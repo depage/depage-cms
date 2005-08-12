@@ -1,0 +1,26 @@
+| geronimo
+| interface
+
+&copy; 2003 jonas [jonas.info@gmx.net]
+
+this are the flash interface files.
+
+| to do
+
+- interface for internal links
+- interface for backup/restore
+
+- interface preview
+	automatic
+	manual
+	type: html/debug
+
+- add relative links in sourcecode: not ../../..lib/bla.txt instead /lib/bla.txt
+-add global text settings (title etc.)
+
+- choose image per doubleclick
+- deny multiple users editing the same properties
+
+- just set the focus on the flash movie without first clicking on it
+- javascript preview ie 5.2.2 on mac os x and safari
+- preview after adding a new site not available

@@ -1,0 +1,17 @@
+# rewriting rules for geronimo
+#
+# (c) 2003-2004 Frank Hellenkamp <jonas.info@gmx.net>
+
+
+# enable apache rewriting engine
+RewriteEngine	on
+RewriteBase		/depage_0.9.14
+
+# rewriting for index
+# only nessecary if no index.php is allowed
+RewriteRule		^$											index.php			[last]
+RewriteRule		^index.html									index.php			[last]
+
+# rewriting for preview
+RewriteRule		^projects/(.*)/preview(/[^\/]*){4}/lib/(.*)	projects/$1/lib/$3	[last]
+RewriteRule		^projects/(.*)/preview/(.*)					scripts/preview.php	[last]

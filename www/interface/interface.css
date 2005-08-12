@@ -1,0 +1,11 @@
+* {
+	font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
+	font-size : 10px;
+	text-decoration : none;
+	margin-top : 0px;
+	margin-bottom : 0px;
+}
+.temp {
+	line-height : 15px;
+	color : #000000;
+}
