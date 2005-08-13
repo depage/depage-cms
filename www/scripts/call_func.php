@@ -8,7 +8,7 @@
  * interface.
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2005 Frank Hellenkamp [jonas.info@gmx.net]
  *
  * @author	Frank Hellenkamp [jonas.info@gmx.net]
  *
