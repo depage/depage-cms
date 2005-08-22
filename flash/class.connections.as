@@ -103,7 +103,7 @@ class_phpConnect.prototype.send = function(name, args, debug) {
 		
 	this.debug = debug;
 	if (this.toSend.length == 0) {
-		setTimeout(this.sendNow, this, 20);	
+		setTimeout(this.sendNow, this, 1000);	
 	}
 	
 	this.toSend.push(func);
@@ -114,13 +114,14 @@ class_phpConnect.prototype.sendNow = function() {
 	var msg = this.msgHandler.create_msg(this.toSend);
 	this.toSend = [];
 	
+	this.requestXML = new XML("");
 	this.requestXML = new XML(msg);
 	
 	if (this.debug) {
-		this.requestXML.send("../scripts/call_func.php", "_blank", "POST");
+		this.requestXML.send("../scripts/call_func.php", "_blank");
 	} else {
 		_root.interface.connection_indicate_plus();
-		this.requestXML.sendAndLoad("../scripts/call_func.php", this.answer, "POST");
+		this.requestXML.sendAndLoad("../scripts/call_func.php", this.answer);
 	}
 };
 // }}}
