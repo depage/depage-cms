@@ -114,7 +114,6 @@ class_phpConnect.prototype.sendNow = function() {
 	var msg = this.msgHandler.create_msg(this.toSend);
 	this.toSend = [];
 	
-	this.requestXML = new XML("");
 	this.requestXML = new XML(msg);
 	
 	if (this.debug) {

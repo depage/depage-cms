@@ -90,7 +90,7 @@ class_ttRpcMsgHandler.prototype.call = function(xmldata) {
 	xmlObj.parseXML(xmldata.convEntityToUnicode());
 	
 	if (xmlObj.status == 0) {
-		xmlNode = xmlObj.firstChild;
+		xmlNode = xmlObj.getRootNode();
 		if (xmlNode.nodeName == this.xml_ns_rpc + ":msg") {
 			xmlNode = xmlNode.firstChild;
 			while (xmlNode != null) {

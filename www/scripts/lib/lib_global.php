@@ -761,7 +761,7 @@ class ttRpcMsgHandler{
 	function create_msg($funcs) {
 		global $conf;
 		
-		$data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		$data = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
 		$data .= "<{$conf->ns['rpc']['ns']}:msg";
 		
 		foreach($conf->ns as $ns_key => $ns) {
