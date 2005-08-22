@@ -156,11 +156,11 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
 					echo($transformed['value']);
 				} else {
 					$cache_path = substr($param['path'], strpos($param['path'], '/', 2));
-					$file_path = $project->get_project_path($project_name) . "/cache/{$param['type']}{$cache_path}/{$param['file_name']}";
+					$file_path = $project->get_project_path($project_name) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}";
 					$file_access = fs::factory('local');
 					$file_access->f_write_string($file_path, $transformed['value']);
-					$file_access->ch_dir($project->get_project_path($project_name) . "/cache/{$param['type']}{$cache_path}");
-					virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache/{$param['type']}{$cache_path}/{$param['file_name']}");
+					$file_access->ch_dir($project->get_project_path($project_name) . "/cache_{$param['type']}{$cache_path}");
+					virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
 					//$file_access->rm($file_path);
 				}
 			} else {

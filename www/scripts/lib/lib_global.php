@@ -46,7 +46,7 @@ class config {
 		$inifile = parse_ini_file($this->settingsPath . $file, false);
 		
 		$this->app_name = 'dePage';
-		$this->app_version = '0.9.14';
+		$this->app_version = '0.9.15';
 
 		$vars_to_set = array(
 			'xml_version' => (string) '1.0',
@@ -632,7 +632,11 @@ class logObj{
 			$do_log = false; 
 		}
 		if ($do_log){
-			error_log("[" . date("r") . "] $type: $entry\n", 3, "../logs/depage.log");
+			if ($conf->path_base != "" && $conf->path_server_root != "") {
+				error_log("[" . date("r") . "] $type: $entry\n", 3, $conf->path_server_root . $conf->path_base . "/logs/depage.log");
+			} else {
+				error_log("[" . date("r") . "] $type: $entry\n", 3, "../logs/depage.log");
+			}
 			/*
 			$result = mysql_query(
 				"INSERT INTO $this->log_db 

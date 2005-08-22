@@ -27,7 +27,11 @@ class_project.prototype.init = function(xml_data) {
 	_root.pocketConnect.msgHandler.register_func("set_active_tasks_status", this.setActiveTasksStatus, this);
 	_root.pocketConnect.msgHandler.register_func("error_alert", this.error_alert, this);
 
-	setInterval(this, "sendKeepAlive", 15000);
+	//if (conf.usePocket == true) {
+		setInterval(this, "sendKeepAlive", 15000);
+	//} else {
+		//setInterval(this, "sendKeepAlive", 5000);
+	//}
 };
 // }}}
 // {{{ error_alert()
@@ -37,7 +41,11 @@ class_project.prototype.error_alert = function(args) {
 // }}}
 // {{{ sendKeepAlive()
 class_project.prototype.sendKeepAlive = function() {
-	_root.pocketConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+	//if (conf.usePocket == true) {
+		_root.pocketConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+	//} else {
+		//_root.phpConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+	//}
 };
 // }}}
 // {{{ parseProjectData

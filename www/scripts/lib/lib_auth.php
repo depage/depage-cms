@@ -81,7 +81,7 @@ class ttUser{
 			db_query(
 				"INSERT 
 				INTO $conf->db_table_sessions 
-				SET sid='$sid', userid='" . $data['id'] . "', project='$project', ip='$ip'"
+				SET sid='$sid', userid='" . $data['id'] . "', project='$project', ip='$ip', last_update=NOW()"
 			);
 			$log->add_entry("'" . $user . "' has logged in Project '" . $project . "' from '" . $ip . "'", "auth");
 			$retval = $sid;

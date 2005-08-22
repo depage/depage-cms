@@ -32,6 +32,62 @@ require_once('Archive/tar.php');
  * handles all remote function calls, called from flash interface
  */
 class rpc_phpConnect_functions extends rpc_functions_class {
+	// {{{ login()
+	/**
+	 * logs user in to server and registers a window to user. so a message will 
+	 * be send to client with new created sid, wid and current user_level, or 
+	 * an error, if login failed.
+	 *
+	 * @public
+	 *
+	 * @param	$args['user'] (string) user name
+	 * @param	$args['pass'] (string) password (attention: unencypted!!!!)
+	 * @param	$args['project'] (string) name of project to log in to
+	 */ 
+	function login($args){
+		global $conf, $project;
+
+		$sid = $project->user->login($args['user'], $args['pass'], $args['project'], $_SERVER["REMOTE_ADDR"]);
+		if ($sid) {
+			$wid = $project->user->register_window($sid, $_SERVER["REMOTE_ADDR"], 0, 'main');
+		}
+		if ($sid && $wid) {
+			$func = new ttRpcFunc('logged_in', array('sid' => $sid, 'wid' => $wid, 'user_level' => $project->user->get_level_by_sid($sid), 'error' => false));
+		} else {
+			$func = new ttRpcFunc('logged_in', array('error' => true));
+		}
+
+		return $func;
+	}
+	// }}}
+	// {{{ register_window()
+	/**
+	 * registeres a new window to user. a message will be send back to
+	 * client with new wid or an error, if registration fails.
+	 *
+	 * @public
+	 *
+	 * @param	$args['sid'] (string) session id
+	 * @param	$args['type'] (string) type of window to be registered
+	 */ 
+	function register_window($args) {
+		global $conf, $project;
+		
+		$wid = $project->user->register_window($args['sid'], $_SERVER["REMOTE_ADDR"], 0, $args['type']);
+
+		if ($wid) {
+			$func = new ttRpcFunc('registered_window', array('wid' => $wid, 'user_level' => $project->user->get_level_by_sid($args['sid']), 'error' => false));
+		} else {
+			$func = new ttRpcFunc('registered_window', array('error' => true));
+		}
+		return $func;
+	}
+	// }}}
+	// {{{ keepAlive()
+	function keepAlive() {
+		return new ttRpcFunc("", array());
+	}
+	// }}}
 	// {{{ get_config()
 	/**
 	 * gets global configuration data and interface texts from db

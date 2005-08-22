@@ -119,3 +119,5 @@ class_ttRpcMsgHandler.prototype.call = function(xmldata) {
 	}
 };
 // }}}
+
+/* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

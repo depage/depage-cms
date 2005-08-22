@@ -5,7 +5,7 @@
 
 # enable apache rewriting engine
 RewriteEngine	on
-RewriteBase		/depage_0.9.14
+RewriteBase		/depage_1.0
 
 # rewriting for index
 # only nessecary if no index.php is allowed

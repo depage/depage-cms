@@ -892,10 +892,15 @@ class tpl_engine_xslt extends tpl_engine {
 	 * @return	$path (string) relative path
 	 */
 	function get_relative_path_to($target_path) {
+		global $log;
+
 		$path = '';
 		if ($target_path == '') {
 			$path = '';
 		} else {
+			$log->add_entry("actual path: " . $this->actual_path);
+			$log->add_entry("target path: " . $target_path);
+
 			$actual_path = explode('/', $this->actual_path);
 			$target_path = explode('/', $target_path);
 			
