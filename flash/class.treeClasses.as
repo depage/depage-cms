@@ -791,6 +791,7 @@ class_tree_page_data.prototype.init = function(type, projectObj) {
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	_root.pocketConnect.msgHandler.register_func("get_update_tree_" + this.type, this.get_new_update, this);
+	_root.phpConnect.msgHandler.register_func("get_update_tree_" + this.type, this.get_new_update, this);
 };
 // }}}
 // {{{ get_new_update()
@@ -1069,7 +1070,9 @@ class_tree_files.prototype.init = function(type, projectObj) {
 // {{{ onShow()
 class_tree_files.prototype.onShow = function() {
 	_root.pocketConnect.msgHandler.register_func("get_update_tree_" + this.type, this.load, this);
+	_root.phpConnect.msgHandler.register_func("get_update_tree_" + this.type, this.load, this);
 	_root.pocketConnect.msgHandler.register_func("get_update_prop_" + this.type, this.get_newFileProp_update, this);
+	_root.phpConnect.msgHandler.register_func("get_update_prop_" + this.type, this.get_newFileProp_update, this);
 	
 	this.clear();
 	this.onChange();

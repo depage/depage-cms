@@ -10,6 +10,7 @@
 	
 	public_functions.push("project_loader");
 	public_functions.push("project_loader_update");
+	public_functions.push("loadBox_setText");
 	
 	public_functions.push("start_main_interface");
 /* set public functions end */
@@ -318,7 +319,7 @@
 		if (percentLoaded == 0.5) {
 			loadBox.setPercent(newPercent * 0.5 + 0.5);
 		} else {
-			loadBox.setPercent(newPercent * 0.9 + 0.1);
+			loadBox.setPercent(newPercent * 0.8 + 0.1);
 		}
 		loadBox.setText(conf.lang.start_loading_version.replace([
 			["%app_name%"		, conf.app_name],
@@ -327,6 +328,13 @@
 		]));
 	}
 
+	function loadBox_setText(text) {
+		loadBox.setText(conf.lang.start_loading_version.replace([
+			["%app_name%"		, conf.app_name],
+			["%app_version%"	, conf.app_version],
+			["%loading%"		, text]
+		]));
+	}	
 	
 	function start_main_interface() {
 		connection_indicator._alpha = 100;

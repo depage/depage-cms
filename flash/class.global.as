@@ -207,18 +207,17 @@ class_user.prototype.login = function(user, pass, project, onSuccessFunc, onErro
 	this.onSuccessFunc = onSuccessFunc;
 	this.onErrorFunc = onErrorFunc;
 
-	//_root.phpConnect.msgHandler.register_func("logged_in", this.loginHandler, this);
 	_root.pocketConnect.msgHandler.register_func("logged_in", this.loginHandler, this);
-	//if (conf.usepocket == true) {
+	_root.phpConnect.msgHandler.register_func("logged_in", this.loginHandler, this);
+	if (conf.usepocket == true) {
 		_root.pocketConnect.send("login", [["user", user], ["pass", pass], ["project", project]]);
-	//} else {
-		//_root.phpConnect.send("login", [["user", user], ["pass", pass], ["project", project]]);
-	//}
+	} else {
+		_root.phpConnect.send("login", [["user", user], ["pass", pass], ["project", project]]);
+	}
 };
 // }}}
 // {{{ loginHandler()
 class_user.prototype.loginHandler = function(args) {
-	//alertObjInfo(args);
 	if (args['error']) {
 		this.onErrorFunc();
 	} else {
@@ -239,11 +238,12 @@ class_user.prototype.registerWindow = function(onSuccessFunc, onErrorFunc) {
 	this.onErrorFunc = onErrorFunc;
 
 	_root.pocketConnect.msgHandler.register_func("registered_window", this.registerWindowHandler, this);
-	//if (conf.usepocket == true) {
+	_root.phpConnect.msgHandler.register_func("registered_window", this.registerWindowHandler, this);
+	if (conf.usepocket == true) {
 		_root.pocketConnect.send("register_window", [["sid", this.sid], ["type", "main"]]);
-	//} else {
-		//_root.phpConnect.send("register_window", [["sid", this.sid], ["type", "main"]]);
-	//}
+	} else {
+		_root.phpConnect.send("register_window", [["sid", this.sid], ["type", "main"]]);
+	}
 };
 // }}}
 // {{{ registerWindowHandler()

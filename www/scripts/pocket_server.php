@@ -53,6 +53,7 @@ class rpc_pocketConnect_functions extends rpc_pocketConnect_default_functions {
 		$func = new ttRpcFunc('return_active_tasks', array('running' => $runningTasksXML));
 		
 		//$arg['connectionObj']->sendMessage($arg['serverObj']->msgHandler->create_msg($func));
+		return count($active) == 0;
 	}
 }
 

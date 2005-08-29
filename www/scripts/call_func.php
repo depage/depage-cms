@@ -84,7 +84,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 	}
 	// }}}
 	// {{{ keepAlive()
-	function keepAlive() {
+	function keepAlive($args) {
+		global $project;
+
+		if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
+			$project->user->update_login($args['sid']);
+		}
+
 		return new ttRpcFunc("", array());
 	}
 	// }}}
@@ -1447,6 +1453,11 @@ foreach ($funcs as $func) {
 		$value[] = $tempval;
 	}
 }
+if (count($pocket_updates) > 0) {
+	send_updates();
+}
+$value = array_merge($value, $project->user->get_updates($project->user->sid));
+
 if (count($value) == 0) {
 	$value[] = new ttRpcFunc('nothing', array('error' => 0));
 }

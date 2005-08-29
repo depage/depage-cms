@@ -78,24 +78,30 @@ class PocketServer{
 	 * @public
 	 */
 	function init(){
-		$this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		if ($this->sock === false){
-			$this->serverMessage("Could not create a socket. $this->sock");
-			$this->initsuccess = false;
-		}
-		//socket_setoption($this->sock, SOL_SOCKET, SO_REUSEADDR, 1);
-		$ret = @socket_bind ($this->sock, $this->host, $this->port);
-		if (!$ret) {
-			$this->serverMessage("Could not bind socket: $this->host:$this->port. Is Pocket-Server still running?");
-			$this->initsuccess = false;
-		} else {
-			$this->serverMessage("Pocket-Sever started on $this->host:$this->port.");
-		}
+		global $conf;
 
-		$ret = socket_listen($this->sock, 100);
-		if (!$ret){
-			$this->serverMessage('Listen failed.' . $ret);
-			$this->initsuccess = false;
+		if ($conf->pocket_use) {
+			$this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+			if ($this->sock === false){
+				$this->serverMessage("Could not create a socket. $this->sock");
+				$this->initsuccess = false;
+			}
+			//socket_setoption($this->sock, SOL_SOCKET, SO_REUSEADDR, 1);
+			$ret = @socket_bind ($this->sock, $this->host, $this->port);
+			if (!$ret) {
+				$this->serverMessage("Could not bind socket: $this->host:$this->port. Is Pocket-Server still running?");
+				$this->initsuccess = false;
+			} else {
+				$this->serverMessage("Pocket-Server started on $this->host:$this->port.");
+			}
+
+			$ret = socket_listen($this->sock, 100);
+			if (!$ret){
+				$this->serverMessage('Listen failed.' . $ret);
+				$this->initsuccess = false;
+			}
+		} else {
+			$this->serverMessage("Pocket-Server started without listening.");
 		}
 	}
 	// }}}
@@ -171,63 +177,68 @@ class PocketServer{
 	 *			tasks between handling remote functions.
 	 */
 	function startListen($callbackFunc = null){
-		global $conf;
+		global $conf, $project;
 		
 		$user = new ttUser();
-		$user->clearsessions();
-
-		if ($this->initsuccess){
+		if ($this->initsuccess) {
 			set_time_limit(0);
 			$conf->set_tt_env('pocket_server_running', 1);
 			$this->running = true;
 			$this->force_shutdown = false;
 			$lasttime = time();
 
-			while (($this->running || count($this->connhosts) > 0) && !$this->force_shutdown){
-				$actConnections = array();
+			$usercount = $project->user->get_loggedin_count();
+			while (($this->running || $usercount > 0) && !$this->force_shutdown){
+				if ($conf->pocket_use) {
+					$actConnections = array();
 
-				$actConnections[0] = $this->sock;
-				for ($i = 0; $i < count($this->connhosts); $i++){
-					$actConnections[$i + 1] = $this->connhosts[$i]->connection;
-				} 
-				if (socket_select($actConnections, $w = null, $e = null, 1) === false){
-					$this->running = false;
-				} 
-				// add new connections
-				if (in_array($this->sock, $actConnections)){
-					$this->connhosts[] = new PocketConnection($this, $this->sock);
-				} 
-				// read open connections
-				for ($i = 0; $i < count($this->connhosts); $i++){
-					if (in_array($this->connhosts[$i]->connection, $actConnections)){
-						$sockFunc = $this->connhosts[$i]->readMessage();
-						if ($sockFunc != null){
-							$this->sockFuncs[] = $sockFunc;
+					$actConnections[0] = $this->sock;
+					for ($i = 0; $i < count($this->connhosts); $i++){
+						$actConnections[$i + 1] = $this->connhosts[$i]->connection;
+					} 
+					if (socket_select($actConnections, $w = null, $e = null, 1) === false){
+						$this->running = false;
+					} 
+					// add new connections
+					if (in_array($this->sock, $actConnections)){
+						$this->connhosts[] = new PocketConnection($this, $this->sock);
+					} 
+					// read open connections
+					for ($i = 0; $i < count($this->connhosts); $i++){
+						if (in_array($this->connhosts[$i]->connection, $actConnections)){
+							$sockFunc = $this->connhosts[$i]->readMessage();
+							if ($sockFunc != null){
+								$this->sockFuncs[] = $sockFunc;
+							}
 						}
+					} 
+					// delete closed connections
+					for ($i = 0; $i < count($this->connhosts); $i++){
+						if ($this->connhosts[$i]->isToDelete === true){
+							socket_close($this->connhosts[$i]->connection);
+							$user->unregister_window($this->connhosts[$i]->host, $this->connhosts[$i]->port);
+							$this->connhosts[$i] = null;
+							array_splice($this->connhosts, $i, 1);
+						}
+					} 
+					// executing registered functions
+					for ($i = 0; $i < count($this->sockFuncs); $i++){
+						$this->sockFuncs[$i]->execute();
 					}
-				} 
-				// delete closed connections
-				for ($i = 0; $i < count($this->connhosts); $i++){
-					if ($this->connhosts[$i]->isToDelete === true){
-						socket_close($this->connhosts[$i]->connection);
-						$user->unregister_window($this->connhosts[$i]->host, $this->connhosts[$i]->port);
-						$this->connhosts[$i] = null;
-						array_splice($this->connhosts, $i, 1);
-					}
-				} 
-				// executing registered functions
-				for ($i = 0; $i < count($this->sockFuncs); $i++){
-					$this->sockFuncs[$i]->execute();
+					$this->sockFuncs = array(); 
+				} else {
+					sleep(2);
 				}
-				$this->sockFuncs = array(); 
 				
 				// call callBackFunc
+				$may_shutdown = true;
 				if ($callbackFunc !== null) {
-					call_user_func($callbackFunc, &$this);
+					$may_shutdown = $mayshutdown && call_user_func($callbackFunc, &$this);
 				}
 				
+				$usercount = $project->user->get_loggedin_count();
 				// test keep running
-				if ($this->running && count($this->connhosts) > 0){
+				if ($this->running && (count($this->connhosts) > 0 || $usercount > 0)){
 					$lasttime = time();
 					$this->running = true;
 				} else if (count($this->connhosts) == 0) {
@@ -244,12 +255,16 @@ class PocketServer{
 					$this->force_shutdown = true;
 				}
 			}
-			for ($i = 0; $i < count($this->connhosts); $i++){
-				socket_close($this->connhosts[$i]->connection);
+			if ($conf->pocket_use) {
+				for ($i = 0; $i < count($this->connhosts); $i++){
+					socket_close($this->connhosts[$i]->connection);
+				}
+				socket_close($this->sock);
 			}
-			socket_close($this->sock);
 			$this->serverMessage('Pocket-Server Shutdown.');
 			$conf->set_tt_env('pocket_server_running', 0);
+
+			$user->clearsessions();
 		}
 	}
 	// }}}
@@ -437,12 +452,18 @@ class PocketClient {
 	 * @return	$connected (bool) true on succes, false on failure
 	 */
 	function connect() {
-		$this->fp = fsockopen($this->host, $this->port, &$errno , &$errstr, 1);
-		if (!$this->fp) {
-			return false;
+		global $conf;
+
+		if ($conf->pocket_use) {
+			$this->fp = fsockopen($this->host, $this->port, &$errno , &$errstr, 1);
+			if (!$this->fp) {
+				return false;
+			} else {
+				$this->connected = true;
+				return true;
+			}
 		} else {
-			$this->connected = true;
-			return true;
+			return false;
 		}
 	}
 	// }}}
@@ -455,9 +476,11 @@ class PocketClient {
 	 * @param	$func (rpcFuncObj) function to call on server
 	 */
 	function send($func) {
-		$msgHandler = new ttRpcMsgHandler();
-		$msg = $msgHandler->create_msg($func);
-		fwrite($this->fp, $msg . "\0");
+		if ($this->connected) {
+			$msgHandler = new ttRpcMsgHandler();
+			$msg = $msgHandler->create_msg($func);
+			fwrite($this->fp, $msg . "\0");
+		}
 	}
 	// }}}
 	// {{{ send_to_clients()
@@ -472,6 +495,15 @@ class PocketClient {
 	 *			to clients, that are connected to given project.
 	 */
 	function send_to_clients($func, $project_name = null, $info = '') {
+		global $project;
+
+		$users = $project->user->get_loggedin_nonpocket();
+		foreach ($users as $act_sid => $act_project) {
+			if ($project_name == $act_project || $project_name == null) {
+				$project->user->add_update($act_sid, $func->create_msg_func());
+			}
+		}
+
 		if ($project_name != null) {
 			$func = new ttRpcFunc('send_message_to_clients', array('message' => $func->create_msg_func(), 'project' => $project_name, 'info' => $info));
 		} else {
@@ -482,7 +514,7 @@ class PocketClient {
 	// }}}
 	// {{{ send_to_client()
 	/**
-	 * tells the server to resend geiven function message to a client,
+	 * tells the server to resend given function message to a client,
 	 * that is logged in under given sid and wid.
 	 *
 	 * @public
@@ -492,6 +524,15 @@ class PocketClient {
 	 * @param	$wid (string) session window id of client
 	 */
 	function send_to_client($func, $sid, $wid) {
+		global $project;
+
+		$users = $project->user->get_loggedin_nonpocket();
+		foreach ($users as $act_sid => $act_project) {
+			if ($sid == $act_sid) {
+				$project->user->add_update($sid, $func->create_msg_func());
+			}
+		}
+
 		$func = new ttRpcFunc('send_message_to_client', array('message' => $func->create_msg_func(), 'sid' => $sid, 'wid' => $wid));
 		
 		$this->send($func);
@@ -504,8 +545,10 @@ class PocketClient {
 	 * @public
 	 */
 	function close() {
-		$this->connected = false;
-		fclose($this->fp);	
+		if ($this->connected) {
+			$this->connected = false;
+			fclose($this->fp);	
+		}
 	}
 	// }}}
 }
@@ -649,7 +692,9 @@ class rpc_pocketConnect_default_functions extends rpc_functions_class {
 	 * does nothing.
 	 */ 
 	function keepAlive($args) {
+		global $project;
 
+		$project->user->update_login($args['sid']);
 	}
 	// }}}
 }
@@ -674,9 +719,6 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
 	
 	if (!is_array($GLOBALS['pocket_updates'])) {
 		$GLOBALS['pocket_updates'] = array();
-	}
-	if (count($GLOBALS['pocket_updates']) == 0) {
-		register_shutdown_function('send_updates');
 	}
 	
 	global $pocket_updates;
@@ -774,13 +816,11 @@ function send_updates() {
 	$pocket_client = new PocketClient('127.0.0.1', $conf->pocket_port);
 	
 	if (count($pocket_updates) > 0) {
-		if ($pocket_client->connect()) {
-			for ($i = 0; $i < count($pocket_updates); $i++) {
-				$pocket_client->send_to_clients($pocket_updates[$i]['func'], $pocket_updates[$i]['project'], $pocket_updates[$i]['info']);
-			}
-			
-			$pocket_client->close();
+		$pocket_client->connect();
+		for ($i = 0; $i < count($pocket_updates); $i++) {
+			$pocket_client->send_to_clients($pocket_updates[$i]['func'], $pocket_updates[$i]['project'], $pocket_updates[$i]['info']);
 		}
+		$pocket_client->close();
 	}
 }
 // }}}

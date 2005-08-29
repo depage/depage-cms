@@ -62,6 +62,7 @@ class config {
 			'db_table_user' => (string) '%db_praefix%_auth_user',
 			'db_table_sessions' => (string) '%db_praefix%_auth_sessions',
 			'db_table_sessions_win' => (string) '%db_praefix%_auth_sessions_win',
+			'db_table_updates' => (string) '%db_praefix%_auth_updates',
 				
 			'db_table_env' => (string) '%db_praefix%_env',
 				
@@ -770,7 +771,11 @@ class ttRpcMsgHandler{
 		$data .= ">";
 		if (is_array($funcs)) {
 			foreach ($funcs as $func) {
-				$data .= $func->create_msg_func();
+				if (is_object($func)) {
+					$data .= $func->create_msg_func();
+				} else if (is_string($func)) {
+					$data .= $func;
+				}
 			}
 		} else if (is_object($funcs)) {
 			$data .= $funcs->create_msg_func();

@@ -23,7 +23,10 @@ if (!function_exists('die_error')) require_once('lib_global.php');
  * and session handling.
  */
 class ttUser{
+	// {{{ variables
 	var $sid, $wid, $uid;
+	// }}}
+	// {{{ uniqid16()
 	/**
 	 * generates a uniqid, used for sessions.
 	 *
@@ -34,7 +37,8 @@ class ttUser{
 	function uniqid16() {
 		return uniqid(dechex(rand(256, 4095)));
 	}
-
+	// }}}
+	// {{{ get_userlist()
 	/**
 	 * gets an xml array of available user account
 	 **/
@@ -55,6 +59,91 @@ class ttUser{
 
 		return $xml;
 	}
+	// }}}
+	// {{{ get_loggedin_count()
+	function get_loggedin_count() {
+		global $conf, $log;
+
+		// remove users which login is outdated
+		$result = db_query(
+			"SELECT sid 
+			FROM $conf->db_table_sessions
+			WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
+		);
+		if (($num = mysql_num_rows($result)) > 0) {
+			for ($i = 0; $i < $num; $i++) {
+				$data = mysql_fetch_assoc($result);
+				$this->logout($data['sid']);
+			}
+		}
+
+		// get count of logged in users
+		$result = db_query(
+			"SELECT COUNT(*) AS count
+			FROM $conf->db_table_sessions"
+		);
+		$data = mysql_fetch_assoc($result);
+
+		return $data['count'];
+	}
+	// }}}
+	// {{{ get_loggedin_nonpocket()
+	function get_loggedin_nonpocket() {
+		global $conf, $log;
+
+		$loggedin= array();
+		$result = db_query(
+			"SELECT sessions.sid AS sid, sessions.project AS project
+			FROM $conf->db_table_sessions As sessions, $conf->db_table_sessions_win AS sessions_win
+			WHERE sessions_win.port=0 AND sessions.sid=sessions_win.sid"
+		);
+		if ($result && ($num = mysql_num_rows($result)) > 0) {
+			for ($i = 0; $i < $num; $i++) {
+				$data = mysql_fetch_array($result);
+				$loggedin[$data['sid']] = $data['project'];
+			}
+		}
+
+		return $loggedin;
+	}
+	// }}}
+	// {{{ add_update()
+	function add_update($sid, $message) {
+		global $conf;
+
+		db_query(
+			"INSERT INTO $conf->db_table_updates
+			SET sid='$sid', message='" . mysql_escape_string($message) . "'"
+		);
+	}
+	// }}}
+	// {{{ get_updates()
+	function get_updates($sid) {
+		global $conf;
+
+		$msgs = array();
+		
+		$result = db_query(
+			"SELECT message
+			FROM $conf->db_table_updates
+			WHERE sid='$sid'
+			ORDER BY id"
+		);
+		if ($result && ($num = mysql_num_rows($result)) > 0) {
+			for ($i = 0; $i < $num; $i++) {
+				$data = mysql_fetch_assoc($result);
+				$msgs[] = $data['message'];
+			}
+		}
+		db_query(
+			"DELETE FROM $conf->db_table_updates
+			WHERE sid='$sid'"
+		);
+
+		return $msgs;
+	}
+	// }}}
+	// {{{ login()
 	/**
 	 * logs user in and sets a new sid for this user.
 	 *
@@ -71,7 +160,7 @@ class ttUser{
 		global $conf, $log;
 
 		$result = db_query(
-			"SELECT * 
+			"SELECT name, id
 			FROM $conf->db_table_user 
 			WHERE name='$user' and pass='" . md5($pass) . "'"
 		);
@@ -93,7 +182,8 @@ class ttUser{
 		
 		return $retval;
 	}
-
+	// }}}
+	// {{{ logout()
 	/**
 	 * logs user out
 	 *
@@ -127,7 +217,19 @@ class ttUser{
 		}
 		mysql_free_result($result);
 	}
+	// }}}
+	// {{{ update_login()
+	function update_login($sid) {
+		global $conf;
 
+		db_query(
+			"UPDATE $conf->db_table_sessions
+			SET last_update=NOW()
+			WHERE sid='$sid'"
+		);
+	}
+	// }}}
+	// {{{ clearsessions()
 	/**
 	 * clears all sessions (and so logs all users out, if
 	 * some were there.
@@ -140,7 +242,8 @@ class ttUser{
 		db_query("DELETE FROM $conf->db_table_sessions");
 		db_query("DELETE FROM $conf->db_table_sessions_win");
 	}
-
+	// }}}
+	// {{{ register_window
 	/**
 	 * registers a new window (pocket connection) to a user.
 	 *
@@ -157,7 +260,7 @@ class ttUser{
 		global $conf, $log;
 
 		$result = db_query(
-			"SELECT * 
+			"SELECT name 
 			FROM $conf->db_table_sessions AS session, $conf->db_table_user AS user 
 			WHERE session.sid='$sid' and session.ip='$ip' and session.userid = user.id"
 		);
@@ -182,7 +285,8 @@ class ttUser{
 		
 		return $retval;
 	}
-
+	// }}}
+	// {{{ unregister_window
 	/**
 	 * unregisters a window. if thi was the last window of this user
 	 * the user will also logged out.
@@ -222,7 +326,8 @@ class ttUser{
 			mysql_free_result($result);
 		}	
 	}
-
+	// }}}
+	// {{{ is_valid_user()
 	/**
 	 * test, if the combination of sid, wid and ip belongs to
 	 * an already logged in user and a registered window.
@@ -274,7 +379,8 @@ class ttUser{
 		}
 		return $retVal;
 	}
-
+	// }}}
+	// {{{ is_logged_in()
 	/**
 	 * checks, wether someone is logged in from given ip and port.
 	 * if project is given also, it will be checked, if this user
@@ -313,7 +419,8 @@ class ttUser{
 		
 		return $retVal;
 	}
-	
+	// }}}
+	// {{{ get_project_by_sid()
 	/**
 	 * gets project, the user with given sid is logged into.
 	 *
@@ -342,7 +449,8 @@ class ttUser{
 		
 		return $retVal;
 	}
-	
+	// }}}
+	// {{{ get_userid_by_sid()
 	/**
 	 * gets id of user by its sid.
 	 *
@@ -371,7 +479,8 @@ class ttUser{
 		
 		return $retVal;
 	}
-	
+	// }}}
+	// {{{ get_level_by_sid()
 	/**
 	 * gets authentication level of user by sid.
 	 *
@@ -399,7 +508,8 @@ class ttUser{
 		
 		return $retVal;
 	}
-	
+	// }}}
+	// {{{ get_host_port_sid_wid
 	/**
 	 * gets ip and port of a connection by sid and wid.
 	 *
@@ -431,6 +541,7 @@ class ttUser{
 		
 		return $retVal;
 	}
+	// }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
