@@ -569,7 +569,9 @@ class fs_ftp extends fs {
 
 		$temp_flist = $this->_get_filelist($path);
 		foreach ($temp_flist['dirs'] as $dir) {
-			$flist['dirs'][] = $dir['name'];
+			if ($dir['name'] != '.' && $dir['name'] != '..') {
+				$flist['dirs'][] = $dir['name'];
+			}
 		}
 		foreach ($temp_flist['files'] as $file) {
 			$flist['files'][] = $file['name'];
