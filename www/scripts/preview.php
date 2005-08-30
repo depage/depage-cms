@@ -121,7 +121,6 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
 	$xml_proc = tpl_engine::factory('xslt', $param);
 	if ($param['access'] == 'browse' || $param['access'] == 'preview') {
 		$id = $xml_proc->get_id_by_path($param['file_path'], $project_name);
-		error_log("preview id: $id");
 		if ($project_name && $id != null) {
 			$data['lang'] = $param['lang'];
 			if (!$param['cached']) {

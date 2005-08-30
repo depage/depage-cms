@@ -599,7 +599,6 @@ class bgTasks_task {
 		
 		//log error
 		if ($errno != E_WARNING || !in_array(substr($errmsg, 0, strpos($errmsg, "()")), $hide_errors)) {
-			error_log($errstr);
 			$log->add_entry($errstr, "task");
 		}
 		//inform user if error is critical
@@ -655,7 +654,6 @@ class bgTasks_task {
 						$errmsg
 					);
 					if (!$issent) {
-						error_log($issent->toString());
 						$log->add_entry($issent->toString(), "task");
 					}
 				}

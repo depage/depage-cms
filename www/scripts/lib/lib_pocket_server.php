@@ -734,8 +734,6 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
 				
 				$func = new ttRpcFunc("update_tree_$type", $data);
 				$pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");
-			} else {
-				error_log("unable to get page structure");
 			}
 		// }}}
 		// {{{ page_data

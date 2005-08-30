@@ -81,7 +81,7 @@ class tpl_engine_xslt extends tpl_engine {
 	 * @param	$use_cached_template (bool) true, if to use cached template, false for using template from db for previewing
 	 */
 	function generate_page_redirect($project_name, $type, $lang = '', $use_cached_template = true) {
-		global $conf;
+		global $conf, $log;
 		
 		if ($lang == '') {
 			$output_languages = array();
@@ -131,7 +131,7 @@ class tpl_engine_xslt extends tpl_engine {
 			// Process the document
 			$result = xslt_process($xh, "get:redirect", "get:template/{$this->type}/" . ($this->use_cached_template ? 'cached' : 'noncached'), null, $arguments = null, $param = null);
 			if (!$result) {
-				error_log("ERROR " . xslt_errno($xh) . ": " . xslt_error($xh) . ".\n");
+				$log->add_entry("ERROR " . xslt_errno($xh) . ": " . xslt_error($xh) . ".\n");
 				$this->error .= "ERROR " . xslt_errno($xh) . ": " . xslt_error($xh) . ".\n";
 			} else {
 				$this->error = "";
@@ -1092,7 +1092,7 @@ function urlSchemeHandler($processor, $scheme, $param) {
 		$tmp_path = $xml_proc->get_relative_path_to('/lib/' . trim($param, '/'));
 		$value = '<file_ref>' . htmlspecialchars($tmp_path) . '</file_ref>';
 	} else {
-		error_log("called unknown scheme: $scheme");
+		$log->add_entry("called unknown scheme: $scheme");
 	}
 	
 	return $value;
