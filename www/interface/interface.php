@@ -23,9 +23,10 @@
 			
 			$params = "nsrpc=" . urlencode($conf->ns['rpc']['ns']) 
 				. "&nsrpcuri=" . urlencode($conf->ns['rpc']['uri'])
-				. "&phost=" . $_SERVER["HTTP_HOST"]
+				. "&phost=" . urlencode($_SERVER["HTTP_HOST"])
 				. "&pport=" . urlencode($conf->pocket_port)
-				. "&standalone=" . $_GET["standalone"];
+				. "&puse=" . urlencode($conf->pocket_use ? "true" : "false")
+				. "&standalone=" . urlencode($_GET["standalone"]);
 			if ($_GET['userid'] != "null") {
 			    $flashfile = "main.swf?userid=" . $_GET['userid'] . "&" . $params;
 			} else if ($conf->interface_autologin) {

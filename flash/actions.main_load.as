@@ -39,7 +39,8 @@
 		
 		conf.phost = params['phost'];
 		conf.pport = params['pport'];
-		
+		conf.puse = params['puse'];
+
 		conf.standalone = params['standalone'];
 		
 		/* set connection objects */
@@ -62,7 +63,11 @@
 	}
 
 	function pocket_connect() {
-		_root.pocketConnect.connect();
+		if (conf.puse == "false") {
+			pocket_connect_fault();
+		} else {
+			_root.pocketConnect.connect();
+		}
 	}
 	
 	function pocket_connect_success() {
@@ -77,10 +82,9 @@
 	function pocket_connect_fault() {
 		status(conf.lang.start_pocket_reconnect);
 
-		if (_root.pocketConnect.connectFaults < 2) {
+		if (_root.pocketConnect.connectFaults < 2 && conf.puse != "false") {
 			interface.loadBox_setText(conf.lang.start_pocket_reconnect);
 			pocket_connect();
-			//setTimeout(pocket_connect, this, 250);
 		} else {
 			conf.usepocket = false;
 			init_pocket = true;
