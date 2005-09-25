@@ -521,23 +521,25 @@ class fs_ftp extends fs {
             if (!$date) {
                 trigger_error("Can not parse date from raw directory-list on '$dir'.");
             }
-            if ($is_dir) {
-                $dirs_list[] = array("name"         =>  $eregs[8],
-                                    "rights"        =>  $eregs[2],
-                                    "user"          =>  $eregs[4],
-                                    "group"         =>  $eregs[5],
-                                    "files_inside"  =>  $eregs[3],
-                                    "date"          =>  $date,
-                                    "is_dir"        =>  $is_dir);
-            } else if ($eregs[8] != null) {
-                $files_list[] = array("name"        =>  $eregs[8],
-                                     "size"         =>  (int)$eregs[6],
-                                     "rights"       =>  $eregs[2],
-                                     "user"         =>  $eregs[4],
-                                     "group"        =>  $eregs[5],
-                                     "date"         =>  $date,
-                                     "is_dir"       =>  $is_dir);
-            }
+			if ($eregs[8] != '.' && $eregs[8] != '..') {
+				if ($is_dir) {
+					$dirs_list[] = array("name"         =>  $eregs[8],
+										"rights"        =>  $eregs[2],
+										"user"          =>  $eregs[4],
+										"group"         =>  $eregs[5],
+										"files_inside"  =>  $eregs[3],
+										"date"          =>  $date,
+										"is_dir"        =>  $is_dir);
+				} else if ($eregs[8] != null) {
+					$files_list[] = array("name"        =>  $eregs[8],
+										 "size"         =>  (int)$eregs[6],
+										 "rights"       =>  $eregs[2],
+										 "user"         =>  $eregs[4],
+										 "group"        =>  $eregs[5],
+										 "date"         =>  $date,
+										 "is_dir"       =>  $is_dir);
+				}
+			}
         }
         usort($dirs_list, array($this, "compare_ftp_listing"));
         usort($files_list, array($this, "compare_ftp_listing"));

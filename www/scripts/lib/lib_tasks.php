@@ -94,6 +94,8 @@ class bgTasks_control {
 	 * @param	$pocketServerObj (ref) reference to running pocketServer object.
 	 */
 	function handle_tasks(&$pocketServerObj) {
+		global $log;
+
 		$active_tasks = $this->get_active_tasks();
 		$planned_tasks = $this->get_planned_tasks();
 		$finished_tasks = $this->get_finished_tasks();
@@ -128,6 +130,9 @@ class bgTasks_control {
 			for ($i = 0; $i < count($active_tasks); $i++) {
 				$this->send_status(&$pocketServerObj, $active_tasks[$i]);
 			}
+			return false;
+		} else {
+			return true;
 		}
 	}
 	
@@ -143,7 +148,7 @@ class bgTasks_control {
 	 * @return	$task (object) task object
 	 */
 	function send_status(&$pocketServerObj, &$actualtask, $finished = false) {
-		global $conf;
+		global $conf, $project;
 		
 		if (strlen($actualtask['depends_on']) == 0) {
 			$depender = '';
@@ -169,11 +174,19 @@ class bgTasks_control {
 		
 		
 		$func = new ttRpcFunc('set_active_tasks_status', array('status' => $runningTasksXML));
+		$message = $func->create_msg_func();
 		
 		if ($depender == '') {
-			$pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $func->create_msg_func()));
+			$pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message));
 		} else if ($depender == 'project') {
-			$pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $func->create_msg_func(), 'project' => $depends_on));
+			$users = $project->user->get_loggedin_nonpocket();
+			foreach ($users as $act_sid => $act_project) {
+				if ($depends_on == $act_project) {
+					$project->user->add_update($act_sid, $message);
+				}
+			}
+
+			$pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message, 'project' => $depends_on));
 		} else if ($depender == 'user') {
 			
 		}

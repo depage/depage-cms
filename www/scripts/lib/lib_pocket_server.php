@@ -177,7 +177,7 @@ class PocketServer{
 	 *			tasks between handling remote functions.
 	 */
 	function startListen($callbackFunc = null){
-		global $conf, $project;
+		global $conf, $project, $log;
 		
 		$user = new ttUser();
 		if ($this->initsuccess) {
@@ -232,13 +232,13 @@ class PocketServer{
 				
 				// call callBackFunc
 				$may_shutdown = true;
-				if ($callbackFunc !== null) {
-					$may_shutdown = $mayshutdown && call_user_func($callbackFunc, &$this);
+				if (is_callable($callbackFunc)) {
+					$may_shutdown = $may_shutdown && call_user_func($callbackFunc, &$this);
 				}
 				
 				$usercount = $project->user->get_loggedin_count();
 				// test keep running
-				if ($this->running && (count($this->connhosts) > 0 || $usercount > 0)){
+				if ($this->running && (count($this->connhosts) > 0 || $usercount > 0) && !may_shutdown) {
 					$lasttime = time();
 					$this->running = true;
 				} else if (count($this->connhosts) == 0) {

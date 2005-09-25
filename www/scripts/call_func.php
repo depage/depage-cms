@@ -639,7 +639,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 			$nodetype = $xml_db->get_node_name_by_id($args['id']);
 			$data_id = $project->_set_element_lastchange_UTC($args['id']);
 			if ($nodetype == "{$conf->ns['page']['ns']}:page") {
-				tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+				tpl_engine::clear_transform_cache($project_name, 'preview');
 			}
 			tell_clients_to_update($project_name, $args['sid'], 'page_data', array($args['id'], $data_id));
 			tell_clients_to_update($project_name, $args['sid'], 'pages', array($args['id']));
