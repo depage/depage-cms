@@ -41,18 +41,20 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$this->archivObj = null;
 	}
 	// }}}
-	
+	// {{{ wait()
 	function wait($args) {
 		sleep($args['duration']);
 	}
-	
+	// }}}
+	// {{{ do_error()
 	function do_error($args) {
 		if (!isset($args['error_level'])) {
 			$args['error_level'] = E_USER_NOTICE;
 		}
 		trigger_error("this is my error", $args['error_level']);
 	}
-	
+	// }}}
+	// {{{ finish()
 	/**
 	 * ----------------------------------------------
 	 * finish args:
@@ -60,7 +62,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 	function finish($args) {
 		$args['task']->set_status('finished');
 	}
-	
+	// }}}
+	// {{{ backup_db_init()
 	/**
 	 * ----------------------------------------------
 	 * backup_db_init args:
@@ -86,7 +89,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$infoNode->set_attribute('comment', $args['comment']);
 		$infoNode->set_attribute('backuptime_UTC', $conf->dateUTC($conf->date_format_UTC));
 	}
-	
+	// }}}
+	// {{{ backup_db_add_data_node()
 	/**
 	 * ----------------------------------------------
 	 * backup_db_add_data_node args:
@@ -133,7 +137,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$dataNode->append_child($tempNode);
 	}
-	
+	// }}}
+	// {{{ backup_db_end()
 	/**
 	 * ----------------------------------------------
 	 * backup_db_end args:
@@ -149,7 +154,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			$this->backup_xml->dump_file($args['file_path'] . 'backup_dev.xml', false, true);
 		}
 	}
-	
+	// }}}
+	// {{{ backup_lib_init()
 	/**
 	 * ----------------------------------------------
 	 * backup_lib_init args:
@@ -174,7 +180,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$this->olddir = getcwd();
 		chdir($project->get_project_path($this->project) . '/lib/');
 	}
-	
+	// }}}
+	// {{{ backup_lib_add_dir()
 	/**
 	 * ----------------------------------------------
 	 * backup_lib_add_dir args:
@@ -219,7 +226,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 	        }
 		}
 	}
-	
+	// }}}
+	// {{{ backup_lib_end()
 	/**
 	 * ----------------------------------------------
 	 * backup_lib_end args:
@@ -230,7 +238,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$this->archivObj->_writeFooter();
 		$this->archivObj->_close();
 	}
-	
+	// }}}
+	// {{{ restore_db_from_file()
 	/**
 	 * ----------------------------------------------
 	 * restore_db_from_file args:
@@ -320,7 +329,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			}
 		}
 	}
-	
+	// }}}
+	// {{{ db_optimize()
 	/**
 	 * ----------------------------------------------
 	 * db_optimize args:
@@ -331,7 +341,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$args['task']->set_description('%task_db_optimize%');
 		$xml_db->optimize_database;
 	}
-	
+	// }}}
+	// {{{ restore_db_sendupdate()
 	/**
 	 * ----------------------------------------------
 	 * restore_db_sendupdate args:
@@ -349,7 +360,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			tell_clients_to_update($args['project'], '', 'newnodes');
 		}
 	}
-	
+	// }}}
+	// {{{ restore_lib_init()
 	/**
 	 * ----------------------------------------------
 	 * restore_lib_init args:
@@ -366,7 +378,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			$file_access->mk_dir($args['target_path']);
 		}
 	}
-	
+	// }}}
+	// {{{ restore_lib_extract_dir()
 	/**
 	 * ----------------------------------------------
 	 * restore_lib_extract_dir args:
@@ -399,7 +412,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			$this->archivObj->_extractList($args['target_path'], $detail = array(), 'partial', $extractFileList, '');
 		}
 	}
-	
+	// }}}
+	// {{{ restore_lib_end()
 	/**
 	 * ----------------------------------------------
 	 * restore_lib_end args:
@@ -409,7 +423,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		tell_clients_to_update($args['project'], '', 'files');
 	}
-	
+	// }}}
+	// {{{ publish_init()
 	/**
 	 * ----------------------------------------------
 	 * publish_init
@@ -458,7 +473,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			$log->add_entry("ftp: " . $this->output_host . " - " . $this->output_port . " - " . $this->output_user . " - " . $this->output_pass);
 		}
 	}
-
+	// }}}
+	// {{{ publish_init_test()
 	/**
 	 * ----------------------------------------------
 	 * publish_init
@@ -473,7 +489,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$this->file_access->f_write_string($this->output_path . '/connection_test.tmp', $conf->app_name . ' ' . $conf->app_version);
 		$this->file_access->rm($this->output_path . '/connection_test.tmp');
 	}
-	
+	// }}}
+	// {{{ publish_cache_init()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_init
@@ -487,7 +504,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$this->xml_proc->isPreview = true;
 	}
-	
+	// }}}
+	// {{{ publish_cache_xslt_templates()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_xslt_templates
@@ -500,7 +518,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_colorschemes()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_colorschemes
@@ -514,7 +533,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_languages()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_languages
@@ -531,7 +551,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_navigation()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_navigation
@@ -545,7 +566,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_settings()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_settings
@@ -559,7 +581,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_page()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_page
@@ -576,7 +599,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$tempdoc->free();
 	}
-	
+	// }}}
+	// {{{ publish_cache_end()
 	/**
 	 * ----------------------------------------------
 	 * publish_cache_end
@@ -589,8 +613,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		*/
 		$this->xml_proc->isPreview = false;
 	}
-	
-		
+	// }}}
+	// {{{ publish_process_remove_old()
 	/**
 	 * ----------------------------------------------
 	 * publish_process_remove_old
@@ -599,7 +623,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$file_access = fs::factory('local');
 		$file_access->rm($this->output_path . '/dyn_publish');
 	}
-		
+	// }}}
+	// {{{ publish_process_page()
 	/**
 	 * ----------------------------------------------
 	 * publish_process_page
@@ -624,7 +649,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$this->file_access->f_write_string($this->output_path . $file_path['dirname'] . '/' . $file_path['basename'], $transformed['value']);
 	}
-	
+	// }}}
+	// {{{ publish_index_page()
 	/**
 	 * ----------------------------------------------
 	 * publish_index_page
@@ -642,7 +668,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		
 		$this->file_access->f_write_string($this->output_path . '/index_publish.html', $transformed['value']);
 	}
-	
+	// }}}
+	// {{{ publish_lib_dir()
 	/**
 	 * ----------------------------------------------
 	 * publish_lib_dir args:
@@ -683,7 +710,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			}
 		}
 	}
-
+	// }}}
+	// {{{ publish_end()
 	/**
 	 * ----------------------------------------------
 	 * publish_end
@@ -695,6 +723,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		$this->file_access->rm($this->output_path . '/index.html');
 		$this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
 	}
+	// }}}
 }
 
 /**

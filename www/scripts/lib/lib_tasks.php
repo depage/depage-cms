@@ -18,16 +18,19 @@
  * $Id: lib_tasks.php,v 1.31 2004/11/12 19:45:31 jonas Exp $
  */
 
+// {{{ define and require
 if (!function_exists('die_error')) require_once('lib_global.php');
 require_once('lib_auth.php');
 require_once('lib_tpl.php');
 require_once('lib_pocket_server.php');
 require_once('Mail.php');
+// }}}
 
 /**
  * provides access to start and control background tasks.
  */
 class bgTasks_control {
+	// {{{ constructor
 	/**
 	 * constructor, sets the database tables, in which the task lists
 	 * are saved. it also sets a pocketClient object to send informations
@@ -48,7 +51,8 @@ class bgTasks_control {
 		$this->pocket_client = new PocketClient('127.0.0.1', $conf->pocket_port);
 		$this->tasks = array();
 	}
-	
+	// }}}
+	// {{{ control_msg()
 	/**
 	 * logs and/or prints out a message to console
 	 *
@@ -64,7 +68,8 @@ class bgTasks_control {
 			echo('[' . $conf->dateUTC($conf->date_format_UTC) . '] ' . $message . "\n");
 		}
 	}
-	
+	// }}}
+	// {{{ get_task_control()
 	/**
 	 * gets a task object from db by id
 	 *
@@ -82,7 +87,8 @@ class bgTasks_control {
 		}
 		return $this->tasks[$id];
 	}
-	
+	// }}}
+	// {{{ handle_tasks()
 	/**
 	 * starts planned tasks, controls active tasks, and sends informations about 
 	 * it to the clients and cleans up finished tasks. this function will be 
@@ -135,7 +141,8 @@ class bgTasks_control {
 			return true;
 		}
 	}
-	
+	// }}}
+	// {{{ send_status()
 	/**
 	 * send status about current tasks through pocketServer to clients
 	 *
@@ -193,7 +200,8 @@ class bgTasks_control {
 		
 		return $task;
 	}
-	
+	// }}}
+	// {{{ get_num_tasks()
 	/**
 	 * gets number of planned and active tasks
 	 *
@@ -211,7 +219,8 @@ class bgTasks_control {
 		
 		return $row['num'];
 	}
-	
+	// }}}
+	// {{{ get_planned_tasks()
 	/**
 	 * gets planned tasks, which should be performed now
 	 *
@@ -238,7 +247,8 @@ class bgTasks_control {
 		
 		return $ids;
 	}
-	
+	// }}}
+	// {{{ get_active_tasks()
 	/**
 	 * gets active tasks
 	 *
@@ -265,7 +275,8 @@ class bgTasks_control {
 		
 		return $ids;
 	}
-	
+	// }}}
+	// {{{ get_finished_tasks()
 	/**
 	 * gets finished tasks
 	 *
@@ -292,7 +303,8 @@ class bgTasks_control {
 		
 		return $ids;
 	}
-	
+	// }}}
+	// {{{ get_aborted_tasks()
 	/**
 	 * gets aborted tasks
 	 *
@@ -304,7 +316,8 @@ class bgTasks_control {
 	function get_aborted_tasks() {
 		
 	}
-
+	// }}}
+	// {{{ do_task()
 	/**
 	 * starts task handling script (task_do.php) to perform a task
 	 * in background.
@@ -321,12 +334,14 @@ class bgTasks_control {
 					
 		$conf->execInBackground($conf->path_server_root . $conf->path_base . "/scripts/", "task_do.php", $id, true);
 	}
+	// }}}
 }
 
 /**
  * handles or creates a task
  */
 class bgTasks_task {
+	// {{{ constructor
 	/**
 	 * constructor, sets needed options
 	 *
@@ -356,7 +371,8 @@ class bgTasks_task {
 		
 		$this->aborted = false;
 	}
-	
+	// }}}
+	// {{{ control_msg()
 	/**
 	 * sends control message to log and to console,
 	 * if started from console
@@ -373,7 +389,8 @@ class bgTasks_task {
 			echo("[" . $conf->dateUTC($conf->date_format_UTC) . "] " . $message . "\n");
 		}
 	}
-	
+	// }}}
+	// {{{ create
 	/**
 	 * creates a new background task
 	 *
@@ -415,7 +432,8 @@ class bgTasks_task {
 		
 		$this->control_msg("added new task \"$name\" to start at $start_time");
 	}
-	
+	// }}}
+	// {{{ load_by_id()
 	/**
 	 * loads a task from db by its task-id, and fills actual
 	 * object with it.
@@ -446,7 +464,8 @@ class bgTasks_task {
 		}
 		mysql_free_result($result);
 	}
-	
+	// }}}
+	// {{{ add_thread()
 	/**
 	 * adds a thread to the current task
 	 *
@@ -459,7 +478,8 @@ class bgTasks_task {
 		$thread = new bgTasks_thread($this);
 		$thread->create($funcs);
 	}
-	
+	// }}}
+	// {{{ _do_threads()
 	/**
 	 * executes a thread
 	 *
@@ -489,7 +509,8 @@ class bgTasks_task {
 			$this->stop_for_resume();
 		}
 	}
-	
+	// }}}
+	// {{{ do_start()
 	/**
 	 * starts a task
 	 *
@@ -503,7 +524,8 @@ class bgTasks_task {
 			$this->_do_threads($funcObj);
 		}
 	}
-	
+	// }}}
+	// {{{ do_resume()
 	/**
 	 * resumes task execution
 	 *
@@ -517,7 +539,8 @@ class bgTasks_task {
 			$this->_do_threads($funcObj);
 		}
 	}
-	
+	// }}}
+	// {{{ stop()
 	/**
 	 * stops a task
 	 *
@@ -527,7 +550,8 @@ class bgTasks_task {
 		$this->set_status("wait_for_resume");
 		$this->aborted = true;
 	}
-	
+	// }}}
+	// {{{ stop_or_resume()
 	/**
 	 * stops a task, and starts the next script for
 	 * continuing task execution
@@ -541,7 +565,8 @@ class bgTasks_task {
 		$conf->execInBackground($conf->path_server_root . $conf->path_base . "/scripts/", "task_do.php", $this->id, true);
 		$this->aborted = true;
 	}
-	
+	// }}}
+	// {{{ stop_for_question()
 	/**
 	 * stops a task for interacting wit the user, which
 	 * starts the task.
@@ -553,7 +578,8 @@ class bgTasks_task {
 	function stop_for_question() {
 		
 	}
-	
+	// }}}
+	// {{{ stop_error()
 	/**
 	 * stops the task, because an unrecoverable error occurred
 	 *
@@ -566,7 +592,8 @@ class bgTasks_task {
 		$this->aborted = true;
 		die();
 	}
-	
+	// }}}
+	// {{{ handle_error()
 	/**
 	 * handles errors, that occurred during bg-task-handling.
 	 * it logs the error. if user, who has started the task, is
@@ -674,7 +701,8 @@ class bgTasks_task {
 			$this->stop_error();
 		}
 	}
-	
+	// }}}
+	// {{{ remove()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -698,7 +726,8 @@ class bgTasks_task {
 		$this->start_time = NULL;
 		$this->active_thread = NULL;
 	}
-	
+	// }}}
+	// {{{ set_status()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -709,7 +738,8 @@ class bgTasks_task {
 			WHERE id=$this->id"
 		);
 	}
-	
+	// }}}
+	// {{{ get_status()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -725,7 +755,8 @@ class bgTasks_task {
 		}
 		mysql_free_result($result);
 	}
-	
+	// }}}
+	// {{{ set_description()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -736,7 +767,8 @@ class bgTasks_task {
 			WHERE id=$this->id"
 		);
 	}
-	
+	// }}}
+	// {{{ get_description()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -753,7 +785,8 @@ class bgTasks_task {
 		}
 		mysql_free_result($result);
 	}
-	
+	// }}}
+	// {{{ get_progress()
 	/**
 	 * ----------------------------------------------
 	 */
@@ -789,12 +822,14 @@ class bgTasks_task {
 		
 		return $value;
 	}
+	// }}}
 }
 
 /**
  * ----------------------------------------------
  */
 class bgTasks_thread {
+	// {{{ constructor
 	/**
 	 * ----------------------------------------------
 	 */
@@ -802,7 +837,8 @@ class bgTasks_thread {
 		$this->taskObj = &$taskObj;
 		$this->funcs = NULL;
 	}
-	
+	// }}}
+	// {{{ create()
 	function create($funcs) {
 		if (!is_array($funcs)) {
 			$funcs = array($funcs);
@@ -812,7 +848,8 @@ class bgTasks_thread {
 			SET id=" . $this->taskObj->id . ", func='" . mysql_real_escape_string($this->taskObj->msgHandler->create_msg($funcs)) . "'"
 		);
 	}
-		
+	// }}}
+	// {{{ load_next()
 	function load_next() {
 		$result = db_query(
 			"SELECT threads.id_thread AS id_thread, threads.func AS func 
@@ -831,7 +868,8 @@ class bgTasks_thread {
 		}
 		mysql_free_result($result);
 	}
-	
+	// }}}
+	// {{{ do_start()
 	function do_start() {
 		for ($i = 0; $i < count($this->funcs); $i++) {
 			set_time_limit($this->taskObj->timelimit);
@@ -845,12 +883,14 @@ class bgTasks_thread {
 			);
 		}
 	}
+	// }}}
 }
 
 /**
  * ----------------------------------------------
  * user defined error handling function 
  */
+// {{{ taskErrorHandler()
 function taskErrorHandler($errno, $errmsg, $filename, $linenum, $vars) { 
 	global $task;
 	
@@ -858,6 +898,7 @@ function taskErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 		$task->handle_error($errno, $errmsg, $filename, $linenum, $vars);
 	}
 }
+// }}}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>
