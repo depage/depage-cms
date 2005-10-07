@@ -805,7 +805,9 @@ class ttRpcMsgHandler{
 		$error = false;
 
 		if (!$xmlobj = @domxml_open_mem($xmldata)) {
-			trigger_error("error in rpc:msg message:\n'$xmldata'\n");
+			if ($xmldata != '') {
+				trigger_error("error in rpc:msg message:\n'$xmldata'\n");
+			}
 		} else {
 			$xmlctx = xpath_new_context($xmlobj);
 			foreach($conf->ns as $ns_key => $ns) {
