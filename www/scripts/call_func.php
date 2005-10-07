@@ -972,7 +972,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 		
 		if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
 			if ($args['project'] != '') {
-				$project = $args['project'];
+				$project_name = $args['project'];
 			}
 			if ($args['type'] != 'data' && $args['type'] != 'lib' && $args['type'] != 'all') {
 				$type = 'all';
@@ -980,7 +980,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 				$type = $args['type'];
 			}
 			
-			$path_backup = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project)) . '/';
+			$path_backup = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/';
 			$file_backup = 'backup_' . gmdate('YmdHis');
 			
 			//CREATE
@@ -999,10 +999,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 						'server_name' => $_SERVER['SERVER_NAME'],
 					)),
 					new ttRpcFunc('backup_db_add_data_node', array('type' => 'settings')),
-					new ttRpcFunc('backup_db_add_data_node', array('type' => 'content')),
+					new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages')),
+					new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages_struct')),
 					new ttRpcFunc('backup_db_add_data_node', array('type' => 'colorschemes')),
-					new ttRpcFunc('backup_db_add_data_node', array('type' => 'templates')),
-					new ttRpcFunc('backup_db_add_data_node', array('type' => 'newnodes')),
+					new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates')),
+					new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates_struct')),
+					new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_newnodes')),
 					new ttRpcFunc('backup_db_end', array(
 						'file_path' => $path_backup, 
 						'file_name' => $file_backup . '.xml',

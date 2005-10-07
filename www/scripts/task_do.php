@@ -75,7 +75,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		global $xml_db;
 		
 		$this->project = $args['project'];
-		$this->project_id = $xml_db->get_doc_ic_by_name($this->project);
+		$this->project_id = $xml_db->get_doc_id_by_name($this->project);
 		
 		$this->backup_xml = project::domxml_new_doc($backup_str);
 		
@@ -108,21 +108,29 @@ class rpc_bgtask_functions extends rpc_functions_class {
 			$args['task']->set_description('%task_backup_settings%');
 			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'settings');
 			$tempid = $tempids[0];
-		} else if ($args['type'] == 'content') {
+		} else if ($args['type'] == 'pages') {
 			$args['task']->set_description('%task_backup_content%');
-			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'content');
+			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'pages');
+			$tempid = $tempids[0];
+		} else if ($args['type'] == 'pages_struct') {
+			$args['task']->set_description('%task_backup_content%');
+			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'pages_struct');
 			$tempid = $tempids[0];
 		} else if ($args['type'] == 'colorschemes') {
 			$args['task']->set_description('%task_backup_colorschemes%');
 			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'colorschemes');
 			$tempid = $tempids[0];
-		} else if ($args['type'] == 'templates') {
+		} else if ($args['type'] == 'tpl_templates') {
 			$args['task']->set_description('%task_backup_templates%');
-			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'templates_publish');
+			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_templates');
 			$tempid = $tempids[0];
-		} else if ($args['type'] == 'newnodes') {
+		} else if ($args['type'] == 'tpl_templates_struct') {
+			$args['task']->set_description('%task_backup_templates%');
+			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_templates_struct');
+			$tempid = $tempids[0];
+		} else if ($args['type'] == 'tpl_newnodes') {
 			$args['task']->set_description('%task_backup_newnodes%');
-			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'templates_newnodes');
+			$tempids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_newnodes');
 			$tempid = $tempids[0];
 		}
 		
@@ -149,6 +157,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		global $conf;
 		global $xml_db;
 		
+		$fs = fs::factory('local');
+		$fs->mk_dir($args['file_path']);
 		$this->backup_xml->dump_file($args['file_path'] . $args['file_name'], false, true);
 		if ($conf->backup_add_dev_backup) {
 			$this->backup_xml->dump_file($args['file_path'] . 'backup_dev.xml', false, true);
@@ -246,7 +256,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 	 *		project, file, type, subtype
 	 */ 
 	function restore_db_from_file($args) {
-		global $conf, $xml_db;
+		global $conf, $xml_db, $log;
 		
 		$file_path = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($args['project'])) . '/' . $args['file'];
 		
@@ -260,6 +270,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 		if ($args['type'] == 'all' || $args['type'] == 'data') {
 			$doc_id = $xml_db->get_doc_id_by_name($args['project']);
 			
+			// {{{ settings
 			if ($args['subtype'] == 'settings') {
 				$args['task']->set_description('%task_restore_db_settings%');
 				
@@ -272,22 +283,36 @@ class rpc_bgtask_functions extends rpc_functions_class {
 				if (count($node_ids) == 1) {
 					$xml_db->replace_node($project_settings_node, $node_ids[0], $doc_id);
 				} else {
-
+					$log->add_entry("could not restore project settings");
 				}
+			// }}}
+			// {{{ pages
 			} else if ($args['subtype'] == 'content') {
 				$args['task']->set_description('%task_restore_db_content%');
 				
-				//get project content
-				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'content']/*[1]");
-				$project_content_node = $xfetch->nodeset[0];
+				//get project pages_struct
+				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'pages_struct']/*[1]");
+				$project_pages_struct_node = $xfetch->nodeset[0];
+				//get project pages
+				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'pages']/*[1]");
+				$project_pages_node = $xfetch->nodeset[0];
 				
 				//get xmldb-ids to overwrite
-				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'content');
+				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'pages_struct');
 				if (count($node_ids) == 1) {
-					$xml_db->replace_node($project_content_node, $node_ids[0], $doc_id);
+					$xml_db->replace_node($project_pages_struct_node, $node_ids[0], $doc_id);
 				} else {
-
+					$log->add_entry("could not restore project page structure");
 				}
+				//get xmldb-ids to overwrite
+				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'pages');
+				if (count($node_ids) == 1) {
+					$xml_db->replace_node($project_pages_node, $node_ids[0], $doc_id);
+				} else {
+					$log->add_entry("could not restore project page data");
+				}
+			// }}}
+			// {{{ colorschemes
 			} else if ($args['subtype'] == 'colorschemes') {
 				$args['task']->set_description('%task_restore_db_colorschemes%');
 				
@@ -300,33 +325,46 @@ class rpc_bgtask_functions extends rpc_functions_class {
 				if (count($node_ids) == 1) {
 					$xml_db->replace_node($project_colorschemes_node, $node_ids[0], $doc_id);
 				} else {
-
+					$log->add_entry("could not restore project colorschemes");
 				}
+			// }}}
+			// {{{ templates
 			} else if ($args['subtype'] == 'templates') {
 				$args['task']->set_description('%task_restore_db_templates%');
 				
 				//get project templates
-				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'templates']/*[1]");
+				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'tpl_templates']/*[1]");
 				$project_xslt_templates_node = $xfetch->nodeset[0];
+				//get project templates_struct
+				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'tpl_templates_struct']/*[1]");
+				$project_xslt_templates_struct_node = $xfetch->nodeset[0];
 				//get project newnodes
-				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'newnodes']/*[1]");
+				$xfetch = xpath_eval($xml_doc_ctx, "/{$conf->ns['backup']['ns']}:backup/{$conf->ns['backup']['ns']}:data[@type = 'tpl_newnodes']/*[1]");
 				$project_content_newnodes_node = $xfetch->nodeset[0];
 				
 				//get xmldb-ids to overwrite
-				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'templates_publish');
+				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_templates');
 				if (count($node_ids) == 1) {
 					$xml_db->replace_node($project_xslt_templates_node, $node_ids[0], $doc_id);
 				} else {
-
+					$log->add_entry("could not restore project tpl_template data");
 				}
 				//get xmldb-ids to overwrite
-				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'templates_newnodes');
+				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_templates_struct');
+				if (count($node_ids) == 1) {
+					$xml_db->replace_node($project_xslt_templates_struct_node, $node_ids[0], $doc_id);
+				} else {
+					$log->add_entry("could not restore project tpl_template structure");
+				}
+				//get xmldb-ids to overwrite
+				$node_ids = $xml_db->get_node_ids_by_name($doc_id, $conf->ns['project']['ns'], 'tpl_newnodes');
 				if (count($node_ids) == 1) {
 					$xml_db->replace_node($project_content_newnodes_node, $node_ids[0], $doc_id);
 				} else {
-
+					$log->add_entry("could not restore project tpl_newnodes");
 				}
 			}
+			// }}}
 		}
 	}
 	// }}}
