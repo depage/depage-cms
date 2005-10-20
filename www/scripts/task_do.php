@@ -508,7 +508,6 @@ class rpc_bgtask_functions extends rpc_functions_class {
 				'user' => $this->output_user, 
 				'pass' => $this->output_pass,
 			));
-			$log->add_entry("ftp: " . $this->output_host . " - " . $this->output_port . " - " . $this->output_user . " - " . $this->output_pass);
 		}
 	}
 	// }}}
