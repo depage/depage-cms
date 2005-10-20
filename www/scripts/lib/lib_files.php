@@ -22,6 +22,8 @@ if (!function_exists('die_error')) require_once('lib_global.php');
  * Parent class for all other fs_classes
  */
 class fs {
+	var $chmod = 0644;
+
 	/**
 	 * creates new filesystem object
 	 *
@@ -77,6 +79,19 @@ class fs {
 	function f_size_format($path) {
 		return $this->formatFilesize($this->f_size($path));
 	}
+
+	function set_dirchmod() {
+		$this->dirchmod = $this->chmod;
+		if (($this->chmod & 0400) == 0400) {
+			$this->dirchmod = 0100 | $this->dirchmod;
+		} 
+	   	if (($this->chmod & 0040) == 0040) {
+			$this->dirchmod = 0010 | $this->dirchmod;
+		} 
+	   	if (($this->chmod & 0004) == 0004) {
+			$this->dirchmod = 0001 | $this->dirchmod;
+		}
+	}
 }
 
 /**
@@ -86,8 +101,12 @@ class fs_local extends fs {
 	/**
 	 * Constructor, sets umask to default value on unix-system
 	 */
-	function fs_local() {
-		umask(0002);
+	function fs_local($chmod = null) {
+		if ($chmod != null) {
+			$this->chmod = $chmod;
+		}
+		umask($this->chmod ^ 0777);
+		$this->set_dirchmod();
 	}
 	
 	/**
@@ -140,9 +159,16 @@ class fs_local extends fs {
 		foreach ($paths as $dir) {
 			$actual_path .= '/' . $dir;
 			if (!file_exists($actual_path)) {
-				mkdir($actual_path, 0775);
+				mkdir($actual_path, $this->dirchmod);
 			}
 		}
+	}
+
+	/**
+	 * changes the chmodding of a file or a directory
+	 */
+	function ch_mod($path, $mod) {
+		return ch_mod($path, $mod);
 	}
 	
 	/**
@@ -341,6 +367,10 @@ class fs_ftp extends fs {
 		$this->port = $param['port'];
 		$this->user = $param['user'];
 		$this->pass = $param['pass'];
+		if (isset($param['chmod'])) {
+			$this->chmod = $param['chmod'];
+		}
+		$this->set_dirchmod();
 		
 		$this->connected = false;
 		
@@ -444,10 +474,23 @@ class fs_ftp extends fs {
 			$actual_path = $paths[0];
 			foreach ($paths as $dir) {
 				$actual_path .= '/' . $dir;
-				@ftp_mkdir($this->ftpp, $actual_path);
+				if (ftp_mkdir($this->ftpp, $actual_path)) {
+					$this->ch_mod($actual_path, $this->dirchmod);
+				}
 			}
 		}
 	}
+
+	/**
+	 * changes the chmodding of a file or a directory
+	 */
+	function ch_mod($path, $mod) {
+		if ($this->_connect()) {
+			$mod = sprintf("%04o", $mod);
+			return ftp_site($this->ftpp, "CHMOD $mod $path");
+		}
+	}
+	
 	
 	/**
 	 * Removes files and directories recursive
@@ -726,8 +769,10 @@ class fs_ftp extends fs {
 			fwrite($fp, $str);
 			fclose($fp);
 			
-			if (!@ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
+			if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
 				trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+			} else {
+				$this->ch_mod($filepath, $this->chmod);
 			}
 			
 			unlink($tempfile);
@@ -752,8 +797,10 @@ class fs_ftp extends fs {
 			
 			$this->mk_dir($path['dirname']);
 			
-			if (!@ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
+			if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
 				trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+			} else {
+				$this->ch_mod($filepath, $this->chmod);
 			}
 		} else {
 			return false;
