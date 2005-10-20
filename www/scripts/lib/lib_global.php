@@ -46,7 +46,7 @@ class config {
 		$inifile = parse_ini_file($this->settingsPath . $file, false);
 		
 		$this->app_name = 'dePage';
-		$this->app_version = '0.9.16';
+		$this->app_version = '0.9.17';
 
 		$vars_to_set = array(
 			'xml_version' => (string) '1.0',
