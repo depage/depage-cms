@@ -874,6 +874,8 @@ class project_acss_mysql2 extends project {
 					$this->xmldb->clear_deleted_nodes();
 					break;
 				case 'settings':
+					$changed_ids = $this->xmldb->unlink_node_by_id($id);
+					$this->xmldb->clear_deleted_nodes();
 					break;
 				case 'tpl_templates':
 					//get data_ids
