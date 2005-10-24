@@ -267,7 +267,7 @@ class_tree.prototype.removeOnChangeListener = function (obj) {
 	}
 };
 // }}}
-// {{{ onPaste()
+// {{{ onPaste()
 class_tree.prototype.onPaste = function(value) {
 	this.onChange();
 };
@@ -348,7 +348,7 @@ class_tree.prototype.move_after = function(node, targetNode) {
 	}
 };
 // }}}
-// {{{ copy_in()
+// {{{ copy_in()
 class_tree.prototype.copy_in = function(node, targetNode) {
 	if (this.isValidCopy(node, targetNode)) {
 		var tempNode = node.cloneNode(true)
@@ -360,7 +360,7 @@ class_tree.prototype.copy_in = function(node, targetNode) {
 // }}}
 // {{{ copy_before()
 class_tree.prototype.copy_before = function(node, targetNode) {
-	if (node != targetNode && this.isValidCopy(node, targetNode.parentNode)) {
+	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var tempNode = node.cloneNode(true);
 		targetNode.parentNode.insertBefore(tempNode, targetNode);
 		this.onChange(tempNode);
@@ -370,7 +370,7 @@ class_tree.prototype.copy_before = function(node, targetNode) {
 // }}}
 // {{{ copy_after()
 class_tree.prototype.copy_after = function(node, targetNode) {
-	if (node != targetNode && this.isValidCopy(node, targetNode.parentNode)) {
+	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var tempNode = node.cloneNode(true);
 		if (targetNode.nextSibling == null) {
 			targetNode.parentNode.appendChild(tempNode);
@@ -602,7 +602,7 @@ class_tree_pages.prototype.copy_in = function(node, targetNode) {
 // }}}
 // {{{ copy_before()
 class_tree_pages.prototype.copy_before = function(node, targetNode) {
-	if (node != targetNode && this.isValidCopy(node, targetNode.parentNode)) {
+	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var newName =  node.attributes.name + " " + conf.lang.tree_after_copy;
 		this.loading = true;
 		_root.phpConnect.send("copy_node_before", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", newName]]);
@@ -615,7 +615,7 @@ class_tree_pages.prototype.copy_before = function(node, targetNode) {
 // }}}
 // {{{ copy_after()
 class_tree_pages.prototype.copy_after = function(node, targetNode) {
-	if (node != targetNode && this.isValidCopy(node, targetNode.parentNode)) {
+	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var newName =  node.attributes.name + " " + conf.lang.tree_after_copy;
 		this.loading = true;
 		_root.phpConnect.send("copy_node_after", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", newName]]);
