@@ -2089,7 +2089,7 @@ class_propBox_edit_img.prototype.saveData = function() {
  *	Extends class_propBox
  *	Handles Files in a directory
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_proj_filelist = function() {};
 class_propBox_proj_filelist.prototype = new class_propBox();
 
@@ -2117,9 +2117,10 @@ class_propBox_proj_filelist.prototype.onResize = function() {
 	}	
 };
 // }}}
-// {{{ generateCompnents()
+// {{{ generateComponents()
 class_propBox_proj_filelist.prototype.generateComponents = function() {
 	var i, fileTypes;
+	var addThis;
 	
 	this.tooltipMsg = new tooltipClass.tooltipMsgObj();
 
@@ -2127,28 +2128,41 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 	this.back.buttonCancel._visible = false;
 	
 	this.filelist = [];
+	this.filelist_disabled = [];
 
-	for (i = 1; i <= this.data.childNodes.length; i++) {
-		var addThis = false;
+	var fileTypes = this._parent.propObj.treeObj.fileFilter.file_type.split(",");
+	for (i = 0; i < this.data.childNodes.length; i++) {
+		addThis = false;
 		if (this._parent.propObj.treeObj.fileFilter.file_type == "") {
-			var addThis = true;
+			addThis = true;
 		} else {
-			fileTypes = this._parent.propObj.treeObj.fileFilter.file_type.split(",");
-			if (fileTypes.searchFor(this.data.childNodes[i - 1].attributes.extension) != -1) {
-				if ((this._parent.propObj.treeObj.fileFilter.force_width == "" || this._parent.propObj.treeObj.fileFilter.force_width == this.data.childNodes[i - 1].attributes.width) && (this._parent.propObj.treeObj.fileFilter.force_height == "" || this._parent.propObj.treeObj.fileFilter.force_height == this.data.childNodes[i - 1].attributes.height)) {
-					var addThis = true;
+			if (fileTypes.searchFor(this.data.childNodes[i].attributes.extension) != -1) {
+				if ((this._parent.propObj.treeObj.fileFilter.force_width == "" || this._parent.propObj.treeObj.fileFilter.force_width == this.data.childNodes[i].attributes.width) && (this._parent.propObj.treeObj.fileFilter.force_height == "" || this._parent.propObj.treeObj.fileFilter.force_height == this.data.childNodes[i].attributes.height)) {
+					addThis = true;
 				}
 			}
 		} 
-		if (addThis) {
-			this.filelist.push({
-				filename	: this.data.childNodes[i - 1].attributes.name,
+		if (addThis == false) {
+			this.filelist_disabled.push({
+				filename	: this.data.childNodes[i].attributes.name,
 				filepath	: this.data.attributes.dir,
-				filesize	: this.data.childNodes[i - 1].attributes.size,
-				filedate	: this.data.childNodes[i - 1].attributes.date,
-				filetype	: this.data.childNodes[i - 1].attributes.type,
-				imagesize	: this.data.childNodes[i - 1].attributes.width != undefined ? this.data.childNodes[i - 1].attributes.width + "x" + this.data.childNodes[i - 1].attributes.height : null,
-				selected	: false
+				filesize	: this.data.childNodes[i].attributes.size,
+				filedate	: this.data.childNodes[i].attributes.date,
+				filetype	: this.data.childNodes[i].attributes.type,
+				imagesize	: this.data.childNodes[i].attributes.width != undefined ? this.data.childNodes[i].attributes.width + "x" + this.data.childNodes[i].attributes.height : null,
+				selected	: false,
+				selectable	: false
+			});
+		} else {
+			this.filelist.push({
+				filename	: this.data.childNodes[i].attributes.name,
+				filepath	: this.data.attributes.dir,
+				filesize	: this.data.childNodes[i].attributes.size,
+				filedate	: this.data.childNodes[i].attributes.date,
+				filetype	: this.data.childNodes[i].attributes.type,
+				imagesize	: this.data.childNodes[i].attributes.width != undefined ? this.data.childNodes[i].attributes.width + "x" + this.data.childNodes[i].attributes.height : null,
+				selected	: false,
+				selectable	: true
 			});
 		}
 	}
@@ -2161,26 +2175,26 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 		
 	this.button_1.symbol = "icon_filelist_thumbnail";
 	this.button_1.tooltip = conf.lang.buttontip_filelist_thumbnail;
-	this.button_1.enabledState = this.filelist.length > 0;
+	this.button_1.enabledState = this.filelist.length > 0 || this.filelist_disabled.length > 0;
 	this.button_1.onClick = function() {
 		conf.user.settings.filelistType = "thumbs";
-		this._parent.generateFilelist();
+		this._parent.removeFileList();
 	};
 	this.button_2.symbol = "icon_filelist_detail";
 	this.button_2.tooltip = conf.lang.buttontip_filelist_detail;
-	this.button_2.enabledState = this.filelist.length > 0;
+	this.button_2.enabledState = this.filelist.length > 0 || this.filelist_disabled.length > 0;
 	this.button_2.onClick = function() {
 		conf.user.settings.filelistType = "details";
-		this._parent.generateFilelist();
+		this._parent.removeFileList();
 	};
 	this.button_3.symbol = "icon_tree_button_delete";
 	this.button_3.tooltip = conf.lang.buttontip_tree_delete;
-	this.button_3.enabledState = this.filelist.length > 0 && conf.user.mayDeleteFiles();
+	this.button_3.enabledState = (this.filelist.length > 0 || this.filelist_disabled.length > 0) && conf.user.mayDeleteFiles();
 	this.button_3.onClick = function() {
 		this._parent.deleteFiles();
 	};
 
-	this.generateFilelist();
+	this.removeFileList();
 };
 // }}}
 // {{{ deleteFiles()
@@ -2208,51 +2222,81 @@ class_propBox_proj_filelist.prototype.deleteFiles = function() {
 	}
 };
 // }}}
+// {{{ removeFileList()
+class_propBox_proj_filelist.prototype.removeFileList = function() {
+	var i;
+
+	for (i = 1; i <= this.filelist.length; i++) {
+		this["thumb" + i].removeMovieclip();
+	} 
+	for (i = 1; i <= this.filelist_disabled.length; i++) {
+		this["thumb_disabled" + i].removeMovieclip();
+	} 
+	setTimeout(this.generateFilelist, this, 30);
+}
+// }}}
 // {{{ generateFileList()
 class_propBox_proj_filelist.prototype.generateFilelist = function() {
 	var i;
 
-	//remove old filelist
-	if (this.filelist.length > 0 && this.thumb1 != undefined) {
+	if (conf.user.settings.filelistType == "thumbs") {
+		//generate filelist as thumbnails
 		for (i = 1; i <= this.filelist.length; i++) {
-			this["thumb" + i].removeMovieclip();
-		} 
-		setTimeout(this.generateFilelist, this, 30);
-	} else {
-		if (conf.user.settings.filelistType == "thumbs") {
-			//generate filelist as thumbnails
-			for (i = 1; i <= this.filelist.length; i++) {
-				this.attachMovie("prop_tt_filelist_thumbnail", "thumb" + i, i + 20,{
-					n			: i,
-					fileobj		: this.filelist[i - 1],
-					_visible	: false
-				});
-			}
-			for (i = 1; i <= conf.thumb_load_num && i <= this.filelist.length; i++) {
-				setTimeout(this.load_thumb, this, 200, [i], false);
-			}
-		} else {
-			//generate filelist as details
-			for (i = 1; i <= this.filelist.length; i++) {
-				this.attachMovie("prop_tt_filelist_detail", "thumb" + i, i + 20,{
-					n			: i,
-					fileobj		: this.filelist[i - 1],
-					_visible	: false
-				});
-			}
+			this.attachMovie("prop_tt_filelist_thumbnail", "thumb" + i, i + 20,{
+				n			: i,
+				fileobj		: this.filelist[i - 1],
+				_visible	: false
+			});
 		}
-		this.onResize();
+		for (i = 1; i <= conf.thumb_load_num && i <= this.filelist.length; i++) {
+			setTimeout(this.load_thumb, this, 200, [i], false);
+		}
+		//generate filelist as thumbnails
+		for (i = 1; i <= this.filelist_disabled.length; i++) {
+			this.attachMovie("prop_tt_filelist_thumbnail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
+				n			: i,
+				fileobj		: this.filelist_disabled[i - 1],
+				_visible	: false
+			});
+		}
+		for (i = 1; i <= conf.thumb_load_num && i <= this.filelist_disabled.length; i++) {
+			setTimeout(this.load_thumb_disabled, this, 200, [i], false);
+		}
+	} else {
+		//generate filelist as details
+		for (i = 1; i <= this.filelist.length; i++) {
+			this.attachMovie("prop_tt_filelist_detail", "thumb" + i, i + 20,{
+				n			: i,
+				fileobj		: this.filelist[i - 1],
+				_visible	: false
+			});
+		}
+		for (i = 1; i <= this.filelist_disabled.length; i++) {
+			this.attachMovie("prop_tt_filelist_detail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
+				n			: i,
+				fileobj		: this.filelist_disabled[i - 1],
+				_visible	: false
+			});
+		}
 	}
+	this.onResize();
 };
 // }}}
-// {{{ load_thumb()
+// {{{ load_thumb()
 class_propBox_proj_filelist.prototype.load_thumb = function(id) {
 	if (id <= this.filelist.length) {
-		this["thumb" + id].load_thumb(id);
+		this["thumb" + id].load_thumb(id, false);
 	}
 };
 // }}}
-// {{{ select()
+// {{{ load_thumb_disabled()
+class_propBox_proj_filelist.prototype.load_thumb_disabled = function(id) {
+	if (id <= this.filelist_disabled.length) {
+		this["thumb_disabled" + id].load_thumb(id, true);
+	}
+};
+// }}}
+// {{{ select()
 class_propBox_proj_filelist.prototype.select = function(id, type) {
 	var i, startId, endId;
 
@@ -2293,7 +2337,7 @@ class_propBox_proj_filelist.prototype.select = function(id, type) {
 	}
 };
 // }}}
-// {{{ setComponents()
+// {{{ setComponents()
 class_propBox_proj_filelist.prototype.setComponents = function() {
 	var i, j, xNum, yNum;
 		
@@ -2310,7 +2354,19 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				}
 			}
 		}
-		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10;
+		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10 + 20;
+
+		yNum = int(this.filelist_disabled.length / xNum) + (this.filelist_disabled.length % xNum > 0 ? 1 : 0);
+		
+		for (i = 0; i < xNum; i++) {
+			for (j = 0; j < yNum; j++) {
+				with (this["thumb_disabled" + (i + j * xNum + 1)]) {
+					_x = this.settings.border_left + 2 * this.settings.gridSize + i * (int(conf.thumb_width) + this.settings.border + 6);
+					_y = this.innerHeight + this.settings.border_top + j * (int(conf.thumb_height) + this.settings.border + 6 + 24);
+				}
+			}
+		}
+		this.innerHeight += yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10;
 	} else {
 		//set filelist as details
 		for (i = 1; i <= this.filelist.length; i++) {
@@ -2319,7 +2375,15 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				_y = this.settings.border_top + (i - 1) * 20;
 			}
 		}
-		this.innerHeight = this.filelist.length * 20;
+		this.innerHeight = this.filelist.length * 20 + 20;
+
+		for (i = 1; i <= this.filelist_disabled.length; i++) {
+			with (this["thumb_disabled" + i]) {
+				_x = this.settings.border_left + 2 * this.settings.gridSize;
+				_y = this.settings.border_top + (i - 1) * 20 + this.innerHeight;
+			}
+		}
+		this.innerHeight += this.filelist_disabled.length * 20;
 	}
 	
 	this.innerHeight = this.innerHeight.limit(this.settings.border_top + 75 + this.settings.border);
@@ -2348,7 +2412,7 @@ class_propBox_proj_filelist.prototype.setNewPos = function() {
 	this.button_3._y = bottomBorder - 17;
 };
 // }}}
-// {{{ setButtons()
+// {{{ setButtons()
 class_propBox_proj_filelist.prototype.setButtons = function() {
 	var i;
 	
