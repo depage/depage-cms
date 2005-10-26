@@ -2094,6 +2094,7 @@ class_propBox_proj_filelist = function() {};
 class_propBox_proj_filelist.prototype = new class_propBox();
 
 class_propBox_proj_filelist.prototype.showSaver = false;
+class_propBox_proj_filelist.prototype.showDeactiveFiles = false;
 // }}}
 // {{{ onResize()
 class_propBox_proj_filelist.prototype.onResize = function() {
@@ -2194,6 +2195,14 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 		this._parent.deleteFiles();
 	};
 
+	this.createTextField("deactiveMessage", 8, 0, 0, 50, 20);
+	this.deactiveMessage.multiline = true;
+	//this.deactiveMessage.text = conf.lang.prop_tt_img_altdesc;
+	this.deactiveMessage.initFormat(conf.interface.textformat);
+	this.deactiveMessage.selectable = false;
+
+	this.attachMovie("prop_tt_filelist_deactiveFilesOpener", "deactiveFilesOpener", 15);
+
 	this.removeFileList();
 };
 // }}}
@@ -2251,16 +2260,18 @@ class_propBox_proj_filelist.prototype.generateFilelist = function() {
 		for (i = 1; i <= conf.thumb_load_num && i <= this.filelist.length; i++) {
 			setTimeout(this.load_thumb, this, 200, [i], false);
 		}
-		//generate filelist as thumbnails
-		for (i = 1; i <= this.filelist_disabled.length; i++) {
-			this.attachMovie("prop_tt_filelist_thumbnail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
-				n			: i,
-				fileobj		: this.filelist_disabled[i - 1],
-				_visible	: false
-			});
-		}
-		for (i = 1; i <= conf.thumb_load_num && i <= this.filelist_disabled.length; i++) {
-			setTimeout(this.load_thumb_disabled, this, 200, [i], false);
+		if (this.showDeactiveFiles) {
+			//generate filelist as thumbnails
+			for (i = 1; i <= this.filelist_disabled.length; i++) {
+				this.attachMovie("prop_tt_filelist_thumbnail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
+					n			: i,
+					fileobj		: this.filelist_disabled[i - 1],
+					_visible	: false
+				});
+			}
+			for (i = 1; i <= conf.thumb_load_num && i <= this.filelist_disabled.length; i++) {
+				setTimeout(this.load_thumb_disabled, this, 200, [i], false);
+			}
 		}
 	} else {
 		//generate filelist as details
@@ -2271,12 +2282,14 @@ class_propBox_proj_filelist.prototype.generateFilelist = function() {
 				_visible	: false
 			});
 		}
-		for (i = 1; i <= this.filelist_disabled.length; i++) {
-			this.attachMovie("prop_tt_filelist_detail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
-				n			: i,
-				fileobj		: this.filelist_disabled[i - 1],
-				_visible	: false
-			});
+		if (this.showDeactiveFiles) {
+			for (i = 1; i <= this.filelist_disabled.length; i++) {
+				this.attachMovie("prop_tt_filelist_detail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
+					n			: i,
+					fileobj		: this.filelist_disabled[i - 1],
+					_visible	: false
+				});
+			}
 		}
 	}
 	this.onResize();
@@ -2354,19 +2367,39 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				}
 			}
 		}
-		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10 + 20;
+		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10 + 25;
 
-		yNum = int(this.filelist_disabled.length / xNum) + (this.filelist_disabled.length % xNum > 0 ? 1 : 0);
-		
-		for (i = 0; i < xNum; i++) {
-			for (j = 0; j < yNum; j++) {
-				with (this["thumb_disabled" + (i + j * xNum + 1)]) {
-					_x = this.settings.border_left + 2 * this.settings.gridSize + i * (int(conf.thumb_width) + this.settings.border + 6);
-					_y = this.innerHeight + this.settings.border_top + j * (int(conf.thumb_height) + this.settings.border + 6 + 24);
+		this.deactiveFilesOpener._x = this.settings.border_left + 2 * this.settings.gridSize;
+		this.deactiveFilesOpener._y = this.innerHeight - 15;
+
+		this.deactiveMessage._x = this.deactiveFilesOpener._x + 20;
+		this.deactiveMessage._y = this.deactiveFilesOpener._y - 1;
+		this.deactiveMessage._width = this.width - this.deactiveMessage._x - this.settings.border_right;
+		this.deactiveMessage._height = 100;
+
+		if (this.filelist_disabled.length > 0) {
+			this.deactiveFilesOpener._visible = true;
+			this.deactiveMessage._visible = true;
+			if (this.showDeactiveFiles) {
+				this.deactiveMessage.text = conf.lang.prop_proj_filelist_hidefiles;
+				yNum = int(this.filelist_disabled.length / xNum) + (this.filelist_disabled.length % xNum > 0 ? 1 : 0);
+				
+				for (i = 0; i < xNum; i++) {
+					for (j = 0; j < yNum; j++) {
+						with (this["thumb_disabled" + (i + j * xNum + 1)]) {
+							_x = this.settings.border_left + 2 * this.settings.gridSize + i * (int(conf.thumb_width) + this.settings.border + 6);
+							_y = this.innerHeight + this.settings.border_top + j * (int(conf.thumb_height) + this.settings.border + 6 + 24);
+						}
+					}
 				}
+				this.innerHeight += yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10;
+			} else {
+				this.deactiveMessage.text = conf.lang.prop_proj_filelist_showfiles;
 			}
+		} else {
+			this.deactiveFilesOpener._visible = false;
+			this.deactiveMessage._visible = false;
 		}
-		this.innerHeight += yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10;
 	} else {
 		//set filelist as details
 		for (i = 1; i <= this.filelist.length; i++) {
@@ -2375,15 +2408,35 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				_y = this.settings.border_top + (i - 1) * 20;
 			}
 		}
-		this.innerHeight = this.filelist.length * 20 + 20;
+		this.innerHeight = this.filelist.length * 20 + 25 + 10;
 
-		for (i = 1; i <= this.filelist_disabled.length; i++) {
-			with (this["thumb_disabled" + i]) {
-				_x = this.settings.border_left + 2 * this.settings.gridSize;
-				_y = this.settings.border_top + (i - 1) * 20 + this.innerHeight;
+		this.deactiveFilesOpener._x = this.settings.border_left + 2 * this.settings.gridSize;
+		this.deactiveFilesOpener._y = this.innerHeight - 15;
+
+		this.deactiveMessage._x = this.deactiveFilesOpener._x + 20;
+		this.deactiveMessage._y = this.deactiveFilesOpener._y - 1;
+		this.deactiveMessage._width = this.width - this.deactiveMessage._x - this.settings.border_right;
+		this.deactiveMessage._height = 100;
+
+		if (this.filelist_disabled.length > 0) {
+			this.deactiveFilesOpener._visible = true;
+			this.deactiveMessage._visible = true;
+			if (this.showDeactiveFiles) {
+				this.deactiveMessage.text = conf.lang.prop_proj_filelist_hidefiles;
+				for (i = 1; i <= this.filelist_disabled.length; i++) {
+					with (this["thumb_disabled" + i]) {
+						_x = this.settings.border_left + 2 * this.settings.gridSize;
+						_y = this.settings.border_top + (i - 1) * 20 + this.innerHeight;
+					}
+				}
+				this.innerHeight += this.filelist_disabled.length * 20;
+			} else {
+				this.deactiveMessage.text = conf.lang.prop_proj_filelist_showfiles;
 			}
+		} else {
+			this.deactiveFilesOpener._visible = false;
+			this.deactiveMessage._visible = false;
 		}
-		this.innerHeight += this.filelist_disabled.length * 20;
 	}
 	
 	this.innerHeight = this.innerHeight.limit(this.settings.border_top + 75 + this.settings.border);
