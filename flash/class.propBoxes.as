@@ -2203,6 +2203,12 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 
 	this.attachMovie("prop_tt_filelist_deactiveFilesOpener", "deactiveFilesOpener", 15);
 
+	this.attachMovie("rectangle_back", "deactiveFilesDivider", 16);
+	this.deactiveFilesDivider._alpha = 30;
+	this.deactiveFilesDivider._height = 1;
+	this.deactiveFilesDivider.setRGB(conf.interface.color_background);
+	this.deactiveFilesDivider._x = this.settings.border + this.settings.gridSize * 2;
+
 	this.removeFileList();
 };
 // }}}
@@ -2367,10 +2373,17 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				}
 			}
 		}
-		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10 + 25;
+		this.innerHeight = yNum * (int(conf.thumb_height) + this.settings.border + 24) + 10;
+		if (this.filelist_disabled.length > 0) {
+			this.innerHeight += 35;
+		}
+		
+		this.deactiveFilesDivider._y = this.innerHeight - 30;
+		this.deactiveFilesDivider._width = this.width - this.settings.border * 2 - this.settings.gridSize * 2;
 
 		this.deactiveFilesOpener._x = this.settings.border_left + 2 * this.settings.gridSize;
-		this.deactiveFilesOpener._y = this.innerHeight - 15;
+		this.deactiveFilesOpener._y = this.innerHeight - 20;
+		this.deactiveFilesOpener.onResize();
 
 		this.deactiveMessage._x = this.deactiveFilesOpener._x + 20;
 		this.deactiveMessage._y = this.deactiveFilesOpener._y - 1;
@@ -2378,6 +2391,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 		this.deactiveMessage._height = 100;
 
 		if (this.filelist_disabled.length > 0) {
+			this.deactiveFilesDivider._visible = true;
 			this.deactiveFilesOpener._visible = true;
 			this.deactiveMessage._visible = true;
 			if (this.showDeactiveFiles) {
@@ -2397,6 +2411,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				this.deactiveMessage.text = conf.lang.prop_proj_filelist_showfiles;
 			}
 		} else {
+			this.deactiveFilesDivider._visible = false;
 			this.deactiveFilesOpener._visible = false;
 			this.deactiveMessage._visible = false;
 		}
@@ -2408,10 +2423,17 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				_y = this.settings.border_top + (i - 1) * 20;
 			}
 		}
-		this.innerHeight = this.filelist.length * 20 + 25 + 10;
+		this.innerHeight = this.filelist.length * 20 + 10;
+		if (this.filelist_disabled.length > 0) {
+			this.innerHeight += 35;
+		}
+
+		this.deactiveFilesDivider._y = this.innerHeight - 30;
+		this.deactiveFilesDivider._width = this.width - this.settings.border * 2 - this.settings.gridSize * 2;
 
 		this.deactiveFilesOpener._x = this.settings.border_left + 2 * this.settings.gridSize;
-		this.deactiveFilesOpener._y = this.innerHeight - 15;
+		this.deactiveFilesOpener._y = this.innerHeight - 20;
+		this.deactiveFilesOpener.onResize();
 
 		this.deactiveMessage._x = this.deactiveFilesOpener._x + 20;
 		this.deactiveMessage._y = this.deactiveFilesOpener._y - 1;
@@ -2419,6 +2441,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 		this.deactiveMessage._height = 100;
 
 		if (this.filelist_disabled.length > 0) {
+			this.deactiveFilesDivider._visible = true;
 			this.deactiveFilesOpener._visible = true;
 			this.deactiveMessage._visible = true;
 			if (this.showDeactiveFiles) {
@@ -2434,6 +2457,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				this.deactiveMessage.text = conf.lang.prop_proj_filelist_showfiles;
 			}
 		} else {
+			this.deactiveFilesDivider._visible = false;
 			this.deactiveFilesOpener._visible = false;
 			this.deactiveMessage._visible = false;
 		}
