@@ -22,7 +22,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
  * Parent class for all other fs_classes
  */
 class fs {
-	var $chmod = 0644;
+	var $chmod = 0664;
 
 	/**
 	 * creates new filesystem object
@@ -81,6 +81,8 @@ class fs {
 	}
 
 	function set_dirchmod() {
+		global $log;
+
 		$this->dirchmod = $this->chmod;
 		if (($this->chmod & 0400) == 0400) {
 			$this->dirchmod = 0100 | $this->dirchmod;
@@ -101,11 +103,11 @@ class fs_local extends fs {
 	/**
 	 * Constructor, sets umask to default value on unix-system
 	 */
-	function fs_local($chmod = null) {
-		if ($chmod != null) {
-			$this->chmod = $chmod;
+	function fs_local($param) {
+		if (isset($param['chmod'])) {
+			$this->chmod = $param['chmod'];
 		}
-		umask($this->chmod ^ 0777);
+		//umask($this->chmod ^ 0777);
 		$this->set_dirchmod();
 	}
 	
@@ -132,10 +134,12 @@ class fs_local extends fs {
 		if (file_exists($path) && @is_dir($path)) {
 			$current_dir = opendir($path);
 			while ($entryname = readdir($current_dir)) {
-				if (@is_dir($path . '/' . $entryname) && ($entryname != '.' && $entryname!='..')) {
-					$flist['dirs'][] = $entryname;
-				} elseif (is_file($path . '/' . $entryname)) {
-					$flist['files'][] = $entryname;
+				if ($entryname != '.' && $entryname!='..') {
+					if (@is_dir($path . '/' . $entryname)) {
+						$flist['dirs'][] = $entryname;
+					} elseif (is_file($path . '/' . $entryname)) {
+						$flist['files'][] = $entryname;
+					}
 				}
 			}
 			closedir($current_dir);
@@ -154,12 +158,17 @@ class fs_local extends fs {
 	 * @param $path (string) path of new directory
 	 */
 	function mk_dir($path) {
+		global $log;
+
 		$paths = explode('/', $path);
 		$actual_path = $paths[0];
 		foreach ($paths as $dir) {
 			$actual_path .= '/' . $dir;
 			if (!file_exists($actual_path)) {
 				mkdir($actual_path, $this->dirchmod);
+				$this->ch_mod($actual_path);
+				$log->add_varinfo($actual_path);
+				$log->add_varinfo($this->dirchmod);
 			}
 		}
 	}
@@ -167,8 +176,15 @@ class fs_local extends fs {
 	/**
 	 * changes the chmodding of a file or a directory
 	 */
-	function ch_mod($path, $mod) {
-		return ch_mod($path, $mod);
+	function ch_mod($path, $mod = null) {
+		if ($mod == null) {
+			if (is_dir($path)) {
+				$mod = $this->chmod;
+			} else if (is_file($path)) {
+				$mod = $this->dirchmod;
+			}
+		}
+		return chmod($path, $mod);
 	}
 	
 	/**

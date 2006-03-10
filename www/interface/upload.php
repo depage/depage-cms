@@ -14,6 +14,7 @@
 	require_once('../scripts/lib/lib_global.php');
 	require_once('lib_html.php');
 	require_once('lib_auth.php');
+	require_once('lib_files.php');
 	require_once('lib_pocket_server.php');
 		
 	$settings = $conf->getScheme($conf->interface_scheme);
@@ -39,9 +40,12 @@
 	}
 	
 	if ($type == "uploaded") {
+		$file_access = fs::factory('local');
 		for ($i = 0; $i < count($_FILES['file']['error']); $i++) {
 			if ($_FILES['file']['error'][$i] == 0) {
-				move_uploaded_file($_FILES['file']['tmp_name'][$i], $project->get_project_path($project_name) . "/lib" . $path . $_FILES['file']['name'][$i]);
+				$filepath = $project->get_project_path($project_name) . "lib" . $path . $_FILES['file']['name'][$i];
+				move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath);
+				$file_access->ch_mod($filepath);
 			}
 		}
 		clearstatcache();
