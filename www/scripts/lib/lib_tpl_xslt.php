@@ -7,9 +7,9 @@
  * This file provides support
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
  * $Id: lib_tpl_xslt.php,v 1.13 2004/07/08 00:28:56 jonas Exp $
  */

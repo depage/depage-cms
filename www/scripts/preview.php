@@ -8,9 +8,9 @@
  * the xml data into the wanted format.
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
  * @todo    change preview behaviour in the following manner:
  *            don't save xml data after every edit. instead work

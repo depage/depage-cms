@@ -9,9 +9,9 @@
  * actual edit pages.
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
  * $Id: lib_user.php,v 1.13 2004/05/26 14:49:05 jonas Exp $
  */

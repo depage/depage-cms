@@ -4,7 +4,7 @@
  * I N T E R F A C E
  *
  * php-script:
- * (c)2003 jonas [jonas.info@gmx.net]
+ * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  */
 
 	define('IS_IN_CONTOOL', true);

@@ -11,9 +11,9 @@
  * needs access to the cli-version of php.
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
  * $Id: lib_tasks.php,v 1.31 2004/11/12 19:45:31 jonas Exp $
  */

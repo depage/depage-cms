@@ -9,9 +9,9 @@
  * with same function calls.
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
  * $Id: lib_files.php,v 1.19 2004/06/22 09:58:46 jonas Exp $
  */

@@ -5,9 +5,9 @@
  * index file
  *
  *
- * copyright (c) 2002-2004 Frank Hellenkamp [jonas.info@gmx.net]
+ * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas.info@gmx.net]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
  
 /**
@@ -82,6 +82,6 @@ require_once('lib_html.php');
 
 <frameset rows="100%,*" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
     <frame id="contentFrame" name="content" src="interface/index.php?standalone=false" scrolling="auto" noresize frameborder="0" border="0"  framespacing="0">
-    <frame name="nothing" src="nothing.html" scrolling="no" noresize frameborder="0" border="0" framespacing="0">
+    <!--frame name="nothing" src="nothing.html" scrolling="no" noresize frameborder="0" border="0" framespacing="0"-->
 </frameset>
 </html>
