@@ -20,10 +20,11 @@
 		<?php 
 			$settings = $conf->getScheme($conf->interface_scheme);
 			$lang = $conf->getTexts($conf->interface_language, 'inhtml');
+			$phost = parse_url("http://" . $_SERVER["HTTP_HOST"]);
 			
 			$params = "nsrpc=" . urlencode($conf->ns['rpc']['ns']) 
 				. "&nsrpcuri=" . urlencode($conf->ns['rpc']['uri'])
-				. "&phost=" . urlencode($_SERVER["HTTP_HOST"])
+				. "&phost=" . urlencode($phost['host'])
 				. "&pport=" . urlencode($conf->pocket_port)
 				. "&puse=" . urlencode($conf->pocket_use ? "true" : "false")
 				. "&standalone=" . urlencode($_GET["standalone"]);
@@ -32,9 +33,11 @@
 			} else if ($conf->interface_autologin) {
 				$user = new ttUser();
 				$userid = $user->login($conf->interface_autologin_user, $conf->interface_autologin_pass, $conf->interface_autologin_project, $_SERVER["REMOTE_ADDR"]);
-			    $flashfile = "index.swf?userid=" . ($userid == false ? "null" : $userid) . "&" . $params;
+			    $flashfile = "main.swf?userid=" . ($userid == false ? "null" : $userid) . "&" . $params;
+			    //$flashfile = "index.swf?userid=" . ($userid == false ? "null" : $userid) . "&" . $params;
 			} else {
-			    $flashfile = "index.swf?userid=null&" . $params;
+			    $flashfile = "main.swf?userid=null&" . $params;
+			    //$flashfile = "index.swf?userid=null&" . $params;
 			}
 		?>
 		<script language="JavaScript" type="text/javascript">
@@ -88,7 +91,7 @@
 			
 			function load_flasherror() {
 				if (flashloaded == false) {
-					window.location="msg.php?msg=inhtml_needed_flash&title=inhtml_require_title";
+					//window.location="msg.php?msg=inhtml_needed_flash&title=inhtml_require_title";
 				}	
 			}
 			
