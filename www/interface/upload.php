@@ -1,6 +1,6 @@
 <?php
 /**
- * G E R O N I M O
+ * depage::cms
  * U P L O A D
  *
  * php-script:
