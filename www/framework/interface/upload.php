@@ -11,7 +11,7 @@
     
     define("IS_IN_CONTOOL", true);
         
-    require_once('../scripts/lib/lib_global.php');
+    require_once('../lib/lib_global.php');
     require_once('lib_html.php');
     require_once('lib_auth.php');
     require_once('lib_files.php');

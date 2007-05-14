@@ -9,7 +9,7 @@
 
 	define('IS_IN_CONTOOL', true);
 
-	require_once('../scripts/lib/lib_global.php');
+	require_once('../lib/lib_global.php');
 	require_once('lib_html.php');
 	require_once('lib_auth.php');
 ?>
@@ -100,7 +100,7 @@
 			}
 			
 			function start_pocketServer() {
-				parent.nothing.location = "../scripts/pocket_server_start.php";
+				parent.nothing.location = "../pocket_server_start.php";
 				parent.contentX.location = "interface.php";
 			}
 			

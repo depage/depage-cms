@@ -9,7 +9,7 @@
 
 	define('IS_IN_CONTOOL', true);
 
-	require_once('../scripts/lib/lib_global.php');
+	require_once('../lib/lib_global.php');
 	require_once('lib_html.php');
 ?>
 <HTML>
@@ -40,6 +40,6 @@
 
 <frameset rows="100%,0" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
     <frame id="contentFrameX" name="contentX" src="interface.php?standalone=<?php echo(isset($_GET['standalone']) ? $_GET['standalone'] : "true"); ?>&userid=<?php echo(isset($_GET['userid']) ? $_GET['userid'] : "null"); ?>" scrolling="no" noresize frameborder="0" border="0"  framespacing="0" marginwidth="0" marginheight="0">
-    <frame name="nothing" src="../scripts/pocket_server_start.php" scrolling="no" noresize frameborder="0" border="0" framespacing="0">
+    <frame name="nothing" src="../pocket_server_start.php" scrolling="no" noresize frameborder="0" border="0" framespacing="0">
 </frameset>
 </HTML>

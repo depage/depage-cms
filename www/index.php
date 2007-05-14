@@ -21,7 +21,7 @@
  
 define('IS_IN_CONTOOL', true);
 
-require_once('scripts/lib/lib_global.php');
+require_once('framework/lib/lib_global.php');
 require_once('lib_html.php');
 
 ?>
@@ -38,7 +38,7 @@ require_once('lib_html.php');
         y = screen.availHeight - 60 - h;
     
         options = "height=" + h + ",width=" + w + ",fullscreen=0,dependent=0,location=0,menubar=0,resizable=1,scrollbars=0,status=1,titlebar=0,toolbar=0,screenX=" + x + ",screenY=" + y + ",left=" + x + ",top=" + y;
-        url = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "interface/index.php?standalone=false&userid=" + userid;
+        url = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "framework/interface/index.php?standalone=false&userid=" + userid;
         flashwin = open(url, "tt" + userid, options);
         flashwin.opener = top;
     }
@@ -81,7 +81,7 @@ require_once('lib_html.php');
 </head>
 
 <frameset rows="100%,*" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
-    <frame id="contentFrame" name="content" src="interface/index.php?standalone=false" scrolling="auto" noresize frameborder="0" border="0"  framespacing="0">
+    <frame id="contentFrame" name="content" src="framework/interface/index.php?standalone=false" scrolling="auto" noresize frameborder="0" border="0"  framespacing="0">
     <!--frame name="nothing" src="nothing.html" scrolling="no" noresize frameborder="0" border="0" framespacing="0"-->
 </frameset>
 </html>

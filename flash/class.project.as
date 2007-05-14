@@ -155,7 +155,7 @@ class_project.prototype.previewManual = function() {
 class_project.prototype.previewNow = function() {
 	var url;
 	
-	url = "../projects/";
+	url = "../../projects/";
 	url += conf.project.pathname;
 	url += "/preview/";
 	url += this.preview_type + "/";

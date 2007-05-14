@@ -7,7 +7,7 @@
     headerNoCache();
     
     if ($conf->get_tt_env('pocket_server_running') == 0) {
-        $conf->execInBackground($conf->path_server_root . $conf->path_base . '/scripts/', 'pocket_server.php');
+        $conf->execInBackground($conf->path_server_root . $conf->path_base . '/framework/', 'pocket_server.php');
     }
 ?>
 <html>

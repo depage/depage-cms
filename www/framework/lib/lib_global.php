@@ -262,8 +262,8 @@ class config {
         //$old_include_path = ini_get('inlude_path');
         //$new_include_path = $old_include_path;
         $new_include_path = '';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'scripts/lib';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'scripts/pear';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/lib';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/pear';
         
         ini_set('include_path', $new_include_path);
     }
