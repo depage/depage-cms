@@ -369,8 +369,9 @@ class config {
      * @return    $value (mixed)
      */
     function _getIniValue(&$iniarray, $key, &$standard_array){
-        $value = $iniarray[$key];
-        if ($value == ''){
+        if (isset($iniarray[$key])) {
+            $value = $iniarray[$key];
+        } else {
             $value = $standard_array[$key];
         }
 
@@ -918,10 +919,16 @@ class ttRpcFunc {
      */
     function call() {
         global $conf;
+        global $log;
         
         $val = call_user_func_array(array(&$this->funcObj, $this->name), Array($this->args));
         if (php_sapi_name() == 'cli' && !in_array($this->name, $this->invisibleFuncs)) {
             echo("[" . $conf->dateUTC($conf->date_format_UTC) . "] $this->name called\n");
+        } elseif(!in_array($this->name, $this->invisibleFuncs)) {
+            $log->add_entry("calling $this->name");
+            foreach ($this->args as $id => $value) {
+                $log->add_entry("    $id: $value");
+            }
         }
         
         return $val;

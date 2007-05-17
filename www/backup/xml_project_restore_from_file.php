@@ -1,7 +1,7 @@
 <?php
 define("IS_IN_CONTOOL", true);
 
-require_once("../scripts/lib/lib_global.php");
+require_once("../framework/lib/lib_global.php");
 require_once("lib_project.php");
 require_once("lib_tpl.php");
 require_once("lib_pocket_server.php");

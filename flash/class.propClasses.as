@@ -65,7 +65,7 @@ class_prop.prototype.save = function(id) {
 	var save_data;
 	
 	for (i = 0; i < tempNode.childNodes.length; i++) {
-		if (tempNode.childNodes[i].id == id) {
+		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
 		}	
 	}
@@ -150,11 +150,11 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 		var tempNode = this.data;
 		var save_data;
 
-		if (tempNode.id == id) {
+		if (tempNode.nid == id) {
 			save_data = tempNode;
 		} else {
 			for (i = 0; i < tempNode.childNodes.length; i++) {
-				if (tempNode.childNodes[i].id == id) {
+				if (tempNode.childNodes[i].nid == id) {
 					save_data = tempNode.childNodes[i];
 				}	
 			}
@@ -256,7 +256,7 @@ class_prop_page_data.prototype.saveFilePath = function(path, id) {
 	
 	if (path != "") {
 		for (i = 0; i < this.data.childNodes.length; i++) {
-			if (this.data.childNodes[i].id == id) {
+			if (this.data.childNodes[i].nid == id) {
 				this.data.childNodes[i].attributes.src = path;
 			}
 		}
@@ -271,7 +271,7 @@ class_prop_page_data.prototype.saveFileRef = function(href_id, id) {
 	//alert("hrefid: " + href_id + ", id: " + id);
 	if (href_id != "") {
 		for (i = 0; i < this.data.childNodes.length; i++) {
-			if (this.data.childNodes[i].id == id) {
+			if (this.data.childNodes[i].nid == id) {
 				if (href_id.substring(0, conf.url_lib_scheme_intern.length + 2) == conf.url_lib_scheme_intern + ":/") {
 					this.data.childNodes[i].attributes.href = href_id;
 					delete(this.data.childNodes[i].attributes.href_id);
@@ -406,7 +406,7 @@ class_prop_tpl_templates.prototype.save = function(id) {
 	var save_data;
 	
 	for (i = 0; i < tempNode.childNodes.length; i++) {
-		if (tempNode.childNodes[i].id == id) {
+		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
 		}	
 	}
@@ -488,7 +488,7 @@ class_prop_tpl_newnodes.prototype.save = function(id) {
 	var save_data;
 	
 	for (i = 0; i < tempNode.childNodes.length; i++) {
-		if (tempNode.childNodes[i].id == id) {
+		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
 		}	
 	}
@@ -568,11 +568,11 @@ class_prop_settings.prototype.save = function(id) {
 	var tempNode = this.data;
 	var save_data;
 	
-	if (tempNode.id == id) {
+	if (tempNode.nid == id) {
 		save_data = tempNode;
 	} else {
 		for (i = 0; i < tempNode.childNodes.length; i++) {
-			if (tempNode.childNodes[i].id == id) {
+			if (tempNode.childNodes[i].nid == id) {
 				save_data = tempNode.childNodes[i];
 			}	
 		}

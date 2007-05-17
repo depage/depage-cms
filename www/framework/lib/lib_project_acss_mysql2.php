@@ -926,6 +926,7 @@ class project_acss_mysql2 extends project {
     function duplicate_element($project_name, $id, $new_name = NULL) {
         global $conf, $log;
 
+        $log->add_entry("attemting to duplicate '$id' in '$project_name' with new name '$new_name'");
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
             switch ($type) {
                 case 'pages':
@@ -1034,6 +1035,7 @@ class project_acss_mysql2 extends project {
             }
         }
 
+        $log->add_entry("duplicating '$type' and '$new_id' is the new id.");
         return $new_id;
     }
     // }}}

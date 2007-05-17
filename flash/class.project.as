@@ -127,17 +127,17 @@ class_project.prototype.preview = function(forcePreview) {
 		} else {
 			var previewTimeout = 100;
 		}
-		if (this.previewNode != null && (conf.user.settings.preview_automatic == 2 || (conf.user.settings.preview_automatic == 1 && this.previewId != tempNode.id) || forcePreview)) {
+		if (this.previewNode != null && (conf.user.settings.preview_automatic == 2 || (conf.user.settings.preview_automatic == 1 && this.previewId != tempNode.nid) || forcePreview)) {
 			if (this.preview_setIdFromOutside) {
 				this.preview_setIdFromOutside = false;
-				if (this.previewId != tempNode.id) {
-					this.previewId = tempNode.id;
+				if (this.previewId != tempNode.nid) {
+					this.previewId = tempNode.nid;
 					
 					this.timeoutObj.clear();
 					this.timeoutObj = setTimeout(this.previewNow, this, previewTimeout);
 				}
 			} else {
-				this.previewId = tempNode.id;
+				this.previewId = tempNode.nid;
 				
 				this.timeoutObj.clear();
 				this.timeoutObj = setTimeout(this.previewNow, this, previewTimeout);

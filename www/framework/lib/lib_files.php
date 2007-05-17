@@ -103,7 +103,7 @@ class fs_local extends fs {
     /**
      * Constructor, sets umask to default value on unix-system
      */
-    function fs_local($param) {
+    function fs_local($param = array()) {
         if (isset($param['chmod'])) {
             $this->chmod = $param['chmod'];
         }

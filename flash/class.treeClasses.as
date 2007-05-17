@@ -69,7 +69,7 @@ class_tree.prototype.setNodeIds = function(actualNode) {
 		this.setNodeIds(this.data);
 		this.maxNodeId = 0;
 	} else {
-		actualNode.id = this.maxNodeId++;
+		actualNode.nid = this.maxNodeId++;
 		actualNode = actualNode.firstChild;
 		while (actualNode != null) {
 			this.setNodeIds(actualNode);
@@ -105,7 +105,7 @@ class_tree.prototype.isSeparatorNode = function(node) {
 // }}}
 // {{{ isAccessible
 class_tree.prototype.isAccessible = function(node) {
-	return node.id != undefined && node.id != "";
+	return node.nid != undefined && node.nid != "";
 };
 // }}}
 // {{{ isRenamable()
@@ -294,7 +294,7 @@ class_tree.prototype.onDelete = function(node) {
 };
 // }}}
 // {{{ duplicate()
-class_tree.prototype.duplicate = function(node) {
+class_tree.prototype.duplicate = function(node, noOnChange) {
 	if (node != null && this.isValidDuplicate(node)) {
 		tempNode = node.cloneNode(false);
 		if (node.isRootNode()) {
@@ -306,7 +306,9 @@ class_tree.prototype.duplicate = function(node) {
 				node.parentNode.appendChild(tempNode);			
 			}
 		}
-		this.onChange(); 
+                if (noOnChange != true) {
+                    this.onChange(); 
+                }
 	}
 	return tempNode;
 };
@@ -404,7 +406,7 @@ class_tree.prototype.idIsInData = function(idsToSearch, actualNode) {
 		var found = false;
 		
 		for (i = 0; i < idsToSearch.length; i++) {
-			if (actualNode.id == idsToSearch[i]) {
+			if (actualNode.nid == idsToSearch[i]) {
 				found = true;
 			}	
 		}
@@ -521,7 +523,7 @@ class_tree_pages.prototype.onCut = function() {
 class_tree_pages.prototype.onDelete = function(node) {
 	var idToDelete;
 	if (this.isValidDelete(node)) {
-		idToDelete = node.id;
+		idToDelete = node.nid;
 		
 		node.removeIds();
 		this.loading = true;
@@ -537,20 +539,21 @@ class_tree_pages.prototype.onDelete = function(node) {
 class_tree_pages.prototype.duplicate = function(node) {
 	if (this.isValidDuplicate(node)) {
 		var newName = node.attributes.name + " " + conf.lang.tree_after_copy;
-		var tempNode = super.duplicate(node);
+		var tempNode = super.duplicate(node, true);
+                var copyid = node.nid;
 		tempNode.attributes.name = newName;
 		tempNode.removeIds();
 		this.loading = true;
 		this.onChange();
 		
-		_root.phpConnect.send("duplicate_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["new_name", newName], ["type", this.type]]);
+		_root.phpConnect.send("duplicate_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", copyid], ["new_name", newName], ["type", this.type]]);
 	}
 };
 // }}}
 // {{{ renameNode()
 class_tree_pages.prototype.renameNode = function(node, newName) {
 	this.loading = true;
-	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["new_name", newName], ["type", this.type]]);
+	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["new_name", newName], ["type", this.type]]);
 	super.renameNode(node, newName);
 };
 // }}}
@@ -558,7 +561,7 @@ class_tree_pages.prototype.renameNode = function(node, newName) {
 class_tree_pages.prototype.move_in = function(node, targetNode) {
 	if (this.isValidMove(node, targetNode)) {
 		this.loading = true;
-		_root.phpConnect.send("move_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type]]);
+		_root.phpConnect.send("move_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type]]);
 		super.move_in(node, targetNode);
 		node.removeIds();
 		this.onChange();
@@ -569,7 +572,7 @@ class_tree_pages.prototype.move_in = function(node, targetNode) {
 class_tree_pages.prototype.move_before = function(node, targetNode) {
 	if (node != targetNode && this.isValidMove(node, targetNode.parentNode)) {
 		this.loading = true;
-		_root.phpConnect.send("move_node_before", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type]]);
+		_root.phpConnect.send("move_node_before", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type]]);
 		super.move_before(node, targetNode);
 		node.removeIds();
 		this.onChange();
@@ -580,7 +583,7 @@ class_tree_pages.prototype.move_before = function(node, targetNode) {
 class_tree_pages.prototype.move_after = function(node, targetNode) {
 	if (node != targetNode && this.isValidMove(node, targetNode.parentNode)) {
 		this.loading = true;
-		_root.phpConnect.send("move_node_after", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type]]);
+		_root.phpConnect.send("move_node_after", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type]]);
 		super.move_after(node, targetNode);
 		node.removeIds();
 		this.onChange();
@@ -592,7 +595,7 @@ class_tree_pages.prototype.copy_in = function(node, targetNode) {
 	if (this.isValidCopy(node, targetNode)) {
 		var newName =  node.attributes.name + " " + conf.lang.tree_after_copy;
 		this.loading = true;
-		_root.phpConnect.send("copy_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", newName]]);
+		_root.phpConnect.send("copy_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type], ["new_name", newName]]);
 		var tempNode = super.copy_in(node, targetNode);
 		tempNode.attributes.name = newName;
 		tempNode.removeIds();
@@ -605,7 +608,7 @@ class_tree_pages.prototype.copy_before = function(node, targetNode) {
 	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var newName =  node.attributes.name + " " + conf.lang.tree_after_copy;
 		this.loading = true;
-		_root.phpConnect.send("copy_node_before", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", newName]]);
+		_root.phpConnect.send("copy_node_before", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type], ["new_name", newName]]);
 		var tempNode = super.copy_before(node, targetNode);
 		tempNode.attributes.name = newName;
 		tempNode.removeIds();
@@ -618,7 +621,7 @@ class_tree_pages.prototype.copy_after = function(node, targetNode) {
 	if (this.isValidCopy(node, targetNode.parentNode)) {
 		var newName =  node.attributes.name + " " + conf.lang.tree_after_copy;
 		this.loading = true;
-		_root.phpConnect.send("copy_node_after", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", newName]]);
+		_root.phpConnect.send("copy_node_after", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type], ["new_name", newName]]);
 		var tempNode = super.copy_after(node, targetNode);
 		tempNode.attributes.name = newName;
 		tempNode.removeIds();
@@ -661,7 +664,7 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 	if (targetNode != null) {
 		targetNode.showChildren = true;
 		this.loading = true;
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", type], ["xmldata", add_node_string], ["new_name", new_name]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["xmldata", add_node_string], ["new_name", new_name]]);
 		newNode.attributes.name = new_name;
 		this.onChange();
 	}	
@@ -723,7 +726,7 @@ class_tree_pages.prototype.getUriById = function(id) {
 	
 	while (tempNode != this.data) {
 		if (tempNode != this.data.getRootNode()) {
-			if (id == tempNode.id && !this.isFolder(tempNode)) {
+			if (id == tempNode.nid && !this.isFolder(tempNode)) {
 				path = tempNode.attributes.name;
 			} else {
 				path = tempNode.attributes.name + "/" + path;
@@ -767,7 +770,7 @@ class_tree_pages.prototype.getIdByURI = function(uri) {
 	if (targetNode == null) {
 		return "";
 	} else {
-		return targetNode.id;
+		return targetNode.nid;
 	}
 };
 // }}}
@@ -941,7 +944,7 @@ class_tree_page_data.prototype.addNode = function(targetNode, type) {
 		}
 		this.loading = true;
 		this.onChange();
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", add_node_string], ["new_name", new_name]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", add_node_string], ["new_name", new_name]]);
 	}	
 };
 // }}}
@@ -949,7 +952,7 @@ class_tree_page_data.prototype.addNode = function(targetNode, type) {
 class_tree_page_data.prototype.onDelete = function(node) {
 	var idToDelete;
 	if (this.isValidDelete(node)) {
-		idToDelete = node.id;
+		idToDelete = node.nid;
 		node.removeIds();
 		this.loading = true;
 		this.onChange();
@@ -1110,7 +1113,7 @@ class_tree_files.prototype.setNodeIds = function(actualNode, path) {
 		this.setNodeIds(this.data.getRootNode(), "");
 	} else {
 		path = path + (actualNode.attributes['name'] == conf.project.name ? "" : actualNode.attributes['name']) + "/";
-		actualNode.id = path;
+		actualNode.nid = path;
 		actualNode = actualNode.firstChild;
 		while (actualNode != null) {
 			this.setNodeIds(actualNode, path);
@@ -1121,16 +1124,16 @@ class_tree_files.prototype.setNodeIds = function(actualNode, path) {
 // }}}
 // {{{ renameNode()
 class_tree_files.prototype.renameNode = function(node, newName) {
-	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["new_name", newName], ["type", this.type]]);
+	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["new_name", newName], ["type", this.type]]);
 	node.attributes['name'] = newName;
-	this.setNodeIds(node, node.parentNode.id);
+	this.setNodeIds(node, node.parentNode.nid);
 };
 // }}}
 // {{{ onDelete()
 class_tree_files.prototype.onDelete = function(node) {
 	var idToDelete;
 	if (this.isValidDelete(node)) {
-		idToDelete = node.id;
+		idToDelete = node.nid;
 		_root.phpConnect.send("delete_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", idToDelete], ["type", this.type]]);
 		node.removeIds();
 		this.onChange();
@@ -1140,7 +1143,7 @@ class_tree_files.prototype.onDelete = function(node) {
 // {{{ move_in()
 class_tree_files.prototype.move_in = function(node, targetNode) {
 	if (this.isValidMove(node, targetNode)) {
-		_root.phpConnect.send("move_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type]]);
+		_root.phpConnect.send("move_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type]]);
 		super.move_in(node, targetNode);
 		node.removeIds();
 		this.onChange();
@@ -1150,7 +1153,7 @@ class_tree_files.prototype.move_in = function(node, targetNode) {
 // {{{ copy_in()
 class_tree_files.prototype.copy_in = function(node, targetNode) {
 	if (this.isValidCopy(node, targetNode)) {
-		_root.phpConnect.send("copy_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.id], ["target_id", targetNode.id], ["type", this.type], ["new_name", node.attributes.name + " " + conf.lang.tree_after_copy]]);
+		_root.phpConnect.send("copy_node_in", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", node.nid], ["target_id", targetNode.nid], ["type", this.type], ["new_name", node.attributes.name + " " + conf.lang.tree_after_copy]]);
 		super.copy_in(node, targetNode);
 		node.removeIds();
 		this.onChange();
@@ -1200,7 +1203,7 @@ class_tree_files.prototype.addNode = function(targetNode, type) {
 		var newName = conf.lang.tree_name_untitled;
 		this.loading = true;
 		this.onChange();
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", type], ["new_name", newName]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", newName]]);
 	}	
 };
 // }}}
@@ -1439,7 +1442,7 @@ class_tree_colors.prototype.addNode = function(targetNode, type) {
 	if (targetNode != null) {
 		this.loading = true;
 		this.onChange();
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
 	}	
 	//this.project.preview();
 };
@@ -1547,7 +1550,7 @@ class_tree_tpl_templates.prototype.addNode = function(targetNode, type) {
 		tempNode.attributes.name = new_name;
 		this.loading = true;
 		this.onChange();
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
 	}	
 };
 // }}}
@@ -1641,7 +1644,7 @@ class_tree_tpl_newnodes.prototype.addNode = function(targetNode, type) {
 		tempNode.attributes.name = new_name;
 		this.loading = true;
 		this.onChange();
-		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.id], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
+		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
 	}
 };
 // }}}

@@ -745,6 +745,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function duplicate_node($args) {
         global $conf, $project;
         global $xml_db;
+        global $log;
         
         $updated_ids = array();
         $data = array();
