@@ -15,7 +15,12 @@
     require_once("Archive/tar.php");
     // }}}
     
-    var_dump($conf);
+    $texts = $conf->getTexts("en", "", false);
+    echo("<?php \n\n\$text = array(\n");
+    foreach($texts as $name => $text) {
+        echo("\t'$name' => \"$text\",\n");
+    }
+    echo(");\n\n?>");
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>

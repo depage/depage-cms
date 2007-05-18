@@ -66,7 +66,6 @@ class config {
                 
             'db_table_env' => (string) '%db_praefix%_env',
                 
-            'db_table_interface_text' => (string) '%db_praefix%_interface_text',
             'db_table_mediathumbs' => (string) '%db_praefix%_mediathumbs',
                 
             'db_table_transform_cache' => (string) '%db_praefix%_transform_cache',
@@ -275,27 +274,20 @@ class config {
      * @public
      */
     function get_language_by_browser() {
-        $result = db_query("SHOW COLUMNS FROM $this->db_table_interface_text;");
-        if ($result && ($num = mysql_num_rows($result)) > 0) {
-            $available_languages = array();
-            for ($i = 0; $i < $num; $i++) {
-                $row = mysql_fetch_row($result);
-                if ($row[0] != 'name') {
-                    $available_languages[] = $row[0];
-                }
-            }
-            $browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
-            foreach ($browser_languages as $lang) {
-                $actual_language_array = explode(';', $lang);
-                $actual_language_array = explode('-', $actual_language_array[0]);
-                $actual_language = trim($actual_language_array[0]);
-                if (in_array($actual_language, $available_languages)) {
-                    $this->interface_language = $actual_language;
-                    break;
-                }    
-            }
+        $available_languages = array(
+            'en',
+            'de',
+        );
+        $browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+        foreach ($browser_languages as $lang) {
+            $actual_language_array = explode(';', $lang);
+            $actual_language_array = explode('-', $actual_language_array[0]);
+            $actual_language = trim($actual_language_array[0]);
+            if (in_array($actual_language, $available_languages)) {
+                $this->interface_language = $actual_language;
+                break;
+            }    
         }
-        mysql_free_result($result);
     }
     // }}}
     // {{{ getTexts()
@@ -311,30 +303,12 @@ class config {
      * @return    texts (array) an array of texts
      */
     function getTexts($lang, $type = '', $codespecialchars = true){
-        $texts = array();
-        
-        if ($type != '') {
-            $type_select = "WHERE name LIKE '$type%'";
-        } else {
-            $type_select = '';
-        }
-        
-        $result = db_query(
-            "SELECT name AS name, $lang AS text 
-            FROM $this->db_table_interface_text 
-            $type_select
-            ORDER BY name"
-        );
-        if ($result && $numrows = mysql_num_rows($result)) {
-            for ($i=0; $i < $numrows; $i++) {
-                $row = mysql_fetch_assoc($result);
-                if ($codespecialchars) {
-                    $texts[$row['name']] = htmlspecialchars($row['text']);
-                } else {
-                    $texts[$row['name']] = $row['text'];
-                }
+        include($this->path_server_root . $this->path_base . "framework/locale/$lang.php");
+
+        if ($codespecialchars) {
+            foreach ($texts as $key => $value) {
+                $texts[$key] = htmlspecialchars($value);
             }
-            mysql_free_result($result);
         }
         
         return $texts;
