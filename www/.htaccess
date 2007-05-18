@@ -1,6 +1,6 @@
-# rewriting rules for geronimo
+# rewriting rules for depage::cms
 #
-# (c) 2003-2004 Frank Hellenkamp <jonas.info@gmx.net>
+# (c) 2003-2007 Frank Hellenkamp <jonas@depagecms.net>
 
 
 # enable apache rewriting engine
@@ -15,3 +15,6 @@ RewriteRule        ^index.html                                    index.php     
 # rewriting for preview
 RewriteRule        ^projects/(.*)/preview(/[^\/]*){4}/lib/(.*)    projects/$1/lib/$3    [last]
 RewriteRule        ^projects/(.*)/preview/(.*)                    framework/preview.php    [last]
+
+# Deny Access to settings directory
+RewriteRule         ^settings/(.*)                              framework/interface/msg.php?title=aa&msg=notallowed           [last]

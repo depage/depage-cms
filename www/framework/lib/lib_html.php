@@ -66,7 +66,7 @@ class htmlout {
     function echoNullImg($width = 1, $height = 1) {
         global $conf;
         
-        echo("<img src=\"{$conf->path_base}/interface/pics/null.gif\" width=\"$width\" height=\"$height\">");
+        echo("<img src=\"{$conf->path_base}/framework/interface/pics/null.gif\" width=\"$width\" height=\"$height\">");
     }
 
     /**
