@@ -4,17 +4,19 @@
 
 
 # enable apache rewriting engine
-RewriteEngine    on
+RewriteEngine      on
 RewriteBase        /depage_1.0
 
 # rewriting for index
 # only nessecary if no index.php is allowed
-RewriteRule        ^$                                            index.php            [last]
-RewriteRule        ^index.html                                    index.php            [last]
+RewriteRule        ^$                                           index.php            [last]
+RewriteRule        ^index.html                                  index.php            [last]
 
 # rewriting for preview
-RewriteRule        ^projects/(.*)/preview(/[^\/]*){4}/lib/(.*)    projects/$1/lib/$3    [last]
-RewriteRule        ^projects/(.*)/preview/(.*)                    framework/preview.php    [last]
+RewriteRule        ^projects/(.*)/preview(/[^\/]*){4}/lib/(.*)  projects/$1/lib/$3    [last]
+RewriteRule        ^projects/(.*)/preview/(.*)                  framework/preview.php    [last]
 
 # Deny Access to settings directory
-RewriteRule         ^settings/(.*)                              framework/interface/msg.php?title=aa&msg=notallowed           [last]
+RewriteRule        ^settings/(.*)                               framework/interface/msg.php?title=auth_access&msg=auth_no_access          [last]
+RewriteRule        ^logs/(.*)                                   framework/interface/msg.php?title=auth_access&msg=auth_no_access          [last]
+RewriteRule        ^framework/lib/(.*)                          framework/interface/msg.php?title=auth_access&msg=auth_no_access          [last]
