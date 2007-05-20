@@ -179,9 +179,9 @@ class fs_local extends fs {
     function ch_mod($path, $mod = null) {
         if ($mod == null) {
             if (is_dir($path)) {
-                $mod = $this->chmod;
-            } else if (is_file($path)) {
                 $mod = $this->dirchmod;
+            } else if (is_file($path)) {
+                $mod = $this->chmod;
             }
         }
         return chmod($path, $mod);
