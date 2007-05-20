@@ -713,14 +713,14 @@ class tpl_engine_xslt extends tpl_engine {
                     $path = 'index.html';
                 }
             } else {
-                $path = $this->_glp_encode($temp_node->get_attribute('name')) . ".{$id}.{$type}";
+                $path = $this->glp_encode($temp_node->get_attribute('name')) . ".{$id}.{$type}";
             }
             
             while ($temp_node != null && $temp_node->parent_node() != null) {
                 $temp_node = $temp_node->parent_node();    
                 $parent_node = $temp_node->parent_node();
                 if ($parent_node != null && $parent_node->node_type() == XML_ELEMENT_NODE) {
-                    $path = $this->_glp_encode($temp_node->get_attribute('name')) . "/{$path}";
+                    $path = $this->glp_encode($temp_node->get_attribute('name')) . "/{$path}";
                 }
             }
             
@@ -769,7 +769,7 @@ class tpl_engine_xslt extends tpl_engine {
             while ($path[$pos] != '' && $path[$pos] != 'index.html') {
                 $child_nodes = $temp_node->child_nodes();
                 for ($i = 0; $i < count($child_nodes); $i++) {
-                    if ($this->_glp_encode($child_nodes[$i]->get_attribute('name')) == $path[$pos]) {
+                    if ($this->glp_encode($child_nodes[$i]->get_attribute('name')) == $path[$pos]) {
                         $temp_node = $child_nodes[$i];
                     }
                 }
@@ -792,39 +792,43 @@ class tpl_engine_xslt extends tpl_engine {
     /**
      * specific url encoding of name
      *
-     * @private
+     * @public
      *
      * @param    $str (string) name to encode
      *
      * @return    $encoded (string) encoded string
      */
-    function _glp_encode($str) {
-        $str = strtolower(utf8_decode($str));
+    function glp_encode($str) {
+        global $log;
+
+        $repl = array(
+            "ה" => "ae",
+            "צ" => "oe",
+            "ü" => "ue",
+            "ß" => "ss",
+            "ב" => "a",
+            "א" => "a",
+            "ג" => "a",
+            "י" => "e",
+            "ט" => "e",
+            "ך" => "e",
+            "ם" => "i",
+            "ל" => "i",
+            "מ" => "i",
+            "ף" => "o",
+            "ע" => "o",
+            "פ" => "o",
+            "ת" => "u",
+            "ש" => "u",
+            "û" => "u",
+        );
+
+        $search = array('/[^a-z0-9]/', '/--+/', '/^-+/', '/-+$/' );
+        $replace = array( '-', '-', '', '');
         
-        /*
-        $search = array(
-            "'ה'",
-            "'צ'",
-            "'ü'",
-            "'ß'",
-            "'[^a-z0-9הצüß_\.\-]'",
-        );
-        $replace = array(
-            "ae",
-            "oe",
-            "ue",
-            "ss",
-            "_",
-        );
-        */
-        $search = array(
-            "'[^a-z0-9_\.\-]'",
-        );
-        $replace = array(
-            "",
-        );
+        $str = strtr(mb_strtolower(utf8_decode($str), 'ISO-8859-1'), $repl);
         $str = preg_replace($search, $replace, $str);
-        
+
         return $str;
     }
     // }}}
