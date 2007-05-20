@@ -443,7 +443,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             // {{{ files
             } else if ($args['type'] == 'files') {
                 $projectPath = $project->get_project_path($project->user->get_project_by_sid($args['sid']));
-                mkdir($projectPath . '/lib' . $args['target_id'] . $args['new_name']);
+                $fs = fs::factory('local');
+                $fs->mk_dir($projectPath . '/lib' . $args['target_id'] . $args['new_name']);
                 
                 tell_clients_to_update($project_name, $args['sid'], $args['type']);
                 
