@@ -45,7 +45,7 @@
             if ($_FILES['file']['error'][$i] == 0) {
                 // @todo change characters that are not allowed
                 // @todo add error handling for files thar are still there
-                $filepath = $project->get_project_path($project_name) . "lib" . $path . $_FILES['file']['name'][$i];
+                $filepath = $project->get_project_path($project_name) . "/lib" . $path . $_FILES['file']['name'][$i];
                 move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath);
                 $file_access->ch_mod($filepath);
             }

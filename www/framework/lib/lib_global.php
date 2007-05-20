@@ -133,8 +133,8 @@ class config {
 
             'db_praefix' => (string) 'tt',
 
-            'file_notfound' => (string) '%path_server_root%%path_base%/interface/pics/file_notfound.swf',
-            'file_thumbs' => (string) '%path_server_root%%path_base%/interface/pics/file_thumbs.swf',
+            'file_notfound' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_notfound.swf',
+            'file_thumbs' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_thumbs.swf',
                 
             'interface_language' => (string) 'en',
             'interface_language_by_browser' => (bool) true,
@@ -261,8 +261,8 @@ class config {
         //$old_include_path = ini_get('inlude_path');
         //$new_include_path = $old_include_path;
         $new_include_path = '';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/lib';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/pear';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/lib';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/pear';
         
         ini_set('include_path', $new_include_path);
     }
@@ -303,7 +303,7 @@ class config {
      * @return    texts (array) an array of texts
      */
     function getTexts($lang, $type = '', $codespecialchars = true){
-        include($this->path_server_root . $this->path_base . "framework/locale/$lang.php");
+        include($this->path_server_root . $this->path_base . "/framework/locale/$lang.php");
 
         if ($codespecialchars) {
             foreach ($texts as $key => $value) {

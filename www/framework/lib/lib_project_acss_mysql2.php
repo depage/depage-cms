@@ -119,7 +119,10 @@ class project_acss_mysql2 extends project {
      * @return    $id (int) id of project
      */
     function get_projectId($project_name) {
+        global $log;
+
         if (preg_match("/^([0-9]+)$/", (string) $project_name)) {
+            $log->add_entry("!!!! ATTENTION get_projectID by number instead of name");
             return $this->xmldb->get_doc_id_by_id($project_name);
         } else {
             if (!isset($this->_project_ids[$project_name])) {
