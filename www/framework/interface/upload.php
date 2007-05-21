@@ -15,6 +15,7 @@
     require_once('lib_html.php');
     require_once('lib_auth.php');
     require_once('lib_files.php');
+    require_once('lib_tpl_xslt.php');
     require_once('lib_pocket_server.php');
         
     $settings = $conf->getScheme($conf->interface_scheme);
@@ -45,9 +46,10 @@
             if ($_FILES['file']['error'][$i] == 0) {
                 // @todo change characters that are not allowed
                 // @todo add error handling for files thar are still there
-                $filepath = $project->get_project_path($project_name) . "/lib" . $path . $_FILES['file']['name'][$i];
-                move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath);
-                $file_access->ch_mod($filepath);
+                $fname = tpl_engine_xslt::glp_encode($_FILES['file']['name'][$i]);
+                $fpath = $project->get_project_path($project_name) . "/lib" . $path;
+                move_uploaded_file($_FILES['file']['tmp_name'][$i], $fpath . $fname);
+                $file_access->ch_mod($fpath . $fname);
             }
         }
         clearstatcache();

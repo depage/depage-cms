@@ -107,7 +107,7 @@ String.prototype.glpEncode = function() {
 	
 	for (i = 0; i < this.length; i++) {
 		charCode = this.charCodeAt(i);
-		/*
+                //@todo add support áàâ etc (exactely as in php)
 		if (this.charAt(i) == "ä" || this.charAt(i) == "Ä") {
 			newValue += "ae";
 		} else if (this.charAt(i) == "ö" || this.charAt(i) == "Ö") {
@@ -119,14 +119,15 @@ String.prototype.glpEncode = function() {
 		} else if (this.charAt(i) == "-" || this.charAt(i) == "_" || this.charAt(i) == "." || (charCode >= 48 && charCode <= 57) || (charCode >= 97 && charCode <= 122) || (charCode >= 65 && charCode <= 90)) {
 			newValue += this.charAt(i);
 		} else {
-			newValue += "_";
+			newValue += "-";
 		}
-		*/
+		/*
 		if (this.charAt(i) == "-" || this.charAt(i) == "_" || this.charAt(i) == "." || (charCode >= 48 && charCode <= 57) || (charCode >= 97 && charCode <= 122) || (charCode >= 65 && charCode <= 90)) {
 			newValue += this.charAt(i);
 		} else {
 			newValue += "";
 		}
+		*/
 	}	
 	
 	newValue = newValue.toLowerCase();
@@ -996,7 +997,7 @@ XMLNode.prototype.setID = function(value) {
 };
 // }}}
 XMLNode.prototype.addProperty("nid", XMLNode.prototype.getID, XMLNode.prototype.setID);
-*/
+/**/
 
 /*
  *	Class TextField

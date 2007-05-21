@@ -823,10 +823,14 @@ class tpl_engine_xslt extends tpl_engine {
             "û" => "u",
         );
 
-        $search = array('/[^a-z0-9]/', '/--+/', '/^-+/', '/-+$/' );
+        $search = array('/[^a-z0-9\.]/', '/--+/', '/^-+/', '/-+$/' );
         $replace = array( '-', '-', '', '');
         
-        $str = strtr(mb_strtolower(utf8_decode($str), 'ISO-8859-1'), $repl);
+        if (is_callable(mb_strtolower)) {
+            $str = strtr(mb_strtolower(utf8_decode($str), 'ISO-8859-1'), $repl);
+        } else {
+            $str = strtr(strtolower(utf8_decode($str)), $repl);
+        }
         $str = preg_replace($search, $replace, $str);
 
         return $str;

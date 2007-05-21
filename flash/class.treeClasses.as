@@ -1102,6 +1102,7 @@ class_tree_files.prototype.load = function() {
 // }}}
 // {{{ get_newFileProp_update()
 class_tree_files.prototype.get_newFileProp_update = function(args) {
+        //alertObjInfo(args['path']);
 	if (args['path'] == XPath.selectNodes(this.project.prop[this.type].data, "/" + conf.ns.project + ":files/" + conf.ns.project + ":filelist[1]/@dir")[0].nodeValue) {
 		this.load_prop(args['path'], this.project.prop[this.type].data, true);
 	}

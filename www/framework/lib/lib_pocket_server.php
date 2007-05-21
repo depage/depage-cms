@@ -716,6 +716,7 @@ class rpc_pocketConnect_default_functions extends rpc_functions_class {
  */ 
 function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
     global $conf, $project;
+    global $log;
     
     if (!is_array($GLOBALS['pocket_updates'])) {
         $GLOBALS['pocket_updates'] = array();
@@ -723,7 +724,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
     
     global $pocket_updates;
     
-    if ($project_name && ($ids === true || count($ids) > 0)) {
+    if ($project_name && ($ids == true || count($ids) > 0)) {
         // {{{ pages
         if ($type == 'pages') {
             $xml_def = $project->get_page_struct($project_name);
@@ -756,7 +757,8 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
         // {{{ fileProps
         } else if ($type == 'fileProps') {
             $data = array();
-            $data['path'] = $ids;
+            $data['path'] = $ids[0];
+            $log->add_entry("sending update for $project_name of type $type with ids: {$ids[0]}");
             
             $func = new ttRpcFunc('get_update_prop_files', $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");
