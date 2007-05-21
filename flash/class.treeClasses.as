@@ -483,7 +483,7 @@ class_tree_pages.prototype.isTreeNode = function(node) {
 };
 // }}}
 // {{{ isSeparatorNode()
-class_tree.prototype.isSeparatorNode = function(node) {
+class_tree_pages.prototype.isSeparatorNode = function(node) {
 	return false;
 };
 // }}}
