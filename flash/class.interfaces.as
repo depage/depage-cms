@@ -681,7 +681,7 @@ class_treeDisplayData_pages.prototype.setActiveNode = function(node, scrollToAct
 	
 	if (!this.interfaceObj.isDialog) {
 		this.timeoutObj.clear();
-		this.timeoutObj = setTimeout(conf.project.tree.page_data.load, conf.project.tree.page_data, 200, [node.attributes[conf.ns.database + ":ref"], this]);
+                this.timeoutObj = setTimeout(conf.project.tree.page_data.load, conf.project.tree.page_data, 200, [node.attributes[conf.ns.database + ":ref"], node]);
 	
 		conf.project.setPreviewNode(this.activeNode);
 		conf.project.preview();

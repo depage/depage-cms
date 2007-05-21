@@ -676,6 +676,31 @@ class project_acss_mysql2 extends project {
         }
     }
     // }}}
+    // {{{ add_page_separator()
+    /**
+     * adds new folder to document tree
+     *
+     * @param    $project_name (string) name of project
+     * @param    $target_id (int) id of page to rename
+     * @param    $newname (string) new name
+     */
+    function add_page_separator($project_name, $target_id) {
+        global $conf, $log;
+
+        $doc_page = @file_get_contents('xml/pages_new_separator.xml');
+        if ($doc_page != '' && in_array($type = $this->get_type($target_id, $data_id), array('pages'))) {
+            //set name
+            $xml_page = $this->domxml_open_mem($doc_page);
+            if ($xml_page) {
+                $new_id = $this->xmldb->save_node(&$xml_page, $target_id);
+
+                return $new_id;
+            } else {
+                $log->add_entry('no valid xml data to insert', 'debug');
+            }
+        }
+    }
+    // }}}
     // {{{ add_page_data_element()
     /**
      * adds new page to document tree
@@ -929,7 +954,6 @@ class project_acss_mysql2 extends project {
     function duplicate_element($project_name, $id, $new_name = NULL) {
         global $conf, $log;
 
-        $log->add_entry("attemting to duplicate '$id' in '$project_name' with new name '$new_name'");
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
             switch ($type) {
                 case 'pages':
@@ -937,19 +961,24 @@ class project_acss_mysql2 extends project {
                     $target_id = $this->xmldb->get_parent_id_by_id($id);
                     $target_pos = $this->xmldb->get_pos_by_id($id) + 1;
                     $page_data_id = $this->get_page_data_id_by_page_id($project_name, $id);
+                    $node_name = $this->xmldb->get_node_name_by_id($id);
                     list($proj_pgs_id) = $this->xmldb->get_node_ids_by_xpath($this->get_projectId($project_name), "//{$conf->ns['project']['ns']}:pages");
 
                     //duplicate page_data
-                    $new_data_id = $this->xmldb->copy_node_in($page_data_id, $proj_pgs_id);
-                    $this->_set_element_lastchange_UTC($new_data_id);
+                    if ($page_data_id) {
+                        $new_data_id = $this->xmldb->copy_node_in($page_data_id, $proj_pgs_id);
+                        $this->_set_element_lastchange_UTC($new_data_id);
+                    }
 
-                    //add page node
+                    //add node
                     $pg_attr = $this->xmldb->get_attributes($id);
-                    if ($new_name != null) {
+                    if ($node_name != "sec:separator" && $new_name != null) {
                         $pg_attr['name'] = $new_name;
                     }
-                    $pg_attr["{$conf->ns['database']['ns']}:ref"] = $new_data_id;
-                    $page_xml_str = "<{$conf->ns['page']['ns']}:page ";
+                    if ($page_data_id) {
+                        $pg_attr["{$conf->ns['database']['ns']}:ref"] = $new_data_id;
+                    }
+                    $page_xml_str = "<{$node_name} ";
                     foreach($pg_attr as $name => $value) {
                         $page_xml_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
                     }
@@ -1037,8 +1066,6 @@ class project_acss_mysql2 extends project {
                     break;
             }
         }
-
-        $log->add_entry("duplicating '$type' and '$new_id' is the new id.");
         return $new_id;
     }
     // }}}

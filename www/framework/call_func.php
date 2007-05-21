@@ -430,6 +430,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                     $new_id = $project->add_page($project_name, $args['target_id'], $args['new_name'], $args['xmldata']);
                 } elseif ($args['node_type'] == 'folder') {
                     $new_id = $project->add_page_folder($project_name, $args['target_id'], $args['new_name']);
+                } elseif ($args['node_type'] == 'separator') {
+                    $new_id = $project->add_page_separator($project_name, $args['target_id']);
                 }
                 $updated = array($new_id, $args['target_id']);
                 $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));

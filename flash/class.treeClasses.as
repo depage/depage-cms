@@ -110,7 +110,9 @@ class_tree.prototype.isAccessible = function(node) {
 // }}}
 // {{{ isRenamable()
 class_tree.prototype.isRenamable = function(node) {
-	if (node.attributes[conf.ns.database + ":invalid"] != undefined) {
+        if (node.nodeName == conf.ns.section + ":separator") {
+            return false;
+        } else if (node.attributes[conf.ns.database + ":invalid"] != undefined) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		return invalidActions.searchFor("name") == -1;
 	} else {
@@ -477,7 +479,12 @@ class_tree_pages.prototype.getValidNameLetters = function() {
 // }}}
 // {{{ isTreeNode()
 class_tree_pages.prototype.isTreeNode = function(node) {
-	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct");	
+	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct" || node.nodeName == conf.ns.section + ":separator");	
+};
+// }}}
+// {{{ isSeparatorNode()
+class_tree.prototype.isSeparatorNode = function(node) {
+	return false;
 };
 // }}}
 // {{{ isValidDelete()
@@ -487,12 +494,12 @@ class_tree_pages.prototype.isValidDelete = function(node) {
 // }}}
 // {{{ isValiMove()
 class_tree_pages.prototype.isValidMove = function(node, targetNode) {
-	return super.isValidMove(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder");
+	return super.isValidMove(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.section + ":separator");
 };
 // }}}
 // {{{ isValidCopy()
 class_tree_pages.prototype.isValidCopy = function(node, targetNode) {
-	return super.isValidCopy(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder");
+	return super.isValidCopy(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.section + ":separator");
 };
 // }}}
 // {{{ isValidName()
@@ -631,7 +638,7 @@ class_tree_pages.prototype.copy_after = function(node, targetNode) {
 // }}}
 // {{{ getAddNodes()
 class_tree_pages.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_folder, [conf.lang.tree_name_new_page, [conf.lang.tree_name_new_page_empty].concat(this.project.tree.page_data.getAddNodes())]];	
+	return [conf.lang.tree_name_new_folder, [conf.lang.tree_name_new_page, [conf.lang.tree_name_new_page_empty].concat(this.project.tree.page_data.getAddNodes())], conf.lang.tree_name_new_separator];	
 };
 // }}}
 // {{{ addNode()
@@ -643,20 +650,23 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 	if (type == conf.lang.tree_name_new_folder) {
 		type = "folder";
 		var newNode = super.addNode(targetNode, conf.ns.page + ":folder");	
+        } else if (type == conf.lang.tree_name_new_separator) {
+		type = "separator";
+		var newNode = super.addNode(targetNode, conf.ns.section + ":separator");	
 	} else if (type == conf.lang.tree_name_new_page) {
 		type = "page";
 		if (subType != null && subType != conf.lang.tree_name_new_page_empty) {
-			temp_node = this.project.tree.tpl_newnodes.data.getRootNode().firstChild;
-			while (temp_node != null) {
+			root_node = this.project.tree.tpl_newnodes.data.getRootNode();
+                        for (i = 0; i < root_node.childNodes.length; i++) {
+                                temp_node = root_node.childNodes[i];
 				if (temp_node.attributes.name == subType) {
-					for (i = 0; i < temp_node.childNodes.length; i++) {
-						if (temp_node.childNodes[i].nodeName == conf.ns.edit + ":newnode") {
-							add_node_string += temp_node.childNodes[i].firstChild.nodeValue;
+					for (j = 0; j < temp_node.childNodes.length; j++) {
+						if (temp_node.childNodes[j].nodeName == conf.ns.edit + ":newnode") {
+							add_node_string += temp_node.childNodes[j].firstChild.nodeValue;
 						}
 					}
+                                        break;
 				}
-				
-				temp_node = temp_node.nextSibling;
 			}	
 		}
 		var newNode = super.addNode(targetNode, conf.ns.page + ":page");	
@@ -817,12 +827,18 @@ class_tree_page_data.prototype.get_new_update = function(args) {
 class_tree_page_data.prototype.load = function(id, node, reload) {
 	if (id != undefined && (id != this.lastid || reload)) {
 		if (id != this.lastid) {
-			this.clear();
+                    this.clear();
 		}
-		this.loading = true;
-		this.lastid = id;
-		this.onChange();
-		_root.phpConnect.send("get_tree", [["sid", conf.user.sid], ["wid", conf.user.wid], ["type", this.type], ["id", id]]);
+                if (node.nodeName != conf.ns.section + ":separator") {
+                    this.loading = true;
+                    this.lastid = id;
+                    this.onChange();
+                    _root.phpConnect.send("get_tree", [["sid", conf.user.sid], ["wid", conf.user.wid], ["type", this.type], ["id", id]]);
+                } else {
+                    this.loading = false;
+                    this.lastid = null;
+                    this.onChange();
+                }
 	}
 };
 // }}}
