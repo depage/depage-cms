@@ -1085,6 +1085,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = $xml_proc->get_file_info($param);
         } else if ($func == 'doctype') {
             $value = $xml_proc->get_doc_type($param);
+        } else if ($func == 'atomizetext') {
+            $value = "<atomized><span>" . str_replace(" ", "</span> <span>", htmlspecialchars($param)) . "</span></atomized>";
         }
     } else if ($scheme == $conf->url_page_scheme_intern) {
         list($id, $param) = explode('/', trim($param, '/'), 2);
