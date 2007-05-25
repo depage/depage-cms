@@ -212,7 +212,11 @@ class ttUser{
                 FROM $conf->db_table_sessions_win 
                 WHERE sid='$sid'"
             );
-
+            db_query(
+                "DELETE
+                FROM $conf->db_table_auth_updates
+                WHERE sid='$sid'"
+            );
             $log->add_entry("'{$data['name']}' has logged out Project '{$data['project']}' from '{$data['ip']}'", "auth");
         }
         mysql_free_result($result);
