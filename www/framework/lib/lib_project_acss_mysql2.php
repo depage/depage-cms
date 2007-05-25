@@ -569,6 +569,9 @@ class project_acss_mysql2 extends project {
                     tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
                 case 'colors':
+                    //@todo regenerate colors
+                    $log->add_entry("regenerate colors, because color saved");
+
                     tpl_engine::clear_transform_cache($project_name, 'preview');
                     break;
                 case 'tpl_template_data':
@@ -713,14 +716,20 @@ class project_acss_mysql2 extends project {
     function add_page_data_element($project_name, $target_id, $newname, $page_data = '') {
         global $conf, $log;
         
-        if (($xml_element = project::domxml_open_mem($page_data)) && in_array($type = $this->get_type($target_id, $data_id), array('page_data'))) {
+        if (($xml_element = project::domxml_open_mem("<root>" . $page_data . "</root>")) && in_array($type = $this->get_type($target_id, $data_id), array('page_data'))) {
             $root_node = $xml_element->document_element();
+            $temp_node = $root_node->first_child();
             $page_id = $this->get_page_id_by_page_data_id($project_name, $target_id);
 
             $languages = $this->get_languages($project_name);
             $this->_test_pageObj_languages($xml_element, $this->xmldb->get_attribute($page_id, '', 'multilang'), $languages);
 
-            $new_id = $this->xmldb->save_node(&$root_node, $target_id);                
+            $new_id = $this->xmldb->save_node(&$temp_node, $target_id);                
+            $temp_node = $temp_node->next_sibling();
+            while ($temp_node != null) {
+                $new_id = $this->xmldb->save_node(&$temp_node, $target_id);                
+                $temp_node = $temp_node->next_sibling();
+            }
             if (($page_data_id = $this->_set_element_lastchange_UTC($target_id)) != null) {
                 tpl_engine::delete_from_transform_cache($project_name, $page_data_id, 'preview');
             }
@@ -899,6 +908,10 @@ class project_acss_mysql2 extends project {
                 case 'colors':
                     $changed_ids = $this->xmldb->unlink_node_by_id($id);
                     tpl_engine::clear_transform_cache($project_name, 'preview');
+                    
+                    //@todo regenerate colors
+                    $log->add_entry("regenerate colors, because color deleted");
+
                     $this->xmldb->clear_deleted_nodes();
                     break;
                 case 'settings':
@@ -1010,6 +1023,10 @@ class project_acss_mysql2 extends project {
                     }
 
                     $new_id = $this->xmldb->save_node($root_node, $target_id, $target_pos);
+                    
+                    //@todo regenerate colors
+                    $log->add_entry("regenerate colors, because color duplicated");
+
                     break;
                 case 'settings':
                     $target_id = $this->xmldb->get_parent_id_by_id($id);
