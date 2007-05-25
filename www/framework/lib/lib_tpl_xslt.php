@@ -1072,6 +1072,9 @@ function urlSchemeHandler($processor, $scheme, $param) {
                 $xml_proc->add_extras_to_navigation($xml_proc->project, $xml_proc->id, $xml_proc->type, $xml_proc->lang, $xml_navigation);
             }
             $value = $xml_navigation->dump_mem(false);
+        } else if ($func == 'colors') {
+            $xml_colors = $xml_proc->get_colors($xml_proc->project);
+            $value = $xml_colors->dump_mem(false);
         } else if ($func == 'languages') {
             $xml_languages = $xml_proc->get_languages($xml_proc->project);
             $value = $xml_languages->dump_mem(false);
