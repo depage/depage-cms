@@ -71,6 +71,7 @@ class project_acss_mysql2 extends project {
                 "{$conf->ns['edit']['ns']}:template",        //template publish 
                 "{$conf->ns['edit']['ns']}:newnode",        //template newnode
                 "{$conf->ns['edit']['ns']}:plain_source",    //plain source
+                "{$conf->ns['edit']['ns']}:table",    //table source
                 "p",                                        //text paragraphs
             )
         );

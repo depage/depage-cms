@@ -169,7 +169,7 @@ class_propBox.prototype.save = function(forceSave) {
 	}
 };
 // }}}
-// {{{ saveDat()
+// {{{ saveData()
 class_propBox.prototype.saveData = function(forceSave) {
 	if (this.isChanged == true || forceSave == true) {
 		this._parent.propObj.save(this.data.nid);
@@ -291,7 +291,7 @@ class_propBox_edit_text_singleline.prototype.generateComponents = function() {
 	};
 };
 // }}}
-// {{{ setComonents()
+// {{{ setComponents()
 class_propBox_edit_text_singleline.prototype.setComponents = function() {
 	this.inputBox._x = this.settings.border_left;
 	this.inputBox._y = this.settings.border_top;
@@ -1005,6 +1005,93 @@ class_propBox_edit_text_headline.prototype.formatSelection = class_propBox_edit_
 // }}}
 
 /*
+ *	Class PropBox_edit_colorscheme
+ *
+ *	Extends class_propBox
+ *	Handles Colorscheme inside a page
+ */
+// {{{ constructor
+class_propBox_edit_colorscheme = function() {};
+class_propBox_edit_colorscheme.prototype = new class_propBox();
+
+class_propBox_edit_colorscheme.prototype.propName = [];
+class_propBox_edit_colorscheme.prototype.propName[0] = conf.lang.prop_name_page_colorscheme;
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_colorscheme.prototype.generateComponents = function() {
+        val = Array(conf.lang.prop_name_edit_colorscheme_none);
+        val = val.concat(conf.project.tree.colors.getColorschemes());
+	this.attachMovie("component_comboBox", "comboBox", 2, {
+		values	: val
+	});
+	this.comboBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	
+	this.attachMovie("prop_page_colorscheme_preview", "preview", 3);
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_colorscheme.prototype.setData = function() {
+	var i;
+	
+	super.setData();
+	
+	for (i = 0; i < this.comboBox.values.length; i++) {
+		if (this.comboBox.values[i] == this.data.attributes.value) {
+			this.comboBox.selected = i;	
+		}
+	}
+	if (this.comboBox.selected == null) {
+		this.comboBox.selected = 0;
+		this.save();	
+	}
+	this.comboBox.select();
+	
+	this.preview.colors = conf.project.tree.colors.getColors(this.comboBox.values[this.comboBox.selected]);
+	this.preview.showColors();
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_colorscheme.prototype.saveData = function(forceSave) {
+	if (this.isChanged == true || forceSave == true) {
+            if (this.comboBox.values[this.comboBox.selected] == conf.lang.prop_name_edit_colorscheme_none) {
+                this.data.attributes.value = "";
+            } else {
+                this.data.attributes.value = this.comboBox.values[this.comboBox.selected];
+            }
+
+            this._parent.propObj.save(this.data.nid);
+            this.isChanged = false;
+	}
+	return true;
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_colorscheme.prototype.setComponents = function() {
+        if (this.comboBox.values[this.comboBox.selected] == conf.lang.prop_name_edit_colorscheme_none) {
+            this.preview._visible = false;
+            previewWidth = 0;
+        } else {
+            this.preview._visible = true;
+
+            this.preview.setColorPos((this.width - this.settings.border_left - this.settings.border_right) / 2);
+            
+            this.preview._x = this.width - this.settings.border_right - this.preview.width;
+            this.preview._y = this.settings.border_top;
+            previewWidth = this.preview.width;
+        }
+	
+	this.comboBox._x = this.settings.border_left;
+	this.comboBox._y = this.settings.border_top;
+        this.comboBox.width = this.width - this.settings.border_left - this.settings.border_right - previewWidth - 5;
+			
+	this.innerHeight = this.settings.minInnerHeight > this.preview.height ? this.settings.minInnerHeight : this.preview.height;
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+};
+// }}}
+
+/*
  *	Class PropBox_page_date
  *
  *	Extends class_propBox
@@ -1065,42 +1152,19 @@ class_propBox_pg_date.prototype.setComponents = function() {
  */
 // {{{ constructor
 class_propBox_pg_colorscheme = function() {};
-class_propBox_pg_colorscheme.prototype = new class_propBox();
-
-class_propBox_pg_colorscheme.prototype.propName = [];
-class_propBox_pg_colorscheme.prototype.propName[0] = conf.lang.prop_name_page_colorscheme;
+class_propBox_pg_colorscheme.prototype = new class_propBox_edit_colorscheme();
 // }}}
 // {{{ generateComponents()
 class_propBox_pg_colorscheme.prototype.generateComponents = function() {
+        val = conf.project.tree.colors.getColorschemes();
 	this.attachMovie("component_comboBox", "comboBox", 2, {
-		values	: conf.project.tree.colors.getColorschemes()
+		values	: val
 	});
 	this.comboBox.onChanged = function() {
 		this._parent.onChanged();
 	};
 	
 	this.attachMovie("prop_page_colorscheme_preview", "preview", 3);
-};
-// }}}
-// {{{ setData()
-class_propBox_pg_colorscheme.prototype.setData = function() {
-	var i;
-	
-	super.setData();
-	
-	for (i = 0; i < this.comboBox.values.length; i++) {
-		if (this.comboBox.values[i] == this.data.attributes.colorscheme) {
-			this.comboBox.selected = i;	
-		}
-	}
-	if (this.comboBox.selected == null) {
-		this.comboBox.selected = 0;
-		this.save();	
-	}
-	this.comboBox.select();
-	
-	this.preview.colors = conf.project.tree.colors.getColors(this.comboBox.values[this.comboBox.selected]);
-	this.preview.showColors();
 };
 // }}}
 // {{{ saveData()
@@ -1112,21 +1176,6 @@ class_propBox_pg_colorscheme.prototype.saveData = function(forceSave) {
 		this.isChanged = false;
 	}
 	return true;
-};
-// }}}
-// {{{ setComponents()
-class_propBox_pg_colorscheme.prototype.setComponents = function() {
-	this.preview.setColorPos((this.width - this.settings.border_left - this.settings.border_right) / 2);
-	
-	this.preview._x = this.width - this.settings.border_right - this.preview.width;
-	this.preview._y = this.settings.border_top;
-	
-	this.comboBox._x = this.settings.border_left;
-	this.comboBox._y = this.settings.border_top;
-	this.comboBox.width = this.width - this.settings.border_left - this.settings.border_right - this.preview.width - 5;
-			
-	this.innerHeight = this.settings.minInnerHeight > this.preview.height ? this.settings.minInnerHeight : this.preview.height;
-	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 };
 // }}}
 
@@ -1548,6 +1597,96 @@ class_propBox_edit_plain_source.prototype.saveData = function(forceSave) {
 	this.data.appendChild(tempXML.createTextNode(newText));
 
 	return super.saveData(forceSave);
+};
+// }}}
+
+/*
+ *	Class PropBox_edit_element_source
+ *
+ *	Extends class_propBox_edit_plain_source
+ *	Handles Source-Elements
+ */
+// {{{ constructor
+class_propBox_edit_element_source = function() {};
+class_propBox_edit_element_source.prototype = new class_propBox_edit_plain_source();
+
+class_propBox_edit_element_source.prototype.propName = [];
+class_propBox_edit_element_source.prototype.propName[0] = conf.lang.prop_name_edit_plain_source;
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_element_source.prototype.generateComponents = function() {
+	if (conf.user.mayEditSourceCode()) {
+		super.generateComponents();	
+	} else {
+		this.generateComponentsNoRight();
+	}
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_element_source.prototype.setComponents = function() {
+	if (conf.user.mayEditSourceCode()) {
+		super.setComponents();	
+	} else {
+		this.setComponentsNoRight();
+	}
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_element_source.prototype.setData = function() {
+	var newText;
+        var tempNode;
+        var tempNodeClone;
+
+	if (conf.user.mayEditSourceCode()) {
+		super.setData();
+
+                tempNode = this.data.firstChild;
+                while (tempNode != null) {
+                    tempNodeClone = tempNode.cloneNode(true);
+                    tempNodeClone.removeIdAttribute();
+                    newText += tempNodeClone.toString();
+                    tempNode = tempNode.nextSibling;
+                }
+                this.textBox.text = newText;
+		this._parent.setHeight();
+	}
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_element_source.prototype.saveData = function(forceSave) {
+	var newText;
+        newText = this.textBox.htmlText.removeUnwantedTags(["p"])
+        newText = newText.replace([
+                ["<p>"		, ""],
+                ["</p>"		, "\n"],
+                ["&lt;"		, "<"],
+                ["&gt;"		, ">"],
+                ["&quot;"	, "\""],
+                ["&apos;"	, "'"],
+                ["&amp;"	, "&"]
+        ]);
+
+	var tempXML = new XML("<temp>" + newText + "</temp>");
+	var tempNode = tempXML.firstChild;
+	var i;
+	
+	if (tempXML.status == 0) {
+		while (this.data.hasChildNodes()) {
+			this.data.firstChild.removeNode();
+		}
+                for (i = 0; i < tempNode.childNodes.length; i++) {
+                    this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
+                }
+                if (this.isChanged == true || forceSave == true) {
+                        this._parent.propObj.save(this.data.nid);
+                        this.isChanged = false;
+                }
+                return true;
+	} else {
+		alert(conf.lang.error_prop_xslt_template + "\n\n" + conf.lang["error_parsexml" + tempXML.status]);
+
+		return false;
+	}
 };
 // }}}
 
@@ -3685,6 +3824,8 @@ Object.registerClass("prop_edit_text_headline", class_propBox_edit_text_headline
 Object.registerClass("prop_edit_a", class_propBox_edit_a);
 Object.registerClass("prop_edit_img", class_propBox_edit_img);
 Object.registerClass("prop_edit_date", class_propBox_edit_date);
+Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
+Object.registerClass("prop_edit_table", class_propBox_edit_element_source);
 // }}}
 // {{{ colorschemes
 Object.registerClass("prop_proj_colorscheme", class_propBox_proj_colorscheme);

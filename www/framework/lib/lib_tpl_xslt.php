@@ -270,9 +270,10 @@ class tpl_engine_xslt extends tpl_engine {
      * @return    $transformed (string) posttransformed data
      */
     function _post_transform($project_name, $type, $transformed) {
+        /* @todo take care that html files are served ase UTF-8
         if (function_exists('mb_encode_numericentity')) {
             $transformed = $this->_to_entity($transformed, $this->content_encoding);
-        }
+        }*/
         
         return $transformed;
     }
@@ -1090,6 +1091,23 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = $xml_proc->get_doc_type($param);
         } else if ($func == 'atomizetext') {
             $value = "<atomized><span>" . str_replace(" ", "</span> <span>", htmlspecialchars($param)) . "</span></atomized>";
+        } else if ($func == 'replaceEmailChars') {
+            $email = htmlspecialchars($param);
+            $original = array(
+                "@",
+                ".",
+                "-",
+                "_",
+                );
+            $repl = array(
+                " *at* ",
+                " *punkt* ",
+                " *minus* ",
+                " *unterstrich* ",
+                );
+            $value = "<email>";
+            $value .= str_replace($original, $repl, $param);
+            $value .= "</email>";
         }
     } else if ($scheme == $conf->url_page_scheme_intern) {
         list($id, $param) = explode('/', trim($param, '/'), 2);

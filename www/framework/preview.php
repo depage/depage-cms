@@ -189,7 +189,6 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
     }
 } else {
     die_error('you are not logged in' );
-    //die_error('you are not logged in', '../');
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

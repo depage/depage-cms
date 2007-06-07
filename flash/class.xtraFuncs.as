@@ -960,6 +960,19 @@ XMLNode.prototype.removeIds = function() {
 	}
 };
 // }}}
+// {{{ XMLNode.removeIdAttribute();
+XMLNode.prototype.removeIdAttribute = function() {
+	var i;
+	
+	if (this.nodeType == 1) {
+                delete this.attributes[conf.ns.database + ":id"];	
+		delete this.nid
+		for (i = 0; i < this.childNodes.length; i++) {
+			this.childNodes[i].removeIdAttribute();	
+		}
+	}
+};
+// }}}
 // {{{ XMLNode.searchForId()
 XMLNode.prototype.searchForId = function(id) {
 	var i, val;
