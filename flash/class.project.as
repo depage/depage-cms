@@ -80,7 +80,9 @@ class_project.prototype.parseProjectData = function(xml_data) {
 				this.prop[tempType].treeObj = this.tree[tempType];
 			}
 		}
-	}
+	} else {
+            alert("error while loading projectData");
+        }
 	this.waitForLoaded();
 };	
 // }}}
@@ -127,7 +129,7 @@ class_project.prototype.preview = function(forcePreview) {
 		} else {
 			var previewTimeout = 100;
 		}
-		if (this.previewNode != null && (conf.user.settings.preview_automatic == 2 || (conf.user.settings.preview_automatic == 1 && this.previewId != tempNode.nid) || forcePreview)) {
+		if (tempNode.nid != null && ((conf.user.settings.preview_automatic == 2 || (conf.user.settings.preview_automatic == 1 && this.previewId != tempNode.nid) || forcePreview))) {
 			if (this.preview_setIdFromOutside) {
 				this.preview_setIdFromOutside = false;
 				if (this.previewId != tempNode.nid) {

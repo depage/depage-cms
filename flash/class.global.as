@@ -3,7 +3,7 @@
  * Class Global
  *
  * actionScript-library:
- * (c)2003 jonas [jonas.info@gmx.net]
+ * (c)2003-2007 Frank Hellenkamp [jonas@depagecms.net]
  */
 
 /*

@@ -10,16 +10,16 @@ class_interface = function() {};
 // {{{ init()
 class_interface.prototype.init = function(movClip, projectType) {
 	this.movClip = movClip;
-	this.type = projectType;
+	this.projectType = projectType;
 	this.layouts = new Object();
 	this.activeLayout = null;
-	
+
 	this.generateGlobalComponents();
 };
 // }}}
 // {{{ generateGlobalComponents
 class_interface.prototype.generateGlobalComponents = function() {
-	if (this.type == "webProject") {
+	if (this.projectType == "webProject") {
 		this.movClip.attachMovie("rectangle_back", "back_left", 1, {
 			_x	: 35,
 			_y	: 0
@@ -65,7 +65,7 @@ class_interface.prototype.onKeyUp = function() {
 // {{{ initSettings()
 class_interface.prototype.initSettings = function() {
 	Key.addListener(this);
-	if (this.type == "webProject") {
+	if (this.projectType == "webProject") {
 		//interface layouts
 		this.layouts.editPages = new class_interfaceLayout_editPages(this, conf.lang.register_name_edit_pages);
 		this.layouts.editPages.init();
@@ -224,7 +224,7 @@ class_interface.prototype.choose_preview_type = function(index, previewType) {
 // }}}
 // {{{ onResize()
 class_interface.prototype.onResize = function() {
-	if (this.type == "webProject") {
+	if (this.projectType == "webProject") {
 		if ((Stage.width - this.movClip.register._x) / 2 < this.movClip.divider_vertical._x - this.movClip.register._x || Stage.width < 475) {
 			this.divider_vertical._x = int(this.register._x + (Stage.width - this.register._x) / 2);	
  		} else if (this.movClip.divider_vertical._x < int(this.movClip.register._x + 220)) {
@@ -249,7 +249,7 @@ class_interface.prototype.onResize = function() {
 class_interface.prototype.setDivider = function() {
 	var i;
 	
-	if (this.type == "webProject") {
+	if (this.projectType == "webProject") {
 		this.movClip.divider_vertical._x = int(this.movClip.divider_vertical._x);
 
 		this.movClip.back_left._width = this.movClip.divider_vertical._x - this.movClip.register._x - 10;

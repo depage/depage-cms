@@ -665,7 +665,6 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 							add_node_string += temp_node.childNodes[j].firstChild.nodeValue;
 						}
 					}
-                                        break;
 				}
 			}	
 		}
