@@ -768,6 +768,13 @@ class rpc_bgtask_functions extends rpc_functions_class {
  */ 
 set_error_handler('taskErrorHandler');
 
+if (!$conf->pocket_use) {
+    //init objects
+    $task_control = new bgTasks_control($conf->db_table_tasks, $conf->db_table_tasks_threads);
+    $pocket_server = "";
+    register_shutdown_function(array($task_control, "handle_tasks"), array($pocket_server));
+}
+
 $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
 $task->load_by_id($argv[1]);
 if (($status = $task->get_status()) == 'wait_for_start') {
