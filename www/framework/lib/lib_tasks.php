@@ -184,7 +184,9 @@ class bgTasks_control {
         $message = $func->create_msg_func();
         
         if ($depender == '') {
-            $pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message));
+            if (is_object($pocketServerObj)) {
+                $pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message));
+            }
         } else if ($depender == 'project') {
             $users = $project->user->get_loggedin_nonpocket();
             foreach ($users as $act_sid => $act_project) {
@@ -193,7 +195,9 @@ class bgTasks_control {
                 }
             }
 
-            $pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message, 'project' => $depends_on));
+            if (is_object($pocketServerObj)) {
+                $pocketServerObj->msgHandler->funcObj->send_message_to_clients(array('serverObj' => $pocketServerObj, 'message' => $message, 'project' => $depends_on));
+            }
         } else if ($depender == 'user') {
             
         }
@@ -218,6 +222,33 @@ class bgTasks_control {
         mysql_free_result($result);
         
         return $row['num'];
+    }
+    // }}}
+    // {{{ get_tasks()
+    /**
+     * gets all tasks
+     *
+     * @public
+     *
+     * @return    $ids (array) ids and other information of planned tasks
+     */
+    function get_tasks() {
+        $ids = array();
+        
+        $result = db_query(
+            "SELECT name, id, depends_on 
+            FROM $this->taskTable"
+        );
+        if ($result) {
+            $num = mysql_num_rows($result);
+            for ($i = 0; $i < $num; $i++) {
+                $row = mysql_fetch_assoc($result);
+                $ids[] = $row;
+            }
+        }
+        mysql_free_result($result);
+        
+        return $ids;
     }
     // }}}
     // {{{ get_planned_tasks()
@@ -815,7 +846,7 @@ class bgTasks_task {
             $value['time_from_start'] = round($value['time_from_start']);
             $value['time_at_all'] = round($value['time_at_all']);
             $value['time_until_end'] = round($value['time_until_end']);
-            $value['percent'] = round($value['percent'] * 98);
+            $value['percent'] = round($value['percent'] * 99);
             $value['description'] = $this->get_description();
         }
         mysql_free_result($result);
