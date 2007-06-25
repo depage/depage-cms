@@ -1472,5 +1472,12 @@ $msg = ($msgHandler->create_msg($value));
 echo($msg);
 flush();
 
+if (!$conf->pocket_use) {
+    //init objects
+    $task_control = new bgTasks_control($conf->db_table_tasks, $conf->db_table_tasks_threads);
+    $pocket_server = "";
+    register_shutdown_function(array($task_control, "handle_tasks"), array($pocket_server));
+}
+
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>
