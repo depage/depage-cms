@@ -60,6 +60,41 @@ class ttUser{
         return $xml;
     }
     // }}}
+    // {{{ get_loggedin_users()
+    function get_loggedin_users() {
+        global $conf, $log;
+
+        $loggedin= array();
+        
+        // remove users which login is outdated
+        $result = db_query(
+            "SELECT sid 
+            FROM $conf->db_table_sessions
+            WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
+        );
+        if (($num = mysql_num_rows($result)) > 0) {
+            for ($i = 0; $i < $num; $i++) {
+                $data = mysql_fetch_assoc($result);
+                $this->logout($data['sid']);
+            }
+        }
+
+        // get logged in users
+        $result = db_query(
+            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update, sessions_win.port
+            FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions, $conf->db_table_sessions_win AS sessions_win
+            WHERE user.id=sessions.userid AND sessions.sid=sessions_win.sid"
+        );
+        if ($result && ($num = mysql_num_rows($result)) > 0) {
+            for ($i = 0; $i < $num; $i++) {
+                $data = mysql_fetch_object($result);
+                $loggedin[] = $data;
+            }
+        }
+
+        return $loggedin;
+    }
+    // }}}
     // {{{ get_loggedin_count()
     function get_loggedin_count() {
         global $conf, $log;

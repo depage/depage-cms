@@ -50,6 +50,22 @@ class htmlout {
                     color : #000000;
                     margin-bottom : 10px;
                 }
+                h1 {
+                    padding-top: 10px;
+                }
+                ul {
+                    list-style: none;
+                    padding-left: 10px;
+                    text-indent: 0px;
+                    padding-bottom: 10px;
+                }
+                li {
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                }
+                a {
+                    color: #882200;
+                }
                 -->
             </style>
         <?php    

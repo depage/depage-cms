@@ -73,6 +73,7 @@ $texts = array(
 	'inhtml_preview_error' => "Error in transformation",
 	'inhtml_require_javascript' => "You have to activate javascript to use %app_name%.",
 	'inhtml_require_title' => "requirements",
+	'inhtml_status_title' => "%app_name% %app_version% status",
 	'msg_choose_file_link' => "Please, choose a file to link to:",
 	'msg_choose_img' => "Please, choose an image:",
 	'msg_choose_page' => "Please, choose a page to link to:",

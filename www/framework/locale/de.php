@@ -73,6 +73,7 @@ $texts = array(
 	'inhtml_preview_error' => "Fehler beim Transformieren",
 	'inhtml_require_javascript' => "Sie müssen Javascript aktivieren, um %app_name% nutzen zu können",
 	'inhtml_require_title' => "Systemanforderungen",
+	'inhtml_status_title' => "%app_name% %app_version% Status",
 	'msg_choose_file_link' => "Bitte wählen sie die Datei aus, die verlinkt werden soll:",
 	'msg_choose_img' => "Bitte wählen sie ein Bild aus:",
 	'msg_choose_page' => "Bitte wählen sie die Seite aus, die verlinkt werden soll:",
