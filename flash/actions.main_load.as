@@ -82,7 +82,7 @@
 	function pocket_connect_fault() {
 		status(conf.lang.start_pocket_reconnect);
 
-		if (_root.pocketConnect.connectFaults < 2 && conf.puse != "false") {
+		if (_root.pocketConnect.connectFaults < 1 && conf.puse != "false") {
 			interface.loadBox_setText(conf.lang.start_pocket_reconnect);
 			pocket_connect();
 		} else {
