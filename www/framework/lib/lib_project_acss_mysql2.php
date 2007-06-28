@@ -307,7 +307,7 @@ class project_acss_mysql2 extends project {
         $lib_path = $this->get_project_path($project_name) . "/lib";
         $fs_access = fs::factory('local');
 
-            $dir_str = "<{$conf->ns['project']['ns']}:dir name=\"" . $project_name . "\">";
+        $dir_str = "<{$conf->ns['project']['ns']}:dir name=\"" . $project_name . "\">";
         $dir_str .= $this->_get_lib_tree_dir($fs_access, $lib_path);
         $dir_str .= "</{$conf->ns['project']['ns']}:dir>";
 
@@ -570,8 +570,7 @@ class project_acss_mysql2 extends project {
                     tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
                 case 'colors':
-                    //@todo regenerate colors
-                    $log->add_entry("regenerate colors, because color saved");
+                    $this->generate_css($project_name);
 
                     tpl_engine::clear_transform_cache($project_name, 'preview');
                     break;
@@ -910,8 +909,7 @@ class project_acss_mysql2 extends project {
                     $changed_ids = $this->xmldb->unlink_node_by_id($id);
                     tpl_engine::clear_transform_cache($project_name, 'preview');
                     
-                    //@todo regenerate colors
-                    $log->add_entry("regenerate colors, because color deleted");
+                    $this->generate_css($project_name);
 
                     $this->xmldb->clear_deleted_nodes();
                     break;
@@ -1025,8 +1023,7 @@ class project_acss_mysql2 extends project {
 
                     $new_id = $this->xmldb->save_node($root_node, $target_id, $target_pos);
                     
-                    //@todo regenerate colors
-                    $log->add_entry("regenerate colors, because color duplicated");
+                    $this->generate_css($project_name);
 
                     break;
                 case 'settings':
@@ -1366,6 +1363,29 @@ class project_acss_mysql2 extends project {
             }
         }
         return $new_id;
+    }
+    // }}}
+    // {{{ generate_css()
+    function generate_css($project_name) {
+        global $log, $xml_proc;
+
+        $xml_proc = tpl_engine::factory('xslt', $param);
+        //@todo eventually get css-types by settings instead of a hard-coded array
+        $types = array(
+            "global",
+            "screen",
+            "print",
+        );
+
+        $lib_path = $this->get_project_path($project_name) . "/lib";
+        $fs_access = fs::factory('local');
+        
+        //@todo get template name for the stylesheet (at the moment hardcoded to html)
+        foreach ($types as $type) {
+            $transformed = $xml_proc->generate_page_css($project_name, "html", $type);
+            //@todo write css to cache instead of library and get css also by preview/cache
+            $fs_access->f_write_string("$lib_path/css/test_$type.css", $transformed['value']);
+        }
     }
     // }}}
 

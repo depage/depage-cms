@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: test.php,v 1.52 2004/11/12 19:45:31 jonas Exp $
+ * 
  */
     // {{{ define and includes
     define("IS_IN_CONTOOL", true);
@@ -14,13 +14,14 @@
     require_once("lib_files.php");
     require_once("Archive/tar.php");
     // }}}
-    
-    $texts = $conf->getTexts("en", "", false);
-    echo("<?php \n\n\$text = array(\n");
-    foreach($texts as $name => $text) {
-        echo("\t'$name' => \"$text\",\n");
-    }
-    echo(");\n\n?>");
+
+    $xml_proc = tpl_engine::factory('xslt', $param);
+    $project_name = "RLM Trier";
+    $transformed = $xml_proc->generate_page_css($project_name, "html", "screen");
+
+    echo("<html><body><pre>");
+    echo($transformed['value']);
+    echo("</pre></body></html>");
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>

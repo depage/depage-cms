@@ -145,6 +145,113 @@ class tpl_engine_xslt extends tpl_engine {
         return $transformed;
     }
     // }}}
+    // {{{ generate_page_css()
+    /**
+     * generates the the cascading stylesheets
+     *
+     * @public
+     *
+     * @param    $project_name (string) project name
+     * @param    $type (string) name of template-set that should be used
+     * @param    $lang (string) current language
+     * @param    $use_cached_template (bool) true, if to use cached template, false for using template from db for previewing
+     */
+    function generate_page_css($project_name, $type, $media_type, $lang = '', $use_cached_template = true) {
+        global $conf, $log;
+        
+        if ($lang == '') {
+            $output_languages = array();
+            $xml_temp = $this->get_languages($project_name);
+            $xpath_temp = project::xpath_new_context($xml_temp);
+            $xfetch = xpath_eval($xpath_temp, "/{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language/@shortname");
+            for ($i = 0; $i < count($xfetch->nodeset); $i++) {
+                $output_languages[$i] = $xfetch->nodeset[$i]->get_content();
+            }
+            $lang = $output_languages[0];
+        }
+        
+        $this->project = $project_name;
+        $this->type = $type;
+        $this->id = -1;
+        $this->lang = $lang;
+        $this->use_cached_template = $use_cached_template;
+        $this->ids_used = array();
+        $this->media_type = $media_type;
+        $transformed = array();
+        
+        $settings = $this->get_settings($project_name, $type);
+        $tempNode = $settings->document_element();
+        
+        $this->method = $tempNode->get_attribute('method');
+        $this->indent = $tempNode->get_attribute('indent');
+        $this->content_encoding = $tempNode->get_attribute('encoding');
+        $this->content_type = $this->methods[$this->method];
+        
+        //set variables
+        $this->variables = array(
+            'tt_actual_id' => "'{$this->id}'",
+            'tt_lang' => "'{$this->lang}'",
+            'tt_multilang' => "/{$conf->ns['page']['ns']}:page/@multilang",
+            'content_type' => "'{$this->content_type}'",
+            'content_encoding' => "'{$this->content_encoding}'",
+            'media_type' => "'{$this->media_type}'",
+        );
+        
+        $xml_colors = $this->get_colors($this->project);
+        $xpath_colors = project::xpath_new_context($xml_colors);
+            
+        // get available colorschemes
+        $colorschemes = array();
+        $xfetch = xpath_eval($xpath_colors, "/{$conf->ns['project']['ns']}:colorschemes/{$conf->ns['project']['ns']}:colorscheme");
+        if (count($xfetch->nodeset) > 0) {
+            foreach ($xfetch->nodeset as $tcs) {
+                if ($tcs->get_attribute('name') != "tree_name_color_global") {
+                    $colorschemes[] = "'" . $tcs->get_attribute('name') . "'";
+                }
+            }
+        }
+        if (!in_array($this->variables['tt_actual_colorscheme'], $colorschemes)) {
+            $this->variables['tt_actual_colorscheme'] = $colorschemes[0];
+        }
+        
+        // add global colors
+        $xfetch = xpath_eval($xpath_colors, "/{$conf->ns['project']['ns']}:colorschemes/{$conf->ns['project']['ns']}:colorscheme[@{$conf->ns['database']['ns']}:name=\"tree_name_color_global\"]/color");
+        for ($i = 0; $i < count($xfetch->nodeset); $i++) {
+            $this->variables['ttc_' . $xfetch->nodeset[$i]->get_attribute('name')] = "'" . $xfetch->nodeset[$i]->get_attribute('value') . "'";
+        }
+        // @todo add all colorschemes or get it as xml inside of template
+        // add colors from colorscheme
+        $xfetch = xpath_eval($xpath_colors, "/{$conf->ns['project']['ns']}:colorschemes/{$conf->ns['project']['ns']}:colorscheme[@name=" . $this->variables['tt_actual_colorscheme'] . "]/color");
+        for ($i = 0; $i < count($xfetch->nodeset); $i++) {
+            $this->variables['ttc_' . $xfetch->nodeset[$i]->get_attribute('name')] = "'" . $xfetch->nodeset[$i]->get_attribute('value') . "'";
+        }
+        
+        //process data
+        if ($this->use == 'sablotron') {
+            // Allocate a new XSLT processor
+            $schemeHandlerArray = array(
+                'get_all' => 'urlSchemeHandler',
+            );
+            $xh = xslt_create();
+            xslt_set_scheme_handlers($xh, $schemeHandlerArray);
+            
+            // Process the document
+            $result = xslt_process($xh, "get:css", "get:template/{$this->type}/" . ($this->use_cached_template ? 'cached' : 'noncached'), null, $arguments = null, $param = null);
+            if (!$result) {
+                $log->add_entry("ERROR " . xslt_errno($xh) . ": " . xslt_error($xh) . ".\n");
+                $this->error .= "ERROR " . xslt_errno($xh) . ": " . xslt_error($xh) . ".\n";
+            } else {
+                $this->error = "";
+            }
+            xslt_free($xh);
+            
+            $transformed['value'] = $this->_post_transform($project_name, $type, $result);
+            $transformed['content_type'] = $this->content_type;
+            $transformed['content_encoding'] = $this->content_encoding;
+        }
+        return $transformed;
+    }
+    // }}}
     // {{{ transform
     /**
      * generates the code for index page from template
@@ -395,6 +502,35 @@ class tpl_engine_xslt extends tpl_engine {
             $docdef .= " xmlns:{$ns['ns']}=\"{$ns['uri']}\" ";
         }
         $docdef .= " />";
+        
+        
+        return domxml_open_mem($docdef);
+    }
+    // }}}
+    // {{{ get_page_css()
+    /**
+     * gets xml data to generate cascading stylesheets
+     *
+     * @public
+     *
+     * @param    $type (string) type of stylesheet (global|screen|print|handheld(?))
+     *
+     * @return    $data (xmlobject) data
+     */
+    function &get_page_css($type) {
+        global $conf;
+        
+        $docdef = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+        $docdef .= "<!DOCTYPE ttdoc [";
+        for ($i = 0; $i < count($conf->global_entities); $i++) {
+            $docdef .= "<!ENTITY {$conf->global_entities[$i]} \"&amp;{$conf->global_entities[$i]};\" >";
+        }
+        $docdef .= "]>";
+        $docdef .= "<{$conf->ns['page']['ns']}:css ";
+        foreach($conf->ns as $ns_key => $ns) {
+            $docdef .= " xmlns:{$ns['ns']}=\"{$ns['uri']}\" ";
+        }
+        $docdef .= " type=\"$type\" />";
         
         
         return domxml_open_mem($docdef);
@@ -1063,6 +1199,9 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = $xml_page_data->dump_mem(false);
         } else if ($func == 'redirect') {
             $xml_page_data = $xml_proc->get_page_redirect($id);
+            $value = $xml_page_data->dump_mem(false);
+        } else if ($func == 'css') {
+            $xml_page_data = $xml_proc->get_page_css($id);
             $value = $xml_page_data->dump_mem(false);
         } else if ($func == 'template') {
             $xml_template = $xml_proc->get_template($xml_proc->project, $id, $param == "cached", $xml_proc->variables);
