@@ -844,6 +844,7 @@ class project_acss_mysql2 extends project {
                     break;
                 case 'colors':
                     tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $this->generate_css($project_name);
                     break;
             }
         } else if ($type) {
