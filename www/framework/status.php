@@ -10,6 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+    // {{{ init
     define("IS_IN_CONTOOL", true);
         
     require_once('lib/lib_global.php');
@@ -26,10 +27,12 @@
     foreach ($lang as $key => $text) {
         $lang_keys[] = "%$key%";
     }
+    // }}}
     
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
+    <!-- {{{ head -->
     <head>
         <title><?php echo(str_replace(array("%app_name%", "%app_version%"), array($conf->app_name, $conf->app_version), $lang["inhtml_status_title"])); ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -40,7 +43,9 @@
         </script>
         <?php htmlout::echoStyleSheet(); ?>
     </head>
+    <!-- }}} -->
     <body bgcolor="<?php echo($settings['color_face']); ?>">            
+        <!-- {{{ Users -->
         <h1>Logged in users</h1>
         <?php
             $user = $project->user->get_loggedin_users();
@@ -59,7 +64,8 @@
                 echo("<p>none</p>");
             }
         ?>
-
+        <!-- }}} -->
+        <!-- {{{ Tasks -->
         <h1>Tasks</h1>
         <?php
             $task_control = new bgTasks_control($conf->db_table_tasks, $conf->db_table_tasks_threads);
@@ -88,6 +94,24 @@
                 echo("<p>none</p>");
             }
         ?>
+        <!-- }}} -->
+        <!-- {{{ Pocket-Server -->
+        <h1>Pocket Server</h1>
+        <?php
+            $running = $conf->get_tt_env('pocket_server_running');
+            if ($running == 0) {
+                echo("<p>stopped</p>");
+            } elseif ($running == 1) {
+                echo("<p>running</p>");
+            } elseif ($running == -1) {
+                echo("<p>stopping</p>");
+            } elseif ($running == -2) {
+                echo("<p>forcing to stop</p>");
+            } else {
+                echo("<p>unknown</p>");
+            }
+        ?>
+        <!-- }}} -->
     </body>
 </html>
 <?php
