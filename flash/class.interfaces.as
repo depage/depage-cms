@@ -507,7 +507,7 @@ class_treeDisplayData.prototype.onChange = function(node) {
 	var setActiveBy = "not set";
 
 	if (this.treeObj.data != undefined && !this.treeObj.isEmpty()) {
-		this.setShowChildrenInitLevel();
+                this.setShowChildrenInitLevel();
 		if (node != undefined) {
 			this.setActiveNode(node);
 			setActiveBy = "node, given directly to onChange function with id '" + node.nid + "'";
@@ -543,9 +543,9 @@ class_treeDisplayData.prototype.onChange = function(node) {
 		this.interfaceObj.removeProps();
 		setActiveBy = "set to null because tree is empty";
 	} 
-	if (this.treeObj.type == "pages") {
-		//alert(setActiveBy);
-	}
+        if (this.treeObj.type == "page_data") {
+            //alert(setActiveBy);
+        }
 	this.redraw(scrollToActiveNode);
 };
 // }}}
@@ -598,6 +598,8 @@ class_treeDisplayData.prototype.getLineNum = function(actualNode) {
 // }}}
 // {{{ getTreeLines()
 class_treeDisplayData.prototype.getTreeLines = function(treeLinesArray, actualChild, level) {
+        var i;
+
 	if (!this.isOpen) {
 		treeLinesArray = [];
 		return treeLinesArray;
@@ -619,12 +621,9 @@ class_treeDisplayData.prototype.getTreeLines = function(treeLinesArray, actualCh
 			}
 			
 			if (this.showChildren[actualChild.nid] || actualChild == this.treeObj.data) {
-				actualChild = actualChild.firstChild;
-				while (actualChild != null) {
-					treeLinesArray = this.getTreeLines(treeLinesArray, actualChild, level + 1);
-					
-					actualChild = actualChild.nextSibling;
-				}
+                                for (i = 0; i < actualChild.childNodes.length; i++) {
+					treeLinesArray = this.getTreeLines(treeLinesArray, actualChild.childNodes[i], level + 1);
+                                }
 			}
 			return treeLinesArray;
 		} else {
