@@ -46,7 +46,7 @@ class config {
         $inifile = parse_ini_file($this->settingsPath . $file, false);
         
         $this->app_name = 'depage';
-        $this->app_version = '1.0.3';
+        $this->app_version = '1.0.4';
 
         $vars_to_set = array(
             'xml_version' => (string) '1.0',
@@ -483,6 +483,7 @@ class config {
     function execInBackground($path, $script, $args = '', $start_low_priority = false) {
         $pro_param = '';
         
+        //@todo implement alternative through http interface if no php-cli is available or add another function execInBackgroundHttp
         if (file_exists($path . $script) || $path == '') {
             chdir($path);
             if (substr(php_uname(), 0, 7) == 'Windows') {
