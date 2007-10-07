@@ -34,6 +34,7 @@ class config {
      * @public
      */
     function config($file) {
+        // @todo change this to always use filepath relative to framework
         if (file_exists('../settings/' . $file)) {
             $this->settingsPath = '../settings/';
         } else if (file_exists('../../settings/' . $file)) {
@@ -46,7 +47,7 @@ class config {
         $inifile = parse_ini_file($this->settingsPath . $file, false);
         
         $this->app_name = 'depage';
-        $this->app_version = '1.0.4';
+        $this->app_version = '1.0.6';
 
         $vars_to_set = array(
             'xml_version' => (string) '1.0',
@@ -481,21 +482,78 @@ class config {
      * @param    $start_low_priority (bool)
      */
     function execInBackground($path, $script, $args = '', $start_low_priority = false) {
-        $pro_param = '';
-        
-        //@todo implement alternative through http interface if no php-cli is available or add another function execInBackgroundHttp
-        if (file_exists($path . $script) || $path == '') {
-            chdir($path);
-            if (substr(php_uname(), 0, 7) == 'Windows') {
-                if ($start_low_priority) {
-                    $prio_param = "/belownormal";
+        global $log;
+
+        if ($this->path_phpcli != "" && is_executable($this->path_phpcli)) {
+            // call script in background through cli executable
+            // this is the finest, because cli scripts has generally no timeout
+            // but unfortunately not available in all cases/platforms
+            if (file_exists($path . $script) || $path == '') {
+                chdir($path);
+                if (substr(php_uname(), 0, 7) == 'Windows') {
+                    if ($start_low_priority) {
+                        $prio_param = "/belownormal";
+                    }
+                    pclose(popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $this->path_phpcli) . "\" -f $script " . escapeshellarg($args), "r"));    
+                } else {
+                    if ($start_low_priority) {
+                        $prio_param = "nice -10";
+                    }
+                    exec("$prio_param \"$this->path_phpcli\" -f $script " . escapeshellarg($args) . " > /dev/null &");    
                 }
-                pclose(popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $this->path_phpcli) . "\" -f $script " . escapeshellarg($args), "r"));    
+            }
+        } else {
+            // call script through http
+            $path = pathinfo($_SERVER['REQUEST_URI']);
+            $host = $_SERVER['HTTP_HOST'];
+            if ($host == "") {
+                $host = $_SERVER['SERVER_NAME'];
+            }
+            if ($host == "") {
+                $host = $_SERVER['SERVER_ADDR'];
+            }
+            $url = "http://{$host}{$path['dirname']}/{$script}?arg=" . urlencode($args);
+            if (is_callable('curl_init')) {
+                // call script through curl-interface
+                $fp = curl_init($url);
+
+                curl_setopt($fp, CURLOPT_HEADER, false);
+                // hack for "non-blocking" -> has always a timout of 1 second
+                curl_setopt($fp, CURLOPT_TIMEOUT, 1);
+
+                curl_exec($fp);
+                curl_close($fp);
+            } else if (is_callable('fsockopen')) {
+                // call script though fsockopen-interface
+                $urlinfo = parse_url($url);
+
+                if (!isset($urlinfo['port'])) {
+                    $urlinfo['port'] = $_SERVER['SERVER_PORT'];
+                }
+                if (!isset($urlinfo['port'])) {
+                    $urlinfo['port'] = 80;
+                }
+
+                $header .= "GET {$urlinfo['path']}?{$urlinfo['query']} HTTP/1.0\r\n";
+                $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
+                $header .= "Content-Length: 0\r\n\r\n";
+
+                $fp = fsockopen ($urlinfo['host'], $urlinfo['port'], $errno, $errstr, 30);
+                if ($fp) {
+                    fputs ($fp, $header);
+                    fclose($fp);
+                } else {
+                    $log->add_entry("could not execute '$script' by '$url'\n$errorno - $errstr");
+                }
             } else {
-                if ($start_low_priority) {
-                    $prio_param = "nice -10";
+                // call script through fopen -> this is ugly because it's blocking until 
+                // called script is finished or parent script is timed out
+                $fp = fopen($url, 'r');
+                if ($fp) {
+                    fclose($fp);
+                } else {
+                    $log->add_entry("could not execute '$script' by '$url'\n$errorno - $errstr");
                 }
-                exec("$prio_param \"$this->path_phpcli\" -f $script " . escapeshellarg($args) . " > /dev/null &");    
             }
         }
     }
