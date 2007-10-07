@@ -36,7 +36,13 @@
     <head>
         <title><?php echo(str_replace(array("%app_name%", "%app_version%"), array($conf->app_name, $conf->app_version), $lang["inhtml_status_title"])); ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        <meta http-equiv="Refresh" content="3 ;URL=status.php">
+        <?php
+            if ($_GET['autorefresh'] == 'true') {
+        ?>
+            <meta http-equiv="Refresh" content="3 ;URL=status.php?autorefresh=true">
+        <?php
+            }
+        ?>
         <script language="JavaScript" type="text/JavaScript">
         <!--
         //-->
@@ -110,6 +116,44 @@
             } else {
                 echo("<p>unknown</p>");
             }
+        ?>
+        <!-- }}} -->
+        <!-- {{{ Pocket-Server -->
+        <h1>Log</h1>
+        <?php
+            $loglines = array();
+            clearstatcache();
+            $logfile = $conf->path_server_root . $conf->path_base . "/logs/depage.log";
+            $fp = fopen($logfile, "r");
+            $i = 0;
+            if ($fp) {
+                fseek($fp, -5000, SEEK_END);
+                while (!feof($fp)) {
+                    $buffer = fgets($fp);
+                    if ($i > 0) {
+                        $loglines[] = $buffer;
+                    }
+                    $i++;
+                }
+                fclose($fp);
+                for ($i = count($loglines) - 20; $i < count($loglines); $i++) {
+                    echo("<p>{$loglines[$i]}</p>");
+                }
+            }
+        ?>
+        <!-- }}} -->
+        <!-- {{{ Auto-Refresh -->
+        <h1>Settings</h1>
+        <?php
+            if ($_GET['autorefresh'] == 'true') {
+        ?>
+            <p><a href="?autorefresh=false">disable autorefresh</a><p>
+        <?php
+            } else {
+        ?>
+            <p><a href="?autorefresh=true">enable autorefresh</a><p>
+        <?php
+            } 
         ?>
         <!-- }}} -->
     </body>
