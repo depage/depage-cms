@@ -83,20 +83,27 @@ function getParameterByUrl($url, $project = "", $type = "", $access = "") {
         if (strpos($url['path'], 'dyn') === false) { 
             $param['access'] = 'index';
         } else {
-            $param['access'] = $access;
-            
             $path = explode('/', substr($url['path'], strpos($url['path'], 'dyn')));
             $pathinfo = pathinfo($url['path']);
-            $param['file_name'] = $pathinfo['basename'];
-            $param['file_extension'] = $pathinfo['extension'];
-            foreach ($conf->output_file_types AS $file_type_name => $file_type) {
-                if ($file_type['extension'] == $pathinfo['extension']) {
-                    $param['file_type'] = $file_type_name;
-                }
-            }
-            $param['file_path'] = '/' . implode('/', array_slice($path, 0));
-            $param['path'] = '/' . implode('/', array_slice($path, 0, -1));
             $param['lang'] = $path[1];
+            if ($param['lang'] == "css") {
+                $param['access'] = "css";
+                $param['file_name'] = substr($pathinfo['basename'], 0, strlen($pathinfo['basename']) - 4);
+                $param['file_extension'] = $pathinfo['extension'];
+                $param['file_path'] = '/' . implode('/', array_slice($path, 0));
+                $param['path'] = '/' . implode('/', array_slice($path, 0, -1));
+            } else {
+                $param['access'] = $access;
+                $param['file_name'] = $pathinfo['basename'];
+                $param['file_extension'] = $pathinfo['extension'];
+                foreach ($conf->output_file_types AS $file_type_name => $file_type) {
+                    if ($file_type['extension'] == $pathinfo['extension']) {
+                        $param['file_type'] = $file_type_name;
+                    }
+                }
+                $param['file_path'] = '/' . implode('/', array_slice($path, 0));
+                $param['path'] = '/' . implode('/', array_slice($path, 0, -1));
+            }
         }
         
     }
@@ -119,7 +126,8 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
         $project_name = $param['project'];
     }
     $xml_proc = tpl_engine::factory('xslt', $param);
-    if ($param['access'] == 'browse' || $param['access'] == 'preview') {
+    // {{{ browse or preview
+    if ($param['access'] == 'browse' || $param['access'] == 'preview') { 
         $id = $xml_proc->get_id_by_path($param['file_path'], $project_name);
         if ($project_name && $id != null) {
             $data['lang'] = $param['lang'];
@@ -175,7 +183,24 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
         } else {
             die_error("not a valid id");
         }
-    } else if ($param['access'] == 'index') {
+        // }}}
+    // {{{ css
+    } else if ($param['access'] == 'css') { 
+        $xml_proc->actual_path = '/';
+        $id = 0;
+        if (!$param['cached']) {
+            $transformed = $xml_proc->generate_page_css($project_name, $param['type'], $param['file_name'], $param['cached']);
+        } else if (($transformed = $xml_proc->get_from_transform_cache($project_name, $param['type'], 0, $param['file_name'], $param['access'])) === false) {
+            $transformed = $xml_proc->generate_page_css($project_name, $param['type'], $param['file_name'], $param['cached']);
+            $xml_proc->add_to_transform_cache($project_name, $param['type'], 0, $param['file_name'], $param['access'], $transformed, array());
+        }
+        headerType($transformed['content_type'], $transformed['content_encoding']);
+        echo("<pre>");
+        echo($transformed['value']);
+        echo("</pre>");
+    // }}}
+    // {{{ index
+    } else if ($param['access'] == 'index') { 
         $xml_proc->actual_path = '/';
         $id = 0;
         if (!$param['cached']) {
@@ -187,6 +212,7 @@ if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER
         headerType($transformed['content_type'], $transformed['content_encoding']);
         echo($transformed['value']);
     }
+    // }}}
 } else {
     die_error('you are not logged in' );
 }
