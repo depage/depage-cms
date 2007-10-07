@@ -775,8 +775,15 @@ if (!$conf->pocket_use) {
     register_shutdown_function(array($task_control, "handle_tasks"), array($pocket_server));
 }
 
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cli') {
+    $arg = $argv[1];
+} else {
+    $arg = $_GET['arg'];
+}
+
 $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
-$task->load_by_id($argv[1]);
+$task->load_by_id($arg);
 if (($status = $task->get_status()) == 'wait_for_start') {
     $task->do_start($msgFunc = new rpc_bgtask_functions());
 } else if ($status == 'wait_for_resume' || $status == 'wait_for_question') {
