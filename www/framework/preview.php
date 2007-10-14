@@ -120,10 +120,10 @@ set_time_limit(60);
 
 $param = getParameterByUrl($_SERVER['REQUEST_URI'], $_GET['project'], $_GET['type'], $_GET['access']);
 
-$user = new ttUser();
-if (($project_name = $user->is_valid_user($param['sid'], $param['wid'], $_SERVER['REMOTE_ADDR'])) || $param['project'] != "") {
+if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'], $_SERVER['REMOTE_ADDR'])) || $param['project'] != "") {
     if ($project_name === false) {
         $project_name = $param['project'];
+        $project->user->project = $project_name;
     }
     $xml_proc = tpl_engine::factory('xslt', $param);
     // {{{ browse or preview

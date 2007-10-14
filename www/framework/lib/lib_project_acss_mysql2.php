@@ -62,6 +62,7 @@ class project_acss_mysql2 extends project {
         global $conf;
 
         $this->xmldb = new xml_db(
+            // @todo set these tables depending on project
             $conf->db_table_xml_elements,                     //element table
             $conf->db_table_xml_cache,                         //cache table
             $conf->ns['database']['ns'],                     //db_xml namespace
@@ -98,6 +99,7 @@ class project_acss_mysql2 extends project {
     function get_avail_projects() {
         global $conf;
                 
+        // @todo rewrite for different xmldb-tables
         $xml_proj = '';
         
         $docs = $this->xmldb->get_docs();
@@ -121,6 +123,7 @@ class project_acss_mysql2 extends project {
      */
     function get_projectId($project_name) {
         global $log;
+        // @todo rewrite for different xmldb-tables
 
         if (preg_match("/^([0-9]+)$/", (string) $project_name)) {
             $log->add_entry("!!!! ATTENTION get_projectID by number instead of name");
@@ -146,6 +149,7 @@ class project_acss_mysql2 extends project {
     function &get_settings($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $settings = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:settings");
 
@@ -166,6 +170,7 @@ class project_acss_mysql2 extends project {
         global $conf;
 
         $languages = array();
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $ids_lang = $this->xmldb->get_node_ids_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language");
         foreach($ids_lang as $temp_id) {
@@ -188,6 +193,7 @@ class project_acss_mysql2 extends project {
     function &get_languages_xml($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         return $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:languages", false);
     }
@@ -203,6 +209,7 @@ class project_acss_mysql2 extends project {
     function &get_page_struct($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:pages_struct");
 
@@ -225,6 +232,7 @@ class project_acss_mysql2 extends project {
     function &get_page_data($project_name, $id) {
         global $conf, $log;
         
+        $this->_set_project();
         $xml_def = $this->xmldb->get_doc_by_id($id);
         
         return $xml_def;
@@ -244,6 +252,7 @@ class project_acss_mysql2 extends project {
     function get_page_data_id_by_page_id($project_name, $id) {
         global $conf;
         
+        $this->_set_project();
         $data_id = $this->xmldb->get_attribute($id, $conf->ns['database']['ns'], 'ref');
         
         return $data_id;
@@ -263,6 +272,7 @@ class project_acss_mysql2 extends project {
     function get_page_id_by_page_data_id($project_name, $id) {
         global $conf;
         
+        $this->_set_project();
         $tempid = $id;
         while (($name = $this->xmldb->get_node_name_by_id($tempid)) != "pg:page_data") {
             $tempid = $this->xmldb->get_parent_id_by_id($tempid);
@@ -288,6 +298,7 @@ class project_acss_mysql2 extends project {
     function get_page_attributes($project_name, $id) {
         global $conf;
         
+        $this->_set_project();
         $attrs = $this->xmldb->get_attributes($id);
         
         return $attrs;
@@ -304,6 +315,7 @@ class project_acss_mysql2 extends project {
     function get_lib_tree($project_name) {
         global $conf;
 
+        $this->_set_project();
         $lib_path = $this->get_project_path($project_name) . "/lib";
         $fs_access = fs::factory('local');
 
@@ -352,6 +364,7 @@ class project_acss_mysql2 extends project {
     function get_lib_dir_content($project_name, $path) {
         global $conf;
 
+        $this->_set_project();
         $dir = $this->get_project_path($project_name) . '/lib' . $path;
         $fs_access = fs::factory('local');
         $dirarray = $fs_access->list_dir($dir);
@@ -387,6 +400,7 @@ class project_acss_mysql2 extends project {
     function &get_colors($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:colorschemes");
 
@@ -404,6 +418,7 @@ class project_acss_mysql2 extends project {
     function &get_tpl_template_struct($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:tpl_templates_struct");
 
@@ -424,6 +439,7 @@ class project_acss_mysql2 extends project {
     function &get_tpl_template_data($project_name, $id) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_id($id);
 
@@ -445,6 +461,7 @@ class project_acss_mysql2 extends project {
     function get_tpl_template_contents($project_name, $type) {
         global $conf;
 
+        $this->_set_project();
         $tpl_set = array();
         $doc_id = $this->get_projectId($project_name);
         $tpl_ids = $this->xmldb->get_node_ids_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:tpl_templates/{$conf->ns['page']['ns']}:template_data[@active='true' and @type='$type']/{$conf->ns['edit']['ns']}:template");
@@ -469,6 +486,7 @@ class project_acss_mysql2 extends project {
     function &get_tpl_settings_xml($project_name, $type) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $settings = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:template_set[@name = '$type']");
 
@@ -486,6 +504,7 @@ class project_acss_mysql2 extends project {
     function &get_tpl_newnodes($project_name) {
         global $conf;
 
+        $this->_set_project();
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:tpl_newnodes");
 
@@ -508,6 +527,7 @@ class project_acss_mysql2 extends project {
     function get_type($id, &$data_id) {
         global $conf, $log;
 
+        $this->_set_project();
         if (isset($_element_type[$id])) {
             $data_id = $_element_type_data_id[$id];
             return $_element_type[$id];
@@ -562,6 +582,7 @@ class project_acss_mysql2 extends project {
     function save_element($project_name, $id, &$data) {
         global $log;
 
+        $this->_set_project();
         if (in_array($type = $this->get_type($id, $data_id), array('page_data', 'tpl_template_data', 'tpl_newnodes', 'colors', 'settings'))) {
             $this->xmldb->save_node($data);
             switch ($type) {
@@ -603,6 +624,7 @@ class project_acss_mysql2 extends project {
     function add_page($project_name, $target_id, $newname, $page_data = '') {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_page = @file_get_contents('xml/pages_new_page.xml');
         $doc_page_data = @file_get_contents('xml/pages_new_page_data.xml');
         if ($doc_page != '' && $doc_page_data != '' && in_array($type = $this->get_type($target_id, $data_id), array('pages'))) {
@@ -656,6 +678,7 @@ class project_acss_mysql2 extends project {
     function add_page_folder($project_name, $target_id, $newname) {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_page = @file_get_contents('xml/pages_new_folder.xml');
         $doc_page_data = @file_get_contents('xml/pages_new_folder_data.xml');
         if ($doc_page != '' && $doc_page_data != '' && in_array($type = $this->get_type($target_id, $data_id), array('pages'))) {
@@ -690,6 +713,7 @@ class project_acss_mysql2 extends project {
     function add_page_separator($project_name, $target_id) {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_page = @file_get_contents('xml/pages_new_separator.xml');
         if ($doc_page != '' && in_array($type = $this->get_type($target_id, $data_id), array('pages'))) {
             //set name
@@ -716,6 +740,7 @@ class project_acss_mysql2 extends project {
     function add_page_data_element($project_name, $target_id, $newname, $page_data = '') {
         global $conf, $log;
         
+        $this->_set_project();
         if (($xml_element = project::domxml_open_mem("<root>" . $page_data . "</root>")) && in_array($type = $this->get_type($target_id, $data_id), array('page_data'))) {
             $root_node = $xml_element->document_element();
             $temp_node = $root_node->first_child();
@@ -749,6 +774,7 @@ class project_acss_mysql2 extends project {
     function add_tpl_template($project_name, $target_id, $newname) {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_tpl = @file_get_contents('xml/tpl_templates_new_template.xml');
         $doc_tpl_data = @file_get_contents('xml/tpl_templates_new_template_data.xml');
         if ($doc_tpl != '' && $doc_tpl_data != '' && in_array($type = $this->get_type($target_id, $data_id), array('tpl_templates'))) {
@@ -782,6 +808,7 @@ class project_acss_mysql2 extends project {
     function add_tpl_template_folder($project_name, $target_id, $newname) {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_tpl = @file_get_contents('xml/tpl_templates_new_folder.xml');
         if ($doc_tpl != '' && in_array($type = $this->get_type($target_id, $data_id), array('tpl_templates'))) {
             //set name
@@ -807,6 +834,7 @@ class project_acss_mysql2 extends project {
     function add_tpl_newnode($project_name, $target_id, $newname) {
         global $conf, $log;
 
+        $this->_set_project();
         $doc_tpl = @file_get_contents('xml/tpl_newnodes_new_newnode.xml');
         if ($doc_tpl != '' && in_array($type = $this->get_type($target_id, $data_id), array('tpl_newnodes'))) {
             //set name
@@ -832,6 +860,7 @@ class project_acss_mysql2 extends project {
     function rename_element($project_name, $id, $newname) {
         global $log;
 
+        $this->_set_project();
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
             $this->xmldb->set_attribute($id, '', 'name', $newname);
             switch ($type) {
@@ -868,6 +897,7 @@ class project_acss_mysql2 extends project {
     function delete_element($project_name, $id) {
         global $conf, $log;
 
+        $this->_set_project();
         $data_ids = array();
         $changed_ids = array();
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
@@ -967,6 +997,7 @@ class project_acss_mysql2 extends project {
     function duplicate_element($project_name, $id, $new_name = NULL) {
         global $conf, $log;
 
+        $this->_set_project();
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
             switch ($type) {
                 case 'pages':
@@ -1096,6 +1127,7 @@ class project_acss_mysql2 extends project {
     function move_element_in($project_name, $id, $target_id) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1123,6 +1155,7 @@ class project_acss_mysql2 extends project {
     function move_element_before($project_name, $id, $target_id) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1150,6 +1183,7 @@ class project_acss_mysql2 extends project {
     function move_element_after($project_name, $id, $target_id) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1178,6 +1212,7 @@ class project_acss_mysql2 extends project {
     function copy_element_in($project_name, $id, $target_id, $new_name = NULL) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1244,6 +1279,7 @@ class project_acss_mysql2 extends project {
     function copy_element_before($project_name, $id, $target_id, $new_name = NULL) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1311,6 +1347,7 @@ class project_acss_mysql2 extends project {
     function copy_element_after($project_name, $id, $target_id, $new_name = NULL) {
         global $conf, $log;
 
+        $this->_set_project();
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
@@ -1370,6 +1407,7 @@ class project_acss_mysql2 extends project {
     function generate_css($project_name) {
         global $log, $xml_proc;
 
+        $this->_set_project();
         $xml_proc = tpl_engine::factory('xslt', $param);
         //@todo eventually get css-types by settings instead of a hard-coded array
         $types = array(
@@ -1390,6 +1428,20 @@ class project_acss_mysql2 extends project {
     }
     // }}}
 
+    // {{{ _set_project()
+    /**
+     * sets actual project, depending on user
+     *
+     * @private
+     */
+    function _set_project() {
+        global $conf, $log;
+        
+        $project = str_replace(' ', '_', strtolower($this->user->project));
+        $this->xmldb->set_tables("{$conf->db_table_xml_elements}_{$project}", "{$conf->db_table_xml_cache}_{$project}");
+        $this->xmldb->set_tables($conf->db_table_xml_elements, $conf->db_table_xml_cache);
+    }
+    // }}}
     // {{{ _set_element_lastchange_UTC()
     /**
      * sets last change date of page

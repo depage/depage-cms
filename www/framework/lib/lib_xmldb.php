@@ -65,8 +65,7 @@ class xml_db {
      *            whitespace will be stripped.
      */
     function xml_db($element_table, $cache_table, $dbxml_ns, $dbxml_ns_uri, $global_ns = array(), $dont_strip_white = array()) {
-        $this->element_table = $element_table;
-        $this->cache_table = $cache_table;
+        $this->set_tables($element_table, $cache_table);
         $this->global_ns = $global_ns;
         $this->dont_strip_white = $dont_strip_white;
         
@@ -79,6 +78,15 @@ class xml_db {
         
         $this->free_element_ids = array();
         $this->free_attribute_ids = array();
+    }
+    // }}}
+    // {{{ set_tables
+    function set_tables($element_table, $cache_table) {
+        global $log;
+
+        //$log->add_entry("tables: $element_table, $cache_table");
+        $this->element_table = $element_table;
+        $this->cache_table = $cache_table;
     }
     // }}}
     // {{{ lock_write()
@@ -95,8 +103,7 @@ class xml_db {
             db_query(
                 "LOCK TABLES 
                 $this->element_table WRITE, 
-                $this->cache_table WRITE, 
-                $conf->db_log WRITE"
+                $this->cache_table WRITE" 
             );
             $this->_lock_mode = 'w';
         }
@@ -116,8 +123,7 @@ class xml_db {
             db_query(
                 "LOCK TABLES 
                 $this->element_table READ,
-                $this->cache_table READ, 
-                $conf->db_log READ"
+                $this->cache_table READ" 
             );
             $this->_lock_mode = 'r';
         }
