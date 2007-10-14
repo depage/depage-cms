@@ -249,7 +249,7 @@ class ttUser{
             );
             db_query(
                 "DELETE
-                FROM $conf->db_table_auth_updates
+                FROM $conf->db_table_updates
                 WHERE sid='$sid'"
             );
             $log->add_entry("'{$data['name']}' has logged out Project '{$data['project']}' from '{$data['ip']}'", "auth");
@@ -397,9 +397,9 @@ class ttUser{
             $this->sid = $sid;
             $this->wid = $wid;
             $this->uid = $row['userid'];
-            $project = $row['project'];
+            $this->project = $row['project'];
             if ($neededlevel == 0) {
-                $retVal = $project;
+                $retVal = $this->project;
             } else {
                 $result = db_query(
                     "SELECT * 
@@ -407,7 +407,7 @@ class ttUser{
                     WHERE session.sid='$sid' and user.id = session.userid and user.level <= $neededlevel"
                 );
                 if (mysql_num_rows($result) == 1) {
-                    $retVal = $project;
+                    $retVal = $this->project;
                 } else {
                     $retVal = false;
                 }
