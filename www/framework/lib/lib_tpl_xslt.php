@@ -960,7 +960,7 @@ class tpl_engine_xslt extends tpl_engine {
             "û" => "u",
         );
 
-        $search = array('/[^a-z0-9\.]/', '/--+/', '/^-+/', '/-+$/' );
+        $search = array('/[^a-z0-9_\.]/', '/--+/', '/^-+/', '/-+$/' );
         $replace = array( '-', '-', '', '');
         
         if (is_callable(mb_strtolower)) {
@@ -1149,7 +1149,9 @@ class tpl_engine_xslt extends tpl_engine {
     function get_doc_type($param) {
         list($type, $version, $subtype) = explode('/', $param);
         /* HTML */
-        if ($type == "html" && $version == "4.01" && $subtype == "strict") {
+        if ($type == "html" && $version == "5" && $subtype == "") {
+            $value = "<!DOCTYPE html>";
+        } else if ($type == "html" && $version == "4.01" && $subtype == "strict") {
             $value = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
         } else if ($type == "html" && $version == "4.01" && $subtype == "transitional") {
             $value = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
