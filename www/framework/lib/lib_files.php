@@ -370,6 +370,10 @@ class fs_local extends fs {
  * Implements file system functions on remote ftp filesystem
  */
 class fs_ftp extends fs {
+    var $num_errors_max = 3; 
+    var $login_errors = 0;
+    var $connected = false;
+
     /**
      * Constructor, sets parameter needed for connection
      *
@@ -387,10 +391,6 @@ class fs_ftp extends fs {
             $this->chmod = $param['chmod'];
         }
         $this->set_dirchmod();
-        
-        $this->connected = false;
-        
-        $this->login_errors = 0;
     }
     
     /**
@@ -402,17 +402,22 @@ class fs_ftp extends fs {
      */
     function _connect() {
         if (!$this->connected) {
-            while (!$this->connected && $this->login_errors <= 3) {
-                sleep(1);
-                
+            while (!$this->connected && $this->login_errors <= $this->num_errors_max) {
                 $this->ftpp = @ftp_connect($this->server);
                 if (!$this->ftpp) {
                     $this->login_errors++;
+                    sleep(2);
                     continue;
                 }
                 if (!@ftp_login($this->ftpp, $this->user, $this->pass)) {
                     ftp_close($this->ftpp);
-                    trigger_error("%error_ftp%%error_ftp_login% '$this->user@$this->server'.", E_USER_ERROR);
+                    if ($this->login_errors <= $this->num_errors_max) {
+                        $this->login_errors++;
+                        sleep(2);
+                        continue;
+                    } else {
+                        trigger_error("%error_ftp%%error_ftp_login% '$this->user@$this->server'.", E_USER_ERROR);
+                    }
                 }
                 @ftp_pasv($this->ftpp, true);
                 register_shutdown_function(array(&$this, '_disconnect'));
