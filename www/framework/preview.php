@@ -167,7 +167,21 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
                     $file_access = fs::factory('local');
                     $file_access->f_write_string($file_path, $transformed['value']);
                     $file_access->ch_dir($project->get_project_path($project_name) . "/cache_{$param['type']}{$cache_path}");
-                    virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
+                    // replace virtual if not available
+                    if (is_callable("virtual")) {
+                        virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
+                    } else {
+                       $host = $_SERVER['HTTP_HOST'];
+                       if ($host == "") {
+                           $host = $_SERVER['SERVER_NAME'];
+                       }
+                       if ($host == "") {
+                           $host = $_SERVER['SERVER_ADDR'];
+                       }
+
+                       //@todo add options to give GET, POST and COOKIES to called script
+                       readfile("http://$host/{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
+                    }
                     //$file_access->rm($file_path);
                 }
             } else {
