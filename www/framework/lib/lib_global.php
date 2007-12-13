@@ -274,11 +274,13 @@ class config {
      *
      * @public
      */
-    function get_language_by_browser() {
-        $available_languages = array(
-            'en',
-            'de',
-        );
+    function get_language_by_browser($available_languages = null) {
+        if ($available_languages == null) {
+            $available_languages = array(
+                'en',
+                'de',
+            );
+        }
         $browser_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
         foreach ($browser_languages as $lang) {
             $actual_language_array = explode(';', $lang);
@@ -289,6 +291,7 @@ class config {
                 break;
             }    
         }
+        return $this->interface_language;
     }
     // }}}
     // {{{ getTexts()
