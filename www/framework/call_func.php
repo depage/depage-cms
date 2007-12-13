@@ -1166,13 +1166,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $i = 0;
             while (!feof($fp) && !$found && $i < $maxlines) {
                 $line = fgets($fp);
-                if (preg_match("/<{$conf->ns['backup']['ns']}:info (.*)\/>/", $line, $ínfonode)) {
+                if (preg_match("/<{$conf->ns['backup']['ns']}:info (.*)\/>/", $line, $infonode)) {
                     $found = true;
                 }
                 $i++;
             }
         }
-        return $ínfonode[0];
+        return $infonode[0];
     }
     // }}}
     // {{{ restore_project()

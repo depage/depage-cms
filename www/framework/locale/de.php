@@ -222,6 +222,7 @@ $texts = array(
 	'tree_name_settings_navigation' => "Navigation",
 	'tree_name_settings_publish' => "Veröffentlichen",
 	'tree_name_settings_template_sets' => "Vorlagen-Sets",
+	'tree_name_settings_global_files' => "Globale Dateien",
 	'tree_name_untitled' => "(unbenannt)",
 	'tree_nodata' => " lade...",
 	'user_unknown' => "(unbekannt)",
