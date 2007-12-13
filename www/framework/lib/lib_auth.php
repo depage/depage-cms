@@ -194,6 +194,10 @@ class ttUser{
     function login($user, $pass, $project, $ip) {
         global $conf, $log;
 
+        $user = mysql_real_escape_string($user);
+        $project = mysql_real_escape_string($project);
+        $ip = mysql_real_escape_string($ip);
+
         $result = db_query(
             "SELECT name, id
             FROM $conf->db_table_user 
