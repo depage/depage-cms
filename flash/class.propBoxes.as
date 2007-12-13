@@ -3159,6 +3159,102 @@ class_propBox_proj_template_set.prototype.saveData = function(forceSave) {
 // }}}
 
 /*
+ *	Class PropBox_proj_global_file
+ *
+ *	Extends class_propBox
+ *	Interface to edit global_file settings
+ */
+// {{{ constructor
+class_propBox_proj_global_file = function() {};
+class_propBox_proj_global_file.prototype = new class_propBox();
+
+class_propBox_proj_global_file.prototype.propName = [];
+class_propBox_proj_global_file.prototype.propName[0] = conf.lang.prop_name_proj_global_file_path; //@todo add name
+class_propBox_proj_global_file.prototype.propName[1] = conf.lang.prop_name_proj_global_file_xsl_template; //@todo add name
+// }}}
+// {{{ generateComponents()
+class_propBox_proj_global_file.prototype.generateComponents = function() {
+	this.attachMovie("component_inputField", "inputBoxPath", 2);
+	this.inputBoxPath.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.inputBoxPath.onKillFocus = function() {
+		//this._parent.save();
+		updateAfterEvent();
+	};
+	this.inputBoxPath.onEnter = function() {
+		this._parent.save();	
+	};
+	this.inputBoxPath.onCtrlS = function() {
+		this._parent.save();	
+	};
+	this.attachMovie("component_inputField", "inputBoxXSLTemplate", 3);
+	this.inputBoxXSLTemplate.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.inputBoxXSLTemplate.onKillFocus = function() {
+		//this._parent.save();
+		updateAfterEvent();
+	};
+	this.inputBoxXSLTemplate.onEnter = function() {
+		this._parent.save();	
+	};
+	this.inputBoxXSLTemplate.onCtrlS = function() {
+		this._parent.save();	
+	};
+
+	this.createTextField("explain", 5, 0, 0, 100, 100);
+	this.explain.text = this.propName[1];
+	this.explain.initFormat(conf.interface.textformat_component);
+};
+// }}}
+// {{{ setComponents()
+class_propBox_proj_global_file.prototype.setComponents = function() {
+	this.inputBoxPath._x = this.settings.border_left;
+	this.inputBoxPath._y = this.settings.border_top;
+	this.inputBoxPath.width = this.width - this.settings.border_left - this.settings.border_right;
+			
+	this.inputBoxXSLTemplate._x = this.settings.border_left;
+	this.inputBoxXSLTemplate._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+	this.inputBoxXSLTemplate.width = this.width - this.settings.border_left - this.settings.border_right;
+	
+	this.explain._x = this.settings.border;
+	this.explain._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+	this.explain._width = this.settings.explanationWidth;
+			
+	this.setHeight();
+};
+// }}}
+// {{{ setHeight()
+class_propBox_proj_global_file.prototype.setHeight = function() {
+	this.innerHeight = 2 * this.settings.minInnerHeight;
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+	
+	super.setHeight();
+	this._parent.setPropPos();
+};
+// }}}
+// {{{ setData()
+class_propBox_proj_global_file.prototype.setData = function() {
+	var i;
+
+	super.setData();
+	
+        //this.setTitle(this.data.attributes.name);
+	this.inputBoxPath.value = this.data.attributes.path;
+	this.inputBoxXSLTemplate.value = this.data.attributes.xsl_template;
+};
+// }}}
+// {{{ saveData()
+class_propBox_proj_global_file.prototype.saveData = function(forceSave) {
+	this.data.attributes.path = this.inputBoxPath.value;
+	this.data.attributes.xsl_template = this.inputBoxXSLTemplate.value;
+
+	return super.saveData(forceSave);
+};
+// }}}
+
+/*
  *	Class PropBox_proj_publish_folder
  *
  *	Extends class_propBox
@@ -3845,6 +3941,7 @@ Object.registerClass("prop_edit_newnode_valid_parents", class_propBox_edit_newno
 Object.registerClass("prop_proj_language", class_propBox_proj_language);
 Object.registerClass("prop_proj_navigation", class_propBox_proj_navigation);
 Object.registerClass("prop_proj_template_set", class_propBox_proj_template_set);
+Object.registerClass("prop_proj_global_file", class_propBox_proj_global_file);
 Object.registerClass("prop_proj_publish_folder", class_propBox_proj_publish_folder);
 Object.registerClass("prop_proj_backup_backup", class_propBox_proj_backup_backup);
 Object.registerClass("prop_proj_backup_restore", class_propBox_proj_backup_restore);

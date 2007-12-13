@@ -1735,6 +1735,8 @@ class_tree_settings.prototype.isTreeNode = function(node) {
 			return true;
 		} else if ((node.nodeName == conf.ns.project + ":template_sets" || node.nodeName == conf.ns.project + ":template_set") && conf.user.mayEditSettingsTemplateSets()) {
 			return true;
+		} else if ((node.nodeName == conf.ns.project + ":global_files" || node.nodeName == conf.ns.project + ":global_file") && conf.user.mayEditSettingsTemplateSets()) {
+			return true;
 		} else if ((node.nodeName == conf.ns.project + ":languages" || node.nodeName == conf.ns.project + ":language") && conf.user.mayEditSettingsLanguages()) {
 			return true;
 		} else if ((node.nodeName == conf.ns.project + ":navigations" || node.nodeName == conf.ns.project + ":navigation") && conf.user.mayEditSettingsNavigation()) {
@@ -1751,7 +1753,7 @@ class_tree_settings.prototype.isTreeNode = function(node) {
 // }}}
 // {{{ isFolder()
 class_tree_settings.prototype.isFolder = function(node) {
-	return node.nodeName == conf.ns.project + ":publish" || node.nodeName == conf.ns.project + ":template_sets" || node.nodeName == conf.ns.project + ":languages" || node.nodeName == conf.ns.project + ":navigations" || node.nodeName == conf.ns.project + ":backup";	
+	return node.nodeName == conf.ns.project + ":publish" || node.nodeName == conf.ns.project + ":template_sets" || node.nodeName == conf.ns.project + ":global_files" || node.nodeName == conf.ns.project + ":languages" || node.nodeName == conf.ns.project + ":navigations" || node.nodeName == conf.ns.project + ":backup";	
 };
 // }}}
 // {{{ isRenamable()
@@ -1761,6 +1763,8 @@ class_tree_settings.prototype.isRenamable = function(node) {
 	} else if (node.nodeName == conf.ns.project + ":language") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
+		return true;		
+	} else if (node.nodeName == conf.ns.project + ":global_file") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
 		return true;		
@@ -1776,6 +1780,8 @@ class_tree_settings.prototype.isValidMove = function(node, targetNode) {
 	} else if (node.nodeName == conf.ns.project + ":language" && targetNode.nodeName == conf.ns.project + ":languages") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":template_set" && targetNode.nodeName == conf.ns.project + ":template_sets") {
+		return true;		
+	} else if (node.nodeName == conf.ns.project + ":global_file" && targetNode.nodeName == conf.ns.project + ":global_files") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":publish_folder" && targetNode.nodeName == conf.ns.project + ":publish") {
 		return true;		
@@ -1797,6 +1803,8 @@ class_tree_settings.prototype.isValidDelete = function(node) {
 		return true && (node.previousSibling != null || node.nextSibling != null);		
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
 		return true && (node.previousSibling != null || node.nextSibling != null);		
+	} else if (node.nodeName == conf.ns.project + ":global_file") {
+		return true && (node.previousSibling != null || node.nextSibling != null);		
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
 		return true && (node.previousSibling != null || node.nextSibling != null);		
 	} else {
@@ -1811,6 +1819,8 @@ class_tree_settings.prototype.isValidDuplicate = function(node) {
 	} else if (node.nodeName == conf.ns.project + ":language") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
+		return true;		
+	} else if (node.nodeName == conf.ns.project + ":global_file") {
 		return true;		
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
 		return true;		

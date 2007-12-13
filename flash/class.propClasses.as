@@ -545,9 +545,9 @@ class_prop_settings.prototype.getPropNodes = function() {
 	var tempNode;
 	var propNodes = [];
 
-	if (this.data.nodeName == conf.ns.project + ":publish" || this.data.nodeName == conf.ns.project + ":template_sets" || this.data.nodeName == conf.ns.project + ":languages" || this.data.nodeName == conf.ns.project + ":navigations" || this.data.nodeName == conf.ns.project + ":backup") {
+	if (this.data.nodeName == conf.ns.project + ":publish" || this.data.nodeName == conf.ns.project + ":template_sets" || this.data.nodeName == conf.ns.project + ":global_files" || this.data.nodeName == conf.ns.project + ":languages" || this.data.nodeName == conf.ns.project + ":navigations" || this.data.nodeName == conf.ns.project + ":backup") {
 
-	} else if (this.data.nodeName == conf.ns.project + ":template_set" || this.data.nodeName == conf.ns.project + ":publish_folder" || this.data.nodeName == conf.ns.project + ":language" || this.data.nodeName == conf.ns.project + ":navigation" || this.data.nodeName == conf.ns.project + ":backup_backup" || this.data.nodeName == conf.ns.project + ":backup_restore") {
+	} else if (this.data.nodeName == conf.ns.project + ":template_set" || this.data.nodeName == conf.ns.project + ":global_file" || this.data.nodeName == conf.ns.project + ":publish_folder" || this.data.nodeName == conf.ns.project + ":language" || this.data.nodeName == conf.ns.project + ":navigation" || this.data.nodeName == conf.ns.project + ":backup_backup" || this.data.nodeName == conf.ns.project + ":backup_restore") {
 		propNodes.push(this.data);
 	} else {
 		tempNode = this.data.firstChild;	
