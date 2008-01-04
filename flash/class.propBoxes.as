@@ -743,7 +743,12 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 			linkEndIndex = text.indexOf("\"", linkStartIndex + 9);
 			targetStartIndex = text.indexOf("target=\"", linkEndIndex);
 			targetEndIndex = text.indexOf("\"", targetStartIndex + 8);
-			this.textLinks.push([text.substring(linkStartIndex + 9, linkEndIndex), text.substring(targetStartIndex + 8, targetEndIndex)]);
+
+                        newURL = text.substring(linkStartIndex + 9, linkEndIndex);
+                        if (newURL.substring(0, 8) == "pageref:") {
+                            newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
+                        }
+			this.textLinks.push([newURL, text.substring(targetStartIndex + 8, targetEndIndex)]);
 
 			//insert as link
 			newurl = "asfunction:textlink," + (this.textLinks.length - 1) + "," + targetPath(this);
@@ -793,8 +798,14 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
 					linkEndIndex = text.indexOf(",", linkStartIndex + 27);
 					linkIndex = text.substring(linkStartIndex + 26, linkEndIndex);
 
+                                        if (this.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
+                                            newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this.textLinks[linkIndex][0].substring(8));
+                                        } else {
+                                            newURL = this.textLinks[linkIndex][0];
+                                        }
+
 					newStr += "<a ";
-					newStr += "href=\"" + this.textLinks[linkIndex][0] + "\" ";
+					newStr += "href=\"" + newURL + "\" ";
 					newStr += "target=\"" + this.textLinks[linkIndex][1] + "\">";
 				} else {
 					newStr += text.substring(startIndex, foundEndAt + 1).toLowerCase();
