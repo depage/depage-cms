@@ -32,7 +32,7 @@ require_once('lib_html.php');
 <script language="JavaScript" type="text/javascript">
 <!--
     function open_edit(userid) {
-        h = 400;
+        h = 600;
         w = 770;
         x = screen.availWidth - 20 - w;
         y = screen.availHeight - 60 - h;
