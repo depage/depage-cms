@@ -1353,16 +1353,28 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 new ttRpcFunc('publish_cache_settings', array()),
             );
             
-            $page_ids = array();
             $xslt_proc = tpl_engine::factory('xslt');
             $xml_nav = $xslt_proc->get_navigation($project_name);
             $xpath_nav = project::xpath_new_context($xml_nav);
+            
+            //get pages
+            $page_ids = array();
             $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:page");
             foreach ($xfetch->nodeset as $temp_node) {
                 $page_ids[] = $xml_db->get_node_id($temp_node);
             }
             foreach ($page_ids as $page_id) {
                 $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $page_id));
+            }
+
+            //get folders
+            $folder_ids = array();
+            $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:folder");
+            foreach ($xfetch->nodeset as $temp_node) {
+                $folder_ids[] = $xml_db->get_node_id($temp_node);
+            }
+            foreach ($folder_ids as $folder_id) {
+                $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $folder_id));
             }
             
 
