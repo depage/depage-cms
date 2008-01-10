@@ -684,6 +684,8 @@ class project_acss_mysql2 extends project {
             //set name
             $doc_page = str_replace('%insert_default_name%', htmlspecialchars($newname), $doc_page);
             if ($xml_page_data = $this->domxml_open_mem($doc_page_data)) {
+                $languages = $this->get_languages($project_name);
+                $this->_test_pageObj_languages($xml_page_data, 'true', $languages);
                 $data_ids = $this->xmldb->get_node_ids_by_xpath($this->get_projectId($project_name), "//{$conf->ns['project']['ns']}:pages");
                 $new_id = $this->xmldb->save_node(&$xml_page_data, $data_ids[0]);                
                 $doc_page = str_replace('%insert_data_id%', $new_id, $doc_page);
