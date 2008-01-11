@@ -850,7 +850,12 @@ class tpl_engine_xslt extends tpl_engine {
                     $path = 'index.html';
                 }
             } else {
-                $path = $this->glp_encode($temp_node->get_attribute('name')) . ".{$id}.{$type}";
+                $path = $this->glp_encode($temp_node->get_attribute('name'));
+                if ($this->isPreview) {
+                    $path = "{$path}.{$id}.{$type}";
+                } else {
+                    $path = "{$path}.{$type}";
+                }
             }
             
             while ($temp_node != null && $temp_node->parent_node() != null) {
