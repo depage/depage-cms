@@ -854,6 +854,7 @@ class tpl_engine_xslt extends tpl_engine {
                 if ($this->isPreview) {
                     $path = "{$path}.{$id}.{$type}";
                 } else {
+                    // @todo add tests that the name is unique without the page-id
                     $path = "{$path}.{$type}";
                 }
             }
