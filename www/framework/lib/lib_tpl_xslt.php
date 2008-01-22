@@ -855,6 +855,8 @@ class tpl_engine_xslt extends tpl_engine {
                     $path = "{$path}.{$id}.{$type}";
                 } else {
                     // @todo add tests that the name is unique without the page-id
+                    // perhabs generate all pathes for all pages or alternately
+                    // for all pages in this specific folder (and cache these?)
                     $path = "{$path}.{$type}";
                 }
             }
