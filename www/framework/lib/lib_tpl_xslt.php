@@ -7,11 +7,9 @@
  * This file provides support
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_tpl_xslt.php,v 1.13 2004/07/08 00:28:56 jonas Exp $
  */
 
 // {{{ define and includes
@@ -19,6 +17,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
 require_once('lib_tpl.php');
 require_once('lib_xmldb.php');
 require_once('lib_project.php');
+require_once('lib_media.php');
 // }}}
 
 /**
@@ -851,12 +850,7 @@ class tpl_engine_xslt extends tpl_engine {
                 }
             } else {
                 $path = $this->glp_encode($temp_node->get_attribute('name'));
-                if ($this->isPreview) {
-                    $path = "{$path}.{$id}.{$type}";
-                } else {
-                    // @todo add tests that the name is unique without the page-id
-                    $path = "{$path}.{$type}";
-                }
+                $path = "{$path}.{$id}.{$type}";
             }
             
             while ($temp_node != null && $temp_node->parent_node() != null) {
@@ -1111,31 +1105,10 @@ class tpl_engine_xslt extends tpl_engine {
     function get_file_info($path) {
         global $conf, $project;
         
-        $value = '<file';
         if (substr($path, 0, strlen($conf->url_lib_scheme_intern) + 1) == $conf->url_lib_scheme_intern . ':') {
             $file_path = $project->get_project_path($this->project) . '/lib/' . substr($path, strlen($conf->url_lib_scheme_intern) + 1);
-            if (file_exists($file_path)) {
-                $fileinfo = pathinfo($file_path);
-                $imageinfo = @getimagesize($file_path);
-                
-                $value .= ' exists="true"';
-                $value .= ' dirname="' . $fileinfo['dirname'] . '"';
-                $value .= ' basename="' . $fileinfo['basename'] . '"';
-                $value .= ' extension="' . $fileinfo['extension'] . '"';
-                if ($imageinfo[2] > 0) {
-                    $value .= ' width="' . $imageinfo[0] . '"';
-                    $value .= ' height="' . $imageinfo[1] . '"';
-                }
-                $fs_access = new fs_local();
-                $value .= ' size="' . $fs_access->f_size_format($file_path) . '"';
-                $value .= ' date="' . $conf->dateUTC($conf->date_format_UTC, filemtime($file_path)) . '"';
-            } else {
-                $value .= ' exists="false"';
-            }
-        } else {
-            $value .= ' exists="false"';
+            $value = mediainfo::get_file_info_xml($file_path);
         }
-        $value .= ' />';
         
         return $value;
     }

@@ -42,6 +42,8 @@ class mediainfo {
             $fs_access = new fs_local();
             
             $info['exists'] = "true";
+            //$info['name'] = $file;
+            $info['name'] = $fileinfo['basename'];
             $info['dirname'] = $fileinfo['dirname'];
             $info['basename'] = $fileinfo['basename'];
             $info['extension'] = $fileinfo['extension'];

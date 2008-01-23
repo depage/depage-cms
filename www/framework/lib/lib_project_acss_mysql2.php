@@ -21,6 +21,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
 
 require_once('lib_xmldb.php');
 require_once('lib_auth.php');
+require_once('lib_media.php');
 // }}}
 
 /**
@@ -371,18 +372,7 @@ class project_acss_mysql2 extends project {
 
         $dir_str = "<{$conf->ns['project']['ns']}:files><{$conf->ns['project']['ns']}:filelist dir=\"$path\">";
         foreach ($dirarray['files'] as $file) {
-            $fileinfo = pathinfo($file);
-            $imageinfo = @getimagesize($dir . '/' . $file);
-            $dir_str .= "<file name=\"$file\"";
-            $dir_str .= " extension=\"{$fileinfo['extension']}\"";
-            if ($imageinfo[2] > 0) {
-                $dir_str .= " width=\"{$imageinfo[0]}\"";
-                $dir_str .= " height=\"{$imageinfo[1]}\"";
-            }
-            $dir_str .= " size=\"" . $fs_access->f_size_format("$dir/$file") . "\"";
-            $dir_str .= " date=\"" . $conf->dateUTC($conf->date_format_UTC, filemtime("$dir/$file")) . "\"";
-
-            $dir_str .= " />";
+            $dir_str .= mediainfo::get_file_info_xml($dir . '/' . $file);
         }
         $dir_str .= "</{$conf->ns['project']['ns']}:filelist></{$conf->ns['project']['ns']}:files>";
 
