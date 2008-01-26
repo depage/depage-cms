@@ -2381,7 +2381,7 @@ class_propBox_edit_audio.prototype.setComponents = function() {
 	this.altDesc._width = 20;
 	
 	//this.innerHeight = int(conf.thumb_height) + 7;
-	this.innerHeight = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border + 2) + 2;
+	this.innerHeight = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
 	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 };
 // }}}
@@ -2409,6 +2409,334 @@ class_propBox_edit_audio.prototype.load_thumb = function() {
 // }}}
 // {{{ saveData()
 class_propBox_edit_audio.prototype.saveData = function() {
+	this.data.attributes.src = this.inputBox.value;
+	if (this.hrefBox._visible == true) {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+			delete(this.data.attributes.href);
+			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
+		} else {
+			delete(this.data.attributes.href_id);
+			this.data.attributes.href = this.hrefBox.value;
+		}
+	}
+	this.data.attributes.alt = this.altBox.value;
+	
+	return super.saveData();
+};
+// }}}
+
+/*
+ *	Class PropBox_edit_video
+ *
+ *	Extends class_propBox
+ *	Handles an video-element
+ */
+// {{{ constructor
+class_propBox_edit_video = function() {};
+class_propBox_edit_video.prototype = new class_propBox();
+
+class_propBox_edit_video.prototype.propName = [];
+class_propBox_edit_video.prototype.propName[0] = conf.lang.prop_name_edit_video;
+// }}}
+// {{{ onResize()
+class_propBox_edit_video.prototype.onResize = function() {
+	this.width = this._parent.width;
+
+	if (this.width - this.settings.explanationWidth - this.settings.OKCancelWidth < this.settings.explanationWidth) {
+		if (this.multilangProp == 2) {
+			this.settings.border_top = this.settings.minInnerHeight;
+		} else {
+			this.settings.border_top = this.settings.minInnerHeight + this.settings.border;
+		}
+		this.settings.border_bottom = this.settings.border;
+		this.settings.border_left = this.settings.border;
+		this.settings.border_right = this.settings.border;
+	} else {
+		if (this.multilangProp == 2) {
+			this.settings.border_top = 0;
+		} else {
+			this.settings.border_top = this.settings.border;
+		}
+		this.settings.border_bottom = this.settings.border;
+		this.settings.border_left = 2 * this.settings.gridSize + this.settings.border;
+		this.settings.border_right = this.settings.OkCancelWidth + this.settings.border;
+	};
+
+	this.setComponents();		
+	
+	this.back.onResize();
+
+	if (this.num == this._parent.propLineNum) {
+		this._parent.setPropPos();	
+	}
+};
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_video.prototype.generateComponents = function() {
+	super.generateComponents();
+	
+	this.attachMovie("component_inputField", "inputBox", 2);
+	this.inputBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.inputBox.onKillFocus = function() {
+		//this._parent.save();	
+	};
+	this.inputBox.onEnter = function() {
+		this._parent.save();	
+	};
+	this.inputBox.onCtrlS = function() {
+		this._parent.save();	
+	};
+	
+	
+	this.attachMovie("component_inputField", "altBox", 4);
+	this.altBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.altBox.onKillFocus = function() {
+		//this._parent.save();	
+	};
+	this.altBox.onEnter = function() {
+		this._parent.save();	
+	};
+	this.altBox.onCtrlS = function() {
+		this._parent.save();	
+	};
+
+	this.attachMovie("component_button", "buttonVideo", 6, {
+		enabledState	: true,
+		caption			: conf.lang.prop_tt_img_choose,
+		align			: "TR"
+	});
+	
+	this.createTextField("altDesc", 8, 0, 0, 50, 20);
+	this.altDesc.text = conf.lang.prop_tt_img_altdesc;
+	this.altDesc.initFormat(conf.interface.textformat);
+	
+	//this.attachMovie("prop_tt_img_thumbnail", "thumb", 9);
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_video.prototype.setComponents = function() {
+	super.setComponents();
+	
+	//this.thumb._x = this.settings.border_left + 1;
+	//this.thumb._y = this.settings.border_top + 1;
+	
+	this.buttonVideo._x = this.width - this.settings.border_right;
+	this.buttonVideo._y = this.settings.border_top;
+	this.buttonVideo.width = 26;
+	
+	this.inputBox._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width);
+	this.inputBox._y = this.settings.border_top;
+	this.inputBox.width = this.width - this.settings.border_left - this.settings.border_right - (2 * this.settings.border + int(conf.thumb_width)) - this.buttonVideo.width - this.settings.border;
+	
+	this.buttonHref._x = this.width - this.settings.border_right;
+	this.buttonHref._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border + 2;
+	this.buttonHref.width = this.buttonVideo.width;
+	
+	this.altBox._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width) + 30;
+	this.altBox._y = this.settings.border_top + 1 * (int(conf.interface.component_height) + this.settings.border + 2);
+	this.altBox.width = this.width - this.settings.border_left - this.settings.border_right - (2 * this.settings.border + int(conf.thumb_width)) - 30;
+	
+	this.altDesc._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width) + this.settings.border + 1;
+	this.altDesc._y = this.settings.border_top + 1 * (int(conf.interface.component_height) + this.settings.border + 2) + 2;
+	this.altDesc._width = 20;
+	
+	//this.innerHeight = int(conf.thumb_height) + 7;
+	this.innerHeight = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_video.prototype.setData = function() {
+	super.setData();
+	
+	this.inputBox.value = this.data.attributes.src;
+	this.inputBox.explain = conf.lang.prop_tt_video_filepath;
+	
+	this.altBox.value = this.data.attributes.alt;
+	this.altBox.explain = conf.lang.prop_tt_img_alt;
+	
+        this.load_thumb();
+};
+// }}}
+// {{{ load_thumb()
+class_propBox_edit_video.prototype.load_thumb = function() {
+	var filedata = this.inputBox.value.splitPath();
+	
+	this.buttonVideo.onClick = function() {
+		_root.mainInterface.interface.layouts.dlgChoose_files.setActive(this._parent._parent.propObj.saveFilePath, this._parent._parent.propObj, [this._parent.thumb.filepath, this._parent.data.nid, "flv"]);
+	}
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_video.prototype.saveData = function() {
+	this.data.attributes.src = this.inputBox.value;
+	if (this.hrefBox._visible == true) {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+			delete(this.data.attributes.href);
+			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
+		} else {
+			delete(this.data.attributes.href_id);
+			this.data.attributes.href = this.hrefBox.value;
+		}
+	}
+	this.data.attributes.alt = this.altBox.value;
+	
+	return super.saveData();
+};
+// }}}
+
+/*
+ *	Class PropBox_edit_flash
+ *
+ *	Extends class_propBox
+ *	Handles an video-element
+ */
+// {{{ constructor
+class_propBox_edit_flash = function() {};
+class_propBox_edit_flash.prototype = new class_propBox();
+
+class_propBox_edit_flash.prototype.propName = [];
+class_propBox_edit_flash.prototype.propName[0] = conf.lang.prop_name_edit_flash;
+// }}}
+// {{{ onResize()
+class_propBox_edit_flash.prototype.onResize = function() {
+	this.width = this._parent.width;
+
+	if (this.width - this.settings.explanationWidth - this.settings.OKCancelWidth < this.settings.explanationWidth) {
+		if (this.multilangProp == 2) {
+			this.settings.border_top = this.settings.minInnerHeight;
+		} else {
+			this.settings.border_top = this.settings.minInnerHeight + this.settings.border;
+		}
+		this.settings.border_bottom = this.settings.border;
+		this.settings.border_left = this.settings.border;
+		this.settings.border_right = this.settings.border;
+	} else {
+		if (this.multilangProp == 2) {
+			this.settings.border_top = 0;
+		} else {
+			this.settings.border_top = this.settings.border;
+		}
+		this.settings.border_bottom = this.settings.border;
+		this.settings.border_left = 2 * this.settings.gridSize + this.settings.border;
+		this.settings.border_right = this.settings.OkCancelWidth + this.settings.border;
+	};
+
+	this.setComponents();		
+	
+	this.back.onResize();
+
+	if (this.num == this._parent.propLineNum) {
+		this._parent.setPropPos();	
+	}
+};
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_flash.prototype.generateComponents = function() {
+	super.generateComponents();
+	
+	this.attachMovie("component_inputField", "inputBox", 2);
+	this.inputBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.inputBox.onKillFocus = function() {
+		//this._parent.save();	
+	};
+	this.inputBox.onEnter = function() {
+		this._parent.save();	
+	};
+	this.inputBox.onCtrlS = function() {
+		this._parent.save();	
+	};
+	
+	
+	this.attachMovie("component_inputField", "altBox", 4);
+	this.altBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.altBox.onKillFocus = function() {
+		//this._parent.save();	
+	};
+	this.altBox.onEnter = function() {
+		this._parent.save();	
+	};
+	this.altBox.onCtrlS = function() {
+		this._parent.save();	
+	};
+
+	this.attachMovie("component_button", "buttonFlash", 6, {
+		enabledState	: true,
+		caption			: conf.lang.prop_tt_img_choose,
+		align			: "TR"
+	});
+	
+	this.createTextField("altDesc", 8, 0, 0, 50, 20);
+	this.altDesc.text = conf.lang.prop_tt_img_altdesc;
+	this.altDesc.initFormat(conf.interface.textformat);
+	
+	//this.attachMovie("prop_tt_img_thumbnail", "thumb", 9);
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_flash.prototype.setComponents = function() {
+	super.setComponents();
+	
+	//this.thumb._x = this.settings.border_left + 1;
+	//this.thumb._y = this.settings.border_top + 1;
+	
+	this.buttonFlash._x = this.width - this.settings.border_right;
+	this.buttonFlash._y = this.settings.border_top;
+	this.buttonFlash.width = 26;
+	
+	this.inputBox._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width);
+	this.inputBox._y = this.settings.border_top;
+	this.inputBox.width = this.width - this.settings.border_left - this.settings.border_right - (2 * this.settings.border + int(conf.thumb_width)) - this.buttonFlash.width - this.settings.border;
+	
+	this.buttonHref._x = this.width - this.settings.border_right;
+	this.buttonHref._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border + 2;
+	this.buttonHref.width = this.buttonFlash.width;
+	
+	this.altBox._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width) + 30;
+	this.altBox._y = this.settings.border_top + 1 * (int(conf.interface.component_height) + this.settings.border + 2);
+	this.altBox.width = this.width - this.settings.border_left - this.settings.border_right - (2 * this.settings.border + int(conf.thumb_width)) - 30;
+	
+	this.altDesc._x = this.settings.border_left + 2 * this.settings.border + int(conf.thumb_width) + this.settings.border + 1;
+	this.altDesc._y = this.settings.border_top + 1 * (int(conf.interface.component_height) + this.settings.border + 2) + 2;
+	this.altDesc._width = 20;
+	
+	//this.innerHeight = int(conf.thumb_height) + 7;
+	this.innerHeight = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_flash.prototype.setData = function() {
+	super.setData();
+	
+	this.inputBox.value = this.data.attributes.src;
+	this.inputBox.explain = conf.lang.prop_tt_flash_filepath;
+	
+	this.altBox.value = this.data.attributes.alt;
+	this.altBox.explain = conf.lang.prop_tt_img_alt;
+	
+        this.load_thumb();
+};
+// }}}
+// {{{ load_thumb()
+class_propBox_edit_flash.prototype.load_thumb = function() {
+	var filedata = this.inputBox.value.splitPath();
+	
+	this.buttonFlash.onClick = function() {
+		_root.mainInterface.interface.layouts.dlgChoose_files.setActive(this._parent._parent.propObj.saveFilePath, this._parent._parent.propObj, [this._parent.thumb.filepath, this._parent.data.nid, "swf"]);
+	}
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_flash.prototype.saveData = function() {
 	this.data.attributes.src = this.inputBox.value;
 	if (this.hrefBox._visible == true) {
 		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
@@ -4123,6 +4451,8 @@ Object.registerClass("prop_edit_text_headline", class_propBox_edit_text_headline
 Object.registerClass("prop_edit_a", class_propBox_edit_a);
 Object.registerClass("prop_edit_img", class_propBox_edit_img);
 Object.registerClass("prop_edit_audio", class_propBox_edit_audio);
+Object.registerClass("prop_edit_video", class_propBox_edit_video);
+Object.registerClass("prop_edit_flash", class_propBox_edit_flash);
 Object.registerClass("prop_edit_date", class_propBox_edit_date);
 Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
 Object.registerClass("prop_edit_table", class_propBox_edit_element_source);
