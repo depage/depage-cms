@@ -1309,7 +1309,7 @@ class_interfaceLayout_dlgChoose_files.prototype.generate = function(dlgArgs) {
 	this.movClip.treeBox1.treeObj.treeObj.setFileFilter(dlgArgs[2], dlgArgs[3], dlgArgs[4]);
 		
 	this.movClip.attachMovie("tree_box_dlg", "dlgBox", 50, {
-		text	: conf.lang.msg_choose_img,
+		text	: conf.lang.msg_choose_file,
 		type	: "OkCancel"
 	});
 	this.movClip.dlgBox.getX = function() {
