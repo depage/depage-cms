@@ -1379,10 +1379,10 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
             //publish library
             $funcs = array();
-            $olddir = getcwd();
+            //$olddir = getcwd();
             chdir($project->get_project_path($project_name) . '/lib/');
             $this->_publish_project_lib_add_dir($funcs, '');
-            chdir($olddir);
+            chdir($conf->path_server_root . $conf->path_base . '/framework');
             
             $funcs = array_chunk($funcs, 20);
             foreach ($funcs as $func) {
