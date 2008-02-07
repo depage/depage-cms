@@ -758,7 +758,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
         } else if ($type == 'fileProps') {
             $data = array();
             $data['path'] = $ids[0];
-            $log->add_entry("sending update for $project_name of type $type with ids: {$ids[0]}");
+            //$log->add_entry("sending update for $project_name of type $type with ids: {$ids[0]}");
             
             $func = new ttRpcFunc('get_update_prop_files', $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");

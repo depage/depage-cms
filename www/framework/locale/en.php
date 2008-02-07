@@ -67,6 +67,7 @@ $texts = array(
 	'inhtml_connection_closed_title' => "connection lost",
 	'inhtml_dialog_upload_button' => "upload...",
 	'inhtml_dialog_upload_text' => "Please choose the files, you want to upload to the file-library to '%path%'. <br/><br/><b>Attention: Existing file will be overwritten without confimation!</b>",
+	'inhtml_dialog_upload_uploaded' => "The file(s) have been uploaded.",
 	'inhtml_dialog_upload_title' => "%app_name% upload",
 	'inhtml_needed_flash' => "You need the Macromedia Flash Player%minversion%, to use %app_name%.",
 	'inhtml_noscript' => "You need to activate Javascript, to use %app_name%.",

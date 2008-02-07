@@ -67,6 +67,7 @@ $texts = array(
 	'inhtml_connection_closed_title' => "Verbindung verloren",
 	'inhtml_dialog_upload_button' => "upload...",
 	'inhtml_dialog_upload_text' => "Bitte wählen Sie die Dateien aus, die sie in die Datei-Bibliothek nach '%path%' hochladen möchten. <br/><br/><b>Achtung: Existierende Dateien werden ohne weitere Abfrage überschrieben!</b>",
+	'inhtml_dialog_upload_uploaded' => "Die Datei(en) wurde(n) hochgeladen.",
 	'inhtml_dialog_upload_title' => "%app_name% upload",
 	'inhtml_needed_flash' => "Sie benötigen den Macromedia Flash Player%minversion%, um %app_name% nutzen zu können.",
 	'inhtml_noscript' => "Sie müssen Javascript aktivieren, um %app_name% benutzen zu können.",
