@@ -1384,7 +1384,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $this->_publish_project_lib_add_dir($funcs, '');
             chdir($conf->path_server_root . $conf->path_base . '/framework');
             
-            $funcs = array_chunk($funcs, 20);
+            $funcs = array_chunk($funcs, 50);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
@@ -1411,7 +1411,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 }
             }
 
-            $funcs = array_chunk($funcs, 40);
+            $funcs = array_chunk($funcs, 100);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
