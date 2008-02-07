@@ -553,7 +553,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $tempdoc = $this->xml_proc->_get_template_from_cache($this->project, $this->template_set);
         $tempdoc->dump_file($this->cache_path . 'template.xsl', false, true);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_colorschemes()
@@ -568,7 +568,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $tempdoc = $this->xml_proc->get_colors($this->project);
         $tempdoc->dump_file($this->cache_path . 'colors.xml', false, false);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_languages()
@@ -586,7 +586,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $tempdoc = $xml_db->get_doc_by_id($tempids[0], null, false);
         $tempdoc->dump_file($this->cache_path . 'languages.xml', false, false);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_navigation()
@@ -601,7 +601,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $tempdoc = $this->xml_proc->get_navigation($this->project);
         $tempdoc->dump_file($this->cache_path . 'navigation.xml', false, false);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_settings()
@@ -616,7 +616,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
         $tempdoc->dump_file($this->cache_path . 'settings.xml', false, false);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_page()
@@ -630,11 +630,11 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $args['task']->set_description('%task_publish_caching_pages% [id ' . $args['page_id'] . ']');
         
-        $tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
+        //$tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
         $tempdoc = $this->xml_proc->get_page($args['page_id']);
         $tempdoc->dump_file($this->cache_path . 'page' . $args['page_id'] . '.xml', false, false);
         
-        $tempdoc->free();
+        //$tempdoc->free();
     }
     // }}}
     // {{{ publish_cache_end()
@@ -680,7 +680,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $page_keys = array_keys($this->xml_proc->pages);
         foreach ($page_keys as $page) {
-            $this->xml_proc->pages[$page]->free();
+            //$this->xml_proc->pages[$page]->free();
             unset($this->xml_proc->pages[$page]);
         }
         

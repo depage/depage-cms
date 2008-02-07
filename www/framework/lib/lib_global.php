@@ -550,7 +550,7 @@ class config {
                 }
             } else {
                 // call script through fopen -> this is ugly because it's blocking until 
-                // called script is finished or parent script is timed out
+                // called script is finished or parent script has timed out
                 $fp = fopen($url, 'r');
                 if ($fp) {
                     fclose($fp);
