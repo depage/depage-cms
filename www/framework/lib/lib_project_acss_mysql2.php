@@ -53,6 +53,8 @@ class project_acss_mysql2 extends project {
      */
     var $_element_type = array();
     var $_element_type_data_id = array();
+
+    var $_page_ids;
     // }}}
 
     // {{{ constructor
@@ -214,6 +216,8 @@ class project_acss_mysql2 extends project {
         $this->_set_project($project_name);
         $doc_id = $this->get_projectId($project_name);
         $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:pages_struct");
+
+        $this->_page_struct_add_url($xml_def->document_element());
 
         return $xml_def;
     }
@@ -1420,6 +1424,39 @@ class project_acss_mysql2 extends project {
     }
     // }}}
 
+    /* {{{ _page_struct_add_url() */
+    function _page_struct_add_url($node, $ppath = "", $pfilename = "", $pfullname = "") {
+        $filenames = array();
+        $children = $node->child_nodes();
+
+        for ($i = count($children) - 1; $i >= 0; $i--) {
+            $path = $ppath . $pfilename . "/";
+            $filename = tpl_engine_xslt::glp_encode($children[$i]->get_attribute("name"));
+            if (in_array($filenames, $filename)) {
+                $filename .= "_$i";
+            }
+            $extension = $children[$i]->get_attribute("file_type");
+            $fullname = "$filename.$extension";
+            $lastpageurl = $this->_page_struct_add_url($children[$i], $path, $filename, $fullname);
+        }
+
+        if ($ppath != "") {
+            if ($node->tagname() == "page") {
+                $url = "$ppath$pfullname";
+                //echo("[p] $url<br>\n");
+            } else if ($node->tagname() == "folder") {
+                $url = $lastpageurl;
+                //echo("[f] $url<br>\n");
+            } else {
+                $url = "";
+                //echo("[s] $url<br>\n");
+            }
+            $node->set_attribute("url", $url);
+            $this->_page_ids[$node->get_attribute("id")] = $url;
+        }
+        return $url;
+    }
+    /* }}} */
     // {{{ _set_project()
     /**
      * sets actual project, depending on user
