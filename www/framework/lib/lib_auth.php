@@ -63,23 +63,11 @@ class ttUser{
     // {{{ get_loggedin_users()
     function get_loggedin_users() {
         global $conf, $log;
-
-        $loggedin= array();
         
-        // remove users which login is outdated
-        $result = db_query(
-            "SELECT sid 
-            FROM $conf->db_table_sessions
-            WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
-        );
-        if (($num = mysql_num_rows($result)) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $data = mysql_fetch_assoc($result);
-                $this->logout($data['sid']);
-            }
-        }
+        $this->logout_timed_out_users();
 
         // get logged in users
+        $loggedin = array();
         $result = db_query(
             "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update, sessions_win.port
             FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions, $conf->db_table_sessions_win AS sessions_win
@@ -99,18 +87,7 @@ class ttUser{
     function get_loggedin_count() {
         global $conf, $log;
 
-        // remove users which login is outdated
-        $result = db_query(
-            "SELECT sid 
-            FROM $conf->db_table_sessions
-            WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
-        );
-        if (($num = mysql_num_rows($result)) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $data = mysql_fetch_assoc($result);
-                $this->logout($data['sid']);
-            }
-        }
+        $this->logout_timed_out_users();
 
         // get count of logged in users
         $result = db_query(
@@ -125,6 +102,8 @@ class ttUser{
     // {{{ get_loggedin_nonpocket()
     function get_loggedin_nonpocket() {
         global $conf, $log;
+
+        $this->logout_timed_out_users();
 
         $loggedin= array();
         $result = db_query(
@@ -256,9 +235,27 @@ class ttUser{
                 FROM $conf->db_table_updates
                 WHERE sid='$sid'"
             );
-            $log->add_entry("'{$data['name']}' has logged out Project '{$data['project']}' from '{$data['ip']}'", "auth");
+            $log->add_entry("'{$data['name']}' has logged out Project '{$data['project']}' from '{$data['ip']}' with $sid", "auth");
         }
         mysql_free_result($result);
+    }
+    // }}}
+    // {{{ logout_timed_out_users()
+    function logout_timed_out_users() {
+        global $conf, $log;
+
+        // remove users which login is outdated
+        $result = db_query(
+            "SELECT sid 
+            FROM $conf->db_table_sessions
+            WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
+        );
+        if (($num = mysql_num_rows($result)) > 0) {
+            for ($i = 0; $i < $num; $i++) {
+                $data = mysql_fetch_assoc($result);
+                $this->logout($data['sid']);
+            }
+        }
     }
     // }}}
     // {{{ update_login()

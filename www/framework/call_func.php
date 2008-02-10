@@ -25,6 +25,7 @@ require_once('lib_project.php');
 require_once('lib_pocket_server.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
+require_once('lib_media.php');
 require_once('Archive/tar.php');
 // }}}
 
@@ -350,20 +351,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function get_imageProp($args) {
         global $conf, $project;
         
-        $data = array();
         if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip']) && $args['filename'] != '') {
             $imagePath = $project->get_project_path($project_name) . '/lib' . $args['filepath'] . $args['filename'];
             if (file_exists($imagePath)) {    
-                $data['name'] .= $args['filename'];
-                $data['path'] .= $args['filepath'];
-                $imageinfo = @getimagesize($imagePath);
-                if ($imageinfo[2] > 0) {
-                    $data['width'] .= $imageinfo[0];
-                    $data['height'] .= $imageinfo[1];
-                }
-                $fs_access = fs::factory('local');
-                $data['size'] .= $fs_access->f_size_format($imagePath);
-                $data['date'] .= date($conf->interface_dateformat, filemtime($imagePath));
+                $data = mediainfo::get_file_info($imagePath);
+                $data['name'] = $args['filename'];
+                $data['path'] = $args['filepath'];
+
                 return new ttRpcFunc('set_imageProp', $data);
             }
         }
@@ -1385,12 +1379,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
             //publish library
             $funcs = array();
-            $olddir = getcwd();
+            //$olddir = getcwd();
             chdir($project->get_project_path($project_name) . '/lib/');
             $this->_publish_project_lib_add_dir($funcs, '');
-            chdir($olddir);
+            chdir($conf->path_server_root . $conf->path_base . '/framework');
             
-            $funcs = array_chunk($funcs, 20);
+            $funcs = array_chunk($funcs, 50);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
@@ -1417,7 +1411,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 }
             }
 
-            $funcs = array_chunk($funcs, 40);
+            $funcs = array_chunk($funcs, 100);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
@@ -1481,6 +1475,7 @@ if (count($value) == 0) {
 }
 
 $msg = ($msgHandler->create_msg($value));
+//@todo add gzip compression
 echo($msg);
 flush();
 

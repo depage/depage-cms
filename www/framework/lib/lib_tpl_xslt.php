@@ -7,11 +7,9 @@
  * This file provides support
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_tpl_xslt.php,v 1.13 2004/07/08 00:28:56 jonas Exp $
  */
 
 // {{{ define and includes
@@ -19,6 +17,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
 require_once('lib_tpl.php');
 require_once('lib_xmldb.php');
 require_once('lib_project.php');
+require_once('lib_media.php');
 // }}}
 
 /**
@@ -655,7 +654,7 @@ class tpl_engine_xslt extends tpl_engine {
         $xslt_doc = $this->_get_template_from_db($project_name, $type, array());
         $xslt_doc->dump_file($filename, false, true);
         
-        $xslt_doc->free();
+        //$xslt_doc->free();
     }
     // }}}
     // {{{ add_variables_to_template()
@@ -902,6 +901,7 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function get_id_by_path($path, $project_name) {
         global $project;
+        //@todo fix bug with "()" in folder and page names
         
         $id = null;
         
@@ -945,6 +945,8 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function glp_encode($str) {
         global $log;
+        
+        //@todo fix bug with "()" in folder and page names
 
         $repl = array(
             "ä" => "ae",
@@ -1044,14 +1046,18 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $path (string) relative path
      */
-    function get_relative_path_to($target_path) {
+    function get_relative_path_to($target_path, $actual_path = null) {
         global $log;
 
         $path = '';
         if ($target_path == '') {
             $path = '';
         } else {
-            $actual_path = explode('/', $this->actual_path);
+            if ($actual_path === null) {
+                $actual_path = explode('/', $this->actual_path);
+            } else {
+                $actual_path = explode('/', $actual_path);
+            }
             $target_path = explode('/', $target_path);
             
             $i = 0;
@@ -1113,31 +1119,10 @@ class tpl_engine_xslt extends tpl_engine {
     function get_file_info($path) {
         global $conf, $project;
         
-        $value = '<file';
         if (substr($path, 0, strlen($conf->url_lib_scheme_intern) + 1) == $conf->url_lib_scheme_intern . ':') {
             $file_path = $project->get_project_path($this->project) . '/lib/' . substr($path, strlen($conf->url_lib_scheme_intern) + 1);
-            if (file_exists($file_path)) {
-                $fileinfo = pathinfo($file_path);
-                $imageinfo = @getimagesize($file_path);
-                
-                $value .= ' exists="true"';
-                $value .= ' dirname="' . $fileinfo['dirname'] . '"';
-                $value .= ' basename="' . $fileinfo['basename'] . '"';
-                $value .= ' extension="' . $fileinfo['extension'] . '"';
-                if ($imageinfo[2] > 0) {
-                    $value .= ' width="' . $imageinfo[0] . '"';
-                    $value .= ' height="' . $imageinfo[1] . '"';
-                }
-                $fs_access = new fs_local();
-                $value .= ' size="' . $fs_access->f_size_format($file_path) . '"';
-                $value .= ' date="' . $conf->dateUTC($conf->date_format_UTC, filemtime($file_path)) . '"';
-            } else {
-                $value .= ' exists="false"';
-            }
-        } else {
-            $value .= ' exists="false"';
+            $value = mediainfo::get_file_info_xml($file_path);
         }
-        $value .= ' />';
         
         return $value;
     }
@@ -1240,6 +1225,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = $xml_proc->get_doc_type($param);
         } else if ($func == 'atomizetext') {
             $value = "<atomized><span>" . str_replace(" ", "</span> <span>", htmlspecialchars($param)) . "</span></atomized>";
+        } else if ($func == 'urlencode') {
+            $value = "<url>" . urlencode($param) . "</url>";
         } else if ($func == 'replaceEmailChars') {
             $email = htmlspecialchars($param);
             $original = array(
@@ -1260,14 +1247,39 @@ function urlSchemeHandler($processor, $scheme, $param) {
         }
     } else if ($scheme == $conf->url_page_scheme_intern) {
         list($id, $param) = explode('/', trim($param, '/'), 2);
-        
+
         $target_path = $xml_proc->get_path_by_id($id, $param, $xml_proc->project);
         $value_path = $xml_proc->get_relative_path_to($target_path);
         
         $value = '<page_ref>' . htmlspecialchars($value_path) . '</page_ref>';
     } else if ($scheme == $conf->url_lib_scheme_intern) {
+        list($param, $argstr) = explode('?', $param, 2);
+
+        // path to file
         $tmp_path = $xml_proc->get_relative_path_to('/lib/' . trim($param, '/'));
-        $value = '<file_ref>' . htmlspecialchars($tmp_path) . '</file_ref>';
+
+        // make references in parameters relative
+        $args = explode('&', $argstr);
+        $argstr = "";
+        foreach($args as $arg) {
+            list($key, $value) = explode('=', $arg);
+            if ($key != "") {
+                $value = urldecode($value);
+
+                if (substr($value, 0, strlen($conf->url_lib_scheme_intern)) == $conf->url_lib_scheme_intern) {
+                    $value = substr($value, strlen($conf->url_lib_scheme_intern) + 1);
+                    $value = $xml_proc->get_relative_path_to($value, $param);
+                }
+
+                $value = urlencode($value);
+                $argstr .= $key . "=" . $value . "&";
+            }
+        }
+        if ($argstr != "") {
+            $argstr = "?" . substr($argstr, 0, -1);
+        }
+        
+        $value = '<file_ref>' . htmlspecialchars($tmp_path . $argstr) . '</file_ref>';
     } else {
         $log->add_entry("called unknown scheme: $scheme");
     }

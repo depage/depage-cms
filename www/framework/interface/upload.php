@@ -44,7 +44,6 @@
         $file_access = fs::factory('local');
         for ($i = 0; $i < count($_FILES['file']['error']); $i++) {
             if ($_FILES['file']['error'][$i] == 0) {
-                // @todo change characters that are not allowed
                 // @todo add error handling for files thar are still there
                 $fname = tpl_engine_xslt::glp_encode($_FILES['file']['name'][$i]);
                 $fpath = $project->get_project_path($project_name) . "/lib" . $path;
@@ -54,15 +53,31 @@
         }
         clearstatcache();
         
-        tell_clients_to_update($project_name, $sid, 'fileProps', $path);
+        tell_clients_to_update($project_name, $sid, 'fileProps', array($path));
+        send_updates();
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
+        <title><?php echo(str_replace("%app_name%", $conf->app_name, $lang["inhtml_dialog_upload_title"])); ?></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <?php htmlout::echoStyleSheet(); ?>
     </head>
-    <body>
+    <body bgcolor="<?php echo($settings['color_face']); ?>">            
+        <table width="300" height="300" border="0">
+            <tr height="20">
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr height="40">
+                <td width="40" valign="top"><img src="pics/icon_upload.gif" width="40" height="40"></td>
+                <td width="260" valign="top"><?php echo($lang["inhtml_dialog_upload_uploaded"]); ?></td>
+            </tr>
+        </table>
+    </body>
         <script language="JavaScript" type="text/JavaScript">
         <!--
-            self.close();
+            window.setTimeout("self.close()", 3000);
+            //self.close();
         //-->
         </script>
     </body>    
