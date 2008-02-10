@@ -104,6 +104,8 @@ String.prototype.glpEncode = function() {
 	var newValue = "";
 	var i;
 	var charCode;
+        
+        //@todo fix bug with "()" in folder and page names
 	
 	for (i = 0; i < this.length; i++) {
 		charCode = this.charCodeAt(i);

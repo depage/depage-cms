@@ -47,7 +47,7 @@ class config {
         $inifile = parse_ini_file($this->settingsPath . $file, false);
         
         $this->app_name = 'depage::cms';
-        $this->app_version = '1.0.10';
+        $this->app_version = '1.0.11';
 
         $vars_to_set = array(
             'xml_version' => (string) '1.0',
@@ -871,7 +871,7 @@ class ttRpcMsgHandler{
                     }
                 }
             }
-            $xmlobj->free();
+            //$xmlobj->free();
                 
             return $funcs;
         }

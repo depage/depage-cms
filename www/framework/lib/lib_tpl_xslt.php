@@ -654,7 +654,7 @@ class tpl_engine_xslt extends tpl_engine {
         $xslt_doc = $this->_get_template_from_db($project_name, $type, array());
         $xslt_doc->dump_file($filename, false, true);
         
-        $xslt_doc->free();
+        //$xslt_doc->free();
     }
     // }}}
     // {{{ add_variables_to_template()
@@ -894,6 +894,7 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function get_id_by_path($path, $project_name) {
         global $project;
+        //@todo fix bug with "()" in folder and page names
         
         $id = null;
         
@@ -937,6 +938,8 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function glp_encode($str) {
         global $log;
+        
+        //@todo fix bug with "()" in folder and page names
 
         $repl = array(
             "ä" => "ae",

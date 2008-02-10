@@ -209,6 +209,7 @@ class project_acss_mysql2 extends project {
      */
     function &get_page_struct($project_name) {
         global $conf;
+        global $log;
 
         $this->_set_project($project_name);
         $doc_id = $this->get_projectId($project_name);

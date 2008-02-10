@@ -731,7 +731,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
             
             if (get_class($xml_def) == 'domdocument') {
                 $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                $xml_def->free();
+                //$xml_def->free();
                 
                 $func = new ttRpcFunc("update_tree_$type", $data);
                 $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");

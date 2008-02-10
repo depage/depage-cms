@@ -1475,6 +1475,7 @@ if (count($value) == 0) {
 }
 
 $msg = ($msgHandler->create_msg($value));
+//@todo add gzip compression
 echo($msg);
 flush();
 
