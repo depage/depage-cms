@@ -1430,6 +1430,8 @@ class project_acss_mysql2 extends project {
 
     /* {{{ _page_struct_add_url() */
     function _page_struct_add_url($node, $ppath = "", $pfilename = "", $pfullname = "") {
+        global $log;
+
         $filenames = array();
         $children = $node->child_nodes();
 
@@ -1448,7 +1450,7 @@ class project_acss_mysql2 extends project {
             if ($node->tagname() == "page") {
                 $url = "$ppath$pfullname";
                 //echo("[p] $url<br>\n");
-            } else if ($node->tagname() == "folder") {
+            } else if ($node->tagname() == "folder" && $lastpageurl) {
                 $url = $lastpageurl;
                 //echo("[f] $url<br>\n");
             } else {

@@ -157,19 +157,23 @@ class_project.prototype.previewManual = function() {
 class_project.prototype.previewNow = function() {
 	var url;
 	
-	url = "../../projects/";
-	url += conf.project.pathname;
-	url += "/preview/";
-	url += this.preview_type + "/";
-	url += conf.user.sid + "/";
-	url += conf.user.wid + "/";
-	if (this.previewDisableCache) {
-		url += "noncached"
-	} else {
-		url += "cached"
-	}
-	url += conf.project.tree.pages.getPathById(this.previewId, this.preview_lang, this.preview_type);
-	call_jsfunc("preview('" + escape(url) + "')");
+        urlId = conf.project.tree.pages.getPathById(this.previewId, this.preview_lang, this.preview_type);
+        if (urlID != "") {
+            url = "../../projects/";
+            url += conf.project.pathname;
+            url += "/preview/";
+            url += this.preview_type + "/";
+            url += conf.user.sid + "/";
+            url += conf.user.wid + "/";
+            if (this.previewDisableCache) {
+                    url += "noncached"
+            } else {
+                    url += "cached"
+            }
+            url += urlId;
+
+            call_jsfunc("preview('" + escape(url) + "')");
+        }
 };
 // }}}
 // {{{ previewLoaded()

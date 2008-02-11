@@ -687,7 +687,9 @@ class_tree_pages.prototype.getPathById = function(id, lang, type) {
 	var tempNode = this.data.searchForId(id);
 	var multilang = tempNode.attributes.multilang == "true";
 
-	if (multilang) {
+        if (tempNode.attributes.url == "") {
+		path = "";
+        } else if (multilang) {
 		path = "/" + lang + tempNode.attributes.url;
 	} else {
 		path = "/int" + tempNode.attributes.url;
