@@ -22,6 +22,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
 require_once('lib_xmldb.php');
 require_once('lib_auth.php');
 require_once('lib_media.php');
+require_once('lib_tpl_xslt.php');
 // }}}
 
 /**
@@ -54,7 +55,7 @@ class project_acss_mysql2 extends project {
     var $_element_type = array();
     var $_element_type_data_id = array();
 
-    var $_page_ids;
+    var $page_ids = array();
     // }}}
 
     // {{{ constructor
@@ -198,7 +199,10 @@ class project_acss_mysql2 extends project {
 
         $this->_set_project($project_name);
         $doc_id = $this->get_projectId($project_name);
-        return $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:languages", false);
+
+        $xml = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:languages", false);
+
+        return $xml;
     }
     // }}}
     // {{{ get_page_struct()
@@ -1432,7 +1436,7 @@ class project_acss_mysql2 extends project {
         for ($i = count($children) - 1; $i >= 0; $i--) {
             $path = $ppath . $pfilename . "/";
             $filename = tpl_engine_xslt::glp_encode($children[$i]->get_attribute("name"));
-            if (in_array($filenames, $filename)) {
+            if (in_array($filename, $filenames)) {
                 $filename .= "_$i";
             }
             $extension = $children[$i]->get_attribute("file_type");
@@ -1452,7 +1456,7 @@ class project_acss_mysql2 extends project {
                 //echo("[s] $url<br>\n");
             }
             $node->set_attribute("url", $url);
-            $this->_page_ids[$node->get_attribute("id")] = $url;
+            $this->page_ids[$node->get_attribute("id")] = $url;
         }
         return $url;
     }

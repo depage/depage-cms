@@ -1319,6 +1319,16 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             //parse settings
             $tempdoc = $xml_db->get_doc_by_id($args['publish_id']);
             $tempnode = $tempdoc->document_element();
+            //
+            //get languages
+            $output_languages = array();
+            $xml_proc = tpl_engine::factory('xslt');
+            $xml_temp = $xml_proc->get_languages($project_name);
+            $xpath_temp = project::xpath_new_context($xml_temp);
+            $xfetch = xpath_eval($xpath_temp, "/{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language/@shortname");
+            foreach ($xfetch->nodeset as $temp_node) {
+                $output_languages[] = $temp_node->get_content();
+            }
             
             //create
             $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
@@ -1373,7 +1383,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
 
             $funcs[] = new ttRpcFunc('publish_cache_end', array());
-            $funcs[] = new ttRpcFunc('publish_process_remove_old', array());
+            foreach ($output_languages as $output_language) {
+                $funcs[] = new ttRpcFunc('publish_process_remove_old', array('lang' => $output_language));
+            }
             
             $task->add_thread($funcs);
             
@@ -1387,16 +1399,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $funcs = array_chunk($funcs, 50);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
-            }
-            
-            //get languages
-            $output_languages = array();
-            $xml_proc = tpl_engine::factory('xslt');
-            $xml_temp = $xml_proc->get_languages($project_name);
-            $xpath_temp = project::xpath_new_context($xml_temp);
-            $xfetch = xpath_eval($xpath_temp, "/{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language/@shortname");
-            foreach ($xfetch->nodeset as $temp_node) {
-                $output_languages[] = $temp_node->get_content();
             }
             
             //process
@@ -1418,6 +1420,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+            foreach ($output_languages as $output_language) {
+                $funcs[] = new ttRpcFunc('publish_end', array('lang' => $output_language));
+            }
             $funcs[] = new ttRpcFunc('publish_end', array());
             $task->add_thread($funcs);
         }

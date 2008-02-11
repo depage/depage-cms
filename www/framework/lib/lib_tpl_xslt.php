@@ -34,6 +34,9 @@ class tpl_engine_xslt extends tpl_engine {
         'xml' => 'application/xml',
         'text' => 'application/text',
     );
+
+    var $navigation = array();
+    var $languages = array();
     // }}}
     // {{{ constructor
     /**
@@ -60,7 +63,6 @@ class tpl_engine_xslt extends tpl_engine {
         $this->use = 'sablotron';
         
         $this->pages = array();
-        $this->page_refs = array();
         $this->colors = array();
         $this->templates = array();
         $this->navigations = array();
@@ -733,6 +735,8 @@ class tpl_engine_xslt extends tpl_engine {
                 $this->navigations[$project_name] = $project->get_page_struct($project_name);
             } else {
                 $this->navigations[$project_name] = domxml_open_file($project->get_project_path($project_name) . '/publish/navigation.xml');
+                // @todo this is a hack -> cache page ids and urls, please
+                $project->_page_struct_add_url($this->navigations[$project_name]->document_element());
             }
         }
         return $this->navigations[$project_name];
@@ -749,7 +753,8 @@ class tpl_engine_xslt extends tpl_engine {
      * @return    $language (xmlobject) languages
      */
     function &get_languages($project_name) {
-        global $conf, $project, $log;
+        global $conf, $project;
+        global $log;
         
         if (!isset($this->languages[$project_name])) {
             if ($this->isPreview) {
@@ -804,88 +809,25 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function get_path_by_id($id, $lang, $project_name) {
         global $project;
+        global $log;
         
         if ($id == '') {
             return '';
         }
         
-        if (!isset($this->page_refs[$project_name])) {
-            $this->page_refs[$project_name] = array();
+        if (!isset($this->navigations[$project_name])) {
+            $this->get_navigation($project_name);
         }
-        if (!isset($this->page_refs[$project_name][$lang])) {
-            $this->page_refs[$project_name][$lang] = array();
+        $path = $project->page_ids[$id];
+            
+            
+        if ($this->isPreview) {
+            $path = "/{$lang}{$path}";
+        } else {
+            $path = "/{$lang}_publish{$path}";
         }
-        if (!isset($this->page_refs[$project_name][$lang][$id])) {
-            $path = '';
-            
-            $navigation = $this->get_navigation($project_name);
-            $languages = $this->get_languages($project_name);
-            
-            $temp_node = $project->search_for_id($navigation->document_element(), $id);
-            if ($temp_node == null) {
-                return '';
-            }
-            while (nodeType::isFolderNode($temp_node) && $temp_node->first_child() != null) {
-                $temp_node = $temp_node->first_child();
-            }
-            if ($temp_node == null) {
-                return '';
-            }
-            $multilang = $temp_node->get_attribute('multilang') == 'true';
-            $type = $temp_node->get_attribute('file_type') == '' ? 'html' : $temp_node->get_attribute('file_type');
-            
-            $noindex = false;
-            $prev_node = $temp_node->previous_sibling();
-            
-            $doc_node = $temp_node->owner_document();
-            $root_node = $doc_node->document_element();
-            if ($root_node == $temp_node->parent_node()) {
-                $noindex = true;
-            }
-            if (($prev_node == null || $prev_node->node_type() != XML_ELEMENT_NODE) && !$noindex && $type == 'html') {
-                if ($this->isPreview && false) {
-                    $path = '';
-                } else {
-                    $path = 'index.html';
-                }
-            } else {
-                $path = $this->glp_encode($temp_node->get_attribute('name'));
-                if ($this->isPreview) {
-                    $path = "{$path}.{$id}.{$type}";
-                } else {
-                    // @todo add tests that the name is unique without the page-id
-                    // perhabs generate all pathes for all pages or alternately
-                    // for all pages in this specific folder (and cache these?)
-                    $path = "{$path}.{$type}";
-                }
-            }
-            
-            while ($temp_node != null && $temp_node->parent_node() != null) {
-                $temp_node = $temp_node->parent_node();    
-                $parent_node = $temp_node->parent_node();
-                if ($parent_node != null && $parent_node->node_type() == XML_ELEMENT_NODE) {
-                    $path = $this->glp_encode($temp_node->get_attribute('name')) . "/{$path}";
-                }
-            }
-            
-            if ($multilang) {
-                if ($lang == 'int') {
-                    $temp_node = $languages->document_element();
-                    $temp_node = $temp_node->first_child();
-                    $lang = $temp_node->get_attribute('shortname');;
-                }
-                $path = $lang . '/' . $path;
-            } else {
-                $path = 'int/' . $path;
-            }
-            
-            if ($this->isPreview) {
-                $this->page_refs[$project_name][$lang][$id] = '/dyn/' . $path;
-            } else {
-                $this->page_refs[$project_name][$lang][$id] = '/dyn_publish/' . $path;
-            }
-        }
-        return $this->page_refs[$project_name][$lang][$id];
+
+        return $path;
     }
     // }}}
     // {{{ get_id_by_path()
@@ -901,35 +843,18 @@ class tpl_engine_xslt extends tpl_engine {
      */
     function get_id_by_path($path, $project_name) {
         global $project;
+        global $log;
+
         //@todo fix bug with "()" in folder and page names
         
-        $id = null;
-        
-        $path = explode('/', $path);
-        $filename = end($path);
-        if ($filename == '' || $filename == 'index.html') {
-            $navigation = $this->get_navigation($project_name);
-            $temp_node = $navigation->document_element();
-            $pos = 3;
-            while ($path[$pos] != '' && $path[$pos] != 'index.html') {
-                $child_nodes = $temp_node->child_nodes();
-                for ($i = 0; $i < count($child_nodes); $i++) {
-                    if ($this->glp_encode($child_nodes[$i]->get_attribute('name')) == $path[$pos]) {
-                        $temp_node = $child_nodes[$i];
-                    }
-                }
-                $pos++;
-            }
-            if ($pos > 3) {
-                $id = $project->get_node_id($temp_node->first_child());
-            } else {
-                $id = $project->get_node_id($temp_node);
-            }
-        } else {
-            $filename = pathinfo($filename);
-            $filename = substr($filename['basename'], 0, strlen($filename['basename']) - strlen($filename['extension']) - 1);
-            $id = substr($filename, strrpos($filename, '.') + 1);
+        if (!$this->navigations[$project_name]) {
+            $this->get_navigation($project_name);
         }
+        
+        list($lang, $path) = explode('/', $path, 2);
+
+        $path = "/$path";
+        $id = array_search($path, $project->page_ids);
         
         return $id;
     }
@@ -1059,6 +984,8 @@ class tpl_engine_xslt extends tpl_engine {
                 $actual_path = explode('/', $actual_path);
             }
             $target_path = explode('/', $target_path);
+
+            //$log->add_entry("path:\n" . implode("/", $target_path) . "\n" . implode("/", $actual_path));
             
             $i = 0;
             while ($actual_path[$i] == $target_path[$i] && $i < count($actual_path)) {

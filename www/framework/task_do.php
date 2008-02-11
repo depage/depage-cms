@@ -521,7 +521,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $args['task']->set_description('%task_publish_testing_connection%');
         
-        $log->add_entry("output_folder: " . $this->output_path);
+        //$log->add_entry("output_folder: " . $this->output_path);
 
         $this->file_access->f_write_string($this->output_path . '/connection_test.tmp', $conf->app_name . ' ' . $conf->app_version);
         $this->file_access->rm($this->output_path . '/connection_test.tmp');
@@ -657,8 +657,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_process_remove_old
      */ 
     function publish_process_remove_old($args) {
+        $lang = $args['lang'];
         $file_access = fs::factory('local');
-        $file_access->rm($this->output_path . '/dyn_publish');
+        $file_access->rm("{$this->output_path}/{$lang}_publish");
     }
     // }}}
     // {{{ publish_process_page()
@@ -672,7 +673,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $file_path .= 'index.html';
         }
         
-        $args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 13)) . ']');
+        //$args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 13)) . ']');
+        $args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 9)) . ']');
         
         $file_path = pathinfo($file_path);
         $this->xml_proc->actual_path = $file_path['dirname'] . '/' . $file_path['basename'];
@@ -754,11 +756,16 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_end
      */ 
     function publish_end($args) {
-        $this->file_access->f_rename($this->output_path . '/dyn', $this->output_path . '/dyn_remove');
-        $this->file_access->f_rename($this->output_path . '/dyn_publish', $this->output_path . '/dyn');
-        $this->file_access->rm($this->output_path . '/dyn_remove');
-        $this->file_access->rm($this->output_path . '/index.html');
-        $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
+        if (isset($args['lang'])) {
+            $lang = $args['lang'];
+
+            $this->file_access->f_rename("{$this->output_path}/{$lang}", "{$this->output_path}/{$lang}_remove");
+            $this->file_access->f_rename("{$this->output_path}/{$lang}_publish", "{$this->output_path}/{$lang}");
+            $this->file_access->rm("{$this->output_path}/{$lang}_remove");
+        } else {
+            $this->file_access->rm($this->output_path . '/index.html');
+            $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
+        }
     }
     // }}}
 }

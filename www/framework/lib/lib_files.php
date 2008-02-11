@@ -167,8 +167,6 @@ class fs_local extends fs {
             if (!file_exists($actual_path)) {
                 mkdir($actual_path, $this->dirchmod);
                 $this->ch_mod($actual_path);
-                $log->add_varinfo($actual_path);
-                $log->add_varinfo($this->dirchmod);
             }
         }
     }

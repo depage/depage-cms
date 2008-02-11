@@ -679,44 +679,21 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 	}	
 };
 // }}}
-// {{{ getPPathById()
+// {{{ getPathById()
 class_tree_pages.prototype.getPathById = function(id, lang, type) {
 	var i;
 	var path = "";
 	var languages = conf.project.tree.settings.getLanguages();
-	
 	var tempNode = this.data.searchForId(id);
-	while (this.isFolder(tempNode) && tempNode.firstChild != null) {
-		tempNode = tempNode.firstChild;
-	}
-	
 	var multilang = tempNode.attributes.multilang == "true";
 
-	if (tempNode.previousSibling == null && tempNode.attributes.file_type == "html" && tempNode.parentNode != this.data.getRootNode()) {
-		path = "index.html";
-	} else {
-		for (i = 0; i < conf.output_file_types.length; i++) {
-			if (tempNode.attributes.file_type == conf.output_file_types[i].name) {
-				var file_type = conf.output_file_types[i].extension;
-			}
-		}
-		path = tempNode.attributes.name.glpEncode() + "." + id + "." + file_type;
-	}
-	tempNode = tempNode.parentNode;
-	
-	while (tempNode != this.data) {
-		if (tempNode != this.data.getRootNode()) {
-			path = tempNode.attributes.name.glpEncode() + "/" + path;
-		}
-		tempNode = tempNode.parentNode;
-	}
-	
 	if (multilang) {
-		path = lang + "/" + path;
+		path = "/" + lang + tempNode.attributes.url;
 	} else {
-		path = "int/" + path;
+		path = "/int" + tempNode.attributes.url;
 	}
-	return "/dyn/" + path;	
+
+	return path;	
 };
 // }}}
 // {{{ getIdByPath()

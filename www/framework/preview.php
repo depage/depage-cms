@@ -69,9 +69,10 @@ function getParameterByUrl($url, $project = "", $type = "", $access = "") {
                 $param['file_type'] = $file_type_name;
             }
         }
+        $param['id_file_path'] = '/' . implode('/', array_slice($path, 6));
         $param['file_path'] = '/' . implode('/', array_slice($path, 5));
         $param['path'] = '/' . implode('/', array_slice($path, 5, -1));
-        $param['lang'] = $path[6];
+        $param['lang'] = $path[5];
     } else {
         $param['project'] = $project;
         $param['type'] = $type;
@@ -128,7 +129,7 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
     $xml_proc = tpl_engine::factory('xslt', $param);
     // {{{ browse or preview
     if ($param['access'] == 'browse' || $param['access'] == 'preview') { 
-        $id = $xml_proc->get_id_by_path($param['file_path'], $project_name);
+        $id = $xml_proc->get_id_by_path($param['id_file_path'], $project_name);
         if ($project_name && $id != null) {
             $data['lang'] = $param['lang'];
             if (!$param['cached']) {
