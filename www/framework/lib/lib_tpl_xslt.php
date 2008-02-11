@@ -1049,6 +1049,8 @@ class tpl_engine_xslt extends tpl_engine {
         if (substr($path, 0, strlen($conf->url_lib_scheme_intern) + 1) == $conf->url_lib_scheme_intern . ':') {
             $file_path = $project->get_project_path($this->project) . '/lib/' . substr($path, strlen($conf->url_lib_scheme_intern) + 1);
             $value = mediainfo::get_file_info_xml($file_path);
+        } else {
+            $value = "<file />";
         }
         
         return $value;
