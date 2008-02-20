@@ -678,7 +678,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $file_path = pathinfo($file_path);
         $this->xml_proc->actual_path = $file_path['dirname'] . '/' . $file_path['basename'];
+        $this->xml_proc->isPreview = true;
         $transformed = $this->xml_proc->transform($this->project, $this->template_set, $args['page_id'], $args['lang'], true);
+        $this->xml_proc->isPreview = false;
         
         $page_keys = array_keys($this->xml_proc->pages);
         foreach ($page_keys as $page) {
