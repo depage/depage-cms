@@ -658,8 +658,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
      */ 
     function publish_process_remove_old($args) {
         $lang = $args['lang'];
-        $file_access = fs::factory('local');
-        $file_access->rm("{$this->output_path}/{$lang}_publish");
+        $this->file_access->rm("{$this->output_path}/{$lang}_publish");
     }
     // }}}
     // {{{ publish_process_page()

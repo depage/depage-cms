@@ -515,6 +515,9 @@ class config {
             if ($host == "") {
                 $host = $_SERVER['SERVER_ADDR'];
             }
+            if ($host == "") {
+                $host = "localhost";
+            }
             $url = "http://{$host}{$path['dirname']}/{$script}?arg=" . urlencode($args);
             if (is_callable('curl_init')) {
                 // call script through curl-interface

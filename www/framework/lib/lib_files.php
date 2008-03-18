@@ -526,7 +526,7 @@ class fs_ftp extends fs {
         if ($this->_connect()) {
             if (ftp_size($this->ftpp, $path) == -1) {
                 $flist = $this->_get_filelist($path);
-                if ($path != '' && $path != '/' && strpos($path, '/dyn') !== false) {
+                if ($path != '' && $path != '/') {
                     foreach ($flist['dirs'] as $dir) {
                         $this->rm($path . '/' . $dir['name']);
                     }

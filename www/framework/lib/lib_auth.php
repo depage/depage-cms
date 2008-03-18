@@ -385,11 +385,14 @@ class ttUser{
      */
     function is_valid_user($sid, $wid, $ip, $neededlevel = 0){
         global $conf;
-        
+
+        $this->logout_timed_out_users();
+
+        // @todo add sanity-check for parameters
         $result = db_query(
             "SELECT * 
             FROM $conf->db_table_sessions_win AS session_win, $conf->db_table_sessions AS session 
-            WHERE session.sid='$sid' and  session.ip='$ip' and session_win.wid='$wid' and session.sid = session_win.sid"
+            WHERE session.sid='$sid' and session.ip='$ip' and session_win.wid='$wid' and session.sid = session_win.sid"
         );
         if (mysql_num_rows($result) == 1) {
             $row = mysql_fetch_assoc($result);
