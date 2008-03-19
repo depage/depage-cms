@@ -26,33 +26,35 @@ class sitemap {
     function generate($baseurl) {
         global $project;
 
-        $xmlstr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        $xmlstr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         $xmlstr .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
 
-        $languages = $project->get_languages($this->project_name);
+        $languages = array_keys($project->get_languages($this->project_name));
 
         $page_struct = $project->get_page_struct($this->project_name);
         $pages = $page_struct->get_elements_by_tagname("page");
+
+        //@todo exclude pages, that are "hidden" or add an extra "no-publish"-tag
         foreach($pages as $page) {
-            $xmlstr .= "<url>\n";
-            $xmlstr .= "\t<loc>" . htmlentities($baseurl . $page->get_attribute("url")) . "</loc>\n";
-            $xmlstr .= "\t<lastmod>" . "</lastmod>\n";
-            $xmlstr .= "</url>\n";
+            foreach ($languages as $lang) {
+                $page_data = $project->get_page_data($this->project_name, $page->get_attribute("ref"));
+                $meta = $page_data->get_elements_by_tagname("meta");
+                $lastmod = $meta[0]->get_attribute("lastchange_UTC");
+                $lastmod = substr($lastmod, 0, 4) . "-" . substr($lastmod, 5, 2) . "-" . substr($lastmod, 8, 2);
+
+                $xmlstr .= "<url>\n";
+                $xmlstr .= "\t<loc>" . htmlentities("{$baseurl}/{$lang}" . $page->get_attribute("url")) . "</loc>\n";
+                $xmlstr .= "\t<lastmod>" . htmlentities($lastmod) . "</lastmod>\n";
+
+                //@todo add priority (based on depth of navigation)
+                //@todo add changefreq (based on some statistics?)
+                $xmlstr .= "</url>\n";
+            }
         }
 
         $xmlstr .= "</urlset>";
 
         return $xmlstr;
-    }
-    /* }}} */
-    /* {{{ _generate_url */
-    function _generate_url(&$xmlstr, $node, $priority = 0.5) {
-        if ($node->node_name == "pg:page") {
-            $xmlstr .= "<url>\n";
-            $xmlstr .= "\t<loc>" . "</loc>\n";
-            $xmlstr .= "\t<lastmod>" . "</lastmod>\n";
-            $xmlstr .= "</url>\n";
-        }
     }
     /* }}} */
 }
