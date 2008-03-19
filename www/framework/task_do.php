@@ -24,6 +24,7 @@ require_once('lib_tpl.php');
 require_once('lib_project.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
+require_once('lib_publish.php');
 require_once('lib_pocket_server.php');
 require_once('Archive/tar.php');
 require_once('Mail.php');
@@ -709,6 +710,31 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $this->file_access->f_write_string($this->output_path . '/index_publish.html', $transformed['value']);
     }
     // }}}
+    // {{{ publish_lib_file()
+    /**
+     * ----------------------------------------------
+     * publish_lib_file args:
+     *        path
+     *        filename
+     *        sha1
+     *        publish_id
+     */ 
+    function publish_lib_file($args) {
+        global $conf, $project, $log;
+        
+        $file = new publish_file($args['path'], $args['filename']);
+        $file->sha1 = $args['sha1'];
+
+        $args['task']->set_description('%task_publish_processing_lib% [/' . $file->get_fullname() . ']');
+        
+        $project_path = $project->get_project_path($this->project);
+        if ($this->file_access->f_write_file($this->output_path . $file->get_fullname(), $project_path . $file->get_fullname())) {
+            $log->add_entry($file->sha1 . " " . $file->get_fullname());
+            $pb = new publish($this->project, $args['publish_id']);
+            $pb->add_file_to_db($file);
+        }
+    }
+    // }}}
     // {{{ publish_lib_dir()
     /**
      * ----------------------------------------------
@@ -722,13 +748,13 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $fList = array();
         $project_path = $project->get_project_path($this->project);
-        $path = $project_path . '/lib/' . $args['file_path'];
+        $path = $project_path . $args['file_path'];
         
         if ($dir = opendir($path != '' ? $path : '.')) {
             while (($file = readdir($dir)) !== false) {
                 if ($file != '.' && $file != '..') {
                     if (is_file($path . $file)) {
-                        $fList[] = '/lib/' . $args['file_path'] . $file;
+                        $fList[] = $args['file_path'] . $file;
                     }
                 }
             }  

@@ -26,6 +26,7 @@ require_once('lib_pocket_server.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
 require_once('lib_media.php');
+require_once('lib_publish.php');
 require_once('Archive/tar.php');
 // }}}
 
@@ -1391,12 +1392,19 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
             //publish library
             $funcs = array();
-            //$olddir = getcwd();
-            chdir($project->get_project_path($project_name) . '/lib/');
-            $this->_publish_project_lib_add_dir($funcs, '');
-            chdir($conf->path_server_root . $conf->path_base . '/framework');
+
+            $pb = new publish($project_name, $args['publish_id']);
+            $files = $pb->get_changed_lib_files();
+            foreach ($files as $file) {
+                $funcs[] = new ttRpcFunc('publish_lib_file', array(
+                    'path' => $file->path, 
+                    'filename' => $file->filename, 
+                    'sha1' => $file->sha1, 
+                    'publish_id' => $args['publish_id']
+                ));
+            }
             
-            $funcs = array_chunk($funcs, 30);
+            $funcs = array_chunk($funcs, 80);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
