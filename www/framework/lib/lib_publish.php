@@ -83,7 +83,8 @@ class publish {
                 pid={$this->publish_id}, 
                 path='" . mysql_escape_string($file->path) . "',
                 filename='" . mysql_escape_string($file->filename) . "',
-                sha1='{$file->sha1}'
+                sha1='{$file->sha1}',
+                lastmod=NOW()
             "
         );
     }
