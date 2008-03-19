@@ -39,6 +39,7 @@ class sitemap {
             foreach ($languages as $lang) {
                 $page_data = $project->get_page_data($this->project_name, $page->get_attribute("ref"));
                 $meta = $page_data->get_elements_by_tagname("meta");
+                //@todo change lastmod not based on lastchange_UTC but on the lastmod of sourcechange (sha1)
                 $lastmod = $meta[0]->get_attribute("lastchange_UTC");
                 $lastmod = substr($lastmod, 0, 4) . "-" . substr($lastmod, 5, 2) . "-" . substr($lastmod, 8, 2);
 
