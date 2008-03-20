@@ -1390,6 +1390,23 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
             $task->add_thread($funcs);
             
+            //process
+            $funcs = array();
+            foreach ($page_ids as $page_id) {
+                foreach ($output_languages as $output_language) {
+                    $funcs[] = new ttRpcFunc('publish_process_page', array(
+                        'page_id' => $page_id, 
+                        'lang' => $output_language,
+                        'publish_id' => $args['publish_id']
+                    ));
+                }
+            }
+
+            $funcs = array_chunk($funcs, 60);
+            foreach ($funcs as $func) {
+                $task->add_thread($func);
+            }
+
             //publish library
             $funcs = array();
 
@@ -1409,15 +1426,15 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 $task->add_thread($func);
             }
             
-            //process
+            //publish pages            
             $funcs = array();
             foreach ($page_ids as $page_id) {
-                if ($xml_db->get_attribute($page_id, '', 'multilang') == 'true') {
-                    foreach ($output_languages as $output_language) {
-                        $funcs[] = new ttRpcFunc('publish_process_page', array('page_id' => $page_id, 'lang' => $output_language));
-                    }
-                } else {
-                    $funcs[] = new ttRpcFunc('publish_process_page', array('page_id' => $page_id, 'lang' => $output_languages[0]));
+                foreach ($output_languages as $output_language) {
+                    $funcs[] = new ttRpcFunc('publish_page_file', array(
+                        'page_id' => $page_id, 
+                        'lang' => $output_language,
+                        'publish_id' => $args['publish_id']
+                    ));
                 }
             }
 

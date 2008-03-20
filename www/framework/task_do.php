@@ -541,6 +541,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
         */
         
         $this->xml_proc->isPreview = true;
+
+        $fs = fs::factory("local");
+        $fs->mk_dir($this->cache_path . 'xml/');
     }
     // }}}
     // {{{ publish_cache_xslt_templates()
@@ -633,7 +636,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         //$tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
         $tempdoc = $this->xml_proc->get_page($args['page_id']);
-        $tempdoc->dump_file($this->cache_path . 'page' . $args['page_id'] . '.xml', false, false);
+        $tempdoc->dump_file($this->cache_path . 'xml/page_' . $args['page_id'] . '.xml', false, false);
         
         //$tempdoc->free();
     }
@@ -673,10 +676,10 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $file_path .= 'index.html';
         }
         
-        //$args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 13)) . ']');
         $args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 9)) . ']');
         
         $file_path = pathinfo($file_path);
+
         $this->xml_proc->actual_path = $file_path['dirname'] . '/' . $file_path['basename'];
         $this->xml_proc->isPreview = true;
         $transformed = $this->xml_proc->transform($this->project, $this->template_set, $args['page_id'], $args['lang'], true);
@@ -688,7 +691,43 @@ class rpc_bgtask_functions extends rpc_functions_class {
             unset($this->xml_proc->pages[$page]);
         }
         
-        $this->file_access->f_write_string($this->output_path . $file_path['dirname'] . '/' . $file_path['basename'], $transformed['value']);
+        $fs = fs::factory("local");
+        $filename = $this->cache_path . $args['publish_id'] . '/' . $args['lang'] . '/page_' . $args['page_id'] . '_' . $file_path['basename'];
+        $fs->f_write_string($filename, $transformed['value']);
+    }
+    // }}}
+    // {{{ publish_page_file()
+    /**
+     * ----------------------------------------------
+     * publish_page_file
+     */ 
+    function publish_page_file($args) {
+        global $log;
+
+        $this->xml_proc->isPreview = true;
+        $file_path = $this->xml_proc->get_path_by_id($args['page_id'], $args['lang'], $this->project);
+        if (substr($file_path, -1) == '/') {
+            $file_path .= 'index.html';
+        }
+        $this->xml_proc->isPreview = false;
+        
+        $args['task']->set_description('%task_publish_publishing_pages% [' . substr($file_path, strpos($file_path, '/', 9)) . ']');
+
+        $file_path = pathinfo($file_path);
+        $filename = $this->cache_path . $args['publish_id'] . '/' . $args['lang'] . '/page_' . $args['page_id'] . '_' . $file_path['basename'];
+
+        $file = new publish_file($file_path['dirname'] . '/', $file_path['basename']);
+        $file->sha1 = sha1_file($filename);
+        
+        $pb = new publish($this->project, $args['publish_id']);
+        if ($pb->file_changed($file)) {
+            if ($this->file_access->f_write_file($this->output_path . $file->get_fullname(), $filename)) {
+                $log->add_entry($file->sha1 . " " . $file->get_fullname());
+                $pb->add_file_to_db($file);
+            } else {
+                $log->add_entry("Could not write: " . $file->get_fullname());
+            }
+        }
     }
     // }}}
     // {{{ publish_index_page()
@@ -732,6 +771,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $log->add_entry($file->sha1 . " " . $file->get_fullname());
             $pb = new publish($this->project, $args['publish_id']);
             $pb->add_file_to_db($file);
+        } else {
+            $log->add_entry("Could not write: " . $file->get_fullname());
         }
     }
     // }}}
@@ -786,9 +827,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
         if (isset($args['lang'])) {
             $lang = $args['lang'];
 
-            $this->file_access->f_rename("{$this->output_path}/{$lang}", "{$this->output_path}/{$lang}_remove");
-            $this->file_access->f_rename("{$this->output_path}/{$lang}_publish", "{$this->output_path}/{$lang}");
-            $this->file_access->rm("{$this->output_path}/{$lang}_remove");
+            //$this->file_access->f_rename("{$this->output_path}/{$lang}", "{$this->output_path}/{$lang}_remove");
+            //$this->file_access->f_rename("{$this->output_path}/{$lang}_publish", "{$this->output_path}/{$lang}");
+            //$this->file_access->rm("{$this->output_path}/{$lang}_remove");
         } else {
             $this->file_access->rm($this->output_path . '/index.html');
             $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');

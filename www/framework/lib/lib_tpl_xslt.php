@@ -472,7 +472,7 @@ class tpl_engine_xslt extends tpl_engine {
                 $this->pages[$data_id]->append_child($root_node);
                 $this->ids_used[] = $data_id;
             } else {
-                $this->pages[$data_id] = domxml_open_file($project->get_project_path($this->project) . "/publish/page{$id}.xml");
+                $this->pages[$data_id] = domxml_open_file($project->get_project_path($this->project) . "/publish/xml/page_{$id}.xml");
             }
             
         }
