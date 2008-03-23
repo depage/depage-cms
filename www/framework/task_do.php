@@ -838,7 +838,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $sitemap = new sitemap($this->project);
         // @todo add real baseurl instead of the dummy-url
-        $xmlstr = $sitemap->generate($args['publish_id'], "http://www.depagecms.net");
+        $xmlstr = $sitemap->generate($args['publish_id'], $args['baseurl']);
 
         if (!$this->file_access->f_write_string($this->output_path . "/sitemap.xml", $xmlstr)) {
             $log->add_entry("Could not write sitemap");

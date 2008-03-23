@@ -1341,9 +1341,11 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 'cache_path' => $project->get_project_path($project_name) . '/publish/',
                 'template_set' => $tempnode->get_attribute('template_set'),
                 'output_folder' => $tempnode->get_attribute('output_folder'),
+                'baseurl' => $tempnode->get_attribute('baseurl'),
                 'output_user' => $tempnode->get_attribute('output_user'),
                 'output_pass' => $tempnode->get_attribute('output_pass'),
             )));
+            $baseurl = $tempnode->get_attribute('baseurl');
             
             $doc_id = $xml_db->get_doc_id_by_name($project_name);
             
@@ -1447,7 +1449,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
             $funcs[] = new ttRpcFunc('publish_sitemap', array(
-                'publish_id' => $args['publish_id']
+                'publish_id' => $args['publish_id'],
+                'baseurl' => $baseurl,
             ));
             $funcs[] = new ttRpcFunc('publish_end', array(
                 'publish_id' => $args['publish_id']

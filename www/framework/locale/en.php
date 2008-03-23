@@ -153,6 +153,7 @@ $texts = array(
 	'prop_tt_publish_folder_pass' => "password",
 	'prop_tt_publish_folder_progress' => "%description%<br>%percent% done<br>remaining: %remaining%",
 	'prop_tt_publish_folder_targetpath' => "target path",
+	'prop_tt_publish_folder_baseurl' => "base-url",
 	'prop_tt_publish_folder_user' => "user",
 	'prop_tt_template_set_indent' => "indent source",
 	'prop_tt_text_formatted_loading' => "please wait ... initializing text-styles",
