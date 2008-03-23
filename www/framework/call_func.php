@@ -1411,6 +1411,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $funcs = array();
 
             $pb = new publish($project_name, $args['publish_id']);
+            $pb->reset_all_file_exists();
             $files = $pb->get_changed_lib_files();
             foreach ($files as $file) {
                 $funcs[] = new ttRpcFunc('publish_lib_file', array(
@@ -1445,10 +1446,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
-            foreach ($output_languages as $output_language) {
-                $funcs[] = new ttRpcFunc('publish_end', array('lang' => $output_language));
-            }
-            $funcs[] = new ttRpcFunc('publish_end', array());
+            $funcs[] = new ttRpcFunc('publish_end', array(
+                'publish_id' => $args['publish_id']
+            ));
             $task->add_thread($funcs);
         }
     }

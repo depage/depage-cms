@@ -44,6 +44,8 @@ class publish {
             $file->sha1 = sha1_file($ppath . $file->get_fullname());
             if ($this->file_changed($file)) {
                 $changed_files[] = $file;
+            } else {
+                $this->set_file_exists($file);
             }
         }
 
@@ -84,9 +86,90 @@ class publish {
                 path='" . mysql_escape_string($file->path) . "',
                 filename='" . mysql_escape_string($file->filename) . "',
                 sha1='{$file->sha1}',
-                lastmod=NOW()
+                lastmod=NOW(),
+                exist='1'
             "
         );
+    }
+    /* }}} */
+    /* {{{ set_file_exists */
+    function set_file_exists($file) {
+        global $conf;
+
+        // update entry
+        $result = db_query(
+            "UPDATE $conf->db_table_publish_files 
+            SET 
+                exist='1'
+            WHERE
+                pid={$this->publish_id} AND
+                path='" . mysql_escape_string($file->path) . "' AND
+                filename='" . mysql_escape_string($file->filename) . "'
+            "
+        );
+    }
+    /* }}} */
+    /* {{{ reset_all_file_exists */
+    function reset_all_file_exists() {
+        global $conf;
+
+        // update entry
+        $result = db_query(
+            "UPDATE $conf->db_table_publish_files 
+            SET 
+                exist='0'
+            WHERE
+                pid={$this->publish_id}
+            "
+        );
+    }
+    /* }}} */
+    /* {{{ get_deleted_files */
+    function get_deleted_files() {
+        global $conf;
+
+        $files = array();
+
+        // update entry
+        $result = db_query(
+            "SELECT
+                path,
+                filename
+            FROM $conf->db_table_publish_files 
+            WHERE
+                pid={$this->publish_id} AND
+                exist='0'
+            "
+        );
+
+        if ($result) {
+            $num = mysql_num_rows($result);
+            for ($i = 0; $i < $num; $i++) {
+                $row = mysql_fetch_assoc($result);
+                $files[] = new publish_file($row['path'], $row['filename']);
+            }
+        }
+
+        return $files;
+    }
+    /* }}} */
+    /* {{{ clear_deleted_files */
+    function clear_deleted_files() {
+        global $conf;
+
+        $files = array();
+
+        // update entry
+        $result = db_query(
+            "DELETE
+            FROM $conf->db_table_publish_files 
+            WHERE
+                pid={$this->publish_id} AND
+                exist='0'
+            "
+        );
+
+        return $files;
     }
     /* }}} */
     /* {{{ file_changed */
@@ -116,14 +199,12 @@ class publish {
 class publish_file {
     var $path = "";
     var $filename = "";
-    var $page_id = null;
     var $sha1 = "";
 
     /* {{{ constructor */
-    function publish_file($path, $filename, $page_id = null) {
+    function publish_file($path, $filename) {
         $this->path = $path;
         $this->filename = $filename;
-        $this->page_id = $page_id;
     }
     /* }}} */
     /* {{{ get_fullname */

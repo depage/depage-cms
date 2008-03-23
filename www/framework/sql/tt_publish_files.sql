@@ -25,6 +25,7 @@ CREATE TABLE `tt_publish_files` (
   `filename` varchar(255) NOT NULL default '',
   `sha1` varchar(40) NOT NULL default '',
   `lastmod` datetime NOT NULL default '0000-00-00 00:00:00',
+  `exist` boolean NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 

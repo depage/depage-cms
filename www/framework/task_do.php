@@ -727,6 +727,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
             } else {
                 $log->add_entry("Could not write: " . $file->get_fullname());
             }
+        } else {
+            $pb->set_file_exists($file);
         }
     }
     // }}}
@@ -824,16 +826,19 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_end
      */ 
     function publish_end($args) {
-        if (isset($args['lang'])) {
-            $lang = $args['lang'];
+        global $log;
 
-            //$this->file_access->f_rename("{$this->output_path}/{$lang}", "{$this->output_path}/{$lang}_remove");
-            //$this->file_access->f_rename("{$this->output_path}/{$lang}_publish", "{$this->output_path}/{$lang}");
-            //$this->file_access->rm("{$this->output_path}/{$lang}_remove");
-        } else {
-            $this->file_access->rm($this->output_path . '/index.html');
-            $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
+        $pb = new publish($this->project, $args['publish_id']);
+
+        $files = $pb->get_deleted_files();
+        foreach ($files as $file) {
+            $log->add_entry("removing: " . $file->get_fullname());
+            $this->file_access->rm($this->output_path . $file->get_fullname());
         }
+        $pb->clear_deleted_files();
+
+        $this->file_access->rm($this->output_path . '/index.html');
+        $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
     }
     // }}}
 }
