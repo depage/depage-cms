@@ -24,6 +24,7 @@ require_once('lib_tpl.php');
 require_once('lib_project.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
+require_once('lib_publish.php');
 require_once('lib_pocket_server.php');
 require_once('Archive/tar.php');
 require_once('Mail.php');
@@ -540,6 +541,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
         */
         
         $this->xml_proc->isPreview = true;
+
+        $fs = fs::factory("local");
+        $fs->mk_dir($this->cache_path . 'xml/');
     }
     // }}}
     // {{{ publish_cache_xslt_templates()
@@ -632,7 +636,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         //$tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
         $tempdoc = $this->xml_proc->get_page($args['page_id']);
-        $tempdoc->dump_file($this->cache_path . 'page' . $args['page_id'] . '.xml', false, false);
+        $tempdoc->dump_file($this->cache_path . 'xml/page_' . $args['page_id'] . '.xml', false, false);
         
         //$tempdoc->free();
     }
@@ -672,10 +676,10 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $file_path .= 'index.html';
         }
         
-        //$args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 13)) . ']');
         $args['task']->set_description('%task_publish_processing_pages% [' . substr($file_path, strpos($file_path, '/', 9)) . ']');
         
         $file_path = pathinfo($file_path);
+
         $this->xml_proc->actual_path = $file_path['dirname'] . '/' . $file_path['basename'];
         $this->xml_proc->isPreview = true;
         $transformed = $this->xml_proc->transform($this->project, $this->template_set, $args['page_id'], $args['lang'], true);
@@ -687,7 +691,45 @@ class rpc_bgtask_functions extends rpc_functions_class {
             unset($this->xml_proc->pages[$page]);
         }
         
-        $this->file_access->f_write_string($this->output_path . $file_path['dirname'] . '/' . $file_path['basename'], $transformed['value']);
+        $fs = fs::factory("local");
+        $filename = $this->cache_path . $args['publish_id'] . '/' . $args['lang'] . '/page_' . $args['page_id'] . '_' . $file_path['basename'];
+        $fs->f_write_string($filename, $transformed['value']);
+    }
+    // }}}
+    // {{{ publish_page_file()
+    /**
+     * ----------------------------------------------
+     * publish_page_file
+     */ 
+    function publish_page_file($args) {
+        global $log;
+
+        $this->xml_proc->isPreview = true;
+        $file_path = $this->xml_proc->get_path_by_id($args['page_id'], $args['lang'], $this->project);
+        if (substr($file_path, -1) == '/') {
+            $file_path .= 'index.html';
+        }
+        $this->xml_proc->isPreview = false;
+        
+        $args['task']->set_description('%task_publish_publishing_pages% [' . substr($file_path, strpos($file_path, '/', 9)) . ']');
+
+        $file_path = pathinfo($file_path);
+        $filename = $this->cache_path . $args['publish_id'] . '/' . $args['lang'] . '/page_' . $args['page_id'] . '_' . $file_path['basename'];
+
+        $file = new publish_file($file_path['dirname'] . '/', $file_path['basename']);
+        $file->sha1 = sha1_file($filename);
+        
+        $pb = new publish($this->project, $args['publish_id']);
+        if ($pb->file_changed($file)) {
+            if ($this->file_access->f_write_file($this->output_path . $file->get_fullname(), $filename)) {
+                $log->add_entry($file->sha1 . " " . $file->get_fullname());
+                $pb->add_file_to_db($file);
+            } else {
+                $log->add_entry("Could not write: " . $file->get_fullname());
+            }
+        } else {
+            $pb->set_file_exists($file);
+        }
     }
     // }}}
     // {{{ publish_index_page()
@@ -709,6 +751,33 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $this->file_access->f_write_string($this->output_path . '/index_publish.html', $transformed['value']);
     }
     // }}}
+    // {{{ publish_lib_file()
+    /**
+     * ----------------------------------------------
+     * publish_lib_file args:
+     *        path
+     *        filename
+     *        sha1
+     *        publish_id
+     */ 
+    function publish_lib_file($args) {
+        global $conf, $project, $log;
+        
+        $file = new publish_file($args['path'], $args['filename']);
+        $file->sha1 = $args['sha1'];
+
+        $args['task']->set_description('%task_publish_processing_lib% [/' . $file->get_fullname() . ']');
+        
+        $project_path = $project->get_project_path($this->project);
+        if ($this->file_access->f_write_file($this->output_path . $file->get_fullname(), $project_path . $file->get_fullname())) {
+            $log->add_entry($file->sha1 . " " . $file->get_fullname());
+            $pb = new publish($this->project, $args['publish_id']);
+            $pb->add_file_to_db($file);
+        } else {
+            $log->add_entry("Could not write: " . $file->get_fullname());
+        }
+    }
+    // }}}
     // {{{ publish_lib_dir()
     /**
      * ----------------------------------------------
@@ -722,13 +791,13 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $fList = array();
         $project_path = $project->get_project_path($this->project);
-        $path = $project_path . '/lib/' . $args['file_path'];
+        $path = $project_path . $args['file_path'];
         
         if ($dir = opendir($path != '' ? $path : '.')) {
             while (($file = readdir($dir)) !== false) {
                 if ($file != '.' && $file != '..') {
                     if (is_file($path . $file)) {
-                        $fList[] = '/lib/' . $args['file_path'] . $file;
+                        $fList[] = $args['file_path'] . $file;
                     }
                 }
             }  
@@ -757,16 +826,19 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_end
      */ 
     function publish_end($args) {
-        if (isset($args['lang'])) {
-            $lang = $args['lang'];
+        global $log;
 
-            $this->file_access->f_rename("{$this->output_path}/{$lang}", "{$this->output_path}/{$lang}_remove");
-            $this->file_access->f_rename("{$this->output_path}/{$lang}_publish", "{$this->output_path}/{$lang}");
-            $this->file_access->rm("{$this->output_path}/{$lang}_remove");
-        } else {
-            $this->file_access->rm($this->output_path . '/index.html');
-            $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
+        $pb = new publish($this->project, $args['publish_id']);
+
+        $files = $pb->get_deleted_files();
+        foreach ($files as $file) {
+            $log->add_entry("removing: " . $file->get_fullname());
+            $this->file_access->rm($this->output_path . $file->get_fullname());
         }
+        $pb->clear_deleted_files();
+
+        $this->file_access->rm($this->output_path . '/index.html');
+        $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
     }
     // }}}
 }

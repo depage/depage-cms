@@ -77,6 +77,8 @@ class config {
             'db_table_tasks_threads' => (string) '%db_praefix%_tasks_threads',
 
             'db_log' => (string) '%db_praefix%_log',
+
+            'db_table_publish_files' => (string) '%db_praefix%_publish_files',
             );
 
         $vars_to_get = array(
