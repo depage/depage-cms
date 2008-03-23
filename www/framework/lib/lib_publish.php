@@ -194,6 +194,30 @@ class publish {
         return true;
     }
     /* }}} */
+    /* {{{ get_lastmod */
+    function get_lastmod($file) {
+        global $conf;
+
+        // get lastmod entry
+        $result = db_query(
+            "SELECT
+                lastmod
+            FROM $conf->db_table_publish_files 
+            WHERE
+                pid={$this->publish_id} AND
+                path='" . mysql_escape_string($file->path) . "' AND
+                filename='" . mysql_escape_string($file->filename) . "'
+            "
+        );
+
+        if ($result && mysql_num_rows($result) > 0) {
+            $row = mysql_fetch_assoc($result);
+            return $row['lastmod'];
+        }
+
+        return false;
+    }
+    /* }}} */
 }
 
 class publish_file {
@@ -204,6 +228,9 @@ class publish_file {
     /* {{{ constructor */
     function publish_file($path, $filename) {
         $this->path = $path;
+        if (substr($this->path, -1, 1) != "/") {
+            $this->path .= "/";
+        }
         $this->filename = $filename;
     }
     /* }}} */

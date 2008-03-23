@@ -205,6 +205,7 @@ $texts = array(
 	'task_publish_processing_lib' => "aktualisiere Bibliothek",
 	'task_publish_processing_pages' => "bereite Seiten vor",
 	'task_publish_publishing_pages' => "aktualisiere Seiten",
+	'task_publish_sitemap' => "aktualisiere Sitemap",
 	'time_calculating' => "(wird berechnet)",
 	'time_min' => "Minuten",
 	'time_sec' => "Sekunden",

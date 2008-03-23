@@ -13,9 +13,12 @@
  */
 
 require_once('lib_project.php');
+require_once('lib_publish.php');
 
 class sitemap {
     var $project_name;
+    var $xmlstr;
+    var $languages;
 
     /* {{{ constructor */
     function sitemap($project_name) {
@@ -23,39 +26,53 @@ class sitemap {
     }
     /* }}} */
     /* {{{ generate */
-    function generate($baseurl) {
+    function generate($publish_id, $baseurl) {
         global $project;
 
-        $xmlstr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        $xmlstr .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+        $this->baseurl = $baseurl;
+        $this->pb = new publish($this->project_name, $publish_id);
+        $this->languages = array_keys($project->get_languages($this->project_name));
 
-        $languages = array_keys($project->get_languages($this->project_name));
+        $this->xmlstr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        $this->xmlstr .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
 
         $page_struct = $project->get_page_struct($this->project_name);
-        $pages = $page_struct->get_elements_by_tagname("page");
+        $this->add_page_data($page_struct->document_element());
 
-        //@todo exclude pages, that are "hidden" or add an extra "no-publish"-tag
-        foreach($pages as $page) {
-            foreach ($languages as $lang) {
-                $page_data = $project->get_page_data($this->project_name, $page->get_attribute("ref"));
-                $meta = $page_data->get_elements_by_tagname("meta");
-                //@todo change lastmod not based on lastchange_UTC but on the lastmod of sourcechange (sha1)
-                $lastmod = $meta[0]->get_attribute("lastchange_UTC");
-                $lastmod = substr($lastmod, 0, 4) . "-" . substr($lastmod, 5, 2) . "-" . substr($lastmod, 8, 2);
+        $this->xmlstr .= "</urlset>";
 
-                $xmlstr .= "<url>\n";
-                $xmlstr .= "\t<loc>" . htmlentities("{$baseurl}/{$lang}" . $page->get_attribute("url")) . "</loc>\n";
-                $xmlstr .= "\t<lastmod>" . htmlentities($lastmod) . "</lastmod>\n";
+        return $this->xmlstr;
+    }
+    /* }}} */
+    /* {{{ add_page_data */
+    function add_page_data($node, $depth = 0) {
+        global $project;
 
-                //@todo add priority (based on depth of navigation)
+        if ($node->tagname == "page" && $node->get_attribute("nav_hidden") != "true") {
+            $pathinfo = pathinfo($node->get_attribute("url"));
+            foreach ($this->languages as $lang) {
+                $file = new publish_file("/{$lang}{$pathinfo['dirname']}", $pathinfo['basename']);
+                $lastmod = $this->pb->get_lastmod($file);
+                
+                // pages in top hierarchy are mor important
+                $priority = floor((1 / sqrt($depth) * 10)) / 10;
+
+                $this->xmlstr .= "<url>\n";
+                $this->xmlstr .= "\t<loc>" . htmlentities($this->baseurl . $file->get_fullname()) . "</loc>\n";
+                $this->xmlstr .= "\t<lastmod>" . htmlentities($lastmod) . "</lastmod>\n";
+                $this->xmlstr .= "\t<priority>" . htmlentities($priority) . "</priority>\n";
                 //@todo add changefreq (based on some statistics?)
-                $xmlstr .= "</url>\n";
+
+                $this->xmlstr .= "</url>\n";
             }
         }
 
-        $xmlstr .= "</urlset>";
-
-        return $xmlstr;
+        $children = $node->child_nodes();
+        foreach ($children as $child) {
+            if ($child->get_attribute("nav_hidden") != "true") {
+                $this->add_page_data($child, $depth + 1);
+            }
+        }
     }
     /* }}} */
 }

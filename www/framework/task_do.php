@@ -25,6 +25,7 @@ require_once('lib_project.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
 require_once('lib_publish.php');
+require_once('lib_sitemap.php');
 require_once('lib_pocket_server.php');
 require_once('Archive/tar.php');
 require_once('Mail.php');
@@ -817,6 +818,30 @@ class rpc_bgtask_functions extends rpc_functions_class {
             if ($do_copy) {
                 $this->file_access->f_write_file($this->output_path . $fList[$i], $project_path . $fList[$i]);
             }
+        }
+    }
+    // }}}
+    // {{{ publish_sitemap()
+    /**
+     * ----------------------------------------------
+     * publish_lib_file args:
+     *        path
+     *        filename
+     *        sha1
+     *        publish_id
+     */ 
+    function publish_sitemap($args) {
+        global $conf, $project, $log;
+        
+        $pb = new publish($this->project, $args['publish_id']);
+        $args['task']->set_description('%task_publish_sitemap%');
+        
+        $sitemap = new sitemap($this->project);
+        // @todo add real baseurl instead of the dummy-url
+        $xmlstr = $sitemap->generate($args['publish_id'], "http://www.depagecms.net");
+
+        if (!$this->file_access->f_write_string($this->output_path . "/sitemap.xml", $xmlstr)) {
+            $log->add_entry("Could not write sitemap");
         }
     }
     // }}}

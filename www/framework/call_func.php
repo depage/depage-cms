@@ -1446,6 +1446,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+            $funcs[] = new ttRpcFunc('publish_sitemap', array(
+                'publish_id' => $args['publish_id']
+            ));
             $funcs[] = new ttRpcFunc('publish_end', array(
                 'publish_id' => $args['publish_id']
             ));
