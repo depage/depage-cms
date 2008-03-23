@@ -3816,7 +3816,24 @@ class_propBox_proj_publish_folder.prototype.generateComponents = function() {
 		this._parent.save();	
 	};
 
-	this.attachMovie("component_inputField", "inputBoxUser", 3, {
+	this.attachMovie("component_inputField", "inputBoxBaseURL", 3, {
+		explain	: conf.lang.prop_tt_publish_folder_baseurl
+	});
+	this.inputBoxBaseURL.onChanged = function() {
+		this._parent.onChanged();
+	};
+	this.inputBoxBaseURL.onKillFocus = function() {
+		//this._parent.save();	
+	};
+	this.inputBoxBaseURL.onEnter = function() {
+		this._parent.save();	
+	};
+	this.inputBoxBaseURL.onCtrlS = function() {
+		this._parent.save();	
+	};
+
+
+	this.attachMovie("component_inputField", "inputBoxUser", 4, {
 		explain	: conf.lang.prop_tt_publish_folder_user
 	});
 	this.inputBoxUser.onChanged = function() {
@@ -3832,7 +3849,7 @@ class_propBox_proj_publish_folder.prototype.generateComponents = function() {
 		this._parent.save();	
 	};
 
-	this.attachMovie("component_inputField", "inputBoxPass", 4, {
+	this.attachMovie("component_inputField", "inputBoxPass", 5, {
 		explain		: conf.lang.prop_tt_publish_folder_pass,
 		password	: true
 	});
@@ -3849,7 +3866,7 @@ class_propBox_proj_publish_folder.prototype.generateComponents = function() {
 		this._parent.save();	
 	};
 
-	this.attachMovie("component_comboBox", "comboBoxTemplateSet", 5, {
+	this.attachMovie("component_comboBox", "comboBoxTemplateSet", 6, {
 		values		: conf.project.tree.settings.templateSets,
 		selected	: 0
 	});
@@ -3858,7 +3875,7 @@ class_propBox_proj_publish_folder.prototype.generateComponents = function() {
 		this._parent.save();
 	};
 	
-	this.attachMovie("component_button", "buttonStart", 6);
+	this.attachMovie("component_button", "buttonStart", 7);
 	this.buttonStart.onClick = function() {
 		this._parent.handleTaskProgress({
 			progress_percent	: 0,
@@ -3891,6 +3908,7 @@ class_propBox_proj_publish_folder.prototype.handleTaskProgress = function(taskHa
 	if (taskHandler == undefined) {
 		this.buttonStart._visible = true;
 		this.inputBoxTargetPath._visible = true;
+		this.inputBoxBaseURL._visible = true;
 		this.inputBoxUser._visible = true;
 		this.inputBoxPass._visible = true;
 		this.comboBoxTemplateSet._visible = true;
@@ -3924,6 +3942,7 @@ class_propBox_proj_publish_folder.prototype.handleTaskProgress = function(taskHa
 		
 		this.buttonStart._visible = false;
 		this.inputBoxTargetPath._visible = false;
+		this.inputBoxBaseURL._visible = false;
 		this.inputBoxUser._visible = false;
 		this.inputBoxPass._visible = false;
 		this.comboBoxTemplateSet._visible = false;
@@ -3938,20 +3957,24 @@ class_propBox_proj_publish_folder.prototype.setComponents = function() {
 	this.inputBoxTargetPath._y = this.settings.border_top;
 	this.inputBoxTargetPath.width = this.width - this.settings.border_left - this.settings.border_right;
 	
+	this.inputBoxBaseURL._x = this.settings.border_left;
+	this.inputBoxBaseURL._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+	this.inputBoxBaseURL.width = this.width - this.settings.border_left - this.settings.border_right;
+
 	this.inputBoxUser._x = this.settings.border_left;
-	this.inputBoxUser._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+	this.inputBoxUser._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
 	this.inputBoxUser.width = this.settings.gridSize * 6 - this.settings.border;
 	
 	this.inputBoxPass._x = this.settings.border_left + this.settings.gridSize * 6;
-	this.inputBoxPass._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+	this.inputBoxPass._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
 	this.inputBoxPass.width = this.settings.gridSize * 6 - this.settings.border;
 	
 	this.comboBoxTemplateSet._x = this.settings.border_left;
-	this.comboBoxTemplateSet._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
+	this.comboBoxTemplateSet._y = this.settings.border_top + 3 * (int(conf.interface.component_height) + this.settings.border);
 	this.comboBoxTemplateSet.width = this.settings.gridSize * 6 - this.settings.border;
 
 	this.buttonStart._x = this.width - this.settings.border_right;
-	this.buttonStart._y = this.settings.border_top + 3*(int(conf.interface.component_height) + 7);
+	this.buttonStart._y = this.settings.border_top + 4 * (int(conf.interface.component_height) + 7);
 	this.buttonStart.caption = conf.lang.prop_tt_publish_folder_button_start;
 	this.buttonStart.align = "TR";
 	
@@ -3964,7 +3987,7 @@ class_propBox_proj_publish_folder.prototype.setComponents = function() {
 	this.progressField._y = this.settings.border_top + int(conf.interface.component_height) + 10;
 	this.progressField._width = this.width - this.settings.border_left - this.settings.border_right;
 	
-	this.innerHeight = this.settings.border_top + (int(conf.interface.component_height) + this.settings.border) * 4;
+	this.innerHeight = this.settings.border_top + (int(conf.interface.component_height) + this.settings.border) * 5;
 	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 };
 // }}}
@@ -3973,6 +3996,7 @@ class_propBox_proj_publish_folder.prototype.setData = function() {
 	var i;
 
 	this.inputBoxTargetPath.value = this.data.attributes.output_folder;
+	this.inputBoxBaseURL.value = this.data.attributes.baseurl;
 	this.inputBoxUser.value = this.data.attributes.output_user;
 	this.inputBoxPass.value = this.data.attributes.output_pass;
 	
@@ -3987,6 +4011,7 @@ class_propBox_proj_publish_folder.prototype.setData = function() {
 // {{{ saveData()
 class_propBox_proj_publish_folder.prototype.saveData = function(forceSave) {
 	this.data.attributes.output_folder = this.inputBoxTargetPath.value;
+	this.data.attributes.baseurl = this.inputBoxBaseURL.value;
 	this.data.attributes.output_user = this.inputBoxUser.value;
 	this.data.attributes.output_pass = this.inputBoxPass.value;
 	this.data.attributes.template_set = this.comboBoxTemplateSet.values[this.comboBoxTemplateSet.selected];

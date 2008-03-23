@@ -26,6 +26,7 @@ require_once('lib_pocket_server.php');
 require_once('lib_tasks.php');
 require_once('lib_files.php');
 require_once('lib_media.php');
+require_once('lib_publish.php');
 require_once('Archive/tar.php');
 // }}}
 
@@ -1340,9 +1341,11 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 'cache_path' => $project->get_project_path($project_name) . '/publish/',
                 'template_set' => $tempnode->get_attribute('template_set'),
                 'output_folder' => $tempnode->get_attribute('output_folder'),
+                'baseurl' => $tempnode->get_attribute('baseurl'),
                 'output_user' => $tempnode->get_attribute('output_user'),
                 'output_pass' => $tempnode->get_attribute('output_pass'),
             )));
+            $baseurl = $tempnode->get_attribute('baseurl');
             
             $doc_id = $xml_db->get_doc_id_by_name($project_name);
             
@@ -1389,27 +1392,52 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             
             $task->add_thread($funcs);
             
+            //process
+            $funcs = array();
+            foreach ($page_ids as $page_id) {
+                foreach ($output_languages as $output_language) {
+                    $funcs[] = new ttRpcFunc('publish_process_page', array(
+                        'page_id' => $page_id, 
+                        'lang' => $output_language,
+                        'publish_id' => $args['publish_id']
+                    ));
+                }
+            }
+
+            $funcs = array_chunk($funcs, 60);
+            foreach ($funcs as $func) {
+                $task->add_thread($func);
+            }
+
             //publish library
             $funcs = array();
-            //$olddir = getcwd();
-            chdir($project->get_project_path($project_name) . '/lib/');
-            $this->_publish_project_lib_add_dir($funcs, '');
-            chdir($conf->path_server_root . $conf->path_base . '/framework');
+
+            $pb = new publish($project_name, $args['publish_id']);
+            $pb->reset_all_file_exists();
+            $files = $pb->get_changed_lib_files();
+            foreach ($files as $file) {
+                $funcs[] = new ttRpcFunc('publish_lib_file', array(
+                    'path' => $file->path, 
+                    'filename' => $file->filename, 
+                    'sha1' => $file->sha1, 
+                    'publish_id' => $args['publish_id']
+                ));
+            }
             
-            $funcs = array_chunk($funcs, 30);
+            $funcs = array_chunk($funcs, 80);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
             
-            //process
+            //publish pages            
             $funcs = array();
             foreach ($page_ids as $page_id) {
-                if ($xml_db->get_attribute($page_id, '', 'multilang') == 'true') {
-                    foreach ($output_languages as $output_language) {
-                        $funcs[] = new ttRpcFunc('publish_process_page', array('page_id' => $page_id, 'lang' => $output_language));
-                    }
-                } else {
-                    $funcs[] = new ttRpcFunc('publish_process_page', array('page_id' => $page_id, 'lang' => $output_languages[0]));
+                foreach ($output_languages as $output_language) {
+                    $funcs[] = new ttRpcFunc('publish_page_file', array(
+                        'page_id' => $page_id, 
+                        'lang' => $output_language,
+                        'publish_id' => $args['publish_id']
+                    ));
                 }
             }
 
@@ -1420,10 +1448,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
-            foreach ($output_languages as $output_language) {
-                $funcs[] = new ttRpcFunc('publish_end', array('lang' => $output_language));
-            }
-            $funcs[] = new ttRpcFunc('publish_end', array());
+            $funcs[] = new ttRpcFunc('publish_sitemap', array(
+                'publish_id' => $args['publish_id'],
+                'baseurl' => $baseurl,
+            ));
+            $funcs[] = new ttRpcFunc('publish_end', array(
+                'publish_id' => $args['publish_id']
+            ));
             $task->add_thread($funcs);
         }
     }
