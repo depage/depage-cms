@@ -789,7 +789,7 @@ class tpl_engine_xslt extends tpl_engine {
                 
                 return $this->settings[$project_name][$type];
             } else {
-                $this->settings[$project_name][$type] = domxml_open_file($project->get_project_path($this->project) . "/publish/settings.xml");
+                $this->settings[$project_name][$type] = domxml_open_file($project->get_project_path($project_name) . "/publish/settings.xml");
             }
         }
         return $this->settings[$project_name][$type];

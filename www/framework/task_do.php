@@ -764,7 +764,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_htaccess
      */ 
     function publish_htaccess($args) {
-        global $project;
+        global $project, $log;
         
         $page_struct = $project->get_page_struct($this->project);
         $node = $page_struct->document_element();
@@ -781,14 +781,14 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $autolang .= $args['languages'];
             $autolang .= ");\n";
 
-            $autolang .= "\$lang_location = \"\" . get_language_by_browser(\$languages) . \"\";\n";
+            $autolang .= "\$lang_location = get_language_by_browser(\$languages);\n";
 
             $autolang .= "\$base_location = \"http://{\$_SERVER['HTTP_HOST']}{\$_SERVER['REQUEST_URI']}\";\n";
             $autolang .= "if (substr(\$base_location, -1, 1) != \"/\") {\n";
             $autolang .= "\t\$base_location .= \"/\";\n";
             $autolang .= "}\n";
             $autolang .= "\$document = \"" . $node->get_attribute("url") . "\";\n";
-            $autolang .= "\$location = \"{\$base_location}{\$lang_location}{\$document}\";\n";
+            $autolang .= "\$location = \"{\$base_location}{\$lang_location}{\$document}\";\n\n";
 
             $autolang .= "header(\"Location: \$location\");\n";
 
@@ -800,11 +800,27 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $htaccess = "";
 
-        $htaccess .= "AddCharset UTF-8 .html\n";
+        // get encoding
+        $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
+        $settings = $this->xml_proc->get_settings($this->project, $this->template_set);
+        $tempNode = $settings->document_element();
+        
+        $method = $tempNode->get_attribute('method');
+        $content_encoding = $tempNode->get_attribute('encoding');
+
+        if ($content_encoding == "UTF-8") {
+            $htaccess .= "AddCharset UTF-8 .html\n\n";
+        }
 
         $htaccess .= "<IfModule mod_rewrite.c>\n";
-            $htaccess .= "RewriteEngine       on\n";
-            $htaccess .= "RewriteRule         ^$              autolang.php  [last]\n";
+            $htaccess .= "\tRewriteEngine       on\n\n";
+
+            if ($method == "xhtml") {
+                $htaccess .= "\tRewriteCond %{HTTP_ACCEPT} application/xhtml\+xml\n";
+                $htaccess .= "\tRewriteRule \.html$ - [T=application/xhtml+xml]\n\n";
+            }
+
+            $htaccess .= "\tRewriteRule         ^$              autolang.php  [last]\n";
         $htaccess .= "</IfModule>\n";
 
         $this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
