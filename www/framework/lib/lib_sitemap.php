@@ -54,7 +54,7 @@ class sitemap {
                 $file = new publish_file("/{$lang}{$pathinfo['dirname']}", $pathinfo['basename']);
                 $lastmod = $this->pb->get_lastmod($file);
                 
-                // pages in top hierarchy are mor important
+                // pages in top hierarchy are more important
                 $priority = floor((1 / sqrt($depth) * 10)) / 10;
 
                 $this->xmlstr .= "<url>\n";

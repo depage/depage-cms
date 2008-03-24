@@ -1320,7 +1320,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             //parse settings
             $tempdoc = $xml_db->get_doc_by_id($args['publish_id']);
             $tempnode = $tempdoc->document_element();
-            //
+           
             //get languages
             $output_languages = array();
             $xml_proc = tpl_engine::factory('xslt');
@@ -1448,6 +1448,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs = array();
             $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+
+            $languages = "";
+            foreach ($output_languages as $lang) {
+                $languages .= "\t'$lang',\n";
+            }
+            $funcs[] = new ttRpcFunc('publish_htaccess', array('languages' => $languages));
+
             $funcs[] = new ttRpcFunc('publish_sitemap', array(
                 'publish_id' => $args['publish_id'],
                 'baseurl' => $baseurl,

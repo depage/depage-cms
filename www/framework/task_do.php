@@ -749,7 +749,65 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $transformed = $this->xml_proc->generate_page_redirect($this->project, $this->template_set, $args['lang'], true);
         
-        $this->file_access->f_write_string($this->output_path . '/index_publish.html', $transformed['value']);
+        $this->file_access->f_write_string($this->output_path . '/index.html', $transformed['value']);
+
+        $htaccess = "";
+
+        $htaccess .= "AddCharset UTF-8 .html\n";
+
+        $this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
+    }
+    // }}}
+    // {{{ publish_htaccess()
+    /**
+     * ----------------------------------------------
+     * publish_htaccess
+     */ 
+    function publish_htaccess($args) {
+        global $project;
+        
+        $page_struct = $project->get_page_struct($this->project);
+        $node = $page_struct->document_element();
+        while ($node != null && $node->tagname != "page") {
+            $node = $node->first_child();
+        }
+        if ($node == null) {
+            return;
+        }
+
+        $autolang = file_get_contents("php/autolang_tpl.php");
+        $autolang .= "<" . "?php\n";
+            $autolang .= "\$languages = array(\n";
+            $autolang .= $args['languages'];
+            $autolang .= ");\n";
+
+            $autolang .= "\$lang_location = \"\" . get_language_by_browser(\$languages) . \"\";\n";
+
+            $autolang .= "\$base_location = \"http://{\$_SERVER['HTTP_HOST']}{\$_SERVER['REQUEST_URI']}\";\n";
+            $autolang .= "if (substr(\$base_location, -1, 1) != \"/\") {\n";
+            $autolang .= "\t\$base_location .= \"/\";\n";
+            $autolang .= "}\n";
+            $autolang .= "\$document = \"" . $node->get_attribute("url") . "\";\n";
+            $autolang .= "\$location = \"{\$base_location}{\$lang_location}{\$document}\";\n";
+
+            $autolang .= "header(\"Location: \$location\");\n";
+
+            //$autolang .= "echo(\"\$location\")\n";
+        $autolang .= "?" . ">";
+
+        $this->file_access->f_write_string($this->output_path . '/autolang.php', $autolang);
+
+
+        $htaccess = "";
+
+        $htaccess .= "AddCharset UTF-8 .html\n";
+
+        $htaccess .= "<IfModule mod_rewrite.c>\n";
+            $htaccess .= "RewriteEngine       on\n";
+            $htaccess .= "RewriteRule         ^$              autolang.php  [last]\n";
+        $htaccess .= "</IfModule>\n";
+
+        $this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
     }
     // }}}
     // {{{ publish_lib_file()
@@ -861,9 +919,6 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $this->file_access->rm($this->output_path . $file->get_fullname());
         }
         $pb->clear_deleted_files();
-
-        $this->file_access->rm($this->output_path . '/index.html');
-        $this->file_access->f_rename($this->output_path . '/index_publish.html', $this->output_path . '/index.html');
     }
     // }}}
 }
