@@ -378,7 +378,8 @@ class tpl_engine_xslt extends tpl_engine {
      * @return    $transformed (string) posttransformed data
      */
     function _post_transform($project_name, $type, $transformed) {
-        /* @todo take care that html files are served ase UTF-8
+        // @todo take care that html files are served as UTF-8
+        /* 
         if (function_exists('mb_encode_numericentity')) {
             $transformed = $this->_to_entity($transformed, $this->content_encoding);
         }*/

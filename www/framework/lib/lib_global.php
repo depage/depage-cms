@@ -35,12 +35,9 @@ class config {
      */
     function config($file) {
         // @todo change this to always use filepath relative to framework
-        if (file_exists('../settings/' . $file)) {
-            $this->settingsPath = '../settings/';
-        } else if (file_exists('../../settings/' . $file)) {
-            $this->settingsPath = '../../settings/';
-        } else if (file_exists('settings/' . $file)) {
-            $this->settingsPath = 'settings/';
+        $pinfo = pathinfo(__FILE__);
+        if (file_exists($pinfo['dirname'] . '/../../settings/' . $file)) {
+            $this->settingsPath = $pinfo['dirname'] . '/../../settings/';
         } else {
             die("no '$file' found");
         }
@@ -261,9 +258,9 @@ class config {
         } else {
             $path_divider = ':';
         }
-        //$old_include_path = ini_get('inlude_path');
-        //$new_include_path = $old_include_path;
-        $new_include_path = '';
+        $old_include_path = ini_get('inlude_path');
+        $new_include_path = $old_include_path;
+        //$new_include_path = '';
         $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/lib';
         $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/pear';
         

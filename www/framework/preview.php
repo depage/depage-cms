@@ -163,14 +163,18 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
                     headerType($transformed['content_type'], $transformed['content_encoding']);
                     echo($transformed['value']);
                 } else {
-                    $cache_path = substr($param['path'], strpos($param['path'], '/', 2));
-                    $file_path = $project->get_project_path($project_name) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}";
+                    if (strpos($param['path'], '/', 2)) {
+                        $cache_path = substr($param['path'], strpos($param['path'], '/', 2));
+                    } else {
+                        $cache_path = "";
+                    }
+                    $file_path = $project->get_project_path($project_name) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}/{$param['file_name']}";
                     $file_access = fs::factory('local');
                     $file_access->f_write_string($file_path, $transformed['value']);
-                    $file_access->ch_dir($project->get_project_path($project_name) . "/cache_{$param['type']}{$cache_path}");
+                    $file_access->ch_dir($project->get_project_path($project_name) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}");
                     // replace virtual if not available
-                    if (is_callable("virtual")) {
-                        virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
+                    if (false && is_callable("virtual")) {
+                        virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}/{$param['file_name']}");
                     } else {
                        $host = $_SERVER['HTTP_HOST'];
                        if ($host == "") {
@@ -179,9 +183,14 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
                        if ($host == "") {
                            $host = $_SERVER['SERVER_ADDR'];
                        }
+                       if ($_SERVER['QUERY_STRING'] != "") {
+                           $get_query = "?{$_SERVER['QUERY_STRING']}";
+                       } else {
+                           $get_query = "";
+                       }
 
-                       //@todo add options to give GET, POST and COOKIES to called script
-                       readfile("http://$host/{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}{$cache_path}/{$param['file_name']}");
+                       //@todo add options to give POST and COOKIES to called script
+                       readfile("http://$host{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}/{$param['file_name']}{$get_query}");
                     }
                     //$file_access->rm($file_path);
                 }

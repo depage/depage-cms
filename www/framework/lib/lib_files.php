@@ -219,7 +219,12 @@ class fs_local extends fs {
      * @return $success (bool) true on success, false on error
      */
     function ch_dir($path) {
-        return chdir($path);
+        global $log;
+        if (!@chdir($path)) {
+            $log->add_entry("could not change directory to '$path'");
+        } 
+
+        return true;
     }
     
     /**

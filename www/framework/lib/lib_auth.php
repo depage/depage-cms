@@ -248,7 +248,7 @@ class ttUser{
         $result = db_query(
             "SELECT sid 
             FROM $conf->db_table_sessions
-            WHERE last_update < DATE_SUB(NOW(), INTERVAL 1 MINUTE)"
+            WHERE last_update < DATE_SUB(NOW(), INTERVAL 5 MINUTE)"
         );
         if (($num = mysql_num_rows($result)) > 0) {
             for ($i = 0; $i < $num; $i++) {
