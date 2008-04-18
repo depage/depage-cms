@@ -105,6 +105,9 @@ class xml_db {
                 $this->element_table WRITE, 
                 $this->cache_table WRITE" 
             );
+            db_query(
+                "START TRANSACTION"
+            );
             $this->_lock_mode = 'w';
         }
     }
@@ -142,6 +145,9 @@ class xml_db {
         
         $this->_is_locked--;
         if ($this->_is_locked == 0 || $force) {
+            db_query(
+                "COMMIT;"
+            );
             db_query(
                 "UNLOCK TABLES"
             );

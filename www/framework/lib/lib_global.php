@@ -501,7 +501,8 @@ class config {
                     if ($start_low_priority) {
                         $prio_param = "nice -10";
                     }
-                    exec("$prio_param \"$this->path_phpcli\" -f $script " . escapeshellarg($args) . " > /dev/null &");    
+                    //exec("$prio_param \"$this->path_phpcli\" -f $script " . escapeshellarg($args) . " > /dev/null &");    
+                    pclose(popen("$prio_param \"$this->path_phpcli\" -f $script " . escapeshellarg($args) . " > /dev/null &", "r"));    
                 }
             }
         } else {

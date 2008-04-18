@@ -492,6 +492,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
             if (substr($this->output_path, -1) == '/') {
                 $this->output_path = substr($this->output_path, 0, -1);
             }
+            if (substr($this->output_path, 0, 2) == '//') {
+                $this->output_path = substr($this->output_path, 1);
+            }
             
             //generate file_access_object
             $this->file_access = fs::factory('local');
@@ -791,11 +794,9 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $autolang .= "\$location = \"{\$base_location}{\$lang_location}{\$document}\";\n\n";
 
             $autolang .= "header(\"Location: \$location\");\n";
-
-            //$autolang .= "echo(\"\$location\")\n";
         $autolang .= "?" . ">";
 
-        $this->file_access->f_write_string($this->output_path . '/autolang.php', $autolang);
+        $this->file_access->f_write_string($this->output_path . '/index.php', $autolang);
 
 
         $htaccess = "";
@@ -812,16 +813,17 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $htaccess .= "AddCharset UTF-8 .html\n\n";
         }
 
-        $htaccess .= "<IfModule mod_rewrite.c>\n";
-            $htaccess .= "\tRewriteEngine       on\n\n";
+        // @todo add option to exclude rewrite conditions
+        //$htaccess .= "<IfModule mod_rewrite.c>\n";
+            //$htaccess .= "\tRewriteEngine       on\n\n";
 
             if ($method == "xhtml") {
-                $htaccess .= "\tRewriteCond %{HTTP_ACCEPT} application/xhtml\+xml\n";
-                $htaccess .= "\tRewriteRule \.html$ - [T=application/xhtml+xml]\n\n";
+                $htaccess .= "RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml\n";
+                $htaccess .= "RewriteRule \.html$ - [T=application/xhtml+xml]\n\n";
             }
 
-            $htaccess .= "\tRewriteRule         ^$              autolang.php  [last]\n";
-        $htaccess .= "</IfModule>\n";
+            $htaccess .= "RewriteRule         ^$              index.php  [last]\n";
+        //$htaccess .= "</IfModule>\n";
 
         $this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
     }

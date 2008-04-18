@@ -795,11 +795,15 @@ class fs_ftp extends fs {
             
             if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
                 trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+                unlink($tempfile);
+
+                return false;
             } else {
                 $this->ch_mod($filepath, $this->chmod);
+                unlink($tempfile);
+
+                return true;
             }
-            
-            unlink($tempfile);
         } else {
             return false;
         }
@@ -823,9 +827,13 @@ class fs_ftp extends fs {
             
             if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
                 trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+
+                return false;
             } else {
                 $this->ch_mod($filepath, $this->chmod);
             }
+
+            return true;
         } else {
             return false;
         }

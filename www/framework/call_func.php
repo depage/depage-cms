@@ -1384,6 +1384,11 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $folder_id));
             }
             
+            $funcs = array_chunk($funcs, 20);
+            foreach ($funcs as $func) {
+                array_unshift($func, new ttRpcFunc('publish_cache_init', array()));
+                $task->add_thread($func);
+            }
 
             $funcs[] = new ttRpcFunc('publish_cache_end', array());
             foreach ($output_languages as $output_language) {
@@ -1404,7 +1409,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 }
             }
 
-            $funcs = array_chunk($funcs, 60);
+            $funcs = array_chunk($funcs, 20);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
@@ -1424,7 +1429,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 ));
             }
             
-            $funcs = array_chunk($funcs, 80);
+            $funcs = array_chunk($funcs, 40);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
@@ -1441,13 +1446,13 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 }
             }
 
-            $funcs = array_chunk($funcs, 60);
+            $funcs = array_chunk($funcs, 40);
             foreach ($funcs as $func) {
                 $task->add_thread($func);
             }
 
             $funcs = array();
-            $funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+            //$funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
 
             $languages = "";
             foreach ($output_languages as $lang) {
