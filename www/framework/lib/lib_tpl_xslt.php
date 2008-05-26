@@ -443,7 +443,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $data (xmlobject) xmldata of page
      */
-    function &get_page($id) {
+    function get_page($id) {
         global $conf, $project, $log;
         
         if ($id == '') {
@@ -490,7 +490,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $data (xmlobject) data
      */
-    function &get_page_redirect($id) {
+    function get_page_redirect($id) {
         global $conf;
         
         $docdef = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -519,7 +519,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $data (xmlobject) data
      */
-    function &get_page_css($type) {
+    function get_page_css($type) {
         global $conf;
         
         $docdef = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -557,7 +557,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @bug        extra data also added tomemcached template?
      */
-    function &get_template($project_name, $type, $cached, $variables = array()) {
+    function get_template($project_name, $type, $cached, $variables = array()) {
         global $conf, $project, $log;
         
         if ($this->isPreview) {
@@ -588,7 +588,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $template (string) template string
      */
-    function &_get_template_from_db($project_name, $type) {
+    function _get_template_from_db($project_name, $type) {
         global $conf, $project;
     
         $docdef = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -629,7 +629,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $template (string) template string
      */
-    function &_get_template_from_cache($project_name, $type) {
+    function _get_template_from_cache($project_name, $type) {
         global $conf, $project;
         
         $filename = $project->get_project_path($project_name) . "/cache/xslt_{$type}.xsl";
@@ -728,7 +728,7 @@ class tpl_engine_xslt extends tpl_engine {
      * 
      * @return     $navigation (xmlobject) navigation hirarchy
      */
-    function &get_navigation($project_name) {
+    function get_navigation($project_name) {
         global $conf, $project, $log;
         
         if (!isset($this->navigations[$project_name])) {
@@ -753,7 +753,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $language (xmlobject) languages
      */
-    function &get_languages($project_name) {
+    function get_languages($project_name) {
         global $conf, $project;
         global $log;
         
@@ -778,7 +778,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $settings (xmlobject) project settings
      */
-    function &get_settings($project_name, $type) {
+    function get_settings($project_name, $type) {
         global $conf, $project, $log;
         
         if (!isset($this->settings[$project_name])) {
@@ -950,7 +950,7 @@ class tpl_engine_xslt extends tpl_engine {
      *
      * @return    $colors (xmlobject) colorschemes
      */
-    function &get_colors($project_name) {
+    function get_colors($project_name) {
         global $conf, $project;
 
         if ($this->isPreview) {

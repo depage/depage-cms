@@ -9,7 +9,7 @@
  * It needs the lib_xmldb library for database access.
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -150,7 +150,7 @@ class project_acss_mysql2 extends project {
      *
      * @return    $settings (domxmlobject) poject settings as xml
      */
-    function &get_settings($project_name) {
+    function get_settings($project_name) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -194,7 +194,7 @@ class project_acss_mysql2 extends project {
      *
      * @return    $languages (array) array of available languages
      */
-    function &get_languages_xml($project_name) {
+    function get_languages_xml($project_name) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -213,7 +213,7 @@ class project_acss_mysql2 extends project {
      *
      * @param    $project_name (string) project name
      */
-    function &get_page_struct($project_name) {
+    function get_page_struct($project_name) {
         global $conf;
         global $log;
 
@@ -239,7 +239,7 @@ class project_acss_mysql2 extends project {
      *            language settings are changing.
      * @todo    test, if id belongs to project with $project_name
      */
-    function &get_page_data($project_name, $id) {
+    function get_page_data($project_name, $id) {
         global $conf, $log;
         
         $this->_set_project($project_name);
@@ -354,9 +354,11 @@ class project_acss_mysql2 extends project {
         $dirarray = $fs_access->list_dir($path);
         
         foreach ($dirarray['dirs'] as $dir) {
-            $dirXML .= "<{$conf->ns['project']['ns']}:dir name=\"$dir\">";
-            $dirXML .= $this->_get_lib_tree_dir($fs_access, "$path/$dir");
-            $dirXML .= "</{$conf->ns['project']['ns']}:dir>"; 
+            if (substr($dir, 0, 1) != ".") {
+                $dirXML .= "<{$conf->ns['project']['ns']}:dir name=\"$dir\">";
+                $dirXML .= $this->_get_lib_tree_dir($fs_access, "$path/$dir");
+                $dirXML .= "</{$conf->ns['project']['ns']}:dir>"; 
+            }
         }
         
         return $dirXML;
@@ -381,7 +383,9 @@ class project_acss_mysql2 extends project {
 
         $dir_str = "<{$conf->ns['project']['ns']}:files><{$conf->ns['project']['ns']}:filelist dir=\"$path\">";
         foreach ($dirarray['files'] as $file) {
-            $dir_str .= mediainfo::get_file_info_xml($dir . '/' . $file);
+            if (substr($file, 0, 1) != ".") {
+                $dir_str .= mediainfo::get_file_info_xml($dir . '/' . $file);
+            }
         }
         $dir_str .= "</{$conf->ns['project']['ns']}:filelist></{$conf->ns['project']['ns']}:files>";
 
@@ -396,7 +400,7 @@ class project_acss_mysql2 extends project {
      *
      * @param    $project_name (string) project name
      */
-    function &get_colors($project_name) {
+    function get_colors($project_name) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -414,7 +418,7 @@ class project_acss_mysql2 extends project {
      *
      * @param    $project_name (string) project name
      */
-    function &get_tpl_template_struct($project_name) {
+    function get_tpl_template_struct($project_name) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -435,7 +439,7 @@ class project_acss_mysql2 extends project {
      *
      * @todo    add check, if template belongs to project
      */
-    function &get_tpl_template_data($project_name, $id) {
+    function get_tpl_template_data($project_name, $id) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -482,7 +486,7 @@ class project_acss_mysql2 extends project {
      *
      * @return    $settings (domxmlobject) poject settings as xml
      */
-    function &get_tpl_settings_xml($project_name, $type) {
+    function get_tpl_settings_xml($project_name, $type) {
         global $conf;
 
         $this->_set_project($project_name);
@@ -500,7 +504,7 @@ class project_acss_mysql2 extends project {
      *
      * @param    $project_name (string) project name
      */
-    function &get_tpl_newnodes($project_name) {
+    function get_tpl_newnodes($project_name) {
         global $conf;
 
         $this->_set_project($project_name);

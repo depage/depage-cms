@@ -9,7 +9,7 @@
  * called db:id.
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -664,7 +664,7 @@ class xml_db {
      *
      * @return    $doc (domxmlobject)
      */
-    function &get_doc_by_xpath($doc_id, $xpath, $add_id_attribute = true) {
+    function get_doc_by_xpath($doc_id, $xpath, $add_id_attribute = true) {
         $ids = $this->get_node_ids_by_xpath($doc_id, $xpath);
         if (count($ids > 0)) {
             $val = $this->get_doc_by_id($ids[0], null, $add_id_attribute);
@@ -686,7 +686,7 @@ class xml_db {
      *            to xml-definition, false to remove them.
      * @param    $lock (bool) wether to lock database tablessor not
      */
-    function &get_doc_by_id($id, $nodefunc = '', $add_id_attribute = true, $lock = true) {
+    function get_doc_by_id($id, $nodefunc = '', $add_id_attribute = true, $lock = true) {
         global $conf;
         
         $result = db_query(
@@ -777,7 +777,7 @@ class xml_db {
      *
      * @return    $xml_doc (string) xml node definition of node
      */
-    function &_get_node_by_id(&$xml_doc, $id, $nodefunc = null, $is_root = false, $row = array()) {
+    function _get_node_by_id(&$xml_doc, $id, $nodefunc = null, $is_root = false, $row = array()) {
         global $conf;
         
         if (count($row) == 0) {

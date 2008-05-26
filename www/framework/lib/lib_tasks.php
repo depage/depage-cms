@@ -11,7 +11,7 @@
  * needs access to the cli-version of php.
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -77,7 +77,7 @@ class bgTasks_control {
      *
      * @param    $id (int) id of task
      */
-    function &get_task_control($id) {
+    function get_task_control($id) {
         global $conf;
         
         if (!isset($this->tasks[$id])) {
@@ -99,7 +99,7 @@ class bgTasks_control {
      *
      * @param    $pocketServerObj (ref) reference to running pocketServer object.
      */
-    function handle_tasks(&$pocketServerObj) {
+    function handle_tasks($pocketServerObj) {
         global $log;
 
         $active_tasks = $this->get_active_tasks();
@@ -109,7 +109,7 @@ class bgTasks_control {
             for ($i = 0; $i < count($finished_tasks); $i++) {
                 $task = $this->get_task_control($finished_tasks[$i]['id']);
                 $this->control_msg('finished task "' . $finished_tasks[$i]['name'] . '" with status "' . $task->get_status() . '"');
-                $this->send_status(&$pocketServerObj, $finished_tasks[$i], true);
+                $this->send_status($pocketServerObj, $finished_tasks[$i], true);
                 $task->remove();
             }
         }
@@ -134,7 +134,7 @@ class bgTasks_control {
         
         if (count($active_tasks) > 0) {
             for ($i = 0; $i < count($active_tasks); $i++) {
-                $this->send_status(&$pocketServerObj, $active_tasks[$i]);
+                $this->send_status($pocketServerObj, $active_tasks[$i]);
             }
             return false;
         } else {
@@ -154,7 +154,7 @@ class bgTasks_control {
      *
      * @return    $task (object) task object
      */
-    function send_status(&$pocketServerObj, &$actualtask, $finished = false) {
+    function send_status($pocketServerObj, $actualtask, $finished = false) {
         global $conf, $project;
         
         if (strlen($actualtask['depends_on']) == 0) {
@@ -519,8 +519,8 @@ class bgTasks_task {
      * @param    $funcObj (rpcfuncobject) rpc function object that handles 
      *            the function execution.
      */
-    function _do_threads(&$funcObj) {
-        $this->msgHandler->funcObj = &$funcObj;
+    function _do_threads($funcObj) {
+        $this->msgHandler->funcObj = $funcObj;
         $this->set_status('active');
         
         ignore_user_abort(true);
@@ -528,7 +528,7 @@ class bgTasks_task {
         //init variables
         $funcs = $this->msgHandler->parse_msg($this->func_init_vars);
         for ($i = 0; $i < count($funcs); $i++) {
-            $funcs[$i]->add_args(array('task' => &$this));
+            $funcs[$i]->add_args(array('task' => $this));
             $funcs[$i]->call();
         }
         
@@ -550,7 +550,7 @@ class bgTasks_task {
      * @param    $funcObj (rpcfuncobject) rpc function object that handles 
      *            the function execution.
      */
-    function do_start(&$funcObj) {
+    function do_start($funcObj) {
         if ($this->id !== NULL) {
             $this->_do_threads($funcObj);
         }
@@ -565,7 +565,7 @@ class bgTasks_task {
      * @param    $funcObj (rpcfuncobject) rpc function object that handles 
      *            the function execution.
      */
-    function do_resume(&$funcObj) {
+    function do_resume($funcObj) {
         if ($this->id !== NULL) {
             $this->_do_threads($funcObj);
         }
@@ -864,8 +864,8 @@ class bgTasks_thread {
     /**
      * ----------------------------------------------
      */
-    function bgTasks_thread(&$taskObj) {
-        $this->taskObj = &$taskObj;
+    function bgTasks_thread($taskObj) {
+        $this->taskObj = $taskObj;
         $this->funcs = NULL;
     }
     // }}}
@@ -902,10 +902,13 @@ class bgTasks_thread {
     // }}}
     // {{{ do_start()
     function do_start() {
+        global $log;
+
         for ($i = 0; $i < count($this->funcs); $i++) {
             set_time_limit($this->taskObj->timelimit);
             
-            $this->funcs[$i]->add_args(array('task' => &$this->taskObj));
+            $this->funcs[$i]->add_args(array('task' => $this->taskObj));
+            $log->add_memory_usage($this->funcs[$i]->name);
             $this->funcs[$i]->call();
             db_query(
                 "UPDATE " . $this->taskObj->threadTable . " 
