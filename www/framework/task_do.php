@@ -8,7 +8,7 @@
  * background tasks.
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -675,6 +675,11 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_process_page
      */ 
     function publish_process_page($args) {
+        global $log, $db;
+
+        $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
+        $GLOBALS['xml_proc'] = &$this->xml_proc;
+        
         $file_path = $this->xml_proc->get_path_by_id($args['page_id'], $args['lang'], $this->project);
         if (substr($file_path, -1) == '/') {
             $file_path .= 'index.html';
@@ -688,12 +693,6 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $this->xml_proc->isPreview = true;
         $transformed = $this->xml_proc->transform($this->project, $this->template_set, $args['page_id'], $args['lang'], true);
         $this->xml_proc->isPreview = false;
-        
-        $page_keys = array_keys($this->xml_proc->pages);
-        foreach ($page_keys as $page) {
-            //$this->xml_proc->pages[$page]->free();
-            unset($this->xml_proc->pages[$page]);
-        }
         
         $fs = fs::factory("local");
         $filename = $this->cache_path . $args['publish_id'] . '/' . $args['lang'] . '/page_' . $args['page_id'] . '_' . $file_path['basename'];
@@ -825,7 +824,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $htaccess .= "RewriteRule         ^$              index.php  [last]\n";
         //$htaccess .= "</IfModule>\n";
 
-        $this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
+        @$this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);
     }
     // }}}
     // {{{ publish_lib_file()
