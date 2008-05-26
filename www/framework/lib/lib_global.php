@@ -9,7 +9,7 @@
  * errorHandler with logging.
  *
  *
- * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -44,7 +44,7 @@ class config {
         $inifile = parse_ini_file($this->settingsPath . $file, false);
         
         $this->app_name = 'depage::cms';
-        $this->app_version = '1.0.12';
+        $this->app_version = '1.0.14';
 
         $vars_to_set = array(
             'xml_version' => (string) '1.0',
@@ -702,6 +702,21 @@ class logObj{
         $varinfo = ob_get_clean();
 
         $this->add_entry($varinfo, $type);
+    }
+    // }}}
+    // {{{ add_memory_usage()
+    /**
+     * adds entry to log-db
+     *
+     * @public
+     *
+     * @param    $entry (string)
+     * @param    $type (string)
+     */
+    function add_memory_usage($entry = ""){
+        if (function_exists('memory_get_usage')) {
+            $this->add_entry($entry . " - memory: " . fs::formatFileSize(memory_get_usage()));
+        }
     }
     // }}}
     // {{{ get_entries()
