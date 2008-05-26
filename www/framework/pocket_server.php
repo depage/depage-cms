@@ -4,7 +4,7 @@
  * P O C K E T - S E R V E R
  *
  * php-script:
- * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
  */
 
 define('IS_IN_CONTOOL', true);
