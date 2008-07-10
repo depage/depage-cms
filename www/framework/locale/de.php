@@ -86,6 +86,7 @@ $texts = array(
 	'prop_name_edit_a' => "Link",
 	'prop_name_edit_date' => "Datum",
 	'prop_name_edit_img' => "Bild",
+	'prop_name_edit_img_zoom' => "Zoom",
 	'prop_name_edit_audio' => "Audio",
 	'prop_name_edit_video' => "Video",
 	'prop_name_edit_flash' => "Flash",
