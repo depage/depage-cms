@@ -34,6 +34,14 @@ class config {
      * @public
      */
     function config($file) {
+        if (is_callable("mb_internal_encoding")) {
+            $this->encoding = "UTF-8";
+
+            mb_internal_encoding($this->encoding);
+            mb_http_output($this->encoding);
+            mb_regex_encoding($this->encoding);
+        }
+        
         // @todo change this to always use filepath relative to framework
         $pinfo = pathinfo(__FILE__);
         if (file_exists($pinfo['dirname'] . '/../../settings/' . $file)) {

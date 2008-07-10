@@ -1389,13 +1389,13 @@ class xml_db {
             $attributes = preg_split("/(=\"|\"$|\" )/", $row['value']);
             for ($i = 0; $i < count($attributes) - 1; $i += 2) {
                 if ($attributes[$i] == $query) {
-                    $attributes[$i + 1] = htmlspecialchars($attr_value);
+                    $attributes[$i + 1] = $attr_value;
                     $changed = true;
                 }
-                $attr_str .= $attributes[$i] . "=\"" . $attributes[$i + 1] . "\" ";
+                $attr_str .= $attributes[$i] . "=\"" . str_replace('"', "&quot;", $attributes[$i + 1]) . "\" ";
             }
             if (!$changed) {
-                $attr_str .= $query . "=\"" . htmlspecialchars($attr_value) . "\" ";
+                $attr_str .= $query . "=\"" . str_replace('"', "&quot;", $attr_value) . "\" ";
             }
             db_query(
                 "UPDATE $this->element_table 
