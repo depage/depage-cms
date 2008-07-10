@@ -52,7 +52,7 @@ class sitemap {
             $pathinfo = pathinfo($node->get_attribute("url"));
             foreach ($this->languages as $lang) {
                 $file = new publish_file("/{$lang}{$pathinfo['dirname']}", $pathinfo['basename']);
-                $lastmod = $this->pb->get_lastmod($file);
+                $lastmod = date("Y-m-d", $this->pb->get_lastmod($file));
                 
                 // pages in top hierarchy are more important
                 $priority = floor((1 / sqrt($depth) * 10)) / 10;

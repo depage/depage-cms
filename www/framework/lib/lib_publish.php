@@ -212,7 +212,7 @@ class publish {
 
         if ($result && mysql_num_rows($result) > 0) {
             $row = mysql_fetch_assoc($result);
-            return $row['lastmod'];
+            return strtotime($row['lastmod']);
         }
 
         return false;
