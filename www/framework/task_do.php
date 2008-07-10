@@ -768,6 +768,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
     function publish_htaccess($args) {
         global $project, $log;
         
+        // generate autolanguage-switch
         $page_struct = $project->get_page_struct($this->project);
         $node = $page_struct->document_element();
         while ($node != null && $node->tagname != "page") {
@@ -797,8 +798,13 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $this->file_access->f_write_string($this->output_path . '/index.php', $autolang);
 
-
-        $htaccess = "";
+        // generate htaccess file
+        $project_path = $project->get_project_path($this->project);
+        if (file_exists("{$project_path}/lib/htaccess")) {
+            $htaccess = file_get_contents("{$project_path}/lib/htaccess") . "\n\n";
+        } else {
+            $htaccess = "";
+        }
 
         // get encoding
         $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
@@ -814,14 +820,20 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         // @todo add option to exclude rewrite conditions
         //$htaccess .= "<IfModule mod_rewrite.c>\n";
-            //$htaccess .= "\tRewriteEngine       on\n\n";
+        //$htaccess .= "\tRewriteEngine       on\n\n";
 
-            if ($method == "xhtml") {
-                $htaccess .= "RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml\n";
-                $htaccess .= "RewriteRule \.html$ - [T=application/xhtml+xml]\n\n";
-            }
+        if ($method == "xhtml") {
+            $htaccess .= "RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml\n";
+            $htaccess .= "RewriteRule \.html$ - [T=application/xhtml+xml]\n\n";
+        }
 
-            $htaccess .= "RewriteRule         ^$              index.php  [last]\n";
+        if ($args['lang_num'] > 1) {
+            $htaccess .= "RewriteRule         ^$              index.php [last]\n";
+        } else {
+            $htaccess .= "RewriteRule         ^$              {$args['lang_default']}" . $node->get_attribute("url") . " [last]\n";
+            $htaccess .= "RedirectMatch       ^/$             {$args['baseurl']}/{$args['lang_default']}" . $node->get_attribute("url") . "\n";
+        }
+        
         //$htaccess .= "</IfModule>\n";
 
         @$this->file_access->f_write_string($this->output_path . '/.htaccess', $htaccess);

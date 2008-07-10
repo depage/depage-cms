@@ -551,6 +551,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function rename_node($args) {
         global $conf, $project;
         global $xml_db;
+        global $log;
         
         $data = array();
         $updated = false;
@@ -567,7 +568,10 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             // }}}
             // {{{ all other types    
             } else {
-                $project->rename_element($project_name, $args['id'], $args['new_name']);
+                // @todo check for encoding
+                $newname = $args['new_name'];
+               
+                $project->rename_element($project_name, $args['id'], $newname);
                 $updated = $args['id'];
             }
             // }}}
@@ -1458,7 +1462,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             foreach ($output_languages as $lang) {
                 $languages .= "\t'$lang',\n";
             }
-            $funcs[] = new ttRpcFunc('publish_htaccess', array('languages' => $languages));
+            $funcs[] = new ttRpcFunc('publish_htaccess', array(
+                'languages' => $languages,
+                'lang_num' => count($output_languages),
+                'lang_default' => $output_languages[0],
+                'baseurl' => $baseurl,
+            ));
 
             $funcs[] = new ttRpcFunc('publish_sitemap', array(
                 'publish_id' => $args['publish_id'],
