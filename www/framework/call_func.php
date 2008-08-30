@@ -948,6 +948,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $XSLTProc->cache_template($project_name, $args['template_type']);
             $XSLTProc->clear_transform_cache($project_name, 'preview');
 
+            $project->generate_css($project_name);
+
             tell_clients_to_update($project_name, $args['sid'], $args['type']);
         }
     }
@@ -1400,7 +1402,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             }
             
             $task->add_thread($funcs);
-            
+
             //process
             $funcs = array();
             foreach ($page_ids as $page_id) {

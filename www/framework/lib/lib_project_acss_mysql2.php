@@ -1409,25 +1409,28 @@ class project_acss_mysql2 extends project {
     // }}}
     // {{{ generate_css()
     function generate_css($project_name) {
-        global $log, $xml_proc;
+        global $log, $xml_proc, $conf;
 
         $this->_set_project($project_name);
         $xml_proc = tpl_engine::factory('xslt', $param);
-        //@todo eventually get css-types by settings instead of a hard-coded array
-        $types = array(
-            "global",
-            "screen",
-            "print",
-        );
 
+        // get colorschemes
+        $colorschemes = array();
+        $xml_colors = $xml_proc->get_colors($project_name);
+        $xpath_colors = project::xpath_new_context($xml_colors);
+        $xfetch = xpath_eval($xpath_colors, "//{$conf->ns['project']['ns']}:colorscheme[@name != 'tree_name_color_global']");
+        foreach ($xfetch->nodeset as $temp_node) {
+            $colorschemes[] = $temp_node->get_attribute("name");
+        }
+            
         $lib_path = $this->get_project_path($project_name) . "/lib";
         $fs_access = fs::factory('local');
         
         //@todo get template name for the stylesheet (at the moment hardcoded to html)
-        foreach ($types as $type) {
-            $transformed = $xml_proc->generate_page_css($project_name, "html", $type);
-            //@todo write css to cache instead of library and get css also by preview/cache
-            $fs_access->f_write_string("$lib_path/css/test_$type.css", $transformed['value']);
+        foreach ($colorschemes as $colorscheme) {
+            $transformed = $xml_proc->generate_page_css($project_name, "html", $colorscheme);
+
+            $fs_access->f_write_string("$lib_path/global/css/color_$colorscheme.css", $transformed['value']);
         }
     }
     // }}}

@@ -157,7 +157,7 @@ class tpl_engine_xslt extends tpl_engine {
      * @param    $lang (string) current language
      * @param    $use_cached_template (bool) true, if to use cached template, false for using template from db for previewing
      */
-    function generate_page_css($project_name, $type, $media_type, $lang = '', $use_cached_template = true) {
+    function generate_page_css($project_name, $type, $colorscheme, $lang = '', $use_cached_template = true) {
         global $conf, $log;
         
         if ($lang == '') {
@@ -177,7 +177,7 @@ class tpl_engine_xslt extends tpl_engine {
         $this->lang = $lang;
         $this->use_cached_template = $use_cached_template;
         $this->ids_used = array();
-        $this->media_type = $media_type;
+        $this->colorscheme = $colorscheme;
         $transformed = array();
         
         $settings = $this->get_settings($project_name, $type);
@@ -195,7 +195,7 @@ class tpl_engine_xslt extends tpl_engine {
             'tt_multilang' => "/{$conf->ns['page']['ns']}:page/@multilang",
             'content_type' => "'{$this->content_type}'",
             'content_encoding' => "'{$this->content_encoding}'",
-            'media_type' => "'{$this->media_type}'",
+            'tt_actual_colorscheme' => "'{$this->colorscheme}'",
         );
         
         $xml_colors = $this->get_colors($this->project);
@@ -220,7 +220,7 @@ class tpl_engine_xslt extends tpl_engine {
         for ($i = 0; $i < count($xfetch->nodeset); $i++) {
             $this->variables['ttc_' . $xfetch->nodeset[$i]->get_attribute('name')] = "'" . $xfetch->nodeset[$i]->get_attribute('value') . "'";
         }
-        // @todo add all colorschemes or get it as xml inside of template
+
         // add colors from colorscheme
         $xfetch = xpath_eval($xpath_colors, "/{$conf->ns['project']['ns']}:colorschemes/{$conf->ns['project']['ns']}:colorscheme[@name=" . $this->variables['tt_actual_colorscheme'] . "]/color");
         for ($i = 0; $i < count($xfetch->nodeset); $i++) {
