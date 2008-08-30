@@ -1077,7 +1077,7 @@ class_propBox_edit_colorscheme.prototype.setData = function() {
 	super.setData();
 	
 	for (i = 0; i < this.comboBox.values.length; i++) {
-		if (this.comboBox.values[i] == this.data.attributes.value) {
+		if (this.comboBox.values[i] == this.data.attributes['colorscheme']) {
 			this.comboBox.selected = i;	
 		}
 	}
@@ -1091,13 +1091,21 @@ class_propBox_edit_colorscheme.prototype.setData = function() {
 	this.preview.showColors();
 };
 // }}}
+// {{{ setData()
+class_propBox_edit_colorscheme.prototype.onChanged = function() {
+	super.onChanged();
+
+	this.preview.colors = conf.project.tree.colors.getColors(this.comboBox.values[this.comboBox.selected]);
+	this.preview.showColors();
+};
+// }}}
 // {{{ saveData()
 class_propBox_edit_colorscheme.prototype.saveData = function(forceSave) {
 	if (this.isChanged == true || forceSave == true) {
             if (this.comboBox.values[this.comboBox.selected] == conf.lang.prop_name_edit_colorscheme_none) {
-                this.data.attributes.value = "";
+                this.data.attributes.colorscheme = "";
             } else {
-                this.data.attributes.value = this.comboBox.values[this.comboBox.selected];
+                this.data.attributes.colorscheme = this.comboBox.values[this.comboBox.selected];
             }
 
             this._parent.propObj.save(this.data.nid);
