@@ -1157,6 +1157,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = "<atomized><span>" . str_replace(" ", "</span> <span>", htmlspecialchars($param)) . "</span></atomized>";
         } else if ($func == 'urlencode') {
             $value = "<url>" . urlencode($param) . "</url>";
+        } else if ($func == 'formatdate') {
+            $value = "<date>" . $param . "</date>";
         } else if ($func == 'replaceEmailChars') {
             $email = htmlspecialchars($param);
             $original = array(

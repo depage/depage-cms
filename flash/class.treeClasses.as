@@ -1689,6 +1689,9 @@ class_tree_settings.prototype.set_data = function(args) {
 		this.navigations = this.getNavigations();
 		this.languages = this.getLanguages();
 		this.templateSets = this.getTemplateSets();
+
+                conf.project.preview_lang = this.languages[0].shortname;
+
 		this.onChange();
 	}
 };
@@ -1848,7 +1851,7 @@ class_tree_settings.prototype.getNavigations = function() {
 	}
 };
 // }}}
-// {{{ getLannguages()
+// {{{ getLanguages()
 class_tree_settings.prototype.getLanguages = function() {
 	var tempNode;
 	var tempObj;
