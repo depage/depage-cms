@@ -926,17 +926,19 @@ class xml_db {
                 WHERE 1=1"
             );
         } else {
-            db_query(
-                "DELETE
-                FROM $this->cache_table
-                WHERE id IN (" . implode(',', $changed_ids)    . ")"
-            );
-            for ($i = 0; $i < count($changed_ids); $i++) {
+            if (count($changed_ids) > 0) {
                 db_query(
-                    "DELETE 
-                    FROM $this->cache_table 
-                    WHERE value LIKE '%{$conf->ns['database']['ns']}:id=\"{$changed_ids[$i]}\"%'"
+                    "DELETE
+                    FROM $this->cache_table
+                    WHERE id IN (" . implode(',', $changed_ids)    . ")"
                 );
+                for ($i = 0; $i < count($changed_ids); $i++) {
+                    db_query(
+                        "DELETE 
+                        FROM $this->cache_table 
+                        WHERE value LIKE '%{$conf->ns['database']['ns']}:id=\"{$changed_ids[$i]}\"%'"
+                    );
+                }
             }
         }
     }
@@ -998,12 +1000,14 @@ class xml_db {
             $deleted_ids[] = $id;
             
             if ($reorder_pos) {
-                db_query(
-                    "UPDATE $this->element_table
-                    SET type='DELETED'
-                    WHERE id IN (" . implode(',', $deleted_ids)    . ")"
-                );
-                $this->clear_cache($deleted_ids);
+                if (count($deleted_ids) > 0) {
+                    db_query(
+                        "UPDATE $this->element_table
+                        SET type='DELETED'
+                        WHERE id IN (" . implode(',', $deleted_ids)    . ")"
+                    );
+                    $this->clear_cache($deleted_ids);
+                }
             }
         }
         $this->unlock();
