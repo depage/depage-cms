@@ -20,7 +20,7 @@
  * @author 		Joe Scylla <joe.scylla@gmail.com>
  * @copyright 	2008 Joe Scylla <joe.scylla@gmail.com>
  * @license 	http://opensource.org/licenses/mit-license.php MIT License
- * @version 	1.0.1.b2 (2008-08-15)
+ * @version 	1.0.1.b3 (2008-10-02)
  */
 class cssmin
 	{
@@ -33,6 +33,10 @@ class cssmin
 	 * 
 	 * @param	string			$css		Stylesheet definitions as string
 	 * @param	array|string	$options	Array or comma speperated list of options:
+	 * 										
+	 * 										- remove-last-semicolon: Removes the last semicolon in 
+	 * 										the style definition of an element (activated by default).
+	 * 										
 	 * 										- preserve-urls: Preserves every url defined in an url()-
 	 * 										expression. This option is only required if you have 
 	 * 										defined really uncommon urls with multiple spaces or 
@@ -40,7 +44,7 @@ class cssmin
 	 * 										following spaces.
 	 * @return	string			Minified stylesheet definitions
 	 */
-	public static function minify($css, $options = "")
+	public static function minify($css, $options = "remove-last-semicolon")
 		{
 		$options = ($options == "") ? array() : (is_array($options) ? $options : explode(",", $options));
 		if (in_array("preserve-urls", $options))
@@ -56,6 +60,11 @@ class cssmin
 		$css = preg_replace("/\s\s+/", " ", $css);
 		// Remove unneeded spaces
 		$css = preg_replace("/\s*({|}|\[|\]|=|~|\+|>|\||;|:|,)\s*/", "$1", $css);
+		if (in_array("remove-last-semicolon", $options))
+			{
+			// Removes the last semicolon of every style definition
+			$css = str_replace(";}", "}", $css);
+			}
 		$css = trim($css);
 		if (in_array("preserve-urls", $options))
 			{
@@ -157,7 +166,7 @@ function cssmin_array_clean(array $array)
 	return $r;
 	}
 /**
- * Return if value is a associative array.
+ * Return if a value is a associative array.
  *
  * @param	array		$array
  * @return	bool
