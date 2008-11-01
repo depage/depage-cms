@@ -1158,7 +1158,9 @@ function urlSchemeHandler($processor, $scheme, $param) {
         } else if ($func == 'urlencode') {
             $value = "<url>" . urlencode($param) . "</url>";
         } else if ($func == 'formatdate') {
-            $value = "<date>" . $param . "</date>";
+            list($year, $month, $day, $format) = explode('/', $param, 4);
+            $date = date($format, strtotime("$year-$month-$day"));
+            $value = "<date>" . htmlspecialchars($date) . "</date>";
         } else if ($func == 'replaceEmailChars') {
             $email = htmlspecialchars($param);
             $original = array(

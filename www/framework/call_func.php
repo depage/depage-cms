@@ -1534,9 +1534,9 @@ if (count($value) == 0) {
 }
 
 $msg = ($msgHandler->create_msg($value));
-//@todo add gzip compression
+ob_start("ob_gzhandler");
 echo($msg);
-flush();
+ob_end_flush();
 
 if (!$conf->pocket_use) {
     //init objects

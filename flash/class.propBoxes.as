@@ -1494,6 +1494,57 @@ class_propBox_edit_date.prototype.saveData = function(forceSave) {
 // }}}
 
 /*
+ *	Class PropBox_edit_time
+ *
+ *	Extends class_propBox_edit_text_singleline
+ *	Handles Title of a Page
+ */
+// {{{ constructor()
+class_propBox_edit_time = function() {};
+class_propBox_edit_time.prototype = new class_propBox_edit_date();
+
+class_propBox_edit_time.prototype.propName = [];
+class_propBox_edit_time.prototype.propName[0] = conf.lang.prop_name_edit_time;
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_time.prototype.generateComponents = function() {
+    super.generateComponents();
+    this.inputBox.restrict = "0123456789:";
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_time.prototype.setData = function() {
+	super.setData();
+	if (this.data.attributes.value != "" && this.data.attributes.value != undefined) {
+		this.inputBox.value = this.data.attributes.value;
+	} else {
+		this.inputBox.value = "";
+	}
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_time.prototype.saveData = function(forceSave) {
+	if (this.isChanged == true || forceSave == true) {
+		var formattedTime = conf.lang.date_time_format_short;
+		
+		newTime = this.inputBox.value.split(":");
+		
+		formattedTime = formattedTime.replace([
+			["%h%"	, setLeadingZero(newTime[0].substr(0, 2), 2)],
+			["%m%"	, setLeadingZero(newTime[1].substr(0, 2), 2)]
+		]);
+		
+		this.inputBox.value = formattedTime;
+		this.data.attributes.value = formattedTime;
+		
+		this._parent.propObj.save(this.data.nid);
+		this.isChanged = false;
+	}
+	return true;
+};
+// }}}
+
+/*
  *	Class PropBox_page_linkdesc
  *
  *	Extends class_propBox
@@ -4478,6 +4529,7 @@ Object.registerClass("prop_pg_desc", class_propBox_pg_desc);
 
 Object.registerClass("prop_edit_text_singleline", class_propBox_edit_text_singleline);
 
+//Object.registerClass("prop_edit_text_multiline", class_propBox_edit_text_multiline);
 Object.registerClass("prop_edit_plain_source", class_propBox_edit_plain_source);
 Object.registerClass("prop_edit_text_formatted", class_propBox_edit_text_formatted);
 Object.registerClass("prop_edit_text_headline", class_propBox_edit_text_headline);
@@ -4487,6 +4539,7 @@ Object.registerClass("prop_edit_audio", class_propBox_edit_audio);
 Object.registerClass("prop_edit_video", class_propBox_edit_video);
 Object.registerClass("prop_edit_flash", class_propBox_edit_flash);
 Object.registerClass("prop_edit_date", class_propBox_edit_date);
+Object.registerClass("prop_edit_time", class_propBox_edit_time);
 Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
 Object.registerClass("prop_edit_table", class_propBox_edit_element_source);
 // }}}

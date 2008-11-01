@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    lib_sitemape.php
+ * @file    lib_sitemap.php
  *
  * Sitemap Generator Library
  *
