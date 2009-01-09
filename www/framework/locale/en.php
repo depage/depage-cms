@@ -13,6 +13,7 @@ $texts = array(
 	'buttontip_filelist_thumbnail' => "show thumbnails",
 	'buttontip_format_bold' => "bold",
 	'buttontip_format_italic' => "italic",
+	'buttontip_format_small' => "small",
 	'buttontip_format_link' => "link",
 	'buttontip_link_target' => "linktarget",
 	'buttontip_tree_delete' => "delete",

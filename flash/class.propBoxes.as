@@ -593,6 +593,7 @@ class_propBox_edit_text_formatted.prototype.textLinkIsSecondClick = false;
 class_propBox_edit_text_formatted.prototype.setTextBoxFormat = function() {
 	this.textBox.html = true
 	this.textBox.textFormat = conf.interface.textformat_input;
+	this.textBox.textFormatSmall = conf.interface.textformat_input_small;
 };
 // }}}
 // {{{ generateComponents()
@@ -601,7 +602,7 @@ class_propBox_edit_text_formatted.prototype.generateComponents = function() {
 	
 	super.generateComponents();
 	
-	for (i = 1; i <= 3; i++) {
+	for (i = 1; i <= 4; i++) {
 		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
 			width	: 19,
 			height	: 17
@@ -622,10 +623,17 @@ class_propBox_edit_text_formatted.prototype.generateComponents = function() {
 		setTimeout(this._parent.formatSelection, this._parent, 10, ["italic"]);
 	};
 	
-	this.button_3.symbol = "icon_format_link";
-	this.button_3.tooltip = conf.lang.buttontip_format_link;
+	this.button_3.symbol = "icon_format_small";
+	this.button_3.tooltip = conf.lang.buttontip_format_small;
 	this.button_3.enabledState = true;
 	this.button_3.onClick = function() {
+		setTimeout(this._parent.formatSelection, this._parent, 10, ["small"]);
+	};
+	
+	this.button_4.symbol = "icon_format_link";
+	this.button_4.tooltip = conf.lang.buttontip_format_link;
+	this.button_4.enabledState = true;
+	this.button_4.onClick = function() {
 		setTimeout(this._parent.formatSelection, this._parent, 10, ["link"]);
 	};
 };
@@ -637,6 +645,7 @@ class_propBox_edit_text_formatted.prototype.setComponents = function() {
 	this.button_1._x = this.settings.border_left + 2;
 	this.button_2._x = this.settings.border_left + 2;
 	this.button_3._x = this.settings.border_left + 2;
+	this.button_4._x = this.settings.border_left + 2;
 };
 // }}}
 // {{{ setNewPos()
@@ -652,16 +661,17 @@ class_propBox_edit_text_formatted.prototype.setNewPos = function() {
 		bottomBorder = this.settings.border_top + 85;
 	}
 		
-	this.button_1._y = bottomBorder - 59
-	this.button_2._y = bottomBorder - 38;
-	this.button_3._y = bottomBorder - 17;
+	this.button_1._y = bottomBorder - 76
+	this.button_2._y = bottomBorder - 59
+	this.button_3._y = bottomBorder - 38;
+	this.button_4._y = bottomBorder - 17;
 };
 // }}}
 // {{{ setButtons()
 class_propBox_edit_text_formatted.prototype.setButtons = function() {
 	var i;
 	
-	for (i = 1; i <= 3; i++) {
+	for (i = 1; i <= 4; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
 	}
 };
@@ -700,15 +710,25 @@ class_propBox_edit_text_formatted.prototype.setData = function() {
 class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 	this.textBox.type = "input";
 	
-	this.textBox.htmlText = tempText;
-	
-	this.textBox.initFormat(this.textBox.textFormat);
-	
+        this.textBox.htmlText = tempText;
+
+	//this.textBox.initFormat(this.textBox.textFormat);
+
+        for (i = 0; i <= this.textBox.text.length; i++) {
+            tf = this.textBox.getTextFormat(i, i + 1);
+            if (tf.size == this.textBox.textFormatSmall.size) {
+                this.textBox.setTextFormat(i, i + 1, this.textBox.textFormatSmall);
+            } else {
+                this.textBox.setTextFormat(i, i + 1, this.textBox.textFormat);
+            }
+        }
+        this.textBox.setNewTextFormat(this.textBox.textFormat);
+
 	this.textBox.htmlText = this.textBox.htmlText.replace([
-		["<I></I>"	, ""],
-		["<B></B>"	, ""]
+		["<I></I>"    , ""],
+		["<B></B>"    , ""]
 	]);
-	
+
 	this.onScroller();
 };
 // }}}
@@ -732,6 +752,8 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 	text = text.replace("<p />", "<p> </p>");
 	text = text.replace("<a", "<u><a");
 	text = text.replace("</a>", "</a></u>");
+        text = text.replace("<small>", "<font size=\"" + this.textBox.textFormatSmall.size + "\">");
+        text = text.replace("</small>", "</font>");
 
 	this.textLinks = new Array();
 
@@ -759,77 +781,102 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 		} 
 	} while (linkStartIndex != -1)
 
-	return text;
+        return text;
 };
 // }}}
 // {{{ reduceHtmlText()
 class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
-	var allowedTagsVar = [["p", false], ["b", false], ["i", false], ["a", true]];
-	var allowedTags = [];
-	var newStr;
-	var i, testStr;
-	var startIndex = 0;
-	var foundStartAt, foundEndAt, foundSpaceAt;
-	var isAllowedTag;
-	
-	for (i=0; i<allowedTagsVar.length; i++) {
-		allowedTags.push([allowedTagsVar[i][0].toLowerCase(), allowedTagsVar[i][1]]);
-		allowedTags.push(["/" + allowedTagsVar[i][0].toLowerCase(), false]);
-	}
-	
-	foundStartAt = text.indexOf("<", startIndex);
-	foundEndAt = text.indexOf(">", foundStartAt + 1);
-	while (foundStartAt > -1) {
-		isAllowedTag = false;
-		for (i = 0; i < allowedTags.length; i++) {
-			testStr = text.substring(foundStartAt + 1, foundStartAt + 1 + allowedTags[i][0].length);
-			
-			if(testStr.toLowerCase() == allowedTags[i][0]) {
-				isAllowedTag = true;
-				break;
-			}
-		}
-		
-		newStr += text.substring(startIndex, foundStartAt);			
-		if (isAllowedTag) {
-			if (allowedTags[i][1]) {
-				if (allowedTags[i][0] == "a") {
-					linkStartIndex = text.indexOf("HREF=\"asfunction:textlink,", foundStartAt);
-					linkEndIndex = text.indexOf(",", linkStartIndex + 27);
-					linkIndex = text.substring(linkStartIndex + 26, linkEndIndex);
+        // testing new version 
+        newStr = "<p>";
+        closeTags = new Array();
 
-                                        if (this.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
-                                            newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this.textLinks[linkIndex][0].substring(8));
-                                        } else {
-                                            newURL = this.textLinks[linkIndex][0];
-                                        }
+        var isItalic = false;
+        var isBold = false;
+        var isSmall = false;
+        var hasURL = false;
+        var forceClosingTags = false;
 
-					newStr += "<a ";
-					newStr += "href=\"" + newURL + "\" ";
-					newStr += "target=\"" + this.textLinks[linkIndex][1] + "\">";
-				} else {
-					newStr += text.substring(startIndex, foundEndAt + 1).toLowerCase();
-				}
-			} else {
-				foundSpaceAt = text.indexOf(" ", foundStartAt);
-				if (foundSpaceAt > foundEndAt || foundSpaceAt == -1) {
-					newStr += text.substring(foundStartAt, foundEndAt + 1).toLowerCase();
-				} else {
-					newStr += text.substring(foundStartAt, foundSpaceAt).toLowerCase() + ">";
-				}
-			}
-		}
+        for (i = 0; i <= this.textBox.text.length; i++) {
+            tf = this.textBox.getTextFormat(i, i + 1);
+            if (tf.bold != isBold) {
+                if (tf.bold) {
+                    newStr += "<b>";
+                    closeTags.push("</b>");
+                    isBold = true;
+                } else {
+                    forceClosingTags = true;
+                }
+            }
+            if (tf.italic != isItalic) {
+                if (tf.italic) {
+                    newStr += "<i>";
+                    closeTags.push("</i>");
+                    isItalic = true;
+                } else {
+                    forceClosingTags = true;
+                }
+            }
+            if ((tf.size == this.textBox.textFormatSmall.size) != isSmall) {
+                if (tf.size == this.textBox.textFormatSmall.size) {
+                    newStr += "<small>";
+                    closeTags.push("</small>");
+                    isSmall = true;
+                } else {
+                    forceClosingTags = true;
+                }
+            }
+            if ((tf.url.indexOf("asfunction:textlink,") == 0) != hasURL) {
+                if (tf.url != "") {
+                    urlParts = tf.url.split(",", 2);
+                    linkIndex = urlParts[1]; 
 
-		startIndex = foundEndAt + 1;
-		foundStartAt = text.indexOf("<", startIndex);
-		foundEndAt = text.indexOf(">", foundStartAt + 1);
-	}
-	newStr += text.substring(startIndex, text.length);
+                    if (this.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
+                        newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this.textLinks[linkIndex][0].substring(8));
+                    } else {
+                        newURL = this.textLinks[linkIndex][0];
+                    }
+
+                    newStr += "<a ";
+                    newStr += "href=\"" + newURL + "\" ";
+                    newStr += "target=\"" + this.textLinks[linkIndex][1] + "\">";
+                    closeTags.push("</a>");
+                    hasURL = true;
+                } else {
+                    forceClosingTags = true;
+                }
+            }
+
+            forceClosingTags = this.textBox.text.charCodeAt(i) == 13 || i == this.textBox.text.length || forceClosingTags;
+            if (forceClosingTags) {
+                isBold = false;
+                isItalic = false;
+                isSmall = false;
+                hasURL = false;
+
+                closeTags.reverse();
+                newStr += closeTags.join("");
+
+                closeTags = new Array();
+                forceClosingTags = false;
+            }
+
+            if (this.textBox.text.charCodeAt(i) != 13) {
+                newStr += this.textBox.text.charAt(i);
+            } else {
+                newStr += "</p><p>";
+            }
+        }
+        newStr += "</p>";
+
 	newStr = newStr.replace([
 		["<i></i>"	, ""],
-		["<b></b>"	, ""]
+		["<b></b>"	, ""],
+		["<small></small>", ""]
 	]);
-	
+        if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
+            newStr = newStr.substring(0, newStr.length - 7);
+        }
+
 	return newStr;
 };
 // }}}
@@ -871,6 +918,12 @@ class_propBox_edit_text_formatted.prototype.formatSelection = function(type) {
 				tempSetFormat.italic = true;
 			} else {
 				tempSetFormat.italic = false;
+			}
+		} else if (type == "small") {
+			if (tempGetFormat.size != this.textBox.textFormatSmall.size) {
+				tempSetFormat.size = this.textBox.textFormatSmall.size;
+			} else {
+				tempSetFormat.size = this.textBox.textFormat.size;
 			}
 		} else if (type == "link") {
 			if (tempGetFormat.url == "") {
