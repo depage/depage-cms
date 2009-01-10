@@ -714,12 +714,12 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 
 	//this.textBox.initFormat(this.textBox.textFormat);
 
-        for (i = 0; i <= this.textBox.text.length; i++) {
+        for (i = 0; i < this.textBox.text.length; i++) {
             tf = this.textBox.getTextFormat(i, i + 1);
             if (tf.size == this.textBox.textFormatSmall.size) {
-                this.textBox.setTextFormat(i, i + 1, this.textBox.textFormatSmall);
+                this.textBox.setTextFormat(i, this.textBox.textFormatSmall);
             } else {
-                this.textBox.setTextFormat(i, i + 1, this.textBox.textFormat);
+                this.textBox.setTextFormat(i, this.textBox.textFormat);
             }
         }
         this.textBox.setNewTextFormat(this.textBox.textFormat);
@@ -787,8 +787,11 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 // {{{ reduceHtmlText()
 class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
         // testing new version 
-        newStr = "<p>";
-        closeTags = new Array();
+        var newStr = "<p>";
+        var openTags = new Array();
+        var closeTags = new Array();
+        var newCloseTags = new Array();
+        //var msg = "";
 
         var isItalic = false;
         var isBold = false;
@@ -796,12 +799,12 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
         var hasURL = false;
         var forceClosingTags = false;
 
-        for (i = 0; i <= this.textBox.text.length; i++) {
-            tf = this.textBox.getTextFormat(i, i + 1);
+        for (i = 0; i < this.textBox.text.length; i++) {
+            tf = this.textBox.getTextFormat(i);
             if (tf.bold != isBold) {
                 if (tf.bold) {
-                    newStr += "<b>";
-                    closeTags.push("</b>");
+                    openTags.push("<b>");
+                    newCloseTags.push("</b>");
                     isBold = true;
                 } else {
                     forceClosingTags = true;
@@ -809,8 +812,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
             }
             if (tf.italic != isItalic) {
                 if (tf.italic) {
-                    newStr += "<i>";
-                    closeTags.push("</i>");
+                    openTags.push("<i>");
+                    newCloseTags.push("</i>");
                     isItalic = true;
                 } else {
                     forceClosingTags = true;
@@ -818,8 +821,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
             }
             if ((tf.size == this.textBox.textFormatSmall.size) != isSmall) {
                 if (tf.size == this.textBox.textFormatSmall.size) {
-                    newStr += "<small>";
-                    closeTags.push("</small>");
+                    openTags.push("<small>");
+                    newCloseTags.push("</small>");
                     isSmall = true;
                 } else {
                     forceClosingTags = true;
@@ -836,10 +839,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
                         newURL = this.textLinks[linkIndex][0];
                     }
 
-                    newStr += "<a ";
-                    newStr += "href=\"" + newURL + "\" ";
-                    newStr += "target=\"" + this.textLinks[linkIndex][1] + "\">";
-                    closeTags.push("</a>");
+                    openTags.push("<a href=\"" + newURL + "\" target=\"" + this.textLinks[linkIndex][1] + "\">");
+                    newCloseTags.push("</a>");
                     hasURL = true;
                 } else {
                     forceClosingTags = true;
@@ -848,17 +849,28 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
 
             forceClosingTags = this.textBox.text.charCodeAt(i) == 13 || i == this.textBox.text.length || forceClosingTags;
             if (forceClosingTags) {
-                isBold = false;
-                isItalic = false;
-                isSmall = false;
-                hasURL = false;
+                //think about status after change
+                isBold = tf.bold;
+                isItalic = tf.Italic;
+                isSmall = tf.size == this.textBox.textFormatSmall.size;
+                hasURL = tf.url != "";
 
                 closeTags.reverse();
                 newStr += closeTags.join("");
 
+                //msg += newStr + "\n";
+                //msg += closeTags.join("") + "\n";
+
                 closeTags = new Array();
                 forceClosingTags = false;
             }
+            for (j = 0; j < newCloseTags.length; j++) {
+                closeTags.push(newCloseTags[j]);
+            }
+            newCloseTags = new Array();
+
+            newStr += openTags.join("");
+            openTags = new Array();
 
             if (this.textBox.text.charCodeAt(i) != 13) {
                 newStr += this.textBox.text.charAt(i);
@@ -876,6 +888,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
         if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
             newStr = newStr.substring(0, newStr.length - 7);
         }
+        //alert("msg:\n" + msg + "\n---\n" + newStr);
+        //alert("newStr:\n" + newStr);
 
 	return newStr;
 };
