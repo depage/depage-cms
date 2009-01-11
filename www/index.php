@@ -40,7 +40,12 @@ require_once('lib_html.php');
         options = "height=" + h + ",width=" + w + ",fullscreen=0,dependent=0,location=0,menubar=0,resizable=1,scrollbars=0,status=1,titlebar=0,toolbar=0,screenX=" + x + ",screenY=" + y + ",left=" + x + ",top=" + y;
         url = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "framework/interface/index.php?standalone=false&userid=" + userid;
         flashwin = open(url, "tt" + userid, options);
-        flashwin.opener = top;
+        if (!flashwin) {
+            // @todo localisation
+            alert("Sie müssen Popups für diese Seite zulassen, um depage::cms nutzen zu können.");
+        } else {
+            flashwin.opener = top;
+        }
     }
     
     function close_edit() {
