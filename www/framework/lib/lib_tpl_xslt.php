@@ -1157,6 +1157,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = "<atomized><span>" . str_replace(" ", "</span> <span>", htmlspecialchars($param)) . "</span></atomized>";
         } else if ($func == 'urlencode') {
             $value = "<url>" . urlencode($param) . "</url>";
+        } else if ($func == 'phpescape') {
+            $value = "<php>" . htmlspecialchars(str_replace("\"", "\\\"", $param)) . "</php>";
         } else if ($func == 'formatdate') {
             list($year, $month, $day, $format) = explode('/', $param, 4);
             $date = date($format, strtotime("$year-$month-$day"));
