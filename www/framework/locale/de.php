@@ -96,6 +96,7 @@ $texts = array(
 	'prop_name_edit_plain_source' => "Quelltext",
 	'prop_name_edit_text_formatted' => "Text",
 	'prop_name_edit_text_headline' => "Überschrift",
+	'prop_name_edit_table' => "Tabelle",
 	'prop_name_edit_colorscheme_none' => "[keins]",
 	'prop_name_page_colorscheme' => "Farbschema",
 	'prop_name_page_date' => "letzte Änderung",
