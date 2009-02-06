@@ -117,7 +117,7 @@
                 </tr>
                 <tr height="40">
                     <td width="40" valign="top"><img src="pics/icon_upload.gif" width="40" height="40"></td>
-                    <td width="260" valign="top"><?php echo(str_replace("%path%", $path, $lang["inhtml_dialog_upload_text"])); echo($_GET['PATH']); ?></td>
+                    <td width="260" valign="top"><?php echo(str_replace(array("%path%", "%maxsize%"), array($path, fs::getMaxUploadFileSize()), $lang["inhtml_dialog_upload_text"])); echo($_GET['PATH']); ?></td>
                 </tr>
                 <tr>
                     <td height="200">&nbsp;</td>

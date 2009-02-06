@@ -67,6 +67,29 @@ class fs {
         }
     }
 
+    function getSizeInBytes($val) {
+        $val = trim($val);
+        $last = strtolower($val[strlen($val)-1]);
+        switch($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+            case 'k':
+                $val *= 1024;
+        }
+
+        return $val;
+    }
+
+    function getMaxUploadFileSize() {
+        $post_max = fs::getSizeInBytes(ini_get('post_max_size'));
+        $file_max = fs::getSizeInBytes(ini_get('upload_max_filesize'));
+
+        return fs::formatFilesize($post_max < $file_max ? $post_max : $filemax);
+    }
+
     /**
      * Gets size of a file in B/KB/MB/GB
      *
