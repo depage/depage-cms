@@ -1174,9 +1174,8 @@ class_propBox_edit_table.prototype.generateComponents = function() {
 class_propBox_edit_table.prototype.generateTableCells = function() {
     this.removeTableCells();
 
-    var log = "";
-    var depth = 100;
     var row = 0;
+    this.depth = 100;
 
     for (var i = 0; i < this.data.childNodes.length; i++) {
         if (this.data.childNodes[i].localName == "tr") { 
@@ -1186,97 +1185,7 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
 
             for (var j = 0; j < this.data.childNodes[i].childNodes.length; j++) {
                 if (this.data.childNodes[i].childNodes[j].localName == "td" || this.data.childNodes[i].childNodes[j].localName == "th") { 
-                    //colums
-                    depth++;
-                    // create Textboxes
-                    this.createTextField("textBox" + depth, depth, 0, 0, 100, 50),
-                    this.cells[row][col] = {
-                        textBox: this["textBox" + depth],
-                        node: this.data.childNodes[i].childNodes[j]
-                    };
-                    this.cells[row][col].textBox.type = "input";
-                    this.cells[row][col].textBox.selectable = true;
-                    this.cells[row][col].textBox.multiline = true;
-                    this.cells[row][col].textBox.wordwrap = true;
-                    this.cells[row][col].textBox.html = true;
-                    this.cells[row][col].textBox.border = true;
-                    this.cells[row][col].textBox.borderColor = conf.interface.color_input_face_inactive.toColor();
-                    this.cells[row][col].textBox.textFormat = conf.interface.textformat_input;
-                    this.cells[row][col].textBox.textFormatSmall = conf.interface.textformat_input_small;
-                    // {{{ textBox.onChanged()
-                    this.cells[row][col].textBox.onChanged = function() {
-                            this._parent.onChanged();
-                    };
-                    // }}}
-                    // {{{ onSetFocus()
-                    this.cells[row][col].textBox.onSetFocus = function() {
-                            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_active);
-                            this._parent.textBox = this;
-                            Key.addListener(this);
-                            this.intervalID = setInterval(this, "onEditInterval", 100);
-                            this.timeoutObj.clear();
-                            this.active = true;
-                    };
-                    // }}}
-                    // {{{ onEditInterval()
-                    this.cells[row][col].textBox.onEditInterval = function() {
-                            this._parent.saveSelection();
-                            updateAfterEvent();
-                    };
-                    // }}}
-                    // {{{ onKillFocus()
-                    this.cells[row][col].textBox.onKillFocus = function() {
-                            clearInterval(this.intervalID);
-                            Key.removeListener(this);
-                            //this._parent.save();	
-                            this.timeoutObj = setTimeout(this.killedFocus, this, 200);
-                            this.active = false;
-                    };
-                    // }}}
-                    // {{{ killedFocus()
-                    this.cells[row][col].textBox.killedFocus = function() {
-                        if (!this._parent.textBox.active) {
-                            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_inactive);
-                            this._parent.selectionBeginIndex = -1;
-                            this._parent.selectionEndIndex = -1;
-                        }
-                    };
-                    // }}}
-                    // {{{ onScroller()
-                    this.cells[row][col].textBox.onScroller = function() {
-                            this._parent.onScroller();
-                    };
-                    // }}}
-                    // {{{ onKeyDown()
-                    this.cells[row][col].textBox.onKeyDown = function() {
-                            var keyCode = Key.getCode();
-
-                            if (keyCode == Key.TAB) {
-                                    if (Selection.getBeginIndex() == Selection.getEndIndex()) {
-                                            this.text = this.text.substring(0, Selection.getBeginIndex()) + "\t" + this.text.substring(Selection.getBeginIndex(), this.text.length);
-                                            Selection.setSelection(Selection.getBeginIndex() + 1, Selection.getBeginIndex() + 1);
-                                    }
-                            } else if (keyCode == 83 && Key.isDown(Key.CONTROL)) {
-                                    this._parent.save();
-                                    this._parent.resetButtons();
-                            } else if (keyCode == Key.DELETEKEY || keyCode == Key.BACKSPACE) {
-                                    this._parent.setHeight();
-                            }
-                    };
-                    // }}}
-
-                    // prepare Data
-                    this.data.childNodes[i].childNodes[j].stripXMLDbIds();
-
-                    tempText = "";
-                    for (var k = 0; k < this.data.childNodes[i].childNodes[j].childNodes.length; k++) {
-                        this.data.childNodes[i].childNodes[j].childNodes[k].stripXMLDbIds();
-                        tempText += this.data.childNodes[i].childNodes[j].childNodes[k].toString();
-                    }
-                    tempText = this.prepareHtmlText(tempText);
-
-                    this.cells[row][col].textBox.htmlText = tempText;
-                    this.setDataNow(this.cells[row][col].textBox, tempText);
+                    this.cells[row][col] = this.generateTableCell(this.data.childNodes[i].childNodes[j]);
 
                     col++;
                 }
@@ -1285,6 +1194,102 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
         }
     }
     this.onScroller();
+};
+// }}}
+// {{{ generateTableCell()
+class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
+    var cell;
+
+    this.depth++;
+    // create Textboxes
+    this.createTextField("textBox" + this.depth, this.depth, 0, 0, 100, 50),
+    cell = {
+        textBoxName: "textBox" + this.depth,
+        textBox: this["textBox" + this.depth],
+        node: dataNode
+    };
+    cell.textBox.type = "input";
+    cell.textBox.selectable = true;
+    cell.textBox.multiline = true;
+    cell.textBox.wordwrap = true;
+    cell.textBox.html = true;
+    cell.textBox.border = true;
+    cell.textBox.borderColor = conf.interface.color_input_face_inactive.toColor();
+    cell.textBox.textFormat = conf.interface.textformat_input;
+    cell.textBox.textFormatSmall = conf.interface.textformat_input_small;
+    // {{{ textBox.onChanged()
+    cell.textBox.onChanged = function() {
+            this._parent.onChanged();
+    };
+    // }}}
+    // {{{ onSetFocus()
+    cell.textBox.onSetFocus = function() {
+            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_active);
+            this._parent.textBox = this;
+            Key.addListener(this);
+            this.intervalID = setInterval(this, "onEditInterval", 100);
+            this.timeoutObj.clear();
+            this.active = true;
+    };
+    // }}}
+    // {{{ onEditInterval()
+    cell.textBox.onEditInterval = function() {
+            this._parent.saveSelection();
+            updateAfterEvent();
+    };
+    // }}}
+    // {{{ onKillFocus()
+    cell.textBox.onKillFocus = function() {
+            clearInterval(this.intervalID);
+            Key.removeListener(this);
+            //this._parent.save();	
+            this.timeoutObj = setTimeout(this.killedFocus, this, 200);
+            this.active = false;
+    };
+    // }}}
+    // {{{ killedFocus()
+    cell.textBox.killedFocus = function() {
+        if (!this._parent.textBox.active) {
+            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_inactive);
+            this._parent.selectionBeginIndex = -1;
+            this._parent.selectionEndIndex = -1;
+        }
+    };
+    // }}}
+    // {{{ onScroller()
+    cell.textBox.onScroller = function() {
+            this._parent.onScroller();
+    };
+    // }}}
+    // {{{ onKeyDown()
+    cell.textBox.onKeyDown = function() {
+            var keyCode = Key.getCode();
+
+            if (keyCode == Key.TAB) {
+                    if (Selection.getBeginIndex() == Selection.getEndIndex()) {
+                            this.text = this.text.substring(0, Selection.getBeginIndex()) + "\t" + this.text.substring(Selection.getBeginIndex(), this.text.length);
+                            Selection.setSelection(Selection.getBeginIndex() + 1, Selection.getBeginIndex() + 1);
+                    }
+            } else if (keyCode == 83 && Key.isDown(Key.CONTROL)) {
+                    this._parent.save();
+                    this._parent.resetButtons();
+            } else if (keyCode == Key.DELETEKEY || keyCode == Key.BACKSPACE) {
+                    this._parent.setHeight();
+            }
+    };
+    // }}}
+
+    // prepare Data
+    tempText = "";
+    for (var k = 0; k < dataNode.childNodes.length; k++) {
+        dataNode.childNodes[k].stripXMLDbIds();
+        tempText += dataNode.childNodes[k].toString();
+    }
+    tempText = this.prepareHtmlText(tempText);
+
+    this.setDataNow(cell.textBox, tempText);
+
+    return cell;
 };
 // }}}
 // {{{ removeTableCells()
