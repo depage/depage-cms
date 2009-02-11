@@ -730,7 +730,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox, this.textBox.htmlText) + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -781,7 +781,7 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 };
 // }}}
 // {{{ reduceHtmlText()
-class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
+class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(tB, text) {
         // testing new version 
         var newStr = "<p>";
         var openTags = new Array();
@@ -795,8 +795,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
         var hasURL = false;
         var forceClosingTags = false;
 
-        for (var i = 0; i < this.textBox.text.length; i++) {
-            tf = this.textBox.getTextFormat(i);
+        for (var i = 0; i < tB.text.length; i++) {
+            tf = tB.getTextFormat(i);
             if (tf.bold != isBold) {
                 if (tf.bold) {
                     openTags.push("<b>");
@@ -815,8 +815,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
                     forceClosingTags = true;
                 }
             }
-            if ((tf.size == this.textBox.textFormatSmall.size) != isSmall) {
-                if (tf.size == this.textBox.textFormatSmall.size) {
+            if ((tf.size == tB.textFormatSmall.size) != isSmall) {
+                if (tf.size == tB.textFormatSmall.size) {
                     openTags.push("<small>");
                     newCloseTags.push("</small>");
                     isSmall = true;
@@ -843,12 +843,12 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
                 }
             }
 
-            forceClosingTags = this.textBox.text.charCodeAt(i) == 13 || i == this.textBox.text.length || forceClosingTags;
+            forceClosingTags = tB.text.charCodeAt(i) == 13 || i == tB.text.length || forceClosingTags;
             if (forceClosingTags) {
                 //think about status after change
                 isBold = tf.bold;
                 isItalic = tf.Italic;
-                isSmall = tf.size == this.textBox.textFormatSmall.size;
+                isSmall = tf.size == tB.textFormatSmall.size;
                 hasURL = tf.url != "";
 
                 closeTags.reverse();
@@ -868,8 +868,8 @@ class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
             newStr += openTags.join("");
             openTags = new Array();
 
-            if (this.textBox.text.charCodeAt(i) != 13) {
-                newStr += this.textBox.text.charAt(i);
+            if (tB.text.charCodeAt(i) != 13) {
+                newStr += tB.text.charAt(i);
             } else {
                 newStr += "</p><p>";
             }
@@ -1080,7 +1080,7 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox, this.textBox.htmlText) + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -1110,7 +1110,7 @@ class_propBox_edit_text_headline.prototype.formatSelection = class_propBox_edit_
  *	Class PropBox_edit_table
  *
  *	Extends class_propBox_edit_table
- *	Handles HTML-formatted Textfields
+ *	Handles HTML-formatted Tables
  */
 // {{{ constructor
 class_propBox_edit_table = function() {};
@@ -1172,7 +1172,8 @@ class_propBox_edit_table.prototype.generateComponents = function() {
 // }}}
 // {{{ generateTableCells()
 class_propBox_edit_table.prototype.generateTableCells = function() {
-    this.cells = new Array();
+    this.removeTableCells();
+
     var log = "";
     var depth = 100;
     var row = 0;
@@ -1199,7 +1200,9 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
                     this.cells[row][col].textBox.wordwrap = true;
                     this.cells[row][col].textBox.html = true;
                     this.cells[row][col].textBox.border = true;
+                    this.cells[row][col].textBox.borderColor = conf.interface.color_input_face_inactive.toColor();
                     this.cells[row][col].textBox.textFormat = conf.interface.textformat_input;
+                    this.cells[row][col].textBox.textFormatSmall = conf.interface.textformat_input_small;
                     // {{{ textBox.onChanged()
                     this.cells[row][col].textBox.onChanged = function() {
                             this._parent.onChanged();
@@ -1273,6 +1276,7 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
                     tempText = this.prepareHtmlText(tempText);
 
                     this.cells[row][col].textBox.htmlText = tempText;
+                    this.setDataNow(this.cells[row][col].textBox, tempText);
 
                     col++;
                 }
@@ -1280,11 +1284,21 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
             row++;
         }
     }
-    alertObjInfo(this.cells);
+    this.onScroller();
 };
 // }}}
 // {{{ removeTableCells()
 class_propBox_edit_table.prototype.removeTableCells = function() {
+    var depth = 100;
+
+    for (var i = 0; i < this.cells.length; i++) {
+        for (var j = 0; j < this.cells[i].length; j++) {
+            depth++;
+
+            removeMovieClip("textBox" + depth);
+        }
+    }
+    this.cells = new Array();
 };
 // }}}
 // {{{ setComponents()
@@ -1299,17 +1313,13 @@ class_propBox_edit_table.prototype.setComponents = function() {
 
 	this.textBoxBack._y = this.settings.border_top;
 	this.textBoxBack._width = int(this.width - this.textBoxBack._x - this.settings.border_right - 1);	
-        this.tableWidth = this.textBoxBack._width - 3;
+        this.tableWidth = this.textBoxBack._width - 6;
 
         for (var i = 0; i < this.cells.length; i++) {
             var cellWidth = int(this.tableWidth / this.cells[i].length);
-            //alert("cellWidth: " + cellWidth + "\nnumRows: " + this.cells.length + "\nnumColums: " + this.cells[i].length + "\nrow: " + this.cells[i]);
             for (var j = 0; j < this.cells[i].length; j++) {
-                //alert("positioning: " + i + "/" + j);
-                this.cells[i][j].textBox._x = int(this.tableX + j * cellWidth);
+                this.cells[i][j].textBox._x = int(this.tableX + j * cellWidth) - 1;
                 this.cells[i][j].textBox._width = cellWidth;
-                this.cells[i][j].textBox._y = i * 30;
-                this.cells[i][j].textBox.height = 30;
             }
         }
 
@@ -1325,32 +1335,47 @@ class_propBox_edit_table.prototype.setComponents = function() {
 };
 // }}}
 // {{{ onScroller()
-class_propBox_edit_text_multiline.prototype.onScroller = function() {
-    /*
-	this.textHeight = this.textBox.textHeight;
-	if (this.oldTextHeight != this.textHeight) {
-		this.setHeight();
-		this.oldTextHeight = this.textHeight;
-	}
-	if ((this.textBox.scroll > this.oldTextScroll && this.getGlobalY() + this.height > Stage.height) || (this.textBox.scroll < this.oldTextScroll)) {
-		var scrollNum = this.textBox.scroll - this.oldTextScroll;
-		if (scrollNum == 1 || scrollNum == -1) scrollNum *= 3;
-		this._parent.setOffset(this._parent.offset + scrollNum * this.lineHeight);
-		this.oldTextScroll = this.textBox.scroll;
-	}
-	if (this.oldTextHeight > this.textHeight && this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight < 0) {
-		this._parent.setOffset(this._parent.offset + (this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight));
-	}
-    */
+class_propBox_edit_table.prototype.onScroller = function() {
+    this.newTextHeight = this.textBox.textHeight;
+    if (this.oldTextHeight != this.newTextHeight) {
+            this.setHeight();
+            this.oldTextHeight = this.newTextHeight;
+    }
+    if ((this.textBox.scroll > this.oldTextScroll && this.getGlobalY() + this.height > Stage.height) || (this.textBox.scroll < this.oldTextScroll)) {
+            var scrollNum = this.textBox.scroll - this.oldTextScroll;
+            if (scrollNum == 1 || scrollNum == -1) scrollNum *= 3;
+            this._parent.setOffset(this._parent.offset + scrollNum * this.lineHeight);
+            this.oldTextScroll = this.textBox.scroll;
+    }
+    if (this.oldTextHeight > this.newTextHeight && this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight < 0) {
+            this._parent.setOffset(this._parent.offset + (this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight));
+    }
 };
 // }}}
 // {{{ setHeight()
 class_propBox_edit_table.prototype.setHeight = function() {
 	var textBoxHeight;
+	var rowStart = this.settings.border_top + 3;
 
 	//this.textHeight = this.textBox.textHeight;
+        for (var i = 0; i < this.cells.length; i++) {
+            var rowHeight = 0;
+            for (var j = 0; j < this.cells[i].length; j++) {
+                var cellHeight = this.cells[i][j].textBox.textHeight;
+            
+                if (rowHeight < cellHeight) {
+                    rowHeight = cellHeight;
+                }
+            }
+            rowHeight += 5;
+            for (var j = 0; j < this.cells[i].length; j++) {
+                this.cells[i][j].textBox._y = rowStart;
+                this.cells[i][j].textBox._height = rowHeight;
+            }
+            rowStart += rowHeight;
+        }
 	
-	this.innerHeight = this.textHeight > this.minHeight ? this.textHeight + 12 : this.minHeight;
+	this.innerHeight = rowStart > this.minHeight ? rowStart + 12 : this.minHeight;
 	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 	
 	textBoxHeight = this.innerHeight - 3 + 10;
@@ -1359,7 +1384,7 @@ class_propBox_edit_table.prototype.setHeight = function() {
 	}
 	this.textBoxBack._height = this.innerHeight - 5;
 	
-	super.setHeight();
+	//super.setHeight();
 	this._parent.setPropPos();
 
 	/* ERROR NOT FOUND -> its only a workaround for flash */
@@ -1373,7 +1398,8 @@ class_propBox_edit_table.prototype.setHeight = function() {
 class_propBox_edit_table.prototype.setNewPos = function() {
 	var bottomBorder = this.height - this.settings.border_bottom - 2;
 	
-	super.setNewPos();
+        // @todo rewrite for table
+	//super.setNewPos();
 	
 	if (this.getGlobalY() + bottomBorder > Stage.height - 7) {
 		bottomBorder = Stage.height - 7 - this.getGlobalY();	
@@ -1408,40 +1434,47 @@ class_propBox_edit_table.prototype.setData = function() {
 	}
 
         this.generateTableCells();
-        
-        //this.setDataNow(tempText);
+        //this.setDataNow();
 };
 // }}}
 // {{{ setDataNow()
-class_propBox_edit_table.prototype.setDataNow = function(tempText) {
-	this.textBox.type = "input";
+class_propBox_edit_table.prototype.setDataNow = function(tB, tempText) {
+	tB.type = "input";
 	
-        this.textBox.htmlText = tempText;
+        tb.htmlText = tempText;
 
 	//this.textBox.initFormat(this.textBox.textFormat);
 
-        for (var i = 0; i < this.textBox.text.length; i++) {
-            tf = this.textBox.getTextFormat(i, i + 1);
-            if (tf.size == this.textBox.textFormatSmall.size) {
-                this.textBox.setTextFormat(i, this.textBox.textFormatSmall);
+        for (var i = 0; i < tB.text.length; i++) {
+            tf = tB.getTextFormat(i, i + 1);
+            if (tf.size == tB.textFormatSmall.size) {
+                tB.setTextFormat(i, tB.textFormatSmall);
             } else {
-                this.textBox.setTextFormat(i, this.textBox.textFormat);
+                tB.setTextFormat(i, tB.textFormat);
             }
+            tB.setNewTextFormat(tB.textFormat);
+
+            tB.htmlText = tB.htmlText.replace([
+                    ["<I></I>"    , ""],
+                    ["<B></B>"    , ""]
+            ]);
         }
-        this.textBox.setNewTextFormat(this.textBox.textFormat);
-
-	this.textBox.htmlText = this.textBox.htmlText.replace([
-		["<I></I>"    , ""],
-		["<B></B>"    , ""]
-	]);
-
-	this.onScroller();
 };
 // }}}
 // {{{ saveData()
 class_propBox_edit_table.prototype.saveData = function(forceSave) {
-        /* disabled saving
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox.htmlText) + "</root>");
+        var tempText = "";
+
+        for (var i = 0; i < this.cells.length; i++) {
+            tempText += "<tr>";
+            for (var j = 0; j < this.cells[i].length; j++) {
+                tempText += "<td>";
+                tempText += this.reduceHtmlText(this.cells[i][j].textBox, this.cells[i][j].textBox.htmlText);
+                tempText += "</td>";
+            }
+            tempText += "</tr>";
+        }
+	var tempXML = new XML("<root>" + tempText + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -1450,7 +1483,6 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
 	for (var i = 0; i < tempNode.childNodes.length; i++) {
 		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
 	}
-        */
 	
 	return super.saveData(forceSave);
 };
@@ -1511,13 +1543,6 @@ class_propBox_edit_table.prototype.setLink = function(num, selBeginIndex, selEnd
         this.textLinks[num] = [newURL, ""]
 
         this.onChanged();
-};
-// }}}
-// {{{ _global.textLink()
-_global.textlink = function(args) {
-	args = args.split(",");
-	tempObj = eval(args[1]);
-	tempObj.textLinkClick(args[0]);
 };
 // }}}
 
