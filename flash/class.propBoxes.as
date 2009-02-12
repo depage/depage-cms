@@ -1132,7 +1132,6 @@ class_propBox_edit_table.prototype.setTextBoxFormat = function() {
 // {{{ generateComponents()
 class_propBox_edit_table.prototype.generateComponents = function() {
 	super.generateComponents();
-        removeMovieClip("textBox");
 	
 	for (var i = 1; i <= 4; i++) {
 		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
@@ -1172,7 +1171,7 @@ class_propBox_edit_table.prototype.generateComponents = function() {
 // }}}
 // {{{ generateTableCells()
 class_propBox_edit_table.prototype.generateTableCells = function() {
-    this.removeTableCells();
+    removeMovieClip("textBox");
 
     var row = 0;
     this.depth = 100;
@@ -1193,7 +1192,8 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
             row++;
         }
     }
-    this.onScroller();
+    this.setComponents();
+    //this.onScroller();
 };
 // }}}
 // {{{ generateTableCell()
@@ -1287,7 +1287,7 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
     }
     tempText = this.prepareHtmlText(tempText);
 
-    this.setDataNow(cell.textBox, tempText);
+    this.setCellData(cell.textBox, tempText);
 
     return cell;
 };
@@ -1328,7 +1328,6 @@ class_propBox_edit_table.prototype.setComponents = function() {
             }
         }
 
-	//this.setHeight();
 	this._visible = false;
 
 	setTimeout(this.setHeight, this, 1, [], false);
@@ -1438,12 +1437,12 @@ class_propBox_edit_table.prototype.setData = function() {
 		this.setTitle(this.data.attributes.name);
 	}
 
-        this.generateTableCells();
-        //this.setDataNow();
+        this.removeTableCells();
+	setTimeout(this.generateTableCells, this, 1, [], false);
 };
 // }}}
-// {{{ setDataNow()
-class_propBox_edit_table.prototype.setDataNow = function(tB, tempText) {
+// {{{ setCellData()
+class_propBox_edit_table.prototype.setCellData = function(tB, tempText) {
 	tB.type = "input";
 	
         tb.htmlText = tempText;
