@@ -730,7 +730,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox, this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -778,116 +778,6 @@ class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
 	} while (linkStartIndex != -1)
 
         return text;
-};
-// }}}
-// {{{ reduceHtmlText()
-class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(tB, text) {
-        // testing new version 
-        var newStr = "<p>";
-        var openTags = new Array();
-        var closeTags = new Array();
-        var newCloseTags = new Array();
-        //var msg = "";
-
-        var isItalic = false;
-        var isBold = false;
-        var isSmall = false;
-        var hasURL = false;
-        var forceClosingTags = false;
-
-        for (var i = 0; i < tB.text.length; i++) {
-            tf = tB.getTextFormat(i);
-            if (tf.bold != isBold) {
-                if (tf.bold) {
-                    openTags.push("<b>");
-                    newCloseTags.push("</b>");
-                    isBold = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if (tf.italic != isItalic) {
-                if (tf.italic) {
-                    openTags.push("<i>");
-                    newCloseTags.push("</i>");
-                    isItalic = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if ((tf.size == tB.textFormatSmall.size) != isSmall) {
-                if (tf.size == tB.textFormatSmall.size) {
-                    openTags.push("<small>");
-                    newCloseTags.push("</small>");
-                    isSmall = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if ((tf.url.indexOf("asfunction:textlink,") == 0) != hasURL) {
-                if (tf.url != "") {
-                    urlParts = tf.url.split(",", 2);
-                    linkIndex = urlParts[1]; 
-
-                    if (this.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
-                        newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this.textLinks[linkIndex][0].substring(8));
-                    } else {
-                        newURL = this.textLinks[linkIndex][0];
-                    }
-
-                    openTags.push("<a href=\"" + newURL + "\" target=\"" + this.textLinks[linkIndex][1] + "\">");
-                    newCloseTags.push("</a>");
-                    hasURL = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-
-            forceClosingTags = tB.text.charCodeAt(i) == 13 || i == tB.text.length || forceClosingTags;
-            if (forceClosingTags) {
-                //think about status after change
-                isBold = tf.bold;
-                isItalic = tf.Italic;
-                isSmall = tf.size == tB.textFormatSmall.size;
-                hasURL = tf.url != "";
-
-                closeTags.reverse();
-                newStr += closeTags.join("");
-
-                //msg += newStr + "\n";
-                //msg += closeTags.join("") + "\n";
-
-                closeTags = new Array();
-                forceClosingTags = false;
-            }
-            for (var j = 0; j < newCloseTags.length; j++) {
-                closeTags.push(newCloseTags[j]);
-            }
-            newCloseTags = new Array();
-
-            newStr += openTags.join("");
-            openTags = new Array();
-
-            if (tB.text.charCodeAt(i) != 13) {
-                newStr += tB.text.charAt(i);
-            } else {
-                newStr += "</p><p>";
-            }
-        }
-        newStr += "</p>";
-
-	newStr = newStr.replace([
-		["<i></i>"	, ""],
-		["<b></b>"	, ""],
-		["<small></small>", ""]
-	]);
-        if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
-            newStr = newStr.substring(0, newStr.length - 7);
-        }
-        //alert("msg:\n" + msg + "\n---\n" + newStr);
-        //alert("newStr:\n" + newStr);
-
-	return newStr;
 };
 // }}}
 // {{{ saveSelection()
@@ -1080,7 +970,7 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox, this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -1095,9 +985,6 @@ class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
 // }}}
 // {{{ prepareHtmlText()
 class_propBox_edit_text_headline.prototype.prepareHtmlText = class_propBox_edit_text_formatted.prototype.prepareHtmlText;
-// }}}
-// {{{ reduceHtmlText()
-class_propBox_edit_text_headline.prototype.reduceHtmlText = class_propBox_edit_text_formatted.prototype.reduceHtmlText;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
@@ -1473,13 +1360,14 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
             tempText += "<tr>";
             for (var j = 0; j < this.cells[i].length; j++) {
                 tempText += "<td>";
-                tempText += this.reduceHtmlText(this.cells[i][j].textBox, this.cells[i][j].textBox.htmlText);
+                tempText += this.cells[i][j].textBox.reducedHtmlText();
                 tempText += "</td>";
             }
             tempText += "</tr>";
         }
 	var tempXML = new XML("<root>" + tempText + "</root>");
 	var tempNode = tempXML.firstChild;
+        //alert("table:\n" + tempText + "\n" + tempNode.toString());
 	
 	while (this.data.hasChildNodes()) {
 		this.data.firstChild.removeNode();
@@ -1493,9 +1381,6 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
 // }}}
 // {{{ prepareHtmlText()
 class_propBox_edit_table.prototype.prepareHtmlText = class_propBox_edit_text_formatted.prototype.prepareHtmlText;
-// }}}
-// {{{ reduceHtmlText()
-class_propBox_edit_table.prototype.reduceHtmlText = class_propBox_edit_text_formatted.prototype.reduceHtmlText;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_table.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;

@@ -1034,6 +1034,125 @@ TextField.prototype.initFormat = function(tFormat) {
 	this.setTextFormat(tFormat);
 };
 // }}}
+// {{{ TextField.reducedHtmlText()
+TextField.prototype.reducedHtmlText = function() {
+    // testing new version 
+    var newStr = "<p>";
+    var openTags = new Array();
+    var closeTags = new Array();
+    var newCloseTags = new Array();
+    var msg = "";
+
+    var isItalic = false;
+    var isBold = false;
+    var isSmall = false;
+    var hasURL = false;
+    var forceClosingTags = false;
+
+    for (var i = 0; i <= this.text.length; i++) {
+        if (i < this.text.length) {
+            tf = this.getTextFormat(i);
+            if (tf.bold != isBold) {
+                if (tf.bold) {
+                    openTags.push("<b>");
+                    newCloseTags.push("</b>");
+                    isBold = true;
+                } else {
+                    forceClosingTags = true;
+                    isBold = false;
+                }
+            }
+            if (tf.italic != isItalic) {
+                if (tf.italic) {
+                    openTags.push("<i>");
+                    newCloseTags.push("</i>");
+                    isItalic = true;
+                } else {
+                    forceClosingTags = true;
+                    isItalic = false;
+                }
+            }
+            if ((tf.size == this.textFormatSmall.size) != isSmall) {
+                if (tf.size == this.textFormatSmall.size) {
+                    openTags.push("<small>");
+                    newCloseTags.push("</small>");
+                    isSmall = true;
+                } else {
+                    forceClosingTags = true;
+                    isSmall = false;
+                }
+            }
+            if ((tf.url.indexOf("asfunction:textlink,") == 0) != hasURL) {
+                if (tf.url != "") {
+                    urlParts = tf.url.split(",", 2);
+                    linkIndex = urlParts[1]; 
+
+                    if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
+                        newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
+                    } else {
+                        newURL = this._parent.textLinks[linkIndex][0];
+                    }
+
+                    openTags.push("<a href=\"" + newURL + "\" target=\"" + this._parent.textLinks[linkIndex][1] + "\">");
+                    newCloseTags.push("</a>");
+                    hasURL = true;
+                } else {
+                    forceClosingTags = true;
+                    hasURL = false;
+                }
+            }
+        } else {
+            tf = this.textFormat;
+        }
+        forceClosingTags = this.text.charCodeAt(i) == 13 || i == this.text.length || forceClosingTags;
+
+        if (forceClosingTags) {
+            //think about status after change
+            isBold = tf.bold;
+            isItalic = tf.Italic;
+            isSmall = tf.size == this.textFormatSmall.size;
+            hasURL = tf.url != "";
+
+            closeTags.reverse();
+            newStr += closeTags.join("");
+
+            msg += newStr + "\n--\n";
+            msg += closeTags.join("") + "\n";
+
+            closeTags = new Array();
+            forceClosingTags = false;
+        }
+        for (var j = 0; j < newCloseTags.length; j++) {
+            closeTags.push(newCloseTags[j]);
+        }
+        newCloseTags = new Array();
+
+        newStr += openTags.join("");
+        openTags = new Array();
+
+        if (this.text.charCodeAt(i) != 13) {
+            newStr += this.text.charAt(i);
+        } else {
+            newStr += "</p><p>";
+        }
+    }
+    newStr += "</p>";
+
+	newStr = newStr.replace([
+		["<i></i>"	, ""],
+		["<b></b>"	, ""],
+		["<small></small>", ""]
+	]);
+
+    if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
+        newStr = newStr.substring(0, newStr.length - 7);
+    }
+    alert("msg:\n" + msg + "\n---\n" + newStr);
+    //alert("newStr:\n" + newStr);
+
+	return newStr;
+};
+// }}}
 
 /*
  *  Class TextFormat
