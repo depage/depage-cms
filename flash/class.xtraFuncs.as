@@ -6,6 +6,24 @@
  * (c)2003 jonas [jonas.info@gmx.net]
  */
 
+/*
+ *  Object
+ */
+// {{{ Object.copy()
+Object.prototype.copy = function() {
+    var _t = new this.__proto__.constructor(this) ;
+    for(var i in this) {
+        if (typeof this[i] == "object") {
+            _t[i] = this[i].copy()
+        } else {
+            _t[i] = this[i];
+        }
+    }
+
+    return _t;
+};
+ASSetPropFlags(Object.prototype,["copy"],1);
+// }}}
 
 /*
  *	colorFuncs
@@ -1035,40 +1053,42 @@ TextField.prototype.initFormat = function(tFormat) {
 };
 // }}}
 // {{{ TextField.prepareHtmlText()
-TextField.prototype.prepareHtmlText = function(text) {
-	text = text.replace("<p />", "<p> </p>");
-	text = text.replace("<a", "<u><a");
-	text = text.replace("</a>", "</a></u>");
-    text = text.replace("<small>", "<font size=\"" + this.textBox.textFormatSmall.size + "\">");
-    text = text.replace("</small>", "</font>");
+TextField.prototype.prepareHtmlText = function(htmlString) {
+	var linkEndIndex = 0;
+    var newURL = "";
 
-	this.textLinks = new Array();
+	htmlString = htmlString.replace("<p />", "<p> </p>");
+	htmlString = htmlString.replace("<a", "<u><a");
+	htmlString = htmlString.replace("</a>", "</a></u>");
+    htmlString = htmlString.replace("<small>", "<font size=\"" + this.htmlStringFormatSmall.size + "\">");
+    htmlString = htmlString.replace("</small>", "</font>");
 
-	linkEndIndex = 0;
+	this._parent.textLinks = new Array();
+
 	do {
 		//get link target
-		linkStartIndex = text.indexOf("<a href=\"", linkEndIndex);
+		linkStartIndex = htmlString.indexOf("<a href=\"", linkEndIndex);
 		if (linkStartIndex != -1) {
-			linkEndIndex = text.indexOf("\"", linkStartIndex + 9);
-			targetStartIndex = text.indexOf("target=\"", linkEndIndex);
-			targetEndIndex = text.indexOf("\"", targetStartIndex + 8);
+			linkEndIndex = htmlString.indexOf("\"", linkStartIndex + 9);
+			targetStartIndex = htmlString.indexOf("target=\"", linkEndIndex);
+			targetEndIndex = htmlString.indexOf("\"", targetStartIndex + 8);
 
-            newURL = text.substring(linkStartIndex + 9, linkEndIndex);
+            newURL = htmlString.substring(linkStartIndex + 9, linkEndIndex);
             if (newURL.substring(0, 8) == "pageref:") {
                 newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
             }
-			this._parent.textLinks.push([newURL, text.substring(targetStartIndex + 8, targetEndIndex)]);
+			this._parent.textLinks.push([newURL, htmlString.substring(targetStartIndex + 8, targetEndIndex)]);
 
 			//insert as link
-			newurl = "asfunction:textlink," + (this._parent.textLinks.length - 1) + "," + targetPath(this);
-			text = text.substring(0, linkStartIndex + 9) + newurl + text.substring(linkEndIndex);
+			newurl = "asfunction:textlink," + (this._parent.textLinks.length - 1) + "," + targetPath(this._parent);
+			htmlString = htmlString.substring(0, linkStartIndex + 9) + newurl + htmlString.substring(linkEndIndex);
 			diffLength = this._parent.textLinks[this._parent.textLinks.length - 1].length - newurl.length;
 			linkStartIndex = linkStartIndex - diffLength;
 			linkEndIndex = linkEndIndex - diffLength;
 		} 
 	} while (linkStartIndex != -1)
 
-    return text;
+    return htmlString;
 };
 // }}}
 // {{{ TextField.reducedHtmlText()
@@ -1084,12 +1104,12 @@ TextField.prototype.reducedHtmlText = function() {
     var hasURL = false;
     var forceClosingTags = false;
 
-    tf1 = this.textFormat;
+    tf1 = this.textFormat.copy();
     for (var i = 0; i <= this.text.length; i++) {
         if (this.text.charCodeAt(i) == 13) {
-            tf2 = this.textFormat;
+            tf2 = this.textFormat.copy();
         } else {
-            tf2 = this.getTextFormat(i);
+            tf2 = this.getTextFormat(i).copy();
         }
 
         // {{{ close tags if formatting changed
@@ -1151,7 +1171,7 @@ TextField.prototype.reducedHtmlText = function() {
         }
         // }}}
 
-        tf1 = tf2;
+        tf1 = tf2.copy();
     }
     newStr += "</p>";
 

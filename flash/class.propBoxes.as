@@ -689,7 +689,7 @@ class_propBox_edit_text_formatted.prototype.setData = function() {
 		this.data.childNodes[i].stripXMLDbIds();
 		tempText += this.data.childNodes[i].toString();
 	}
-	tempText = this.prepareHtmlText(tempText);
+	tempText = this.textBox.prepareHtmlText(tempText);
 	
 	if (this.textBox.text == "" && tempText.length > 600) {
 		this.textBox.type = "dynamic";
@@ -741,43 +741,6 @@ class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
 	}
 	
 	return super.saveData(forceSave);
-};
-// }}}
-// {{{ prepareHtmlText()
-class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
-	text = text.replace("<p />", "<p> </p>");
-	text = text.replace("<a", "<u><a");
-	text = text.replace("</a>", "</a></u>");
-        text = text.replace("<small>", "<font size=\"" + this.textBox.textFormatSmall.size + "\">");
-        text = text.replace("</small>", "</font>");
-
-	this.textLinks = new Array();
-
-	linkEndIndex = 0;
-	do {
-		//get link target
-		linkStartIndex = text.indexOf("<a href=\"", linkEndIndex);
-		if (linkStartIndex != -1) {
-			linkEndIndex = text.indexOf("\"", linkStartIndex + 9);
-			targetStartIndex = text.indexOf("target=\"", linkEndIndex);
-			targetEndIndex = text.indexOf("\"", targetStartIndex + 8);
-
-                        newURL = text.substring(linkStartIndex + 9, linkEndIndex);
-                        if (newURL.substring(0, 8) == "pageref:") {
-                            newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
-                        }
-			this.textLinks.push([newURL, text.substring(targetStartIndex + 8, targetEndIndex)]);
-
-			//insert as link
-			newurl = "asfunction:textlink," + (this.textLinks.length - 1) + "," + targetPath(this);
-			text = text.substring(0, linkStartIndex + 9) + newurl + text.substring(linkEndIndex);
-			diffLength = this.textLinks[this.textLinks.length - 1].length - newurl.length;
-			linkStartIndex = linkStartIndex - diffLength;
-			linkEndIndex = linkEndIndex - diffLength;
-		} 
-	} while (linkStartIndex != -1)
-
-        return text;
 };
 // }}}
 // {{{ saveSelection()
@@ -944,7 +907,7 @@ class_propBox_edit_text_headline.prototype.setData = function() {
 		this.data.childNodes[i].stripXMLDbIds();
 		tempText += this.data.childNodes[i].toString();
 	}
-	tempText = this.prepareHtmlText(tempText);
+	tempText = this.textBox.prepareHtmlText(tempText);
 	
 	if (this.textBox.text == "" && tempText.length > 300) {
 		this.textBox.type = "dynamic";
@@ -982,9 +945,6 @@ class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
 	
 	return super.saveData(forceSave);
 };
-// }}}
-// {{{ prepareHtmlText()
-class_propBox_edit_text_headline.prototype.prepareHtmlText = class_propBox_edit_text_formatted.prototype.prepareHtmlText;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
@@ -1172,7 +1132,7 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
         dataNode.childNodes[k].stripXMLDbIds();
         tempText += dataNode.childNodes[k].toString();
     }
-    tempText = this.prepareHtmlText(tempText);
+    tempText = cell.textBox.prepareHtmlText(tempText);
 
     this.setCellData(cell.textBox, tempText);
 
@@ -1378,9 +1338,6 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
 	
 	return super.saveData(forceSave);
 };
-// }}}
-// {{{ prepareHtmlText()
-class_propBox_edit_table.prototype.prepareHtmlText = class_propBox_edit_text_formatted.prototype.prepareHtmlText;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_table.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
