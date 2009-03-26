@@ -1034,13 +1034,48 @@ TextField.prototype.initFormat = function(tFormat) {
 	this.setTextFormat(tFormat);
 };
 // }}}
+// {{{ TextField.prepareHtmlText()
+TextField.prototype.prepareHtmlText = function(text) {
+	text = text.replace("<p />", "<p> </p>");
+	text = text.replace("<a", "<u><a");
+	text = text.replace("</a>", "</a></u>");
+    text = text.replace("<small>", "<font size=\"" + this.textBox.textFormatSmall.size + "\">");
+    text = text.replace("</small>", "</font>");
+
+	this.textLinks = new Array();
+
+	linkEndIndex = 0;
+	do {
+		//get link target
+		linkStartIndex = text.indexOf("<a href=\"", linkEndIndex);
+		if (linkStartIndex != -1) {
+			linkEndIndex = text.indexOf("\"", linkStartIndex + 9);
+			targetStartIndex = text.indexOf("target=\"", linkEndIndex);
+			targetEndIndex = text.indexOf("\"", targetStartIndex + 8);
+
+            newURL = text.substring(linkStartIndex + 9, linkEndIndex);
+            if (newURL.substring(0, 8) == "pageref:") {
+                newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
+            }
+			this._parent.textLinks.push([newURL, text.substring(targetStartIndex + 8, targetEndIndex)]);
+
+			//insert as link
+			newurl = "asfunction:textlink," + (this._parent.textLinks.length - 1) + "," + targetPath(this);
+			text = text.substring(0, linkStartIndex + 9) + newurl + text.substring(linkEndIndex);
+			diffLength = this._parent.textLinks[this._parent.textLinks.length - 1].length - newurl.length;
+			linkStartIndex = linkStartIndex - diffLength;
+			linkEndIndex = linkEndIndex - diffLength;
+		} 
+	} while (linkStartIndex != -1)
+
+    return text;
+};
+// }}}
 // {{{ TextField.reducedHtmlText()
 TextField.prototype.reducedHtmlText = function() {
     // testing new version 
     var newStr = "<p>";
-    var openTags = new Array();
-    var closeTags = new Array();
-    var newCloseTags = new Array();
+    var closing = "";
     var msg = "";
 
     var isItalic = false;
@@ -1049,105 +1084,87 @@ TextField.prototype.reducedHtmlText = function() {
     var hasURL = false;
     var forceClosingTags = false;
 
+    tf1 = this.textFormat;
     for (var i = 0; i <= this.text.length; i++) {
+        if (this.text.charCodeAt(i) == 13) {
+            tf2 = this.textFormat;
+        } else {
+            tf2 = this.getTextFormat(i);
+        }
+
+        // {{{ close tags if formatting changed
+        if (tf1.bold != tf2.bold || tf1.italic != tf2.italic || tf1.size != tf2.size || tf1.url != tf2.url) {
+            newstr += closing;
+            closing = "";
+
+            tf1.bold = false;
+            tf1.italic = false;
+            tf1.size = this.textFormat.size;
+            tf1.url = "";
+        }
+        // }}}
+        // {{{ test for bold
+        if (tf1.bold != true && tf2.bold == true) {
+            newStr += "<b>";
+            closing = "</b>" + closing;
+        }
+        // }}}
+        // {{{ test for italic
+        if (tf1.italic != true && tf2.italic == true) {
+            newStr += "<i>";
+            closing = "</i>" + closing;
+        }
+        // }}}
+        // {{{ test for small
+        if (tf1.size != this.textFormatSmall.size && tf2.size == this.textFormatSmall.size) {
+            newStr += "<small>";
+            closing = "</small>" + closing;
+        }
+        // }}}
+        // {{{ test for link
+        if (tf1.url.indexOf("asfunction:textlink,") != 0 && tf2.url.indexOf("asfunction:textlink,") == 0) {
+            urlParts = tf2.url.split(",", 2);
+            linkIndex = urlParts[1]; 
+
+            if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
+                newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
+            } else {
+                newURL = this._parent.textLinks[linkIndex][0];
+            }
+
+            newStr += "<a href=\"" + newURL + "\" target=\"" + this._parent.textLinks[linkIndex][1] + "\">";
+            closing = "</a>" + closing;
+        }
+        // }}}
+
+        // {{{ add actual char
         if (i < this.text.length) {
-            tf = this.getTextFormat(i);
-            if (tf.bold != isBold) {
-                if (tf.bold) {
-                    openTags.push("<b>");
-                    newCloseTags.push("</b>");
-                    isBold = true;
-                } else {
-                    forceClosingTags = true;
-                    isBold = false;
-                }
+            if (this.text.charCodeAt(i) == 13) {
+                newStr += "</p><p>";
+            } else if (this.text.charAt(i) == "<") {
+                newStr += "&lt;";
+            } else if (this.text.charAt(i) == ">") {
+                newStr += "&gt;";
+            } else {
+                newStr += this.text.charAt(i);
             }
-            if (tf.italic != isItalic) {
-                if (tf.italic) {
-                    openTags.push("<i>");
-                    newCloseTags.push("</i>");
-                    isItalic = true;
-                } else {
-                    forceClosingTags = true;
-                    isItalic = false;
-                }
-            }
-            if ((tf.size == this.textFormatSmall.size) != isSmall) {
-                if (tf.size == this.textFormatSmall.size) {
-                    openTags.push("<small>");
-                    newCloseTags.push("</small>");
-                    isSmall = true;
-                } else {
-                    forceClosingTags = true;
-                    isSmall = false;
-                }
-            }
-            if ((tf.url.indexOf("asfunction:textlink,") == 0) != hasURL) {
-                if (tf.url != "") {
-                    urlParts = tf.url.split(",", 2);
-                    linkIndex = urlParts[1]; 
-
-                    if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
-                        newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
-                    } else {
-                        newURL = this._parent.textLinks[linkIndex][0];
-                    }
-
-                    openTags.push("<a href=\"" + newURL + "\" target=\"" + this._parent.textLinks[linkIndex][1] + "\">");
-                    newCloseTags.push("</a>");
-                    hasURL = true;
-                } else {
-                    forceClosingTags = true;
-                    hasURL = false;
-                }
-            }
-        } else {
-            tf = this.textFormat;
         }
-        forceClosingTags = this.text.charCodeAt(i) == 13 || i == this.text.length || forceClosingTags;
+        // }}}
 
-        if (forceClosingTags) {
-            //think about status after change
-            isBold = tf.bold;
-            isItalic = tf.Italic;
-            isSmall = tf.size == this.textFormatSmall.size;
-            hasURL = tf.url != "";
-
-            closeTags.reverse();
-            newStr += closeTags.join("");
-
-            msg += newStr + "\n--\n";
-            msg += closeTags.join("") + "\n";
-
-            closeTags = new Array();
-            forceClosingTags = false;
-        }
-        for (var j = 0; j < newCloseTags.length; j++) {
-            closeTags.push(newCloseTags[j]);
-        }
-        newCloseTags = new Array();
-
-        newStr += openTags.join("");
-        openTags = new Array();
-
-        if (this.text.charCodeAt(i) != 13) {
-            newStr += this.text.charAt(i);
-        } else {
-            newStr += "</p><p>";
-        }
+        tf1 = tf2;
     }
     newStr += "</p>";
 
 	newStr = newStr.replace([
-		["<i></i>"	, ""],
-		["<b></b>"	, ""],
-		["<small></small>", ""]
+		["</i><i>"	, ""],
+		["</b><b>"	, ""],
+		["</small><small>", ""]
 	]);
 
     if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
         newStr = newStr.substring(0, newStr.length - 7);
     }
-    alert("msg:\n" + msg + "\n---\n" + newStr);
+    //alert("msg:\n" + msg);
     //alert("newStr:\n" + newStr);
 
 	return newStr;

@@ -732,7 +732,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
 	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
-	
+
 	while (this.data.hasChildNodes()) {
 		this.data.firstChild.removeNode();
 	}
