@@ -1037,6 +1037,31 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
                 if (this.data.childNodes[i].childNodes[j].localName == "td" || this.data.childNodes[i].childNodes[j].localName == "th") { 
                     this.cells[row][col] = this.generateTableCell(this.data.childNodes[i].childNodes[j]);
 
+                    this.attachMovie("component_button_symbol", "button_table_row_add_" + row, row + 1200, {
+                        width	: 14,
+                        height	: 14
+                    });
+                    this["button_table_row_add_" + row].symbol = "icon_table_row_add";
+                    this["button_table_row_add_" + row].tooltip = conf.lang.buttontip_table_row_add;
+                    this["button_table_row_add_" + row].enabledState = true;
+                    this["button_table_row_add_" + row].row = row;
+                    this["button_table_row_add_" + row].onClick = function() {
+                        // ?!?!?!?!?!?!
+                        alert("add row: " + this.row);
+                    };
+
+                    this.attachMovie("component_button_symbol", "button_table_row_del_" + row, row + 1400, {
+                        width	: 14,
+                        height	: 14
+                    });
+                    this["button_table_row_del_" + row].symbol = "icon_table_row_del";
+                    this["button_table_row_del_" + row].tooltip = conf.lang.buttontip_table_row_del;
+                    this["button_table_row_del_" + row].enabledState = true;
+                    this["button_table_row_del_" + row].row = row;
+                    this["button_table_row_del_" + row].onClick = function() {
+                        // ?!?!?!?!?!?!
+                        alert("delete row " + this.row);
+                    };
                     col++;
                 }
             }
@@ -1146,13 +1171,16 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
 // {{{ removeTableCells()
 class_propBox_edit_table.prototype.removeTableCells = function() {
     var depth = 100;
+    var msg = "";
 
     for (var i = 0; i < this.cells.length; i++) {
         for (var j = 0; j < this.cells[i].length; j++) {
             depth++;
 
-            removeMovieClip("textBox" + depth);
+            this[this.cells[i][j].textBoxName].removeTextField();
         }
+        this["button_table_row_add_" + i].removeMovieClip();
+        this["button_table_row_del_" + i].removeMovieClip();
     }
     this.cells = new Array();
 };
@@ -1169,7 +1197,7 @@ class_propBox_edit_table.prototype.setComponents = function() {
 
 	this.textBoxBack._y = this.settings.border_top;
 	this.textBoxBack._width = int(this.width - this.textBoxBack._x - this.settings.border_right - 1);	
-        this.tableWidth = this.textBoxBack._width - 6;
+        this.tableWidth = this.textBoxBack._width - 6 - 14;
 
         for (var i = 0; i < this.cells.length; i++) {
             var cellWidth = int(this.tableWidth / this.cells[i].length);
@@ -1177,16 +1205,18 @@ class_propBox_edit_table.prototype.setComponents = function() {
                 this.cells[i][j].textBox._x = int(this.tableX + j * cellWidth) - 1;
                 this.cells[i][j].textBox._width = cellWidth;
             }
+            this["button_table_row_add_" + i]._x = this.tableX + this.tableWidth + 1;
+            this["button_table_row_del_" + i]._x = this.tableX + this.tableWidth + 1;
         }
 
 	this._visible = false;
 
-	setTimeout(this.setHeight, this, 1, [], false);
-	
 	this.button_1._x = this.settings.border_left + 2;
 	this.button_2._x = this.settings.border_left + 2;
 	this.button_3._x = this.settings.border_left + 2;
 	this.button_4._x = this.settings.border_left + 2;
+
+	setTimeout(this.setHeight, this, 1, [], false);
 };
 // }}}
 // {{{ onScroller()
@@ -1227,6 +1257,9 @@ class_propBox_edit_table.prototype.setHeight = function() {
                 this.cells[i][j].textBox._y = rowStart;
                 this.cells[i][j].textBox._height = rowHeight;
             }
+            this["button_table_row_add_" + i]._y = rowStart;
+            this["button_table_row_del_" + i]._y = rowStart + 14;
+
             rowStart += rowHeight;
         }
 	
@@ -1318,6 +1351,7 @@ class_propBox_edit_table.prototype.setCellData = function(tB, tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_table.prototype.saveData = function(forceSave) {
+    if (!forceSave) {
         var tempText = "";
 
         for (var i = 0; i < this.cells.length; i++) {
@@ -1329,19 +1363,24 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
             }
             tempText += "</tr>";
         }
-	var tempXML = new XML("<root>" + tempText + "</root>");
-	var tempNode = tempXML.firstChild;
-        //alert("table:\n" + tempText + "\n" + tempNode.toString());
-	
-	while (this.data.hasChildNodes()) {
-		this.data.firstChild.removeNode();
-	}
-	for (var i = 0; i < tempNode.childNodes.length; i++) {
-		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
-	}
-	
-	return super.saveData(forceSave);
+        var tempXML = new XML("<root>" + tempText + "</root>");
+        var tempNode = tempXML.firstChild;
+        
+        while (this.data.hasChildNodes()) {
+                this.data.firstChild.removeNode();
+        }
+        for (var i = 0; i < tempNode.childNodes.length; i++) {
+                this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
+        }
+        
+    }
+    return super.saveData(forceSave);
 };
+// }}}
+// {{{ resetData() 
+class_propBox_edit_table.prototype.resetData = function() {
+    super.resetData();
+}
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_table.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;

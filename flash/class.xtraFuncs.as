@@ -1060,7 +1060,7 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
 	htmlString = htmlString.replace("<p />", "<p> </p>");
 	htmlString = htmlString.replace("<a", "<u><a");
 	htmlString = htmlString.replace("</a>", "</a></u>");
-    htmlString = htmlString.replace("<small>", "<font size=\"" + this.htmlStringFormatSmall.size + "\">");
+    htmlString = htmlString.replace("<small>", "<font size=\"" + this.textFormatSmall.size + "\">");
     htmlString = htmlString.replace("</small>", "</font>");
 
 	do {
