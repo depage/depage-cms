@@ -1063,8 +1063,6 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
     htmlString = htmlString.replace("<small>", "<font size=\"" + this.htmlStringFormatSmall.size + "\">");
     htmlString = htmlString.replace("</small>", "</font>");
 
-	this._parent.textLinks = new Array();
-
 	do {
 		//get link target
 		linkStartIndex = htmlString.indexOf("<a href=\"", linkEndIndex);

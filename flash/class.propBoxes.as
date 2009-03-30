@@ -582,6 +582,8 @@ class_propBox_edit_text_formatted = function() {};
 class_propBox_edit_text_formatted.prototype = new class_propBox_edit_text_multiline();
 
 class_propBox_edit_text_formatted.prototype.propName = [];
+class_propBox_edit_text_formatted.prototype.textLinks = [];
+	
 class_propBox_edit_text_formatted.prototype.propName[0] = conf.lang.prop_name_edit_text_formatted;
 class_propBox_edit_text_formatted.prototype.minHeight = 100;
 
@@ -967,6 +969,8 @@ class_propBox_edit_table.prototype.propName = [];
 class_propBox_edit_table.prototype.propName[0] = conf.lang.prop_name_edit_table;
 class_propBox_edit_table.prototype.minHeight = 100;
 
+class_propBox_edit_table.prototype.textLinks = [];
+
 class_propBox_edit_table.prototype.textLinkIsSecondClick = false;
 // }}}
 // {{{ setTextBoxFormat()
@@ -1346,50 +1350,16 @@ class_propBox_edit_table.prototype.saveSelection = class_propBox_edit_text_forma
 class_propBox_edit_table.prototype.formatSelection = class_propBox_edit_text_formatted.prototype.formatSelection;
 // }}}
 // {{{ textLinkClick()
-class_propBox_edit_table.prototype.textLinkClick = function(num) {
-        this.textLinkDoubleClick(num);
-        /*
-	if (this.textLinkIsSecondClick) {
-		this.textLinkDoubleClick(num);
-	} else {
-		this.textLinkIsSecondClick = true;
-		setTimeout(this.textLinkResetDoubleClick, this, 300);
-	}
-        */
-};
+class_propBox_edit_table.prototype.textLinkClick = class_propBox_edit_text_formatted.prototype.textLinkClick;
 // }}}
 // {{{ textLinkResetDoubleClick()
-class_propBox_edit_table.prototype.textLinkResetDoubleClick = function() {
-	this.textLinkIsSecondClick = false;
-};
+class_propBox_edit_table.prototype.textLinkResetDoubleClick = class_propBox_edit_text_formatted.prototype.textLinkResetDoubleClick;
 // }}}
 // {{{ textLinkDoubleClick()
-class_propBox_edit_table.prototype.textLinkDoubleClick = function(num) {
-	linkChooser = new tooltipClass.linkChooserObj(this.textLinks[num][0], this);
-        linkChooser.setOKFunc(this.setLink, this, [num, this.selectionBeginIndex, this.selectionEndIndex]);
-	linkChooser.show(_root._xmouse, _root._ymouse);
-};
+class_propBox_edit_table.prototype.textLinkDoubleClick = class_propBox_edit_text_formatted.prototype.textLinkDoubleClick;
 // }}}
 // {{{ setLink()
-class_propBox_edit_table.prototype.setLink = function(num, selBeginIndex, selEndIndex, newURL) {
-	var tempSetFormat = new TextFormat();
-
-        if (num == -1) {
-            // new link
-            num = this.textLinks.length;
-
-            tempSetFormat.url = "asfunction:textlink," + (num) + "," + targetPath(this);
-            tempSetFormat.underline = true;
-
-            this.textBox.setTextFormat(selBeginIndex, selEndIndex, tempSetFormat);
-		
-            Selection.setFocus(this.textBox);
-            Selection.setSelection(selBeginIndex, selEndIndex);
-        }
-        this.textLinks[num] = [newURL, ""]
-
-        this.onChanged();
-};
+class_propBox_edit_table.prototype.setLink = class_propBox_edit_text_formatted.prototype.setLink;
 // }}}
 
 /*
