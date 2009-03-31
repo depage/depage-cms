@@ -1046,8 +1046,7 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
                     this["button_table_row_add_" + row].enabledState = true;
                     this["button_table_row_add_" + row].row = row;
                     this["button_table_row_add_" + row].onClick = function() {
-                        // ?!?!?!?!?!?!
-                        alert("add row: " + this.row);
+                        this._parent.addTableRow(this.row);
                     };
 
                     this.attachMovie("component_button_symbol", "button_table_row_del_" + row, row + 1400, {
@@ -1059,8 +1058,7 @@ class_propBox_edit_table.prototype.generateTableCells = function() {
                     this["button_table_row_del_" + row].enabledState = true;
                     this["button_table_row_del_" + row].row = row;
                     this["button_table_row_del_" + row].onClick = function() {
-                        // ?!?!?!?!?!?!
-                        alert("delete row " + this.row);
+                        this._parent.delTableRow(this.row);
                     };
                     col++;
                 }
@@ -1170,19 +1168,44 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
 // }}}
 // {{{ removeTableCells()
 class_propBox_edit_table.prototype.removeTableCells = function() {
-    var depth = 100;
-    var msg = "";
-
     for (var i = 0; i < this.cells.length; i++) {
         for (var j = 0; j < this.cells[i].length; j++) {
-            depth++;
-
             this[this.cells[i][j].textBoxName].removeTextField();
         }
         this["button_table_row_add_" + i].removeMovieClip();
         this["button_table_row_del_" + i].removeMovieClip();
     }
     this.cells = new Array();
+};
+// }}}
+// {{{ addTableRow()
+class_propBox_edit_table.prototype.addTableRow = function(row) {
+    newRow = new Array();
+    for (var i = 0; i < this.cells[row].length; i++) {
+        newRow.push(new Object());
+    }
+    this.cells.splice(row + 1, 0, newRow);
+
+    this.isChanged = true;
+    this.saveData();
+    this.removeTableCells();
+    setTimeout(this.generateTableCells, this, 1, [], false);
+};
+// }}}
+// {{{ delTableRow()
+class_propBox_edit_table.prototype.delTableRow = function(row) {
+    for (var j = 0; j < this.cells[row].length; j++) {
+        this[this.cells[row][j].textBoxName].removeTextField();
+    }
+    this["button_table_row_add_" + row].removeMovieClip();
+    this["button_table_row_del_" + row].removeMovieClip();
+
+    this.cells.splice(row, 1);
+
+    this.isChanged = true;
+    this.saveData();
+    this.removeTableCells();
+    setTimeout(this.generateTableCells, this, 1, [], false);
 };
 // }}}
 // {{{ setComponents()
@@ -1358,7 +1381,11 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
             tempText += "<tr>";
             for (var j = 0; j < this.cells[i].length; j++) {
                 tempText += "<td>";
-                tempText += this.cells[i][j].textBox.reducedHtmlText();
+                if (this.cells[i][j].textBox != undefined) {
+                    tempText += this.cells[i][j].textBox.reducedHtmlText();
+                } else {
+                    tempText += "<p></p>";
+                }
                 tempText += "</td>";
             }
             tempText += "</tr>";
