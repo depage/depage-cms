@@ -15,10 +15,8 @@ class_propBox.prototype.propName = [];
 // }}}
 // {{{ onLoad()
 class_propBox.prototype.onLoad = function() {
-	var i;
-	
 	var tempArray = [];
-	for (i = 0; i < this.propName.length; i++) {
+	for (var i = 0; i < this.propName.length; i++) {
 		tempArray[i] = this.propName[i];
 	}
 	this.propName = tempArray;
@@ -584,6 +582,8 @@ class_propBox_edit_text_formatted = function() {};
 class_propBox_edit_text_formatted.prototype = new class_propBox_edit_text_multiline();
 
 class_propBox_edit_text_formatted.prototype.propName = [];
+class_propBox_edit_text_formatted.prototype.textLinks = [];
+	
 class_propBox_edit_text_formatted.prototype.propName[0] = conf.lang.prop_name_edit_text_formatted;
 class_propBox_edit_text_formatted.prototype.minHeight = 100;
 
@@ -598,11 +598,9 @@ class_propBox_edit_text_formatted.prototype.setTextBoxFormat = function() {
 // }}}
 // {{{ generateComponents()
 class_propBox_edit_text_formatted.prototype.generateComponents = function() {
-	var i;
-	
 	super.generateComponents();
 	
-	for (i = 1; i <= 4; i++) {
+	for (var i = 1; i <= 4; i++) {
 		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
 			width	: 19,
 			height	: 17
@@ -671,7 +669,7 @@ class_propBox_edit_text_formatted.prototype.setNewPos = function() {
 class_propBox_edit_text_formatted.prototype.setButtons = function() {
 	var i;
 	
-	for (i = 1; i <= 4; i++) {
+	for (var i = 1; i <= 4; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
 	}
 };
@@ -689,11 +687,11 @@ class_propBox_edit_text_formatted.prototype.setData = function() {
 	}
 
 	tempText = "";
-	for (i = 0; i < this.data.childNodes.length; i++) {
+	for (var i = 0; i < this.data.childNodes.length; i++) {
 		this.data.childNodes[i].stripXMLDbIds();
 		tempText += this.data.childNodes[i].toString();
 	}
-	tempText = this.prepareHtmlText(tempText);
+	tempText = this.textBox.prepareHtmlText(tempText);
 	
 	if (this.textBox.text == "" && tempText.length > 600) {
 		this.textBox.type = "dynamic";
@@ -714,7 +712,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 
 	//this.textBox.initFormat(this.textBox.textFormat);
 
-        for (i = 0; i < this.textBox.text.length; i++) {
+        for (var i = 0; i < this.textBox.text.length; i++) {
             tf = this.textBox.getTextFormat(i, i + 1);
             if (tf.size == this.textBox.textFormatSmall.size) {
                 this.textBox.setTextFormat(i, this.textBox.textFormatSmall);
@@ -734,164 +732,17 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
-	
+
 	while (this.data.hasChildNodes()) {
 		this.data.firstChild.removeNode();
 	}
-	for (i = 0; i < tempNode.childNodes.length; i++) {
+	for (var i = 0; i < tempNode.childNodes.length; i++) {
 		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
 	}
 	
 	return super.saveData(forceSave);
-};
-// }}}
-// {{{ prepareHtmlText()
-class_propBox_edit_text_formatted.prototype.prepareHtmlText = function(text) {
-	text = text.replace("<p />", "<p> </p>");
-	text = text.replace("<a", "<u><a");
-	text = text.replace("</a>", "</a></u>");
-        text = text.replace("<small>", "<font size=\"" + this.textBox.textFormatSmall.size + "\">");
-        text = text.replace("</small>", "</font>");
-
-	this.textLinks = new Array();
-
-	linkEndIndex = 0;
-	do {
-		//get link target
-		linkStartIndex = text.indexOf("<a href=\"", linkEndIndex);
-		if (linkStartIndex != -1) {
-			linkEndIndex = text.indexOf("\"", linkStartIndex + 9);
-			targetStartIndex = text.indexOf("target=\"", linkEndIndex);
-			targetEndIndex = text.indexOf("\"", targetStartIndex + 8);
-
-                        newURL = text.substring(linkStartIndex + 9, linkEndIndex);
-                        if (newURL.substring(0, 8) == "pageref:") {
-                            newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
-                        }
-			this.textLinks.push([newURL, text.substring(targetStartIndex + 8, targetEndIndex)]);
-
-			//insert as link
-			newurl = "asfunction:textlink," + (this.textLinks.length - 1) + "," + targetPath(this);
-			text = text.substring(0, linkStartIndex + 9) + newurl + text.substring(linkEndIndex);
-			diffLength = this.textLinks[this.textLinks.length - 1].length - newurl.length;
-			linkStartIndex = linkStartIndex - diffLength;
-			linkEndIndex = linkEndIndex - diffLength;
-		} 
-	} while (linkStartIndex != -1)
-
-        return text;
-};
-// }}}
-// {{{ reduceHtmlText()
-class_propBox_edit_text_formatted.prototype.reduceHtmlText = function(text) {
-        // testing new version 
-        var newStr = "<p>";
-        var openTags = new Array();
-        var closeTags = new Array();
-        var newCloseTags = new Array();
-        //var msg = "";
-
-        var isItalic = false;
-        var isBold = false;
-        var isSmall = false;
-        var hasURL = false;
-        var forceClosingTags = false;
-
-        for (i = 0; i < this.textBox.text.length; i++) {
-            tf = this.textBox.getTextFormat(i);
-            if (tf.bold != isBold) {
-                if (tf.bold) {
-                    openTags.push("<b>");
-                    newCloseTags.push("</b>");
-                    isBold = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if (tf.italic != isItalic) {
-                if (tf.italic) {
-                    openTags.push("<i>");
-                    newCloseTags.push("</i>");
-                    isItalic = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if ((tf.size == this.textBox.textFormatSmall.size) != isSmall) {
-                if (tf.size == this.textBox.textFormatSmall.size) {
-                    openTags.push("<small>");
-                    newCloseTags.push("</small>");
-                    isSmall = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-            if ((tf.url.indexOf("asfunction:textlink,") == 0) != hasURL) {
-                if (tf.url != "") {
-                    urlParts = tf.url.split(",", 2);
-                    linkIndex = urlParts[1]; 
-
-                    if (this.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
-                        newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this.textLinks[linkIndex][0].substring(8));
-                    } else {
-                        newURL = this.textLinks[linkIndex][0];
-                    }
-
-                    openTags.push("<a href=\"" + newURL + "\" target=\"" + this.textLinks[linkIndex][1] + "\">");
-                    newCloseTags.push("</a>");
-                    hasURL = true;
-                } else {
-                    forceClosingTags = true;
-                }
-            }
-
-            forceClosingTags = this.textBox.text.charCodeAt(i) == 13 || i == this.textBox.text.length || forceClosingTags;
-            if (forceClosingTags) {
-                //think about status after change
-                isBold = tf.bold;
-                isItalic = tf.Italic;
-                isSmall = tf.size == this.textBox.textFormatSmall.size;
-                hasURL = tf.url != "";
-
-                closeTags.reverse();
-                newStr += closeTags.join("");
-
-                //msg += newStr + "\n";
-                //msg += closeTags.join("") + "\n";
-
-                closeTags = new Array();
-                forceClosingTags = false;
-            }
-            for (j = 0; j < newCloseTags.length; j++) {
-                closeTags.push(newCloseTags[j]);
-            }
-            newCloseTags = new Array();
-
-            newStr += openTags.join("");
-            openTags = new Array();
-
-            if (this.textBox.text.charCodeAt(i) != 13) {
-                newStr += this.textBox.text.charAt(i);
-            } else {
-                newStr += "</p><p>";
-            }
-        }
-        newStr += "</p>";
-
-	newStr = newStr.replace([
-		["<i></i>"	, ""],
-		["<b></b>"	, ""],
-		["<small></small>", ""]
-	]);
-        if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
-            newStr = newStr.substring(0, newStr.length - 7);
-        }
-        //alert("msg:\n" + msg + "\n---\n" + newStr);
-        //alert("newStr:\n" + newStr);
-
-	return newStr;
 };
 // }}}
 // {{{ saveSelection()
@@ -1054,11 +905,11 @@ class_propBox_edit_text_headline.prototype.setData = function() {
 	}
 	
 	tempText = "";
-	for (i = 0; i < this.data.childNodes.length; i++) {
+	for (var i = 0; i < this.data.childNodes.length; i++) {
 		this.data.childNodes[i].stripXMLDbIds();
 		tempText += this.data.childNodes[i].toString();
 	}
-	tempText = this.prepareHtmlText(tempText);
+	tempText = this.textBox.prepareHtmlText(tempText);
 	
 	if (this.textBox.text == "" && tempText.length > 300) {
 		this.textBox.type = "dynamic";
@@ -1084,30 +935,497 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.reduceHtmlText(this.textBox.htmlText) + "</root>");
+	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
 		this.data.firstChild.removeNode();
 	}
-	for (i = 0; i < tempNode.childNodes.length; i++) {
+	for (var i = 0; i < tempNode.childNodes.length; i++) {
 		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
 	}
 	
 	return super.saveData(forceSave);
 };
 // }}}
-// {{{ prepareHtmlText()
-class_propBox_edit_text_headline.prototype.prepareHtmlText = class_propBox_edit_text_formatted.prototype.prepareHtmlText;
-// }}}
-// {{{ reduceHtmlText()
-class_propBox_edit_text_headline.prototype.reduceHtmlText = class_propBox_edit_text_formatted.prototype.reduceHtmlText;
-// }}}
 // {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
 // }}}
 // {{{ formatSelection()
 class_propBox_edit_text_headline.prototype.formatSelection = class_propBox_edit_text_formatted.prototype.formatSelection;
+// }}}
+
+/*
+ *	Class PropBox_edit_table
+ *
+ *	Extends class_propBox_edit_table
+ *	Handles HTML-formatted Tables
+ */
+// {{{ constructor
+class_propBox_edit_table = function() {};
+class_propBox_edit_table.prototype = new class_propBox_edit_text_multiline();
+
+class_propBox_edit_table.prototype.propName = [];
+class_propBox_edit_table.prototype.propName[0] = conf.lang.prop_name_edit_table;
+class_propBox_edit_table.prototype.minHeight = 100;
+
+class_propBox_edit_table.prototype.textLinks = [];
+
+class_propBox_edit_table.prototype.textLinkIsSecondClick = false;
+// }}}
+// {{{ setTextBoxFormat()
+class_propBox_edit_table.prototype.setTextBoxFormat = function() {
+	this.textBox.html = true
+	this.textBox.textFormat = conf.interface.textformat_input;
+	this.textBox.textFormatSmall = conf.interface.textformat_input_small;
+};
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_table.prototype.generateComponents = function() {
+	super.generateComponents();
+	
+	for (var i = 1; i <= 4; i++) {
+		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
+			width	: 19,
+			height	: 17
+		});
+	}
+		
+	this.button_1.symbol = "icon_format_bold";
+	this.button_1.tooltip = conf.lang.buttontip_format_bold;
+	this.button_1.enabledState = true;
+	this.button_1.onClick = function() {
+		setTimeout(this._parent.formatSelection, this._parent, 10, ["bold"]);
+	};
+	
+	this.button_2.symbol = "icon_format_italic";
+	this.button_2.tooltip = conf.lang.buttontip_format_italic;
+	this.button_2.enabledState = true;
+	this.button_2.onClick = function() {
+		setTimeout(this._parent.formatSelection, this._parent, 10, ["italic"]);
+	};
+	
+	this.button_3.symbol = "icon_format_small";
+	this.button_3.tooltip = conf.lang.buttontip_format_small;
+	this.button_3.enabledState = true;
+	this.button_3.onClick = function() {
+		setTimeout(this._parent.formatSelection, this._parent, 10, ["small"]);
+	};
+	
+	this.button_4.symbol = "icon_format_link";
+	this.button_4.tooltip = conf.lang.buttontip_format_link;
+	this.button_4.enabledState = true;
+	this.button_4.onClick = function() {
+		setTimeout(this._parent.formatSelection, this._parent, 10, ["link"]);
+	};
+};
+// }}}
+// {{{ generateTableCells()
+class_propBox_edit_table.prototype.generateTableCells = function() {
+    removeMovieClip("textBox");
+
+    var row = 0;
+    this.depth = 100;
+
+    for (var i = 0; i < this.data.childNodes.length; i++) {
+        if (this.data.childNodes[i].localName == "tr") { 
+            //rows
+            this.cells[row] = new Array();
+            var col = 0;
+
+            for (var j = 0; j < this.data.childNodes[i].childNodes.length; j++) {
+                if (this.data.childNodes[i].childNodes[j].localName == "td" || this.data.childNodes[i].childNodes[j].localName == "th") { 
+                    this.cells[row][col] = this.generateTableCell(this.data.childNodes[i].childNodes[j]);
+
+                    this.attachMovie("component_button_symbol", "button_table_row_add_" + row, row + 1200, {
+                        width	: 14,
+                        height	: 14
+                    });
+                    this["button_table_row_add_" + row].symbol = "icon_table_row_add";
+                    this["button_table_row_add_" + row].tooltip = conf.lang.buttontip_table_row_add;
+                    this["button_table_row_add_" + row].enabledState = true;
+                    this["button_table_row_add_" + row].row = row;
+                    this["button_table_row_add_" + row].onClick = function() {
+                        this._parent.addTableRow(this.row);
+                    };
+
+                    this.attachMovie("component_button_symbol", "button_table_row_del_" + row, row + 1400, {
+                        width	: 14,
+                        height	: 14
+                    });
+                    this["button_table_row_del_" + row].symbol = "icon_table_row_del";
+                    this["button_table_row_del_" + row].tooltip = conf.lang.buttontip_table_row_del;
+                    this["button_table_row_del_" + row].enabledState = true;
+                    this["button_table_row_del_" + row].row = row;
+                    this["button_table_row_del_" + row].onClick = function() {
+                        this._parent.delTableRow(this.row);
+                    };
+                    col++;
+                }
+            }
+            row++;
+        }
+    }
+    this.setComponents();
+    //this.onScroller();
+};
+// }}}
+// {{{ generateTableCell()
+class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
+    var cell;
+
+    this.depth++;
+    // create Textboxes
+    this.createTextField("textBox" + this.depth, this.depth, 0, 0, 100, 50),
+    cell = {
+        textBoxName: "textBox" + this.depth,
+        textBox: this["textBox" + this.depth],
+        node: dataNode
+    };
+    cell.textBox.type = "input";
+    cell.textBox.selectable = true;
+    cell.textBox.multiline = true;
+    cell.textBox.wordwrap = true;
+    cell.textBox.html = true;
+    cell.textBox.border = true;
+    cell.textBox.borderColor = conf.interface.color_input_face_inactive.toColor();
+    cell.textBox.textFormat = conf.interface.textformat_input;
+    cell.textBox.textFormatSmall = conf.interface.textformat_input_small;
+    // {{{ textBox.onChanged()
+    cell.textBox.onChanged = function() {
+            this._parent.onChanged();
+    };
+    // }}}
+    // {{{ onSetFocus()
+    cell.textBox.onSetFocus = function() {
+            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_active);
+            this._parent.textBox = this;
+            Key.addListener(this);
+            this.intervalID = setInterval(this, "onEditInterval", 100);
+            this.timeoutObj.clear();
+            this.active = true;
+    };
+    // }}}
+    // {{{ onEditInterval()
+    cell.textBox.onEditInterval = function() {
+            this._parent.saveSelection();
+            updateAfterEvent();
+    };
+    // }}}
+    // {{{ onKillFocus()
+    cell.textBox.onKillFocus = function() {
+            clearInterval(this.intervalID);
+            Key.removeListener(this);
+            //this._parent.save();	
+            this.timeoutObj = setTimeout(this.killedFocus, this, 200);
+            this.active = false;
+    };
+    // }}}
+    // {{{ killedFocus()
+    cell.textBox.killedFocus = function() {
+        if (!this._parent.textBox.active) {
+            this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_inactive);
+            this._parent.selectionBeginIndex = -1;
+            this._parent.selectionEndIndex = -1;
+        }
+    };
+    // }}}
+    // {{{ onScroller()
+    cell.textBox.onScroller = function() {
+            this._parent.onScroller();
+    };
+    // }}}
+    // {{{ onKeyDown()
+    cell.textBox.onKeyDown = function() {
+            var keyCode = Key.getCode();
+
+            if (keyCode == Key.TAB) {
+                    if (Selection.getBeginIndex() == Selection.getEndIndex()) {
+                            this.text = this.text.substring(0, Selection.getBeginIndex()) + "\t" + this.text.substring(Selection.getBeginIndex(), this.text.length);
+                            Selection.setSelection(Selection.getBeginIndex() + 1, Selection.getBeginIndex() + 1);
+                    }
+            } else if (keyCode == 83 && Key.isDown(Key.CONTROL)) {
+                    this._parent.save();
+                    this._parent.resetButtons();
+            } else if (keyCode == Key.DELETEKEY || keyCode == Key.BACKSPACE) {
+                    this._parent.setHeight();
+            }
+    };
+    // }}}
+
+    // prepare Data
+    tempText = "";
+    for (var k = 0; k < dataNode.childNodes.length; k++) {
+        dataNode.childNodes[k].stripXMLDbIds();
+        tempText += dataNode.childNodes[k].toString();
+    }
+    tempText = cell.textBox.prepareHtmlText(tempText);
+
+    this.setCellData(cell.textBox, tempText);
+
+    return cell;
+};
+// }}}
+// {{{ removeTableCells()
+class_propBox_edit_table.prototype.removeTableCells = function() {
+    for (var i = 0; i < this.cells.length; i++) {
+        for (var j = 0; j < this.cells[i].length; j++) {
+            this[this.cells[i][j].textBoxName].removeTextField();
+        }
+        this["button_table_row_add_" + i].removeMovieClip();
+        this["button_table_row_del_" + i].removeMovieClip();
+    }
+    this.cells = new Array();
+};
+// }}}
+// {{{ addTableRow()
+class_propBox_edit_table.prototype.addTableRow = function(row) {
+    newRow = new Array();
+    for (var i = 0; i < this.cells[row].length; i++) {
+        newRow.push(new Object());
+    }
+    this.cells.splice(row + 1, 0, newRow);
+
+    this.isChanged = true;
+    this.saveData();
+    this.removeTableCells();
+    setTimeout(this.generateTableCells, this, 1, [], false);
+};
+// }}}
+// {{{ delTableRow()
+class_propBox_edit_table.prototype.delTableRow = function(row) {
+    for (var j = 0; j < this.cells[row].length; j++) {
+        this[this.cells[row][j].textBoxName].removeTextField();
+    }
+    this["button_table_row_add_" + row].removeMovieClip();
+    this["button_table_row_del_" + row].removeMovieClip();
+
+    this.cells.splice(row, 1);
+
+    this.isChanged = true;
+    this.saveData();
+    this.removeTableCells();
+    setTimeout(this.generateTableCells, this, 1, [], false);
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_table.prototype.setComponents = function() {
+	if (this.usesFirstLine) {
+		this.tableX = this.settings.border_left + 4;
+		this.textBoxBack._x = this.settings.border_left;
+	} else {
+		this.tableX = this.settings.border_left + this.settings.gridsize * 2 + 4;
+		this.textBoxBack._x = this.settings.border_left + this.settings.gridsize * 2;
+	}
+
+	this.textBoxBack._y = this.settings.border_top;
+	this.textBoxBack._width = int(this.width - this.textBoxBack._x - this.settings.border_right - 1);	
+        this.tableWidth = this.textBoxBack._width - 6 - 14;
+
+        for (var i = 0; i < this.cells.length; i++) {
+            var cellWidth = int(this.tableWidth / this.cells[i].length);
+            for (var j = 0; j < this.cells[i].length; j++) {
+                this.cells[i][j].textBox._x = int(this.tableX + j * cellWidth) - 1;
+                this.cells[i][j].textBox._width = cellWidth;
+            }
+            this["button_table_row_add_" + i]._x = this.tableX + this.tableWidth + 1;
+            this["button_table_row_del_" + i]._x = this.tableX + this.tableWidth + 1;
+        }
+
+	this._visible = false;
+
+	this.button_1._x = this.settings.border_left + 2;
+	this.button_2._x = this.settings.border_left + 2;
+	this.button_3._x = this.settings.border_left + 2;
+	this.button_4._x = this.settings.border_left + 2;
+
+	setTimeout(this.setHeight, this, 1, [], false);
+};
+// }}}
+// {{{ onScroller()
+class_propBox_edit_table.prototype.onScroller = function() {
+    this.newTextHeight = this.textBox.textHeight;
+    if (this.oldTextHeight != this.newTextHeight) {
+            this.setHeight();
+            this.oldTextHeight = this.newTextHeight;
+    }
+    if ((this.textBox.scroll > this.oldTextScroll && this.getGlobalY() + this.height > Stage.height) || (this.textBox.scroll < this.oldTextScroll)) {
+            var scrollNum = this.textBox.scroll - this.oldTextScroll;
+            if (scrollNum == 1 || scrollNum == -1) scrollNum *= 3;
+            this._parent.setOffset(this._parent.offset + scrollNum * this.lineHeight);
+            this.oldTextScroll = this.textBox.scroll;
+    }
+    if (this.oldTextHeight > this.newTextHeight && this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight < 0) {
+            this._parent.setOffset(this._parent.offset + (this.getGlobalY() + this.innerHeight + this.settings.border_top - 3 * this.lineHeight));
+    }
+};
+// }}}
+// {{{ setHeight()
+class_propBox_edit_table.prototype.setHeight = function() {
+	var textBoxHeight;
+	var rowStart = this.settings.border_top + 3;
+
+	//this.textHeight = this.textBox.textHeight;
+        for (var i = 0; i < this.cells.length; i++) {
+            var rowHeight = 0;
+            for (var j = 0; j < this.cells[i].length; j++) {
+                var cellHeight = this.cells[i][j].textBox.textHeight;
+            
+                if (rowHeight < cellHeight) {
+                    rowHeight = cellHeight;
+                }
+            }
+            rowHeight += 5;
+            for (var j = 0; j < this.cells[i].length; j++) {
+                this.cells[i][j].textBox._y = rowStart;
+                this.cells[i][j].textBox._height = rowHeight;
+            }
+            this["button_table_row_add_" + i]._y = rowStart;
+            this["button_table_row_del_" + i]._y = rowStart + 14;
+
+            rowStart += rowHeight;
+        }
+	
+	this.innerHeight = rowStart > this.minHeight ? rowStart + 12 : this.minHeight;
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+	
+	textBoxHeight = this.innerHeight - 3 + 10;
+	if (textBoxHeight > Stage.height - 60) {
+		textBoxHeight = Stage.height - 60;
+	}
+	this.textBoxBack._height = this.innerHeight - 5;
+	
+	//super.setHeight();
+	this._parent.setPropPos();
+
+	/* ERROR NOT FOUND -> its only a workaround for flash */
+	this.textBoxBack._width = int(this.width - this.textBoxBack._x - this.settings.border_right - 1);	
+	//this.textBoxBack._width = int(this.textBoxBack._width);
+	
+	this._visible = true;
+};
+// }}}
+// {{{ setNewPos()
+class_propBox_edit_table.prototype.setNewPos = function() {
+	var bottomBorder = this.height - this.settings.border_bottom - 2;
+	
+        // @todo rewrite for table
+	//super.setNewPos();
+	
+	if (this.getGlobalY() + bottomBorder > Stage.height - 7) {
+		bottomBorder = Stage.height - 7 - this.getGlobalY();	
+	}
+	if (bottomBorder < this.settings.border_top + 85) {
+		bottomBorder = this.settings.border_top + 85;
+	}
+		
+	this.button_1._y = bottomBorder - 76
+	this.button_2._y = bottomBorder - 59
+	this.button_3._y = bottomBorder - 38;
+	this.button_4._y = bottomBorder - 17;
+};
+// }}}
+// {{{ setButtons()
+class_propBox_edit_table.prototype.setButtons = function() {
+	for (var i = 1; i <= 4; i++) {
+		this["button_" + i].setStatus(this["button_" + i].enabledState);
+	}
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_table.prototype.setData = function() {
+	var i, tempText;
+	
+	super.setData();
+	
+	this.setMultilangProp();
+	
+	if (this.data.attributes.name != undefined && this.data.attributes.name != "") {
+		this.setTitle(this.data.attributes.name);
+	}
+
+        this.removeTableCells();
+	setTimeout(this.generateTableCells, this, 1, [], false);
+};
+// }}}
+// {{{ setCellData()
+class_propBox_edit_table.prototype.setCellData = function(tB, tempText) {
+	tB.type = "input";
+	
+        tb.htmlText = tempText;
+
+	//this.textBox.initFormat(this.textBox.textFormat);
+
+        for (var i = 0; i < tB.text.length; i++) {
+            tf = tB.getTextFormat(i, i + 1);
+            if (tf.size == tB.textFormatSmall.size) {
+                tB.setTextFormat(i, tB.textFormatSmall);
+            } else {
+                tB.setTextFormat(i, tB.textFormat);
+            }
+            tB.setNewTextFormat(tB.textFormat);
+
+            tB.htmlText = tB.htmlText.replace([
+                    ["<I></I>"    , ""],
+                    ["<B></B>"    , ""]
+            ]);
+        }
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_table.prototype.saveData = function(forceSave) {
+    if (!forceSave) {
+        var tempText = "";
+
+        for (var i = 0; i < this.cells.length; i++) {
+            tempText += "<tr>";
+            for (var j = 0; j < this.cells[i].length; j++) {
+                tempText += "<td>";
+                if (this.cells[i][j].textBox != undefined) {
+                    tempText += this.cells[i][j].textBox.reducedHtmlText();
+                } else {
+                    tempText += "<p></p>";
+                }
+                tempText += "</td>";
+            }
+            tempText += "</tr>";
+        }
+        var tempXML = new XML("<root>" + tempText + "</root>");
+        var tempNode = tempXML.firstChild;
+        
+        while (this.data.hasChildNodes()) {
+                this.data.firstChild.removeNode();
+        }
+        for (var i = 0; i < tempNode.childNodes.length; i++) {
+                this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
+        }
+        
+    }
+    return super.saveData(forceSave);
+};
+// }}}
+// {{{ resetData() 
+class_propBox_edit_table.prototype.resetData = function() {
+    super.resetData();
+}
+// }}}
+// {{{ saveSelection()
+class_propBox_edit_table.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
+// }}}
+// {{{ formatSelection()
+class_propBox_edit_table.prototype.formatSelection = class_propBox_edit_text_formatted.prototype.formatSelection;
+// }}}
+// {{{ textLinkClick()
+class_propBox_edit_table.prototype.textLinkClick = class_propBox_edit_text_formatted.prototype.textLinkClick;
+// }}}
+// {{{ textLinkResetDoubleClick()
+class_propBox_edit_table.prototype.textLinkResetDoubleClick = class_propBox_edit_text_formatted.prototype.textLinkResetDoubleClick;
+// }}}
+// {{{ textLinkDoubleClick()
+class_propBox_edit_table.prototype.textLinkDoubleClick = class_propBox_edit_text_formatted.prototype.textLinkDoubleClick;
+// }}}
+// {{{ setLink()
+class_propBox_edit_table.prototype.setLink = class_propBox_edit_text_formatted.prototype.setLink;
 // }}}
 
 /*
@@ -1143,7 +1461,7 @@ class_propBox_edit_colorscheme.prototype.setData = function() {
 	
 	super.setData();
 	
-	for (i = 0; i < this.comboBox.values.length; i++) {
+	for (var i = 0; i < this.comboBox.values.length; i++) {
 		if (this.comboBox.values[i] == this.data.attributes['colorscheme']) {
 			this.comboBox.selected = i;	
 		}
@@ -1316,7 +1634,7 @@ class_propBox_pg_navigation.prototype.generateComponents = function() {
 	this.textBoxBack.outline.setRGB(conf.interface.color_component_line);
 	
 	this.navigations = conf.project.tree.settings.navigations;
-	for (i = 1; i <= this.navigations.length; i++) {
+	for (var i = 1; i <= this.navigations.length; i++) {
 		this.attachMovie("component_checkBox", "checkBox" + i, i + 2);
 		this["checkBox" + i].onChanged = function() {
 			this._parent.onChanged();
@@ -1330,7 +1648,7 @@ class_propBox_pg_navigation.prototype.setData = function() {
 	
 	super.setData();
 	
-	for (i = 1; i <= this.navigations.length; i++) {
+	for (var i = 1; i <= this.navigations.length; i++) {
 		this["checkBox" + i].caption = this.navigations[i - 1].name;
 		if (this.data.attributes["nav_" + this.navigations[i - 1].shortname] == "true") {
 			this["checkBox" + i].value = true;
@@ -1343,11 +1661,10 @@ class_propBox_pg_navigation.prototype.setData = function() {
 // {{{ saveData()
 class_propBox_pg_navigation.prototype.saveData = function(forceSave) {
 	if (this.isChanged == true || forceSave == true) {
-		var i;
 		var tempNode;
 		var tempXML = new XML();
 
-		for (i = 1; i <= this.navigations.length; i++) {
+		for (var i = 1; i <= this.navigations.length; i++) {
 			if (this["checkBox" + i].value) {
 				this.data.attributes["nav_" + this.navigations[i - 1].shortname] = "true";
 			} else {
@@ -1363,13 +1680,13 @@ class_propBox_pg_navigation.prototype.saveData = function(forceSave) {
 // }}}
 // {{{ setComponents()
 class_propBox_pg_navigation.prototype.setComponents = function() {
-	var i, colNum, actualCol, actualRow, rows; 
+	var colNum, actualCol, actualRow, rows; 
 	
 	this.textBoxBack._x = this.settings.border_left;
 	this.textBoxBack._y = this.settings.border_top;
 	this.textBoxBack._width = this.width - this.settings.border_left - this.settings.border_right;	
 	
-	for (i = 1; i <= this.navigations.length; i++) {
+	for (var i = 1; i <= this.navigations.length; i++) {
 		this["checkBox" + i]._x = this.settings.border_left + 5;
 		this["checkBox" + i]._y = this.settings.border_top + (i - 1) * conf.interface.menu_line_height;
 		this["checkBox" + i].width = this.width - (this.settings.border_left + this.settings.border_right + 10);
@@ -1412,7 +1729,7 @@ class_propBox_pg_file.prototype.generateComponents = function() {
 
 	this.attachMovie("component_comboBox", "comboBox", 3);
 	this.comboBox.values = [];
-	for (i = 0; i < conf.output_file_types.length; i++) {
+	for (var i = 0; i < conf.output_file_types.length; i++) {
 		this.comboBox.values.push(conf.output_file_types[i].name);
 	}
 	this.comboBox.onChanged = function() {
@@ -1434,7 +1751,7 @@ class_propBox_pg_file.prototype.setData = function() {
 
 		super.setData();
 
-		for (i = 0; i < this.comboBox.values.length; i++) {
+		for (var i = 0; i < this.comboBox.values.length; i++) {
 			if (this.comboBox.values[i] == this.data.attributes.file_type) {
 				this.comboBox.selected = i;	
 			}
@@ -1839,7 +2156,7 @@ class_propBox_edit_element_source.prototype.saveData = function(forceSave) {
 		while (this.data.hasChildNodes()) {
 			this.data.firstChild.removeNode();
 		}
-                for (i = 0; i < tempNode.childNodes.length; i++) {
+                for (var i = 0; i < tempNode.childNodes.length; i++) {
                     this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
                 }
                 if (this.isChanged == true || forceSave == true) {
@@ -2894,8 +3211,6 @@ class_propBox_proj_filelist.prototype.showDeactiveFiles = false;
 // }}}
 // {{{ onResize()
 class_propBox_proj_filelist.prototype.onResize = function() {
-	var i;
-
 	this.width = this._parent.width;
 	
 	this.settings.border_top = this.settings.border;
@@ -2909,14 +3224,14 @@ class_propBox_proj_filelist.prototype.onResize = function() {
 
 	this.back.onResize();
 	
-	for (i = 1; i <= this.filelist.length; i++) {
+	for (var i = 1; i <= this.filelist.length; i++) {
 		this["thumb" + i].onResize();
 	}	
 };
 // }}}
 // {{{ generateComponents()
 class_propBox_proj_filelist.prototype.generateComponents = function() {
-	var i, fileTypes;
+	var fileTypes;
 	var addThis;
 	
 	this.tooltipMsg = new tooltipClass.tooltipMsgObj();
@@ -2928,7 +3243,7 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 	this.filelist_disabled = [];
 
 	var fileTypes = this._parent.propObj.treeObj.fileFilter.file_type.split(",");
-	for (i = 0; i < this.data.childNodes.length; i++) {
+	for (var i = 0; i < this.data.childNodes.length; i++) {
 		addThis = false;
 		if (this._parent.propObj.treeObj.fileFilter.file_type == "") {
 			addThis = true;
@@ -2963,7 +3278,7 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 			});
 		}
 	}
-	for (i = 1; i <= 3; i++) {
+	for (var i = 1; i <= 3; i++) {
 		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
 			width	: 19,
 			height	: 17
@@ -3012,7 +3327,7 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
 class_propBox_proj_filelist.prototype.deleteFiles = function() {
 	var i, name = [], fileArray = [];
 	
-	for (i = 0; i < this.filelist.length; i++) {
+	for (var i = 0; i < this.filelist.length; i++) {
 		if (this.filelist[i].selected) {
 			name.push(this.filelist[i].filename);
 			fileArray.push(this.filelist[i].filepath + this.filelist[i].filename);
@@ -3035,12 +3350,10 @@ class_propBox_proj_filelist.prototype.deleteFiles = function() {
 // }}}
 // {{{ removeFileList()
 class_propBox_proj_filelist.prototype.removeFileList = function() {
-	var i;
-
-	for (i = 1; i <= this.filelist.length; i++) {
+	for (var i = 1; i <= this.filelist.length; i++) {
 		this["thumb" + i].removeMovieClip();
 	} 
-	for (i = 1; i <= this.filelist_disabled.length; i++) {
+	for (var i = 1; i <= this.filelist_disabled.length; i++) {
 		this["thumb_disabled" + i].removeMovieClip();
 	} 
 	setTimeout(this.generateFilelist, this, 30);
@@ -3048,36 +3361,34 @@ class_propBox_proj_filelist.prototype.removeFileList = function() {
 // }}}
 // {{{ generateFileList()
 class_propBox_proj_filelist.prototype.generateFilelist = function() {
-	var i;
-
 	if (conf.user.settings.filelistType == "thumbs") {
 		//generate filelist as thumbnails
-		for (i = 1; i <= this.filelist.length; i++) {
+		for (var i = 1; i <= this.filelist.length; i++) {
 			this.attachMovie("prop_tt_filelist_thumbnail", "thumb" + i, i + 20,{
 				n			: i,
 				fileobj		: this.filelist[i - 1],
 				_visible	: false
 			});
 		}
-		for (i = 1; i <= conf.thumb_load_num && i <= this.filelist.length; i++) {
+		for (var i = 1; i <= conf.thumb_load_num && i <= this.filelist.length; i++) {
 			setTimeout(this.load_thumb, this, 200, [i], false);
 		}
 		if (this.showDeactiveFiles) {
 			//generate filelist as thumbnails
-			for (i = 1; i <= this.filelist_disabled.length; i++) {
+			for (var i = 1; i <= this.filelist_disabled.length; i++) {
 				this.attachMovie("prop_tt_filelist_thumbnail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
 					n			: i,
 					fileobj		: this.filelist_disabled[i - 1],
 					_visible	: false
 				});
 			}
-			for (i = 1; i <= conf.thumb_load_num && i <= this.filelist_disabled.length; i++) {
+			for (var i = 1; i <= conf.thumb_load_num && i <= this.filelist_disabled.length; i++) {
 				setTimeout(this.load_thumb_disabled, this, 200, [i], false);
 			}
 		}
 	} else {
 		//generate filelist as details
-		for (i = 1; i <= this.filelist.length; i++) {
+		for (var i = 1; i <= this.filelist.length; i++) {
 			this.attachMovie("prop_tt_filelist_detail", "thumb" + i, i + 20,{
 				n			: i,
 				fileobj		: this.filelist[i - 1],
@@ -3085,7 +3396,7 @@ class_propBox_proj_filelist.prototype.generateFilelist = function() {
 			});
 		}
 		if (this.showDeactiveFiles) {
-			for (i = 1; i <= this.filelist_disabled.length; i++) {
+			for (var i = 1; i <= this.filelist_disabled.length; i++) {
 				this.attachMovie("prop_tt_filelist_detail", "thumb_disabled" + i, i + 20 + this.filelist.length,{
 					n			: i,
 					fileobj		: this.filelist_disabled[i - 1],
@@ -3116,7 +3427,7 @@ class_propBox_proj_filelist.prototype.select = function(id, type) {
 	var i, startId, endId;
 
 	if (type == "single") {
-		for (i = 0; i < this.filelist.length; i++) {
+		for (var i = 0; i < this.filelist.length; i++) {
 			this.filelist[i].selected = false;
 		}
 		this.filelist[id - 1].selected = true;
@@ -3137,15 +3448,15 @@ class_propBox_proj_filelist.prototype.select = function(id, type) {
 			startId = 1;
 			endId = 0;
 		}
-		for (i = startId; i <= endId; i++) {
+		for (var i = startId; i <= endId; i++) {
 			this.filelist[i - 1].selected = true;
 		}
 	}
-	for (i = 1; i <= this.filelist.length; i++) {
+	for (var i = 1; i <= this.filelist.length; i++) {
 		this["thumb" + i].setSelected();
 	}
 	this._parent.propObj.treeObj.selectedFile = "";
-	for (i = 0; i < this.filelist.length && this._parent.propObj.treeObj.selectedFile == ""; i++) {
+	for (var i = 0; i < this.filelist.length && this._parent.propObj.treeObj.selectedFile == ""; i++) {
 		if (this.filelist[i].selected) {
 			this._parent.propObj.treeObj.selectedFile = this.filelist[i].filepath + this.filelist[i].filename;
 		}
@@ -3161,8 +3472,8 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 		xNum = int((this.width - this.settings.border_left - this.settings.border_right - 2 * this.settings.gridSize) / (int(conf.thumb_width) + this.settings.border + 2 + 4));
 		yNum = int(this.filelist.length / xNum) + (this.filelist.length % xNum > 0 ? 1 : 0);
 		
-		for (i = 0; i < xNum; i++) {
-			for (j = 0; j < yNum; j++) {
+		for (var i = 0; i < xNum; i++) {
+			for (var j = 0; j < yNum; j++) {
 				with (this["thumb" + (i + j * xNum + 1)]) {
 					_x = this.settings.border_left + 2 * this.settings.gridSize + i * (int(conf.thumb_width) + this.settings.border + 6);
 					_y = this.settings.border_top + j * (int(conf.thumb_height) + this.settings.border + 6 + 24);
@@ -3194,8 +3505,8 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 				this.deactiveMessage.text = conf.lang.prop_proj_filelist_hidefiles;
 				yNum = int(this.filelist_disabled.length / xNum) + (this.filelist_disabled.length % xNum > 0 ? 1 : 0);
 				
-				for (i = 0; i < xNum; i++) {
-					for (j = 0; j < yNum; j++) {
+				for (var i = 0; i < xNum; i++) {
+					for (var j = 0; j < yNum; j++) {
 						with (this["thumb_disabled" + (i + j * xNum + 1)]) {
 							_x = this.settings.border_left + 2 * this.settings.gridSize + i * (int(conf.thumb_width) + this.settings.border + 6);
 							_y = this.innerHeight + this.settings.border_top + j * (int(conf.thumb_height) + this.settings.border + 6 + 24);
@@ -3213,7 +3524,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 		}
 	} else {
 		//set filelist as details
-		for (i = 1; i <= this.filelist.length; i++) {
+		for (var i = 1; i <= this.filelist.length; i++) {
 			with (this["thumb" + i]) {
 				_x = this.settings.border_left + 2 * this.settings.gridSize;
 				_y = this.settings.border_top + (i - 1) * 20;
@@ -3242,7 +3553,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 			this.deactiveMessage._visible = true;
 			if (this.showDeactiveFiles) {
 				this.deactiveMessage.text = conf.lang.prop_proj_filelist_hidefiles;
-				for (i = 1; i <= this.filelist_disabled.length; i++) {
+				for (var i = 1; i <= this.filelist_disabled.length; i++) {
 					with (this["thumb_disabled" + i]) {
 						_x = this.settings.border_left + 2 * this.settings.gridSize;
 						_y = this.settings.border_top + (i - 1) * 20 + this.innerHeight;
@@ -3289,7 +3600,7 @@ class_propBox_proj_filelist.prototype.setNewPos = function() {
 class_propBox_proj_filelist.prototype.setButtons = function() {
 	var i;
 	
-	for (i = 1; i <= 3; i++) {
+	for (var i = 1; i <= 3; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
 	}
 };
@@ -3389,7 +3700,7 @@ class_propBox_pg_template_data.prototype.setData = function() {
 	super.setData();
 	
 	this.comboBox.selected = 0;
-	for (i = 0; i < this.comboBox.values.length; i++) {
+	for (var i = 0; i < this.comboBox.values.length; i++) {
 		if (this.comboBox.values[i] == this.data.attributes.type) {
 			this.comboBox.selected = i;
 		}
@@ -3542,7 +3853,7 @@ class_propBox_proj_colorscheme.prototype.generateComponents = function() {
 	this.colorLineNum = 0;
 	this.generateColors();
 	
-	for (i = 1; i <= 2; i++) {
+	for (var i = 1; i <= 2; i++) {
 		this.attachMovie("component_button_symbol", "button_" + i, i + 10, {
 			width	: 19,
 			height	: 17
@@ -3576,7 +3887,7 @@ class_propBox_proj_colorscheme.prototype.generateColors = function() {
 	}
 	nodeArray.sort(this.sortColors);
 		
-	for (i = 1; i <= nodeArray.length; i++) {
+	for (var i = 1; i <= nodeArray.length; i++) {
 		if (i > this.colorLineNum) {
 			this.colorLineNum++;
 			this.attachMovie("prop_tt_colorscheme_color", "colorBox" + this.colorLineNum, this.colorLineNum + 20);
@@ -3589,7 +3900,7 @@ class_propBox_proj_colorscheme.prototype.generateColors = function() {
 	
 	tempVal = this.colorLineNum;
 	this.colorLineNum = i - 1;
-	for (i; i <= tempVal; i++) {
+	for (var i; i <= tempVal; i++) {
 		this["colorBox" + i].removeMovieClip();	
 	}
 };
@@ -3623,7 +3934,7 @@ class_propBox_proj_colorscheme.prototype.setComponents = function() {
 	if (this.rowNum < 2) {
 		this.rowNum = 2;	
 	}
-	for (i = 1; i <= this.colorLineNum; i++) {
+	for (var i = 1; i <= this.colorLineNum; i++) {
 		actualCol = Math.floor((i - 1) / this.rowNum);
 		actualRow = (i - 1) % this.rowNum;
 		this["colorBox" + i]._x = this.settings.border_left + 5 + this.settings.gridsize * 2 + actualCol * this.colorWidth;
@@ -3639,7 +3950,7 @@ class_propBox_proj_colorscheme.prototype.setActiveColor = function(colorNode) {
 	var i;
 	
 	this.activeColor = colorNode;
-	for (i = 0; i <= this.colorLineNum; i++) {
+	for (var i = 0; i <= this.colorLineNum; i++) {
 		this["colorBox" + i].setStatus();
 	}	
 	this.setButtons();
@@ -3693,7 +4004,7 @@ class_propBox_proj_colorscheme.prototype.setButtons = function() {
 		this.button_2.enabledState = false;	
 	}
 	
-	for (i = 1; i <= 2; i++) {
+	for (var i = 1; i <= 2; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
 	}
 };
@@ -3788,14 +4099,14 @@ class_propBox_proj_template_set.prototype.setData = function() {
 
 	super.setData();
 	
-	for (i = 0; i < this.comboBoxEncoding.values.length; i++) {
+	for (var i = 0; i < this.comboBoxEncoding.values.length; i++) {
 		if (this.comboBoxEncoding.values[i] == this.data.attributes.encoding) {
 			this.comboBoxEncoding.selected = i;
 		}
 	}
 	this.comboBoxEncoding.select(this.comboBoxEncoding.selected);
 	
-	for (i = 0; i < this.comboBoxMethod.values.length; i++) {
+	for (var i = 0; i < this.comboBoxMethod.values.length; i++) {
 		if (this.comboBoxMethod.values[i] == this.data.attributes.method) {
 			this.comboBoxMethod.selected = i;
 		}
@@ -4126,7 +4437,7 @@ class_propBox_proj_publish_folder.prototype.setData = function() {
 	this.inputBoxUser.value = this.data.attributes.output_user;
 	this.inputBoxPass.value = this.data.attributes.output_pass;
 	
-	for (i = 0; i < this.comboBoxTemplateSet.values.length; i++) {
+	for (var i = 0; i < this.comboBoxTemplateSet.values.length; i++) {
 		if (this.data.attributes.template_set == this.comboBoxTemplateSet.values[i]) {
 			this.comboBoxTemplateSet.selected = i;
 		}
@@ -4353,7 +4664,7 @@ class_propBox_proj_backup_restore.prototype.generateComponents = function() {
 	this.textBoxBack.back.setRGB(conf.interface.color_component_face);
 	this.textBoxBack.outline.setRGB(conf.interface.color_component_line);
 	
-	for (i = 1; i <= this.restoreDBTypes.length; i++) {
+	for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 		this.attachMovie("component_checkBox", "checkBox" + i, i + 4, {
 			caption			: conf.lang["prop_tt_bak_restore_db_" + this.restoreDBTypes[i - 1]],
 			enabledState	: false
@@ -4421,7 +4732,7 @@ class_propBox_proj_backup_restore.prototype.setMenuData = function(backupsDB, ba
 	this.backupsLib = backupsLib;
 
 	this.chooseFileDB.values = [];
-	for (i = 0; i < this.backupsDB.length; i++) {
+	for (var i = 0; i < this.backupsDB.length; i++) {
 		if (this.backupsDB[i].name == "backup_dev.xml") {
 			this.chooseFileDB.values.push("developer backup");
 		} else {
@@ -4431,7 +4742,7 @@ class_propBox_proj_backup_restore.prototype.setMenuData = function(backupsDB, ba
 	}
 
 	this.chooseFileLib.values = [];
-	for (i = 0; i < this.backupsLib.length; i++) {
+	for (var i = 0; i < this.backupsLib.length; i++) {
 		this.chooseFileLib.values.push(getLocalDate(this.backupsLib[i].date));
 	}
 	
@@ -4441,7 +4752,7 @@ class_propBox_proj_backup_restore.prototype.setMenuData = function(backupsDB, ba
 	this.chooseFileLib.init();
 	
 	this.buttonStartDB.setEnabled(true);
-	for (i = 1; i <= this.restoreDBTypes.length; i++) {
+	for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 		this["checkBox" + i].setEnabled(true);
 	}
 	
@@ -4455,7 +4766,7 @@ class_propBox_proj_backup_restore.prototype.handleTaskProgress = function(taskHa
 		this.buttonStartDB._visible = true;
 		this.chooseFileDB._visible = true;
 		this.textBoxBack._visible = true;
-		for (i = 1; i <= this.restoreDBTypes.length; i++) {
+		for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 			this["checkBox" + i]._visible = true;
 		}
 		this.buttonStartLib._visible = true;
@@ -4486,7 +4797,7 @@ class_propBox_proj_backup_restore.prototype.handleTaskProgress = function(taskHa
 		this.buttonStartDB._visible = false;
 		this.chooseFileDB._visible = false;
 		this.textBoxBack._visible = false;
-		for (i = 1; i <= this.restoreDBTypes.length; i++) {
+		for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 			this["checkBox" + i]._visible = false;
 		}
 		this.buttonStartLib._visible = false;
@@ -4510,7 +4821,7 @@ class_propBox_proj_backup_restore.prototype.setComponents = function() {
 	this.textBoxBack._width = this.width - this.settings.border_right - this.settings.border_left;
 	this.textBoxBack._height = this.restoreDBTypes.length * conf.interface.menu_line_height + 3;
 
-	for (i = 1; i <= this.restoreDBTypes.length; i++) {
+	for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 		this["checkBox" + i]._x = this.settings.border_left + 5;
 		this["checkBox" + i]._y = this.settings.border_top + (i - 1) * conf.interface.menu_line_height + int(conf.interface.component_height) + 7;
 		this["checkBox" + i].width = this.width - (this.settings.border_left + this.settings.border_right + 10);
@@ -4562,7 +4873,7 @@ class_propBox_proj_backup_restore.prototype.setComponents = function() {
 class_propBox_proj_backup_restore.prototype.restoreDB = function() {
 	var options = [];
 	
-	for (i = 1; i <= this.restoreDBTypes.length; i++) {
+	for (var i = 1; i <= this.restoreDBTypes.length; i++) {
 		if (this["checkBox" + i].value) {
 			options.push(this.restoreDBTypes[i - 1]);
 		}
@@ -4595,8 +4906,8 @@ Object.registerClass("prop_pg_linkdesc", class_propBox_pg_linkdesc);
 Object.registerClass("prop_pg_desc", class_propBox_pg_desc);
 
 Object.registerClass("prop_edit_text_singleline", class_propBox_edit_text_singleline);
+Object.registerClass("prop_edit_text_multiline", class_propBox_edit_text_multiline);
 
-//Object.registerClass("prop_edit_text_multiline", class_propBox_edit_text_multiline);
 Object.registerClass("prop_edit_plain_source", class_propBox_edit_plain_source);
 Object.registerClass("prop_edit_text_formatted", class_propBox_edit_text_formatted);
 Object.registerClass("prop_edit_text_headline", class_propBox_edit_text_headline);
@@ -4608,7 +4919,7 @@ Object.registerClass("prop_edit_flash", class_propBox_edit_flash);
 Object.registerClass("prop_edit_date", class_propBox_edit_date);
 Object.registerClass("prop_edit_time", class_propBox_edit_time);
 Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
-Object.registerClass("prop_edit_table", class_propBox_edit_element_source);
+Object.registerClass("prop_edit_table", class_propBox_edit_table);
 // }}}
 // {{{ colorschemes
 Object.registerClass("prop_proj_colorscheme", class_propBox_proj_colorscheme);

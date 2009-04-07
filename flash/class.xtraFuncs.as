@@ -6,6 +6,24 @@
  * (c)2003 jonas [jonas.info@gmx.net]
  */
 
+/*
+ *  Object
+ */
+// {{{ Object.copy()
+Object.prototype.copy = function() {
+    var _t = new this.__proto__.constructor(this) ;
+    for(var i in this) {
+        if (typeof this[i] == "object") {
+            _t[i] = this[i].copy()
+        } else {
+            _t[i] = this[i];
+        }
+    }
+
+    return _t;
+};
+ASSetPropFlags(Object.prototype,["copy"],1);
+// }}}
 
 /*
  *	colorFuncs
@@ -1032,6 +1050,142 @@ TextField.prototype.initFormat = function(tFormat) {
 	this.embedFonts = tFormat.embedFonts;
 	this.setNewTextFormat(tFormat);
 	this.setTextFormat(tFormat);
+};
+// }}}
+// {{{ TextField.prepareHtmlText()
+TextField.prototype.prepareHtmlText = function(htmlString) {
+	var linkEndIndex = 0;
+    var newURL = "";
+
+	htmlString = htmlString.replace("<p />", "<p> </p>");
+	htmlString = htmlString.replace("<a", "<u><a");
+	htmlString = htmlString.replace("</a>", "</a></u>");
+    htmlString = htmlString.replace("<small>", "<font size=\"" + this.textFormatSmall.size + "\">");
+    htmlString = htmlString.replace("</small>", "</font>");
+
+	do {
+		//get link target
+		linkStartIndex = htmlString.indexOf("<a href=\"", linkEndIndex);
+		if (linkStartIndex != -1) {
+			linkEndIndex = htmlString.indexOf("\"", linkStartIndex + 9);
+			targetStartIndex = htmlString.indexOf("target=\"", linkEndIndex);
+			targetEndIndex = htmlString.indexOf("\"", targetStartIndex + 8);
+
+            newURL = htmlString.substring(linkStartIndex + 9, linkEndIndex);
+            if (newURL.substring(0, 8) == "pageref:") {
+                newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
+            }
+			this._parent.textLinks.push([newURL, htmlString.substring(targetStartIndex + 8, targetEndIndex)]);
+
+			//insert as link
+			newurl = "asfunction:textlink," + (this._parent.textLinks.length - 1) + "," + targetPath(this._parent);
+			htmlString = htmlString.substring(0, linkStartIndex + 9) + newurl + htmlString.substring(linkEndIndex);
+			diffLength = this._parent.textLinks[this._parent.textLinks.length - 1].length - newurl.length;
+			linkStartIndex = linkStartIndex - diffLength;
+			linkEndIndex = linkEndIndex - diffLength;
+		} 
+	} while (linkStartIndex != -1)
+
+    return htmlString;
+};
+// }}}
+// {{{ TextField.reducedHtmlText()
+TextField.prototype.reducedHtmlText = function() {
+    // testing new version 
+    var newStr = "<p>";
+    var closing = "";
+    var msg = "";
+
+    var isItalic = false;
+    var isBold = false;
+    var isSmall = false;
+    var hasURL = false;
+    var forceClosingTags = false;
+
+    tf1 = this.textFormat.copy();
+    for (var i = 0; i <= this.text.length; i++) {
+        if (this.text.charCodeAt(i) == 13) {
+            tf2 = this.textFormat.copy();
+        } else {
+            tf2 = this.getTextFormat(i).copy();
+        }
+
+        // {{{ close tags if formatting changed
+        if (tf1.bold != tf2.bold || tf1.italic != tf2.italic || tf1.size != tf2.size || tf1.url != tf2.url) {
+            newstr += closing;
+            closing = "";
+
+            tf1.bold = false;
+            tf1.italic = false;
+            tf1.size = this.textFormat.size;
+            tf1.url = "";
+        }
+        // }}}
+        // {{{ test for bold
+        if (tf1.bold != true && tf2.bold == true) {
+            newStr += "<b>";
+            closing = "</b>" + closing;
+        }
+        // }}}
+        // {{{ test for italic
+        if (tf1.italic != true && tf2.italic == true) {
+            newStr += "<i>";
+            closing = "</i>" + closing;
+        }
+        // }}}
+        // {{{ test for small
+        if (tf1.size != this.textFormatSmall.size && tf2.size == this.textFormatSmall.size) {
+            newStr += "<small>";
+            closing = "</small>" + closing;
+        }
+        // }}}
+        // {{{ test for link
+        if (tf1.url.indexOf("asfunction:textlink,") != 0 && tf2.url.indexOf("asfunction:textlink,") == 0) {
+            urlParts = tf2.url.split(",", 2);
+            linkIndex = urlParts[1]; 
+
+            if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
+                newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
+            } else {
+                newURL = this._parent.textLinks[linkIndex][0];
+            }
+
+            newStr += "<a href=\"" + newURL + "\" target=\"" + this._parent.textLinks[linkIndex][1] + "\">";
+            closing = "</a>" + closing;
+        }
+        // }}}
+
+        // {{{ add actual char
+        if (i < this.text.length) {
+            if (this.text.charCodeAt(i) == 13) {
+                newStr += "</p><p>";
+            } else if (this.text.charAt(i) == "<") {
+                newStr += "&lt;";
+            } else if (this.text.charAt(i) == ">") {
+                newStr += "&gt;";
+            } else {
+                newStr += this.text.charAt(i);
+            }
+        }
+        // }}}
+
+        tf1 = tf2.copy();
+    }
+    newStr += "</p>";
+
+	newStr = newStr.replace([
+		["</i><i>"	, ""],
+		["</b><b>"	, ""],
+		["</small><small>", ""]
+	]);
+
+    if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
+        newStr = newStr.substring(0, newStr.length - 7);
+    }
+    //alert("msg:\n" + msg);
+    //alert("newStr:\n" + newStr);
+
+	return newStr;
 };
 // }}}
 
