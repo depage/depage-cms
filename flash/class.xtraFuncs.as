@@ -1093,6 +1093,7 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
 TextField.prototype.reducedHtmlText = function() {
     // testing new version 
     var newStr = "<p>";
+    var btext = this.text;
     var closing = "";
     var msg = "";
 
@@ -1102,9 +1103,15 @@ TextField.prototype.reducedHtmlText = function() {
     var hasURL = false;
     var forceClosingTags = false;
 
+    btext = btext.replace([
+        ["\r\n"	, "\r"],
+        ["\n"	, "\r"]
+    ]);
+
     tf1 = this.textFormat.copy();
-    for (var i = 0; i <= this.text.length; i++) {
-        if (this.text.charCodeAt(i) == 13) {
+    for (var i = 0; i <= btext.length; i++) {
+        //if (btext.charCodeAt(i) == 10 || btext.charCodeAt(i) == 13) {
+        if (btext.charAt(i) == "\r") {
             tf2 = this.textFormat.copy();
         } else {
             tf2 = this.getTextFormat(i).copy();
@@ -1156,15 +1163,16 @@ TextField.prototype.reducedHtmlText = function() {
         // }}}
 
         // {{{ add actual char
-        if (i < this.text.length) {
-            if (this.text.charCodeAt(i) == 13) {
+        if (i < btext.length) {
+            //if (btext.charCodeAt(i) == 10 || btext.charCodeAt(i) == 13) {
+            if (btext.charAt(i) == "\r") {
                 newStr += "</p><p>";
-            } else if (this.text.charAt(i) == "<") {
+            } else if (btext.charAt(i) == "<") {
                 newStr += "&lt;";
-            } else if (this.text.charAt(i) == ">") {
+            } else if (btext.charAt(i) == ">") {
                 newStr += "&gt;";
             } else {
-                newStr += this.text.charAt(i);
+                newStr += btext.charAt(i);
             }
         }
         // }}}
@@ -1173,11 +1181,11 @@ TextField.prototype.reducedHtmlText = function() {
     }
     newStr += "</p>";
 
-	newStr = newStr.replace([
-		["</i><i>"	, ""],
-		["</b><b>"	, ""],
-		["</small><small>", ""]
-	]);
+    newStr = newStr.replace([
+            ["</i><i>"	, ""],
+            ["</b><b>"	, ""],
+            ["</small><small>", ""]
+    ]);
 
     if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
         newStr = newStr.substring(0, newStr.length - 7);

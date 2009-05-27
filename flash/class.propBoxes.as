@@ -732,9 +732,14 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
+	setTimeout(this.saveDataNow, this, 1, [this.textBox.reducedHtmlText(), forceSave], false);
+};
+// }}}
+// {{{ saveDataNow()
+class_propBox_edit_text_formatted.prototype.saveDataNow = function(saveData, forceSave) {
+	var tempXML = new XML("<root>" + saveData + "</root>");
 	var tempNode = tempXML.firstChild;
-
+	
 	while (this.data.hasChildNodes()) {
 		this.data.firstChild.removeNode();
 	}
@@ -935,18 +940,11 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
-	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
-	var tempNode = tempXML.firstChild;
-	
-	while (this.data.hasChildNodes()) {
-		this.data.firstChild.removeNode();
-	}
-	for (var i = 0; i < tempNode.childNodes.length; i++) {
-		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
-	}
-	
-	return super.saveData(forceSave);
+	setTimeout(this.saveDataNow, this, 1, [this.textBox.reducedHtmlText(), forceSave], false);
 };
+// }}}
+// {{{ saveDataNow()
+class_propBox_edit_text_headline.prototype.saveDataNow = class_propBox_edit_text_formatted.prototype.saveDataNow;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
@@ -1390,19 +1388,14 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
             }
             tempText += "</tr>";
         }
-        var tempXML = new XML("<root>" + tempText + "</root>");
-        var tempNode = tempXML.firstChild;
-        
-        while (this.data.hasChildNodes()) {
-                this.data.firstChild.removeNode();
-        }
-        for (var i = 0; i < tempNode.childNodes.length; i++) {
-                this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
-        }
-        
+
+	setTimeout(this.saveDataNow, this, 1, [tempText, forceSave], false);
     }
     return super.saveData(forceSave);
 };
+// }}}
+// {{{ saveDataNow()
+class_propBox_edit_table.prototype.saveDataNow = class_propBox_edit_text_formatted.prototype.saveDataNow;
 // }}}
 // {{{ resetData() 
 class_propBox_edit_table.prototype.resetData = function() {
@@ -4390,42 +4383,48 @@ class_propBox_proj_publish_folder.prototype.handleTaskProgress = function(taskHa
 // }}}
 // {{{ setComponents()
 class_propBox_proj_publish_folder.prototype.setComponents = function() {
-	this.inputBoxTargetPath._x = this.settings.border_left;
-	this.inputBoxTargetPath._y = this.settings.border_top;
-	this.inputBoxTargetPath.width = this.width - this.settings.border_left - this.settings.border_right;
-	
-	this.inputBoxBaseURL._x = this.settings.border_left;
-	this.inputBoxBaseURL._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
-	this.inputBoxBaseURL.width = this.width - this.settings.border_left - this.settings.border_right;
+    //targetPath
+    this.inputBoxTargetPath._x = this.settings.border_left;
+    this.inputBoxTargetPath._y = this.settings.border_top;
+    this.inputBoxTargetPath.width = this.width - this.settings.border_left - this.settings.border_right;
+    
+    // baseURL
+    this.inputBoxBaseURL._x = this.settings.border_left;
+    this.inputBoxBaseURL._y = this.settings.border_top + int(conf.interface.component_height) + this.settings.border;
+    this.inputBoxBaseURL.width = this.width - this.settings.border_left - this.settings.border_right;
 
-	this.inputBoxUser._x = this.settings.border_left;
-	this.inputBoxUser._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
-	this.inputBoxUser.width = this.settings.gridSize * 6 - this.settings.border;
-	
-	this.inputBoxPass._x = this.settings.border_left + this.settings.gridSize * 6;
-	this.inputBoxPass._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
-	this.inputBoxPass.width = this.settings.gridSize * 6 - this.settings.border;
-	
-	this.comboBoxTemplateSet._x = this.settings.border_left;
-	this.comboBoxTemplateSet._y = this.settings.border_top + 3 * (int(conf.interface.component_height) + this.settings.border);
-	this.comboBoxTemplateSet.width = this.settings.gridSize * 6 - this.settings.border;
+    //user
+    this.inputBoxUser._x = this.settings.border_left;
+    this.inputBoxUser._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
+    this.inputBoxUser.width = this.settings.gridSize * 6 - this.settings.border;
+    
+    //pass
+    this.inputBoxPass._x = this.settings.border_left + this.settings.gridSize * 6;
+    this.inputBoxPass._y = this.settings.border_top + 2 * (int(conf.interface.component_height) + this.settings.border);
+    this.inputBoxPass.width = this.settings.gridSize * 6 - this.settings.border;
+    
+    //templateset
+    this.comboBoxTemplateSet._x = this.settings.border_left;
+    this.comboBoxTemplateSet._y = this.settings.border_top + 3 * (int(conf.interface.component_height) + this.settings.border);
+    this.comboBoxTemplateSet.width = this.settings.gridSize * 6 - this.settings.border;
 
-	this.buttonStart._x = this.width - this.settings.border_right;
-	this.buttonStart._y = this.settings.border_top + 4 * (int(conf.interface.component_height) + 7);
-	this.buttonStart.caption = conf.lang.prop_tt_publish_folder_button_start;
-	this.buttonStart.align = "TR";
-	
-	this.progressBar._x = this.settings.border_left;
-	this.progressBar._y = this.settings.border_top + 2;
-	this.progressBar.width = this.width - this.settings.border_left - this.settings.border_right;
-	this.progressBar.setWidth();
-	
-	this.progressField._x = this.settings.border_left;
-	this.progressField._y = this.settings.border_top + int(conf.interface.component_height) + 10;
-	this.progressField._width = this.width - this.settings.border_left - this.settings.border_right;
-	
-	this.innerHeight = this.settings.border_top + (int(conf.interface.component_height) + this.settings.border) * 5;
-	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+    //other
+    this.buttonStart._x = this.width - this.settings.border_right;
+    this.buttonStart._y = this.settings.border_top + 4 * (int(conf.interface.component_height) + 7);
+    this.buttonStart.caption = conf.lang.prop_tt_publish_folder_button_start;
+    this.buttonStart.align = "TR";
+    
+    this.progressBar._x = this.settings.border_left;
+    this.progressBar._y = this.settings.border_top + 2;
+    this.progressBar.width = this.width - this.settings.border_left - this.settings.border_right;
+    this.progressBar.setWidth();
+    
+    this.progressField._x = this.settings.border_left;
+    this.progressField._y = this.settings.border_top + int(conf.interface.component_height) + 10;
+    this.progressField._width = this.width - this.settings.border_left - this.settings.border_right;
+    
+    this.innerHeight = this.settings.border_top + (int(conf.interface.component_height) + this.settings.border) * 5;
+    this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 };
 // }}}
 // {{{ setData()
