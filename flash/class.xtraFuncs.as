@@ -292,6 +292,28 @@ String.prototype.convEntityToUnicode = function() {
 	return newStr;	
 };
 // }}}
+// {{{ String.toXMLString()
+String.prototype.toXMLString = function() {
+    newStr = "";
+
+    for (var i = 0; i < this.length; i++) {
+        var s = this.charAt(i);
+        if (s == "&") {
+            newStr += "&amp;";
+        } else if (s == "<") {
+            newStr += "&lt;";
+        } else if (s == ">") {
+            newStr += "&gt;";
+        } else if (s == "\"") {
+            newStr += "&quot;";
+        } else {
+            newStr += s;
+        }
+    }
+	
+    return newStr;	
+};
+// }}}
 // {{{ String.trim()
 String.prototype.trim = function() {
 	var tempStr = this;
@@ -1091,65 +1113,40 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
 // }}}
 // {{{ TextField.reducedHtmlText()
 TextField.prototype.reducedHtmlText = function() {
-    // testing new version 
-    var newStr = "<p>";
-    var btext = this.text;
-    var closing = "";
-    var msg = "";
+    var tempXML = new XML("<root>" + this.htmlText + "</root>");
+    newStr = this.reducedHtmlXML(tempXML.firstChild);
 
-    var isItalic = false;
-    var isBold = false;
-    var isSmall = false;
-    var hasURL = false;
-    var forceClosingTags = false;
-
-    btext = btext.replace([
-        ["\r\n"	, "\r"],
-        ["\n"	, "\r"]
+    newStr = newStr.replace([
+        ["<i></i>"	  , ""],
+        ["<b></b>"	  , ""],
+        ["<small></small>", ""]
     ]);
+    
+    return newStr;
+};
+// }}}
+// {{{ TextField.reducedHtmlXML()
+TextField.prototype.reducedHtmlXML = function(node) {
+    var newStr = "";
 
-    tf1 = this.textFormat.copy();
-    for (var i = 0; i <= btext.length; i++) {
-        //if (btext.charCodeAt(i) == 10 || btext.charCodeAt(i) == 13) {
-        if (btext.charAt(i) == "\r") {
-            tf2 = this.textFormat.copy();
-        } else {
-            tf2 = this.getTextFormat(i).copy();
-        }
+    if (node.nodeType == 1) { // XML Element
+        var nodeName = node.nodeName.toLowerCase();
+        var startTag = "";
+        var endTag = "";
 
-        // {{{ close tags if formatting changed
-        if (tf1.bold != tf2.bold || tf1.italic != tf2.italic || tf1.size != tf2.size || tf1.url != tf2.url) {
-            newstr += closing;
-            closing = "";
-
-            tf1.bold = false;
-            tf1.italic = false;
-            tf1.size = this.textFormat.size;
-            tf1.url = "";
-        }
-        // }}}
-        // {{{ test for bold
-        if (tf1.bold != true && tf2.bold == true) {
-            newStr += "<b>";
-            closing = "</b>" + closing;
-        }
-        // }}}
-        // {{{ test for italic
-        if (tf1.italic != true && tf2.italic == true) {
-            newStr += "<i>";
-            closing = "</i>" + closing;
-        }
-        // }}}
-        // {{{ test for small
-        if (tf1.size != this.textFormatSmall.size && tf2.size == this.textFormatSmall.size) {
-            newStr += "<small>";
-            closing = "</small>" + closing;
-        }
-        // }}}
-        // {{{ test for link
-        if (tf1.url.indexOf("asfunction:textlink,") != 0 && tf2.url.indexOf("asfunction:textlink,") == 0) {
-            urlParts = tf2.url.split(",", 2);
-            linkIndex = urlParts[1]; 
+        if (nodeName == "p" || nodeName == "b" || nodeName == "i") {
+            startTag = "<" + nodeName + ">";
+            endTag = "</" + nodeName + ">";
+        } else if (nodeName == "font") {
+            if (node.attributes.size == conf.interface.textformat_input_small.size) {
+                startTag = "<small>";
+                endTag = "</small>";
+            }
+        } else if (nodeName == "a") {
+            var link = node.attributes.href;
+            linkStartIndex = link.indexOf("asfunction:textlink,");
+            linkEndIndex = link.indexOf(",", linkStartIndex + 21);
+            linkIndex = link.substring(linkStartIndex + 20, linkEndIndex);
 
             if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
                 newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
@@ -1157,43 +1154,22 @@ TextField.prototype.reducedHtmlText = function() {
                 newURL = this._parent.textLinks[linkIndex][0];
             }
 
-            newStr += "<a href=\"" + newURL + "\" target=\"" + this._parent.textLinks[linkIndex][1] + "\">";
-            closing = "</a>" + closing;
+            startTag += "<a ";
+            startTag += "href=\"" + newURL.toXMLString() + "\" ";
+            startTag += "target=\"" + this.textLinks[linkIndex][1].toXMLString() + "\">";
+            endTag += "</a>";
         }
-        // }}}
 
-        // {{{ add actual char
-        if (i < btext.length) {
-            //if (btext.charCodeAt(i) == 10 || btext.charCodeAt(i) == 13) {
-            if (btext.charAt(i) == "\r") {
-                newStr += "</p><p>";
-            } else if (btext.charAt(i) == "<") {
-                newStr += "&lt;";
-            } else if (btext.charAt(i) == ">") {
-                newStr += "&gt;";
-            } else {
-                newStr += btext.charAt(i);
-            }
+        newStr += startTag;
+        for (var i = 0; i < node.childNodes.length; i++) {
+            newStr += this.reducedHtmlXML(node.childNodes[i]);
         }
-        // }}}
-
-        tf1 = tf2.copy();
+        newStr += endTag;
+    } else if (node.nodeType == 3) { // Text-Node
+        newStr += node.nodeValue.toXMLString();
     }
-    newStr += "</p>";
 
-    newStr = newStr.replace([
-            ["</i><i>"	, ""],
-            ["</b><b>"	, ""],
-            ["</small><small>", ""]
-    ]);
-
-    if (newStr.indexOf("<p></p>", newStr.length - 7) > 0) {
-        newStr = newStr.substring(0, newStr.length - 7);
-    }
-    //alert("msg:\n" + msg);
-    //alert("newStr:\n" + newStr);
-
-	return newStr;
+    return newStr;
 };
 // }}}
 

@@ -732,12 +732,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 // }}}
 // {{{ saveData()
 class_propBox_edit_text_formatted.prototype.saveData = function(forceSave) {
-	setTimeout(this.saveDataNow, this, 1, [this.textBox.reducedHtmlText(), forceSave], false);
-};
-// }}}
-// {{{ saveDataNow()
-class_propBox_edit_text_formatted.prototype.saveDataNow = function(saveData, forceSave) {
-	var tempXML = new XML("<root>" + saveData + "</root>");
+	var tempXML = new XML("<root>" + this.textBox.reducedHtmlText() + "</root>");
 	var tempNode = tempXML.firstChild;
 	
 	while (this.data.hasChildNodes()) {
@@ -939,12 +934,7 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 };
 // }}}
 // {{{ saveData()
-class_propBox_edit_text_headline.prototype.saveData = function(forceSave) {
-	setTimeout(this.saveDataNow, this, 1, [this.textBox.reducedHtmlText(), forceSave], false);
-};
-// }}}
-// {{{ saveDataNow()
-class_propBox_edit_text_headline.prototype.saveDataNow = class_propBox_edit_text_formatted.prototype.saveDataNow;
+class_propBox_edit_text_headline.prototype.saveData = class_propBox_edit_text_formatted.prototype.saveData;
 // }}}
 // {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
@@ -1389,13 +1379,18 @@ class_propBox_edit_table.prototype.saveData = function(forceSave) {
             tempText += "</tr>";
         }
 
-	setTimeout(this.saveDataNow, this, 1, [tempText, forceSave], false);
+	var tempXML = new XML("<root>" + tempText + "</root>");
+	var tempNode = tempXML.firstChild;
+	
+	while (this.data.hasChildNodes()) {
+		this.data.firstChild.removeNode();
+	}
+	for (var i = 0; i < tempNode.childNodes.length; i++) {
+		this.data.appendChild(tempNode.childNodes[i].cloneNode(true));
+	}
     }
     return super.saveData(forceSave);
 };
-// }}}
-// {{{ saveDataNow()
-class_propBox_edit_table.prototype.saveDataNow = class_propBox_edit_text_formatted.prototype.saveDataNow;
 // }}}
 // {{{ resetData() 
 class_propBox_edit_table.prototype.resetData = function() {
