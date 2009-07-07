@@ -26,6 +26,7 @@ require_once('lib_tasks.php');
 require_once('lib_files.php');
 require_once('lib_publish.php');
 require_once('lib_sitemap.php');
+require_once('lib_atom.php');
 require_once('lib_pocket_server.php');
 require_once('Archive/tar.php');
 require_once('Mail.php');
@@ -905,6 +906,21 @@ class rpc_bgtask_functions extends rpc_functions_class {
             if ($do_copy) {
                 $this->file_access->f_write_file($this->output_path . $fList[$i], $project_path . $fList[$i]);
             }
+        }
+    }
+    // }}}
+    // {{{ publish_feeds()
+    function publish_feeds($args) {
+        global $conf, $project, $log;
+        
+        $pb = new publish($this->project, $args['publish_id']);
+        $args['task']->set_description('%task_publish_feeds%');
+        
+        $feed = new atom($args['baseurl'], $args['title']);
+
+        $xmlstr = $feed->generate();
+        if (!$this->file_access->f_write_string($this->output_path . "/" . $lang . "/atom.xml", $xmlstr)) {
+            $log->add_entry("Could not write atom-feed");
         }
     }
     // }}}
