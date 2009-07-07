@@ -259,7 +259,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             // }}}
             // {{{ get page_data
             } elseif ($args['type'] == 'page_data') {
-                $xml_def = $project->get_page_data($project_name, $args['id']);
+                $xml_def = $project->get_page_data_test_lang($project_name, $args['id']);
                 if ($xml_def !== false) {
                     $data['data'] = $xml_def->dump_node($xml_def->document_element());
                 } else {
@@ -1398,7 +1398,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
 
             $funcs[] = new ttRpcFunc('publish_cache_end', array());
             foreach ($output_languages as $output_language) {
-                $funcs[] = new ttRpcFunc('publish_process_remove_old', array('lang' => $output_language));
+                //$funcs[] = new ttRpcFunc('publish_process_remove_old', array('lang' => $output_language));
             }
             
             $task->add_thread($funcs);
@@ -1471,6 +1471,14 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                 'baseurl' => $baseurl,
             ));
 
+            foreach ($output_languages as $lang) {
+                $funcs[] = new ttRpcFunc('publish_feeds', array(
+                    'publish_id' => $args['publish_id'],
+                    'baseurl' => $baseurl,
+                    'title' => $project_name,
+                    'lang' => $lang,
+                ));
+            }
             $funcs[] = new ttRpcFunc('publish_sitemap', array(
                 'publish_id' => $args['publish_id'],
                 'baseurl' => $baseurl,

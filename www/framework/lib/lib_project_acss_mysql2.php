@@ -248,6 +248,31 @@ class project_acss_mysql2 extends project {
         return $xml_def;
     }
     // }}}
+    // {{{ get_page_data_test_lang()
+    /**
+     * gets page from db
+     *
+     * @public
+     *
+     * @param    $project_name (string) name of project
+     * @param    $id (int) id of page
+     *
+     * @todo    move the language tester, so that it is called only, if some 
+     *            language settings are changing.
+     * @todo    test, if id belongs to project with $project_name
+     */
+    function get_page_data_test_lang($project_name, $id) {
+        $xml_def = $this->get_page_data($project_name, $id);
+        
+        $languages = $this->get_languages($project_name);
+        if ($this->_test_pageObj_languages($xml_def, 'true', $languages)) {
+            $this->xmldb->save_node($xml_def);
+            tpl_engine::delete_from_transform_cache($project_name, $id, 'preview');
+        }
+
+        return $xml_def;
+    }
+    // }}}
     // {{{ get_page_data_id_by_page_id()
     /**
      * gets ref-id to page from db

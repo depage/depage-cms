@@ -469,9 +469,21 @@ class fs_ftp extends fs {
     function _disconnect() {
         if ($this->connected) {
             ftp_close($this->ftpp);
+            $this->connected = false;
         }
     }
     
+    /**
+     * reconnects to ftp-server after 3 second sleep
+     *
+     * @private
+     */
+    function _reconnect() {
+        $this->_disconnect();
+        sleep(3);
+        $this->_connect();
+    }
+
     /**
      * get type of transfer (ascii | binary) by extension of file
      *
@@ -806,6 +818,8 @@ class fs_ftp extends fs {
      * @return    $success (bool) true on success, false on error
      */
     function f_write_string($filepath, $str) {
+        $errors = 0;
+
         if ($this->_connect()) {
             $path = pathinfo($filepath);
             
@@ -816,16 +830,25 @@ class fs_ftp extends fs {
             fwrite($fp, $str);
             fclose($fp);
             
-            if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
-                trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
-                unlink($tempfile);
+            while ($errors <= $this->num_errors_max) {
+                if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
+                    $errors++;
+                    if ($errors > $this->num_errors_max) {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+                        unlink($tempfile);
 
-                return false;
-            } else {
-                $this->ch_mod($filepath, $this->chmod);
-                unlink($tempfile);
+                        return false;
+                    } else {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying", E_USER_NOTICE);
 
-                return true;
+                        $this->_reconnect();
+                    }
+                } else {
+                    $this->ch_mod($filepath, $this->chmod);
+                    unlink($tempfile);
+
+                    return true;
+                }
             }
         } else {
             return false;
@@ -843,20 +866,31 @@ class fs_ftp extends fs {
      * @return    $success (bool) true on success, false on error
      */
     function f_write_file($filepath, $sourcefile) {
+        $errors = 0;
+
         if ($this->_connect()) {
             $path = pathinfo($filepath);
             
             $this->mk_dir($path['dirname']);
             
-            if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
-                trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+            while ($errors <= $this->num_errors_max) {
+                if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
+                    $errors++;
+                    if ($errors > $this->num_errors_max) {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
 
-                return false;
-            } else {
-                $this->ch_mod($filepath, $this->chmod);
+                        return false;
+                    } else {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying $errors", E_USER_NOTICE);
+
+                        $this->_reconnect();
+                    }
+                } else {
+                    $this->ch_mod($filepath, $this->chmod);
+
+                    return true;
+                }
             }
-
-            return true;
         } else {
             return false;
         }

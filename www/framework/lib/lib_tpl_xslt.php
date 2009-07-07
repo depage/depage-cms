@@ -295,6 +295,8 @@ class tpl_engine_xslt extends tpl_engine {
                 'tt_multilang' => "/{$conf->ns['page']['ns']}:page/@multilang",
                 'content_type' => "'{$this->content_type}'",
                 'content_encoding' => "'{$this->content_encoding}'",
+                'depage_path_base' => "'{$conf->path_base}'",
+                'depage_path_server_root' => "'{$conf->path_server_root}'",
             );
             
             //get color variables
@@ -875,25 +877,25 @@ class tpl_engine_xslt extends tpl_engine {
         //@todo fix bug with "()" in folder and page names
 
         $repl = array(
-            "ä" => "ae",
-            "ö" => "oe",
-            "ü" => "ue",
-            "ß" => "ss",
-            "á" => "a",
-            "à" => "a",
-            "â" => "a",
-            "é" => "e",
-            "è" => "e",
-            "ê" => "e",
-            "í" => "i",
-            "ì" => "i",
-            "î" => "i",
-            "ó" => "o",
-            "ò" => "o",
-            "ô" => "o",
-            "ú" => "u",
-            "ù" => "u",
-            "û" => "u",
+            "?" => "ae",
+            "?" => "oe",
+            "?" => "ue",
+            "?" => "ss",
+            "?" => "a",
+            "?" => "a",
+            "?" => "a",
+            "?" => "e",
+            "?" => "e",
+            "?" => "e",
+            "?" => "i",
+            "?" => "i",
+            "?" => "i",
+            "?" => "o",
+            "?" => "o",
+            "?" => "o",
+            "?" => "u",
+            "?" => "u",
+            "?" => "u",
         );
 
         $search = array('/[^a-z0-9_\.]/', '/--+/', '/^-+/', '/-+$/' );
@@ -1131,6 +1133,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
         } else if ($func == 'template') {
             $xml_template = $xml_proc->get_template($xml_proc->project, $id, $param == "cached", $xml_proc->variables);
             $value = $xml_template->dump_mem(false);
+        } else if ($func == 'xslt') {
+            $value = file_get_contents("{$conf->path_server_root}{$conf->path_base}/framework/xslt/$id");
         } else if ($func == 'navigation') {
             $xml_navigation = $xml_proc->get_navigation($xml_proc->project);
             if ($xml_proc->id != -1) {

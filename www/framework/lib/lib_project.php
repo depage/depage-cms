@@ -281,11 +281,7 @@ class project {
             }
         }
             
-        if ($changed) {
-            return false;
-        } else {
-            return true;
-        }
+        return $changed;
     }
     // }}}
     // }}}

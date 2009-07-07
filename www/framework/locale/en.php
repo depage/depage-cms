@@ -214,6 +214,7 @@ $texts = array(
 	'task_publish_processing_pages' => "preprocessing pages",
 	'task_publish_publishing_pages' => "publishing pages",
 	'task_publish_sitemap' => "publishing sitemap",
+	'task_publish_feeds' => "publishing atom feeds",
 	'time_calculating' => "(calculating)",
 	'time_min' => "minutes",
 	'time_sec' => "seconds",
