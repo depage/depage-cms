@@ -354,7 +354,7 @@ class project_acss_mysql2 extends project {
         $lib_path = $this->get_project_path($project_name) . "/lib";
         $fs_access = fs::factory('local');
 
-        $dir_str = "<{$conf->ns['project']['ns']}:dir name=\"" . $project_name . "\">";
+        $dir_str = "<{$conf->ns['project']['ns']}:dir {$conf->ns['database']['ns']}:invalid=\"name\" name=\"" . $project_name . "\">";
         $dir_str .= $this->_get_lib_tree_dir($fs_access, $lib_path);
         $dir_str .= "</{$conf->ns['project']['ns']}:dir>";
 
