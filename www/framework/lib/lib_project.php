@@ -228,6 +228,7 @@ class project {
                 }
             }
             $langdiff = array_merge(array_diff($languages, $actual_languages), array_diff($actual_languages, $languages));
+
             if (count($langdiff) > 0) {
                 $first_lang = $xfetch->nodeset[0]->get_attribute('lang');
                 foreach ($xfetch->nodeset as $val) {
@@ -242,27 +243,37 @@ class project {
                 for ($i = 0; $i < count($temp_nodes); $i++) {
                     $lang_nodes = array();
                     $temp_node = $temp_nodes[$i];
-                    for ($j = 0; $j < count($actual_languages); $j++) {
-                        $temp_node = $temp_node->next_sibling();
-                        $lang_nodes[$temp_node->get_attribute('lang')] = $temp_node;
-                        $lang_nodes[$j] = $temp_node;
+                    $sibl_node = $temp_node->next_sibling();
+                    while ($sibl_node && $sibl_node->node_type() == XML_ELEMENT_NODE && $sibl_node->has_attribute("lang")) {
+                        $lang = $sibl_node->get_attribute('lang');
+                        if ($lang != "") {
+                            $lang_nodes[$lang] = $sibl_node;
+                        } else {
+                            $lang_nodes[] = $sibl_node;
+                        }
+                        $sibl_node = $sibl_node->next_sibling();
                     }
-                    
                     $parent_node = $temp_nodes[$i]->parent_node();
                     for ($j = 0; $j < count($languages); $j++) {
                         if ($lang_nodes[$languages[$j]] !== null) {
                             $temp_node = $lang_nodes[$languages[$j]]->clone_node(true);
                             $parent_node->insert_before($temp_node, $temp_nodes[$i]);
+                            $temp_node->set_attribute('lang', $languages[$j]);
                         } else {
-                            $temp_node = $lang_nodes[0]->clone_node(true);
-                            $parent_node->insert_before($temp_node, $temp_nodes[$i]);
-                            $this->xmldb->remove_id_attributes($temp_node);
+                            if (count($lang_nodes) > 0) {
+                                reset($lang_nodes);
+                                $lang_node = current($lang_nodes);
+
+                                $temp_node = $lang_node->clone_node(true);
+                                $parent_node->insert_before($temp_node, $temp_nodes[$i]);
+                                $this->xmldb->remove_id_attributes($temp_node);
+                                $temp_node->set_attribute('lang', $languages[$j]);
+                            }
                         }
-                        $temp_node->set_attribute('lang', $languages[$j]);
                     }    
                     $temp_nodes[$i]->unlink_node();
-                    foreach ($lang_nodes as $temp_node) {
-                        $temp_node->unlink_node();
+                    foreach ($lang_nodes as $lang_node) {
+                        $lang_node->unlink_node();
                     }
                 }
                 $changed = true;
