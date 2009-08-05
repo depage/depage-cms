@@ -249,4 +249,5 @@ $texts = array(
 	'user_unknown' => "(unknown)",
 );
 
+/* vim:set fenc=latin1 ft=php sw=4 sts=4 fdm=marker : */
 ?>

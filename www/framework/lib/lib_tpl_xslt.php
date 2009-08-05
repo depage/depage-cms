@@ -877,25 +877,25 @@ class tpl_engine_xslt extends tpl_engine {
         //@todo fix bug with "()" in folder and page names
 
         $repl = array(
-            "?" => "ae",
-            "?" => "oe",
-            "?" => "ue",
-            "?" => "ss",
-            "?" => "a",
-            "?" => "a",
-            "?" => "a",
-            "?" => "e",
-            "?" => "e",
-            "?" => "e",
-            "?" => "i",
-            "?" => "i",
-            "?" => "i",
-            "?" => "o",
-            "?" => "o",
-            "?" => "o",
-            "?" => "u",
-            "?" => "u",
-            "?" => "u",
+            "ä" => "ae",
+            "ö" => "oe",
+            "u" => "ue",
+            "ß" => "ss",
+            "á" => "a",
+            "à" => "a",
+            "â" => "a",
+            "é" => "e",
+            "è" => "e",
+            "ê" => "e",
+            "í" => "i",
+            "ì" => "i",
+            "î" => "i",
+            "ó" => "o",
+            "ò" => "o",
+            "ô" => "o",
+            "ú" => "u",
+            "ù" => "u",
+            "û" => "u",
         );
 
         $search = array('/[^a-z0-9_\.]/', '/--+/', '/^-+/', '/-+$/' );
@@ -1228,5 +1228,5 @@ function urlSchemeHandler($processor, $scheme, $param) {
 }
 // }}}
 
-/* vim:set ft=php sw=4 sts=4 fdm=marker : */
+/* vim:set fenc=latin1 ft=php sw=4 sts=4 fdm=marker : */
 ?>
