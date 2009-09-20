@@ -879,7 +879,7 @@ class tpl_engine_xslt extends tpl_engine {
         $repl = array(
             "ä" => "ae",
             "ö" => "oe",
-            "u" => "ue",
+            "ü" => "ue",
             "ß" => "ss",
             "á" => "a",
             "à" => "a",

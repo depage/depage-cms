@@ -489,7 +489,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
         
         $this->output_protocol = $parsed['scheme'];
         if ($this->output_protocol == 'file') {
-            $this->output_path = substr($this->output_folder, 7);
+            $this->output_path = $parsed['path'];
+
             if (substr($this->output_path, -1) == '/') {
                 $this->output_path = substr($this->output_path, 0, -1);
             }
@@ -503,6 +504,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
             $this->output_host = $parsed['host'];
             $this->output_port = $parsed['port'];
             $this->output_path = $parsed['path'];
+
             if (substr($this->output_path, -1) == '/') {
                 $this->output_path = substr($this->output_path, 0, -1);
             }

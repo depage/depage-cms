@@ -893,7 +893,10 @@ class ttRpcMsgHandler{
                                 }
                             }
                         }
-                        $funcs[] = new ttRpcFunc($func, $args, &$this->funcObj);
+
+                        $pos = count($funcs);
+                        $funcs[$pos] = new ttRpcFunc($func, $args);
+                        $funcs[$pos]->set_func_obj($this->funcObj);
                     }
                 }
             }
@@ -931,9 +934,13 @@ class ttRpcFunc {
      * @param    $args (array)
      * @param    $funcObj (object)
      */
-    function ttRpcFunc($name, $args = Array(), $funcObj = null) {
+    function ttRpcFunc($name, $args = Array()) {
         $this->name = $name;
         $this->args = $args;
+    }
+    // }}}
+    // {{{ setFuncObj()
+    function set_func_obj(&$funcObj) {
         $this->funcObj = &$funcObj;
     }
     // }}}
