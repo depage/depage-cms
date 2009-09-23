@@ -1417,6 +1417,80 @@ class_propBox_edit_table.prototype.setLink = class_propBox_edit_text_formatted.p
 // }}}
 
 /*
+ *	Class PropBox_edit_type
+ *
+ *	Extends class_propBox
+ *	Handles combobox-chooser inside a page
+ */
+// {{{ constructor
+class_propBox_edit_type = function() {};
+class_propBox_edit_type.prototype = new class_propBox();
+
+class_propBox_edit_type.prototype.propName = [];
+class_propBox_edit_type.prototype.propName[0] = conf.lang.prop_name_edit_type;
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_type.prototype.generateComponents = function() {
+        val = Array();
+	this.attachMovie("component_comboBox", "comboBox", 2, {
+		values	: val
+	});
+	this.comboBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_type.prototype.setData = function() {
+	super.setData();
+
+        setTimeout(this.setDataNow, this, 10, [tempText]);
+};
+// }}}
+// {{{ setDataNow()
+class_propBox_edit_type.prototype.setDataNow = function() {
+	var i;
+        var options;
+	
+        options = this.data.attributes['options'].split(",");
+
+        this.comboBox.setValues(options);
+
+	for (var i = 0; i < this.comboBox.values.length; i++) {
+		if (this.comboBox.values[i] == this.data.attributes['value']) {
+			this.comboBox.selected = i;	
+		}
+	}
+	if (this.comboBox.selected == null) {
+		this.comboBox.selected = 0;
+		this.save();	
+	}
+	this.comboBox.select();
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_type.prototype.saveData = function(forceSave) {
+	if (this.isChanged == true || forceSave == true) {
+            this.data.attributes.value = this.comboBox.values[this.comboBox.selected];
+
+            this._parent.propObj.save(this.data.nid);
+            this.isChanged = false;
+	}
+	return true;
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_type.prototype.setComponents = function() {
+	this.comboBox._x = this.settings.border_left;
+	this.comboBox._y = this.settings.border_top;
+        this.comboBox.width = this.width - this.settings.border_left - this.settings.border_right - 5;
+			
+	this.innerHeight = this.settings.minInnerHeight;
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+};
+// }}}
+
+/*
  *	Class PropBox_edit_colorscheme
  *
  *	Extends class_propBox
@@ -4914,6 +4988,7 @@ Object.registerClass("prop_edit_date", class_propBox_edit_date);
 Object.registerClass("prop_edit_time", class_propBox_edit_time);
 Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
 Object.registerClass("prop_edit_table", class_propBox_edit_table);
+Object.registerClass("prop_edit_type", class_propBox_edit_type);
 // }}}
 // {{{ colorschemes
 Object.registerClass("prop_proj_colorscheme", class_propBox_proj_colorscheme);
