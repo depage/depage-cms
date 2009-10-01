@@ -3632,6 +3632,7 @@ class_propBox_proj_filelist.prototype.setComponents = function() {
 		}
 	}
 	
+        this.innerHeight = int(this.innerHeight * 1.1);
 	this.innerHeight = this.innerHeight.limit(this.settings.border_top + 75 + this.settings.border);
 	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 	

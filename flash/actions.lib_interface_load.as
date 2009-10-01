@@ -97,6 +97,16 @@
 			lineSpacing	: conf.interface.font_linespacing
 		});
 		
+		conf.interface.textformat_small = getTextFormat({
+			font		: conf.interface.font,
+			size		: conf.interface.font_size - 1,
+			color		: conf.interface.color_font,
+			bold		: false,
+			italic		: false,
+			deviceFont	: conf.interface.font_device,
+			lineSpacing	: conf.interface.font_linespacing
+		});
+		
 		conf.interface.textformat_bold = getTextFormat({
 			font		: conf.interface.font,
 			size		: conf.interface.font_size,
