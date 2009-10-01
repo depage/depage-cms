@@ -13,7 +13,7 @@ class_propBox.prototype.multilangProp = 0;
 
 class_propBox.prototype.propName = [];
 // }}}
-// {{{ onLoad()
+// {{{onLoad()
 class_propBox.prototype.onLoad = function() {
 	var tempArray = [];
 	for (var i = 0; i < this.propName.length; i++) {
@@ -40,7 +40,7 @@ class_propBox.prototype.onLoad = function() {
 	Stage.addListener(this);
 };
 // }}}
-// {{{ onUnload()
+// {{{ onUnload()
 class_propBox.prototype.onUnload = function() {
 	Stage.removeListener(this);
 };
@@ -307,7 +307,7 @@ class_propBox_edit_text_singleline.prototype.setHeight = function() {
 	this._parent.setPropPos();
 };
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_edit_text_singleline.prototype.setData = function() {
 	super.setData();
 	
