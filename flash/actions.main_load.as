@@ -40,6 +40,7 @@
 		conf.phost = params['phost'];
 		conf.pport = params['pport'];
 		conf.puse = params['puse'];
+		conf.project_name = params['project'];
 
 		conf.standalone = params['standalone'];
 		
@@ -161,7 +162,7 @@
 
 		status(conf.lang.start_loading_project);
 		
-		_root.phpConnect.send("get_project", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+		_root.phpConnect.send("get_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name]]);
 	}
 	
 	function set_project_data(args) {

@@ -13,7 +13,7 @@ RewriteRule        ^$                                           index.php       
 RewriteRule        ^index.html                                  index.php            [last]
 
 # rewriting for preview
-RewriteRule        ^projects/(.*)/preview(/[^\/]*){4}/lib/(.*)  projects/$1/lib/$3    [last]
+RewriteRule        ^projects/(.*)/preview(/[^\/]*){2}/lib/(.*)  projects/$1/lib/$3    [last]
 RewriteRule        ^projects/(.*)/preview/(.*)                  framework/preview.php    [last]
 
 # Deny Access to settings directory

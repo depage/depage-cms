@@ -529,7 +529,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $args['task']->set_description('%task_publish_testing_connection%');
         
-        //$log->add_entry("output_folder: " . $this->output_path);
+        $log->add_entry("output_folder: " . $this->output_path);
 
         $this->file_access->f_write_string($this->output_path . '/connection_test.tmp', $conf->app_name . ' ' . $conf->app_version);
         $this->file_access->rm($this->output_path . '/connection_test.tmp');

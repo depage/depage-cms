@@ -14,6 +14,7 @@
     require_once('../lib/lib_global.php');
     require_once('lib_html.php');
     require_once('lib_auth.php');
+    require_once('lib_project.php');
     require_once('lib_files.php');
     require_once('lib_tpl_xslt.php');
     require_once('lib_pocket_server.php');
@@ -21,23 +22,16 @@
     $settings = $conf->getScheme($conf->interface_scheme);
     $lang = $conf->getTexts($conf->interface_language, 'inhtml', false);
     
-    $user = new ttUser();
+    $project->user->auth_digest();
+
     $data = array();
     
-    if (isset($_GET['sid'])) {
-        $sid = $_GET['sid'];
-        $wid = $_GET['wid'];
+    if (isset($_GET['path'])) {
         $path = $_GET['path'];
         $type = "choose";
     } else {
-        $sid = $_POST['sid'];
-        $wid = $_POST['wid'];
         $path = $_POST['path'];
         $type = "uploaded";
-    }
-    
-    if (!($project_name = $user->is_valid_user($sid, $wid, $_SERVER['REMOTE_ADDR']))) {
-        die_error("you are not allowed to to this!");
     }
     
     if ($type == "uploaded") {

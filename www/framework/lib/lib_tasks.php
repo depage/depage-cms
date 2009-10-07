@@ -908,6 +908,8 @@ class bgTasks_thread {
             set_time_limit($this->taskObj->timelimit);
             
             $this->funcs[$i]->add_args(array('task' => $this->taskObj));
+            // log every called function
+            //$log->add_entry($this->funcs[$i]->name . "(" . implode(",", $this->funcs[$i]->args) . ")");
             $log->add_memory_usage($this->funcs[$i]->name);
             $this->funcs[$i]->call();
             db_query(

@@ -7,11 +7,14 @@
  * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  */
 
-	define('IS_IN_CONTOOL', true);
+    define('IS_IN_CONTOOL', true);
 
-	require_once('../lib/lib_global.php');
-	require_once('lib_html.php');
-	require_once('lib_auth.php');
+    require_once('../lib/lib_global.php');
+    require_once('lib_project.php');
+    require_once('lib_html.php');
+    require_once('lib_auth.php');
+
+    $project->user->auth_digest();
 ?>
 <html>
 	<head>
@@ -27,18 +30,10 @@
 				. "&phost=" . urlencode($phost['host'])
 				. "&pport=" . urlencode($conf->pocket_port)
 				. "&puse=" . urlencode($conf->pocket_use ? "true" : "false")
-				. "&standalone=" . urlencode($_GET["standalone"]);
-			if ($_GET['userid'] != "null") {
-			    $flashfile = "main.swf?userid=" . $_GET['userid'] . "&" . $params;
-			} else if ($conf->interface_autologin) {
-				$user = new ttUser();
-				$userid = $user->login($conf->interface_autologin_user, $conf->interface_autologin_pass, $conf->interface_autologin_project, $_SERVER["REMOTE_ADDR"]);
-			    $flashfile = "main.swf?userid=" . ($userid == false ? "null" : $userid) . "&" . $params;
-			    //$flashfile = "index.swf?userid=" . ($userid == false ? "null" : $userid) . "&" . $params;
-			} else {
-			    $flashfile = "main.swf?userid=null&" . $params;
-			    //$flashfile = "index.swf?userid=null&" . $params;
-			}
+				. "&standalone=" . urlencode($_GET["standalone"])
+				. "&project=" . urlencode($_GET["project_name"])
+				. "&userid=" . urlencode($project->user->sid);
+                        $flashfile = "main.swf?" . $params;
 		?>
 		<script language="JavaScript" type="text/javascript">
 		<!--
@@ -47,7 +42,10 @@
 			}
 			
 			function open_login() {
-				top.opener.location = top.opener.location;
+                                try {
+                                    top.opener.location = top.opener.location;
+                                } catch (e) {
+                                }
 			}
 			
 			function open_upload(sid, wid, path) {
@@ -113,7 +111,7 @@
 		<script language="JavaScript" type="text/javascript">
 		<!--
 			document.write('<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http:\/\/download.macromedia.com\/pub\/shockwave\/cabs\/flash\/swflash.cab#version=6,0,0,0" WIDTH="100%" HEIGHT="100%" id="screensize" ALIGN=""><param name=movie value="<?php echo($flashfile) ?>"><param name=quality value=best><param name=bgcolor value=<?php echo($settings['color_background']); ?>><embed src="<?php echo($flashfile); ?>" quality=best bgcolor=<?php echo($settings['color_background']); ?>  WIDTH="100%" HEIGHT="100%" NAME="screensize" ALIGN="" TYPE="application\/x-shockwave-flash" PLUGINSPAGE="http:\/\/www.macromedia.com\/go\/getflashplayer"><\/embed><\/object>');
-			<?php if ($_GET['userid'] == "null") {
+			<?php if ($_GET['sid'] == "null") {
 				echo("setTimeout(\"load_flasherror()\", 12000);"); 
 			} ?>
 		//-->	

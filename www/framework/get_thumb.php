@@ -23,6 +23,8 @@ require_once('lib_auth.php');
 require_once('lib_project.php');
 // }}}
 
+    $project->user->auth_digest();
+
 // {{{ getImage()
 /**
  * gets image object from file
@@ -202,14 +204,10 @@ $sourceImg = $_GET['image'];
 
 set_time_limit(120);
 
-$user = new ttUser();
 $data = array();
-if ($user->is_valid_user($sid, $wid, $_SERVER['REMOTE_ADDR'])) {
-    $project_name = $user->get_project_by_sid($sid);
-    imgGetThumb($project_name, $sourceImgPath, $sourceImg);
-} else {
-    imgGetThumb('');
-}
+$project_name = $project->user->get_project_by_sid($sid);
+
+imgGetThumb($project_name, $sourceImgPath, $sourceImg);
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>

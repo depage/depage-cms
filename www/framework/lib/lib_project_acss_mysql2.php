@@ -92,6 +92,23 @@ class project_acss_mysql2 extends project {
         $GLOBALS['xml_db'] = &$this->xmldb;
     }
     // }}}
+    // {{{ get_projects()
+    /**
+     * gets available projects from database.
+     *
+     * @public
+     *
+     * @return    $projects (array) available projects
+     */
+    function get_projects() {
+        global $conf;
+                
+        $projects = array();
+        $docs = $this->xmldb->get_docs();
+
+        return $docs;
+    }
+    // }}}
     // {{{ get_avail_projects()
     /**
      * gets available projects from database.
@@ -226,6 +243,25 @@ class project_acss_mysql2 extends project {
         return $xml_def;
     }
     // }}}
+    // {{{ get_root_page_id()
+    /**
+     * gets page hirarchy from db
+     *
+     * @public
+     *
+     * @param    $project_name (string) project name
+     */
+    function get_root_page_id($project_name) {
+        global $conf;
+        global $log;
+
+        $this->_set_project($project_name);
+        $doc_id = $this->get_projectId($project_name);
+        list($data_id) = $this->xmldb->get_node_ids_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:pages_struct/{$conf->ns['page']['ns']}:page");
+
+        return $data_id;
+    }
+    // }}}
     // {{{ get_page_data()
     /**
      * gets page from db
@@ -262,6 +298,8 @@ class project_acss_mysql2 extends project {
      * @todo    test, if id belongs to project with $project_name
      */
     function get_page_data_test_lang($project_name, $id) {
+        global $log;
+
         $xml_def = $this->get_page_data($project_name, $id);
         
         $languages = $this->get_languages($project_name);

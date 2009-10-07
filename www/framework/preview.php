@@ -52,10 +52,13 @@ function getParameterByUrl($url, $project = "", $type = "", $access = "") {
         $param['access'] = 'preview';
         
         $url = parse_url($url);
-        $path = explode('/', substr($url['path'], strpos($url['path'], 'preview')));
-        $param['type'] = $path[1];
-        $param['sid'] = $path[2];
-        $param['wid'] = $path[3];
+        $path = explode('/', substr($url['path'], strpos($url['path'], 'projects')));
+        $param['project'] = $path[1];
+        $param['type'] = $path[3];
+        /*
+        $param['sid'] = $path[4];
+        $param['wid'] = $path[5];
+         */
         if ($path[4] == 'cached') {
             $param['cached'] = true;
         } else {
@@ -116,22 +119,33 @@ function getParameterByUrl($url, $project = "", $type = "", $access = "") {
 /**
  * ----------------------------------------------
  */ 
+$user = new ttUser();
+$user->auth_digest();
+
 headerNoCache();
 set_time_limit(60);
 
 $param = getParameterByUrl($_SERVER['REQUEST_URI'], $_GET['project'], $_GET['type'], $_GET['access']);
 
-if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'], $_SERVER['REMOTE_ADDR'])) || $param['project'] != "") {
-    if ($project_name === false) {
-        $project_name = $param['project'];
-        $project->user->project = $project_name;
-    }
+if ($param['project'] != "") {
+    $project_name = $param['project'];
+    $project->user->project = $project_name;
+
     $xml_proc = tpl_engine::factory('xslt', $param);
     // {{{ browse or preview
+    if ($param['id_file_path'] == "/") {
+        $param['access'] = "index";
+    }
     if ($param['access'] == 'browse' || $param['access'] == 'preview') { 
         $id = $xml_proc->get_id_by_path($param['id_file_path'], $project_name);
         if ($project_name && $id != null) {
-            $data['lang'] = $param['lang'];
+            if ($param['lang'] == "") {
+                $languages = $project->get_languages($project_name);
+                $languages = array_keys($languages);
+                $data['lang'] = $languages[0];
+            } else {
+                $data['lang'] = $param['lang'];
+            }
             if (!$param['cached']) {
                 $transformed = $xml_proc->transform($project_name, $param['type'], $id, $param['lang'], $param['cached']);
             } else if (($transformed = $xml_proc->get_from_transform_cache($project_name, $param['type'], $id, $param['lang'], $param['access'])) === false) {
@@ -163,6 +177,7 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
                     headerType($transformed['content_type'], $transformed['content_encoding']);
                     echo($transformed['value']);
                 } else {
+                    headerType($transformed['content_type'], $transformed['content_encoding']);
                     if (strpos($param['path'], '/', 2)) {
                         $cache_path = substr($param['path'], strpos($param['path'], '/', 2));
                     } else {
@@ -173,7 +188,7 @@ if (($project_name = $project->user->is_valid_user($param['sid'], $param['wid'],
                     $file_access->f_write_string($file_path, $transformed['value']);
                     $file_access->ch_dir($project->get_project_path($project_name) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}");
                     // replace virtual if not available
-                    if (false && is_callable("virtual")) {
+                    if (is_callable("virtual")) {
                         virtual("{$conf->path_projects}/" . str_replace(' ', '_', strtolower($project_name)) . "/cache_{$param['type']}_{$param['lang']}{$cache_path}/{$param['file_name']}");
                     } else {
                        $host = $_SERVER['HTTP_HOST'];

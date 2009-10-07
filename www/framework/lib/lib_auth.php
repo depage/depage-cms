@@ -23,6 +23,8 @@ if (!function_exists('die_error')) require_once('lib_global.php');
  * and session handling.
  */
 class ttUser{
+    var $realm = "depage::cms";
+
     // {{{ variables
     var $sid, $wid, $uid;
     // }}}
@@ -69,9 +71,9 @@ class ttUser{
         // get logged in users
         $loggedin = array();
         $result = db_query(
-            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update, sessions_win.port
-            FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions, $conf->db_table_sessions_win AS sessions_win
-            WHERE user.id=sessions.userid AND sessions.sid=sessions_win.sid"
+            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update
+            FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions
+            WHERE user.id=sessions.userid"
         );
         if ($result && ($num = mysql_num_rows($result)) > 0) {
             for ($i = 0; $i < $num; $i++) {
@@ -124,6 +126,7 @@ class ttUser{
     // {{{ add_update()
     function add_update($sid, $message) {
         global $conf;
+        global $log;
 
         db_query(
             "INSERT INTO $conf->db_table_updates
@@ -134,6 +137,7 @@ class ttUser{
     // {{{ get_updates()
     function get_updates($sid) {
         global $conf;
+        global $log;
 
         $msgs = array();
         
@@ -220,23 +224,23 @@ class ttUser{
         if (mysql_num_rows($result) > 0) {
             $data = mysql_fetch_assoc($result);
             
-            db_query(
-                "DELETE 
-                FROM $conf->db_table_sessions 
-                WHERE sid='$sid'"
-            );
-            db_query(
-                "DELETE 
-                FROM $conf->db_table_sessions_win 
-                WHERE sid='$sid'"
-            );
-            db_query(
-                "DELETE
-                FROM $conf->db_table_updates
-                WHERE sid='$sid'"
-            );
             $log->add_entry("'{$data['name']}' has logged out Project '{$data['project']}' from '{$data['ip']}' with $sid", "auth");
         }
+        db_query(
+            "DELETE 
+            FROM $conf->db_table_sessions 
+            WHERE sid='$sid'"
+        );
+        db_query(
+            "DELETE 
+            FROM $conf->db_table_sessions_win 
+            WHERE sid='$sid'"
+        );
+        db_query(
+            "DELETE
+            FROM $conf->db_table_updates
+            WHERE sid='$sid'"
+        );
         mysql_free_result($result);
     }
     // }}}
@@ -296,7 +300,7 @@ class ttUser{
      *
      * @return    $wid (string) new session window id, or false on failure
      */
-    function register_window($sid, $ip, $port, $type){
+    function register_window($sid, $ip, $port, $type, $project_name){
         global $conf, $log;
 
         $result = db_query(
@@ -311,6 +315,11 @@ class ttUser{
                 "INSERT 
                 INTO $conf->db_table_sessions_win 
                 SET sid='$sid', wid='$wid', port='$port', type='$type'"
+            );
+            db_query(
+                "UPDATE $conf->db_table_sessions
+                SET project='" . mysql_escape_string($project_name) . "'
+                WHERE sid='$sid'"
             );
 
             $log->add_entry("'{$data['name']}' has registered $type-window from '$ip:$port'", "auth");
@@ -518,7 +527,6 @@ class ttUser{
         } else {
             $retVal = false;
         }
-        mysql_free_result($result);
         
         return $retVal;
     }
@@ -583,6 +591,282 @@ class ttUser{
         mysql_free_result($result);
         
         return $retVal;
+    }
+    // }}}
+    
+    // {{{ auth_digest()
+    function auth_digest() {
+        global $conf;
+        global $log;
+
+        $headers = getallheaders();
+        if (isset($headers['Authorization']) && !empty($headers['Authorization'])) {
+            $digest_header = substr($headers['Authorization'], strpos($headers['Authorization'],' ') + 1);
+            //$log->add_varinfo($headers);
+        }
+        
+        if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
+            // generate the valid response
+            $HA1 = $this->get_passwd_hash($data['username']);
+            $HA1sess = md5($HA1 . ":{$data['nonce']}:{$data['cnonce']}");
+            $HA2 = md5("{$_SERVER['REQUEST_METHOD']}:{$data['uri']}");
+            $valid_response = md5("{$HA1sess}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
+
+            $n = hexdec($data['nc']);
+
+            if ($data['response'] == $valid_response) {
+                if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                    if ($uid == "") {
+                        $log->add_entry("'{$data['username']}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                        $sid = $this->register_session($this->get_uid_by_name($data['username']), $_COOKIE[session_name()]);
+                    } else {
+                        //$log->add_entry("has " . $_COOKIE[session_name()]);
+                        $sid = $this->set_sid($_COOKIE[session_name()]);
+                    }
+                    session_id($sid);
+                    session_start();
+
+                    return;
+                } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+                    $log->add_entry("delete cookie");
+                    setcookie(session_name(), "", time() - 3600);
+                    unset($_COOKIE[session_name()]);
+                }
+            }
+        }
+        $sid = $this->get_sid();
+        $opaque = md5($sid);
+        $realm = $this->realm;
+        $domain = $conf->path_base;
+        $nonce = $sid;
+
+        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['nonce'] != "") {
+        //if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+            $log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
+            $log->add_varinfo($headers);
+            $stale = ", stale=true";
+        } else {
+            session_id($sid);
+            session_start();
+            $stale = "";
+        }
+
+        header("WWW-Authenticate: Digest realm=\"$realm\", domain=\"$domain\", qop=\"auth\", algorithm=MD5-sess, nonce=\"$nonce\", opaque=\"$opaque\"$stale");
+        header("HTTP/1.1 401 Unauthorized");
+
+        die_error("you are not allowed to to this!");
+    } 
+    // }}}
+    // {{{ http_digest_parse()
+    function http_digest_parse($txt) {
+        // protect against missing data
+        $needed_parts = array(
+            'nonce' => 1,
+            'nc' => 1,
+            'cnonce' => 1,
+            'qop' => 1,
+            'username' => 1,
+            'uri' => 1,
+            'response' => 1,
+            'opaque' => 1,
+        );
+        $data = array();
+
+        preg_match_all('@(\w+)=(?:(([\'"])(.+?)\3|([A-Za-z0-9/]+)))@', $txt, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $m) {
+            $data[$m[1]] = $m[4] ? $m[4] : $m[5];
+            unset($needed_parts[$m[1]]);
+        }
+
+        return $needed_parts ? false : $data;
+    } 
+    // }}}
+    // {{{ get_nonce
+    function get_nonce() {
+        $time = time();
+        $hash = md5($time . $_SERVER['HTTP_USER_AGENT'] . $this->realm);
+
+        return base64_encode($time) . $hash;  
+    }
+    // }}}
+    
+    // {{{ get_new_sid()
+    function get_new_sid() {
+        $this->sid = md5(uniqid(dechex(rand(256, 4095))));
+
+        return $this->sid;
+    }
+    // }}}
+    // {{{ get_sid()
+    function get_sid() {
+        if (!$this->valid) {
+            if (!$this->is_valid_sid($this->sid)) {
+                $this->register_session();
+            }
+        }
+        return $this->sid;
+    }
+    // }}}
+    // {{{ set_sid()
+    function set_sid($sid) {
+        $this->sid = $sid;
+
+        return $sid;
+    }
+    // }}}
+    // {{{ is_valid_sid()
+    function is_valid_sid($sid) {
+        global $conf;
+        global $log;
+
+        $this->logout_timed_out_users();
+
+        // test for validity
+        $result = db_query(
+            "SELECT sid, userid
+            FROM {$conf->db_table_sessions} 
+            WHERE 
+                sid='" . mysql_escape_string($sid) . "' AND
+                ip='{$_SERVER["REMOTE_ADDR"]}'"
+        );
+        if ($result) {
+            if (($num = mysql_num_rows($result)) > 0) {
+                $data = mysql_fetch_assoc($result);
+
+                // set new timestamp
+                db_query(
+                    "UPDATE {$conf->db_table_sessions} SET 
+                        last_update=NOW()
+                    WHERE sid='" . mysql_escape_string($sid) . "'"
+                );
+
+                $this->uid = $data['userid'];
+                $this->valid = true;
+
+                return $this->uid;
+            }
+        }
+
+        $this->valid = false;
+        return false;
+    }
+    // }}}
+    
+    // {{{ get_uid()
+    function get_uid() {
+        global $conf;
+
+        if (is_null($this->uid)) {
+            $result = db_query(
+                "SELECT userid 
+                FROM {$conf->db_table_sessions}
+                WHERE sid='" . $this->get_sid() . "'"
+            );
+            $data = mysql_fetch_assoc($result);
+            $this->uid = $data['userid'];
+        }
+        return $this->uid;
+    }
+    // }}}
+    // {{{ get_uid_by_name()
+    function get_uid_by_name($name) {
+        global $conf;
+        global $log;
+
+        $result = db_query(
+            "SELECT id 
+            FROM {$conf->db_table_user}
+            WHERE name='" . mysql_escape_string($name) . "'"
+        );
+        $data = mysql_fetch_assoc($result);
+        
+        return $data['id'];
+    }
+    // }}}
+    // {{{ get_passwd_hash()
+    function get_passwd_hash($name) {
+        global $conf;
+
+        $result = db_query(
+            "SELECT pass
+            FROM {$conf->db_table_user}
+            WHERE name='" . mysql_escape_string($name) . "'"
+        );
+
+        if ($result && ($num = mysql_num_rows($result)) > 0) {
+            $data = mysql_fetch_assoc($result);
+        }
+        return $data['pass'];
+    }
+    // }}}
+    
+    // {{{ register_session()
+    function register_session($uid = null, $sid = null) {
+        global $conf;
+        global $log;
+
+        if (is_null($sid)) {
+            $sid = $this->get_new_sid();
+        }
+        if (is_null($uid)) {
+            $uid_query = "";
+            $time_login_query = "";
+        } else {
+            $uid_query = "userid='{$uid}',";
+            $time_login_query = "time_login=NOW(),";
+        }
+
+        db_query(
+            "REPLACE INTO {$conf->db_table_sessions} SET 
+                sid='{$sid}',
+                $uid_query
+                $time_login_query
+                last_update=NOW(),
+                ip='" . mysql_escape_string($_SERVER["REMOTE_ADDR"]) . "'"
+        );
+        $this->valid = true;
+        $this->sid = $sid;
+        $this->uid = $uid;
+
+        return $sid;
+    }
+    // }}}
+    // {{{ login2()
+    function login2($user, $passwd) {
+        global $conf;
+
+        // test credentials
+        $result = db_query(
+            "SELECT id 
+            FROM {$conf->db_table_users}
+            WHERE 
+                name='" . mysql_escape_string($user) . "' AND 
+                passwd='" . md5("$user:" . $this->auth_realm . ":$passwd") . "'"
+        );
+        if (mysql_num_rows($result) > 0) {
+            $data = mysql_fetch_assoc($result);
+
+            return $this->register_session($data[userid]);
+        } else {
+            echo "error: wrong creditentials";
+        }
+    }
+    // }}}
+    // {{{ logout2()
+    function logout2() {
+        db_query(
+            "DELETE FROM {$conf->db_table_sessions}
+            WHERE sid='" . mysql_escape_string($this->get_sid()) . "'"
+        );
+
+        return true;
+    }
+    // }}}
+    // {{{ get_auth_level()
+    function get_auth_group($sid) {
+        // @todo define auth level/groups
+        return 0;
     }
     // }}}
 }

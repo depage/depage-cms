@@ -7,10 +7,14 @@
  * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  */
 
-	define('IS_IN_CONTOOL', true);
+    define('IS_IN_CONTOOL', true);
 
-	require_once('../lib/lib_global.php');
-	require_once('lib_html.php');
+    require_once('../lib/lib_global.php');
+    require_once('lib_project.php');
+    require_once('lib_auth.php');
+    require_once('lib_html.php');
+
+    $project->user->auth_digest();
 ?>
 <HTML>
 <HEAD>
@@ -39,7 +43,7 @@
 </HEAD>
 
 <frameset rows="100%,0" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
-    <frame id="contentFrameX" name="contentX" src="interface.php?standalone=<?php echo(isset($_GET['standalone']) ? $_GET['standalone'] : "true"); ?>&userid=<?php echo(isset($_GET['userid']) ? $_GET['userid'] : "null"); ?>" scrolling="no" noresize frameborder="0" border="0"  framespacing="0" marginwidth="0" marginheight="0">
+    <frame id="contentFrameX" name="contentX" src="interface.php?standalone=<?php echo(isset($_GET['standalone']) ? $_GET['standalone'] : "true"); ?>&project_name=<?php echo(isset($_GET['project_name']) ? $_GET['project_name'] : "null"); ?>" scrolling="no" noresize frameborder="0" border="0"  framespacing="0" marginwidth="0" marginheight="0">
     <frame name="nothing" src="../pocket_server_start.php" scrolling="no" noresize frameborder="0" border="0" framespacing="0">
 </frameset>
 </HTML>

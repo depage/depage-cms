@@ -30,6 +30,8 @@ require_once('lib_publish.php');
 require_once('Archive/tar.php');
 // }}}
 
+$project->user->auth_digest();
+
 /**
  * handles all remote function calls, called from flash interface
  */
@@ -73,9 +75,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      * @param    $args['type'] (string) type of window to be registered
      */ 
     function register_window($args) {
-        global $conf, $project;
+        global $conf, $project, $log;
         
-        $wid = $project->user->register_window($args['sid'], $_SERVER["REMOTE_ADDR"], 0, $args['type']);
+        $wid = $project->user->register_window($args['sid'], $_SERVER["REMOTE_ADDR"], 0, $args['type'], $args['project_name']);
 
         if ($wid) {
             $func = new ttRpcFunc('registered_window', array('wid' => $wid, 'user_level' => $project->user->get_level_by_sid($args['sid']), 'error' => false));
@@ -89,9 +91,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function keepAlive($args) {
         global $project;
 
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $project->user->update_login($args['sid']);
-        }
+        $project_name = $args['project_name'];
+
+        $project->user->update_login($args['sid']);
 
         return new ttRpcFunc("", array());
     }
@@ -178,17 +180,15 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      * @return    $set_project_data (xmlfuncobj) project settings
      */ 
     function get_project($args) {
-        global $conf, $project;
+        global $conf, $project, $log;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($project_name && $xml_def = $project->get_settings($project_name)) {
-                $data['name'] = $project_name;
-                $data['settings'] = $xml_def->dump_node($xml_def->document_element());
-                $data['users'] = $project->user->get_userlist();
-            } else {
-                $data['error'] = true;
-            }
+        $project_name = $args['project_name'];
+
+        if ($project_name && $xml_def = $project->get_settings($project_name)) {
+            $data['name'] = $project_name;
+            $data['settings'] = $xml_def->dump_node($xml_def->document_element());
+            $data['users'] = $project->user->get_userlist();
         } else {
             $data['error'] = true;
         }
@@ -210,80 +210,78 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $conf, $project, $log;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $callbackFunc = "update_tree_{$args['type']}";    
-            // {{{ get settings
-            if ($args['type'] == 'settings') {
-                $xml_def = $project->get_settings($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get colors
-            } elseif ($args['type'] == 'colors') {
-                $xml_def = $project->get_colors($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get tpl_templates
-            } elseif ($args['type'] == 'tpl_templates') {
-                $xml_def = $project->get_tpl_template_struct($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get tpl_newnodes
-            } elseif ($args['type'] == 'tpl_newnodes') {
-                $xml_def = $project->get_tpl_newnodes($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get pages
-            } elseif ($args['type'] == 'pages') {
-                $xml_def = $project->get_page_struct($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get page_data
-            } elseif ($args['type'] == 'page_data') {
-                $xml_def = $project->get_page_data_test_lang($project_name, $args['id']);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get files
-            } elseif ($args['type'] == 'files') {
-                $xml_def = $project->get_lib_tree($project_name);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ unknown
+        $project_name = $args['project_name'];
+
+        $callbackFunc = "update_tree_{$args['type']}";    
+        // {{{ get settings
+        if ($args['type'] == 'settings') {
+            $xml_def = $project->get_settings($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
             } else {
-                $data['data'] = '<error />';
-                $log->add_entry("get for -{$args['type']}- is not yet defined.");
+                $data['error'] = true;
             }
-            // }}}
+        // }}}
+        // {{{ get colors
+        } elseif ($args['type'] == 'colors') {
+            $xml_def = $project->get_colors($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ get tpl_templates
+        } elseif ($args['type'] == 'tpl_templates') {
+            $xml_def = $project->get_tpl_template_struct($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ get tpl_newnodes
+        } elseif ($args['type'] == 'tpl_newnodes') {
+            $xml_def = $project->get_tpl_newnodes($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ get pages
+        } elseif ($args['type'] == 'pages') {
+            $xml_def = $project->get_page_struct($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ get page_data
+        } elseif ($args['type'] == 'page_data') {
+            $xml_def = $project->get_page_data_test_lang($project_name, $args['id']);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ get files
+        } elseif ($args['type'] == 'files') {
+            $xml_def = $project->get_lib_tree($project_name);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ unknown
         } else {
-            $data['error'] = true;
+            $data['data'] = '<error />';
+            $log->add_entry("get for -{$args['type']}- is not yet defined.");
         }
+        // }}}
         
         return new ttRpcFunc($callbackFunc, $data);
     }
@@ -302,36 +300,34 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $conf, $project, $log;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $callbackFunc = "update_prop_{$args['type']}";    
-            // {{{ get tpl_templates
-            if ($args['type'] == 'tpl_templates') {
-                $xml_def = $project->get_tpl_template_data($project_name, $args['id']);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ get files
-            } elseif ($args['type'] == 'files') {
-                $xml_def = $project->get_lib_dir_content($project_name, $args['id']);
-                if ($xml_def !== false) {
-                    $data['data'] = $xml_def->dump_node($xml_def->document_element());
-                } else {
-                    $data['error'] = true;
-                }
-            // }}}
-            // {{{ unknown
+        $project_name = $args['project_name'];
+
+        $callbackFunc = "update_prop_{$args['type']}";    
+        // {{{ get tpl_templates
+        if ($args['type'] == 'tpl_templates') {
+            $xml_def = $project->get_tpl_template_data($project_name, $args['id']);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
             } else {
-                $data['data'] = '<error />';
-                $log->add_entry("get for -{$args['type']}- is not yet defined.");
-                alert("get for -{$args['type']}- is not yet defined.");
+                $data['error'] = true;
             }
-            // }}}
+        // }}}
+        // {{{ get files
+        } elseif ($args['type'] == 'files') {
+            $xml_def = $project->get_lib_dir_content($project_name, $args['id']);
+            if ($xml_def !== false) {
+                $data['data'] = $xml_def->dump_node($xml_def->document_element());
+            } else {
+                $data['error'] = true;
+            }
+        // }}}
+        // {{{ unknown
         } else {
-            $data['error'] = true;
+            $data['data'] = '<error />';
+            $log->add_entry("get for -{$args['type']}- is not yet defined.");
+            alert("get for -{$args['type']}- is not yet defined.");
         }
+        // }}}
         
         return new ttRpcFunc($callbackFunc, $data);
     }
@@ -352,7 +348,10 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function get_imageProp($args) {
         global $conf, $project;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip']) && $args['filename'] != '') {
+        $project_name = $args['project_name'];
+
+        
+        if ($args['filename'] != '') {
             $imagePath = $project->get_project_path($project_name) . '/lib' . $args['filepath'] . $args['filename'];
             if (file_exists($imagePath)) {    
                 $data = mediainfo::get_file_info($imagePath);
@@ -379,17 +378,17 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $conf, $project, $log;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $xml_doc = project::domxml_open_mem($args['data']);
-            $xml_node = $xml_doc->document_element();
-            $id = $project->get_node_id($xml_node);
-            $updated = false;
-            if ($id != null) {
-                $page_id = $project->save_element($project_name, $id, $xml_node);
-                $updated_ids = array($id, $page_id);
-            }
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated_ids);
+        $project_name = $args['project_name'];
+
+        $xml_doc = project::domxml_open_mem($args['data']);
+        $xml_node = $xml_doc->document_element();
+        $id = $project->get_node_id($xml_node);
+        $updated = false;
+        if ($id != null) {
+            $page_id = $project->save_element($project_name, $id, $xml_node);
+            $updated_ids = array($id, $page_id);
         }
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated_ids);
     }
     // }}}
     // {{{ add_node()
@@ -418,77 +417,77 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $updated = false;
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            // {{{ pages
-            if ($args['type'] == 'pages') {
-                if ($args['node_type'] == 'page') {
-                    $new_id = $project->add_page($project_name, $args['target_id'], $args['new_name'], $args['xmldata']);
-                } elseif ($args['node_type'] == 'folder') {
-                    $new_id = $project->add_page_folder($project_name, $args['target_id'], $args['new_name']);
-                } elseif ($args['node_type'] == 'separator') {
-                    $new_id = $project->add_page_separator($project_name, $args['target_id']);
-                }
-                $updated = array($new_id, $args['target_id']);
-                $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            // }}}
-            // {{{ page_data
-            } else if ($args['type'] == 'page_data') {
-                $new_id = $project->add_page_data_element($project_name, $args['target_id'], $args['new_name'], $args['node_type']);
-                $updated = array($new_id, $args['target_id']);
-                $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            // }}}
-            // {{{ files
-            } else if ($args['type'] == 'files') {
-                $projectPath = $project->get_project_path($project->user->get_project_by_sid($args['sid']));
-                $fs = fs::factory('local');
-                $fs->mk_dir($projectPath . '/lib' . $args['target_id'] . $args['new_name']);
-                
-                tell_clients_to_update($project_name, $args['sid'], $args['type']);
-                
-                return new ttRpcFunc("set_activeId_{$args['type']}", array('id' => ($args['target_id'] . $args['new_name'])));
-            // }}}
-            // {{{ colors
-            } else if ($args['type'] == 'colors') {
-                $doc_def = '';
-                
-                if ($doc_def != '') {
-                    $doc_obj = project::domxml_open_mem($doc_def);
-                    $node = $doc_obj->document_element();
-                    $node->set_attribute('name', $args['new_name']);
-                    
-                    $new_id = $xml_db->save_node(&$node, $args['target_id']);                
-                    
-                    tell_clients_to_update($project, $args['sid'], $args['type']);
+        $project_name = $args['project_name'];
 
-                    return new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-                }
-            // }}}
-            // {{{ tpl_templates
-            } elseif ($args['type'] == 'tpl_templates') {
-                if ($args['node_type'] == 'template') {
-                    $new_id = $project->add_tpl_template($project_name, $args['target_id'], $args['new_name']);
-                } elseif ($args['node_type'] == 'folder') {
-                    $new_id = $project->add_tpl_template_folder($project_name, $args['target_id'], $args['new_name']);
-                }
-                $updated = array($new_id, $args['target_id']);
-                $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            // }}}
-            // {{{ tpl_newnodes
-            } elseif ($args['type'] == 'tpl_newnodes') {
-                if ($args['node_type'] == 'new_node') {
-                    $new_id = $project->add_tpl_newnode($project_name, $args['target_id'], $args['new_name']);
-                }
-                $updated = array($new_id, $args['target_id']);
-                $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            // }}}
-            // {{{ type undefined
-            } else {
-                alert("add node of {$args['type']} not yet defined");
+        // {{{ pages
+        if ($args['type'] == 'pages') {
+            if ($args['node_type'] == 'page') {
+                $new_id = $project->add_page($project_name, $args['target_id'], $args['new_name'], $args['xmldata']);
+            } elseif ($args['node_type'] == 'folder') {
+                $new_id = $project->add_page_folder($project_name, $args['target_id'], $args['new_name']);
+            } elseif ($args['node_type'] == 'separator') {
+                $new_id = $project->add_page_separator($project_name, $args['target_id']);
             }
-            // }}}
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated);
-            return $retval;
+            $updated = array($new_id, $args['target_id']);
+            $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        // }}}
+        // {{{ page_data
+        } else if ($args['type'] == 'page_data') {
+            $new_id = $project->add_page_data_element($project_name, $args['target_id'], $args['new_name'], $args['node_type']);
+            $updated = array($new_id, $args['target_id']);
+            $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        // }}}
+        // {{{ files
+        } else if ($args['type'] == 'files') {
+            $projectPath = $project->get_project_path($project->user->get_project_by_sid($args['sid']));
+            $fs = fs::factory('local');
+            $fs->mk_dir($projectPath . '/lib' . $args['target_id'] . $args['new_name']);
+            
+            tell_clients_to_update($project_name, $args['sid'], $args['type']);
+            
+            return new ttRpcFunc("set_activeId_{$args['type']}", array('id' => ($args['target_id'] . $args['new_name'])));
+        // }}}
+        // {{{ colors
+        } else if ($args['type'] == 'colors') {
+            $doc_def = '';
+            
+            if ($doc_def != '') {
+                $doc_obj = project::domxml_open_mem($doc_def);
+                $node = $doc_obj->document_element();
+                $node->set_attribute('name', $args['new_name']);
+                
+                $new_id = $xml_db->save_node(&$node, $args['target_id']);                
+                
+                tell_clients_to_update($project, $args['sid'], $args['type']);
+
+                return new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+            }
+        // }}}
+        // {{{ tpl_templates
+        } elseif ($args['type'] == 'tpl_templates') {
+            if ($args['node_type'] == 'template') {
+                $new_id = $project->add_tpl_template($project_name, $args['target_id'], $args['new_name']);
+            } elseif ($args['node_type'] == 'folder') {
+                $new_id = $project->add_tpl_template_folder($project_name, $args['target_id'], $args['new_name']);
+            }
+            $updated = array($new_id, $args['target_id']);
+            $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        // }}}
+        // {{{ tpl_newnodes
+        } elseif ($args['type'] == 'tpl_newnodes') {
+            if ($args['node_type'] == 'new_node') {
+                $new_id = $project->add_tpl_newnode($project_name, $args['target_id'], $args['new_name']);
+            }
+            $updated = array($new_id, $args['target_id']);
+            $retval = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        // }}}
+        // {{{ type undefined
+        } else {
+            alert("add node of {$args['type']} not yet defined");
         }
+        // }}}
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated);
+        return $retval;
     }
     // }}}
     // {{{ delete_node()
@@ -507,33 +506,33 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            // {{{ files
-            if ($args['type'] == 'files') {
-                $projectPath = $project->get_project_path($project_name);
-                $file_access = fs::factory('local');
-                if (is_dir($projectPath . '/lib' . $args['id'])) {
-                    $pathparts = pathinfo($args['id']);
-                    $file_access->mk_dir($projectPath . '/trash' . $pathparts['dirname']);
-                    $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/trash' . $args['id']);
-                    tell_clients_to_update($project_name, $args['sid'], $args['type']);
-                } else if (is_file($projectPath . '/lib' . $args['id'])) {
-                    $pathparts = pathinfo($args['id']);
-                    $file_access->mk_dir($projectPath . '/trash' . $pathparts['dirname']);
-                    if (file_exists($projectPath . '/trash' . $args['id'])) {
-                        $file_access->rm($projectPath . '/trash' . $args['id']);
-                    }
-                    $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/trash' . $args['id']);
-                    tell_clients_to_update($project_name, $args['sid'], 'fileProps', $pathparts['dirname'] . '/');
+        $project_name = $args['project_name'];
+
+        // {{{ files
+        if ($args['type'] == 'files') {
+            $projectPath = $project->get_project_path($project_name);
+            $file_access = fs::factory('local');
+            if (is_dir($projectPath . '/lib' . $args['id'])) {
+                $pathparts = pathinfo($args['id']);
+                $file_access->mk_dir($projectPath . '/trash' . $pathparts['dirname']);
+                $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/trash' . $args['id']);
+                tell_clients_to_update($project_name, $args['sid'], $args['type']);
+            } else if (is_file($projectPath . '/lib' . $args['id'])) {
+                $pathparts = pathinfo($args['id']);
+                $file_access->mk_dir($projectPath . '/trash' . $pathparts['dirname']);
+                if (file_exists($projectPath . '/trash' . $args['id'])) {
+                    $file_access->rm($projectPath . '/trash' . $args['id']);
                 }
-            // }}}
-            // {{{ all other types
-            } else {
-                $changed_ids = $project->delete_element($project_name, $args['id']);
+                $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/trash' . $args['id']);
+                tell_clients_to_update($project_name, $args['sid'], 'fileProps', $pathparts['dirname'] . '/');
             }
-            // }}}
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], $changed_ids);
+        // }}}
+        // {{{ all other types
+        } else {
+            $changed_ids = $project->delete_element($project_name, $args['id']);
         }
+        // }}}
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], $changed_ids);
     }
     // }}}
     // {{{ rename_node()
@@ -555,28 +554,29 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $updated = false;
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            // {{{ files
-            if ($args['type'] == 'files') {
-                $projectPath = $project->get_project_path($project_name);
-                
-                $oldpath_array = explode('/', $args['id']);
-                array_pop($oldpath_array);
-                $newpath_array = $oldpath_array;
-                $newpath_array[count($newpath_array) - 1] = $args['new_name'];
-                rename($projectPath . '/lib' . implode('/', $oldpath_array), $projectPath . '/lib' . implode('/', $newpath_array));
-            // }}}
-            // {{{ all other types    
-            } else {
-                // @todo check for encoding
-                $newname = $args['new_name'];
-               
-                $project->rename_element($project_name, $args['id'], $newname);
-                $updated = $args['id'];
-            }
-            // }}}
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $page_id));
+        $project_name = $args['project_name'];
+
+        // {{{ files
+        if ($args['type'] == 'files') {
+            $projectPath = $project->get_project_path($project_name);
+            
+            $oldpath_array = explode('/', $args['id']);
+            array_pop($oldpath_array);
+            $newpath_array = $oldpath_array;
+            $newpath_array[count($newpath_array) - 1] = $args['new_name'];
+            rename($projectPath . '/lib' . implode('/', $oldpath_array), $projectPath . '/lib' . implode('/', $newpath_array));
+        // }}}
+        // {{{ all other types    
+        } else {
+            // @todo check for encoding
+            $newname = $args['new_name'];
+           
+            $project->rename_element($project_name, $args['id'], $newname);
+            $updated = $args['id'];
         }
+        // }}}
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $page_id));
+
         if ($args['type'] == 'content' || $args['type'] == 'contentObj') {
             return new ttRpcFunc('preview_update', array('error' => 0));
         }
@@ -599,7 +599,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $project;
         
         $data = array();
-        if (($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) && $args['type'] == 'page_data') {
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'page_data') {
             if (($data_id = $project->_set_element_lastchange_UTC($args['id'])) != null) {
                 tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
             }
@@ -629,7 +631,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $project;
         
         $data = array();
-        if (($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) && $args['type'] == 'page_data') {
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'page_data') {
             $temp_XML = domxml_open_mem($args['navigations']);
             $temp_node = $temp_XML->document_element();
             $temp_attrs = $temp_node->attributes();
@@ -670,7 +674,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $project;
         
         $data = array();
-        if (($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) && $args['type'] == 'page_data') {
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'page_data') {
             $xml_db->set_attribute($args['id'], '', 'file_type', $args['file_type']);
             if ($xml_db->get_attribute($args['id'], '', 'multilang') != $args['multilang']) {
                 $xml_db->set_attribute($args['id'], '', 'multilang', $args['multilang']);
@@ -701,7 +707,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $project;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip']) && $args['type'] == 'tpl_templates') {
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'tpl_templates') {
             $xml_db->set_attribute($args['id'], '', 'type', $args['new_type']);
             
             tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id']));
@@ -725,7 +733,9 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $project;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip']) && $args['type'] == 'tpl_templates') {
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'tpl_templates') {
             $xml_db->set_attribute($args['id'], '', 'active', $args['new_active']);
             
             tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id']));
@@ -751,21 +761,21 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $updated_ids = array();
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            // {{{ files
-            if ($args['type'] == 'files') {
+        $project_name = $args['project_name'];
 
-            // }}}
-            // {{{ all other element
-            } else {
-                $new_id = $project->duplicate_element($project_name, $args['id'], $args['new_name']);
-                $updated_ids = array($new_id, $args['id']);
-                $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            }
-            // }}}
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated_ids);
-            return $retVal;
+        // {{{ files
+        if ($args['type'] == 'files') {
+
+        // }}}
+        // {{{ all other element
+        } else {
+            $new_id = $project->duplicate_element($project_name, $args['id'], $args['new_name']);
+            $updated_ids = array($new_id, $args['id']);
+            $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
         }
+        // }}}
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], $updated_ids);
+        return $retVal;
     }
     // }}}
     // {{{ move_node_in()
@@ -785,19 +795,19 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['type'] == 'files') {
-                $projectPath = $project->get_project_path($project_name);
-                $temppath = explode('/', $projectPath . '/lib' . $args['id']);
-                $temppath = $temppath[count($temppath) - 2];
-                $file_access = fs::factory('local');
-                $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/lib' . $args['target_id'] . $temppath . '/');
-            } else {
-                $project->move_element_in($project_name, $args['id'], $args['target_id']);
-            }
-                
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $page_id));
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'files') {
+            $projectPath = $project->get_project_path($project_name);
+            $temppath = explode('/', $projectPath . '/lib' . $args['id']);
+            $temppath = $temppath[count($temppath) - 2];
+            $file_access = fs::factory('local');
+            $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/lib' . $args['target_id'] . $temppath . '/');
+        } else {
+            $project->move_element_in($project_name, $args['id'], $args['target_id']);
         }
+            
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $page_id));
     }
     // }}}
     // {{{ move_node_before()
@@ -816,11 +826,11 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $project->move_element_before($project_name, $args['id'], $args['target_id']);
-            
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id']));
-        }
+        $project_name = $args['project_name'];
+
+        $project->move_element_before($project_name, $args['id'], $args['target_id']);
+        
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id']));
     }
     // }}}
     // {{{ move_node_after()
@@ -839,11 +849,11 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $project->move_element_after($project_name, $args['id'], $args['target_id']);
-            
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id']));
-        }
+        $project_name = $args['project_name'];
+
+        $project->move_element_after($project_name, $args['id'], $args['target_id']);
+        
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id']));
     }
     // }}}
     // {{{ copy_node_in()
@@ -862,20 +872,21 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $conf, $project;
         global $xml_db, $log;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['type'] == 'files') {
-                $projectPath = $project->get_project_path($project_name);
-                $temppath = explode('/', $projectPath . '/lib' . $args['id']);
-                $temppath = $temppath[count($temppath) - 2];
-                $file_access = fs::factory('local');
-                $file_access->f_copy($projectPath . '/lib' . $args['id'], $projectPath . '/lib' . $args['target_id'] . $temppath . '/');
-            } else {
-                $new_id = $project->copy_element_in($project_name, $args['id'], $args['target_id'], $args['new_name']);
-                $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            }
-            
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
+        $project_name = $args['project_name'];
+
+        if ($args['type'] == 'files') {
+            $projectPath = $project->get_project_path($project_name);
+            $temppath = explode('/', $projectPath . '/lib' . $args['id']);
+            $temppath = $temppath[count($temppath) - 2];
+            $file_access = fs::factory('local');
+            $file_access->f_copy($projectPath . '/lib' . $args['id'], $projectPath . '/lib' . $args['target_id'] . $temppath . '/');
+        } else {
+            $new_id = $project->copy_element_in($project_name, $args['id'], $args['target_id'], $args['new_name']);
+            $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
         }
+        
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
+
         return $retVal;
     }
     // }}}
@@ -895,11 +906,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $new_id = $project->copy_element_before($project_name, $args['id'], $args['target_id'], $args['new_name']);
-            $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
-        }
+        $project_name = $args['project_name'];
+
+        $new_id = $project->copy_element_before($project_name, $args['id'], $args['target_id'], $args['new_name']);
+        $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
+
         return $retVal;
     }
     // }}}
@@ -919,11 +931,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $new_id = $project->copy_element_after($project_name, $args['id'], $args['target_id'], $args['new_name']);
-            $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
-            tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
-        }
+        $project_name = $args['project_name'];
+
+        $new_id = $project->copy_element_after($project_name, $args['id'], $args['target_id'], $args['new_name']);
+        $retVal = new ttRpcFunc("set_activeId_{$args['type']}", array('id' => $new_id));
+        tell_clients_to_update($project_name, $args['sid'], $args['type'], array($args['id'], $args['target_id'], $new_id));
+        
         return $retVal;
     }
     // }}}
@@ -943,15 +956,15 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $xml_db, $project;
         
         $data = array();
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            $XSLTProc = tpl_engine::factory('xslt');
-            $XSLTProc->cache_template($project_name, $args['template_type']);
-            $XSLTProc->clear_transform_cache($project_name, 'preview');
+        $project_name = $args['project_name'];
 
-            $project->generate_css($project_name);
+        $XSLTProc = tpl_engine::factory('xslt');
+        $XSLTProc->cache_template($project_name, $args['template_type']);
+        $XSLTProc->clear_transform_cache($project_name, 'preview');
 
-            tell_clients_to_update($project_name, $args['sid'], $args['type']);
-        }
+        $project->generate_css($project_name);
+
+        tell_clients_to_update($project_name, $args['sid'], $args['type']);
     }
     // }}}
     // {{{ backup_project()
@@ -975,66 +988,66 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function backup_project($args) {
         global $conf, $project;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['project'] != '') {
-                $project_name = $args['project'];
-            }
-            if ($args['type'] != 'data' && $args['type'] != 'lib' && $args['type'] != 'all') {
-                $type = 'all';
-            } else {
-                $type = $args['type'];
-            }
+        $project_name = $args['project_name'];
+
+        if ($args['project'] != '') {
+            $project_name = $args['project'];
+        }
+        if ($args['type'] != 'data' && $args['type'] != 'lib' && $args['type'] != 'all') {
+            $type = 'all';
+        } else {
+            $type = $args['type'];
+        }
+        
+        $path_backup = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/';
+        $file_backup = 'backup_' . gmdate('YmdHis');
+        
+        //CREATE
+        $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
+        $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
+        $task->create('backup project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date);
+        
+        //ADD functions
+        if ($type == 'all' || $type == 'data') {
+            $funcs = array(
+                new ttRpcFunc('backup_db_init', array(
+                    'project' => $project_name, 
+                    'file_path' => $path_backup, 
+                    'file_name' => $file_backup . '.xml', 
+                    'comment' => $args['comment'], 
+                    'server_name' => $_SERVER['SERVER_NAME'],
+                )),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'settings')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages_struct')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'colorschemes')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates_struct')),
+                new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_newnodes')),
+                new ttRpcFunc('backup_db_end', array(
+                    'file_path' => $path_backup, 
+                    'file_name' => $file_backup . '.xml',
+                )),
+            );
+            $task->add_thread($funcs);
+        }
+        if ($type == 'all' || $type == 'lib') {    
+            $funcs = array(
+                new ttRpcFunc('backup_lib_init', array(
+                    'project' => $project_name, 
+                    'file_path' => $path_backup, 
+                    'file_name' => $file_backup,
+                )),
+            );
             
-            $path_backup = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/';
-            $file_backup = 'backup_' . gmdate('YmdHis');
+            $olddir = getcwd();
+            chdir($project->get_project_path($project_name) . '/lib/');
+            $this->_backup_project_lib_add_dir($funcs, '');
+            chdir($olddir);
             
-            //CREATE
-            $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
-            $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
-            $task->create('backup project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date);
+            $funcs[] = new ttRpcFunc('backup_lib_end', array());
             
-            //ADD functions
-            if ($type == 'all' || $type == 'data') {
-                $funcs = array(
-                    new ttRpcFunc('backup_db_init', array(
-                        'project' => $project_name, 
-                        'file_path' => $path_backup, 
-                        'file_name' => $file_backup . '.xml', 
-                        'comment' => $args['comment'], 
-                        'server_name' => $_SERVER['SERVER_NAME'],
-                    )),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'settings')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'pages_struct')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'colorschemes')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_templates_struct')),
-                    new ttRpcFunc('backup_db_add_data_node', array('type' => 'tpl_newnodes')),
-                    new ttRpcFunc('backup_db_end', array(
-                        'file_path' => $path_backup, 
-                        'file_name' => $file_backup . '.xml',
-                    )),
-                );
-                $task->add_thread($funcs);
-            }
-            if ($type == 'all' || $type == 'lib') {    
-                $funcs = array(
-                    new ttRpcFunc('backup_lib_init', array(
-                        'project' => $project_name, 
-                        'file_path' => $path_backup, 
-                        'file_name' => $file_backup,
-                    )),
-                );
-                
-                $olddir = getcwd();
-                chdir($project->get_project_path($project_name) . '/lib/');
-                $this->_backup_project_lib_add_dir($funcs, '');
-                chdir($olddir);
-                
-                $funcs[] = new ttRpcFunc('backup_lib_end', array());
-                
-                $task->add_thread($funcs);
-            }
+            $task->add_thread($funcs);
         }
     }
 
@@ -1072,60 +1085,60 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function get_backup_files($args) {
         global $conf, $project;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['project'] != '') {
-                $project_name = $args['project'];
-            }
-            
-            $backupsLib = array();
-            $backupsDb = array();
-            
-            $file_path = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/';
+        $project_name = $args['project_name'];
 
-            $fs_access = fs::factory('local');
-            $dirarray = $fs_access->list_dir($file_path);
-
-            foreach ($dirarray['files'] as $file) {
-                if (substr($file, 0, 7) == 'backup_') {
-                    if (substr($file, -4) == '.xml') {
-                        $backupsDb[] = $file;
-                    } else if (substr($file, -4) == '.tgz' || substr($file, -4) == '.bz2') {
-                        $backupsLib[] = $file;
-                    }
-                }
-            }
-
-            rsort($backupsDb);
-            rsort($backupsLib);
-            
-            $listDBStr = "<{$conf->ns['backup']['ns']}:backupListDB>";
-            foreach ($backupsDb as $file) {
-                $listDBStr .= "<{$conf->ns['backup']['ns']}:backupFile ";
-                $listDBStr .= " name=\"" . htmlentities($file) . "\"";
-                if (strlen($file) == 25) {
-                    $listDBStr .= " date=\"" . htmlentities(date($conf->date_format_UTC, $this->_getTimestampFromFilename($file, 7))) . "\"";
-                }
-                if (substr($file, 7, 3) == "dev") {
-                    $listDBStr .= " devBackup=\"true\"";
-                }
-                $listDBStr .= ">";
-                $listDBStr .= $this->_readInfoFromDBBackupFile($file_path . $file);
-                $listDBStr .= "</{$conf->ns['backup']['ns']}:backupFile>";
-            }
-            $listDBStr .= "</{$conf->ns['backup']['ns']}:backupListDB>";
-            
-            $listLibStr .= "<{$conf->ns['backup']['ns']}:backupListLib>";
-            foreach ($backupsLib as $file) {
-                $listLibStr .= "<{$conf->ns['backup']['ns']}:backupFile ";
-                $listLibStr .= " name=\"" . htmlentities($file) . "\"";
-                if (strlen($file) == 25) {
-                    $listLibStr .= " date=\"" . htmlentities($conf->dateUTC($conf->date_format_UTC, $this->_getTimestampFromFilename($file, 7))) . "\"";
-                }
-                $listLibStr .= ">";
-                $listLibStr .= "</{$conf->ns['backup']['ns']}:backupFile>";
-            }
-            $listLibStr .= "</{$conf->ns['backup']['ns']}:backupListLib>";
+        if ($args['project'] != '') {
+            $project_name = $args['project'];
         }
+        
+        $backupsLib = array();
+        $backupsDb = array();
+        
+        $file_path = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/';
+
+        $fs_access = fs::factory('local');
+        $dirarray = $fs_access->list_dir($file_path);
+
+        foreach ($dirarray['files'] as $file) {
+            if (substr($file, 0, 7) == 'backup_') {
+                if (substr($file, -4) == '.xml') {
+                    $backupsDb[] = $file;
+                } else if (substr($file, -4) == '.tgz' || substr($file, -4) == '.bz2') {
+                    $backupsLib[] = $file;
+                }
+            }
+        }
+
+        rsort($backupsDb);
+        rsort($backupsLib);
+        
+        $listDBStr = "<{$conf->ns['backup']['ns']}:backupListDB>";
+        foreach ($backupsDb as $file) {
+            $listDBStr .= "<{$conf->ns['backup']['ns']}:backupFile ";
+            $listDBStr .= " name=\"" . htmlentities($file) . "\"";
+            if (strlen($file) == 25) {
+                $listDBStr .= " date=\"" . htmlentities(date($conf->date_format_UTC, $this->_getTimestampFromFilename($file, 7))) . "\"";
+            }
+            if (substr($file, 7, 3) == "dev") {
+                $listDBStr .= " devBackup=\"true\"";
+            }
+            $listDBStr .= ">";
+            $listDBStr .= $this->_readInfoFromDBBackupFile($file_path . $file);
+            $listDBStr .= "</{$conf->ns['backup']['ns']}:backupFile>";
+        }
+        $listDBStr .= "</{$conf->ns['backup']['ns']}:backupListDB>";
+        
+        $listLibStr .= "<{$conf->ns['backup']['ns']}:backupListLib>";
+        foreach ($backupsLib as $file) {
+            $listLibStr .= "<{$conf->ns['backup']['ns']}:backupFile ";
+            $listLibStr .= " name=\"" . htmlentities($file) . "\"";
+            if (strlen($file) == 25) {
+                $listLibStr .= " date=\"" . htmlentities($conf->dateUTC($conf->date_format_UTC, $this->_getTimestampFromFilename($file, 7))) . "\"";
+            }
+            $listLibStr .= ">";
+            $listLibStr .= "</{$conf->ns['backup']['ns']}:backupFile>";
+        }
+        $listLibStr .= "</{$conf->ns['backup']['ns']}:backupListLib>";
 
         return new ttRpcFunc('set_backup_files', array('listDB' => $listDBStr, 'listLib' => $listLibStr));
     }
@@ -1203,73 +1216,71 @@ class rpc_phpConnect_functions extends rpc_functions_class {
     function restore_project($args) {
         global $conf, $project;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['project'] != '') {
-                $project_name = $args['project'];
+        if ($args['project'] != '') {
+            $project_name = $args['project'];
+        }
+        $options = explode(',', $args['options']);
+        
+        //CREATE
+        $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
+        $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
+        $task->create('restore project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date);
+        
+        //ADD functions
+        if ($args['type'] == 'all' || $args['type'] == 'data') {
+            $funcs = array();
+            foreach ($options as $option) {
+                $funcs[] = new ttRpcFunc('restore_db_from_file', array('project' => $project_name, 'file' => $args['file'], 'type' => 'data', 'subtype' => $option));
             }
-            $options = explode(',', $args['options']);
+            $task->add_thread($funcs);
             
-            //CREATE
-            $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
-            $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
-            $task->create('restore project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date);
+            $funcs = array();
+            $funcs[] = new ttRpcFunc('db_optimize', array());
+            $task->add_thread($funcs);
             
-            //ADD functions
-            if ($args['type'] == 'all' || $args['type'] == 'data') {
-                $funcs = array();
-                foreach ($options as $option) {
-                    $funcs[] = new ttRpcFunc('restore_db_from_file', array('project' => $project_name, 'file' => $args['file'], 'type' => 'data', 'subtype' => $option));
-                }
-                $task->add_thread($funcs);
-                
-                $funcs = array();
-                $funcs[] = new ttRpcFunc('db_optimize', array());
-                $task->add_thread($funcs);
-                
-                $funcs = array();
-                foreach ($options as $option) {
-                    $funcs[] = new ttRpcFunc('restore_db_sendupdate', array('project' => $project_name, 'subtype' => $option));
-                }
-                $task->add_thread($funcs);
+            $funcs = array();
+            foreach ($options as $option) {
+                $funcs[] = new ttRpcFunc('restore_db_sendupdate', array('project' => $project_name, 'subtype' => $option));
             }
-            if ($args['type'] == 'all' || $args['type'] == 'lib') {
-                $funcs = array();
+            $task->add_thread($funcs);
+        }
+        if ($args['type'] == 'all' || $args['type'] == 'lib') {
+            $funcs = array();
+            
+            $file_path = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/' . $args['file'];
+            $target_path = $project->get_project_path($project_name) . '/lib/';
+            
+            $archivObj = new Archive_Tar($file_path);
+            if (($archiveFileList = $archivObj->listContent()) != 0) {
+                $funcs[] = new ttRpcFunc('restore_lib_init', array(
+                    'target_path' => $target_path, 
+                    'filename' => $file_path,
+                    'clear' => in_array('clear', $options) ? 'true' : 'false',
+                ));
                 
-                $file_path = $conf->path_server_root . $conf->path_backup . '/' . str_replace(' ', '_', strtolower($project_name)) . '/' . $args['file'];
-                $target_path = $project->get_project_path($project_name) . '/lib/';
-                
-                $archivObj = new Archive_Tar($file_path);
-                if (($archiveFileList = $archivObj->listContent()) != 0) {
-                    $funcs[] = new ttRpcFunc('restore_lib_init', array(
-                        'target_path' => $target_path, 
-                        'filename' => $file_path,
-                        'clear' => in_array('clear', $options) ? 'true' : 'false',
-                    ));
-                    
-                    $old_dir = '';
-                    $actual_files = '';
-                    for ($i = 0; $i < sizeof($archiveFileList); $i++) {
-                        if ($i % 120 == 0) {
-                            if ($actual_files != '') {
-                                $actual_files .= '</filelist>';
-                                $funcs[] = new ttRpcFunc('restore_lib_extract_dir', array(
-                                    'target_path' => $target_path, 
-                                    'filelist' => $actual_files,
-                                ));
-                            }
-                            $actual_files = "<filelist>";
-                        } 
-                        $actual_files .= "<file name=\"" . htmlentities($archiveFileList[$i]['filename']) . "\" />";
-                    }
-                    $actual_files .= '</filelist>';
-                    $funcs[] = new ttRpcFunc('restore_lib_extract_dir', array(
-                        'target_path' => $target_path, 
-                        'filelist' => $actual_files,
-                    ));
-                    $funcs[] = new ttRpcFunc('restore_lib_end', array('project' => $project_name));
+                $old_dir = '';
+                $actual_files = '';
+                for ($i = 0; $i < sizeof($archiveFileList); $i++) {
+                    if ($i % 120 == 0) {
+                        if ($actual_files != '') {
+                            $actual_files .= '</filelist>';
+                            $funcs[] = new ttRpcFunc('restore_lib_extract_dir', array(
+                                'target_path' => $target_path, 
+                                'filelist' => $actual_files,
+                            ));
+                        }
+                        $actual_files = "<filelist>";
+                    } 
+                    $actual_files .= "<file name=\"" . htmlentities($archiveFileList[$i]['filename']) . "\" />";
                 }
-                $task->add_thread($funcs);
+                $actual_files .= '</filelist>';
+                $funcs[] = new ttRpcFunc('restore_lib_extract_dir', array(
+                    'target_path' => $target_path, 
+                    'filelist' => $actual_files,
+                ));
+                $funcs[] = new ttRpcFunc('restore_lib_end', array('project' => $project_name));
             }
+            $task->add_thread($funcs);
         }
     }
     // }}}
@@ -1318,176 +1329,176 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         global $conf, $project;
         global $xml_db, $log;
         
-        if ($project_name = $project->user->is_valid_user($args['sid'], $args['wid'], $args['ip'])) {
-            if ($args['project'] != '') {
-                $project_name = $args['project'];
-            }
-            
-            //parse settings
-            $tempdoc = $xml_db->get_doc_by_id($args['publish_id']);
-            $tempnode = $tempdoc->document_element();
-           
-            //get languages
-            $output_languages = array();
-            $xml_proc = tpl_engine::factory('xslt');
-            $xml_temp = $xml_proc->get_languages($project_name);
-            $xpath_temp = project::xpath_new_context($xml_temp);
-            $xfetch = xpath_eval($xpath_temp, "/{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language/@shortname");
-            foreach ($xfetch->nodeset as $temp_node) {
-                $output_languages[] = $temp_node->get_content();
-            }
-            
-            //create
-            $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
-            $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
-            $task->create('publish project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date, new ttRpcFunc('publish_init', array(
-                'project' => $project_name, 
-                'project_id' => $xml_db->get_doc_id_by_name($project),
-                'publish_id' => $args['publish_id'],
-                'cache_path' => $project->get_project_path($project_name) . '/publish/',
-                'template_set' => $tempnode->get_attribute('template_set'),
-                'output_folder' => $tempnode->get_attribute('output_folder'),
-                'baseurl' => $tempnode->get_attribute('baseurl'),
-                'output_user' => $tempnode->get_attribute('output_user'),
-                'output_pass' => $tempnode->get_attribute('output_pass'),
-            )));
-            $baseurl = $tempnode->get_attribute('baseurl');
-            
-            $doc_id = $xml_db->get_doc_id_by_name($project_name);
-            
-            //caching
-            $funcs = array(
-                new ttRpcFunc('publish_init_test', array()),
-                new ttRpcFunc('publish_cache_init', array()),
-                new ttRpcFunc('publish_cache_xslt_templates', array('publish_id' => $args['publish_id'])),
-                new ttRpcFunc('publish_cache_colorschemes', array()),
-                new ttRpcFunc('publish_cache_languages', array()),
-                new ttRpcFunc('publish_cache_navigation', array()),
-                new ttRpcFunc('publish_cache_settings', array()),
-            );
-            
-            $xslt_proc = tpl_engine::factory('xslt');
-            $xml_nav = $xslt_proc->get_navigation($project_name);
-            $xpath_nav = project::xpath_new_context($xml_nav);
-            
-            //get pages
-            $page_ids = array();
-            $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:page");
-            foreach ($xfetch->nodeset as $temp_node) {
-                $page_ids[] = $xml_db->get_node_id($temp_node);
-            }
-            foreach ($page_ids as $page_id) {
-                $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $page_id));
-            }
+        $project_name = $args['project_name'];
 
-            //get folders
-            $folder_ids = array();
-            $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:folder");
-            foreach ($xfetch->nodeset as $temp_node) {
-                $folder_ids[] = $xml_db->get_node_id($temp_node);
-            }
-            foreach ($folder_ids as $folder_id) {
-                $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $folder_id));
-            }
-            
-            $funcs = array_chunk($funcs, 20);
-            foreach ($funcs as $func) {
-                array_unshift($func, new ttRpcFunc('publish_cache_init', array()));
-                $task->add_thread($func);
-            }
+        if ($args['project'] != '') {
+            $project_name = $args['project'];
+        }
+        
+        //parse settings
+        $tempdoc = $xml_db->get_doc_by_id($args['publish_id']);
+        $tempnode = $tempdoc->document_element();
+       
+        //get languages
+        $output_languages = array();
+        $xml_proc = tpl_engine::factory('xslt');
+        $xml_temp = $xml_proc->get_languages($project_name);
+        $xpath_temp = project::xpath_new_context($xml_temp);
+        $xfetch = xpath_eval($xpath_temp, "/{$conf->ns['project']['ns']}:languages/{$conf->ns['project']['ns']}:language/@shortname");
+        foreach ($xfetch->nodeset as $temp_node) {
+            $output_languages[] = $temp_node->get_content();
+        }
+        
+        //create
+        $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
+        $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
+        $task->create('publish project', 'project [' . $project_name . ']', $project->user->get_userid_by_sid($args['sid']), $start_date, new ttRpcFunc('publish_init', array(
+            'project' => $project_name, 
+            'project_id' => $xml_db->get_doc_id_by_name($project),
+            'publish_id' => $args['publish_id'],
+            'cache_path' => $project->get_project_path($project_name) . '/publish/',
+            'template_set' => $tempnode->get_attribute('template_set'),
+            'output_folder' => $tempnode->get_attribute('output_folder'),
+            'baseurl' => $tempnode->get_attribute('baseurl'),
+            'output_user' => $tempnode->get_attribute('output_user'),
+            'output_pass' => $tempnode->get_attribute('output_pass'),
+        )));
+        $baseurl = $tempnode->get_attribute('baseurl');
+        
+        $doc_id = $xml_db->get_doc_id_by_name($project_name);
+        
+        //caching
+        $funcs = array(
+            new ttRpcFunc('publish_init_test', array()),
+            new ttRpcFunc('publish_cache_init', array()),
+            new ttRpcFunc('publish_cache_xslt_templates', array('publish_id' => $args['publish_id'])),
+            new ttRpcFunc('publish_cache_colorschemes', array()),
+            new ttRpcFunc('publish_cache_languages', array()),
+            new ttRpcFunc('publish_cache_navigation', array()),
+            new ttRpcFunc('publish_cache_settings', array()),
+        );
+        
+        $xslt_proc = tpl_engine::factory('xslt');
+        $xml_nav = $xslt_proc->get_navigation($project_name);
+        $xpath_nav = project::xpath_new_context($xml_nav);
+        
+        //get pages
+        $page_ids = array();
+        $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:page");
+        foreach ($xfetch->nodeset as $temp_node) {
+            $page_ids[] = $xml_db->get_node_id($temp_node);
+        }
+        foreach ($page_ids as $page_id) {
+            $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $page_id));
+        }
 
-            $funcs[] = new ttRpcFunc('publish_cache_end', array());
+        //get folders
+        $folder_ids = array();
+        $xfetch = xpath_eval($xpath_nav, "//{$conf->ns['page']['ns']}:folder");
+        foreach ($xfetch->nodeset as $temp_node) {
+            $folder_ids[] = $xml_db->get_node_id($temp_node);
+        }
+        foreach ($folder_ids as $folder_id) {
+            $funcs[] = new ttRpcFunc('publish_cache_page', array('page_id' => $folder_id));
+        }
+        
+        $funcs = array_chunk($funcs, 20);
+        foreach ($funcs as $func) {
+            array_unshift($func, new ttRpcFunc('publish_cache_init', array()));
+            $task->add_thread($func);
+        }
+
+        $funcs[] = new ttRpcFunc('publish_cache_end', array());
+        foreach ($output_languages as $output_language) {
+            //$funcs[] = new ttRpcFunc('publish_process_remove_old', array('lang' => $output_language));
+        }
+        
+        $task->add_thread($funcs);
+
+        //process
+        $funcs = array();
+        foreach ($page_ids as $page_id) {
             foreach ($output_languages as $output_language) {
-                //$funcs[] = new ttRpcFunc('publish_process_remove_old', array('lang' => $output_language));
-            }
-            
-            $task->add_thread($funcs);
-
-            //process
-            $funcs = array();
-            foreach ($page_ids as $page_id) {
-                foreach ($output_languages as $output_language) {
-                    $funcs[] = new ttRpcFunc('publish_process_page', array(
-                        'page_id' => $page_id, 
-                        'lang' => $output_language,
-                        'publish_id' => $args['publish_id']
-                    ));
-                }
-            }
-
-            $funcs = array_chunk($funcs, 5);
-            foreach ($funcs as $func) {
-                $task->add_thread($func);
-            }
-
-            //publish library
-            $funcs = array();
-
-            $pb = new publish($project_name, $args['publish_id']);
-            $pb->reset_all_file_exists();
-            $files = $pb->get_changed_lib_files();
-            foreach ($files as $file) {
-                $funcs[] = new ttRpcFunc('publish_lib_file', array(
-                    'path' => $file->path, 
-                    'filename' => $file->filename, 
-                    'sha1' => $file->sha1, 
+                $funcs[] = new ttRpcFunc('publish_process_page', array(
+                    'page_id' => $page_id, 
+                    'lang' => $output_language,
                     'publish_id' => $args['publish_id']
                 ));
             }
-            
-            $funcs = array_chunk($funcs, 40);
-            foreach ($funcs as $func) {
-                $task->add_thread($func);
-            }
-            
-            //publish pages            
-            $funcs = array();
-            foreach ($page_ids as $page_id) {
-                foreach ($output_languages as $output_language) {
-                    $funcs[] = new ttRpcFunc('publish_page_file', array(
-                        'page_id' => $page_id, 
-                        'lang' => $output_language,
-                        'publish_id' => $args['publish_id']
-                    ));
-                }
-            }
+        }
 
-            $funcs = array_chunk($funcs, 40);
-            foreach ($funcs as $func) {
-                $task->add_thread($func);
-            }
+        $funcs = array_chunk($funcs, 5);
+        foreach ($funcs as $func) {
+            $task->add_thread($func);
+        }
 
-            $funcs = array();
-            //$funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+        //publish library
+        $funcs = array();
 
-            $languages = "";
-            foreach ($output_languages as $lang) {
-                $languages .= "\t'$lang',\n";
-            }
-            $funcs[] = new ttRpcFunc('publish_htaccess', array(
-                'languages' => $languages,
-                'lang_num' => count($output_languages),
-                'lang_default' => $output_languages[0],
-                'baseurl' => $baseurl,
-            ));
-
-            foreach ($output_languages as $lang) {
-                $funcs[] = new ttRpcFunc('publish_feeds', array(
-                    'publish_id' => $args['publish_id'],
-                    'baseurl' => $baseurl,
-                    'title' => $project_name,
-                    'lang' => $lang,
-                ));
-            }
-            $funcs[] = new ttRpcFunc('publish_sitemap', array(
-                'publish_id' => $args['publish_id'],
-                'baseurl' => $baseurl,
-            ));
-            $funcs[] = new ttRpcFunc('publish_end', array(
+        $pb = new publish($project_name, $args['publish_id']);
+        $pb->reset_all_file_exists();
+        $files = $pb->get_changed_lib_files();
+        foreach ($files as $file) {
+            $funcs[] = new ttRpcFunc('publish_lib_file', array(
+                'path' => $file->path, 
+                'filename' => $file->filename, 
+                'sha1' => $file->sha1, 
                 'publish_id' => $args['publish_id']
             ));
-            $task->add_thread($funcs);
         }
+        
+        $funcs = array_chunk($funcs, 40);
+        foreach ($funcs as $func) {
+            $task->add_thread($func);
+        }
+        
+        //publish pages            
+        $funcs = array();
+        foreach ($page_ids as $page_id) {
+            foreach ($output_languages as $output_language) {
+                $funcs[] = new ttRpcFunc('publish_page_file', array(
+                    'page_id' => $page_id, 
+                    'lang' => $output_language,
+                    'publish_id' => $args['publish_id']
+                ));
+            }
+        }
+
+        $funcs = array_chunk($funcs, 40);
+        foreach ($funcs as $func) {
+            $task->add_thread($func);
+        }
+
+        $funcs = array();
+        //$funcs[] = new ttRpcFunc('publish_index_page', array('lang' => $output_languages[0]));
+
+        $languages = "";
+        foreach ($output_languages as $lang) {
+            $languages .= "\t'$lang',\n";
+        }
+        $funcs[] = new ttRpcFunc('publish_htaccess', array(
+            'languages' => $languages,
+            'lang_num' => count($output_languages),
+            'lang_default' => $output_languages[0],
+            'baseurl' => $baseurl,
+        ));
+
+        foreach ($output_languages as $lang) {
+            $funcs[] = new ttRpcFunc('publish_feeds', array(
+                'publish_id' => $args['publish_id'],
+                'baseurl' => $baseurl,
+                'title' => $project_name,
+                'lang' => $lang,
+            ));
+        }
+        $funcs[] = new ttRpcFunc('publish_sitemap', array(
+            'publish_id' => $args['publish_id'],
+            'baseurl' => $baseurl,
+        ));
+        $funcs[] = new ttRpcFunc('publish_end', array(
+            'publish_id' => $args['publish_id']
+        ));
+        $task->add_thread($funcs);
     }
 
     /**

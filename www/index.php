@@ -19,16 +19,24 @@
  * @li @ref bug "Bug List"
  */
  
-define('IS_IN_CONTOOL', true);
+    define('IS_IN_CONTOOL', true);
 
-require_once('framework/lib/lib_global.php');
-require_once('lib_html.php');
+    require_once('framework/lib/lib_global.php');
+    require_once('lib_auth.php');
+    require_once('lib_html.php');
+    require_once('lib_files.php');
+    require_once('lib_tpl_xslt.php');
+    require_once('lib_pocket_server.php');
+    require_once('lib_tasks.php');
 
+    $project->user->auth_digest();
+
+    $html = new html()
 ?>
 <html>
-<head>
-<meta http-equiv=Content-Type content="text/html;  charset=ISO-8859-1">
-<title><?php echo($conf->app_name . ' ' . $conf->app_version); ?></title>
+    <?php
+        $html->head();
+/*
 <script language="JavaScript" type="text/javascript">
 <!--
     function open_edit(userid) {
@@ -39,6 +47,7 @@ require_once('lib_html.php');
     
         options = "height=" + h + ",width=" + w + ",fullscreen=0,dependent=0,location=0,menubar=0,resizable=1,scrollbars=0,status=1,titlebar=0,toolbar=0,screenX=" + x + ",screenY=" + y + ",left=" + x + ",top=" + y;
         url = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "framework/interface/index.php?standalone=false&userid=" + userid;
+        //alert("options: " + options);
         flashwin = open(url, "tt" + userid, options);
         if (!flashwin) {
             // @todo localisation
@@ -84,9 +93,7 @@ require_once('lib_html.php');
 </script>
 
 </head>
-
-<frameset rows="100%,*" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
-    <frame id="contentFrame" name="content" src="framework/interface/index.php?standalone=false" scrolling="auto" noresize frameborder="0" border="0"  framespacing="0">
-    <!--frame name="nothing" src="nothing.html" scrolling="no" noresize frameborder="0" border="0" framespacing="0"-->
-</frameset>
+ */
+        $html->preview_frame();
+    ?>
 </html>

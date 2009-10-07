@@ -245,9 +245,9 @@ class_user.prototype.registerWindow = function(onSuccessFunc, onErrorFunc) {
 	_root.pocketConnect.msgHandler.register_func("registered_window", this.registerWindowHandler, this);
 	_root.phpConnect.msgHandler.register_func("registered_window", this.registerWindowHandler, this);
 	if (conf.usepocket == true) {
-		_root.pocketConnect.send("register_window", [["sid", this.sid], ["type", "main"]]);
+		_root.pocketConnect.send("register_window", [["sid", this.sid], ["project_name", conf.project_name], ["type", "main"]]);
 	} else {
-		_root.phpConnect.send("register_window", [["sid", this.sid], ["type", "main"]]);
+		_root.phpConnect.send("register_window", [["sid", this.sid], ["project_name", conf.project_name], ["type", "main"]]);
 	}
 };
 // }}}

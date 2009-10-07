@@ -45,9 +45,9 @@ class_project.prototype.error_alert = function(args) {
 // {{{ sendKeepAlive()
 class_project.prototype.sendKeepAlive = function() {
 	if (conf.usePocket == true) {
-		_root.pocketConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+		_root.pocketConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name]]);
 	} else {
-		_root.phpConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+		_root.phpConnect.send("keepAlive", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name]]);
 	}
 };
 // }}}
@@ -163,8 +163,10 @@ class_project.prototype.previewNow = function() {
             url += conf.project.pathname;
             url += "/preview/";
             url += this.preview_type + "/";
+            /*
             url += conf.user.sid + "/";
             url += conf.user.wid + "/";
+            */
             if (this.previewDisableCache) {
                     url += "noncached"
             } else {
@@ -205,7 +207,7 @@ class_project.prototype.previewUpdate = function(args) {
 // }}}
 // {{{ backupProject()
 class_project.prototype.backupProject = function(type, comment) {
-	_root.phpConnect.send("backup_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["type", type], ["comment", comment]]);
+	_root.phpConnect.send("backup_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["type", type], ["comment", comment]]);
 };
 // }}}
 // {{{ getBackupFiles()
@@ -214,7 +216,7 @@ class_project.prototype.getBackupFiles = function(callBackObj, callBackFunc) {
 	this.backupCallBackFunc = callBackFunc;
 
 	_root.phpConnect.msgHandler.register_func("set_backup_files", this.parseBackupFiles, this);
-	_root.phpConnect.send("get_backup_files", [["sid", conf.user.sid], ["wid", conf.user.wid]]);
+	_root.phpConnect.send("get_backup_files", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name]]);
 };
 // }}}
 // {{{ parseBackupFiles()
@@ -258,12 +260,12 @@ class_project.prototype.parseBackupFiles = function(args) {
 // }}}
 // {{{ restoreProject()
 class_project.prototype.restoreProject = function(restoreType, file, options) {
-	_root.phpConnect.send("restore_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["type", restoreType], ["file", file], ["options", options]]);
+	_root.phpConnect.send("restore_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["type", restoreType], ["file", file], ["options", options]]);
 };
 // }}}
 // {{{ publishProject()
 class_project.prototype.publishProject = function(id) {
-	_root.phpConnect.send("publish_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["publish_id", id]]);
+	_root.phpConnect.send("publish_project", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["publish_id", id]]);
 };
 // }}}
 // {{{ addTaskHandler()

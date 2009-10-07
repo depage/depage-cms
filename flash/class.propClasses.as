@@ -132,7 +132,7 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 	var tempNode;
 	
 	if (type == "colorscheme") {
-		_root.phpConnect.send("set_page_colorscheme", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["colorscheme", dataNode.attributes.colorscheme], ["type", this.type]]);
+		_root.phpConnect.send("set_page_colorscheme", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["colorscheme", dataNode.attributes.colorscheme], ["type", this.type]]);
 	} else if (type == "navigation") {
 		tempNode = dataNode.cloneNode();
 		for(attr in tempNode.attributes) {
@@ -141,9 +141,9 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 			}
 		}
 		
-		_root.phpConnect.send("set_page_navigations", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["navigations", tempNode], ["type", this.type]]);
+		_root.phpConnect.send("set_page_navigations", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["navigations", tempNode], ["type", this.type]]);
 	} else if (type == "file") {
-		_root.phpConnect.send("set_page_file_options", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["multilang", dataNode.attributes.multilang], ["file_name", dataNode.attributes.file_name], ["file_type", dataNode.attributes.file_type], ["type", this.type]]);
+		_root.phpConnect.send("set_page_file_options", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["multilang", dataNode.attributes.multilang], ["file_name", dataNode.attributes.file_name], ["file_type", dataNode.attributes.file_type], ["type", this.type]]);
 	} else if (this.data.isRootNode()) {  
 		//conf.project.tree.content.propObj.save(id, dataNode, type);
 	} else {
@@ -160,7 +160,7 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 			}
 		}
 				
-		_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["data", save_data], ["type", this.type]]);
+		_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
 	}
 };
 // }}}
@@ -232,7 +232,7 @@ class_prop_page_data.prototype.getImageProp = function(path, name, callbackFunc,
 	this.imageCallback.push([path, name, callbackFunc, callbackObj]);
 	
 	_root.phpConnect.msgHandler.register_func("set_imageProp", this.setImageProp, this);
-	_root.phpConnect.send("get_imageProp", [["sid", conf.user.sid], ["wid", conf.user.wid], ["filepath", path], ["filename", name]]);
+	_root.phpConnect.send("get_imageProp", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["filepath", path], ["filename", name]]);
 };
 // }}}
 // {{{ setImageProp()
@@ -316,7 +316,7 @@ class_prop_files.prototype.clear = function() {
 class_prop_files.prototype.load = function(id, temp, reload) {
 	if (id != null && (id != this.oldid || reload)) {
 		this.clear();
-		_root.phpConnect.send("get_prop", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["file_type", this.treeObj.fileFilter.file_type], ["type", this.type]]);
+		_root.phpConnect.send("get_prop", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["file_type", this.treeObj.fileFilter.file_type], ["type", this.type]]);
 		this.oldid = id;
 	}
 };
@@ -326,7 +326,7 @@ class_prop_files.prototype.deleteFiles = function(files) {
 	var i;
 
 	for (i = 0; i < files.length; i++) {
-		_root.phpConnect.send("delete_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", files[i]], ["type", this.type]]);
+		_root.phpConnect.send("delete_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", files[i]], ["type", this.type]]);
 	}
 };
 // }}}
@@ -392,7 +392,7 @@ class_prop_tpl_templates.prototype.load = function(id) {
 	if (id != null && id != this.activeId) {
 		this.clear();
 		this.onChange();
-		_root.phpConnect.send("get_prop", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["type", this.type]]);
+		_root.phpConnect.send("get_prop", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["type", this.type]]);
 		this.activeId = id;
 	}
 };
@@ -411,7 +411,7 @@ class_prop_tpl_templates.prototype.save = function(id) {
 		}	
 	}
 
-	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["data", save_data], ["type", this.type]]);
+	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
 	this.project.preview();	
 };
 // }}}
@@ -437,14 +437,14 @@ class_prop_tpl_templates.prototype.getPropNodes = function() {
 // }}}
 // {{{ setTemplatePropActive()
 class_prop_tpl_templates.prototype.setTemplatePropActive = function(id, newActive) {
-	_root.phpConnect.send("set_template_node_active", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["type", this.type], ["new_active", newActive.toString()]]);
+	_root.phpConnect.send("set_template_node_active", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["type", this.type], ["new_active", newActive.toString()]]);
 	this.data.attributes.active = newActive;
 	this.project.preview();	
 };
 // }}}
 // {{{ setTemplatePropType()
 class_prop_tpl_templates.prototype.setTemplatePropType = function(id, newType) {
-	_root.phpConnect.send("set_template_node_type", [["sid", conf.user.sid], ["wid", conf.user.wid], ["id", id], ["type", this.type], ["new_type", newType]]);
+	_root.phpConnect.send("set_template_node_type", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["type", this.type], ["new_type", newType]]);
 	this.data.attributes.type = newType;
 	this.project.preview();	
 };
@@ -493,7 +493,7 @@ class_prop_tpl_newnodes.prototype.save = function(id) {
 		}	
 	}
 
-	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["data", save_data], ["type", this.type]]);
+	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
 };
 // }}}
 // {{{ getPropNodes()
@@ -578,7 +578,7 @@ class_prop_settings.prototype.save = function(id) {
 		}
 	}
 	
-	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["data", save_data], ["type", this.type]]);
+	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
 	this.project.preview();	
 };
 // }}}

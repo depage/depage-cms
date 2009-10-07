@@ -338,14 +338,14 @@ class_propBox_edit_text_singleline.prototype.saveData = function(forceSave) {
  *	Extends class_propBox
  *	Main MulitLineProp
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_edit_text_multiline = function() {};
 class_propBox_edit_text_multiline.prototype = new class_propBox();
 
 class_propBox_edit_text_multiline.prototype.usesFirstLine = false;
 class_propBox_edit_text_multiline.prototype.minHeight = 100;
 // }}}
-// {{{ onResize()
+// {{{ onResize()
 class_propBox_edit_text_multiline.prototype.onResize = function() {
 	this.width = this._parent.width;
 
@@ -429,14 +429,14 @@ class_propBox_edit_text_multiline.prototype.generateComponents = function() {
 		this.active = false;
 	};
 	// }}}
-	// {{{ killedFocus()
+	// {{{ killedFocus()
 	this.textBox.killedFocus = function() {
 		this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_inactive);
 		this._parent.selectionBeginIndex = -1;
 		this._parent.selectionEndIndex = -1;
 	};
 	// }}}
-	// {{{ onScroller()
+	// {{{ onScroller()
 	this.textBox.onScroller = function() {
 		this._parent.onScroller();
 	};
@@ -588,6 +588,8 @@ class_propBox_edit_text_formatted.prototype.propName[0] = conf.lang.prop_name_ed
 class_propBox_edit_text_formatted.prototype.minHeight = 100;
 
 class_propBox_edit_text_formatted.prototype.textLinkIsSecondClick = false;
+
+class_propBox_edit_text_formatted.prototype.maxChars = 10000;
 // }}}
 // {{{ setTextBoxFormat()
 class_propBox_edit_text_formatted.prototype.setTextBoxFormat = function() {
@@ -606,7 +608,7 @@ class_propBox_edit_text_formatted.prototype.generateComponents = function() {
 			height	: 17
 		});
 	}
-		
+
 	this.button_1.symbol = "icon_format_bold";
 	this.button_1.tooltip = conf.lang.buttontip_format_bold;
 	this.button_1.enabledState = true;
@@ -644,9 +646,11 @@ class_propBox_edit_text_formatted.prototype.setComponents = function() {
 	this.button_2._x = this.settings.border_left + 2;
 	this.button_3._x = this.settings.border_left + 2;
 	this.button_4._x = this.settings.border_left + 2;
+
+        this.tooltipObj = new tooltipClass.tooltipObj();
 };
 // }}}
-// {{{ setNewPos()
+// {{{ setNewPos()
 class_propBox_edit_text_formatted.prototype.setNewPos = function() {
 	var bottomBorder = this.height - this.settings.border_bottom - 2;
 	
@@ -665,13 +669,39 @@ class_propBox_edit_text_formatted.prototype.setNewPos = function() {
 	this.button_4._y = bottomBorder - 17;
 };
 // }}}
-// {{{ setButtons()
+// {{{ setButtons()
 class_propBox_edit_text_formatted.prototype.setButtons = function() {
 	var i;
 	
 	for (var i = 1; i <= 4; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
 	}
+};
+// }}}
+// {{{ onChanged()
+class_propBox_edit_text_formatted.prototype.onChanged = function() {
+    super.onChanged();
+
+    var warningMaxChars = this.maxChars * 0.98;
+    var errorText = conf.lang.prop_tt_text_formatted_maxchars;
+
+    if (this.textBox.text.length > warningMaxChars) {
+        // show info
+        errorText = errorText.replace([
+            ["%chars%"	 , this.maxChars - this.textBox.text.length],
+            ["%maxchars%", this.maxChars]
+        ]);
+        this.tooltipObj.setText(errorText);
+
+        if (!this.tooltipObj.shown) {
+            setTimeout(this.tooltipObj.show, this.tooltipObj, 1, [this.button_1.getGlobalX(), this.button_1.getGlobalY() - 30], true);
+        }
+    } else {
+        // hide info
+        if (this.tooltipObj.shown) {
+            this.tooltipObj.hide();
+        }
+    }
 };
 // }}}
 // {{{ setData()
@@ -709,6 +739,7 @@ class_propBox_edit_text_formatted.prototype.setDataNow = function(tempText) {
 	this.textBox.type = "input";
 	
         this.textBox.htmlText = tempText;
+        this.textBox.maxChars = this.maxChars;
 
 	//this.textBox.initFormat(this.textBox.textFormat);
 
@@ -878,7 +909,7 @@ _global.textlink = function(args) {
  *	Extends class_propBox_edit_text_multiline
  *	Handles HTML Headlines
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_edit_text_headline = function() {};
 class_propBox_edit_text_headline.prototype = new class_propBox_edit_text_multiline();
 
@@ -936,7 +967,7 @@ class_propBox_edit_text_headline.prototype.setDataNow = function(tempText) {
 // {{{ saveData()
 class_propBox_edit_text_headline.prototype.saveData = class_propBox_edit_text_formatted.prototype.saveData;
 // }}}
-// {{{ saveSelection()
+// {{{ saveSelection()
 class_propBox_edit_text_headline.prototype.saveSelection = class_propBox_edit_text_formatted.prototype.saveSelection;
 // }}}
 // {{{ formatSelection()
@@ -1109,7 +1140,7 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
             this.active = false;
     };
     // }}}
-    // {{{ killedFocus()
+    // {{{ killedFocus()
     cell.textBox.killedFocus = function() {
         if (!this._parent.textBox.active) {
             this._parent.textBoxBack.back.setRGB(conf.interface.color_input_face_inactive);
@@ -1118,7 +1149,7 @@ class_propBox_edit_table.prototype.generateTableCell = function(dataNode) {
         }
     };
     // }}}
-    // {{{ onScroller()
+    // {{{ onScroller()
     cell.textBox.onScroller = function() {
             this._parent.onScroller();
     };
@@ -1293,7 +1324,7 @@ class_propBox_edit_table.prototype.setHeight = function() {
 	this._visible = true;
 };
 // }}}
-// {{{ setNewPos()
+// {{{ setNewPos()
 class_propBox_edit_table.prototype.setNewPos = function() {
 	var bottomBorder = this.height - this.settings.border_bottom - 2;
 	
@@ -1313,7 +1344,7 @@ class_propBox_edit_table.prototype.setNewPos = function() {
 	this.button_4._y = bottomBorder - 17;
 };
 // }}}
-// {{{ setButtons()
+// {{{ setButtons()
 class_propBox_edit_table.prototype.setButtons = function() {
 	for (var i = 1; i <= 4; i++) {
 		this["button_" + i].setStatus(this["button_" + i].enabledState);
@@ -1517,7 +1548,7 @@ class_propBox_edit_colorscheme.prototype.generateComponents = function() {
 	this.attachMovie("prop_page_colorscheme_preview", "preview", 3);
 };
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_edit_colorscheme.prototype.setData = function() {
 	var i;
 	
@@ -1538,7 +1569,7 @@ class_propBox_edit_colorscheme.prototype.setData = function() {
 	this.preview.showColors();
 };
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_edit_colorscheme.prototype.onChanged = function() {
 	super.onChanged();
 
@@ -2030,7 +2061,7 @@ class_propBox_pg_linkdesc.prototype.saveData = function(forceSave) {
  *	Extends class_propBox_edit_text_multiline
  *	Handles Description of a Page
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_pg_desc = function() {};
 class_propBox_pg_desc.prototype = new class_propBox_edit_text_multiline();
 
@@ -2086,7 +2117,7 @@ class_propBox_edit_plain_source.prototype = new class_propBox_edit_text_multilin
 class_propBox_edit_plain_source.prototype.propName = [];
 class_propBox_edit_plain_source.prototype.propName[0] = conf.lang.prop_name_edit_plain_source;
 // }}}
-// {{{ generateComponents()
+// {{{ generateComponents()
 class_propBox_edit_plain_source.prototype.generateComponents = function() {
 	if (conf.user.mayEditSourceCode()) {
 		super.generateComponents();	
@@ -2104,7 +2135,7 @@ class_propBox_edit_plain_source.prototype.setComponents = function() {
 	}
 };
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_edit_plain_source.prototype.setData = function() {
 	var newText;
 	if (conf.user.mayEditSourceCode()) {
@@ -2157,7 +2188,7 @@ class_propBox_edit_element_source.prototype = new class_propBox_edit_plain_sourc
 class_propBox_edit_element_source.prototype.propName = [];
 class_propBox_edit_element_source.prototype.propName[0] = conf.lang.prop_name_edit_plain_source;
 // }}}
-// {{{ generateComponents()
+// {{{ generateComponents()
 class_propBox_edit_element_source.prototype.generateComponents = function() {
 	if (conf.user.mayEditSourceCode()) {
 		super.generateComponents();	
@@ -2175,7 +2206,7 @@ class_propBox_edit_element_source.prototype.setComponents = function() {
 	}
 };
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_edit_element_source.prototype.setData = function() {
 	var newText;
         var tempNode;
@@ -2247,7 +2278,7 @@ class_propBox_proj_language.prototype = new class_propBox_edit_text_singleline()
 class_propBox_proj_language.prototype.propName = [];
 class_propBox_proj_language.prototype.propName[0] = conf.lang.prop_name_proj_language;
 // }}}
-// {{{ setData()
+// {{{ setData()
 class_propBox_proj_language.prototype.setData = function() {
 	super.setData();
 	
@@ -2275,14 +2306,14 @@ class_propBox_proj_language.prototype.saveData = function(forceSave) {
  *	Extends class_propBox
  *	Handles Settings-Navigations
  */
-// {{{ constructor()
+// {{{ constructor()
 class_propBox_proj_navigation = function() {};
 class_propBox_proj_navigation.prototype = new class_propBox_proj_language();
 
 class_propBox_proj_navigation.prototype.propName = [];
 class_propBox_proj_navigation.prototype.propName[0] = conf.lang.prop_name_proj_navigation;
 // }}}
-// {{{ generateComponents()
+// {{{ generateComponents()
 class_propBox_proj_navigation.prototype.generateComponents = function() {
 	super.generateComponents();
 	this.inputBox.restrict = "a-zA-Z0-9_";	
@@ -2714,7 +2745,7 @@ class_propBox_edit_img.prototype.setData = function() {
 	setTimeout(this.load_thumb, this, 10);
 };
 // }}}
-// {{{ load_thumb()
+// {{{ load_thumb()
 class_propBox_edit_img.prototype.load_thumb = function() {
 	var filedata = this.inputBox.value.splitPath();
 	
@@ -2903,7 +2934,7 @@ class_propBox_edit_audio.prototype.setData = function() {
         this.load_thumb();
 };
 // }}}
-// {{{ load_thumb()
+// {{{ load_thumb()
 class_propBox_edit_audio.prototype.load_thumb = function() {
 	var filedata = this.inputBox.value.splitPath();
 	
@@ -3067,7 +3098,7 @@ class_propBox_edit_video.prototype.setData = function() {
         this.load_thumb();
 };
 // }}}
-// {{{ load_thumb()
+// {{{ load_thumb()
 class_propBox_edit_video.prototype.load_thumb = function() {
 	var filedata = this.inputBox.value.splitPath();
 	
@@ -3231,7 +3262,7 @@ class_propBox_edit_flash.prototype.setData = function() {
         this.load_thumb();
 };
 // }}}
-// {{{ load_thumb()
+// {{{ load_thumb()
 class_propBox_edit_flash.prototype.load_thumb = function() {
 	var filedata = this.inputBox.value.splitPath();
 	
@@ -3733,14 +3764,14 @@ class_propBox_edit_template.prototype.saveData = function(forceSave) {
  *	Extends class_propBox
  *	Handles Settings of an XSLT-Template
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_pg_template_data = function() {};
 class_propBox_pg_template_data.prototype = new class_propBox();
 
 class_propBox_pg_template_data.prototype.propName = [];
 class_propBox_pg_template_data.prototype.propName[0] = conf.lang.prop_name_pg_template;
 // }}}
-// {{{ saveData()
+// {{{ saveData()
 class_propBox_pg_template_data.prototype.saveData = function(forceSave) {
 	if (this.isChanged == true || forceSave == true) {
 		this.isChanged = false;
@@ -3798,7 +3829,7 @@ class_propBox_pg_template_data.prototype.generateComponents = function() {
 	};
 };
 // }}}
-// {{{ setComponents()
+// {{{ setComponents()
 class_propBox_pg_template_data.prototype.setComponents = function() {
 	this.comboBox._x = this.settings.border_left;
 	this.comboBox._y = this.settings.border_top;
@@ -3819,7 +3850,7 @@ class_propBox_pg_template_data.prototype.setComponents = function() {
  *	Extends class_propBox_pg_template_tempate
  *	Handles an newNode-Source
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_edit_newnode = function() {};
 class_propBox_edit_newnode.prototype = new class_propBox_edit_template();
 
@@ -3833,7 +3864,7 @@ class_propBox_edit_newnode.prototype.propName[0] = conf.lang.prop_name_xslt_newn
  *	Extends class_propBox_edit_text_singleline
  *	Handles an newNode-Settings
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_edit_newnode_valid_parents = function() {};
 class_propBox_edit_newnode_valid_parents.prototype = new class_propBox_edit_text_singleline();
 
@@ -3887,7 +3918,7 @@ class_propBox_proj_colorscheme.prototype.propName[0] = conf.lang.prop_name_proj_
 class_propBox_proj_colorscheme.prototype.minColorWidth = 150;
 class_propBox_proj_colorscheme.prototype.activeColor = null;
 // }}}
-// {{{ onResize()
+// {{{ onResize()
 class_propBox_proj_colorscheme.prototype.onResize = function() {
 	this.width = this._parent.width;
 	
@@ -4072,7 +4103,7 @@ class_propBox_proj_colorscheme.prototype.setButtons = function() {
 	}
 };
 // }}}
-// {{{ addColor()
+// {{{ addColor()
 class_propBox_proj_colorscheme.prototype.addColor = function() {
 	if (conf.user.mayAddDeleteColors()) {
 		conf.project.tree.colors.addColor(this.data);
@@ -4093,7 +4124,7 @@ class_propBox_proj_colorscheme.prototype.deleteColor = function() {
  *	Extends class_propBox
  *	Interface to edit template_set settings
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_proj_template_set = function() {};
 class_propBox_proj_template_set.prototype = new class_propBox();
 
@@ -4179,7 +4210,7 @@ class_propBox_proj_template_set.prototype.setData = function() {
 	this.checkBoxIndent.value = this.data.attributes.indent == "yes";
 };
 // }}}
-// {{{ saveData()
+// {{{ saveData()
 class_propBox_proj_template_set.prototype.saveData = function(forceSave) {
 	this.data.attributes.encoding = this.comboBoxEncoding.values[this.comboBoxEncoding.selected];
 	this.data.attributes.method = this.comboBoxMethod.values[this.comboBoxMethod.selected];
@@ -4195,7 +4226,7 @@ class_propBox_proj_template_set.prototype.saveData = function(forceSave) {
  *	Extends class_propBox
  *	Interface to edit global_file settings
  */
-// {{{ constructor
+// {{{ constructor
 class_propBox_proj_global_file = function() {};
 class_propBox_proj_global_file.prototype = new class_propBox();
 
@@ -4276,7 +4307,7 @@ class_propBox_proj_global_file.prototype.setData = function() {
 	this.inputBoxXSLTemplate.value = this.data.attributes.xsl_template;
 };
 // }}}
-// {{{ saveData()
+// {{{ saveData()
 class_propBox_proj_global_file.prototype.saveData = function(forceSave) {
 	this.data.attributes.path = this.inputBoxPath.value;
 	this.data.attributes.xsl_template = this.inputBoxXSLTemplate.value;
@@ -4403,7 +4434,7 @@ class_propBox_proj_publish_folder.prototype.generateComponents = function() {
 	}
 };
 // }}}
-// {{{ handleTaskProgress()
+// {{{ handleTaskProgress()
 class_propBox_proj_publish_folder.prototype.handleTaskProgress = function(taskHandler) {
 	if (taskHandler == undefined) {
 		this.buttonStart._visible = true;
@@ -4793,7 +4824,7 @@ class_propBox_proj_backup_restore.prototype.generateComponents = function() {
 	}
 };
 // }}}
-// {{{ setMenuData()
+// {{{ setMenuData()
 class_propBox_proj_backup_restore.prototype.setMenuData = function(backupsDB, backupsLib) {
 	var i;
 
@@ -4829,7 +4860,7 @@ class_propBox_proj_backup_restore.prototype.setMenuData = function(backupsDB, ba
 	this.checkBoxClear.setEnabled(true);
 };
 // }}}
-// {{{ handleTaskProgress()
+// {{{ handleTaskProgress()
 class_propBox_proj_backup_restore.prototype.handleTaskProgress = function(taskHandler) {
 	if (taskHandler == undefined) {
 		this.buttonStartDB._visible = true;
@@ -4878,7 +4909,7 @@ class_propBox_proj_backup_restore.prototype.handleTaskProgress = function(taskHa
 	}
 };
 // }}}
-// {{{ setComponents()
+// {{{ setComponents()
 class_propBox_proj_backup_restore.prototype.setComponents = function() {
 	//restore DB
 	this.chooseFileDB._x = this.settings.border_left;

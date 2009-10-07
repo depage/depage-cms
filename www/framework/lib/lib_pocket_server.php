@@ -717,7 +717,7 @@ class rpc_pocketConnect_default_functions extends rpc_functions_class {
 function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
     global $conf, $project;
     global $log;
-    
+
     if (!is_array($GLOBALS['pocket_updates'])) {
         $GLOBALS['pocket_updates'] = array();
     }
