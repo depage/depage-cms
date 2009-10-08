@@ -65,7 +65,11 @@ class_project.prototype.parseProjectData = function(xml_data) {
 			}
 		}
 		if (this.type == "webProject") {
+                    if (conf.user.mayEditTemplates()) {
 			this.datatypes = ["settings", "tpl_templates", "tpl_newnodes", "colors", "page_data", "pages", "files"];
+                    } else {
+			this.datatypes = ["settings", "tpl_newnodes", "colors", "page_data", "pages", "files"];
+                    }
 		} else {
 			this.datatypes = [];
 		}
