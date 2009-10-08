@@ -594,15 +594,85 @@ class ttUser{
     }
     // }}}
     
+    // {{{ auth_http()
+    function auth_http() {
+        if (isset($_ENV["HTTP_AUTHORIZATION"]) || function_exists('getallheaders')) {
+            $this->auth_digest();
+        } else {
+            if (isset($_ENV["HTTP_AUTHORIZATION"])) {
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+            }
+            $this->auth_basic();
+        }
+    } 
+    // }}}
+    // {{{ auth_basic()
+    function auth_basic() {
+        global $conf;
+        global $log;
+
+        $HA1 = $this->get_passwd_hash($_SERVER['PHP_AUTH_USER']);
+        if (isset($_SERVER['PHP_AUTH_USER'])) { 
+            // generate the valid response
+            $HA1 = $this->get_passwd_hash($_SERVER['PHP_AUTH_USER']);
+
+            if ($HA1 == md5($_SERVER['PHP_AUTH_USER'] . ':' . $this->realm . ':' . $_SERVER['PHP_AUTH_PW'])) {
+                if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                    if ($uid == "") {
+                        $log->add_entry("'{$_SERVER['PHP_AUTH_USER']}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                        $sid = $this->register_session($this->get_uid_by_name($_SERVER['PHP_AUTH_USER']), $_COOKIE[session_name()]);
+                    } else {
+                        //$log->add_entry("has " . $_COOKIE[session_name()]);
+                        $sid = $this->set_sid($_COOKIE[session_name()]);
+                    }
+                    session_id($sid);
+                    session_start();
+
+                    return;
+                } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+                    $log->add_entry("delete cookie");
+                    setcookie(session_name(), "", time() - 3600);
+                    unset($_COOKIE[session_name()]);
+                }
+            }
+        }
+        $sid = $this->get_sid();
+        $opaque = md5($sid);
+        $realm = $this->realm;
+        $domain = $conf->path_base;
+        $nonce = $sid;
+
+        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+
+        } else {
+            session_id($sid);
+            session_start();
+        }
+
+        header("WWW-Authenticate: Basic realm=\"$realm\"");
+        header("HTTP/1.1 401 Unauthorized");
+
+        phpinfo();
+        die();
+        //die_error("you are not allowed to to this!");
+    } 
+    // }}}
     // {{{ auth_digest()
     function auth_digest() {
         global $conf;
         global $log;
 
-        $headers = getallheaders();
-        if (isset($headers['Authorization']) && !empty($headers['Authorization'])) {
-            $digest_header = substr($headers['Authorization'], strpos($headers['Authorization'],' ') + 1);
-            //$log->add_varinfo($headers);
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            if (isset($headers['Authorization']) && !empty($headers['Authorization'])) {
+                $digest_header = substr($headers['Authorization'], strpos($headers['Authorization'],' ') + 1);
+            }
+        } else {
+            $_ENV["HTTP_AUTHORIZATION"] = str_replace('\"', '"', $_ENV["HTTP_AUTHORIZATION"]);
+            $digest_header = substr($_ENV["HTTP_AUTHORIZATION"], strpos($_ENV["HTTP_AUTHORIZATION"],' ') + 1);
+            
+            //$log->add_entry("HTTP_AUTHORIZATION: " . $_ENV["HTTP_AUTHORIZATION"]);
+            //$log->add_entry("digest_header: " . $digest_header);
         }
         
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 

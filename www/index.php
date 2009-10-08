@@ -29,7 +29,7 @@
     require_once('lib_pocket_server.php');
     require_once('lib_tasks.php');
 
-    $project->user->auth_digest();
+    $project->user->auth_http();
 
     $html = new html()
 ?>

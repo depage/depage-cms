@@ -23,7 +23,7 @@ require_once('lib_auth.php');
 require_once('lib_project.php');
 // }}}
 
-    $project->user->auth_digest();
+    $project->user->auth_http();
 
 // {{{ getImage()
 /**

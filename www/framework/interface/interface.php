@@ -14,7 +14,7 @@
     require_once('lib_html.php');
     require_once('lib_auth.php');
 
-    $project->user->auth_digest();
+    $project->user->auth_http();
 ?>
 <html>
 	<head>

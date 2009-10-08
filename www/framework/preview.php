@@ -120,7 +120,7 @@ function getParameterByUrl($url, $project = "", $type = "", $access = "") {
  * ----------------------------------------------
  */ 
 $user = new ttUser();
-$user->auth_digest();
+$user->auth_http();
 
 headerNoCache();
 set_time_limit(60);

@@ -22,7 +22,7 @@
     $settings = $conf->getScheme($conf->interface_scheme);
     $lang = $conf->getTexts($conf->interface_language, 'inhtml', false);
     
-    $project->user->auth_digest();
+    $project->user->auth_http();
 
     $data = array();
     
@@ -40,7 +40,7 @@
             if ($_FILES['file']['error'][$i] == 0) {
                 // @todo add error handling for files thar are still there
                 $fname = tpl_engine_xslt::glp_encode($_FILES['file']['name'][$i]);
-                $fpath = $project->get_project_path($project_name) . "/lib" . $path;
+                $fpath = $project->get_project_path($project_name) . "lib" . $path;
                 move_uploaded_file($_FILES['file']['tmp_name'][$i], $fpath . $fname);
                 $file_access->ch_mod($fpath . $fname);
             }

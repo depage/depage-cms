@@ -30,7 +30,7 @@ require_once('lib_publish.php');
 require_once('Archive/tar.php');
 // }}}
 
-$project->user->auth_digest();
+$project->user->auth_http();
 
 /**
  * handles all remote function calls, called from flash interface
