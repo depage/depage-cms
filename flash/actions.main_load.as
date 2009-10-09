@@ -41,6 +41,7 @@
 		conf.pport = params['pport'];
 		conf.puse = params['puse'];
 		conf.project_name = params['project'];
+		conf.startpage = params['page'];
 
 		conf.standalone = params['standalone'];
 		

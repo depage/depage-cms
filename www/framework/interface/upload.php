@@ -33,6 +33,10 @@
         $path = $_POST['path'];
         $type = "uploaded";
     }
+
+    $html = new html();
+
+    $html->head();
     
     if ($type == "uploaded") {
         $file_access = fs::factory('local');
@@ -50,13 +54,6 @@
         tell_clients_to_update($project_name, $sid, 'fileProps', array($path));
         send_updates();
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-    <head>
-        <title><?php echo(str_replace("%app_name%", $conf->app_name, $lang["inhtml_dialog_upload_title"])); ?></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        <?php htmlout::echoStyleSheet(); ?>
-    </head>
     <body bgcolor="<?php echo($settings['color_face']); ?>">            
         <table width="300" height="300" border="0">
             <tr height="20">
@@ -67,7 +64,6 @@
                 <td width="260" valign="top"><?php echo($lang["inhtml_dialog_upload_uploaded"]); ?></td>
             </tr>
         </table>
-    </body>
         <script language="JavaScript" type="text/JavaScript">
         <!--
             window.setTimeout("self.close()", 3000);
@@ -75,34 +71,9 @@
         //-->
         </script>
     </body>    
-</html>    
 <?php
     } else {
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-    <head>
-        <title><?php echo(str_replace("%app_name%", $conf->app_name, $lang["inhtml_dialog_upload_title"])); ?></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        <script language="JavaScript" type="text/JavaScript">
-        <!--
-            function add_file_chooser() {
-                if (document.getElementById("file" + chooserNum).value != "" && chooserNum < 9) {
-                    chooserNum++;
-                    document.getElementById("chooser" + chooserNum).style.visibility = "visible";
-                }
-                setTimeout("add_file_chooser()", 200);
-            }
-            
-            function add_first_chooser() {
-                add_file_chooser();
-            }
-            
-            chooserNum = 1;
-        //-->
-        </script>
-        <?php htmlout::echoStyleSheet(); ?>
-    </head>
     <body bgcolor="<?php echo($settings['color_face']); ?>" onLoad="add_first_chooser();">            
         <form action="upload.php" method="POST" name="file_upload" enctype="multipart/form-data">
             <table width="300" height="300" border="0">
@@ -152,7 +123,7 @@
             </table>
         </form>
     </body>
-</html>
 <?php
     }                
-?>
+
+    $html->end();

@@ -687,6 +687,18 @@ class_treeDisplayData_pages.prototype.setActiveNode = function(node, scrollToAct
 	}
 };
 // }}}
+// {{{ onShow()
+class_treeDisplayData_pages.prototype.onShow = function() {
+    super.onShow();
+
+    if (conf.startpage != "") {
+        var pageid = conf.project.tree.pages.getIdByURL(conf.startpage);
+        this.setActiveNodeById(pageid);
+        
+        conf.startpage = "";
+    }
+};
+// }}}
 
 /*
  *	Class treeDisplayData_page_data

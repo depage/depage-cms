@@ -1,11 +1,107 @@
 * {
-	font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
-	font-size : 10px;
-	text-decoration : none;
-	margin-top : 0px;
-	margin-bottom : 0px;
+    font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
+    font-size : 12px;
+    text-decoration : none;
+    margin-top : 0px;
+    margin-bottom : 0px;
 }
+html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    height: 100%;
+}
+.head {
+    font-weight : bold;
+    line-height : 15px;
+    margin-top : 7px;
+    margin-bottom : 10px;
+}
+.normal {
+    line-height : 15px;
+    margin-bottom : 10px;
+}
+h1 {
+    padding-top: 10px;
+}
+ul {
+    list-style: none;
+    padding-left: 10px;
+    text-indent: 0px;
+    padding-bottom: 10px;
+}
+li {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .temp {
-	line-height : 15px;
-	color : #000000;
+    line-height : 15px;
+}
+a img {
+    border: none;
+}
+
+.centered_box {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    padding: 0 12px 12px 12px;
+}
+.centered_box.first {
+    min-height: 200px;
+    height: auto !important;
+    height: 200px;
+    margin-top: 100px;
+}
+ul.projectlisting {
+    text-indent: 0;
+    margin: 0;
+    padding: 0 0 0 6px;
+}
+.toolbar {
+    margin: 2px 12px;
+}
+.toolbar a,
+.projectlisting a {
+    display: block;
+    float: left;
+    line-height: 22px;
+    padding: 2px 8px;
+}
+.toolbar .right {
+    float: right;
+}
+.toolbar h2,
+.projectlisting h2 {
+    display: block;
+    float: left;
+}
+.toolbar h2 a {
+}
+.projectlisting h2 a {
+    width: 180px;
+}
+.toolbar h2 a,
+.projectlisting h2 a {
+    padding-left: 0;
+}
+.toolbar h2 a:hover,
+.projectlisting h2 a:hover {
+    background: inherit;
+}
+.toolbar a span,
+.projectlisting a span {
+    position: relative;
+    display: inline-block;
+    padding-right: 22px;
+}
+.toolbar a img,
+.projectlisting a img {
+    position: absolute;
+    top: -14px;
+    /*top: -2px;*/
+    /*margin-bottom: -7px;*/
 }

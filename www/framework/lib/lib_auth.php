@@ -213,8 +213,12 @@ class ttUser{
      *
      * @param    $sid (string) session id
      */
-    function logout($sid) {
+    function logout($sid = null) {
         global $conf, $log;
+
+        if ($sid == null) {
+            $sid = $this->sid;
+        }
         
         $result = db_query(
             "SELECT * 
@@ -541,8 +545,12 @@ class ttUser{
      * 
      * @return    $level (int) authentication level of logged in user.
      */
-    function get_level_by_sid($sid) {
+    function get_level_by_sid($sid = null) {
         global $conf;
+
+        if ($sid == null) {
+            $sid = $this->sid;
+        }
         
         $result = db_query(
             "SELECT user.level AS level 
@@ -622,7 +630,6 @@ class ttUser{
                         $log->add_entry("'{$_SERVER['PHP_AUTH_USER']}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
                         $sid = $this->register_session($this->get_uid_by_name($_SERVER['PHP_AUTH_USER']), $_COOKIE[session_name()]);
                     } else {
-                        //$log->add_entry("has " . $_COOKIE[session_name()]);
                         $sid = $this->set_sid($_COOKIE[session_name()]);
                     }
                     session_id($sid);
@@ -630,7 +637,6 @@ class ttUser{
 
                     return;
                 } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                    $log->add_entry("delete cookie");
                     setcookie(session_name(), "", time() - 3600);
                     unset($_COOKIE[session_name()]);
                 }
@@ -670,9 +676,6 @@ class ttUser{
         } else {
             $_ENV["HTTP_AUTHORIZATION"] = str_replace('\"', '"', $_ENV["HTTP_AUTHORIZATION"]);
             $digest_header = substr($_ENV["HTTP_AUTHORIZATION"], strpos($_ENV["HTTP_AUTHORIZATION"],' ') + 1);
-            
-            //$log->add_entry("HTTP_AUTHORIZATION: " . $_ENV["HTTP_AUTHORIZATION"]);
-            //$log->add_entry("digest_header: " . $digest_header);
         }
         
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
@@ -690,7 +693,6 @@ class ttUser{
                         $log->add_entry("'{$data['username']}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
                         $sid = $this->register_session($this->get_uid_by_name($data['username']), $_COOKIE[session_name()]);
                     } else {
-                        //$log->add_entry("has " . $_COOKIE[session_name()]);
                         $sid = $this->set_sid($_COOKIE[session_name()]);
                     }
                     session_id($sid);
@@ -698,7 +700,6 @@ class ttUser{
 
                     return;
                 } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                    $log->add_entry("delete cookie");
                     setcookie(session_name(), "", time() - 3600);
                     unset($_COOKIE[session_name()]);
                 }
@@ -707,10 +708,10 @@ class ttUser{
         $sid = $this->get_sid();
         $opaque = md5($sid);
         $realm = $this->realm;
-        $domain = $conf->path_base;
+        $domain = $conf->path_base . "/";
         $nonce = $sid;
 
-        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['nonce'] != "") {
+        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['response'] == $valid_response) {
         //if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
             $log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
             $log->add_varinfo($headers);

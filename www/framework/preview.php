@@ -134,7 +134,7 @@ if ($param['project'] != "") {
     $xml_proc = tpl_engine::factory('xslt', $param);
     // {{{ browse or preview
     if ($param['id_file_path'] == "/") {
-        $param['access'] = "index";
+        $param['access'] = "redirect";
     }
     if ($param['access'] == 'browse' || $param['access'] == 'preview') { 
         $id = $xml_proc->get_id_by_path($param['id_file_path'], $project_name);
@@ -250,6 +250,25 @@ if ($param['project'] != "") {
         }
         headerType($transformed['content_type'], $transformed['content_encoding']);
         echo($transformed['value']);
+    // }}}
+    // {{{ redirect
+    } else if ($param['access'] == 'redirect') { 
+        
+        //headerType($transformed['content_type'], $transformed['content_encoding']);
+        //var_dump($param);
+        $languages = $project->get_languages($param['project']);
+        $languages = array_keys($languages);
+        $page_struct = $project->get_page_struct($param['project']);
+
+        $node = $page_struct->document_element();
+        while ($node != null && $node->tagname != "page") {
+            $node = $node->first_child();
+        }
+        
+        $url = $conf->path_base . "/projects/" . $param['project'] . "/preview/" . $param['type'] . "/cached/" . $languages[0] . $node->get_attribute("url");
+
+        header("Location: $url");
+        echo("redirect to <a href=\"$url\">$url</a>");
     }
     // }}}
 } else {

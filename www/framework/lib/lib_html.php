@@ -31,9 +31,10 @@ class html {
     }
     /* }}} */
     /* {{{ head */
-    function head() {
+    function head($extra_content) {
         global $conf;
-        ?>
+        ?><!DOCTYPE html>
+<html>
         <head>
             <title><?php echo(str_replace(array("%app_name%", "%app_version%"), array($conf->app_name, $conf->app_version), $this->lang["inhtml_main_title"])); ?></title>
             <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -45,19 +46,28 @@ class html {
                 }
             ?>
             
+            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}/framework/interface/jquery-1.3.2.min.js");?>"></script>
             <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}/framework/interface/interface.js");?>"></script>
             <link rel="stylesheet" type="text/css" href="<?php echo("{$conf->path_base}/framework/interface/interface.css");?>">
-            <?php htmlout::echoStyleSheet(); ?>
+            <?php 
+                echo($extra_content);
+                htmlout::echoStyleSheet(); 
+            ?>
         </head>
         <?php
+    }
+    /* }}} */
+    /* {{{ end */
+    function end() {
+        echo("</html>");
     }
     /* }}} */
     /* {{{ preview_frame */
     function preview_frame() {
         ?>
-        <frameset rows="30,100%,*" frameborder="0" border="0"  framespacing="0" onUnload="close_edit()">
-            <frame id="toolbarFrame" name="toolbar" src="framework/interface/toolbar.php" scrolling="no" noresize frameborder="0" border="0" framespacing="0">
-            <frame id="contentFrame" name="content" src="framework/interface/home.php" scrolling="auto" noresize frameborder="0" border="0" framespacing="0" onLoad="set_preview_title()">
+        <frameset rows="30,100%,*" frameborder="1" border="1"  framespacing="0" bordercolor="#000000" onUnload="close_edit()">
+            <frame id="toolbarFrame" name="toolbarFrame" src="framework/interface/toolbar.php" scrolling="no" noresize frameborder="1" border="1" framespacing="0">
+            <frame id="contentFrame" name="content" src="framework/interface/home.php" scrolling="auto" noresize frameborder="0" border="0" framespacing="0" onload="set_preview_title()">
         </frameset>
         <?php
     }
@@ -78,16 +88,56 @@ class html {
 
         $projects = $project->get_projects();
 
-        echo("<h1>Projekte</h1>");
-        echo("<ul>");
-        foreach ($projects as $name => $id) {
-            echo("<li>
-                <a href=\"javascript:top.open_edit('$name')\">$name</a> 
-                <a href=\"javascript:top.open_edit('$name')\">edit</a>
-                <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\">preview</a>
-            </li>");
+        echo("<div class=\"centered_box first\">");
+            echo("<h1>Projekte</h1>");
+            echo("<ul class=\"projectlisting\">");
+            foreach ($projects as $name => $id) {
+                echo("<li>");
+                echo("
+                    <h2><a href=\"javascript:top.open_edit('$name','')\">$name</a></h2>
+                    <p>
+                        <a href=\"javascript:top.open_edit('$name','')\"><span><img src=\"{$conf->path_base}/framework/interface/pics/icon_edit.gif\"></span>edit</a>
+                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span><img src=\"{$conf->path_base}/framework/interface/pics/icon_preview.gif\"></span>preview</a> ");
+                        if ($project->user->get_level_by_sid() <= 3) {
+                            echo("<a href=\"javascript:top.publish('$name')\">publish</a>");
+                        }
+                echo("</p></li>");
+            }
+            echo("</ul>");
+        echo("</div>");
+    }
+    /* }}} */
+    /* {{{ task_status */
+    function task_status() {
+        global $conf;
+        global $project;
+
+        $task_control = new bgTasks_control($conf->db_table_tasks, $conf->db_table_tasks_threads);
+
+        $tasks = $task_control->get_tasks();
+        if (count($tasks) > 0) {
+            echo("<div class=\"centered_box\">");
+                echo("<h1>Tasks</h1>");
+                echo("<ul>");
+                foreach($tasks as $t) {
+                    $tt = $task_control->get_task_control($t['id']);
+                    $t_status = $tt->get_status();
+                    $t_desc = $tt->get_description();
+                    $t_progress = $tt->get_progress();
+
+                    echo("<li>");
+                    echo("<h3>{$t['id']}. {$t['name']} &mdash; {$t['depends_on']}</h3>");
+                    echo("<p style=\"padding-bottom: 10px\">Status: <b>$t_status</b></p>");
+                    echo("<div style=\"float: left; border: 1px solid #000000; width: 202px; height: 15px; margin-left: 10px; margin-right: 10px;\">");
+                    echo("<div style=\"background: #ff9900; width: " . ($t_progress['percent'] * 2) . "px; height: 15px;\">");
+                    echo("</div></div>");
+                    echo("<p style=\"padding-top: 1px\">" . $t_progress['percent'] . "% finishing in " . $t_progress['time_until_end'] . "min</p>");
+                    echo("<p style=\"padding-top: 10px\">" . str_replace($lang_keys, $lang, $t_progress['description']) . "<br></p>");
+                    echo("</li>");
+                }
+                echo("</ul>");
+            echo("</div>");
         }
-        echo("</ul>");
     }
     /* }}} */
     /* {{{ status */
@@ -202,43 +252,34 @@ class htmlout {
      * @public
      */
     function echoStyleSheet() {
+        global $conf;
+
+        $settings = $conf->getScheme($conf->interface_scheme);
         ?>
             <style type="text/css">
                 <!--
-                * {
-                    font-family : Verdana, Tahoma, Verdana, Arial, Geneva, sans-serif;
-                    font-size : 12px;
-                    text-decoration : none;
-                    margin-top : 0px;
-                    margin-bottom : 0px;
-                }
                 .head {
-                    font-weight : bold;
-                    line-height : 15px;
                     color : #000000;
-                    margin-top : 7px;
-                    margin-bottom : 10px;
                 }
-                .normal {
-                    line-height : 15px;
+                .normal,
+                h2 a {
                     color : #000000;
-                    margin-bottom : 10px;
                 }
-                h1 {
-                    padding-top: 10px;
-                }
-                ul {
-                    list-style: none;
-                    padding-left: 10px;
-                    text-indent: 0px;
-                    padding-bottom: 10px;
-                }
-                li {
-                    padding-top: 5px;
-                    padding-bottom: 5px;
-                }
-                a {
+                a,
+                h2 a:hover {
                     color: #882200;
+                }
+                body {
+                    background: <?php echo($settings['color_background']); ?>
+                }
+                .centered_box {
+                    background: <?php echo($settings['color_face']); ?>
+                }
+                .toolbar a:hover {
+                    background: <?php echo($settings['color_face']); ?>;
+                }
+                .projectlisting a:hover {
+                    background: <?php echo($settings['color_background']); ?>;
                 }
                 -->
             </style>

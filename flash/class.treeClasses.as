@@ -457,9 +457,9 @@ class_tree_pages.prototype.load = function() {
 class_tree_pages.prototype.set_data = function(args) {
 	this.loading = false;
 	if (!args['error'] && this.updateEnabled) {
-		this.data = new XML(args['data']);
-		this.setNodeIds();
-		this.onChange();
+            this.data = new XML(args['data']);
+            this.setNodeIds();
+            this.onChange();
 	}
 };
 // }}}
@@ -760,6 +760,26 @@ class_tree_pages.prototype.getIdByURI = function(uri) {
 	} else {
 		return targetNode.nid;
 	}
+};
+// }}}
+// {{{ getIdByUrl()
+class_tree_pages.prototype.getIdByURL = function(url, node) {
+    if (node == undefined) {
+        node = this.data.getRootNode();
+    }
+	
+    if (!this.isFolder(node) && node.attributes.url == url) {
+        return node.nid;
+    } else {
+        for (var i = 0; i < node.childNodes.length; i++) {
+            nid = this.getIdByURL(url, node.childNodes[i]);
+            if (nid != "") {
+                return nid;
+            }
+        }
+
+    }
+    return "";
 };
 // }}}
 

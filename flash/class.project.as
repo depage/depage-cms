@@ -96,7 +96,11 @@ class_project.prototype.waitForLoaded = function(i) {
 	if (i == undefined) var i = 0;
 	
 	if (this.type == "webProject") {
-		var toLoad = [["settings", "colors", "tpl_templates", "tpl_newnodes"], ["pages"]];
+            if (conf.user.mayEditTemplates()) {
+                var toLoad = [["settings", "colors", "tpl_templates", "tpl_newnodes"], ["pages"]];
+            } else {
+                var toLoad = [["settings", "colors", "tpl_newnodes"], ["pages"]];
+            }
 	}
 	
 	if (i <= toLoad.length) {
