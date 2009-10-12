@@ -22,8 +22,11 @@
     $project->user->auth_http();
 
     $html = new html();
-    if ($_GET['type'] == "tasks") {
+
+    if ($_REQUEST['type'] == "tasks") {
         $html->task_status();
+    } elseif ($_REQUEST['type'] == "publish") {
+        $project->publish($_REQUEST['project']);
     }
 
     if (!$conf->pocket_use) {

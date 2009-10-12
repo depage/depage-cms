@@ -177,6 +177,13 @@ class html {
 
         $tasks = $task_control->get_tasks();
         if (count($tasks) > 0) {
+            $lang = $this->lang;
+
+            $lang_keys = array();
+            foreach ($lang as $key => $text) {
+                $lang_keys[] = "%$key%";
+            }
+
             echo("<div class=\"centered_box\">");
                 echo("<h1>Tasks</h1>");
                 echo("<ul>");
@@ -187,7 +194,7 @@ class html {
                     $t_progress = $tt->get_progress();
 
                     echo("<li>");
-                    echo("<h3>{$t['id']}. {$t['name']} &mdash; {$t['depends_on']}</h3>");
+                    echo("<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>");
                     echo("<p style=\"padding-bottom: 10px\">Status: <b>$t_status</b></p>");
                     echo("<div style=\"float: left; border: 1px solid #000000; width: 202px; height: 15px; margin-left: 10px; margin-right: 10px;\">");
                     echo("<div style=\"background: #ff9900; width: " . ($t_progress['percent'] * 2) . "px; height: 15px;\">");

@@ -67,7 +67,11 @@ function set_preview_title() {
 /* }}} */
 /* {{{ get_preview_pagetype */
 function get_preview_pagetype() {
-    var url = content.document.location.toString();
+    try {
+        var url = window.content.document.location.toString();
+    } catch(e) {
+        var url = "";
+    }
 
     if (url.match(/\/preview\//)) {
         return "preview";
@@ -84,6 +88,32 @@ function set_toolbar(type) {
         $("#button_reload, #button_edit").hide();
     }
 
+}
+/* }}} */
+
+/* {{{ dlg_publish */
+function dlg_publish(project) {
+    var html = "";
+
+    html += "<div class=\"dlg\">";
+        html += "<span><a class=\"question\"></a></span>";
+        html += "Do you want to publish '" + project + "' now?";
+        html += "<span></span>";
+        html += "<span><a class=\"yes\" href=\"#\"></a></span>";
+        html += "<span><a class=\"no\" href=\"#\"></a></span>";
+    html += "</div>";
+
+    var dlg = $(html).appendTo("body");
+
+    $(".yes", dlg).click(function() {
+        dlg.remove();
+
+        top.publish(project);
+    });
+    $(".no", dlg).click(function() {
+        dlg.remove();
+    });
+    
 }
 /* }}} */
 
@@ -180,6 +210,15 @@ function edit_page(page) {
 /* {{{ logout */
 function logout() {
     window.location = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "?logout=true";
+    //content.location = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "?logout=true";
+}
+/* }}} */
+/* {{{ publish */
+function publish(project) {
+    $("<div></div>").load("framework/interface/status.php", {
+        type: "publish",
+        project: project
+    }, function() {});
 }
 /* }}} */
 
@@ -188,7 +227,7 @@ function update_tasklist() {
     var tasks = $("#tasks");
 
     if (tasks.length == 1) {
-        tasks.load("status.php?type=tasks", {}, function() {
+        tasks.load("status.php?type=tasks", null, function() {
             setTimeout("update_tasklist()", 1500);
         });
     }
