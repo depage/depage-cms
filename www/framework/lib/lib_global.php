@@ -492,6 +492,7 @@ class config {
      * @param    $start_low_priority (bool)
      */
     function execInBackground($path, $script, $args = '', $start_low_priority = false) {
+        global $conf;
         global $log;
 
         if ($this->path_phpcli != "" && is_executable($this->path_phpcli)) {
@@ -526,7 +527,8 @@ class config {
             if ($host == "") {
                 $host = "localhost";
             }
-            $url = "http://{$host}{$path['dirname']}/{$script}?arg=" . urlencode($args);
+            $url = "http://{$host}{$conf->path_base}/framework/{$script}?arg=" . urlencode($args);
+
             if (is_callable('curl_init')) {
                 // call script through curl-interface
                 $fp = curl_init($url);

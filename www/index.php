@@ -37,7 +37,7 @@
             $project->user->logout();
 
             $html->head();
-            $html->message($html->lang["inhtml_logout_headline"], str_replace("%app_name%", $conf->app_name, $html->lang["inhtml_logout_text"]) . "<br><br>" . $html->lang["inhtml_logout_relogin"]);
+            $html->message($html->lang["inhtml_logout_headline"], str_replace("%app_name%", $conf->app_name, $html->lang["inhtml_logout_text"]), "<p class=\"bottom right\">" . $html->lang["inhtml_logout_relogin"] . "</p>");
         }
     } else {
         $project->user->auth_http();

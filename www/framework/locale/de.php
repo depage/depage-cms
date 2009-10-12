@@ -229,6 +229,7 @@ $texts = array(
 	'task_publish_publishing_pages' => "aktualisiere Seiten",
 	'task_publish_sitemap' => "aktualisiere Sitemap",
 	'task_publish_feeds' => "aktualisiere Atom Feeds",
+        'task_publish_progress' => "%percent%% beendet in %time_until_end%min</p>",
 	'time_calculating' => "(wird berechnet)",
 	'time_min' => "Minuten",
 	'time_sec' => "Sekunden",

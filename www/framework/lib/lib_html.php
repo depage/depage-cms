@@ -115,10 +115,21 @@ class html {
     /* }}} */
 
     /* {{{ message */
-    function message($head, $text) {
+    function message($head, $text = "", $extra = "") {
+        if (!is_array($text)) {
+            $text = array($text);
+        }
+        if (!is_array($extra)) {
+            $extra = array($extra);
+        }
         echo("<div class=\"centered_box first\">");
             echo("<h1>" . $head . "</h2>");
-            echo("<p>" . $text . "</p>");
+            foreach ($text as $t) {
+                echo("<p>" . $t . "</p>");
+            }
+            foreach ($extra as $t) {
+                echo($t);
+            }
         echo("</div>");
     }
     /* }}} */
@@ -186,7 +197,7 @@ class html {
 
             echo("<div class=\"centered_box\">");
                 echo("<h1>Tasks</h1>");
-                echo("<ul>");
+                echo("<ul class=\"tasks\">");
                 foreach($tasks as $t) {
                     $tt = $task_control->get_task_control($t['id']);
                     $t_status = $tt->get_status();
@@ -194,13 +205,16 @@ class html {
                     $t_progress = $tt->get_progress();
 
                     echo("<li>");
-                    echo("<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>");
-                    echo("<p style=\"padding-bottom: 10px\">Status: <b>$t_status</b></p>");
-                    echo("<div style=\"float: left; border: 1px solid #000000; width: 202px; height: 15px; margin-left: 10px; margin-right: 10px;\">");
-                    echo("<div style=\"background: #ff9900; width: " . ($t_progress['percent'] * 2) . "px; height: 15px;\">");
-                    echo("</div></div>");
-                    echo("<p style=\"padding-top: 1px\">" . $t_progress['percent'] . "% finishing in " . $t_progress['time_until_end'] . "min</p>");
-                    echo("<p style=\"padding-top: 10px\">" . str_replace($lang_keys, $lang, $t_progress['description']) . "<br></p>");
+                        echo("<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>");
+                        echo("<div class=\"progress\">");
+                            echo("<div style=\"width: " . ($t_progress['percent']) . "%;\">");
+                        echo("</div></div>");
+                        //echo("<p class=\"desc\">" . str_replace(array("%percent%", "%time_until_end%"), array($t_progress['percent'], $t_progress['time_until_end']), $this->lang['task_publish_progress']) . "</p>");
+                        echo("<p class=\"desc\">" . $t_progress['percent'] . "%</p>");
+                        echo("<p style=\"clear: both;\">" . str_replace($lang_keys, $lang, $t_progress['description']) . "</p>");
+                        if ($project->user->get_level_by_sid() <= 2) {
+                            echo("<p>Status: <b>$t_status</b></p>");
+                        }
                     echo("</li>");
                 }
                 echo("</ul>");
