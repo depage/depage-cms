@@ -30,8 +30,9 @@ class html {
         }
     }
     /* }}} */
+
     /* {{{ head */
-    function head($extra_content) {
+    function head($extra_content = "") {
         global $conf;
         ?><!DOCTYPE html>
 <html>
@@ -51,15 +52,74 @@ class html {
             <link rel="stylesheet" type="text/css" href="<?php echo("{$conf->path_base}/framework/interface/interface.css");?>">
             <?php 
                 echo($extra_content);
-                htmlout::echoStyleSheet(); 
+                $this->head_stylesheet(); 
             ?>
         </head>
         <?php
     }
     /* }}} */
+    /* {{{ head_stylesheet */
+    function head_stylesheet() {
+        global $conf;
+
+        $settings = $conf->getScheme($conf->interface_scheme);
+        ?>
+            <style type="text/css">
+                <!--
+                .head {
+                    color : #000000;
+                }
+                .normal,
+                h2 a {
+                    color : #000000;
+                }
+                a,
+                h2 a:hover {
+                    color: #882200;
+                }
+                body {
+                    background: <?php echo($settings['color_background']); ?>
+                }
+                .centered_box {
+                    background: <?php echo($settings['color_face']); ?>
+                }
+                .toolbar a:hover {
+                    background: <?php echo($settings['color_face']); ?>;
+                }
+                .projectlisting a:hover {
+                    background: <?php echo($settings['color_background']); ?>;
+                }
+                .dlg {
+                    background: <?php echo($settings['color_tooltipMsg_face']); ?>;
+                    border: 1px solid <?php echo($settings['color_component_line']); ?>;
+                    color: <?php echo($settings['color_tooltip_font']); ?>;
+                }
+                .dlg .question {
+                    background: url(<?php echo($this->icon_path("question"))?>);
+                }
+                .dlg .yes {
+                    background: url(<?php echo($this->icon_path("yes"))?>);
+                }
+                .dlg .no {
+                    background: url(<?php echo($this->icon_path("no"))?>);
+                }
+                -->
+            </style>
+        <?php    
+    }
+    /* }}} */
     /* {{{ end */
     function end() {
         echo("</html>");
+    }
+    /* }}} */
+
+    /* {{{ message */
+    function message($head, $text) {
+        echo("<div class=\"centered_box first\">");
+            echo("<h1>" . $head . "</h2>");
+            echo("<p>" . $text . "</p>");
+        echo("</div>");
     }
     /* }}} */
     /* {{{ preview_frame */
@@ -79,6 +139,7 @@ class html {
         <?php
     }
     /* }}} */
+
     /* {{{ project_listing */
     function project_listing() {
         global $conf;
@@ -96,10 +157,10 @@ class html {
                 echo("
                     <h2><a href=\"javascript:top.open_edit('$name','')\">$name</a></h2>
                     <p>
-                        <a href=\"javascript:top.open_edit('$name','')\"><span><img src=\"{$conf->path_base}/framework/interface/pics/icon_edit.gif\"></span>edit</a>
-                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span><img src=\"{$conf->path_base}/framework/interface/pics/icon_preview.gif\"></span>preview</a> ");
+                        <a href=\"javascript:top.open_edit('$name','')\"><span>" . $this->icon("edit") . "</span>" . $this->lang['inhtml_projects_edit'] . "</a>
+                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
                         if ($project->user->get_level_by_sid() <= 3) {
-                            echo("<a href=\"javascript:top.publish('$name')\">publish</a>");
+                            echo("<a href=\"javascript:dlg_publish('$name')\">" . $this->lang['inhtml_projects_publish'] . "</a>");
                         }
                 echo("</p></li>");
             }
@@ -240,126 +301,37 @@ class html {
         <?php
     }
     /* }}} */
-}
-/**
- * Defines functions, which may be called without initializing an
- * instance of htmlout. 
- */
-class htmlout {
-    /**
-     * outputs unified stylesheet for html content
-     *
-     * @public
-     */
-    function echoStyleSheet() {
+    /* {{{ toolbar */
+    function toolbar() {
         global $conf;
-
-        $settings = $conf->getScheme($conf->interface_scheme);
-        ?>
-            <style type="text/css">
-                <!--
-                .head {
-                    color : #000000;
-                }
-                .normal,
-                h2 a {
-                    color : #000000;
-                }
-                a,
-                h2 a:hover {
-                    color: #882200;
-                }
-                body {
-                    background: <?php echo($settings['color_background']); ?>
-                }
-                .centered_box {
-                    background: <?php echo($settings['color_face']); ?>
-                }
-                .toolbar a:hover {
-                    background: <?php echo($settings['color_face']); ?>;
-                }
-                .projectlisting a:hover {
-                    background: <?php echo($settings['color_background']); ?>;
-                }
-                -->
-            </style>
-        <?php    
-    }
-
-    /**
-     * outputs a transparent spacer image
-     *
-     * @public
-     *
-     * @param    $width (int) width of spacer, optional, default is 1
-     * @param    $height (int) height of spacer, optional, default is 1
-     */
-    function echoNullImg($width = 1, $height = 1) {
-        global $conf;
+        global $project;
         
-        echo("<img src=\"{$conf->path_base}/framework/interface/pics/null.gif\" width=\"$width\" height=\"$height\">");
+        echo("<div class=\"toolbar\">
+            <h2><a>depage::cms</a></h2>
+            <p>
+                <a id=\"button_home\" href=\"javascript:top.go_home()\">" . $this->lang['inhtml_toolbar_home'] . "</a>
+                <a id=\"button_reload\" href=\"javascript:top.content.location.reload()\" style=\"display:none\"><span>" . $this->icon("reload") . "</span>" . $this->lang['inhtml_toolbar_reload'] . "</a>
+                <a id=\"button_edit\" href=\"javascript:top.edit_page()\" style=\"display:none\"><span>" . $this->icon("edit") . "</span>" . $this->lang['inhtml_toolbar_edit'] . "</a>
+            </p>
+            <p class=\"right\">
+                <a id=\"button_logout\" href=\"javascript:top.logout()\">" . $this->lang['inhtml_toolbar_logout'] . "</a>
+            </p>
+        </div>");
     }
+    /* }}} */
 
-    /**
-     * outputs a message in a centered box
-     *
-     * @public
-     *
-     * @param    $head (string) title of message
-     * @param    $text (string) message text
-     */
-    function echoMsg($head, $text) {
-        ?>
-            <table width="100%" height="150">
-                <tr>
-                    <td align="center">
-                        <table border="0" cellspacing="0" cellpadding="0">
-                          <tr> 
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td rowspan="5" width="10" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(10); ?></td>
-                            <td height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td rowspan="5" width="10" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(10); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                          </tr>
-                          <tr> 
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                          </tr>
-                          <tr> 
-                            <td width="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="500" height="50" align="left" valign="middle" bgcolor="#D4D0C8">
-                                <p class="head"><?php echo($head) ?></p>
-                                <p class="normal"><?php echo($text) ?></p>
-                            </td>
-                            <td width="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                          </tr>
-                          <tr> 
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                          </tr>
-                          <tr> 
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td height="1" bgcolor="#D4D0C8"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                            <td width="1" height="1"><?php htmlout::echoNullImg(); ?></td>
-                          </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        <?php
+    /* {{{ icon */
+    function icon($name) {
+        return "<img src=\"" . $this->icon_path($name) . "\")>";
     }
+    /* }}} */
+    /* {{{ icon_path */
+    function icon_path($name) {
+        global $conf;
+
+        return "{$conf->path_base}/framework/interface/pics/icon_{$name}.gif";
+    }
+    /* }}} */
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

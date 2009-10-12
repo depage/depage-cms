@@ -29,27 +29,10 @@
     }
     // }}}
     
+    $html = new html();
+
+    $html->head($_GET['autorefresh'] == 'true' ? "<meta http-equiv=\"Refresh\" content=\"3 ;URL=status.php?autorefresh=true\">" : "");
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-    <!-- {{{ head -->
-    <head>
-        <title><?php echo(str_replace(array("%app_name%", "%app_version%"), array($conf->app_name, $conf->app_version), $lang["inhtml_status_title"])); ?></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        <?php
-            if ($_GET['autorefresh'] == 'true') {
-        ?>
-            <meta http-equiv="Refresh" content="3 ;URL=status.php?autorefresh=true">
-        <?php
-            }
-        ?>
-        <script language="JavaScript" type="text/JavaScript">
-        <!--
-        //-->
-        </script>
-        <?php htmlout::echoStyleSheet(); ?>
-    </head>
-    <!-- }}} -->
     <body bgcolor="<?php echo($settings['color_face']); ?>">            
         <!-- {{{ Users -->
         <h1>Logged in users</h1>
@@ -157,8 +140,8 @@
         ?>
         <!-- }}} -->
     </body>
-</html>
 <?php
+    $html->end();
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
 ?>

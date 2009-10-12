@@ -28,18 +28,9 @@
     $settings = $conf->getScheme($conf->interface_scheme); 
     ?>
     <body bgcolor="<?php echo($settings['color_face']); ?>">
-        <div class="toolbar">
-            <h2><a>depage::cms</a></h2>
-            <p>
-                <a id="button_home" href="javascript:top.go_home()" target="content">home</a>
-                <a id="button_reload" href="javascript:top.content.location.reload()"><span><img src="<?php echo("{$conf->path_base}/framework/interface/pics/icon_reload.gif"); ?>"></span>reload</a>
-                <a id="button_edit" href="javascript:top.edit_page()"><span><img src="<?php echo("{$conf->path_base}/framework/interface/pics/icon_edit.gif"); ?>"></span>edit page</a>
-            </p>
-            <p class="right">
-                <a id="button_logout" href="javascript:top.logout()">logout</a>
-            </p>
-        </div>
+        <?php
+            $html->toolbar();
+        ?>
     </body>
 <?php
     $html->end();
-?>

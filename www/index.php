@@ -29,19 +29,20 @@
     require_once('lib_pocket_server.php');
     require_once('lib_tasks.php');
 
+    $html = new html();
+
     if ($_GET['logout']) {
         if ($_COOKIE[session_name()] != "") {
             $project->user->auth_http();
             $project->user->logout();
 
-            die_error("Thank you for using depage::cms.");
+            $html->head();
+            $html->message($html->lang["inhtml_logout_headline"], str_replace("%app_name%", $conf->app_name, $html->lang["inhtml_logout_text"]) . "<br><br>" . $html->lang["inhtml_logout_relogin"]);
         }
     } else {
         $project->user->auth_http();
+
+        $html->head();
+        $html->preview_frame();
     }
-
-    $html = new html();
-
-    $html->head();
-    $html->preview_frame();
     $html->end();

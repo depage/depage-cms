@@ -1169,16 +1169,20 @@ function errorHandler ($errno, $errmsg, $filename, $linenum, $vars) {
 function die_error($msg, $redirect_url = null) { 
     global $conf;
      
-    if (!is_callable('htmlout::echoMsg')) {
-        require_once('lib_html.php');
-    }
+    require_once('lib_html.php');
     
     $settings = $conf->getScheme($conf->interface_scheme); 
-    echo("<html><head>" . ($redirect_url != null ? "<meta http-equiv=\"refresh\" content=\"3; URL=" . $redirect_url . "\">" : "")); 
-    htmlout::echoStyleSheet(); 
-    echo("</head><body bgcolor=\"" . $settings['color_background'] . "\">"); 
-    htmlout::echoMsg("Error", $msg); 
-    echo("</body></html>"); 
+
+    $html = new html();
+
+    $html->head($redirect_url != null ? "<meta http-equiv=\"refresh\" content=\"3; URL=" . $redirect_url . "\">" : "");
+
+    echo("<body bgcolor=\"" . $settings['color_background'] . "\">"); 
+        $html->message("Error", $msg); 
+    echo("</body>"); 
+
+    $html->end();
+
     die(); 
 }
 // }}}

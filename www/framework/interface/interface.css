@@ -42,7 +42,6 @@ li {
 a img {
     border: none;
 }
-
 .centered_box {
     width: 400px;
     margin-left: auto;
@@ -60,6 +59,9 @@ ul.projectlisting {
     text-indent: 0;
     margin: 0;
     padding: 0 0 0 6px;
+}
+.projectlisting p {
+    float: right;
 }
 .toolbar {
     margin: 2px 12px;
@@ -82,7 +84,7 @@ ul.projectlisting {
 .toolbar h2 a {
 }
 .projectlisting h2 a {
-    width: 180px;
+    /*width: 180px;*/
 }
 .toolbar h2 a,
 .projectlisting h2 a {

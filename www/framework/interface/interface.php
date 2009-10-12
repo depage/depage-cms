@@ -45,7 +45,7 @@
 		//-->	
 		</script>
 		<noscript>
-			<?php htmlout::echoMsg($lang["inhtml_require_title"], str_replace("%app_name%", $conf->app_name, $lang["inhtml_require_javascript"])); ?>
+			<?php $html->message($lang["inhtml_require_title"], str_replace("%app_name%", $conf->app_name, $lang["inhtml_require_javascript"])); ?>
 		</noscript>
 	</body>
 <?php

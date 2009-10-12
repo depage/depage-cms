@@ -213,11 +213,13 @@ if ($param['project'] != "") {
                 $settings = $conf->getScheme($conf->interface_scheme);
                 $lang = $conf->getTexts($conf->interface_language, 'inhtml');
                 
-                echo("<html><head>");
-                htmlout::echoStyleSheet();
-                echo("</head><body bgcolor=\"" . $settings['color_background'] . "\">");
-                htmlout::echoMsg($lang['inhtml_preview_error'], $data['error']);
-                echo("</body></html>");
+                $html = new html();
+
+                $html->head();
+                echo("<body bgcolor=\"" . $settings['color_background'] . "\">");
+                    $html->message($lang['inhtml_preview_error'], $data['error']);
+                echo("</body>");
+                $html->end();
             }
         } else {
             die_error("not a valid id");
