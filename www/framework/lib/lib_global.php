@@ -437,7 +437,7 @@ class config {
         } else {
             $value = NULL;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $value;
     }    
@@ -754,7 +754,7 @@ class logObj{
                 $entries[] = $row;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
 
         return $entries;
     }
@@ -772,7 +772,7 @@ class logObj{
     function get_entrynum($type){
         $result = mysql_query("SELECT COUNT(*) AS NUM FROM $this->log_db WHERE type='$type'");
         $row = mysql_fetch_assoc($result);
-        mysql_free_result($result);
+        //mysql_free_result($result);
 
         return $row['NUM'];
     }

@@ -137,7 +137,7 @@ class tpl_engine_xslt extends tpl_engine {
             } else {
                 $this->error = "";
             }
-            xslt_free($xh);
+            //xslt_free($xh);
             
             $transformed['value'] = $this->_post_transform($project_name, $type, $result);
             $transformed['content_type'] = $this->content_type;
@@ -244,7 +244,7 @@ class tpl_engine_xslt extends tpl_engine {
             } else {
                 $this->error = "";
             }
-            xslt_free($xh);
+            //xslt_free($xh);
             
             $transformed['value'] = $this->_post_transform($project_name, $type, $result);
             $transformed['content_type'] = $this->content_type;
@@ -357,7 +357,7 @@ class tpl_engine_xslt extends tpl_engine {
                     $transformed['content_encoding'] = $this->content_encoding;
                     $this->error = "";
                 }
-                xslt_free($xh);
+                //xslt_free($xh);
             
                 return $transformed;
             }

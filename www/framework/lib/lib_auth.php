@@ -200,7 +200,7 @@ class ttUser{
             $log->add_entry("unauthorisized: '" . $ip . "' tried to log in Project '" . $project . "' as '" . $user . "'", "auth");
             $retval = false;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retval;
     }
@@ -245,7 +245,7 @@ class ttUser{
             FROM $conf->db_table_updates
             WHERE sid='$sid'"
         );
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ logout_timed_out_users()
@@ -334,7 +334,7 @@ class ttUser{
 
             $retval = false;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retval;
     }
@@ -360,7 +360,7 @@ class ttUser{
         if (mysql_num_rows($result) == 1) {
             $data = mysql_fetch_assoc($result);
             $sid = $data['sid'];
-            mysql_free_result($result);
+            //mysql_free_result($result);
             
             db_query(
                 "DELETE 
@@ -376,7 +376,7 @@ class ttUser{
             if (mysql_num_rows($result) == 0) {
                 $this->logout($sid);
             }
-            mysql_free_result($result);
+            //mysql_free_result($result);
         }    
     }
     // }}}
@@ -409,7 +409,7 @@ class ttUser{
         );
         if (mysql_num_rows($result) == 1) {
             $row = mysql_fetch_assoc($result);
-            mysql_free_result($result);
+            //mysql_free_result($result);
             
             $this->sid = $sid;
             $this->wid = $wid;
@@ -428,7 +428,7 @@ class ttUser{
                 } else {
                     $retVal = false;
                 }
-                mysql_free_result($result);
+                //mysql_free_result($result);
             }
         } else {
             $retVal = false;
@@ -471,7 +471,7 @@ class ttUser{
         } else {
             $retVal = false;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -501,7 +501,7 @@ class ttUser{
         } else {
             $retVal = false;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -563,7 +563,7 @@ class ttUser{
         } else {
             $retVal = NULL;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -596,7 +596,7 @@ class ttUser{
         } else {
             $retVal = false;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }

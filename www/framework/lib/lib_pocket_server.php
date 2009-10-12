@@ -768,7 +768,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
             $xml_def = $project->get_colors($project_name);
             
             $data['data'] = $xml_def->dump_node($xml_def->document_element());
-            $xml_def->free();
+            //$xml_def->free();
             
             $func = new ttRpcFunc("update_tree_$type", $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");
@@ -777,7 +777,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
         } else if ($type == 'tpl_templates') {            
             $xml_def = $project->get_tpl_template_struct($project_name);
             $data['data'] = $xml_def->dump_node($xml_def->document_element());
-            $xml_def->free();
+            //$xml_def->free();
             
             $func = new ttRpcFunc("update_tree_$type", $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");
@@ -786,7 +786,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
         } else if ($type == 'tpl_newnodes') {
             $xml_def = $project->get_tpl_newnodes($project_name);
             $data['data'] = $xml_def->dump_node($xml_def->document_element());
-            $xml_def->free();
+            //$xml_def->free();
 
             $func = new ttRpcFunc("update_tree_$type", $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");
@@ -796,7 +796,7 @@ function tell_clients_to_update($project_name, $sid, $type, $ids = false) {
             $xml_def = $project->get_settings($project_name);
             
             $data['data'] = $xml_def->dump_node($xml_def->document_element());
-            $xml_def->free();
+            //$xml_def->free();
 
             $func = new ttRpcFunc("update_tree_$type", $data);
             $pocket_updates[] = array('func' => $func, 'project' => $project_name, 'info' => "sending update for '$type' to project '$project_name'");

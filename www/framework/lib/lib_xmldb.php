@@ -191,7 +191,7 @@ class xml_db {
                 $this->free_element_ids[] = $row['id_max'] + $i;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ get_docs()
@@ -244,7 +244,7 @@ class xml_db {
         } else {
             $retVal = false;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -272,7 +272,7 @@ class xml_db {
         } else {
             $retVal = false;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -300,7 +300,7 @@ class xml_db {
         } else {
             $retVal = false;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -328,7 +328,7 @@ class xml_db {
         } else {
             $retVal = false;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -355,7 +355,7 @@ class xml_db {
         } else {
             $retVal = null;    
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $retVal;
     }
@@ -389,7 +389,7 @@ class xml_db {
                 $node_ids[] = $row['id'];
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $node_ids;
     }
@@ -433,7 +433,7 @@ class xml_db {
                 $row = mysql_fetch_assoc($result);
                 $node_ids[] = $row['id'];
             }
-            mysql_free_result($result);
+            //mysql_free_result($result);
         }
         
         return $node_ids;
@@ -696,7 +696,7 @@ class xml_db {
         );
         if ($result && ($num = mysql_num_rows($result) == 1)) {
             $row = mysql_fetch_assoc($result);
-            mysql_free_result($result);
+            //mysql_free_result($result);
             
             $xml_doc = domxml_open_mem($row['value']);
         } else {
@@ -716,7 +716,7 @@ class xml_db {
             );
             if ($result && ($num = mysql_num_rows($result)) == 1) {
                 $row = mysql_fetch_assoc($result);
-                mysql_free_result($result);
+                //mysql_free_result($result);
                 
                 //if node is DOCUMENT_NODE
                 if ($row['type'] == 'DOCUMENT_NODE') {
@@ -727,7 +727,7 @@ class xml_db {
                     );
                     if ($result && ($num = mysql_num_rows($result)) == 1) {
                         $row = mysql_fetch_assoc($result);
-                        mysql_free_result($result);
+                        //mysql_free_result($result);
                         
                         $this->_get_node_by_id($xml_doc, $row['id'], $nodefunc, true, $row);    
                         $xml_doc = domxml_open_mem($xml_doc);
@@ -787,7 +787,7 @@ class xml_db {
                 WHERE id='$id'"
             );
             $row = mysql_fetch_assoc($result);
-            mysql_free_result($result);
+            //mysql_free_result($result);
         }
         //get ELMEMENT_NODE
         if ($row['type'] == 'ELEMENT_NODE') {
@@ -838,7 +838,7 @@ class xml_db {
                         $this->_get_node_by_id($xml_doc, $row['id'], $nodefunc, false, $row);
                     }
                 }
-                mysql_free_result($result);
+                //mysql_free_result($result);
                 $xml_doc .= "</$name>";
             }
         //get TEXT_NODES
@@ -970,7 +970,7 @@ class xml_db {
                 WHERE id='$id'"
             );
             $row = mysql_fetch_assoc($result);
-            mysql_free_result($result);
+            //mysql_free_result($result);
             $addParentNode = $row['id_parent'];
         } else {
             $addParentNode = NULL;
@@ -996,7 +996,7 @@ class xml_db {
                     $deleted_ids = array_merge($deleted_ids, $this->unlink_node_by_id($row['id'], $ids_to_keep, false, false, $row));
                 }    
             }
-            mysql_free_result($result);
+            //mysql_free_result($result);
             $deleted_ids[] = $id;
             
             if ($reorder_pos) {
@@ -1104,7 +1104,7 @@ class xml_db {
                     $row = mysql_fetch_assoc($result);
                     $this->unlink_node_by_id($row['id'], array(), true, false);
                 }
-                mysql_free_result($result);
+                //mysql_free_result($result);
             }
             $this->clear_cache(array($target_id));
             
@@ -1122,7 +1122,7 @@ class xml_db {
             } else {
                 $target_pos = 0;
             }
-            mysql_free_result($result);
+            //mysql_free_result($result);
             
             //resort
             db_query(
@@ -1408,7 +1408,7 @@ class xml_db {
             );
             $this->clear_cache(array($node_id));
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         $this->unlock();
     }
@@ -1467,7 +1467,7 @@ class xml_db {
                 }
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $attributes;
     }
@@ -1538,7 +1538,7 @@ class xml_db {
             WHERE id_parent='$target_id'"
         );
         $row = mysql_fetch_assoc($result);
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         $this->move_node($node_id, $target_id, $row['newpos']);
     }
@@ -1610,7 +1610,7 @@ class xml_db {
             WHERE id_parent='$target_id'"
         );
         $row = mysql_fetch_assoc($result);
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $this->copy_node($node_id, $target_id, $row['newpos']);
     }

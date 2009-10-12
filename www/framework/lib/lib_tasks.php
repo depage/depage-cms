@@ -219,7 +219,7 @@ class bgTasks_control {
             FROM $this->taskTable"
         );
         $row = mysql_fetch_assoc($result);
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $row['num'];
     }
@@ -246,7 +246,7 @@ class bgTasks_control {
                 $ids[] = $row;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $ids;
     }
@@ -274,7 +274,7 @@ class bgTasks_control {
                 $ids[] = $row;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $ids;
     }
@@ -302,7 +302,7 @@ class bgTasks_control {
                 $ids[] = $row;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $ids;
     }
@@ -330,7 +330,7 @@ class bgTasks_control {
                 $ids[] = $row;
             }
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $ids;
     }
@@ -493,7 +493,7 @@ class bgTasks_task {
             $this->start_by = $row['start_by'];
             $this->start_time = $row['start_time'];
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ add_thread()
@@ -784,7 +784,7 @@ class bgTasks_task {
             $row = mysql_fetch_assoc($result);
             return $row['status'];
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ set_description()
@@ -814,7 +814,7 @@ class bgTasks_task {
             
             return $row['status_description'];
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ get_progress()
@@ -849,7 +849,7 @@ class bgTasks_task {
             $value['percent'] = round($value['percent'] * 99);
             $value['description'] = $this->get_description();
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
         
         return $value;
     }
@@ -897,7 +897,7 @@ class bgTasks_thread {
             $this->taskObj->set_status('finished');
             $this->funcs = NULL;
         }
-        mysql_free_result($result);
+        //mysql_free_result($result);
     }
     // }}}
     // {{{ do_start()

@@ -103,7 +103,7 @@ class tpl_engine {
         );
         if ($result && mysql_num_rows($result) == 1) {
             $row = mysql_fetch_assoc($result);
-            mysql_free_result($result);
+            //mysql_free_result($result);
             
             return $row;
         } else {
