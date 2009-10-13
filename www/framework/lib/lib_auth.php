@@ -713,8 +713,8 @@ class ttUser{
 
         if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['response'] == $valid_response) {
         //if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-            $log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
-            $log->add_varinfo($headers);
+            //$log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
+            //$log->add_varinfo($headers);
             $stale = ", stale=true";
         } else {
             session_id($sid);

@@ -103,15 +103,35 @@ class project_acss_mysql2 extends project {
      */
     function get_projects() {
         global $conf;
+        global $log;
                 
         $projects = array();
         //$docs = $this->xmldb->get_docs();
 
-        $result = db_query(
-            "SELECT id, name, id_doc 
-            FROM $conf->db_table_projects
-            ORDER BY name"
-        );
+        $sid = $this->user->sid;
+        if ($this->user->get_level_by_sid() == 1) {
+            // get all projects for admins
+            $result = db_query(
+                "SELECT projects.id, projects.name, projects.id_doc 
+                FROM 
+                    $conf->db_table_projects AS projects
+                ORDER BY name"
+            );
+        } else {
+            // get only allowed projects for normal users
+            $result = db_query(
+                "SELECT projects.id, projects.name, projects.id_doc 
+                FROM 
+                    $conf->db_table_projects AS projects,
+                    $conf->db_table_sessions AS sessions,
+                    $conf->db_table_user_projects AS user_projects
+                WHERE
+                    sessions.sid = '$sid' AND
+                    sessions.userid = user_projects.uid AND
+                    user_projects.pid = projects.id
+                ORDER BY name"
+            );
+        }
         if ($result) {
             while ($row = mysql_fetch_assoc($result)) {
                 $projects[$row['name']] = $row['id_doc'];
