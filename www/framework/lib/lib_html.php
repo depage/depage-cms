@@ -123,7 +123,7 @@ class html {
             $extra = array($extra);
         }
         echo("<div class=\"centered_box first\">");
-            echo("<h1>" . $head . "</h2>");
+            echo("<h1>" . $head . "</h1>");
             foreach ($text as $t) {
                 echo("<p>" . $t . "</p>");
             }

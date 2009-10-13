@@ -34,6 +34,7 @@
     $html = new html();
 
     $html->head();
+        /*<body bgcolor="<?php echo($settings['color_background']); ?>" onUnload="opener.flashwin = null;">*/
     ?>
 	<body bgcolor="<?php echo($settings['color_background']); ?>" onUnload="open_home();">
 		<script language="JavaScript" type="text/javascript">
