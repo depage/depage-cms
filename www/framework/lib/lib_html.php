@@ -54,6 +54,8 @@ class html {
                 echo($extra_content);
                 $this->head_stylesheet(); 
             ?>
+            <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo("{$conf->path_base}/framework/interface/pics/favicon.ico");?>">
+            <link rel="icon" type="image/png" href="<?php echo("{$conf->path_base}/framework/interface/pics/favicon.png");?>">
         </head>
         <?php
     }
@@ -74,8 +76,9 @@ class html {
                     color : #000000;
                 }
                 a,
-                h2 a:hover {
-                    color: #882200;
+                h2 a:hover,
+                .projectlisting li:hover h2 a {
+                    color: <?php echo($settings['color_active2']); ?>;
                 }
                 body {
                     background: <?php echo($settings['color_background']); ?>
