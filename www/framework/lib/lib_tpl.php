@@ -64,6 +64,8 @@ class tpl_engine {
     function add_to_transform_cache($project_name, $type, $id, $lang, $access, $transformed, $ids_used) {
         global $conf, $project;
         
+        $this->_set_project($project_name);
+
         $id_project = $project->get_projectId($project_name);
         $value = mysql_real_escape_string($transformed['value']);
         $content_type = mysql_real_escape_string($transformed['content_type']);
@@ -71,7 +73,7 @@ class tpl_engine {
         $ids_used = implode(',', $ids_used);
         
         db_query(
-            "REPLACE {$conf->db_table_transform_cache}
+            "REPLACE {$this->db_table_transform_cache}
             SET id_project='$id_project', id_page='$id', type='$type', lang='$lang', access='$access', ids_used='$ids_used,', value='$value', content_type='$content_type', content_encoding='$content_encoding'"
         );
     }
@@ -95,10 +97,12 @@ class tpl_engine {
         
         $transformed = array();
         $id_project = $project->get_projectId($project_name);
+
+        $this->_set_project($project_name);
         
         $result = db_query(
             "SELECT value, content_type, content_encoding 
-            FROM {$conf->db_table_transform_cache}
+            FROM {$this->db_table_transform_cache}
             WHERE id_project='$id_project' and id_page='$id' and type='$type' and lang='$lang' and access='$access'"
         );
         if ($result && mysql_num_rows($result) == 1) {
@@ -127,9 +131,11 @@ class tpl_engine {
         
         $id_project = $project->get_projectId($project_name);
         
+        $this->_set_project($project_name);
+        
         $result = db_query(
             "DELETE  
-            FROM {$conf->db_table_transform_cache}
+            FROM {$this->db_table_transform_cache}
             WHERE id_project='$id_project' AND access='$access' AND (ids_used LIKE '%$id,%' OR id_page='$id')"
         );
     }
@@ -147,12 +153,31 @@ class tpl_engine {
         global $conf, $project;
         
         $id_project = $project->get_projectId($project_name);
+
+        $this->_set_project($project_name);
         
         $result = db_query(
             "DELETE  
-            FROM {$conf->db_table_transform_cache}
+            FROM {$this->db_table_transform_cache}
             WHERE id_project='$id_project' AND access='$access'"
         );
+    }
+    // }}}
+    
+    // {{{ _set_project()
+    /**
+     * sets actual project, depending on user
+     *
+     * @private
+     */
+    function _set_project($project_name) {
+        global $conf, $log;
+        global $project;
+
+        $project->_set_project($project_name);
+        
+        $project_name = str_replace(' ', '_', strtolower($project_name));
+        $this->db_table_transform_cache = "{$conf->db_prefix}_{$project_name}_transform_cache";
     }
     // }}}
 }

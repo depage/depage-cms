@@ -76,8 +76,10 @@ class rpc_bgtask_functions extends rpc_functions_class {
     function backup_db_init($args) {
         global $conf;
         global $xml_db;
+        global $project;
         
         $this->project = $args['project'];
+        $project->_set_project($project_name);
         $this->project_id = $xml_db->get_doc_id_by_name($this->project);
         
         $this->backup_xml = project::domxml_new_doc($backup_str);
@@ -465,6 +467,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         tell_clients_to_update($args['project'], '', 'files');
     }
     // }}}
+    
     // {{{ publish_init()
     /**
      * ----------------------------------------------
@@ -472,11 +475,16 @@ class rpc_bgtask_functions extends rpc_functions_class {
      */ 
     function publish_init($args) {
         global $xml_db, $log;
+        global $project;
+
+        $project_name = $args['project'];
 
         $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
         $GLOBALS['xml_proc'] = &$this->xml_proc;
         
-        $this->project = $args['project'];
+        $this->xml_proc->_set_project($project_name);
+
+        $this->project = $project_name;
         $this->project_id = $args['project_id'];
         $this->project_id = $xml_db->get_doc_id_by_name($this->project);
         $this->cache_path = $args['cache_path'];
@@ -484,7 +492,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
         $this->output_folder = $args['output_folder'];
         $this->output_user = $args['output_user'];
         $this->output_pass = $args['output_pass'];
-        
+
         $parsed = parse_url($this->output_folder);
         
         $this->output_protocol = $parsed['scheme'];
@@ -589,10 +597,12 @@ class rpc_bgtask_functions extends rpc_functions_class {
      *        project
      */ 
     function publish_cache_languages($args) {
-        global $xml_db, $conf;
+        global $xml_db, $conf, $project;
         
         $args['task']->set_description('%task_publish_caching_languages%');
         
+        $project->_set_project($this->project);
+
         $tempids = $xml_db->get_node_ids_by_name($this->project_id, $conf->ns['project']['ns'], 'languages');
         $tempdoc = $xml_db->get_doc_by_id($tempids[0], null, false);
         $tempdoc->dump_file($this->cache_path . 'languages.xml', false, false);
@@ -637,11 +647,11 @@ class rpc_bgtask_functions extends rpc_functions_class {
      *        project, page_id
      */ 
     function publish_cache_page($args) {
-        global $xml_db;
+        global $log;
 
         $args['task']->set_description('%task_publish_caching_pages% [id ' . $args['page_id'] . ']');
         
-        //$tempdoc = $this->xml_proc->get_settings($this->project, $this->template_set);
+        $this->xml_proc->_set_project($this->project);
         $tempdoc = $this->xml_proc->get_page($args['page_id']);
         $tempdoc->dump_file($this->cache_path . 'xml/page_' . $args['page_id'] . '.xml', false, false);
         
@@ -682,6 +692,7 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
         $GLOBALS['xml_proc'] = &$this->xml_proc;
+        $this->xml_proc->_set_project($this->project);
         
         $file_path = $this->xml_proc->get_path_by_id($args['page_id'], $args['lang'], $this->project);
         if (substr($file_path, -1) == '/') {
@@ -744,8 +755,6 @@ class rpc_bgtask_functions extends rpc_functions_class {
      * publish_index_page
      */ 
     function publish_index_page($args) {
-        global $xml_db;
-        
         $args['task']->set_description('%task_publish_processing_indexes%');
         
         $this->xml_proc->isPreview = true;
@@ -811,6 +820,8 @@ class rpc_bgtask_functions extends rpc_functions_class {
 
         // get encoding
         $this->xml_proc = tpl_engine::factory('xslt', array('isPreview' => false));
+        $this->xml_proc->_set_project($this->project);
+
         $settings = $this->xml_proc->get_settings($this->project, $this->template_set);
         $tempNode = $settings->document_element();
         

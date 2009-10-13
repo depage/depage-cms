@@ -25,6 +25,8 @@ class publish {
         $this->project_name = $project_name;
         $this->publish_id = $publish_id;
 
+        $this->_set_project($project_name);
+
         $this->fs_local = fs::factory('local');
     }
     /* }}} */
@@ -70,7 +72,7 @@ class publish {
 
         // remove old entry
         $result = db_query(
-            "DELETE FROM $conf->db_table_publish_files 
+            "DELETE FROM $this->db_table_publish_files 
             WHERE 
                 pid={$this->publish_id} AND
                 path='" . mysql_escape_string($file->path) . "' AND
@@ -80,7 +82,7 @@ class publish {
 
         // add new entry
         $result = db_query(
-            "INSERT INTO $conf->db_table_publish_files 
+            "INSERT INTO $this->db_table_publish_files 
             SET 
                 pid={$this->publish_id}, 
                 path='" . mysql_escape_string($file->path) . "',
@@ -98,7 +100,7 @@ class publish {
 
         // update entry
         $result = db_query(
-            "UPDATE $conf->db_table_publish_files 
+            "UPDATE $this->db_table_publish_files 
             SET 
                 exist='1'
             WHERE
@@ -115,7 +117,7 @@ class publish {
 
         // update entry
         $result = db_query(
-            "UPDATE $conf->db_table_publish_files 
+            "UPDATE $this->db_table_publish_files 
             SET 
                 exist='0'
             WHERE
@@ -135,7 +137,7 @@ class publish {
             "SELECT
                 path,
                 filename
-            FROM $conf->db_table_publish_files 
+            FROM $this->db_table_publish_files 
             WHERE
                 pid={$this->publish_id} AND
                 exist='0'
@@ -162,7 +164,7 @@ class publish {
         // update entry
         $result = db_query(
             "DELETE
-            FROM $conf->db_table_publish_files 
+            FROM $this->db_table_publish_files 
             WHERE
                 pid={$this->publish_id} AND
                 exist='0'
@@ -177,7 +179,7 @@ class publish {
         global $conf;
 
         $result = db_query(
-            "SELECT sha1 FROM $conf->db_table_publish_files 
+            "SELECT sha1 FROM $this->db_table_publish_files 
             WHERE 
                 pid={$this->publish_id} AND
                 path='" . mysql_escape_string($file->path) . "' AND
@@ -202,7 +204,7 @@ class publish {
         $result = db_query(
             "SELECT
                 lastmod
-            FROM $conf->db_table_publish_files 
+            FROM $this->db_table_publish_files 
             WHERE
                 pid={$this->publish_id} AND
                 path='" . mysql_escape_string($file->path) . "' AND
@@ -218,6 +220,20 @@ class publish {
         return false;
     }
     /* }}} */
+    
+    // {{{ _set_project()
+    /**
+     * sets actual project, depending on user
+     *
+     * @private
+     */
+    function _set_project($project_name) {
+        global $conf, $log;
+        
+        $project = str_replace(' ', '_', strtolower($project_name));
+        $this->db_table_publish_files = "{$conf->db_prefix}_{$project}_publish_files";
+    }
+    // }}}
 }
 
 class publish_file {

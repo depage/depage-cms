@@ -919,6 +919,8 @@ class xml_db {
      *            were deleted.
      */
     function clear_cache($changed_ids = array(), $clearall = false) {
+        global $log;
+
         if ($clearall) {
             db_query(
                 "DELETE 
@@ -926,11 +928,12 @@ class xml_db {
                 WHERE 1=1"
             );
         } else {
-            if (count($changed_ids) > 0) {
+            $to_delete = implode(',', $changed_ids);
+            if ($to_delete != "") {
                 db_query(
                     "DELETE
                     FROM $this->cache_table
-                    WHERE id IN (" . implode(',', $changed_ids)    . ")"
+                    WHERE id IN ($to_delete)"
                 );
                 for ($i = 0; $i < count($changed_ids); $i++) {
                     db_query(
@@ -960,6 +963,8 @@ class xml_db {
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
     function unlink_node_by_id($id, $ids_to_keep = array(), $reorder_pos = true, $lock = true, $row = array())  {
+        global $log;
+
         $this->lock_write();
         
         $deleted_ids = array();
@@ -1000,11 +1005,12 @@ class xml_db {
             $deleted_ids[] = $id;
             
             if ($reorder_pos) {
-                if (count($deleted_ids) > 0) {
+                $to_delete = implode(',', $deleted_ids);
+                if ($to_delete != "") {
                     db_query(
                         "UPDATE $this->element_table
                         SET type='DELETED'
-                        WHERE id IN (" . implode(',', $deleted_ids)    . ")"
+                        WHERE id IN ($to_delete)"
                     );
                     $this->clear_cache($deleted_ids);
                 }

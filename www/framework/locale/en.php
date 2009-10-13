@@ -3,7 +3,7 @@
 $texts = array(
 	'all_comment' => "comment",
         'auth_access' => "Authentication",
-        'auth_no_access' => "You have noch Authentication to access this item",
+        'auth_no_access' => "You have no Authentication to access this item",
 	'auth_no_right' => "Sorry, you don't have the authentification to change \"%name%\".",
 	'button_link_target_blank' => "new window",
 	'button_link_target_self' => "existing window",

@@ -451,10 +451,10 @@ class tpl_engine_xslt extends tpl_engine {
         if ($id == '') {
             return "<error>can't get page without id</error>";
         }
-        $data_id = $project->get_page_data_id_by_page_id($this->project, $id);
+        $data_id = $project->get_page_data_id_by_page_id($project->project_name, $id);
         if (!isset($this->pages[$data_id])) {
             if ($this->isPreview) {
-                $temp_xml = $project->get_page_data($this->project, $data_id);
+                $temp_xml = $project->get_page_data($project->project_name, $data_id);
 
                 $this->pages[$data_id] = $project->domxml_new_doc();
                 $root_node = $this->pages[$data_id]->create_element_ns($conf->ns['page']['uri'], 'page', $conf->ns['page']['ns']);
@@ -463,7 +463,7 @@ class tpl_engine_xslt extends tpl_engine {
                         $root_node->set_attribute("xmlns:{$ns['ns']}", $ns['uri']);
                     }
                 }
-                $page_attributes = $project->get_page_attributes($this->project, $id);
+                $page_attributes = $project->get_page_attributes($project->project_name, $id);
                 foreach ($page_attributes as $name => $value) {
                     $root_node->set_attribute($name, $value);
                 }
@@ -475,7 +475,7 @@ class tpl_engine_xslt extends tpl_engine {
                 $this->pages[$data_id]->append_child($root_node);
                 $this->ids_used[] = $data_id;
             } else {
-                $this->pages[$data_id] = domxml_open_file($project->get_project_path($this->project) . "/publish/xml/page_{$id}.xml");
+                $this->pages[$data_id] = domxml_open_file($project->get_project_path($project->project_name) . "/publish/xml/page_{$id}.xml");
             }
             
         }
@@ -953,7 +953,7 @@ class tpl_engine_xslt extends tpl_engine {
      * @return    $colors (xmlobject) colorschemes
      */
     function get_colors($project_name) {
-        global $conf, $project;
+        global $conf, $project, $log;
 
         if ($this->isPreview) {
             return $project->get_colors($project_name);

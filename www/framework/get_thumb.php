@@ -146,6 +146,8 @@ function imgGetThumb($project_name = '', $sourceImgPath = '', $sourceImg = '') {
     global $conf, $project;
     global $xml_db;
 
+    $project->_set_project($project_name);
+    $db_table_mediathumbs = "{$conf->db_prefix}_{$project_name}_mediathumbs";
     $imageWholePath = $project->get_project_path($project_name) . '/lib' . $sourceImgPath . $sourceImg;
     
     if ($sourceImgPath != '' && $sourceImg != '' && file_exists($imageWholePath)) {
@@ -157,7 +159,7 @@ function imgGetThumb($project_name = '', $sourceImgPath = '', $sourceImg = '') {
             
             $result = db_query(
                 "SELECT * 
-                FROM $conf->db_table_mediathumbs 
+                FROM $db_table_mediathumbs 
                 WHERE projectId=\"$projectId\" and path=\"" . mysql_real_escape_string($sourceImgPath) . "\" and filename=\"" . mysql_real_escape_string($sourceImg) . "\""
             );
             if (mysql_num_rows($result) > 0) {
@@ -165,7 +167,7 @@ function imgGetThumb($project_name = '', $sourceImgPath = '', $sourceImg = '') {
                 if ($row['size'] != $filesize || $row['mtime'] != $filemtime) {
                     $thumb = imgMakeThumb($imageWholePath);
                     db_query(
-                        "UPDATE $conf->db_table_mediathumbs 
+                        "UPDATE $db_table_mediathumbs 
                         SET mtime=\"$filemtime\", size=\"$filesize\", thumb=\"" . mysql_real_escape_string($thumb) . "\" 
                         WHERE projectId=\"$projectId\" and path=\"" . mysql_real_escape_string($sourceImgPath) . "\" and filename=\"" . mysql_real_escape_string($sourceImg) . "\""
                     );
@@ -176,7 +178,7 @@ function imgGetThumb($project_name = '', $sourceImgPath = '', $sourceImg = '') {
             } else {
                 $thumb = imgMakeThumb($imageWholePath);
                 db_query(
-                    "INSERT INTO $conf->db_table_mediathumbs 
+                    "INSERT INTO $db_table_mediathumbs 
                     SET projectId=\"$projectId\", path=\"" . mysql_real_escape_string($sourceImgPath) . "\", filename=\"" . mysql_real_escape_string($sourceImg) . "\", mtime=\"$filemtime\", size=\"$filesize\", thumb=\"" . mysql_real_escape_string($thumb) . "\""
                 );
                 

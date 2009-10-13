@@ -65,25 +65,27 @@ class config {
             );
 
         $vars_to_set_eval = array(
-            'db_table_user' => (string) '%db_praefix%_auth_user',
-            'db_table_sessions' => (string) '%db_praefix%_auth_sessions',
-            'db_table_sessions_win' => (string) '%db_praefix%_auth_sessions_win',
-            'db_table_updates' => (string) '%db_praefix%_auth_updates',
+            'db_table_user' => (string) '%db_prefix%_auth_user',
+            'db_table_user_projects' => (string) '%db_prefix%_auth_projects',
+            'db_table_sessions' => (string) '%db_prefix%_auth_sessions',
+            'db_table_sessions_win' => (string) '%db_prefix%_auth_sessions_win',
+            'db_table_updates' => (string) '%db_prefix%_auth_updates',
+            'db_table_projects' => (string) '%db_prefix%_projects',
                 
-            'db_table_env' => (string) '%db_praefix%_env',
+            'db_table_env' => (string) '%db_prefix%_env',
                 
-            'db_table_mediathumbs' => (string) '%db_praefix%_mediathumbs',
+            'db_table_mediathumbs' => (string) '%db_prefix%_mediathumbs',
                 
-            'db_table_transform_cache' => (string) '%db_praefix%_transform_cache',
-            'db_table_xml_elements' => (string) '%db_praefix%_xmldata_elements',
-            'db_table_xml_cache' => (string) '%db_praefix%_xmldata_cache',
+            'db_table_transform_cache' => (string) '%db_prefix%_transform_cache',
+            'db_table_xml_elements' => (string) '%db_prefix%_xmldata_elements',
+            'db_table_xml_cache' => (string) '%db_prefix%_xmldata_cache',
                 
-            'db_table_tasks' => (string) '%db_praefix%_tasks',
-            'db_table_tasks_threads' => (string) '%db_praefix%_tasks_threads',
+            'db_table_tasks' => (string) '%db_prefix%_tasks',
+            'db_table_tasks_threads' => (string) '%db_prefix%_tasks_threads',
 
-            'db_log' => (string) '%db_praefix%_log',
+            'db_log' => (string) '%db_prefix%_log',
 
-            'db_table_publish_files' => (string) '%db_praefix%_publish_files',
+            'db_table_publish_files' => (string) '%db_prefix%_publish_files',
             );
 
         $vars_to_get = array(
@@ -139,7 +141,7 @@ class config {
             'db_user' => (string) '',
             'db_pass' => (string) '',
 
-            'db_praefix' => (string) 'tt',
+            'db_prefix' => (string) 'tt',
 
             'file_notfound' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_notfound.swf',
             'file_thumbs' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_thumbs.swf',

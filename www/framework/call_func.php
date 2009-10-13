@@ -418,6 +418,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         $data = array();
         $updated = false;
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         // {{{ pages
         if ($args['type'] == 'pages') {
@@ -507,6 +508,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         // {{{ files
         if ($args['type'] == 'files') {
@@ -555,6 +557,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         $data = array();
         $updated = false;
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         // {{{ files
         if ($args['type'] == 'files') {
@@ -600,10 +603,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         if ($args['type'] == 'page_data') {
             if (($data_id = $project->_set_element_lastchange_UTC($args['id'])) != null) {
-                tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                $tpl_engine = new tpl_engine();
+                $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
             }
             list($meta_id) = $xml_db->get_child_ids_by_name($data_id, "pg", "meta");
             $xml_db->set_attribute($meta_id, '', 'colorscheme', $args['colorscheme']);
@@ -632,6 +637,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         if ($args['type'] == 'page_data') {
             $temp_XML = domxml_open_mem($args['navigations']);
@@ -645,7 +651,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             $nodetype = $xml_db->get_node_name_by_id($args['id']);
             $data_id = $project->_set_element_lastchange_UTC($args['id']);
             if ($nodetype == "{$conf->ns['page']['ns']}:page" || $nodetype == "{$conf->ns['page']['ns']}:folder") {
-                tpl_engine::clear_transform_cache($project_name, 'preview');
+                $tpl_engine = new tpl_engine();
+                $tpl_engine->clear_transform_cache($project_name, 'preview');
             }
             tell_clients_to_update($project_name, $args['sid'], 'page_data', array($args['id'], $data_id));
             tell_clients_to_update($project_name, $args['sid'], 'pages', array($args['id']));
@@ -675,6 +682,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         if ($args['type'] == 'page_data') {
             $xml_db->set_attribute($args['id'], '', 'file_type', $args['file_type']);
@@ -683,7 +691,8 @@ class rpc_phpConnect_functions extends rpc_functions_class {
             }
 
             if (($data_id = $project->_set_element_lastchange_UTC($args['id'])) != null) {
-                tpl_engine::delete_from_transform_cache($project_name, $args['id'], 'preview');
+                $tpl_engine = new tpl_engine();
+                $tpl_engine->delete_from_transform_cache($project_name, $args['id'], 'preview');
             }
             tell_clients_to_update($project_name, $args['sid'], 'page_data', array($args['id'], $data_id));
             tell_clients_to_update($project_name, $args['sid'], 'pages', array($args['id']));
@@ -708,6 +717,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         if ($args['type'] == 'tpl_templates') {
             $xml_db->set_attribute($args['id'], '', 'type', $args['new_type']);
@@ -734,6 +744,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
         
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         if ($args['type'] == 'tpl_templates') {
             $xml_db->set_attribute($args['id'], '', 'active', $args['new_active']);
@@ -756,12 +767,12 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function duplicate_node($args) {
         global $conf, $project;
-        global $xml_db;
         global $log;
         
         $updated_ids = array();
         $data = array();
         $project_name = $args['project_name'];
+        $project->_set_project($project_name);
 
         // {{{ files
         if ($args['type'] == 'files') {
@@ -792,7 +803,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function move_node_in($args) {
         global $conf, $project;
-        global $xml_db;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -823,7 +833,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function move_node_before($args) {
         global $conf, $project;
-        global $xml_db;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -846,7 +855,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function move_node_after($args) {
         global $conf, $project;
-        global $xml_db;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -870,7 +878,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function copy_node_in($args) {
         global $conf, $project;
-        global $xml_db, $log;
+        global $log;
         
         $project_name = $args['project_name'];
 
@@ -903,7 +911,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function copy_node_before($args) {
         global $conf, $project;
-        global $xml_db;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -928,7 +935,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function copy_node_after($args) {
         global $conf, $project;
-        global $xml_db;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -953,7 +959,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      * @param    $args['template_type'] (string) name of template set
      */ 
     function release_templates($args) {
-        global $xml_db, $project;
+        global $project;
         
         $data = array();
         $project_name = $args['project_name'];
@@ -1296,7 +1302,6 @@ class rpc_phpConnect_functions extends rpc_functions_class {
      */ 
     function _dummy_wait($name, $depends) {
         global $confi, $project;
-        global $xml_db;
         
         $task = new bgTasks_task($conf->db_table_tasks, $conf->db_table_tasks_threads);
         $start_date = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));

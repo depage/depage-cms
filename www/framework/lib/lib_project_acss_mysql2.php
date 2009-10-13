@@ -105,9 +105,20 @@ class project_acss_mysql2 extends project {
         global $conf;
                 
         $projects = array();
-        $docs = $this->xmldb->get_docs();
+        //$docs = $this->xmldb->get_docs();
 
-        return $docs;
+        $result = db_query(
+            "SELECT id, name, id_doc 
+            FROM $conf->db_table_projects
+            ORDER BY name"
+        );
+        if ($result) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $projects[$row['name']] = $row['id_doc'];
+            }
+        }
+
+        return $projects;
     }
     // }}}
     // {{{ get_avail_projects()
@@ -124,8 +135,10 @@ class project_acss_mysql2 extends project {
         // @todo rewrite for different xmldb-tables
         $xml_proj = '';
         
-        $docs = $this->xmldb->get_docs();
+        $docs = $this->get_projects();
         foreach ($docs as $name => $id) {
+            $this->_set_project($name);
+
             list($temp_id) = $this->xmldb->get_node_ids_by_xpath($id, "/{$conf->ns['project']['ns']}:project/{$conf->ns['project']['ns']}:settings/{$conf->ns['project']['ns']}:type");
             $xml_proj .= "<project name=\"{$name}\" preview=\"" . $this->xmldb->get_attribute($temp_id, "", "preview") . "\" />";
         }
@@ -146,6 +159,7 @@ class project_acss_mysql2 extends project {
     function get_projectId($project_name) {
         global $log;
         // @todo rewrite for different xmldb-tables
+        $this->_set_project($project_name);
 
         if (preg_match("/^([0-9]+)$/", (string) $project_name)) {
             $log->add_entry("!!!! ATTENTION get_projectID by number instead of name");
@@ -301,12 +315,15 @@ class project_acss_mysql2 extends project {
     function get_page_data_test_lang($project_name, $id) {
         global $log;
 
+        $this->_set_project($project_name);
         $xml_def = $this->get_page_data($project_name, $id);
         
         $languages = $this->get_languages($project_name);
         if ($this->_test_pageObj_languages($xml_def, 'true', $languages)) {
             $this->xmldb->save_node($xml_def);
-            tpl_engine::delete_from_transform_cache($project_name, $id, 'preview');
+
+            $tpl_engine = new tpl_engine();
+            $tpl_engine->delete_from_transform_cache($project_name, $id, 'preview');
         }
 
         return $xml_def;
@@ -609,7 +626,7 @@ class project_acss_mysql2 extends project {
             $retVal = false;
         } else if ($name == "{$conf->ns['page']['ns']}:page" || $name == "{$conf->ns['project']['ns']}:pages_struct") {
             $retVal = 'pages';
-            $data_id = $this->get_page_data_id_by_page_id('', $id);
+            $data_id = $this->get_page_data_id_by_page_id($this->project_name, $id);
         } else if ($name == "{$conf->ns['page']['ns']}:page_data" || $name == "{$conf->ns['page']['ns']}:folder_data") {
             $retVal = 'page_data';
         } else if ($name == "{$conf->ns['project']['ns']}:colorscheme" || $name == "{$conf->ns['project']['ns']}:colorschemes") {
@@ -622,7 +639,7 @@ class project_acss_mysql2 extends project {
             $retVal = 'tpl_template_data';
         } else if ($name == "{$conf->ns['page']['ns']}:newnode" || $name == "{$conf->ns['project']['ns']}:tpl_newnodes") {
             $retVal = 'tpl_newnodes';
-            $data_id = $this->get_page_data_id_by_page_id('', $id);
+            $data_id = $this->get_page_data_id_by_page_id($this->project_name, $id);
         } else if ($name == "{$conf->ns['project']['ns']}:project") {
             $retVal = 'unknown';
         } else {
@@ -654,12 +671,15 @@ class project_acss_mysql2 extends project {
             switch ($type) {
                 case 'page_data':
                     $this->_set_element_lastchange_UTC($id);
-                    tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+
+                    $tpl_engine = new tpl_engine();
+                    $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
                 case 'colors':
                     $this->generate_css($project_name);
 
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine = new tpl_engine();
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'tpl_template_data':
                     $this->_set_element_lastchange_UTC($id);
@@ -824,7 +844,8 @@ class project_acss_mysql2 extends project {
                 $temp_node = $temp_node->next_sibling();
             }
             if (($page_data_id = $this->_set_element_lastchange_UTC($target_id)) != null) {
-                tpl_engine::delete_from_transform_cache($project_name, $page_data_id, 'preview');
+                $tpl_engine = new tpl_engine();
+                $tpl_engine->delete_from_transform_cache($project_name, $page_data_id, 'preview');
             }
 
             return $new_id;
@@ -931,16 +952,17 @@ class project_acss_mysql2 extends project {
         $this->_set_project($project_name);
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
             $this->xmldb->set_attribute($id, '', 'name', $newname);
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'page_data':
                     $this->_set_element_lastchange_UTC($id);
-                    tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                    $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
                 case 'colors':
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     $this->generate_css($project_name);
                     break;
             }
@@ -969,6 +991,7 @@ class project_acss_mysql2 extends project {
         $data_ids = array();
         $changed_ids = array();
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
                     //get data_ids
@@ -992,7 +1015,7 @@ class project_acss_mysql2 extends project {
 
                     //delete page_nodes
                     $changed_ids = array_merge($changed_ids, $this->xmldb->unlink_node_by_id($id));
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     $this->xmldb->clear_deleted_nodes();
                     break;
                 case 'page_data':
@@ -1001,12 +1024,12 @@ class project_acss_mysql2 extends project {
                     $this->xmldb->clear_deleted_nodes();
                     $changed_ids[] = $data_id;
                     if ($data_id != null) {
-                        tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                        $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     }
                     break;
                 case 'colors':
                     $changed_ids = $this->xmldb->unlink_node_by_id($id);
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     
                     $this->generate_css($project_name);
 
@@ -1067,6 +1090,7 @@ class project_acss_mysql2 extends project {
 
         $this->_set_project($project_name);
         if (in_array($type = $this->get_type($id, $data_id), array('pages', 'page_data', 'colors', 'tpl_templates', 'tpl_newnodes', 'colors', 'settings'))) {
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
                     //get needed data
@@ -1109,7 +1133,7 @@ class project_acss_mysql2 extends project {
 
                     $new_id = $this->xmldb->save_node($root_node, $target_id, $target_pos);
                     if (($page_id = $this->_set_element_lastchange_UTC($id)) != null) {
-                        tpl_engine::delete_from_transform_cache($project_name, $page_id, 'preview');
+                        $tpl_engine->delete_from_transform_cache($project_name, $page_id, 'preview');
                     }
                     break;
                 case 'colors':
@@ -1201,12 +1225,13 @@ class project_acss_mysql2 extends project {
         if ($type && $type == $target_type) {
             $this->xmldb->move_node_in($id, $target_id);
             $this->_set_element_lastchange_UTC($id);
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'page_data':
-                    tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                    $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
             }
         }
@@ -1229,12 +1254,13 @@ class project_acss_mysql2 extends project {
         if ($type && $type == $target_type) {
             $this->xmldb->move_node_before($id, $target_id);
             $this->_set_element_lastchange_UTC($id);
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'page_data':
-                    tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                    $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
             }
         }
@@ -1257,12 +1283,13 @@ class project_acss_mysql2 extends project {
         if ($type && $type == $target_type) {
             $this->xmldb->move_node_after($id, $target_id);
             $this->_set_element_lastchange_UTC($id);
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'page_data':
-                    tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                    $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     break;
             }
         }
@@ -1284,6 +1311,7 @@ class project_acss_mysql2 extends project {
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
                     //get needed data
@@ -1315,7 +1343,7 @@ class project_acss_mysql2 extends project {
                     $cp_nodes->nodeset[0]->set_attribute('name', $new_name);
                     $this->xmldb->save_node($cp_nodes->nodeset[0]);
 
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
                     break;
                 case 'page_data':
                 case 'colors':
@@ -1327,7 +1355,7 @@ class project_acss_mysql2 extends project {
                     }
                     $this->_set_element_lastchange_UTC($new_id);
                     if ($type == 'page_data') {    
-                        tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                        $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     }
                     break;
             }
@@ -1351,6 +1379,7 @@ class project_acss_mysql2 extends project {
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
                     //get needed data
@@ -1382,7 +1411,7 @@ class project_acss_mysql2 extends project {
                     $cp_nodes->nodeset[0]->set_attribute('name', $new_name);
                     $this->xmldb->save_node($cp_nodes->nodeset[0]);
 
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
 
                     break;
                 case 'page_data':
@@ -1395,7 +1424,7 @@ class project_acss_mysql2 extends project {
                     }
                     $this->_set_element_lastchange_UTC($new_id);
                     if ($type == 'page_data') {    
-                        tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                        $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     }
                     break;
             }
@@ -1419,6 +1448,7 @@ class project_acss_mysql2 extends project {
         $type = $this->get_type($id, $data_id);
         $target_type = $this->get_type($target_id, $target_data_id);
         if ($type && $type == $target_type) {
+            $tpl_engine = new tpl_engine();
             switch ($type) {
                 case 'pages':
                     //get needed data
@@ -1450,7 +1480,7 @@ class project_acss_mysql2 extends project {
                     $cp_nodes->nodeset[0]->set_attribute('name', $new_name);
                     $this->xmldb->save_node($cp_nodes->nodeset[0]);
 
-                    tpl_engine::clear_transform_cache($project_name, 'preview');
+                    $tpl_engine->clear_transform_cache($project_name, 'preview');
 
                     break;
                 case 'page_data':
@@ -1463,7 +1493,7 @@ class project_acss_mysql2 extends project {
                     }
                     $this->_set_element_lastchange_UTC($new_id);
                     if ($type == 'page_data') {    
-                        tpl_engine::delete_from_transform_cache($project_name, $data_id, 'preview');
+                        $tpl_engine->delete_from_transform_cache($project_name, $data_id, 'preview');
                     }
                     break;
             }
@@ -1747,9 +1777,11 @@ class project_acss_mysql2 extends project {
     function _set_project($project_name) {
         global $conf, $log;
         
+        $this->project_name = $project_name;
+
         $project = str_replace(' ', '_', strtolower($project_name));
-        $this->xmldb->set_tables("{$conf->db_table_xml_elements}_{$project}", "{$conf->db_table_xml_cache}_{$project}");
-        $this->xmldb->set_tables($conf->db_table_xml_elements, $conf->db_table_xml_cache);
+        $this->xmldb->set_tables("{$conf->db_prefix}_{$project}_xmldata_elements", "{$conf->db_prefix}_{$project}_xmldata_cache");
+        //$this->xmldb->set_tables($conf->db_table_xml_elements, $conf->db_table_xml_cache);
     }
     // }}}
     // {{{ _set_element_lastchange_UTC()
