@@ -1569,7 +1569,7 @@ class_propBox_edit_colorscheme.prototype.setData = function() {
 	this.preview.showColors();
 };
 // }}}
-// {{{ setData()
+// {{{ onChanged()
 class_propBox_edit_colorscheme.prototype.onChanged = function() {
 	super.onChanged();
 
@@ -1610,6 +1610,122 @@ class_propBox_edit_colorscheme.prototype.setComponents = function() {
 	this.comboBox._x = this.settings.border_left;
 	this.comboBox._y = this.settings.border_top;
         this.comboBox.width = this.width - this.settings.border_left - this.settings.border_right - previewWidth - 5;
+			
+	this.innerHeight = this.settings.minInnerHeight > this.preview.height ? this.settings.minInnerHeight : this.preview.height;
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+};
+// }}}
+
+/*
+ *	Class PropBox_edit_icon
+ *
+ *	Extends class_propBox
+ *	Handles icon inside a page
+ */
+// {{{ constructor
+class_propBox_edit_icon = function() {};
+class_propBox_edit_icon.prototype = new class_propBox();
+
+class_propBox_edit_icon.prototype.propName = [];
+//class_propBox_edit_icon.prototype.propName[0] = conf.lang.prop_name_page_icon;
+class_propBox_edit_icon.prototype.propName[0] = "";
+// }}}
+// {{{ generateComponents()
+class_propBox_edit_icon.prototype.generateComponents = function() {
+        val = Array(conf.lang.prop_name_edit_icon_default);
+        val = val.concat(Array(
+            "color",
+            "edit_a",
+            "edit_audio",
+            "edit_headline",
+            "edit_img",
+            "edit_imgtext",
+            "edit_source",
+            "edit_text",
+            "edit_unknown",
+            "edit_video",
+            "folder",
+            "page_portrait",
+            "sec_aside_left",
+            "sec_aside_right",
+            "sec_section",
+            "sec_section_2col",
+            "sec_section_2col_1",
+            "sec_section_2col_2",
+            "sec_section_2col_xl",
+            "sec_section_2col_xl_1",
+            "sec_section_2col_xl_2",
+            "sec_section_3col",
+            "sec_section_3col_1",
+            "sec_section_3col_2",
+            "sec_section_3col_3"
+        ));
+	this.attachMovie("component_comboBox", "comboBox", 2, {
+		values	: val
+	});
+	this.comboBox.onChanged = function() {
+		this._parent.onChanged();
+	};
+	
+	this.attachMovie("tree_icon", "preview", 3);
+};
+// }}}
+// {{{ setData()
+class_propBox_edit_icon.prototype.setData = function() {
+	var i;
+	
+	super.setData();
+	
+	for (var i = 0; i < this.comboBox.values.length; i++) {
+		if (this.comboBox.values[i] == this.data.attributes['icon']) {
+			this.comboBox.selected = i;	
+		}
+	}
+	if (this.comboBox.selected == null) {
+		this.comboBox.selected = 0;
+		this.save();	
+	}
+	this.comboBox.select();
+};
+// }}}
+// {{{ onChanged()
+class_propBox_edit_icon.prototype.onChanged = function() {
+	super.onChanged();
+
+	this.preview.loadIcon(this.comboBox.values[this.comboBox.selected]);
+};
+// }}}
+// {{{ saveData()
+class_propBox_edit_icon.prototype.saveData = function(forceSave) {
+	if (this.isChanged == true || forceSave == true) {
+            if (this.comboBox.values[this.comboBox.selected] == conf.lang.prop_name_edit_icon_default) {
+                this.data.attributes.icon = "";
+                this.data.dataNode.attributes.icon = "";
+            } else {
+                this.data.attributes.icon = this.comboBox.values[this.comboBox.selected];
+                this.data.dataNode.attributes.icon = this.comboBox.values[this.comboBox.selected];
+            }
+
+            this._parent.propObj.save(this.data.nid);
+            this.isChanged = false;
+	}
+	return true;
+};
+// }}}
+// {{{ setComponents()
+class_propBox_edit_icon.prototype.setComponents = function() {
+        this.preview.loadIcon(this.data.attributes.icon);
+            
+        this.preview._x = this.settings.border_top + 7;
+        this.preview._y = this.settings.border_top + 7;
+        //this.preview._xscale = 200;
+        //this.preview._yscale = 200;
+	
+        this.comboBox._visible = conf.user.mayEditTemplates();
+
+	this.comboBox._x = this.settings.border + this.settings.gridsize * 2;
+	this.comboBox._y = this.settings.border_top;
+        this.comboBox.width = this.width - this.comboBox._x - this.settings.border_right - 5;
 			
 	this.innerHeight = this.settings.minInnerHeight > this.preview.height ? this.settings.minInnerHeight : this.preview.height;
 	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
@@ -5021,6 +5137,7 @@ Object.registerClass("prop_edit_time", class_propBox_edit_time);
 Object.registerClass("prop_edit_colorscheme", class_propBox_edit_colorscheme);
 Object.registerClass("prop_edit_table", class_propBox_edit_table);
 Object.registerClass("prop_edit_type", class_propBox_edit_type);
+Object.registerClass("prop_edit_icon", class_propBox_edit_icon);
 // }}}
 // {{{ colorschemes
 Object.registerClass("prop_proj_colorscheme", class_propBox_proj_colorscheme);

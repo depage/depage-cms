@@ -114,6 +114,7 @@ $texts = array(
 	'prop_name_edit_type' => "Typ",
 	'prop_name_edit_colorscheme_none' => "[keins]",
 	'prop_name_page_colorscheme' => "Farbschema",
+	'prop_name_page_icon' => "Icon",
 	'prop_name_page_date' => "letzte Änderung",
 	'prop_name_page_desc' => "Beschreibung",
 	'prop_name_page_file' => "Dokumenttyp",

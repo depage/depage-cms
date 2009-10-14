@@ -3,7 +3,7 @@
  *
  *	main Prop Class
  */
-// {{{ constructor()
+// {{{ constructor()
 class_prop = function() {
 
 };
@@ -52,7 +52,7 @@ class_prop.prototype.isPropNode = function(node) {
 	return node.nodeType == 1;
 };
 // }}}
-// {{{ onChange()
+// {{{ onChange()
 class_prop.prototype.onChange = function() {
 	if (this.onChangeObj != null) {
 		this.onChangeObj.onChange();	
@@ -98,7 +98,7 @@ class_prop.prototype.getPropNodes = function() {
  *	Handles Page-Element-Properties on XML_DB
  *	Cooperates with class_tree_page_data()
  */
-// {{{ constructor
+// {{{ constructor
 class_prop_page_data = function() {};
 class_prop_page_data.prototype = new class_prop();
 
@@ -124,7 +124,7 @@ class_prop_page_data.prototype.isPropNode = function(node) {
 	return !class_tree_page_data.prototype.isTreeNode.apply(this, [node]);
 };
 // }}}
-// {{{ setNodeIds()
+// {{{ setNodeIds()
 class_prop_page_data.prototype.setNodeIds = class_tree_page_data.prototype.setNodeIds;
 // }}}
 // {{{ save()
@@ -204,7 +204,7 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			tempNode.setNodeIdByDBId();
 			propNodes.push(tempNode);
 		}
-		
+
 		tempNode = this.data.firstChild;	
 		while (tempNode != null) {
 			if (this.isPropNode(tempNode)) {
@@ -214,6 +214,16 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			tempNode = tempNode.nextSibling;	
 		}
 	} else {
+            if (conf.user.mayEditTemplates()) {
+                tempXML = new XML("<edit:icon />");
+                tempNode = tempXML.firstChild;
+                tempNode.attributes["icon"] = this.data.attributes['icon'];
+                tempNode.attributes["db:id"] = this.data.attributes['db:id'];
+                tempNode.setNodeIdByDBId();
+                tempNode.dataNode = this.data;
+                propNodes.push(tempNode);
+            }
+
 		tempNode = this.data.firstChild;	
 		while (tempNode != null) {
 			if (this.isPropNode(tempNode)) {
@@ -250,7 +260,7 @@ class_prop_page_data.prototype.setImageProp = function(args) {
 	}
 };
 // }}}
-// {{{ saveFilePath()
+// {{{ saveFilePath()
 class_prop_page_data.prototype.saveFilePath = function(path, id) {
 	var i;
 	
@@ -344,7 +354,7 @@ class_prop_colors.prototype = new class_prop();
 
 class_prop_colors.prototype.setNodeIds = class_tree_colors.prototype.setNodeIds;
 // }}}
-// {{{ load()
+// {{{ load()
 class_prop_colors.prototype.load = function(id, node) {
 	if (id != null && this.oldData != node.toString()) {
 		this.clear();
@@ -380,14 +390,14 @@ class_prop_colors.prototype.getPropNodes = function() {
 class_prop_tpl_templates = function() {};
 class_prop_tpl_templates.prototype = new class_prop();
 // }}}
-// {{{ init()
+// {{{ init()
 class_prop_tpl_templates.prototype.init = function(type, projectObj) {
 	super.init(type, projectObj);
 	_root.phpConnect.msgHandler.register_func("update_prop_" + this.type, this.set_data, this);
 	_root.pocketConnect.msgHandler.register_func("update_prop_" + this.type, this.set_data, this);
 };
 // }}}
-// {{{ load()
+// {{{ load()
 class_prop_tpl_templates.prototype.load = function(id) {
 	if (id != null && id != this.activeId) {
 		this.clear();
@@ -457,7 +467,7 @@ class_prop_tpl_templates.prototype.setTemplatePropType = function(id, newType) {
  *	Handles new Elements for class_tree_page_data()
  *	Cooperates with class_tree_newnodes()
  */
-// {{{ constructor
+// {{{ constructor
 class_prop_tpl_newnodes = function() {};
 class_prop_tpl_newnodes.prototype = new class_prop();
 // }}}
@@ -526,7 +536,7 @@ class_prop_settings.prototype = new class_prop();
 
 class_prop_settings.prototype.setNodeIds = class_tree_settings.prototype.setNodeIds;
 // }}}
-// {{{ load()
+// {{{ load()
 class_prop_settings.prototype.load = function(id, node) {
 	if (id != null && id != this.activeId) {
 		this.data = node;
