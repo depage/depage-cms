@@ -1714,7 +1714,8 @@ class_propBox_edit_icon.prototype.saveData = function(forceSave) {
 // }}}
 // {{{ setComponents()
 class_propBox_edit_icon.prototype.setComponents = function() {
-        this.preview.loadIcon(this.data.attributes.icon);
+        var datainfo = this.preview.getIconType(this.data.dataNode);
+        this.preview.loadIcon(datainfo.icon);
             
         this.preview._x = this.settings.border_top + 7;
         this.preview._y = this.settings.border_top + 7;
