@@ -169,12 +169,12 @@ class html {
             foreach ($projects as $name => $id) {
                 echo("<li>");
                 echo("
-                    <h2><a href=\"javascript:top.open_edit('$name','')\">$name</a></h2>
+                    <h2><a href=\"#edit('$name','')\" class=\"edit\" data-project=\"$name\">$name</a></h2>
                     <p>
-                        <a href=\"javascript:top.open_edit('$name','')\"><span>" . $this->icon("edit") . "</span>" . $this->lang['inhtml_projects_edit'] . "</a>
-                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
+                        <a href=\"#edit('$name')\" class=\"edit\" data-project=\"$name\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
+                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
                         if ($project->user->get_level_by_sid() <= 3) {
-                            echo("<a href=\"javascript:dlg_publish('$name')\">" . $this->lang['inhtml_projects_publish'] . "</a>");
+                            echo("<a href=\"#publish('$name')\" class=\"publish\" data-project=\"$name\">" . $this->lang['inhtml_projects_publish'] . "</a>");
                         }
                 echo("</p></li>");
             }
@@ -334,8 +334,8 @@ class html {
             <h2><a>depage::cms</a></h2>
             <p>
                 <a id=\"button_home\" href=\"javascript:top.go_home()\">" . $this->lang['inhtml_toolbar_home'] . "</a>
-                <a id=\"button_reload\" href=\"javascript:top.content.location.reload()\" style=\"display:none\"><span>" . $this->icon("reload") . "</span>" . $this->lang['inhtml_toolbar_reload'] . "</a>
-                <a id=\"button_edit\" href=\"javascript:top.edit_page()\" style=\"display:none\"><span>" . $this->icon("edit") . "</span>" . $this->lang['inhtml_toolbar_edit'] . "</a>
+                <a id=\"button_reload\" href=\"javascript:top.content.location.reload()\" style=\"display:none\"><span>" . $this->icon("reload") . "&nbsp;</span>" . $this->lang['inhtml_toolbar_reload'] . "</a>
+                <a id=\"button_edit\" href=\"javascript:top.edit_page()\" style=\"display:none\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_toolbar_edit'] . "</a>
             </p>
             <p class=\"right\">
                 <a id=\"button_logout\" href=\"javascript:top.logout()\">" . $this->lang['inhtml_toolbar_logout'] . "</a>

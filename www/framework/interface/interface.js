@@ -92,10 +92,14 @@ function set_toolbar(type) {
 /* }}} */
 
 /* {{{ dlg_publish */
-function dlg_publish(project) {
+function dlg_publish(project, x, y) {
     var html = "";
 
-    html += "<div class=\"dlg\">";
+    x = window.innerWidth - x - 350;
+    if (x < 0) {
+        x = 0;
+    }
+    html += "<div class=\"dlg\" style=\"right: " + x + "px; top: " + y + "px;\">";
         html += "<span><a class=\"question\"></a></span>";
         html += "Do you want to publish '" + project + "' now?";
         html += "<span></span>";
@@ -222,6 +226,24 @@ function publish(project) {
 }
 /* }}} */
 
+/* {{{ projectlisting_add_events */
+function projectlisting_add_events() {
+    $(".projectlisting .edit").click(function() {
+        var project = $(this).attr("data-project");
+
+        top.open_edit(project, '');
+
+        return false;
+    });
+    $(".projectlisting .publish").click(function(e) {
+        var project = $(this).attr("data-project");
+
+        dlg_publish(project, e.pageX, e.pageY);
+
+        return false;
+    });
+}
+/* }}} */
 /* {{{ update_tasklist */
 function update_tasklist() {
     var tasks = $("#tasks");
@@ -256,6 +278,9 @@ flashloaded = false;
 
 $(document).ready(function() {
     basetitle = document.title;
+
+    projectlisting_add_events();
+
     update_tasklist();
 
     $("a").click( function() {

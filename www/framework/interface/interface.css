@@ -90,7 +90,12 @@ a img {
 ul.projectlisting {
     text-indent: 0;
     margin: 0;
-    padding: 0 0 0 6px;
+    padding: 6px 0 0 6px;
+}
+.projectlisting li {
+    clear: both;
+    padding: 0;
+    margin: 0;
 }
 .projectlisting p {
     float: right;
@@ -103,6 +108,7 @@ ul.projectlisting {
     display: block;
     float: left;
     line-height: 22px;
+    height: 22px;
     padding: 2px 8px;
 }
 .toolbar .right {
@@ -129,13 +135,36 @@ ul.projectlisting {
 .toolbar a span,
 .projectlisting a span {
     position: relative;
-    display: inline-block;
-    padding-right: 22px;
+    padding-right: 20px;
 }
 .toolbar a img,
 .projectlisting a img {
     position: absolute;
-    top: -14px;
-    /*top: -2px;*/
-    /*margin-bottom: -7px;*/
+    top: -3px;
 }
+/* }}} */
+/* {{{ dlg */
+.dlg {
+    position: absolute;
+    padding: 10px;
+    top: 100px;
+    right: 50px;
+    line-height: 22px;
+}
+.dlg span {
+    display: inline-block;
+    position: relative;
+    width: 22px;
+}
+.dlg .question,
+.dlg .yes,
+.dlg .no {
+    display: block;
+    position: absolute;
+    top: -14px;
+    width: 22px;
+    height: 22px;
+}
+/* }}} */
+
+/* vim:set ft=css sw=4 sts=4 fdm=marker : */
