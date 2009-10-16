@@ -267,7 +267,7 @@ if ($param['project'] != "") {
             $node = $node->first_child();
         }
         
-        $url = $conf->path_base . "/projects/" . $param['project'] . "/preview/" . $param['type'] . "/cached/" . $languages[0] . $node->get_attribute("url");
+        $url = $conf->path_base . "projects/" . $param['project'] . "/preview/" . $param['type'] . "/cached/" . $languages[0] . $node->get_attribute("url");
 
         header("Location: $url");
         echo("redirect to <a href=\"$url\">$url</a>");

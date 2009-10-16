@@ -19,7 +19,7 @@ if ($_GET['project'] == '') {
 	$project_id = $project->xmldb->get_doc_id_by_name($_GET['project']);
 	if ($project_id !== false) {
 		$filename = 'xml_project_' . str_replace(' ', '_', strtolower($_GET['project'])) . '.xml';
-		if (!($new_xml_doc = domxml_open_file("{$conf->path_server_root}{$conf->path_base}/backup/{$filename}"))) {
+		if (!($new_xml_doc = domxml_open_file("{$conf->path_server_root}{$conf->path_base}backup/{$filename}"))) {
 			exit("error parsing \"{$filename}\"");	
 		}
 

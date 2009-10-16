@@ -258,10 +258,12 @@ class ttUser{
             FROM $conf->db_table_sessions
             WHERE last_update < DATE_SUB(NOW(), INTERVAL 5 MINUTE)"
         );
-        if (($num = mysql_num_rows($result)) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $data = mysql_fetch_assoc($result);
-                $this->logout($data['sid']);
+        if ($result) {
+            if (($num = mysql_num_rows($result)) > 0) {
+                for ($i = 0; $i < $num; $i++) {
+                    $data = mysql_fetch_assoc($result);
+                    $this->logout($data['sid']);
+                }
             }
         }
     }
@@ -708,7 +710,7 @@ class ttUser{
         $sid = $this->get_sid();
         $opaque = md5($sid);
         $realm = $this->realm;
-        $domain = $conf->path_base . "/";
+        $domain = $conf->path_base;
         $nonce = $sid;
 
         if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['response'] == $valid_response) {

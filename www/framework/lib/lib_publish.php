@@ -40,7 +40,7 @@ class publish {
 
         chdir($ppath . '/lib/');
         $this->_get_changed_lib_files_dir();
-        chdir($conf->path_server_root . $conf->path_base . '/framework');
+        chdir($conf->path_server_root . $conf->path_base . 'framework');
         
         foreach ($this->files as $file) {
             $file->sha1 = sha1_file($ppath . $file->get_fullname());

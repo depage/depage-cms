@@ -47,15 +47,15 @@ class html {
                 }
             ?>
             
-            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}/framework/interface/jquery-1.3.2.min.js");?>"></script>
-            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}/framework/interface/interface.js");?>"></script>
-            <link rel="stylesheet" type="text/css" href="<?php echo("{$conf->path_base}/framework/interface/interface.css");?>">
+            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}framework/interface/jquery-1.3.2.min.js");?>"></script>
+            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}framework/interface/interface.js");?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo("{$conf->path_base}framework/interface/interface.css");?>">
             <?php 
                 echo($extra_content);
                 $this->head_stylesheet(); 
             ?>
-            <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo("{$conf->path_base}/framework/interface/pics/favicon.ico");?>">
-            <link rel="icon" type="image/png" href="<?php echo("{$conf->path_base}/framework/interface/pics/favicon.png");?>">
+            <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo("{$conf->path_base}framework/interface/pics/favicon.ico");?>">
+            <link rel="icon" type="image/png" href="<?php echo("{$conf->path_base}framework/interface/pics/favicon.png");?>">
         </head>
         <?php
     }
@@ -172,7 +172,7 @@ class html {
                     <h2><a href=\"#edit('$name','')\" class=\"edit\" data-project=\"$name\">$name</a></h2>
                     <p>
                         <a href=\"#edit('$name')\" class=\"edit\" data-project=\"$name\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
-                        <a href=\"{$conf->path_base}/projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
+                        <a href=\"{$conf->path_base}projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
                         if ($project->user->get_level_by_sid() <= 3) {
                             echo("<a href=\"#publish('$name')\" class=\"publish\" data-project=\"$name\">" . $this->lang['inhtml_projects_publish'] . "</a>");
                         }
@@ -303,7 +303,7 @@ class html {
         <?php
             $loglines = array();
             clearstatcache();
-            $logfile = $conf->path_server_root . $conf->path_base . "/logs/depage.log";
+            $logfile = $conf->path_server_root . $conf->path_base . "logs/depage.log";
             $fp = fopen($logfile, "r");
             $i = 0;
             if ($fp) {
@@ -353,7 +353,7 @@ class html {
     function icon_path($name) {
         global $conf;
 
-        return "{$conf->path_base}/framework/interface/pics/icon_{$name}.gif";
+        return "{$conf->path_base}framework/interface/pics/icon_{$name}.gif";
     }
     /* }}} */
 }

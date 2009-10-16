@@ -363,7 +363,7 @@ class bgTasks_control {
         $task = $this->get_task_control($id);
         $task->set_status("wait_for_start");
                     
-        $conf->execInBackground($conf->path_server_root . $conf->path_base . "/framework/", "task_do.php", $id, true);
+        $conf->execInBackground($conf->path_server_root . $conf->path_base . "framework/", "task_do.php", $id, true);
     }
     // }}}
 }
@@ -593,7 +593,7 @@ class bgTasks_task {
         global $conf;
         
         $this->set_status("wait_for_resume");
-        $conf->execInBackground($conf->path_server_root . $conf->path_base . "/framework/", "task_do.php", $this->id, true);
+        $conf->execInBackground($conf->path_server_root . $conf->path_base . "framework/", "task_do.php", $this->id, true);
         $this->aborted = true;
     }
     // }}}

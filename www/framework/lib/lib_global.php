@@ -128,13 +128,13 @@ class config {
             );
 
         $vars_to_get_eval = array(
-            'path_base' => (string) '',
+            'path_base' => (string) '/',
             'path_server_root' => (string) '',
-            'path_projects' => (string) '%path_base%/projects',
+            'path_projects' => (string) '%path_base%projects',
             'path_phpcli' => (string) '',
             'path_imageMagick' => (string) '',
             'path_gif2png' => (string) '',
-            'path_backup' => (string) '%path_base%/backup',
+            'path_backup' => (string) '%path_base%backup',
 
             'db_host' => (string) 'localhost',
             'db_database' => (string) '',
@@ -143,8 +143,8 @@ class config {
 
             'db_prefix' => (string) 'tt',
 
-            'file_notfound' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_notfound.swf',
-            'file_thumbs' => (string) '%path_server_root%%path_base%/framework/interface/pics/file_thumbs.swf',
+            'file_notfound' => (string) '%path_server_root%%path_base%framework/interface/pics/file_notfound.swf',
+            'file_thumbs' => (string) '%path_server_root%%path_base%framework/interface/pics/file_thumbs.swf',
                 
             'interface_language' => (string) 'en',
             'interface_language_by_browser' => (bool) true,
@@ -271,8 +271,8 @@ class config {
         $old_include_path = ini_get('inlude_path');
         $new_include_path = $old_include_path;
         //$new_include_path = '';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/lib';
-        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . '/framework/pear';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/lib';
+        $new_include_path .= $path_divider . $this->path_server_root . $this->path_base . 'framework/pear';
         
         ini_set('include_path', $new_include_path);
     }
@@ -316,7 +316,7 @@ class config {
      * @return    texts (array) an array of texts
      */
     function getTexts($lang, $type = '', $codespecialchars = true){
-        include($this->path_server_root . $this->path_base . "/framework/locale/$lang.php");
+        include($this->path_server_root . $this->path_base . "framework/locale/$lang.php");
 
         if ($codespecialchars) {
             foreach ($texts as $key => $value) {
@@ -529,7 +529,7 @@ class config {
             if ($host == "") {
                 $host = "localhost";
             }
-            $url = "http://{$host}{$conf->path_base}/framework/{$script}?arg=" . urlencode($args);
+            $url = "http://{$host}{$conf->path_base}framework/{$script}?arg=" . urlencode($args);
 
             if (is_callable('curl_init')) {
                 // call script through curl-interface
@@ -686,7 +686,7 @@ class logObj{
         }
         if ($do_log){
             if ($conf->path_base != "" && $conf->path_server_root != "") {
-                error_log("[" . date("r") . "] $type: $entry\n", 3, $conf->path_server_root . $conf->path_base . "/logs/depage.log");
+                error_log("[" . date("r") . "] $type: $entry\n", 3, $conf->path_server_root . $conf->path_base . "logs/depage.log");
             } else {
                 error_log("[" . date("r") . "] $type: $entry\n", 3, "../logs/depage.log");
             }

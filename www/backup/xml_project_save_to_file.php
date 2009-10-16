@@ -21,7 +21,7 @@ if ($_GET['project'] == '') {
 		
 		$filename = 'xml_project_' . str_replace(' ', '_', strtolower($_GET['project'])) . '.xml';
 
-		$xml_doc->dump_file("{$conf->path_server_root}{$conf->path_base}/backup/{$filename}", false, true);
+		$xml_doc->dump_file("{$conf->path_server_root}{$conf->path_base}backup/{$filename}", false, true);
 
 		echo("saved {$_GET['project']} to \"{$filename}\"");
 	} else {

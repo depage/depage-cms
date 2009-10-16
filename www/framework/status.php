@@ -106,7 +106,7 @@
         <?php
             $loglines = array();
             clearstatcache();
-            $logfile = $conf->path_server_root . $conf->path_base . "/logs/depage.log";
+            $logfile = $conf->path_server_root . $conf->path_base . "logs/depage.log";
             $fp = fopen($logfile, "r");
             $i = 0;
             if ($fp) {

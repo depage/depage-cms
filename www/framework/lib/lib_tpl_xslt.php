@@ -1134,7 +1134,7 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $xml_template = $xml_proc->get_template($xml_proc->project, $id, $param == "cached", $xml_proc->variables);
             $value = $xml_template->dump_mem(false);
         } else if ($func == 'xslt') {
-            $value = file_get_contents("{$conf->path_server_root}{$conf->path_base}/framework/xslt/$id");
+            $value = file_get_contents("{$conf->path_server_root}{$conf->path_base}framework/xslt/$id");
         } else if ($func == 'navigation') {
             $xml_navigation = $xml_proc->get_navigation($xml_proc->project);
             if ($xml_proc->id != -1) {

@@ -137,7 +137,7 @@ class project_updater {
 }
 
 $updater = new project_updater("0.9.7");
-$updater->open_data_from_file("{$conf->path_server_root}{$conf->path_base}/backup/xml_project_hesse_internet_0.9.6.xml");
+$updater->open_data_from_file("{$conf->path_server_root}{$conf->path_base}backup/xml_project_hesse_internet_0.9.6.xml");
 if (!$updater->convert_data($error_str)) {
 	echo($error . "\n");
 } else {
