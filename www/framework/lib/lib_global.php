@@ -669,6 +669,7 @@ class logObj{
      */
     function add_entry($entry, $type = 'debug'){
         global $conf;
+        global $project;
         
         if ($type == 'sql' && $conf->log_sql_do) {
             $do_log = true; 
@@ -685,10 +686,15 @@ class logObj{
             $do_log = false; 
         }
         if ($do_log){
-            if ($conf->path_base != "" && $conf->path_server_root != "") {
-                error_log("[" . date("r") . "] $type: $entry\n", 3, $conf->path_server_root . $conf->path_base . "logs/depage.log");
+            if ($project->project_name != "") {
+                $logfile = "depage_" . $project->project_name . ".log";
             } else {
-                error_log("[" . date("r") . "] $type: $entry\n", 3, "../logs/depage.log");
+                $logfile = "depage.log";
+            }
+            if ($conf->path_base != "" && $conf->path_server_root != "") {
+                error_log("[" . date("r") . "] $type: $entry\n", 3, $conf->path_server_root . $conf->path_base . "logs/$logfile");
+            } else {
+                error_log("[" . date("r") . "] $type: $entry\n", 3, "../logs/$logfile");
             }
             /*
             $result = mysql_query(
@@ -729,66 +735,6 @@ class logObj{
         if (function_exists('memory_get_usage')) {
             $this->add_entry($entry . " - memory: " . fs::formatFileSize(memory_get_usage()));
         }
-    }
-    // }}}
-    // {{{ get_entries()
-    /**
-     * get log entries from db
-     *
-     * @public
-     *
-     * @param    $start (int)
-     * @param    $rownum (int)
-     * @param    $type (string)
-     *
-     * @return    $entries (array)
-     */
-    function get_entries($start, $rownum, $type){
-        global $conf;
-
-        $entries = array();
-
-        $result = mysql_query("SELECT DATE_FORMAT(times, '$conf->log_dateformat') AS times, entry FROM $this->log_db WHERE type='$type' ORDER BY id DESC LIMIT $start, $rownum");
-        if ($result){
-            $num = mysql_num_rows($result);
-            for ($i = 0; $i < $num; $i++){
-                $row = mysql_fetch_assoc($result);
-                $entries[] = $row;
-            }
-        }
-        //mysql_free_result($result);
-
-        return $entries;
-    }
-    // }}}
-    // {{{ get_entrynum()
-    /**
-     * gets number of log-entries of specific type
-     *
-     * @public
-     *
-     * @param    $type (string)
-     *
-     * @return    $num (int)
-     */
-    function get_entrynum($type){
-        $result = mysql_query("SELECT COUNT(*) AS NUM FROM $this->log_db WHERE type='$type'");
-        $row = mysql_fetch_assoc($result);
-        //mysql_free_result($result);
-
-        return $row['NUM'];
-    }
-    // }}}
-    // {{{ clear()
-    /**
-     * clears all entries of specific type
-     *
-     * @public
-     *
-     * @param    $type (string)
-     */
-    function clear($type){
-        $result = mysql_query("DELETE FROM $this->log_db WHERE type='$type'");
     }
     // }}}
 }
