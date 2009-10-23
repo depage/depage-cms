@@ -2719,7 +2719,7 @@ class_propBox_edit_img.prototype.generateComponents = function() {
 	};
 	this.hrefBox.onDrop = function(droppedObj) {
 		this._parent.hrefBox.value = conf.project.tree.pages.getUriById(droppedObj.nid);
-		this._parent.isChanged();
+		this._parent.onChanged();
 		this._parent.save();
 	};
 	this.hrefBox.isValidDrop = function(draggedObj) {
