@@ -101,7 +101,8 @@ function dlg_publish(project, x, y) {
     }
     html += "<div class=\"dlg\" style=\"right: " + x + "px; top: " + y + "px;\">";
         html += "<span><a class=\"question\"></a></span>";
-        html += "Do you want to publish '" + project + "' now?";
+        //html += "Do you want to publish '" + project + "' now?";
+        html += "M&ouml;chten Sie '" + project + "' jetzt ver&ouml;ffentlichen?";
         html += "<span></span>";
         html += "<span><a class=\"yes\" href=\"#\"></a></span>";
         html += "<span><a class=\"no\" href=\"#\"></a></span>";
@@ -250,7 +251,18 @@ function update_tasklist() {
 
     if (tasks.length == 1) {
         tasks.load("status.php?type=tasks", null, function() {
-            setTimeout("update_tasklist()", 1500);
+            setTimeout("update_tasklist()", 2000);
+        });
+    }
+}
+/* }}} */
+/* {{{ update_userlist */
+function update_userlist() {
+    var users = $("#users");
+
+    if (users.length == 1) {
+        users.load("status.php?type=users", null, function() {
+            setTimeout("update_userlist()", 10000);
         });
     }
 }
@@ -282,6 +294,7 @@ $(document).ready(function() {
     projectlisting_add_events();
 
     update_tasklist();
+    update_userlist();
 
     $("a").click( function() {
         this.blur();

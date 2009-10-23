@@ -53,10 +53,13 @@ class config {
         
         $this->app_name = 'depage::cms';
         $this->app_version = '1.1.1';
+        $this->app_copyright = '(c) 2002-2009 by Frank Hellenkamp';
+        $this->app_license = 'This software is released under MIT and GPL2 licenses';
 
+        //'home_url' => (string) 'tool.untitled.net',
         $vars_to_set = array(
             'xml_version' => (string) '1.0',
-            'home_url' => (string) 'tool.untitled.net',
+            'home_url' => (string) 'cms.depagecms.net',
                 
             'url_page_scheme_intern' => (string) 'pageref',
             'url_lib_scheme_intern' => (string) 'libref',

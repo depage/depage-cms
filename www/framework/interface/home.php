@@ -34,8 +34,11 @@
                 $html->task_status();
             echo("</div>");
             if ($project->user->get_level_by_sid() <= 2) {
-                //$html->status();
+                echo("<div id=\"users\">");
+                    $html->user_status();
+                echo("</div>");
             }
+            $html->copyright_footer();
         ?>
     </body>
 <?php

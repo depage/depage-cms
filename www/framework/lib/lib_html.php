@@ -69,21 +69,20 @@ class html {
             <style type="text/css">
                 <!--
                 .head {
-                    color : #000000;
+                    color: <?php echo($settings['color_font']); ?>;
                 }
                 .normal,
                 h2 a {
-                    color : #000000;
+                    color: <?php echo($settings['color_font']); ?>;
                 }
                 a,
-                h2 a:hover,
-                .projectlisting li:hover h2 a {
+                h2 a:hover {
                     color: <?php echo($settings['color_active2']); ?>;
                 }
                 body {
                     background: <?php echo($settings['color_background']); ?>
                 }
-                .centered_box {
+                .centered_box .content {
                     background: <?php echo($settings['color_face']); ?>
                 }
                 .toolbar a:hover {
@@ -106,6 +105,15 @@ class html {
                 .dlg .no {
                     background: url(<?php echo($this->icon_path("no"))?>);
                 }
+                .centered_box small  {
+                    color: #666666;
+                }
+                .centered_box .icon {
+                    color: <?php echo($settings['color_face']); ?>;
+                }
+                .centered_box .icon {
+                    color: <?php echo($settings['color_font']); ?>;
+                }
                 -->
             </style>
         <?php    
@@ -125,7 +133,7 @@ class html {
         if (!is_array($extra)) {
             $extra = array($extra);
         }
-        echo("<div class=\"centered_box first\">");
+        echo("<div class=\"centered_box first\"><div class=\"content\">");
             echo("<h1>" . $head . "</h1>");
             foreach ($text as $t) {
                 echo("<p>" . $t . "</p>");
@@ -133,7 +141,7 @@ class html {
             foreach ($extra as $t) {
                 echo($t);
             }
-        echo("</div>");
+        echo("</div></div>");
     }
     /* }}} */
     /* {{{ preview_frame */
@@ -163,8 +171,12 @@ class html {
 
         $projects = $project->get_projects();
 
-        echo("<div class=\"centered_box first\">");
-            echo("<h1>Projekte</h1>");
+        echo("<div class=\"centered_box first\"><div class=\"content\">");
+            echo("<div class=\"icon\">");
+                echo($this->icon("projects", "Projekte"));
+                //echo("Projects");
+            echo("</div>");
+            //echo("<h1>Projekte</h1>");
             echo("<ul class=\"projectlisting\">");
             foreach ($projects as $name => $id) {
                 echo("<li>");
@@ -179,7 +191,16 @@ class html {
                 echo("</p></li>");
             }
             echo("</ul>");
-        echo("</div>");
+        echo("</div></div>");
+    }
+    /* }}} */
+    /* {{{ copyright_footer */
+    function copyright_footer() {
+        global $conf;
+        echo("<div class=\"centered_box noback\"><div class=\"content\">");
+            echo("<p><small>" . $conf->app_copyright . "</small></p>");
+            echo("<p><small>" . $conf->app_license . "</small></p>");
+        echo("</div></div>");
     }
     /* }}} */
     /* {{{ task_status */
@@ -198,8 +219,11 @@ class html {
                 $lang_keys[] = "%$key%";
             }
 
-            echo("<div class=\"centered_box\">");
-                echo("<h1>Tasks</h1>");
+            echo("<div class=\"centered_box\"><div class=\"content\">");
+                echo("<div class=\"icon\">");
+                    echo($this->icon("tasks", "Tasks"));
+                echo("</div>");
+                //echo("<h1>Tasks</h1>");
                 echo("<ul class=\"tasks\">");
                 foreach($tasks as $t) {
                     $tt = $task_control->get_task_control($t['id']);
@@ -221,7 +245,33 @@ class html {
                     echo("</li>");
                 }
                 echo("</ul>");
-            echo("</div>");
+            echo("</div></div>");
+        }
+    }
+    /* }}} */
+    /* {{{ user_status */
+    function user_status() {
+        global $conf;
+        global $project;
+
+        $users = $project->user->get_loggedin_users();
+        if (count($users) > 0) {
+
+            echo("<div class=\"centered_box\"><div class=\"content\">");
+                echo("<div class=\"icon\">");
+                    echo($this->icon("users", "Benutzer"));
+                echo("</div>");
+                //echo("<h1>Users</h1>");
+                echo("<ul class=\"users\">");
+                foreach($users as $u) {
+                    echo("<li>");
+                    echo("<h3><a href=\"mailto:$u->email\">$u->name_full</a> ($u->name)</h3>");
+                    echo("<p>is logged into '<b>$u->project</b>' from '$u->ip:$u->port'</p>");
+                    echo("<p>last update: $u->last_update</p>");
+                    echo("</li>");
+                }
+                echo("</ul>");
+            echo("</div></div>");
         }
     }
     /* }}} */
@@ -345,8 +395,8 @@ class html {
     /* }}} */
 
     /* {{{ icon */
-    function icon($name) {
-        return "<img src=\"" . $this->icon_path($name) . "\")>";
+    function icon($name, $alt = "") {
+        return "<img src=\"" . $this->icon_path($name) . "\" alt=\"" . htmlentities($alt) . "\">";
     }
     /* }}} */
     /* {{{ icon_path */

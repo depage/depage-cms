@@ -28,9 +28,10 @@ h1 {
 }
 ul {
     list-style: none;
-    padding-left: 10px;
+    padding: 0;
     text-indent: 0px;
     padding-bottom: 10px;
+    padding: 6px 0 24px 0px;
 }
 li {
     padding-top: 5px;
@@ -46,17 +47,20 @@ a img {
 /* }}} */
 /* {{{ centered_box */
 .centered_box {
+    width: 100%;
+    margin-top: 20px;
+}
+.centered_box .content {
     position: relative;
-    width: 400px;
+    width: 420px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20px;
     padding: 0 12px 12px 12px;
 }
-.centered_box.first {
-    min-height: 200px;
+.centered_box.first .content {
     height: auto !important;
     height: 200px;
+    min-height: 200px;
     margin-top: 100px;
 }
 .centered_box .bottom {
@@ -65,6 +69,30 @@ a img {
 }
 .centered_box .right {
     right: 12px;
+}
+.centered_box.noback .content {
+    margin-top: 6px;
+    background: none;
+    padding-left: 0;
+}
+.centered_box small {
+    font-size: 10px;
+}
+.centered_box .icon {
+    position: absolute;
+    top: 5px;
+    left: -70px;
+    width: 70px;
+    height: 100%;
+    opacity: .3;
+}
+.centered_box .icon img {
+    display: block;
+    width: 48px;
+    height: 48px;
+}
+.centered_box:hover .icon {
+    opacity: 1;
 }
 /* }}} */
 /* {{{ tasks */
@@ -90,7 +118,6 @@ a img {
 ul.projectlisting {
     text-indent: 0;
     margin: 0;
-    padding: 6px 0 0 6px;
 }
 .projectlisting li {
     clear: both;
