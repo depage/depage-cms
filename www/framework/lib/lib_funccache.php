@@ -11,7 +11,7 @@
  * server without the need to duplicate the database.
  *
  *
- * copyright (c) 2008-2008 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2008-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */

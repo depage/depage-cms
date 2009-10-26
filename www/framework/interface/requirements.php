@@ -4,7 +4,7 @@
  * R E Q U I R E M E N T S
  *
  * php-script:
- * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  */
 
     define("IS_IN_CONTOOL", true);

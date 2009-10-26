@@ -4,7 +4,7 @@
  * U P L O A D
  *
  * php-script:
- * (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
+ * (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  */
     set_time_limit(200);
     ignore_user_abort();

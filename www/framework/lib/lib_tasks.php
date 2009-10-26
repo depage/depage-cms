@@ -11,7 +11,7 @@
  * needs access to the cli-version of php.
  *
  *
- * copyright (c) 2002-2008 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *

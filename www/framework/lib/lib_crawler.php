@@ -7,7 +7,7 @@
  * defines class to search a domain for cleartext
  *
  *
- * copyright (c) 2008-2008 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2008-2009 Frank Hellenkamp [jonas@depagecms.net]
  * with colde elements from sphider
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]

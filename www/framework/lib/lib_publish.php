@@ -7,7 +7,7 @@
  * Intelligent publishing Library to publish only changed and new files
  *
  *
- * copyright (c) 2007-2008 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2007-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
