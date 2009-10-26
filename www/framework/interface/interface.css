@@ -56,6 +56,10 @@ a img {
     margin-left: auto;
     margin-right: auto;
     padding: 0 12px 12px 12px;
+
+    height: auto !important;
+    height: 48px;
+    min-height: 48px;
 }
 .centered_box.first .content {
     height: auto !important;
@@ -84,15 +88,11 @@ a img {
     left: -70px;
     width: 70px;
     height: 100%;
-    opacity: .3;
 }
 .centered_box .icon img {
     display: block;
     width: 48px;
     height: 48px;
-}
-.centered_box:hover .icon {
-    opacity: 1;
 }
 /* }}} */
 /* {{{ tasks */
@@ -112,6 +112,12 @@ a img {
 }
 .tasks .desc {
     margin-top: 10px;
+}
+/* }}} */
+/* {{{ users */
+.users h3,
+.users p {
+    display: inline;
 }
 /* }}} */
 /* {{{ projectlisting/toolbar */

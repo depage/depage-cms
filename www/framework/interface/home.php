@@ -28,17 +28,14 @@
     ?>
     <body>
         <?php
-            $html->close_edit();
-            $html->project_listing();
-            echo("<div id=\"tasks\">");
-                $html->task_status();
-            echo("</div>");
+            echo($html->close_edit());
+            echo($html->project_listing());
+
+            echo($html->box("<div id=\"tasks\">" . $html->task_status() . "</div>", "tasks"));
             if ($project->user->get_level_by_sid() <= 2) {
-                echo("<div id=\"users\">");
-                    $html->user_status();
-                echo("</div>");
+                echo($html->box("<div id=\"users\">" . $html->user_status() . "</div>", "users"));
             }
-            $html->copyright_footer();
+            echo($html->copyright_footer());
         ?>
     </body>
 <?php

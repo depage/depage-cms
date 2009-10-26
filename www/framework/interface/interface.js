@@ -245,26 +245,58 @@ function projectlisting_add_events() {
     });
 }
 /* }}} */
+
 /* {{{ update_tasklist */
 function update_tasklist() {
+    var box = $("#box_tasks");
     var tasks = $("#tasks");
 
     if (tasks.length == 1) {
         tasks.load("status.php?type=tasks", null, function() {
             setTimeout("update_tasklist()", 2000);
+
+            if (tasks.html() == "") {
+                box.hide();
+            } else {
+                box.show();
+            }
         });
     }
 }
 /* }}} */
 /* {{{ update_userlist */
 function update_userlist() {
+    var box = $("#box_users");
     var users = $("#users");
 
     if (users.length == 1) {
         users.load("status.php?type=users", null, function() {
             setTimeout("update_userlist()", 10000);
+
+            if (users.html() == "") {
+                box.hide();
+            } else {
+                box.show();
+            }
         });
     }
+}
+/* }}} */
+
+/* {{{ attach_events */
+function attach_events() {
+    $(".centered_box .icon").css({
+        opacity: 0.3
+    });
+    $(".centered_box").hover( function() {
+        $(".icon", this).animate({
+            opacity: 1
+        }, "fast");
+    }, function() {
+        $(".icon", this).animate({
+            opacity: 0.3
+        }, "fast");
+    });
 }
 /* }}} */
 
@@ -295,6 +327,8 @@ $(document).ready(function() {
 
     update_tasklist();
     update_userlist();
+
+    attach_events();
 
     $("a").click( function() {
         this.blur();

@@ -24,9 +24,9 @@
     $html = new html();
 
     if ($_REQUEST['type'] == "tasks") {
-        $html->task_status();
+        echo($html->task_status());
     } elseif ($_REQUEST['type'] == "users") {
-        $html->user_status();
+        echo($html->user_status());
     } elseif ($_REQUEST['type'] == "publish") {
         $project->publish($_REQUEST['project']);
     }

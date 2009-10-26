@@ -125,23 +125,42 @@ class html {
     }
     /* }}} */
 
+    /* {{{ box */
+    function box($content, $icon = "", $class = "") {
+        $h = "";
+
+        $h .= "<div id=\"box_$icon\" class=\"centered_box $class\"><div class=\"content\">";
+            if ($icon != "") {
+                $h .= "<div class=\"icon\">";
+                    $h .= $this->icon($icon);
+                $h .= "</div>";
+            }
+            $h .= $content;
+        $h .= "</div></div>";
+
+        return $h;
+    }
+    /* }}} */
+
     /* {{{ message */
     function message($head, $text = "", $extra = "") {
+        $h = "";
         if (!is_array($text)) {
             $text = array($text);
         }
         if (!is_array($extra)) {
             $extra = array($extra);
         }
-        echo("<div class=\"centered_box first\"><div class=\"content\">");
-            echo("<h1>" . $head . "</h1>");
-            foreach ($text as $t) {
-                echo("<p>" . $t . "</p>");
-            }
-            foreach ($extra as $t) {
-                echo($t);
-            }
-        echo("</div></div>");
+
+        $h .= "<h1>" . $head . "</h1>";
+        foreach ($text as $t) {
+            $h .= "<p>" . $t . "</p>";
+        }
+        foreach ($extra as $t) {
+            $h .= $t;
+        }
+
+        echo($this->box($h, "", "first"));
     }
     /* }}} */
     /* {{{ preview_frame */
@@ -156,9 +175,9 @@ class html {
     /* }}} */
     /* {{{ close_edit */
     function close_edit() {
-        ?>
-            <script type="text/javascript">top.close_edit();</script>
-        <?php
+        $h = "<script type=\"text/javascript\">top.close_edit();</script>";
+
+        return $h;
     }
     /* }}} */
 
@@ -169,44 +188,48 @@ class html {
         global $user;
         global $log;
 
+        $h = "";
+
         $projects = $project->get_projects();
 
-        echo("<div class=\"centered_box first\"><div class=\"content\">");
-            echo("<div class=\"icon\">");
-                echo($this->icon("projects", "Projekte"));
-                //echo("Projects");
-            echo("</div>");
-            //echo("<h1>Projekte</h1>");
-            echo("<ul class=\"projectlisting\">");
-            foreach ($projects as $name => $id) {
-                echo("<li>");
-                echo("
-                    <h2><a href=\"#edit('$name','')\" class=\"edit\" data-project=\"$name\">$name</a></h2>
-                    <p>
-                        <a href=\"#edit('$name')\" class=\"edit\" data-project=\"$name\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
-                        <a href=\"{$conf->path_base}projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ");
-                        if ($project->user->get_level_by_sid() <= 3) {
-                            echo("<a href=\"#publish('$name')\" class=\"publish\" data-project=\"$name\">" . $this->lang['inhtml_projects_publish'] . "</a>");
-                        }
-                echo("</p></li>");
-            }
-            echo("</ul>");
-        echo("</div></div>");
+        $h .= "<ul class=\"projectlisting\">";
+        foreach ($projects as $name => $id) {
+            $h .= "<li>";
+            $h .= "
+                <h2><a href=\"#edit('$name','')\" class=\"edit\" data-project=\"$name\">$name</a></h2>
+                <p>
+                    <a href=\"#edit('$name')\" class=\"edit\" data-project=\"$name\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
+                    <a href=\"{$conf->path_base}projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ";
+                    if ($project->user->get_level_by_sid() <= 3) {
+                        $h .= "<a href=\"#publish('$name')\" class=\"publish\" data-project=\"$name\">" . $this->lang['inhtml_projects_publish'] . "</a>";
+                    }
+            $h .= "</p></li>";
+        }
+        $h .= "</ul>";
+
+        return $this->box($h, "projects", "first");
     }
     /* }}} */
     /* {{{ copyright_footer */
     function copyright_footer() {
         global $conf;
-        echo("<div class=\"centered_box noback\"><div class=\"content\">");
-            echo("<p><small>" . $conf->app_copyright . "</small></p>");
-            echo("<p><small>" . $conf->app_license . "</small></p>");
-        echo("</div></div>");
+
+        $h = "";
+
+        $h .= "<p><small>" . $conf->app_copyright . "</small></p>";
+        $h .= "<p><small>" . $conf->app_license . "</small></p>";
+
+        $h = $this->box($h, "", "noback");
+
+        return $h;
     }
     /* }}} */
     /* {{{ task_status */
     function task_status() {
         global $conf;
         global $project;
+
+        $h = "";
 
         $task_control = new bgTasks_control($conf->db_table_tasks, $conf->db_table_tasks_threads);
 
@@ -219,34 +242,30 @@ class html {
                 $lang_keys[] = "%$key%";
             }
 
-            echo("<div class=\"centered_box\"><div class=\"content\">");
-                echo("<div class=\"icon\">");
-                    echo($this->icon("tasks", "Tasks"));
-                echo("</div>");
-                //echo("<h1>Tasks</h1>");
-                echo("<ul class=\"tasks\">");
-                foreach($tasks as $t) {
-                    $tt = $task_control->get_task_control($t['id']);
-                    $t_status = $tt->get_status();
-                    $t_desc = $tt->get_description();
-                    $t_progress = $tt->get_progress();
+            $h .= "<ul class=\"tasks\">";
+            foreach($tasks as $t) {
+                $tt = $task_control->get_task_control($t['id']);
+                $t_status = $tt->get_status();
+                $t_desc = $tt->get_description();
+                $t_progress = $tt->get_progress();
 
-                    echo("<li>");
-                        echo("<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>");
-                        echo("<div class=\"progress\">");
-                            echo("<div style=\"width: " . ($t_progress['percent']) . "%;\">");
-                        echo("</div></div>");
-                        //echo("<p class=\"desc\">" . str_replace(array("%percent%", "%time_until_end%"), array($t_progress['percent'], $t_progress['time_until_end']), $this->lang['task_publish_progress']) . "</p>");
-                        echo("<p class=\"desc\">" . $t_progress['percent'] . "%</p>");
-                        echo("<p style=\"clear: both;\">" . str_replace($lang_keys, $lang, $t_progress['description']) . "</p>");
-                        if ($project->user->get_level_by_sid() <= 2) {
-                            echo("<p>Status: <b>$t_status</b></p>");
-                        }
-                    echo("</li>");
-                }
-                echo("</ul>");
-            echo("</div></div>");
+                $h .= "<li>";
+                    $h .= "<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>";
+                    $h .= "<div class=\"progress\">";
+                        $h .= "<div style=\"width: " . ($t_progress['percent']) . "%;\">";
+                    $h .= "</div></div>";
+                    //$h .= "<p class=\"desc\">" . str_replace(array("%percent%", "%time_until_end%"), array($t_progress['percent'], $t_progress['time_until_end']), $this->lang['task_publish_progress']) . "</p>");
+                    $h .= "<p class=\"desc\">" . $t_progress['percent'] . "%</p>";
+                    $h .= "<p style=\"clear: both;\">" . str_replace($lang_keys, $lang, $t_progress['description']) . "</p>";
+                    if ($project->user->get_level_by_sid() <= 2) {
+                        $h .= "<p>Status: <b>$t_status</b></p>";
+                    }
+                $h .= "</li>";
+            }
+            $h .= "</ul>";
         }
+
+        return $h;
     }
     /* }}} */
     /* {{{ user_status */
@@ -254,25 +273,24 @@ class html {
         global $conf;
         global $project;
 
+        $h = "";
+
         $users = $project->user->get_loggedin_users();
         if (count($users) > 0) {
-
-            echo("<div class=\"centered_box\"><div class=\"content\">");
-                echo("<div class=\"icon\">");
-                    echo($this->icon("users", "Benutzer"));
-                echo("</div>");
-                //echo("<h1>Users</h1>");
-                echo("<ul class=\"users\">");
-                foreach($users as $u) {
-                    echo("<li>");
-                    echo("<h3><a href=\"mailto:$u->email\">$u->name_full</a> ($u->name)</h3>");
-                    echo("<p>is logged into '<b>$u->project</b>' from '$u->ip:$u->port'</p>");
-                    echo("<p>last update: $u->last_update</p>");
-                    echo("</li>");
+            $h .= "<ul class=\"users\">";
+            foreach($users as $u) {
+                $h .= "<li>";
+                $h .= "<h3><a href=\"mailto:$u->email\">$u->name_full</a> ($u->name) </h3>";
+                if ($u->project != "") {
+                    $h .= "<p>is editing '$u->project'</p>";
                 }
-                echo("</ul>");
-            echo("</div></div>");
+                //$h .= "<p>last update: $u->last_update</p>";
+                $h .= "</li>";
+            }
+            $h .= "</ul>";
         }
+
+        return $h;
     }
     /* }}} */
     /* {{{ status */
