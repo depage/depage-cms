@@ -12,8 +12,6 @@
  * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_project_acss_mysql.php,v 1.16 2004/11/12 19:45:31 jonas Exp $
  */
 
 // {{{ define and require

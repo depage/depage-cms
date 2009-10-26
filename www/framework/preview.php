@@ -19,7 +19,6 @@
  *            deny editing of the same page at the same time, show
  *            only the current copy of it.
  *
- * $Id: preview.php,v 1.32 2004/11/12 19:45:31 jonas Exp $
  */
 
 // {{{ define and require

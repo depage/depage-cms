@@ -12,8 +12,6 @@
  * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_tpl.php,v 1.9 2004/06/22 09:58:47 jonas Exp $
  */
 
 // {{{ define and includes

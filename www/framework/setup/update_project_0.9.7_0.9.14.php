@@ -11,8 +11,6 @@
  * copyright (c) 2002-2007 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author	Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_project.php,v 1.15 2004/11/12 19:45:31 jonas Exp $
  */
 
 if (!function_exists('die_error')) require_once('../lib/lib_global.php');

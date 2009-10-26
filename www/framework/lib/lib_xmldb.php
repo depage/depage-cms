@@ -12,8 +12,6 @@
  * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_xmldb.php,v 1.55 2004/11/12 19:45:31 jonas Exp $
  */
 
 // {{{ define and includes

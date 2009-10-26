@@ -11,8 +11,6 @@
  * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: task_do.php,v 1.42 2004/07/08 00:28:56 jonas Exp $
  */
 
 // {{{ define and include

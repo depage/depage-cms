@@ -16,7 +16,6 @@
 // | Author: Vincent Blavet <vincent@blavet.net>                          |
 // +----------------------------------------------------------------------+
 //
-// $Id: tar.php,v 1.1 2004/01/20 00:37:03 jonas Exp $
 
 require_once 'PEAR.php';
 

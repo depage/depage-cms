@@ -17,8 +17,6 @@
  * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
- *
- * $Id: lib_pocket_server.php,v 1.34 2004/11/12 19:45:31 jonas Exp $
  */
 
 if (!function_exists('die_error')) require_once('lib_global.php');
