@@ -1178,6 +1178,8 @@ function urlSchemeHandler($processor, $scheme, $param) {
             $value = "<email>";
             $value .= str_replace($original, $repl, $param);
             $value .= "</email>";
+        } else if ($func == 'getversion') {
+            $value = "<version>" . htmlspecialchars($conf->app_name . " " . $conf->app_version) . "</version>";
         }
     } else if ($scheme == $conf->url_page_scheme_intern) {
         list($id, $param) = explode('/', trim($param, '/'), 2);
