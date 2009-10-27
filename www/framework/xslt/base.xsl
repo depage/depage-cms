@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xsl:stylesheet [ ]>
+<!DOCTYPE xsl:stylesheet [ 
+    <!ENTITY nbsp "&#160;">
+]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
     <!-- {{{ edit:a -->
     <xsl:template match="edit:a" name="edit:a">
@@ -242,6 +244,152 @@
         <!-- }}} -->
     </xsl:template>
     <!-- }}} -->
+
+    <!-- {{{ edit:text_formatted -->
+    <xsl:template name="edit:text_formatted" match="edit:text_formatted">
+        <xsl:param name="class" />
+        <xsl:param name="id" />
+
+        <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
+            <xsl:apply-templates><xsl:with-param name="class" select="$class"/><xsl:with-param name="id" select="$id"/></xsl:apply-templates>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline -->
+    <xsl:template match="edit:text_headline">
+        <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
+            <xsl:apply-templates><xsl:with-param name="class" select="'headline'"/></xsl:apply-templates>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ p -->
+    <xsl:template match="p">
+        <xsl:param name="class" />
+        <xsl:param name="linebreaks" />
+
+        <xsl:choose>
+            <xsl:when test="$class != ''">
+                <p class="{$class}"><xsl:apply-templates/>&nbsp;</p>
+            </xsl:when>
+            <xsl:when test="$linebreaks != ''">
+                <xsl:apply-templates/><xsl:if test="position() != last()"><br /></xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <p><xsl:apply-templates/>&nbsp;</p>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ b -->
+    <xsl:template match="b"><b><xsl:apply-templates/></b></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ i -->
+    <xsl:template match="i"><i><xsl:apply-templates/></i></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ small -->
+    <xsl:template match="small"><small><xsl:apply-templates /></small></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ br -->
+    <xsl:template match="br"><br /></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ a -->
+    <xsl:template match="a">
+        <xsl:choose>
+            <xsl:when test="substring(@href,1,8) = 'pageref:'">
+                <xsl:call-template name="edit:a">
+                    <xsl:with-param name="href_id" select="substring(@href,9)" />
+                    <xsl:with-param name="target" select="@target" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="edit:a">
+                    <xsl:with-param name="href" select="@href" />
+                    <xsl:with-param name="target" select="@target" />
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- }}} -->
+
+    <!-- {{{ edit:date -->
+    <xsl:template match="edit:date" name="edit:date">
+        <xsl:param name="format" select=" 'short' "/>
+
+        <time><xsl:attribute name="datetime"><xsl:value-of select="translate(edit:date/@value,'/','-')"/></xsl:attribute>
+            <xsl:choose>
+                <xsl:when test="$format = 'long' ">
+                    <xsl:call-template name="formatdatelong">
+                        <xsl:with-param name="date"><xsl:value-of select="@value"/></xsl:with-param>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="formatdateshort">
+                        <xsl:with-param name="date"><xsl:value-of select="@value"/></xsl:with-param>
+                    </xsl:call-template>
+                </xsl:otherwise>
+            </xsl:choose>
+        </time>
+    </xsl:template>
+
+    <xsl:template name="formatdatelong">
+        <xsl:param name="date"/>
+
+        <xsl:variable name="year"><xsl:value-of select="substring($date,1,4)"/></xsl:variable>
+        <xsl:variable name="month"><xsl:value-of select="substring($date,6,2)"/></xsl:variable>
+        <xsl:variable name="day"><xsl:value-of select="substring($date,9,2)"/></xsl:variable>
+
+        <xsl:value-of select="$day"/>.
+        <xsl:text> </xsl:text>
+
+        <xsl:if test="$tt_lang = 'de' ">
+            <xsl:if test="$month = '01' ">Januar</xsl:if>
+            <xsl:if test="$month = '02' ">Februar</xsl:if>
+            <xsl:if test="$month = '03' ">März</xsl:if>
+            <xsl:if test="$month = '04' ">April</xsl:if>
+            <xsl:if test="$month = '05' ">Mai</xsl:if>
+            <xsl:if test="$month = '06' ">Juni</xsl:if>
+            <xsl:if test="$month = '07' ">Juli</xsl:if>
+            <xsl:if test="$month = '08' ">August</xsl:if>
+            <xsl:if test="$month = '09' ">September</xsl:if>
+            <xsl:if test="$month = '10' ">Oktober</xsl:if>
+            <xsl:if test="$month = '11' ">November</xsl:if>
+            <xsl:if test="$month = '12' ">Dezember</xsl:if>
+        </xsl:if>
+        <xsl:if test="$tt_lang = 'en' ">
+            <xsl:if test="$month = '01' ">January</xsl:if>
+            <xsl:if test="$month = '02' ">February</xsl:if>
+            <xsl:if test="$month = '03' ">March</xsl:if>
+            <xsl:if test="$month = '04' ">April</xsl:if>
+            <xsl:if test="$month = '05' ">May</xsl:if>
+            <xsl:if test="$month = '06' ">June</xsl:if>
+            <xsl:if test="$month = '07' ">July</xsl:if>
+            <xsl:if test="$month = '08' ">August</xsl:if>
+            <xsl:if test="$month = '09' ">September</xsl:if>
+            <xsl:if test="$month = '10' ">October</xsl:if>
+            <xsl:if test="$month = '11' ">November</xsl:if>
+            <xsl:if test="$month = '12' ">December</xsl:if>
+        </xsl:if>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="$year"/>
+    </xsl:template>
+
+    <xsl:template name="formatdateshort">
+        <xsl:param name="date"/>
+
+        <xsl:variable name="year"><xsl:value-of select="substring($date,1,4)"/></xsl:variable>
+        <xsl:variable name="month"><xsl:value-of select="substring($date,6,2)"/></xsl:variable>
+        <xsl:variable name="day"><xsl:value-of select="substring($date,9,2)"/></xsl:variable>
+
+        <xsl:value-of select="$day"/>.<xsl:value-of select="$month"/>.<xsl:value-of select="$year"/>
+    </xsl:template>
+    <!-- }}} -->
+
+    <!-- {{{ edit:plain_source -->
+    <xsl:template match="edit:plain_source">
+        <xsl:value-of select="document(concat('call:/changesrc/', string(.)))/*" disable-output-escaping="yes"/>
+    </xsl:template>
+    <!-- }}} -->
+
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
 
