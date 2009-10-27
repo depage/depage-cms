@@ -908,7 +908,7 @@ class bgTasks_thread {
             $this->funcs[$i]->add_args(array('task' => $this->taskObj));
             // log every called function
             //$log->add_entry($this->funcs[$i]->name . "(" . implode(",", $this->funcs[$i]->args) . ")");
-            $log->add_memory_usage($this->funcs[$i]->name);
+            //$log->add_memory_usage($this->funcs[$i]->name);
             $this->funcs[$i]->call();
             db_query(
                 "UPDATE " . $this->taskObj->threadTable . " 

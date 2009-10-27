@@ -823,12 +823,7 @@ class tpl_engine_xslt extends tpl_engine {
         }
         $path = $project->page_ids[$id];
             
-            
-        if ($this->isPreview) {
-            $path = "/{$lang}{$path}";
-        } else {
-            $path = "/{$lang}_publish{$path}";
-        }
+        $path = "/{$lang}{$path}";
 
         return $path;
     }
@@ -977,31 +972,30 @@ class tpl_engine_xslt extends tpl_engine {
     function get_relative_path_to($target_path, $actual_path = null) {
         global $log;
 
+        if ($actual_path === null) {
+            $actual_path = $this->actual_path;
+        }
+
         $path = '';
         if ($target_path == '') {
             $path = '';
+        } elseif ($target_path == $actual_path) {
+            $path = '';
         } else {
-            if ($actual_path === null) {
-                $actual_path = explode('/', $this->actual_path);
-            } else {
-                $actual_path = explode('/', $actual_path);
-            }
+            $actual_path = explode('/', $actual_path);
             $target_path = explode('/', $target_path);
 
-            //$log->add_entry("path:\n" . implode("/", $target_path) . "\n" . implode("/", $actual_path));
-            
             $i = 0;
             while ($actual_path[$i] == $target_path[$i] && $i < count($actual_path)) {
                 $i++;
             }
+            
             if (count($actual_path) - $i >= 1) {
                 $path = str_repeat('../', count($actual_path) - $i - 1) . implode('/', array_slice($target_path, $i));
-                if ($path == '') {
-                    $path = './';
-                }
             } else {
                 $path = '';
             }
+            //$log->add_entry("path:\n" . implode("/", $target_path) . "\n" . implode("/", $actual_path) . "\n" . $i . "\n" . $path);
         }
         return $path;
     }
