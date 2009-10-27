@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE xsl:stylesheet [ ]>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://tool.untitled.net/ns/rpc" xmlns:db="http://tool.untitled.net/ns/database" xmlns:proj="http://tool.untitled.net/ns/project" xmlns:pg="http://tool.untitled.net/ns/page" xmlns:sec="http://tool.untitled.net/ns/section" xmlns:edit="http://tool.untitled.net/ns/edit" xmlns:backup="http://tool.untitled.net/ns/backup" version="1.0" extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
     <!-- {{{ init-feed -->
     <xsl:template name="init-feed">
         require_once("<xsl:value-of select="$depage_path_server_root" /><xsl:value-of select="$depage_path_base" />framework/lib/lib_atom.php"); 
