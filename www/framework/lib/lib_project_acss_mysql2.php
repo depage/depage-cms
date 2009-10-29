@@ -1750,6 +1750,101 @@ class project_acss_mysql2 extends project {
         }
     }
     // }}}
+    
+    // {{{ backup_save()
+    function backup_save($project_name) {
+        global $conf;
+        global $xml_db, $log;
+        
+        $this->_set_project($project_name);
+
+	$doc_id = $this->xmldb->get_doc_id_by_name($project_name);
+	if ($doc_id !== false) {
+            $xml_doc = $this->xmldb->get_doc_by_id($doc_id);
+            
+            $filename = 'backup_full_' . date("YmdHis");
+            $filepath = "{$conf->path_server_root}{$conf->path_projects}/$project_name/backup/";
+
+            $fs = fs::factory("local");
+            $fs->mk_dir($filepath);
+
+            $xml_doc->dump_file("$filepath$filename.xml", false, true);
+            $hash = sha1_file("$filepath$filename.xml");
+
+            if (count($backups = $this->backup_get_files($project_name, $hash)) > 0) {
+                $fs->rm("{$filepath}{$filename}.xml");
+
+                $log->add_entry("'{$project_name}' already saved in \"{$backups[0]}\"");
+            } else {
+                $fs->f_rename("{$filepath}{$filename}.xml", "{$filepath}{$filename}_{$hash}.xml");
+
+                $log->add_entry("saved '{$project_name}' to \"{$filename}_{$hash}.xml\"");
+            }
+
+            return true;
+	} else {
+            return false;
+	}
+    }
+    // }}}
+    // {{{ backup_get_files()
+    function backup_get_files($project_name, $hash = null) {
+        global $conf;
+        global $xml_db, $log;
+
+        $backups = Array();
+        
+        $this->_set_project($project_name);
+
+        $filename = 'backup_full_' . date("YmdHis");
+        $filepath = "{$conf->path_server_root}{$conf->path_projects}/$project_name/backup/";
+
+        $fs = fs::factory("local");
+        $dir = $fs->list_dir($filepath);
+
+        if ($hash !== null) {
+            $pattern = "/backup_full_(.){14}_$hash\.xml/";
+        } else {
+            $pattern = "/backup_full_(.){14}.*\.xml/";
+        }
+
+        foreach ($dir["files"] as $file) {
+            if (preg_match($pattern, $file)) {
+                $backups[] = $file;
+            }
+        }
+
+        return $backups;
+    }
+    // }}}
+    // {{{ backup_restore()
+    function backup_restore($project_name, $filename) {
+        global $conf;
+        global $xml_db, $log;
+        
+        $this->_set_project($project_name);
+
+	$doc_id = $this->xmldb->get_doc_id_by_name($project_name);
+	if ($doc_id !== false) {
+            $filepath = "{$conf->path_server_root}{$conf->path_projects}/$project_name/backup/";
+
+            if (!($new_xml_doc = domxml_open_file("{$filepath}{$filename}"))) {
+                $log->add_entry("error parsing \"{$filename}\"");	
+
+                return false;
+            }
+
+            //save doc	
+            $error = $this->xmldb->save_node($new_xml_doc->document_element(), $doc_id);
+
+            $log->add_entry("restored \"{$project_name}\" from \"{$filename}\"");
+
+            return true;
+	} else {
+            return false;
+	}
+    }
+    // }}}
 
     /* {{{ _page_struct_add_url() */
     function _page_struct_add_url($node, $ppath = "", $pfilename = "", $pfullname = "") {
