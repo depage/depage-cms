@@ -280,6 +280,7 @@ class html {
                 $t_desc = $tt->get_description();
                 $t_progress = $tt->get_progress();
 
+                // @todo show only tasks of projects the user is allowed to edit (depends_on)
                 $h .= "<li>";
                     $h .= "<h3>{$t['name']} &mdash; {$t['depends_on']}</h3>";
                     $h .= "<div class=\"progress\">";
@@ -319,6 +320,30 @@ class html {
                 $h .= "</li>";
             }
             $h .= "</ul>";
+        }
+
+        return $h;
+    }
+    /* }}} */
+    /* {{{ lastchanged_pages */
+    function lastchanged_pages($project_name) {
+        global $conf;
+        global $project;
+
+        $h = "";
+
+        $pages = $project->get_lastchanged_pages($project_name);
+        $languages = $project->get_languages($project_name);
+        $languages = array_keys($languages);
+        $lang = $languages[0];
+
+        foreach ($pages as $page) {
+            $h .= "<li>";
+                $h .= "<a href=\"{$conf->path_base}projects/{$project_name}/preview/html/cached/{$lang}{$page['url']}\">";
+                    $h .= "{$page['url']}";
+                    $h .= "<span class=\"date\">" . date("d.m.y H:m", $page['dt']) . "</span>";
+                $h .= "</a>";
+            $h .= "</li>";
         }
 
         return $h;
