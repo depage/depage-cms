@@ -228,21 +228,21 @@ ul.projectlisting {
 }
 /* }}} */
 /* {{{ dlg */
-.dlg {
+#dlg {
     position: absolute;
     padding: 10px;
     top: 100px;
     right: 50px;
     line-height: 22px;
 }
-.dlg span {
+#dlg span {
     display: inline-block;
     position: relative;
     width: 22px;
 }
-.dlg .question,
-.dlg .yes,
-.dlg .no {
+#dlg .question,
+#dlg .yes,
+#dlg .no {
     display: block;
     position: absolute;
     top: -14px;

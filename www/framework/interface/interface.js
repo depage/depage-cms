@@ -95,25 +95,63 @@ function set_toolbar(type) {
 function dlg_publish(project, x, y) {
     var html = "";
 
+    $("#dlg").remove();
+
     x = window.innerWidth - x - 350;
     if (x < 0) {
         x = 0;
     }
-    html += "<div class=\"dlg\" style=\"right: " + x + "px; top: " + y + "px;\">";
+    html += "<div id=\"dlg\" style=\"right: " + x + "px; top: " + y + "px; display: none;\">";
         html += "<span><a class=\"question\"></a></span>";
-        //html += "Do you want to publish '" + project + "' now?";
-        html += "M&ouml;chten Sie '" + project + "' jetzt ver&ouml;ffentlichen?";
+        html += lang['js_dlg_publish'].replace(/%project%/, project);
         html += "<span></span>";
         html += "<span><a class=\"yes\" href=\"#\"></a></span>";
         html += "<span><a class=\"no\" href=\"#\"></a></span>";
     html += "</div>";
 
-    var dlg = $(html).appendTo("body");
+    var dlg = $(html).appendTo("body").fadeIn("fast");
 
     $(".yes", dlg).click(function() {
         dlg.remove();
 
         top.publish(project);
+
+        clearTimeout(timeout['tasks']);
+        timeout['tasks'] = setTimeout("update_tasklist()", 1000);
+    });
+    $(".no", dlg).click(function() {
+        dlg.remove();
+    });
+    
+}
+/* }}} */
+/* {{{ dlg_backup_restore */
+function dlg_backup_restore(project, x, y) {
+    var html = "";
+
+    $("#dlg").remove();
+
+    x = window.innerWidth - x - 350;
+    if (x < 0) {
+        x = 0;
+    }
+    html += "<div id=\"dlg\" style=\"right: " + x + "px; top: " + y + "px; display: none;\">";
+        html += "<span><a class=\"question\"></a></span>";
+        html += lang['js_dlg_backup_save'].replace(/%project%/, project);
+        html += "<span></span>";
+        html += "<span><a class=\"yes\" href=\"#\"></a></span>";
+        html += "<span><a class=\"no\" href=\"#\"></a></span>";
+    html += "</div>";
+
+    var dlg = $(html).appendTo("body").fadeIn("fast");
+
+    $(".yes", dlg).click(function() {
+        dlg.remove();
+
+        //top.publish(project);
+
+        clearTimeout(timeout['tasks']);
+        timeout['tasks'] = setTimeout("update_tasklist()", 1000);
     });
     $(".no", dlg).click(function() {
         dlg.remove();
@@ -236,7 +274,7 @@ function backup_save(project) {
         project: project
     }, function() {
         clearTimeout(timeout['tasks']);
-        timeout['tasks'] = setTimeout("update_tasklist()", 5000);
+        timeout['tasks'] = setTimeout("update_tasklist()", 8000);
 
         if (tasks.html() == "") {
             box.hide();
@@ -277,8 +315,8 @@ function projectlisting_add_events() {
         });
         // }}}
         // {{{ backup_restore
-        $(".backup_restore", pl).click(function() {
-            alert("restore: " + project);
+        $(".backup_restore", pl).click(function(e) {
+            dlg_backup_restore(project, e.pageX, e.pageY);
 
             return false;
         });

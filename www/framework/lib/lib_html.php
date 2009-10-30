@@ -52,6 +52,7 @@ class html {
             <?php 
                 echo($extra_content);
                 $this->head_stylesheet(); 
+                $this->head_javascript(); 
             ?>
             <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo("{$conf->path_base}framework/interface/pics/favicon.ico");?>">
             <link rel="icon" type="image/png" href="<?php echo("{$conf->path_base}framework/interface/pics/favicon.png");?>">
@@ -106,18 +107,18 @@ class html {
                 .projectlisting div.details ul.lastchanged_pages li:hover .date {
                     color: <?php echo($settings['color_font']); ?>;
                 }
-                .dlg {
+                #dlg {
                     background: <?php echo($settings['color_tooltipMsg_face']); ?>;
                     border: 1px solid <?php echo($settings['color_component_line']); ?>;
                     color: <?php echo($settings['color_tooltip_font']); ?>;
                 }
-                .dlg .question {
+                #dlg .question {
                     background: url(<?php echo($this->icon_path("question"))?>);
                 }
-                .dlg .yes {
+                #dlg .yes {
                     background: url(<?php echo($this->icon_path("yes"))?>);
                 }
-                .dlg .no {
+                #dlg .no {
                     background: url(<?php echo($this->icon_path("no"))?>);
                 }
                 .centered_box small  {
@@ -131,6 +132,28 @@ class html {
                 }
                 -->
             </style>
+        <?php    
+    }
+    /* }}} */
+    /* {{{ head_javascript */
+    function head_javascript() {
+        global $conf;
+
+        ?>
+            <script language="JavaScript" type="text/JavaScript">
+                <!--
+                    var lang = {
+                        <?php
+                            foreach($this->lang as $k => $t) {
+                                if (substr($k, 0, 3) == "js_") {
+                                    echo("$k: \"" . addslashes($t) . "\", \n");
+                                }
+                            }
+                        ?>
+                        empty: ""
+                    }
+                -->
+            </script>
         <?php    
     }
     /* }}} */
@@ -230,7 +253,7 @@ class html {
                     $h .= "<h3>" . $this->lang['inhtml_extra_functions'] . "</h3>";
                     $h .= "<ul>";
                             $h .= "<li><a href=\"#backup_save('$name')\" class=\"backup_save\">" . $this->lang['inhtml_projects_backup_save'] . "</a>";
-                            //$h .= "<a href=\"#backup_restore('$name')\" class=\"backup_restore\">" . $this->lang['inhtml_projects_backup_restore'] . "</a></li>";
+                            $h .= "<a href=\"#backup_restore('$name')\" class=\"backup_restore\">" . $this->lang['inhtml_projects_backup_restore'] . "</a></li>";
                     $h .= "</ul>";
                 }
             $h .= "</div>";
