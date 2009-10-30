@@ -46,6 +46,7 @@ class html {
             ?>
             
             <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}framework/interface/jquery-1.3.2.min.js");?>"></script>
+            <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}framework/interface/jquery.cookie.min.js");?>"></script>
             <script language="JavaScript" type="text/JavaScript" src="<?php echo("{$conf->path_base}framework/interface/interface.js");?>"></script>
             <link rel="stylesheet" type="text/css" href="<?php echo("{$conf->path_base}framework/interface/interface.css");?>">
             <?php 
@@ -88,6 +89,22 @@ class html {
                 }
                 .projectlisting a:hover {
                     background: <?php echo($settings['color_background']); ?>;
+                }
+                .projectlisting div.details {
+                    background: <?php echo($settings['color_background']); ?>;
+                }
+                .projectlisting div.details a {
+                    color: <?php echo($settings['color_font']); ?>;
+                }
+                .projectlisting div.details a:hover {
+                    color: <?php echo($settings['color_active2']); ?>;
+                    background: <?php echo($settings['color_face']); ?>;
+                }
+                .projectlisting div.details ul.lastchanged_pages li .date {
+                    color: <?php echo($settings['color_inactive']); ?>;
+                }
+                .projectlisting div.details ul.lastchanged_pages li:hover .date {
+                    color: <?php echo($settings['color_font']); ?>;
                 }
                 .dlg {
                     background: <?php echo($settings['color_tooltipMsg_face']); ?>;
@@ -192,16 +209,32 @@ class html {
 
         $h .= "<ul class=\"projectlisting\">";
         foreach ($projects as $name => $id) {
-            $h .= "<li>";
+            $h .= "<li data-project=\"$name\">";
+            // add main controls
+                $h .= "<a class=\"details_control arrow\"></a>";
             $h .= "
-                <h2><a href=\"#edit('$name','')\" class=\"edit\" data-project=\"$name\">$name</a></h2>
+                <h2><a href=\"#edit('$name','')\" class=\"details_control\">$name</a></h2>
                 <p>
-                    <a href=\"#edit('$name')\" class=\"edit\" data-project=\"$name\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
+                    <a href=\"#edit('$name')\" class=\"edit\"><span>" . $this->icon("edit") . "&nbsp;</span>" . $this->lang['inhtml_projects_edit'] . "</a>
                     <a href=\"{$conf->path_base}projects/$name/preview/html/cached/\"><span>" . $this->icon("preview") . "&nbsp;</span>" . $this->lang['inhtml_projects_preview'] . "</a> ";
                     if ($project->user->get_level_by_sid() <= 3) {
-                        $h .= "<a href=\"#publish('$name')\" class=\"publish\" data-project=\"$name\">" . $this->lang['inhtml_projects_publish'] . "</a>";
+                        $h .= "<a href=\"#publish('$name')\" class=\"publish\">" . $this->lang['inhtml_projects_publish'] . "</a>";
                     }
-            $h .= "</p></li>";
+            $h .= "</p>";
+            // add details
+            $h .= "<div class=\"details\">";
+                $h .= "<h3>" . $this->lang['inhtml_lastchanged_pages'] . "</h3>";
+                $h .= "<ul class=\"lastchanged_pages\">";
+                $h .= "</ul>";
+                if ($project->user->get_level_by_sid() <= 2) {
+                    $h .= "<h3>" . $this->lang['inhtml_extra_functions'] . "</h3>";
+                    $h .= "<ul>";
+                            $h .= "<li><a href=\"#backup_save('$name')\" class=\"backup_save\">" . $this->lang['inhtml_projects_backup_save'] . "</a>";
+                            //$h .= "<a href=\"#backup_restore('$name')\" class=\"backup_restore\">" . $this->lang['inhtml_projects_backup_restore'] . "</a></li>";
+                    $h .= "</ul>";
+                }
+            $h .= "</div>";
+            $h .= "</li>";
         }
         $h .= "</ul>";
 

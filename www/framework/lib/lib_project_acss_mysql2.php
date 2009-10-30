@@ -276,6 +276,50 @@ class project_acss_mysql2 extends project {
         return $xml_def;
     }
     // }}}
+    // {{{ get_lastchanged_pages()
+    /**
+     * gets page hirarchy from db
+     *
+     * @public
+     *
+     * @param    $project_name (string) project name
+     */
+    function get_lastchanged_pages($project_name) {
+        global $conf;
+        global $log;
+
+        $pages = Array();
+
+        $this->_set_project($project_name);
+        $doc_id = $this->get_projectId($project_name);
+        $xml_def = $this->xmldb->get_doc_by_xpath($doc_id, "//{$conf->ns['project']['ns']}:pages_struct");
+
+        $this->_page_struct_add_url($xml_def->document_element());
+
+        $xpath_pages = $this->xpath_new_context($xml_def);
+        $xfetch = xpath_eval($xpath_pages, "//{$conf->ns['page']['ns']}:page");
+
+        for ($i = 0; $i < count($xfetch->nodeset); $i++) {
+            list($meta_id) = $this->xmldb->get_child_ids_by_name($xfetch->nodeset[$i]->get_attribute('ref'), $conf->ns['page']['ns'], 'meta');
+            $pages[] = Array(
+                name => htmlspecialchars($xfetch->nodeset[$i]->get_attribute('name')),
+                url => htmlspecialchars($xfetch->nodeset[$i]->get_attribute('url')),
+                dt => strtotime($this->xmldb->get_attribute($meta_id, '', 'lastchange_UTC')),
+            );
+        }
+
+        usort($pages, Array($this, "_date_cmp"));
+
+        return array_splice($pages, 0, 10);
+    }
+    
+    function _date_cmp($a, $b) {
+        if ($a['dt'] == $b['dt']) {
+            return 0;
+        }
+        return ($a['dt'] > $b['dt']) ? -1 : 1;
+    }
+    // }}}
     // {{{ get_root_page_id()
     /**
      * gets page hirarchy from db

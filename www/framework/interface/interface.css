@@ -45,6 +45,20 @@ a img {
     border: none;
 }
 /* }}} */
+/* {{{ border-radius */
+.centered_box .content {
+    -moz-border-radius: 0 0 12px 0;
+    -webkit-border-bottom-right-radius: 12px;
+}
+.toolbar a,
+.projectlisting a {
+    /*
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    */
+}
+/* }}} */
 /* {{{ centered_box */
 .centered_box {
     width: 100%;
@@ -96,6 +110,9 @@ a img {
 }
 /* }}} */
 /* {{{ tasks */
+#box_tasks {
+    display: none;
+}
 .tasks h3 {
 }
 .progress {
@@ -132,6 +149,40 @@ ul.projectlisting {
 }
 .projectlisting p {
     float: right;
+}
+.projectlisting div.details {
+    clear: both;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: none;
+}
+.projectlisting .open div.details {
+    display: block;
+}
+.projectlisting a.details_control.arrow,
+.projectlisting a.details_control.arrow:hover {
+    background: url(pics/icon_details_closed.gif);
+}
+.projectlisting .open a.details_control.arrow,
+.projectlisting .open a.details_control.arrow:hover {
+    background: url(pics/icon_details_open.gif);
+}
+.projectlisting div.details ul.lastchanged_pages a {
+    display: inline;
+    float: none;
+}
+.projectlisting div.details ul.lastchanged_pages a:hover {
+    background: none;
+}
+.projectlisting div.details ul.lastchanged_pages li {
+    position: relative;
+}
+.projectlisting div.details ul.lastchanged_pages li .date {
+    position: absolute;
+    display: block;
+    font-size: 10px;
+    right: 0;
+    top: 0;
 }
 .toolbar {
     margin: 2px 12px;

@@ -29,6 +29,26 @@
         echo($html->user_status());
     } elseif ($_REQUEST['type'] == "publish") {
         $project->publish($_REQUEST['project']);
+    } elseif ($_REQUEST['type'] == "backup_save") {
+        if ($project->backup_save($_REQUEST['project'])) {
+            echo("<h2>backup saved</h2>");
+        } else {
+            echo("<h2>backup not saved</h2>");
+        }
+    } elseif ($_REQUEST['type'] == "lastchanged_pages") {
+        $pages = $project->get_lastchanged_pages($_REQUEST['project']);
+        $languages = $project->get_languages($_REQUEST['project']);
+        $languages = array_keys($languages);
+        $lang = $languages[0];
+
+        foreach ($pages as $page) {
+            echo("<li>");
+            echo("<a href=\"../../projects/{$_REQUEST['project']}/preview/html/cached/{$lang}{$page['url']}\">");
+                    echo("{$page['url']}");
+                    echo("<span class=\"date\">" . date("d.m.y H:m", $page['dt']) . "</span>");
+                echo("</a>");
+            echo("</li>");
+        }
     }
 
     if (!$conf->pocket_use) {

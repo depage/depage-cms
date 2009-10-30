@@ -226,22 +226,92 @@ function publish(project) {
     }, function() {});
 }
 /* }}} */
+/* {{{ backup_save */
+function backup_save(project) {
+    var box = $("#box_tasks");
+    var tasks = $("#tasks");
+
+    tasks.load("status.php", {
+        type: "backup_save",
+        project: project
+    }, function() {
+        clearTimeout(timeout['tasks']);
+        timeout['tasks'] = setTimeout("update_tasklist()", 5000);
+
+        if (tasks.html() == "") {
+            box.hide();
+        } else {
+            box.show();
+        }
+    });
+}
+/* }}} */
 
 /* {{{ projectlisting_add_events */
 function projectlisting_add_events() {
-    $(".projectlisting .edit").click(function() {
-        var project = $(this).attr("data-project");
+    var open_project = $.cookie("depage-details-open");
 
-        top.open_edit(project, '');
+    $(".projectlisting > li").each(function() {
+        var pl = $(this);
+        var project = pl.attr("data-project");
+        
+        // {{{ edit
+        $(".edit", pl).click(function() {
+            top.open_edit(project, '');
 
-        return false;
-    });
-    $(".projectlisting .publish").click(function(e) {
-        var project = $(this).attr("data-project");
+            return false;
+        });
+        // }}}
+        // {{{ publish
+        $(".publish", pl).click(function(e) {
+            dlg_publish(project, e.pageX, e.pageY);
 
-        dlg_publish(project, e.pageX, e.pageY);
+            return false;
+        });
+        // }}}
+        // {{{ backup_save
+        $(".backup_save", pl).click(function() {
+            backup_save(project);
 
-        return false;
+            return false;
+        });
+        // }}}
+        // {{{ backup_restore
+        $(".backup_restore", pl).click(function() {
+            alert("restore: " + project);
+
+            return false;
+        });
+        // }}}
+        // {{{ details_control
+        $(".details_control", pl).click(function() {
+            if ($(this).parents("li").hasClass("open")) {
+                $(this).parents("li").removeClass("open");
+                    $.cookie("depage-details-open", "", { 
+                        path: '/', 
+                        expires: 30 
+                    });
+            } else {
+                $(".projectlisting > li").removeClass("open");
+                $(this).parents("li").addClass("open");
+                $(this).parents("li").find(".lastchanged_pages").each(function() {
+                    $.cookie("depage-details-open", project, { 
+                        path: '/', 
+                        expires: 30 
+                    });
+
+                    $(this).load("status.php", {
+                        type: "lastchanged_pages",
+                        project: project
+                    });  
+                })
+            }
+        });
+        
+        if (open_project == project) {
+            $(".details_control:first", pl).click();
+        }
+        // }}}
     });
 }
 /* }}} */
@@ -253,13 +323,15 @@ function update_tasklist() {
 
     if (tasks.length == 1) {
         tasks.load("status.php?type=tasks", null, function() {
-            setTimeout("update_tasklist()", 2000);
-
             if (tasks.html() == "") {
+                var time = "5000";
                 box.hide();
             } else {
+                var time = "500";
                 box.show();
             }
+
+            timeout['tasks'] = setTimeout("update_tasklist()", time);
         });
     }
 }
@@ -271,7 +343,7 @@ function update_userlist() {
 
     if (users.length == 1) {
         users.load("status.php?type=users", null, function() {
-            setTimeout("update_userlist()", 10000);
+            timeout['userlist'] = setTimeout("update_userlist()", 10000);
 
             if (users.html() == "") {
                 box.hide();
@@ -316,6 +388,8 @@ function add_first_chooser() {
 /* }}} */
 
 chooserNum = 1;
+
+timeout = [];
 
 flashwin = null;
 flashloaded = false;
