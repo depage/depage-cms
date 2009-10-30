@@ -35,14 +35,19 @@
                         <xsl:value-of select="$href" disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:when>
-                <xsl:when test="$href and not(substring($href, 1, 8) = 'pageref:')">
+                <xsl:when test="$href and substring($href, 1, 8) = 'pageref:'">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$href" disable-output-escaping="yes"/>
+                        <xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:when test="$href_id != ''">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:attribute name="href">
-                        <xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$href" disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:otherwise>
             </xsl:choose>
