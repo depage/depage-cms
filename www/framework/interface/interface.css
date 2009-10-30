@@ -132,8 +132,8 @@ a img {
 }
 /* }}} */
 /* {{{ users */
-.users h3,
-.users p {
+.users ul h3,
+.users ul p {
     display: inline;
 }
 /* }}} */
@@ -198,8 +198,8 @@ ul.projectlisting {
 .toolbar .right {
     float: right;
 }
-.toolbar h2,
-.projectlisting h2 {
+.toolbar ul h2,
+.projectlisting ul h2 {
     display: block;
     float: left;
 }

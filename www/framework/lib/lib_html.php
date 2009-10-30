@@ -391,11 +391,48 @@ class html {
         foreach ($backups as $b) {
             $name = date("d.m.y H:m", mktime(substr($b, 20, 2), substr($b, 22, 2), substr($b, 24, 2), substr($b, 16, 2), substr($b, 18, 2), substr($b, 12, 4)));
             $h .= "<li>";
-                $h .= "<a href=\"#\" class=\"backup_restore_file\" data-backup-file=\"$b\">$name</a>";
+            $h .= "<a href=\"#backup_restore('$project_name', '$b')\" class=\"backup_restore_file\" data-backup-file=\"$b\">{$this->lang['inhtml_backup_name_complete']} $name</a>";
             $h .= "</li>";
         }
 
         return $h;
+    }
+    /* }}} */
+    /* {{{ backup_save */
+    function backup_save($project_name) {
+        global $project;
+
+        $h = "";
+
+        if ($savename = $project->backup_save($project_name)) {
+            $h .= "<h1>{$this->lang["inhtml_backup_saved"]}</h1>";
+            $h .= "<p>" . str_replace(array("%project%", "%file%"), array($project_name, $this->backup_format_filename($savename)), $this->lang["inhtml_backup_saved_info"]) . "</p>";
+        } else {
+            $h .= "<h1>{$this->lang["inhtml_backup_not_saved"]}</h1>";
+        }
+
+        return $h;
+    }
+    /* }}} */
+    /* {{{ backup_restore */
+    function backup_restore($project_name, $file) {
+        global $project;
+
+        $h = "";
+
+        if ($savename = $project->backup_restore($project_name, $file)) {
+            $h .= "<h1>{$this->lang["inhtml_backup_restored"]}</h1>";
+            $h .= "<p>" . str_replace(array("%project%", "%file%"), array($project_name, $this->backup_format_filename($file)), $this->lang["inhtml_backup_restored_info"]) . "</p>";
+        } else {
+            $h .= "<h1>{$this->lang["inhtml_backup_not_restored"]}</h1>";
+        }
+
+        return $h;
+    }
+    /* }}} */
+    /* {{{ backup_format_filename */
+    function backup_format_filename($file) {
+        return substr($file, 0, 26) . ".xml";
     }
     /* }}} */
     /* {{{ status */
