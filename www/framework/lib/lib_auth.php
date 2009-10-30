@@ -69,7 +69,7 @@ class ttUser{
         // get logged in users
         $loggedin = array();
         $result = db_query(
-            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update
+            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update, sessions.useragent
             FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions
             WHERE user.id=sessions.userid"
         );
@@ -894,7 +894,8 @@ class ttUser{
                 $uid_query
                 $time_login_query
                 last_update=NOW(),
-                ip='" . mysql_escape_string($_SERVER["REMOTE_ADDR"]) . "'"
+                ip='" . mysql_escape_string($_SERVER["REMOTE_ADDR"]) . "',
+                useragent='" . mysql_escape_string($_SERVER["HTTP_USER_AGENT"]) . "'"
         );
         $this->valid = true;
         $this->sid = $sid;

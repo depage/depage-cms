@@ -327,6 +327,7 @@ class html {
     function user_status() {
         global $conf;
         global $project;
+        global $log;
 
         $h = "";
 
@@ -335,11 +336,16 @@ class html {
             $h .= "<ul class=\"users\">";
             foreach($users as $u) {
                 $h .= "<li>";
-                $h .= "<h3><a href=\"mailto:$u->email\">$u->name_full</a> ($u->name) </h3>";
-                if ($u->project != "") {
-                    $h .= "<p>is editing '$u->project'</p>";
-                }
-                //$h .= "<p>last update: $u->last_update</p>";
+                    $h .= "<h3><a href=\"mailto:$u->email\">$u->name_full</a> ($u->name) </h3>";
+                    $h .= "<p>";
+                        if ($u->project != "") {
+                            $h .= "is editing '$u->project'";
+                        }
+                        if (ini_get("browscap") != "") {
+                            $browser = get_browser($u->useragent);
+                            $h .= " on {$browser->browser} {$browser->version} {$browser->platform}";
+                        }
+                    $h .= "</p>";
                 $h .= "</li>";
             }
             $h .= "</ul>";
