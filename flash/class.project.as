@@ -133,9 +133,9 @@ class_project.prototype.preview = function(forcePreview) {
 		}
 		
 		if (conf.user.settings.preview_automatic < 2) {
-			var previewTimeout = 0;
+			var previewTimeout = 1000;
 		} else {
-			var previewTimeout = 100;
+			var previewTimeout = 1000;
 		}
 		if (tempNode.nid != null && ((conf.user.settings.preview_automatic == 2 || (conf.user.settings.preview_automatic == 1 && this.previewId != tempNode.nid) || forcePreview))) {
 			if (this.preview_setIdFromOutside) {
@@ -171,10 +171,7 @@ class_project.prototype.previewNow = function() {
             url += conf.project.pathname;
             url += "/preview/";
             url += this.preview_type + "/";
-            /*
-            url += conf.user.sid + "/";
-            url += conf.user.wid + "/";
-            */
+
             if (this.previewDisableCache) {
                     url += "noncached"
             } else {
