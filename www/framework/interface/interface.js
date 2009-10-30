@@ -139,20 +139,39 @@ function dlg_backup_restore(project, x, y) {
         html += "<span><a class=\"question\"></a></span>";
         html += lang['js_dlg_backup_save'].replace(/%project%/, project);
         html += "<span></span>";
-        html += "<span><a class=\"yes\" href=\"#\"></a></span>";
         html += "<span><a class=\"no\" href=\"#\"></a></span>";
+        html += "<ul class=\"backups\"></ul>";
     html += "</div>";
 
     var dlg = $(html).appendTo("body").fadeIn("fast");
+    $(".backups", dlg).load("status.php", {
+        type: "backup_files",
+        project: project
+    }, function() {
+        $(".backup_restore_file", dlg).click(function() {
+            dlg.remove();
 
-    $(".yes", dlg).click(function() {
-        dlg.remove();
+            var file = $(this).attr("data-backup-file");
+            var box = $("#box_tasks");
+            var tasks = $("#tasks");
 
-        //top.publish(project);
+            tasks.load("status.php", {
+                type: "backup_restore",
+                project: project,
+                file: file
+            }, function() {
+                clearTimeout(timeout['tasks']);
+                timeout['tasks'] = setTimeout("update_tasklist()", 8000);
 
-        clearTimeout(timeout['tasks']);
-        timeout['tasks'] = setTimeout("update_tasklist()", 1000);
+                if (tasks.html() == "") {
+                    box.hide();
+                } else {
+                    box.show();
+                }
+            });
+        });
     });
+
     $(".no", dlg).click(function() {
         dlg.remove();
     });

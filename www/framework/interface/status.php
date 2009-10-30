@@ -30,11 +30,21 @@
     } elseif ($_REQUEST['type'] == "publish") {
         $project->publish($_REQUEST['project']);
     } elseif ($_REQUEST['type'] == "backup_save") {
-        if ($project->backup_save($_REQUEST['project'])) {
-            echo("<h2>backup saved</h2>");
+        if ($savename = $project->backup_save($_REQUEST['project'])) {
+            echo("<h1>backup saved</h1>");
+            echo("<p>$savename</p>");
         } else {
-            echo("<h2>backup not saved</h2>");
+            echo("<h1>backup not saved</h1>");
         }
+    } elseif ($_REQUEST['type'] == "backup_restore") {
+        if ($project->backup_restore($_REQUEST['project'], $_REQUEST['file'])) {
+            echo("<h1>backup restored</h1>");
+            echo("<p>{$_REQUEST['project']} from {$_REQUEST['file']}</p>");
+        } else {
+            echo("<h1>backup not restored</h1>");
+        }
+    } elseif ($_REQUEST['type'] == "backup_files") {
+        echo($html->backup_files($_REQUEST['project']));
     } elseif ($_REQUEST['type'] == "lastchanged_pages") {
         echo($html->lastchanged_pages($_REQUEST['project']));
     }

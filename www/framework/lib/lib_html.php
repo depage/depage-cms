@@ -378,6 +378,26 @@ class html {
         return $h;
     }
     /* }}} */
+    /* {{{ backup_files */
+    function backup_files($project_name) {
+        global $conf;
+        global $project;
+
+        $h = "";
+
+        $backups = $project->backup_get_files($project_name);
+        $backups = array_reverse($backups);
+
+        foreach ($backups as $b) {
+            $name = date("d.m.y H:m", mktime(substr($b, 20, 2), substr($b, 22, 2), substr($b, 24, 2), substr($b, 16, 2), substr($b, 18, 2), substr($b, 12, 4)));
+            $h .= "<li>";
+                $h .= "<a href=\"#\" class=\"backup_restore_file\" data-backup-file=\"$b\">$name</a>";
+            $h .= "</li>";
+        }
+
+        return $h;
+    }
+    /* }}} */
     /* {{{ status */
     function status() {
         global $conf;

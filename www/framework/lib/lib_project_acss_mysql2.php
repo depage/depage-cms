@@ -1818,14 +1818,16 @@ class project_acss_mysql2 extends project {
             if (count($backups = $this->backup_get_files($project_name, $hash)) > 0) {
                 $fs->rm("{$filepath}{$filename}.xml");
 
-                $log->add_entry("'{$project_name}' already saved in \"{$backups[0]}\"");
+                $savename = $backups[0];
+                $log->add_entry("'{$project_name}' already saved in \"{$savename}\"");
             } else {
                 $fs->f_rename("{$filepath}{$filename}.xml", "{$filepath}{$filename}_{$hash}.xml");
 
-                $log->add_entry("saved '{$project_name}' to \"{$filename}_{$hash}.xml\"");
+                $savename = "{$filename}_{$hash}.xml";
+                $log->add_entry("saved '{$project_name}' to \"{$savename}\"");
             }
 
-            return true;
+            return $savename;
 	} else {
             return false;
 	}
