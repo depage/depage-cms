@@ -301,10 +301,16 @@ class project_acss_mysql2 extends project {
 
         for ($i = 0; $i < count($xfetch->nodeset); $i++) {
             list($meta_id) = $this->xmldb->get_child_ids_by_name($xfetch->nodeset[$i]->get_attribute('ref'), $conf->ns['page']['ns'], 'meta');
+            $date = $this->xmldb->get_attribute($meta_id, '', 'lastchange_UTC');
+            if ($date == "") {
+                $date = 0;
+            } else {
+                $date = strtotime($this->xmldb->get_attribute($meta_id, '', 'lastchange_UTC'));
+            }
             $pages[] = Array(
                 name => htmlspecialchars($xfetch->nodeset[$i]->get_attribute('name')),
                 url => htmlspecialchars($xfetch->nodeset[$i]->get_attribute('url')),
-                dt => strtotime($this->xmldb->get_attribute($meta_id, '', 'lastchange_UTC')),
+                dt => $date,
             );
         }
 

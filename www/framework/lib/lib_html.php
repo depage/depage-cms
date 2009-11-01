@@ -367,10 +367,15 @@ class html {
         $lang = $languages[0];
 
         foreach ($pages as $page) {
+            if ($page['dt'] == 0) {
+                $date = "";
+            } else {
+                $date = date("d.m.y H:m", $page['dt']);
+            }
             $h .= "<li>";
                 $h .= "<a href=\"{$conf->path_base}projects/{$project_name}/preview/html/cached/{$lang}{$page['url']}\">";
                     $h .= "{$page['url']}";
-                    $h .= "<span class=\"date\">" . date("d.m.y H:m", $page['dt']) . "</span>";
+                    $h .= "<span class=\"date\">$date</span>";
                 $h .= "</a>";
             $h .= "</li>";
         }
