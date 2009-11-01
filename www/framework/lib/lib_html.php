@@ -85,6 +85,9 @@ class html {
                 .centered_box .content {
                     background: <?php echo($settings['color_face']); ?>
                 }
+                .centered_box.noback .content {
+                    background: none;
+                }
                 .toolbar a:hover {
                     background: <?php echo($settings['color_face']); ?>;
                 }

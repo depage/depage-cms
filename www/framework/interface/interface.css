@@ -28,9 +28,8 @@ h1 {
 }
 ul {
     list-style: none;
-    padding: 0;
     text-indent: 0px;
-    padding-bottom: 10px;
+    margin: 0;
     padding: 6px 0 24px 0px;
 }
 li {
@@ -90,7 +89,6 @@ a img {
 }
 .centered_box.noback .content {
     margin-top: 6px;
-    background: none;
     padding-left: 0;
 }
 .centered_box small {
@@ -132,8 +130,8 @@ a img {
 }
 /* }}} */
 /* {{{ users */
-.users ul h3,
-.users ul p {
+ul.users h3,
+ul.users p {
     display: inline;
 }
 /* }}} */
@@ -166,6 +164,9 @@ ul.projectlisting {
 .projectlisting .open a.details_control.arrow,
 .projectlisting .open a.details_control.arrow:hover {
     background: url(pics/icon_details_open.gif);
+}
+.projectlisting div.details table.lastchanged_pages {
+    margin-bottom: 16px;
 }
 .projectlisting div.details table.lastchanged_pages a {
     display: inline;
@@ -210,8 +211,8 @@ ul.projectlisting {
 }
 .toolbar h2 a {
 }
-.projectlisting h2 a {
-    /*width: 180px;*/
+.projectlisting h2 {
+    float: left;
 }
 .toolbar h2 a,
 .projectlisting h2 a {
@@ -219,7 +220,7 @@ ul.projectlisting {
 }
 .toolbar h2 a:hover,
 .projectlisting h2 a:hover {
-    background: inherit;
+    background: none;
 }
 .toolbar a span,
 .projectlisting a span {
