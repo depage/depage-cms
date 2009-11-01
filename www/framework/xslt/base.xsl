@@ -88,19 +88,19 @@
                 </xsl:if>
             </xsl:variable>
 
-            <xsl:value-of select="$pretext"/>
-                <xsl:choose>
-                    <xsl:when test="$href_id and not($content) and not($linkdesc = '')">
-                        <xsl:value-of select="$linkdesc"/>
-                    </xsl:when>
-                    <xsl:when test="$content != '' ">
-                        <xsl:value-of select="$content"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            <xsl:value-of select="$aptext"/>
+            <xsl:value-of select="$pretext" disable-output-escaping="yes" />
+            <xsl:choose>
+                <xsl:when test="$href_id and not($content) and not($linkdesc = '')">
+                    <xsl:value-of select="$linkdesc"/>
+                </xsl:when>
+                <xsl:when test="$content != '' ">
+                    <xsl:value-of select="$content"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:value-of select="$aptext" disable-output-escaping="yes" />
             <!-- }}} -->
         </a>
         <xsl:if test="name(../..) = 'sec:unordered_list' ">
