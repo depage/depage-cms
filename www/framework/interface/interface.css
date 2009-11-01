@@ -167,19 +167,24 @@ ul.projectlisting {
 .projectlisting .open a.details_control.arrow:hover {
     background: url(pics/icon_details_open.gif);
 }
-.projectlisting div.details ul.lastchanged_pages a {
+.projectlisting div.details table.lastchanged_pages a {
     display: inline;
     float: none;
+    padding: 0;
 }
-.projectlisting div.details ul.lastchanged_pages a:hover {
+.projectlisting div.details table.lastchanged_pages a:hover {
     background: none;
 }
-.projectlisting div.details ul.lastchanged_pages li {
-    position: relative;
+.projectlisting div.details table.lastchanged_pages {
+    width: 100%;
 }
-.projectlisting div.details ul.lastchanged_pages li .date {
-    position: absolute;
-    display: block;
+.projectlisting div.details table.lastchanged_pages td {
+    padding-left: 8px;
+    vertical-align: top;
+}
+.projectlisting div.details table.lastchanged_pages .date {
+    text-align: right;
+    white-space: nowrap;
     font-size: 10px;
     right: 0;
     top: 0;

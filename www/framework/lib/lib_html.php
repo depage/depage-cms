@@ -247,8 +247,8 @@ class html {
             // add details
             $h .= "<div class=\"details\">";
                 $h .= "<h3>" . $this->lang['inhtml_lastchanged_pages'] . "</h3>";
-                $h .= "<ul class=\"lastchanged_pages\">";
-                $h .= "</ul>";
+                $h .= "<table class=\"lastchanged_pages\">";
+                $h .= "</table>";
                 if ($project->user->get_level_by_sid() <= 2) {
                     $h .= "<h3>" . $this->lang['inhtml_extra_functions'] . "</h3>";
                     $h .= "<ul>";
@@ -372,12 +372,18 @@ class html {
             } else {
                 $date = date("d.m.y H:m", $page['dt']);
             }
-            $h .= "<li>";
-                $h .= "<a href=\"{$conf->path_base}projects/{$project_name}/preview/html/cached/{$lang}{$page['url']}\">";
-                    $h .= "{$page['url']}";
-                    $h .= "<span class=\"date\">$date</span>";
-                $h .= "</a>";
-            $h .= "</li>";
+            $h .= "<tr>";
+                $h .= "<td>";
+                    $h .= "<a href=\"{$conf->path_base}projects/{$project_name}/preview/html/cached/{$lang}{$page['url']}\">";
+                        $h .= "{$page['url']}";
+                    $h .= "</a>";
+                $h .= "</td>";
+                $h .= "<td class=\"date\">";
+                    $h .= "<a href=\"{$conf->path_base}projects/{$project_name}/preview/html/cached/{$lang}{$page['url']}\">";
+                        $h .= "<span class=\"date\">$date</span>";
+                    $h .= "</a>";
+                $h .= "</td>";
+            $h .= "</tr>";
         }
 
         return $h;
