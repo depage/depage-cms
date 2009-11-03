@@ -12,7 +12,7 @@
     
     $project->user->auth_http();
 
-    $projects = $project->get_projects();
+    $projects = $project->get_projects(true);
 
     foreach ($projects as $name => $id) {
         echo("saving '$name'\n");

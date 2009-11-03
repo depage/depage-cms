@@ -99,7 +99,7 @@ class project_acss_mysql2 extends project {
      *
      * @return    $projects (array) available projects
      */
-    function get_projects() {
+    function get_projects($all = false) {
         global $conf;
         global $log;
                 
@@ -107,7 +107,7 @@ class project_acss_mysql2 extends project {
         //$docs = $this->xmldb->get_docs();
 
         $sid = $this->user->sid;
-        if ($this->user->get_level_by_sid() == 1) {
+        if ($all || $this->user->get_level_by_sid() == 1) {
             // get all projects for admins
             $result = db_query(
                 "SELECT projects.id, projects.name, projects.id_doc 
@@ -137,6 +137,89 @@ class project_acss_mysql2 extends project {
         }
 
         return $projects;
+    }
+    // }}}
+    // {{{ add_new_project()
+    /**
+     * gets available projects from database.
+     *
+     * @public
+     *
+     * @return    $projects (array) available projects
+     */
+    function add_new_project($project_name) {
+        global $conf;
+        global $log;
+
+        $projects = $this->get_projects(true);
+        if (isset($projects[$project_name])) {
+            echo("project '$project_name' already exists.");
+
+            return false;
+        } else if ($project_name == "") {
+            echo("you have to set a name.");
+
+            return false;
+        }
+
+        $this->_set_project($project_name);
+        $fs = fs::factory('local');
+                
+        $project_path = "{$conf->path_server_root}{$conf->path_projects}/{$this->project_name}/";
+
+        // add database tables
+        $tables = array(
+            "mediathumbs",
+            "publish_files",
+            "transform_cache",
+            "xmldata_cache",
+            "xmldata_elements",
+        );
+        foreach ($tables as $table) {
+            $sql = file_get_contents("{$conf->path_server_root}{$conf->path_base}/framework/sql/dp_newproject_{$table}.sql");
+            $sql = str_replace("dp_newproject_", "{$conf->db_prefix}_{$project_name}_", $sql);
+
+            db_query($sql);
+        }
+        db_query(
+            "INSERT INTO
+                {$conf->db_table_projects}
+            SET
+                name='$project_name',
+                id_doc=1;"
+        );
+        db_query(
+            "INSERT INTO
+                {$this->xmldb->element_table}
+            SET
+                id=1,
+                id_parent=NULL,
+                id_doc=1,
+                pos=0,
+                name='$project_name',
+                value='',
+                type='DOCUMENT_NODE';"
+        );
+        
+        // add basic directory structure
+        $dirs = array(
+            "backup",
+            "cache",
+            "lib",
+            "lib/global",
+            "lib/global/css",
+            "lib/global/js",
+            "publish",
+            "trash",
+        );
+        foreach ($dirs as $dir) {
+            $fs->mk_dir("{$project_path}{$dir}");
+        }
+
+        // copy basebackup
+        $backupfile = "backup_full_" . date("YmdHis") . ".xml";
+        $fs->f_copy("{$conf->path_server_root}{$conf->path_base}/framework/xml/project_new.xml", "{$project_path}backup/$backupfile");
+        $this->backup_restore($project_name, $backupfile);
     }
     // }}}
     // {{{ get_avail_projects()
@@ -1942,10 +2025,10 @@ class project_acss_mysql2 extends project {
     function _set_project($project_name) {
         global $conf, $log;
         
+        $project_name = str_replace(' ', '_', strtolower($project_name));
         $this->project_name = $project_name;
 
-        $project = str_replace(' ', '_', strtolower($project_name));
-        $this->xmldb->set_tables("{$conf->db_prefix}_{$project}_xmldata_elements", "{$conf->db_prefix}_{$project}_xmldata_cache");
+        $this->xmldb->set_tables("{$conf->db_prefix}_{$project_name}_xmldata_elements", "{$conf->db_prefix}_{$project_name}_xmldata_cache");
         //$this->xmldb->set_tables($conf->db_table_xml_elements, $conf->db_table_xml_cache);
     }
     // }}}
