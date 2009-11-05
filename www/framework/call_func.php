@@ -524,7 +524,7 @@ class rpc_phpConnect_functions extends rpc_functions_class {
                     $file_access->rm($projectPath . '/trash' . $args['id']);
                 }
                 $file_access->f_rename($projectPath . '/lib' . $args['id'], $projectPath . '/trash' . $args['id']);
-                tell_clients_to_update($project_name, $args['sid'], 'fileProps', $pathparts['dirname'] . '/');
+                tell_clients_to_update($project_name, $args['sid'], 'fileProps', array($pathparts['dirname'] . '/'));
             }
         // }}}
         // {{{ all other types
