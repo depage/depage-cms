@@ -232,7 +232,7 @@
                     <xsl:with-param name="target" select="''"/>
                     <xsl:with-param name="onMouseOver" select="''"/>
                     <xsl:with-param name="onMouseOut" select="''"/>
-                    <xsl:with-param name="class" select="''"/>
+                    <xsl:with-param name="class" select="$class"/>
                     <xsl:with-param name="id" select="''"/>
                     <xsl:with-param name="src" select="$src"/>
                     <xsl:with-param name="width" select="$width"/>
@@ -254,16 +254,21 @@
     <xsl:template name="edit:text_formatted" match="edit:text_formatted">
         <xsl:param name="class" />
         <xsl:param name="id" />
+        <xsl:param name="linebreaks" />
 
         <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
-            <xsl:apply-templates><xsl:with-param name="class" select="$class"/><xsl:with-param name="id" select="$id"/></xsl:apply-templates>
+            <xsl:apply-templates>
+                <xsl:with-param name="class" select="$class"/>
+                <xsl:with-param name="id" select="$id"/>
+                <xsl:with-param name="linebreaks" select="$linebreaks"/>
+            </xsl:apply-templates>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
         <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
-            <xsl:apply-templates><xsl:with-param name="class" select="'headline'"/></xsl:apply-templates>
+            <xsl:apply-templates><xsl:with-param name="linebreaks" select="'true'"/></xsl:apply-templates>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
