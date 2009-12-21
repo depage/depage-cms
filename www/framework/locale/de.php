@@ -116,6 +116,7 @@ $texts = array(
 	'prop_name_edit_date' => "Datum",
 	'prop_name_edit_time' => "Uhrzeit",
 	'prop_name_edit_img' => "Bild",
+	'prop_name_edit_img_thumb' => "thumb",
 	'prop_name_edit_img_zoom' => "Zoom",
 	'prop_name_edit_audio' => "Audio",
 	'prop_name_edit_video' => "Video",
