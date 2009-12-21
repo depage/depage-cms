@@ -32,6 +32,9 @@ class html {
     /* {{{ head */
     function head($extra_content = "") {
         global $conf;
+
+        headerType("text/html", "ISO-8859-1");
+
         ?><!DOCTYPE html>
 <html>
         <head>
