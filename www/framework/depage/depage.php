@@ -17,8 +17,19 @@ function __autoload($class) {
 class depage {
     public $version = '1.5';
     public $conf;
+    public $log;
 
-    protected $_configFile = "conf/dpconf.php";
+    protected $configFile = "conf/dpconf.php";
+    
+    // {{{ default config
+    protected $defaults = array(
+        'handlers' => array(
+            '*' => "setup",
+        ),
+        'env' => "development",
+    );
+    protected $options = array();
+    // }}}
 
     // {{{ constructor
     /**
@@ -29,19 +40,29 @@ class depage {
      * @return  null
      */
     public function __construct($configFile = '') {
+        $this->log = new log();
+
+        set_error_handler(array($this, "handlePhpError"));
+        set_exception_handler(array($this, "handleException"));
+
         if ($configFile != '') {
-            $this->_configFile = $configFile;
+            $this->configFile = $configFile;
         }
 
         $this->conf = new config();
 
-        if (file_exists($this->_configFile)) {
-            $this->conf->readConfig($this->_configFile);
+        // read config file
+        if (file_exists($this->configFile)) {
+            $this->conf->readConfig($this->configFile);
         }
+
+        $this->options = $this->conf->toOptions($this->defaults);
+
+        $this->log = new log($this->conf->log);
     }
     // }}}
     
-    // {{{ __autoload
+    // {{{ autoload
     /**
      * automatically loads classes from the framework or the private modules
      *
@@ -52,32 +73,29 @@ class depage {
     static function autoload($class) {
         $fm_path = depage::getDepageFrameworkPath();
         $dp_path = depage::getDepagePath();
+        $php_file = "";
 
         $file = "$class.php";
 
         if ($pos = strrpos($class, "_")) {
             $module = substr($class, 0, $pos);
         } else {
-            $module = "";
+            $module = $class;
         }
         
         //searching for class in global modules
         if (file_exists("$fm_path/$module/$file")) {
             $php_file = "$fm_path/$module/$file";
-        } elseif (file_exists("$fm_path/$class/$file")) {
-            $php_file = "$fm_path/$class/$file";
 
         //searching for class in local modules
         } elseif (file_exists("$dp_path/modules/$module/$file")) {
             $php_file = "$dp_path/modules/$module/$file";
-        } elseif (file_exists("$dp_path/modules/$class/$file")) {
-            $php_file = "$dp_path/modules/$class/$file";
         }
 
         if ($php_file != "") {
             require_once($php_file);
         } else {
-            echo("failed to load $class");
+            trigger_error("failed to load $class");
         }
     }
     // }}}
@@ -116,6 +134,74 @@ class depage {
 
         return $path;
     }
+    // }}}
+    
+    // {{{ handleRequest()
+    /**
+     * analyses request and decieds what to do
+     *
+     * @return  framework path
+     */
+    public function handleRequest($handler = "") {
+        if ($handler == "") {
+            // get handler based on configuration/domain/path
+            $handler = $this->conf->handler;
+        }
+
+        // setup handler class
+        $this->handler = new $handler();
+        $this->handler->run();
+    }
+    // }}}
+    // {{{ handlePhpError()
+    /**
+     * analyses request and decieds what to do
+     *
+     * @return  framework path
+     */
+    public function handlePhpError($errno, $errstr, $errfile, $errline) {
+        $error = (object) array(
+            'no' => $errno,
+            'msg' => $errstr,
+            'file' => $errfile,
+            'line' => $errline,
+            'backtrace' => debug_backtrace(),
+        );
+
+        $this->log->log("Error: {$error->msg} in '{$error->file}' on line {$error->line}");
+
+            $this->handler->showError($error, $this->options['env']);
+        if (is_callable($this->handler, "showError")) {
+            $this->handler->showError($error, $this->options['env']);
+        }
+
+        /* Don't execute PHP internal error handler */
+        return true;
+    }
+    
+    // }}}
+    // {{{ handleException()
+    /**
+     * analyses request and decieds what to do
+     *
+     * @return  framework path
+     */
+    public function handleException($exception) {
+        $error = (object) array(
+            'exception' => $exception,
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'msg' => $exception->getMessage(),
+            'backtrace' => debug_backtrace(),
+        );
+
+        $this->log->log("Unhandled Exception: {$error->msg} in '{$error->file}' on line {$error->line}");
+
+        if (is_callable($this->handler, "showError")) {
+            $this->handler->showError($error, $this->options['env']);
+        }
+    }
+    
     // }}}
 }
 

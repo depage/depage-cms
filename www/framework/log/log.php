@@ -12,10 +12,11 @@
 
 class log {
     // {{{ default config
-    protected $_defaults = array(
-        file => "",
+    protected $defaults = array(
+        'file' => "logs/depage.log",
+        'mail' => "",
     );
-    protected $_options = array();
+    protected $options = array();
     // }}}
     
     // {{{ constructor
@@ -28,7 +29,30 @@ class log {
      */
     public function __construct($options = NULL) {
         $conf = new config($options);
-        $this->_options = $conf->toOptions($this->_defaults);
+        $this->options = $conf->toOptions($this->defaults);
+    }
+    // }}}
+    // {{{ getMessage
+    /**
+     * get log message based on given data
+     *
+     * @param   $arg (var) text, array or object to log
+     *
+     * @return  null
+     */
+    public function getMessage($arg) {
+        if (gettype($arg) != 'string') {
+            ob_start();
+            print_r($arg);
+            $message .= ob_get_contents();
+            ob_end_clean();
+        } else {
+            $message .= $arg;
+        }
+
+        $message = str_replace("\n", "\n    ", rtrim($message, "\n"));
+
+        return $message;
     }
     // }}}
     // {{{ log
@@ -41,20 +65,11 @@ class log {
      * @return  null
      */
     public function log($arg, $type = "debug") {
-        if (gettype($arg) != 'string') {
-            ob_start();
-            print_r($arg);
-            $message .= ob_get_contents();
-            ob_end_clean();
-        } else {
-            $message .= $arg;
-        }
-
-        $message = str_replace("\n", "\n    ", rtrim($message, "\n"));
+        $message = $this->getMessage($arg);
         $date = date("c");
 
-        if ($this->_options['file'] != "") {
-            error_log("[$date] [$type] $message\n", 3, $this->_options['file']);
+        if ($this->options['file'] != "") {
+            error_log("[$date] [$type] $message\n", 3, $this->options['file']);
         } else {
             error_log("[$date] [$type] $message\n");
         }

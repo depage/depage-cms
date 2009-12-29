@@ -1,4 +1,3 @@
-<pre>
 <?php
 /**
  * @file    index.php
@@ -14,10 +13,6 @@
     require_once('framework/depage/depage.php');
 
     $dp = new depage();
+    $dp->handleRequest();
 
-    $log = new log($dp->conf->log);
-
-    $log->log($log);
-
-/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
-?></pre>
+    /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

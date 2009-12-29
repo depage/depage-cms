@@ -11,7 +11,7 @@
  */
 
 class config implements Iterator {
-    protected $_data = array();
+    protected $data = array();
 
     // {{{ constructor
     /**
@@ -34,11 +34,17 @@ class config implements Iterator {
      * @return  null
      */
     public function readConfig($configFile) {
-        include $configFile;
+        $values = include $configFile;
 
-        $values = get_defined_vars();
-
-        $this->setConfig($values);
+        $urls = array_keys($values);
+        $acturl = $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"];
+        foreach ($urls as $url) {
+            $pattern = "/" . str_replace(array("?", "*", "/"), array("(.)", "(.*)", "\/"), $url) . "/";
+            if (preg_match($pattern, $acturl)) {
+                // url fits into pattern
+                $this->setConfig($values[$url]);
+            }
+        }
     }
     // }}}
     // {{{ setConfig
@@ -53,9 +59,9 @@ class config implements Iterator {
         if (count($values) > 0) {
             foreach ($values as $key => $value) {
                 if (is_array($value)) {
-                    $this->_data[$key] = new self($value);
+                    $this->data[$key] = new self($value);
                 } else {
-                    $this->_data[$key] = $value;
+                    $this->data[$key] = $value;
                 }
             }
         }
@@ -70,7 +76,7 @@ class config implements Iterator {
     public function toArray() {
         $data = array();
 
-        foreach ($this->_data as $key => $value) {
+        foreach ($this->data as $key => $value) {
             if (is_object($value)) {
                 $data[$key] = $value->toArray();
             } else {
@@ -83,18 +89,22 @@ class config implements Iterator {
     // }}}
     // {{{ toOptions
     /**
-     * returns options as array
+     * returns options based on defaults as array
+     *
+     * @param $defaults (array) default options from class
      *
      * @return  options as array
      */
     public function toOptions($defaults) {
         $data = array();
 
-        foreach ($defaults as $key => $value) {
-            if (isset($this->_data[$key]) && !is_null($this->_data[$key])) {
-                $data[$key] = $this->_data[$key];
-            } else {
-                $data[$key] = $value;
+        if (count($defaults) > 0) {
+            foreach ($defaults as $key => $value) {
+                if (isset($this->data[$key]) && !is_null($this->data[$key])) {
+                    $data[$key] = $this->data[$key];
+                } else {
+                    $data[$key] = $value;
+                }
             }
         }
 
@@ -111,11 +121,11 @@ class config implements Iterator {
      * @return  null
      */
     public function __get($name) {
-        if (array_key_exists($name, $this->_data)) {
-            if (is_array($this->_data[$name])) {
+        if (array_key_exists($name, $this->data)) {
+            if (is_array($this->data[$name])) {
                 return "sub $name";
             } else {
-                return $this->_data[$name];
+                return $this->data[$name];
             }
         }
     }
@@ -129,28 +139,28 @@ class config implements Iterator {
      * @return  null
      */
     public function __isset($name) {
-        return isset($this->_data[$name]);
+        return isset($this->data[$name]);
     }
     // }}}
      
     // {{{ rewind()
     public function rewind() {
-        reset($this->_data);
+        reset($this->data);
     }
     // }}}
     // {{{ current()
     public function current() {
-        return current($this->_data);
+        return current($this->data);
     }
     // }}}
     // {{{ key()
     public function key() {
-        return key($this->_data);
+        return key($this->data);
     }
     // }}}
     // {{{ next()
     public function next() {
-        return next($this->_data);
+        return next($this->data);
     }
     // }}}
     // {{{ valid()
