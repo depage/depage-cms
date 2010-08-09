@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.0.b1 (2010-08-06)
+ * @version		2.0.0.b2 (2010-08-09)
  */
 
 class CssMin
@@ -181,6 +181,24 @@ class CssMin
 				}
 			}
 		
+		// Remove empty rulesets
+		if ($config["remove-empty-rulesets"])
+			{
+			for($i = 0, $l = count($tokens); $i < $l; $i++)
+				{
+				// Remove empty rulesets
+				if ($tokens[$i][0] == self::T_RULESET_START && $tokens[$i+4][0] == self::T_RULESET_END)
+					{
+					unset($tokens[$i]); 	// T_RULESET_START
+					unset($tokens[++$i]);	// T_SELECTORS
+					unset($tokens[++$i]);	// T_DECLARATIONS_START
+					unset($tokens[++$i]);	// T_DECLARATIONS_END
+					unset($tokens[++$i]);	// T_RULESET_END
+					}
+				}
+			}
+		$tokens = array_values($tokens);
+		
 		// Compression
 		for($i = 0, $l = count($tokens); $i < $l; $i++)
 			{
@@ -189,15 +207,6 @@ class CssMin
 				{
 				unset($tokens[$i]);		// T_AT_RULE_MEDIA_START
 				unset($tokens[++$i]);	// T_AT_RULE_MEDIA_END
-				}
-			// Remove empty rulesets
-			if ($config["remove-empty-rulesets"] && $tokens[$i][0] == self::T_RULESET_START && $tokens[$i+4][0] == self::T_RULESET_END)
-				{
-				unset($tokens[$i]); 	// T_RULESET_START
-				unset($tokens[++$i]);	// T_SELECTORS
-				unset($tokens[++$i]);	// T_DECLARATIONS_START
-				unset($tokens[++$i]);	// T_DECLARATIONS_END
-				unset($tokens[++$i]);	// T_RULESET_END
 				}
 			// Compress unit values
 			if ($config["compress-unit-values"] && $tokens[$i][0] == self::T_DECLARATION)
@@ -341,7 +350,7 @@ class CssMin
 		$sAtRuleTrim		= $sDefaultTrim . ";";
 		$sAtRuleEol			= array(";", "\n");
 		// Basic variables
-		$css				= " " . $css;
+		$css				= " " . $css . " ";
 		$l					= strlen($css);
 		$i					= 0;
 		$buffer 			= "";
@@ -578,6 +587,7 @@ class CssMin
 					$buffer .= $c = substr($css, $i, 1);
 					}
 				$buffer = "";
+				$r[] = array(self::T_RULESET_END);
 				}
 			}
 		return $r;
