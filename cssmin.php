@@ -238,7 +238,7 @@ class CssMin
 					}
 				}
 			// Compress color values ("#aabbcc" to "#abc") 
-			if ($config["compress-color-values"] && $tokens[$i][0] == CssParser::T_DECLARATION)
+			if ($config["compress-color-values"] && $tokens[$i][0] == self::T_DECLARATION)
 				{
 				preg_match("/\#([0-9a-f]{6})/i", $tokens[$i][2], $m);
 				if ($m)
