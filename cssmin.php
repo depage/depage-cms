@@ -569,11 +569,21 @@ class CssMin
 								}
 							elseif (in_array($c, $sDeclEol))
 								{
+								
 								//$value	= trim(substr($buffer, 0, -1));
 								$value		= trim($buffer, $sDeclValueTrim);
 								$r[]		= array(self::T_DECLARATION, $property, $value, $mediaScope);
 								$buffer		= "";
-								break;
+								if ($c == "}")
+									{
+									$r[] = array(self::T_DECLARATIONS_END);
+									$r[] = array(self::T_RULESET_END);
+									break 2;
+									}
+								else
+									{
+									break;
+									}
 								}
 							$buffer .= $c = substr($css, $i, 1);
 							}
