@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.b1 (2010-08-10)
+ * @version		2.0.1.b2 (2010-08-10)
  */
 
 class CssMin
@@ -205,8 +205,8 @@ class CssMin
 				"border-bottom-right-radius"	=> array("-moz-border-radius-bottomright", "-webkit-border-bottom-right-radius", "-khtml-border-bottom-right-radius"),
 				"border-bottom-left-radius"		=> array("-moz-border-radius-bottomleft", "-webkit-border-bottom-left-radius", "-khtml-border-bottom-left-radius"),
 				"box-shadow"					=> array("-moz-box-shadow", "-webkit-box-shadow", "-khtml-box-shadow"),
-				"opacity"						=> array("-moz-opacity", "-webkit-opacity", "-khtml-opacity"),
 				"text-shadow"					=> array("-moz-text-shadow", "-webkit-text-shadow", "-khtml-text-shadow")
+				
 				)
 			), $config);
 		// Remove tokens
@@ -391,9 +391,17 @@ class CssMin
 				{
 				if (isset($config["css3-translation"][$tokens[$i][1]]))
 					{
-					foreach ($config["css3-translation"][$tokens[$i][1]] as $css3Declaration)
+					foreach ($config["css3-translation"][$tokens[$i][1]] as $value)
 						{
-						$r .= $css3Declaration . ":" . $tokens[$i][2] . ";";
+						if (!is_array($value))
+							{
+							$r .= $value . ":" . $tokens[$i][2] . ";";
+							}
+						elseif (is_array($value) && is_callable($value))
+							{
+							$r.= call_user_func_array($value, array($tokens[$i][1], $tokens[$i][2]));
+							
+							}
 						}
 					}
 				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($config["remove-last-ruleset-semicolon"] && $tokens[$i + 1][0] == self::T_DECLARATIONS_END ? "" : ";");
@@ -535,8 +543,7 @@ class CssMin
 					$r[]		= array(self::T_FONT_FACE_DECLARATION, $property, $value, $scope);
 					$buffer		= "";
 					array_pop($state);
-					// font face declaration closed with a right curly brace => closes @font-face block
-					if ($c == "}")
+					if ($c == "}") // @font-face declaration closed with a right curly brace => closes @font-face block
 						{
 						array_pop($state);
 						$r[]		= array(self::T_AT_FONT_FACE_END);
@@ -579,8 +586,7 @@ class CssMin
 					$r[]		= array(self::T_PAGE_DECLARATION, $property, $value, $scope);
 					$buffer		= "";
 					array_pop($state);
-					// font face declaration closed with a right curly brace => closes @font-face block
-					if ($c == "}")
+					if ($c == "}") // @page declaration closed with a right curly brace => closes @font-face block
 						{
 						array_pop($state);
 						$r[]		= array(self::T_AT_PAGE_END);
@@ -635,8 +641,7 @@ class CssMin
 					$r[]		= array(self::T_VARIABLE_DECLARATION, $property, $value, $scope);
 					$buffer		= "";
 					array_pop($state);
-					// variable declaration closed with a right curly brace => closes @variables block
-					if ($c == "}")
+					if ($c == "}") // @variable declaration closed with a right curly brace => closes @variables block
 						{
 						array_pop($state);
 						$r[]		= array(self::T_AT_VARIABLES_END);
@@ -714,8 +719,7 @@ class CssMin
 					$r[]		= array(self::T_DECLARATION, $property, $value, $scope);
 					$buffer		= "";
 					array_pop($state);
-					// declaration closed with a right curly brace => close ruleset
-					if ($c == "}")
+					if ($c == "}") // declaration closed with a right curly brace => close ruleset
 						{
 						array_pop($state);
 						$r[]		= array(self::T_DECLARATIONS_END);
@@ -735,7 +739,7 @@ class CssMin
 				/*
 				 * Start of string
 				 */
-				elseif ($currentState != self::T_STRING && ($c == "\"" || $c == "'"))
+				elseif ($currentState != self::T_STRING && $currentState != self::T_COMMENT && ($c == "\"" || $c == "'"))
 					{
 					$stringChar	= $c;
 					$filterWs	= false;
