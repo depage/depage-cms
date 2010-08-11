@@ -15,9 +15,8 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.b3 (2010-08-11)
+ * @version		2.0.1.b5 (2010-08-11)
  */
-
 class CssMin
 	{
 	/**
@@ -623,7 +622,7 @@ class CssMin
 					if ($c == "}") // @font-face declaration closed with a right curly brace => closes @font-face block
 						{
 						array_pop($state);
-						$r[]		= array(self::T_AT_FONT_FACE_END);
+						$r[]	= array(self::T_AT_FONT_FACE_END);
 						}
 					}
 				/*
@@ -666,7 +665,7 @@ class CssMin
 					if ($c == "}") // @page declaration closed with a right curly brace => closes @font-face block
 						{
 						array_pop($state);
-						$r[]		= array(self::T_AT_PAGE_END);
+						$r[]	= array(self::T_AT_PAGE_END);
 						}
 					}
 				/*
@@ -721,8 +720,8 @@ class CssMin
 					if ($c == "}") // @variable declaration closed with a right curly brace => closes @variables block
 						{
 						array_pop($state);
-						$r[]		= array(self::T_AT_VARIABLES_END);
-						$scope		= $sDefaultScope;
+						$r[]	= array(self::T_AT_VARIABLES_END);
+						$scope	= $sDefaultScope;
 						}
 					}
 				/*
@@ -798,8 +797,8 @@ class CssMin
 					if ($c == "}") // declaration closed with a right curly brace => close ruleset
 						{
 						array_pop($state);
-						$r[]		= array(self::T_DECLARATIONS_END);
-						$r[]		= array(self::T_RULESET_END);
+						$r[]	= array(self::T_DECLARATIONS_END);
+						$r[]	= array(self::T_RULESET_END);
 						}
 					}
 				/*
