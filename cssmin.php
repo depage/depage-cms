@@ -175,7 +175,13 @@ class CssMin
 	 * 
 	 * @var integer
 	 */
-	const T_STRING = 255;
+	const T_STRING = 254;
+	/**
+	 * State: Is in url string property
+	 * 
+	 * @var integer
+	 */
+	const T_STRING_URL = 255;
 	/**
 	 * Css transformations table
 	 * 
@@ -441,7 +447,7 @@ class CssMin
 		// Settings
 		$sDefaultScope		= array("all");						// Default scope
 		$sDefaultTrim		= " \t\n\r\0\x0B";					// Default trim charlist
-		$sTokenChars		= "@{};:\n\"'/*,";					// Tokens triggering parser processing
+		$sTokenChars		= "@{}();:\n\"'/*,";				// Tokens triggering parser processing
 		// Basic variables
 		$c					= null;								// Current char
 		$p					= null;								// Previous char
@@ -497,7 +503,7 @@ class CssMin
 				/*
 				 * Start of string
 				 */
-				elseif (($c == "\"" || $c == "'") && $currentState != self::T_STRING && $currentState != self::T_COMMENT)
+				elseif (($c == "\"" || $c == "'") && $currentState != self::T_STRING && $currentState != self::T_COMMENT && $currentState != self::T_STRING_URL)
 					{
 					$stringChar	= $c;
 					$isFilterWs	= false;
@@ -513,11 +519,46 @@ class CssMin
 				/*
 				 * End of string
 				 */
-				elseif ($c === $stringChar && $currentState == self::T_STRING && (substr($css, $i - 1, 1) != "\\" || substr($css, $i - 2, 2) == "\\\\"))
+				elseif ($c === $stringChar && $currentState == self::T_STRING)
 					{
+					if ($p == "\\") // Previous char is a escape char
+						{
+						$count = 1; 
+						$i2 = $i -2;
+						while (substr($css, $i2, 1) == "\\")
+							{
+							$count++;
+							$i2--;
+							}
+						// if count of escape chars is uneven => continue with string...
+						if ($count % 2)
+							{
+							continue;
+							}
+						}
+					// ...else end the string
 					$isFilterWs	= true;
 					array_pop($state);
 					$stringChar = null;
+					}
+				/**
+				 * Start of url string property
+				 */
+				elseif ($c == "(" && ($currentState != self::T_COMMENT && $currentState != self::T_STRING) && strtolower(substr($css, $i - 3, 3) == "url") 
+					&& ($currentState == self::T_DECLARATION || $currentState == self::T_FONT_FACE_DECLARATION || $currentState == self::T_PAGE_DECLARATION || $currentState == self::T_VARIABLE_DECLARATION))
+					{
+					array_push($state, self::T_STRING_URL);
+					}
+				/**
+				 * End of url string property
+				 */
+				elseif (($c == ")" || $c == "\n") && ($currentState != self::T_COMMENT && $currentState != self::T_STRING) && $currentState == self::T_STRING_URL)
+					{
+					if ($p == "\\")
+						{
+						continue;
+						}
+					array_pop($state);
 					}
 				/*
 				 * Start of at-rule @media block
