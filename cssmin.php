@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.b2 (2010-08-10)
+ * @version		2.0.1.b3 (2010-08-11)
  */
 
 class CssMin
@@ -177,6 +177,23 @@ class CssMin
 	 */
 	const T_STRING = 255;
 	/**
+	 * Css transformations table
+	 * 
+	 * @var array
+	 */
+	private static $transformations = array
+		(
+		"border-radius"					=> array("-moz-border-radius", "-webkit-border-radius", "-khtml-border-radius"),
+		"border-top-left-radius"		=> array("-moz-border-radius-topleft", "-webkit-border-top-left-radius", "-khtml-top-left-radius"),
+		"border-top-right-radius"		=> array("-moz-border-radius-topright", "-webkit-border-top-right-radius", "-khtml-top-right-radius"),
+		"border-bottom-right-radius"	=> array("-moz-border-radius-bottomright", "-webkit-border-bottom-right-radius", "-khtml-border-bottom-right-radius"),
+		"border-bottom-left-radius"		=> array("-moz-border-radius-bottomleft", "-webkit-border-bottom-left-radius", "-khtml-border-bottom-left-radius"),
+		"box-shadow"					=> array("-moz-box-shadow", "-webkit-box-shadow", "-khtml-box-shadow"),
+		"opacity"						=> array(array("CssMin", "_tOpacity")),
+		"text-shadow"					=> array("-moz-text-shadow", "-webkit-text-shadow", "-khtml-text-shadow"),
+		"white-space"					=> array(array("CssMin", "_tWhiteSpacePreWrap"))
+		);
+	/**
 	 * Minifies the Css.
 	 * 
 	 * @param string $css
@@ -197,17 +214,6 @@ class CssMin
 			"compress-color-values"			=> false,
 			"compress-unit-values"			=> false,
 			"emulate-css3-variables"		=> true,
-			"css3-translation"				=> array
-				(
-				"border-radius"					=> array("-moz-border-radius", "-webkit-border-radius", "-khtml-border-radius"),
-				"border-top-left-radius"		=> array("-moz-border-radius-topleft", "-webkit-border-top-left-radius", "-khtml-top-left-radius"),
-				"border-top-right-radius"		=> array("-moz-border-radius-topright", "-webkit-border-top-right-radius", "-khtml-top-right-radius"),
-				"border-bottom-right-radius"	=> array("-moz-border-radius-bottomright", "-webkit-border-bottom-right-radius", "-khtml-border-bottom-right-radius"),
-				"border-bottom-left-radius"		=> array("-moz-border-radius-bottomleft", "-webkit-border-bottom-left-radius", "-khtml-border-bottom-left-radius"),
-				"box-shadow"					=> array("-moz-box-shadow", "-webkit-box-shadow", "-khtml-box-shadow"),
-				"text-shadow"					=> array("-moz-text-shadow", "-webkit-text-shadow", "-khtml-text-shadow")
-				
-				)
 			), $config);
 		// Remove tokens
 		if (!$config["emulate-css3-variables"])
@@ -389,9 +395,9 @@ class CssMin
 			// T_DECLARATION
 			elseif ($tokens[$i][0] == self::T_DECLARATION)
 				{
-				if (isset($config["css3-translation"][$tokens[$i][1]]))
+				if (isset(self::$transformations[$tokens[$i][1]]))
 					{
-					foreach ($config["css3-translation"][$tokens[$i][1]] as $value)
+					foreach (self::$transformations[$tokens[$i][1]] as $value)
 						{
 						if (!is_array($value))
 							{
@@ -433,28 +439,34 @@ class CssMin
 	public static function parse($css)
 		{
 		// Settings
-		$sDefaultTrim		= " \t\n\r\0\x0B";
-		$sDefaultScope		= array("all");
-		$sTokenChars		= "@{};:\n\"'/*,";
-		
+		$sDefaultScope		= array("all");						// Default scope
+		$sDefaultTrim		= " \t\n\r\0\x0B";					// Default trim charlist
+		$sTokenChars		= "@{};:\n\"'/*,";					// Tokens triggering parser processing
 		// Basic variables
-		$c					= null;
-		$buffer 			= "";
-		$state				= array(self::T_DOCUMENT);
-		$currentState		= self::T_DOCUMENT;
-		$scope				= $sDefaultScope;
-		$selectors			= array();
-		$stringChar			= null;
-		$filterWs			= true;
-		
-		// Return value
-		$r 					= array();
-		// 
+		$c					= null;								// Current char
+		$p					= null;								// Previous char
+		$buffer 			= "";								// Buffer
+		$state				= array(self::T_DOCUMENT);			// State stack
+		$currentState		= self::T_DOCUMENT;					// Current state
+		$scope				= $sDefaultScope;					// Current scope
+		$stringChar			= null;								// String delimiter char
+		$isFilterWs			= true;								// Filter double whitespaces?
+		$selectors			= array();							// Array with collected selectors
+		$r 					= array();							// Return value
+		// Prepare css
+		$css				= str_replace("\r\n", "\n", $css);	// Windows to Unix line endings
+		$css				= str_replace("\r", "\n", $css);	// Mac to Unix line endings
+		while (strpos($css, "\n\n") !== false)
+			{
+			$css			= str_replace("\n\n", "\n", $css);	// Remove double line endings
+			}
+		$css				= str_replace("\t", " ", $css);		// Convert tabs to spaces
+		// Parse css 
 		for ($i = 0, $l = strlen($css); $i < $l; $i++)
 			{
 			$c = substr($css, $i, 1);
-			// Filter out whitespace chars
-			if ($filterWs && ($c == "\t" || ($c == " " && $c == $p)))
+			// Filter out double spaces
+			if ($isFilterWs && $c == " " && $c == $p)
 				{
 				continue;
 				}
@@ -465,28 +477,52 @@ class CssMin
 				/*
 				 * Start of comment
 				 */
-				if ($currentState != self::T_STRING && substr($css, $i, 2) == "/*")
+				if ($p == "/" && $c == "*" && $currentState != self::T_STRING)
 					{
+					$saveBuffer = substr($buffer, 0, -2); // save the buffer (will get restored with comment ending)
 					$buffer 	= $c;
-					$filterWs	= false;
+					$isFilterWs	= false;
 					array_push($state, self::T_COMMENT);
 					}
 				/*
 				 * End of comment
 				 */
-				elseif ($currentState != self::T_STRING && $currentState == self::T_COMMENT && substr($css, $i, 2) == "*/")
+				elseif ($p == "*" && $c == "/" && $currentState == self::T_COMMENT)
 					{
-					$buffer		.= substr($css, $i, 2);
 					$r[]		= array(self::T_COMMENT, trim($buffer));
-					$i			= $i + 2;
-					$buffer		= "";
-					$filterWs	= true;
+					$buffer		= $saveBuffer;
+					$isFilterWs	= true;
 					array_pop($state);
+					}
+				/*
+				 * Start of string
+				 */
+				elseif (($c == "\"" || $c == "'") && $currentState != self::T_STRING && $currentState != self::T_COMMENT)
+					{
+					$stringChar	= $c;
+					$isFilterWs	= false;
+					array_push($state, self::T_STRING);
+					}
+				/**
+				 * Escaped LF in string => remove escape backslash and LF
+				 */
+				elseif ($c == "\n" && $p == "\\" && $currentState == self::T_STRING)
+					{
+					$buffer = substr($buffer, 0, -2);
+					}
+				/*
+				 * End of string
+				 */
+				elseif ($c === $stringChar && $currentState == self::T_STRING && (substr($css, $i - 1, 1) != "\\" || substr($css, $i - 2, 2) == "\\\\"))
+					{
+					$isFilterWs	= true;
+					array_pop($state);
+					$stringChar = null;
 					}
 				/*
 				 * Start of at-rule @media block
 				 */
-				elseif ($currentState == self::T_DOCUMENT && $c == "@" && strtolower(substr($css, $i, 6)) == "@media")
+				elseif ($c == "@" && $currentState == self::T_DOCUMENT && strtolower(substr($css, $i, 6)) == "@media")
 					{
 					$i			= $i + 6;
 					$buffer 	= "";
@@ -495,7 +531,7 @@ class CssMin
 				/*
 				 * At-rule @media block media types
 				 */
-				elseif ($currentState == self::T_AT_MEDIA_START && $c == "{")
+				elseif ($c == "{" && $currentState == self::T_AT_MEDIA_START)
 					{
 					$buffer 	= strtolower(trim($buffer, $sDefaultTrim . "{"));
 					$scope		= $buffer != "" ? array_filter(array_map("trim", explode(",", $buffer))) : $sDefaultScope;
@@ -518,7 +554,7 @@ class CssMin
 				/*
 				 * Start of at-rule @font-face block
 				 */
-				elseif ($currentState == self::T_DOCUMENT && $c == "@" && strtolower(substr($css, $i, 10)) == "@font-face")
+				elseif ($c == "@" && $currentState == self::T_DOCUMENT && strtolower(substr($css, $i, 10)) == "@font-face")
 					{
 					$r[]		= array(self::T_AT_FONT_FACE_START);
 					$i			= $i + 10;
@@ -537,7 +573,7 @@ class CssMin
 				/*
 				 * @font-face declaration: Value
 				 */
-				elseif ($currentState == self::T_FONT_FACE_DECLARATION && strpos(";}\n", $c) !== false)
+				elseif (($c == ";" || $c == "}" || $c == "\n") && $currentState == self::T_FONT_FACE_DECLARATION)
 					{
 					$value		= trim($buffer, $sDefaultTrim . ";}");
 					$r[]		= array(self::T_FONT_FACE_DECLARATION, $property, $value, $scope);
@@ -552,7 +588,7 @@ class CssMin
 				/*
 				 * End of at-rule @font-face block
 				 */
-				elseif ($currentState == self::T_AT_FONT_FACE && $c == "}")
+				elseif ($c == "}" && $currentState == self::T_AT_FONT_FACE)
 					{
 					$r[]		= array(self::T_AT_FONT_FACE_END);
 					$buffer		= "";
@@ -561,7 +597,7 @@ class CssMin
 				/*
 				 * Start of at-rule @page block
 				 */
-				elseif ($currentState == self::T_DOCUMENT && $c == "@" && strtolower(substr($css, $i, 5)) == "@page")
+				elseif ($c == "@" && $currentState == self::T_DOCUMENT && strtolower(substr($css, $i, 5)) == "@page")
 					{
 					$r[]		= array(self::T_AT_PAGE_START);
 					$i			= $i + 5;
@@ -580,7 +616,7 @@ class CssMin
 				/*
 				 * @page declaration: Value
 				 */
-				elseif ($currentState == self::T_PAGE_DECLARATION && strpos(";}\n", $c) !== false)
+				elseif (($c == ";" || $c == "}" || $c == "\n") && $currentState == self::T_PAGE_DECLARATION)
 					{
 					$value		= trim($buffer, $sDefaultTrim . ";}");
 					$r[]		= array(self::T_PAGE_DECLARATION, $property, $value, $scope);
@@ -595,7 +631,7 @@ class CssMin
 				/*
 				 * End of at-rule @page block
 				 */
-				elseif ($currentState == self::T_AT_PAGE && $c == "}")
+				elseif ($c == "}" && $currentState == self::T_AT_PAGE)
 					{
 					$r[]		= array(self::T_AT_PAGE_END);
 					$buffer		= "";
@@ -604,7 +640,7 @@ class CssMin
 				/*
 				 * Start of at-rule @variables block
 				 */
-				elseif ($currentState == self::T_DOCUMENT && $c == "@" && strtolower(substr($css, $i, 10)) == "@variables")
+				elseif ($c == "@" && $currentState == self::T_DOCUMENT &&  strtolower(substr($css, $i, 10)) == "@variables")
 					{
 					$i			= $i + 10;
 					$buffer 	= "";
@@ -635,7 +671,7 @@ class CssMin
 				/*
 				 * @variables declaration: Value
 				 */
-				elseif ($currentState == self::T_VARIABLE_DECLARATION && strpos(";}\n", $c) !== false)
+				elseif (($c == ";" || $c == "}" || $c == "\n") && $currentState == self::T_VARIABLE_DECLARATION)
 					{
 					$value		= trim($buffer, $sDefaultTrim . ";}");
 					$r[]		= array(self::T_VARIABLE_DECLARATION, $property, $value, $scope);
@@ -651,7 +687,7 @@ class CssMin
 				/*
 				 * End of at-rule @variables block
 				 */
-				elseif ($currentState == self::T_AT_VARIABLES && $c == "}")
+				elseif ($c == "}" && $currentState == self::T_AT_VARIABLES)
 					{
 					$r[]		= array(self::T_AT_VARIABLES_END);
 					$scope		= $sDefaultScope;
@@ -661,16 +697,15 @@ class CssMin
 				/*
 				 * Start of document level at-rule
 				 */
-				elseif ($currentState == self::T_DOCUMENT && $c == "@")
+				elseif ($c == "@" && $currentState == self::T_DOCUMENT)
 					{
 					$buffer		= "";
 					array_push($state, self::T_AT_RULE);
 					}
-				
 				/*
 				 * End of document level at-rule
 				 */
-				elseif ($currentState == self::T_AT_RULE && $c == ";")
+				elseif ($c == ";" && $currentState == self::T_AT_RULE)
 					{
 					$pos		= strpos($buffer, " ");
 					$rule		= substr($buffer, 0, $pos);
@@ -682,7 +717,7 @@ class CssMin
 				/**
 				 * Selector
 				 */
-				elseif (($currentState == self::T_AT_MEDIA || $currentState ==  self::T_DOCUMENT) && $c == ",")
+				elseif ($c == "," && ($currentState == self::T_AT_MEDIA || $currentState ==  self::T_DOCUMENT))
 					{
 					$selectors[]= trim($buffer, $sDefaultTrim . ",");
 					$buffer		= "";
@@ -690,7 +725,7 @@ class CssMin
 				/*
 				 * Start of ruleset
 				 */
-				elseif (($currentState == self::T_AT_MEDIA || $currentState == self::T_DOCUMENT) && $c == "{")
+				elseif ($c == "{" && ($currentState == self::T_AT_MEDIA || $currentState == self::T_DOCUMENT))
 					{
 					$selectors[]= trim($buffer, $sDefaultTrim . "{");
 					$selectors 	= array_filter(array_map("trim", $selectors));
@@ -704,7 +739,7 @@ class CssMin
 				/*
 				 * Declaration: Property
 				 */
-				elseif ($currentState == self::T_DECLARATIONS && $c == ":")
+				elseif ($c == ":" && $currentState == self::T_DECLARATIONS)
 					{
 					$property	= trim($buffer, $sDefaultTrim . ":;");
 					$buffer		= "";
@@ -713,7 +748,7 @@ class CssMin
 				/*
 				 * Declaration: Value
 				 */
-				elseif ($currentState == self::T_DECLARATION && strpos(";}\n", $c) !== false)
+				elseif (($c == ";" || $c == "}" || $c == "\n") && $currentState == self::T_DECLARATION)
 					{
 					$value		= trim($buffer, $sDefaultTrim . ";}");
 					$r[]		= array(self::T_DECLARATION, $property, $value, $scope);
@@ -729,35 +764,58 @@ class CssMin
 				/*
 				 * End of ruleset
 				 */
-				elseif ($currentState == self::T_DECLARATIONS && $c == "}")
+				elseif ($c == "}" && $currentState == self::T_DECLARATIONS)
 					{
 					$r[]		= array(self::T_DECLARATIONS_END);
 					$r[]		= array(self::T_RULESET_END);
 					$buffer		= "";
 					array_pop($state);
 					}
-				/*
-				 * Start of string
-				 */
-				elseif ($currentState != self::T_STRING && $currentState != self::T_COMMENT && ($c == "\"" || $c == "'"))
-					{
-					$stringChar	= $c;
-					$filterWs	= false;
-					array_push($state, self::T_STRING);
-					}
-				/*
-				 * End of string
-				 */
-				elseif ($currentState == self::T_STRING && $c === $stringChar && (substr($css, $i - 1, 1) != "\\" || substr($css, $i - 2, 2) == "\\\\"))
-					{
-					$filterWs	= true;
-					array_pop($state);
-					$stringChar = null;
-					}
+				
 				}
+			
 			$p = $c;
 			}
 		return $r;
+		}
+	/**
+	 * Transforms "opacity: {value}" into browser specific counterparts.
+	 * 
+	 * @param string $property
+	 * @param string $value
+	 * @return string
+	 */
+	private static function _tOpacity($property, $value)
+		{
+		$ieValue = (int) ((float) $value * 100);
+		$r  = "-moz-opacity:" . $value . ";";						// Firefox < 3.5
+		$r .= "-ms-filter: \"alpha(opacity=" . $ieValue . ")\";";	// Internet Explorer 8
+		$r .= "filter: alpha(opacity=" . $ieValue . ");zoom: 1;";	// Internet Explorer 4 - 7
+		return $r;
+		}
+	/**
+	 * Transforms "white-space: pre-wrap" into browser specific counterparts.
+	 * 
+	 * @param string $property
+	 * @param string $value
+	 * @return string
+	 */
+	private static function _tWhiteSpacePreWrap($property, $value)
+		{
+		if (strtolower($value) == "pre-wrap")
+			{
+			$r  = "white-space:-moz-pre-wrap;";		// Mozilla
+			$r .= "white-space:-webkit-pre-wrap;";	// Webkit
+			$r .= "white-space:-khtml-pre-wrap;";	// khtml
+			$r .= "white-space:-pre-wrap;";			// Opera 4 - 6
+			$r .= "white-space:-o-pre-wrap;";		// Opera 7+
+			$r .= "word-wrap:break-word;";			// Internet Explorer 5.5+
+			return $r;
+			}
+		else
+			{
+			return "";
+			}
 		}
 	}
 ?>
