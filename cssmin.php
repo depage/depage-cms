@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.002 (2010-08-12)
+ * @version		2.0.1.003 (2010-08-12)
  */
 class CssMin
 	{
@@ -210,7 +210,6 @@ class CssMin
 		$tokens = self::parse($css);
 		$config = array_merge(array
 			(
-			"remove-tokens"					=> array(self::T_COMMENT),
 			"remove-empty-blocks"			=> true,
 			"remove-empty-rulesets"			=> true,
 			"remove-last-ruleset-semicolon"	=> true,
@@ -220,19 +219,22 @@ class CssMin
 			"compress-unit-values"			=> false,
 			"emulate-css3-variables"		=> true,
 			), $config);
+		
 		// Remove tokens
+		$remove = array(self::T_COMMENT);
 		if (!$config["emulate-css3-variables"])
 			{
-			$config["remove-tokens"] = array_merge($config["remove-tokens"], array(self::T_AT_VARIABLES_START, self::T_VARIABLE_DECLARATION, self::T_AT_VARIABLES_END));
+			$remove = array_merge($remove, array(self::T_AT_VARIABLES_START, self::T_VARIABLE_DECLARATION, self::T_AT_VARIABLES_END));
 			}
 		for($i = 0, $l = count($tokens); $i < $l; $i++)
 			{
-			if (in_array($tokens[$i][0], $config["remove-tokens"]))
+			if (in_array($tokens[$i][0], $remove))
 				{
 				unset($tokens[$i]);
 				}
 			}
 		$tokens = array_values($tokens);
+		
 		// Emulate css3 variables
 		if ($config["emulate-css3-variables"])
 			{
@@ -288,21 +290,29 @@ class CssMin
 					unset($tokens[++$i]);	// T_RULESET_END
 					}
 				}
+			$tokens = array_values($tokens);
 			}
-		$tokens = array_values($tokens);
+		
+		// Remove empty @media, @font-face or @page blocks
+		if ($config["remove-empty-blocks"])
+			{
+			for($i = 0, $l = count($tokens); $i < $l; $i++)
+				{
+				// Remove empty @media, @font-face or @page blocks
+				if (($tokens[$i][0] == self::T_AT_MEDIA_START && $tokens[$i+1][0] == self::T_AT_MEDIA_END)
+					|| ($tokens[$i][0] == self::T_AT_FONT_FACE_START && $tokens[$i+1][0] == self::T_AT_FONT_FACE_END)
+					|| ($tokens[$i][0] == self::T_AT_PAGE_START && $tokens[$i+1][0] == self::T_AT_PAGE_END))
+					{
+					unset($tokens[$i]);		// T_AT_MEDIA_START, T_AT_FONT_FACE_START, T_AT_PAGE_START
+					unset($tokens[++$i]);	// T_AT_MEDIA_END, T_AT_FONT_FACE_END, T_AT_PAGE_END
+					}
+				}
+			$tokens = array_values($tokens);
+			}
+			
 		// Compression and conversion
 		for($i = 0, $l = count($tokens); $i < $l; $i++)
 			{
-			// Remove empty @media, @font-face or @page blocks
-			if ($config["remove-empty-blocks"] && (
-				($tokens[$i][0] == self::T_AT_MEDIA_START && $tokens[$i+1][0] == self::T_AT_MEDIA_END)
-				|| ($tokens[$i][0] == self::T_AT_FONT_FACE_START && $tokens[$i+1][0] == self::T_AT_FONT_FACE_END)
-				|| ($tokens[$i][0] == self::T_AT_PAGE_START && $tokens[$i+1][0] == self::T_AT_PAGE_END)
-				))
-				{
-				unset($tokens[$i]);		// T_AT_MEDIA_START, T_AT_FONT_FACE_START, T_AT_PAGE_START
-				unset($tokens[++$i]);	// T_AT_MEDIA_END, T_AT_FONT_FACE_END, T_AT_PAGE_END
-				}
 			// Compress unit values
 			if ($config["compress-unit-values"] && $tokens[$i][0] == self::T_DECLARATION)
 				{
@@ -338,14 +348,13 @@ class CssMin
 				preg_match("/\#([0-9a-f]{6})/i", $tokens[$i][2], $m);
 				if ($m)
 					{
-					if (substr($m[1], 1, 1) == substr($m[1], 2, 1) && substr($m[1], 3, 1) == substr($m[1], 4, 1) && substr($m[1], 5, 1) == substr($m[1], 6, 1))
+					if (substr($m[1], 0, 1) == substr($m[1], 1, 1) && substr($m[1], 2, 1) == substr($m[1], 3, 1) && substr($m[1], 4, 1) == substr($m[1], 5, 1))
 						{
-						$tokens[$i][2] = str_replace($m[0], "#" . substr($m[1], 1, 1) . substr($m[1],3,1) . substr($m[1],5,1), $tokens[$i][2]);
+						$tokens[$i][2] = str_replace($m[0], "#" . substr($m[1], 0, 1) . substr($m[1], 2, 1) . substr($m[1], 4, 1), $tokens[$i][2]);
 						}
 					}
 				}
 			}
-		$tokens = array_values($tokens);
 		// Create minified css
 		$r = "";
 		for($i = 0, $l = count($tokens); $i < $l; $i++)
