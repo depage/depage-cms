@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.b5 (2010-08-11)
+ * @version		2.0.1.002 (2010-08-12)
  */
 class CssMin
 	{
@@ -214,7 +214,7 @@ class CssMin
 			"remove-empty-blocks"			=> true,
 			"remove-empty-rulesets"			=> true,
 			"remove-last-ruleset-semicolon"	=> true,
-			"convert-css3-properties"		=> true,
+			"convert-css3-properties"		=> false,
 			"convert-color-values"			=> false,
 			"compress-color-values"			=> false,
 			"compress-unit-values"			=> false,
@@ -400,7 +400,7 @@ class CssMin
 			// T_DECLARATION
 			elseif ($tokens[$i][0] == self::T_DECLARATION)
 				{
-				if (isset(self::$transformations[$tokens[$i][1]]))
+				if ($config["convert-css3-properties"] && isset(self::$transformations[$tokens[$i][1]]))
 					{
 					foreach (self::$transformations[$tokens[$i][1]] as $value)
 						{
@@ -478,6 +478,7 @@ class CssMin
 			$buffer .= $c;
 			if (strpos($sTokenChars, $c) !== false)
 				{
+				// 
 				$currentState	= $state[count($state) - 1];
 				/*
 				 * Start of comment
