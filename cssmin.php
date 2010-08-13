@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.003 (2010-08-12)
+ * @version		2.0.1.058 (2010-08-13)
  */
 class CssMin
 	{
@@ -212,17 +212,26 @@ class CssMin
 			(
 			"remove-empty-blocks"			=> true,
 			"remove-empty-rulesets"			=> true,
-			"remove-last-ruleset-semicolon"	=> true,
+			"remove-last-semicolons"		=> true,
 			"convert-css3-properties"		=> false,
 			"convert-color-values"			=> false,
 			"compress-color-values"			=> false,
 			"compress-unit-values"			=> false,
 			"emulate-css3-variables"		=> true,
 			), $config);
+		// Minification options
+ 		$sRemoveEmptyBlocks			= $config["remove-empty-blocks"]; 
+ 		$sRemoveEmptyRulesets		= $config["remove-empty-rulesets"];
+ 		$sRemoveLastSemicolon		= $config["remove-last-semicolons"];
+ 		$sConvertCss3Properties 	= $config["convert-css3-properties"];
+		$sCompressUnitValues		= $config["compress-unit-values"];
+		$sConvertColorValues		= $config["convert-color-values"];
+		$sCompressColorValues		= $config["compress-color-values"];
+		$sEmulateCcss3Variables		= $config["emulate-css3-variables"];
 		
 		// Remove tokens
 		$remove = array(self::T_COMMENT);
-		if (!$config["emulate-css3-variables"])
+		if (!$sEmulateCcss3Variables)
 			{
 			$remove = array_merge($remove, array(self::T_AT_VARIABLES_START, self::T_VARIABLE_DECLARATION, self::T_AT_VARIABLES_END));
 			}
@@ -234,9 +243,41 @@ class CssMin
 				}
 			}
 		$tokens = array_values($tokens);
-		
-		// Emulate css3 variables
-		if ($config["emulate-css3-variables"])
+		// Remove empty rulesets
+		if ($sRemoveEmptyRulesets)
+			{
+			for($i = 0, $l = count($tokens); $i < $l; $i++)
+				{
+				// Remove empty rulesets
+				if ($tokens[$i][0] == self::T_RULESET_START && $tokens[$i+4][0] == self::T_RULESET_END)
+					{
+					unset($tokens[$i]); 	// T_RULESET_START
+					unset($tokens[++$i]);	// T_SELECTORS
+					unset($tokens[++$i]);	// T_DECLARATIONS_START
+					unset($tokens[++$i]);	// T_DECLARATIONS_END
+					unset($tokens[++$i]);	// T_RULESET_END
+					}
+				}
+			$tokens = array_values($tokens);
+			}
+		// Remove empty @media, @font-face or @page blocks
+		if ($sRemoveEmptyBlocks)
+			{
+			for($i = 0, $l = count($tokens); $i < $l; $i++)
+				{
+				// Remove empty @media, @font-face or @page blocks
+				if (($tokens[$i][0] == self::T_AT_MEDIA_START && $tokens[$i+1][0] == self::T_AT_MEDIA_END)
+					|| ($tokens[$i][0] == self::T_AT_FONT_FACE_START && $tokens[$i+1][0] == self::T_AT_FONT_FACE_END)
+					|| ($tokens[$i][0] == self::T_AT_PAGE_START && $tokens[$i+1][0] == self::T_AT_PAGE_END))
+					{
+					unset($tokens[$i]);		// T_AT_MEDIA_START, T_AT_FONT_FACE_START, T_AT_PAGE_START
+					unset($tokens[++$i]);	// T_AT_MEDIA_END, T_AT_FONT_FACE_END, T_AT_PAGE_END
+					}
+				}
+			$tokens = array_values($tokens);
+			}
+		// CSS Level 3 variables: parse variables
+		if ($sEmulateCcss3Variables)
 			{
 			// Parse variables
 			$variables = array();
@@ -254,10 +295,14 @@ class CssMin
 						}
 					}
 				}
-			// Parse declarations for variable statements
-			for($i = 0, $l = count($tokens); $i < $l; $i++)
+			}
+		// Conversion and compression 
+		for($i = 0, $l = count($tokens); $i < $l; $i++)
+			{
+			if ($tokens[$i][0] == self::T_DECLARATION)
 				{
-				if ($tokens[$i][0] == self::T_DECLARATION)
+				// CSS Level 3 variables
+				if ($sEmulateCcss3Variables)
 					{
 					if (substr($tokens[$i][2], 0, 4) == "var(" && substr($tokens[$i][2], -1, 1) == ")")
 						{
@@ -273,81 +318,38 @@ class CssMin
 							}
 						}
 					}
-				}
-			}
-		// Remove empty rulesets
-		if ($config["remove-empty-rulesets"])
-			{
-			for($i = 0, $l = count($tokens); $i < $l; $i++)
-				{
-				// Remove empty rulesets
-				if ($tokens[$i][0] == self::T_RULESET_START && $tokens[$i+4][0] == self::T_RULESET_END)
+				// Compress unit values
+				if ($sCompressUnitValues)
 					{
-					unset($tokens[$i]); 	// T_RULESET_START
-					unset($tokens[++$i]);	// T_SELECTORS
-					unset($tokens[++$i]);	// T_DECLARATIONS_START
-					unset($tokens[++$i]);	// T_DECLARATIONS_END
-					unset($tokens[++$i]);	// T_RULESET_END
+					// Compress "0.5px" to ".5px"
+					$tokens[$i][2] = preg_replace("/(^| )0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}.\${2}\${3}", $tokens[$i][2]);
+					// Compress "0px" to "0"
+					$tokens[$i][2] = preg_replace("/(^| )(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}0", $tokens[$i][2]);
+					// Compress "0 0 0 0" to "0"
+					if ($tokens[$i][2] == "0 0 0 0") {$tokens[$i][2] = "0";}
 					}
-				}
-			$tokens = array_values($tokens);
-			}
-		
-		// Remove empty @media, @font-face or @page blocks
-		if ($config["remove-empty-blocks"])
-			{
-			for($i = 0, $l = count($tokens); $i < $l; $i++)
-				{
-				// Remove empty @media, @font-face or @page blocks
-				if (($tokens[$i][0] == self::T_AT_MEDIA_START && $tokens[$i+1][0] == self::T_AT_MEDIA_END)
-					|| ($tokens[$i][0] == self::T_AT_FONT_FACE_START && $tokens[$i+1][0] == self::T_AT_FONT_FACE_END)
-					|| ($tokens[$i][0] == self::T_AT_PAGE_START && $tokens[$i+1][0] == self::T_AT_PAGE_END))
-					{
-					unset($tokens[$i]);		// T_AT_MEDIA_START, T_AT_FONT_FACE_START, T_AT_PAGE_START
-					unset($tokens[++$i]);	// T_AT_MEDIA_END, T_AT_FONT_FACE_END, T_AT_PAGE_END
-					}
-				}
-			$tokens = array_values($tokens);
-			}
-			
-		// Compression and conversion
-		for($i = 0, $l = count($tokens); $i < $l; $i++)
-			{
-			// Compress unit values
-			if ($config["compress-unit-values"] && $tokens[$i][0] == self::T_DECLARATION)
-				{
-				// Compress "0px" to "0"
-				$tokens[$i][2] = preg_replace("/(^| )0(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}0", $tokens[$i][2]);
-				// Compress "0.5px" to ".5px"
-				$tokens[$i][2] = preg_replace("/(^| )0\.([0-9]{1})(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}.\${2}\${3}", $tokens[$i][2]);
-				// Compress "0 0 0 0" to "0"
-				if ($tokens[$i][2] == "0 0 0 0") {$tokens[$i][2] = "0";}
-				}
-			// Convert color values
-			if ($config["convert-color-values"] && $tokens[$i][0] == self::T_DECLARATION)
-				{
 				// Convert RGB color values to hex ("rgb(200,60%,5)" => "#c89905")
-				preg_match("/rgb\s*\(\s*([0-9%]+)\s*,\s*([0-9%]+)\s*,\s*([0-9%]+)\s*\)/i", $tokens[$i][2], $m);
-				if ($m)
+				if ($sConvertColorValues)
 					{
-					for ($i2 = 1, $l2 = count($m); $i2 < $l2; $i2++)
+					preg_match("/rgb\s*\(\s*([0-9%]+)\s*,\s*([0-9%]+)\s*,\s*([0-9%]+)\s*\)/i", $tokens[$i][2], $m);
+					if ($m)
 						{
-						if (strpos("%", $m[$i2]) !== false)
+						for ($i2 = 1, $l2 = count($m); $i2 < $l2; $i2++)
 							{
-							$m[$i2] = substr($m[$i2], 0, -1);
-							$m[$i2] = (int) (256 * ($m[$i2] / 100));
+							if (strpos("%", $m[$i2]) !== false)
+								{
+								$m[$i2] = substr($m[$i2], 0, -1);
+								$m[$i2] = (int) (256 * ($m[$i2] / 100));
+								}
+							$m[$i2] = str_pad(dechex($m[$i2]),  2, "0", STR_PAD_LEFT);
 							}
-						$m[$i2] = str_pad(dechex($m[$i2]),  2, "0", STR_PAD_LEFT);
+						$tokens[$i][2] = str_replace($m[0], "#" . $m[1] . $m[2] . $m[3], $tokens[$i][2]);
 						}
-					$tokens[$i][2] = str_replace($m[0], "#" . $m[1] . $m[2] . $m[3], $tokens[$i][2]);
 					}
-				}
-			// Compress color values ("#aabbcc" to "#abc") 
-			if ($config["compress-color-values"] && $tokens[$i][0] == self::T_DECLARATION)
-				{
-				preg_match("/\#([0-9a-f]{6})/i", $tokens[$i][2], $m);
-				if ($m)
+				// Compress color values ("#aabbcc" to "#abc") 
+				if ($sCompressColorValues && preg_match("/\#([0-9a-f]{6})/i", $tokens[$i][2], $m))
 					{
+					$m[1] = strtolower($m[1]);
 					if (substr($m[1], 0, 1) == substr($m[1], 1, 1) && substr($m[1], 2, 1) == substr($m[1], 3, 1) && substr($m[1], 4, 1) == substr($m[1], 5, 1))
 						{
 						$tokens[$i][2] = str_replace($m[0], "#" . substr($m[1], 0, 1) . substr($m[1], 2, 1) . substr($m[1], 4, 1), $tokens[$i][2]);
@@ -384,7 +386,7 @@ class CssMin
 			// T_FONT_FACE_DECLARATION
 			elseif ($tokens[$i][0] == self::T_FONT_FACE_DECLARATION)
 				{
-				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($config["remove-last-ruleset-semicolon"] && $tokens[$i + 1][0] == self::T_AT_FONT_FACE_END ? "" : ";");
+				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($sRemoveLastSemicolon && $tokens[$i+1][0] == self::T_AT_FONT_FACE_END ? "" : ";");
 				}
 			// T_AT_PAGE_START
 			elseif ($tokens[$i][0] == self::T_AT_PAGE_START)
@@ -394,7 +396,7 @@ class CssMin
 			// T_PAGE_DECLARATION
 			elseif ($tokens[$i][0] == self::T_PAGE_DECLARATION)
 				{
-				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($config["remove-last-ruleset-semicolon"] && $tokens[$i + 1][0] == self::T_AT_PAGE_END ? "" : ";");
+				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($sRemoveLastSemicolon && $tokens[$i+1][0] == self::T_AT_PAGE_END ? "" : ";");
 				}
 			// T_SELECTORS
 			elseif ($tokens[$i][0] == self::T_SELECTORS)
@@ -409,7 +411,7 @@ class CssMin
 			// T_DECLARATION
 			elseif ($tokens[$i][0] == self::T_DECLARATION)
 				{
-				if ($config["convert-css3-properties"] && isset(self::$transformations[$tokens[$i][1]]))
+				if ($sConvertCss3Properties && isset(self::$transformations[$tokens[$i][1]]))
 					{
 					foreach (self::$transformations[$tokens[$i][1]] as $value)
 						{
@@ -424,7 +426,7 @@ class CssMin
 							}
 						}
 					}
-				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($config["remove-last-ruleset-semicolon"] && $tokens[$i + 1][0] == self::T_DECLARATIONS_END ? "" : ";");
+				$r .= $tokens[$i][1] . ":" . $tokens[$i][2] . ($sRemoveLastSemicolon && $tokens[$i+1][0] == self::T_DECLARATIONS_END ? "" : ";");
 				}
 			// T_DECLARATIONS_END, T_AT_MEDIA_END, T_AT_FONT_FACE_END, T_AT_PAGE_END
 			elseif (in_array($tokens[$i][0], array(self::T_DECLARATIONS_END, self::T_AT_MEDIA_END, self::T_AT_FONT_FACE_END, self::T_AT_PAGE_END)))
