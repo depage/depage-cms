@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.0061 (2010-08-13)
+ * @version		2.0.1.0062 (2010-08-16)
  */
 class CssMin
 	{
@@ -321,10 +321,37 @@ class CssMin
 				// Compress unit values
 				if ($sCompressUnitValues)
 					{
+					if (preg_match("/([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?/i", $tokens[$i][2], $m))
+						{
+						$m[2] = strtolower($m[2]);
+						$m[4] = strtolower($m[4]);
+						$m[6] = strtolower($m[6]);
+						$m[8] = (isset($m[8]) ? strtolower($m[8]) : "");
+						// Compress "2px 2px 2px 2px" to "2px"
+						if ($m[1] == $m[3] && $m[1] == $m[5] && $m[1] == $m[7] && $m[2] == $m[4] && $m[2] == $m[6] && $m[2] == $m[8])
+							{
+							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2], $tokens[$i][2]);
+							}
+						// Compress "2px 1em 2px 1em" to "2px 1em"
+						elseif ($m[1] == $m[5] && $m[2] == $m[6] && $m[3] == $m[7] && $m[4] == $m[8])
+							{
+							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2] . " " . $m[3] . $m[4], $tokens[$i][2]);
+							}
+						}
+					elseif (preg_match("/([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?/i", $tokens[$i][2], $m))
+						{
+						$m[2] = strtolower($m[2]);
+						$m[4] = (isset($m[4]) ? strtolower($m[4]) : "");
+						// Compress "2px 2px" to "2px"
+						if ($m[1] == $m[3] && $m[2] == $m[4])
+							{
+							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2], $tokens[$i][2]);
+							}
+						}
 					// Compress "0.5px" to ".5px"
-					$tokens[$i][2] = preg_replace("/(^| )0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}.\${2}\${3}", $tokens[$i][2]);
+					$tokens[$i][2] = preg_replace("/(^| |-)0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}.\${2}\${3}", $tokens[$i][2]);
 					// Compress "0px" to "0"
-					$tokens[$i][2] = preg_replace("/(^| )(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}0", $tokens[$i][2]);
+					$tokens[$i][2] = preg_replace("/(^| )-?(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}0", $tokens[$i][2]);
 					// Compress "0 0 0 0" to "0"
 					if ($tokens[$i][2] == "0 0 0 0") {$tokens[$i][2] = "0";}
 					}
