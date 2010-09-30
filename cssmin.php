@@ -15,7 +15,7 @@
  * @author		Joe Scylla <joe.scylla@gmail.com>
  * @copyright	2008 - 2010 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		2.0.1.0062 (2010-08-16)
+ * @version		2.0.1.0064 (2010-09-30)
  */
 class CssMin
 	{
@@ -228,16 +228,15 @@ class CssMin
 		$sConvertColorValues		= $config["convert-color-values"];
 		$sCompressColorValues		= $config["compress-color-values"];
 		$sEmulateCcss3Variables		= $config["emulate-css3-variables"];
-		
+		$sRemoveTokens				= array(self::T_COMMENT);
 		// Remove tokens
-		$remove = array(self::T_COMMENT);
 		if (!$sEmulateCcss3Variables)
 			{
-			$remove = array_merge($remove, array(self::T_AT_VARIABLES_START, self::T_VARIABLE_DECLARATION, self::T_AT_VARIABLES_END));
+			$sRemoveTokens = array_merge($sRemoveTokens, array(self::T_AT_VARIABLES_START, self::T_VARIABLE_DECLARATION, self::T_AT_VARIABLES_END));
 			}
 		for($i = 0, $l = count($tokens); $i < $l; $i++)
 			{
-			if (in_array($tokens[$i][0], $remove))
+			if (in_array($tokens[$i][0], $sRemoveTokens))
 				{
 				unset($tokens[$i]);
 				}
@@ -321,60 +320,29 @@ class CssMin
 				// Compress unit values
 				if ($sCompressUnitValues)
 					{
-					if (preg_match("/([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?/i", $tokens[$i][2], $m))
-						{
-						$m[2] = strtolower($m[2]);
-						$m[4] = strtolower($m[4]);
-						$m[6] = strtolower($m[6]);
-						$m[8] = (isset($m[8]) ? strtolower($m[8]) : "");
-						// Compress "2px 2px 2px 2px" to "2px"
-						if ($m[1] == $m[3] && $m[1] == $m[5] && $m[1] == $m[7] && $m[2] == $m[4] && $m[2] == $m[6] && $m[2] == $m[8])
-							{
-							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2], $tokens[$i][2]);
-							}
-						// Compress "2px 1em 2px 1em" to "2px 1em"
-						elseif ($m[1] == $m[5] && $m[2] == $m[6] && $m[3] == $m[7] && $m[4] == $m[8])
-							{
-							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2] . " " . $m[3] . $m[4], $tokens[$i][2]);
-							}
-						}
-					elseif (preg_match("/([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?\s+([\.\-0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)?/i", $tokens[$i][2], $m))
-						{
-						$m[2] = strtolower($m[2]);
-						$m[4] = (isset($m[4]) ? strtolower($m[4]) : "");
-						// Compress "2px 2px" to "2px"
-						if ($m[1] == $m[3] && $m[2] == $m[4])
-							{
-							$tokens[$i][2] = str_replace($m[0], $m[1] . $m[2], $tokens[$i][2]);
-							}
-						}
 					// Compress "0.5px" to ".5px"
-					$tokens[$i][2] = preg_replace("/(^| |-)0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}.\${2}\${3}", $tokens[$i][2]);
+					$tokens[$i][2] = preg_replace("/(^| |-)0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/iS", "\${1}.\${2}\${3}", $tokens[$i][2]);
 					// Compress "0px" to "0"
-					$tokens[$i][2] = preg_replace("/(^| )-?(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i", "\${1}0", $tokens[$i][2]);
+					$tokens[$i][2] = preg_replace("/(^| )-?(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/iS", "\${1}0", $tokens[$i][2]);
 					// Compress "0 0 0 0" to "0"
 					if ($tokens[$i][2] == "0 0 0 0") {$tokens[$i][2] = "0";}
 					}
 				// Convert RGB color values to hex ("rgb(200,60%,5)" => "#c89905")
-				if ($sConvertColorValues)
+				if ($sConvertColorValues && preg_match("/rgb\s*\(\s*([0-9%]+)\s*,\s*([0-9%]+)\s*,\s*([0-9%]+)\s*\)/iS", $tokens[$i][2], $m))
 					{
-					preg_match("/rgb\s*\(\s*([0-9%]+)\s*,\s*([0-9%]+)\s*,\s*([0-9%]+)\s*\)/i", $tokens[$i][2], $m);
-					if ($m)
+					for ($i2 = 1, $l2 = count($m); $i2 < $l2; $i2++)
 						{
-						for ($i2 = 1, $l2 = count($m); $i2 < $l2; $i2++)
+						if (strpos("%", $m[$i2]) !== false)
 							{
-							if (strpos("%", $m[$i2]) !== false)
-								{
-								$m[$i2] = substr($m[$i2], 0, -1);
-								$m[$i2] = (int) (256 * ($m[$i2] / 100));
-								}
-							$m[$i2] = str_pad(dechex($m[$i2]),  2, "0", STR_PAD_LEFT);
+							$m[$i2] = substr($m[$i2], 0, -1);
+							$m[$i2] = (int) (256 * ($m[$i2] / 100));
 							}
-						$tokens[$i][2] = str_replace($m[0], "#" . $m[1] . $m[2] . $m[3], $tokens[$i][2]);
+						$m[$i2] = str_pad(dechex($m[$i2]),  2, "0", STR_PAD_LEFT);
 						}
+					$tokens[$i][2] = str_replace($m[0], "#" . $m[1] . $m[2] . $m[3], $tokens[$i][2]);
 					}
 				// Compress color values ("#aabbcc" to "#abc") 
-				if ($sCompressColorValues && preg_match("/\#([0-9a-f]{6})/i", $tokens[$i][2], $m))
+				if ($sCompressColorValues && preg_match("/\#([0-9a-f]{6})/iS", $tokens[$i][2], $m))
 					{
 					$m[1] = strtolower($m[1]);
 					if (substr($m[1], 0, 1) == substr($m[1], 1, 1) && substr($m[1], 2, 1) == substr($m[1], 3, 1) && substr($m[1], 4, 1) == substr($m[1], 5, 1))
@@ -521,7 +489,7 @@ class CssMin
 				/*
 				 * Start of comment
 				 */
-				if ($p == "/" && $c == "*" && $currentState != self::T_STRING)
+				if ($p == "/" && $c == "*" && $currentState != self::T_STRING && $currentState != self::T_COMMENT)
 					{
 					$saveBuffer = substr($buffer, 0, -2); // save the buffer (will get restored with comment ending)
 					$buffer 	= $c;
