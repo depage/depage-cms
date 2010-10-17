@@ -10,12 +10,17 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+define("DEPAGE_FM_PATH", depage::getDepageFrameworkPath()) ;
+define("DEPAGE_PATH", depage::getDepagePath()) ;
+
 function __autoload($class) {
     depage::autoload($class);
 }
 
 class depage {
-    public $version = '1.5';
+    const version = '1.5a pre';
+    const name = 'depage::cms';
+
     public $conf;
     public $log;
 
@@ -28,7 +33,7 @@ class depage {
         ),
         'env' => "development",
     );
-    protected $options = array();
+    protected $options;
     // }}}
 
     // {{{ constructor
@@ -40,6 +45,14 @@ class depage {
      * @return  null
      */
     public function __construct($configFile = '') {
+
+        /* @todo check include path
+            ;include_path = ".:/usr/local/lib/php"
+            include_path = "/usr/local/lib/php:."
+
+            If you use REST techniques - so that POST requests do work and then send the browser a 303 redirect to GET to view the results, you quickly achieve two things:
+         */
+        
         $this->log = new log();
 
         set_error_handler(array($this, "handlePhpError"));
@@ -71,8 +84,6 @@ class depage {
      * @return  null
      */
     static function autoload($class) {
-        $fm_path = depage::getDepageFrameworkPath();
-        $dp_path = depage::getDepagePath();
         $php_file = "";
 
         $file = "$class.php";
@@ -84,12 +95,12 @@ class depage {
         }
         
         //searching for class in global modules
-        if (file_exists("$fm_path/$module/$file")) {
-            $php_file = "$fm_path/$module/$file";
+        if (file_exists(DEPAGE_FM_PATH . "/$module/$file")) {
+            $php_file = DEPAGE_FM_PATH . "/$module/$file";
 
         //searching for class in local modules
-        } elseif (file_exists("$dp_path/modules/$module/$file")) {
-            $php_file = "$dp_path/modules/$module/$file";
+        } elseif (file_exists(DEPAGE_PATH . "/modules/$module/$file")) {
+            $php_file = DEPAGE_PATH . "/modules/$module/$file";
         }
 
         if ($php_file != "") {
@@ -149,7 +160,7 @@ class depage {
         }
 
         // setup handler class
-        $this->handler = new $handler();
+        $this->handler = new $handler($this->conf);
         $this->handler->run();
     }
     // }}}
@@ -168,9 +179,9 @@ class depage {
             'backtrace' => debug_backtrace(),
         );
 
-        $this->log->log("Error: {$error->msg} in '{$error->file}' on line {$error->line}");
+        $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
-            $this->handler->showError($error, $this->options['env']);
+        //$this->handler->showError($error, $this->options['env']);
         if (is_callable($this->handler, "showError")) {
             $this->handler->showError($error, $this->options['env']);
         }

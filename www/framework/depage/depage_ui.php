@@ -40,9 +40,23 @@ class depage_ui {
      * @return  null
      */
     public function run() {
-        $this->html = new html();
+        // get depage specific query string
+        $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE));
 
-        $this->index();
+        list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
+        $dp_params = explode("/", $dp_request_path);
+        $dp_func = array_shift($dp_params);
+
+        if ($dp_func == "") {
+            // show index page
+            $this->index();
+        } else if (is_callable(array($this, $dp_func))) {
+            // call function
+            $this->$dp_func($dp_params);
+        } else {
+            // show error for notfound
+            $this->notfound();
+        }
     }
     // }}}
     
@@ -55,10 +69,17 @@ class depage_ui {
      * @return  null
      */
     public function index() {
-        $this->html->addTag("h1", "test");
-        $this->html->addTag("p", "test");
-
-        echo($this->html->render());
+    }
+    // }}}
+    // {{{ notfound
+    /**
+     * default function to call if no function is given in handler
+     *
+     * @param   $options (array) named options for base class
+     *
+     * @return  null
+     */
+    public function notfound() {
     }
     // }}}
     // {{{ showError
@@ -74,7 +95,7 @@ class depage_ui {
         if ($env == "production") {
             echo("<p>error in production environement</p>");
         } elseif ($env == "development") {
-            echo("<p>{$error->msg}</p>");
+            echo("<p>{$error->no}: {$error->msg}</p>");
             echo("<p>in '{$error->file}' on line {$error->line} </p>");
 
             echo("<ol>");

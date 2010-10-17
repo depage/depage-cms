@@ -21,7 +21,7 @@ class config implements Iterator {
      *
      * @return  null
      */
-    public function __construct($values = array()) {
+    public function __construct($values = array(), $defaults = array()) {
         $this->setConfig($values);
     }
     // }}}
@@ -39,11 +39,17 @@ class config implements Iterator {
         $urls = array_keys($values);
         $acturl = $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"];
         foreach ($urls as $url) {
-            $pattern = "/" . str_replace(array("?", "*", "/"), array("(.)", "(.*)", "\/"), $url) . "/";
-            if (preg_match($pattern, $acturl)) {
+            $pattern = "/(" . str_replace(array("?", "*", "/"), array("(.)", "(.*)", "\/"), $url) . ")/";
+            if (preg_match($pattern, $acturl, $matches)) {
                 // url fits into pattern
+                $depage_base = $matches[0];
                 $this->setConfig($values[$url]);
             }
+        }
+        if ($depage_base[0] != "*") {
+            define("DEPAGE_BASE", "http://" . $depage_base);
+        } else {
+            define("DEPAGE_BASE", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"]);
         }
     }
     // }}}
