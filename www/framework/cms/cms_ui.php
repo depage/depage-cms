@@ -30,7 +30,8 @@ class cms_ui extends depage_ui {
      * @return  null
      */
     public function index() {
-        $projects = array("a", "b");
+        $cp = new cms_project();
+        $projects = $cp->get_projects();
 
         $h = new html("html.tpl", array(
             'title' => $this->basetitle,
