@@ -20,7 +20,7 @@ class cms_ui extends depage_ui {
             'template_path' => __DIR__ . "/tpl/",
             'clean' => "space",
         );
-        $this->basetitle = depage::name . " " . depage::version;
+        $this->basetitle = depage::getName() . " " . depage::getVersion();
     }
     // }}}
     // {{{ index

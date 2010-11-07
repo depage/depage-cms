@@ -18,7 +18,6 @@ function __autoload($class) {
 }
 
 class depage {
-    const version = '1.5a pre';
     const name = 'depage::cms';
 
     public $conf;
@@ -144,6 +143,16 @@ class depage {
         }
 
         return $path;
+    }
+    // }}}
+    // {{{ getName()
+    /**
+     * gets name of depage framework
+     *
+     * @return  name
+     */
+    static function getName() {
+        return depage::name;
     }
     // }}}
     // {{{ getVersion()
