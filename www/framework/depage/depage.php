@@ -69,7 +69,7 @@ class depage {
             $this->conf->readConfig($this->configFile);
         }
 
-        $this->options = $this->conf->toOptions($this->defaults);
+        $this->options = $this->conf->getFromDefaults($this->defaults);
 
         $this->log = new log($this->conf->log);
     }
@@ -140,10 +140,26 @@ class depage {
         static $path;
                
         if (!isset($path)) {
-            $path = substr(dirname(__FILE__), 0, -6);
+            $path = substr(__DIR__, 0, -6);
         }
 
         return $path;
+    }
+    // }}}
+    // {{{ getVersion()
+    /**
+     * gets version number of depage framework
+     *
+     * @return  version number
+     */
+    static function getVersion() {
+        static $version;
+
+        if (!isset($version)) {
+            $version = file_get_contents(__DIR__ . "/version.txt");
+        }
+
+        return $version;
     }
     // }}}
     
