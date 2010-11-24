@@ -13,9 +13,36 @@
 class cms_ui extends depage_ui {
     protected $html_options = array();
     protected $basetitle = "";
+    protected $defaults = array(
+        "db" => null,
+        "auth" => null,
+        "env" => "development",
+    );
 
     // {{{ constructor
-    public function __construct() {
+    public function __construct($options = NULL) {
+        parent::__construct($options);
+
+        // get database instance
+        $this->pdo = new db_pdo (
+            $this->options->db->dsn, // dsn
+            $this->options->db->user, // user
+            $this->options->db->password, // password
+            array(
+                'prefix' => $this->options->db->prefix, // database prefix
+            )
+        );
+        // enable exceptions for sql-queries
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // get auth object
+        $this->auth = new auth(
+            $this->pdo, // db_pdo 
+            $this->options->auth->realm, // auth realm
+            DEPAGE_BASE // domain
+        );
+
+        // set html-options
         $this->html_options = array(
             'template_path' => __DIR__ . "/tpl/",
             'clean' => "space",
@@ -30,7 +57,9 @@ class cms_ui extends depage_ui {
      * @return  null
      */
     public function index() {
-        $cp = new cms_project();
+        $this->auth->enforce();
+
+        $cp = new cms_project($this->pdo);
         $projects = $cp->get_projects();
 
         $h = new html("html.tpl", array(
