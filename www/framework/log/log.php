@@ -16,7 +16,7 @@ class log {
         'file' => "logs/depage.log",
         'mail' => "",
     );
-    protected $options = array();
+    protected $conf;
     // }}}
     
     // {{{ constructor
@@ -29,7 +29,7 @@ class log {
      */
     public function __construct($options = NULL) {
         $conf = new config($options);
-        $this->options = $conf->toOptions($this->defaults);
+        $this->options = $conf->getFromDefaults($this->defaults);
     }
     // }}}
     // {{{ getMessage
@@ -41,6 +41,8 @@ class log {
      * @return  null
      */
     public function getMessage($arg) {
+        $message = "";
+
         if (gettype($arg) != 'string') {
             ob_start();
             print_r($arg);
@@ -68,8 +70,8 @@ class log {
         $message = $this->getMessage($arg);
         $date = date("c");
 
-        if ($this->options['file'] != "") {
-            error_log("[$date] [$type] $message\n", 3, $this->options['file']);
+        if ($this->options->file != "") {
+            error_log("[$date] [$type] $message\n", 3, $this->options->file);
         } else {
             error_log("[$date] [$type] $message\n");
         }

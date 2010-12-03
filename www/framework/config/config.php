@@ -93,7 +93,7 @@ class config implements Iterator {
         return $data;
     }
     // }}}
-    // {{{ toOptions
+    // {{{ getFromDefaults
     /**
      * returns options based on defaults as array
      *
@@ -101,7 +101,7 @@ class config implements Iterator {
      *
      * @return  options as array
      */
-    public function toOptions($defaults) {
+    public function getFromDefaults($defaults) {
         $data = array();
 
         if (count($defaults) > 0) {
@@ -114,7 +114,7 @@ class config implements Iterator {
             }
         }
 
-        return $data;
+        return (object) $data;
     }
     // }}}
     
@@ -134,6 +134,18 @@ class config implements Iterator {
                 return $this->data[$name];
             }
         }
+    }
+    // }}}
+    // {{{ __set
+    /**
+     * gets a value from configuration
+     *
+     * @param   $name (string) name of option
+     *
+     * @return  null
+     */
+    public function __set($name, $value) {
+        // make readonly
     }
     // }}}
     // {{{ __isset
@@ -177,4 +189,3 @@ class config implements Iterator {
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
-

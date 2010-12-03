@@ -8,11 +8,14 @@ $conf = array(
     // {{{ global
     '*' => array(
         'db' => array(
-            'dsn' => "mysql:dbname=depagecms;host=127.0.0.1",
+            'dsn' => "mysql:dbname=depage_depagecms;host=127.0.0.1",
             'user' => "root",
             'password' => "",
             'prefix' => "tt",
         ),
+        'auth' => array(
+            'realm' => "depage::cms",
+        )
     ),
     // }}}
     
