@@ -63,7 +63,7 @@ class cms_ui extends depage_ui {
             'title' => $this->basetitle,
             'content' => array(
                 $this->projectlist(),
-                //new html("userlist.tpl"),
+                $this->userlist(),
             )
         ), $this->html_options);
 
@@ -72,7 +72,7 @@ class cms_ui extends depage_ui {
     // }}}
     // {{{ projectlist
     /**
-     * default function to call if no function is given in handler
+     * gets a list of projects
      *
      * @return  null
      */
@@ -85,6 +85,25 @@ class cms_ui extends depage_ui {
         $h = new html("projectlist.tpl", array(
             'title' => $this->basetitle,
             'projects' => $projects,
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    // {{{ userlist
+    /**
+     * gets a list of loggedin users
+     *
+     * @return  null
+     */
+    public function userlist() {
+        $this->auth->enforce();
+
+        $users = $this->auth->get_active_users();
+
+        $h = new html("userlist.tpl", array(
+            'title' => $this->basetitle,
+            'users' => $users,
         ), $this->html_options);
 
         return $h;

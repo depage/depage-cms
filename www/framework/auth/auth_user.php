@@ -97,6 +97,28 @@ class auth_user {
         return $user;
     }
     // }}}
+    // {{{ get_useragent()
+    /**
+     * gets a user-object by sid (session-id) directly from database
+     *
+     * @public
+     *
+     * @param       PDO     $pdo        pdo object for database access
+     * @param       string  $sid        session id
+     *
+     * @return      auth_user
+     */
+    public function get_useragent() {
+        if (ini_get("browscap") != "") {
+            $browser = get_browser($this->useragent);
+            $useragent = " {$browser->browser} {$browser->version} {$browser->platform}";
+        } else {
+            $useragent = "unknown";
+        }
+        
+        return $useragent;
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
