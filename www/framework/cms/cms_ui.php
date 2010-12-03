@@ -82,9 +82,12 @@ class cms_ui extends depage_ui {
         $cp = new cms_project($this->pdo);
         $projects = $cp->get_projects();
 
-        $h = new html("projectlist.tpl", array(
-            'title' => $this->basetitle,
-            'projects' => $projects,
+        $h = new html("box.tpl", array(
+            'id' => "projects",
+            'title' => "Projects",
+            'content' => new html("projectlist.tpl", array(
+                'projects' => $projects,
+            )),
         ), $this->html_options);
 
         return $h;
@@ -101,9 +104,13 @@ class cms_ui extends depage_ui {
 
         $users = $this->auth->get_active_users();
 
-        $h = new html("userlist.tpl", array(
-            'title' => $this->basetitle,
-            'users' => $users,
+        $h = new html("box.tpl", array(
+            'id' => "users",
+            'title' => "Users",
+            'content' => new html("userlist.tpl", array(
+                'title' => $this->basetitle,
+                'users' => $users,
+            )),
         ), $this->html_options);
 
         return $h;
