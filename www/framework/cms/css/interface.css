@@ -1,3 +1,76 @@
+/* {{{ colors */
+    .head {
+        color: #000000;
+    }
+    .normal,
+    h2 a {
+        color: #000000;
+    }
+    a,
+    h2 a:hover,
+    .error span {
+        color: #882200;
+    }
+    body {
+        background: #ffffff
+    }
+    .centered_box .content {
+        background: #ccc8c4
+    }
+    .centered_box.noback .content {
+        background: none;
+    }
+    .toolbar a:hover {
+        background: #ccc8c4;
+    }
+    .centered_box .toolbar a:hover,
+    .projectlisting a:hover {
+        background: #ffffff;
+    }
+    .projectlisting div.details {
+        background: #ffffff;
+    }
+    .projectlisting div.details a {
+        color: #000000;
+    }
+    .projectlisting div.details a:hover {
+        color: #882200;
+        background: #ccc8c4;
+    }
+    .projectlisting div.details table.lastchanged_pages .date,
+    .projectlisting div.details table.lastchanged_pages .lastpublish,
+    .projectlisting div.details table.lastchanged_pages .published a {
+        color: #777777;
+    }
+    .projectlisting div.details table.lastchanged_pages tr:hover a .date,
+    .projectlisting div.details table.lastchanged_pages tr:hover a {
+        color: #882200;
+    }
+    #dlg {
+        background: #ffc670;
+        border: 1px solid #303238;
+        color: #303238;
+    }
+    #dlg .question {
+        background: url(../images/icon_question.gif);
+    }
+    #dlg .yes {
+        background: url(../images/icon_yes.gif);
+    }
+    #dlg .no {
+        background: url(../images/icon_no.gif);
+    }
+    .centered_box small  {
+        color: #666666;
+    }
+    .centered_box .icon {
+        color: #ccc8c4;
+    }
+    .centered_box .icon {
+        color: #000000;
+    }
+/* }}} */
+
 /* {{{ global */
 * {
     font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
