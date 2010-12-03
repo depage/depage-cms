@@ -27,7 +27,7 @@ class depage_ui {
      */
     public function __construct($options = NULL) {
         $conf = new config($options);
-        $this->options = $conf->toOptions($this->defaults);
+        $this->options = $conf->getFromDefaults($this->defaults);
     }
     // }}}
     
@@ -41,21 +41,39 @@ class depage_ui {
      */
     public function run() {
         // get depage specific query string
+        // @todo use parseurl?
         $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE));
 
-        list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
+        if (strpos('?', $dp_request_uri)) {
+            list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
+        } else {
+            $dp_request_path = $dp_request_uri;
+            $dp_query_string = '';
+        }
         $dp_params = explode("/", $dp_request_path);
+        
         $dp_func = array_shift($dp_params);
 
-        if ($dp_func == "") {
-            // show index page
-            $this->index();
-        } else if (is_callable(array($this, $dp_func))) {
-            // call function
-            $this->$dp_func($dp_params);
-        } else {
-            // show error for notfound
-            $this->notfound();
+        try {
+            if ($dp_func == "") {
+                // show index page
+                echo($this->index());
+            } else if (is_callable(array($this, $dp_func))) {
+                // call function
+                echo($this->$dp_func($dp_params));
+            } else {
+                // show error for notfound
+                echo($this->notfound());
+            }
+        } catch (Exception $e) {
+            $error = (object) array(
+                'exception' => $e,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'msg' => $e->getMessage(),
+                'backtrace' => debug_backtrace(),
+            );
+            echo($this->error($error, $this->options->env));
         }
     }
     // }}}
@@ -82,7 +100,7 @@ class depage_ui {
     public function notfound() {
     }
     // }}}
-    // {{{ showError
+    // {{{ error
     /**
      * automatically loads classes from the framework or the private modules
      *
@@ -90,25 +108,34 @@ class depage_ui {
      *
      * @return  null
      */
-    public function showError($error, $env) {
-        echo("<h1>Error</h1>");
-        if ($env == "production") {
-            echo("<p>error in production environement</p>");
-        } elseif ($env == "development") {
-            echo("<p>{$error->no}: {$error->msg}</p>");
-            echo("<p>in '{$error->file}' on line {$error->line} </p>");
+    public function error($error, $env) {
+        $h = "";
 
-            echo("<ol>");
-                foreach ($error->backtrace as $call) {
-                    echo("<li>");
-                        echo("<details>");
-                            echo("<dt>function: {$call['class']}{$call['type']}{$call['function']}</dt>");
-                            echo("<dd>in {$call['file']} on line {$call['line']}</dd>");
-                        echo("</details>");
-                    echo("</li>");
+        $h .= "<h1>Error</h1>";
+        if ($env == "production") {
+            $h .= "<p>error in production environement</p>";
+            $h .= "<p>{$error->msg}</p>";
+        } elseif ($env == "development") {
+            $h .= "<p>{$error->msg}";
+                if (isset($error->no)) {
+                    $h .= " ({$error->no})";
                 }
-            echo("</ol>");
+            $h .= "</p>";
+            $h .= "<p>in '{$error->file}' on line {$error->line} </p>";
+
+            $h .= "<ol>";
+                foreach ($error->backtrace as $call) {
+                    $h .= "<li>";
+                        $h .= "<details>";
+                            $h .= "<dt>function: {$call['class']}{$call['type']}{$call['function']}</dt>";
+                            $h .= "<dd>in {$call['file']} on line {$call['line']}</dd>";
+                        $h .= "</details>";
+                    $h .= "</li>";
+                }
+            $h .= "</ol>";
         }
+
+        return $h;
     }
     // }}}
 }

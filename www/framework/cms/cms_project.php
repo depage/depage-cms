@@ -12,7 +12,17 @@
 
 class cms_project {
     /* {{{ constructor */
-    function __construct() {
+    /**
+     * constructor
+     *
+     * @public
+     *
+     * @param       $pdo (PDO) pdo object for database access
+     *
+     * @return      void
+     */
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
     /* }}} */
 

@@ -55,7 +55,6 @@ class depage {
         $this->log = new log();
 
         set_error_handler(array($this, "handlePhpError"));
-        set_exception_handler(array($this, "handleException"));
 
         if ($configFile != '') {
             $this->configFile = $configFile;
@@ -70,7 +69,7 @@ class depage {
 
         $this->options = $this->conf->getFromDefaults($this->defaults);
 
-        $this->log = new log($this->conf->log);
+        //$this->log = new log($this->options->log);
     }
     // }}}
     
@@ -233,9 +232,12 @@ class depage {
 
         $this->log->log("Unhandled Exception: {$error->msg} in '{$error->file}' on line {$error->line}");
 
+        var_dump($error);
+        /*
         if (is_callable($this->handler, "showError")) {
             $this->handler->showError($error, $this->options['env']);
         }
+         */
     }
     
     // }}}

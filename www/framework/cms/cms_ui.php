@@ -59,22 +59,38 @@ class cms_ui extends depage_ui {
     public function index() {
         $this->auth->enforce();
 
-        $cp = new cms_project($this->pdo);
-        $projects = $cp->get_projects();
-
         $h = new html("html.tpl", array(
             'title' => $this->basetitle,
             'content' => array(
-                new html("projectlist.tpl", array(
-                    'projects' => $projects,
-                )),
+                $this->projectlist(),
                 //new html("userlist.tpl"),
             )
         ), $this->html_options);
 
-        echo($h);
+        return $h;
     }
     // }}}
+    // {{{ projectlist
+    /**
+     * default function to call if no function is given in handler
+     *
+     * @return  null
+     */
+    public function projectlist() {
+        $this->auth->enforce();
+
+        $cp = new cms_project($this->pdo);
+        $projects = $cp->get_projects();
+
+        $h = new html("projectlist.tpl", array(
+            'title' => $this->basetitle,
+            'projects' => $projects,
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    
     // {{{ notfound
     /**
      * function to call if action/function is not defined
@@ -87,7 +103,24 @@ class cms_ui extends depage_ui {
             'content' => 'notfound',
         ), $this->html_options);
 
-        echo($h);
+        return $h;
+    }
+    // }}}
+    // {{{ error
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function error($error, $env) {
+        $content = parent::error($error, $env);
+
+        $h = new html("html.tpl", array(
+            'title' => $this->basetitle,
+            'content' => $content,
+        ), $this->html_options);
+
+        return $h;
     }
     // }}}
     
