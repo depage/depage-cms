@@ -22,6 +22,9 @@ class auth {
     var $realm = "depage::cms";
     var $sid, $uid;
     var $valid = false;
+    var $session_lifetime = 300; // in seconds
+    var $privateKey = "private Key";
+    var $user = null;
     // }}}
     
     // {{{ constructor()
@@ -55,9 +58,14 @@ class auth {
      * @return      void
      */
     public function enforce($method = "http") {
-        if ($method = "http") {
-            return $this->auth_http();
+        // only enforce authentication of not authenticated before
+        if ($this->user === null) {
+            if ($method = "http") {
+                $this->user = $this->auth_http();
+            }
         }
+
+        return $this->user;
     }
     // }}}
     
@@ -106,10 +114,10 @@ class auth {
             }
         }
         $sid = $this->get_sid();
-        $opaque = md5($sid);
+        $opaque = $sid;
         $realm = $this->realm;
         $domain = $this->domain;
-        $nonce = $sid;
+        $nonce = $this->get_nonce();
 
         if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
 
@@ -219,10 +227,10 @@ class auth {
     // }}}
     // {{{ get_nonce
     private function get_nonce() {
-        $time = time();
-        $hash = md5($time . $_SERVER['HTTP_USER_AGENT'] . $this->realm);
+        $time = ceil(time() / $this->session_lifetime) * $this->session_lifetime;
+        $hash = md5(date('Y-m-d H:i', $time).':'.$_SERVER['REMOTE_ADDR'].':'.$this->privateKey);
 
-        return base64_encode($time) . $hash;  
+        return $hash;
     }
     // }}}
     
@@ -357,6 +365,41 @@ class auth {
     }
     // }}}
     
+    // {{{ get_active_users()
+    function get_active_users() {
+        $users = array();
+
+        $this->logout_timed_out_users();
+
+        // get logged in users
+        $user_query = $this->pdo->prepare(
+            "SELECT 
+                user.id AS id,
+                user.name as name,
+                user.name_full as fullname,
+                user.pass as passwordhash,
+                user.email as email,
+                user.settings as settings,
+                user.level as level,
+                sessions.project AS project, 
+                sessions.ip AS ip, 
+                sessions.last_update AS last_update, 
+                sessions.useragent AS useragent
+            FROM 
+                {$this->pdo->prefix}_auth_user AS user, 
+                {$this->pdo->prefix}_auth_sessions AS sessions
+            WHERE 
+                user.id=sessions.userid"
+        );
+
+        $user_query->execute();
+        while ($user = $user_query->fetchObject("auth_user", array($this->pdo))) {
+            $users[] = $user;
+        }
+        return $users;
+    }
+    // }}}
+    
     // {{{ logout_timed_out_users()
     private function logout_timed_out_users() {
         // remove users which login is outdated
@@ -366,7 +409,7 @@ class auth {
             FROM 
                 {$this->pdo->prefix}_auth_sessions
             WHERE 
-                last_update < DATE_SUB(NOW(), INTERVAL 10 MINUTE)"
+                last_update < DATE_SUB(NOW(), INTERVAL $this->session_lifetime SECOND)"
         );
         $result = $outdated_query->fetchAll();
 
@@ -428,29 +471,6 @@ class auth {
         }
 
         return $xml;
-    }
-    // }}}
-    // {{{ get_loggedin_users()
-    function get_loggedin_users() {
-        global $conf, $log;
-        
-        $this->logout_timed_out_users();
-
-        // get logged in users
-        $loggedin = array();
-        $result = db_query(
-            "SELECT user.name, user.name_full, user.email, sessions.project, sessions.ip, sessions.last_update, sessions.useragent
-            FROM $conf->db_table_user AS user, $conf->db_table_sessions AS sessions
-            WHERE user.id=sessions.userid"
-        );
-        if ($result && ($num = mysql_num_rows($result)) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $data = mysql_fetch_object($result);
-                $loggedin[] = $data;
-            }
-        }
-
-        return $loggedin;
     }
     // }}}
     // {{{ get_loggedin_count()
