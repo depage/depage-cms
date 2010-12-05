@@ -28,10 +28,15 @@ class html {
      * @param $param (array) params how to use template
      */
     public function __construct($template, $args = array(), $param = null) {
-        $this->template = $template;
-        $this->args = $args;
-
-        $this->param = $param;
+        if (is_array($template)) {
+            $this->template = null;
+            $this->args = $template;
+            $this->param = $param;
+        } else {
+            $this->template = $template;
+            $this->args = $args;
+            $this->param = $param;
+        }
 
         foreach ($this->args as $arg) {
             // set to parent params to params if not set
@@ -65,7 +70,7 @@ class html {
             return $this->args[$name];
         } else {
             // if parameter is not set
-            return "parameter '$name' is not set";
+            return null;
         }
     }
     // }}}
@@ -76,12 +81,16 @@ class html {
      * @return
      */
     public function __toString() {
-        ob_start();
+        if ($this->template !== null) {
+            ob_start();
 
-        require($this->param["template_path"] . $this->template);
+            require($this->param["template_path"] . $this->template);
 
-        $html = ob_get_contents();
-        ob_end_clean();
+            $html = ob_get_contents();
+            ob_end_clean();
+        } else {
+            $html = html::e($this->content);
+        }
 
         if ($this->param["clean"] == "tidy") {
             // clean html up

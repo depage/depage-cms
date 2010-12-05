@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?php html::t($this->title); ?></title>
+        <title><?php 
+            html::t($this->title); 
+            if ($this->subtitle != null) {
+                html::t(" // " . $this->subtitle);
+            }
+        ?></title>
 
         <base href="<?php html::base(); ?>">
 
 	<script type="text/javascript" src="framework/cms/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="framework/cms/js/jquery.cookie.min.js"></script>
 	<script type="text/javascript" src="framework/cms/js/interface.js"></script>
 
         <link rel="stylesheet" type="text/css" href="framework/cms/css/interface.css">

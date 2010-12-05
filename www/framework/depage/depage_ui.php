@@ -57,13 +57,13 @@ class depage_ui {
         try {
             if ($dp_func == "") {
                 // show index page
-                echo($this->index());
+                echo($this->package($this->index()));
             } else if (is_callable(array($this, $dp_func))) {
                 // call function
-                echo($this->$dp_func($dp_params));
+                echo($this->package($this->$dp_func($dp_params)));
             } else {
                 // show error for notfound
-                echo($this->notfound());
+                echo($this->package($this->notfound()));
             }
         } catch (Exception $e) {
             $error = (object) array(
@@ -73,8 +73,20 @@ class depage_ui {
                 'msg' => $e->getMessage(),
                 'backtrace' => debug_backtrace(),
             );
-            echo($this->error($error, $this->options->env));
+            echo($this->package($this->error($error, $this->options->env)));
         }
+    }
+    // }}}
+    // {{{ package
+    /**
+     * default function to call if no function is given in handler
+     *
+     * @param   $options (array) named options for base class
+     *
+     * @return  null
+     */
+    protected function package($output) {
+        return $output;
     }
     // }}}
     

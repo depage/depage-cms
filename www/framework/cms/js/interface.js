@@ -410,20 +410,21 @@ function update_tasklist() {
 /* }}} */
 /* {{{ update_userlist */
 function update_userlist() {
-    var box = $("#box_users");
-    var users = $("#users");
+    var box = load_box("userlist", function() {
+        timeout['userlist'] = setTimeout("update_userlist()", 10000);
+    });
+}
+/* }}} */
 
-    if (users.length == 1) {
-        users.load("status.php?type=users", null, function() {
-            timeout['userlist'] = setTimeout("update_userlist()", 10000);
+/* {{{ load_box */
+function load_box(selector, successFunc) {
+    var box = $("#box_" + selector);
 
-            if (users.html() == "") {
-                box.hide();
-            } else {
-                box.show();
-            }
-        });
+    if (box.length == 1) {
+        box.load(baseurl + selector + "/ #box_" + selector + " > *", {ajax: 1}, successFunc);
     }
+
+    return box;
 }
 /* }}} */
 
@@ -492,8 +493,12 @@ timeout = [];
 flashwin = null;
 flashloaded = false;
 
+var basetitle;
+var baseurl;
+
 $(document).ready(function() {
     basetitle = document.title;
+    baseurl = $("base")[0].href;
 
     projectlisting_add_events();
 

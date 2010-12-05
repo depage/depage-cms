@@ -1,8 +1,8 @@
-<div id="box_<?php html::t($this->id); ?>" class="centered_box">
+<div id="box_<?php html::t($this->id); ?>" class="centered_box <?php html::t($this->class); ?>">
     <div class="content">
-        <?php if (isset($this->icon)) { ?>
+        <?php if ($this->icon != null) { ?>
             <div class="icon">
-                <img src="<?php html::t($icon); ?>">
+                <img src="<?php html::t($this->icon); ?>">
             </div>
         <?php } ?>
 

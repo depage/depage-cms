@@ -50,6 +50,27 @@ class cms_ui extends depage_ui {
         $this->basetitle = depage::getName() . " " . depage::getVersion();
     }
     // }}}
+    // {{{ package
+    /**
+     * gets a list of projects
+     *
+     * @return  null
+     */
+    public function package($output) {
+        // pack into base-html if output is html-object
+        if (is_object($output) and get_class($output) == "html") {
+            // pack into body html
+            $output = new html("html.tpl", array(
+                'title' => $this->basetitle,
+                'subtitle' => $output->title,
+                'content' => $output,
+            ), $this->html_options);
+        }
+
+        return $output;
+    }
+    // }}}
+    
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -59,13 +80,12 @@ class cms_ui extends depage_ui {
     public function index() {
         $this->auth->enforce();
 
-        $h = new html("html.tpl", array(
-            'title' => $this->basetitle,
+        $h = new html(array(
             'content' => array(
                 $this->projectlist(),
                 $this->userlist(),
-            )
-        ), $this->html_options);
+            ),
+        ));
 
         return $h;
     }
@@ -79,11 +99,15 @@ class cms_ui extends depage_ui {
     public function projectlist() {
         $this->auth->enforce();
 
+        // get data
         $cp = new cms_project($this->pdo);
         $projects = $cp->get_projects();
 
+        // construct template
         $h = new html("box.tpl", array(
-            'id' => "projects",
+            'id' => "projectlist",
+            'icon' => "framework/cms/images/icon_projects.gif",
+            'class' => "first",
             'title' => "Projects",
             'content' => new html("projectlist.tpl", array(
                 'projects' => $projects,
@@ -105,7 +129,8 @@ class cms_ui extends depage_ui {
         $users = $this->auth->get_active_users();
 
         $h = new html("box.tpl", array(
-            'id' => "users",
+            'id' => "userlist",
+            'icon' => "framework/cms/images/icon_users.gif",
             'title' => "Users",
             'content' => new html("userlist.tpl", array(
                 'title' => $this->basetitle,
