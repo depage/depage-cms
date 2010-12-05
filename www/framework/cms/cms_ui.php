@@ -58,7 +58,7 @@ class cms_ui extends depage_ui {
      */
     public function package($output) {
         // pack into base-html if output is html-object
-        if (is_object($output) and get_class($output) == "html") {
+        if (!isset($_REQUEST['ajax']) && is_object($output) && get_class($output) == "html") {
             // pack into body html
             $output = new html("html.tpl", array(
                 'title' => $this->basetitle,
@@ -82,21 +82,21 @@ class cms_ui extends depage_ui {
 
         $h = new html(array(
             'content' => array(
-                $this->projectlist(),
-                $this->userlist(),
+                $this->projects(),
+                $this->users(),
             ),
         ));
 
         return $h;
     }
     // }}}
-    // {{{ projectlist
+    // {{{ projects
     /**
      * gets a list of projects
      *
      * @return  null
      */
-    public function projectlist() {
+    public function projects() {
         $this->auth->enforce();
 
         // get data
@@ -105,7 +105,7 @@ class cms_ui extends depage_ui {
 
         // construct template
         $h = new html("box.tpl", array(
-            'id' => "projectlist",
+            'id' => "projects",
             'icon' => "framework/cms/images/icon_projects.gif",
             'class' => "first",
             'title' => "Projects",
@@ -117,19 +117,19 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
-    // {{{ userlist
+    // {{{ users
     /**
      * gets a list of loggedin users
      *
      * @return  null
      */
-    public function userlist() {
+    public function users() {
         $this->auth->enforce();
 
         $users = $this->auth->get_active_users();
 
         $h = new html("box.tpl", array(
-            'id' => "userlist",
+            'id' => "users",
             'icon' => "framework/cms/images/icon_users.gif",
             'title' => "Users",
             'content' => new html("userlist.tpl", array(
@@ -149,8 +149,7 @@ class cms_ui extends depage_ui {
      * @return  null
      */
     public function notfound() {
-        $h = new html("html.tpl", array(
-            'title' => $this->basetitle,
+        $h = new html(array(
             'content' => 'notfound',
         ), $this->html_options);
 
@@ -166,8 +165,7 @@ class cms_ui extends depage_ui {
     public function error($error, $env) {
         $content = parent::error($error, $env);
 
-        $h = new html("html.tpl", array(
-            'title' => $this->basetitle,
+        $h = new html(array(
             'content' => $content,
         ), $this->html_options);
 

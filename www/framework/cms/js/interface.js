@@ -410,7 +410,7 @@ function update_tasklist() {
 /* }}} */
 /* {{{ update_userlist */
 function update_userlist() {
-    var box = load_box("userlist", function() {
+    var box = load_box("users", function() {
         timeout['userlist'] = setTimeout("update_userlist()", 10000);
     });
 }
@@ -421,7 +421,7 @@ function load_box(selector, successFunc) {
     var box = $("#box_" + selector);
 
     if (box.length == 1) {
-        box.load(baseurl + selector + "/ #box_" + selector + " > *", {ajax: 1}, successFunc);
+        box.load(baseurl + selector + "/ #box_" + selector + "?ajax=1 > *", null, successFunc);
     }
 
     return box;
