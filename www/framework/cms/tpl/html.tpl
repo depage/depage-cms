@@ -10,7 +10,7 @@
 
         <base href="<?php html::base(); ?>">
 
-	<script type="text/javascript" src="framework/cms/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="framework/cms/js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="framework/cms/js/jquery.cookie.min.js"></script>
 	<script type="text/javascript" src="framework/cms/js/interface.js"></script>
 
