@@ -62,7 +62,7 @@ class auth {
      *
      * @return      void
      */
-    public function __construct($pdo, $realm, $domain, $method) {
+    public function __construct($pdo, $realm, $domain) {
         $this->pdo = $pdo;
         $this->realm = $realm;
         $this->domain = $domain;
@@ -81,6 +81,19 @@ class auth {
      * @return      void
      */
     public function enforce() {
+        throw new Exception("no auth method set!");
+    }
+    // }}}
+    // {{{ enforce_logout()
+    /**
+     * enforces authentication 
+     *
+     * @public
+     *
+     * @param       string  $method     method to use for authentication. Can be http
+     * @return      void
+     */
+    public function enforce_logout() {
         throw new Exception("no auth method set!");
     }
     // }}}
@@ -292,7 +305,7 @@ class auth {
         // get user object for info
         $user = auth_user::get_by_sid($this->pdo, $sid);
         if ($user) {
-            $this->log->log("'{$user->name}' has logged with $sid", "auth");
+            $this->log->log("'{$user->name}' has logged out with $sid", "auth");
         }
 
         // delete session data for sid

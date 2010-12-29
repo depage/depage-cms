@@ -31,39 +31,62 @@ class auth_http_digest extends auth {
         return $this->user;
     }
     // }}}
+    // {{{ enforce_logout()
+    /**
+     * enforces authentication 
+     *
+     * @public
+     *
+     * @param       string  $method     method to use for authentication. Can be http
+     * @return      void
+     */
+    public function enforce_logout() {
+        // only enforce authentication if not authenticated before
+        if ($this->user === null) {
+            $this->user = $this->auth_digest(true);
+        }
+
+        return $this->user;
+    }
+    // }}}
     
     // {{{ auth_digest()
-    public function auth_digest() {
+    public function auth_digest($logout = false) {
+        $valid_response = false;
         $digest_header = $this->get_digest_header();
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
-            // get new user object
-            $user = auth_user::get_by_username($this->pdo, $data['username']);
+            if (!$logout) {
+                // get new user object
+                $user = auth_user::get_by_username($this->pdo, $data['username']);
+                $valid_response = $this->check_response($data, $user->passwordhash);
+            } else {
+                $user = true;
+                $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
+            }
 
-            if ($user) {
-                // generate the valid response
-                $HA1 = $user->passwordhash;
-                $HA1sess = md5($HA1 . ":{$data['nonce']}:{$data['cnonce']}");
-                $HA2 = md5("{$_SERVER['REQUEST_METHOD']}:{$data['uri']}");
-                $valid_response = md5("{$HA1sess}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
+            if ($user && $valid_response) {
+                if (!$logout && ($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                    if ($uid == "") {
+                        $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                        $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
+                    } else {
+                        $sid = $this->set_sid($_COOKIE[session_name()]);
+                    }
+                    session_id($sid);
+                    session_start();
 
-                $n = hexdec($data['nc']);
+                    return $user;
+                } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+                    if ($logout) {
+                        $this->logout($_COOKIE[session_name()]);
+                    }
 
-                if ($data['response'] == $valid_response) {
-                    if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
-                        if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                            $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
-                        } else {
-                            $sid = $this->set_sid($_COOKIE[session_name()]);
-                        }
-                        session_id($sid);
-                        session_start();
+                    setcookie(session_name(), "", time() - 3600);
+                    unset($_COOKIE[session_name()]);
 
+                    if ($logout) {
                         return $user;
-                    } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                        setcookie(session_name(), "", time() - 3600);
-                        unset($_COOKIE[session_name()]);
                     }
                 }
             }
@@ -74,53 +97,38 @@ class auth_http_digest extends auth {
         $domain = $this->domain;
         $nonce = $sid;
 
-        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $data['response'] == $valid_response) {
+        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $valid_response) {
         //if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
             //$log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
             //$log->add_varinfo($headers);
             $stale = ", stale=true";
         } else {
-            session_id($sid);
-            session_start();
             $stale = "";
         }
 
         header("WWW-Authenticate: Digest realm=\"{$realm}\", domain=\"{$domain}\", qop=\"auth\", algorithm=MD5-sess, nonce=\"{$nonce}\", opaque=\"{$opaque}\"{$stale}");
         header("HTTP/1.1 401 Unauthorized");
 
-        throw new Exception("you are not allowed to to this!");
+        session_id($sid);
+        session_start();
+
+        if (!$logout) {
+            throw new Exception("you are not allowed to to this!");
+        }
     } 
     // }}}
-    // {{{ check_auth_data()
-    protected function check_auth_data($accept_only_logout = false) {
-        $digest_header = $this->get_digest_header();
+    // {{{ check_response()
+    protected function check_response(&$data, $passwordhash) {
+        // generate the valid response
+        $HA1 = $passwordhash;
+        $HA1sess = md5($HA1 . ":{$data['nonce']}:{$data['cnonce']}");
+        $HA2 = md5("{$_SERVER['REQUEST_METHOD']}:{$data['uri']}");
+        $valid_response = md5("{$HA1sess}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
 
-        if (!empty($digest_header)) { 
-            $data = $this->http_digest_parse($digest_header);
-            $user = auth_user::get_by_username($this->pdo, $data['username']);
-                
-            // generate the valid response
-            if ($accept_only_logout) {
-                $HA1 = md5("logout" . ':' . $this->realm . ':' . "logout");
-            } else {
-                $HA1 = $user->passwordhash;
-            }
-            $HA2 = md5("{$_SERVER['REQUEST_METHOD']}:{$data['uri']}");
-            $valid_response = $data['response'] == md5("{$HA1}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
+        $data['n'] = hexdec($data['nc']);
+        $data['valid_response'] = $valid_response;
 
-            if ($valid_response) {
-                list($data["sid"], $data["uid"], $data["date"]) = explode("-", $data['nonce']);
-
-                $data["n"] = hexdec($data['nc']);
-                $data["valid_response"] = true;
-                $data["user"] = $user;
-                $data["logout"] = $accept_only_logout;
-            }
-        } else {
-            $data = false;
-        }
-
-        return $data;
+        return $data['response'] == $valid_response;
     } 
     // }}}
     // {{{ http_digest_parse()
@@ -150,6 +158,8 @@ class auth_http_digest extends auth {
     // }}}
     // {{{ get_digest_header()
     protected function get_digest_header() {
+        $digest_header = false;
+
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
             if (isset($headers['Authorization']) && !empty($headers['Authorization'])) {
