@@ -109,14 +109,11 @@ class auth_user {
      * @return      auth_user
      */
     public function get_useragent() {
-        if (ini_get("browscap") != "") {
-            $browser = get_browser($this->useragent);
-            $useragent = " {$browser->browser} {$browser->version} {$browser->platform}";
-        } else {
-            $useragent = "unknown";
-        }
-        
-        return $useragent;
+        $browscap = new browscap(DEPAGE_CACHE_PATH . "browscap/");
+        $browscap->silent = true;
+        $info = $browscap->getBrowser($this->useragent);
+
+        return "{$info->Browser} {$info->Version} on {$info->Platform}";
     }
     // }}}
 }
