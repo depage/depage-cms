@@ -36,10 +36,11 @@ class cms_ui extends depage_ui {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // get auth object
-        $this->auth = new auth(
+        $this->auth = auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
-            DEPAGE_BASE // domain
+            DEPAGE_BASE, // domain
+            $this->options->auth->method // method
         );
 
         // set html-options
@@ -71,6 +72,16 @@ class cms_ui extends depage_ui {
     }
     // }}}
     
+    // {{{ toolbar
+    protected function toolbar() {
+        $h = new html("toolbar_main.tpl", array(
+            'title' => $this->basetitle,
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -82,6 +93,7 @@ class cms_ui extends depage_ui {
 
         $h = new html(array(
             'content' => array(
+                $this->toolbar(),
                 $this->projects(),
                 $this->users(),
             ),
@@ -90,6 +102,67 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
+    // {{{ notfound
+    /**
+     * function to call if action/function is not defined
+     *
+     * @return  null
+     */
+    public function notfound() {
+        $h = new html("box.tpl", array(
+            'id' => "error",
+            'class' => "first",
+            'title' => "Error",
+            'content' => new html(array(
+                'content' => 'url not found',
+            )),
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    // {{{ error
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function error($error, $env) {
+        $content = parent::error($error, $env);
+
+        $h = new html("box.tpl", array(
+            'id' => "error",
+            'class' => "first",
+            'content' => new html(array(
+                'content' => $content,
+            )),
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    // {{{ logout
+    public function logout($action) {
+        if ($action[0] == "now") {
+            $this->auth->enforce_logout();
+        }
+
+        $h = new html("box.tpl", array(
+            'id' => "logout",
+            'class' => "first",
+            'title' => "Bye bye!",
+            'content' => new html("logout.tpl", array(
+                'content' => "Thank you for using depage::cms. ",
+                'relogin1' => "You can relogin ",
+                'relogin2' => "here",
+                'relogin_link' => ".",
+            )),
+        ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    
     // {{{ projects
     /**
      * gets a list of projects
@@ -136,37 +209,6 @@ class cms_ui extends depage_ui {
                 'title' => $this->basetitle,
                 'users' => $users,
             )),
-        ), $this->html_options);
-
-        return $h;
-    }
-    // }}}
-    
-    // {{{ notfound
-    /**
-     * function to call if action/function is not defined
-     *
-     * @return  null
-     */
-    public function notfound() {
-        $h = new html(array(
-            'content' => 'notfound',
-        ), $this->html_options);
-
-        return $h;
-    }
-    // }}}
-    // {{{ error
-    /**
-     * function to show error messages
-     *
-     * @return  null
-     */
-    public function error($error, $env) {
-        $content = parent::error($error, $env);
-
-        $h = new html(array(
-            'content' => $content,
         ), $this->html_options);
 
         return $h;

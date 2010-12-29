@@ -6,7 +6,9 @@
             </div>
         <?php } ?>
 
-        <h1><?php html::t($this->title); ?></h1>
+        <?php if ($this->title != null) { ?>
+            <h1><?php html::t($this->title); ?></h1>
+        <?php } ?>
         <?php html::e($this->content); ?>
     </div>
 </div>

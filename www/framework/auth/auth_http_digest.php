@@ -61,7 +61,6 @@ class auth_http_digest extends auth {
             $this->set_sid("");
         }
 
-        //@todo fix in safari which does not send auth-header in first request
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
             // get new user object
             $user = auth_user::get_by_username($this->pdo, $data['username']);
@@ -98,17 +97,16 @@ class auth_http_digest extends auth {
         $digest_header = $this->get_digest_header();
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
-            $user = true;
             $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
 
-            if ($user && $valid_response) {
+            if ($valid_response) {
                 if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
                     $this->logout($_COOKIE[session_name()]);
 
                     setcookie(session_name(), "", time() - 3600);
                     unset($_COOKIE[session_name()]);
 
-                    return $user;
+                    return true;
                 }
             }
         }

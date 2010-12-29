@@ -271,19 +271,23 @@ function edit_page(page) {
 /* }}} */
 /* {{{ logout */
 function logout() {
-    var logouturl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "?logout";
+    var logouturl = baseurl + "logout/";
 
     $.ajax({ 
         type: "GET", 
-        url: logouturl + "=true", 
+        url: logouturl + "now/",
         cache: false,
         async: true,
         username: "logout",
         password: "logout",
         complete: function(XMLHttpRequest, textStatus) {
-            window.location = logouturl + "=done";
+            if (window.location != logouturl) {
+                window.location = logouturl;
+            }
         }
     });
+
+    return false;
 }
 /* }}} */
 /* {{{ publish */
@@ -430,6 +434,11 @@ function load_box(selector, successFunc) {
 
 /* {{{ attach_events */
 function attach_events() {
+    $("#logout").click( logout );
+    if ($("#box_logout").length > 0) {
+        logout();
+    }
+
     $(".centered_box .icon").css({
         opacity: 0.3
     });
