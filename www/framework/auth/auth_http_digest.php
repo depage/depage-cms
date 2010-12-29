@@ -55,20 +55,25 @@ class auth_http_digest extends auth {
         $valid_response = false;
         $digest_header = $this->get_digest_header();
 
+        if (isset($_COOKIE[session_name()])) {
+            $this->set_sid($_COOKIE[session_name()]);
+        } else {
+            $this->set_sid("");
+        }
+
         //@todo fix in safari which does not send auth-header in first request
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
             // get new user object
             $user = auth_user::get_by_username($this->pdo, $data['username']);
             $valid_response = $this->check_response($data, isset($user->passwordhash) ? $user->passwordhash : "");
+
             if ($user && $valid_response) {
-                if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                if (($uid = $this->is_valid_sid($this->sid)) !== false) {
                     if ($uid == "") {
                         $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                        $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
-                    } else {
-                        $sid = $this->set_sid($_COOKIE[session_name()]);
+                        $sid = $this->register_session($user->id, $this->sid);
                     }
-                    session_id($sid);
+                    session_id($this->sid);
                     session_start();
 
                     return $user;
@@ -120,7 +125,6 @@ class auth_http_digest extends auth {
         $nonce = $sid;
 
         if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $valid_response) {
-        //if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
             //$log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
             //$log->add_varinfo($headers);
             $stale = ", stale=true";
