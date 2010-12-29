@@ -12,6 +12,7 @@
 
 define("DEPAGE_FM_PATH", depage::getDepageFrameworkPath()) ;
 define("DEPAGE_PATH", depage::getDepagePath()) ;
+define("DEPAGE_CACHE_PATH", depage::getDepageCachePath()) ;
 
 function __autoload($class) {
     depage::autoload($class);
@@ -86,7 +87,7 @@ class depage {
 
         $file = "$class.php";
 
-        if ($pos = strrpos($class, "_")) {
+        if ($pos = strpos($class, "_")) {
             $module = substr($class, 0, $pos);
         } else {
             $module = $class;
@@ -139,6 +140,22 @@ class depage {
                
         if (!isset($path)) {
             $path = substr(__DIR__, 0, -6);
+        }
+
+        return $path;
+    }
+    // }}}
+    // {{{ getDepageCachePath()
+    /**
+     * gets path of depage framework
+     *
+     * @return  framework path
+     */
+    static function getDepageCachePath() {
+        static $path;
+               
+        if (!isset($path)) {
+            $path = depage::getDepagePath() . "/cache/";
         }
 
         return $path;
