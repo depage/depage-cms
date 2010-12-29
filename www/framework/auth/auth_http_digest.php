@@ -55,11 +55,11 @@ class auth_http_digest extends auth {
         $valid_response = false;
         $digest_header = $this->get_digest_header();
 
+        //@todo fix in safari which does not send auth-header in first request
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
             // get new user object
             $user = auth_user::get_by_username($this->pdo, $data['username']);
-            $valid_response = $this->check_response($data, $user->passwordhash);
-
+            $valid_response = $this->check_response($data, isset($user->passwordhash) ? $user->passwordhash : "");
             if ($user && $valid_response) {
                 if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
                     if ($uid == "") {
@@ -79,7 +79,7 @@ class auth_http_digest extends auth {
             }
         }
 
-        $this->send_header();
+        $this->send_header($valid_response);
 
         throw new Exception("you are not allowed to to this!");
     } 
@@ -105,11 +105,11 @@ class auth_http_digest extends auth {
             }
         }
 
-        $this->send_header();
+        $this->send_header($valid_response);
     } 
     // }}}
     // {{{ send_header()
-    protected function send_header() {
+    protected function send_header($valid_response) {
         $sid = $this->get_sid();
         $opaque = md5($sid);
         $realm = $this->realm;
