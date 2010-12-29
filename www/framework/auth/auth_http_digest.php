@@ -81,6 +81,9 @@ class auth_http_digest extends auth {
 
         $this->send_header($valid_response);
 
+        session_id($this->get_sid());
+        session_start();
+
         throw new Exception("you are not allowed to to this!");
     } 
     // }}}
@@ -127,9 +130,6 @@ class auth_http_digest extends auth {
 
         header("WWW-Authenticate: Digest realm=\"{$realm}\", domain=\"{$domain}\", qop=\"auth\", algorithm=MD5-sess, nonce=\"{$nonce}\", opaque=\"{$opaque}\"{$stale}");
         header("HTTP/1.1 401 Unauthorized");
-
-        session_id($sid);
-        session_start();
     } 
     // }}}
     // {{{ check_response()
