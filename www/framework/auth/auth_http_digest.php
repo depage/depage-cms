@@ -43,7 +43,7 @@ class auth_http_digest extends auth {
     public function enforce_logout() {
         // only enforce authentication if not authenticated before
         if ($this->user === null) {
-            $this->user = $this->auth_digest(true);
+            $this->user = $this->auth_digest_logout();
         }
 
         return $this->user;
@@ -51,22 +51,17 @@ class auth_http_digest extends auth {
     // }}}
     
     // {{{ auth_digest()
-    public function auth_digest($logout = false) {
+    public function auth_digest() {
         $valid_response = false;
         $digest_header = $this->get_digest_header();
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
-            if (!$logout) {
-                // get new user object
-                $user = auth_user::get_by_username($this->pdo, $data['username']);
-                $valid_response = $this->check_response($data, $user->passwordhash);
-            } else {
-                $user = true;
-                $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
-            }
+            // get new user object
+            $user = auth_user::get_by_username($this->pdo, $data['username']);
+            $valid_response = $this->check_response($data, $user->passwordhash);
 
             if ($user && $valid_response) {
-                if (!$logout && ($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
                     if ($uid == "") {
                         $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
                         $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
@@ -78,19 +73,43 @@ class auth_http_digest extends auth {
 
                     return $user;
                 } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                    if ($logout) {
-                        $this->logout($_COOKIE[session_name()]);
-                    }
+                    setcookie(session_name(), "", time() - 3600);
+                    unset($_COOKIE[session_name()]);
+                }
+            }
+        }
+
+        $this->send_header();
+
+        throw new Exception("you are not allowed to to this!");
+    } 
+    // }}}
+    // {{{ auth_digest_logout()
+    public function auth_digest_logout() {
+        $valid_response = false;
+        $digest_header = $this->get_digest_header();
+
+        if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
+            $user = true;
+            $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
+
+            if ($user && $valid_response) {
+                if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+                    $this->logout($_COOKIE[session_name()]);
 
                     setcookie(session_name(), "", time() - 3600);
                     unset($_COOKIE[session_name()]);
 
-                    if ($logout) {
-                        return $user;
-                    }
+                    return $user;
                 }
             }
         }
+
+        $this->send_header();
+    } 
+    // }}}
+    // {{{ send_header()
+    protected function send_header() {
         $sid = $this->get_sid();
         $opaque = md5($sid);
         $realm = $this->realm;
@@ -111,10 +130,6 @@ class auth_http_digest extends auth {
 
         session_id($sid);
         session_start();
-
-        if (!$logout) {
-            throw new Exception("you are not allowed to to this!");
-        }
     } 
     // }}}
     // {{{ check_response()
