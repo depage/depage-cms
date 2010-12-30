@@ -34,9 +34,27 @@ class auth_http_basic extends auth {
         return $this->user;
     }
     // }}}
+    // {{{ enforce_logout()
+    /**
+     * enforces logout 
+     *
+     * @public
+     *
+     * @return      boolean             true
+     */
+    public function enforce_logout() {
+        // not implemented
+    }
+    // }}}
     
     // {{{ auth_basic()
     public function auth_basic() {
+        if ($this->has_session()) {
+            $this->set_sid($_COOKIE[session_name()]);
+        } else {
+            $this->set_sid("");
+        }
+
         if (isset($_SERVER['PHP_AUTH_USER'])) { 
             // get new user object
             $user = auth_user::get_by_username($this->pdo, $_SERVER['PHP_AUTH_USER']);
@@ -50,35 +68,51 @@ class auth_http_basic extends auth {
                         if ($uid == "") {
                             $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
                             $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
-                        } else {
-                            $sid = $this->set_sid($_COOKIE[session_name()]);
                         }
-                        session_id($sid);
-                        session_start();
+                        $this->start_session();
 
                         return $user;
-                    } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                        setcookie(session_name(), "", time() - 3600);
-                        unset($_COOKIE[session_name()]);
+                    } elseif ($this->has_session()) {
+                        $this->destroy_session();
                     }
                 }
             }
         }
+
+        $this->send_auth_header();
+        $this->start_session();
+
+        throw new Exception("you are not allowed to to this!");
+    } 
+    // }}}
+    // {{{ send_auth_header()
+    protected function send_auth_header($valid_response = false) {
         $sid = $this->get_sid();
         $realm = $this->realm;
         $domain = $this->domain;
 
-        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-
-        } else {
-            session_id($sid);
-            session_start();
-        }
-
         header("WWW-Authenticate: Basic realm=\"$realm\", domain=\"{$this->domain}\"");
         header("HTTP/1.1 401 Unauthorized");
+    } 
+    // }}}
+    // {{{ start_session()
+    protected function start_session() {
+        session_id($this->get_sid());
+        session_start();
+    } 
+    // }}}
+    // {{{ has_session()
+    protected function has_session() {
+        return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+    } 
+    // }}}
+    // {{{ destroy_session()
+    protected function destroy_session() {
+        $this->start_session();
 
-        throw new Exception("you are not allowed to to this!");
+        setcookie(session_name(), "", time() - 3600);
+        session_destroy();
+        unset($_COOKIE[session_name()]);
     } 
     // }}}
 }

@@ -279,7 +279,7 @@ function logout() {
         cache: false,
         async: true,
         username: "logout",
-        password: "logout",
+        password: "",
         complete: function(XMLHttpRequest, textStatus) {
             if (window.location != logouturl) {
                 window.location = logouturl;

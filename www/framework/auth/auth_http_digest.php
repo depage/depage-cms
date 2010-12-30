@@ -12,15 +12,14 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-class auth_http_digest extends auth {
+class auth_http_digest extends auth_http_basic {
     // {{{ enforce()
     /**
      * enforces authentication 
      *
      * @public
      *
-     * @param       string  $method     method to use for authentication. Can be http
-     * @return      void
+     * @return      user                user object or false if no valid authorization
      */
     public function enforce() {
         // only enforce authentication of not authenticated before
@@ -33,12 +32,11 @@ class auth_http_digest extends auth {
     // }}}
     // {{{ enforce_logout()
     /**
-     * enforces authentication 
+     * enforces logout 
      *
      * @public
      *
-     * @param       string  $method     method to use for authentication. Can be http
-     * @return      void
+     * @return      boolean             true
      */
     public function enforce_logout() {
         // only enforce authentication if not authenticated before
@@ -55,7 +53,7 @@ class auth_http_digest extends auth {
         $valid_response = false;
         $digest_header = $this->get_digest_header();
 
-        if (isset($_COOKIE[session_name()])) {
+        if ($this->has_session()) {
             $this->set_sid($_COOKIE[session_name()]);
         } else {
             $this->set_sid("");
@@ -72,21 +70,18 @@ class auth_http_digest extends auth {
                         $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
                         $sid = $this->register_session($user->id, $this->sid);
                     }
-                    session_id($this->sid);
-                    session_start();
+                    $this->start_session();
 
                     return $user;
-                } elseif (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
-                    setcookie(session_name(), "", time() - 3600);
-                    unset($_COOKIE[session_name()]);
+                } elseif ($this->has_session()) {
+                    $this->destroy_session();
                 }
             }
         }
 
-        $this->send_header($valid_response);
+        $this->send_auth_header($valid_response);
 
-        session_id($this->get_sid());
-        session_start();
+        $this->start_session();
 
         throw new Exception("you are not allowed to to this!");
     } 
@@ -97,34 +92,32 @@ class auth_http_digest extends auth {
         $digest_header = $this->get_digest_header();
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
-            $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
+            $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . ""));
 
             if ($valid_response) {
                 if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
                     $this->logout($_COOKIE[session_name()]);
 
-                    setcookie(session_name(), "", time() - 3600);
-                    unset($_COOKIE[session_name()]);
+                    $this->destroy_session();
 
                     return true;
                 }
             }
         }
 
-        $this->send_header($valid_response);
+        $this->send_auth_header($valid_response);
     } 
     // }}}
-    // {{{ send_header()
-    protected function send_header($valid_response) {
+    // {{{ send_auth_header()
+    protected function send_auth_header($valid_response = false) {
         $sid = $this->get_sid();
         $opaque = md5($sid);
         $realm = $this->realm;
         $domain = $this->domain;
         $nonce = $sid;
 
-        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "" && $valid_response) {
-            //$log->add_entry("stale!!! sid: $sid - nonce: {$data['nonce']}");
-            //$log->add_varinfo($headers);
+        if ($this->has_session() && $valid_response) {
+            //$this->log->log("stale!!! sid: $sid - nonce: {$data['nonce']}");
             $stale = ", stale=true";
         } else {
             $stale = "";

@@ -68,7 +68,12 @@ class auth {
         $this->domain = $domain;
         $this->log = new log();
 
+        $url = parse_url($this->domain);
+
+        // set session configuration
         session_name("depage-session-id");
+        //session_set_cookie_params($this->session_lifetime, $url['path'], $url['host'], false, true);
+        session_set_cookie_params($this->session_lifetime, $url['path'], "", false, true);
     }
     // }}}
     // {{{ enforce()
@@ -295,11 +300,7 @@ class auth {
             $sid = $this->sid;
 
             //remove session
-            session_start();
-
-            setcookie(session_name(), "", time() - 3600, $_SERVER['HTTP_HOST']);
-
-            session_destroy();
+            $this->destroy_session();
         }
 
         // get user object for info

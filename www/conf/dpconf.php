@@ -15,6 +15,7 @@ $conf = array(
         ),
         'auth' => array(
             'realm' => "depage::cms",
+            'method' => "http_digest",
         )
     ),
     // }}}
@@ -22,6 +23,7 @@ $conf = array(
     // {{{ */depage_1.5/
     '*/depage_1.5/' => array(
         'handler' => "cms_ui",
+        //'env' => "production",
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/
