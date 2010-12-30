@@ -22,9 +22,31 @@ class auth_http_digest extends auth_http_basic {
      * @return      user                user object or false if no valid authorization
      */
     public function enforce() {
-        // only enforce authentication of not authenticated before
+        // only enforce authentication if not authenticated before
         if ($this->user === null) {
             $this->user = $this->auth_digest();
+        }
+
+        return $this->user;
+    }
+    // }}}
+    // {{{ enforce_lazy()
+    /**
+     * enforces authentication but lazily with fallback content if someone is not logged in 
+     *
+     * @public
+     *
+     * @return      user                user object or false if no valid authorization
+     */
+    public function enforce_lazy() {
+        // only enforce authentication if not authenticated before
+        if ($this->user === null) {
+            // only authenticate if session cookie is set
+            if ($this->has_session() && $this->is_valid_sid($_COOKIE[session_name()])) {
+                $this->user = $this->auth_digest();
+            } else {
+                $this->user = false;
+            }
         }
 
         return $this->user;
@@ -80,7 +102,6 @@ class auth_http_digest extends auth_http_basic {
         }
 
         $this->send_auth_header($valid_response);
-
         $this->start_session();
 
         throw new Exception("you are not allowed to to this!");

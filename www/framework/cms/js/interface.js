@@ -283,6 +283,10 @@ function logout() {
         complete: function(XMLHttpRequest, textStatus) {
             if (window.location != logouturl) {
                 window.location = logouturl;
+            } else {
+                setTimeout(function() {
+                    window.location = baseurl;
+                }, 5000);
             }
         }
     });

@@ -89,6 +89,12 @@ class depage_ui {
         return $output;
     }
     // }}}
+    // {{{ redirect
+    public function redirect($url) {
+        header('Location: ' . $url);
+        die( "Tried to redirect you to " . $url);
+    }
+    // }}}
     
     // {{{ index
     /**

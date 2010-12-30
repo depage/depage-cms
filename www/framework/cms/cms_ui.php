@@ -74,9 +74,16 @@ class cms_ui extends depage_ui {
     
     // {{{ toolbar
     protected function toolbar() {
-        $h = new html("toolbar_main.tpl", array(
-            'title' => $this->basetitle,
-        ), $this->html_options);
+        if ($this->auth->enforce_lazy()) {
+            $h = new html("toolbar_main.tpl", array(
+                'title' => $this->basetitle,
+                'username' => "username",
+            ), $this->html_options);
+        } else {
+            $h = new html("toolbar_plain.tpl", array(
+                'title' => $this->basetitle,
+            ), $this->html_options);
+        }
 
         return $h;
     }
@@ -89,15 +96,32 @@ class cms_ui extends depage_ui {
      * @return  null
      */
     public function index() {
-        $this->auth->enforce();
-
-        $h = new html(array(
-            'content' => array(
-                $this->toolbar(),
-                $this->projects(),
-                $this->users(),
-            ),
-        ));
+        if ($this->auth->enforce_lazy()) {
+            // logged in
+            $h = new html(array(
+                'content' => array(
+                    $this->toolbar(),
+                    $this->projects(),
+                    $this->users(),
+                ),
+            ));
+        } else {
+            // not logged in
+            $h = new html(array(
+                'content' => array(
+                    $this->toolbar(),
+                    'content' => new html("box.tpl", array(
+                        'class' => "first",
+                        'title' => "Welcome to depage::cms. ",
+                        'content' => new html("logout.tpl", array(
+                            'relogin1' => "You can login ",
+                            'relogin2' => "here",
+                            'relogin_link' => "login/",
+                        ), $this->html_options),
+                    ), $this->html_options),
+                )
+            ), $this->html_options);
+        }
 
         return $h;
     }
@@ -141,6 +165,14 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
+    
+    // {{{ login
+    public function login() {
+        $this->auth->enforce();
+
+        $this->redirect(DEPAGE_BASE);
+    }
+    // }}}
     // {{{ logout
     public function logout($action) {
         if ($action[0] == "now") {
@@ -155,7 +187,7 @@ class cms_ui extends depage_ui {
                 'content' => "Thank you for using depage::cms. ",
                 'relogin1' => "You can relogin ",
                 'relogin2' => "here",
-                'relogin_link' => ".",
+                'relogin_link' => "login/",
             )),
         ), $this->html_options);
 
