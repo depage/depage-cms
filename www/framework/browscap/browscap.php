@@ -628,15 +628,17 @@ class Browscap
 					}
 				} // else try with the next possibility
 			case self::UPDATE_CURL:
-				$ch = curl_init($url);
+                                if (is_callable("curl_init")) {
+                                    $ch = curl_init($url);
 
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
-				curl_setopt($ch, CURLOPT_USERAGENT, $this->_getUserAgent());
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
+                                    curl_setopt($ch, CURLOPT_USERAGENT, $this->_getUserAgent());
 
-				$file = curl_exec($ch);
+                                    $file = curl_exec($ch);
 
-				curl_close($ch);
+                                    curl_close($ch);
+                                }
 
 				if ($file !== false) {
 					return $file;
