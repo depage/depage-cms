@@ -3,6 +3,11 @@
 # (c) 2003-2009 Frank Hellenkamp <jonas@depagecms.net>
 
 
+#Options +MultiViews
+
+#Options -MultiViews 
+
+
 # enable apache rewriting engine
 RewriteEngine      on
 RewriteBase        /depage_1.5
@@ -10,6 +15,25 @@ RewriteBase        /depage_1.5
 # rewriting for preview
 RewriteRule        ^projects/(.*)/preview(/[^\/]*){2}/lib/(.*)  projects/$1/lib/$3
 
+# redirect js and css files to compressed version
+RewriteCond         %{HTTP:Accept-Encoding} gzip
+RewriteCond         %{REQUEST_FILENAME}.gz -f
+RewriteRule         ^(.*)\.js                                   $1.js.gz [L]
+<Files ~ "\.js\.gz$">
+    AddEncoding x-gzip .gz
+    ForceType application/javascript
+</Files>
+
+RewriteCond         %{HTTP:Accept-Encoding} gzip
+RewriteCond         %{REQUEST_FILENAME}.gz -f
+RewriteRule         ^(.*)\.css                                  $1.css.gz [L]
+<Files ~ "\.css\.gz$">
+    AddEncoding x-gzip .gz
+    ForceType text/css
+</Files>
+
 # redirect all other requests to index.php
 RewriteCond        %{REQUEST_FILENAME} !-f
-RewriteRule        ^(.*)                                  index.php [last]
+RewriteRule        ^(.*)                                        index.php [L]
+
+

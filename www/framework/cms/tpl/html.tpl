@@ -10,11 +10,14 @@
 
         <base href="<?php html::base(); ?>">
 
-	<script type="text/javascript" src="framework/cms/js/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="framework/cms/js/jquery.cookie.min.js"></script>
-	<script type="text/javascript" src="framework/cms/js/interface.js"></script>
-
-        <link rel="stylesheet" type="text/css" href="framework/cms/css/interface.css">
+        <?php $this->include_js("interface", array(
+            "framework/shared/jquery-1.4.4.js",
+            "framework/shared/jquery.cookie.js",
+            "framework/cms/js/interface.js",
+        )); ?>
+        <?php $this->include_css("interface", array(
+            "framework/cms/css/interface.css",
+        )); ?>
     </head>
     <body>
         <?php html::e($this->content); ?>

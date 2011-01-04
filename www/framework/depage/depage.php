@@ -94,12 +94,12 @@ class depage {
         }
         
         //searching for class in global modules
-        if (file_exists(DEPAGE_FM_PATH . "/$module/$file")) {
-            $php_file = DEPAGE_FM_PATH . "/$module/$file";
+        if (file_exists(DEPAGE_FM_PATH . "$module/$file")) {
+            $php_file = DEPAGE_FM_PATH . "$module/$file";
 
         //searching for class in local modules
-        } elseif (file_exists(DEPAGE_PATH . "/modules/$module/$file")) {
-            $php_file = DEPAGE_PATH . "/modules/$module/$file";
+        } elseif (file_exists(DEPAGE_PATH . "modules/$module/$file")) {
+            $php_file = DEPAGE_PATH . "modules/$module/$file";
         }
 
         if ($php_file != "") {
@@ -199,6 +199,9 @@ class depage {
             // get handler based on configuration/domain/path
             $handler = $this->conf->handler;
         }
+
+        // enable output-compression
+        ini_set("zlib.output_compression", "On");
 
         // setup handler class
         $this->handler = new $handler($this->conf);

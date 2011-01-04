@@ -84,7 +84,12 @@ class html {
         if ($this->template !== null) {
             ob_start();
 
-            require($this->param["template_path"] . $this->template);
+            try {
+                require($this->param["template_path"] . $this->template);
+            } catch (Exception $e) {
+                echo($e);
+                //echo("exception thrown");
+            }
 
             $html = ob_get_contents();
             ob_end_clean();
@@ -125,6 +130,101 @@ class html {
         echo(DEPAGE_BASE);
     }
     // }}}
+    // {{{ include_js()
+    /**
+     * includes javascript files into html
+     */
+    public function include_js($name, $files = array()) {
+        if ($this->param['env'] === "production") {
+            // production environement
+            $identifier = "js/{$name}_" . sha1(serialize($files)) . ".js";
+            $cache = new cache(DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            $regenerate = false;
+
+            if (($age = $cache->age($identifier)) !== false) {
+                foreach ($files as $file) {
+                    $fage = filemtime($file);
+                    
+                    // regenerate cache if one file is newer then the cached file
+                    $regenerate = $regenerate || $age < $fage;
+                }
+            } else {
+                //regenerate if cache file does not exist
+                $regenerate = true;
+            }
+            if ($regenerate) {
+                $src = "";
+
+                foreach ($files as $file) {
+                    $src .= file_get_contents($file);
+                }
+
+                $src = JSMin::minify($src);
+
+                // save cache file
+                $cache->put($identifier, $src);
+            }
+
+            echo("<script type=\"text/javascript\" src=\"" . $cache->geturl($identifier) . "\"></script>\n");
+        } else {
+            // development environement
+            foreach ($files as $file) {
+                echo("<script type=\"text/javascript\" src=\"$file\"></script>\n");
+            }
+        }
+    }
+    // }}}
+    // {{{ include_css()
+    /**
+     * includes css files into html
+     */
+    public function include_css($name, $files = array(), $for = "") {
+        if ($for != "") {
+            $media = "media=\"$for\"";
+        } else {
+            $media = "";
+        }
+
+        if ($this->param['env'] === "production") {
+            // production environement
+            $identifier = "css/{$name}_" . sha1(serialize($files)) . ".css";
+            $cache = new cache(DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            $regenerate = false;
+
+            if (($age = $cache->age($identifier)) !== false) {
+                foreach ($files as $file) {
+                    $fage = filemtime($file);
+                    
+                    // regenerate cache if one file is newer then the cached file
+                    $regenerate = $regenerate || $age < $fage;
+                }
+            } else {
+                //regenerate if cache file does not exist
+                $regenerate = true;
+            }
+            if ($regenerate) {
+                $src = "";
+
+                foreach ($files as $file) {
+                    $src .= file_get_contents($file);
+                }
+
+                $src = CssMin::minify($src);
+
+                // save cache file
+                $cache->put($identifier, $src);
+            }
+
+            echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->geturl($identifier) . "\">\n");
+        } else {
+            // development environement
+            foreach ($files as $file) {
+                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
+            }
+        }
+    }
+    // }}}
+    
     // {{{ t()
     /**
      * outputs escaped text for use in html and html-attributes
@@ -133,8 +233,16 @@ class html {
      *
      * @return  void
      */
-    static function t($text = "") {
-        echo(htmlspecialchars($text));
+    static function t($text = "", $linebreaks = false) {
+        if ($linebreaks) {
+            $lines = explode("\n", $text);
+            foreach ($lines as $line) {
+                html::t($line);
+                echo("<br>");
+            }
+        } else {
+            echo(htmlspecialchars($text));
+        }
     }
     // }}}
     // {{{ e()

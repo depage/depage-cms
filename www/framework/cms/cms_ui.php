@@ -47,6 +47,7 @@ class cms_ui extends depage_ui {
         $this->html_options = array(
             'template_path' => __DIR__ . "/tpl/",
             'clean' => "space",
+            'env' => $this->options->env,
         );
         $this->basetitle = depage::getName() . " " . depage::getVersion();
     }
@@ -59,7 +60,7 @@ class cms_ui extends depage_ui {
      */
     public function package($output) {
         // pack into base-html if output is html-object
-        if (!isset($_REQUEST['ajax']) && is_object($output) && get_class($output) == "html") {
+        if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "html")) {
             // pack into body html
             $output = new html("html.tpl", array(
                 'title' => $this->basetitle,
@@ -74,10 +75,10 @@ class cms_ui extends depage_ui {
     
     // {{{ toolbar
     protected function toolbar() {
-        if ($this->auth->enforce_lazy()) {
+        if ($user = $this->auth->enforce_lazy()) {
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
-                'username' => "username",
+                'username' => $user->name,
             ), $this->html_options);
         } else {
             $h = new html("toolbar_plain.tpl", array(
@@ -110,14 +111,10 @@ class cms_ui extends depage_ui {
             $h = new html(array(
                 'content' => array(
                     $this->toolbar(),
-                    'content' => new html("box.tpl", array(
-                        'class' => "first",
-                        'title' => "Welcome to depage::cms. ",
-                        'content' => new html("logout.tpl", array(
-                            'relogin1' => "You can login ",
-                            'relogin2' => "here",
-                            'relogin_link' => "login/",
-                        ), $this->html_options),
+                    'content' => new html("welcome.tpl", array(
+                        'title' => "Welcome to\n depage::cms ",
+                        'login' => "Login",
+                        'login_link' => "login/",
                     ), $this->html_options),
                 )
             ), $this->html_options);
@@ -242,6 +239,35 @@ class cms_ui extends depage_ui {
                 'users' => $users,
             )),
         ), $this->html_options);
+
+        return $h;
+    }
+    // }}}
+    
+    // {{{ user
+    /**
+     * gets profile of user
+     *
+     * @return  null
+     */
+    public function user($username) {
+        if ($user = $this->auth->enforce()) {
+            $h = new html(array(
+                'content' => array(
+                    $this->toolbar(),
+                    new html("box.tpl", array(
+                        'id' => "userprofile",
+                        'class' => "first",
+                        'icon' => "framework/cms/images/icon_users.gif",
+                        'title' => "Profile: {$user->fullname}",
+                        'content' => new html("userprofile_edit.tpl", array(
+                            'title' => $this->basetitle,
+                            'user' => $user,
+                        )),
+                    ), $this->html_options),
+                )
+            ), $this->html_options);
+        }
 
         return $h;
     }
