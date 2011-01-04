@@ -115,7 +115,7 @@ class cms_ui extends depage_ui {
                         'title' => "Welcome to\n depage::cms ",
                         'login' => "Login",
                         'login_link' => "login/",
-                    ), $this->html_options),
+                    )),
                 )
             ), $this->html_options);
         }
@@ -264,7 +264,7 @@ class cms_ui extends depage_ui {
                             'title' => $this->basetitle,
                             'user' => $user,
                         )),
-                    ), $this->html_options),
+                    )),
                 )
             ), $this->html_options);
         }

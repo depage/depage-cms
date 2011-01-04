@@ -14,9 +14,8 @@
  */
 
 class html {
-    public $param;
-
     private $args;
+    private $param = null;
     private $template;
 
     // {{{ __construct()
@@ -38,18 +37,30 @@ class html {
             $this->param = $param;
         }
 
+        if ($this->param !== null) {
+            $this->set_html_options($this->param);
+        }
+    }
+    // }}}
+    // {{{ set_child_options()
+    /**
+     * gives the options to child-templates
+     */
+    public function set_html_options($param) {
+        $this->param = $param;
+
         foreach ($this->args as $arg) {
             // set to parent params to params if not set
             if (is_object($arg) and get_class($arg) == "html") {
                 if ($arg->param === null) {
-                    $arg->param = &$this->param;
+                    $arg->set_html_options($param);
                 }
             } else if (is_array($arg)) {
                 // set to parent params to params for subarray if not set
                 foreach ($arg as $a) {
                     if (is_object($a) and get_class($a) == "html") {
                         if ($a->param === null) {
-                            $a->param = &$this->param;
+                            $a->set_html_options($param);
                         }
                     }
                 }
