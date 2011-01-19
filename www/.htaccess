@@ -10,7 +10,7 @@
 
 # enable apache rewriting engine
 RewriteEngine      on
-RewriteBase        /depage_1.5
+RewriteBase        /depage-cms
 
 # rewriting for preview
 RewriteRule        ^projects/(.*)/preview(/[^\/]*){2}/lib/(.*)  projects/$1/lib/$3

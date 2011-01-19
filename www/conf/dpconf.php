@@ -8,7 +8,7 @@ $conf = array(
     // {{{ global
     '*' => array(
         'db' => array(
-            'dsn' => "mysql:dbname=depage_depagecms;host=127.0.0.1",
+            'dsn' => "mysql:dbname=depage_depagecms;host=192.168.1.22",
             'user' => "root",
             'password' => "",
             'prefix' => "tt",
@@ -20,8 +20,8 @@ $conf = array(
     ),
     // }}}
     
-    // {{{ */depage_1.5/
-    '*/depage_1.5/' => array(
+    // {{{ */depage-cms/
+    '*/depage-cms/' => array(
         'handler' => "cms_ui",
         //'env' => "production",
     ),

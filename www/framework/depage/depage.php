@@ -102,6 +102,8 @@ class depage {
         }
         //echo("class: $class - module: $module - file: $file - php_file: $php_file <br>\n");
 
+	//echo("class: $class - file: $php_file<br>");
+
         if ($php_file != "") {
             require_once($php_file);
         } else {
@@ -226,7 +228,7 @@ class depage {
         $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
         //$this->handler->showError($error, $this->options['env']);
-        if (is_callable($this->handler, "showError")) {
+        if (isset($this->handler) && is_callable($this->handler, "showError")) {
             $this->handler->showError($error, $this->options['env']);
         }
 
