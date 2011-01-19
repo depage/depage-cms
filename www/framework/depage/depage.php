@@ -14,9 +14,8 @@ define("DEPAGE_FM_PATH", depage::getDepageFrameworkPath()) ;
 define("DEPAGE_PATH", depage::getDepagePath()) ;
 define("DEPAGE_CACHE_PATH", depage::getDepageCachePath()) ;
 
-function __autoload($class) {
-    depage::autoload($class);
-}
+// register autoload function
+spl_autoload_register("depage::autoload");
 
 class depage {
     const name = 'depage::cms';
@@ -101,6 +100,7 @@ class depage {
         } elseif (file_exists(DEPAGE_PATH . "modules/$module/$file")) {
             $php_file = DEPAGE_PATH . "modules/$module/$file";
         }
+        //echo("class: $class - module: $module - file: $file - php_file: $php_file <br>\n");
 
         if ($php_file != "") {
             require_once($php_file);
@@ -122,7 +122,7 @@ class depage {
             if (getcwd() == "") {
                 $path = dirname($_SERVER['SCRIPT_FILENAME']) . "/";
             } else {
-                $path = getcwd();
+                $path = getcwd() . "/";
             }
         }
 
