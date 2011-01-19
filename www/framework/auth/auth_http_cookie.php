@@ -13,13 +13,7 @@
  * @author    Lion Vollnhals
  */
 	
-class auth_http_cookie extends auth {
-	public function __construct($pdo, $realm, $domain) {
-		parent::__construct($pdo, $realm, $domain);
-
-		$this->secret_word = "DO NOT TELL ANYONE!!!1eins"; 
-	}
-
+class auth_http_cookie extends auth_http_basic {
 	public function enforce() {
 		$user = $this->enforce_lazy();
 		if (!user)
@@ -37,26 +31,35 @@ class auth_http_cookie extends auth {
 	}
 
 	public function enforce_logout() {
-		setcookie('login', '', time() - 3600);
+		if ($this->has_session()) {
+			$this->logout($_COOKIE[session_name()]);
+			$this->destroy_session();
+		}
 	}
 		
 	public function login($username, $password) {
 		$user = auth_user::get_by_username($this->pdo, $username);
 		$hash = md5($username . ':' . $this->realm . ':' . $password);
 		if ($user && $user->passwordhash == $hash) {
-			setcookie('login', $username . ',' . md5($username . $this->secret_word));
+			$this->register_session($user->id);
+			$this->start_session();
 			return true;
 		}
+
 //		throw new Exception("Login failed! Wrong username password combination.");
 		return false;
 	}
 
 	protected function auth_cookie() {
-		if ($_COOKIE['login']) {
-			list($c_username, $c_hash) = split(',',$_COOKIE['login']);
-			if (md5($c_username . $this->secret_word) == $c_hash) {
-				$user = auth_user::get_by_username($this->pdo, $c_username);
+		if ($this->has_session()) {
+			if ($this->is_valid_sid($_COOKIE[session_name()]) !== false) {
+				$this->set_sid($_COOKIE[session_name()]);
+				$this->start_session();
+
+				$user = auth_user::get_by_sid($this->pdo, $this->get_sid());
 				return $user;
+			} else {
+				$this->destroy_session();
 			}
 		}
 
@@ -64,5 +67,7 @@ class auth_http_cookie extends auth {
 		return false;
 	}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker : */
 
 ?>
