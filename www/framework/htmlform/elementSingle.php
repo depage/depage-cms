@@ -35,7 +35,8 @@ class elementSingle extends inputClass {
 
         if ($this->skin === "select") {
             foreach($this->optionList as $index => $option) {
-                $selected = ($index === $value) ? ' selected' : '';
+		// WORKAROUND: after first post, $value is changed to string
+                $selected = ($index == $value) ? ' selected' : '';
                 $options .= "<option value=\"$index\"$selected>$option</option>";
             }
 
@@ -47,7 +48,8 @@ class elementSingle extends inputClass {
             "</p>\n";
         } else {
             foreach($this->optionList as $index => $option) {
-                $selected = ($index === $value) ? " checked=\"yes\"" : '';
+		// WORKAROUND: after first post, $value is changed to string
+                $selected = ($index == $value) ? " checked=\"yes\"" : '';
                 $options .= "<span>" .
                     "<label>" .
                         "<input type=\"radio\" name=\"$this->name\"$requiredAttribute value=\"$index\"$selected>" .
