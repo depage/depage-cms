@@ -12,11 +12,12 @@
  *
  * @author    Lion Vollnhals
  */
-	
+
+
 class auth_http_cookie extends auth_http_basic {
 	public function enforce() {
 		$user = $this->enforce_lazy();
-		if (!user)
+		if (!$user)
 			throw new Exception("You are not allowed here!");
 		
 		return $user;
@@ -39,8 +40,10 @@ class auth_http_cookie extends auth_http_basic {
 		
 	public function login($username, $password) {
 		$user = auth_user::get_by_username($this->pdo, $username);
-		$hash = md5($username . ':' . $this->realm . ':' . $password);
+		$hash = $this->hash_user_pass($username, $password);
 		if ($user && $user->passwordhash == $hash) {
+			// destroy session if logging in directly after registering user
+			$this->destroy_session();
 			$this->register_session($user->id);
 			$this->start_session();
 			return true;

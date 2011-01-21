@@ -13,6 +13,12 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 class auth_http_basic extends auth {
+    // {{{ hash_user_pass() 
+    public function hash_user_pass($user, $pass) {
+	return md5($user . ':' . $this->realm . ':' . $pass);
+    }
+    // }}}
+
     // {{{ enforce()
     /**
      * enforces authentication 
@@ -63,7 +69,7 @@ class auth_http_basic extends auth {
                 // generate the valid response
                 $HA1 = $user->passwordhash;
 
-                if ($HA1 == md5($_SERVER['PHP_AUTH_USER'] . ':' . $this->realm . ':' . $_SERVER['PHP_AUTH_PW'])) {
+                if ($HA1 == $this->hash_user_pass($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
                     if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
                         if ($uid == "") {
                             $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
