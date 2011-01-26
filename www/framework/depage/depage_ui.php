@@ -60,7 +60,7 @@ class depage_ui {
                 echo($this->package($this->index()));
             } else if (is_callable(array($this, $dp_func))) {
                 // call function
-                echo($this->package($this->$dp_func($dp_params)));
+                echo($this->package(call_user_func_array(array($this, $dp_func), $dp_params)));
             } else {
                 // show error for notfound
                 echo($this->package($this->notfound()));
