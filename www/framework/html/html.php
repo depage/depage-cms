@@ -274,6 +274,20 @@ class html {
         }
     }
     // }}}
+
+    // {{{ markdown()
+    /**
+     * outputs html by parsing markdown syntax
+     *
+     * @param   $param (string) text to parse
+     * @return  void
+     */
+    static function markdown($param) {
+        require_once('markdown.php');
+
+        echo(Markdown(htmlspecialchars($param)));
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
