@@ -22,6 +22,7 @@ class auth_http_cookie extends auth_http_basic {
 	    parent::__construct($pdo, $realm, $domain);
 	    
 	    // increase lifetime of cookies in order to allow detection of timedout users
+            $url = parse_url($this->domain);
 	    session_set_cookie_params($this->session_lifetime + 120, $url['path'], "", false, true);
 	}
 
