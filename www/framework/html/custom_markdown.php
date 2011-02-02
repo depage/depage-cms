@@ -11,7 +11,7 @@
 # Copyright (c) 2004-2006 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
 #
-# shortened by Lion Vollnhals 
+# edited by Lion Vollnhals 
 
 
 define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
@@ -982,19 +982,13 @@ class Markdown_Parser {
 
 
 	var $em_relist = array(
-		''  => '(?:(?<!\*)\*(?!\*)|(?<!_)_(?!_))(?=\S|$)(?![.,:;]\s)',
+		''  => '(?:(?<!\*)\*(?!\*)|(?<!_)_(?!_)|(?<!/)/(?!/))(?=\S|$)(?![.,:;]\s)',
 		'*' => '(?<=\S|^)(?<!\*)\*(?!\*)',
 		'_' => '(?<=\S|^)(?<!_)_(?!_)',
+		'/' => '(?<=\S|^)(?<!/)/(?!/)',
 		);
 	var $strong_relist = array(
 		''   => '(?:(?<!\*)\*\*(?!\*)|(?<!_)__(?!_))(?=\S|$)(?![.,:;]\s)',
-		'**' => '(?<=\S|^)(?<!\*)\*\*(?!\*)',
-		'__' => '(?<=\S|^)(?<!_)__(?!_)',
-		);
-	var $em_strong_relist = array(
-		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<!_)___(?!_))(?=\S|$)(?![.,:;]\s)',
-		'***' => '(?<=\S|^)(?<!\*)\*\*\*(?!\*)',
-		'___' => '(?<=\S|^)(?<!_)___(?!_)',
 		);
 	var $em_strong_prepared_relist;
 	
@@ -1007,9 +1001,6 @@ class Markdown_Parser {
 			foreach ($this->strong_relist as $strong => $strong_re) {
 				# Construct list of allowed token expressions.
 				$token_relist = array();
-				if (isset($this->em_strong_relist["$em$strong"])) {
-					$token_relist[] = $this->em_strong_relist["$em$strong"];
-				}
 				$token_relist[] = $em_re;
 				$token_relist[] = $strong_re;
 				
@@ -1025,7 +1016,6 @@ class Markdown_Parser {
 		$text_stack = array('');
 		$em = '';
 		$strong = '';
-		$tree_char_em = false;
 		
 		while (1) {
 			#
@@ -1042,7 +1032,7 @@ class Markdown_Parser {
 			$text_stack[0] .= $parts[0];
 			$token =& $parts[1];
 			$text =& $parts[2];
-			
+		
 			if (empty($token)) {
 				# Reached end of text span: empty stack without emitting.
 				# any more emphasis.
@@ -1054,89 +1044,31 @@ class Markdown_Parser {
 			}
 			
 			$token_len = strlen($token);
-			if ($tree_char_em) {
-				# Reached closing marker while inside a three-char emphasis.
-				if ($token_len == 3) {
-					# Three-char closing marker, close em and strong.
-					array_shift($token_stack);
+			# Here $token_len == 1
+			if ($em) {
+				if (strlen($token_stack[0]) == 1) {
+					# Closing emphasis marker:
+					$shifted_token = array_shift($token_stack);
+					$tag = 'em';
+					if ($shifted_token == '*') {
+						$tag = 'strong';
+					} else if ($shifted_token == '_') {
+						$tag = 'u';
+					} else if ($shifted_token == '/') {
+						$tag = 'i';
+					} 
 					$span = array_shift($text_stack);
-					$span = $this->runSpanGamut($span);
-					$span = "<strong><em>$span</em></strong>";
-					$text_stack[0] .= $this->hashPart($span);
-					$em = '';
-					$strong = '';
-				} else {
-					# Other closing marker: close one em or strong and
-					# change current token state to match the other
-					$token_stack[0] = str_repeat($token{0}, 3-$token_len);
-					$tag = $token_len == 2 ? "strong" : "em";
-					$span = $text_stack[0];
 					$span = $this->runSpanGamut($span);
 					$span = "<$tag>$span</$tag>";
-					$text_stack[0] = $this->hashPart($span);
-					$$tag = ''; # $$tag stands for $em or $strong
-				}
-				$tree_char_em = false;
-			} else if ($token_len == 3) {
-				if ($em) {
-					# Reached closing marker for both em and strong.
-					# Closing strong marker:
-					for ($i = 0; $i < 2; ++$i) {
-						$shifted_token = array_shift($token_stack);
-						$tag = strlen($shifted_token) == 2 ? "strong" : "em";
-						$span = array_shift($text_stack);
-						$span = $this->runSpanGamut($span);
-						$span = "<$tag>$span</$tag>";
-						$text_stack[0] .= $this->hashPart($span);
-						$$tag = ''; # $$tag stands for $em or $strong
-					}
-				} else {
-					# Reached opening three-char emphasis marker. Push on token 
-					# stack; will be handled by the special condition above.
-					$em = $token{0};
-					$strong = "$em$em";
-					array_unshift($token_stack, $token);
-					array_unshift($text_stack, '');
-					$tree_char_em = true;
-				}
-			} else if ($token_len == 2) {
-				if ($strong) {
-					# Unwind any dangling emphasis marker:
-					if (strlen($token_stack[0]) == 1) {
-						$text_stack[1] .= array_shift($token_stack);
-						$text_stack[0] .= array_shift($text_stack);
-					}
-					# Closing strong marker:
-					array_shift($token_stack);
-					$span = array_shift($text_stack);
-					$span = $this->runSpanGamut($span);
-					$span = "<strong>$span</strong>";
 					$text_stack[0] .= $this->hashPart($span);
-					$strong = '';
+					$em = '';
 				} else {
-					array_unshift($token_stack, $token);
-					array_unshift($text_stack, '');
-					$strong = $token;
+					$text_stack[0] .= $token;
 				}
 			} else {
-				# Here $token_len == 1
-				if ($em) {
-					if (strlen($token_stack[0]) == 1) {
-						# Closing emphasis marker:
-						array_shift($token_stack);
-						$span = array_shift($text_stack);
-						$span = $this->runSpanGamut($span);
-						$span = "<em>$span</em>";
-						$text_stack[0] .= $this->hashPart($span);
-						$em = '';
-					} else {
-						$text_stack[0] .= $token;
-					}
-				} else {
-					array_unshift($token_stack, $token);
-					array_unshift($text_stack, '');
-					$em = $token;
-				}
+				array_unshift($token_stack, $token);
+				array_unshift($text_stack, '');
+				$em = $token;
 			}
 		}
 		return $text_stack[0];
