@@ -1,5 +1,5 @@
 #!/bin/bash
-languages=`ls locale | sed -e 's/en_US//' | sed -e 's/CVS//'`
+languages=`ls -l locale | grep -v "^l" | cut -f 13 -d " " -s | sed '1d' | sed -e 's/en_US//' | sed -e 's/CVS//'`
 echo "extract strings..."
 tempfile=`tempfile`
 find ./ -name "*.tpl" -or -name "*.php" > $tempfile
