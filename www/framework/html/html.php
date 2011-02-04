@@ -290,6 +290,25 @@ class html {
         echo(Markdown(htmlspecialchars($param)));
     }
     // }}}
+
+    // {{{ format_date()
+    /**
+     * formats date parameter based on current locale
+     * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
+     * @return  string
+     */
+    static function format_date($date, $date_format = IntlDateFormatter::LONG, $time_format = IntlDateFormatter::SHORT) {
+        // there is not getlocale, so use setlocale with null
+        $current_locale = setlocale(LC_ALL, null);
+        $fmt = new IntlDateFormatter($current_locale, $date_format, $time_format); 
+        
+        $timestamp = $date;
+        if ($date instanceof DateTime)
+            $timestamp = $date->getTimestamp();
+
+        return $fmt->format($timestamp);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
