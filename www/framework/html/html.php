@@ -286,7 +286,7 @@ class html {
      * @return  void
      */
     static function markdown($param) {
-        require_once('markdown.php');
+        require_once('custom_markdown.php');
 
         echo(Markdown(htmlspecialchars($param)));
     }

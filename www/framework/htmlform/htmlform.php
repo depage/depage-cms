@@ -76,7 +76,16 @@ class htmlform extends container {
         // create a hidden input element to tell forms apart
         $this->addHidden('form-name', array('defaultValue' => $this->name));
     }
-    
+
+    /**
+     * Was this form already submitted once?
+     * @return bool
+     */   
+    public function wasSubmitted() {
+	// rely on the fact that only form-name and form-isValid are stored before submitting
+	return count($this->sessionSlot) > 2;
+    }
+ 
     /** 
      * Calls parent class to generate an input element or a fieldset and add
      * it to its list of elements.
