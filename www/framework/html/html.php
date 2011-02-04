@@ -309,6 +309,16 @@ class html {
         return $fmt->format($timestamp);
     }
     // }}}
+
+    // {{{ format_number()
+    static function format_number($number, $format = NumberFormatter::DECIMAL) {
+        // there is not getlocale, so use setlocale with null
+        $current_locale = setlocale(LC_ALL, null);
+        $fmt = new NumberFormatter($current_locale, $format);
+        
+        return $fmt->format($number);
+    }
+       
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
