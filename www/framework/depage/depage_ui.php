@@ -42,6 +42,8 @@ class depage_ui {
      * @return  null
      */
     public function run() {
+        $this->set_language();
+
         // get depage specific query string
         // @todo use parseurl?
         $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE));
@@ -157,6 +159,30 @@ class depage_ui {
 
         return $h;
     }
+    // }}}
+
+    // {{{ set_language
+    /**
+     * set language and prepare gettext functionality
+     * by default language is infered by HTTP_ACCEPT_LANGUAGE
+     * overwrite this method to change this
+     */
+    protected function set_language($locale = null) {
+        if (is_null($locale)) 
+            $locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']); 
+
+        $this->log->log("set_language: setting locale to $locale");
+
+        putenv('LC_ALL=' . $locale);
+        setlocale(LC_ALL, $locale);
+
+        // Specify location of translation tables
+        bindtextdomain($this->options->lang->domain, "./locale");
+        bind_textdomain_codeset($this->options->lang->domain, 'UTF-8'); 
+
+        // Choose domain
+        textdomain($this->options->lang->domain);
+    } 
     // }}}
 }
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
