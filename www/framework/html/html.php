@@ -318,6 +318,7 @@ class html {
         
         return $fmt->format($number);
     }
+    // }}}
        
 }
 
