@@ -18,6 +18,9 @@ class html {
     private $param = null;
     private $template;
 
+    public $content_type = "text/html";
+    public $charset = "UTF-8";
+
     // {{{ __construct()
     /**
      * initializes html template
