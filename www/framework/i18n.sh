@@ -1,4 +1,10 @@
 #!/bin/bash
+if ! test -d locale
+then
+	echo "run this script in the parent directory of your locale directory"
+	exit 1
+fi
+
 languages=`ls -l locale | grep -v "^l" | cut -f 13 -d " " -s | sed '1d' | sed -e 's/en_US//' | sed -e 's/CVS//'`
 echo "extract strings..."
 tempfile=`tempfile`
