@@ -28,6 +28,8 @@ class depage_ui {
     public function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getFromDefaults($this->defaults);
+
+        $this->log = new log();
     }
     // }}}
     
