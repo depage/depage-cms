@@ -168,7 +168,7 @@ class depage_ui {
      * overwrite this method to change this
      */
     protected function set_language($locale = null) {
-        if (is_null($locale)) 
+        if (empty($locale)) 
             $locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']); 
 
         $this->log->log("set_language: setting locale to $locale");
