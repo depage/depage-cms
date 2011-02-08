@@ -95,7 +95,7 @@ class depage_ui {
         if (is_object($content)) {
             if (isset($content->content_type) && isset($content->charset)) {
                 header("Content-type: {$content->content_type}; charset={$content->charset}");
-            } else if ($isset($content->content_type)) {
+            } else if (isset($content->content_type)) {
                 header("Content-type: $content->content_type");
             }
         }
