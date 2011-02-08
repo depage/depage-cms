@@ -1,5 +1,5 @@
 <?php 
-    $form = new htmlform("userprofile_edit");
+    $form = new depage\htmlform\htmlform("userprofile_edit");
 
     // define formdata
     $form->addText("name", array(

@@ -54,6 +54,7 @@ class depage_ui {
             $dp_request_path = $dp_request_uri;
             $dp_query_string = '';
         }
+        $dp_request_path = str_replace("-", "_", $dp_request_path);
         $dp_params = explode("/", $dp_request_path);
         
         $dp_func = array_shift($dp_params);
@@ -61,13 +62,13 @@ class depage_ui {
         try {
             if ($dp_func == "") {
                 // show index page
-                echo($this->package($this->index()));
+                $content = $this->index();
             } else if (is_callable(array($this, $dp_func))) {
                 // call function
-                echo($this->package(call_user_func_array(array($this, $dp_func), $dp_params)));
+                $content = call_user_func_array(array($this, $dp_func), $dp_params);
             } else {
                 // show error for notfound
-                echo($this->package($this->notfound()));
+                $content = $this->notfound();
             }
         } catch (Exception $e) {
             $error = (object) array(
@@ -77,7 +78,26 @@ class depage_ui {
                 'msg' => $e->getMessage(),
                 'backtrace' => debug_backtrace(),
             );
-            echo($this->package($this->error($error, $this->options->env)));
+            $content = $this->error($error, $this->options->env);
+        }
+
+        $content = $this->package($content);
+
+        $this->send_headers($content);
+        echo($content);
+    }
+    // }}}
+    // {{{ send_headers
+    /**
+     * sends out headers
+     */
+    protected function send_headers($content) {
+        if (is_object($content)) {
+            if (isset($content->content_type) && isset($content->charset)) {
+                header("Content-type: {$content->content_type}; charset={$content->charset}");
+            } else if ($isset($content->content_type)) {
+                header("Content-type: $content->content_type");
+            }
         }
     }
     // }}}

@@ -1,22 +1,27 @@
 <?php 
 
 /**
- * forms is a PHP library that assists programmers in creating HTML forms.
+ * htmlform is a PHP library that assists programmers in creating HTML forms.
  * It features validation and takes care of duplicate form submissions.
  **/
+namespace depage\htmlform; 
 
-require_once('inputClass.php');
-require_once('exceptions.php');
-require_once('container.php');
-require_once('elementFieldset.php');
-require_once('elementStep.php');
-require_once('elementCreditcard.php');
+function autoload($class) {
+        $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
+        $file = __DIR__ . '/' .  $class . '.php';
+
+        if (file_exists($file)) {
+            require_once($file);
+        }
+    }
+
+spl_autoload_register(__NAMESPACE__ . '\autoload');
 
 /**
- * The class formClass is the main tool of the forms library. It generates HTML
+ * The class htmlform is the main tool of the htmlform library. It generates HTML
  * fieldsets and input elements. It also contains the PHP session handlers.
  **/
-class htmlform extends container {
+class htmlform extends abstracts\container {
     /**
      * HTML form method attribute.
      * */
@@ -48,7 +53,7 @@ class htmlform extends container {
     /**
      * Contains array of step object references.
      **/
-    protected $steps;
+    protected $steps = array();
 
     /**
      * @param $name string - form name
@@ -64,6 +69,7 @@ class htmlform extends container {
         $this->action           = (isset($parameters['action']))            ? $parameters['action']         : $_SERVER['REQUEST_URI'];
         $this->method           = (isset($parameters['method']))            ? $parameters['method']         : 'post';
         $this->successAddress   = (isset($parameters['successAddress']))    ? $parameters['successAddress'] : $_SERVER['REQUEST_URI'];
+        $this->validator        = (isset($parameters['validator']))         ? $parameters['validator']      : null;
         $this->currentStep      = (isset($_GET['step']))                    ? $_GET['step']                 : 0;
 
         // check if there's an open session
@@ -76,16 +82,7 @@ class htmlform extends container {
         // create a hidden input element to tell forms apart
         $this->addHidden('form-name', array('defaultValue' => $this->name));
     }
-
-    /**
-     * Was this form already submitted once?
-     * @return bool
-     */   
-    public function wasSubmitted() {
-	// rely on the fact that only form-name and form-isValid are stored before submitting
-	return count($this->sessionSlot) > 2;
-    }
- 
+    
     /** 
      * Calls parent class to generate an input element or a fieldset and add
      * it to its list of elements.
@@ -100,11 +97,11 @@ class htmlform extends container {
 
         $newElement = parent::addElement($type, $name, $parameters);
 
-        if (is_a($newElement, 'elementFieldset')) {
+        if (is_a($newElement, '\\depage\\htmlform\\elements\\fieldset')) {
             // if it's a fieldset it needs to know which form it belongs to
             $newElement->setParentForm($this);
 
-            if (is_a($newElement, 'elementStep')) {
+            if (is_a($newElement, '\\depage\\htmlform\\elements\\step')) {
                 $this->steps[] = $newElement;
             }
         } else {
@@ -124,13 +121,13 @@ class htmlform extends container {
      * @return void
      **/
     public function updateInputValue($name) {
-        // if it's a post take the value from there and save it to the session
+        // if it's a post, take the value from there and save it to the session
         if (isset($_POST['form-name']) && ($_POST['form-name'] === $this->name) && $this->inCurrentStep($name)) {
             // checkbox like elements produce "null" in post-data if nothing has been selected - change that to empty string for validation
             $value = ($_POST[$name] !== null) ? $_POST[$name] : '';
             $this->sessionSlot[$name] = $this->getElement($name)->setValue($value);
         }
-        // if it's not a post try to get the value from the session
+        // if it's not a post, try to get the value from the session
         else if (isset($this->sessionSlot[$name])) {
             $this->getElement($name)->setValue($this->sessionSlot[$name]);
         }
@@ -147,6 +144,23 @@ class htmlform extends container {
     }
 
     /**
+     * Validates step number of the GET request. If it's out of range it's
+     * reset to the number of the first invalid step. (only to be used after
+     * the form is completely created, because the step elements have to be
+     * counted)
+     *
+     * @return void
+     **/
+    private function setCurrentStep() {
+        if (!is_numeric($this->currentStep)
+            || ($this->currentStep > count($this->steps) - 1)
+            || ($this->currentStep < 0)
+        ) {
+            $this->currentStep = $this->getFirstInvalidStep();
+        }
+    }
+
+    /**
      * returns an array of input elements contained in the current step.
      *
      * @return array of input elements
@@ -154,8 +168,8 @@ class htmlform extends container {
     private function getCurrentElements() {
         $currentElements = array();
         foreach($this->elements as $element) {
-            if (is_a($element, 'elementFieldset')) {
-                if (!is_a($element, 'elementStep') || ($element == $this->steps[$this->currentStep])) {
+            if (is_a($element, '\\depage\\htmlform\\elements\\fieldset')) {
+                if (!is_a($element, '\\depage\\htmlform\\elements\\step') || ($element == $this->steps[$this->currentStep])) {
                     $currentElements = array_merge($currentElements, $element->getElements());
                 }
             } else {
@@ -175,7 +189,7 @@ class htmlform extends container {
         $renderedElements = '';
         foreach($this->elementsAndHtml as $element) {
             // leave out inactive step elements
-            if (!is_a($element, 'elementStep') || (isset($this->steps[$this->currentStep]) && $this->steps[$this->currentStep] == $element)) {
+            if (!is_a($element, '\\depage\\htmlform\\elements\\step') || (isset($this->steps[$this->currentStep]) && $this->steps[$this->currentStep] == $element)) {
                 $renderedElements .= $element;
             }
         }
@@ -193,22 +207,19 @@ class htmlform extends container {
      * @return void
      **/
     public function process() {
+        $this->setCurrentStep();
+
         // if there's post-data from this form
         if (isset($_POST['form-name']) && ($_POST['form-name'] === $this->name)) {
             if (count($this->steps) === 0) {
-                $this->validate();
-                if ($this->valid) {
-                    $this->redirect($this->successAddress);
-                } else {
-                    $this->redirect($this->url['path']);
-                }
+                $this->finalValidation();
             } else {
                 $this->steps[$this->currentStep]->validate();
                 if ($this->steps[$this->currentStep]->valid) {
                     if ($this->currentStep < (count($this->steps)-1)) {
                         $this->redirect($this->url['path'] . '?step=' . ($this->currentStep + 1));
                     } else {
-                        $this->redirect($this->successAddress);
+                        $this->finalValidation();
                     }
                 } else {
                     $this->redirect($this->url['path'] . '?step=' . $this->currentStep);
@@ -217,6 +228,42 @@ class htmlform extends container {
         }
 
         $this->validate();
+    }
+
+    /**
+     * Checks the entire form. If it's valid, it redirects to the successPage. 
+     * Otherwise redirects to first step with an error.
+     **/
+    private function finalValidation() {
+        $this->validate();
+
+        if ($this->valid) {
+            $this->redirect($this->successAddress);
+        } else {
+            $firstInvalidStep = $this->getFirstInvalidStep();
+            $urlStepParameter = ($firstInvalidStep == 0) ? '' : '?step=' . $firstInvalidStep;
+            $this->redirect($this->url['path'] . $urlStepParameter);
+        }
+    }
+
+    /**
+     * Validates steps consecutively and returns the number of the first one
+     * that isn't valid (steps need to be submitted at least once to count as
+     * valid).
+     *
+     * @return int $stepNumber
+     **/
+    private function getFirstInvalidStep() {
+        if ( count($this->steps ) > 0) {
+            foreach ( $this->steps as $stepNumber=>$step ) {
+                $step->validate();
+                if ( !$step->valid ) {
+                    return $stepNumber;
+                }
+            }
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -241,6 +288,10 @@ class htmlform extends container {
 
         parent::validate();
 
+        if ($this->valid && is_callable($this->validator)) {
+            $this->valid = call_user_func($this->validator, $this->getValues());
+        }
+
         // save validation-state in session
         $this->sessionSlot['form-isValid'] = $this->valid;
     }
@@ -257,6 +308,19 @@ class htmlform extends container {
             return (bool) $this->sessionSlot['form-isValid'];
         } else {
             return $this->valid;
+        }
+    }
+
+    /**
+     * Retuns if form has been submitted before
+     *
+     * @return (bool) session status
+     **/
+    public function isEmpty() {
+        if (isset($this->sessionSlot['form-name'])) {
+            return $this->sessionSlot['form-name'] != $this->name;
+        } else {
+            return true;
         }
     }
 
@@ -320,7 +384,7 @@ class htmlform extends container {
     public function checkElementName($name) {
         foreach($this->getElements() as $element) {  
             if ($element->getName() === $name) {
-                throw new duplicateElementNameException();
+                throw new exceptions\duplicateElementNameException();
             }
         }
     }
@@ -342,3 +406,4 @@ class htmlform extends container {
     protected function onValidate() {
     }
 }
+

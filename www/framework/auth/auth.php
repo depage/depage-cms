@@ -25,6 +25,9 @@ class auth {
     var $session_lifetime = 300; // in seconds
     var $privateKey = "private Key";
     var $user = null;
+
+    var $loginUrl = "login/";
+    var $logoutUrl = "logout/";
     // }}}
     
     // {{{ factory()

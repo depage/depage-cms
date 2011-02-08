@@ -18,6 +18,9 @@ class html {
     private $param = null;
     private $template;
 
+    public $content_type = "text/html";
+    public $charset = "UTF-8";
+
     // {{{ __construct()
     /**
      * initializes html template
@@ -92,44 +95,23 @@ class html {
      * @return
      */
     public function __toString() {
+        $html = "";
+
+        ob_start();
         if ($this->template !== null) {
-            ob_start();
 
             try {
                 require($this->param["template_path"] . $this->template);
             } catch (Exception $e) {
                 echo($e);
-                //echo("exception thrown");
             }
 
-            $html = ob_get_contents();
-            ob_end_clean();
         } else {
-            $html = html::e($this->content);
+            html::e($this->content);
         }
 
-        if (isset($this->param["clean"])) {
-            if ($this->param["clean"] == "tidy") {
-                // clean html up
-                $tidy = new tidy();
-                $html = $tidy->repairString($html, array(
-                    'indent' => false,
-                    'output-xhtml' => false,
-                    'wrap' => 0,
-                    'doctype' => "html5",
-                ));
-            } else if ($this->param["clean"] == "space") {
-                $html_lines = explode("\n", $html);
-                $html = "";
-
-                foreach ($html_lines as $i => $line) {
-                    $line = trim($line);
-                    if ($line != "") {
-                        $html .= trim($line) . "\n";
-                    }
-                }
-            }
-        }
+        $html = ob_get_contents();
+        ob_end_clean();
 
         return $html;
     }
