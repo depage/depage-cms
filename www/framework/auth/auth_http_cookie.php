@@ -16,26 +16,41 @@
  */
 
 
-class auth_http_cookie extends auth_http_basic {
-    const INVALID_SID = -1;
-    const NO_SESSION = -2;
-
+class auth_http_cookie extends auth {
     /* {{{ constructor */
     public function __construct($pdo, $realm, $domain) {
         parent::__construct($pdo, $realm, $domain);
-        
+
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
         session_set_cookie_params($this->session_lifetime + 120, $url['path'], "", false, true);
     }
     /* }}} */
+    
+    // {{{ hash_user_pass() 
+    public function hash_user_pass($user, $pass) {
+	return md5($user . ':' . $this->realm . ':' . $pass);
+    }
+    // }}}
+
     /* {{{ enforce */
     public function enforce() {
-        $user = $this->enforce_lazy();
-        if (!$user)
-                throw new Exception("You are not allowed here!");
-        
-        return $user;
+        // only enforce authentication if not authenticated before
+        if ($this->user === null) {
+            $this->user = $this->auth_cookie();
+
+            if (!$this->user) {
+                $url = DEPAGE_BASE . $this->loginUrl;
+                if ($url != "http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]) {
+                    $redirect_to = urlencode($_SERVER['REQUEST_URI']);
+
+                    header("Location: $url?redirect_to=$redirect_to");
+                    die( "Tried to redirect you to " . $url);
+                }
+            }
+        }
+
+        return $this->user;
     }
     /* }}} */
     /* {{{  enforce_lazy*/
@@ -44,7 +59,11 @@ class auth_http_cookie extends auth_http_basic {
      */
     public function enforce_lazy() {
         if ($this->user === null) {
-            $this->user = $this->auth_cookie();
+            if ($this->has_session() && $this->is_valid_sid($_COOKIE[session_name()])) {
+                $this->user = $this->auth_cookie();
+            } else {
+                $this->user = false;
+            }
         }
 
         return $this->user;
@@ -62,11 +81,13 @@ class auth_http_cookie extends auth_http_basic {
     public function login($username, $password) {
         $user = auth_user::get_by_username($this->pdo, $username);
         $hash = $this->hash_user_pass($username, $password);
-        if ($user && $user->passwordhash == $hash) {
+
+        if ($user && $user->passwordhash === $hash) {
             // destroy session if logging in directly after registering user
             $this->destroy_session();
             $this->register_session($user->id);
             $this->start_session();
+
             return true;
         }
 
@@ -74,6 +95,7 @@ class auth_http_cookie extends auth_http_basic {
         return false;
     }
     /* }}} */
+
     /* {{{ auth_cookie() */
     protected function auth_cookie() {
         if ($this->has_session()) {
@@ -83,19 +105,49 @@ class auth_http_cookie extends auth_http_basic {
 
                 $user = auth_user::get_by_sid($this->pdo, $this->get_sid());
                 $this->log->log("http_auth_cookie: authenticated {$user->name}");
+
                 return $user;
             } else {
                 $this->destroy_session();
                 $this->log->log("http_auth_cookie: invalid session ID");
-                return auth_http_cookie::INVALID_SID;
             }
+        } else {
+            $this->log->log("http_auth_cookie: no session");
         }
 
+        $this->send_auth_header();
         //throw new Exception("you are not allowed to do this!");
-        $this->log->log("http_auth_cookie: no session");
-        return auth_http_cookie::NO_SESSION;
+        return false;
     }
     /* }}} */
+    
+    // {{{ start_session()
+    protected function start_session() {
+        session_id($this->get_sid());
+        session_start();
+    } 
+    // }}}
+    // {{{ has_session()
+    protected function has_session() {
+        return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+    } 
+    // }}}
+    // {{{ destroy_session()
+    protected function destroy_session() {
+        $this->start_session();
+
+        setcookie(session_name(), "", time() - 3600);
+        session_destroy();
+        unset($_COOKIE[session_name()]);
+    } 
+    // }}}
+    
+    // {{{ send_auth_header()
+    protected function send_auth_header($valid_response = false) {
+        // @todo look for a way to suppress password saving dialogs when password is wrong
+        //header("HTTP/1.1 403 Unauthorized");
+    } 
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

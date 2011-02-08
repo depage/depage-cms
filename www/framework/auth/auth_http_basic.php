@@ -12,13 +12,7 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-class auth_http_basic extends auth {
-    // {{{ hash_user_pass() 
-    public function hash_user_pass($user, $pass) {
-	return md5($user . ':' . $this->realm . ':' . $pass);
-    }
-    // }}}
-
+class auth_http_basic extends auth_http_cookie {
     // {{{ enforce()
     /**
      * enforces authentication 
@@ -99,26 +93,6 @@ class auth_http_basic extends auth {
 
         header("WWW-Authenticate: Basic realm=\"$realm\", domain=\"{$this->domain}\"");
         header("HTTP/1.1 401 Unauthorized");
-    } 
-    // }}}
-    // {{{ start_session()
-    protected function start_session() {
-        session_id($this->get_sid());
-        session_start();
-    } 
-    // }}}
-    // {{{ has_session()
-    protected function has_session() {
-        return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
-    } 
-    // }}}
-    // {{{ destroy_session()
-    protected function destroy_session() {
-        $this->start_session();
-
-        setcookie(session_name(), "", time() - 3600);
-        session_destroy();
-        unset($_COOKIE[session_name()]);
     } 
     // }}}
 }

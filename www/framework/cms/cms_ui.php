@@ -165,16 +165,63 @@ class cms_ui extends depage_ui {
     
     // {{{ login
     public function login() {
-        $this->auth->enforce();
+        if ($this->auth->enforce()) {
+            // logged in
+            $this->redirect(DEPAGE_BASE);
+        } else {
+            // not logged in
+            $form = new depage\htmlform\htmlform("login", array(
+                'submitLabel' => "Anmelden",
+                'validator' => array($this, 'validate_login'),
+            ));
 
-        $this->redirect(DEPAGE_BASE);
+            // define formdata
+            $form->addText("name", array(
+                'label' => 'Name',
+                'required' => true,
+            ));
+
+            $form->addPassword("pass", array(
+                'label' => 'Passwort',
+                'required' => true,
+            ));
+            
+            $form->process();
+
+            if ($form->isValid()) {
+                $form->clearSession();
+            } else {
+                $error = "";
+                if (!$form->isEmpty()) {
+                    $error = "<p class=\"error\">false/unknown username password combination</p>";
+                }
+
+                $h = new html("box.tpl", array(
+                    'id' => "login",
+                    'icon' => "framework/cms/images/icon_login.gif",
+                    'class' => "first",
+                    'title' => "Login",
+                    'content' => array(
+                        $error,
+                        $form,
+                    ),
+                ), $this->html_options);
+
+                return $h;
+            }
+        }
+    }
+    // }}}
+    // {{{ validate_login
+    public function validate_login($values) {
+        return (bool) $this->auth->login($values['name'], $values['pass']);
     }
     // }}}
     // {{{ logout
     public function logout($action) {
-        if ($action[0] == "now") {
+        //if ($action[0] == "now") {
             $this->auth->enforce_logout();
-        }
+        //}
 
         $h = new html("box.tpl", array(
             'id' => "logout",
