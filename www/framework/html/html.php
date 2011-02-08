@@ -95,22 +95,27 @@ class html {
      * @return
      */
     public function __toString() {
+        $html = "";
+
+        ob_start();
         if ($this->template !== null) {
-            ob_start();
 
             try {
                 require($this->param["template_path"] . $this->template);
             } catch (Exception $e) {
                 echo($e);
-                //echo("exception thrown");
             }
 
-            $html = ob_get_contents();
-            ob_end_clean();
         } else {
-            $html = html::e($this->content);
+            html::e($this->content);
         }
 
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        return $html;
+    }
+    // }}}
         if ($this->param["clean"] == "tidy") {
             // clean html up
             $tidy = new tidy();
