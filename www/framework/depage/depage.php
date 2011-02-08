@@ -83,26 +83,39 @@ class depage {
      */
     static function autoload($class) {
         $php_file = "";
+        $namespaces = explode("\\", $class);
 
-        $file = "$class.php";
+        if (count($namespaces) > 1) {
+            // adjust search path for namespaces
+            $file = array_pop($namespaces) . ".php";
 
-        if ($pos = strpos($class, "_")) {
-            $module = substr($class, 0, $pos);
+            if ($namespaces[0] === "depage") {
+                // local depage-namespace -> remove it from searchpath
+                array_shift($namespaces);
+            }
+
+            $file = implode("/", $namespaces) . "/$file";
         } else {
-            $module = $class;
+            // no namespace
+            $file = "$class.php";
+
+            if ($pos = strpos($class, "_")) {
+                $file = substr($class, 0, $pos) . "/" . $file;
+            } else {
+                $file = $class . "/" . $file;
+            }
         }
-        
+            
         //searching for class in global modules
-        if (file_exists(DEPAGE_FM_PATH . "$module/$file")) {
-            $php_file = DEPAGE_FM_PATH . "$module/$file";
+        if (file_exists(DEPAGE_FM_PATH . $file)) {
+            $php_file = DEPAGE_FM_PATH . $file;
 
         //searching for class in local modules
-        } elseif (file_exists(DEPAGE_PATH . "modules/$module/$file")) {
-            $php_file = DEPAGE_PATH . "modules/$module/$file";
+        } elseif (file_exists(DEPAGE_PATH . "modules/" . $file)) {
+            $php_file = DEPAGE_PATH . "modules/" . $file;
         }
-        //echo("class: $class - module: $module - file: $file - php_file: $php_file <br>\n");
-
-	//echo("class: $class - file: $php_file<br>");
+        
+	//echo("class: $class - file: $file - php_file: $php_file<br>");
 
         if ($php_file != "") {
             require_once($php_file);
