@@ -55,7 +55,7 @@ class auth_http_cookie extends auth {
     /* }}} */
     /* {{{  enforce_lazy*/
     /**
-     * @return   function returns the authenticated user or INVALID_SID or NO_SESSION
+     * @return   function returns the authenticated user or false if not logged in
      */
     public function enforce_lazy() {
         if ($this->user === null) {
@@ -104,7 +104,6 @@ class auth_http_cookie extends auth {
                 $this->start_session();
 
                 $user = auth_user::get_by_sid($this->pdo, $this->get_sid());
-                $this->log->log("http_auth_cookie: authenticated {$user->name}");
 
                 return $user;
             } else {
