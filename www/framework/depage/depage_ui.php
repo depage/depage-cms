@@ -55,6 +55,9 @@ class depage_ui {
             $dp_query_string = '';
         }
         $dp_params = explode("/", $dp_request_path);
+        // ignore trailing '/', so that params are equal with or without the trailing '/'
+        if ($dp_request_path[strlen($dp_request_path) - 1] == '/')
+            array_pop($dp_params);
         
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
