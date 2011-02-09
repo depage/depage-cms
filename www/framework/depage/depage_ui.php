@@ -54,10 +54,10 @@ class depage_ui {
             $dp_request_path = $dp_request_uri;
             $dp_query_string = '';
         }
-        $dp_request_path = str_replace("-", "_", $dp_request_path);
         $dp_params = explode("/", $dp_request_path);
         
         $dp_func = array_shift($dp_params);
+        $dp_func = str_replace("-", "_", $dp_func);
 
         try {
             if ($dp_func == "") {
