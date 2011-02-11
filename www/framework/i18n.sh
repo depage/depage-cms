@@ -21,7 +21,7 @@ then
 echo "copy template..."
 cp locale/en_US/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages.po
 fi
-mv locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
+cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
 msgmerge locale/$lang/LC_MESSAGES/messages_old.po locale/en_US/LC_MESSAGES/messages.po \
 -o locale/$lang/LC_MESSAGES/messages.po
 rm locale/$lang/LC_MESSAGES/messages_old.po
