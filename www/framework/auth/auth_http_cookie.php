@@ -23,7 +23,7 @@ class auth_http_cookie extends auth {
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        session_set_cookie_params($this->session_lifetime + 120, $url['path'], "", false, true);
+        session_set_cookie_params(0, $url['path'], "", false, true);
     }
     /* }}} */
     
