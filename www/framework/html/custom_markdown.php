@@ -33,7 +33,7 @@ define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
 
 @define( 'MARKDOWN_PARSER_CLASS',  'Markdown_Parser' );
 
-function Markdown($text) {
+function Markdown($text, $nofollow = '', $gamut_filter = array()) {
 #
 # Initialize the parser and return the result of its transform method.
 #
@@ -43,6 +43,9 @@ function Markdown($text) {
 		$parser_class = MARKDOWN_PARSER_CLASS;
 		$parser = new $parser_class;
 	}
+
+	$parser->nofollow = $nofollow;
+	$parser->gamut_filter = $gamut_filter;
 
 	# Transform text using parser.
 	return $parser->transform($text);
@@ -79,6 +82,8 @@ class Markdown_Parser {
 	var $predef_urls = array();
 	var $predef_titles = array();
 
+	var $nofollow = '';
+	var $gamut_filter = array();
 
 	function Markdown_Parser() {
 	#
@@ -436,7 +441,8 @@ class Markdown_Parser {
 	# whole-document pass.
 	#
 		foreach ($this->block_gamut as $method => $priority) {
-			$text = $this->$method($text);
+			if (!in_array($method, $this->gamut_filter))
+				$text = $this->$method($text);
 		}
 		
 		# Finally form paragraph and restore hashed blocks.
@@ -1239,8 +1245,8 @@ class Markdown_Parser {
 		return $text;
 	}
 	function _doAutoLinks_url_callback($matches) {
-		$url = $this->encodeAttribute($matches[1]);
-		$link = "<a href=\"$url\">$url</a>";
+		$url = $this->encodeAttribute($matches[1]); 
+		$link = "<a {$this->nofollow} href=\"$url\">$url</a>";
 		return $this->hashPart($link);
 	}
 	function _doAutoLinks_email_callback($matches) {
