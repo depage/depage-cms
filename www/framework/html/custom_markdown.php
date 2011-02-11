@@ -1214,12 +1214,11 @@ class Markdown_Parser {
 
 
 	function doAutoLinks($text) {
-		$text = preg_replace_callback('{<((https?|ftp|dict):[^\'">\s]+)>}i', 
+		$text = preg_replace_callback('{((https?|ftp):[^\'"\s]+)}i', 
 			array(&$this, '_doAutoLinks_url_callback'), $text);
 
 		# Email addresses: <address@domain.foo>
 		$text = preg_replace_callback('{
-			<
 			(?:mailto:)?
 			(
 				(?:
@@ -1234,7 +1233,6 @@ class Markdown_Parser {
 					\[[\d.a-fA-F:]+\]	# IPv4 & IPv6
 				)
 			)
-			>
 			}xi',
 			array(&$this, '_doAutoLinks_email_callback'), $text);
 
