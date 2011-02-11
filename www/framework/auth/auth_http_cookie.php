@@ -40,8 +40,9 @@ class auth_http_cookie extends auth {
             $this->user = $this->auth_cookie();
 
             if (!$this->user) {
-                $url = DEPAGE_BASE . $this->loginUrl;
-                if ($url != "http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]) {
+		// remove trailing slashes when comparing urls
+                $url = rtrim (DEPAGE_BASE . $this->loginUrl, '/');
+                if ($url != rtrim("http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], '/')) {
                     $redirect_to = urlencode($_SERVER['REQUEST_URI']);
 
                     header("Location: $url?redirect_to=$redirect_to");
