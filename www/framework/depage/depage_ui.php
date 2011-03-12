@@ -58,6 +58,8 @@ class depage_ui {
         // ignore trailing '/', so that params are equal with or without the trailing '/'
         if ($dp_request_path[strlen($dp_request_path) - 1] == '/')
             array_pop($dp_params);
+
+        $this->urlpath = $dp_params;
         
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
@@ -87,7 +89,11 @@ class depage_ui {
         $content = $this->package($content);
 
         $this->send_headers($content);
-        echo($content);
+        if (false && is_callable(array($content, 'clean'))) {
+            echo($content->clean($content));
+        } else {
+            echo($content);
+        }
     }
     // }}}
     // {{{ send_headers

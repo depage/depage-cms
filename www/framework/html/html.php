@@ -116,6 +116,40 @@ class html {
         return $html;
     }
     // }}}
+    // {{{ clean()
+    /**
+     * clean html output
+     *
+     * @return output
+     */
+    public function clean($html) {
+        if ($this->param["clean"] == "tidy") {
+            // clean html up
+            $tidy = new tidy();
+            $html = $tidy->repairString($html, array(
+                'indent' => false,
+                'output-xhtml' => false,
+                'wrap' => 0,
+                'doctype' => "html5",
+            ));
+        } else if ($this->param["clean"] == "space") {
+            $html_lines = explode("\n", $html);
+            $html = "";
+
+            $dont_clean_tags = array("pre", "textarea");
+            $dont_clean = 0;
+
+            foreach ($html_lines as $i => $line) {
+                $line = trim($line);
+                if ($line != "") {
+                    $html .= trim($line) . "\n";
+                }
+            }
+        }
+
+        return $html;
+    }
+    // }}}
     
     // {{{ base()
     /**
