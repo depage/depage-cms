@@ -16,7 +16,10 @@ class depage_ui {
     );
     protected $options = array();
     // }}}
-    
+
+    protected $urlpath = null;
+
+
     // {{{ constructor
     /**
      * automatically loads classes from the framework or the private modules
@@ -86,6 +89,7 @@ class depage_ui {
             $content = $this->error($error, $this->options->env);
         }
 
+        $this->urlpath = $dp_request_path;
         $content = $this->package($content);
 
         $this->send_headers($content);

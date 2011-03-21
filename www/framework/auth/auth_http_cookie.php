@@ -23,7 +23,7 @@ class auth_http_cookie extends auth {
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        session_set_cookie_params($this->session_lifetime + 120, $url['path'], "", false, true);
+        session_set_cookie_params(0, $url['path'], "", false, true);
     }
     /* }}} */
     
@@ -40,12 +40,15 @@ class auth_http_cookie extends auth {
             $this->user = $this->auth_cookie();
 
             if (!$this->user) {
-                $url = DEPAGE_BASE . $this->loginUrl;
-                if ($url != "http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]) {
+		// remove trailing slashes when comparing urls, disregard query string
+                $login_url = DEPAGE_BASE . $this->loginUrl;
+		$request_url = strstr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
+                if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
+		    $this->log->log("redirect: $url        .     " . ($_SERVER['REQUEST_URI']));
                     $redirect_to = urlencode($_SERVER['REQUEST_URI']);
 
-                    header("Location: $url?redirect_to=$redirect_to");
-                    die( "Tried to redirect you to " . $url);
+                    header("Location: $login_url?redirect_to=$redirect_to");
+                    die( "Tried to redirect you to " . $login_url);
                 }
             }
         }

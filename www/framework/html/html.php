@@ -300,10 +300,10 @@ class html {
      * @param   $param (string) text to parse
      * @return  void
      */
-    static function markdown($param) {
+    static function markdown($param, $nofollow = '', $gamut_filter = array()) {
         require_once('custom_markdown.php');
 
-        echo(Markdown(htmlspecialchars($param)));
+        echo(Markdown(htmlspecialchars($param), $nofollow, $gamut_filter));
     }
     // }}}
 
