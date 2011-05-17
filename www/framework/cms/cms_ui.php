@@ -32,8 +32,6 @@ class cms_ui extends depage_ui {
                 'prefix' => $this->options->db->prefix, // database prefix
             )
         );
-        // enable exceptions for sql-queries
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // get auth object
         $this->auth = auth::factory(
