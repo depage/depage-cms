@@ -166,8 +166,8 @@ class html {
     public function include_js($name, $files = array()) {
         if ($this->param['env'] === "production") {
             // production environement
-            $identifier = "js/{$name}_" . sha1(serialize($files)) . ".js";
-            $cache = new cache(DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
+            $cache = new depage\cache\cache("js", DEPAGE_CACHE_PATH, DEPAGE_BASE);
             $regenerate = false;
 
             if (($age = $cache->age($identifier)) !== false) {
@@ -191,7 +191,7 @@ class html {
                 $src = JSMin::minify($src);
 
                 // save cache file
-                $cache->put($identifier, $src);
+                $cache->set_file($identifier, $src, true);
             }
 
             echo("<script type=\"text/javascript\" src=\"" . $cache->geturl($identifier) . "\"></script>\n");
@@ -216,8 +216,8 @@ class html {
 
         if ($this->param['env'] === "production") {
             // production environement
-            $identifier = "css/{$name}_" . sha1(serialize($files)) . ".css";
-            $cache = new cache(DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            $identifier = "{$name}_" . sha1(serialize($files)) . ".css";
+            $cache = new depage\cache\cache("css", DEPAGE_CACHE_PATH, DEPAGE_BASE);
             $regenerate = false;
 
             if (($age = $cache->age($identifier)) !== false) {
@@ -235,13 +235,18 @@ class html {
                 $src = "";
 
                 foreach ($files as $file) {
-                    $src .= file_get_contents($file);
+                    $css = file_get_contents($file);
+
+                    // replace relative path with new path relative to cache
+                    $css = str_replace("url(../", "url(../../" . dirname($file) . "/../", $css);
+
+                    $src .= $css;
                 }
 
                 $src = CssMin::minify($src);
 
                 // save cache file
-                $cache->put($identifier, $src);
+                $cache->set_file($identifier, $src, true);
             }
 
             echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->geturl($identifier) . "\">\n");
