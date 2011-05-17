@@ -38,6 +38,29 @@ class db_pdo extends PDO {
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     /* }}} */
+    /* {{{ dsn_parts */
+    /**
+     * parses dsn intro its parts
+     *
+     * @param   string  dsn                 dsn for pdo-object
+     *
+     * @return  array of options
+     */
+    static function parse_dsn($dsn) {
+        $info = array();
+
+        list($info['protocol'], $rest) = explode(":", $dsn, 2);
+
+        $parts = explode(";", $rest);
+
+        foreach ($parts as $part) {
+            list($name, $value) = explode("=", $part, 2);
+            $info[$name] = $value;
+        }
+
+        return $info;
+    }
+    /* }}} */
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
