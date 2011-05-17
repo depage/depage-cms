@@ -3,92 +3,160 @@
 namespace depage\cache; 
 
 class cache {
-    /* {{{ variables */
+    // {{{ variables
     protected $prefix;
     protected $cachepath;
     protected $baseurl;
-    /* }}} */
+    // }}}
 
-    /* {{{ constructor */
+    // {{{ factory
+    public static function factory($prefix, $cachepath, $baseurl = null) {
+        // options;
+        // cachepatch
+        // baseurl
+        // disposition - file/memory
+    }
+    // }}}
+
+    // {{{ constructor
     public function __construct($prefix, $cachepath, $baseurl = null) {
         $this->prefix = $prefix;
         $this->cachepath = "{$cachepath}/{$this->prefix}/";
         $this->baseurl = "{$baseurl}cache/{$this->prefix}/";
     }
-    /* }}} */
-    /* {{{ exist */
-    public function exist($identifier) {
-        return file_exists($this->get_cache_path($identifier));
+    // }}}
+    // {{{ exist
+    /**
+     * @brief return if a cache-item with $key exists
+     *
+     * @return      (bool) true if cache for $key exists, false if not
+     */
+    private function exist($key) {
+        return file_exists($this->get_cache_path($key));
     }
-    /* }}} */
-    /* {{{ age */
-    public function age($identifier) {
-        if ($this->exist($identifier)) {
-            return filemtime($this->get_cache_path($identifier));
+    // }}}
+    // {{{ age */
+    /**
+     * @brief returns age of cache-item with key $key
+     *
+     * @param       $key (string) key of cache item
+     *
+     * @return      (int) age as unix timestamp
+     */
+    public function age($key) {
+        if ($this->exist($key)) {
+            return filemtime($this->get_cache_path($key));
         } else {
             return false;
         }
     }
-    /* }}} */
-    /* {{{ set_file */
-    public function set_file($identifier, $data, $put_gzipped_content = false) {
-        $path = $this->get_cache_path($identifier);
+    // }}}
+    // {{{ set_file */
+    /**
+     * @brief saves cache data for key $key to a file
+     *
+     * @param   $key (string) key to save data in, may include namespaces divided by a forward slash '/'
+     * @param   $data (string) data to save in file
+     * @param   $save_gzipped_content (bool) if true, it saves a gzip file additional to plain string, defaults to false
+     *
+     * @return  (bool) true if saved successfully
+     */
+    public function set_file($key, $data, $save_gzipped_content = false) {
+        $path = $this->get_cache_path($key);
 
         $success = file_put_contents($path, $data);
         if (!$success) {
             mkdir(dirname($path), 0777, true);
             $success = file_put_contents($path, $data);
         }
-        if ($put_gzipped_content) {
+        if ($save_gzipped_content) {
             $success = $success && file_put_contents($path . ".gz", gzencode($data));
         }
 
         return $success;
     }
-    /* }}} */
-    /* {{{ get_file */
-    public function get_file($identifier) {
-        if ($this->exist($identifier)) {
-            $path = $this->get_cache_path($identifier);
+    // }}}
+    // {{{ get_file */
+    /**
+     * @brief gets content of cache item by key $key from a file
+     *
+     * @param   $key (string) key of item to get
+     *
+     * @return  (string) content of cache item, false if the cache item does not exist
+     */
+    public function get_file($key) {
+        if ($this->exist($key)) {
+            $path = $this->get_cache_path($key);
 
             return file_get_contents($path);
         } else {
             return false;
         }
     }
-    /* }}} */
-    /* {{{ set */
-    public function set($identifier, $data) {
+    // }}}
+    // {{{ set */
+    /**
+     * @brief sets data ob a cache item
+     *
+     * @param   $key (string) key to save under
+     * @param   $data (object) object to save. $data must be serializable
+     *
+     * @return  (bool) true on success, false on failure
+     */
+    public function set($key, $data) {
         $str = serialize($data);
 
-        return $this->set_file($identifier, $str);
+        return $this->set_file($key, $str);
     }
-    /* }}} */
-    /* {{{ get */
-    public function get($identifier) {
-        $value = $this->get_file($identifier);
+    // }}}
+    // {{{ get */
+    /**
+     * @brief gets a cached object
+     *
+     * @param   $key (string) key of item to get
+     *
+     * @return  (object) unserialized content of cache item, false if the cache item does not exist
+     */
+    public function get($key) {
+        $value = $this->get_file($key);
 
         return unserialize($value);
     }
-    /* }}} */
-    /* {{{ geturl */
-    public function geturl($identifier) {
+    // }}}
+    // {{{ geturl */
+    /**
+     * @brief returns cache-url of cache-item for direct access through http
+     *
+     * @param   $key (string) key of cache item
+     *
+     * @return  (string) url of cache-item
+     */
+    public function geturl($key) {
         if ($this->baseurl !== null) {
-            return $this->baseurl . $identifier;
+            return $this->baseurl . $key;
         }
     }
-    /* }}} */
-    /* {{{ delete */
-    public function delete($identifier) {
+    // }}}
+    // {{{ delete */
+    /**
+     * @brief deletes a cache-item by key or by namespace
+     *
+     * If key ends on a slash, all items in this namespace will be deleted.
+     *
+     * @param   $key (string) key of item
+     *
+     * @return  void
+     */
+    public function delete($key) {
         // @todo throw error if there are wildcards in identifier to be compatioble with memcached
         
-        if ($identifier[strlen($identifier) - 1] == "/") {
-            $dir = $identifier;
-            $identifier .= "*";
+        if ($key[strlen($key) - 1] == "/") {
+            $dir = $key;
+            $key .= "*";
         }
         $files = array_merge(
-            (array) glob($this->cachepath . $identifier),
-            (array) glob($this->cachepath . $identifier . ".gz")
+            (array) glob($this->cachepath . $key),
+            (array) glob($this->cachepath . $key . ".gz")
         );
 
         foreach ($files as $file) {
@@ -99,17 +167,24 @@ class cache {
             rmdir($this->cachepath . $dir);
         }
     }
-    /* }}} */
-    /* {{{ call */
+    // }}}
+    // {{{ call */
     public function call($func, $args) {
     }
-    /* }}} */
+    // }}}
 
-    /* {{{ get_cache_path */
-    protected function get_cache_path($identifier) {
-        return $this->cachepath . $identifier;
+    // {{{ get_cache_path */
+    /**
+     * @brief gets file-path for a cache-item by key
+     *
+     * @param   key (string) key of item 
+     *
+     * @return  (string) file path to cache-item
+     */
+    protected function get_cache_path($key) {
+        return $this->cachepath . $key;
     }
-    /* }}} */
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
