@@ -31,6 +31,7 @@ class depage {
             '*' => "setup",
         ),
         'env' => "development",
+        'timezone' => "UST",
     );
     protected $options;
     // }}}
@@ -68,6 +69,9 @@ class depage {
         }
 
         $this->options = $this->conf->getFromDefaults($this->defaults);
+
+        // set default timezone from config
+        date_default_timezone_set($this->options->timezone);
 
         //$this->log = new log($this->options->log);
     }
