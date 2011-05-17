@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    modules/cms/cms_xmldb.php
+ * @file    modules/xmldb/xmldb.php
  *
  * cms xmldb module
  *
@@ -12,32 +12,45 @@
  * @todo validate tree solution with left/right columns (nested sets)
  */
 
-class cms_xmldb {
+namespace depage\xmldb; 
+
+class xmldb {
     // {{{ variables
     private $entities;
     private $namespace_string;
+
+    protected $pdo;
+    protected $cache;
+
+    protected $id_attribute = "id";
+    protected $id_data_attribute = "dataid";
+    protected $id_ref_attribute = "ref";
+
+    protected $db_ns;
+
+    protected $dont_strip_white = array();
+    protected $free_element_ids = array();
+
+    protected $table_docs;
+    protected $table_xml;
     // }}}
 
     /* public */
     // {{{ constructor()
-    public function __construct($db_ns, $dont_strip_white = array()) {
-        $this->db_ns = $db_ns;
+    public function __construct($tableprefix, $pdo, $cache, $dont_strip_white = array()) {
+        $this->pdo = $pdo;
+        $this->cache = $cache;
+
+        $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
         $this->dont_strip_white = $dont_strip_white;
 
-        $this->id_attribute = "id";
-        $this->id_data_attribute = "dataid";
-        $this->id_ref_attribute = "ref";
-
-        $this->set_tables();
-
-        $this->free_element_ids = array();
+        $this->set_tables($tableprefix);
     }
     // }}}
     // {{{ set_tables
-    public function set_tables($table_docs = NULL, $table_xml = NULL, $path_cache = NULL) {
-        $this->table_docs = $table_docs;
-        $this->table_xml = $table_xml;
-        $this->path_cache = $path_cache;
+    public function set_tables($tableprefix) {
+        $this->table_docs = $tableprefix . "_xmltree";
+        $this->table_xml = $tableprefix . "_xmldocs";
     }
     // }}}
 
@@ -958,11 +971,13 @@ class cms_xmldb {
         global $conf;
 
         $fs = new fs_local();
-        $cname = "{$this->path_cache}d{$doc_id}_{$id}.xml";
-        if ($fs->f_exists($cname)) {
+        $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
+
+        $xml_str = $this->cache->get($identifier);
+        if ($xml_str !== false) {
             // read from cache
             $xml_doc = new DOMDocument();
-            $xml_doc->load($cname);
+            $xml_doc->loadXML($xml_str);
         } else {
             // read from database
             $this->begin_transaction(DB_TRANSMIT_READ);
@@ -998,7 +1013,7 @@ class cms_xmldb {
 
             // add xml to xml-cache
             if (is_object($xml_doc) && $xml_doc->documentElement != null) {
-                $xml_doc->save($cname);
+                $this->cache->put($xml_doc->saveXML());
             }
         }
         if (is_a($xml_doc, "DOMDocument") && $xml_doc->documentElement != null) {
@@ -1535,17 +1550,12 @@ class cms_xmldb {
      *
      * @public
      */
-    public function clear_cache($doc_id) {
-        $fs = new fs_local();
-
-        $listing = $fs->ls($this->path_cache);
-        foreach ($listing['files'] as $file) {
-            if (strpos($file, "d{$doc_id}_") !== false) {
-                $fs->rm("{$this->path_cache}{$file}");
-            }
+    public function clear_cache($doc_id = null) {
+        if (is_null($doc_id)) {
+            $this->cache->delete("{$this->table_docs}/");
+        } else {
+            $this->cache->delete("{$this->table_docs}/d{$doc_id}/");
         }
-
-        return true;
     }
     // }}}
     // {{{ clear_deleted_nodes()
