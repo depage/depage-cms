@@ -33,6 +33,9 @@ class db_pdo extends PDO {
         }
 
         parent::__construct($dsn, $username, $password, $driver_options);
+
+        // set error mode to exception by default
+        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     /* }}} */
 }
