@@ -22,6 +22,8 @@ class xmldb {
     protected $pdo;
     protected $cache;
 
+    protected $transaction = 0;
+
     protected $id_attribute = "id";
     protected $id_data_attribute = "dataid";
     protected $id_ref_attribute = "ref";
@@ -39,6 +41,8 @@ class xmldb {
     // {{{ constructor()
     public function __construct($tableprefix, $pdo, $cache, $dont_strip_white = array()) {
         $this->pdo = $pdo;
+        $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
+
         $this->cache = $cache;
 
         $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
@@ -49,8 +53,8 @@ class xmldb {
     // }}}
     // {{{ set_tables
     public function set_tables($tableprefix) {
-        $this->table_docs = $tableprefix . "_xmltree";
-        $this->table_xml = $tableprefix . "_xmldocs";
+        $this->table_docs = $tableprefix . "_xmldocs";
+        $this->table_xml = $tableprefix . "_xmltree";
     }
     // }}}
 
@@ -67,29 +71,31 @@ class xmldb {
         $docs = array();
         if ($name == "") {
             $namequery = "";
+            $query_param = array();
         } else {
-            $namequery = "WHERE name LIKE \"$name\"";
+            $namequery = "WHERE name LIKE :projectname";
+            $query_param = array(
+                'projectname' => $name
+            );
         }
-        $result = db()->query(
-            "SELECT docs.id AS id, docs.name AS name, docs.rootid AS rootid
+        $query = $this->pdo->prepare(
+            "SELECT docs.name, docs.name AS name, docs.id AS id, docs.rootid AS rootid
             FROM {$this->table_docs} AS docs
             $namequery
             ORDER BY docs.name ASC"
         );
+        $query->execute($query_param);
 
-        $num = db()->num_rows();
-        for ($i = 0; $i < $num; $i++) {
-            $docs[$result[$i]->name] = new StdClass();
-            $docs[$result[$i]->name]->id = $result[$i]->id;
-            $docs[$result[$i]->name]->name = $result[$i]->name;
-            $docs[$result[$i]->name]->rootid = $result[$i]->rootid;
+        while ($doc = $query->fetchObject()) {
+            $docs[$doc->name] = $doc;
         }
+
         return $docs;
     }
     // }}}
     // {{{ get_doc_info()
     /**
-     * gets available documents in database
+     * gets info about a document by doc_id
      *
      * @public
      *
@@ -97,33 +103,32 @@ class xmldb {
      *            the value is the document db-id.
      */
     public function get_doc_info($doc_id) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT docs.id AS id, docs.name AS name, docs.rootid AS rootid
             FROM {$this->table_docs} AS docs
-            WHERE docs.id='$doc_id'
-            ORDER BY docs.name ASC"
+            WHERE docs.id = :doc_id
+            LIMIT 1"
         );
-        if (db()->num_rows() == 1) {
-            $value = new StdClass();
-            $value->id = $result[0]->id;
-            $value->name = $result[0]->name;
-            $value->rootid = $result[0]->rootid;
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
 
-            return $value;
-        } else {
-            return false;
-        }
+        return $query->fetchObject();
     }
     // }}}
     // {{{ doc_exists()
     public function doc_exists($name) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT COUNT(docs.id) AS num
             FROM {$this->table_docs} AS docs
-            WHERE docs.name='" . db()->escape($name) . "'"
+            WHERE docs.name = :doc_name"
         );
+        $query->execute(array(
+            'doc_name' => $name,
+        ));
+        $result = $query->fetchObject();
 
-        return $result[0]->num > 0 ? true : false;
+        return $result->num > 0 ? true : false;
     }
     // }}}
     // {{{ get_doc()
@@ -144,27 +149,34 @@ class xmldb {
     // }}}
     // {{{ save_doc()
     public function save_doc($name, $xml) {
-        if (!($xml instanceof DOMDocument) || is_null($xml->documentElement)) {
+        if (!(get_class($xml) == 'DOMDocument') || is_null($xml->documentElement)) {
             throw new depage_exception("This document is not a valid XML-Document");
         }
 
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
         $docs = $this->get_doc_list($name);
         if (isset($docs[$name])) {
-            db()->query(
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value='', type='DELETED'
-                WHERE id_doc='{$docs[$name]->id}'"
+                WHERE id_doc = :doc_id"
             );
+            $query->execute(array(
+                'doc_id' => $docs[$name]->id,
+            ));
+
             $this->clear_cache($docs[$name]->id);
         } else {
-            db()->query(
+            $query = $this->pdo->prepare(
                 "INSERT {$this->table_docs} SET 
-                    name='" . db()->escape($name) . "'"
+                    name = :name"
             );
-            $docs[$name] = new StdClass();
-            $docs[$name]->id = db()->insert_id();
+            $query->execute(array(
+                'name' => $name,
+            ));
+            $docs[$name] = new \stdClass();
+            $docs[$name]->id = $this->pdo->lastInsertId();
             $docs[$name]->name = $name;
         }
 
@@ -191,11 +203,20 @@ class xmldb {
          */
 
         $docs[$name]->rootid = $this->save_node($docs[$name]->id, $xml);
-        db()->query(
+        $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
-            SET rootid={$docs[$name]->rootid}, ns='" . db()->escape($namespaces) . "', entities=''
-            WHERE id={$docs[$name]->id}"
+            SET 
+                rootid = :rootid, 
+                ns = :ns,
+                entities=''
+            WHERE id = :doc_id"
         );
+        $query->execute(array(
+            'rootid' => $docs[$name]->rootid,
+            'ns' => $namespaces,
+            'doc_id' => $docs[$name]->id,
+        ));
+
 
         $this->end_transaction();
 
@@ -207,19 +228,26 @@ class xmldb {
         $docs = $this->get_doc_list($name);
 
         if (isset($docs[$name])) {
-            $this->begin_transaction(DB_TRANSMIT_WRITE);
+            $this->begin_transaction();
 
-            db()->query(
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value='', type='DELETED'
-                WHERE id_doc='{$docs[$name]->id}'"
+                WHERE id_doc = :doc_id"
             );
+            $query->execute(array(
+                'doc_id' => $docs[$name]->id,
+            ));
+
             $this->clear_cache($docs[$name]->id);
-            db()->query(
+            $query = $this->pdo->prepare(
                 "DELETE
                 FROM {$this->table_docs}
-                WHERE name='" . db()->escape($name) . "'"
+                WHERE name = :name"
             );
+            $query->execute(array(
+                'name' => $name,
+            ));
 
             $this->end_transaction();
 
@@ -245,14 +273,14 @@ class xmldb {
      */
     public function get_subdoc_by_xpath($doc_id, $xpath, $add_id_attribute = true) {
         $ids = $this->get_elementIds_by_xpath($doc_id, $xpath);
-        if (count($ids > 0)) {
+        if (count($ids) > 0) {
             return $this->get_subdoc_by_elementId($doc_id, $ids[0], $add_id_attribute);
         } else {
             return false;
         }
     }
     // }}}
-    // {{{ unlink_node_by_elementId()
+    // {{{ unlink_node()
     public function unlink_node($doc_id, $node_id) {
         $val = $this->unlink_node_by_elementId($doc_id, $node_id);
         $this->clear_deleted_nodes();
@@ -278,7 +306,7 @@ class xmldb {
      * @return    $changed_ids (array) list of db-ids that has been changed
      */
     public function replace_node($doc_id, $node, $id_to_replace) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
         
         $target_id = $this->get_parentId_by_elementId($doc_id, $id_to_replace);
         $target_pos = $this->get_pos_by_elementId($doc_id, $id_to_replace);
@@ -303,15 +331,20 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function move_node_in($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos 
             FROM {$this->table_xml} AS xml 
-            WHERE xml.id_parent='$target_id' AND xml.id_doc=$doc_id"
+            WHERE xml.id_parent = :target_id AND xml.id_doc = :doc_id"
         );
+        $query->execute(array(
+            'target_id' => $target_id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
         
-        $this->move_node($doc_id, $node_id, $target_id, $result[0]->newpos);
+        $this->move_node($doc_id, $node_id, $target_id, $result->newpos);
 
         $this->end_transaction();
     }
@@ -326,7 +359,7 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function move_node_before($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
         $target_parent_id = $this->get_parentId_by_elementId($doc_id, $target_id);
         $target_pos = $this->get_pos_by_elementId($doc_id, $target_id);
@@ -346,7 +379,7 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function move_node_after($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
         $target_parent_id = $this->get_parentId_by_elementId($doc_id, $target_id);
         $target_pos = $this->get_pos_by_elementId($doc_id, $target_id) + 1;
@@ -366,13 +399,18 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function copy_node_in($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos 
             FROM {$this->table_xml} AS xml 
-            WHERE xml.id_parent='$target_id' AND xml.id_doc=$doc_id"
+            WHERE xml.id_parent = :target_id AND xml.id_doc = :doc_id"
         );
+        $query->execute(array(
+            'target_id' => $target_id,
+            'doc_id' => $doc_id,
+        ));
+
         $val = $this->copy_node($doc_id, $node_id, $target_id, $result[0]->newpos);
 
         $this->end_transaction();
@@ -390,7 +428,7 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function copy_node_before($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
         $target_parent_id = $this->get_parentId_by_elementId($doc_id, $target_id);
         $target_pos = $this->get_pos_by_elementId($doc_id, $target_id);
@@ -412,7 +450,7 @@ class xmldb {
      * @param    $target_id (int) db-id of target node
      */
     public function copy_node_after($doc_id, $node_id, $target_id) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
 
         $target_parent_id = $this->get_parentId_by_elementId($doc_id, $target_id);
         $target_pos = $this->get_pos_by_elementId($doc_id, $target_id) + 1;
@@ -436,39 +474,44 @@ class xmldb {
      * @param    $attr_name (string) name of attribute
      * @param    $attr_value (string) new value of attribute
      */
-    public function set_attribute($doc_id, $node_id, $attr_ns, $attr_name, $attr_value) {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+    public function set_attribute($doc_id, $node_id, $attr_name, $attr_value) {
+        $this->begin_transaction();
         
         $changed = false;
-        if ($attr_ns != NULL && $attr_ns != '') {
-            $query = $attr_ns . ':' . $attr_name;    
-        } else {
-            $query = $attr_name;
-        }
         
         $attr_str = '';
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.value 
             FROM {$this->table_xml} AS xml 
-            WHERE xml.id='$node_id' AND xml.id_doc=$doc_id"
+            WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
         );
-        if (($num = db()->num_rows()) == 1) {
-            $attributes = preg_split("/(=\"|\"$|\" )/", $result[0]->value);
+        $query->execute(array(
+            'node_id' => $node_id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+        if ($result) {
+            $attributes = preg_split("/(=\"|\"$|\" )/", $result->value);
             for ($i = 0; $i < count($attributes) - 1; $i += 2) {
-                if ($attributes[$i] == $query) {
+                if ($attributes[$i] == $attr_name) {
                     $attributes[$i + 1] = htmlspecialchars($attr_value);
                     $changed = true;
                 }
                 $attr_str .= $attributes[$i] . "=\"" . $attributes[$i + 1] . "\" ";
             }
             if (!$changed) {
-                $attr_str .= $query . "=\"" . htmlspecialchars($attr_value) . "\" ";
+                $attr_str .= $attr_name . "=\"" . htmlspecialchars($attr_value) . "\" ";
             }
-            db()->query(
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml} AS xml 
-                SET xml.value='" . db()->escape($attr_str) . "' 
-                WHERE xml.id='$node_id' AND xml.id_doc=$doc_id"
+                SET xml.value = :attr_str 
+                WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
             );
+            $query->execute(array(
+                'node_id' => $node_id,
+                'attr_str' => $attr_str,
+                'doc_id' => $doc_id,
+            ));
             $this->clear_cache($doc_id);
         }
         
@@ -487,17 +530,12 @@ class xmldb {
      *
      * @return    $val (string) value
      */
-    public function get_attribute($doc_id, $node_id, $attr_ns, $attr_name) {
+    public function get_attribute($doc_id, $node_id, $attr_name) {
         $val = null;
-        if ($attr_ns != NULL && $attr_ns != '') {
-            $query = $attr_ns . ':' . $attr_name;
-        } else {
-            $query = $attr_name;    
-        }
         $attributes = $this->get_attributes($doc_id, $node_id);
 
-        if (isset($attributes[$query])) {
-            return $attributes[$query];
+        if (isset($attributes[$attr_name])) {
+            return $attributes[$attr_name];
         } else {
             return false;
         }
@@ -516,13 +554,19 @@ class xmldb {
     public function get_attributes($doc_id, $node_id) {
         $attributes = array();
 
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.value 
             FROM {$this->table_xml} AS xml 
-            WHERE xml.id='$node_id' AND xml.type='ELEMENT_NODE' AND xml.id_doc=$doc_id"
+            WHERE xml.id = :node_id AND xml.type='ELEMENT_NODE' AND xml.id_doc = :doc_id"
         );
-        if (($num = db()->num_rows()) == 1) {
-            $matches = preg_split("/(=\"|\"$|\" )/", $result[0]->value);
+        $query->execute(array(
+            'node_id' => $node_id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+
+        if ($result) {
+            $matches = preg_split("/(=\"|\"$|\" )/", $result->value);
             $matches = array_chunk($matches, 2);
             foreach($matches as $match) {
                 if ($match[0] != '') {
@@ -537,18 +581,19 @@ class xmldb {
 
     /* private */
     // {{{ begin_transaction()
-    private function begin_transaction($transtype = DB_TRANSMIT_READ) {
-        db()->begin_transaction(array(
-            $this->table_docs,
-            $this->table_xml,
-            'docs',
-            'xml',
-        ), $transtype);
+    private function begin_transaction() {
+        if ($this->transaction == 0) {
+            $this->pdo->beginTransaction();
+        }
+        $this->transaction++;
     }
     // }}}
     // {{{ end_transaction()
     private function end_transaction() {
-        db()->end_transaction();
+        $this->transaction--;
+        if ($this->transaction == 0) {
+            $this->pdo->commit();
+        }
     }
     // }}}
 
@@ -564,25 +609,31 @@ class xmldb {
         $num = 0;
         
         $this->free_element_ids = array();
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.id AS id
             FROM {$this->table_xml} AS xml
             WHERE xml.type='DELETED' 
-            ORDER BY xml.id"
+            ORDER BY xml.id 
+            LIMIT $needed"
         );
 
-        $num = db()->num_rows();
-        foreach ($result as $id) {
+        $query->execute();
+
+        $results = $query->fetchAll(\PDO::FETCH_OBJ);
+        foreach ($results as $id) {
             $this->free_element_ids[] = $id->id;
         }
         
         if ($num < $needed) {
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT IFNULL(MAX(xml.id), 0) + 1 AS id_max
                 FROM {$this->table_xml} AS xml"
             );
+            $query->execute();
+            $result = $query->fetchObject();
+
             for ($i = 0; $i < $needed - $num; $i++) {
-                $this->free_element_ids[] = $result[0]->id_max + $i;
+                $this->free_element_ids[] = $result->id_max + $i;
             }
         }
     }
@@ -597,13 +648,17 @@ class xmldb {
      *            doesn't exist.
      */
     private function get_docId_by_elementId($id) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.id_doc AS id_doc
             FROM {$this->table_xml} AS xml
-            WHERE xml.id='$id'"
+            WHERE xml.id = :id"
         );
-        if (db()->num_rows() == 1) {
-            return $result[0]->id_doc;
+        $query->execute(array(
+            'id' => $id,
+        ));
+        $result = $query->fetchObject();
+        if ($result) {
+            return $result->id_doc;
         } else {
             return false;
         }
@@ -619,13 +674,18 @@ class xmldb {
      *            node doesn't exist.
      */
     private function get_parentId_by_elementId($doc_id, $id) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.id_parent AS id_parent
             FROM {$this->table_xml} AS xml
-            WHERE xml.id=$id AND xml.id_doc=$doc_id"
+            WHERE xml.id= :id AND xml.id_doc = :doc_id"
         );
-        if (db()->num_rows() == 1) {
-            return $result[0]->id_parent;
+        $query->execute(array(
+            'id' => $id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+        if ($result) {
+            return $result->id_parent;
         } else {
             return false;
         }
@@ -641,13 +701,18 @@ class xmldb {
      *            node doesn't exist.
      */
     private function get_nodeName_by_elementId($doc_id, $id) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.name AS name
             FROM {$this->table_xml} AS xml
-            WHERE xml.id=$id AND xml.id_doc=$doc_id"
+            WHERE xml.id = :id AND xml.id_doc = :doc_id"
         );
-        if (db()->num_rows() == 1) {
-            return $result[0]->name;
+        $query->execute(array(
+            'id' => $id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+        if ($result) {
+            return $result->name;
         } else {
             return false;
         }
@@ -662,13 +727,19 @@ class xmldb {
      * @return    $pos (int) position in node parents childlist
      */
     private function get_pos_by_elementId($doc_id, $id) {
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.pos AS pos
             FROM {$this->table_xml} AS xml
-            WHERE xml.id=$id AND xml.id_doc=$doc_id"
+            WHERE xml.id = :id AND xml.id_doc = :doc_id"
         );
-        if (db()->num_rows() == 1) {
-            return $result[0]->pos;
+        $query->execute(array(
+            'id' => $id,
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+
+        if ($result) {
+            return $result->pos;
         } else {
             return NULL;
         }
@@ -687,18 +758,23 @@ class xmldb {
     private function get_elementIds_by_name($doc_id, $node_ns = '', $node_name = '', $attr_cond = null) {
         $node_ids = array();
 
-        $name_query = $this->get_name_query($node_ns, $node_name);
-        $attr_query = $this->get_attr_query($attr_cond);
+        list($name_query, $name_param) = $this->get_name_query($node_ns, $node_name);
+        list($attr_query, $attr_param) = $this->get_attr_query($attr_cond);
         
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT xml.id AS id
             FROM {$this->table_xml} AS xml
-            WHERE xml.id_doc='$doc_id' and xml.type='ELEMENT_NODE' $name_query $attr_query"
+            WHERE xml.id_doc = :doc_id and xml.type='ELEMENT_NODE' $name_query $attr_query"
         );
-        if (($num = db()->num_rows()) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $node_ids[] = $result[$i]->id;
-            }
+        $query->execute(array_merge(
+            $name_param,
+            $attr_param,
+            array(
+                'doc_id' => $doc_id,
+            )
+        ));
+        while ($result = $query->fetchObject()) {
+            $node_ids[] = $result->id;
         }
         return $node_ids;
     }
@@ -718,32 +794,54 @@ class xmldb {
     private function get_childIds_by_name($doc_id, $parent_id, $node_ns = '', $node_name = '', $attr_cond = null, $only_element_nodes = false) {
         $node_ids = array();
         
-        $name_query = $this->get_name_query($node_ns, $node_name);
-        $attr_query = $this->get_attr_query($attr_cond);
+        list($name_query, $name_param) = $this->get_name_query($node_ns, $node_name);
+        list($attr_query, $attr_param) = $this->get_attr_query($attr_cond);
+
+        if (is_null($parent_id)) {
+            $parent_query = "xml.id_parent IS NULL";
+            $parent_param = array();
+        } else {
+            $parent_query = "xml.id_parent = :parent_id";
+            $parent_param = array(
+                'parent_id' => $parent_id,
+            );
+        }
         
         if ($only_element_nodes) {
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT xml.id AS id
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id_doc=$doc_id AND xml.id_parent" . ($parent_id === NULL ? " IS NULL" : "=$parent_id") . " AND (xml.type='ELEMENT_NODE' $name_query $attr_query) 
+                WHERE xml.id_doc = :doc_id AND $parent_query AND (xml.type='ELEMENT_NODE' $name_query $attr_query) 
                 ORDER BY pos"
             );
+            $query->execute(array_merge(
+                $name_param,
+                $attr_param,
+                $parent_param,
+                array(
+                    'doc_id' => $doc_id,
+                )
+            ));
         } else {
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT xml.id AS id
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id_doc=$doc_id AND xml.id_parent" . ($parent_id === NULL ? " IS NULL" : "=$parent_id") . " AND ((xml.type='ELEMENT_NODE' $name_query $attr_query) or (xml.type!='ELEMENT_NODE')) 
+                WHERE xml.id_doc = :doc_id AND $parent_query AND ((xml.type='ELEMENT_NODE' $name_query $attr_query) OR (xml.type!='ELEMENT_NODE')) 
                 ORDER BY pos"
             );
+            $query->execute(array_merge(
+                $name_param,
+                $attr_param,
+                $parent_param,
+                array(
+                    'doc_id' => $doc_id,
+                )
+            ));
         }
-        if (($num = db()->num_rows()) > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $node_ids[] = $result[$i]->id;
-            }
-            return $node_ids;
-        } else {
-            return false;
+        while ($result = $query->fetchObject()) {
+            $node_ids[] = $result->id;
         }
+        return $node_ids;
     }
     // }}}
     // {{{ get_name_query()
@@ -758,17 +856,30 @@ class xmldb {
     private function get_name_query($node_ns, $node_name) {
         if ($node_ns == '' && ($node_name == '' || $node_name == '*')) {
             $name_query = '';
+            $name_param = array();
         } else if ($node_ns == '*') {
-            $name_query = " and xml.name LIKE '%$node_name'";
+            $name_query = " and xml.name LIKE :node_name";
+            $name_param = array(
+                'node_name' => "%$node_name",
+            );
         } else if ($node_ns != '' && $node_name == '*') {
-            $name_query = " and xml.name LIKE '$node_ns:%'";
+            $name_query = " and xml.name LIKE :node_name";
+            $name_param = array(
+                'node_name' => "$node_ns:%",
+            );
         } else if ($node_ns != '') {
-            $name_query = " and xml.name='$node_ns:$node_name'";
+            $name_query = " and xml.name = :node_name";
+            $name_param = array(
+                'node_name' => "$node_ns:$node_name",
+            );
         } else {
-            $name_query = " and xml.name='$node_name'";    
+            $name_query = " and xml.name = :node_name";    
+            $name_param = array(
+                'node_name' => $node_name,
+            );
         }
 
-        return $name_query;
+        return array($name_query, $name_param);
     }
     // }}}
     // {{{ get_attr_query()
@@ -781,21 +892,24 @@ class xmldb {
      * @return    $attr_query (string)
      */
     private function get_attr_query($attr_cond) {
-        if (!is_array($attr_cond)) {
-            $attr_query = '';
-        } else {
+        $attr_query = '';
+        $attr_param = array();
+
+        if (is_array($attr_cond) && count($attr_cond) > 0) {
             $attr_query = 'and (';
-            foreach($attr_cond as $temp_cond) {
+            foreach($attr_cond as $i => $temp_cond) {
                 if ($temp_cond['value'] == null) {
-                    $attr_query .= " {$temp_cond['operator']} xml,value LIKE '%{$temp_cond['name']}=%'";
+                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
+                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=%";
                 } else {
-                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE '%{$temp_cond['name']}=\"" . db()->escape($temp_cond['value']) . "\"%'";
+                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
+                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=\"" . htmlspecialchars($temp_cond['value']) . "\"%";
                 }
             }
             $attr_query .= ')';
         }
 
-        return $attr_query;
+        return array($attr_query, $attr_param);
     }
     // }}}
     // {{{ get_elementIds_by_xpath()
@@ -819,18 +933,24 @@ class xmldb {
 
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
 
-        $result = db()->query(
+        $query = $this->pdo->prepare(
             "SELECT docs.rootid AS rootid
             FROM {$this->table_docs} AS docs
-            WHERE docs.id=$doc_id"
+            WHERE docs.id = :doc_id"
         );
-        $rootid = $result[0]->rootid;
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
+        $result = $query->fetchObject();
+        $rootid = $result->rootid;
         $actual_ids = array(NULL);
 
         foreach ($xpath_elements as $level => $element) {
             $fetched_ids = array();
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
+            $strings = array();
+
             if ($divider == '/') {
                 // {{{ fetch only by name:
                 if ($condition == '') {    
@@ -852,7 +972,7 @@ class xmldb {
                     }
                 // }}}
                 // {{{fetch by simple attributes:
-                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings = array()))) {
+                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
                     /*
                      * "... /ns:name[@attr1] ..."
                      * "... /ns:name[@attr1 = 'string1'] ..."
@@ -872,10 +992,10 @@ class xmldb {
                     /*
                      * "//ns:name ..."
                      */
-                    $fetched_ids = $this->get_elementIds_by_name($doc_id, $actual_ids[0], $ns, $name);    
+                    $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name);    
                 // }}}
                 // {{{ fetch by simple attributes:
-                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings = array()))) {
+                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
                     /*
                      * "//ns:name[@attr1] ..."
                      * "//ns:name[@attr1 = 'string1'] ..."
@@ -883,7 +1003,7 @@ class xmldb {
                      */
                     $cond_array = $this->get_condition_attributes($temp_condition, $strings);
                     foreach ($actual_ids as $actual_id) {
-                        $fetched_ids = $this->get_elementIds_by_name($doc_id, $actual_ids[0], $ns, $name, $cond_array);
+                        $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name, $cond_array);
                     }
                 // }}}
                 } else {
@@ -913,12 +1033,14 @@ class xmldb {
      * @return    $attr (array) array of attr-conditions
      */
     public function get_condition_attributes($condition, $strings) {
+        $cond_array = array();
+
         $pAttr = "@(\w[\w\d:]*)";
         $pOperator = "(=)";
-        $pBool = "(and|or)";
+        $pBool = "(and|or|AND|OR)";
         $pString = "\\$(\d*)";
         preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
-        $cond_array = array();
+
         for ($i = 0; $i < count($conditions[0]); $i++) {
             $cond_array[] = array(
                 'name' => $conditions[1][$i],
@@ -940,13 +1062,14 @@ class xmldb {
      *
      * @return    $text (string)
      */
-    public function remove_literal_strings($text, $strings) {
+    public function remove_literal_strings($text, &$strings) {
         $n = 0;
         $newText = '';
         $strings = array();
 
         $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
         preg_match_all($p, $text, $parts);
+
         for ($i = 0; $i < count($parts[0]); $i++) {
             if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
                 $strings[$n] = $parts[2][$i] . $parts[3][$i];
@@ -970,50 +1093,78 @@ class xmldb {
     private function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
         global $conf;
 
-        $fs = new fs_local();
         $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
 
         $xml_str = $this->cache->get($identifier);
         if ($xml_str !== false) {
             // read from cache
-            $xml_doc = new DOMDocument();
+            $xml_doc = new \DOMDocument();
             $xml_doc->loadXML($xml_str);
         } else {
             // read from database
-            $this->begin_transaction(DB_TRANSMIT_READ);
+            $this->begin_transaction();
 
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT docs.entities AS entities, docs.ns AS namespaces
                 FROM {$this->table_docs} AS docs
-                WHERE docs.id=$doc_id"
+                WHERE docs.id = :doc_id"
             );
-            $this->entities = $result[0]->entities;
-            $this->namespace_string = $result[0]->namespaces;
+            $query->execute(array(
+                'doc_id' => $doc_id,
+            ));
+            $result = $query->fetchObject();
+
+            $this->entities = $result->entities;
+            $this->namespace_string = $result->namespaces;
             $this->namespaces = $this->extract_namespaces($this->namespace_string);
             $this->namespaces[] = $this->db_ns;
 
-            $xml_doc  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-            $xml_doc .= "<!DOCTYPE depage [ $this->entities ]>";
-            
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id=$id AND xml.id_doc=$doc_id"
+                WHERE xml.id = :id AND xml.id_doc = :doc_id"
             );
-            if (($num = db()->num_rows()) == 1) {
-                //if node is ELEMENT_NODE
-                if ($result[0]->type == 'ELEMENT_NODE') {
-                    $xml_str = $this->get_node_by_id($doc_id, $id, true, $result[0]);
-                    $xml_doc = new DOMDocument();
-                    $xml_doc->loadXML($xml_str);
-                }
-            }
 
-            db()->end_transaction();
+            $xml_str = "";
+
+            $query->execute(array(
+                'doc_id' => $doc_id,
+                'id' => $id,
+            ));
+            $row = $query->fetchObject();
+
+            //get ROOT-NODE
+            if ($row->type == 'ELEMENT_NODE') {
+                //create node
+                $node_data = "<{$row->name}";
+                
+                $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
+                $node_data .= " {$this->namespace_string}";
+                
+                //add attributes to node
+                $node_data .= " {$row->value}";
+                
+                //add id_attribute to node
+                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
+                
+                $xml_str .= $node_data;
+                
+                //add child_nodes
+                $xml_str .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+
+                $xml_str .= "</{$row->name}>";
+
+            } else {
+                throw new depage_exception("This node is no ELEMENT_NODE or node does not exist");
+            }
+            $xml_doc = new \DOMDocument();
+            $xml_doc->loadXML($xml_str);
+
+            $this->end_transaction();
 
             // add xml to xml-cache
             if (is_object($xml_doc) && $xml_doc->documentElement != null) {
-                $this->cache->put($xml_doc->saveXML());
+                $this->cache->set($identifier, $xml_doc->saveXML());
             }
         }
         if (is_a($xml_doc, "DOMDocument") && $xml_doc->documentElement != null) {
@@ -1026,75 +1177,72 @@ class xmldb {
         }
     }
     // }}}
-    // {{{ get_node_by_id()
+    // {{{ get_childnodes_by_parentid()
     /**
-     * gets node definition by its node id
+     * gets child nodes of a node as string
      *
-     * @private
+     * @param   $doc_id (int) document id
+     * @param   $parent_id (int) id of parent-node
      *
-     * @param    $xml_doc (string) xml definition to append elements
-     * @param    $id (int) db-id of node to add
-     * @param    $is_root (bool) if true, global namespace-definitions will
-     *            be added to node. false, otherwise.
-     * @param    $row (array) result of last select
-     *
-     * @return    $xml_doc (string) xml node definition of node
+     * @return  $xml_doc (string) xml node definition of node
      */
-    public function get_node_by_id($doc_id, $id, $is_root = false, $row) {
-        /*
-         * @todo rewrite to return actual node value by "return"
-         */
-        //get ELMEMENT_NODE
-        if ($row->type == 'ELEMENT_NODE') {
-            $xml_doc = "";
+    protected function get_childnodes_by_parentid($doc_id, $parent_id) {
+        static $query = null;
 
-            //create node
-            $name = $row->name;
-            $node_data = "<$name";
-            
-            if ($is_root) {
-                $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
-                $node_data .= " {$this->namespace_string}";
-            }
-            
-            //add attributes to node
-            $node_data .= " {$row->value}";
-            
-            //add id_attribute to node
-            $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$id\">";
-            
-            $xml_doc .= $node_data;
-            //add child_nodes
-            $result = db()->query(
+        // prepare query
+        if (is_null($query)) {
+            $query = $this->pdo->prepare(
                 "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent='$id' AND xml.id_doc='$doc_id'
+                WHERE xml.id_parent = :parent_id AND xml.id_doc = :doc_id
                 ORDER BY xml.pos"
             );
-            if (($num = db()->num_rows()) > 0) {
-                for ($i = 0; $i < $num; $i++) {
-                    $xml_doc .= $this->get_node_by_id($doc_id, $result[$i]->id, false, $result[$i]);
-                }
-            }
-            $xml_doc .= "</$name>";
-
-            return $xml_doc;
-        //get TEXT_NODES
-        } else if ($row->type == 'TEXT_NODE') {
-            return htmlspecialchars($row->value);
-        //get CDATA_SECTION
-        } else if ($row->type == 'CDATA_SECTION_NODE') {
-            //$node = $xml_doc->create_cdata_section($row->value);
-        //get COMMENT_NODE
-        } else if ($row->type == 'COMMENT_NODE') {
-            return "<!--{$row->value}-->";
-        //get PROCESSING_INSTRUCTION
-        } else if ($row->type == 'PI_NODE') {
-            return "<?{$row->name} {$row->value} ?>";
-        //get ENTITY_REF Node
-        } else if ($row->type == 'ENTITY_REF_NODE') {
-            //$node = $xml_doc->create_entity_reference($row->value);
         }
+
+        $xml_doc = "";
+        
+        $query->execute(array(
+            'doc_id' => $doc_id,
+            'parent_id' => $parent_id,
+        ));
+        $results = $query->fetchAll(\PDO::FETCH_OBJ);
+        foreach ($results as $row) {
+            //get ELMEMENT_NODE
+            if ($row->type == 'ELEMENT_NODE') {
+                //create node
+                $node_data = "<{$row->name}";
+                
+                //add attributes to node
+                $node_data .= " {$row->value}";
+                
+                //add id_attribute to node
+                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
+                
+                $xml_doc .= $node_data;
+                
+                //add child_nodes
+                $xml_doc .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+
+                $xml_doc .= "</{$row->name}>";
+            //get TEXT_NODES
+            } else if ($row->type == 'TEXT_NODE') {
+                $xml_doc = htmlspecialchars($row->value);
+            //get CDATA_SECTION
+            } else if ($row->type == 'CDATA_SECTION_NODE') {
+                // @todo CDATA not implemented yet
+            //get COMMENT_NODE
+            } else if ($row->type == 'COMMENT_NODE') {
+                $xml_doc = "<!--{$row->value}-->";
+            //get PROCESSING_INSTRUCTION
+            } else if ($row->type == 'PI_NODE') {
+                $xml_doc = "<?{$row->name} {$row->value} ?>";
+            //get ENTITY_REF Node
+            } else if ($row->type == 'ENTITY_REF_NODE') {
+                // @todo ENTITY_REF_NODE not implemented yet
+            }
+        }
+
+        return $xml_doc;
     }
     // }}}
     // {{{ extract_namespaces()
@@ -1105,7 +1253,7 @@ class xmldb {
         $pAttr = "([^\"]*)";
         preg_match_all("/xmlns:$pName=\"$pAttr\"/", $str, $ns_elements, PREG_SET_ORDER);
         foreach ($ns_elements AS $ns_element) {
-            $namespaces[] = new ns($ns_element[1], $ns_element[2]);
+            $namespaces[] = new xmlns($ns_element[1], $ns_element[2]);
         }
         return $namespaces;
     }
@@ -1126,7 +1274,7 @@ class xmldb {
     public function save_node($doc_id, $node, $target_id = null, $target_pos = -1, $stripwhitespace = true) {
         global $conf, $log;
         
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
         
         //get all nodes in array
         $node_array = array();
@@ -1149,23 +1297,31 @@ class xmldb {
             $parent_id = $this->get_parentId_by_elementId($doc_id, $target_id);
             //unlink child nodes, if target is document
             if ($parent_id === false) {
-                $result = db()->query(
+                $query = $this->pdo->prepare(
                     "DELETE
                     FROM {$this->table_xml}
-                    WHERE id_doc='$doc_id'"
+                    WHERE id_doc = :doc_id"
                 );
+                $query->execute(array(
+                    'doc_id' => $doc_id,
+                ));
             }
             $this->clear_cache($doc_id);
             
             //set target_id/pos/doc
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS pos 
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent='$target_id' AND id_doc='$doc_id'"
+                WHERE xml.id_parent = :target_id AND id_doc = :doc_id"
             );
-            if (($num = db()->num_rows()) == 1) {
-                if ($target_pos > $result[0]->pos || $target_pos == -1) {
-                    $target_pos = $result[0]->pos;
+            $query->execute(array(
+                'target_id' => $target_id,
+                'doc_id' => $doc_id,
+            ));
+            $result = $query->fetchObject();
+            if ($result) {
+                if ($target_pos > $result->pos || $target_pos == -1) {
+                    $target_pos = $result->pos;
                 }
             } else {
                 $target_pos = 0;
@@ -1259,6 +1415,21 @@ class xmldb {
      * @return    $id (int) db-id under which node has been saved
      */
     private function save_node_to_db($doc_id, $node, $id, $target_id, $target_pos, $increase_pos = false) {
+        static $insert_query = null;
+        if (is_null($insert_query)) {
+            $insert_query = $this->pdo->prepare(
+                "REPLACE {$this->table_xml}
+                SET 
+                    id = :id_query, 
+                    id_parent = :target_id, 
+                    id_doc = :doc_id, 
+                    pos = :target_pos, 
+                    name = :name, 
+                    value = :value, 
+                    type='ELEMENT_NODE'"
+            );
+        }
+
         if ($id === null) {
             $id_query = 'NULL';
         } else {
@@ -1282,18 +1453,27 @@ class xmldb {
                 }
             }
             if ($increase_pos) {
-                db()->query(
+                $query = $this->pdo->prepare(
                     "UPDATE {$this->table_xml}
                     SET pos=pos+1 
-                    WHERE id_parent=$target_id AND pos >=$target_pos AND id_doc=$doc_id"
+                    WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
                 );
+                $query->execute(array(
+                    'target_id' => $target_id,
+                    'target_pos' => $target_pos,
+                    'doc_id' => $doc_id,
+                ));
             }
-            db()->query(
-                "REPLACE {$this->table_xml}
-                SET id=$id_query, id_parent=$target_id, id_doc=$doc_id, pos=$target_pos, name='$name_query', value='" . db()->escape($attr_str) . "', type='ELEMENT_NODE'"
-            );
+            $insert_query->execute(array(
+                'id_query' => $id_query,
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'name' => $name_query,
+                'value' => $attr_str,
+                'doc_id' => $doc_id,
+            ));
             if ($id === null) {
-                $id = db()->insert_id();
+                $id = $query->lastInsertId();
                 $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
             } else if ($this->get_node_elementId($node) == null) {
                 $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
@@ -1310,12 +1490,16 @@ class xmldb {
                 $node_data = $node->nodeName;
             }
             
-            db()->query(
-                "REPLACE {$this->table_xml}
-                SET id=$id_query, id_parent=$target_id, id_doc=$doc_id, pos=$target_pos, name=NULL, value='" . db()->escape($node_data) . "', type='$node_type'"
-            );
+            $insert_query->execute(array(
+                'id_query' => $id_query,
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'name' => null,
+                'value' => $node_data,
+                'doc_id' => $doc_id,
+            ));
             if ($id === null) {
-                $id = db()->insert_id();
+                $id = $query->lastInsertId();
             }
         }
         return $id;
@@ -1394,48 +1578,80 @@ class xmldb {
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
     public function unlink_node_by_elementId($doc_id, $id, $ids_to_keep = array(), $reorder_pos = true, $row = NULL)  {
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
         
         $deleted_ids = array();
         if (is_null($row)) {
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT xml.id_parent AS id_parent, xml.pos AS pos
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id='$id' AND xml.id_doc='$doc_id'"
+                WHERE xml.id = :id AND xml.id_doc = :doc_id"
             );
-            $row = $result[0];
-            $addParentNode = $result[0]->id_parent;
+            $query->execute(array(
+                'id' => $id,
+                'doc_id' => $doc_id,
+            ));
+            $row = $query->fetchObject();
+            if ($row) {
+                $addParentNode = $row->id_parent;
+            } else {
+                $addParentNode = NULL;
+            }
         } else {
             $addParentNode = NULL;
         }
         if (!is_null($row)) {
             //reorder node positions
-            if ($reorder_pos && ($row->id_parent != null)) {
-                db()->query(
+            if ($reorder_pos && $row && ($row->id_parent != null)) {
+                $query = $this->pdo->prepare(
                     "UPDATE {$this->table_xml}
                     SET pos = pos - 1 
-                    WHERE id_parent={$row->id_parent} AND pos > {$row->pos} AND id_doc='$doc_id'"
+                    WHERE id_parent = :id_parent AND pos > :pos AND id_doc = :doc_id"
                 );
+                $query->execute(array(
+                    'id_parent' => $row->id_parent,
+                    'pos' => $row->pos,
+                    'doc_id' => $doc_id,
+                ));
             }
             //unlink child-nodes
-            $result = db()->query(
+            $query = $this->pdo->prepare(
                 "SELECT xml.id AS id, xml.id_parent AS id_parent, xml.pos AS pos
                 FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent='$id' AND xml.id_doc='$doc_id'"
+                WHERE xml.id_parent = :id AND xml.id_doc = :doc_id"
             );
-            if (($num = db()->num_rows()) > 0) {
-                for ($i = 0; $i < $num; $i++) {
-                    $deleted_ids = array_merge($deleted_ids, $this->unlink_node_by_elementId($doc_id, $result[$i]->id, $ids_to_keep, false, $result[$i]));
-                }    
-            }
+            $query->execute(array(
+                'id' => $id,
+                'doc_id' => $doc_id,
+            ));
+            $results = $query->fetchAll(\PDO::FETCH_OBJ);
+            for ($i = 0; $i < count($results); $i++) {
+                $deleted_ids = array_merge($deleted_ids, $this->unlink_node_by_elementId($doc_id, $result[$i]->id, $ids_to_keep, false, $result[$i]));
+            }    
             $deleted_ids[] = $id;
             
             if ($reorder_pos) {
-                db()->query(
+                // @todo optimize this with "id IN ()"
+                /*
+                $in_array = "";
+                $params = array();
+
+                foreach ($deleted_ids as $key => $id) {
+                    $in_array .= 
+                }
+                 */
+                $query = $this->pdo->prepare(
                     "UPDATE {$this->table_xml}
                     SET type='deleted'
-                    WHERE id_doc='$doc_id' AND id IN (" . implode(',', $deleted_ids)    . ")"
+                    WHERE id_doc = :doc_id AND id = :id"
                 );
+                foreach ($deleted_ids as $id) {
+                    $query->execute(array(
+                        'doc_id' => $doc_id,
+                        'id' => $id,
+                    ));
+                }
+
                 $this->clear_cache($doc_id);
             }
         }
@@ -1462,7 +1678,7 @@ class xmldb {
         //echo("doc_id: $doc_id\nnode_id: $node_id\ntarget_id: $target_id\ntarget_pos: $target_pos\n");
         //return false;
 
-        $this->begin_transaction(DB_TRANSMIT_WRITE);
+        $this->begin_transaction();
         
         $node_parent_id = $this->get_parentId_by_elementId($doc_id, $node_id);
         $node_pos = $this->get_pos_by_elementId($doc_id, $node_id);
@@ -1472,27 +1688,51 @@ class xmldb {
         }
         
         if ($target_id != $node_parent_id || $target_pos != $node_pos) {
-            db()->query(
+            // remove node from parent
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET id_doc=NULL, id_parent=NULL, pos=NULL 
-                WHERE id='$node_id' AND id_doc=$doc_id"
+                WHERE id = :node_id AND id_doc = :doc_id"
             );
-            db()->query(
+            $query->execute(array(
+                'node_id' => $node_id,
+                'doc_id' => $doc_id,
+            ));
+            // update position on source position
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET pos=pos-1 
-                WHERE id_parent='$node_parent_id' AND pos>$node_pos AND id_doc=$doc_id"
+                WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
             );
+            $query->execute(array(
+                'node_parent_id' => $node_parent_id,
+                'node_pos' => $node_pos,
+                'doc_id' => $doc_id,
+            ));
 
-            db()->query(
+            // update positions on target position
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET pos=pos+1 
-                WHERE id_parent='$target_id' AND pos>=$target_pos AND id_doc=$doc_id"
+                WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
             );
-            db()->query(
+            $query->execute(array(
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'doc_id' => $doc_id,
+            ));
+            // reattach node at target position
+            $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
-                SET id_doc='$doc_id', id_parent='$target_id', pos='$target_pos' 
-                WHERE id='$node_id'"
+                SET id_doc = :doc_id, id_parent = :target_id, pos = :target_pos 
+                WHERE id = :node_id"
             );
+            $query->execute(array(
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'node_id' => $node_id,
+                'doc_id' => $doc_id,
+            ));
             
             $this->clear_cache($doc_id);
         }
@@ -1512,7 +1752,7 @@ class xmldb {
      */
     public function copy_node($doc_id, $node_id, $target_id, $target_pos) {
         $xml_doc = $this->get_subdoc_by_elementId($doc_id, $node_id, false);
-        $root_node = $xml_doc->document_element();
+        $root_node = $xml_doc;
         
         $this->clear_cache($doc_id);
         
@@ -1536,7 +1776,7 @@ class xmldb {
                 $xml_doc = $node;
                 $node = $xml_doc->documentElement;
             }
-            $xpath = new DOMXPath($xml_doc);
+            $xpath = new \DOMXPath($xml_doc);
             $xp_result = $xpath->query(".//*[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
             foreach ($xp_result as $node) {
                 $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
@@ -1565,7 +1805,7 @@ class xmldb {
      * @public
      */
     public function clear_deleted_nodes() {
-        db()->query(
+        $this->pdo->query(
             "UPDATE {$this->table_xml}
             SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value=''
             WHERE type='DELETED' AND id_doc IS NOT NULL"
@@ -1613,52 +1853,6 @@ class xmldb {
         
         return $db_id;
     }        
-    // }}}
-
-    /* do these function really belong here? */
-
-    /* are these functions really needed? */
-    // {{{ optimize_database()
-    /**
-     * optimizes xml_db tables
-     *
-     * @public
-     */
-    public function optimize_database() {
-        db()->query(
-            "OPTIMIZE TABLE 
-            {$this->table_xml}"
-        );
-    }
-    // }}}
-    // {{{ get_elementIds_to_keep()
-    /**
-     * gets the db-ids, that are used in the given document. this will be
-     * used to keep the same ids during deleting and saving.
-     *
-     * @public
-     *
-     * @param    $node (domxmlnode) node to get db-id from
-     *
-     * @return    $ids (array) list of db-ids, that are use in the given
-     *            node and its children.
-     */
-    public function get_elementIds_to_keep($node) {
-        $ids = array();
-
-        $xpath_node = xpath_new_context_ns($node, array($this->db_ns));
-        $xfetch = xpath_eval($xpath_node, "//*");
-        for ($i = 0; $i < count($xfetch->nodeset); $i++) {
-            $attribs = $xfetch->nodeset[$i]->attributes();
-            for ($j = 0; $j < count($attribs); $j++) {
-                if (($attribs[$j]->prefix() . ':' . $attribs[$j]->name()) == $this->id_attribute || $attribs[$j]->name() == $this->id_attribute) {
-                    $ids[] = $attribs[$j]->value();
-                }
-            }
-        }
-        
-        return $ids;
-    }
     // }}}
 }
 
