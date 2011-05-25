@@ -10,9 +10,14 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class db_pdo extends PDO {
+class db_pdo {
     /* {{{ variables*/
     public $prefix;
+    private $pdo = null;
+    private $dsn;
+    private $username;
+    private $password;
+    private $driver_options;
     /* }}} */
 
     /* {{{ constructor */
@@ -27,17 +32,66 @@ class db_pdo extends PDO {
      * @return  void
      */
     public function __construct($dsn, $username = '', $password = '', $driver_options = array()) {
+        $this->dsn = $dsn;
+        $this->username = $username;
+        $this->password = $password;
+
         if (isset($driver_options['prefix'])) {
             $this->prefix = $driver_options['prefix'];
             unset($driver_options['prefix']);
         }
-
-        parent::__construct($dsn, $username, $password, $driver_options);
+        $this->driver_options = $driver_options;
+    }
+    /* }}} */
+    /* {{{ late_initialize */
+    /**
+     */
+    private function late_initialize() {
+        $this->pdo = new pdo($this->dsn, $this->username, $this->password, $this->driver_options);
 
         // set error mode to exception by default
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     /* }}} */
+
+    /* {{{ __set */
+    /**
+     */
+    public function __set($name, $value) {
+        if (is_null($this->pdo)) {
+            $this->late_initialize();
+        }
+        $this->$name = $value;
+    }
+    /* }}} */
+    /* {{{ __get */
+    /**
+     */
+    public function __get($name) {
+        if (is_null($this->pdo)) {
+            $this->late_initialize();
+        }
+        return $this->$name;
+    }
+    /* }}} */
+    /* {{{ __call */
+    /**
+     */
+    public function __call($name, $arguments) {
+        if (is_null($this->pdo)) {
+            $this->late_initialize();
+        }
+        return call_user_func_array(array($this->pdo, $name), $arguments);
+    }
+    /* }}} */
+    /* {{{ __callStatic */
+    /**
+     */
+    public static function __callStatic($name, $arguments) {
+        return call_user_func_array("pdo::$name", $arguments);
+    }
+    /* }}} */
+    
     /* {{{ dsn_parts */
     /**
      * parses dsn intro its parts
