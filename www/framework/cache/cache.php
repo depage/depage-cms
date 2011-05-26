@@ -7,22 +7,33 @@ class cache {
     protected $prefix;
     protected $cachepath;
     protected $baseurl;
+    protected $defaults = array(
+        'cachepath' => DEPAGE_CACHE_PATH,
+        'baseurl' => DEPAGE_BASE,
+        'disposition' => "file",
+    );
     // }}}
 
     // {{{ factory
-    public static function factory($prefix, $cachepath, $baseurl = null) {
-        // options;
-        // cachepatch
-        // baseurl
-        // disposition - file/memory
+    public static function factory($prefix, $options = array()) {
+        if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
+            return new \depage\cache\cache_memcached($prefix, $options);
+        } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
+            return new \depage\cache\cache_memcache($prefix, $options);
+        } else {
+            return new \depage\cache\cache($prefix, $options);
+        }
     }
     // }}}
 
     // {{{ constructor
-    public function __construct($prefix, $cachepath, $baseurl = null) {
+    protected function __construct($prefix, $options = array()) {
+        $class_vars = get_class_vars('\depage\cache\cache');
+        $options = array_merge($class_vars['defaults'], $options);
+
         $this->prefix = $prefix;
-        $this->cachepath = "{$cachepath}/{$this->prefix}/";
-        $this->baseurl = "{$baseurl}cache/{$this->prefix}/";
+        $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
+        $this->baseurl = "{$options['baseurl']}cache/{$this->prefix}/";
     }
     // }}}
     // {{{ exist
@@ -168,10 +179,6 @@ class cache {
         }
     }
     // }}}
-    // {{{ call */
-    public function call($func, $args) {
-    }
-    // }}}
 
     // {{{ get_cache_path */
     /**
@@ -181,7 +188,7 @@ class cache {
      *
      * @return  (string) file path to cache-item
      */
-    protected function get_cache_path($key) {
+    private function get_cache_path($key) {
         return $this->cachepath . $key;
     }
     // }}}

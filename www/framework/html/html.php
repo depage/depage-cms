@@ -167,7 +167,10 @@ class html {
         if ($this->param['env'] === "production") {
             // production environement
             $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
-            $cache = new depage\cache\cache("js", DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            
+            // get cache instance
+            $cache = depage\cache\cache::factory("js");
+
             $regenerate = false;
 
             if (($age = $cache->age($identifier)) !== false) {
@@ -217,7 +220,10 @@ class html {
         if ($this->param['env'] === "production") {
             // production environement
             $identifier = "{$name}_" . sha1(serialize($files)) . ".css";
-            $cache = new depage\cache\cache("css", DEPAGE_CACHE_PATH, DEPAGE_BASE);
+            
+            // get cache instance
+            $cache = depage\cache\cache::factory("css");
+
             $regenerate = false;
 
             if (($age = $cache->age($identifier)) !== false) {
