@@ -1045,7 +1045,7 @@ class xmldb {
             $cond_array[] = array(
                 'name' => $conditions[1][$i],
                 'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
-                'operator' => $conditions[4][$i - 1],
+                'operator' => $i > 0 ? $conditions[4][$i - 1] : "",
             );
         }
 
