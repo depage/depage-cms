@@ -117,6 +117,30 @@ class config implements Iterator {
         return (object) $data;
     }
     // }}}
+    // {{{ getDefaulsFromClass
+    /**
+     * returns options based on defaults as array
+     *
+     * @param $object (object) object to get defaults from
+     *
+     * @return  options as object
+     */
+    public function getDefaultsFromClass($object) {
+        $data = array();
+        $defaults = array();
+
+        $class = get_class($object);
+        while ($class) {
+            // go through class hierarchy for defaults and merge with parent's defaults
+            $class_vars = get_class_vars($class);
+            $defaults = array_merge($class_vars['defaults'], $defaults);
+
+            $class = get_parent_class($class);
+        }
+
+        return $this->getFromDefaults($defaults);
+    }
+    // }}}
     
     // {{{ __get
     /**
