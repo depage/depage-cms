@@ -86,6 +86,7 @@ class depage {
      * @return  null
      */
     static function autoload($class) {
+        $class = strtolower($class);
         $php_file = "";
         $namespaces = explode("\\", $class);
 
