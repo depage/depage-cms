@@ -9,7 +9,7 @@ class jstree_xml_to_html {
       */
     public static function toHTML($nodes) {
         $xsl = new \DOMDocument();
-        $xsl->load(__DIR__ . "/../xslt/nodes_to_html.xsl", LIBXML_NOCDATA);
+        $xsl->load(DEPAGE_FM_PATH . "xslt/nodes_to_html.xsl", LIBXML_NOCDATA);
 
         $xslt = new \XSLTProcessor();
         $xslt->importStylesheet($xsl);
