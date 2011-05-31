@@ -52,7 +52,7 @@ class xmldb {
     }
     // }}}
     // {{{ set_tables
-    public function set_tables($tableprefix) {
+    protected function set_tables($tableprefix) {
         $this->table_docs = $tableprefix . "_xmldocs";
         $this->table_xml = $tableprefix . "_xmltree";
     }
