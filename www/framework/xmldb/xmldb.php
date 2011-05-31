@@ -928,92 +928,100 @@ class xmldb {
      * @todo    implement full xpath specifications
      */
     private function get_elementIds_by_xpath($doc_id, $xpath) {
-        $pName = "(?:([^\/\[\]]*):)?([^\/\[\]]+)";
-        $pCondition = "(?:\[(.*?)\])?";
+        $identifier = "{$this->table_docs}/d{$doc_id}/xpath_" . sha1($xpath);
 
-        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
+        $fetched_ids = $this->cache->get($identifier);
 
-        $query = $this->pdo->prepare(
-            "SELECT docs.rootid AS rootid
-            FROM {$this->table_docs} AS docs
-            WHERE docs.id = :doc_id"
-        );
-        $query->execute(array(
-            'doc_id' => $doc_id,
-        ));
-        $result = $query->fetchObject();
-        $rootid = $result->rootid;
-        $actual_ids = array(NULL);
+        if ($fetched_ids === false) {
+            $pName = "(?:([^\/\[\]]*):)?([^\/\[\]]+)";
+            $pCondition = "(?:\[(.*?)\])?";
 
-        foreach ($xpath_elements as $level => $element) {
-            $fetched_ids = array();
-            $element[] = '';
-            list(,$divider, $ns, $name, $condition) = $element;
-            $strings = array();
+            preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
 
-            if ($divider == '/') {
-                // {{{ fetch only by name:
-                if ($condition == '') {    
-                    /*
-                     * "... /ns:name ..."
-                     */
-                    foreach ($actual_ids as $actual_id) {
-                        $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name));
+            $query = $this->pdo->prepare(
+                "SELECT docs.rootid AS rootid
+                FROM {$this->table_docs} AS docs
+                WHERE docs.id = :doc_id"
+            );
+            $query->execute(array(
+                'doc_id' => $doc_id,
+            ));
+            $result = $query->fetchObject();
+            $rootid = $result->rootid;
+            $actual_ids = array(NULL);
+
+            foreach ($xpath_elements as $level => $element) {
+                $fetched_ids = array();
+                $element[] = '';
+                list(,$divider, $ns, $name, $condition) = $element;
+                $strings = array();
+
+                if ($divider == '/') {
+                    // {{{ fetch only by name:
+                    if ($condition == '') {    
+                        /*
+                         * "... /ns:name ..."
+                         */
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name));
+                        }
+                    // }}}
+                    // {{{ fetch by name and position:
+                    } else if (preg_match("/^([0-9]+)$/", $condition)) {
+                        /*
+                         * "... /ns:name[n] ..."
+                         */
+                        foreach ($actual_ids as $actual_id) {
+                            $temp_ids = $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name);
+                            $fetched_ids[] = $temp_ids[((int) $condition) - 1];
+                        }
+                    // }}}
+                    // {{{fetch by simple attributes:
+                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
+                        /*
+                         * "... /ns:name[@attr1] ..."
+                         * "... /ns:name[@attr1 = 'string1'] ..."
+                         * "... /ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+                         */
+                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, $cond_array));
+                        }
+                    // }}}
+                    } else {
+                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
                     }
-                // }}}
-                // {{{ fetch by name and position:
-                } else if (preg_match("/^([0-9]+)$/", $condition)) {
-                    /*
-                     * "... /ns:name[n] ..."
-                     */
-                    foreach ($actual_ids as $actual_id) {
-                        $temp_ids = $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name);
-                        $fetched_ids[] = $temp_ids[((int) $condition) - 1];
+                } elseif ($divider == '//' && $level == 0) {
+                    // {{{ fetch only by name recursive:
+                    if ($condition == '') {
+                        /*
+                         * "//ns:name ..."
+                         */
+                        $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name);    
+                    // }}}
+                    // {{{ fetch by simple attributes:
+                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
+                        /*
+                         * "//ns:name[@attr1] ..."
+                         * "//ns:name[@attr1 = 'string1'] ..."
+                         * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+                         */
+                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name, $cond_array);
+                        }
+                    // }}}
+                    } else {
+                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
                     }
-                // }}}
-                // {{{fetch by simple attributes:
-                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                    /*
-                     * "... /ns:name[@attr1] ..."
-                     * "... /ns:name[@attr1 = 'string1'] ..."
-                     * "... /ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                     */
-                    $cond_array = $this->get_condition_attributes($temp_condition, $strings);
-                    foreach ($actual_ids as $actual_id) {
-                        $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, $cond_array));
-                    }
-                // }}}
                 } else {
                     //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
                 }
-            } elseif ($divider == '//' && $level == 0) {
-                // {{{ fetch only by name recursive:
-                if ($condition == '') {
-                    /*
-                     * "//ns:name ..."
-                     */
-                    $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name);    
-                // }}}
-                // {{{ fetch by simple attributes:
-                } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                    /*
-                     * "//ns:name[@attr1] ..."
-                     * "//ns:name[@attr1 = 'string1'] ..."
-                     * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                     */
-                    $cond_array = $this->get_condition_attributes($temp_condition, $strings);
-                    foreach ($actual_ids as $actual_id) {
-                        $fetched_ids = $this->get_elementIds_by_name($doc_id, $ns, $name, $cond_array);
-                    }
-                // }}}
-                } else {
-                    //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                }
-            } else {
-                //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
+                
+                $actual_ids = $fetched_ids;
             }
-            
-            $actual_ids = $fetched_ids;
+
+            $this->cache->set($identifier, $fetched_ids);
         }
         return $fetched_ids;
     }
