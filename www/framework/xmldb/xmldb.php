@@ -1090,7 +1090,7 @@ class xmldb {
      * @param    $add_id_attribute (bool) true, if you want to add the db-id attributes
      *            to xml-definition, false to remove them.
      */
-    private function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
+    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
         global $conf;
 
         $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
