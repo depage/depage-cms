@@ -1,6 +1,8 @@
 <?php
 
-class delta_updates {
+namespace depage\websocket\jstree;
+
+class jstree_delta_updates {
     function __construct($table_prefix, $db, $xmldb, $doc_id, $seq_nr = 0) {
         $this->table_name = $table_prefix . "_delta_updates";
         $this->db = $db;
