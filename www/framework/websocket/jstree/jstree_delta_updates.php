@@ -11,6 +11,15 @@ class jstree_delta_updates {
         $this->seq_nr = (int)$seq_nr;
     }
 
+    public function currentChangeNumber() {
+        $query = $this->db->prepare("SELECT MAX(id) AS id FROM " . $this->table_name . " WHERE doc_id = ?");
+        if ($query->execute(array($this->doc_id)))
+            if ($row = $query->fetch())
+                return (int)$row["id"];
+
+        return -1;
+    }
+
     public function recordChange($parent_id) {
         $query = $this->db->prepare("INSERT INTO " . $this->table_name . " (node_id, doc_id) VALUES (?, ?)");
         $query->execute(array((int)$parent_id), $this->doc_id);
