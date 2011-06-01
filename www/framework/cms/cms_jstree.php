@@ -12,7 +12,6 @@
 
 class cms_jstree extends depage_ui {
     protected $html_options = array();
-    protected $basetitle = "";
     protected $defaults = array(
         "db" => null,
         "auth" => null,
@@ -34,8 +33,8 @@ class cms_jstree extends depage_ui {
         );
 
         // TODO init correctly
-        $prefix = "dp_proj_{$this->pdo->prefix}";
-        $this->xmldb = new \depage\xmldb\xmldb ($prefix, $this->pdo, \depage\cache\cache::factory($prefix));
+        $this->prefix = "dp_proj_{$this->pdo->prefix}";
+        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
         // get auth object
         $this->auth = auth::factory(
@@ -55,7 +54,22 @@ class cms_jstree extends depage_ui {
 //        $this->delta_updates = new delta_updates ("dp_proj_{$this->pdo->prefix}", $this->pdo);
     }
     // }}}
-    
+
+    // {{{ index
+    public function index($doc_name = "pages") {
+        // $this->auth->enforce();
+        $doc_id = $this->get_doc_id($doc_name);
+
+        $h = new html("jstree.tpl", array(
+            'doc_id' => $doc_id,
+            'seq_nr' => $this->get_current_seq_nr($doc_id),
+            'nodes' => $this->get_html_nodes($doc_name),
+        ), $this->html_options); 
+
+        return $h;
+    }
+    // }}}
+
     // {{{ create_node
     /**
      * @param $doc_id document id
@@ -81,9 +95,10 @@ class cms_jstree extends depage_ui {
 
     // {{{ move_node
     public function move_node() {
-        $this->auth->enforce();
+        //$this->auth->enforce();
 
         $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        return $this->json_status(1);
     }
     // }}}
 
@@ -95,18 +110,32 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
-    // {{{ get_children
-    public function get_children() {
-        $this->auth->enforce();
+    // {{{ json_status
+    private function json_status($status) {
+        $h = new html();
+        $h->content = "{ \"status\" : $status }";
+        $h->content_type = "text/json";
+        return $h;
+    }
+    // }}}
 
+    // {{{ get_doc_id
+    private function get_doc_id($doc_name) {
+        $doc_list = $this->xmldb->get_doc_list($doc_name);
+        return $doc_list[$doc_name]->id;
+    }
+    // }}}
+
+    // {{{ get_html_nodes
+    private function get_html_nodes($doc_name) {
         $xsl = new DOMDocument();
         $xsl->load(__DIR__ . "/tpl/nodes_to_html.xsl", LIBXML_NOCDATA);
 
         $xslt = new XSLTProcessor();
         $xslt->importStylesheet($xsl);
 
-        $subdoc = $this->xmldb->get_subdoc_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $html = \depage\cms\jstree_xml_to_html::toHTML(array($_REQUEST["id"] => $subdoc));
+        $doc = $this->xmldb->get_doc($doc_name);
+        $html = \depage\cms\jstree_xml_to_html::toHTML(array($_REQUEST["id"] => $doc));
 
         return current($html);
     }
@@ -128,6 +157,11 @@ class cms_jstree extends depage_ui {
         return $parent;
     }
     // }}}
+
+    private function get_current_seq_nr($doc_id) {
+       $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $this->doc_id);
+       return $delta_updates->currentChangeNumber();
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
