@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" xmlns:dpg="http://www.depagecms.net/ns/depage" extension-element-prefixes="xsl rpc db proj pg sec edit backup dpg">
 
-<xsl:output method="xml" omit-xml-declaration="yes" />
+<!-- TODO: strip spaces correctly -->
+<xsl:output method="html" omit-xml-declaration="yes" />
+
+<xsl:template match="dpg:pages">
+    <xsl:apply-templates />
+</xsl:template>
 
 <xsl:template match="node()">
     <xsl:variable name="id" select="@db:id" />
-    <xsl:variable name="type" select="@type" />
+    <!-- TODO: <xsl:variable name="type" select="@type" /> -->
+    <xsl:variable name="type" select="'folder'" />
     <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint" select="@hint" />
 
