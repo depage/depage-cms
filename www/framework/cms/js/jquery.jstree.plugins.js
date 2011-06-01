@@ -777,7 +777,7 @@ var placeholder;
                 fallbackPollURL: settings.fallbackPollURL,
                 fallbackPollParams:  {
                     "seq_nr": function () {
-                        return tree.data("seq_nr") || -1;
+                        return tree.data("seq_nr");
                     }
                 }
             });
@@ -802,13 +802,12 @@ var placeholder;
                         seq : jstree.data.delta_updates.seq++,
                         async : true,
                         type: 'POST',
-                        url: settings.postURL,
+                        url: settings.postURL + "move_node",
                         data : {
-                            "operation" : "move_node",
+                            "doc_id" : tree.data("doc_id"),
                             "id" : $(this).attr("id").replace("node_",""),
-                            "ref" : data.rslt.np.attr("id").replace("node_",""),
+                            "target_id" : data.rslt.np.attr("id").replace("node_",""),
                             "position" : data.rslt.cp + i,
-                            "title" : data.rslt.name,
                             "copy" : data.rslt.cy ? 1 : 0
                         },
                         beforeSend : function () {
@@ -865,7 +864,7 @@ var placeholder;
                 $.each(this.data.delta_updates.pending_updates, function (index, event) {
                     var data = $.evalJSON(event.data);
                     // only overwrite tree nodes if data is newer
-                    var old_seq_nr = parseInt(tree.data("seq_nr")) || -1;
+                    var old_seq_nr = parseInt(tree.data("seq_nr"));
                     var new_seq_nr = parseInt(data.seq_nr);
                     if (new_seq_nr > old_seq_nr) {
                         // remember which tree nodes were open
