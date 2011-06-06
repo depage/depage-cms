@@ -158,8 +158,7 @@ class xmldb {
         $docs = $this->get_doc_list($name);
         if (isset($docs[$name])) {
             $query = $this->pdo->prepare(
-                "UPDATE {$this->table_xml}
-                SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value='', type='DELETED'
+                "DELETE FROM {$this->table_xml}
                 WHERE id_doc = :doc_id"
             );
             $query->execute(array(
@@ -231,8 +230,7 @@ class xmldb {
             $this->begin_transaction();
 
             $query = $this->pdo->prepare(
-                "UPDATE {$this->table_xml}
-                SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value='', type='DELETED'
+                "DELETE FROM {$this->table_xml}
                 WHERE id_doc = :doc_id"
             );
             $query->execute(array(
@@ -282,10 +280,7 @@ class xmldb {
     // }}}
     // {{{ unlink_node()
     public function unlink_node($doc_id, $node_id) {
-        $val = $this->unlink_node_by_elementId($doc_id, $node_id);
-        $this->clear_deleted_nodes();
-
-        return $val;
+        return $this->unlink_node_by_elementId($doc_id, $node_id);
     }
     // }}}
     // {{{ add_node()
@@ -311,10 +306,11 @@ class xmldb {
         $target_id = $this->get_parentId_by_elementId($doc_id, $id_to_replace);
         $target_pos = $this->get_pos_by_elementId($doc_id, $id_to_replace);
         
-        $changed_ids = $this->unlink_node_by_elementId($doc_id, $id_to_replace, array(), true);
+        $this->unlink_node_by_elementId($doc_id, $id_to_replace, array(), true);
+
+        $changed_ids = array();
         $changed_ids[] = $this->save_node($doc_id, $node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
-        $this->clear_deleted_nodes();
             
         $this->end_transaction();
         
@@ -611,12 +607,15 @@ class xmldb {
         
         $this->free_element_ids = array();
         $query = $this->pdo->prepare(
-            "SELECT xml.id AS id
-            FROM {$this->table_xml} AS xml
-            WHERE xml.type='DELETED' 
-            ORDER BY xml.id 
-            LIMIT $needed"
+            "SELECT row AS id FROM
+                (SELECT @row := @row + 1 as row, t.id FROM {$this->table_xml} t, (SELECT @row := 0) r WHERE @row <> id ORDER BY t.id) AS seq
+            WHERE NOT EXISTS (
+                SELECT  1
+                FROM {$this->table_xml} t
+                WHERE t.id = row
+            );"
         );
+        
 
         $query->execute();
 
@@ -1301,7 +1300,7 @@ class xmldb {
             }
 
             //unlink old node
-            $this->unlink_node_by_elementId($doc_id, $node_array[0]['id'], array(), true);
+            $this->unlink_node_by_elementId($doc_id, $node_array[0]['id']);
             $this->clear_cache($doc_id);
         } else if ($target_id === null) {
             $target_id = null;
@@ -1405,7 +1404,6 @@ class xmldb {
                 $node_array[$i]['id'] = $this->save_node_to_db($doc_id, $node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
             }
         }
-        $this->clear_deleted_nodes();
         
         $this->end_transaction();
         
@@ -1601,91 +1599,19 @@ class xmldb {
      *
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
-    public function unlink_node_by_elementId($doc_id, $id, $ids_to_keep = array(), $reorder_pos = true, $row = NULL)  {
-        $this->begin_transaction();
-        
-        $deleted_ids = array();
-        if (is_null($row)) {
-            $query = $this->pdo->prepare(
-                "SELECT xml.id_parent AS id_parent, xml.pos AS pos
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id = :id AND xml.id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'id' => $id,
-                'doc_id' => $doc_id,
-            ));
-            $row = $query->fetchObject();
-            if ($row) {
-                $addParentNode = $row->id_parent;
-            } else {
-                $addParentNode = NULL;
-            }
-        } else {
-            $addParentNode = NULL;
-        }
-        if (!is_null($row)) {
-            //reorder node positions
-            if ($reorder_pos && $row && ($row->id_parent != null)) {
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET pos = pos - 1 
-                    WHERE id_parent = :id_parent AND pos > :pos AND id_doc = :doc_id"
-                );
-                $query->execute(array(
-                    'id_parent' => $row->id_parent,
-                    'pos' => $row->pos,
-                    'doc_id' => $doc_id,
-                ));
-            }
-            //unlink child-nodes
-            $query = $this->pdo->prepare(
-                "SELECT xml.id AS id, xml.id_parent AS id_parent, xml.pos AS pos
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent = :id AND xml.id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'id' => $id,
-                'doc_id' => $doc_id,
-            ));
-            $results = $query->fetchAll(\PDO::FETCH_OBJ);
-            for ($i = 0; $i < count($results); $i++) {
-                $deleted_ids = array_merge($deleted_ids, $this->unlink_node_by_elementId($doc_id, $results[$i]->id, $ids_to_keep, false, $results[$i]));
-            }    
-            $deleted_ids[] = $id;
-            
-            if ($reorder_pos) {
-                // @todo optimize this with "id IN ()"
-                /*
-                $in_array = "";
-                $params = array();
+    public function unlink_node_by_elementId($doc_id, $id)  {
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->table_xml}
+            WHERE id_doc = :doc_id AND id = :id"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+            'id' => $id,
+        ));
 
-                foreach ($deleted_ids as $key => $id) {
-                    $in_array .= 
-                }
-                 */
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET type='deleted'
-                    WHERE id_doc = :doc_id AND id = :id"
-                );
-                foreach ($deleted_ids as $id) {
-                    $query->execute(array(
-                        'doc_id' => $doc_id,
-                        'id' => $id,
-                    ));
-                }
+        $this->clear_cache($doc_id);
 
-                $this->clear_cache($doc_id);
-            }
-        }
-        $this->end_transaction();
-
-        if (!is_null($addParentNode)) {
-            $deleted_ids[] = $addParentNode;
-        }
-        
-        return $deleted_ids;
+        return array();
     }
     // }}}
     // {{{ move_node()
@@ -1820,20 +1746,6 @@ class xmldb {
         } else {
             $this->cache->delete("{$this->table_docs}/d{$doc_id}/");
         }
-    }
-    // }}}
-    // {{{ clear_deleted_nodes()
-    /**
-     * clears data of deleted nodes
-     *
-     * @public
-     */
-    public function clear_deleted_nodes() {
-        $this->pdo->query(
-            "UPDATE {$this->table_xml}
-            SET id_parent=NULL, id_doc=NULL, pos=NULL, name=NULL, value=''
-            WHERE type='DELETED' AND id_doc IS NOT NULL"
-        );
     }
     // }}}
     // {{{ get_node_elementId()
