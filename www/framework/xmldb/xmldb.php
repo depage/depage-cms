@@ -608,11 +608,17 @@ class xmldb {
         $this->free_element_ids = array();
         $query = $this->pdo->prepare(
             "SELECT row AS id FROM
-                (SELECT @row := @row + 1 as row, t.id FROM {$this->table_xml} t, (SELECT @row := 0) r WHERE @row <> id ORDER BY t.id) AS seq
+                (SELECT 
+                    @row := @row + 1 as row, xml.id 
+                FROM 
+                    {$this->table_xml} xml, 
+                    (SELECT @row := 0) r 
+                WHERE @row <> id 
+                ORDER BY xml.id) AS seq
             WHERE NOT EXISTS (
                 SELECT  1
-                FROM {$this->table_xml} t
-                WHERE t.id = row
+                FROM {$this->table_xml} xml
+                WHERE xml.id = row
             );"
         );
         
@@ -1163,7 +1169,7 @@ class xmldb {
                 $xml_str .= "</{$row->name}>";
 
             } else {
-                throw new depage_exception("This node is no ELEMENT_NODE or node does not exist");
+                throw new xmldbException("This node is no ELEMENT_NODE or node does not exist");
             }
 
             $xml_doc = new \DOMDocument();
