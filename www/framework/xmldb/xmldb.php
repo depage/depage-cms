@@ -798,7 +798,7 @@ class xmldb {
         list($name_query, $name_param) = $this->get_name_query($node_ns, $node_name);
         list($attr_query, $attr_param) = $this->get_attr_query($attr_cond);
 
-        if (is_null($parent_id)) {
+        if (is_null($parent_id) || $parent_id === false) {
             $parent_query = "xml.id_parent IS NULL";
             $parent_param = array();
         } else {
@@ -964,7 +964,7 @@ class xmldb {
                          * "... /ns:name ..."
                          */
                         foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name));
+                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, null, true));
                         }
                     // }}}
                     // {{{ fetch by name and position:
@@ -973,7 +973,7 @@ class xmldb {
                          * "... /ns:name[n] ..."
                          */
                         foreach ($actual_ids as $actual_id) {
-                            $temp_ids = $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name);
+                            $temp_ids = $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, null, true);
                             $fetched_ids[] = $temp_ids[((int) $condition) - 1];
                         }
                     // }}}
@@ -986,7 +986,7 @@ class xmldb {
                          */
                         $cond_array = $this->get_condition_attributes($temp_condition, $strings);
                         foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, $cond_array));
+                            $fetched_ids = array_merge($fetched_ids, $this->get_childIds_by_name($doc_id, $actual_id, $ns, $name, $cond_array, true));
                         }
                     // }}}
                     } else {
@@ -1099,7 +1099,7 @@ class xmldb {
      * @param    $add_id_attribute (bool) true, if you want to add the db-id attributes
      *            to xml-definition, false to remove them.
      */
-    private function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
+    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
         global $conf;
 
         $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
@@ -1245,7 +1245,7 @@ class xmldb {
                 $xml_doc .= "<!--{$row->value}-->";
             //get PROCESSING_INSTRUCTION
             } else if ($row->type == 'PI_NODE') {
-                $xml_doc .= "<?{$row->name} {$row->value} ?>";
+                $xml_doc .= "<?{$row->name} {$row->value}?>";
             //get ENTITY_REF Node
             } else if ($row->type == 'ENTITY_REF_NODE') {
                 // @todo ENTITY_REF_NODE not implemented yet
@@ -1498,19 +1498,26 @@ class xmldb {
             if ($node->nodeType == XML_TEXT_NODE) {
                 $node_type = 'TEXT_NODE';
                 $node_data = $node->textContent;
-            } else if ($node->node_type == XML_COMMENT_NODE) {
+                $node_name = null;
+            } else if ($node->nodeType == XML_COMMENT_NODE) {
                 $node_type = 'COMMENT_NODE';
                 $node_data = $node->textContent;
-            } else if ($node->node_type == XML_ENTITY_REF_NODE) {
+                $node_name = null;
+            } else if ($node->nodeType == XML_PI_NODE) {
+                $node_type = 'PI_NODE';
+                $node_data = $node->textContent;
+                $node_name = $node->target;
+            } else if ($node->nodeType == XML_ENTITY_REF_NODE) {
                 $node_type = 'ENTITY_REF_NODE';
                 $node_data = $node->nodeName;
+                $node_name = null;
             }
             
             $insert_query->execute(array(
                 'id_query' => $id_query,
                 'target_id' => $target_id,
                 'target_pos' => $target_pos,
-                'name' => null,
+                'name' => $node_name,
                 'value' => $node_data,
                 'type' => $node_type,
                 'doc_id' => $doc_id,
