@@ -890,6 +890,8 @@ var placeholder;
                         tree.data("seq_nr", new_seq_nr);
                     }
                 });
+
+                this.data.delta_updates.pending_updates = [];
             },
         },
     });
