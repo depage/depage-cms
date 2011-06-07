@@ -98,7 +98,9 @@ class cms_jstree extends depage_ui {
         //$this->auth->enforce();
 
         $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
-        return $this->json_status(1);
+        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array($_REQUEST["target_id"]));
+
+        return new json(array("status" => 1));
     }
     // }}}
 
@@ -110,12 +112,18 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
-    // {{{ json_status
-    private function json_status($status) {
-        $h = new html();
-        $h->content = "{ \"status\" : $status }";
-        $h->content_type = "text/json";
-        return $h;
+    // {{{ recordChange
+    private function recordChange($doc_id, $ids, $parent_ids) {
+        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
+
+        foreach ($ids as $id) {
+            $parent_ids[] = $this->xmldb->get_parentId_by_elementId($doc_id, $id);
+        }
+
+        $unique_parent_ids = array_unique($parent_ids);
+        foreach ($unique_parent_ids as $parent_id) {
+            $delta_updates->recordChange($parent_id);
+        }
     }
     // }}}
 
@@ -159,7 +167,7 @@ class cms_jstree extends depage_ui {
     // }}}
 
     private function get_current_seq_nr($doc_id) {
-       $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $this->doc_id);
+       $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
 }
