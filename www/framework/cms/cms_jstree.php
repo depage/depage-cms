@@ -136,14 +136,8 @@ class cms_jstree extends depage_ui {
 
     // {{{ get_html_nodes
     private function get_html_nodes($doc_name) {
-        $xsl = new DOMDocument();
-        $xsl->load(__DIR__ . "/tpl/nodes_to_html.xsl", LIBXML_NOCDATA);
-
-        $xslt = new XSLTProcessor();
-        $xslt->importStylesheet($xsl);
-
         $doc = $this->xmldb->get_doc($doc_name);
-        $html = \depage\cms\jstree_xml_to_html::toHTML(array($_REQUEST["id"] => $doc));
+        $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
 
         return current($html);
     }
