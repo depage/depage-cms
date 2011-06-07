@@ -1,8 +1,8 @@
 <?php
 
 // TODO: convert to autoloader
-require_once("../lib/WebSocket/Application/Application.php");
-require_once("../../depage/depage.php");
+require_once("framework/depage/depage.php");
+require_once("framework/websocket/lib/WebSocket/Application/Application.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
     private $clients = array();
