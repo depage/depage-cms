@@ -4,8 +4,11 @@
 <!-- TODO: strip spaces correctly -->
 <xsl:output method="html" omit-xml-declaration="yes" />
 
-<xsl:template match="dpg:pages">
+<!-- ignore root element, only transform children -->
+<xsl:template match="/*">
+    <ul>
     <xsl:apply-templates />
+    </ul>
 </xsl:template>
 
 <xsl:template match="node()">
