@@ -3,12 +3,15 @@
 namespace depage\websocket\jstree;
 
 class jstree_delta_updates {
-    function __construct($table_prefix, $db, $xmldb, $doc_id, $seq_nr = 0) {
+    function __construct($table_prefix, $db, $xmldb, $doc_id, $seq_nr = -1) {
         $this->table_name = $table_prefix . "_delta_updates";
         $this->db = $db;
         $this->xmldb = $xmldb;
         $this->doc_id = (int)$doc_id;
+
         $this->seq_nr = (int)$seq_nr;
+        if ($this->seq_nr == -1)
+            $this->seq_nr = $this->currentChangeNumber();
     }
 
     public function currentChangeNumber() {
