@@ -416,7 +416,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // {{{ testSave_node_root()
     public function testSave_node_root() {
         $xml = $this->xmldb->get_doc("pages");
-        $this->xmldb->save_node("pages", $xml, 1);
+        $this->xmldb->save_node(1, $xml);
 
         $saved_xml = $this->xmldb->get_doc("pages");
 

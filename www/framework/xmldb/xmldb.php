@@ -9,6 +9,7 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
+ * @todo add test if doc_id is not an integer and not a valid document for public methods
  * @todo validate tree solution with left/right columns (nested sets)
  */
 
@@ -227,17 +228,6 @@ class xmldb {
         $docs = $this->get_doc_list($name);
 
         if (isset($docs[$name])) {
-            $this->begin_transaction();
-
-            $query = $this->pdo->prepare(
-                "DELETE FROM {$this->table_xml}
-                WHERE id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'doc_id' => $docs[$name]->id,
-            ));
-
-            $this->clear_cache($docs[$name]->id);
             $query = $this->pdo->prepare(
                 "DELETE
                 FROM {$this->table_docs}
@@ -246,8 +236,7 @@ class xmldb {
             $query->execute(array(
                 'name' => $name,
             ));
-
-            $this->end_transaction();
+            $this->clear_cache($docs[$name]->id);
 
             return true;
         } else {
