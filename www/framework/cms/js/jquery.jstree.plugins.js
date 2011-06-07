@@ -778,6 +778,9 @@ var placeholder;
                 fallbackPollParams:  {
                     "seq_nr": function () {
                         return tree.data("seq_nr");
+                    },
+                    "doc_id": function () {
+                        return tree.data("doc_id");
                     }
                 }
             });
