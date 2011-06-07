@@ -6,6 +6,7 @@ require_once("../../depage/depage.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
     private $clients = array();
+    private $delta_updates = array();
     protected $defaults = array(
         "db" => null,
         "auth" => null,
@@ -41,30 +42,40 @@ class JsTreeApplication extends \Websocket\Application\Application {
             DEPAGE_BASE, // domain
             $this->options->auth->method // method
         );
-
-        $this->delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, PHP_INT_MAX);
     }
 
     public function onConnect($client)
     {
-        $this->clients[] = $client;
+        // TODO: authentication
+        if (empty($this->clients[$client->param])) {
+            $this->clients[$client->param] = array();
+            $this->delta_updates[$client->param] = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $client->param);
+        }
+
+        $this->clients[$client->param][] = $client;
     }
 
     public function onDisconnect($client)
     {
-        $key = array_search($client, $this->clients);
+        $key = array_search($client, $this->clients[$client->param]);
         if ($key) {
-            unset($this->clients[$key]);
+            unset($this->clients[$client->param][$key]);
+
+            if (empty($this->clients[$client->param])) {
+                unset($this->delta_updates[$client->param]);
+            }
         }
     }
 
     public function onTick() {
-        $data = $this->delta_updates->encodedDeltaUpdate();
-        
-        if (!empty($data)) {
-            // send to clients
-            foreach ($this->clients as $client) {
-                $client->send($data);
+        foreach ($this->clients as $doc_id => $clients) {
+            $data = $this->delta_updates[$doc_id]->encodedDeltaUpdate();
+
+            if (!empty($data)) {
+                // send to clients
+                foreach ($clients as $client) {
+                    $client->send($data);
+                }
             }
         }
 
@@ -75,10 +86,12 @@ class JsTreeApplication extends \Websocket\Application\Application {
     public function onData($raw_data, $client)
     {
         // TODO
+        /*
         $data = json_decode($raw_data);
         foreach ($this->clients as $sendto) {
             $sendto->send($data);
         }
+        */
     }
 }
 
