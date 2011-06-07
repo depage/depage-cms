@@ -16,6 +16,8 @@ class Connection
     private $handshaked = false;
 
     private $application = null;
+
+    public $param = null;
     
     public function __construct($server, $socket)
     {
@@ -57,7 +59,10 @@ class Connection
         $origin = $headers['Origin'];
         $host = $headers['Host'];
 
-        $this->application = $this->server->getApplication(substr($path, 1)); // e.g. '/echo'
+        preg_match('/\/(.*?)\/(.*)/', $path, $matches);
+        $this->application = $this->server->getApplication($matches[1]);
+        $this->param = $matches[2];
+
         if (! $this->application) {
             $this->log('Invalid application: ' . $path);
             socket_close($this->socket);
