@@ -796,16 +796,37 @@ var placeholder;
                 }
             }, this);
 
-            var jstree = this;
+            var _this = this;
 
-            tree.bind("move_node.jstree", function (e, data) {
-                jstree._init_update_seq();
+            tree.bind("create.jstree", function (e, data) {
+                _this._init_update_seq();
+                _this._ajax_call({
+                    operation : "create_node",
+                    data : {
+                        "doc_id" : tree.data("doc_id"),
+//                        "id" : data.rslt.parent.attr("id").replace("node_",""), 
+                        "position" : data.rslt.position,
+//                        "title" : data.rslt.name,
+//                        "type" : data.rslt.obj.attr("rel"),
+                        "parent" : data.rslt.parent,
+                        "child" : data.rslt.obj,
+                    },
+                    success : function (r) {
+                        if(r.status) {
+                            $(data.rslt.obj).attr("id", "node_" + r.id);
+                        }
+                        else {
+                            _this._rollback_in_order(this.seq, data.rlbk);
+                        }
+                    },
+                    rollback : data.rlbk,
+                });
+            })
+            .bind("move_node.jstree", function (e, data) {
+                _this._init_update_seq();
                 data.rslt.o.each(function (i) {
-                    $.ajax({
-                        seq : jstree.data.delta_updates.seq++,
-                        async : true,
-                        type: 'POST',
-                        url: settings.postURL + "move_node",
+                    _this._ajax_call({
+                        operation : "move_node",
                         data : {
                             "doc_id" : tree.data("doc_id"),
                             "id" : $(this).attr("id").replace("node_",""),
@@ -813,54 +834,23 @@ var placeholder;
                             "position" : data.rslt.cp + i,
                             "copy" : data.rslt.cy ? 1 : 0
                         },
-                        beforeSend : function () {
-                            jstree.data.delta_updates.active_ajax_requests += 1;
-                        },
                         success : function (r) {
-                            if(!r.status) {
-                                jstree._rollback_in_order(this.seq, data.rlbk);
-                            }
-                            else {
-                                // TODO: seems uneccessary in default case. copy only?
+                            if(r.status) {
                                 $(data.rslt.oc).attr("id", "node_" + r.id);
                                 if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
                                     data.inst.refresh(data.inst._get_parent(data.rslt.oc));
                                 }
                             }
-                        },
-                        error : function () {
-                            // TODO: untested
-                            jstree._rollback_in_order(this.seq, data.rlbk);
-                        },
-                        complete : function () {
-                            jstree.data.delta_updates.active_ajax_requests -= 1;
-                            // apply delta updates if this is last outstanding request
-                            if (!jstree.data.delta_updates.active_ajax_requests) {
-                                jstree.apply_delta_updates();
+                            else {
+                                _this._rollback_in_order(this.seq, data.rlbk);
                             }
-                        }
+                        },
+                        rollback : data.rlbk,
                     });
                 });
             });
         },
         _fn : {
-            _init_update_seq : function () {
-                if (!this.data.delta_updates.active_ajax_requests) {
-                    this.data.delta_updates.last_rollback = 2147483647;
-                    this.data.delta_updates.seq = 0;
-                }
-            },
-            _rollback_in_order : function (seq, rlbk) {
-                // only allow rollbacks in correct order
-                // in case rollback overwrites a successful update wait for a delta update
-                if (seq < this.data.delta_updates.last_rollback) {
-                    this.data.delta_updates.last_rollback = seq;
-                    $.jstree.rollback(rlbk);
-                    // poll newest delta updates to prevent a 3 sec wait if polling is neccessary
-                    if (this.data.delta_updates.ws.poll)
-                        this.data.delta_updates.ws.poll();
-                }
-            },
             apply_delta_updates : function () {
                 var tree = this.get_container();
 
@@ -895,6 +885,51 @@ var placeholder;
                 });
 
                 this.data.delta_updates.pending_updates = [];
+            },        
+            _init_update_seq : function () {
+                if (!this.data.delta_updates.active_ajax_requests) {
+                    this.data.delta_updates.last_rollback = 2147483647;
+                    this.data.delta_updates.seq = 0;
+                }
+            },
+            _rollback_in_order : function (seq, rlbk) {
+                // only allow rollbacks in correct order
+                // in case rollback overwrites a successful update wait for a delta update
+                if (seq < this.data.delta_updates.last_rollback) {
+                    this.data.delta_updates.last_rollback = seq;
+                    $.jstree.rollback(rlbk);
+                    // poll newest delta updates to prevent a 3 sec wait if polling is neccessary
+                    if (this.data.delta_updates.ws.poll)
+                        this.data.delta_updates.ws.poll();
+                }
+            },
+            _ajax_call : function (args) {
+                var tree = this.get_container();
+                var settings = this.get_settings().delta_updates;
+                var _this = this;
+
+                $.ajax({
+                    seq : _this.data.delta_updates.seq++,
+                    async : true,
+                    type: 'POST',
+                    url: settings.postURL + args.operation,
+                    data : args.data,
+                    beforeSend : function () {
+                        _this.data.delta_updates.active_ajax_requests += 1;
+                    },
+                    success : args.success,
+                    error : function () {
+                        // TODO: untested
+                        _this._rollback_in_order(this.seq, args.rollback);
+                    },
+                    complete : function () {
+                        _this.data.delta_updates.active_ajax_requests -= 1;
+                        // apply delta updates if this is last outstanding request
+                        if (!_this.data.delta_updates.active_ajax_requests) {
+                            _this.apply_delta_updates();
+                        }
+                    }
+                });
             },
         },
     });
