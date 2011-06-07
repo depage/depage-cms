@@ -22,12 +22,12 @@ class jstree_delta_updates {
 
     public function recordChange($parent_id) {
         $query = $this->db->prepare("INSERT INTO " . $this->table_name . " (node_id, doc_id) VALUES (?, ?)");
-        $query->execute(array((int)$parent_id), $this->doc_id);
+        $query->execute(array((int)$parent_id, $this->doc_id));
     }
 
     public function discardOldChanges() {
         $query = $this->db->prepare("DELETE FROM " . $this->table_name . " WHERE id <= ? AND doc_id = ?");
-        $query->execute(array($this->seq_nr), $this->doc_id);
+        $query->execute(array($this->seq_nr, $this->doc_id));
     }
 
     private function changedParentIds() {
