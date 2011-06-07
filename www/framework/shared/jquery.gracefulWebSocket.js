@@ -1,7 +1,8 @@
 /**
  * WebSocket with graceful degradation - jQuery plugin
  * @author David Lindkvist
- * @version 0.1
+ * @author Lion Vollnhals
+ * @version 0.1 + extensions
  * 
  * Returns an object implementing the WebSocket API. 
  * 
