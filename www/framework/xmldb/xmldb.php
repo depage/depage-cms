@@ -673,7 +673,7 @@ class xmldb {
      * @return    $parent_id (id) db-id of parent node, false, if
      *            node doesn't exist.
      */
-    private function get_parentId_by_elementId($doc_id, $id) {
+    public function get_parentId_by_elementId($doc_id, $id) {
         $query = $this->pdo->prepare(
             "SELECT xml.id_parent AS id_parent
             FROM {$this->table_xml} AS xml
