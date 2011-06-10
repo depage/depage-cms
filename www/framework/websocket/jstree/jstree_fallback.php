@@ -14,12 +14,6 @@
 namespace depage\websocket\jstree;
 
 class jstree_fallback extends \depage_ui {
-    protected $defaults = array(
-        "db" => null,
-        "auth" => null,
-        "env" => "development",
-    );
-
     // {{{ constructor
     public function __construct($options = NULL) {
         parent::__construct($options);
@@ -46,14 +40,18 @@ class jstree_fallback extends \depage_ui {
             $this->options->auth->method // method
         );
     }
+    // }}}
 
+    // {{{ updates
     public function updates() {
         // TODO: authentication
         // TODO: cleanup old recorded changes based on logged in users
         $delta_updates = new jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], $_REQUEST["seq_nr"]);
         return $delta_updates->encodedDeltaUpdate();
     }
+    // }}}
 
+    // {{{ send_headers
     protected function send_headers($content) {
         header("HTTP/1.0 200 OK");
         header('Content-type: text/json; charset=utf-8');
@@ -61,6 +59,7 @@ class jstree_fallback extends \depage_ui {
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
         header("Pragma: no-cache");
     }
+    // }}}
 }
 
 ?>
