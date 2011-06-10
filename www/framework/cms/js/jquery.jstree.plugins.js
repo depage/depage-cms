@@ -804,12 +804,12 @@ var placeholder;
                     operation : "create_node",
                     data : {
                         "doc_id" : tree.data("doc_id"),
-//                        "id" : data.rslt.parent.attr("id").replace("node_",""), 
+                        "target_id" : data.rslt.parent.attr("id").replace("node_",""), 
                         "position" : data.rslt.position,
-//                        "title" : data.rslt.name,
-//                        "type" : data.rslt.obj.attr("rel"),
-                        "parent" : data.rslt.parent,
-                        "child" : data.rslt.obj,
+                        "node" : {
+                            "type" : data.rslt.obj.attr("rel"),
+                            "name" : data.rslt.name
+                        }
                     },
                     success : function (r) {
                         if(r.status) {

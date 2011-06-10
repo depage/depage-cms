@@ -73,10 +73,13 @@ class cms_jstree extends depage_ui {
      * @param $position position for new child in parent
      */
     public function create_node() {
-        $this->auth->enforce();
+        // TODO: $this->auth->enforce();
 
-        $node = $this->node_from_request();
-        $this->xmldb->add_node($_REQUEST["doc_id"], $node, null, $_REQUEST["position"]);   
+        $node = $this->node_from_request($_REQUEST["node"]);
+        $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
+        $this->recordChange($_REQUEST["doc_id"], array(), array($_REQUEST["target_id"]));
+
+        return new json(array("status" => 1, "id" => $id));
     }
     // }}}
 
@@ -90,7 +93,7 @@ class cms_jstree extends depage_ui {
 
     // {{{ move_node
     public function move_node() {
-        //$this->auth->enforce();
+        // TODO: $this->auth->enforce();
 
         $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array($_REQUEST["target_id"]));
@@ -108,7 +111,7 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ recordChange
-    private function recordChange($doc_id, $ids, $parent_ids) {
+    protected function recordChange($doc_id, $ids, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
 
         foreach ($ids as $id) {
@@ -123,14 +126,14 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ get_doc_id
-    private function get_doc_id($doc_name) {
+    protected function get_doc_id($doc_name) {
         $doc_list = $this->xmldb->get_doc_list($doc_name);
         return $doc_list[$doc_name]->id;
     }
     // }}}
 
     // {{{ get_html_nodes
-    private function get_html_nodes($doc_name) {
+    protected function get_html_nodes($doc_name) {
         $doc = $this->xmldb->get_doc($doc_name);
         $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
 
@@ -139,26 +142,29 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ node_from_request
-    private function node_from_request() {
-        $parent = new DOMElement($_REQUEST["parent"]["type"]);
-        foreach ($_REQUEST["parent"] as $attr => $value) {
-            $parent->setAttribute($attr, $value);
+    protected function node_from_request($request) {
+        $doc = new DOMDocument;
+        $node = new DOMElement($request["type"]);
+        $doc->appendChild($node);
+
+        foreach ($request as $attr => $value) {
+            $node->setAttribute($attr, $value);
         }
 
-        $child = new DOMElement($_REQUEST["child"]["type"]);
-        foreach ($_REQUEST["parent"] as $attr => $value) {
-            $parent->setAttribute($attr, $value);
-        }
-
-        $parent->appendChild($child);
-        return $parent;
+        return $node;
     }
     // }}}
 
-    private function get_current_seq_nr($doc_id) {
+    protected function get_current_seq_nr($doc_id) {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
+
+    // {{{ send_time
+    protected function send_time($time) {
+        // do nothing
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
