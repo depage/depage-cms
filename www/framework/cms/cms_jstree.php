@@ -75,7 +75,7 @@ class cms_jstree extends depage_ui {
      * @param $doc_id document id
      * @param $parent parent
      * @param $child child
-     * @param $pos position for new child in parent
+     * @param $position position for new child in parent
      */
     public function create_node() {
         $this->auth->enforce();
