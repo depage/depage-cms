@@ -807,6 +807,7 @@ var placeholder;
                         "target_id" : data.rslt.parent.attr("id").replace("node_",""), 
                         "position" : data.rslt.position,
                         "node" : {
+                            // TODO: include every .data(...) attribute
                             "type" : data.rslt.obj.attr("rel"),
                             "name" : data.rslt.name
                         }
