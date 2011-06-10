@@ -822,6 +822,23 @@ var placeholder;
                     rollback : data.rlbk,
                 });
             })
+            .bind("rename.jstree", function (e, data) {
+                _this._init_update_seq();
+                _this._ajax_call({
+                    operation : "rename_node",
+                    data : {
+                        "doc_id" : tree.data("doc_id"),
+                        "id" : data.rslt.obj.attr("id").replace("node_",""),
+                        "name" : data.rslt.new_name
+                    },
+                    success : function (r) {
+                        if(!r.status) {
+                            _this._rollback_in_order(this.seq, data.rlbk);
+                        }
+                    },
+                    rollback : data.rlbk,
+                });
+            })
             .bind("move_node.jstree", function (e, data) {
                 _this._init_update_seq();
                 data.rslt.o.each(function (i) {
@@ -843,6 +860,24 @@ var placeholder;
                             }
                             else {
                                 _this._rollback_in_order(this.seq, data.rlbk);
+                            }
+                        },
+                        rollback : data.rlbk,
+                    });
+                });
+            })
+            .bind("remove.jstree", function (e, data) {
+                _this._init_update_seq();
+                data.rslt.obj.each(function () {
+                    _this._ajax_call({
+                        operation : "remove_node",
+                        data : {
+                            "doc_id" : tree.data("doc_id"),
+                            "id" : this.id.replace("node_","")
+                        },
+                        success : function (r) {
+                            if(!r.status) {
+                                data.inst.refresh();
                             }
                         },
                         rollback : data.rlbk,

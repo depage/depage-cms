@@ -85,9 +85,12 @@ class cms_jstree extends depage_ui {
 
     // {{{ rename_node
     public function rename_node() {
-        $this->auth->enforce();
+        // TODO: $this->auth->enforce();
 
         $this->xmldb->set_attribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
+        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array());
+
+        return new json(array("status" => 1));
     }
     // }}}
 
@@ -104,9 +107,13 @@ class cms_jstree extends depage_ui {
 
     // {{{ remove_node
     public function remove_node() {
-        $this->auth->enforce();
+        // TODO: $this->auth->enforce();
 
+        // record change before unlink, because node will not exist afterwards
+        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array());
         $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+
+        return new json(array("status" => 1));
     }
     // }}}
 
