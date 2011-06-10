@@ -51,6 +51,12 @@ class jstree_fallback extends \depage_ui {
     }
     // }}}
 
+    // {{{ send_time
+    protected function send_time($time) {
+        // do nothing
+    }
+    // }}}
+
     // {{{ send_headers
     protected function send_headers($content) {
         header("HTTP/1.0 200 OK");
