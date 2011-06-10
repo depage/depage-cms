@@ -12,13 +12,27 @@
 
 class depage_ui {
     // {{{ default config
-    protected $defaults = array(
+    public $defaults = array(
+        'auth' => null,
+        'db' => array(
+            'dsn' => "mysql:dbname=;host=localhost",
+            'user' => "root",
+            'password' => "",
+            'prefix' => "tt",
+        ),
+        'env' => "development",
+        'lang' => array(
+            'domain' => 'messages',
+            'subdomain_to_locale' => array(
+                'en' => 'en_US',
+            ),
+        ),
     );
     protected $options = array();
     // }}}
 
     protected $urlpath = null;
-
+    public $locale = null;
 
     // {{{ constructor
     /**
@@ -30,9 +44,21 @@ class depage_ui {
      */
     public function __construct($options = NULL) {
         $conf = new config($options);
-        $this->options = $conf->getFromDefaults($this->defaults);
+        $this->options = $conf->getDefaultsFromClass($this);
+    }
+    // }}}
+    // {{{ init()
+    /**
+     * initialize needed objects like pdo or auth-objects
+     *
+     * @return  null
+     */
+    public function init() {
+        $this->log = new log(array(
+            'file' => "logs/" . get_class($this) . ".log",
+        ));
 
-        $this->log = new log();
+        $this->set_language();
     }
     // }}}
     
@@ -45,7 +71,8 @@ class depage_ui {
      * @return  null
      */
     public function run() {
-        $this->set_language();
+        // starting time
+        $time_start = microtime(true);
 
         // get depage specific query string
         // @todo use parseurl?
@@ -58,16 +85,19 @@ class depage_ui {
             $dp_query_string = '';
         }
         $dp_params = explode("/", $dp_request_path);
+
         // ignore trailing '/', so that params are equal with or without the trailing '/'
         if ($dp_request_path[strlen($dp_request_path) - 1] == '/')
             array_pop($dp_params);
 
-        $this->urlpath = $dp_params;
+        $this->urlpath = $dp_request_path;
         
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
 
         try {
+            $this->init();
+
             if ($dp_func == "") {
                 // show index page
                 $content = $this->index();
@@ -78,6 +108,7 @@ class depage_ui {
                 // show error for notfound
                 $content = $this->notfound();
             }
+            $content = $this->package($content);
         } catch (Exception $e) {
             $error = (object) array(
                 'exception' => $e,
@@ -89,15 +120,16 @@ class depage_ui {
             $content = $this->error($error, $this->options->env);
         }
 
-        $this->urlpath = $dp_request_path;
-        $content = $this->package($content);
-
         $this->send_headers($content);
         if (false && is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
             echo($content);
         }
+
+        // finishing time
+        $time = microtime(true) - $time_start;
+        echo("<!-- $time sec -->");
     }
     // }}}
     // {{{ send_headers
@@ -201,8 +233,9 @@ class depage_ui {
      * overwrite this method to change this
      */
     protected function set_language($locale = null) {
-        if (empty($locale)) 
+        if (empty($locale)) {
             $locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']); 
+        }
 
         $this->log->log("set_language: setting locale to $locale");
 
@@ -215,6 +248,8 @@ class depage_ui {
 
         // Choose domain
         textdomain($this->options->lang->domain);
+
+        $this->locale = $locale;
     } 
     // }}}
 }

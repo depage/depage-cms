@@ -20,6 +20,8 @@ class cache {
             return new \depage\cache\cache_memcached($prefix, $options);
         } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
             return new \depage\cache\cache_memcache($prefix, $options);
+        } elseif ($options['disposition'] == "uncached") {
+            return new \depage\cache\cache_uncached($prefix, $options);
         } else {
             return new \depage\cache\cache($prefix, $options);
         }

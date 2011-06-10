@@ -13,11 +13,6 @@
 class cms_ui extends depage_ui {
     protected $html_options = array();
     protected $basetitle = "";
-    protected $defaults = array(
-        "db" => null,
-        "auth" => null,
-        "env" => "development",
-    );
 
     // {{{ constructor
     public function __construct($options = NULL) {
