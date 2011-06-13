@@ -194,10 +194,10 @@ class html {
                 $src = JSMin::minify($src);
 
                 // save cache file
-                $cache->set_file($identifier, $src, true);
+                $cache->setFile($identifier, $src, true);
             }
 
-            echo("<script type=\"text/javascript\" src=\"" . $cache->geturl($identifier) . "\"></script>\n");
+            echo("<script type=\"text/javascript\" src=\"" . $cache->getUrl($identifier) . "\"></script>\n");
         } else {
             // development environement
             foreach ($files as $file) {
@@ -252,10 +252,10 @@ class html {
                 $src = CssMin::minify($src);
 
                 // save cache file
-                $cache->set_file($identifier, $src, true);
+                $cache->setFile($identifier, $src, true);
             }
 
-            echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->geturl($identifier) . "\">\n");
+            echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->getUrl($identifier) . "\">\n");
         } else {
             // development environement
             foreach ($files as $file) {
