@@ -27,7 +27,6 @@ class cms_jstree extends depage_ui {
             )
         );
 
-        // TODO init correctly
         $this->prefix = "dp_proj_{$this->pdo->prefix}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
@@ -45,8 +44,6 @@ class cms_jstree extends depage_ui {
             'clean' => "space",
             'env' => $this->options->env,
         );
-
-//        $this->delta_updates = new delta_updates ("dp_proj_{$this->pdo->prefix}", $this->pdo);
     }
     // }}}
 
