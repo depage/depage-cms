@@ -52,7 +52,7 @@ class cms_jstree extends depage_ui {
 
     // {{{ index
     public function index($doc_name = "pages") {
-        // $this->auth->enforce();
+        $this->auth->enforce();
         $doc_id = $this->get_doc_id($doc_name);
 
         $h = new html("jstree.tpl", array(
@@ -72,7 +72,7 @@ class cms_jstree extends depage_ui {
      * @param $position position for new child in parent
      */
     public function create_node() {
-        // TODO: $this->auth->enforce();
+        $this->auth->enforce();
 
         $node = $this->node_from_request($_REQUEST["node"]);
         $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
@@ -84,7 +84,7 @@ class cms_jstree extends depage_ui {
 
     // {{{ rename_node
     public function rename_node() {
-        // TODO: $this->auth->enforce();
+        $this->auth->enforce();
 
         $this->xmldb->set_attribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
         $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
@@ -96,7 +96,7 @@ class cms_jstree extends depage_ui {
 
     // {{{ move_node
     public function move_node() {
-        // TODO: $this->auth->enforce();
+        $this->auth->enforce();
 
         $old_parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
@@ -108,7 +108,7 @@ class cms_jstree extends depage_ui {
 
     // {{{ remove_node
     public function remove_node() {
-        // TODO: $this->auth->enforce();
+        $this->auth->enforce();
 
         $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
