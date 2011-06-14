@@ -28,7 +28,6 @@ class jstree_fallback extends \depage_ui {
             )
         );
 
-        // TODO init correctly
         $this->prefix = "dp_proj_{$this->pdo->prefix}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
@@ -44,7 +43,8 @@ class jstree_fallback extends \depage_ui {
 
     // {{{ updates
     public function updates() {
-        // TODO: authentication
+        $this->auth->enforce();
+
         // TODO: cleanup old recorded changes based on logged in users
         $delta_updates = new jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], $_REQUEST["seq_nr"]);
         return $delta_updates->encodedDeltaUpdate();
