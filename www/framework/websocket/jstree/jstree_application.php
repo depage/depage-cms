@@ -1,7 +1,7 @@
 <?php
 
-// TODO: convert to autoloader
 require_once("framework/depage/depage.php");
+// TODO: convert to autoloader
 require_once("framework/websocket/lib/WebSocket/Application/Application.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
@@ -85,13 +85,7 @@ class JsTreeApplication extends \Websocket\Application\Application {
 
     public function onData($raw_data, $client)
     {
-        // TODO
-        /*
-        $data = json_decode($raw_data);
-        foreach ($this->clients as $sendto) {
-            $sendto->send($data);
-        }
-        */
+        // do nothing, only send data in onTick() because fallback clients do not support websockets
     }
 }
 
