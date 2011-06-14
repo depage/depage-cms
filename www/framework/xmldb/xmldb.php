@@ -1092,8 +1092,9 @@ class xmldb {
      * @param    $id (int) db-id of node to get
      * @param    $add_id_attribute (bool) true, if you want to add the db-id attributes
      *            to xml-definition, false to remove them.
+     * @param    $level (int) number of recursive get_childnodes_by_parentid calls. how deep to traverse the tree.
      */
-    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
+    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true, $level = PHP_INT_MAX) {
         global $conf;
 
         $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
@@ -1153,7 +1154,7 @@ class xmldb {
                 $xml_str .= $node_data;
                 
                 //add child_nodes
-                $xml_str .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+                $xml_str .= $this->get_childnodes_by_parentid($doc_id, $row->id, $level);
 
                 $xml_str .= "</{$row->name}>";
 
@@ -1187,10 +1188,10 @@ class xmldb {
      *
      * @param   $doc_id (int) document id
      * @param   $parent_id (int) id of parent-node
-     *
+     * @param   $level (int) number of recursive calls. how deep to traverse the tree.
      * @return  $xml_doc (string) xml node definition of node
      */
-    protected function get_childnodes_by_parentid($doc_id, $parent_id) {
+    protected function get_childnodes_by_parentid($doc_id, $parent_id, $level = PHP_INT_MAX) {
         static $query = null;
 
         // prepare query
@@ -1225,7 +1226,9 @@ class xmldb {
                 $xml_doc .= $node_data;
                 
                 //add child_nodes
-                $xml_doc .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+                if ($level > 0) {
+                    $xml_doc .= $this->get_childnodes_by_parentid($doc_id, $row->id, $level - 1);
+                }
 
                 $xml_doc .= "</{$row->name}>";
             //get TEXT_NODES
