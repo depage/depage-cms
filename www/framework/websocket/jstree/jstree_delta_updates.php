@@ -34,7 +34,6 @@ class jstree_delta_updates {
     }
 
     private function changedParentIds() {
-        // TODO: transaction for all db requests?
         $parent_ids = array();
 
         $query = $this->db->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
