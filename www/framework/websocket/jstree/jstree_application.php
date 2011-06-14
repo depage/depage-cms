@@ -31,22 +31,22 @@ class JsTreeApplication extends \Websocket\Application\Application {
             )
         );
 
-        // TODO init correctly
         $this->prefix = "dp_proj_{$this->pdo->prefix}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
-        // get auth object
+        /* get auth object
         $this->auth = \auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method
-        );
+        ); */
     }
 
     public function onConnect($client)
     {
-        // TODO: authentication
+        // TODO: authentication ? beware of timeouts
+
         if (empty($this->clients[$client->param])) {
             $this->clients[$client->param] = array();
             $this->delta_updates[$client->param] = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $client->param);
