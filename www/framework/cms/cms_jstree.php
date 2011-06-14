@@ -77,7 +77,7 @@ class cms_jstree extends depage_ui {
 
         $node = $this->node_from_request($_REQUEST["node"]);
         $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
-        $this->recordChange($_REQUEST["doc_id"], array(), array($_REQUEST["target_id"]));
+        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
 
         return new json(array("status" => 1, "id" => $id));
     }
@@ -88,7 +88,8 @@ class cms_jstree extends depage_ui {
         // TODO: $this->auth->enforce();
 
         $this->xmldb->set_attribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array());
+        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
 
         return new json(array("status" => 1));
     }
@@ -98,8 +99,9 @@ class cms_jstree extends depage_ui {
     public function move_node() {
         // TODO: $this->auth->enforce();
 
+        $old_parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array($_REQUEST["target_id"]));
+        $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
 
         return new json(array("status" => 1));
     }
@@ -109,21 +111,17 @@ class cms_jstree extends depage_ui {
     public function remove_node() {
         // TODO: $this->auth->enforce();
 
-        // record change before unlink, because node will not exist afterwards
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array());
+        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
 
         return new json(array("status" => 1));
     }
     // }}}
 
     // {{{ recordChange
-    protected function recordChange($doc_id, $ids, $parent_ids) {
+    protected function recordChange($doc_id, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
-
-        foreach ($ids as $id) {
-            $parent_ids[] = $this->xmldb->get_parentId_by_elementId($doc_id, $id);
-        }
 
         $unique_parent_ids = array_unique($parent_ids);
         foreach ($unique_parent_ids as $parent_id) {
