@@ -901,12 +901,20 @@ var placeholder;
 
                         for (var id in data.nodes) {
                             var node = $("#node_" + id);
+                            var second_level_childs = node.find("> ul > li:has(ul)");
+
                             var children = node.children("ul");
                             // replace children if present, else create new children by appending
                             if (children.length)
                                 children.replaceWith(data.nodes[id]);
                             else
                                 node.append(data.nodes[id]);
+
+                            // reattach second level children
+                            second_level_childs.each(function () {
+                                $("#" + $(this).attr("id")).append($(this).children("ul"));
+                            });
+
                         }
 
                         // all jstree-open classes were lost: restore them

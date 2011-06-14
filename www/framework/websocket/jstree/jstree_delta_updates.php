@@ -53,13 +53,13 @@ class jstree_delta_updates {
     }
 
     // returns an associative array of parent node id keys and children node values, that where involved in a recent change
-    // TODO: optimization, only get immediate children and replace partially in client
+    // only get immediate children and replace partially in client
     public function changedNodes() {
         $parent_ids = $this->changedParentIds();
 
         $changed_nodes = array();
         foreach ($parent_ids as $parent_id) {
-            $changed_nodes[$parent_id] = $this->xmldb->get_subdoc_by_elementId($this->doc_id, $parent_id);
+            $changed_nodes[$parent_id] = $this->xmldb->get_subdoc_by_elementId($this->doc_id, $parent_id, true, 0);
         }
 
         return $changed_nodes;
