@@ -68,8 +68,7 @@ class cms_jstree extends depage_ui {
     // {{{ create_node
     /**
      * @param $doc_id document id
-     * @param $parent parent
-     * @param $child child
+     * @param $node child node data
      * @param $position position for new child in parent
      */
     public function create_node() {
