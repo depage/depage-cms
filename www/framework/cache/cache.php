@@ -16,15 +16,17 @@ class cache {
 
     // {{{ factory
     public static function factory($prefix, $options = array()) {
-        if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
-            return new \depage\cache\cache_memcached($prefix, $options);
-        } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
-            return new \depage\cache\cache_memcache($prefix, $options);
-        } elseif ($options['disposition'] == "uncached") {
-            return new \depage\cache\cache_uncached($prefix, $options);
-        } else {
-            return new \depage\cache\cache($prefix, $options);
+        if (isset($options['disposition'])) {
+            if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
+                return new \depage\cache\cache_memcached($prefix, $options);
+            } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
+                return new \depage\cache\cache_memcache($prefix, $options);
+            } elseif ($options['disposition'] == "uncached") {
+                return new \depage\cache\cache_uncached($prefix, $options);
+            }
         }
+
+        return new \depage\cache\cache($prefix, $options);
     }
     // }}}
 
