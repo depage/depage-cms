@@ -898,29 +898,34 @@ var placeholder;
                     if (new_seq_nr > old_seq_nr) {
                         // remember which tree nodes were open
                         var open_nodes = $(".jstree-open");
+                        var clicked_node = $(".jstree-clicked").parent();
 
                         for (var id in data.nodes) {
-                            var node = $("#node_" + id);
-                            var second_level_childs = node.find("> ul > li:has(ul)");
+                            if (data.nodes[id]) {
+                                var node = $("#node_" + id);
+                                var second_level_childs = node.find("> ul > li:has(ul)");
 
-                            var children = node.children("ul");
-                            // replace children if present, else create new children by appending
-                            if (children.length)
-                                children.replaceWith(data.nodes[id]);
-                            else
-                                node.append(data.nodes[id]);
+                                var children = node.children("ul");
+                                // replace children if present, else create new children by appending
+                                if (children.length)
+                                    children.replaceWith(data.nodes[id]);
+                                else
+                                    node.append(data.nodes[id]);
 
-                            // reattach second level children
-                            second_level_childs.each(function () {
-                                $("#" + $(this).attr("id")).append($(this).children("ul"));
-                            });
-
+                                // reattach second level children
+                                second_level_childs.each(function () {
+                                    $("#" + $(this).attr("id")).append($(this).children("ul"));
+                                });
+                            }
                         }
 
                         // all jstree-open classes were lost: restore them
                         open_nodes.each(function () {
                             $("#" + $(this).attr("id")).filter(":has(li)").addClass("jstree-open");
                         });
+                        // jstree-clicked class was lost: restore it
+                        $("#" + clicked_node.attr("id")).children("a").addClass("jstree-clicked");
+
                         // fix up remaining jstree classes
                         tree.jstree("clean_node");
 
