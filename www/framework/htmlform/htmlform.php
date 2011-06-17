@@ -24,8 +24,6 @@
  * You can find a list of available input-class in @link depage::htmlform::elements 
  * elements@endlink.
  *
- * @link simple.php simple.php @endlink
- *
  * @endsection 
  *
  * @subpage developer
@@ -41,6 +39,12 @@
 /**
  * @page developer Developer guide
  *
+ * @section prerequisites Developer Prerequisites
+ *
+ * - PHP 5.3
+ * - PHPUnit 3.5 (to run included unit tests)
+ * - Doxygen 1.7.2 (to generate documentation)
+ *
  * @section style Coding style
  *
  * Generally, follow Zend coding style
@@ -52,7 +56,13 @@
  *
  * To run the tests:
  *
- * <pre>$ make tests</pre>
+ * <pre>$ make test</pre>
+ *
+ * @section Documentation
+ *
+ * To generate documentation:
+ *
+ * <pre>$ make doc</pre>
  **/
 
 // {{{ namespace
@@ -82,7 +92,6 @@
  **/
 namespace depage\htmlform;
 
-use depage\htmlform\elements;
 // }}}
 
 // {{{ autoloader

@@ -10,15 +10,14 @@ reliable and validated data from users.
 Features
 --------
 
-- avert form resubmission
 - validation
     - available for standard input elements
     - customizable with regular expressions
-    - customizable with validator functions
-- dividing forms into separate parts (fieldsets and steps)
-- almost complete HTML5 form functionality
+- HTML5 form features
     - attributes : placeholder, autofocus, textbox datalists, title, pattern
     - input elements : boolean (checkbox), email, hidden, multiple (checkbox, select list), number, password, range, search, single (radio, select list), tel, text, textarea, url
+- averts form resubmission
+- divide forms into ѕeparate parts
 - neat return values with appropriate data types
 - easy language localisation
 - session timeout
@@ -32,14 +31,12 @@ Prerequisites
 For more information
 --------------------
 
-You can fork us at:
-http://github.com/jonasjonas/depage-forms/
-
-You find the documentation at:
-http://docs.depage.net/depage-forms/
-
-For more information about depage-cms go to:
-http://www.depagecms.net/
+- You can fork us at:
+  http://github.com/jonasjonas/depage-forms/
+- You find the documentation at:
+  http://docs.depage.net/depage-forms/
+- For more information about depage-cms go to:
+  http://www.depagecms.net/
 
 License (dual)
 --------------
