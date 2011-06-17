@@ -17,8 +17,7 @@
 
 <xsl:template match="node()">
     <xsl:variable name="id" select="@db:id" />
-    <!-- TODO: <xsl:variable name="type" select="@type" /> -->
-    <xsl:variable name="type" select="'folder'" />
+    <xsl:variable name="type" select="name()" />
     <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint" select="@hint" />
 
