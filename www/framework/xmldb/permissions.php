@@ -17,9 +17,10 @@ class permissions {
     protected $allow_element_in = array();
     protected $allow_unlink_of = array();
 
-    public function __construct($allow_element_in = array(), $allow_unlink_of = array()) {
-        $this->allow_element_in = $allow_element_in;
-        $this->allow_unlink_of = $allow_unlink_of;
+    public function __construct($serialized_value = null) {
+        if ($serialized_value) {
+            list($this->allow_element_in, $this->allow_unlink_of) = unserialize($serialized_value);
+        }
     }
 
     public function allow_element_in($element, $target) {
@@ -67,7 +68,7 @@ class permissions {
     }
 
     public function __toString() {
-        return serialize($this);
+        return serialize(array($this->allow_element_in, $this->allow_unlink_of));
     }
 }
 
