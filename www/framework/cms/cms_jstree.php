@@ -47,6 +47,15 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
+    // {{{ destructor
+    public function __destruct() {
+        if (isset($_REQUEST["doc_id"])) {
+            $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], 0);
+            $delta_updates->discardOldChanges();
+        }
+    }
+    // }}}
+
     // {{{ index
     public function index($doc_name = "pages") {
         $this->auth->enforce();

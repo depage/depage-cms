@@ -914,7 +914,10 @@ var placeholder;
 
                                 // reattach second level children
                                 second_level_childs.each(function () {
-                                    $("#" + $(this).attr("id")).append($(this).children("ul"));
+                                    var node = $("#" + $(this).attr("id"));
+                                    // only append old ul if there is no ul already present, because this was a partial update
+                                    if (!node.children("ul").length)
+                                        node.append($(this).children("ul"));
                                 });
                             }
                         }
