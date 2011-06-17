@@ -891,7 +891,13 @@ var placeholder;
                 var tree = this.get_container();
 
                 $.each(this.data.delta_updates.pending_updates, function (index, event) {
-                    var data = $.evalJSON(event.data);
+                    try {
+                        var data = $.evalJSON(event.data);
+                    } catch (e) {
+                        // continue
+                        return true;
+                    }
+
                     // only overwrite tree nodes if data is newer
                     var old_seq_nr = parseInt(tree.data("seq_nr"));
                     var new_seq_nr = parseInt(data.seq_nr);
