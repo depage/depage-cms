@@ -202,41 +202,6 @@ $(function () {
                 "url" : "../framework/cms/css/jstree.css"
             }
 		})
-        // TODO: move to plugin
-		.bind("create.jstree", function (e, data) {
-                        $("#notification").text("created node for parent " + data.rslt.parent.attr("id") + ", pos: " + data.rslt.position + ", title: " + data.rslt.name);
-                        
-			$.post(
-				"./server.php", 
-				{ 
-					"operation" : "create_node", 
-					"id" : data.rslt.parent.attr("id").replace("node_",""), 
-					"position" : data.rslt.position,
-					"title" : data.rslt.name,
-					"type" : data.rslt.obj.attr("rel"),
-                    "parent" : data.rslt.parent,
-				}, 
-				function (r) {
-					if(r.status) {
-						$(data.rslt.obj).attr("id", "node_" + r.id);
-					}
-					else {
-						$.jstree.rollback(data.rlbk);
-					}
-				}
-			);
-		})
-		.bind("remove.jstree", function (e, data) {
-                        var not = "";
-			data.rslt.obj.each(function () {
-                            not += "removed node " + this.id;
-                        });
-                        $("#notification").text(not);
-		})
-		.bind("rename.jstree", function (e, data) {
-                        $("#notification").text("renamed node " + data.rslt.obj.attr("id") + " from " + data.rslt.old_name + " to " + data.rslt.new_name + "\n");
-		})
-
 });
 
 </script>
