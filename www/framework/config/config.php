@@ -37,7 +37,12 @@ class config implements Iterator {
         $values = include $configFile;
 
         $urls = array_keys($values);
-        $acturl = $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"];
+        if (!isset($_SERVER['HTTP_HOST'])) {
+            $_SERVER['HTTP_HOST'] = "";
+            $_SERVER['REQUEST_URI'] = "";
+        }
+
+        $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         foreach ($urls as $url) {
             $pattern = "/(" . str_replace(array("?", "*", "/"), array("(.)", "(.*)", "\/"), $url) . ")/";
             if (preg_match($pattern, $acturl, $matches)) {
@@ -46,7 +51,9 @@ class config implements Iterator {
                 $this->setConfig($values[$url]);
             }
         }
-        if ($depage_base[0] != "*") {
+        if (!isset($depage_base[0])) {
+            define("DEPAGE_BASE", "");
+        } else if ($depage_base[0] != "*") {
             define("DEPAGE_BASE", "http://" . $depage_base);
         } else {
             define("DEPAGE_BASE", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"]);
