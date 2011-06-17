@@ -583,6 +583,43 @@ class xmldb {
     }
     // }}}
 
+    // {{{ get_permissions()
+    private function get_permissions($doc_id) {
+        $query = $this->pdo->prepare(
+            "SELECT docs.permissions AS permissions
+            FROM {$this->table_docs} AS docs
+            WHERE docs.id = :doc_id
+            LIMIT 1"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
+
+        $result = $query->fetchObject();
+        return new permissions($result->permissions);
+    }
+    // }}}
+
+    // {{{ allow_move()
+    private function allow_move($doc_id, $node_id, $target_id) {
+        $query = $this->pdo->prepare(
+            "SELECT name FROM {$this->table_xml} WHERE id = :node_id AND id_doc = :doc_id
+            UNION ALL SELECT name FROM {$this->table_xml} WHERE id = :target_id AND id_doc = :doc_id"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+            'node_id' => $node_id,
+            'target_id' => $target_id,
+        ));
+
+        $node = $query->fetchObject();
+        $target = $query->fetchObject();
+
+        $permissions = $this->get_permissions($doc_id);
+        return $permissions->is_element_allowed_in($node->name, $target->name);
+    }
+    // }}}
+
     // {{{ get_free_elementIds()
     /**
      * gets unused db-node-ids for saving nodes
@@ -1612,6 +1649,7 @@ class xmldb {
         return array();
     }
     // }}}
+
     // {{{ move_node()
     /**
      * moves node in database
@@ -1625,6 +1663,10 @@ class xmldb {
     public function move_node($doc_id, $node_id, $target_id, $target_pos) {
         //echo("doc_id: $doc_id\nnode_id: $node_id\ntarget_id: $target_id\ntarget_pos: $target_pos\n");
         //return false;
+
+        if (!$this->allow_move($doc_id, $node_id, $target_id)) {
+            return false;
+        }
 
         $this->begin_transaction();
         
@@ -1686,6 +1728,8 @@ class xmldb {
         }
         
         $this->end_transaction();
+
+        return true;
     }
     // }}}
     // {{{ copy_node()
