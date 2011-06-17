@@ -109,7 +109,12 @@ class auth_user {
      * @return      auth_user
      */
     public function get_useragent() {
-        $browscap = new browscap(DEPAGE_CACHE_PATH . "browscap/");
+        $cachepath = DEPAGE_CACHE_PATH . "browscap/";
+        if (!is_dir($cachepath)) {
+            mkdir($cachepath, 0777, true);
+        }
+
+        $browscap = new browscap($cachepath);
         $browscap->silent = true;
         $info = $browscap->getBrowser($this->useragent);
 

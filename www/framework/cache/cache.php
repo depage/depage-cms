@@ -16,6 +16,10 @@ class cache {
 
     // {{{ factory
     public static function factory($prefix, $options = array()) {
+        if (!isset($options['disposition'])) {
+            $options['disposition'] = "file";
+        }
+
         if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
             return new \depage\cache\cache_memcached($prefix, $options);
         } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
@@ -77,11 +81,11 @@ class cache {
     public function setFile($key, $data, $saveGzippedContent = false) {
         $path = $this->get_cache_path($key);
 
-        $success = file_put_contents($path, $data);
-        if (!$success) {
+        if (!is_dir(dirname($path))) { 
             mkdir(dirname($path), 0777, true);
-            $success = file_put_contents($path, $data);
         }
+        $success = file_put_contents($path, $data);
+
         if ($saveGzippedContent) {
             $success = $success && file_put_contents($path . ".gz", gzencode($data));
         }
