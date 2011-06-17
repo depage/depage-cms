@@ -1,7 +1,7 @@
 <ul id="userlist">
     <?php foreach($this->users as $user) { ?>
         <li>
-            <a href="mailto:<?php html::t($user->email); ?>">
+            <a href="user/<?php html::t($user->name); ?>/">
                 <?php html::t($user->fullname); ?>
             </a> on <?php html::t($user->get_useragent()); ?>
         </li>
