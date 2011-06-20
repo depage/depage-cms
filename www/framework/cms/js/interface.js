@@ -269,31 +269,6 @@ function edit_page(page) {
     }
 }
 /* }}} */
-/* {{{ logout */
-function logout() {
-    var logouturl = baseurl + "logout/";
-
-    $.ajax({ 
-        type: "GET", 
-        url: logouturl + "now/",
-        cache: false,
-        async: true,
-        username: "logout",
-        password: "",
-        complete: function(XMLHttpRequest, textStatus) {
-            if (window.location != logouturl) {
-                window.location = logouturl;
-            } else {
-                setTimeout(function() {
-                    window.location = baseurl;
-                }, 5000);
-            }
-        }
-    });
-
-    return false;
-}
-/* }}} */
 /* {{{ publish */
 function publish(project) {
     $("<div></div>").load("framework/interface/status.php", {
@@ -396,135 +371,104 @@ function projectlisting_add_events() {
 }
 /* }}} */
 
-/* {{{ update_tasklist */
-function update_tasklist() {
-    var box = $("#box_tasks");
-    var tasks = $("#tasks");
+(function(window) {
+// add depage-object
+var depage = {
+    /* {{{ init() */
+    init: function() {
+        this.basetitle = window.document.title;
+        this.baseurl = $("base")[0].href;
+        this.timeouts = [];
 
-    if (tasks.length == 1) {
-        tasks.load("status.php?type=tasks", null, function() {
-            if (tasks.html() == "") {
-                var time = "5000";
-                box.hide();
-            } else {
-                var time = "500";
-                box.show();
-            }
+        this.registerEvents();
 
-            timeout['tasks'] = setTimeout("update_tasklist()", time);
-        });
-    }
-}
-/* }}} */
-/* {{{ update_userlist */
-function update_userlist() {
-    var box = load_box("users", function() {
-        timeout['userlist'] = setTimeout("update_userlist()", 10000);
-    });
-}
-/* }}} */
+        $("form input.textbutton, form.depage-form :submit").depage('replaceTextButtons');
+        $(".depage-scroller").depage('customScrollBar');
+    },
+    /* }}} */
+    /* {{{ registerEvents() */
+    registerEvents: function () {
+        // update the userlist every 10 seconds
+        this.timeouts['userlist'] = setInterval(depage.updateUserlist, 10000);
 
-/* {{{ load_box */
-function load_box(selector, successFunc) {
-    var box = $("#box_" + selector);
-
-    if (box.length == 1) {
-        box.load(baseurl + selector + "/ #box_" + selector + "?ajax=1 > *", null, successFunc);
-    }
-
-    return box;
-}
-/* }}} */
-
-/* {{{ attach_events */
-function attach_events() {
-    $("#logout").click( logout );
-    if ($("#box_logout").length > 0) {
-        logout();
-    }
-
-    $(".centered_box .icon").css({
-        opacity: 0.3
-    });
-    $(".centered_box").hover( function() {
-        $(".icon", this).animate({
-            opacity: 1
-        }, "fast");
-    }, function() {
-        $(".icon", this).animate({
-            opacity: 0.3
-        }, "fast");
-    });
-
-    // {{{ replace buttons by textlinks
-    var formnum = 0;
-
-    $("form").each(function() {
-        var form = this;
-
-        if (!form.id) {
-            form.id = "textbutton" + formnum++ + "form";
+        // add logout function to logout-button
+        $("#logout").click( depage.logout );
+        if ($("#box_logout").length > 0) {
+            depage.logout();
         }
-        $("input.textbutton", form).each( function() {
-            $(this).hide();
 
-            if (this.type == "submit") {
-                ionclick = "document.forms." + form.id + ".submit(); return false;";
-            } else if (this.type == "reset") {
-                ionclick = "document.forms." + form.id + ".reset(); return false;";
-            } else {
-                ionclick = this.onclick;
-            }
-
-            $(this).after("<a href=\"#\" onclick=\"" + ionclick + "\" class=\"textbutton\">" + this.value + "</a>");
+        // add hover events to icons
+        $(".centered_box .icon").css({
+            opacity: 0.3
         });
-    });
-    // }}}
+        $(".centered_box").hover( function() {
+            $(".icon", this).animate({
+                opacity: 1
+            }, "fast");
+        }, function() {
+            $(".icon", this).animate({
+                opacity: 0.3
+            }, "fast");
+        });
+
+        // remove border from links after click
+        $("a").click( function() {
+            this.blur();
+
+            return true;
+        });
+    },
+    /* }}} */
+
+    /* {{{ loadBox */
+    loadBox: function (selector, successFunc) {
+        var box = $("#box_" + selector);
+
+        if (box.length == 1) {
+            box.load(this.baseurl + selector + "/ #box_" + selector + "?ajax=1 > *", null, successFunc);
+        }
+
+        return box;
+    },
+    /* }}} */
+
+    /* {{{ logout */
+    logout: function () {
+        var logouturl = depage.baseurl + "logout/";
+
+        $.ajax({ 
+            type: "GET", 
+            url: logouturl + "now/",
+            cache: false,
+            async: true,
+            username: "logout",
+            password: "",
+            complete: function(XMLHttpRequest, textStatus) {
+                if (window.location != logouturl) {
+                    window.location = logouturl;
+                } else {
+                    setTimeout(function() {
+                        window.location = depage.baseurl;
+                    }, 5000);
+                }
+            }
+        });
+
+        return false;
+    },
+    /* }}} */
+    /* {{{ updateUserlist */
+    updateUserlist: function () {
+        var box = depage.loadBox("users");
+    },
+    /* }}} */
 }
-/* }}} */
 
-/* {{{ add_file_chooser */
-function add_file_chooser() {
-    if (document.getElementById("file" + chooserNum).value != "" && chooserNum < 9) {
-        chooserNum++;
-        document.getElementById("chooser" + chooserNum).style.visibility = "visible";
-    }
-    setTimeout("add_file_chooser()", 200);
-}
-/* }}} */
-/* {{{ add_first_chooser */
-function add_first_chooser() {
-    add_file_chooser();
-}
-/* }}} */
-
-
-chooserNum = 1;
-
-timeout = [];
-
-flashwin = null;
-flashloaded = false;
-
-var basetitle;
-var baseurl;
+return (window.depage = depage);
+})(window);
 
 $(document).ready(function() {
-    basetitle = document.title;
-    baseurl = $("base")[0].href;
-
-    projectlisting_add_events();
-
-    update_tasklist();
-    update_userlist();
-
-    attach_events();
-
-    $("a").click( function() {
-        this.blur();
-
-        return true;
-    });
+    depage.init();
 });
 
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */
