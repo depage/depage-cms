@@ -9,7 +9,6 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 (function( $ ){
-// add depage "namespace" to jquery
     $.extend($.depage, {
         /* {{{ growl */
         /**
