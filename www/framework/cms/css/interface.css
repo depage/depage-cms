@@ -242,6 +242,44 @@ a img {
 
 /* }}} */
 
+/* {{{ depage-scroller */
+.preview {
+    margin-top: 30px;
+    width: 230px;
+    height: 180px;
+    border: 1px solid #dfdfdf;
+}
+.depage-scroller {
+    overflow: hidden;
+    position: relative;
+}
+.depage-scroller-content {
+    padding-right: 7px;
+}
+.depage-scroller .scroll-bar {
+    position: absolute;
+    right: 0;
+    width: 12px;
+    height: 100%;
+}
+.depage-scroller .scroll-bar:hover {
+    background: #dfdfdf;
+    cursor: pointer;
+}
+.depage-scroller .scroll-bar .scroll-handle {
+    position: absolute;
+    right: 0;
+    width: 7px;
+    border-right: 5px solid #dfdfdf;
+}
+.depage-scroller:hover .scroll-bar .scroll-handle {
+    border-right: 5px solid #555555;
+}
+.depage-scroller .scroll-bar:hover .scroll-handle {
+    border-right: 5px solid #ff9900;
+}
+/* }}} */
+
 /* {{{ tasks */
 #box_tasks {
     display: none;
