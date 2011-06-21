@@ -121,7 +121,7 @@ class depage_ui {
         }
 
         $this->send_headers($content);
-        if (false && is_callable(array($content, 'clean'))) {
+        if (is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
             echo($content);
