@@ -25,32 +25,35 @@
 
                 var className = $scrollContent[0].className;
 
-                // wrap into additional depage-scroller div and move classes tp parent
-                var $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"></div>").parent();
+                // wrap into additional depage-scroller divs and move classes tp parent
+                var $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
+                var $scrollOrigin = $scrollFrame.parent();
 
                 // move classes to parent
                 $scrollContent.removeClass(className);
                 $scrollContent.addClass("depage-scroller-content");
 
-                $scrollFrame.attr("style", $scrollContent.attr("style"));
+                $scrollOrigin.attr("style", $scrollContent.attr("style"));
                 $scrollContent.removeAttr("style");
 
                 // add scrollbar and -handle
-                $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollFrame);
+                $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollOrigin);
 
-                var $scrollBar = $(".scroll-bar", $scrollFrame);
-                var $scrollHandle = $(".scroll-handle", $scrollFrame);
+                var $scrollBar = $(".scroll-bar", $scrollOrigin);
+                var $scrollHandle = $(".scroll-handle", $scrollOrigin);
 
                 // add scroll events
                 $scrollFrame.scroll( function() {
-                    $scrollBar.css({
-                        top: $scrollFrame.scrollTop()
-                    });
-
                     var ratio = $scrollContent.height() / $scrollFrame.height();
+                    var t = $scrollFrame.scrollTop() / ratio
+                    var h = $scrollFrame.height() / ratio;
+                    if (h > $scrollFrame.height()) {
+                        h = $scrollFrame.height();
+                    }
+
                     $scrollHandle.css({
-                        height: $scrollFrame.height() / ratio,
-                        top: $scrollFrame.scrollTop() / ratio
+                        height: h,
+                        top: t
                     });
                 });
                 // call scroll event for initialization
