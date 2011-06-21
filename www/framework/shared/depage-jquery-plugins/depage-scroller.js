@@ -36,6 +36,11 @@
                 $scrollOrigin.attr("style", $scrollContent.attr("style"));
                 $scrollContent.removeAttr("style");
 
+                // make origin relative or absolute
+                if ($scrollOrigin.css("position") == "static") {
+                    $scrollOrigin.css("position", "relative");
+                }
+
                 // add scrollbar and -handle
                 $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollOrigin);
 
@@ -45,11 +50,17 @@
                 // add scroll events
                 $scrollFrame.scroll( function() {
                     var ratio = $scrollContent.height() / $scrollFrame.height();
-                    var t = $scrollFrame.scrollTop() / ratio
                     var h = $scrollFrame.height() / ratio;
-                    if (h > $scrollFrame.height()) {
+
+                    if (h >= $scrollFrame.height()) {
                         h = $scrollFrame.height();
+
+                        $scrollBar.hide();
+                    } else {
+                        $scrollBar.show();
                     }
+
+                    var t = $scrollFrame.scrollTop() / ratio;
 
                     $scrollHandle.css({
                         height: h,
@@ -58,6 +69,11 @@
                 });
                 // call scroll event for initialization
                 $scrollFrame.scroll();
+                
+                // call scroll event also when window resizes
+                $(window).resize( function() {
+                    $scrollFrame.scroll();
+                });
 
                 // add mousewheel events
                 $scrollFrame.mousewheel( function(e, delta) {

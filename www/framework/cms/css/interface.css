@@ -276,9 +276,10 @@ a img {
     height: 180px;
     border: 1px solid #dfdfdf;
 }
-.depage-scroller {
+.depage-scroller-frame {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    position: relative;
 }
 .depage-scroller-content {
     padding-right: 7px;
