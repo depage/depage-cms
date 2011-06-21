@@ -28,8 +28,12 @@
                 // wrap into additional depage-scroller div and move classes tp parent
                 var $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"></div>").parent();
 
+                // move classes to parent
                 $scrollContent.removeClass(className);
                 $scrollContent.addClass("depage-scroller-content");
+
+                $scrollFrame.attr("style", $scrollContent.attr("style"));
+                $scrollContent.removeAttr("style");
 
                 // add scrollbar and -handle
                 $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollFrame);
