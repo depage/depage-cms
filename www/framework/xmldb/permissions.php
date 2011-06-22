@@ -93,6 +93,21 @@ class permissions {
         return $valid_children_for;
     }
 
+    public function known_elements() {
+        $known_elements = array_merge(array_keys($this->allow_element_in), $this->allow_unlink_of);
+        foreach ($this->allow_element_in as $element => $targets) {
+            $known_elements = array_merge($known_elements, $targets);
+        }
+
+        foreach ($known_elements as $key => $value) {
+            if ($value == self::wildcard) {
+                unset($known_elements[$key]);
+            }
+        }
+
+        return array_unique($known_elements);
+    }
+
     public function __toString() {
         return serialize(array($this->allow_element_in, $this->allow_unlink_of));
     }
