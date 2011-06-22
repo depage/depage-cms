@@ -4,6 +4,15 @@
  * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
  */
 
+/* default style overrides */
+.jstree-container, .jstree-container input, .jstree-dnd-helper, #vakata-contextmenu { font-size:12px; font-family:Verdana; }
+.jstree-container { width:auto; height:auto; overflow:auto; border:1px solid gray; }
+.jstree-default a { border:1px solid white; border-color: transparent; }
+.jstree li { line-height: 24px !important; min-height: 24px !important;}
+.jstree a { line-height: 24px !important; min-height: 24px !important;}
+.jstree span { margin-left: 10em; font-style: italic; color: #666; font-size: 8px;}
+
+/* default style */
 .jstree-default li, 
 .jstree-default ins { background-image:url("../images/jstree/d.png"); background-repeat:no-repeat; background-color:transparent; }
 .jstree-default li { background-position:-90px 0; background-repeat:repeat-y; }

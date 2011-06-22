@@ -773,14 +773,15 @@ var placeholder;
             this.data.delta_updates.active_ajax_requests = 0;
             this.data.delta_updates.pending_updates = [];
 
-            this.data.delta_updates.ws = $.gracefulWebSocket(settings.webSocketURL, {
+            var webSocketURL = settings.webSocketURL + tree.attr("data-doc-id");
+            this.data.delta_updates.ws = $.gracefulWebSocket(webSocketURL, {
                 fallbackPollURL: settings.fallbackPollURL,
                 fallbackPollParams:  {
                     "seq_nr": function () {
-                        return tree.data("seq_nr");
+                        return tree.attr("data-seq-nr");
                     },
                     "doc_id": function () {
-                        return tree.data("doc_id");
+                        return tree.attr("data-doc-id");
                     }
                 }
             });
@@ -803,7 +804,7 @@ var placeholder;
                 _this._ajax_call({
                     operation : "create_node",
                     data : {
-                        "doc_id" : tree.data("doc_id"),
+                        "doc_id" : tree.attr("data-doc-id"),
                         "target_id" : data.rslt.parent.attr("id").replace("node_",""), 
                         "position" : data.rslt.position,
                         "node" : {
@@ -828,7 +829,7 @@ var placeholder;
                 _this._ajax_call({
                     operation : "rename_node",
                     data : {
-                        "doc_id" : tree.data("doc_id"),
+                        "doc_id" : tree.attr("data-doc-id"),
                         "id" : data.rslt.obj.attr("id").replace("node_",""),
                         "name" : data.rslt.new_name
                     },
@@ -846,7 +847,7 @@ var placeholder;
                     _this._ajax_call({
                         operation : "move_node",
                         data : {
-                            "doc_id" : tree.data("doc_id"),
+                            "doc_id" : tree.attr("data-doc-id"),
                             "id" : $(this).attr("id").replace("node_",""),
                             "target_id" : data.rslt.np.attr("id").replace("node_",""),
                             "position" : data.rslt.cp + i,
@@ -873,7 +874,7 @@ var placeholder;
                     _this._ajax_call({
                         operation : "remove_node",
                         data : {
-                            "doc_id" : tree.data("doc_id"),
+                            "doc_id" : tree.attr("data-doc-id"),
                             "id" : this.id.replace("node_","")
                         },
                         success : function (r) {
@@ -899,7 +900,7 @@ var placeholder;
                     }
 
                     // only overwrite tree nodes if data is newer
-                    var old_seq_nr = parseInt(tree.data("seq_nr"));
+                    var old_seq_nr = parseInt(tree.attr("data-seq-nr"));
                     var new_seq_nr = parseInt(data.seq_nr);
                     if (new_seq_nr > old_seq_nr) {
                         // remember which tree nodes were open
