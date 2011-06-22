@@ -27,7 +27,9 @@ class cms_jstree extends depage_ui {
             )
         );
 
-        $this->prefix = "dp_proj_{$this->pdo->prefix}";
+        // TODO: set project correctly
+        $proj = "proj";
+        $this->prefix = "{$this->pdo->prefix}_{$proj}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
         // get auth object
