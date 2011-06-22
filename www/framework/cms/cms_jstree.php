@@ -128,6 +128,58 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
+    // {{{ types_settings
+    public function types_settings($doc_id) {
+        $this->auth->enforce();
+
+        $doc_info = $this->xmldb->get_doc_info($doc_id);
+        $root_element_name = $this->xmldb->get_nodeName_by_elementId($doc_id, $doc_info->rootid);
+
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        $valid_children = $permissions->valid_children();
+        $settings = array(
+            "types_from_url" => array(
+                "max_depth" => -2,
+                "max_children" => -2,
+                "valid_children" => $valid_children[$root_element_name],
+                "types" => array(),
+            ),
+        );
+
+        $known_elements = $permissions->known_elements();
+        if (!isset($known_elements[\depage\xmldb\permissions::default_element])) {
+            $known_elements[] = \depage\xmldb\permissions::default_element;
+        }
+
+        $types = &$settings["types_from_url"]["types"];
+        foreach ($known_elements as $element) {
+            if ($element != $root_element_name) {
+                $setting = array();
+
+                if (!$permissions->is_element_allowed_in_any($element)) {
+                    $setting["start_drag"] = false;
+                    $setting["move_node"] = false;
+                }
+
+                if (!$permissions->is_unlink_allowed_of($element)) {
+                    $setting["delete_node"] = false;
+                    $setting["remove"] = false;
+                }
+
+                if (isset($valid_children[$element])) {
+                    $setting["valid_children"] = $valid_children[$element];
+                } else if (isset($valid_children[\depage\xmldb\permissions::default_element])) {
+                    $setting["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+                }
+
+                $types[$element] = $setting;
+            }
+        }
+
+        return new json($settings);
+    }
+    // }}}
+
     // {{{ recordChange
     protected function recordChange($doc_id, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
