@@ -153,7 +153,7 @@ $(function () {
 					"default" : {
 						// I want this type to have no children (so only leaf nodes)
 						// In my case - those are files
-						"valid_children" : "none",
+						"valid_children" : "all",
 						// If we specify an icon for the default type it WILL OVERRIDE the theme icons
 						"icon" : {
 							"image" : "./file.png"
