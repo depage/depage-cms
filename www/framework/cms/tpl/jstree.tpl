@@ -49,6 +49,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     data-delta-updates-websocket-url = "ws://127.0.0.1:8000/jstree/"
     data-delta-updates-fallback-poll-url = "./fallback/updates/"
     data-delta-updates-post-url = "./"
+    data-types-settings-url = "./types_settings/"
 >
     <?php echo $this->nodes; ?>
 </div>
