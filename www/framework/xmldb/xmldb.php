@@ -732,7 +732,7 @@ class xmldb {
      * @return    $node_name (string) name of node, false, if
      *            node doesn't exist.
      */
-    private function get_nodeName_by_elementId($doc_id, $id) {
+    public function get_nodeName_by_elementId($doc_id, $id) {
         $query = $this->pdo->prepare(
             "SELECT xml.name AS name
             FROM {$this->table_xml} AS xml
