@@ -565,26 +565,8 @@ class xmldb {
     }
     // }}}
 
-    /* private */
-    // {{{ begin_transaction()
-    private function begin_transaction() {
-        if ($this->transaction == 0) {
-            $this->pdo->beginTransaction();
-        }
-        $this->transaction++;
-    }
-    // }}}
-    // {{{ end_transaction()
-    private function end_transaction() {
-        $this->transaction--;
-        if ($this->transaction == 0) {
-            $this->pdo->commit();
-        }
-    }
-    // }}}
-
     // {{{ get_permissions()
-    private function get_permissions($doc_id) {
+    public function get_permissions($doc_id) {
         $query = $this->pdo->prepare(
             "SELECT docs.permissions AS permissions
             FROM {$this->table_docs} AS docs
@@ -600,6 +582,7 @@ class xmldb {
     }
     // }}}
 
+    /* private */
     // {{{ allow_move()
     private function allow_move($doc_id, $node_id, $target_id) {
         $query = $this->pdo->prepare(
@@ -617,6 +600,23 @@ class xmldb {
 
         $permissions = $this->get_permissions($doc_id);
         return $permissions->is_element_allowed_in($node->name, $target->name);
+    }
+    // }}}
+
+    // {{{ begin_transaction()
+    private function begin_transaction() {
+        if ($this->transaction == 0) {
+            $this->pdo->beginTransaction();
+        }
+        $this->transaction++;
+    }
+    // }}}
+    // {{{ end_transaction()
+    private function end_transaction() {
+        $this->transaction--;
+        if ($this->transaction == 0) {
+            $this->pdo->commit();
+        }
     }
     // }}}
 
