@@ -147,10 +147,6 @@ class cms_jstree extends depage_ui {
         );
 
         $known_elements = $permissions->known_elements();
-        if (!isset($known_elements[\depage\xmldb\permissions::default_element])) {
-            $known_elements[] = \depage\xmldb\permissions::default_element;
-        }
-
         $types = &$settings["types_from_url"]["types"];
         foreach ($known_elements as $element) {
             if ($element != $root_element_name) {
@@ -174,6 +170,12 @@ class cms_jstree extends depage_ui {
 
                 $types[$element] = $setting;
             }
+        }
+
+        if (!isset($types[\depage\xmldb\permissions::default_element])) {
+            $types[\depage\xmldb\permissions::default_element] = array(
+                "valid_children" => $valid_children[\depage\xmldb\permissions::default_element]
+            );
         }
 
         return new json($settings);
