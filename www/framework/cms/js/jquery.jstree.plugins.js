@@ -789,9 +789,9 @@ var placeholder;
 		},
 		defaults : {
 			// defines maximum number of root nodes (-1 means unlimited, -2 means disable max_children checking)
-			max_children		: -1,
+			max_children		: -2,
 			// defines the maximum depth of the tree (-1 means unlimited, -2 means disable max_depth checking)
-			max_depth			: -1,
+			max_depth			: -2,
 			// defines valid node types for the root nodes
 			valid_children		: "all",
 
@@ -801,9 +801,9 @@ var placeholder;
 			types : {
 				// the default type
 				"default" : {
-					"max_children"	: -1,
-					"max_depth"		: -1,
-					"valid_children": "all"
+					"max_children"	: -2,
+					"max_depth"		: -2,
+					"valid_children": "none"
 
 					// Bound functions - you can bind any other function here (using boolean or function)
 					//"select_node"	: true,
@@ -816,32 +816,34 @@ var placeholder;
 		},
 		_fn : {
             _load_type_settings : function() {
-                $.getJSON(this.get_container().attr("data-types-settings-url"), function(new_types_settings) {
-                    this._set_settings(new_types_settings);
-                });
+                var _this = this;
+                var url = this.get_container().attr("data-types-settings-url") + this.get_container().attr("data-doc-id");
 
-                var s = this._get_settings().types_from_url;
-                this.data.types_from_url.attach_to = [];
-                var types = s.types, 
-                    attr  = s.type_attr, 
-                    icons_css = "", 
-                    _this = this;
+                $.getJSON(url, function(new_types_settings) {
+                    _this._set_settings(new_types_settings);
+                    _this.data.types_from_url.attach_to = [];
 
-                $.each(types, function (i, tp) {
-                    $.each(tp, function (k, v) { 
-                        if(!/^(max_depth|max_children|icon|valid_children)$/.test(k)) { _this.data.types_from_url.attach_to.push(k); }
+                    var s = _this._get_settings().types_from_url;
+                    var types = s.types, 
+                        attr  = s.type_attr, 
+                        icons_css = ""; 
+
+                    $.each(types, function (i, tp) {
+                        $.each(tp, function (k, v) { 
+                            if(!/^(max_depth|max_children|icon|valid_children)$/.test(k)) { _this.data.types_from_url.attach_to.push(k); }
+                        });
+                        if(!tp.icon) { return true; }
+                        if( tp.icon.image || tp.icon.position) {
+                            if(i == "default")	{ icons_css += '.jstree-' + _this.get_index() + ' a > .jstree-icon { '; }
+                            else				{ icons_css += '.jstree-' + _this.get_index() + ' li[' + attr + '=' + i + '] > a > .jstree-icon { '; }
+                            if(tp.icon.image)	{ icons_css += ' background-image:url(' + tp.icon.image + '); '; }
+                            if(tp.icon.position){ icons_css += ' background-position:' + tp.icon.position + '; '; }
+                            else				{ icons_css += ' background-position:0 0; '; }
+                            icons_css += '} ';
+                        }
                     });
-                    if(!tp.icon) { return true; }
-                    if( tp.icon.image || tp.icon.position) {
-                        if(i == "default")	{ icons_css += '.jstree-' + _this.get_index() + ' a > .jstree-icon { '; }
-                        else				{ icons_css += '.jstree-' + _this.get_index() + ' li[' + attr + '=' + i + '] > a > .jstree-icon { '; }
-                        if(tp.icon.image)	{ icons_css += ' background-image:url(' + tp.icon.image + '); '; }
-                        if(tp.icon.position){ icons_css += ' background-position:' + tp.icon.position + '; '; }
-                        else				{ icons_css += ' background-position:0 0; '; }
-                        icons_css += '} ';
-                    }
+                    if(icons_css != "") { $.vakata.css.add_sheet({ 'str' : icons_css }); }
                 });
-                if(icons_css != "") { $.vakata.css.add_sheet({ 'str' : icons_css }); }
             },
 			_get_type : function (obj) {
 				obj = this._get_node(obj);
