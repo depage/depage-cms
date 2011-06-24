@@ -58,7 +58,7 @@ $(function () {
                         }
                     };
 
-                    if (obj.attr(this._get_settings().types.type_attr) != "default") {
+                    if (obj.attr(this._get_settings().types_from_url.type_attr) != "default") {
                         default_items = $.extend({
                             "create" : {
                                 "separator_before"	: false,
