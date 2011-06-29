@@ -133,6 +133,7 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
+    // TODO: set icons?
     // {{{ types_settings
     public function types_settings($doc_id) {
         $this->auth->enforce();
@@ -157,10 +158,12 @@ class cms_jstree extends depage_ui {
             if ($element != $root_element_name) {
                 $setting = array();
 
+                /* TODO: disallow drags? is it better if every element is draggable even if it is not movable?
                 if (!$permissions->is_element_allowed_in_any($element)) {
                     $setting["start_drag"] = false;
                     $setting["move_node"] = false;
                 }
+                */
 
                 if (!$permissions->is_unlink_allowed_of($element)) {
                     $setting["delete_node"] = false;
