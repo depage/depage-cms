@@ -175,9 +175,12 @@ class cms_jstree extends depage_ui {
         }
 
         if (!isset($types[\depage\xmldb\permissions::default_element])) {
-            $types[\depage\xmldb\permissions::default_element] = array(
-                "valid_children" => $valid_children[\depage\xmldb\permissions::default_element]
-            );
+            $types[\depage\xmldb\permissions::default_element] = array();
+            if (empty($valid_children[\depage\xmldb\permissions::default_element])) {
+                $types[\depage\xmldb\permissions::default_element]["valid_children"] = "none";
+            } else {
+                $types[\depage\xmldb\permissions::default_element]["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+            }
         }
 
         return new json($settings);
