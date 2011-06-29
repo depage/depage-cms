@@ -61,6 +61,7 @@ class cms_jstree extends depage_ui {
     // {{{ index
     public function index($doc_name = "pages") {
         $this->auth->enforce();
+
         $doc_id = $this->get_doc_id($doc_name);
         $doc_info = $this->xmldb->get_doc_info($doc_id);
 
@@ -86,9 +87,12 @@ class cms_jstree extends depage_ui {
 
         $node = $this->xmldb->build_node($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["node"]);
         $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+        $status = $id !== false;
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+        }
 
-        return new json(array("status" => ($id !== false), "id" => $id));
+        return new json(array("status" => $status, "id" => $id));
     }
     // }}}
 
