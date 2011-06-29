@@ -216,15 +216,18 @@ class cms_jstree extends depage_ui {
 
     // {{{ node_from_request
     protected function node_from_request($request) {
-        $doc = new DOMDocument;
-        $node = new DOMElement($request["type"]);
-        $doc->appendChild($node);
-
+        $xml = "<{$request["_type"]} ";
         foreach ($request as $attr => $value) {
-            $node->setAttribute($attr, $value);
+            if ($attr != "_type") {
+                $xml .= "$attr=\"$value\" ";
+            }
         }
+        $xml .= "/>";        
 
-        return $node;
+        $doc = new DOMDocument;
+        $doc->loadXML($xml);
+
+        return $doc;
     }
     // }}}
 
