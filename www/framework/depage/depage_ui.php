@@ -263,11 +263,11 @@ class depage_ui {
         setlocale(LC_ALL, $locale);
 
         // Specify location of translation tables
-        bindtextdomain($this->options->lang['domain'], "./locale");
-        bind_textdomain_codeset($this->options->lang['domain'], 'UTF-8'); 
+        bindtextdomain($this->options->lang->domain, "./locale");
+        bind_textdomain_codeset($this->options->lang->domain, 'UTF-8'); 
 
         // Choose domain
-        textdomain($this->options->lang['domain']);
+        textdomain($this->options->lang->domain);
 
         $this->locale = $locale;
     } 
