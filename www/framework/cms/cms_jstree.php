@@ -123,10 +123,13 @@ class cms_jstree extends depage_ui {
         $this->auth->enforce();
 
         $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        $ids = $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $status = $ids !== false;
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        }
 
-        return new json(array("status" => 1));
+        return new json(array("status" => $status));
     }
     // }}}
 
