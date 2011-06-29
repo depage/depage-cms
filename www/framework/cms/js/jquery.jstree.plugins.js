@@ -991,16 +991,21 @@ var placeholder;
             var _this = this;
 
             tree.bind("create.jstree", function (e, data) {
+                var parent = data.rslt.parent;
+                if (parent == -1) {
+                    parent = tree;
+                }
+
                 _this._init_update_seq();
                 _this._ajax_call({
                     operation : "create_node",
                     data : {
                         "doc_id" : tree.attr("data-doc-id"),
-                        "target_id" : data.rslt.parent.attr("id").replace("node_",""), 
+                        "target_id" : parent.attr("id").replace("node_",""), 
                         "position" : data.rslt.position,
                         "node" : {
                             // TODO: include every .data(...) attribute
-                            "type" : data.rslt.obj.attr("rel"),
+                            "_type" : data.rslt.obj.attr("rel"),
                             "name" : data.rslt.name
                         }
                     },
