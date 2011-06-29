@@ -274,7 +274,11 @@ class xmldb {
     // }}}
     // {{{ add_node()
     public function add_node($doc_id, $node, $target_id, $target_pos) {
-        return $this->save_node($doc_id, $node, $target_id, $target_pos, true);
+        if ($this->allow_add($doc_id, $node, $target_id)) {
+            return $this->save_node($doc_id, $node, $target_id, $target_pos, true);
+        } else {
+            return false;
+        }
     }
     // }}}
     // {{{ replace_node()
@@ -615,6 +619,18 @@ class xmldb {
 
         $permissions = $this->get_permissions($doc_id);
         return $permissions->is_element_allowed_in($node->name, $target->name);
+    }
+    // }}}
+    // {{{ allow_add()
+    private function allow_add($doc_id, $node, $target_id) {
+        $target_name = $this->get_nodeName_by_elementId($doc_id, $target_id);
+        if ($node->nodeType == XML_DOCUMENT_NODE) {
+            $node = $node->documentElement;
+        }
+        $node_name = $node->nodeName;
+
+        $permissions = $this->get_permissions($doc_id);
+        return $permissions->is_element_allowed_in($node_name, $target_name);
     }
     // }}}
 
