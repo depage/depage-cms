@@ -1053,9 +1053,6 @@ var placeholder;
                         success : function (r) {
                             if(r.status) {
                                 $(data.rslt.oc).attr("id", "node_" + r.id);
-                                if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
-                                    data.inst.refresh(data.inst._get_parent(data.rslt.oc));
-                                }
                             }
                             else {
                                 _this._rollback_in_order(this.seq, data.rlbk);
@@ -1076,7 +1073,7 @@ var placeholder;
                         },
                         success : function (r) {
                             if(!r.status) {
-                                data.inst.refresh();
+                                _this._rollback_in_order(this.seq, data.rlbk);
                             }
                         },
                         rollback : data.rlbk,
