@@ -1145,15 +1145,7 @@ class xmldb {
             // read from database
             $this->begin_transaction();
 
-            $query = $this->pdo->prepare(
-                "SELECT docs.entities AS entities, docs.ns AS namespaces
-                FROM {$this->table_docs} AS docs
-                WHERE docs.id = :doc_id"
-            );
-            $query->execute(array(
-                'doc_id' => $doc_id,
-            ));
-            $result = $query->fetchObject();
+            $result = $this->get_namespaces_and_entities($doc_id);
 
             $this->entities = $result->entities;
             $this->namespace_string = $result->namespaces;
@@ -1300,6 +1292,19 @@ class xmldb {
             $namespaces[] = new xmlns($ns_element[1], $ns_element[2]);
         }
         return $namespaces;
+    }
+    // }}}
+    // {{{ get_namespaces_and_entities()
+    private function get_namespaces_and_entities($doc_id) {
+        $query = $this->pdo->prepare(
+            "SELECT docs.entities AS entities, docs.ns AS namespaces
+            FROM {$this->table_docs} AS docs
+            WHERE docs.id = :doc_id"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
+        return $query->fetchObject();
     }
     // }}}
 
