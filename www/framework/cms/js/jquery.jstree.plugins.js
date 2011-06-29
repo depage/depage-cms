@@ -793,7 +793,7 @@ var placeholder;
 			// defines the maximum depth of the tree (-1 means unlimited, -2 means disable max_depth checking)
 			max_depth			: -2,
 			// defines valid node types for the root nodes
-			valid_children		: "all",
+			valid_children		: "none",
 
 			// where is the type stores (the rel attribute of the LI element)
 			type_attr : "rel",
@@ -803,14 +803,15 @@ var placeholder;
 				"default" : {
 					"max_children"	: -2,
 					"max_depth"		: -2,
-					"valid_children": "none"
+					"valid_children": "none",
+					"delete_node"	: false,
+                    "remove" : false
 
 					// Bound functions - you can bind any other function here (using boolean or function)
 					//"select_node"	: true,
 					//"open_node"	: true,
 					//"close_node"	: true,
 					//"create_node"	: true,
-					//"delete_node"	: true
 				}
 			}
 		},
