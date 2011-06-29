@@ -269,7 +269,11 @@ class xmldb {
     // }}}
     // {{{ unlink_node()
     public function unlink_node($doc_id, $node_id) {
-        return $this->unlink_node_by_elementId($doc_id, $node_id);
+        if ($this->allow_unlink($doc_id, $node_id)) {
+            return $this->unlink_node_by_elementId($doc_id, $node_id);
+        } else {
+            return false;
+        }
     }
     // }}}
     // {{{ add_node()
@@ -631,6 +635,14 @@ class xmldb {
 
         $permissions = $this->get_permissions($doc_id);
         return $permissions->is_element_allowed_in($node_name, $target_name);
+    }
+    // }}}
+    // {{{ allow_unlink()
+    private function allow_unlink($doc_id, $node_id) {
+        $node_name = $this->get_nodeName_by_elementId($doc_id, $node_id);
+        $permissions = $this->get_permissions($doc_id);
+
+        return $permissions->is_unlink_allowed_of($node_name);
     }
     // }}}
 
