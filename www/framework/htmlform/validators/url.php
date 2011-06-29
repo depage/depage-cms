@@ -1,12 +1,18 @@
 <?php
+/**
+ * @file    validators/url.php
+ * @brief   url validator
+ **/
+
 namespace depage\htmlform\validators;
 
 /**
- * Validator for url input elements.
+ * @brief default validator for url input elements
  **/
 class url extends validator {
+    // {{{ validate()
     /**
-     * Overrides validator::validate; url validation.
+     * @brief   url validator
      *
      * @param   $url        (string)    url to be validated
      * @param   $parameters (array)     validation parameters
@@ -15,4 +21,5 @@ class url extends validator {
     public function validate($url, $parameters = array()) {
         return (bool) filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED + FILTER_FLAG_HOST_REQUIRED);
     }
+    // }}}
 }

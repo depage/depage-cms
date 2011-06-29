@@ -211,7 +211,7 @@ class cms_ui extends depage_ui {
     }
     // }}}
     // {{{ logout
-    public function logout($action) {
+    public function logout($action = null) {
         //if ($action[0] == "now") {
             $this->auth->enforce_logout();
         //}
@@ -290,8 +290,21 @@ class cms_ui extends depage_ui {
      *
      * @return  null
      */
-    public function user($username) {
+    public function user($username = "") {
         if ($user = $this->auth->enforce()) {
+            $puser = auth_user::get_by_username($this->pdo, $username);
+
+            if ($puser !== false) {
+                $title = _("User Profile") . ": {$puser->fullname}";
+                $content = new html("userprofile_edit.tpl", array(
+                    'title' => $this->basetitle,
+                    'user' => $puser,
+                ));
+            } else {
+                $title = _("User Profile");
+                $content = _("unknown user profile");
+            }
+
             $h = new html(array(
                 'content' => array(
                     $this->toolbar(),
@@ -299,11 +312,8 @@ class cms_ui extends depage_ui {
                         'id' => "userprofile",
                         'class' => "first",
                         'icon' => "framework/cms/images/icon_users.gif",
-                        'title' => "Profile: {$user->fullname}",
-                        'content' => new html("userprofile_edit.tpl", array(
-                            'title' => $this->basetitle,
-                            'user' => $user,
-                        )),
+                        'title' => $title,
+                        'content' => $content,
                     )),
                 )
             ), $this->html_options);

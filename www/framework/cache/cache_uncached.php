@@ -25,21 +25,21 @@ class cache_uncached extends cache {
         return false;
     }
     // }}}
-    // {{{ set_file */
+    // {{{ setFile */
     /**
      * @brief saves cache data for key $key to a file
      *
      * @param   $key (string) key to save data in, may include namespaces divided by a forward slash '/'
      * @param   $data (string) data to save in file
-     * @param   $save_gzipped_content (bool) if true, it saves a gzip file additional to plain string, defaults to false
+     * @param   $saveGzippedContent (bool) if true, it saves a gzip file additional to plain string, defaults to false
      *
      * @return  (bool) true if saved successfully
      */
-    public function set_file($key, $data, $save_gzipped_content = false) {
+    public function setFile($key, $data, $saveGzippedContent = false) {
         return false;
     }
     // }}}
-    // {{{ get_file */
+    // {{{ getFile */
     /**
      * @brief gets content of cache item by key $key from a file
      *
@@ -47,7 +47,7 @@ class cache_uncached extends cache {
      *
      * @return  (string) content of cache item, false if the cache item does not exist
      */
-    public function get_file($key) {
+    public function getFile($key) {
         return false;
     }
     // }}}
@@ -76,7 +76,7 @@ class cache_uncached extends cache {
         return false;
     }
     // }}}
-    // {{{ geturl */
+    // {{{ getUrl */
     /**
      * @brief returns cache-url of cache-item for direct access through http
      *
@@ -84,7 +84,7 @@ class cache_uncached extends cache {
      *
      * @return  (string) url of cache-item
      */
-    public function geturl($key) {
+    public function getUrl($key) {
         return false;
     }
     // }}}

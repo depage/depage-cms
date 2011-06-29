@@ -1,13 +1,42 @@
 <?php
+/**
+ * @file    textarea.php
+ * @brief   textarea input element
+ *
+ * @author Frank Hellenkamp <jonas@depage.net>
+ * @author Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\htmlform\elements;
 
 /**
- * HTML textarea element.
+ * @brief HTML textarea element.
+ *
+ * @section usage
+ *
+ * @code
+ * <?php
+ *     $form = new depage\htmlform\htmlform('myform');
+ *
+ *     // add a textarea field
+ *     $form->addTextarea('comment', array(
+ *         'label' => 'Comment box',
+ *     ));
+ *
+ *     // process form
+ *     $form->process();
+ *
+ *     // Display the form.
+ *     echo ($form);
+ * ?>
+ * @endcode
  **/
 class textarea extends text {
+    // {{{ setDefaults()
     /**
-     * collects initial values across subclasses.
+     * @brief   collects initial values across subclasses
+     *
+     * @return  void
      **/
     protected function setDefaults() {
         parent::setDefaults();
@@ -15,11 +44,13 @@ class textarea extends text {
         $this->defaults['rows'] = null;
         $this->defaults['cols'] = null;
     }
+    // }}}
 
+    // {{{ __toString()
     /**
-     * Renders element to HTML.
+     * @brief   Renders element to HTML.
      *
-     * @return string of HTML rendered element
+     * @return  (string) HTML rendered element
      **/
     public function __toString() {
         $label              = $this->htmlLabel();
@@ -39,18 +70,27 @@ class textarea extends text {
             $errorMessage .
         "</p>\n";
     }
+    // }}}
 
+    // {{{ htmlRows()
     /**
-     * Returns string of HTML rows attribute.
+     * @brief   Renders HTML rows attribute
+     *
+     * @return  (string) HTML rows attribute
      **/
     protected function htmlRows() {
         return ($this->rows === null) ? "" : " rows=\"" . $this->htmlEscape($this->rows) . "\"";
     }
+    // }}}
 
+    // {{{ htmlCols()
     /**
-     * Returns string of HTML cols attribute.
+     * @brief   Renders HTML cols attribute
+     *
+     * @return  (string) HTML cols attribute
      **/
     protected function htmlCols() {
         return ($this->cols === null) ? "" : " cols=\"" . $this->htmlEscape($this->cols) . "\"";
     }
+    // }}}
 }

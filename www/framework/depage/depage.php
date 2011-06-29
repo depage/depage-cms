@@ -10,6 +10,17 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+/**
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-cms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @htmlinclude main-extended.html
+ **/
+
 define("DEPAGE_FM_PATH", depage::getDepageFrameworkPath()) ;
 define("DEPAGE_PATH", depage::getDepagePath()) ;
 define("DEPAGE_CACHE_PATH", depage::getDepageCachePath()) ;
@@ -124,8 +135,6 @@ class depage {
 
         if ($php_file != "") {
             require_once($php_file);
-        } else {
-            trigger_error("failed to load $class");
         }
     }
     // }}}

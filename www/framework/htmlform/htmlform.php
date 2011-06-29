@@ -1,13 +1,105 @@
 <?php 
+/**
+ * @file    htmlform.php
+ * @brief   htmlform class and autoloader
+ *
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 /**
- * htmlform is a PHP library that assists programmers in creating HTML forms.
- * It features validation and takes care of duplicate form submissions.
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-forms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @section Usage
+ *
+ * depage-forms will mainly be used through the @link depage::htmlform::htmlform 
+ * htmlform-class@endlink. It is the main interface through which you can add 
+ * inputs, fieldsets and steps.
+ *
+ * You can find a list of available input-class in @link depage::htmlform::elements 
+ * elements@endlink.
+ *
+ * @endsection 
+ *
+ * @subpage developer
+ *
+ * @htmlinclude main-extended.html
  **/
-namespace depage\htmlform; 
 
-use depage\htmlform\elements;
+/**
+ * @page usage Usage
+ *
+ **/
 
+/**
+ * @page developer Developer guide
+ *
+ * @section prerequisites Developer Prerequisites
+ *
+ * - PHP 5.3
+ * - PHPUnit 3.5 (to run included unit tests)
+ * - Doxygen 1.7.2 (to generate documentation)
+ *
+ * @section style Coding style
+ *
+ * Generally, follow Zend coding style
+ * camel case
+ * 4 spaces indents
+ * omit php closing tag
+ *
+ * @section Tests
+ *
+ * To run the tests:
+ *
+ * <pre>$ make test</pre>
+ *
+ * @section Documentation
+ *
+ * To generate documentation:
+ *
+ * <pre>$ make doc</pre>
+ **/
+
+// {{{ namespace
+/**
+ * @namespace depage
+ * @brief depage cms
+ *
+ * @namespace depage::htmlform
+ * @brief htmlform class and autoloader
+ *
+ * @namespace depage::htmlform::abstracts
+ * @brief Abstract element classes
+ *
+ * @namespace depage::htmlform::elements
+ * @brief Classes for HTML input-elements
+ *
+ * All Classes in this namespace are HTML input-elements that can be added to
+ * instances of the @link depage::htmlform::htmlform htmlform-class@endlink, 
+ * but also to also to @link depage::htmlform::elements::fieldset fieldsets@endlink
+ * and @link depage::htmlform::elements::step steps@endlink:
+ *
+ * @namespace depage::htmlform::exceptions
+ * @brief Htmlform exceptions
+ *
+ * @namespace depage::htmlform::validators
+ * @brief Validators for HTML input-elements
+ **/
+namespace depage\htmlform;
+
+// }}}
+
+// {{{ autoloader
+/**
+ * @brief PHP autoloader
+ *
+ * Autoloads classes by namespace. (requires PHP >= 5.3)
+ **/
 function autoload($class) {
     $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
     $file = __DIR__ . '/' .  $class . '.php';
@@ -18,59 +110,100 @@ function autoload($class) {
 }
 
 spl_autoload_register(__NAMESPACE__ . '\autoload');
+// }}}
 
 /**
+ * @brief main interface to users
+ *
  * The class htmlform is the main tool of the htmlform library. It generates
- * input elements and container elements. It also contains the PHP session 
+ * input elements and container elements. It also contains the PHP session
  * handlers.
+ *
+ * When you use <em>depage-forms</em> this is probably the only class you will 
+ * instantiate directly.
+ *
+ * In general:
+ *
+ * @code
+ * <?php 
+ *     $form = new depage\htmlform\htmlform('simpleForm');
+ *
+ *     // add form fields
+ *     $form->addText('username', array('label' => 'User name', 'required' => true));
+ *     $form->addEmail('email', array('label' => 'Email address'));
+ *
+ *     // process form
+ *     $form->process();
+ *     
+ *     if ($form->validate()) {
+ *         // do something with your valid data
+ *         var_dump($form->getValues());
+ *     } else {
+ *         // Form was empty or data was not valid:
+ *         // Display the form.
+ *         echo ($form);
+ *     }
+ * ?>
+ * @endcode
+ *
+ * You can find a list of available input-class in @link depage::htmlform::elements 
+ * elements@endlink.
+ *
+ * See examples at
+ *     - @link simple.php @endlink - a simple form
  **/
 class htmlform extends abstracts\container {
+    // {{{ variables
     /**
-     * HTML form method attribute.
+     * @brief HTML form method attribute
      * */
     protected $method;
     /**
-     * HTML form action attribute.
+     * @brief HTML form action attribute
      **/
     protected $submitURL;
     /**
-     * Specifies where the user is redirected to, once the form-data is valid.
+     * @brief Specifies where the user is redirected to, once the form-data is valid
      **/
     protected $successURL;
     /**
-     * Contains the submit button label of the form.
+     * @brief Contains the submit button label of the form
      **/
     protected $label;
     /**
-     * Contains the name of the array in the PHP session, holding the form-data.
+     * @brief Contains the name of the array in the PHP session, holding the form-data
      **/
     protected $sessionSlotName;
     /**
-     * PHP session handle.
+     * @brief PHP session handle
      **/
     protected $sessionSlot;
     /**
-     * Contains current step number.
+     * @brief Contains current step number
      **/
     private $currentStepId;
     /**
-     * Contains array of step object references.
+     * @brief Contains array of step object references
      **/
     private $steps = array();
     /**
-     * Time for session expiry
+     * @brief Time until session expiry (seconds)
      **/
     protected $ttl;
     /**
-     * Form validation result/status.
+     * @brief Form validation result/status
      **/
     public $valid;
+    // }}}
 
+    // {{{ __construct()
     /**
-     * @param $name         string - form name
-     * @param $parameters   array of form parameters, HTML attributes
-     * @param $form         (object) $form object reference (not needed in this case)
-     * @return void
+     * @brief   htmlform class constructor
+     *
+     * @param   $name       (string)    form name
+     * @param   $parameters (array)     form parameters, HTML attributes
+     * @param   $form       (object)    parent form object reference (not used in this case)
+     * @return  void
      **/
     public function __construct($name, $parameters = array(), $form = null) {
         $this->url = parse_url($_SERVER['REQUEST_URI']);
@@ -94,9 +227,13 @@ class htmlform extends abstracts\container {
         $this->addHidden('formName', array('defaultValue' => $this->name));
         $this->addChildElements();
     }
+    // }}}
 
+    // {{{ setDefaults()
     /**
-     * collects initial values across subclasses.
+     * @brief   Collects initial values across subclasses.
+     *
+     * @return  void
      **/
     protected function setDefaults() {
         parent::setDefaults();
@@ -108,7 +245,17 @@ class htmlform extends abstracts\container {
         $this->defaults['validator']    = null;
         $this->defaults['ttl']          = null;
     }
+    // }}}
 
+    // {{{ sessionExpiry()
+    /**
+     * @brief   Deletes session when it expires.
+     *
+     * checks if session lifetime exceeds ttl value and deletes it. Updates
+     * timestamp.
+     *
+     * @return  void
+     **/
     private function sessionExpiry() {
         if (isset($this->ttl) && is_numeric($this->ttl)) {
             $timestamp = time();
@@ -124,15 +271,19 @@ class htmlform extends abstracts\container {
             $this->sessionSlot['timestamp'] = $timestamp;
         }
     }
-    
+    // }}}
+
+    // {{{ addElement()
     /** 
+     * @brief   Adds input or fieldset elements to htmlform.
+     *
      * Calls parent class to generate an input element or a fieldset and add
      * it to its list of elements.
      * 
-     * @param $type input type or fieldset
-     * @param $name string - name of the element
-     * @param $parameters array of element attributes: HTML attributes, validation parameters etc.
-     * @return object $newInput
+     * @param   $type       (string)    input type or fieldset
+     * @param   $name       (string)    name of the element
+     * @param   $parameters (array)     element attributes: HTML attributes, validation parameters etc.
+     * @return  $newElement (object)    element object
      **/
     protected function addElement($type, $name, $parameters) {
         $this->checkElementName($name);
@@ -144,14 +295,19 @@ class htmlform extends abstracts\container {
 
         return $newElement;
     }
+    // }}}
 
+    // {{{ updateInputValue()
     /**
+     * @brief   Updates the value of an associated input element
+     *
      * Sets the input elements' value. If there is post-data - we'll use that
      * to update the value of the input element and the session. If not - we 
      * take the value that's already in the session. If the value is neither in
      * the session nor in the post-data - nothing happens.
      *
-     * @param $name the name of the input element we're looking for
+     * @param   $name (string) name of the input element
+     * @return  void
      **/
     public function updateInputValue($name) {
         // if it's a post, take the value from there and save it to the session
@@ -167,22 +323,30 @@ class htmlform extends abstracts\container {
             $this->getElement($name)->setValue($this->sessionSlot[$name]);
         }
     }
-    
+    // }}}
+
+    // {{{ inCurrentStep()
     /**
-     * Checks if the element named $name is in the current step.
+     * @brief   Checks if the element named $name is in the current step.
      *
-     * @param $name name of element
-     * @return (bool) - says wether it's in the current step
+     * @param   $name   (string)    name of element
+     * @return          (bool)      says wether it's in the current step
      **/
     private function inCurrentStep($name) {
         return in_array($this->getElement($name), $this->getCurrentElements());
     }
+    // }}}
 
+    // {{{ setCurrentStep()
     /**
+     * @brief   Validates step number of GET request.
+     *
      * Validates step number of the GET request. If it's out of range it's
      * reset to the number of the first invalid step. (only to be used after
      * the form is completely created, because the step elements have to be
      * counted)
+     *
+     * @return  void
      **/
     private function setCurrentStep() {
         if (!is_numeric($this->currentStepId)
@@ -192,11 +356,13 @@ class htmlform extends abstracts\container {
             $this->currentStepId = $this->getFirstInvalidStep();
         }
     }
+    // }}}
 
+    // {{{ getCurrenElements()
     /**
-     * returns an array of input elements contained in the current step.
+     * @brief   Returns an array of input elements contained in the current step.
      *
-     * @return (array) input-elements
+     * @return  (array) element objects
      **/
     private function getCurrentElements() {
         $currentElements = array();
@@ -215,12 +381,16 @@ class htmlform extends abstracts\container {
         }
         return $currentElements;
     }
+    // }}}
 
+    // {{{ __toString()
     /**
-     * Renders the form as HTML code. If the form contains elements it
-     * calls their rendering methods.
+     * @brief   Renders form to HTML.
      *
-     * @return (string)
+     * Renders the htmlform object to HTML code. If the form contains elements
+     * it calls their rendering methods.
+     *
+     * @return  (string) HTML code
      **/
     public function __toString() {
         $renderedElements   = '';
@@ -243,11 +413,19 @@ class htmlform extends abstracts\container {
             "<p id=\"{$this->name}-submit\"><input type=\"submit\" value=\"{$label}\"></p>" . "\n" .
         "</form>";
     }
+    // }}}
 
+    // {{{ process()
     /**
+     * @brief   Calls form validation and handles redirects.
+     *
      * Implememts the Post/Redirect/Get strategy. Redirects to success Address
      * on succesful validation otherwise redirects to first invalid step or
      * back to form.
+     *
+     * @return  void
+     *
+     * @see     validate()
      **/
     public function process() {
         $this->setCurrentStep();
@@ -263,14 +441,17 @@ class htmlform extends abstracts\container {
             }
         }
     }
+    // }}}
 
+    // {{{ getFirstInvalidStep()
     /**
+     * @brief   Returns first step that didn't pass validation.
+     *
      * Checks steps consecutively and returns the number of the first one that
      * isn't valid (steps need to be submitted at least once to count as valid).
+     * Form must have been validated before calling this method.
      *
-     * Beware! Be sure to validate the form before calling this method.
-     *
-     * @return (int) $stepNumber
+     * @return  $stepNumber (int) number of first invalid step
      **/
     private function getFirstInvalidStep() {
         if ( count($this->steps ) > 0) {
@@ -290,22 +471,30 @@ class htmlform extends abstracts\container {
             return 0;
         }
     }
+    // }}}
 
+    // {{{ redirect()
     /**
-     * Redirects Browser to a different URL
+     * @brief Redirects Browser to a different URL.
      *
-     * @param   $url    string - url to redirect to
+     * @param $url (string) url to redirect to
      */
     public function redirect($url) {
         header('Location: ' . $url);
         die( "Tried to redirect you to " . $url);
     }
+    // }}}
 
+    // {{{ validate()
     /**
+     * @brief   Validates the forms subelements.
+     *
      * Form validation - validates form elements returns validation result and
      * writes it to session. Also calls custom validator if available.
      *
-     * @return (bool) validation result
+     * @return  (bool) validation result
+     *
+     * @see     process()
      **/
     public function validate() {
         // onValidate hook for custom required/validation rules
@@ -322,21 +511,28 @@ class htmlform extends abstracts\container {
 
         return $this->valid;
     }
+    // }}}
 
+    // {{{ isEmpty()
     /**
-     * Returns wether form has been submitted before or not.
+     * @brief   Returns wether form has been submitted before or not.
      *
-     * @return (bool) session status
+     * @return  (bool) session status
      **/
     public function isEmpty() {
         return !isset($this->sessionSlot['formName']);
     }
+    // }}}
 
+    // {{{ populate()
     /**
+     * @brief   Fills subelement values.
+     *
      * Allows to manually populate the forms' input elements with values by
      * parsing an array of name-value pairs.
      *
-     * @param $data array - contains input element names (key) and desired values (value)
+     * @param   $data (array) input element names (key) and values (value)
+     * @return  void
      **/
     public function populate($data = array()) {
         foreach($data as $name => $value) {
@@ -346,21 +542,28 @@ class htmlform extends abstracts\container {
             }
         }
     }
+    // }}}
 
+    // {{{ getValues()
     /**
-     * Gets form-data from current PHP session.
+     * @brief   Gets form-data from current PHP session.
      *
-     * @return (array) of form-data similar to $_POST
+     * @return  (array) form-data
      **/
     public function getValues() {
         return (isset($this->sessionSlot)) ? $this->sessionSlot : null;
     }
+    // }}}
 
-    /** 
+    // {{{ checkElementName()
+    /**
+     * @brief   Checks for duplicate subelement names.
+     *
      * Checks within the form if an input element or fieldset name is already
      * taken. If so, it throws an exception.
      *
-     * @param $name name to check
+     * @param   $name name to check
+     * @return  void
      **/
     public function checkElementName($name) {
         foreach($this->getElements(true) as $element) {
@@ -369,18 +572,129 @@ class htmlform extends abstracts\container {
             }
         }
     }
+    // }}}
 
+    // {{{ clearSession()
     /**
-     * Deletes the current forms' PHP session data.
+     * @brief   Deletes the current forms' PHP session data.
+     *
+     * @return  void
      **/
     public function clearSession() {
         unset($_SESSION[$this->sessionSlotName]);
         unset($this->sessionSlot);
     }
+    // }}}
 
+    // {{{ onValidate()
     /**
-     * Hook method - to be overridden with custom validation rules, field requested rules etc.
+     * @brief   Validation hook
+     *
+     * Can be overridden with custom validation rules, field-required rules etc.
+     *
+     * @return  void
+     *
+     * @see     validate()
      **/
-    protected function onValidate() {
-    }
+    protected function onValidate() {}
+    // }}}
 }
+
+/**
+ * @example elements.php
+ * @brief   Various element examples
+ *
+ * Demonstrates the use of all element types that are fully implemented.
+ * Includes examples of element specific options.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/elements.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example lists.php
+ * @brief   Option list examples
+ *
+ * Multiple, single and text input elements have option lists. Here are some
+ * more detailed examples.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/lists.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example populate.php
+ * @brief   Populate form example
+ *
+ * The htmlform->populate method provides a comfortable way to fill in
+ * default values before displaying the form. It's more convenient than setting
+ * the 'defaultValue' parameter for each input element individually.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/populate.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example reallife.php
+ * @brief   (almost) real life depage-forms example
+ *
+ * Contains a common personal information form. Some elements are set required
+ * and the username has a minimum length.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/reallife.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example redirect.php
+ * @brief   Redirect to success page example
+ *
+ * Once the form is validated, it can also be redirected to another URL. This
+ * can be done by setting the 'successURL' parameter in the form.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/redirect.php"></iframe>@endhtmlonly
+ *
+ * @include redirect-success.php
+ **/
+
+/**
+ * @example session-timeout.php
+ * @brief   Form expiry example
+ *
+ * One can lower the lifetime of the forms session by setting the 'ttl' value.
+ * Setting this higher than the PHP session length (default around 30min) has
+ * no effect.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/session-timeout.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example simple.php
+ * @brief   Simple form example
+ *
+ * Contains text and email input elements and demonstrates form processing and
+ * validation. In this simple case none of the elements are set required, so an
+ * empty form would also be valid.
+ *
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/simple.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example steps.php
+ * @brief   Steps example
+ *
+ * This demonstrates dividing the form into separate pages using step
+ * container elements. As usual the form itself can only be valid when all
+ * its input elements are valid.
+ * It is also possible to attach input elements directly to the form (outside
+ * any step container). These elements are visible on every step.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/steps.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example subclass.php
+ * @brief   Form subclass example
+ *
+ * It's also possible to override the htmlform class and add elements in the
+ * constructor. This way we can build reusable form classes or add custom rules
+ * to the form validation.
+ * 
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/subclass.php"></iframe>@endhtmlonly
+ **/

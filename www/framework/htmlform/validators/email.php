@@ -1,12 +1,18 @@
 <?php
+/**
+ * @file    validators/email.php
+ * @brief   email validator
+ **/
+
 namespace depage\htmlform\validators;
 
 /**
- * Validator for email input elements.
+ * @brief default validator for email input elements
  **/
 class email extends validator {
+    // {{{ validate()
     /**
-     * Overrides validator::validate; email validation.
+     * @brief   email validation
      *
      * @param   $email      (string)    email to be validated
      * @param   $parameters (array)     validation parameters
@@ -15,4 +21,5 @@ class email extends validator {
     public function validate($email, $parameters = array()) {
         return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
     }
+    // }}}
 }

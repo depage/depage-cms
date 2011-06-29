@@ -13,6 +13,11 @@
         <?php $this->include_js("interface", array(
             "framework/shared/jquery-1.4.4.js",
             "framework/shared/jquery.cookie.js",
+            "framework/shared/jquery.mousewheel.min.js",
+            "framework/shared/depage-jquery-plugins/depage-base.js",
+            "framework/shared/depage-jquery-plugins/depage-textbuttons.js",
+            "framework/shared/depage-jquery-plugins/depage-scroller.js",
+            "framework/shared/depage-jquery-plugins/depage-growl.js",
             "framework/cms/js/interface.js",
         )); ?>
         <?php $this->include_css("interface", array(

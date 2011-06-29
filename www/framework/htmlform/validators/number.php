@@ -1,12 +1,18 @@
 <?php
+/**
+ * @file    validators/number.php
+ * @brief   number validator
+ **/
+
 namespace depage\htmlform\validators;
 
 /**
- * Validator for number input elements.
+ * @brief default validator for number input elements
  **/
 class number extends validator {
+    // {{{ validate()
     /**
-     * Overrides validator::validate; number validation.
+     * @brief   number validation
      *
      * @param   $value      (int)   value to be validated
      * @param   $parameters (array) validation parameters
@@ -20,4 +26,5 @@ class number extends validator {
             && (($value >= $min) || ($min === null))
             && (($value <= $max) || ($max === null));
     }
+    // }}}
 }

@@ -16,14 +16,18 @@ class cache {
 
     // {{{ factory
     public static function factory($prefix, $options = array()) {
-        if (isset($options['disposition'])) {
-            if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
-                return new \depage\cache\cache_memcached($prefix, $options);
-            } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
-                return new \depage\cache\cache_memcache($prefix, $options);
-            } elseif ($options['disposition'] == "uncached") {
-                return new \depage\cache\cache_uncached($prefix, $options);
-            }
+        if (!isset($options['disposition'])) {
+            $options['disposition'] = "file";
+        }
+
+        if ($options['disposition'] == "memory" && extension_loaded("memcached")) {
+            return new \depage\cache\cache_memcached($prefix, $options);
+        } elseif ($options['disposition'] == "memory" && extension_loaded("memcache")) {
+            return new \depage\cache\cache_memcache($prefix, $options);
+        } elseif ($options['disposition'] == "uncached") {
+            return new \depage\cache\cache_uncached($prefix, $options);
+        } else {
+            return new \depage\cache\cache($prefix, $options);
         }
 
         return new \depage\cache\cache($prefix, $options);
@@ -66,32 +70,32 @@ class cache {
         }
     }
     // }}}
-    // {{{ set_file */
+    // {{{ setFile */
     /**
      * @brief saves cache data for key $key to a file
      *
      * @param   $key (string) key to save data in, may include namespaces divided by a forward slash '/'
      * @param   $data (string) data to save in file
-     * @param   $save_gzipped_content (bool) if true, it saves a gzip file additional to plain string, defaults to false
+     * @param   $saveGzippedContent (bool) if true, it saves a gzip file additional to plain string, defaults to false
      *
      * @return  (bool) true if saved successfully
      */
-    public function set_file($key, $data, $save_gzipped_content = false) {
+    public function setFile($key, $data, $saveGzippedContent = false) {
         $path = $this->get_cache_path($key);
 
-        $success = file_put_contents($path, $data);
-        if (!$success) {
+        if (!is_dir(dirname($path))) { 
             mkdir(dirname($path), 0777, true);
-            $success = file_put_contents($path, $data);
         }
-        if ($save_gzipped_content) {
+        $success = file_put_contents($path, $data);
+
+        if ($saveGzippedContent) {
             $success = $success && file_put_contents($path . ".gz", gzencode($data));
         }
 
         return $success;
     }
     // }}}
-    // {{{ get_file */
+    // {{{ getFile */
     /**
      * @brief gets content of cache item by key $key from a file
      *
@@ -99,7 +103,7 @@ class cache {
      *
      * @return  (string) content of cache item, false if the cache item does not exist
      */
-    public function get_file($key) {
+    public function getFile($key) {
         if ($this->exist($key)) {
             $path = $this->get_cache_path($key);
 
@@ -121,7 +125,7 @@ class cache {
     public function set($key, $data) {
         $str = serialize($data);
 
-        return $this->set_file($key, $str);
+        return $this->setFile($key, $str);
     }
     // }}}
     // {{{ get */
@@ -133,12 +137,12 @@ class cache {
      * @return  (object) unserialized content of cache item, false if the cache item does not exist
      */
     public function get($key) {
-        $value = $this->get_file($key);
+        $value = $this->getFile($key);
 
         return unserialize($value);
     }
     // }}}
-    // {{{ geturl */
+    // {{{ getUrl */
     /**
      * @brief returns cache-url of cache-item for direct access through http
      *
@@ -146,7 +150,7 @@ class cache {
      *
      * @return  (string) url of cache-item
      */
-    public function geturl($key) {
+    public function getUrl($key) {
         if ($this->baseurl !== null) {
             return $this->baseurl . $key;
         }

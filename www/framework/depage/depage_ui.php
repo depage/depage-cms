@@ -58,7 +58,7 @@ class depage_ui {
             'file' => "logs/" . get_class($this) . ".log",
         ));
 
-        $this->set_language();
+        $this->setLanguage();
     }
     // }}}
     
@@ -121,7 +121,7 @@ class depage_ui {
         }
 
         $this->send_headers($content);
-        if (false && is_callable(array($content, 'clean'))) {
+        if (is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
             echo($content);
@@ -233,28 +233,41 @@ class depage_ui {
     }
     // }}}
 
-    // {{{ set_language
+    // {{{ setLanguage
     /**
      * set language and prepare gettext functionality
      * by default language is infered by HTTP_ACCEPT_LANGUAGE
      * overwrite this method to change this
      */
-    protected function set_language($locale = null) {
-        if (empty($locale)) {
-            $locale = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']); 
-        }
+    protected function setLanguage($locale = null) {
+        // @todo add available locales automatically
+        $availableLocales = array(
+            "en_US",
+            "de_DE",
+        );
 
-        $this->log->log("set_language: setting locale to $locale");
+        if (empty($locale)) {
+            $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+            foreach ($browserLocales as $lang) {
+                list($alang) = explode(';', $lang);
+
+                $locale = Locale::lookup($availableLocales, $alang, true);
+                if ($locale != "") {
+                    // local found
+                    break;
+                }
+            }
+        }
 
         putenv('LC_ALL=' . $locale);
         setlocale(LC_ALL, $locale);
 
         // Specify location of translation tables
-        bindtextdomain($this->options->lang->domain, "./locale");
-        bind_textdomain_codeset($this->options->lang->domain, 'UTF-8'); 
+        bindtextdomain($this->options->lang['domain'], "./locale");
+        bind_textdomain_codeset($this->options->lang['domain'], 'UTF-8'); 
 
         // Choose domain
-        textdomain($this->options->lang->domain);
+        textdomain($this->options->lang['domain']);
 
         $this->locale = $locale;
     } 

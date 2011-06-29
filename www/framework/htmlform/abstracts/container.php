@@ -1,9 +1,10 @@
 <?php 
-
 /**
- * The abstract container class contains the similatrities of the child classes
- * formClass and fieldset.
- * 
+ * @file container.php
+ * @brief abstract container element class
+ *
+ * @author Frank Hellenkamp <jonas@depage.net>
+ * @author Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
 namespace depage\htmlform\abstracts;
@@ -11,61 +12,90 @@ namespace depage\htmlform\abstracts;
 use depage\htmlform\elements;
 use depage\htmlform\exceptions;
 
+/**
+ * @brief container element base class
+ *
+ * The abstract container class contains the base for container type elements.
+ * ie. htmlform, fieldset and step
+ **/
 abstract class container extends element {
+    // {{{ variables
     /**
-     * Holds references to input elements and fieldsets.
+     * @brief References to input elements and fieldsets.
      **/
     protected $elements = array();
     /**
-     * Holds input element, fieldset and custom HTML object references.
+     * @brief Input element, fieldset and custom HTML object references.
      **/
     protected $elementsAndHtml = array();
     /**
-     * Parent form object reference
+     * @brief Parent form object reference
      **/
     protected $form;
+    // }}}
 
+    // {{{ __construct()
     /**
-     * @param $name string - container name
-     * @param $parameters array of container parameters, HTML attributes
-     * @param $form parent form object.
-     * @return void
+     * @brief   container class constructor
+     *
+     * @param   $name           (string)    container name
+     * @param   $parameters     (array)     container parameters, HTML attributes
+     * @param   $form           (object)    parent form object
+     * @return  void
      **/
     public function __construct($name, $parameters, $form) {
         $this->form = $form;
 
         parent::__construct($name, $parameters, $form);
     }
+    // }}}
 
+    // {{{ __call()
     /**
-     * Allows for various input element types and fieldsets. Accepts methods
-     * that start with "add" and tries to call $this->addElement() to instantiate
-     * the respective class.
-     * Methods that start with "html" return the respective HTML escaped
-     * attributes for element rendering.
+     * @brief   HTML escaping and add subelements
+     *
+     * -# (Methods beginning with "add") Calls addElement() with
+     *    element-specific type argument. Tries to instantiate the respective
+     *    class.
+     * -# (Methods beginnning with "html)" Returns the respective HTML escaped
+     *    attributes for element rendering.
+     *
+     * @param   $function   (string)    function name
+     * @param   $arguments  (array)     function arguments
+     * @return              (object)    element object or (mixed) HTML escaped value
+     *
+     * @see     addElement()
+     * @see     htmlEscape()
      **/
-    public function __call($functionName, $functionArguments) {
-        if (substr($functionName, 0, 3) === 'add') {
-            $type       = strtolower(str_replace('add', '\\depage\\htmlform\\elements\\', $functionName));
-            $name       = (isset($functionArguments[0]))    ? $functionArguments[0] : '';
-            $parameters = isset($functionArguments[1])      ? $functionArguments[1] : array();
+    public function __call($function, $arguments) {
+        if (substr($function, 0, 3) === 'add') {
+            $type       = strtolower(str_replace('add', '\\depage\\htmlform\\elements\\', $function));
+            $name       = isset($arguments[0])  ? $arguments[0] : '';
+            $parameters = isset($arguments[1])  ? $arguments[1] : array();
 
             return $this->addElement($type, $name, $parameters);
         } else {
-            return parent::__call($functionName, $functionArguments);
+            return parent::__call($function, $arguments);
         }
     }
+    // }}}
 
+    // {{{ addElement()
     /**
-     * Generates elements and adds their references to $this->$elements.
-     * 
-     * @param $type input type or fieldset
-     * @param $name string - name of the element
-     * @param $parameters array of element attributes: HTML attributes, validation parameters etc.
-     * @return $newElement
+     * @brief Generates sub-elements.
+     *
+     * Adds new child elements to $this->elements.
+     *
+     * @param   $type       (string) elememt type
+     * @param   $name       (string) element name
+     * @param   $parameters (array)  element attributes: HTML attributes, validation parameters etc.
+     * @return  $newElement (object) new element object
+     *
+     * @see     __call()
+     * @see     addChildElements()
      **/
     protected function addElement($type, $name, $parameters) {
-        $this->_checkElementType($type);
+        $this->checkElementType($type);
         $this->checkParameters($parameters);
 
         $parameters['log'] = $this->log;
@@ -80,34 +110,47 @@ abstract class container extends element {
         }
         return $newElement;
     }
+    // }}}
 
+    // {{{ addChildElements()
     /**
-     * overridable method to add child elements
+     * @brief   Sub-element generator hook
      *
-     * @return void
-     **/
-    public function addChildElements() {
-    }
-
-    /**
-     * Adds a custom HTML element to the form.
+     * Adds child elements just after container construction.
      *
-     * @param $htmlString
-     * return $newHtml custom HTML element reference
+     * @return  void
+     *
+     * @see     addElement()
      **/
-    public function addHtml($htmlString) {
-        $newHtml = new elements\html($htmlString);
+    public function addChildElements() {}
+    // }}}
 
-        $this->elementsAndHtml[] = $newHtml;
-        
-        return $newHtml;
-    }
-
+    // {{{ addHtml()
     /**
+     * @brief   Adds a new custom HTML element to the container.
+     *
+     * @param   $html           (string) HTML code
+     * @return  $htmlElement    (object) HTML element object
+     *
+     * @see     depage::htmlform::elements::html
+     **/
+    public function addHtml($html) {
+        $htmlElement = new elements\html($html);
+
+        $this->elementsAndHtml[] = $htmlElement;
+
+        return $htmlElement;
+    }
+    // }}}
+
+    // {{{ validate()
+    /**
+     * @brief Validates container and its contents.
+     *
      * Walks recursively through current containers' elements and checks if
-     * they're valid. Saves the outcome to $this->valid.
+     * they're valid. Saves the result to $this->valid.
      *
-     * @return void
+     * @return $this->valid (bool) validation result
      **/
     public function validate() {
         if (!$this->validated) {
@@ -121,36 +164,51 @@ abstract class container extends element {
         }
         return $this->valid;
     }
+    // }}}
 
+    // {{{ setRequired()
     /**
-     * Sets current containers' elements' required-HTML attribute recursively.
+     * @brief   Sets required-attribute
      *
-     * @return void
+     * Sets current containers' elements' HTML-required attribute recursively.
+     *
+     * @param   $required (bool) HTML-required attribute
+     * @return  void
      **/
-    public function setRequired($required) {
+    public function setRequired($required = true) {
         $required = (bool) $required;
 
         foreach ($this->elements as $element) {
             $element->setRequired($required);
         }
     }
+    // }}}
 
-    /** 
-     * Checks if an input type class exists. Throws an exception if it doesn't.
+    // {{{ checkElementType()
+    /**
+     * @brief   Checks element class availability
      *
-     * @param $type input type to be checked
+     * Checks if an element type class exists. Throws an exception if it doesn't.
+     *
+     * @param   $type (string) element type
+     * @return  void
      **/
-    private function _checkElementType($type) {
+    private function checkElementType($type) {
         if (!class_exists($type)) {
             throw new exceptions\unknownElementTypeException();
         }
     }
+    // }}}
 
+    // {{{ getElements()
     /**
-     * Walks recursively through current containers' elements to compile a list
-     * of input elements.
+     * @brief Returns containers subelements.
      *
-     * @return $allElements array of input elements
+     * Walks recursively through current containers' elements to compile a list
+     * of subelements.
+     *
+     * @param   $includeFieldsets   (bool)  include fieldset/step elements in result
+     * @return  $allElements        (array) subelements
      **/
     public function getElements($includeFieldsets = false) {
         $allElements = array();
@@ -166,12 +224,17 @@ abstract class container extends element {
         }
         return $allElements;
     }
+    // }}}
 
+    // {{{ getElement()
     /**
-     * Gets input/container element by name.
+     * @brief   Gets subelement by name.
      *
-     * @param $name string - name of the input element we're looking for
-     * @return $input object - input element or fieldset
+     * Searches subelements by name and returns a single element object if
+     * successful. Returns false if the element can't be found.
+     *
+     * @param   $name       (string) name of the input element we're looking for
+     * @return  $element    (object) subelement or (bool) false if unsuccessful
      **/
     public function getElement($name) {
         foreach($this->getElements() as $element) {
@@ -181,4 +244,5 @@ abstract class container extends element {
         }
         return false;
     }
+    // }}}
 }

@@ -1,26 +1,67 @@
 <?php
+/**
+ * @file    elements/number.php
+ * @brief   number input element
+ *
+ * @author Frank Hellenkamp <jonas@depage.net>
+ * @author Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\htmlform\elements;
 
 /**
- * HTML number input type.
+ * @brief HTML number input type.
+ *
+ * Class for HTML5 input type "number".
+ *
+ * @section usage
+ *
+ * @code
+ * <?php
+ *     $form = new depage\htmlform\htmlform('myform');
+ *
+ *     // add a number field
+ *     $form->addNumber('any', array(
+ *         'label' => 'Any number',
+ *     ));
+ *
+ *     // add a number field with restrictions
+ *     $form->addNumber('even', array(
+ *         'label' => 'Even number between 0 and 10, inclusive',
+ *         'min'   => 0,
+ *         'max'   => 10,
+ *         'step'  => 2,
+ *     ));
+ *
+ *     // process form
+ *     $form->process();
+ *
+ *     // Display the form.
+ *     echo ($form);
+ * ?>
+ * @endcode
  **/
 class number extends text {
+    // {{{ variables
     /**
-     * Minimum range HTML attribute.
+     * @brief Minimum range HTML attribute.
      **/
     protected $min;
     /**
-     * Maximum range HTML attribute.
+     * @brief Maximum range HTML attribute.
      **/
     protected $max;
     /**
-     * Step HTML attribute.
+     * @brief Step HTML attribute.
      **/
     protected $step;
-    
+    // }}}
+
+    // {{{ setDefaults()
     /**
-     * collects initial values across subclasses.
+     * @brief   collects initial values across subclasses.
+     *
+     * @return  void
      **/
     protected function setDefaults() {
         parent::setDefaults();
@@ -31,11 +72,13 @@ class number extends text {
         $this->defaults['step']         = null;
         $this->defaults['errorMessage'] = 'Please enter a valid number!';
     }
+    // }}}
 
+    // {{{ __toString()
     /**
-     * Renders element to HTML.
+     * @brief   Renders element to HTML.
      *
-     * @return string of HTML rendered element
+     * @return  (string) HTML rendered element
      **/
     public function __toString() {
         $value              = $this->htmlValue();
@@ -58,30 +101,48 @@ class number extends text {
             $errorMessage .
         "</p>\n";
     }
+    // }}}
 
+    // {{{ htmlMin()
     /**
-     * Returns string of HTML min attribute.
+     * @brief   Renders HTML min attribute.
+     *
+     * @return  (string) HTML min attribute
      **/
     protected function htmlMin() {
         return ($this->min === null) ? "" : " min=\"" . $this->htmlEscape($this->min) . "\"";
     }
+    // }}}
 
+    // {{{ htmlMax()
     /**
-     * Returns string of HTML max attribute.
+     * @brief   Renders HTML max attribute.
+     *
+     * @return  (string) HTML max attribute
      **/
     protected function htmlMax() {
         return ($this->max === null) ? "" : " max=\"" . $this->htmlEscape($this->max) . "\"";
     }
+    // }}}
 
+    // {{{ htmlStep()
     /**
-     * Returns string of HTML step attribute.
+     * @brief   Renders HTML step attribute.
+     *
+     * @return  (string) HTML step attribute
      **/
     protected function htmlStep() {
         return ($this->step === null) ? "" : " step=\"" . $this->htmlEscape($this->step) . "\"";
     }
+    // }}}
 
+    // {{{ validatorCall()
     /**
-     * Overrides parent method to add min and max values
+     * @brief   custom validator call
+     *
+     * Number specific validator call (includes min and max values)
+     *
+     * @return  (bool) validaton result
      **/
     protected function validatorCall() {
         $parameters = array(
@@ -90,11 +151,51 @@ class number extends text {
         );
         return $this->validator->validate($this->value, $parameters);
     }
+    // }}}
 
+    // {{{ typeCastValue()
     /**
-     * Converts value to element specific type.
+     * @brief   Converts value to element specific type.
+     *
+     * @return  void
      **/
     protected function typeCastValue() {
-        $this->value = (float) $this->value;
+        $ptString = $this->value;
+
+        $pString = str_replace(" ", "", $ptString);
+
+        if (substr_count($pString, ",") > 1) {$pString = str_replace(",", "", $pString);}
+        if (substr_count($pString, ".") > 1) {$pString = str_replace(".", "", $pString);}
+
+        $pregResult = array();
+
+        $commaset = strpos($pString,',');
+        if ($commaset === false) {$commaset = -1;}
+
+        $pointset = strpos($pString,'.');
+        if ($pointset === false) {$pointset = -1;}
+
+        $pregResultA = array();
+        $pregResultB = array();
+
+        if ($pointset < $commaset) {
+            preg_match('#(([-]?[0-9]+(\.[0-9])?)+(,[0-9]+)?)#', $pString, $pregResultA);
+        }
+        preg_match('#(([-]?[0-9]+(,[0-9])?)+(\.[0-9]+)?)#', $pString, $pregResultB);
+        if ((isset($pregResultA[0]) && (!isset($pregResultB[0])
+                        || strstr($preResultA[0],$pregResultB[0]) == 0
+                        || !$pointset))) {
+            $numberString = $pregResultA[0];
+            $numberString = str_replace('.','',$numberString);
+            $numberString = str_replace(',','.',$numberString);
+        }
+        elseif (isset($pregResultB[0]) && (!isset($pregResultA[0])
+                    || strstr($pregResultB[0],$preResultA[0]) == 0
+                    || !$commaset)) {
+            $numberString = $pregResultB[0];
+            $numberString = str_replace(',','',$numberString);
+        }
+        $this->value = (float) $numberString;
     }
+    // }}}
 }

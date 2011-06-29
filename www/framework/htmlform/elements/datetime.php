@@ -1,9 +1,16 @@
 <?php
+/**
+ * @file    datetime.php
+ * @brief   datetime input element
+ *
+ * @author Frank Hellenkamp <jonas@depage.net>
+ * @author Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\htmlform\elements;
 
 /**
- * HTML datetime input type.
+ * @brief HTML datetime input type.
  *
  * @todo dummy - no validator implemented yet
  **/

@@ -14,9 +14,10 @@
     // process form
     $form->process();
 
-    if ($form->isValid()) {
+    if ($form->validate()) {
         // saving formdata
         echo("<p>saving</p>");
+        var_dump($form->getValues());
 
         $form->clearSession();
     }

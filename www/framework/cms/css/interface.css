@@ -242,6 +242,71 @@ a img {
 
 /* }}} */
 
+/* {{{ growl */
+#depageGrowlArea {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    z-index: 30000;
+}
+#depageGrowlArea div {
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    width: 250px;
+    background: #555555;
+    padding: 5px 8px;
+    color: #ffffff;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+#depageGrowlArea div:hover {
+    border-color: #ffffff;
+}
+/* }}} */
+/* {{{ depage-scroller */
+.preview {
+    margin-top: 30px;
+    width: 230px;
+    height: 180px;
+    border: 1px solid #dfdfdf;
+}
+.depage-scroller {
+    overflow: hidden;
+    position: relative;
+}
+.depage-scroller-content {
+    padding-right: 7px;
+}
+.depage-scroller .scroll-bar {
+    position: absolute;
+    right: 0;
+    width: 12px;
+    height: 100%;
+}
+.depage-scroller .scroll-bar:hover {
+    background: #dfdfdf;
+    cursor: pointer;
+}
+.depage-scroller .scroll-bar .scroll-handle {
+    position: absolute;
+    right: 0;
+    width: 7px;
+    border-right: 5px solid #dfdfdf;
+}
+.depage-scroller:hover .scroll-bar .scroll-handle {
+    border-right: 5px solid #555555;
+}
+.depage-scroller .scroll-bar:hover .scroll-handle {
+    border-right: 5px solid #ff9900;
+}
+/* }}} */
+
 /* {{{ tasks */
 #box_tasks {
     display: none;
