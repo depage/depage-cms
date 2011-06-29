@@ -40,7 +40,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
 <div id="notification"></div>
 <!-- the tree container (notice NOT an UL node) -->
-<div id="demo" class="jstree-container"
+<div id="node_<?php echo $this->root_id; ?>" class="jstree-container"
     data-doc-id = "<?php echo $this->doc_id; ?>"
     data-seq-nr = "<?php echo $this->seq_nr; ?>"
     data-selected-nodes = ""
