@@ -62,9 +62,11 @@ class cms_jstree extends depage_ui {
     public function index($doc_name = "pages") {
         $this->auth->enforce();
         $doc_id = $this->get_doc_id($doc_name);
+        $doc_info = $this->xmldb->get_doc_info($doc_id);
 
         $h = new html("jstree.tpl", array(
             'doc_id' => $doc_id,
+            'root_id' => $doc_info->rootid, 
             'seq_nr' => $this->get_current_seq_nr($doc_id),
             'nodes' => $this->get_html_nodes($doc_name),
         ), $this->html_options); 
