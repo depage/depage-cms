@@ -84,11 +84,11 @@ class cms_jstree extends depage_ui {
     public function create_node() {
         $this->auth->enforce();
 
-        $node = $this->node_from_request($_REQUEST["node"]);
+        $node = $this->xmldb->build_node($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["node"]);
         $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
         $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
 
-        return new json(array("status" => 1, "id" => $id));
+        return new json(array("status" => ($id !== false), "id" => $id));
     }
     // }}}
 
@@ -214,27 +214,12 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
-    // {{{ node_from_request
-    protected function node_from_request($request) {
-        $xml = "<{$request["_type"]} ";
-        foreach ($request as $attr => $value) {
-            if ($attr != "_type") {
-                $xml .= "$attr=\"$value\" ";
-            }
-        }
-        $xml .= "/>";        
-
-        $doc = new DOMDocument;
-        $doc->loadXML($xml);
-
-        return $doc;
-    }
-    // }}}
-
+    // {{{ get_current_seq_nr
     protected function get_current_seq_nr($doc_id) {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
+    // }}}
 
     // {{{ send_time
     protected function send_time($time) {
