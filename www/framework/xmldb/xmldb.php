@@ -448,6 +448,21 @@ class xmldb {
         return $val;
     }
     // }}}
+    // {{{ build_node()
+    public function build_node($doc_id, $name, $attributes) {
+        $doc_info = $this->get_namespaces_and_entities($doc_id);
+        $xml = "<$name {$doc_info->namespaces}";
+        foreach ($attributes as $attr => $value) {
+            $xml .= " $attr=\"$value\"";
+        }
+        $xml .= "/>";
+
+        $doc = new \DOMDocument;
+        $doc->loadXML($xml);
+
+        return $doc->documentElement;
+    }
+    // }}}
     
     // {{{ set_attribute()
     /**
