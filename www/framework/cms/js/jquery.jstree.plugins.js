@@ -1133,7 +1133,7 @@ var placeholder;
                         // fix up remaining jstree classes
                         tree.jstree("clean_node");
 
-                        tree.data("seq_nr", new_seq_nr);
+                        tree.attr("data-seq-nr", new_seq_nr);
                     }
                 });
 
