@@ -1189,4 +1189,86 @@ var placeholder;
 })(jQuery);
 
 
+/*
+ * add marker plugin
+ */
+(function ($) {
+    $.jstree.plugin("add_marker", {
+		__init : function () {
+            this.data.add_marker = {
+                offset : null,
+                w : null,
+                target : null,
+                related_node : null,
+		        marker : $("<div>ADD</div>").attr({ id : "jstree-add-marker" }).hide().appendTo("body")
+            };
 
+            var c = this.get_container();
+            c.bind("mouseleave.jstree", $.proxy(function(e) {
+                this.data.add_marker.marker.hide();
+            }, this))
+            .delegate("li", "mousemove.jstree", $.proxy(function(e) {
+                this._show_add_marker($(e.target), e.pageY);
+            }, this));
+
+            this.data.add_marker.marker.mouseenter($.proxy(function (e) {
+                this.data.add_marker.related_node = this._get_node(e.relatedTarget);
+                this.data.add_marker.marker.show();
+            }, this))
+            .mousemove($.proxy(function (e) {
+                // add marker swallows mousemove event. try to delegate to correct li_node. hide marker if everything failes.
+                if (this.data.add_marker.related_node && this.data.add_marker.related_node != -1) {
+                    this._show_add_marker(this.data.add_marker.related_node, e.pageY);
+                } else {
+                    this.data.add_marker.marker.hide();
+                }
+            }, this))
+            .click($.proxy(function (e) {
+                this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : "pg:page" } }); 
+                this.data.add_marker.marker.hide();
+            }, this));
+
+        },
+        _fn : {
+            _show_add_marker : function (target, pageY) {
+                // fix li_height
+                this.data.core.li_height = this.get_container().find("ul li.jstree-closed, ul li.jstree-leaf").eq(0).height() || 18;
+
+                this.data.add_marker.offset = target.offset();
+				this.data.add_marker.w = (pageY - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
+                if (this.data.add_marker.w < this.data.core.li_height / 4) {
+                    // before
+                    var node = this._get_node(target);
+
+                    this.data.add_marker.target = node;
+                    this.data.add_marker.pos = "before"; 
+                    this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");;
+                } else if (this.data.add_marker.w <= this.data.core.li_height * 3/4) {
+                    // inside
+                    this.data.add_marker.target = this._get_node(target);
+                    this.data.add_marker.pos = "last"; 
+                    this.data.add_marker.marker.addClass("jstree-add-marker-inside").removeClass("jstree-add-marker-between");
+                } else {
+                    // after
+                    var node = this._get_node(target);
+                    var target_node = this._get_next(node);
+
+                    if (target_node.length) {
+                        this.data.add_marker.target = target_node;
+                        this.data.add_marker.pos = "before";
+                    } else {
+                        // special case for last node
+                        this.data.add_marker.target = node;
+                        this.data.add_marker.pos = "after";
+                    }
+                    this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
+                }
+
+                var left = 300;
+                var top = this.data.add_marker.offset.top;
+                this.data.add_marker.marker.css({ "left" : left + "px", "top" : top + "px" }).show();  
+            },
+        },
+    });
+})(jQuery);
+//*/
