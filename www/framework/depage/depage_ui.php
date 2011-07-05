@@ -129,9 +129,16 @@ class depage_ui {
 
         // finishing time
         $time = microtime(true) - $time_start;
+        $this->send_time($time);
+    }
+    // }}}
+
+    // {{{ send_time
+    protected function send_time($time) {
         echo("<!-- $time sec -->");
     }
     // }}}
+
     // {{{ send_headers
     /**
      * sends out headers

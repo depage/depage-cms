@@ -12,11 +12,6 @@
 
 class cms_jstree extends depage_ui {
     protected $html_options = array();
-    protected $defaults = array(
-        "db" => null,
-        "auth" => null,
-        "env" => "development",
-    );
 
     // {{{ constructor
     public function __construct($options = NULL) {
@@ -32,8 +27,9 @@ class cms_jstree extends depage_ui {
             )
         );
 
-        // TODO init correctly
-        $this->prefix = "dp_proj_{$this->pdo->prefix}";
+        // TODO: set project correctly
+        $proj = "proj";
+        $this->prefix = "{$this->pdo->prefix}_{$proj}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
         // get auth object
@@ -50,18 +46,27 @@ class cms_jstree extends depage_ui {
             'clean' => "space",
             'env' => $this->options->env,
         );
+    }
+    // }}}
 
-//        $this->delta_updates = new delta_updates ("dp_proj_{$this->pdo->prefix}", $this->pdo);
+    // {{{ destructor
+    public function __destruct() {
+        if (isset($_REQUEST["doc_id"])) {
+            $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], 0);
+            $delta_updates->discardOldChanges();
+        }
     }
     // }}}
 
     // {{{ index
     public function index($doc_name = "pages") {
-        // $this->auth->enforce();
+        $this->auth->enforce();
         $doc_id = $this->get_doc_id($doc_name);
+        $doc_info = $this->xmldb->get_doc_info($doc_id);
 
         $h = new html("jstree.tpl", array(
             'doc_id' => $doc_id,
+            'root_id' => $doc_info->rootid, 
             'seq_nr' => $this->get_current_seq_nr($doc_id),
             'nodes' => $this->get_html_nodes($doc_name),
         ), $this->html_options); 
@@ -73,15 +78,17 @@ class cms_jstree extends depage_ui {
     // {{{ create_node
     /**
      * @param $doc_id document id
-     * @param $parent parent
-     * @param $child child
+     * @param $node child node data
      * @param $position position for new child in parent
      */
     public function create_node() {
         $this->auth->enforce();
 
-        $node = $this->node_from_request();
-        $this->xmldb->add_node($_REQUEST["doc_id"], $node, null, $_REQUEST["position"]);   
+        $node = $this->node_from_request($_REQUEST["node"]);
+        $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
+        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+
+        return new json(array("status" => 1, "id" => $id));
     }
     // }}}
 
@@ -90,17 +97,24 @@ class cms_jstree extends depage_ui {
         $this->auth->enforce();
 
         $this->xmldb->set_attribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
+        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+
+        return new json(array("status" => 1));
     }
     // }}}
 
     // {{{ move_node
     public function move_node() {
-        //$this->auth->enforce();
+        $this->auth->enforce();
 
-        $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"]), array($_REQUEST["target_id"]));
+        $old_parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $status = $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
+        }
 
-        return new json(array("status" => 1));
+        return new json(array("status" => $status));
     }
     // }}}
 
@@ -108,17 +122,74 @@ class cms_jstree extends depage_ui {
     public function remove_node() {
         $this->auth->enforce();
 
+        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+
+        return new json(array("status" => 1));
+    }
+    // }}}
+
+    // {{{ types_settings
+    public function types_settings($doc_id) {
+        $this->auth->enforce();
+
+        $doc_info = $this->xmldb->get_doc_info($doc_id);
+        $root_element_name = $this->xmldb->get_nodeName_by_elementId($doc_id, $doc_info->rootid);
+
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        $valid_children = $permissions->valid_children();
+        $settings = array(
+            "types_from_url" => array(
+                "max_depth" => -2,
+                "max_children" => -2,
+                "valid_children" => $valid_children[$root_element_name],
+                "types" => array(),
+            ),
+        );
+
+        $known_elements = $permissions->known_elements();
+        $types = &$settings["types_from_url"]["types"];
+        foreach ($known_elements as $element) {
+            if ($element != $root_element_name) {
+                $setting = array();
+
+                if (!$permissions->is_element_allowed_in_any($element)) {
+                    $setting["start_drag"] = false;
+                    $setting["move_node"] = false;
+                }
+
+                if (!$permissions->is_unlink_allowed_of($element)) {
+                    $setting["delete_node"] = false;
+                    $setting["remove"] = false;
+                }
+
+                if (isset($valid_children[$element])) {
+                    $setting["valid_children"] = $valid_children[$element];
+                } else if (isset($valid_children[\depage\xmldb\permissions::default_element])) {
+                    $setting["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+                }
+
+                $types[$element] = $setting;
+            }
+        }
+
+        if (!isset($types[\depage\xmldb\permissions::default_element])) {
+            $types[\depage\xmldb\permissions::default_element] = array();
+            if (empty($valid_children[\depage\xmldb\permissions::default_element])) {
+                $types[\depage\xmldb\permissions::default_element]["valid_children"] = "none";
+            } else {
+                $types[\depage\xmldb\permissions::default_element]["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+            }
+        }
+
+        return new json($settings);
     }
     // }}}
 
     // {{{ recordChange
-    private function recordChange($doc_id, $ids, $parent_ids) {
+    protected function recordChange($doc_id, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
-
-        foreach ($ids as $id) {
-            $parent_ids[] = $this->xmldb->get_parentId_by_elementId($doc_id, $id);
-        }
 
         $unique_parent_ids = array_unique($parent_ids);
         foreach ($unique_parent_ids as $parent_id) {
@@ -128,14 +199,14 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ get_doc_id
-    private function get_doc_id($doc_name) {
+    protected function get_doc_id($doc_name) {
         $doc_list = $this->xmldb->get_doc_list($doc_name);
         return $doc_list[$doc_name]->id;
     }
     // }}}
 
     // {{{ get_html_nodes
-    private function get_html_nodes($doc_name) {
+    protected function get_html_nodes($doc_name) {
         $doc = $this->xmldb->get_doc($doc_name);
         $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
 
@@ -144,26 +215,32 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ node_from_request
-    private function node_from_request() {
-        $parent = new DOMElement($_REQUEST["parent"]["type"]);
-        foreach ($_REQUEST["parent"] as $attr => $value) {
-            $parent->setAttribute($attr, $value);
+    protected function node_from_request($request) {
+        $xml = "<{$request["_type"]} ";
+        foreach ($request as $attr => $value) {
+            if ($attr != "_type") {
+                $xml .= "$attr=\"$value\" ";
+            }
         }
+        $xml .= "/>";        
 
-        $child = new DOMElement($_REQUEST["child"]["type"]);
-        foreach ($_REQUEST["parent"] as $attr => $value) {
-            $parent->setAttribute($attr, $value);
-        }
+        $doc = new DOMDocument;
+        $doc->loadXML($xml);
 
-        $parent->appendChild($child);
-        return $parent;
+        return $doc;
     }
     // }}}
 
-    private function get_current_seq_nr($doc_id) {
+    protected function get_current_seq_nr($doc_id) {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
+
+    // {{{ send_time
+    protected function send_time($time) {
+        // do nothing
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

@@ -565,7 +565,44 @@ class xmldb {
     }
     // }}}
 
+    // {{{ get_permissions()
+    public function get_permissions($doc_id) {
+        $query = $this->pdo->prepare(
+            "SELECT docs.permissions AS permissions
+            FROM {$this->table_docs} AS docs
+            WHERE docs.id = :doc_id
+            LIMIT 1"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
+
+        $result = $query->fetchObject();
+        return new permissions($result->permissions);
+    }
+    // }}}
+
     /* private */
+    // {{{ allow_move()
+    private function allow_move($doc_id, $node_id, $target_id) {
+        $query = $this->pdo->prepare(
+            "SELECT name FROM {$this->table_xml} WHERE id = :node_id AND id_doc = :doc_id
+            UNION ALL SELECT name FROM {$this->table_xml} WHERE id = :target_id AND id_doc = :doc_id"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+            'node_id' => $node_id,
+            'target_id' => $target_id,
+        ));
+
+        $node = $query->fetchObject();
+        $target = $query->fetchObject();
+
+        $permissions = $this->get_permissions($doc_id);
+        return $permissions->is_element_allowed_in($node->name, $target->name);
+    }
+    // }}}
+
     // {{{ begin_transaction()
     private function begin_transaction() {
         if ($this->transaction == 0) {
@@ -695,7 +732,7 @@ class xmldb {
      * @return    $node_name (string) name of node, false, if
      *            node doesn't exist.
      */
-    private function get_nodeName_by_elementId($doc_id, $id) {
+    public function get_nodeName_by_elementId($doc_id, $id) {
         $query = $this->pdo->prepare(
             "SELECT xml.name AS name
             FROM {$this->table_xml} AS xml
@@ -1092,8 +1129,9 @@ class xmldb {
      * @param    $id (int) db-id of node to get
      * @param    $add_id_attribute (bool) true, if you want to add the db-id attributes
      *            to xml-definition, false to remove them.
+     * @param    $level (int) number of recursive get_childnodes_by_parentid calls. how deep to traverse the tree.
      */
-    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true) {
+    public function get_subdoc_by_elementId($doc_id, $id, $add_id_attribute = true, $level = PHP_INT_MAX) {
         global $conf;
 
         $identifier = "{$this->table_docs}/d{$doc_id}/{$id}.xml";
@@ -1153,7 +1191,7 @@ class xmldb {
                 $xml_str .= $node_data;
                 
                 //add child_nodes
-                $xml_str .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+                $xml_str .= $this->get_childnodes_by_parentid($doc_id, $row->id, $level);
 
                 $xml_str .= "</{$row->name}>";
 
@@ -1187,10 +1225,10 @@ class xmldb {
      *
      * @param   $doc_id (int) document id
      * @param   $parent_id (int) id of parent-node
-     *
+     * @param   $level (int) number of recursive calls. how deep to traverse the tree.
      * @return  $xml_doc (string) xml node definition of node
      */
-    protected function get_childnodes_by_parentid($doc_id, $parent_id) {
+    protected function get_childnodes_by_parentid($doc_id, $parent_id, $level = PHP_INT_MAX) {
         static $query = null;
 
         // prepare query
@@ -1225,7 +1263,9 @@ class xmldb {
                 $xml_doc .= $node_data;
                 
                 //add child_nodes
-                $xml_doc .= $this->get_childnodes_by_parentid($doc_id, $row->id);
+                if ($level > 0) {
+                    $xml_doc .= $this->get_childnodes_by_parentid($doc_id, $row->id, $level - 1);
+                }
 
                 $xml_doc .= "</{$row->name}>";
             //get TEXT_NODES
@@ -1609,6 +1649,7 @@ class xmldb {
         return array();
     }
     // }}}
+
     // {{{ move_node()
     /**
      * moves node in database
@@ -1622,6 +1663,10 @@ class xmldb {
     public function move_node($doc_id, $node_id, $target_id, $target_pos) {
         //echo("doc_id: $doc_id\nnode_id: $node_id\ntarget_id: $target_id\ntarget_pos: $target_pos\n");
         //return false;
+
+        if (!$this->allow_move($doc_id, $node_id, $target_id)) {
+            return false;
+        }
 
         $this->begin_transaction();
         
@@ -1683,6 +1728,8 @@ class xmldb {
         }
         
         $this->end_transaction();
+
+        return true;
     }
     // }}}
     // {{{ copy_node()

@@ -3,6 +3,10 @@
 namespace depage\websocket\jstree;
 
 class jstree_delta_updates {
+    // clients will update themselves about every 3 seconds maximum. retain enough updates to update partially.
+    // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
+    const MAX_UPDATES_BEFORE_RELOAD = 50;
+
     function __construct($table_prefix, $db, $xmldb, $doc_id, $seq_nr = -1) {
         $this->table_name = $table_prefix . "_delta_updates";
         $this->db = $db;
@@ -29,12 +33,15 @@ class jstree_delta_updates {
     }
 
     public function discardOldChanges() {
-        $query = $this->db->prepare("DELETE FROM " . $this->table_name . " WHERE id <= ? AND doc_id = ?");
-        $query->execute(array($this->seq_nr, $this->doc_id));
+        $min_id_query = $this->db->prepare("SELECT id FROM " . $this->table_name . " WHERE doc_id = ? ORDER BY id DESC LIMIT " . (self::MAX_UPDATES_BEFORE_RELOAD - 1) . ", 1");
+        $min_id_query->execute(array($this->doc_id));
+        $row = $min_id_query->fetch();
+
+        $delete_query = $this->db->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
+        $delete_query->execute(array((int)$row["id"], $this->doc_id));
     }
 
     private function changedParentIds() {
-        // TODO: transaction for all db requests?
         $parent_ids = array();
 
         $query = $this->db->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
@@ -53,13 +60,22 @@ class jstree_delta_updates {
     }
 
     // returns an associative array of parent node id keys and children node values, that where involved in a recent change
-    // TODO: optimization, only get immediate children and replace partially in client
     public function changedNodes() {
+        // do a partial update with only immediate children by default
+        $level_of_children = 0;
+        $initial_seq_nr = $this->seq_nr;
         $parent_ids = $this->changedParentIds();
+
+        // very unlikely case that more delta updates happened than will be retained in db. reload whole document
+        if ($this->seq_nr - $initial_seq_nr > MAX_UPDATES_BEFORE_RELOAD) {
+            $level_of_children = PHP_INT_MAX;
+            $doc_info = $this->xmldb->get_doc_info($this->doc_id);
+            $parent_ids = array($doc_info->rootid);
+        }
 
         $changed_nodes = array();
         foreach ($parent_ids as $parent_id) {
-            $changed_nodes[$parent_id] = $this->xmldb->get_subdoc_by_elementId($this->doc_id, $parent_id);
+            $changed_nodes[$parent_id] = $this->xmldb->get_subdoc_by_elementId($this->doc_id, $parent_id, true, $level_of_children);
         }
 
         return $changed_nodes;

@@ -6,15 +6,18 @@
 
 <!-- ignore root element, only transform children -->
 <xsl:template match="/*">
-    <ul>
-    <xsl:apply-templates />
-    </ul>
+    <xsl:choose>
+        <xsl:when test="count(node()) > 0">
+            <ul>
+            <xsl:apply-templates />
+            </ul>
+        </xsl:when>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template match="node()">
     <xsl:variable name="id" select="@db:id" />
-    <!-- TODO: <xsl:variable name="type" select="@type" /> -->
-    <xsl:variable name="type" select="'folder'" />
+    <xsl:variable name="type" select="name()" />
     <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint" select="@hint" />
 

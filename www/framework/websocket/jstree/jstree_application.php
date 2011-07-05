@@ -1,7 +1,7 @@
 <?php
 
-// TODO: convert to autoloader
 require_once("framework/depage/depage.php");
+// TODO: convert to autoloader
 require_once("framework/websocket/lib/WebSocket/Application/Application.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
@@ -31,22 +31,24 @@ class JsTreeApplication extends \Websocket\Application\Application {
             )
         );
 
-        // TODO init correctly
-        $this->prefix = "dp_proj_{$this->pdo->prefix}";
+        // TODO: set project correctly
+        $proj = "proj";
+        $this->prefix = "{$this->pdo->prefix}_{$proj}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
-        // get auth object
+        /* get auth object
         $this->auth = \auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method
-        );
+        ); */
     }
 
     public function onConnect($client)
     {
-        // TODO: authentication
+        // TODO: authentication ? beware of timeouts
+
         if (empty($this->clients[$client->param])) {
             $this->clients[$client->param] = array();
             $this->delta_updates[$client->param] = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $client->param);
@@ -85,13 +87,7 @@ class JsTreeApplication extends \Websocket\Application\Application {
 
     public function onData($raw_data, $client)
     {
-        // TODO
-        /*
-        $data = json_decode($raw_data);
-        foreach ($this->clients as $sendto) {
-            $sendto->send($data);
-        }
-        */
+        // do nothing, only send data in onTick() because fallback clients do not support websockets
     }
 }
 
