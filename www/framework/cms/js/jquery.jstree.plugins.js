@@ -1199,54 +1199,80 @@ var placeholder;
                 offset : null,
                 w : null,
                 target : null,
-                related_node : null,
+                context_menu : false,
 		        marker : $("<div>ADD</div>").attr({ id : "jstree-add-marker" }).hide().appendTo("body")
             };
 
             var c = this.get_container();
             c.bind("mouseleave.jstree", $.proxy(function(e) {
-                this.data.add_marker.marker.hide();
-            }, this))
-            .delegate("li", "mousemove.jstree", $.proxy(function(e) {
-                this._show_add_marker($(e.target), e.pageY);
-            }, this));
-
-            this.data.add_marker.marker.mouseenter($.proxy(function (e) {
-                this.data.add_marker.related_node = this._get_node(e.relatedTarget);
-                this.data.add_marker.marker.show();
-            }, this))
-            .mousemove($.proxy(function (e) {
-                // add marker swallows mousemove event. try to delegate to correct li_node. hide marker if everything failes.
-                if (this.data.add_marker.related_node && this.data.add_marker.related_node != -1) {
-                    this._show_add_marker(this.data.add_marker.related_node, e.pageY);
-                } else {
+                if (!this.data.add_marker.context_menu) {
                     this.data.add_marker.marker.hide();
                 }
             }, this))
-            .click($.proxy(function (e) {
-                this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : "pg:page" } }); 
-                this.data.add_marker.marker.hide();
+            .delegate("li", "mousemove.jstree", $.proxy(function(e) {
+                if (!this.data.add_marker.context_menu) {
+                    this._show_add_marker($(e.target), e.pageX, e.pageY);
+                }
             }, this));
 
+            this.data.add_marker.marker.mousemove($.proxy(function (e) {
+                if (!this.data.add_marker.context_menu) {
+                    // add marker swallows mousemove event. try to delegate to correct li_node.
+                    // TODO: fix for Opera < 10.5, Safari 4.0 Win. see http://www.quirksmode.org/dom/w3c%5Fcssom.html#documentview
+                    var element = $(document.elementFromPoint(e.clientX - this.data.add_marker.marker.width(), e.clientY));
+                    this._show_add_marker(element, e.pageX, e.pageY);
+                }
+            }, this))
+            .click($.proxy(function (e) {
+                var a = this.data.add_marker.marker;
+				var o = a.offset();
+				var x = o.left;
+				var y = o.top + this.data.core.li_height;
+                var items = {
+                    "create" : {
+                        "separator_before"	: false,
+                        "separator_after"	: true,
+                        "label"				: "Create",
+                        "action"			: function (obj) {
+                            this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : "pg:page" } });
+                        }
+                    },
+                };
+                this.data.add_marker.context_menu = true;
+                $.vakata.context.show(items, a, x, y, this, this.data.add_marker.target);
+				if(this.data.themes) { $.vakata.context.cnt.attr("class", "jstree-" + this.data.themes.theme + "-context"); }
+            }, this));
+
+			$(document).bind("context_hide.vakata", $.proxy(function () { this.data.add_marker.context_menu = false; }, this));
         },
         _fn : {
-            _show_add_marker : function (target, pageY) {
+            _show_add_marker : function (target, page_x, page_y) {
                 var node = this._get_node(target);
                 if (!node || node == -1 || target[0].nodeName == "UL") {
                     this.data.add_marker.marker.hide();
                     return;
                 }
 
+                var c = this.get_container();
+                var x_pos = c.offset().left + c.width() - (c.attr("data-add-marker-right") || 30) - (c.attr("data-add-marker-margin-right") || 10);
+                var min_x = x_pos - (c.attr("data-add-marker-margin-left") || 10);
+                if (page_x < min_x) {
+                    this.data.add_marker.marker.hide();
+                    return;
+                }
+
                 // fix li_height
-                this.data.core.li_height = this.get_container().find("ul li.jstree-closed, ul li.jstree-leaf").eq(0).height() || 18;
+                this.data.core.li_height = c.find("ul li.jstree-closed, ul li.jstree-leaf").eq(0).height() || 18;
                 this.data.add_marker.offset = target.offset();
-				this.data.add_marker.w = (pageY - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
+				this.data.add_marker.w = (page_y - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
+                var top = this.data.add_marker.offset.top;
 
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "before"; 
-                    this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");;
+                    this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
+                    top -= this.data.core.li_height / 2;
                 } else if (this.data.add_marker.w <= this.data.core.li_height * 3/4) {
                     // inside
                     this.data.add_marker.target = node;
@@ -1264,11 +1290,10 @@ var placeholder;
                         this.data.add_marker.pos = "after";
                     }
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
+                    top += this.data.core.li_height / 2;
                 }
 
-                var left = 300;
-                var top = this.data.add_marker.offset.top;
-                this.data.add_marker.marker.css({ "left" : left + "px", "top" : top + "px" }).show();  
+                this.data.add_marker.marker.css({ "left" : x_pos + "px", "top" : top + "px" }).show();  
             },
         },
     });
