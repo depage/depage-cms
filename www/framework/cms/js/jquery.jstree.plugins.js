@@ -1231,28 +1231,30 @@ var placeholder;
         },
         _fn : {
             _show_add_marker : function (target, pageY) {
+                var node = this._get_node(target);
+                if (!node || node == -1 || target[0].nodeName == "UL") {
+                    this.data.add_marker.marker.hide();
+                    return;
+                }
+
                 // fix li_height
                 this.data.core.li_height = this.get_container().find("ul li.jstree-closed, ul li.jstree-leaf").eq(0).height() || 18;
-
                 this.data.add_marker.offset = target.offset();
 				this.data.add_marker.w = (pageY - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
+
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
-                    var node = this._get_node(target);
-
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "before"; 
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");;
                 } else if (this.data.add_marker.w <= this.data.core.li_height * 3/4) {
                     // inside
-                    this.data.add_marker.target = this._get_node(target);
+                    this.data.add_marker.target = node;
                     this.data.add_marker.pos = "last"; 
                     this.data.add_marker.marker.addClass("jstree-add-marker-inside").removeClass("jstree-add-marker-between");
                 } else {
                     // after
-                    var node = this._get_node(target);
                     var target_node = this._get_next(node);
-
                     if (target_node.length) {
                         this.data.add_marker.target = target_node;
                         this.data.add_marker.pos = "before";
