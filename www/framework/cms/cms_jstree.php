@@ -151,7 +151,7 @@ class cms_jstree extends depage_ui {
             "types_from_url" => array(
                 "max_depth" => -2,
                 "max_children" => -2,
-                "valid_children" => $valid_children[$root_element_name],
+                "valid_children" => self::valid_children_or_none($valid_children, $root_element_name),
                 "types" => array(),
             ),
         );
@@ -177,7 +177,7 @@ class cms_jstree extends depage_ui {
                 if (isset($valid_children[$element])) {
                     $setting["valid_children"] = $valid_children[$element];
                 } else if (isset($valid_children[\depage\xmldb\permissions::default_element])) {
-                    $setting["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+                    $setting["valid_children"] = self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element);
                 }
 
                 $types[$element] = $setting;
@@ -185,12 +185,9 @@ class cms_jstree extends depage_ui {
         }
 
         if (!isset($types[\depage\xmldb\permissions::default_element])) {
-            $types[\depage\xmldb\permissions::default_element] = array();
-            if (empty($valid_children[\depage\xmldb\permissions::default_element])) {
-                $types[\depage\xmldb\permissions::default_element]["valid_children"] = "none";
-            } else {
-                $types[\depage\xmldb\permissions::default_element]["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
-            }
+            $types[\depage\xmldb\permissions::default_element] = array(
+                "valid_children" => self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element),
+            );
         }
 
         return new json($settings);
@@ -236,6 +233,17 @@ class cms_jstree extends depage_ui {
         // do nothing
     }
     // }}}
+
+    // {{{ valid_children_or_none
+    static private function valid_children_or_none(&$valid_children, $element) {
+        if (empty($valid_children[$element])) {
+            return "none";
+        } else {
+            return $valid_children[$element];
+        }
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
