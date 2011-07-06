@@ -118,6 +118,9 @@ class config implements Iterator {
                 } else {
                     $data[$key] = $value;
                 }
+                if (is_array($data[$key])) {
+                    $data[$key] = (object) $data[$key];
+                }
             }
         }
 
