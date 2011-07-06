@@ -114,17 +114,18 @@ class auth_user {
             mkdir($cachepath, 0777, true);
         }
 
-        $browscap = new browscap($cachepath);
-        $browscap->silent = true;
-        $browscap->updateMethod = false; // don't update now
-        //$browscap->updateMethod = Browscap::UPDATE_CURL;
-        $info = $browscap->getBrowser($this->useragent);
-
-        if ($info) {
-            return "{$info->Browser} {$info->Version} on {$info->Platform}";
+        if (ini_get("browscap")) {
+            $info = get_browser($this->useragent);
         } else {
-            return "";
+            $browscap = new browscap($cachepath);
+            $browscap->silent = true;
+            $browscap->doAutoUpdate = false; // don't update now
+            $browscap->lowercase = true; // don't update now
+            //$browscap->updateMethod = Browscap::UPDATE_CURL;
+            $info = $browscap->getBrowser($this->useragent);
         }
+
+        return "{$info->browser} {$info->version} on {$info->platform}";
     }
     // }}}
 }
