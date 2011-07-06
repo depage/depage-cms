@@ -32,7 +32,11 @@
 
                 // add link and click event to it
                 $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + this.value + "</a>").insertAfter(this).click( function() {
-                    $(button).click();
+                    if ($(button).filter(":submit").length == 0) {
+                        $(button).click();
+                    } else {
+                        $(button).parents("form").submit();
+                    }
 
                     return false;
                 });
