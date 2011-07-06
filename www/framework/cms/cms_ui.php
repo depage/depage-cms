@@ -269,6 +269,66 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
+    // {{{ project
+    /**
+     * gets start page for a project
+     *
+     * @return  null
+     */
+    public function project($project = "") {
+        $this->auth->enforce();
+
+        // get data
+        $cp = new cms_project($this->pdo);
+        $projects = $cp->get_projects();
+
+        $text = "Lorem Ipsum Dolor sitz amet. ";
+        for ($i = 0; $i < 12; $i++) {
+            $text .= "Lorem Ipsum Dolor sitz amet. ";
+        }
+        $text .= "<br>";
+
+        // construct template
+        $hProject = new html("projectmain.tpl", array(
+            'project' => "",
+            'text1' => $text,
+            'text2' => $text . $text,
+            'text3' => $text . $text . $text . $text . $text . $text .
+                       $text . $text . $text . $text . $text . $text .
+                       $text . $text . $text . $text . $text . $text .
+                       $text . $text . $text . $text . $text . $text .
+                       $text . $text . $text . $text . $text . $text .
+                       $text,
+        ), $this->html_options);
+
+        $h = new html(array(
+            'content' => array(
+                $this->toolbar(),
+                $hProject,
+            ),
+        ));
+
+        return $h;
+    }
+    // }}}
+    // {{{ preview
+    /**
+     * gets the preview for a project
+     *
+     * @return  null
+     */
+    public function preview($project = "") {
+        $this->auth->enforce();
+
+        // get data
+        $cp = new cms_project($this->pdo);
+
+        $h = "preview";
+
+        return $h;
+    }
+    // }}}
+    
     // {{{ users
     /**
      * gets a list of loggedin users
@@ -293,7 +353,6 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
-    
     // {{{ user
     /**
      * gets profile of user
@@ -330,17 +389,6 @@ class cms_ui extends depage_ui {
         }
 
         return $h;
-    }
-    // }}}
-    
-    // {{{ blub
-    public function blub($param) {
-        $h = new html("html.tpl", array(
-            'title' => $this->basetitle,
-            'content' => "blub" . $param[0],
-        ), $this->html_options);
-
-        echo($h);
     }
     // }}}
 }

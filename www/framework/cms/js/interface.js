@@ -385,14 +385,50 @@ function projectlisting_add_events() {
 var depage = {
     /* {{{ init() */
     init: function() {
+        this.initialized = this.initialized || false;
+        if (this.initialized === true) {
+            // only initialize once
+            return;
+        }
+        this.initialized = true;
+
         this.basetitle = window.document.title;
         this.baseurl = $("base")[0].href;
         this.timeouts = [];
 
         this.registerEvents();
+        this.initLayout();
 
         $("form input.textbutton, form.depage-form :submit").depage('replaceTextButtons');
+
         $(".depage-scroller").depage('customScrollBar');
+    },
+    /* }}} */
+    /* {{{ initLayout() */
+    initLayout: function() {
+        // change layout based on window-width
+        $(window).resize(function() {
+            if ($(document).width() < 980 + 300) {
+                $("body").addClass("layout-narrow");
+                $("body").removeClass("layout-wide");
+            } else {
+                $("body").addClass("layout-wide");
+                $("body").removeClass("layout-narrow");
+            }
+        }).resize();
+
+        // add menu item to hide and show tree
+        if ($(".trees").length > 0) {
+            $("<li><a href=\"#\" class=\"button-tree-status\">hide tree</a></li>").appendTo("#toolbarmain menu:first").click( function() {
+                if ($("body").hasClass("trees-hidden")) {
+                    depage.showTree();
+                } else {
+                    depage.hideTree();
+                }
+
+                return false;
+            });
+        }
     },
     /* }}} */
     /* {{{ registerEvents() */
@@ -426,6 +462,19 @@ var depage = {
 
             return true;
         });
+    },
+    /* }}} */
+
+    /* {{{ showTree() */
+    showTree: function() {
+        $("body").removeClass("trees-hidden");
+        $("#toolbarmain .button-tree-status").text("hide tree");
+    },
+    /* }}} */
+    /* {{{ hideTree() */
+    hideTree: function() {
+        $("body").addClass("trees-hidden");
+        $("#toolbarmain .button-tree-status").text("show tree");
     },
     /* }}} */
 
