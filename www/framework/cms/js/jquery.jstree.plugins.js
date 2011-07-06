@@ -1224,28 +1224,68 @@ var placeholder;
                 }
             }, this))
             .click($.proxy(function (e) {
-                var a = this.data.add_marker.marker;
-				var o = a.offset();
-				var x = o.left;
-				var y = o.top + this.data.core.li_height;
-                var items = {
-                    "create" : {
-                        "separator_before"	: false,
-                        "separator_after"	: true,
-                        "label"				: "Create",
-                        "action"			: function (obj) {
-                            this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : "pg:page" } });
-                        }
-                    },
-                };
-                this.data.add_marker.context_menu = true;
-                $.vakata.context.show(items, a, x, y, this, this.data.add_marker.target);
-				if(this.data.themes) { $.vakata.context.cnt.attr("class", "jstree-" + this.data.themes.theme + "-context"); }
+                this._show_add_context_menu();
             }, this));
 
-			$(document).bind("context_hide.vakata", $.proxy(function () { this.data.add_marker.context_menu = false; }, this));
+			$(document).bind("context_hide.vakata", $.proxy(function () { 
+                this.data.add_marker.context_menu = false;
+                this.data.add_marker.marker.hide();
+            }, this));
         },
         _fn : {
+            _has_valid_children : function () {
+                var types_settings = this._get_settings().types_from_url;
+                var target_type = this.data.add_marker.target.attr(types_settings.type_attr) || "default";
+                var valid_children = (types_settings.types[target_type] || types_settings.types["default"]).valid_children;
+
+                return valid_children != "none";
+            },
+            _get_add_context_menu_item : function (name, separator) {
+                return {
+                    separator_before : separator || false,
+                    separator_after : false,
+                    label : "Create " + name,
+                    action : function (obj) {
+                            this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : name } });
+                    }
+                };
+            },
+            _get_add_context_menu_items : function () {
+                var types_settings = this._get_settings().types_from_url;
+                var target_type = this.data.add_marker.target.attr(types_settings.type_attr) || "default";
+                var valid_children = (types_settings.types[target_type] || types_settings.types["default"]).valid_children;
+                var special_children = (this.get_container().attr("data-add-marker-special-children") || "").split(" ");
+                var items = [];
+
+                if ($.isArray(valid_children)) {
+                    for (var i = 0; i < special_children.length; i++) {
+                        if ($.inArray(special_children[i], valid_children) != -1) {
+                            items.push(this._get_add_context_menu_item(special_children[i]));
+                        }
+                    }
+
+                    for (var i = 0; i < valid_children.length; i++) {
+                        if ($.inArray(valid_children[i], special_children) == -1) {
+                            items.push(this._get_add_context_menu_item(valid_children[i], i == 0));
+                        }
+                    }
+                }
+
+                return items;
+            },
+            _show_add_context_menu : function () {
+                var items = this._get_add_context_menu_items(); 
+                if (items.length) {
+                    var a = this.data.add_marker.marker;
+                    var o = a.offset();
+                    var x = o.left;
+                    var y = o.top + this.data.core.li_height;
+
+                    this.data.add_marker.context_menu = true;
+                    $.vakata.context.show(items, a, x, y, this, this.data.add_marker.target);
+		    		if(this.data.themes) { $.vakata.context.cnt.attr("class", "jstree-" + this.data.themes.theme + "-context"); }
+                }
+            },
             _show_add_marker : function (target, page_x, page_y) {
                 var node = this._get_node(target);
                 if (!node || node == -1 || target[0].nodeName == "UL") {
@@ -1293,6 +1333,11 @@ var placeholder;
                     top += this.data.core.li_height / 2;
                 }
 
+                if (this._has_valid_children()) {
+                    this.data.add_marker.marker.removeClass("jstree-add-marker-disabled");
+                } else {
+                    this.data.add_marker.marker.addClass("jstree-add-marker-disabled");
+                }
                 this.data.add_marker.marker.css({ "left" : x_pos + "px", "top" : top + "px" }).show();  
             },
         },
