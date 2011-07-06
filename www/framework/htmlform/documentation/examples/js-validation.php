@@ -5,19 +5,24 @@
 require_once('../../htmlform.php');
 
 /*
- * Create the example form 'simpleForm'
+ * Create the example form 'jsExample'
  */
-$form = new depage\htmlform\htmlform('simpleForm');
+$form = new depage\htmlform\htmlform('jsExample');
 
 /*
  * Add the various input elements to the form by calling the '"add" + element
  * type' method.
- * The first parameter is the name of the element; it's a unique
- * identifier and therefore required. The optional second parameter is an array
- * of element settings.
  */
 $form->addText('username', array('label' => 'User name', 'required' => true));
 $form->addEmail('email', array('label' => 'Email address'));
+$form->addBoolean('accept', array('label' => 'Accept terms and conditions.', 'required' => true));
+
+/*
+ * The validator pattern has to match the complete string (HTML5 spec). Here
+ * are some examples:
+ */
+$form->addText('singleLetter', array('label' => 'Single letter', 'required' => true, 'validator' => '/[a-zA-Z]/'));
+$form->addText('letters', array('label' =>'One ore more letters', 'required' => true, 'validator' => '/[a-zA-Z]+/'));
 
 /*
  * The process method is essential to the functionality of the form. It serves
@@ -45,6 +50,15 @@ if ($form->validate()) {
 
     $form->clearSession();
 } else {
+    /*
+     * Load the necessary scripts. jQuery, jQuery Tools and the depage-forms
+     * customization.
+     */
+    echo (
+        '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>' .
+        '<script src="../../lib/js/jquery.tools.min.js"></script>' .
+        '<script src="../../lib/js/effect.min.js"></script>'
+    );
     /*
      * Display the form.
      */

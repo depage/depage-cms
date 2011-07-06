@@ -324,7 +324,7 @@ abstract class input extends element {
             && $this->value !== null
             && $this->errorMessage !== ""
         ) {
-            $errorMessage = " <span class=\"errorMessage\">" . $this->htmlEscape($this->errorMessage) . "</span>";
+            $errorMessage = "<span class=\"errorMessage\">" . $this->htmlEscape($this->errorMessage) . "</span>";
         } else {
             $errorMessage = "";
         }
@@ -333,3 +333,5 @@ abstract class input extends element {
     }
     // }}}
 }
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

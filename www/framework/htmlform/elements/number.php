@@ -157,6 +157,8 @@ class number extends text {
     /**
      * @brief   Converts value to element specific type.
      *
+     * Based on (parseFloat) http://www.php.net/manual/en/function.floatval.php#84793
+     *
      * @return  void
      **/
     protected function typeCastValue() {
@@ -199,3 +201,5 @@ class number extends text {
     }
     // }}}
 }
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

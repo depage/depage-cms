@@ -7,6 +7,7 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
+// {{{ documentation
 /**
  * @mainpage
  *
@@ -17,11 +18,11 @@
  *
  * @section Usage
  *
- * depage-forms will mainly be used through the @link depage::htmlform::htmlform 
- * htmlform-class@endlink. It is the main interface through which you can add 
+ * depage-forms will mainly be used through the @link depage::htmlform::htmlform
+ * htmlform-class@endlink. It is the main interface through which you can add
  * inputs, fieldsets and steps.
  *
- * You can find a list of available input-class in @link depage::htmlform::elements 
+ * You can find a list of available input-class in @link depage::htmlform::elements
  * elements@endlink.
  *
  * @endsection 
@@ -39,6 +40,31 @@
 /**
  * @page developer Developer guide
  *
+ * The idea behind this project is to combine comfortable form-generation and
+ * modern browser functionality with maximum client coverage.
+ *
+ * Comfort
+ * - We abstract browser specifics from HTML-forms to provide a clean interface
+ *   to web developers. All configuration is located in one place.
+ *
+ * Coverage
+ * - To reach as many users as possible we have included several fallbacks for
+ *   old browsers. Depage-forms mimics validation-behavior of modern browsers
+ *   with JavaScript (client-side) or PHP (server-side).
+ *
+ * HTML5
+ * - We follow the HTML5 spec where it's sensible. The only clash so far is
+ *   @link depage::htmlform::elements::multiple::htmlInputAttributes checkbox
+ *   validation @endlink .
+ * - We aim to provide as much HTML5 functionality as possible.
+ *
+ * Customization
+ * - Input-elements can be easily modified by overriding the included
+ * element-classes.
+ * - New element-classes are automatically integrated by the autoloader. (They
+ * can be instantiated with @link depage::htmlform::abstracts::container::__call
+ * add @endlink (runtime generated))
+ *
  * @section prerequisites Developer Prerequisites
  *
  * - PHP 5.3
@@ -47,14 +73,21 @@
  *
  * @section style Coding style
  *
- * Generally, follow Zend coding style
- * camel case
- * 4 spaces indents
- * omit php closing tag
+ * Generally, follow Zend coding standard
+ *
+ * @section Deployment
+ *
+ * To generate a gzipped release of the library (includes examples):
+ *
+ * <pre>$ make release</pre>
+ *
+ * To generate a gzipped release with the essentials for working environments:
+ *
+ * <pre>$ make min</pre>
  *
  * @section Tests
  *
- * To run the tests:
+ * To run the unit tests:
  *
  * <pre>$ make test</pre>
  *
@@ -64,6 +97,7 @@
  *
  * <pre>$ make doc</pre>
  **/
+// }}}
 
 // {{{ namespace
 /**
@@ -244,6 +278,7 @@ class htmlform extends abstracts\container {
         $this->defaults['successURL']   = $_SERVER['REQUEST_URI'];
         $this->defaults['validator']    = null;
         $this->defaults['ttl']          = null;
+        $this->defaults['jsValidation'] = 'blur';
     }
     // }}}
 
@@ -397,6 +432,7 @@ class htmlform extends abstracts\container {
         $label              = $this->htmlLabel();
         $method             = $this->htmlMethod();
         $submitURL          = $this->htmlSubmitURL();
+        $jsValidation       = $this->htmlJsValidation();
 
         foreach($this->elementsAndHtml as $element) {
             // leave out inactive step elements
@@ -408,9 +444,9 @@ class htmlform extends abstracts\container {
             }
         }
 
-        return "<form id=\"{$this->name}\" name=\"{$this->name}\" class=\"depage-form\" method=\"{$method}\" action=\"{$submitURL}\">" . "\n" .
+        return "<form id=\"{$this->name}\" name=\"{$this->name}\" class=\"depage-form\" method=\"{$method}\" action=\"{$submitURL}\" data-jsValidation=\"{$jsValidation}\">" . "\n" .
             $renderedElements .
-            "<p id=\"{$this->name}-submit\"><input type=\"submit\" value=\"{$label}\"></p>" . "\n" .
+            "<p id=\"{$this->name}-submit\" class=\"submit\"><input type=\"submit\" value=\"{$label}\"></p>" . "\n" .
         "</form>";
     }
     // }}}
@@ -600,6 +636,7 @@ class htmlform extends abstracts\container {
     // }}}
 }
 
+// {{{ example page links
 /**
  * @example elements.php
  * @brief   Various element examples
@@ -608,6 +645,15 @@ class htmlform extends abstracts\container {
  * Includes examples of element specific options.
  * 
  * @htmlonly<iframe class="example" seamless="seamless" src="../examples/elements.php"></iframe>@endhtmlonly
+ **/
+
+/**
+ * @example js-validation.php
+ * @brief   Client-side JavaScript validation
+ *
+ * Demonstrates client-side validation. Fields are validated when they lose focus.
+ *
+ * @htmlonly<iframe class="example" seamless="seamless" src="../examples/js-validation.php"></iframe>@endhtmlonly
  **/
 
 /**
@@ -698,3 +744,6 @@ class htmlform extends abstracts\container {
  * 
  * @htmlonly<iframe class="example" seamless="seamless" src="../examples/subclass.php"></iframe>@endhtmlonly
  **/
+// }}}
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
