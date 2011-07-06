@@ -1,4 +1,7 @@
 /**
+ * @require framework/shared/jquery-1.4.4.js
+ * @require framework/shared/jquery.mousewheel.min.js
+ *
  * @file    depage-scroller.js
  *
  * custom scroller to replace default scrollbars for scrolling elements 

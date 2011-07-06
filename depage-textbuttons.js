@@ -1,4 +1,6 @@
 /**
+ * @require framework/shared/jquery-1.4.4.js
+ *
  * @file    depage-textbuttons.js
  *
  * replaces buttons with links to apply css-styles more easily
