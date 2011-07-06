@@ -183,6 +183,9 @@ class html {
      * includes javascript files into html
      */
     public function include_js($name, $files = array()) {
+        // get file-dependencies that are required from javascript header
+        $files = $this->include_js_get_dependencies($files);
+        
         if ($this->param['env'] === "production") {
             // production environement
             $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
@@ -223,6 +226,47 @@ class html {
                 echo("<script type=\"text/javascript\" src=\"$file\"></script>\n");
             }
         }
+    }
+    // }}}
+    // {{{ include_js_get_dependecies()
+    /**
+     * gets dependencies from filename
+     */
+    protected function include_js_get_dependencies($files = array()) {
+        $all_files = array();
+        $max_test_lines = 10; // maximum lines to test without a match
+
+        foreach($files as $file) {
+            if (strpos($file, "http://") !== 0 && file_exists($file)) {
+                $fh = @fopen($file, "r");
+                $n = 0;
+
+                if ($fh) {
+                    while (($line = fgets($fh)) !== false && $n <= $max_test_lines) {
+                        if (preg_match("/@require (.*)/", $line, $matches)) {
+                            // add required files to included files
+                            if (!in_array($matches[1], $all_files)) {
+                                // check for subdependecies
+                                $sub_files = $this->include_js_get_dependencies(array($matches[1]));
+                                $all_files = array_merge($all_files, $sub_files);
+
+                                $all_files[] = $matches[1];
+                            }
+                        } else {
+                            $n++;
+                        }
+                    }
+                    fclose($fh);
+                }
+                
+                // add actual file to uncluded files
+                $all_files[] = $file;
+            }
+        }
+        // only include files once
+        $all_files = array_unique($all_files);
+
+        return $all_files;
     }
     // }}}
     // {{{ include_css()
@@ -355,7 +399,6 @@ class html {
         return $fmt->format($timestamp);
     }
     // }}}
-
     // {{{ format_number()
     static function format_number($number, $format = NumberFormatter::DECIMAL) {
         // there is not getlocale, so use setlocale with null

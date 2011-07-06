@@ -1,3 +1,12 @@
+/*
+ * @require framework/shared/jquery-1.4.4.js
+ * @require framework/shared/jquery.cookie.js
+ * @require framework/shared/depage-jquery-plugins/depage-base.js
+ * @require framework/shared/depage-jquery-plugins/depage-textbuttons.js
+ * @require framework/shared/depage-jquery-plugins/depage-scroller.js
+ * @require framework/shared/depage-jquery-plugins/depage-growl.js
+ * @require framework/htmlform/lib/js/effect.js
+ */
 /* {{{ open_edit */
 function open_edit(project, page) {
     h = 600;
