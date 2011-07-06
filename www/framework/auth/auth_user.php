@@ -116,9 +116,15 @@ class auth_user {
 
         $browscap = new browscap($cachepath);
         $browscap->silent = true;
+        $browscap->updateMethod = false; // don't update now
+        //$browscap->updateMethod = Browscap::UPDATE_CURL;
         $info = $browscap->getBrowser($this->useragent);
 
-        return "{$info->Browser} {$info->Version} on {$info->Platform}";
+        if ($info) {
+            return "{$info->Browser} {$info->Version} on {$info->Platform}";
+        } else {
+            return "";
+        }
     }
     // }}}
 }

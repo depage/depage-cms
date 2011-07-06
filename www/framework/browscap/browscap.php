@@ -479,7 +479,7 @@ class Browscap
 	private function _getRemoteMTime()
 	{
 		$remote_datetime = $this->_getRemoteData($this->remoteVerUrl);
-		$remote_tmstp = strtotime($remote_datetime);
+		$remote_tmstp = @strtotime($remote_datetime);
 
 		if (!$remote_tmstp) {
 			throw new Browscap_Exception("Bad datetime format from {$this->remoteVerUrl}");
