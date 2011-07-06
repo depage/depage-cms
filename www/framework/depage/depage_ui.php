@@ -70,13 +70,13 @@ class depage_ui {
      *
      * @return  null
      */
-    public function run() {
+    public function run($parent = "") {
         // starting time
         $time_start = microtime(true);
 
         // get depage specific query string
         // @todo use parseurl?
-        $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE));
+        $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
         if (strpos('?', $dp_request_uri)) {
             list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
@@ -94,6 +94,19 @@ class depage_ui {
         
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
+
+        if (is_callable(array($this, "getSubHandler"))) {
+            $subHandler = $this::getSubHandler();
+            foreach ($subHandler as $name => $class) {
+                if ($name == $dp_func) {
+                    // has a valid subhandler, so use this instead of $this
+                    $handler = new $class($this->options);
+                    $handler->run($name);
+
+                    return;
+                }
+            }
+        }
 
         try {
             $this->init();

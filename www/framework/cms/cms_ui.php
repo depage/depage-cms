@@ -45,6 +45,14 @@ class cms_ui extends depage_ui {
         $this->basetitle = depage::getName() . " " . depage::getVersion();
     }
     // }}}
+    // {{{ getSubHandler
+    static function getSubHandler() {
+        return array(
+            'jstree' => 'cms_jstree',
+            'edit' => 'cms_edit',
+        );
+    }
+    // }}}
     // {{{ package
     /**
      * gets a list of projects
