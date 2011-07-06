@@ -29,7 +29,7 @@ define("DEPAGE_CACHE_PATH", depage::getDepageCachePath()) ;
 spl_autoload_register("depage::autoload");
 
 class depage {
-    const name = 'depage::cms';
+    const name = 'depage-cms';
 
     public $conf;
     public $log;
@@ -255,8 +255,8 @@ class depage {
         $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
         //$this->handler->showError($error, $this->options['env']);
-        if (isset($this->handler) && is_callable($this->handler, "showError")) {
-            $this->handler->showError($error, $this->options['env']);
+        if (isset($this->handler) && is_callable($this->handler, "error")) {
+            $this->handler->error($error, $this->options['env']);
         }
 
         /* Don't execute PHP internal error handler */
@@ -281,12 +281,9 @@ class depage {
 
         $this->log->log("Unhandled Exception: {$error->msg} in '{$error->file}' on line {$error->line}");
 
-        var_dump($error);
-        /*
-        if (is_callable($this->handler, "showError")) {
-            $this->handler->showError($error, $this->options['env']);
+        if (isset($this->handler) && is_callable($this->handler, "error")) {
+            $this->handler->error($error, $this->options['env']);
         }
-         */
     }
     
     // }}}

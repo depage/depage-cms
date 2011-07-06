@@ -205,6 +205,7 @@ class depage_ui {
      * @return  null
      */
     public function notfound() {
+        header('HTTP/1.1 404 Not Found');
     }
     // }}}
     // {{{ error

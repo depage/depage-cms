@@ -131,6 +131,8 @@ class cms_ui extends depage_ui {
      * @return  null
      */
     public function notfound() {
+        parent::notfound();
+
         $h = new html("box.tpl", array(
             'id' => "error",
             'class' => "first",
@@ -160,7 +162,7 @@ class cms_ui extends depage_ui {
             )),
         ), $this->html_options);
 
-        return $h;
+        return $this->package($h);
     }
     // }}}
     
