@@ -50,6 +50,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     data-delta-updates-fallback-poll-url = "./fallback/updates/"
     data-delta-updates-post-url = "./"
     data-types-settings-url = "./types_settings/"
+    data-add-marker-special-children = "folder separator"
 >
     <?php echo $this->nodes; ?>
 </div>
