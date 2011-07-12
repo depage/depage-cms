@@ -1233,12 +1233,20 @@ var placeholder;
             }, this));
         },
         _fn : {
-            _has_valid_children : function () {
+            _get_valid_children : function () {
                 var types_settings = this._get_settings().types_from_url;
-                var target_type = this.data.add_marker.target.attr(types_settings.type_attr) || "default";
-                var valid_children = (types_settings.types[target_type] || types_settings.types["default"]).valid_children;
+                if (this.data.add_marker.parent !== -1) {
+                    var parent_type = this.data.add_marker.parent.attr(types_settings.type_attr);
+                    var valid_children = (types_settings.types[parent_type] || types_settings.types["default"]).valid_children;
+                } else {
+                    // root element
+                    var valid_children = types_settings.valid_children;
+                }
 
-                return valid_children != "none";
+                return valid_children;
+            },
+            _has_valid_children : function () {
+                return this._get_valid_children() != "none";
             },
             _get_add_context_menu_item : function (name, separator) {
                 return {
@@ -1251,9 +1259,7 @@ var placeholder;
                 };
             },
             _get_add_context_menu_items : function () {
-                var types_settings = this._get_settings().types_from_url;
-                var target_type = this.data.add_marker.target.attr(types_settings.type_attr) || "default";
-                var valid_children = (types_settings.types[target_type] || types_settings.types["default"]).valid_children;
+                var valid_children = this._get_valid_children();
                 var special_children = (this.get_container().attr("data-add-marker-special-children") || "").split(" ");
                 var items = [];
 
@@ -1309,12 +1315,14 @@ var placeholder;
 
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
+                    this.data.add_marker.parent = this._get_parent(node);
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "before"; 
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
                     top -= this.data.core.li_height / 2;
                 } else if (this.data.add_marker.w <= this.data.core.li_height * 3/4) {
                     // inside
+                    this.data.add_marker.parent = node;
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "last"; 
                     this.data.add_marker.marker.addClass("jstree-add-marker-inside").removeClass("jstree-add-marker-between");
@@ -1322,11 +1330,13 @@ var placeholder;
                     // after
                     var target_node = this._get_next(node);
                     if (target_node.length) {
+                        this.data.add_marker.parent = this._get_parent(target_node);
                         this.data.add_marker.target = target_node;
                         this.data.add_marker.pos = "before";
                     } else {
                         // special case for last node
-                        this.data.add_marker.target = node;
+                        this.data.add_marker.target = node.parentsUntil(".jstree", "li:last").andSelf().eq(0);
+                        this.data.add_marker.parent = this._get_parent(this.data.add_marker.target);
                         this.data.add_marker.pos = "after";
                     }
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
