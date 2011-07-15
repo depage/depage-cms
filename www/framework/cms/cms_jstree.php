@@ -194,6 +194,24 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
+    // TODO: disable
+    // {{{ add_permissions
+    public function add_permissions($doc_id, $element, $parent) {
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        $permissions->allow_element_in($element, $parent);
+
+        $this->xmldb->set_permissions($doc_id, $permissions);
+        echo $permissions;
+    }
+    // }}}
+
+    public function get_permissions($doc_id) {
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        print_r($permissions);
+        echo "<br /><br />Valid Children:<br />";
+        print_r($permissions->valid_children());
+    }
+
     // {{{ recordChange
     protected function recordChange($doc_id, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
