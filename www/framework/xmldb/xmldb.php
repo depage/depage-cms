@@ -1491,7 +1491,7 @@ class xmldb {
             $attribs = $node->attributes;
             $attr_str = '';
             foreach ($node->attributes as $attrib) {
-                if ($attrib->prefix . ':' . $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute) {
+                if ($attrib->prefix . ':' . $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute && $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute) {
                     $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
                     $attrib_name = $attrib->localName;
                     $attrib_value = $attrib->value;
