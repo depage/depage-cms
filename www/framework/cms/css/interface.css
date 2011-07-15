@@ -255,7 +255,7 @@ a img {
     border-left: none;
 }
 .layout-wide .preview {
-    left: 300px;
+    left: 250px;
     border-left: 1px solid #000000;
 }
 .preview iframe {
@@ -269,7 +269,7 @@ a img {
 .trees {
     position: absolute;
     background: #ffffff;
-    width: 300px;
+    width: 250px;
     overflow: hidden;
 }
 .trees-hidden .trees {

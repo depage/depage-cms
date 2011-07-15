@@ -408,7 +408,7 @@ var depage = {
     initLayout: function() {
         // change layout based on window-width
         $(window).resize(function() {
-            if ($(document).width() < 980 + 300) {
+            if ($(document).width() < 980 + 250) {
                 $("body").addClass("layout-narrow");
                 $("body").removeClass("layout-wide");
             } else {
