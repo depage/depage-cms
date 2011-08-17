@@ -113,9 +113,20 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         ), $docs);
     }
     // }}}
-    // {{{ testGet_doc_info()
-    public function testGet_doc_info() {
+    // {{{ testGet_doc_info_by_id()
+    public function testGet_doc_info_by_id() {
         $info = $this->xmldb->get_doc_info(1);
+
+        $this->assertEquals((object) array(
+            'name' => 'pages',
+            'id' => '1',
+            'rootid' => '1',
+        ), $info);
+    }
+    // }}}
+    // {{{ testGet_doc_info_by_name()
+    public function testGet_doc_info_by_name() {
+        $info = $this->xmldb->get_doc_info("pages");
 
         $this->assertEquals((object) array(
             'name' => 'pages',
@@ -127,7 +138,9 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // {{{ testDoc_exists()
     public function testDoc_exists() {
         $this->assertFalse($this->xmldb->doc_exists("non existent document"));
-        $this->assertTrue($this->xmldb->doc_exists("pages"));
+        $this->assertFalse($this->xmldb->doc_exists(100));
+        $this->assertEquals(1, $this->xmldb->doc_exists("pages"));
+        $this->assertEquals(1, $this->xmldb->doc_exists(1));
     }
     // }}}
     
@@ -439,7 +452,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testMove_node_in()
     public function testMove_node_in() {
-        $this->xmldb->move_node_in(1, 7, 8);
+        $this->xmldb->move_node_in("pages", 7, 8);
         $xml = $this->xmldb->get_doc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
