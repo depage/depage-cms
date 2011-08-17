@@ -91,7 +91,7 @@ abstract class input extends element {
         $this->defaults['label']        = $this->name;
         $this->defaults['required']     = false;
         $this->defaults['marker']       = '*';
-        $this->defaults['errorMessage'] = 'Please enter valid data!';
+        $this->defaults['errorMessage'] = 'Please enter valid data';
         $this->defaults['title']        = false;
     }
     // }}}
@@ -276,8 +276,8 @@ abstract class input extends element {
     protected function htmlInputAttributes() {
         $attributes = '';
 
-        if ($this->required)    $attributes .= " required";
-        if ($this->autofocus)   $attributes .= " autofocus";
+        if ($this->required)    $attributes .= ' required="required"';
+        if ($this->autofocus)   $attributes .= ' autofocus="autofocus"';
 
         return $attributes;
     }
