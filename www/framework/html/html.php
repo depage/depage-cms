@@ -261,6 +261,8 @@ class html {
                 
                 // add actual file to uncluded files
                 $all_files[] = $file;
+            } else {
+                $all_files[] = $file;
             }
         }
         // only include files once
@@ -307,7 +309,9 @@ class html {
                     $css = file_get_contents($file);
 
                     // replace relative path with new path relative to cache
-                    $css = str_replace("url(../", "url(../../" . dirname($file) . "/../", $css);
+                    $css = str_replace("url(../", "url(../../" . dirname(dirname($file)) . "/", $css);
+                    $css = str_replace("url('../", "url('../../" . dirname(dirname($file)) . "/", $css);
+                    $css = str_replace("url(\"../", "url(\"../../" . dirname(dirname($file)) . "/", $css);
 
                     $src .= $css;
                 }
