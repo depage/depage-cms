@@ -36,7 +36,11 @@ class task {
 
         return $subtask;
     }
-
+    
+    public function run_subtask($subtask) {
+        eval($subtask->php);
+    }
+    
     public function lock() {
         $this->lock_file = fopen($this->lock_name, 'w');
         return flock($this->lock_file, LOCK_EX | LOCK_NB);
@@ -47,9 +51,9 @@ class task {
     }
 
     private function load_task() {
-        $query = $this->pdo->prepare("SELECT id FROM {$this->task_table} WHERE $task_name = :task_name");
+        $query = $this->pdo->prepare("SELECT id FROM {$this->task_table} WHERE name = :name");
         $query->execute(array(
-            "task_name" => $this->task_name,
+            "name" => $this->task_name,
         ));
 
         $result = $query->fetchObject();
@@ -58,7 +62,7 @@ class task {
     
     private function load_subtasks() {
         $query = $this->pdo->prepare(
-            "SELECT id, php, depends_on, status
+            "SELECT *
             FROM {$this->subtask_table}
             WHERE task_id = :task_id
             ORDER BY id ASC"
