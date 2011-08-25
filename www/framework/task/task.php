@@ -37,8 +37,9 @@ class task {
         return $subtask;
     }
     
+    /* @return NULL|false returns NULL for no error, false for a parse error */
     public function run_subtask($subtask) {
-        eval($subtask->php);
+        return eval($subtask->php);
     }
     
     public function lock() {
