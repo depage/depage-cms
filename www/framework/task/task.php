@@ -3,12 +3,12 @@
 namespace depage\task;
 
 class task {
-    public function __construct($task_name, $table_prefix, $pdo) {
-        $this->task_name = $task_name;
+    public function __construct($task_id, $table_prefix, $pdo) {
+        $this->task_id = $task_id;
         $this->task_table = $table_prefix . "_tasks";
         $this->subtask_table = $table_prefix . "_subtasks";
         $this->pdo = $pdo;
-        $this->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task_name . '.lock';
+        $this->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task_id . '.lock';
 
         $this->load_task();
         $this->load_subtasks();
@@ -51,13 +51,16 @@ class task {
     }
 
     private function load_task() {
-        $query = $this->pdo->prepare("SELECT id FROM {$this->task_table} WHERE name = :name");
+        $query = $this->pdo->prepare("SELECT name FROM {$this->task_table} WHERE id = :id");
         $query->execute(array(
-            "name" => $this->task_name,
+            "id" => $this->task_id,
         ));
 
         $result = $query->fetchObject();
-        $this->task_id = $result->id; 
+        if (empty($result))
+            throw new \Exception("no such task");
+        
+        $this->task_name = $result->name; 
     }
     
     private function load_subtasks() {
@@ -78,11 +81,13 @@ class task {
         foreach ($subtasks as $subtask) {
             $id_to_subtask[$subtask->id] = $subtask;
 
-            if (!$subtask->status) {
+            if (empty($subtask->status)) {
                 $this->subtasks[$subtask->id] = $subtask;
                 $this->include_dependent_subtasks($subtask, $id_to_subtask);
             }
         }
+        
+        ksort($this->subtasks);
     }
 
     private function include_dependent_subtasks($subtask, &$id_to_subtask) {
