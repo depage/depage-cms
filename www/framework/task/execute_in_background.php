@@ -27,6 +27,7 @@ function execute_in_background($path, $script, $args = '', $start_low_priority =
         // but unfortunately not available in all cases/platforms
         if (file_exists($path . $script) || $path == '') {
             chdir($path);
+            $prio_param = "";
             if (substr(php_uname(), 0, 7) == 'Windows') {
                 if ($start_low_priority) {
                     $prio_param = "/belownormal";
