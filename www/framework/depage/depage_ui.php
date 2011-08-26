@@ -255,21 +255,28 @@ class depage_ui {
      */
     protected function setLanguage($locale = null) {
         // @todo add available locales automatically
-        $availableLocales = array(
-            "en_US",
-            "de_DE",
-        );
+        $availableLocales = array_keys($this->getAvailableLocales());
 
-        if (empty($locale)) {
+        if (!in_array($locale, $availableLocales)) {
             $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
-            foreach ($browserLocales as $lang) {
-                list($alang) = explode(';', $lang);
 
-                $locale = Locale::lookup($availableLocales, $alang, true);
+            foreach ($browserLocales as $lang) {
+                list($lang) = explode(';', $lang);
+
+                if ($lang == "de") {
+                    // @todo this is a hack - fix Locale::lookup for simple locales like "de"
+                    $lang = "de_DE";
+                }
+                
+                $locale = Locale::lookup($availableLocales, $lang, false, "");
                 if ($locale != "") {
+
                     // local found
                     break;
                 }
+            }
+            if ($locale == "") {
+                $locale = $availableLocales[0];
             }
         }
 
@@ -284,6 +291,20 @@ class depage_ui {
         textdomain($this->options->lang->domain);
 
         $this->locale = $locale;
+    } 
+    // }}}
+    // {{{ getAvailableLocales
+    /**
+     * gets all available locales
+     */
+    protected function getAvailableLocales() {
+        // @todo add available locales and descriptions automatically
+        $availableLocales = array(
+            "en_US" => _("english"),
+            "de_DE" => _("deutsch"),
+        );
+
+        return $availableLocales;
     } 
     // }}}
 }
