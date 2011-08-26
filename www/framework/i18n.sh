@@ -6,13 +6,11 @@ then
 fi
 
 languages=`ls locale`
-#languages=`ls locale | sed -e 's/en_US//'`
 
 echo "extract strings..."
 tempfile=`mktemp /tmp/localize.XXXXXXX`
 find ./ -name "*.tpl" -or -name "*.php" > $tempfile
-xgettext -f $tempfile -L PHP -o locale/en_US/LC_MESSAGES/messages_tmp.po
-cat locale/en_US/LC_MESSAGES/messages_tmp.po | sed -e 's/CHARSET/UTF-8/' > locale/en_US/LC_MESSAGES/messages.po
+xgettext --from-code=UTF-8 -f $tempfile -L PHP -o locale/en_US/LC_MESSAGES/messages_tmp.po
 rm locale/en_US/LC_MESSAGES/messages_tmp.po
 
 echo "update languages..."
