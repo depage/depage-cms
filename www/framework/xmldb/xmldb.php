@@ -79,7 +79,7 @@ class xmldb {
             );
         }
         $query = $this->pdo->prepare(
-            "SELECT docs.name, docs.name AS name, docs.id AS id, docs.rootid AS rootid
+            "SELECT docs.name, docs.name AS name, docs.id AS id, docs.rootid AS rootid, docs.permissions AS permissions
             FROM {$this->table_docs} AS docs
             $namequery
             ORDER BY docs.name ASC"
@@ -869,7 +869,15 @@ class xmldb {
         $doc_id = $this->doc_exists($doc_id_or_name);
 
         if ($doc_id !== false) {
-
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_docs} AS docs 
+                SET docs.permissions = :permissions 
+                WHERE docs.id = :doc_id"
+            );
+            $query->execute(array(
+                'permissione' => (string) $permission,
+                'doc_id' => $doc_id,
+            ));
         } else {
             return false;
         }

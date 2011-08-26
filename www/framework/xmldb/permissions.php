@@ -3,29 +3,36 @@
 /**
  * @file    framework/xmldb/permissions.php
  *
- * depage cms jstree module
+ * depage xmldb permissions
  *
  *
  * copyright (c) 2011 Lion Vollnhals [lion.vollnhals@googlemail.com]
+ * copyright (c) 2011 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
+ * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
 namespace depage\xmldb; 
 
 class permissions {
+    // {{{ constants
     const wildcard = "all";
     const default_element = "default";
-
+    // }}}
+    // {{{ variables
     protected $allow_element_in = array();
     protected $allow_unlink_of = array();
-
+    // }}}
+    
+    // {{{ constructor
     public function __construct($serialized_value = null) {
         if ($serialized_value) {
             list($this->allow_element_in, $this->allow_unlink_of) = unserialize($serialized_value);
         }
     }
-
+    // }}}
+    // {{{ allow_element_in()
     public function allow_element_in($element, $target) {
         if (!isset($this->allow_element_in[$element])) {
             $this->allow_element_in[$element] = array();
@@ -39,7 +46,8 @@ class permissions {
             }
         }
     }
-
+    // }}}
+    // {{{ allow_unlink_of()
     public function allow_unlink_of($element) {
         if (!in_array($element, $this->allow_unlink_of)) {
             if ($element != self::wildcard) {
@@ -49,20 +57,24 @@ class permissions {
             }
         }
     }
-
+    // }}}
+    // {{{ is_element_allowed_in()
     public function is_element_allowed_in($element, $target) {
         return isset($this->allow_element_in[$element]) && 
             (in_array($target, $this->allow_element_in[$element]) || in_array(self::wildcard, $this->allow_element_in[$element]));
     }
-
+    // }}}
+    // {{{ is_element_allowed_in_any()
     public function is_element_allowed_in_any($element) {
         return isset($this->allow_element_in[$element]);
     }
-
+    // }}}
+    // {{{ is_unlink_allowed_of()
     public function is_unlink_allowed_of($element) {
         return in_array($element, $this->allow_unlink_of) || in_array(self::wildcard, $this->allow_unlink_of);
     }
-
+    // }}}
+    // {{{ valid_children()
     public function valid_children() {
         $valid_children_for = array();
         
@@ -82,7 +94,7 @@ class permissions {
                 $valid_children_for[self::default_element] = array();
             }
 
-            $known_elements = array_unique(array_keys($valid_children_for), array_keys($this->allow_element_in));
+            $known_elements = array_unique(array_merge(array_keys($valid_children_for), array_keys($this->allow_element_in)));
             foreach ($known_elements as $element) {
                 $valid_children_for[$element] = array_unique(array_merge($valid_children_for[$element], $valid_children_for[self::wildcard]));
             }
@@ -92,7 +104,8 @@ class permissions {
 
         return $valid_children_for;
     }
-
+    // }}}
+    // {{{ known_elements()
     public function known_elements() {
         $known_elements = array_merge(array_keys($this->allow_element_in), $this->allow_unlink_of);
         foreach ($this->allow_element_in as $element => $targets) {
@@ -107,10 +120,12 @@ class permissions {
 
         return array_unique($known_elements);
     }
-
+    // }}}
+    // {{{ __toString()
     public function __toString() {
         return serialize(array($this->allow_element_in, $this->allow_unlink_of));
     }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
