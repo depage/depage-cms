@@ -254,7 +254,6 @@ class depage_ui {
      * overwrite this method to change this
      */
     protected function setLanguage($locale = null) {
-        // @todo add available locales automatically
         $availableLocales = array_keys($this->getAvailableLocales());
 
         if (!in_array($locale, $availableLocales)) {
@@ -263,19 +262,27 @@ class depage_ui {
             foreach ($browserLocales as $lang) {
                 list($lang) = explode(';', $lang);
 
-                if ($lang == "de") {
-                    // @todo this is a hack - fix Locale::lookup for simple locales like "de"
-                    $lang = "de_DE";
+                if (strlen($lang) == 2) {
+                    // this is a hack when Locale::lookup does not return a valid value
+                    // for simple locales like "de", "fr" or "en"
+                    foreach ($availableLocales as $fallback) {
+                        if (Locale::getPrimaryLanguage($fallback) == $lang) {
+                            $locale = $fallback;
+
+                            break;
+                        }
+                    }
+                } else {
+                    $locale = Locale::lookup($availableLocales, $lang, false, "");
                 }
                 
-                $locale = Locale::lookup($availableLocales, $lang, false, "");
                 if ($locale != "") {
-
                     // local found
                     break;
                 }
             }
             if ($locale == "") {
+                // if not locale is found, take the first of all available locales
                 $locale = $availableLocales[0];
             }
         }
