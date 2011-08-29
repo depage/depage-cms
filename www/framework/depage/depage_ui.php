@@ -87,8 +87,9 @@ class depage_ui {
         $dp_params = explode("/", $dp_request_path);
 
         // ignore trailing '/', so that params are equal with or without the trailing '/'
-        if ($dp_request_path[strlen($dp_request_path) - 1] == '/')
+        if ($dp_request_path[strlen($dp_request_path) - 1] == '/') {
             array_pop($dp_params);
+        }
 
         $this->urlpath = $dp_request_path;
         
@@ -98,10 +99,20 @@ class depage_ui {
         if (is_callable(array($this, "getSubHandler"))) {
             $subHandler = $this::getSubHandler();
             foreach ($subHandler as $name => $class) {
-                if ($name == $dp_func) {
+                $subsub = explode("/", $name);
+                $test = $dp_func;
+
+                if (count($subsub) > 1) {
+                    for ($i = 0; $i < count($subsub) - 1; $i++) {
+                        if (isset($dp_params[$i])) {
+                            $test .= "/" . $dp_params[$i];
+                        }
+                    }
+                }
+                if ($name == $test) {
                     // has a valid subhandler, so use this instead of $this
                     $handler = new $class($this->options);
-                    $handler->run($name);
+                    $handler->run($name . "/");
 
                     return;
                 }
@@ -277,7 +288,7 @@ class depage_ui {
                 }
                 
                 if ($locale != "") {
-                    // local found
+                    // locale found
                     break;
                 }
             }
