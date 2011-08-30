@@ -52,7 +52,7 @@ class task {
     }
 
     private function load_task() {
-        $query = $this->pdo->prepare("SELECT name FROM {$this->task_table} WHERE id = :id");
+        $query = $this->pdo->prepare("SELECT name, status FROM {$this->task_table} WHERE id = :id");
         $query->execute(array(
             "id" => $this->task_id,
         ));
@@ -60,6 +60,8 @@ class task {
         $result = $query->fetchObject();
         if (empty($result))
             throw new \Exception("no such task");
+        if (!empty($result->status))
+            throw new \Exception("task was already run.");
         
         $this->task_name = $result->name; 
     }
