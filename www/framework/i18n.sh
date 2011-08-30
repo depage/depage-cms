@@ -9,9 +9,8 @@ languages=`ls locale`
 
 echo "extract strings..."
 tempfile=`mktemp /tmp/localize.XXXXXXX`
-find ./ -name "*.tpl" -or -name "*.php" > $tempfile
-xgettext --from-code=UTF-8 -f $tempfile -L PHP -o locale/en_US/LC_MESSAGES/messages_tmp.po
-rm locale/en_US/LC_MESSAGES/messages_tmp.po
+find . -name "*.tpl" -or -name "*.php" > $tempfile
+xgettext --from-code=UTF-8 -f $tempfile -L PHP -o locale/en_US/LC_MESSAGES/messages.po
 
 echo "update languages..."
 for lang in $languages; do
