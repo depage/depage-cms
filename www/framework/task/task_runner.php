@@ -118,7 +118,7 @@ class task_runner extends \depage_ui {
                 $this->log->log("finished task {$task_id} ({$this->task->task_name})");
                 $this->task->set_task_status("done");
             } catch (\Exception $e) {
-                $this->task->set_subtask_status($subtask, $e->getMessage());
+                $this->task->set_subtask_status($subtask, "failed: " . $e->getMessage());
                 $this->task->set_task_status("failed");
                 $this->log->log("ERROR: " . $e->getMessage());
             }
