@@ -157,7 +157,8 @@ if (substr($sapi_type, 0, 3) == 'cli') {
 }
 
 /* TODO:
- *  - restart failed task!?
+ *  - how to handle errors?
+ *  - restart failed task!? wird erstmal nicht gebraucht!
  *  - was ist wenn ein einzelner Subtaks Zeitlimit überschreitet?
  */
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
