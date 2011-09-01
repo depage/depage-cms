@@ -80,6 +80,10 @@ class multiple extends abstracts\input {
     /**
      * @brief   collects initial values across subclasses.
      *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
      * @return  void
      **/
     protected function setDefaults() {
@@ -193,8 +197,8 @@ class multiple extends abstracts\input {
         $attributes = '';
 
         // HTML5 validator hack
-        if ($this->required && $this->skin === 'select') $attributes .= " required";
-        if ($this->autofocus)                            $attributes .= " autofocus";
+        if ($this->required && $this->skin === 'select') $attributes .= ' required="required"';
+        if ($this->autofocus)                            $attributes .= ' autofocus="required"';
 
         return $attributes;
     }

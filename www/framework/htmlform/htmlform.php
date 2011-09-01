@@ -63,7 +63,7 @@
  * element-classes.
  * - New element-classes are automatically integrated by the autoloader. (They
  * can be instantiated with @link depage::htmlform::abstracts::container::__call
- * add @endlink (runtime generated))
+ * add @endlink (runtime generated methods))
  *
  * @section prerequisites Developer Prerequisites
  *
@@ -267,6 +267,10 @@ class htmlform extends abstracts\container {
     /**
      * @brief   Collects initial values across subclasses.
      *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
      * @return  void
      **/
     protected function setDefaults() {
@@ -279,6 +283,7 @@ class htmlform extends abstracts\container {
         $this->defaults['validator']    = null;
         $this->defaults['ttl']          = null;
         $this->defaults['jsValidation'] = 'blur';
+        $this->defaults['jsAutosave']   = 'false';
     }
     // }}}
 
@@ -393,6 +398,28 @@ class htmlform extends abstracts\container {
     }
     // }}}
 
+    // {{{ getSteps()
+    /**
+     * @brief   Returns an array of steps
+     *
+     * @return  (array) step objects
+     **/
+    public function getSteps() {
+        return $this->steps;
+    }
+    // }}}
+    
+    // {{{ getCurrentStepId()
+    /**
+     * @brief   Returns the current step id
+     *
+     * @return  (int) current step
+     **/
+    public function getCurrentStepId() {
+        return $this->currentStepId;
+    }
+    // }}}
+    
     // {{{ getCurrenElements()
     /**
      * @brief   Returns an array of input elements contained in the current step.
@@ -433,6 +460,7 @@ class htmlform extends abstracts\container {
         $method             = $this->htmlMethod();
         $submitURL          = $this->htmlSubmitURL();
         $jsValidation       = $this->htmlJsValidation();
+        $jsAutosave         = $this->htmlJsAutosave();
 
         foreach($this->elementsAndHtml as $element) {
             // leave out inactive step elements
@@ -444,7 +472,7 @@ class htmlform extends abstracts\container {
             }
         }
 
-        return "<form id=\"{$this->name}\" name=\"{$this->name}\" class=\"depage-form\" method=\"{$method}\" action=\"{$submitURL}\" data-jsValidation=\"{$jsValidation}\">" . "\n" .
+        return "<form id=\"{$this->name}\" name=\"{$this->name}\" class=\"depage-form\" method=\"{$method}\" action=\"{$submitURL}\" data-jsvalidation=\"{$jsValidation}\" data-jsautosave=\"{$jsAutosave}\">" . "\n" .
             $renderedElements .
             "<p id=\"{$this->name}-submit\" class=\"submit\"><input type=\"submit\" value=\"{$label}\"></p>" . "\n" .
         "</form>";
@@ -489,7 +517,7 @@ class htmlform extends abstracts\container {
      *
      * @return  $stepNumber (int) number of first invalid step
      **/
-    private function getFirstInvalidStep() {
+    public function getFirstInvalidStep() {
         if ( count($this->steps ) > 0) {
             foreach ( $this->steps as $stepNumber => $step ) {
                 if ( !$step->valid ) {
@@ -651,7 +679,9 @@ class htmlform extends abstracts\container {
  * @example js-validation.php
  * @brief   Client-side JavaScript validation
  *
- * Demonstrates client-side validation. Fields are validated when they lose focus.
+ * Demonstrates client-side validation. Fields are validated when they lose
+ * focus. The regular expression has to match the entire string (as in HTML5
+ * patterns). Contrary to PHP preg_match() "/[a-z]/" does not match "aaa".
  *
  * @htmlonly<iframe class="example" seamless="seamless" src="../examples/js-validation.php"></iframe>@endhtmlonly
  **/

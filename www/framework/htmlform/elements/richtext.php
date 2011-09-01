@@ -39,6 +39,10 @@ class richtext extends textarea {
     /**
      * @brief   collects initial values across subclasses
      *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
      * @return  void
      **/
     protected function setDefaults() {
@@ -125,9 +129,9 @@ class richtext extends textarea {
     /**
      * @brief   Parses html-string into htmlDOM
      *
-     * @param   (string) $html html string to parse
+     * @param   $html (string) html string to parse
      *
-     * @return  (\depage\htmlform\abstracts\SerDOMDocument) htmlDOM
+     * @return  (depage::htmlform::abstract::htmldom) htmlDOM
      **/
     protected function parseHtml($html) {
         $htmlDOM = new \depage\htmlform\abstracts\htmldom();

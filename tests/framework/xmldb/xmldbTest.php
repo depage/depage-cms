@@ -88,6 +88,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
                 'name' => 'pages',
                 'id' => '1',
                 'rootid' => '1',
+                'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
             ),
         ), $docs);
 
@@ -99,44 +100,69 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
                 'name' => 'pages',
                 'id' => '1',
                 'rootid' => '1',
+                'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
             ),
             'tpl_newnodes' => (object) array(
                 'name' => 'tpl_newnodes',
                 'id' => '3',
                 'rootid' => '5',
+                'permissions' => '',
             ),
             'tpl_templates' => (object) array(
                 'name' => 'tpl_templates',
                 'id' => '2',
                 'rootid' => '3',
+                'permissions' => '',
             ),
         ), $docs);
     }
     // }}}
-    // {{{ testGet_doc_info()
-    public function testGet_doc_info() {
+    // {{{ testGet_doc_info_by_id()
+    public function testGet_doc_info_by_id() {
         $info = $this->xmldb->get_doc_info(1);
 
         $this->assertEquals((object) array(
             'name' => 'pages',
             'id' => '1',
             'rootid' => '1',
+            'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
+        ), $info);
+    }
+    // }}}
+    // {{{ testGet_doc_info_by_name()
+    public function testGet_doc_info_by_name() {
+        $info = $this->xmldb->get_doc_info("pages");
+
+        $this->assertEquals((object) array(
+            'name' => 'pages',
+            'id' => '1',
+            'rootid' => '1',
+            'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
         ), $info);
     }
     // }}}
     // {{{ testDoc_exists()
     public function testDoc_exists() {
         $this->assertFalse($this->xmldb->doc_exists("non existent document"));
-        $this->assertTrue($this->xmldb->doc_exists("pages"));
+        $this->assertFalse($this->xmldb->doc_exists(100));
+        $this->assertEquals(1, $this->xmldb->doc_exists("pages"));
+        $this->assertEquals(1, $this->xmldb->doc_exists(1));
     }
     // }}}
     
     // {{{ testGet_doc()
     public function testGet_doc() {
-        $xml = $this->xmldb->get_doc("pages");
+        $xml_str = '<?xml version="1.0"?>
+<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
-<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
+        $xml = $this->xmldb->get_doc(1);
+        $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
+
+        $xml = $this->xmldb->get_doc("1");
+        $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
+
+        $xml = $this->xmldb->get_doc("pages");
+        $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
     }
     // }}}
     // {{{ testGet_doc_non_existent()
@@ -145,7 +171,9 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
      */
     public function testGet_doc_non_existent() {
         $xml = $this->xmldb->get_doc("non existing document");
+        $this->assertFalse($xml);
 
+        $xml = $this->xmldb->get_doc(100);
         $this->assertFalse($xml);
     }
     // }}}
@@ -439,7 +467,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testMove_node_in()
     public function testMove_node_in() {
-        $this->xmldb->move_node_in(1, 7, 8);
+        $this->xmldb->move_node_in("pages", 7, 8);
         $xml = $this->xmldb->get_doc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>

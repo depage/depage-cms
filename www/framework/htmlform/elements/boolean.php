@@ -46,12 +46,18 @@ use depage\htmlform\abstracts;
 class boolean extends abstracts\input {
     // {{{ setDefaults()
     /**
-     * @brief collects initial values across subclasses.
+     * @brief   collects initial values across subclasses.
+     *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
+     * @return  void
      **/
     protected function setDefaults() {
         parent::setDefaults();
         $this->defaults['defaultValue'] = false;
-        $this->defaults['errorMessage'] = 'Please check this box if you want to proceed!';
+        $this->defaults['errorMessage'] = 'Please check this box if you want to proceed';
     }
     // }}}
 

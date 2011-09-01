@@ -61,6 +61,10 @@ class number extends text {
     /**
      * @brief   collects initial values across subclasses.
      *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
      * @return  void
      **/
     protected function setDefaults() {
@@ -70,7 +74,7 @@ class number extends text {
         $this->defaults['min']          = null;
         $this->defaults['max']          = null;
         $this->defaults['step']         = null;
-        $this->defaults['errorMessage'] = 'Please enter a valid number!';
+        $this->defaults['errorMessage'] = 'Please enter a valid number';
     }
     // }}}
 

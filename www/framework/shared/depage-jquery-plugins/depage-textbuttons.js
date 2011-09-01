@@ -1,5 +1,5 @@
 /**
- * @require framework/shared/jquery-1.4.4.js
+ * @require framework/shared/depage-jquery-plugins/depage-base.js
  *
  * @file    depage-textbuttons.js
  *

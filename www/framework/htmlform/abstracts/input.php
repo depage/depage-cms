@@ -82,6 +82,10 @@ abstract class input extends element {
     /**
      * @brief   Collects initial values across subclasses.
      *
+     * The constructor loops through these and creates settable class
+     * attributes at runtime. It's a compact mechanism for initialising
+     * a lot of variables.
+     *
      * @return  void
      **/
     protected function setDefaults() {
@@ -91,8 +95,9 @@ abstract class input extends element {
         $this->defaults['label']        = $this->name;
         $this->defaults['required']     = false;
         $this->defaults['marker']       = '*';
-        $this->defaults['errorMessage'] = 'Please enter valid data!';
+        $this->defaults['errorMessage'] = 'Please enter valid data';
         $this->defaults['title']        = false;
+        $this->defaults['disabled']     = false;
     }
     // }}}
 
@@ -233,6 +238,18 @@ abstract class input extends element {
     }
     // }}}
 
+    // {{{ setDisabled()
+    /**
+     * @brief   Sets the HTML disabled-attribute of the current input element.
+     *
+     * @param   $dіsabled (bool) HTML disabled-attribute
+     * @return  void
+     **/
+    public function setDisabled($disabled = true) {
+        $this->disabled = (bool) $disabled;
+    }
+    // }}}
+
     // {{{ htmlClasses()
     /**
      * @brief   Returns string of the elements' HTML-classes, separated by spaces.
@@ -244,6 +261,9 @@ abstract class input extends element {
 
         if ($this->required) {
             $classes .= ' required';
+        }
+        if ($this->disabled) {
+            $classes .= ' disabled';
         }
         if (($this->value !== null) && (!$this->validate())) {
             $classes .= ' error';
@@ -276,8 +296,9 @@ abstract class input extends element {
     protected function htmlInputAttributes() {
         $attributes = '';
 
-        if ($this->required)    $attributes .= " required";
-        if ($this->autofocus)   $attributes .= " autofocus";
+        if ($this->required)    $attributes .= ' required="required"';
+        if ($this->disabled)    $attributes .= ' disabled="disabled"';
+        if ($this->autofocus)   $attributes .= ' autofocus="autofocus"';
 
         return $attributes;
     }
