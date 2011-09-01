@@ -7,25 +7,37 @@ class graphics_gd extends graphics {
         parent::__construct($options);
     }
 
-    private function crop($options) {
+    protected function crop($options) {
     }
 
     protected function resize($options) {
-        $newImage = imagecreatetruecolor($options['width'], $options['height']);
-        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $options['width'], $options['height'], $this->imageSize[0], $this->imageSize[1]);
+        $newSize = $this->dimensions($options['width'], $options['height']);
+
+        $newImage = imagecreatetruecolor($newSize[0], $newSize[1]);
+        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
 
         $this->image = $newImage;
     }
 
-    private function thumb($options) {
+    protected function thumb($options) {
     }
 
-    public function render() {
+    protected function load() {
         $this->image        = imagecreatefromjpeg($this->input);
         $this->imageSize    = getimagesize($this->input);
+    }
 
-        parent::render();
+    protected function save() {
+        imagejpeg($this->image, $this->output, 80);
+    }
 
-        imagejpeg($this->image, $this->output);
+    private function dimensions($width, $height) {
+        if (!is_numeric($height)) {
+            $height = ($this->imageSize[1] / $this->imageSize[0]) * $width;
+        } elseif (!is_numeric($width)) {
+            $width = ($this->imageSize[0] / $this->imageSize[1]) * $height;
+        }
+
+        return array($width, $height);
     }
 }
