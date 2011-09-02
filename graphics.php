@@ -23,35 +23,15 @@ class graphics {
     }
 
     public function addCrop($width, $height, $x = 0, $y = 0) {
-        $this->queue[] = array(
-            'action'    => 'crop',
-            'options'   => array(
-                'width'     => $width,
-                'height'    => $height,
-                'x'         => $x,
-                'y'         => $y,
-            ),
-        );
+        $this->queue[] = array('crop', func_get_args());
     }
 
     public function addResize($width, $height) {
-        $this->queue[] = array(
-            'action'    => 'resize',
-            'options'   => array(
-                'width'     => $width,
-                'height'    => $height,
-            ),
-        );
+        $this->queue[] = array('resize', func_get_args());
     }
 
     public function addThumb($width, $height) {
-        $this->queue[] = array(
-            'action'    => 'thumb',
-            'options'   => array(
-                'width'     => $width,
-                'height'    => $height,
-            ),
-        );
+        $this->queue[] = array('thumb', func_get_args());
     }
 
     protected function load() {}
@@ -64,8 +44,8 @@ class graphics {
 
         $this->load();
 
-        foreach($this->queue as $step) {
-            call_user_func(array($this, $step['action']), $step['options']);
+        foreach($this->queue as $task) {
+            call_user_func_array(array($this, $task[0]), $task[1]);
         }
 
         $this->save();

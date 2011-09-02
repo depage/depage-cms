@@ -3,23 +3,23 @@
 namespace depage\graphics;
 
 class graphics_imagemagick extends graphics {
-    protected function crop($options) {
-        $this->command .= " -crop {$options['width']}x{$options['height']}+{$options['x']}+{$options['y']}\! -flatten";
+    protected function crop($width, $height, $x = 0, $y = 0) {
+        $this->command .= " -crop {$width}x{$height}+{$x}+{$y}\! -flatten";
     }
 
-    protected function resize($options) {
+    protected function resize($width, $height) {
         // allows to change aspect ratio
-        $override = (is_numeric($options['width']) && is_numeric($options['height'])) ? '\!' : '';
+        $override = (is_numeric($width) && is_numeric($height)) ? '\!' : '';
 
-        $width  = (isset($options['width']) && is_numeric($options['width']))   ? $options['width']     : '';
-        $height = (isset($options['height']) && is_numeric($options['height'])) ? $options['height']    : '';
+        $width  = (isset($width) && is_numeric($width))   ? $width  : '';
+        $height = (isset($height) && is_numeric($height)) ? $height : '';
 
         $this->command .= " -resize {$width}x{$height}{$override}";
     }
 
-    protected function thumb($options) {
-        $width  = (isset($options['width']) && is_numeric($options['width']))   ? $options['width']     : '';
-        $height = (isset($options['height']) && is_numeric($options['height'])) ? $options['height']    : '';
+    protected function thumb($width, $height) {
+        $width  = (isset($width) && is_numeric($width))   ? $width  : '';
+        $height = (isset($height) && is_numeric($height)) ? $height : '';
 
         $this->command .= " -thumbnail {$width}x{$height} -gravity center -extent {$width}x{$height}";
     }
