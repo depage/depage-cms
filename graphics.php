@@ -54,6 +54,10 @@ class graphics {
         );
     }
 
+    protected function load() {}
+
+    protected function save() {}
+
     public function render($input, $output = null) {
         $this->input    = $input;
         $this->output   = ($output == null) ? $input : $output;
