@@ -22,7 +22,7 @@ class graphics {
     public function __construct($options) {
     }
 
-    public function addCrop($width, $height, $x, $y) {
+    public function addCrop($width, $height, $x = 0, $y = 0) {
         $this->queue[] = array(
             'action'    => 'crop',
             'options'   => array(
