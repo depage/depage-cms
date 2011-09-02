@@ -4,6 +4,7 @@ namespace depage\graphics;
 
 class graphics_imagemagick extends graphics {
     protected function crop($options) {
+        $this->command .= " -crop {$options['width']}x{$options['height']}+{$options['x']}+{$options['y']}\! -flatten";
     }
 
     protected function resize($options) {
