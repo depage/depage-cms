@@ -8,6 +8,10 @@ class graphics_gd extends graphics {
     }
 
     protected function crop($options) {
+        $newImage = imagecreatetruecolor($options['width'], $options['height']);
+        imagecopy($newImage, $this->image, 0, 0, $options['x'], $options['y'], $options['width'], $options['height']);
+
+        $this->image = $newImage;
     }
 
     protected function resize($options) {
