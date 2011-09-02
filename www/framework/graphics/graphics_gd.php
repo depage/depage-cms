@@ -71,6 +71,8 @@ class graphics_gd extends graphics {
             //PNG
             imagepng($this->image, $this->output);
         }
+
+        imagedestroy($this->image);
     }
 
     public function render($input, $output = null) {
