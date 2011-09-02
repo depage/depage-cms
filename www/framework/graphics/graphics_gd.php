@@ -7,15 +7,15 @@ class graphics_gd extends graphics {
         parent::__construct($options);
     }
 
-    protected function crop($options) {
-        $newImage = imagecreatetruecolor($options['width'], $options['height']);
-        imagecopy($newImage, $this->image, 0, 0, $options['x'], $options['y'], $options['width'], $options['height']);
+    protected function crop($width, $height, $x = 0, $y = 0) {
+        $newImage = imagecreatetruecolor($width, $height);
+        imagecopy($newImage, $this->image, 0, 0, $x, $y, $width, $height);
 
         $this->image = $newImage;
     }
 
-    protected function resize($options) {
-        $newSize = $this->dimensions($options['width'], $options['height']);
+    protected function resize($width, $height) {
+        $newSize = $this->dimensions($width, $height);
 
         $newImage = imagecreatetruecolor($newSize[0], $newSize[1]);
         imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
@@ -23,10 +23,7 @@ class graphics_gd extends graphics {
         $this->image = $newImage;
     }
 
-    protected function thumb($options) {
-        $width  = $options['width'];
-        $height = $options['height'];
-
+    protected function thumb($width, $height) {
         $newSize = $this->dimensions($width, null);
 
         if ($newSize[1] > $height) {
