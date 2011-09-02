@@ -20,15 +20,53 @@ class graphics_gd extends graphics {
     }
 
     protected function thumb($options) {
+        $width  = $options['width'];
+        $height = $options['height'];
+
+        $newSize = $this->dimensions($width, null);
+
+        if ($newSize[1] > $height) {
+            $newSize = $this->dimensions(null, $height);
+            $xOffset = round(($width - $newSize[0]) / 2);
+            $yOffset = 0;
+        } else {
+            $xOffset = 0;
+            $yOffset = round(($height - $newSize[1]) / 2);
+        }
+
+        $newImage = imagecreatetruecolor($width, $height);
+        imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
+
+        $this->image = $newImage;
     }
 
     protected function load() {
-        $this->image        = imagecreatefromjpeg($this->input);
         $this->imageSize    = getimagesize($this->input);
+        $this->imageType    = $this->imageSize[2];
+
+        if ($this->imageType == 1 && function_exists('imagecreatefromgif')) {
+            //GIF
+            $this->image = imagecreatefromgif($this->input);
+        } else if ($this->imageType == 2) {
+            //JPEG
+            $this->image = imagecreatefromjpeg($this->input);
+        } else if ($this->imageType == 3) {
+            //PNG
+            $this->image = imagecreatefrompng($this->input);
+        }
     }
 
     protected function save() {
-        imagejpeg($this->image, $this->output, 80);
+        if ($this->imageType == 1 && function_exists('imagegif')) {
+            //GIF
+            imagegif($this->image, $this->output);
+        } else if ($this->imageType == 2) {
+            //JPEG
+            imagejpeg($this->image, $this->output, 80);
+        } else if ($this->imageType == 3) {
+            //PNG
+            imagepng($this->image, $this->output);
+        }
     }
 
     private function dimensions($width, $height) {
