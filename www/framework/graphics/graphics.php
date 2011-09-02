@@ -33,21 +33,4 @@ class graphics {
     public function addThumb($width, $height) {
         $this->queue[] = array('thumb', func_get_args());
     }
-
-    protected function load() {}
-
-    protected function save() {}
-
-    public function render($input, $output = null) {
-        $this->input    = $input;
-        $this->output   = ($output == null) ? $input : $output;
-
-        $this->load();
-
-        foreach($this->queue as $task) {
-            call_user_func_array(array($this, $task[0]), $task[1]);
-        }
-
-        $this->save();
-    }
 }
