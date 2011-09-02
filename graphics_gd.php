@@ -12,6 +12,7 @@ class graphics_gd extends graphics {
         imagecopy($newImage, $this->image, 0, 0, $x, $y, $width, $height);
 
         $this->image = $newImage;
+        $this->imageSize = array($width, $height);
     }
 
     protected function resize($width, $height) {
@@ -21,6 +22,7 @@ class graphics_gd extends graphics {
         imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
 
         $this->image = $newImage;
+        $this->imageSize = $newSize;
     }
 
     protected function thumb($width, $height) {
@@ -39,6 +41,7 @@ class graphics_gd extends graphics {
         imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
 
         $this->image = $newImage;
+        $this->imageSize = $newSize;
     }
 
     protected function load() {
