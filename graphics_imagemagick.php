@@ -24,11 +24,16 @@ class graphics_imagemagick extends graphics {
         $this->command .= " -thumbnail {$width}x{$height} -gravity center -extent {$width}x{$height}";
     }
 
-    protected function load() {
-        $this->command = "convert {$this->input}";
-    }
+    public function render($input, $output = null) {
+        $this->input    = $input;
+        $this->output   = ($output == null) ? $input : $output;
 
-    protected function save() {
+        $this->command = "convert {$this->input}";
+
+        foreach($this->queue as $task) {
+            call_user_func_array(array($this, $task[0]), $task[1]);
+        }
+
         $this->command .= " {$this->output}";
 
         exec($this->command);

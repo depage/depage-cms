@@ -70,6 +70,19 @@ class graphics_gd extends graphics {
         }
     }
 
+    public function render($input, $output = null) {
+        $this->input    = $input;
+        $this->output   = ($output == null) ? $input : $output;
+
+        $this->load();
+
+        foreach($this->queue as $task) {
+            call_user_func_array(array($this, $task[0]), $task[1]);
+        }
+
+        $this->save();
+    }
+
     private function dimensions($width, $height) {
         if (!is_numeric($height)) {
             $height = ($this->imageSize[1] / $this->imageSize[0]) * $width;
