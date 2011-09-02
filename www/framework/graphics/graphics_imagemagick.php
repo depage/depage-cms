@@ -4,23 +4,21 @@ namespace depage\graphics;
 
 class graphics_imagemagick extends graphics {
     protected function crop($width, $height, $x = 0, $y = 0) {
-        $this->command .= " -crop {$width}x{$height}+{$x}+{$y}\! -flatten";
+        // '+' for positive offset (the '-' is already there)
+        $x = ($x < 0) ? $x : '+' . $x;
+        $y = ($y < 0) ? $y : '+' . $y;
+
+        $this->command .= " -crop {$width}x{$height}{$x}{$y}\! -flatten";
     }
 
     protected function resize($width, $height) {
         // allows to change aspect ratio
-        $override = (is_numeric($width) && is_numeric($height)) ? '\!' : '';
-
-        $width  = (isset($width) && is_numeric($width))   ? $width  : '';
-        $height = (isset($height) && is_numeric($height)) ? $height : '';
+        $override = ($width === null || $height === null) ? '' : '\!';
 
         $this->command .= " -resize {$width}x{$height}{$override}";
     }
 
     protected function thumb($width, $height) {
-        $width  = (isset($width) && is_numeric($width))   ? $width  : '';
-        $height = (isset($height) && is_numeric($height)) ? $height : '';
-
         $this->command .= " -thumbnail {$width}x{$height} -gravity center -extent {$width}x{$height}";
     }
 
@@ -30,9 +28,7 @@ class graphics_imagemagick extends graphics {
 
         $this->command = "convert {$this->input}";
 
-        foreach($this->queue as $task) {
-            call_user_func_array(array($this, $task[0]), $task[1]);
-        }
+        $this->processQueue();
 
         $this->command .= " {$this->output}";
 

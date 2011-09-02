@@ -76,9 +76,7 @@ class graphics_gd extends graphics {
 
         $this->load();
 
-        foreach($this->queue as $task) {
-            call_user_func_array(array($this, $task[0]), $task[1]);
-        }
+        $this->processQueue();
 
         $this->save();
     }

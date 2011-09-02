@@ -33,4 +33,17 @@ class graphics {
     public function addThumb($width, $height) {
         $this->queue[] = array('thumb', func_get_args());
     }
+
+    protected function escapeNumber($number) {
+        return (is_numeric($number)) ? intval($number) : null;
+    }
+
+    protected function processQueue() {
+        foreach($this->queue as $task) {
+            $action     = $task[0];
+            $arguments  = array_map(array($this, 'escapeNumber'), $task[1]);
+
+            call_user_func_array(array($this, $action), $arguments);
+        }
+    }
 }
