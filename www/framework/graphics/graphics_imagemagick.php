@@ -13,9 +13,23 @@ class graphics_imagemagick extends graphics {
         $width  = (isset($options['width']) && is_numeric($options['width']))   ? $options['width']     : '';
         $height = (isset($options['height']) && is_numeric($options['height'])) ? $options['height']    : '';
 
-        exec("convert {$this->input} -resize {$width}x{$height}{$override} {$this->output}");
+        $this->command .= " -resize {$width}x{$height}{$override}";
     }
 
     protected function thumb($options) {
+        $width  = (isset($options['width']) && is_numeric($options['width']))   ? $options['width']     : '';
+        $height = (isset($options['height']) && is_numeric($options['height'])) ? $options['height']    : '';
+
+        $this->command .= " -thumbnail {$width}x{$height} -gravity center -extent {$width}x{$height}";
+    }
+
+    protected function load() {
+        $this->command = "convert {$this->input}";
+    }
+
+    protected function save() {
+        $this->command .= " {$this->output}";
+
+        exec($this->command);
     }
 }
