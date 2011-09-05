@@ -20,6 +20,7 @@ class graphics {
     }
 
     public function __construct($options) {
+        $this->background = (isset($options['background'])) ? $options['background'] : 'transparent';
     }
 
     public function addCrop($width, $height, $x = 0, $y = 0) {
