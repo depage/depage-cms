@@ -67,14 +67,11 @@ class graphics_gd extends graphics {
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->imageSize[0], $this->imageSize[1]);
         $this->image = $bg;
 
-        if ($this->imageType == 1 && function_exists('imagegif')) {
-            //GIF
+        if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
             imagegif($this->image, $this->output);
-        } else if ($this->imageType == 2) {
-            //JPEG
+        } else if ($this->outputFormat == 'jpg') {
             imagejpeg($this->image, $this->output, 80);
-        } else if ($this->imageType == 3) {
-            //PNG
+        } else if ($this->outputFormat == 'png') {
             imagepng($this->image, $this->output);
         }
 
@@ -84,6 +81,8 @@ class graphics_gd extends graphics {
     public function render($input, $output = null) {
         $this->input    = $input;
         $this->output   = ($output == null) ? $input : $output;
+
+        $this->outputFormat = $this->obtainFormat($this->output);
 
         $this->load();
 
@@ -123,7 +122,7 @@ class graphics_gd extends graphics {
             $r = hexdec($r); $g = hexdec($g); $b = hexdec($b);
 
             imagefill($newImage, 0, 0, imagecolorallocate($newImage, $r, $g, $b));
-        } else if ($this->background === 'checkerboard') {
+        } else if ($this->background == 'checkerboard') {
             $transLen = 15;
             $transColor = array();
             $transColor[0] = imagecolorallocate ($newImage, 153, 153, 153);
@@ -133,7 +132,7 @@ class graphics_gd extends graphics {
                     imagefilledrectangle($newImage, $i * $transLen, $j * $transLen, ($i + 1) * $transLen, ($j + 1) * $transLen, $transColor[$j % 2 == 0 ? $i % 2 : ($i % 2 == 0 ? 1 : 0)]);
                 }
             }
-        } else if ($this->background === 'transparent') {
+        } else if ($this->background == 'transparent') {
             imagefill($newImage, 0, 0, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
             imagesavealpha($newImage, true);
         }

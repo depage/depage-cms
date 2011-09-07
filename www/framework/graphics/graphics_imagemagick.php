@@ -30,6 +30,8 @@ class graphics_imagemagick extends graphics {
         $this->input    = $input;
         $this->output   = ($output == null) ? $input : $output;
 
+        $this->outputFormat = $this->obtainFormat($this->output);
+
         $this->command = "convert {$this->input}";
 
         $this->processQueue();
@@ -47,10 +49,14 @@ class graphics_imagemagick extends graphics {
         if ($this->background[0] === '#') {
             // TODO escape!!
             $this->command .= " -background \"{$this->background}\"";
-        } else if ($this->background === 'checkerboard') {
+        } else if ($this->background == 'checkerboard') {
             $this->command .= " pattern:checkerboard";
         } else {
-            $this->command .= " -background none";
+            if ($this->outputFormat == 'jpg') {
+                $this->command .= " -background \"#FFF\"";
+            } else {
+                $this->command .= " -background none";
+            }
         }
     }
 }

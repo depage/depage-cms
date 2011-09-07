@@ -56,4 +56,13 @@ class graphics {
 
         return array($width, $height);
     }
+
+    protected function obtainFormat($fileName) {
+        $parts = explode('.', $fileName);
+        $extension = strtolower($parts[count($parts) - 1]);
+
+        $extension = ($extension == 'jpeg') ? 'jpg' : $extension;
+
+        return $extension;
+    }
 }
