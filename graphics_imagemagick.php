@@ -52,7 +52,7 @@ class graphics_imagemagick extends graphics {
         }
     }
 
-    private function background() {
+    protected function background() {
         $this->command .= " -size {$this->size[0]}x{$this->size[1]}";
 
         if ($this->background[0] === '#') {

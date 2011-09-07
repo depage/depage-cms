@@ -20,8 +20,20 @@ class graphics {
             }
         }
 
+        if ($extension == 'graphicsmagick' && !isset($options['graphicsmagickpath'])) {
+            exec('which gm', $commandOutput, $returnStatus);
+            if ($returnStatus === 0) {
+                $options['graphicsmagickpath'] = $commandOutput[0];
+            } else {
+                trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
+                $extension = 'gd';
+            }
+        }
+
         if ($extension == 'imagemagick') {
             return new graphics_imagemagick($options);
+        } else if ($extension == 'graphicsmagick') {
+            return new graphics_graphicsmagick($options);
         } else {
             return new graphics_gd($options);
         }
