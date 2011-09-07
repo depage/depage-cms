@@ -5,6 +5,12 @@ namespace depage\graphics;
 class graphics_imagemagick extends graphics {
     private $size;
 
+    public function __construct($options) {
+        parent::__construct($options);
+
+        $this->executable = $options['imagemagickpath'];
+    }
+
     protected function crop($width, $height, $x = 0, $y = 0) {
         // '+' for positive offset (the '-' is already there)
         $x = ($x < 0) ? $x : '+' . $x;
@@ -32,7 +38,7 @@ class graphics_imagemagick extends graphics {
 
         $this->outputFormat = $this->obtainFormat($this->output);
 
-        $this->command = "convert {$this->input}";
+        $this->command = $this->executable . " {$this->input}";
 
         $this->processQueue();
 

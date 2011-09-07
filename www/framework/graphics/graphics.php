@@ -8,11 +8,19 @@ class graphics {
     protected $queue = array();
 
     public static function factory($options = array()) {
-        if (!isset($options['extension'])) {
-            $options['extension'] = 'gd';
+        $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
+
+        if ($extension == 'imagemagick' && !isset($options['imagemagickpath'])) {
+            exec('which convert', $commandOutput, $returnStatus);
+            if ($returnStatus === 0) {
+                $options['imagemagickpath'] = $commandOutput[0];
+            } else {
+                trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
+                $extension = 'gd';
+            }
         }
 
-        if ($options['extension'] == 'imagemagick') {
+        if ($extension == 'imagemagick') {
             return new \depage\graphics\graphics_imagemagick($options);
         } else {
             return new \depage\graphics\graphics_gd($options);
