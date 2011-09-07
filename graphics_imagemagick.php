@@ -40,7 +40,10 @@ class graphics_imagemagick extends graphics {
 
         $this->command .= " -reverse -layers merge {$this->output}";
 
-        exec($this->command);
+        exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
+        if ($returnStatus != 0) {
+            throw new graphicsException(implode("\n", $commandOutput));
+        }
     }
 
     private function background() {
