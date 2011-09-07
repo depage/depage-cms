@@ -10,7 +10,7 @@ class graphics_imagemagick extends graphics {
         $x = ($x < 0) ? $x : '+' . $x;
         $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -background none -crop {$width}x{$height}{$x}{$y}\! -flatten";
+        $this->command .= " -background none -gravity West -crop {$width}x{$height}{$x}{$y}\! -flatten";
         $this->size = array($width, $height);
     }
 
@@ -22,7 +22,7 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function thumb($width, $height) {
-        $this->command .= " -background none -thumbnail {$width}x{$height} -gravity center -extent {$width}x{$height}";
+        $this->command .= " -background none -thumbnail {$width}x{$height} -gravity Center -extent {$width}x{$height}";
         $this->size = array($width, $height);
     }
 
