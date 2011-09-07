@@ -92,15 +92,6 @@ class graphics_gd extends graphics {
         $this->save();
     }
 
-    private function dimensions($width, $height) {
-        if (!is_numeric($height)) {
-            $height = round(($this->imageSize[1] / $this->imageSize[0]) * $width);
-        } elseif (!is_numeric($width)) {
-            $width = round(($this->imageSize[0] / $this->imageSize[1]) * $height);
-        }
-
-        return array($width, $height);
-    }
 
     private function createCanvas($width, $height) {
         $canvas = imagecreatetruecolor($width, $height);
@@ -110,7 +101,7 @@ class graphics_gd extends graphics {
         return $canvas;
     }
 
-       private function createBackground($width, $height) {
+    private function createBackground($width, $height) {
         $newImage = imagecreatetruecolor($width, $height);
 
         /**

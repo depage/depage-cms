@@ -47,4 +47,13 @@ class graphics {
             call_user_func_array(array($this, $action), $arguments);
         }
     }
+    protected function dimensions($width, $height) {
+        if (!is_numeric($height)) {
+            $height = round(($this->imageSize[1] / $this->imageSize[0]) * $width);
+        } elseif (!is_numeric($width)) {
+            $width = round(($this->imageSize[0] / $this->imageSize[1]) * $height);
+        }
+
+        return array($width, $height);
+    }
 }
