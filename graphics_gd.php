@@ -19,7 +19,7 @@ class graphics_gd extends graphics {
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
-        $newImage = imagecreatetruecolor($newSize[0], $newSize[1]);
+        $newImage = $this->createCanvas($newSize[0], $newSize[1]);
         imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
 
         $this->image = $newImage;
