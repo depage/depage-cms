@@ -48,15 +48,15 @@ class graphics_gd extends graphics {
 
     protected function load() {
         $this->imageSize    = getimagesize($this->input);
-        $this->imageType    = $this->imageSize[2];
+        $this->inputFormat  = $this->imageSize[2];
 
-        if ($this->imageType == 1 && function_exists('imagecreatefromgif')) {
+        if ($this->inputFormat == 1 && function_exists('imagecreatefromgif')) {
             //GIF
             $this->image = imagecreatefromgif($this->input);
-        } else if ($this->imageType == 2) {
+        } else if ($this->inputFormat == 2) {
             //JPEG
             $this->image = imagecreatefromjpeg($this->input);
-        } else if ($this->imageType == 3) {
+        } else if ($this->inputFormat == 3) {
             //PNG
             $this->image = imagecreatefrompng($this->input);
         }

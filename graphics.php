@@ -21,9 +21,9 @@ class graphics {
         }
 
         if ($extension == 'imagemagick') {
-            return new \depage\graphics\graphics_imagemagick($options);
+            return new graphics_imagemagick($options);
         } else {
-            return new \depage\graphics\graphics_gd($options);
+            return new graphics_gd($options);
         }
     }
 
