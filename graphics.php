@@ -47,14 +47,17 @@ class graphics {
 
     public function addCrop($width, $height, $x = 0, $y = 0) {
         $this->queue[] = array('crop', func_get_args());
+        return $this;
     }
 
     public function addResize($width, $height) {
         $this->queue[] = array('resize', func_get_args());
+        return $this;
     }
 
     public function addThumb($width, $height) {
         $this->queue[] = array('thumb', func_get_args());
+        return $this;
     }
 
     protected function escapeNumber($number) {
