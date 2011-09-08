@@ -3,12 +3,12 @@
 namespace depage\graphics;
 
 class graphics_imagemagick extends graphics {
-    private $size;
+    protected $size;
 
     public function __construct($options) {
         parent::__construct($options);
 
-        $this->executable = $options['imagemagickpath'];
+        $this->executable = $options['executable'];
     }
 
     protected function crop($width, $height, $x = 0, $y = 0) {

@@ -3,14 +3,6 @@
 namespace depage\graphics;
 
 class graphics_graphicsmagick extends graphics_imagemagick {
-    private $size;
-
-    public function __construct($options) {
-        graphics::__construct($options);
-
-        $this->executable = $options['graphicsmagickpath'];
-    }
-
     public function render($input, $output = null) {
         $this->input    = $input;
         $this->output   = ($output == null) ? $input : $output;
