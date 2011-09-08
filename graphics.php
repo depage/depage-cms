@@ -10,23 +10,25 @@ class graphics {
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
-        if ($extension == 'imagemagick' && !isset($options['imagemagickpath'])) {
-            exec('which convert', $commandOutput, $returnStatus);
-            if ($returnStatus === 0) {
-                $options['imagemagickpath'] = $commandOutput[0];
-            } else {
-                trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
-                $extension = 'gd';
+        if (!isset($options['executable'])) {
+            if ($extension == 'imagemagick') {
+                exec('which convert', $commandOutput, $returnStatus);
+                if ($returnStatus === 0) {
+                    $options['executable'] = $commandOutput[0];
+                } else {
+                    trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
+                    $extension = 'gd';
+                }
             }
-        }
 
-        if ($extension == 'graphicsmagick' && !isset($options['graphicsmagickpath'])) {
-            exec('which gm', $commandOutput, $returnStatus);
-            if ($returnStatus === 0) {
-                $options['graphicsmagickpath'] = $commandOutput[0];
-            } else {
-                trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
-                $extension = 'gd';
+            if ($extension == 'graphicsmagick') {
+                exec('which gm', $commandOutput, $returnStatus);
+                if ($returnStatus === 0) {
+                    $options['executable'] = $commandOutput[0];
+                } else {
+                    trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
+                    $extension = 'gd';
+                }
             }
         }
 
