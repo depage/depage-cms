@@ -16,7 +16,7 @@ class graphics_imagemagick extends graphics {
         $x = ($x < 0) ? $x : '+' . $x;
         $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -background none -gravity West -crop {$width}x{$height}{$x}{$y}\! -flatten";
+        $this->command .= " -background none -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -flatten";
         $this->size = array($width, $height);
     }
 
@@ -28,13 +28,14 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function thumb($width, $height) {
-        $this->command .= " -background none -thumbnail {$width}x{$height} -gravity Center -extent {$width}x{$height}";
+        $this->command .= " -background none -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
         $this->size = array($width, $height);
     }
 
     public function render($input, $output = null) {
-        $this->input    = $input;
-        $this->output   = ($output == null) ? $input : $output;
+        $this->input        = $input;
+        $this->imageSize    = getimagesize($this->input);
+        $this->output       = ($output == null) ? $input : $output;
 
         $this->outputFormat = $this->obtainFormat($this->output);
 
