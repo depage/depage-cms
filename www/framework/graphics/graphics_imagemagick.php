@@ -16,7 +16,7 @@ class graphics_imagemagick extends graphics {
         $x = ($x < 0) ? $x : '+' . $x;
         $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -background none -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -flatten";
+        $this->command .= " -background none -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\!";
         $this->size = array($width, $height);
     }
 
