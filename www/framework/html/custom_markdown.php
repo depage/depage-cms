@@ -1134,6 +1134,8 @@ class Markdown_Parser {
 			if (!preg_match('/^B\x1A[0-9]+B$/', $value)) {
 				# Is a paragraph.
 				$value = $this->runSpanGamut($value);
+                                // replace newlines with brs
+                                $value = preg_replace('/\n/', '<br>', $value);
 				$value = preg_replace('/^([ ]*)/', "<p>", $value);
 				$value .= "</p>";
 				$grafs[$key] = $this->unhash($value);
