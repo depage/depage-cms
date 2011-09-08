@@ -4,8 +4,9 @@ namespace depage\graphics;
 
 class graphics_graphicsmagick extends graphics_imagemagick {
     public function render($input, $output = null) {
-        $this->input    = $input;
-        $this->output   = ($output == null) ? $input : $output;
+        $this->input        = $input;
+        $this->imageSize    = getimagesize($this->input);
+        $this->output       = ($output == null) ? $input : $output;
 
         $this->outputFormat = $this->obtainFormat($this->output);
 
