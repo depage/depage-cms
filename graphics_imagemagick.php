@@ -16,19 +16,19 @@ class graphics_imagemagick extends graphics {
         $x = ($x < 0) ? $x : '+' . $x;
         $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -background none -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\!";
+        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -flatten";
         $this->size = array($width, $height);
     }
 
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
-        $this->command .= " -background none -resize {$newSize[0]}x{$newSize[1]}\!";
+        $this->command .= " -resize {$newSize[0]}x{$newSize[1]}\!";
         $this->size = $newSize;
     }
 
     protected function thumb($width, $height) {
-        $this->command .= " -background none -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
+        $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
         $this->size = array($width, $height);
     }
 
@@ -39,13 +39,11 @@ class graphics_imagemagick extends graphics {
 
         $this->outputFormat = $this->obtainFormat($this->output);
 
-        $this->command = $this->executable . " {$this->input}";
-
         $this->processQueue();
 
-        $this->background();
+        $this->command = $this->executable . $this->background() . " \( {$this->input}" . $this->command;
 
-        $this->command .= " -reverse -layers merge {$this->output}";
+        $this->command .= " \) -flatten {$this->output}";
 
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
@@ -54,19 +52,21 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function background() {
-        $this->command .= " -size {$this->size[0]}x{$this->size[1]}";
+        $background = " -size {$this->size[0]}x{$this->size[1]}";
 
         if ($this->background[0] === '#') {
             // TODO escape!!
-            $this->command .= " -background \"{$this->background}\"";
+            $background .= " -background \"{$this->background}\"";
         } else if ($this->background == 'checkerboard') {
-            $this->command .= " pattern:checkerboard";
+            $background .= " -background none pattern:checkerboard";
         } else {
             if ($this->outputFormat == 'jpg') {
-                $this->command .= " -background \"#FFF\"";
+                $background .= " -background \"#FFF\"";
             } else {
-                $this->command .= " -background none";
+                $background .= " -background none";
             }
         }
+
+        return $background;
     }
 }
