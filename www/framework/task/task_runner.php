@@ -97,7 +97,7 @@ class task_runner extends \depage_ui {
         if ($this->force_login)
             $this->auth->enforce();
 
-        $this->task = new \depage\task\task($task_id, $this->prefix, $this->pdo);
+        $this->task = new \depage\task\task((int)$task_id, $this->prefix, $this->pdo);
         $this->abnormal_exit = true;
         register_shutdown_function(array($this, "at_shutdown"));
         
