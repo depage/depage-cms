@@ -29,7 +29,9 @@ require_once(__DIR__ . "/execute_in_background.php");
  * if a subtask fails then its status is set to "failed: {$error_message}",
  * the corresponding task is also set to "failed".
  * 
- * general errors are signaled by throwing exceptions.
+ * general errors are signaled by throwing exceptions. for example when
+ * there is no such task or when the task is already running.
+ * 
  * logging is done to logs/depage_task_task_runner.log .
  * 
  * php's max execution timeout is anticipated, the script is automatically
