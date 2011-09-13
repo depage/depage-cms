@@ -49,12 +49,6 @@ require_once(__DIR__ . "/execute_in_background.php");
 */
 
 
-
-
-// TODO:
-set_time_limit(2);
-error_reporting(E_ERROR);
-
 class task_runner extends \depage_ui {
     // {{{ constructor
     public function __construct($options = NULL, $cli = false) {
