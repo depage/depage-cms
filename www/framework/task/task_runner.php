@@ -18,23 +18,30 @@ require_once("framework/depage/depage.php");
 require_once(__DIR__ . "/task.php");
 require_once(__DIR__ . "/execute_in_background.php");
 
+
 /*
+ * task runner design:
+ * 
+ * task_runner#task reads task with respective id from table *_tasks .
+ * task is locked by writing a file lock.
+ * individual subtasks are read from table *_subtasks .
+ * each subtask and task has a status that is updated after running it.
+ * if a subtask fails then its status is set to "failed: {$error_message}",
+ * the corresponding task is also set to "failed".
+ * 
+ * general errors are signaled by throwing exceptions.
+ * logging is done to logs/depage_task_task_runner.log .
+ * 
+ * php's max execution timeout is anticipated, the script is automatically
+ * restarted and the task will be resumed.
+ * dependent subtasks will also be redone.
+ * if possible the script will be re-executed by php CLI, otherwise the
+ * current request will be repeated.
+ */
 
-get first task from task list
-grab file lock
-run task
-remove task from task list
-release file lock
-
-
-when time limit reached then
-    start over
-    resume last task
-
-==============================
-
-webserver timeouts may happen before php max execution timeout:
-"Your web server can have other timeout configurations that
+/* TODO:
+ webserver timeouts may happen before php max execution timeout:
+ "Your web server can have other timeout configurations that
  may also interrupt PHP execution. Apache has a Timeout directive
  and IIS has a CGI timeout function. Both default to 300 seconds.
  See your web server documentation for specific details."
