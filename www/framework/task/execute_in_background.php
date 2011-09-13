@@ -108,7 +108,6 @@ function execute_in_background($path, $script, $args = '', $start_low_priority =
 
 
 // {{{ get_php_executable
-// see http://stackoverflow.com/questions/3889486/how-to-get-the-path-of-the-php-bin-from-php/3889630#3889630
 function get_php_executable() {
     // only some shells set this variable
     $exe = $_SERVER["_"];
