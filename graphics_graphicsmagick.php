@@ -16,19 +16,19 @@ class graphics_graphicsmagick extends graphics {
 
         $xExtent = ($x > 0) ? "+0" : $x;
         $yExtent = ($y > 0) ? "+0" : $y;
-        $this->command .= " -background none -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
+        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
         $this->size = array($width, $height);
     }
 
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
-        $this->command .= " -background none -resize {$newSize[0]}x{$newSize[1]}\!";
+        $this->command .= " -resize {$newSize[0]}x{$newSize[1]}\!";
         $this->size = $newSize;
     }
 
     protected function thumb($width, $height) {
-        $this->command .= " -background none -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
+        $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
         $this->size = array($width, $height);
     }
 
@@ -39,44 +39,44 @@ class graphics_graphicsmagick extends graphics {
 
         $this->outputFormat = $this->obtainFormat($this->output);
 
-        $this->command = $this->executable . " convert {$this->input}";
+        $this->command = $this->executable . " convert {$this->input} -background none";
 
         $this->processQueue();
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics');
+        if ($this->background === 'checkerboard') {
+            $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics');
+            $this->command .= " miff:{$tempFile}";
 
-        $this->command .= " miff:{$tempFile}";
+            $this->gmExec();
 
+            $this->command = $this->executable . " convert";
+            $this->command .= " -page {$this->size[0]}x{$this->size[1]} -size {$this->size[0]}x{$this->size[1]} pattern:checkerboard";
+            $this->command .= " -page {$this->size[0]}x{$this->size[1]} miff:{$tempFile} -flatten +page {$this->output}";
+
+            $this->gmExec($this->command);
+            unlink($tempFile);
+        } else {
+            $this->command .= $this->background() . " {$this->output}";
+
+            $this->gmExec();
+        }
+    }
+
+    private function gmExec() {
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
             throw new graphicsException(implode("\n", $commandOutput));
         }
-
-        $this->command = $this->executable . " convert";
-
-        $this->command .= $this->background();
-        $flatten = ($this->background() == null) ? '' : " -flatten";
-        $this->command .= " -page {$this->size[0]}x{$this->size[1]} miff:{$tempFile}{$flatten} +page {$this->output}";
-
-        exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
-        if ($returnStatus != 0) {
-            throw new graphicsException(implode("\n", $commandOutput));
-        }
-
-        unlink($tempFile);
     }
 
     protected function background() {
-    $background = " -page {$this->size[0]}x{$this->size[1]} -size {$this->size[0]}x{$this->size[1]}";
         if ($this->background[0] === '#') {
             // TODO escape!!
-            $background .= " -background \"{$this->background}\"";
-        } else if ($this->background == 'checkerboard') {
-            $background .= " pattern:checkerboard";
+            $background = " -flatten -background \"{$this->background}\"";
         } else if ($this->outputFormat == 'jpg') {
-            $background .= " -background \"#FFF\"";
+            $background = " -flatten -background \"#FFF\"";
         } else {
-            $background = null;
+            $background = '';
         }
 
         return $background;
