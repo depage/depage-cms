@@ -10,7 +10,16 @@ class graphics_gd extends graphics {
     protected function crop($width, $height, $x = 0, $y = 0) {
         $newImage = $this->createCanvas($width, $height);
 
-        imagecopy($newImage, $this->image, 0, 0, $x, $y, $width, $height);
+        imagecopy(
+            $newImage,
+            $this->image,
+            ($x > 0) ? 0 : abs($x),
+            ($y > 0) ? 0 : abs($y),
+            ($x < 0) ? 0 : $x,
+            ($y < 0) ? 0 : $y,
+            $this->imageSize[0] - abs($x),
+            $this->imageSize[1] - abs($y)
+        );
 
         $this->image = $newImage;
         $this->imageSize = array($width, $height);
