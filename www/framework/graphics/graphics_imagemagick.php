@@ -45,6 +45,10 @@ class graphics_imagemagick extends graphics {
 
         $this->command .= " \) -flatten {$this->output}";
 
+        $this->execCommand();
+    }
+
+    protected function execCommand() {
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
             throw new graphicsException(implode("\n", $commandOutput));
