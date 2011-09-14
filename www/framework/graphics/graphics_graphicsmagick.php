@@ -54,7 +54,7 @@ class graphics_graphicsmagick extends graphics {
 
         $this->command .= $this->background();
         $flatten = ($this->background() == null) ? '' : " -flatten";
-        $this->command .= " -page {$this->size[0]}x{$this->size[1]} {$this->output}.miff{$flatten} {$this->output}";
+        $this->command .= " -page {$this->size[0]}x{$this->size[1]} {$this->output}.miff{$flatten} +page {$this->output}";
 
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
