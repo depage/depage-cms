@@ -43,7 +43,9 @@ class graphics_graphicsmagick extends graphics {
 
         $this->processQueue();
 
-        $this->command .= " {$this->output}.miff";
+        $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics');
+
+        $this->command .= " miff:{$tempFile}";
 
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
@@ -54,14 +56,14 @@ class graphics_graphicsmagick extends graphics {
 
         $this->command .= $this->background();
         $flatten = ($this->background() == null) ? '' : " -flatten";
-        $this->command .= " -page {$this->size[0]}x{$this->size[1]} {$this->output}.miff{$flatten} +page {$this->output}";
+        $this->command .= " -page {$this->size[0]}x{$this->size[1]} miff:{$tempFile}{$flatten} +page {$this->output}";
 
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
             throw new graphicsException(implode("\n", $commandOutput));
         }
 
-        unlink("{$this->output}.miff");
+        unlink($tempFile);
     }
 
     protected function background() {
