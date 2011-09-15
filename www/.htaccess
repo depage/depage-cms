@@ -7,7 +7,6 @@
 
 #Options -MultiViews 
 
-
 # enable apache rewriting engine
 RewriteEngine      on
 RewriteBase        /depage-cms
@@ -32,8 +31,13 @@ RewriteRule         ^(.*)\.css                                  $1.css.gz [L]
     ForceType text/css
 </Files>
 
+RewriteRule         ^(?!cache/graphics)((.*(jpg|jpeg|png))\.((resize|crop|thumb)-.*x.*)\.(jpg|jpeg|png))        cache/graphics/$1
+
+RewriteCond         %{REQUEST_FILENAME} !-f
+RewriteRule         ^cache/graphics/(.*(jpg|jpeg|png))\.((resize|crop|thumb)-.*x.*)\.(jpg|jpeg|png)$            framework/graphics/graphics_ui.php?file=$1&command=$3&ext=$5 [L]
+
+
 # redirect all other requests to index.php
 RewriteCond        %{REQUEST_FILENAME} !-f
 RewriteRule        ^(.*)                                        index.php [L]
-
 
