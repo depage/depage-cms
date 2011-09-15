@@ -96,6 +96,9 @@ class permissions {
 
             $known_elements = array_unique(array_merge(array_keys($valid_children_for), array_keys($this->allow_element_in)));
             foreach ($known_elements as $element) {
+                if (!isset($valid_children_for[$element])) {
+                    $valid_children_for[$element] = array();
+                }
                 $valid_children_for[$element] = array_unique(array_merge($valid_children_for[$element], $valid_children_for[self::wildcard]));
             }
 

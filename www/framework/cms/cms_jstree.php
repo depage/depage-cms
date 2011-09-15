@@ -61,6 +61,7 @@ class cms_jstree extends depage_ui {
     // {{{ index
     public function index($doc_name = "pages") {
         $this->auth->enforce();
+
         $doc_id = $this->get_doc_id($doc_name);
         $doc_info = $this->xmldb->get_doc_info($doc_id);
 
@@ -84,11 +85,14 @@ class cms_jstree extends depage_ui {
     public function create_node() {
         $this->auth->enforce();
 
-        $node = $this->node_from_request($_REQUEST["node"]);
+        $node = $this->xmldb->build_node($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["node"]);
         $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
-        $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+        $status = $id !== false;
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+        }
 
-        return new json(array("status" => 1, "id" => $id));
+        return new json(array("status" => $status, "id" => $id));
     }
     // }}}
 
@@ -123,13 +127,17 @@ class cms_jstree extends depage_ui {
         $this->auth->enforce();
 
         $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        $ids = $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $status = $ids !== false;
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        }
 
-        return new json(array("status" => 1));
+        return new json(array("status" => $status));
     }
     // }}}
 
+    // TODO: set icons?
     // {{{ types_settings
     public function types_settings($doc_id) {
         $this->auth->enforce();
@@ -143,7 +151,7 @@ class cms_jstree extends depage_ui {
             "types_from_url" => array(
                 "max_depth" => -2,
                 "max_children" => -2,
-                "valid_children" => $valid_children[$root_element_name],
+                "valid_children" => self::valid_children_or_none($valid_children, $root_element_name),
                 "types" => array(),
             ),
         );
@@ -154,10 +162,12 @@ class cms_jstree extends depage_ui {
             if ($element != $root_element_name) {
                 $setting = array();
 
+                /* TODO: disallow drags? is it better if every element is draggable even if it is not movable?
                 if (!$permissions->is_element_allowed_in_any($element)) {
                     $setting["start_drag"] = false;
                     $setting["move_node"] = false;
                 }
+                */
 
                 if (!$permissions->is_unlink_allowed_of($element)) {
                     $setting["delete_node"] = false;
@@ -167,7 +177,7 @@ class cms_jstree extends depage_ui {
                 if (isset($valid_children[$element])) {
                     $setting["valid_children"] = $valid_children[$element];
                 } else if (isset($valid_children[\depage\xmldb\permissions::default_element])) {
-                    $setting["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
+                    $setting["valid_children"] = self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element);
                 }
 
                 $types[$element] = $setting;
@@ -175,17 +185,32 @@ class cms_jstree extends depage_ui {
         }
 
         if (!isset($types[\depage\xmldb\permissions::default_element])) {
-            $types[\depage\xmldb\permissions::default_element] = array();
-            if (empty($valid_children[\depage\xmldb\permissions::default_element])) {
-                $types[\depage\xmldb\permissions::default_element]["valid_children"] = "none";
-            } else {
-                $types[\depage\xmldb\permissions::default_element]["valid_children"] = $valid_children[\depage\xmldb\permissions::default_element];
-            }
+            $types[\depage\xmldb\permissions::default_element] = array(
+                "valid_children" => self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element),
+            );
         }
 
         return new json($settings);
     }
     // }}}
+
+    // TODO: disable
+    // {{{ add_permissions
+    public function add_permissions($doc_id, $element, $parent) {
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        $permissions->allow_element_in($element, $parent);
+
+        $this->xmldb->set_permissions($doc_id, $permissions);
+        echo $permissions;
+    }
+    // }}}
+
+    public function get_permissions($doc_id) {
+        $permissions = $this->xmldb->get_permissions($doc_id);
+        print_r($permissions);
+        echo "<br /><br />Valid Children:<br />";
+        print_r($permissions->valid_children());
+    }
 
     // {{{ recordChange
     protected function recordChange($doc_id, $parent_ids) {
@@ -214,33 +239,29 @@ class cms_jstree extends depage_ui {
     }
     // }}}
 
-    // {{{ node_from_request
-    protected function node_from_request($request) {
-        $xml = "<{$request["_type"]} ";
-        foreach ($request as $attr => $value) {
-            if ($attr != "_type") {
-                $xml .= "$attr=\"$value\" ";
-            }
-        }
-        $xml .= "/>";        
-
-        $doc = new DOMDocument;
-        $doc->loadXML($xml);
-
-        return $doc;
-    }
-    // }}}
-
+    // {{{ get_current_seq_nr
     protected function get_current_seq_nr($doc_id) {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
+    // }}}
 
     // {{{ send_time
     protected function send_time($time) {
         // do nothing
     }
     // }}}
+
+    // {{{ valid_children_or_none
+    static private function valid_children_or_none(&$valid_children, $element) {
+        if (empty($valid_children[$element])) {
+            return "none";
+        } else {
+            return $valid_children[$element];
+        }
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

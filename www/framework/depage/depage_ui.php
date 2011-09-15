@@ -55,7 +55,7 @@ class depage_ui {
      */
     public function init() {
         $this->log = new log(array(
-            'file' => "logs/" . get_class($this) . ".log",
+            'file' => "logs/" . str_replace("\\", "_", get_class($this)) . ".log",
         ));
 
         $this->setLanguage();

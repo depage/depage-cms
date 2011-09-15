@@ -425,7 +425,7 @@ class xmldb {
     public function unlink_node($doc_id_or_name, $node_id) {
         $doc_id = $this->doc_exists($doc_id_or_name);
 
-        if ($doc_id !== false) {
+        if ($doc_id !== false && $this->allow_unlink($doc_id, $node_id)) {
             return $this->unlink_node_by_elementId($doc_id, $node_id);
         } else {
             return false;
@@ -436,7 +436,7 @@ class xmldb {
     public function add_node($doc_id_or_name, $node, $target_id, $target_pos) {
         $doc_id = $this->doc_exists($doc_id_or_name);
 
-        if ($doc_id !== false) {
+        if ($doc_id !== false && $this->allow_add($doc_id, $node, $target_id)) {
             return $this->save_node($doc_id, $node, $target_id, $target_pos, true);
         } else {
             return false;
@@ -646,6 +646,21 @@ class xmldb {
         $this->end_transaction();
 
         return $success;
+    }
+    // }}}
+    // {{{ build_node()
+    public function build_node($doc_id, $name, $attributes) {
+        $doc_info = $this->get_namespaces_and_entities($doc_id);
+        $xml = "<$name {$doc_info->namespaces}";
+        foreach ($attributes as $attr => $value) {
+            $xml .= " $attr=\"$value\"";
+        }
+        $xml .= "/>";
+
+        $doc = new \DOMDocument;
+        $doc->loadXML($xml);
+
+        return $doc->documentElement;
     }
     // }}}
     
@@ -883,6 +898,19 @@ class xmldb {
         }
     }
     // }}}
+    // {{{ set_permissions()
+    public function set_permissions($doc_id, $permissions) {
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->table_docs} 
+            SET permissions = :permissions 
+            WHERE id = :doc_id"
+        );
+        $query->execute(array(
+            'permissions' => $permissions,
+            'doc_id' => $doc_id
+        ));
+    }
+    // }}}
 
     /* private */
     // {{{ allow_move()
@@ -902,6 +930,26 @@ class xmldb {
 
         $permissions = $this->get_permissions($doc_id);
         return $permissions->is_element_allowed_in($node->name, $target->name);
+    }
+    // }}}
+    // {{{ allow_add()
+    private function allow_add($doc_id, $node, $target_id) {
+        $target_name = $this->get_nodeName_by_elementId($doc_id, $target_id);
+        if ($node->nodeType == XML_DOCUMENT_NODE) {
+            $node = $node->documentElement;
+        }
+        $node_name = $node->nodeName;
+
+        $permissions = $this->get_permissions($doc_id);
+        return $permissions->is_element_allowed_in($node_name, $target_name);
+    }
+    // }}}
+    // {{{ allow_unlink()
+    private function allow_unlink($doc_id, $node_id) {
+        $node_name = $this->get_nodeName_by_elementId($doc_id, $node_id);
+        $permissions = $this->get_permissions($doc_id);
+
+        return $permissions->is_unlink_allowed_of($node_name);
     }
     // }}}
 
@@ -1451,6 +1499,19 @@ class xmldb {
             $namespaces[] = new xmlns($ns_element[1], $ns_element[2]);
         }
         return $namespaces;
+    }
+    // }}}
+    // {{{ get_namespaces_and_entities()
+    private function get_namespaces_and_entities($doc_id) {
+        $query = $this->pdo->prepare(
+            "SELECT docs.entities AS entities, docs.ns AS namespaces
+            FROM {$this->table_docs} AS docs
+            WHERE docs.id = :doc_id"
+        );
+        $query->execute(array(
+            'doc_id' => $doc_id,
+        ));
+        return $query->fetchObject();
     }
     // }}}
 

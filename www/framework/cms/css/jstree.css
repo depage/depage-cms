@@ -11,6 +11,20 @@
 .jstree li { line-height: 24px !important; min-height: 24px !important;}
 .jstree a { line-height: 24px !important; min-height: 24px !important;}
 .jstree span { margin-left: 10em; font-style: italic; color: #666; font-size: 8px;}
+#jstree-add-marker {
+    padding:0; margin:0;
+    /*line-height:12px; font-size:1px; */
+    overflow:hidden; height:24px; width:24px; position:absolute; top:-30px; z-index:10000; background-repeat:no-repeat; display:none;
+}
+.jstree-add-marker-between {
+    background-color:yellow;
+}
+.jstree-add-marker-inside {
+    background-color:green;
+}
+.jstree-add-marker-disabled {
+    background-color: red;
+}
 
 /* default style */
 .jstree-default li, 
