@@ -32,12 +32,18 @@ class graphics_imagemagick extends graphics {
         $this->size = array($width, $height);
     }
 
-    public function render($input, $output = null) {
-        $this->input        = $input;
-        $this->imageSize    = getimagesize($this->input);
-        $this->output       = ($output == null) ? $input : $output;
+    protected function getImageSize() {
+        $path = preg_replace('/convert$/', 'identify', $this->executable);
+        exec("{$path} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+        if ($returnStatus === 0) {
+            return explode('x', $commandOutput[0]);
+        } else {
+            return getimagesize($this->input);
+        }
+    }
 
-        $this->outputFormat = $this->obtainFormat($this->output);
+    public function render($input, $output = null) {
+       parent::render($input, $output);
 
         $this->processQueue();
 
