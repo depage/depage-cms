@@ -83,6 +83,13 @@ class graphics {
         return array($width, $height);
     }
 
+    public function render($input, $output = null) {
+        $this->input    = $input;
+        $this->output   = ($output == null) ? $input : $output;
+        $this->imageSize    = $this->getImageSize();
+        $this->outputFormat = $this->obtainFormat($this->output);
+    }
+
     protected function obtainFormat($fileName) {
         $parts = explode('.', $fileName);
         $extension = strtolower($parts[count($parts) - 1]);

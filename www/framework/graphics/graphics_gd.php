@@ -56,7 +56,6 @@ class graphics_gd extends graphics {
     }
 
     protected function load() {
-        $this->imageSize    = getimagesize($this->input);
         $this->inputFormat  = $this->imageSize[2];
 
         if ($this->inputFormat == 1 && function_exists('imagecreatefromgif')) {
@@ -87,11 +86,12 @@ class graphics_gd extends graphics {
         imagedestroy($this->image);
     }
 
-    public function render($input, $output = null) {
-        $this->input    = $input;
-        $this->output   = ($output == null) ? $input : $output;
+    protected function getImageSize() {
+        return getimagesize($this->input);
+    }
 
-        $this->outputFormat = $this->obtainFormat($this->output);
+    public function render($input, $output = null) {
+        parent::render($input, $output);
 
         $this->load();
 

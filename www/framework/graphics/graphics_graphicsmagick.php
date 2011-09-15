@@ -14,12 +14,17 @@ class graphics_graphicsmagick extends graphics_imagemagick {
         $this->size = array($width, $height);
     }
 
-    public function render($input, $output = null) {
-        $this->input        = $input;
-        $this->imageSize    = getimagesize($this->input);
-        $this->output       = ($output == null) ? $input : $output;
+    protected function getImageSize() {
+        exec("{$this->executable} identify -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+        if ($returnStatus === 0) {
+            return explode('x', $commandOutput[0]);
+        } else {
+            return getimagesize($this->input);
+        }
+    }
 
-        $this->outputFormat = $this->obtainFormat($this->output);
+    public function render($input, $output = null) {
+        graphics::render($input, $output);
 
         $this->command = $this->executable . " convert {$this->input} -background none";
 
