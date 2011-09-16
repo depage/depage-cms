@@ -1,7 +1,5 @@
 <?php
 
-namespace depage\graphics;
-
 class graphics_gd extends graphics {
     public function __construct($options) {
         parent::__construct($options);

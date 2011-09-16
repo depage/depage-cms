@@ -1,7 +1,5 @@
 <?php
 
-namespace depage\graphics;
-
 class graphics_graphicsmagick extends graphics_imagemagick {
     protected function crop($width, $height, $x = 0, $y = 0) {
         // '+' for positive offset (the '-' is already there)

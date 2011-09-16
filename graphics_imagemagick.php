@@ -1,7 +1,5 @@
 <?php
 
-namespace depage\graphics;
-
 class graphics_imagemagick extends graphics {
     protected $size;
 

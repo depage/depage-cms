@@ -1,29 +1,49 @@
 <?php
 
-namespace depage\graphics;
+require_once('../depage/depage.php');
 
-require_once('graphics.php');
-require_once('graphics_gd.php');
-require_once('graphics_imagemagick.php');
-require_once('graphics_graphicsmagick.php');
-require_once('graphicsException.php');
+class graphics_ui {
+    public $defaults = array(
+        'extension'     => 'gd',
+        'background'    => 'transparent',
+    );
 
-$command    = explode('-', $_GET['command']);
-$action     = $command[0];
-$size       = explode('x', $command[1]);
-$root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
-$file       = $_GET['file'];
-$extension  = $_GET['ext'];
+    public function __construct($options = NULL) {
+        $conf = new config($options);
+        $this->options = $conf->getDefaultsFromClass($this);
+    }
 
-$cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$size[0]}x{$size[1]}.{$extension}");
+    public function convert() {
+        $command    = explode('-', $_GET['command']);
+        $action     = $command[0];
+        $size       = explode('x', $command[1]);
+        $root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
+        $file       = $_GET['file'];
+        $extension  = $_GET['ext'];
 
-$img = graphics::factory(array('extension'=>'imagemagick', 'background'=>'transparent'));
-$img->{"add$action"}($size[0], $size[1])->render($root . $file, $cachedFile);
+        $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$size[0]}x{$size[1]}.{$extension}");
 
-if ($extension === 'jpg' || $extension === 'jpeg') {
-    header("Content-type: image/jpeg");
-    imagejpeg(imagecreatefromjpeg($cachedFile));
-} else if ($extension === 'png') {
-    header("Content-type: image/png");
-    imagejpeg(imagecreatefrompng($cachedFile));
+        $img = graphics::factory(
+            array(
+                'extension'     => $this->defaults['extension'],
+                'background'    => $this->defaults['background'],
+            )
+        );
+
+        $cachePath = dirname($cachedFile);
+        mkdir($cachePath, 0755, true);
+
+        $img->{"add$action"}($size[0], $size[1])->render($root . $file, $cachedFile);
+
+        if ($extension === 'jpg' || $extension === 'jpeg') {
+            header("Content-type: image/jpeg");
+            imagejpeg(imagecreatefromjpeg($cachedFile));
+        } else if ($extension === 'png') {
+            header("Content-type: image/png");
+            imagejpeg(imagecreatefrompng($cachedFile));
+        }
+    }
 }
+
+$graphics_ui = new graphics_ui();
+$graphics_ui->convert();
