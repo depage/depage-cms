@@ -43,6 +43,11 @@ class graphics {
         $this->background = (isset($options['background'])) ? $options['background'] : 'transparent';
     }
 
+    public function addBackground($background) {
+        $this->background = $background;
+        return $this;
+    }
+
     public function addCrop($width, $height, $x = 0, $y = 0) {
         $this->queue[] = array('crop', func_get_args());
         return $this;
