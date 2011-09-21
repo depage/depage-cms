@@ -7,6 +7,8 @@ class graphics {
     protected $size = array();
     protected $background;
     protected $quality;
+    protected $inputFormat;
+    protected $outputFormat;
 
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
@@ -39,6 +41,7 @@ class graphics {
     public function __construct($options) {
         $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
+        $this->outputFormat = (isset($options['format']))       ? $options['format']            : null;
     }
 
     public function addBackground($background) {
@@ -89,7 +92,8 @@ class graphics {
         $this->output       = ($output == null) ? $input : $output;
         $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
-        $this->outputFormat = $this->obtainFormat($this->output);
+
+        if ($this->outputFormat == null) $this->outputFormat = $this->obtainFormat($this->output);
     }
 
     protected function obtainFormat($fileName) {
