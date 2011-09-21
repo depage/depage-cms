@@ -139,6 +139,7 @@ class graphics_gd extends graphics {
             }
         } else if ($this->background == 'transparent') {
             imagefill($newImage, 0, 0, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
+            if ($this->outputFormat == 'gif') imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
             imagesavealpha($newImage, true);
         }
 
