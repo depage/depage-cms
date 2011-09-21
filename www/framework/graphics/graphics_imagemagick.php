@@ -59,7 +59,7 @@ class graphics_imagemagick extends graphics {
 
             $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
 
-            $this->command .= " ) -flatten -quality {$quality} {$this->output}";
+            $this->command .= " ) -flatten -quality {$quality} {$this->outputFormat}:{$this->output}";
 
             $this->execCommand();
         }
