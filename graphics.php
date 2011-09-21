@@ -8,35 +8,29 @@ class graphics {
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
-        if (!isset($options['executable'])) {
-            if ($extension == 'imagemagick') {
+        if ( $extension == 'im' || $extension == 'imagemagick' ) {
+            if (!isset($options['executable'])) {
                 $executable = graphics::which('convert');
                 if ($executable == null) {
                     trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
-                    $extension = 'gd';
                 } else {
                     $options['executable'] = $executable;
+                    return new graphics_imagemagick($options);
                 }
             }
-
-            if ($extension == 'graphicsmagick') {
+        } else if ( $extension == 'gm' || $extension == 'graphicsmagick' ) {
+            if (!isset($options['executable'])) {
                 $executable = graphics::which('gm');
                 if ($executable == null) {
                     trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
-                    $extension = 'gd';
                 } else {
                     $options['executable'] = $executable;
+                    return new graphics_graphicsmagick($options);
                 }
             }
         }
 
-        if ($extension == 'imagemagick') {
-            return new graphics_imagemagick($options);
-        } else if ($extension == 'graphicsmagick') {
-            return new graphics_graphicsmagick($options);
-        } else {
-            return new graphics_gd($options);
-        }
+        return new graphics_gd($options);
     }
 
     public function __construct($options) {
