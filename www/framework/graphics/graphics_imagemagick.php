@@ -57,7 +57,7 @@ class graphics_imagemagick extends graphics {
 
         exec($command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
-            throw new graphicsException(implode("\n", $commandOutput));
+            throw new graphics_exception(implode("\n", $commandOutput));
         }
     }
 
