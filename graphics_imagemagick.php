@@ -32,13 +32,17 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function getImageSize() {
-        $identify = preg_replace('/convert$/', 'identify', $this->executable);
-        // TODO escape
-        exec("{$identify} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
-        if ($returnStatus === 0) {
-            return explode('x', $commandOutput[0]);
-        } else {
+        if (is_callable('getimagesize')) {
             return getimagesize($this->input);
+        } else {
+            $identify = preg_replace('/convert$/', 'identify', $this->executable);
+            // TODO escape
+            exec("{$identify} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+            if ($returnStatus === 0) {
+                return explode('x', $commandOutput[0]);
+            } else {
+                throw new graphics_exception(implode("\n", $commandOutput));
+            }
         }
     }
 

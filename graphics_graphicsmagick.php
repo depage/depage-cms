@@ -13,11 +13,15 @@ class graphics_graphicsmagick extends graphics_imagemagick {
     }
 
     protected function getImageSize() {
-        exec("{$this->executable} identify -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
-        if ($returnStatus === 0) {
-            return explode('x', $commandOutput[0]);
-        } else {
+        if (is_callable('getimagesize')) {
             return getimagesize($this->input);
+        } else {
+            exec("{$this->executable} identify -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+            if ($returnStatus === 0) {
+                return explode('x', $commandOutput[0]);
+            } else {
+                throw new graphics_exception(implode("\n", $commandOutput));
+            }
         }
     }
 
@@ -31,7 +35,7 @@ class graphics_graphicsmagick extends graphics_imagemagick {
         $quality = $this->getQuality();
 
         if ($this->background === 'checkerboard') {
-            $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics');
+            $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics-');
             $this->command .= " miff:{$tempFile}";
 
             $this->execCommand();
