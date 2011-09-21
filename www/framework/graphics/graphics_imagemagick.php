@@ -47,18 +47,22 @@ class graphics_imagemagick extends graphics {
     }
 
     public function render($input, $output = null) {
-       parent::render($input, $output);
+        parent::render($input, $output);
 
-        $this->processQueue();
+        if ($this->bypassTest()) {
+            $this->bypass();
+        } else {
+            $this->processQueue();
 
-        $background = $this->getBackground();
-        $quality    = $this->getQuality();
+            $background = $this->getBackground();
+            $quality    = $this->getQuality();
 
-        $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
+            $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
 
-        $this->command .= " ) -flatten -quality {$quality} {$this->output}";
+            $this->command .= " ) -flatten -quality {$quality} {$this->output}";
 
-        $this->execCommand();
+            $this->execCommand();
+        }
     }
 
     protected function execCommand() {

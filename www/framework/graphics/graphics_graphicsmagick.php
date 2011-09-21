@@ -28,32 +28,36 @@ class graphics_graphicsmagick extends graphics_imagemagick {
     public function render($input, $output = null) {
         graphics::render($input, $output);
 
-        $this->command = $this->executable . " convert {$this->input} -background none";
-
-        $this->processQueue();
-
-        $quality = $this->getQuality();
-
-        if ($this->background === 'checkerboard') {
-            $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics-');
-            $this->command .= " miff:{$tempFile}";
-
-            $this->execCommand();
-
-            $canvasSize = $this->size[0] . "x" . $this->size[1];
-
-            $this->command = $this->executable . " convert";
-            $this->command .= " -page {$canvasSize} -size {$canvasSize} pattern:checkerboard";
-            $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten -quality {$quality} +page {$this->output}";
-
-            $this->execCommand();
-            unlink($tempFile);
+        if ($this->bypassTest()) {
+            $this->bypass();
         } else {
-            $background = $this->getBackground();
+            $this->command = $this->executable . " convert {$this->input} -background none";
 
-            $this->command .= "{$background} -quality {$quality} {$this->output}";
+            $this->processQueue();
 
-            $this->execCommand();
+            $quality = $this->getQuality();
+
+            if ($this->background === 'checkerboard') {
+                $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics-');
+                $this->command .= " miff:{$tempFile}";
+
+                $this->execCommand();
+
+                $canvasSize = $this->size[0] . "x" . $this->size[1];
+
+                $this->command = $this->executable . " convert";
+                $this->command .= " -page {$canvasSize} -size {$canvasSize} pattern:checkerboard";
+                $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten -quality {$quality} +page {$this->output}";
+
+                $this->execCommand();
+                unlink($tempFile);
+            } else {
+                $background = $this->getBackground();
+
+                $this->command .= "{$background} -quality {$quality} {$this->output}";
+
+                $this->execCommand();
+            }
         }
     }
 

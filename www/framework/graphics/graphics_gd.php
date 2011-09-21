@@ -88,13 +88,14 @@ class graphics_gd extends graphics {
     public function render($input, $output = null) {
         parent::render($input, $output);
 
-        $this->load();
-
-        $this->processQueue();
-
-        $this->save();
+        if ($this->bypassTest()) {
+            $this->bypass();
+        } else {
+            $this->load();
+            $this->processQueue();
+            $this->save();
+        }
     }
-
 
     private function createCanvas($width, $height) {
         $canvas = imagecreatetruecolor($width, $height);

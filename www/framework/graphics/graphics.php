@@ -88,6 +88,7 @@ class graphics {
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;
         $this->size         = $this->getImageSize();
+        $this->inputFormat  = $this->obtainFormat($this->input);
         $this->outputFormat = $this->obtainFormat($this->output);
     }
 
@@ -134,5 +135,19 @@ class graphics {
         }
 
         return (string) $quality;
+    }
+
+    protected function bypassTest() {
+        return (
+            count($this->queue)         == 1
+            && $this->queue[0][0]       == 'resize'
+            && $this->queue[0][1][0]    == $this->size[0]
+            && $this->queue[0][1][1]    == $this->size[1]
+            && $this->outputFormat      == $this->inputFormat
+        );
+    }
+
+    protected function bypass() {
+        copy($this->input, $this->output);
     }
 }
