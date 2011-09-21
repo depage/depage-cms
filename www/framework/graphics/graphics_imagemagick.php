@@ -14,14 +14,14 @@ class graphics_imagemagick extends graphics {
         $x = ($x < 0) ? $x : '+' . $x;
         $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -flatten";
+        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -flatten";
         $this->size = array($width, $height);
     }
 
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
-        $this->command .= " -resize {$newSize[0]}x{$newSize[1]}\!";
+        $this->command .= " -resize {$newSize[0]}x{$newSize[1]}!";
         $this->size = $newSize;
     }
 
@@ -45,15 +45,17 @@ class graphics_imagemagick extends graphics {
 
         $this->processQueue();
 
-        $this->command = $this->executable . $this->background() . " \( {$this->input}" . $this->command;
+        $this->command = $this->executable . $this->background() . " ( {$this->input}" . $this->command;
 
-        $this->command .= " \) -flatten {$this->output}";
+        $this->command .= " ) -flatten {$this->output}";
 
         $this->execCommand();
     }
 
     protected function execCommand() {
-        exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
+        $command = str_replace('!', '\!', escapeshellcmd($this->command));
+
+        exec($command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
             throw new graphicsException(implode("\n", $commandOutput));
         }
