@@ -8,7 +8,7 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
         $xExtent = ($x > 0) ? "+0" : $x;
         $yExtent = ($y > 0) ? "+0" : $y;
-        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}\! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
+        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
         $this->size = array($width, $height);
     }
 
