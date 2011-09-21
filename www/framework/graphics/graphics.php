@@ -87,8 +87,8 @@ class graphics {
     }
 
     public function render($input, $output = null) {
-        $this->input    = $input;
-        $this->output   = ($output == null) ? $input : $output;
+        $this->input        = $input;
+        $this->output       = ($output == null) ? $input : $output;
         $this->imageSize    = $this->getImageSize();
         $this->outputFormat = $this->obtainFormat($this->output);
     }
