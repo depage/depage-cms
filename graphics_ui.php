@@ -15,13 +15,16 @@ class graphics_ui {
 
     public function convert() {
         $command    = explode('-', $_GET['command']);
-        $action     = $command[0];
         $size       = explode('x', $command[1]);
         $root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
-        $file       = $_GET['file'];
-        $extension  = $_GET['ext'];
 
-        $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$size[0]}x{$size[1]}.{$extension}");
+        $action     = preg_replace("[^A-Za-z]", '', $command[0]);
+        $file       = escapeshellcmd($_GET['file']);
+        $extension  = preg_replace("[^A-Za-z]", '', $_GET['ext']);
+        $width      = intval($size[0]);
+        $height     = intval($size[1]);
+
+        $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
         $img = graphics::factory(
             array(
@@ -31,9 +34,11 @@ class graphics_ui {
         );
 
         $cachePath = dirname($cachedFile);
-        mkdir($cachePath, 0755, true);
+        if (!is_dir($cachePath)) {
+            mkdir($cachePath, 0755, true);
+        }
 
-        $img->{"add$action"}($size[0], $size[1])->render($root . $file, $cachedFile);
+        $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
 
         if ($extension === 'jpg' || $extension === 'jpeg') {
             header("Content-type: image/jpeg");
