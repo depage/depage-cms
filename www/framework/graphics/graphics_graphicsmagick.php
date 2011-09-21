@@ -47,14 +47,14 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
                 $this->command = $this->executable . " convert";
                 $this->command .= " -page {$canvasSize} -size {$canvasSize} pattern:checkerboard";
-                $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten -quality {$quality} +page {$this->outputFormat}:{$this->output}";
+                $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten {$quality} +page {$this->outputFormat}:{$this->output}";
 
                 $this->execCommand();
                 unlink($tempFile);
             } else {
                 $background = $this->getBackground();
 
-                $this->command .= "{$background} -quality {$quality} {$this->outputFormat}:{$this->output}";
+                $this->command .= "{$background} {$quality} +page {$this->outputFormat}:{$this->output}";
 
                 $this->execCommand();
             }

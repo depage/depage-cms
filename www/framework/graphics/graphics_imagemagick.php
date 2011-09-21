@@ -59,7 +59,7 @@ class graphics_imagemagick extends graphics {
 
             $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
 
-            $this->command .= " ) -flatten -quality {$quality} {$this->outputFormat}:{$this->output}";
+            $this->command .= " ) -flatten {$quality} {$this->outputFormat}:{$this->output}";
 
             $this->execCommand();
         }
@@ -90,5 +90,13 @@ class graphics_imagemagick extends graphics {
         }
 
         return $background;
+    }
+
+    protected function getQuality() {
+        if ($this->outputFormat != 'gif') {
+            return '-quality ' . parent::getQuality();
+        } else {
+            return '';
+        }
     }
 }
