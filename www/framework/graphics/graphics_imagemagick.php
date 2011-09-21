@@ -1,7 +1,8 @@
 <?php
 
 class graphics_imagemagick extends graphics {
-    protected $size;
+    protected $command;
+    protected $executable;
 
     public function __construct($options) {
         parent::__construct($options);
@@ -31,8 +32,9 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function getImageSize() {
-        $path = preg_replace('/convert$/', 'identify', $this->executable);
-        exec("{$path} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+        $identify = preg_replace('/convert$/', 'identify', $this->executable);
+        // TODO escape
+        exec("{$identify} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus === 0) {
             return explode('x', $commandOutput[0]);
         } else {
@@ -65,7 +67,6 @@ class graphics_imagemagick extends graphics {
         $background = " -size {$this->size[0]}x{$this->size[1]}";
 
         if ($this->background[0] === '#') {
-            // TODO escape!!
             $background .= " -background \"{$this->background}\"";
         } else if ($this->background == 'checkerboard') {
             $background .= " -background none pattern:checkerboard";

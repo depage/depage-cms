@@ -1,10 +1,6 @@
 <?php
 
 class graphics_gd extends graphics {
-    public function __construct($options) {
-        parent::__construct($options);
-    }
-
     protected function crop($width, $height, $x = 0, $y = 0) {
         $newImage = $this->createCanvas($width, $height);
 
@@ -15,22 +11,22 @@ class graphics_gd extends graphics {
             ($y > 0) ? 0 : abs($y),
             ($x < 0) ? 0 : $x,
             ($y < 0) ? 0 : $y,
-            $this->imageSize[0] - abs($x),
-            $this->imageSize[1] - abs($y)
+            $this->size[0] - abs($x),
+            $this->size[1] - abs($y)
         );
 
         $this->image = $newImage;
-        $this->imageSize = array($width, $height);
+        $this->size = array($width, $height);
     }
 
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
         $newImage = $this->createCanvas($newSize[0], $newSize[1]);
-        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
+        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
         $this->image = $newImage;
-        $this->imageSize = $newSize;
+        $this->size = $newSize;
     }
 
     protected function thumb($width, $height) {
@@ -47,14 +43,14 @@ class graphics_gd extends graphics {
 
         $newImage = $this->createCanvas($width, $height);
 
-        imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->imageSize[0], $this->imageSize[1]);
+        imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
         $this->image = $newImage;
-        $this->imageSize = array($width, $height);
+        $this->size = array($width, $height);
     }
 
     protected function load() {
-        $this->inputFormat  = $this->imageSize[2];
+        $this->inputFormat  = $this->size[2];
 
         if ($this->inputFormat == 1 && function_exists('imagecreatefromgif')) {
             //GIF
@@ -69,8 +65,8 @@ class graphics_gd extends graphics {
     }
 
     protected function save() {
-        $bg = $this->createBackground($this->imageSize[0], $this->imageSize[1]);
-        imagecopy($bg, $this->image, 0, 0, 0, 0, $this->imageSize[0], $this->imageSize[1]);
+        $bg = $this->createBackground($this->size[0], $this->size[1]);
+        imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
         $this->image = $bg;
 
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
