@@ -47,9 +47,12 @@ class graphics_imagemagick extends graphics {
 
         $this->processQueue();
 
-        $this->command = $this->executable . $this->background() . " ( {$this->input}" . $this->command;
+        $background = $this->getBackground();
+        $quality    = $this->getQuality();
 
-        $this->command .= " ) -flatten {$this->output}";
+        $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
+
+        $this->command .= " ) -flatten -quality {$quality} {$this->output}";
 
         $this->execCommand();
     }
@@ -63,16 +66,16 @@ class graphics_imagemagick extends graphics {
         }
     }
 
-    protected function background() {
-        $background = " -size {$this->size[0]}x{$this->size[1]}";
+    protected function getBackground() {
+        $background = "-size {$this->size[0]}x{$this->size[1]}";
 
         if ($this->background[0] === '#') {
-            $background .= " -background \"{$this->background}\"";
+            $background .= " -background {$this->background}";
         } else if ($this->background == 'checkerboard') {
             $background .= " -background none pattern:checkerboard";
         } else {
             if ($this->outputFormat == 'jpg') {
-                $background .= " -background \"#FFF\"";
+                $background .= " -background #FFF";
             } else {
                 $background .= " -background none";
             }

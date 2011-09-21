@@ -72,9 +72,10 @@ class graphics_gd extends graphics {
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
             imagegif($this->image, $this->output);
         } else if ($this->outputFormat == 'jpg') {
-            imagejpeg($this->image, $this->output, 80);
+            imagejpeg($this->image, $this->output, $this->getQuality());
         } else if ($this->outputFormat == 'png') {
-            imagepng($this->image, $this->output);
+            $quality = $this->getQuality();
+            imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
 
         imagedestroy($this->image);
