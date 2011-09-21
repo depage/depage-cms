@@ -10,22 +10,22 @@ class graphics {
 
         if (!isset($options['executable'])) {
             if ($extension == 'imagemagick') {
-                exec('which convert', $commandOutput, $returnStatus);
-                if ($returnStatus === 0) {
-                    $options['executable'] = $commandOutput[0];
-                } else {
+                $executable = graphics::which('convert');
+                if ($executable == null) {
                     trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
                     $extension = 'gd';
+                } else {
+                    $options['executable'] = $executable;
                 }
             }
 
             if ($extension == 'graphicsmagick') {
-                exec('which gm', $commandOutput, $returnStatus);
-                if ($returnStatus === 0) {
-                    $options['executable'] = $commandOutput[0];
-                } else {
+                $executable = graphics::which('gm');
+                if ($executable == null) {
                     trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
                     $extension = 'gd';
+                } else {
+                    $options['executable'] = $executable;
                 }
             }
         }
@@ -100,5 +100,14 @@ class graphics {
         $extension = ($extension == 'jpeg') ? 'jpg' : $extension;
 
         return $extension;
+    }
+
+    protected function which($binary) {
+        exec('which ' . $binary, $commandOutput, $returnStatus);
+        if ($returnStatus === 0) {
+            return $commandOutput[0];
+        } else {
+            return null;
+        }
     }
 }
