@@ -6,6 +6,7 @@ class graphics {
     protected $queue = array();
     protected $size = array();
     protected $background;
+    protected $quality;
 
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
@@ -36,7 +37,8 @@ class graphics {
     }
 
     public function __construct($options) {
-        $this->background = (isset($options['background'])) ? $options['background'] : 'transparent';
+        $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
+        $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
     }
 
     public function addBackground($background) {
@@ -105,5 +107,32 @@ class graphics {
         } else {
             return null;
         }
+    }
+
+    protected function getQuality() {
+        if ($this->outputFormat == 'jpg') {
+            if (
+                $this->quality != null
+                && $this->quality >= 0
+                && $this->quality <= 100
+            ) {
+                $quality = $this->quality;
+            } else {
+                $quality = 90;
+            }
+        } else if ($this->outputFormat == 'png') {
+            if (
+                $this->quality != null
+                && $this->quality >= 0
+                && $this->quality <= 95
+                && $this->quality % 10 <= 5
+            ) {
+                $quality = sprintf("%02d", $this->quality);
+            } else {
+                $quality = 95;
+            }
+        }
+
+        return (string) $quality;
     }
 }

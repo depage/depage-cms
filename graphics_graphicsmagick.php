@@ -28,6 +28,8 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
         $this->processQueue();
 
+        $quality = $this->getQuality();
+
         if ($this->background === 'checkerboard') {
             $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics');
             $this->command .= " miff:{$tempFile}";
@@ -38,22 +40,24 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
             $this->command = $this->executable . " convert";
             $this->command .= " -page {$canvasSize} -size {$canvasSize} pattern:checkerboard";
-            $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten +page {$this->output}";
+            $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten -quality {$quality} +page {$this->output}";
 
             $this->execCommand();
             unlink($tempFile);
         } else {
-            $this->command .= $this->background() . ' ' . $this->output;
+            $background = $this->getBackground();
+
+            $this->command .= "{$background} -quality {$quality} {$this->output}";
 
             $this->execCommand();
         }
     }
 
-    protected function background() {
+    protected function getBackground() {
         if ($this->background[0] === '#') {
-            $background = " -flatten -background \"{$this->background}\"";
+            $background = " -flatten -background {$this->background}";
         } else if ($this->outputFormat == 'jpg') {
-            $background = " -flatten -background \"#FFF\"";
+            $background = " -flatten -background #FFF";
         } else {
             $background = '';
         }
