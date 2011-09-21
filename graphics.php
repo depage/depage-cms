@@ -4,6 +4,8 @@ class graphics {
     protected $input;
     protected $output;
     protected $queue = array();
+    protected $size = array();
+    protected $background;
 
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
@@ -72,9 +74,9 @@ class graphics {
 
     protected function dimensions($width, $height) {
         if (!is_numeric($height)) {
-            $height = round(($this->imageSize[1] / $this->imageSize[0]) * $width);
+            $height = round(($this->size[1] / $this->size[0]) * $width);
         } elseif (!is_numeric($width)) {
-            $width = round(($this->imageSize[0] / $this->imageSize[1]) * $height);
+            $width = round(($this->size[0] / $this->size[1]) * $height);
         }
 
         return array($width, $height);
@@ -83,7 +85,7 @@ class graphics {
     public function render($input, $output = null) {
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;
-        $this->imageSize    = $this->getImageSize();
+        $this->size         = $this->getImageSize();
         $this->outputFormat = $this->obtainFormat($this->output);
     }
 

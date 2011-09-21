@@ -51,7 +51,6 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
     protected function background() {
         if ($this->background[0] === '#') {
-            // TODO escape!!
             $background = " -flatten -background \"{$this->background}\"";
         } else if ($this->outputFormat == 'jpg') {
             $background = " -flatten -background \"#FFF\"";
