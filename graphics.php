@@ -6,7 +6,7 @@ class graphics {
     protected $queue = array();
     protected $size = array();
     protected $background;
-    protected $quality;
+    protected $quality = '';
     protected $inputFormat;
     protected $outputFormat;
 
@@ -121,7 +121,7 @@ class graphics {
     protected function getQuality() {
         if ($this->outputFormat == 'jpg') {
             if (
-                $this->quality != null
+                is_numeric($this->quality)
                 && $this->quality >= 0
                 && $this->quality <= 100
             ) {
@@ -131,7 +131,7 @@ class graphics {
             }
         } else if ($this->outputFormat == 'png') {
             if (
-                $this->quality != null
+                is_numeric($this->quality)
                 && $this->quality >= 0
                 && $this->quality <= 95
                 && $this->quality % 10 <= 5
@@ -140,6 +140,8 @@ class graphics {
             } else {
                 $quality = 95;
             }
+        } else {
+            $quality = intval($this->quality);
         }
 
         return (string) $quality;
@@ -149,6 +151,7 @@ class graphics {
         return (
             count($this->queue)         == 1
             && $this->queue[0][0]       == 'resize'
+            && count($this->size)       == 2
             && $this->queue[0][1][0]    == $this->size[0]
             && $this->queue[0][1][1]    == $this->size[1]
             && $this->outputFormat      == $this->inputFormat
@@ -156,6 +159,8 @@ class graphics {
     }
 
     protected function bypass() {
-        copy($this->input, $this->output);
+        if ($this->input != $this->output) {
+            copy($this->input, $this->output);
+        }
     }
 }
