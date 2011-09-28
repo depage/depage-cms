@@ -3,11 +3,22 @@
 require_once('../../../www/framework/depage/depage.php');
 require_once('graphicsTestClass.php');
 
+/**
+ * Tests for graphics class
+ **/
 class graphicsTest extends PHPUnit_Framework_TestCase {
+    /**
+     * Creates fresh graphics objects for tests
+     **/
     public function setUp() {
         $this->graphics = new graphicsTestClass();
     }
 
+    /**
+     * Tests factory with various extensions. Imagemagick and graphicsmagick
+     * classes are created with set 'executable'-option so that the factory won't
+     * look for their executables with 'exec("which ...")'.
+     **/
     public function testFactory() {
         $graphics = graphics::factory();
         $this->assertTrue($graphics instanceof graphics_gd, 'Expected graphics_gd object.');
@@ -31,15 +42,25 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($graphics instanceof graphics_graphicsmagick, 'Expected graphics_graphicsmagick object.');
     }
 
+    /**
+     * Tests background setter.
+     **/
     public function testAddBackground() {
         $this->assertSame('transparent', $this->graphics->getBackground(), 'Invalid default background.');
 
         $this->graphics->addBackground('#000');
         $this->assertSame('#000', $this->graphics->getBackground(), 'Background setter error.');
 
+        // another addBackground() should override old background
+        $this->graphics->addBackground('#111');
+        $this->assertSame('#111', $this->graphics->getBackground(), 'Background setter error.');
+
         $this->assertSame($this->graphics, $this->graphics->addBackground('#000'), 'Background setter should return graphics object.');
     }
 
+    /**
+     * Tests adding crop actions to queue.
+     **/
     public function testAddCrop() {
         $this->assertSame(array(), $this->graphics->getQueue(), 'Initial queue should be empty.');
 
@@ -71,6 +92,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addCrop(100, 200, 300, 400), 'Add-methods should return graphics object.');
     }
 
+    /**
+     * Tests adding resize action to queue.
+     **/
     public function testAddResize() {
         $this->assertSame(array(), $this->graphics->getQueue(), 'Initial queue should be empty.');
 
@@ -89,6 +113,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addResize(100, 200), 'Add-methods should return graphics object.');
     }
 
+    /**
+     * Tests adding thumb action to queue.
+     **/
     public function testAddThumb() {
         $this->assertSame(array(), $this->graphics->getQueue(), 'Initial queue should be empty.');
 
@@ -107,6 +134,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addThumb(100, 200), 'Add-methods should return graphics object.');
     }
 
+    /**
+     * Tests method that handles action number parameters.
+     **/
     public function testEscapeNumber() {
         $this->assertSame(1337, $this->graphics->escapeNumber(1337));
         $this->assertSame(-1337, $this->graphics->escapeNumber(-1337));
@@ -118,6 +148,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(null, $this->graphics->escapeNumber(' 8& do malicious stuff& 222'));
     }
 
+    /**
+     * Tests processing of tasks in queue.
+     **/
     public function testProcessQueue() {
         $this->assertSame('', $this->graphics->getTestQueueString(), 'Initial queue should be empty.');
 
@@ -130,6 +163,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($expected, $this->graphics->getTestQueueString(), 'Queue processing failed.');
     }
 
+    /**
+     * Tests image size scaling.
+     **/
     public function testDimensions() {
         $this->graphics->setSize(array(100, 100));
 
@@ -143,6 +179,10 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array(200, 200), $this->graphics->dimensions('X', 200), 'Dimensions calculation failed.');
     }
 
+    /**
+     * Tests render method (graphics::render() contains initialization for
+     * subclass render methods).
+     **/
     public function testRender() {
         $this->graphics->render('test.jpg');
 
@@ -153,6 +193,10 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('jpg', $this->graphics->getOutputFormat(), 'Render method should set output format.');
     }
 
+    /**
+     * Tests render method (graphics::render() contains initialization for
+     * subclass render methods) for different input & output files.
+     **/
     public function testRenderSetOutput() {
         $this->graphics->render('test.jpg', 'test2.png');
 
@@ -163,6 +207,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('png', $this->graphics->getOutputFormat(), 'Render method should set output format.');
     }
 
+    /**
+     * Tests image format detection by filename extension.
+     **/
     public function testObtainFormat() {
         $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpg'), 'Format parser error.');
         $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpeg'), 'Format parser error.');
@@ -170,10 +217,17 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('png', $this->graphics->obtainFormat('/path.to/test.png'), 'Format parser error.');
     }
 
+    /**
+     * Tests quality index getter/calculator with no given image format.
+     **/
     public function testGetQuality() {
         $this->assertSame('0', $this->graphics->getQuality(), 'Default quality should be 0.');
     }
 
+    /**
+     * Tests quality index getter/calculator for JPG format.
+     * ( 0 <= valid quality <= 100 )
+     **/
     public function testGetQualityJpg() {
         $this->graphics->setOutputFormat('jpg');
 
@@ -182,11 +236,13 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->graphics->setQuality(80);
         $this->assertSame('80', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
 
+        // boundary values
         $this->graphics->setQuality(0);
         $this->assertSame('0', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
         $this->graphics->setQuality(100);
         $this->assertSame('100', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
 
+        // boundary values
         $this->graphics->setQuality(-1);
         $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
         $this->graphics->setQuality(101);
@@ -196,6 +252,11 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
     }
 
+    /**
+     * Tests quality index getter/calculator for PNG format.
+     * compression  ( 0 <= valid first digit <= 9 )
+     * filter       ( 0 <= valid second digit <= 5 )
+     **/
     public function testGetQualityPng() {
         $this->graphics->setOutputFormat('png');
 
@@ -204,6 +265,7 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->graphics->setQuality(80);
         $this->assertSame('80', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
 
+        // boundary values
         $this->graphics->setQuality(0);
         $this->assertSame('00', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
         $this->graphics->setQuality(5);
@@ -211,6 +273,7 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->graphics->setQuality(95);
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
 
+        // boundary values
         $this->graphics->setQuality(-1);
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
         $this->graphics->setQuality(96);
@@ -226,6 +289,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
     }
 
+    /**
+     * Tests bypass test (single resize to same size)
+     **/
     public function testBypassTestSimple() {
         $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail if queue is empty.');
 
@@ -237,15 +303,30 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail if queue contains more than one action.');
     }
 
+    /**
+     * Tests bypass test (single resize to same size)
+     **/
     public function testBypassTestWrongAction() {
         $this->graphics->addThumb(100, 100);
         $this->graphics->render('test.jpg', 'test2.jpg');
         $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail actions other than resize.');
     }
 
+    /**
+     * Tests bypass test (single resize to same size)
+     **/
     public function testBypassTestJpeg() {
         $this->graphics->addResize(100, 100);
         $this->graphics->render('test.jpg', 'test2.jpeg');
         $this->assertTrue($this->graphics->bypassTest(), 'Bypass test should pass.');
+    }
+
+    /**
+     * Tests bypass test (single resize to same size)
+     **/
+    public function testBypassTestWrongSize() {
+        $this->graphics->addResize(10, 10);
+        $this->graphics->render('test.jpg', 'test2.jpg');
+        $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail for different image sizes.');
     }
 }
