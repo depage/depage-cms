@@ -14,7 +14,9 @@ class graphics {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
         if ( $extension == 'im' || $extension == 'imagemagick' ) {
-            if (!isset($options['executable'])) {
+            if (isset($options['executable'])) {
+                return new graphics_imagemagick($options);
+            } else {
                 $executable = graphics::which('convert');
                 if ($executable == null) {
                     trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
@@ -24,7 +26,9 @@ class graphics {
                 }
             }
         } else if ( $extension == 'gm' || $extension == 'graphicsmagick' ) {
-            if (!isset($options['executable'])) {
+            if (isset($options['executable'])) {
+                return new graphics_graphicsmagick($options);
+            } else {
                 $executable = graphics::which('gm');
                 if ($executable == null) {
                     trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
