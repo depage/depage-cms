@@ -1,13 +1,13 @@
 <?php
 
 class graphics_imagemagick extends graphics {
-    protected $command;
+    protected $command = '';
     protected $executable;
 
-    public function __construct($options) {
+    public function __construct($options = array()) {
         parent::__construct($options);
 
-        $this->executable = $options['executable'];
+        $this->executable = isset($options['executable']) ? $options['executable'] : null;
     }
 
     protected function crop($width, $height, $x = 0, $y = 0) {
