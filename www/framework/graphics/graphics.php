@@ -42,7 +42,7 @@ class graphics {
         return new graphics_gd($options);
     }
 
-    public function __construct($options) {
+    public function __construct($options = array()) {
         $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
         $this->outputFormat = (isset($options['format']))       ? $options['format']            : null;
