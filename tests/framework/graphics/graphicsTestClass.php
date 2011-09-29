@@ -1,5 +1,7 @@
 <?php
 
+use depage\graphics\graphics;
+
 class graphicsTestClass extends graphics {
     protected $testQueueString = '';
 

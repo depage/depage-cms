@@ -1,7 +1,6 @@
 <?php
 
-require_once('../../../www/framework/depage/depage.php');
-require_once('graphicsTestClass.php');
+use depage\graphics\graphics;
 
 /**
  * Tests for graphics class
@@ -21,25 +20,25 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
      **/
     public function testFactory() {
         $graphics = graphics::factory();
-        $this->assertTrue($graphics instanceof graphics_gd, 'Expected graphics_gd object.');
+        $this->assertType('depage\\graphics\\graphics_gd', $graphics, 'Expected graphics_gd object.');
 
         $graphics = graphics::factory(array('extension'=>'gd'));
-        $this->assertTrue($graphics instanceof graphics_gd, 'Expected graphics_gd object.');
+        $this->assertType('depage\\graphics\\graphics_gd', $graphics, 'Expected graphics_gd object.');
 
         $graphics = graphics::factory(array('extension'=>'foobar'));
-        $this->assertTrue($graphics instanceof graphics_gd, 'Expected graphics_gd object.');
+        $this->assertType('depage\\graphics\\graphics_gd', $graphics, 'Expected graphics_gd object.');
 
         $graphics = graphics::factory(array('extension'=>'imagemagick', 'executable'=>'bin'));
-        $this->assertTrue($graphics instanceof graphics_imagemagick, 'Expected graphics_imagemagick object.');
+        $this->assertType('depage\\graphics\\graphics_imagemagick', $graphics, 'Expected graphics_imagemagick object.');
 
         $graphics = graphics::factory(array('extension'=>'im', 'executable'=>'bin'));
-        $this->assertTrue($graphics instanceof graphics_imagemagick, 'Expected graphics_imagemagick object.');
+        $this->assertType('depage\\graphics\\graphics_imagemagick', $graphics, 'Expected graphics_imagemagick object.');
 
         $graphics = graphics::factory(array('extension'=>'graphicsmagick', 'executable'=>'bin'));
-        $this->assertTrue($graphics instanceof graphics_graphicsmagick, 'Expected graphics_graphicsmagick object.');
+        $this->assertType('depage\\graphics\\graphics_graphicsmagick', $graphics, 'Expected graphics_graphicsmagick object.');
 
         $graphics = graphics::factory(array('extension'=>'gm', 'executable'=>'bin'));
-        $this->assertTrue($graphics instanceof graphics_graphicsmagick, 'Expected graphics_graphicsmagick object.');
+        $this->assertType('depage\\graphics\\graphics_graphicsmagick', $graphics, 'Expected graphics_graphicsmagick object.');
     }
 
     /**

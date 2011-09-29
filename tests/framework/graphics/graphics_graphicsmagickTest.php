@@ -1,8 +1,4 @@
-
 <?php
-
-require_once('../../../www/framework/depage/depage.php');
-require_once('graphics_graphicsmagickTestClass.php');
 
 class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     public function setUp() {

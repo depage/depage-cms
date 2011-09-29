@@ -1,5 +1,7 @@
 <?php
 
+namespace depage\graphics;
+
 class graphics {
     protected $input;
     protected $output;

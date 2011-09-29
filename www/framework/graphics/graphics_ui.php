@@ -1,5 +1,7 @@
 <?php
 
+namespace depage\graphics;
+
 require_once('../depage/depage.php');
 
 class graphics_ui {

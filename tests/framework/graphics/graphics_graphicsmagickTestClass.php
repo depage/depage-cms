@@ -1,5 +1,7 @@
 <?php
 
+use depage\graphics\graphics_graphicsmagick;
+
 class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
     protected $size = array(100, 100);
     protected $executed = false;
