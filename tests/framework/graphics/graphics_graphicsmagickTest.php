@@ -1,5 +1,7 @@
 <?php
 
+use depage\graphics\graphics_graphicsmagick;
+
 class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
         $this->graphics = new graphics_graphicsmagickTestClass(array('executable' => 'bin'));
