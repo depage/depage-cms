@@ -4,7 +4,7 @@
 require_once('../../../www/framework/depage/depage.php');
 require_once('graphics_imagemagickTestClass.php');
 
-class graphicsTest extends PHPUnit_Framework_TestCase {
+class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
         $this->graphics = new graphics_imagemagickTestClass(array('executable' => 'bin'));
     }
