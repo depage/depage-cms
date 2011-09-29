@@ -123,6 +123,31 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-simple error.');
     }
 
+    public function testThumbColorShort() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123');
+        }
+
+        $this->runSuite(50, 100, 'thumb-color error.');
+    }
+
+    public function testThumbColorLong() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123456');
+        }
+
+        $this->runSuite(50, 100, 'thumb-color error.');
+    }
+
+
+    public function testThumbCheckerboard() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumb(50, 100)->addBackground('checkerboard');
+        }
+
+        $this->runSuite(50, 100, 'thumb-checkerboard error.');
+    }
+
     public function testActionChain() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(50, 50)->addResize(60, 60)->addThumb(70, 70);
