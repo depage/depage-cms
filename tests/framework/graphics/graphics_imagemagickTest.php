@@ -86,21 +86,41 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
 
     public function testGetBackground() {
         // default (transparent)
-        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground());
+        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground(), 'Default background should be transparent.');
 
         // HTML hex color code
         $this->graphics->addBackground('#abc');
-        $this->assertSame('-size 100x100 -background #abc', $this->graphics->getBackground());
+        $this->assertSame('-size 100x100 -background #abc', $this->graphics->getBackground(), 'HTML hex color background error.');
 
         // checkerboard
         $this->graphics->addBackground('checkerboard');
-        $this->assertSame('-size 100x100 -background none pattern:checkerboard', $this->graphics->getBackground());
+        $this->assertSame('-size 100x100 -background none pattern:checkerboard', $this->graphics->getBackground(), 'Checkerboard background error.');
 
         // transparent
         $this->graphics->addBackground('transparent');
-        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground());
+        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground(), 'Transparent background error.');
 
         $this->graphics->addBackground('foo');
-        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground());
+        $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground(), 'Fallback background should be transparent.');
+
+        // 'transparent' JPG
+        $this->graphics->addBackground('transparent');
+        $this->graphics->render('test.jpg');
+        $this->assertSame('-size 100x100 -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
+    }
+
+    public function testGetQualityJpg() {
+        $this->graphics->render('test.jpg');
+        $this->assertSame('-quality 90', $this->graphics->getQuality(), 'JPG quality string error.');
+    }
+
+    public function testGetQualityPng() {
+        $this->graphics->render('test.png');
+        $this->assertSame('-quality 95', $this->graphics->getQuality(), 'PNG quality string error.');
+    }
+
+    public function testGetQualityGif() {
+        $this->graphics->render('test.gif');
+        $this->assertSame('', $this->graphics->getQuality(), 'GIF quality string error.');
     }
 }

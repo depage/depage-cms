@@ -46,4 +46,8 @@ class graphics_imagemagickTestClass extends graphics_imagemagick {
     public function getBackground() {
         return parent::getBackground();
     }
+
+    public function getQuality() {
+        return parent::getQuality();
+    }
 }
