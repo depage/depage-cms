@@ -21,7 +21,7 @@ class graphics {
             } else {
                 $executable = graphics::which('convert');
                 if ($executable == null) {
-                    trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_ERROR);
+                    trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_WARNING);
                 } else {
                     $options['executable'] = $executable;
                     return new graphics_imagemagick($options);
@@ -33,7 +33,7 @@ class graphics {
             } else {
                 $executable = graphics::which('gm');
                 if ($executable == null) {
-                    trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_ERROR);
+                    trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_WARNING);
                 } else {
                     $options['executable'] = $executable;
                     return new graphics_graphicsmagick($options);
