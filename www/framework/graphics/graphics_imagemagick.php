@@ -54,6 +54,7 @@ class graphics_imagemagick extends graphics {
         if ($this->bypassTest()) {
             $this->bypass();
         } else {
+            $this->command = '';
             $this->processQueue();
 
             $background = $this->getBackground();
