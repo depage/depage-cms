@@ -1,5 +1,7 @@
 <?php
 
+namespace depage\graphics;
+
 class graphics_gd extends graphics {
     protected function crop($width, $height, $x = 0, $y = 0) {
         $newImage = $this->createCanvas($width, $height);
