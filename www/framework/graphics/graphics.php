@@ -47,7 +47,7 @@ class graphics {
     public function __construct($options = array()) {
         $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
-        $this->outputFormat = (isset($options['format']))       ? $options['format']            : null;
+        $this->format       = (isset($options['format']))       ? $options['format']            : null;
     }
 
     public function addBackground($background) {
@@ -99,7 +99,7 @@ class graphics {
         $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
 
-        if ($this->outputFormat == null) $this->outputFormat = $this->obtainFormat($this->output);
+        $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
     }
 
     protected function obtainFormat($fileName) {
