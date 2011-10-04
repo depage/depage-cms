@@ -163,6 +163,10 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(70, 70, 'action-chain error.');
     }
 
+    public function testBypassClean() {
+        $this->runSuite(129, 101, 'crop bypass error.', true);
+    }
+
     public function testBypassCrop() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(129, 101, 0, 0)->addCrop(129, 101);
