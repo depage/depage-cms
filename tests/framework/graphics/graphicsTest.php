@@ -295,6 +295,50 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($this->graphics->bypassTest(100, 100, 0, 0));
         $this->assertTrue($this->graphics->bypassTest(100, 100));
-        $this->assertTrue($this->graphics->bypassTest(null, null));
+    }
+
+    public function testBypassTestException0X() {
+        try {
+            $this->graphics->bypassTest(0, 100);
+        } catch (depage\graphics\graphics_exception $expected) {
+            return;
+        }
+        $this->fail('Expected graphics_exception');
+    }
+
+    public function testBypassTestException0Y() {
+        try {
+            $this->graphics->bypassTest(100, 0);
+        } catch (depage\graphics\graphics_exception $expected) {
+            return;
+        }
+        $this->fail('Expected graphics_exception');
+    }
+
+    public function testBypassTestExceptionNegativeX() {
+        try {
+            $this->graphics->bypassTest(-1, 100);
+        } catch (depage\graphics\graphics_exception $expected) {
+            return;
+        }
+        $this->fail('Expected graphics_exception');
+    }
+
+    public function testBypassTestExceptionNegativeY() {
+        try {
+            $this->graphics->bypassTest(100, -1);
+        } catch (depage\graphics\graphics_exception $expected) {
+            return;
+        }
+        $this->fail('Expected graphics_exception');
+    }
+
+    public function testBypassTestExceptionInvalidXY() {
+        try {
+            $this->graphics->bypassTest(null, null);
+        } catch (depage\graphics\graphics_exception $expected) {
+            return;
+        }
+        $this->fail('Expected graphics_exception');
     }
 }
