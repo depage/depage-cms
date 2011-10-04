@@ -58,8 +58,6 @@ class graphics_gd extends graphics {
     }
 
     protected function load() {
-        //$this->inputFormat  = $this->size[2];
-
         if ($this->inputFormat == 'gif' && function_exists('imagecreatefromgif')) {
             //GIF
             $this->image = imagecreatefromgif($this->input);

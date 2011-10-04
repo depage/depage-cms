@@ -107,7 +107,7 @@ class graphics {
 
     protected function obtainFormat($fileName) {
         $parts = explode('.', $fileName);
-        $extension = strtolower($parts[count($parts) - 1]);
+        $extension = strtolower(end($parts));
 
         $extension = ($extension == 'jpeg') ? 'jpg' : $extension;
 
