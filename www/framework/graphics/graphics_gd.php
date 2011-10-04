@@ -4,63 +4,69 @@ namespace depage\graphics;
 
 class graphics_gd extends graphics {
     protected function crop($width, $height, $x = 0, $y = 0) {
-        $newImage = $this->createCanvas($width, $height);
+        if (!$this->bypassTest($width, $height, $x, $y)) {
+            $newImage = $this->createCanvas($width, $height);
 
-        imagecopy(
-            $newImage,
-            $this->image,
-            ($x > 0) ? 0 : abs($x),
-            ($y > 0) ? 0 : abs($y),
-            ($x < 0) ? 0 : $x,
-            ($y < 0) ? 0 : $y,
-            $this->size[0] - abs($x),
-            $this->size[1] - abs($y)
-        );
+            imagecopy(
+                $newImage,
+                $this->image,
+                ($x > 0) ? 0 : abs($x),
+                ($y > 0) ? 0 : abs($y),
+                ($x < 0) ? 0 : $x,
+                ($y < 0) ? 0 : $y,
+                $this->size[0] - abs($x),
+                $this->size[1] - abs($y)
+            );
 
-        $this->image = $newImage;
-        $this->size = array($width, $height);
+            $this->image = $newImage;
+            $this->size = array($width, $height);
+        }
     }
 
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
-        $newImage = $this->createCanvas($newSize[0], $newSize[1]);
-        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
+        if (!$this->bypassTest($newSize[0], $newSize[1])) {
+            $newImage = $this->createCanvas($newSize[0], $newSize[1]);
+            imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
-        $this->image = $newImage;
-        $this->size = $newSize;
+            $this->image = $newImage;
+            $this->size = $newSize;
+        }
     }
 
     protected function thumb($width, $height) {
-        $newSize = $this->dimensions($width, null);
+        if (!$this->bypassTest($width, $height)) {
+            $newSize = $this->dimensions($width, null);
 
-        if ($newSize[1] > $height) {
-            $newSize = $this->dimensions(null, $height);
-            $xOffset = round(($width - $newSize[0]) / 2);
-            $yOffset = 0;
-        } else {
-            $xOffset = 0;
-            $yOffset = round(($height - $newSize[1]) / 2);
+            if ($newSize[1] > $height) {
+                $newSize = $this->dimensions(null, $height);
+                $xOffset = round(($width - $newSize[0]) / 2);
+                $yOffset = 0;
+            } else {
+                $xOffset = 0;
+                $yOffset = round(($height - $newSize[1]) / 2);
+            }
+
+            $newImage = $this->createCanvas($width, $height);
+
+            imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
+
+            $this->image = $newImage;
+            $this->size = array($width, $height);
         }
-
-        $newImage = $this->createCanvas($width, $height);
-
-        imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
-
-        $this->image = $newImage;
-        $this->size = array($width, $height);
     }
 
     protected function load() {
-        $this->inputFormat  = $this->size[2];
+        //$this->inputFormat  = $this->size[2];
 
-        if ($this->inputFormat == 1 && function_exists('imagecreatefromgif')) {
+        if ($this->inputFormat == 'gif' && function_exists('imagecreatefromgif')) {
             //GIF
             $this->image = imagecreatefromgif($this->input);
-        } else if ($this->inputFormat == 2) {
+        } else if ($this->inputFormat == 'jpg') {
             //JPEG
             $this->image = imagecreatefromjpeg($this->input);
-        } else if ($this->inputFormat == 3) {
+        } else if ($this->inputFormat == 'png') {
             //PNG
             $this->image = imagecreatefrompng($this->input);
         }
@@ -90,11 +96,15 @@ class graphics_gd extends graphics {
     public function render($input, $output = null) {
         parent::render($input, $output);
 
-        if ($this->bypassTest()) {
+        $this->load();
+        $this->processQueue();
+
+        if (
+            $this->bypass
+            && $this->inputFormat == $this->outputFormat
+        ) {
             $this->bypass();
         } else {
-            $this->load();
-            $this->processQueue();
             $this->save();
         }
     }

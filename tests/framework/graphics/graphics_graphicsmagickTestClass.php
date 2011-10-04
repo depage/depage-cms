@@ -10,10 +10,6 @@ class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
         return $this->command;
     }
 
-    public function getExecutable() {
-        return $this->executable;
-    }
-
     public function getSize() {
         return $this->size;
     }
@@ -51,5 +47,9 @@ class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
 
     public function getQuality() {
         return parent::getQuality();
+    }
+
+    public function getBypass() {
+        return $this->bypass;
     }
 }

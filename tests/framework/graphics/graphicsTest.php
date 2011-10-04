@@ -287,45 +287,4 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->graphics->setQuality('foo');
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
     }
-
-    /**
-     * Tests bypass test (single resize to same size)
-     **/
-    public function testBypassTestSimple() {
-        $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail if queue is empty.');
-
-        $this->graphics->addResize(100, 100);
-        $this->graphics->render('test.jpg', 'test2.jpg');
-        $this->assertTrue($this->graphics->bypassTest(), 'Bypass test should pass.');
-
-        $this->graphics->addResize(100, 100);
-        $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail if queue contains more than one action.');
-    }
-
-    /**
-     * Tests bypass test (single resize to same size)
-     **/
-    public function testBypassTestWrongAction() {
-        $this->graphics->addThumb(100, 100);
-        $this->graphics->render('test.jpg', 'test2.jpg');
-        $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail actions other than resize.');
-    }
-
-    /**
-     * Tests bypass test (single resize to same size)
-     **/
-    public function testBypassTestJpeg() {
-        $this->graphics->addResize(100, 100);
-        $this->graphics->render('test.jpg', 'test2.jpeg');
-        $this->assertTrue($this->graphics->bypassTest(), 'Bypass test should pass.');
-    }
-
-    /**
-     * Tests bypass test (single resize to same size)
-     **/
-    public function testBypassTestWrongSize() {
-        $this->graphics->addResize(10, 10);
-        $this->graphics->render('test.jpg', 'test2.jpg');
-        $this->assertFalse($this->graphics->bypassTest(), 'Bypass test should fail for different image sizes.');
-    }
 }

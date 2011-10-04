@@ -83,8 +83,4 @@ class graphicsTestClass extends graphics {
     public function getQuality() {
         return parent::getQuality();
     }
-
-    public function bypassTest() {
-        return parent::bypassTest();
-    }
 }

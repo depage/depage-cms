@@ -11,6 +11,7 @@ class graphics {
     protected $quality = '';
     protected $inputFormat;
     protected $outputFormat;
+    protected $bypass = true;
 
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
@@ -98,7 +99,6 @@ class graphics {
         $this->output       = ($output == null) ? $input : $output;
         $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
-
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
     }
 
@@ -149,15 +149,22 @@ class graphics {
         return (string) $quality;
     }
 
-    protected function bypassTest() {
-        return (
-            count($this->queue)         == 1
-            && $this->queue[0][0]       == 'resize'
-            && count($this->size)       == 2
-            && $this->queue[0][1][0]    == $this->size[0]
-            && $this->queue[0][1][1]    == $this->size[1]
-            && $this->outputFormat      == $this->inputFormat
+    protected function bypassTest($width, $height, $x = 0, $y = 0) {
+        $bypass = (
+            (
+                $width      == $this->size[0]
+                && $height  == $this->size[1]
+                && $x       == 0
+                && $y       == 0
+            ) || (
+                $width < 0
+                || $height < 0
+            )
         );
+
+        $this->bypass = $this->bypass && $bypass;
+
+        return $bypass;
     }
 
     protected function bypass() {

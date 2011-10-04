@@ -19,7 +19,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         }
     }
 
-    private function runSuite($width, $height, $message) {
+    private function runSuite($width, $height, $message, $bypass = false) {
         foreach($this->extensions as $extension) {
             foreach($this->formats as $inFormat) {
                 foreach($this->formats as $outFormat) {
@@ -33,6 +33,13 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
                     $this->assertSame($width, $info[0], "Width, {$errorMessage}");
                     $this->assertSame($height, $info[1], "Height, {$errorMessage}");
                     $this->assertSame($outFormat[0], $info[2], "Type, {$errorMessage}");
+
+                    if (
+                        $bypass
+                        && $inFormat == $outFormat
+                    ) {
+                        $this->assertSame(filesize($input), filesize($output));
+                    }
 
                     unlink($output);
                 }
@@ -154,5 +161,29 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         }
 
         $this->runSuite(70, 70, 'action-chain error.');
+    }
+
+    public function testBypassCrop() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addCrop(129, 101, 0, 0)->addCrop(129, 101);
+        }
+
+        $this->runSuite(129, 101, 'crop bypass error.', true);
+    }
+
+    public function testBypassResize() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addResize(129, 101);
+        }
+
+        $this->runSuite(129, 101, 'resize bypass error.', true);
+    }
+
+    public function testBypassThumb() {
+        foreach($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumb(129, 101);
+        }
+
+        $this->runSuite(129, 101, 'thumb bypass error.', true);
     }
 }

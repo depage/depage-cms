@@ -41,9 +41,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
 
     public function testRenderSimple() {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
-        $this->graphics->render('test.jpg');
+        $this->graphics->render('test.jpg', 'test2.png');
 
-        $this->assertSame('bin convert test.jpg -background none -flatten -background #FFF -quality 90 +page jpg:test.jpg', $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame('bin convert test.jpg -background none -quality 95 +page png:test2.png', $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
 
@@ -83,5 +83,20 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->addBackground('transparent');
         $this->graphics->render('test.jpg');
         $this->assertSame(' -flatten -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
+    }
+
+    /**
+     * Tests bypass test for crop action
+     **/
+    public function testBypassTestCrop() {
+        $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
+
+        $this->graphics->addCrop(100, 100, 0, 0)->addCrop(100, 100);
+        $this->graphics->render('test.jpg', 'test2.jpg');
+        $this->assertTrue($this->graphics->getBypass(), 'Bypass test should pass.');
+
+        $this->graphics->addCrop(100, 100, 1, 0);
+        $this->graphics->render('test.jpg', 'test2.jpg');
+        $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
 }
