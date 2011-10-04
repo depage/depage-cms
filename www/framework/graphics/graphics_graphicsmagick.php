@@ -1,8 +1,32 @@
 <?php
+/**
+ * @file    graphics_graphicsmagick.php
+ * @brief   GraphicsMagick interface
+ *
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\graphics;
 
+/**
+ * @brief GraphicsMagick interface
+ *
+ * The graphics_graphicsmagick class provides depage::graphics features using
+ * the GraphicsMagick library.
+ **/
 class graphics_graphicsmagick extends graphics_imagemagick {
+    /**
+     * @brief   Crop action
+     *
+     * Adds crop command to command string.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @param   $x      (int) crop x-offset
+     * @param   $y      (int) crop y-offset
+     * @return  void
+     **/
     protected function crop($width, $height, $x = 0, $y = 0) {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             // '+' for positive offset (the '-' is already there)
@@ -16,6 +40,11 @@ class graphics_graphicsmagick extends graphics_imagemagick {
         }
     }
 
+    /**
+     * @brief   Determine size of input image
+     *
+     * @return  void
+     **/
     protected function getImageSize() {
         if (is_callable('getimagesize')) {
             return getimagesize($this->input);
@@ -29,6 +58,15 @@ class graphics_graphicsmagick extends graphics_imagemagick {
         }
     }
 
+    /**
+     * @brief   Main method for image handling.
+     *
+     * Starts actions, saves image, calls bypass if necessary.
+     *
+     * @param   $input  (string) input filename
+     * @param   $output (string) output filename
+     * @return  void
+     **/
     public function render($input, $output = null) {
         graphics::render($input, $output);
 
@@ -66,6 +104,11 @@ class graphics_graphicsmagick extends graphics_imagemagick {
         }
     }
 
+    /**
+     * @brief Generates background command
+     *
+     * @return $background (string) background part of the command string
+     **/
     protected function getBackground() {
         if ($this->background[0] === '#') {
             $background = " -flatten -background {$this->background}";

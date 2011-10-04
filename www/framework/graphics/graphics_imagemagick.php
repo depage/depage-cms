@@ -1,17 +1,52 @@
 <?php
+/**
+ * @file    graphics_imagemagick.php
+ * @brief   ImageMagick interface
+ *
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\graphics;
 
+/**
+ * @brief ImageMagick interface
+ *
+ * The graphics_imagemagick class provides depage::graphics features using
+ * the ImageMagick library.
+ **/
 class graphics_imagemagick extends graphics {
+    /**
+     * @brief Imagemagick command string
+     **/
     protected $command = '';
+    /**
+     * @brief Imagemagick executable path
+     **/
     protected $executable;
 
+    /**
+     * @brief graphics_graphicsmagick class constructor
+     *
+     * @param $options (array) image processing parameters
+     **/
     public function __construct($options = array()) {
         parent::__construct($options);
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
     }
 
+    /**
+     * @brief   Crop action
+     *
+     * Adds crop command to command string.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @param   $x      (int) crop x-offset
+     * @param   $y      (int) crop y-offset
+     * @return  void
+     **/
     protected function crop($width, $height, $x = 0, $y = 0) {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             // '+' for positive offset (the '-' is already there)
@@ -23,6 +58,15 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief   Resize action
+     *
+     * Adds resize command to command string.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
@@ -33,6 +77,15 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief   Thumb action
+     *
+     * Adds thumb command to command string.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
     protected function thumb($width, $height) {
         if (!$this->bypassTest($width, $height)) {
             $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
@@ -40,6 +93,11 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief   Determine size of input image
+     *
+     * @return  void
+     **/
     protected function getImageSize() {
         if (is_callable('getimagesize')) {
             return getimagesize($this->input);
@@ -55,6 +113,15 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief   Main method for image handling.
+     *
+     * Starts actions, saves image, calls bypass if necessary.
+     *
+     * @param   $input  (string) input filename
+     * @param   $output (string) output filename
+     * @return  void
+     **/
     public function render($input, $output = null) {
         parent::render($input, $output);
 
@@ -77,6 +144,13 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief Executes ImageMagick command.
+     * 
+     * Escapes $this->command and executes it.
+     *
+     * @return void
+     **/
     protected function execCommand() {
         $command = str_replace('!', '\!', escapeshellcmd($this->command));
 
@@ -86,6 +160,11 @@ class graphics_imagemagick extends graphics {
         }
     }
 
+    /**
+     * @brief Generates background command
+     *
+     * @return $background (string) background part of the command string
+     **/
     protected function getBackground() {
         $background = "-size {$this->size[0]}x{$this->size[1]}";
 
@@ -104,6 +183,11 @@ class graphics_imagemagick extends graphics {
         return $background;
     }
 
+    /**
+     * @brief Generates quality command
+     *
+     * @return (string) quality part of the command string
+     **/
     protected function getQuality() {
         if (
             $this->outputFormat == 'jpg'
