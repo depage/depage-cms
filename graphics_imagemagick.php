@@ -24,8 +24,9 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function resize($width, $height) {
-        if (!$this->bypassTest($width, $height)) {
-            $newSize = $this->dimensions($width, $height);
+        $newSize = $this->dimensions($width, $height);
+
+        if (!$this->bypassTest($newSize[0], $newSize[1])) {
 
             $this->command .= " -resize {$newSize[0]}x{$newSize[1]}!";
             $this->size = $newSize;

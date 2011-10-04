@@ -85,10 +85,13 @@ class graphics {
     }
 
     protected function dimensions($width, $height) {
-        if (!is_numeric($height)) {
+        if (!is_numeric($width) && !is_numeric($height)) {
+            $width  = null;
+            $height = null;
+        } else if (!is_numeric($height)) {
             $height = round(($this->size[1] / $this->size[0]) * $width);
-        } elseif (!is_numeric($width)) {
-            $width = round(($this->size[0] / $this->size[1]) * $height);
+        } else if (!is_numeric($width)) {
+            $width  = round(($this->size[0] / $this->size[1]) * $height);
         }
 
         return array($width, $height);
@@ -159,6 +162,8 @@ class graphics {
             ) || (
                 $width < 0
                 || $height < 0
+            ) || (
+                $width === null && $height === null
             )
         );
 
