@@ -13,24 +13,30 @@ class graphics_imagemagick extends graphics {
     }
 
     protected function crop($width, $height, $x = 0, $y = 0) {
-        // '+' for positive offset (the '-' is already there)
-        $x = ($x < 0) ? $x : '+' . $x;
-        $y = ($y < 0) ? $y : '+' . $y;
+        if (!$this->bypassTest($width, $height, $x, $y)) {
+            // '+' for positive offset (the '-' is already there)
+            $x = ($x < 0) ? $x : '+' . $x;
+            $y = ($y < 0) ? $y : '+' . $y;
 
-        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -flatten";
-        $this->size = array($width, $height);
+            $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -flatten";
+            $this->size = array($width, $height);
+        }
     }
 
     protected function resize($width, $height) {
-        $newSize = $this->dimensions($width, $height);
+        if (!$this->bypassTest($width, $height)) {
+            $newSize = $this->dimensions($width, $height);
 
-        $this->command .= " -resize {$newSize[0]}x{$newSize[1]}!";
-        $this->size = $newSize;
+            $this->command .= " -resize {$newSize[0]}x{$newSize[1]}!";
+            $this->size = $newSize;
+        }
     }
 
     protected function thumb($width, $height) {
-        $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
-        $this->size = array($width, $height);
+        if (!$this->bypassTest($width, $height)) {
+            $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
+            $this->size = array($width, $height);
+        }
     }
 
     protected function getImageSize() {
@@ -51,12 +57,15 @@ class graphics_imagemagick extends graphics {
     public function render($input, $output = null) {
         parent::render($input, $output);
 
-        if ($this->bypassTest()) {
+        $this->command = '';
+        $this->processQueue();
+
+        if (
+            $this->bypass
+            && $this->inputFormat == $this->outputFormat
+        ) {
             $this->bypass();
         } else {
-            $this->command = '';
-            $this->processQueue();
-
             $background = $this->getBackground();
             $quality    = $this->getQuality();
 

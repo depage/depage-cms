@@ -4,14 +4,16 @@ namespace depage\graphics;
 
 class graphics_graphicsmagick extends graphics_imagemagick {
     protected function crop($width, $height, $x = 0, $y = 0) {
-        // '+' for positive offset (the '-' is already there)
-        $x = ($x < 0) ? $x : '+' . $x;
-        $y = ($y < 0) ? $y : '+' . $y;
+        if (!$this->bypassTest($width, $height, $x, $y)) {
+            // '+' for positive offset (the '-' is already there)
+            $x = ($x < 0) ? $x : '+' . $x;
+            $y = ($y < 0) ? $y : '+' . $y;
 
-        $xExtent = ($x > 0) ? "+0" : $x;
-        $yExtent = ($y > 0) ? "+0" : $y;
-        $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
-        $this->size = array($width, $height);
+            $xExtent = ($x > 0) ? "+0" : $x;
+            $yExtent = ($y > 0) ? "+0" : $y;
+            $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
+            $this->size = array($width, $height);
+        }
     }
 
     protected function getImageSize() {
@@ -30,13 +32,15 @@ class graphics_graphicsmagick extends graphics_imagemagick {
     public function render($input, $output = null) {
         graphics::render($input, $output);
 
-        if ($this->bypassTest()) {
+        $this->command = $this->executable . " convert {$this->input} -background none";
+        $this->processQueue();
+
+        if (
+            $this->bypass
+            && $this->inputFormat == $this->outputFormat
+        ) {
             $this->bypass();
         } else {
-            $this->command = $this->executable . " convert {$this->input} -background none";
-
-            $this->processQueue();
-
             $quality = $this->getQuality();
 
             if ($this->background === 'checkerboard') {
@@ -55,7 +59,6 @@ class graphics_graphicsmagick extends graphics_imagemagick {
                 unlink($tempFile);
             } else {
                 $background = $this->getBackground();
-
                 $this->command .= "{$background} {$quality} +page {$this->outputFormat}:{$this->output}";
 
                 $this->execCommand();
