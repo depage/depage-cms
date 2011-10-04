@@ -153,18 +153,19 @@ class graphics {
     }
 
     protected function bypassTest($width, $height, $x = 0, $y = 0) {
+        if (
+            ($width !== null && $width < 1) 
+            || ($height !== null && $height < 1)
+            || ($width == null && $height == null)
+        ) {
+            throw new graphics_exception('Invalid image size.');
+        }
+
         $bypass = (
-            (
-                $width      == $this->size[0]
-                && $height  == $this->size[1]
-                && $x       == 0
-                && $y       == 0
-            ) || (
-                $width < 0
-                || $height < 0
-            ) || (
-                $width === null && $height === null
-            )
+            $width      == $this->size[0]
+            && $height  == $this->size[1]
+            && $x       == 0
+            && $y       == 0
         );
 
         $this->bypass = $this->bypass && $bypass;
