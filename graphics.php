@@ -1,18 +1,66 @@
 <?php
+/**
+ * @file    graphics.php
+ * @brief   Main graphics class
+ *
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\graphics;
 
+/**
+ * @brief   Main graphics class
+ *
+ * Contains graphics factory and tools. Collects actions with "add"-methods.
+ **/
 class graphics {
+    /**
+     * @brief Input filename
+     **/
     protected $input;
+    /**
+     * @brief Output filename
+     **/
     protected $output;
+    /**
+     * @brief Action queue array
+     **/
     protected $queue = array();
+    /**
+     * @brief Image size array(width, height)
+     **/
     protected $size = array();
+    /**
+     * @brief Image background string
+     **/
     protected $background;
+    /**
+     * @brief Image quality string
+     **/
     protected $quality = '';
+    /**
+     * @brief Input image format
+     **/
     protected $inputFormat;
+    /**
+     * @brief Output image format
+     **/
     protected $outputFormat;
+    /**
+     * @brief Process bypass bool
+     **/
     protected $bypass = true;
 
+    /**
+     * @brief   graphics object factory
+     * 
+     * Generates various graphics objects depending on extension type (default
+     * is PHP GD)
+     *
+     * @param   $options (array) image processing parameters
+     * @return  (object) graphics object
+     **/
     public static function factory($options = array()) {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
@@ -45,36 +93,93 @@ class graphics {
         return new graphics_gd($options);
     }
 
+    /**
+     * @brief graphics class constructor
+     *
+     * @param $options (array) image processing parameters
+     **/
     public function __construct($options = array()) {
         $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
         $this->format       = (isset($options['format']))       ? $options['format']            : null;
     }
 
+    /**
+     * @brief   Background "action"
+     *
+     * Sets image background.
+     *
+     * @param   $background (string) image background
+     * @return  $this       (object)
+     **/
     public function addBackground($background) {
         $this->background = $background;
         return $this;
     }
 
+    /**
+     * @brief   Adds crop action
+     *
+     * Adds crop action to action queue.
+     *
+     * @param   $width  (int)       output width
+     * @param   $height (int)       output height
+     * @param   $x      (int)       crop x-offset
+     * @param   $y      (int)       crop y-offset
+     * @return  $this   (object)
+     **/
     public function addCrop($width, $height, $x = 0, $y = 0) {
         $this->queue[] = array('crop', func_get_args());
         return $this;
     }
 
+    /**
+     * @brief   Adds resize action
+     *
+     * Adds resize action to action queue.
+     *
+     * @param   $width  (int)       output width
+     * @param   $height (int)       output height
+     * @return  $this   (object)
+     **/
     public function addResize($width, $height) {
         $this->queue[] = array('resize', func_get_args());
         return $this;
     }
 
+    /**
+     * @brief   Adds thumb action
+     *
+     * Adds thumb action to action queue.
+     *
+     * @param   $width  (int)       output width
+     * @param   $height (int)       output height
+     * @return  $this   (object)
+     **/
     public function addThumb($width, $height) {
         $this->queue[] = array('thumb', func_get_args());
         return $this;
     }
 
+    /**
+     * @brief   Validates integers
+     *
+     * Tests integers, returns only integers or null.
+     *
+     * @param   $number (int)       int to check
+     * @return          (int)
+     **/
     protected function escapeNumber($number) {
         return (is_numeric($number)) ? intval($number) : null;
     }
 
+    /**
+     * @brief   Process action queue
+     *
+     * Calls extension specific action methods.
+     *
+     * @return  void
+     **/
     protected function processQueue() {
         foreach($this->queue as $task) {
             $action     = $task[0];
@@ -84,6 +189,15 @@ class graphics {
         }
     }
 
+    /**
+     * @brief   Scales image dimensions
+     *
+     * If either width or height is not set, it calculates the other, preserving
+     * the ratio of the origіnal image.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     **/
     protected function dimensions($width, $height) {
         if (!is_numeric($width) && !is_numeric($height)) {
             $width  = null;
@@ -97,6 +211,15 @@ class graphics {
         return array($width, $height);
     }
 
+    /**
+     * @brief   Main method for image handling.
+     *
+     * Starts actions, saves image, calls bypass if necessary.
+     *
+     * @param   $input  (string) input filename
+     * @param   $output (string) output filename
+     * @return  void
+     **/
     public function render($input, $output = null) {
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;
@@ -105,6 +228,12 @@ class graphics {
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
     }
 
+    /**
+     * @brief   Determines image format from file extension
+     *
+     * @param   $fileName   (string) filename/path
+     * @return  $extension  (string) image format/filename extension
+     **/
     protected function obtainFormat($fileName) {
         $parts = explode('.', $fileName);
         $extension = strtolower(end($parts));
@@ -114,6 +243,14 @@ class graphics {
         return $extension;
     }
 
+    /**
+     * @brief   Executes "which" command
+     *
+     * Looks for path to binary in system.
+     *
+     * @param   $binary             (string) filename of binary to look for
+     * @return  $commandOutput[0]   (string) first line of output (path to binary)
+     **/
     protected function which($binary) {
         exec('which ' . $binary, $commandOutput, $returnStatus);
         if ($returnStatus === 0) {
@@ -123,6 +260,14 @@ class graphics {
         }
     }
 
+    /**
+     * @brief   Returns quality-index for current image format.
+     *
+     * Checks plausibility of quality index for current image format. Returns
+     * default value if invalid. (PNG & JPG have different systems)
+     *
+     * @return  $quality (string) quality index
+     **/
     protected function getQuality() {
         if ($this->outputFormat == 'jpg') {
             if (
@@ -152,6 +297,15 @@ class graphics {
         return (string) $quality;
     }
 
+    /**
+     * @brief   Tests if action would change current image
+     *
+     * @param   $width  (int)   output width
+     * @param   $height (int)   output height
+     * @param   $x      (int)   crop x-offset
+     * @param   $y      (int)   crop y-offset
+     * @return  $bypass (bool)  bypass current action
+     **/
     protected function bypassTest($width, $height, $x = 0, $y = 0) {
         if (
             ($width !== null && $width < 1) 
@@ -173,6 +327,11 @@ class graphics {
         return $bypass;
     }
 
+    /**
+     * @brief   Runs bypass (copies file)
+     *
+     * @return  void
+     **/
     protected function bypass() {
         if ($this->input != $this->output) {
             copy($this->input, $this->output);

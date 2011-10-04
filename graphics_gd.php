@@ -1,8 +1,32 @@
 <?php
+/**
+ * @file    graphics_gd.php
+ * @brief   PHP GD extension interface
+ *
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ **/
 
 namespace depage\graphics;
 
+/**
+ * @brief PHP GD extension interface
+ *
+ * The graphics_gd class provides depage::graphics features using the PHP GD
+ * extension.
+ **/
 class graphics_gd extends graphics {
+    /**
+     * @brief   Crop action
+     *
+     * Applies crop action to $this->image.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @param   $x      (int) crop x-offset
+     * @param   $y      (int) crop y-offset
+     * @return  void
+     **/
     protected function crop($width, $height, $x = 0, $y = 0) {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             $newImage = $this->createCanvas($width, $height);
@@ -23,6 +47,15 @@ class graphics_gd extends graphics {
         }
     }
 
+    /**
+     * @brief   Resize action
+     *
+     * Applies resize action to $this->image.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
     protected function resize($width, $height) {
         $newSize = $this->dimensions($width, $height);
 
@@ -35,6 +68,15 @@ class graphics_gd extends graphics {
         }
     }
 
+    /**
+     * @brief   Thumb action
+     *
+     * Applies thumb action to $this->image.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
     protected function thumb($width, $height) {
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
@@ -57,6 +99,13 @@ class graphics_gd extends graphics {
         }
     }
 
+    /**
+     * @brief   Loads image from file
+     *
+     * Determines image format and loads it to $this->image.
+     *
+     * @return  void
+     **/
     protected function load() {
         if ($this->inputFormat == 'gif' && function_exists('imagecreatefromgif')) {
             //GIF
@@ -67,9 +116,18 @@ class graphics_gd extends graphics {
         } else if ($this->inputFormat == 'png') {
             //PNG
             $this->image = imagecreatefrompng($this->input);
+        } else {
+            throw new graphics_exception('Unknown image format.');
         }
     }
 
+    /**
+     * @brief   Saves image to file.
+     *
+     * Adds background and saves $this->image to file.
+     *
+     * @return  void
+     **/
     protected function save() {
         $bg = $this->createBackground($this->size[0], $this->size[1]);
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
@@ -79,18 +137,30 @@ class graphics_gd extends graphics {
             imagegif($this->image, $this->output);
         } else if ($this->outputFormat == 'jpg') {
             imagejpeg($this->image, $this->output, $this->getQuality());
-        } else if ($this->outputFormat == 'png') {
+       q } else if ($this->outputFormat == 'png') {
             $quality = $this->getQuality();
             imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
-
-        imagedestroy($this->image);
     }
 
+    /**
+     * @brief   Determine size of input image
+     *
+     * @return  void
+     **/
     protected function getImageSize() {
         return getimagesize($this->input);
     }
 
+    /**
+     * @brief   Main method for image handling.
+     *
+     * Starts actions, saves image, calls bypass if necessary.
+     *
+     * @param   $input  (string) input filename
+     * @param   $output (string) output filename
+     * @return  void
+     **/
     public function render($input, $output = null) {
         parent::render($input, $output);
 
@@ -107,6 +177,13 @@ class graphics_gd extends graphics {
         }
     }
 
+    /**
+     * @brief   Creates transparent canvas with given dimensions
+     *
+     * @param   $width  (int)       canvas width
+     * @param   $height (int)       canvas height
+     * @return  $canvas (object)    image resource identifier
+     **/
     private function createCanvas($width, $height) {
         $canvas = imagecreatetruecolor($width, $height);
         $bg = imagecolorallocatealpha($canvas, 255, 255, 255, 127);
@@ -115,13 +192,22 @@ class graphics_gd extends graphics {
         return $canvas;
     }
 
+    /**
+     * @brief   Creates background with given dimensions
+     *
+     * Creates image background specified in $this->background
+     *
+     * @param   $width      (int)       canvas width
+     * @param   $height     (int)       canvas height
+     * @return  $newImage   (object)    image resource identifier
+     **/
     private function createBackground($width, $height) {
         $newImage = imagecreatetruecolor($width, $height);
 
-        /**
-        * uses example from http://www.anyexample.com/programming/php/php_convert_rgb_from_to_html_hex_color.xml
-        **/
         if ($this->background[0] == '#') {
+            /**
+            * uses example from http://www.anyexample.com/programming/php/php_convert_rgb_from_to_html_hex_color.xml
+            **/
             $color = substr($this->background, 1);
 
             if (strlen($color) == 6) {
@@ -144,7 +230,14 @@ class graphics_gd extends graphics {
             $transColor[1] = imagecolorallocate ($newImage, 102, 102, 102);
             for ($i = 0; $i * $transLen < $width; $i++) {
                 for ($j = 0; $j * $transLen < $height; $j++) {
-                    imagefilledrectangle($newImage, $i * $transLen, $j * $transLen, ($i + 1) * $transLen, ($j + 1) * $transLen, $transColor[$j % 2 == 0 ? $i % 2 : ($i % 2 == 0 ? 1 : 0)]);
+                    imagefilledrectangle(
+                        $newImage,
+                        $i * $transLen,
+                        $j * $transLen,
+                        ($i + 1) * $transLen,
+                        ($j + 1) * $transLen,
+                        $transColor[$j % 2 == 0 ? $i % 2 : ($i % 2 == 0 ? 1 : 0)]
+                    );
                 }
             }
         } else if ($this->background == 'transparent') {
