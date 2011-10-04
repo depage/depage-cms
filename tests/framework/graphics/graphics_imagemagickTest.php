@@ -31,7 +31,13 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
 
-    public function testResizeScale() {
+    public function testResizeScaleX() {
+        $this->graphics->resize('X', 60);
+        $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
+        $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
+    }
+
+    public function testResizeScaleY() {
         $this->graphics->resize(60, 'X');
         $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');

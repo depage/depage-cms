@@ -4,6 +4,7 @@ use depage\graphics\graphics;
 
 class graphicsTestClass extends graphics {
     protected $testQueueString = '';
+    protected $size = array(100, 100);
 
     public function getBackground() {
         return $this->background;
@@ -82,5 +83,9 @@ class graphicsTestClass extends graphics {
 
     public function getQuality() {
         return parent::getQuality();
+    }
+
+    public function bypassTest($width, $height, $x = 0, $y = 0) {
+        return parent::bypassTest($width, $height, $x, $y);
     }
 }

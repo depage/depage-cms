@@ -287,4 +287,14 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->graphics->setQuality('foo');
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
     }
+
+    public function testBypassTest() {
+        $this->assertFalse($this->graphics->bypassTest(10, 10));
+        $this->assertFalse($this->graphics->bypassTest(10, 10, 1, 2));
+        $this->assertFalse($this->graphics->bypassTest(100, 100, 1, 2));
+
+        $this->assertTrue($this->graphics->bypassTest(100, 100, 0, 0));
+        $this->assertTrue($this->graphics->bypassTest(100, 100));
+        $this->assertTrue($this->graphics->bypassTest(null, null));
+    }
 }
