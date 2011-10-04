@@ -288,6 +288,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('95', $this->graphics->getQuality(), 'Error in PNG quality calculator.');
     }
 
+    /**
+     * Tests bypass (copy) on resize/thumb to same image size
+     **/
     public function testBypassTest() {
         $this->assertFalse($this->graphics->bypassTest(10, 10));
         $this->assertFalse($this->graphics->bypassTest(10, 10, 1, 2));
@@ -297,6 +300,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->bypassTest(100, 100));
     }
 
+    /**
+     * Tests exception on invalid image size
+     **/
     public function testBypassTestException0X() {
         try {
             $this->graphics->bypassTest(0, 100);
@@ -306,6 +312,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
 
+    /**
+     * Tests exception on invalid image size
+     **/
     public function testBypassTestException0Y() {
         try {
             $this->graphics->bypassTest(100, 0);
@@ -315,6 +324,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
 
+    /**
+     * Tests exception on invalid image size
+     **/
     public function testBypassTestExceptionNegativeX() {
         try {
             $this->graphics->bypassTest(-1, 100);
@@ -324,6 +336,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
 
+    /**
+     * Tests exception on invalid image size
+     **/
     public function testBypassTestExceptionNegativeY() {
         try {
             $this->graphics->bypassTest(100, -1);
@@ -333,6 +348,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
 
+    /**
+     * Tests exception on invalid image size
+     **/
     public function testBypassTestExceptionInvalidXY() {
         try {
             $this->graphics->bypassTest(null, null);

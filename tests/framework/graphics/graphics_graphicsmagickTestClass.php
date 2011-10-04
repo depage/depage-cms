@@ -2,8 +2,14 @@
 
 use depage\graphics\graphics_graphicsmagick;
 
+/**
+ * Override graphicsmagick class to access protected methods/attributes in
+ * tests
+ **/
 class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
+    // imaginary test image size
     protected $size = array(100, 100);
+    // simulate gm execution
     protected $executed = false;
 
     public function getCommand() {
@@ -26,10 +32,12 @@ class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
         parent::thumb($width, $height);
     }
 
+    // imaginary test image size
     protected function getImageSize() {
         return array(100, 100);
     }
 
+    // simulate gm execution
     protected function execCommand() {
         $this->executed = true;
     }
@@ -38,6 +46,7 @@ class graphics_graphicsmagickTestClass extends graphics_graphicsmagick {
         return $this->executed;
     }
 
+    // don't even copy on bypass
     protected function bypass() {
     }
 

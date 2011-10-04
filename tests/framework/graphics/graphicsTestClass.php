@@ -2,8 +2,13 @@
 
 use depage\graphics\graphics;
 
+/**
+ * Override graphicsm class to access protected methods/attributes in
+ * tests
+ **/
 class graphicsTestClass extends graphics {
     protected $testQueueString = '';
+    // imaginary test image size
     protected $size = array(100, 100);
 
     public function getBackground() {
@@ -18,14 +23,17 @@ class graphicsTestClass extends graphics {
         return parent::escapeNumber($number);
     }
 
+    // simulating queue
     public function crop($width, $height, $x, $y) {
         $this->testQueueString .= "-crop-{$width}-{$height}-{$x}-{$y}-";
     }
 
+    // simulating queue
     public function resize($width, $height) {
         $this->testQueueString .= "-resize-{$width}-{$height}-";
     }
 
+    // simulating queue
     public function thumb($width, $height) {
         $this->testQueueString .= "-thumb-{$width}-{$height}-";
     }
@@ -58,6 +66,7 @@ class graphicsTestClass extends graphics {
         return $this->size;
     }
 
+    // imaginary test image size
     public function getImageSize() {
         return array(100, 100);
     }

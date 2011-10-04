@@ -1,12 +1,19 @@
 <?php
 
-use depage\graphics\graphics_graphicsmagick;
-
+/**
+ * Tests for graphicsmagick class
+ **/
 class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
+    /**
+     * Prepares fresh test objects
+     **/
     public function setUp() {
         $this->graphics = new graphics_graphicsmagickTestClass(array('executable' => 'bin'));
     }
 
+    /**
+     * Tests simple crop action
+     **/
     public function testCropSimple() {
         $this->assertSame('', $this->graphics->getCommand(), 'Command string should be empty when queue is empty.');
 
@@ -15,18 +22,27 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
 
+    /**
+     * Tests crop action with offset
+     **/
     public function testCropOffset() {
         $this->graphics->crop(50, 50, 20, 10);
         $this->assertSame(' -gravity NorthWest -crop 50x50+20+10! -gravity NorthWest -extent 50x50+0+0', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
 
+    /**
+     * Tests crop action with negative offset
+     **/
     public function testCropNegativeOffset() {
         $this->graphics->crop(50, 50, -20, -10);
         $this->assertSame(' -gravity NorthWest -crop 50x50-20-10! -gravity NorthWest -extent 50x50-20-10', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
 
+    /**
+     * Tests chaining of multiple actions
+     **/
     public function testActionChain() {
         $this->graphics->crop(50, 50);
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -39,6 +55,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($expected, $this->graphics->getCommand(), 'Action chain error.');
     }
 
+    /**
+     * Tests rendering without actions
+     **/
     public function testRenderSimple() {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render('test.jpg', 'test2.png');
@@ -47,6 +66,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
 
+    /**
+     * Tests rendering after resize
+     **/
     public function testRenderResize() {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(200, 200);
@@ -56,6 +78,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
 
+    /**
+     * Tests bypass
+     **/
     public function testRenderBypass() {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(100, 100);
@@ -64,6 +89,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($this->graphics->getExecuted(), 'Command should not have been executed.');
     }
 
+    /**
+     * Tests background command string
+     **/
     public function testGetBackground() {
         // default (transparent)
         $this->assertSame('', $this->graphics->getBackground(), 'Default background should be transparent.');

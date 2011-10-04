@@ -2,6 +2,9 @@
 
 use depage\graphics\graphics;
 
+/**
+ * Blackbox tests for all extensions, compares imagesizes/filesizes
+ **/
 class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
     protected $extensions   = array('gd', 'im', 'gm');
     protected $formats      = array(
@@ -10,6 +13,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         array(3, 'png'),
     );
 
+    /**
+     * Cleanup method, deletes output test images
+     **/
     private function clean() {
         foreach($this->extensions as $extension) {
             foreach($this->formats as $format) {
@@ -19,6 +25,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * Test runs for all format/graphic extension permutations
+     **/
     private function runSuite($width, $height, $message, $bypass = false) {
         foreach($this->extensions as $extension) {
             foreach($this->formats as $inFormat) {
@@ -30,6 +39,8 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
                     $info = getimagesize($output);
 
                     $errorMessage = "{$extension} {$input} {$output} {$message}";
+
+                    // can only check image dimensions and type
                     $this->assertSame($width, $info[0], "Width, {$errorMessage}");
                     $this->assertSame($height, $info[1], "Height, {$errorMessage}");
                     $this->assertSame($outFormat[0], $info[2], "Type, {$errorMessage}");
@@ -38,15 +49,20 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
                         $bypass
                         && $inFormat == $outFormat
                     ) {
+                        // on bypass filesizes should be equal (copy)
                         $this->assertSame(filesize($input), filesize($output));
                     }
 
+                    // delete test output
                     unlink($output);
                 }
             }
         }
     }
 
+    /**
+     * Prepares fresh test objects
+     **/
     public function setUp() {
         $this->clean();
 
@@ -59,6 +75,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->clean();
     }
 
+    /**
+     * Tests simple crop action
+     **/
     public function testCropSimple() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(200, 200);
@@ -67,6 +86,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(200, 200, 'crop-simple error.');
     }
 
+    /**
+     * Tests crop action with offset
+     **/
     public function testCropOffset() {
        foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(200, 200, 20, 10);
@@ -75,6 +97,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(200, 200, 'crop-offset error.');
     }
 
+    /**
+     * Tests crop action with negative offset
+     **/
     public function testCropNegativeOffset() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(200, 200, -20, -10);
@@ -83,6 +108,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(200, 200, 'crop-negative-offset error.');
     }
 
+    /**
+     * Tests simple resize action
+     **/
     public function testResizeSimple() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addResize(50, 50);
@@ -91,6 +119,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 50, 'resize-simple error.');
     }
 
+    /**
+     * Tests resize action with automatic width
+     **/
     public function testResizeScaleWidth() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addResize('X', 60);
@@ -99,7 +130,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(77, 60, 'resize-scale-width error.');
     }
 
-
+    /**
+     * Tests resize action with automatic height
+     **/
     public function testResizeScaleHeight() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addResize(60, 'X');
@@ -109,7 +142,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * (gd thumb method)
+     * Tests thumb action (different formats for gd thumb method)
      **/
     public function testThumbSimpleLargeWidth() {
         foreach($this->extensions as $extension) {
@@ -120,7 +153,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * (gd thumb method)
+     * Tests thumb action (different formats for gd thumb method)
      **/
     public function testThumbSimpleLargeHeight() {
         foreach($this->extensions as $extension) {
@@ -130,6 +163,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-simple error.');
     }
 
+    /**
+     * Tests background with short HTML color format
+     **/
     public function testThumbColorShort() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123');
@@ -138,6 +174,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-color error.');
     }
 
+    /**
+     * Tests background with long HTML color format
+     **/
     public function testThumbColorLong() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123456');
@@ -146,7 +185,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-color error.');
     }
 
-
+    /**
+     * Tests background with checkerboard pattern
+     **/
     public function testThumbCheckerboard() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('checkerboard');
@@ -155,6 +196,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-checkerboard error.');
     }
 
+    /**
+     * Tests chaining of multiple actions
+     **/
     public function testActionChain() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(50, 50)->addResize(60, 60)->addThumb(70, 70);
@@ -163,10 +207,16 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(70, 70, 'action-chain error.');
     }
 
+    /**
+     * Tests rendering (bypass) without actions
+     **/
     public function testBypassClean() {
-        $this->runSuite(129, 101, 'crop bypass error.', true);
+        $this->runSuite(129, 101, 'clean bypass error.', true);
     }
 
+    /**
+     * Tests crop bypass (same dimensions & format)
+     **/
     public function testBypassCrop() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addCrop(129, 101, 0, 0)->addCrop(129, 101);
@@ -175,6 +225,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(129, 101, 'crop bypass error.', true);
     }
 
+    /**
+     * Tests resize bypass (same dimensions & format)
+     **/
     public function testBypassResize() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addResize(129, 101);
@@ -183,6 +236,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(129, 101, 'resize bypass error.', true);
     }
 
+    /**
+     * Tests thumb bypass (same dimensions & format)
+     **/
     public function testBypassThumb() {
         foreach($this->extensions as $extension) {
             $this->graphics[$extension]->addThumb(129, 101);
