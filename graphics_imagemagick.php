@@ -110,9 +110,11 @@ class graphics_imagemagick extends graphics {
         if (is_callable('getimagesize')) {
             return getimagesize($this->input);
         } else {
-            $identify = preg_replace('/convert$/', 'identify', $this->executable);
-            // TODO escape
-            exec("{$identify} -format \"%wx%h\" {$this->input}" . ' 2>&1', $commandOutput, $returnStatus);
+            $identify       = preg_replace('/convert$/', 'identify', $this->executable);
+            $command        = "{$identify} -format \"%wx%h\" {$this->input}";
+            $escapedCommand = str_replace('!', '\!', escapeshellcmd($command));
+
+            exec($escapedCommand . ' 2>&1', $commandOutput, $returnStatus);
             if ($returnStatus === 0) {
                 return explode('x', $commandOutput[0]);
             } else {
