@@ -7,8 +7,6 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
-
 require_once('../depage/depage.php');
 
 $controller = new graphics_controller();

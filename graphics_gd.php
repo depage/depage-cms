@@ -137,7 +137,7 @@ class graphics_gd extends graphics {
             imagegif($this->image, $this->output);
         } else if ($this->outputFormat == 'jpg') {
             imagejpeg($this->image, $this->output, $this->getQuality());
-       q } else if ($this->outputFormat == 'png') {
+        } else if ($this->outputFormat == 'png') {
             $quality = $this->getQuality();
             imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
