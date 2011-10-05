@@ -254,7 +254,28 @@ class graphics {
         $parts = explode('.', $fileName);
         $extension = strtolower(end($parts));
 
-        $extension = ($extension == 'jpeg') ? 'jpg' : $extension;
+        if ($extension == 'jpeg') {
+            $extension = 'jpg';
+        } else if (
+            $extension != 'jpg'
+            && $extension != 'png'
+            && $extension != 'gif'
+        ) {
+            if (is_callable('getimagesize') && file_exists($fileName)) {
+                $info = getimagesize($fileName);
+                if (isset($info[2])) {
+                    $format = $info[2];
+
+                    if ($format == 1) {
+                        $extension = 'gif';
+                    } else if ($format == 2) {
+                        $extension = 'jpg';
+                    } else if ($format == 3) {
+                        $extension = 'png';
+                    }
+                }
+            }
+        }
 
         return $extension;
     }
