@@ -15,6 +15,7 @@ namespace depage\graphics;
  * Contains graphics factory and tools. Collects actions with "add"-methods.
  **/
 class graphics {
+    // {{{ variables
     /**
      * @brief Input filename
      **/
@@ -51,7 +52,9 @@ class graphics {
      * @brief Process bypass bool
      **/
     protected $bypass = true;
+    // }}}
 
+    // {{{ factory()
     /**
      * @brief   graphics object factory
      * 
@@ -92,7 +95,9 @@ class graphics {
 
         return new graphics_gd($options);
     }
+    // }}}
 
+    // {{{ __construct()
     /**
      * @brief graphics class constructor
      *
@@ -103,7 +108,9 @@ class graphics {
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
         $this->format       = (isset($options['format']))       ? $options['format']            : null;
     }
+    // }}}
 
+    // {{{ addBackground()
     /**
      * @brief   Background "action"
      *
@@ -116,7 +123,9 @@ class graphics {
         $this->background = $background;
         return $this;
     }
+    // }}}
 
+    // {{{ addCrop()
     /**
      * @brief   Adds crop action
      *
@@ -132,7 +141,9 @@ class graphics {
         $this->queue[] = array('crop', func_get_args());
         return $this;
     }
+    // }}}
 
+    // {{{ addResize()
     /**
      * @brief   Adds resize action
      *
@@ -146,7 +157,9 @@ class graphics {
         $this->queue[] = array('resize', func_get_args());
         return $this;
     }
+    // }}}
 
+    // {{{ addThumb()
     /**
      * @brief   Adds thumb action
      *
@@ -160,7 +173,9 @@ class graphics {
         $this->queue[] = array('thumb', func_get_args());
         return $this;
     }
+    // }}}
 
+    // {{{ escapeNumber()
     /**
      * @brief   Validates integers
      *
@@ -172,7 +187,9 @@ class graphics {
     protected function escapeNumber($number) {
         return (is_numeric($number)) ? intval($number) : null;
     }
+    // }}}
 
+    // {{{ processQueue()
     /**
      * @brief   Process action queue
      *
@@ -188,7 +205,9 @@ class graphics {
             call_user_func_array(array($this, $action), $arguments);
         }
     }
+    // }}}
 
+    // {{{ dimensions()
     /**
      * @brief   Scales image dimensions
      *
@@ -210,7 +229,9 @@ class graphics {
 
         return array($width, $height);
     }
+    // }}}
 
+    // {{{ render()
     /**
      * @brief   Main method for image handling.
      *
@@ -227,7 +248,9 @@ class graphics {
         $this->inputFormat  = $this->obtainFormat($this->input);
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
     }
+    // }}}
 
+    // {{{ obtainFormat()
     /**
      * @brief   Determines image format from file extension
      *
@@ -242,7 +265,9 @@ class graphics {
 
         return $extension;
     }
+    // }}}
 
+    // {{{ which()
     /**
      * @brief   Executes "which" command
      *
@@ -259,7 +284,9 @@ class graphics {
             return null;
         }
     }
+    // }}}
 
+    // {{{ getQuality()
     /**
      * @brief   Returns quality-index for current image format.
      *
@@ -296,7 +323,9 @@ class graphics {
 
         return (string) $quality;
     }
+    // }}}
 
+    // {{{ bypassTest()
     /**
      * @brief   Tests if action would change current image
      *
@@ -326,7 +355,9 @@ class graphics {
 
         return $bypass;
     }
+    // }}}
 
+    // {{{ bypass()
     /**
      * @brief   Runs bypass (copies file)
      *
@@ -337,4 +368,5 @@ class graphics {
             copy($this->input, $this->output);
         }
     }
+    // }}}
 }

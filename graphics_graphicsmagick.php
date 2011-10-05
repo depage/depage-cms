@@ -16,6 +16,7 @@ namespace depage\graphics;
  * the GraphicsMagick library.
  **/
 class graphics_graphicsmagick extends graphics_imagemagick {
+    // {{{ crop
     /**
      * @brief   Crop action
      *
@@ -39,7 +40,9 @@ class graphics_graphicsmagick extends graphics_imagemagick {
             $this->size = array($width, $height);
         }
     }
+    // }}}
 
+    // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
      *
@@ -57,7 +60,9 @@ class graphics_graphicsmagick extends graphics_imagemagick {
             }
         }
     }
+    // }}}
 
+    // {{{ render()
     /**
      * @brief   Main method for image handling.
      *
@@ -103,7 +108,9 @@ class graphics_graphicsmagick extends graphics_imagemagick {
             }
         }
     }
+    // }}}
 
+    // {{{ getBackground()
     /**
      * @brief Generates background command
      *
@@ -120,4 +127,5 @@ class graphics_graphicsmagick extends graphics_imagemagick {
 
         return $background;
     }
+    // }}}
 }
