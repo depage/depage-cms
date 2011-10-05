@@ -10,7 +10,7 @@
 namespace depage\graphics;
 
 /**
- * @brief   Main graphics class
+ * @brief Main graphics class
  *
  * Contains graphics factory and tools. Collects actions with "add"-methods.
  **/
