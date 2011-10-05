@@ -62,7 +62,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addBackground('#000'), 'Background setter should return graphics object.');
     }
     // }}}
-
     // {{{ testAddCrop()
     /**
      * Tests adding crop actions to queue.
@@ -97,7 +96,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addCrop(100, 200, 300, 400), 'Add-methods should return graphics object.');
     }
     // }}}
-
     // {{{ testAddResize()
     /**
      * Tests adding resize action to queue.
@@ -120,7 +118,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($this->graphics, $this->graphics->addResize(100, 200), 'Add-methods should return graphics object.');
     }
     // }}}
-
     // {{{ testAddThumb()
     /**
      * Tests adding thumb action to queue.
@@ -159,7 +156,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(null, $this->graphics->escapeNumber(' 8& do malicious stuff& 222'));
     }
     // }}}
-
     // {{{ testProcessQueue()
     /**
      * Tests processing of tasks in queue.
@@ -176,7 +172,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame($expected, $this->graphics->getTestQueueString(), 'Queue processing failed.');
     }
     // }}}
-
     // {{{ testDimensions()
     /**
      * Tests image size scaling.
@@ -192,6 +187,17 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(array(200, 200), $this->graphics->dimensions(200, 'X'), 'Dimensions calculation failed.');
         $this->assertEquals(array(200, 200), $this->graphics->dimensions('X', 200), 'Dimensions calculation failed.');
+    }
+    // }}}
+    // {{{ testObtainFormat()
+    /**
+     * Tests image format detection by filename extension.
+     **/
+    public function testObtainFormat() {
+        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpg'), 'Format parser error.');
+        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpeg'), 'Format parser error.');
+        $this->assertSame('foo', $this->graphics->obtainFormat('test.foo'), 'Format parser error.');
+        $this->assertSame('png', $this->graphics->obtainFormat('/path.to/test.png'), 'Format parser error.');
     }
     // }}}
 
@@ -210,7 +216,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('jpg', $this->graphics->getOutputFormat(), 'Render method should set output format.');
     }
     // }}}
-
     // {{{ testRenderSetOutput()
     /**
      * Tests render method (graphics::render() contains initialization for
@@ -227,18 +232,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
 
-    // {{{ testObtainFormat()
-    /**
-     * Tests image format detection by filename extension.
-     **/
-    public function testObtainFormat() {
-        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpg'), 'Format parser error.');
-        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpeg'), 'Format parser error.');
-        $this->assertSame('foo', $this->graphics->obtainFormat('test.foo'), 'Format parser error.');
-        $this->assertSame('png', $this->graphics->obtainFormat('/path.to/test.png'), 'Format parser error.');
-    }
-    // }}}
-
     // {{{ testGetQuality()
     /**
      * Tests quality index getter/calculator with no given image format.
@@ -247,7 +240,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('0', $this->graphics->getQuality(), 'Default quality should be 0.');
     }
     // }}}
-
     // {{{ testGetQualityJpg()
     /**
      * Tests quality index getter/calculator for JPG format.
@@ -277,7 +269,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
     }
     // }}}
-
     // {{{ testGetQualityPng()
     /**
      * Tests quality index getter/calculator for PNG format.
@@ -330,7 +321,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->bypassTest(100, 100));
     }
     // }}}
-
     // {{{ testBypassTestException0X()
     /**
      * Tests exception on invalid image size
@@ -344,7 +334,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
     // }}}
-
     // {{{ testBypassTestException0Y()
     /**
      * Tests exception on invalid image size
@@ -358,7 +347,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
     // }}}
-
     // {{{ testBypassTestExceptionNegativeX()
     /**
      * Tests exception on invalid image size
@@ -372,7 +360,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
     // }}}
-
     // {{{ testBypassTestExceptionNegativeY()
     /**
      * Tests exception on invalid image size
@@ -386,7 +373,6 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
         $this->fail('Expected graphics_exception');
     }
     // }}}
-
     // {{{ testBypassTestExceptionInvalidXY()
     /**
      * Tests exception on invalid image size

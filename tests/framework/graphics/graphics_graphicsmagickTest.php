@@ -25,7 +25,6 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testCropOffset()
     /**
      * Tests crop action with offset
@@ -36,7 +35,6 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testCropNegativeOffset()
     /**
      * Tests crop action with negative offset
@@ -77,7 +75,6 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
-
     // {{{ testRenderResize()
     /**
      * Tests rendering after resize
@@ -91,7 +88,6 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
-
     // {{{ testRenderBypass()
     /**
      * Tests bypass

@@ -26,7 +26,6 @@ class graphics_imagemagick extends graphics {
      **/
     protected $executable;
     // }}}
-
     // {{{ __construct()
     /**
      * @brief graphics_graphicsmagick class constructor
@@ -63,7 +62,6 @@ class graphics_imagemagick extends graphics {
         }
     }
     // }}}
-
     // {{{ resize()
     /**
      * @brief   Resize action
@@ -84,7 +82,6 @@ class graphics_imagemagick extends graphics {
         }
     }
     // }}}
-
     // {{{ thumb()
     /**
      * @brief   Thumb action
@@ -200,7 +197,6 @@ class graphics_imagemagick extends graphics {
         return $background;
     }
     // }}}
-
     // {{{ getQuality()
     /**
      * @brief Generates quality command

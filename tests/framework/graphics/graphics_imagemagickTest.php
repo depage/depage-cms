@@ -25,7 +25,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testCropOffset()
     /**
      * Tests crop action with offset
@@ -36,7 +35,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testCropNegativeOffset()
     /**
      * Tests crop action with negative offset
@@ -58,7 +56,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testResizeScaleX()
     /**
      * Tests resize action with automatic width
@@ -69,7 +66,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
-
     // {{{ testResizeScaleY()
     /**
      * Tests resize action with automatic height
@@ -121,7 +117,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
-
     // {{{ testRenderResize()
     /**
      * Tests render method after resize (process & execution)
@@ -135,7 +130,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
-
     // {{{ testRenderBypass()
     /**
      * Tests render method bypass
@@ -178,7 +172,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('-size 100x100 -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
     }
     // }}}
-
     // {{{ testGetQualityJpg()
     /**
      * Tests getQuality method for JPG
@@ -188,7 +181,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('-quality 90', $this->graphics->getQuality(), 'JPG quality string error.');
     }
     // }}}
-
     // {{{ testGetQualityPng()
     /**
      * Tests getQuality method for PNG
@@ -198,7 +190,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('-quality 95', $this->graphics->getQuality(), 'PNG quality string error.');
     }
     // }}}
-
     // {{{ testGetQualityGif()
     /**
      * Tests getQuality method for GIF
@@ -225,7 +216,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
     // }}}
-
     // {{{ testBypassTestResize()
     /**
      * Tests bypass test for resize action
@@ -242,7 +232,6 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
     // }}}
-
     // {{{ testBypassTestThumb()
     /**
      * Tests bypass test for thumb action

@@ -53,7 +53,6 @@ class graphics {
      **/
     protected $bypass = true;
     // }}}
-
     // {{{ factory()
     /**
      * @brief   graphics object factory
@@ -96,7 +95,6 @@ class graphics {
         return new graphics_gd($options);
     }
     // }}}
-
     // {{{ __construct()
     /**
      * @brief graphics class constructor
@@ -124,7 +122,6 @@ class graphics {
         return $this;
     }
     // }}}
-
     // {{{ addCrop()
     /**
      * @brief   Adds crop action
@@ -142,7 +139,6 @@ class graphics {
         return $this;
     }
     // }}}
-
     // {{{ addResize()
     /**
      * @brief   Adds resize action
@@ -158,7 +154,6 @@ class graphics {
         return $this;
     }
     // }}}
-
     // {{{ addThumb()
     /**
      * @brief   Adds thumb action
@@ -188,25 +183,6 @@ class graphics {
         return (is_numeric($number)) ? intval($number) : null;
     }
     // }}}
-
-    // {{{ processQueue()
-    /**
-     * @brief   Process action queue
-     *
-     * Calls extension specific action methods.
-     *
-     * @return  void
-     **/
-    protected function processQueue() {
-        foreach($this->queue as $task) {
-            $action     = $task[0];
-            $arguments  = array_map(array($this, 'escapeNumber'), $task[1]);
-
-            call_user_func_array(array($this, $action), $arguments);
-        }
-    }
-    // }}}
-
     // {{{ dimensions()
     /**
      * @brief   Scales image dimensions
@@ -231,6 +207,23 @@ class graphics {
     }
     // }}}
 
+    // {{{ processQueue()
+    /**
+     * @brief   Process action queue
+     *
+     * Calls extension specific action methods.
+     *
+     * @return  void
+     **/
+    protected function processQueue() {
+        foreach($this->queue as $task) {
+            $action     = $task[0];
+            $arguments  = array_map(array($this, 'escapeNumber'), $task[1]);
+
+            call_user_func_array(array($this, $action), $arguments);
+        }
+    }
+    // }}}
     // {{{ render()
     /**
      * @brief   Main method for image handling.
@@ -356,7 +349,6 @@ class graphics {
         return $bypass;
     }
     // }}}
-
     // {{{ bypass()
     /**
      * @brief   Runs bypass (copies file)

@@ -26,7 +26,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         }
     }
     // }}}
-
     // {{{ runSuite()
     /**
      * Test runs for all format/graphic extension permutations
@@ -76,7 +75,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         }
     }
     // }}}
-
     // {{{ tearDown()
     public function tearDown() {
         $this->clean();
@@ -95,7 +93,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(200, 200, 'crop-simple error.');
     }
     // }}}
-
     // {{{ testCropOffset()
     /**
      * Tests crop action with offset
@@ -108,7 +105,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(200, 200, 'crop-offset error.');
     }
     // }}}
-
     // {{{ testCropNegativeOffset()
     /**
      * Tests crop action with negative offset
@@ -134,7 +130,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 50, 'resize-simple error.');
     }
     // }}}
-
     // {{{ testResizeScaleWidth()
     /**
      * Tests resize action with automatic width
@@ -147,7 +142,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(77, 60, 'resize-scale-width error.');
     }
     // }}}
-
     // {{{ testResizeScaleHeight()
     /**
      * Tests resize action with automatic height
@@ -173,7 +167,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(100, 50, 'thumb-simple error.');
     }
     // }}}
-
     // {{{ testThumbSimpleLargeHeight()
     /**
      * Tests thumb action (different formats for gd thumb method)
@@ -186,7 +179,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-simple error.');
     }
     // }}}
-
     // {{{ testThumbColorShort()
     /**
      * Tests background with short HTML color format
@@ -199,7 +191,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-color error.');
     }
     // }}}
-
     // {{{ testThumbColorLong()
     /**
      * Tests background with long HTML color format
@@ -212,7 +203,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(50, 100, 'thumb-color error.');
     }
     // }}}
-
     // {{{ testThumbCheckerboard()
     /**
      * Tests background with checkerboard pattern
@@ -247,7 +237,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(129, 101, 'clean bypass error.', true);
     }
     // }}}
-
     // {{{ testBypassCrop()
     /**
      * Tests crop bypass (same dimensions & format)
@@ -260,7 +249,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(129, 101, 'crop bypass error.', true);
     }
     // }}}
-
     // {{{ testBypassResize()
     /**
      * Tests resize bypass (same dimensions & format)
@@ -273,7 +261,6 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         $this->runSuite(129, 101, 'resize bypass error.', true);
     }
     // }}}
-
     // {{{ testBypassThumb()
     /**
      * Tests thumb bypass (same dimensions & format)

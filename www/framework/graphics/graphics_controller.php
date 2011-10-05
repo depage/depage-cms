@@ -34,7 +34,6 @@ class graphics_controller {
         $this->options = $conf->getDefaultsFromClass($this);
     }
     // }}}
-
     // {{{ convert()
     /**
      * @brief Translates GET data to graphics actions
