@@ -48,7 +48,6 @@ class graphics_gd extends graphics {
         }
     }
     // }}}
-
     // {{{ resize()
     /**
      * @brief   Resize action
@@ -71,7 +70,6 @@ class graphics_gd extends graphics {
         }
     }
     // }}}
-
     // {{{ thumb()
     /**
      * @brief   Thumb action
@@ -128,7 +126,6 @@ class graphics_gd extends graphics {
         }
     }
     // }}}
-
     // {{{ save()
     /**
      * @brief   Saves image to file.
@@ -207,7 +204,6 @@ class graphics_gd extends graphics {
         return $canvas;
     }
     // }}}
-
     // {{{ createBackground()
     /**
      * @brief   Creates background with given dimensions
