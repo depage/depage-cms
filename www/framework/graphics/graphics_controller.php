@@ -83,7 +83,7 @@ class graphics_controller {
             }
 
         } catch (depage\graphics\graphics_exception $expected) {
-            // TODO handle exception
+            header("HTTP/1.1 500 Internal Server Error");
         }
     }
     // }}}
