@@ -7,7 +7,7 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+use depage\graphics\graphics;
 
 /**
  * @brief Interface for accessing graphics via URI
@@ -66,17 +66,22 @@ class graphics_controller {
             mkdir($cachePath, 0755, true);
         }
 
-        $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
+        try {
+            $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
 
-        if ($extension === 'jpg' || $extension === 'jpeg') {
-            header("Content-type: image/jpeg");
-            imagejpeg(imagecreatefromjpeg($cachedFile));
-        } else if ($extension === 'png') {
-            header("Content-type: image/png");
-            imagejpeg(imagecreatefrompng($cachedFile));
-        } else if ($extension === 'gif') {
-            header("Content-type: image/gif");
-            imagejpeg(imagecreatefromgif($cachedFile));
+            if ($extension === 'jpg' || $extension === 'jpeg') {
+                header("Content-type: image/jpeg");
+                imagejpeg(imagecreatefromjpeg($cachedFile));
+            } else if ($extension === 'png') {
+                header("Content-type: image/png");
+                imagejpeg(imagecreatefrompng($cachedFile));
+            } else if ($extension === 'gif') {
+                header("Content-type: image/gif");
+                imagejpeg(imagecreatefromgif($cachedFile));
+            }
+
+        } catch (depage\graphics\graphics_exception $expected) {
+            // TODO handle exception
         }
     }
 }
