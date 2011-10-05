@@ -48,9 +48,10 @@ class graphics_controller {
         $size       = explode('x', $command[1]);
         $root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
 
-        $action     = preg_replace("[^A-Za-z]", '', $command[0]);
+        // escape everything
+        $action     = $this->letters($command[0]);
         $file       = escapeshellcmd($_GET['file']);
-        $extension  = strtolower(preg_replace("[^A-Za-z]", '', $_GET['ext']));
+        $extension  = $this->letters($_GET['ext']);
         $width      = intval($size[0]);
         $height     = intval($size[1]);
 
@@ -63,27 +64,62 @@ class graphics_controller {
             )
         );
 
-        $cachePath = dirname($cachedFile);
-        if (!is_dir($cachePath)) {
-            mkdir($cachePath, 0755, true);
-        }
+        $this->mkPathToFile($cachedFile);
 
         try {
             $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
-
-            if ($extension === 'jpg' || $extension === 'jpeg') {
-                header("Content-type: image/jpeg");
-                imagejpeg(imagecreatefromjpeg($cachedFile));
-            } else if ($extension === 'png') {
-                header("Content-type: image/png");
-                imagejpeg(imagecreatefrompng($cachedFile));
-            } else if ($extension === 'gif') {
-                header("Content-type: image/gif");
-                imagejpeg(imagecreatefromgif($cachedFile));
-            }
-
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
+        }
+
+        $this->display($cachedFile, $extension);
+    }
+    // }}}
+    // {{{ display()
+    /**
+     * @brief Displays image
+     *
+     * @param   $fileName (string) path to image
+     * @param   $format   (string) image format
+     * @return  void
+     **/
+    protected function display($fileName, $format) {
+        if ($format === 'jpg' || $format === 'jpeg') {
+            header("Content-type: image/jpeg");
+            imagejpeg(imagecreatefromjpeg($fileName));
+        } else if ($format === 'png') {
+            header("Content-type: image/png");
+            imagejpeg(imagecreatefrompng($fileName));
+        } else if ($format === 'gif') {
+            header("Content-type: image/gif");
+            imagejpeg(imagecreatefromgif($fileName));
+        }
+    }
+    // }}}
+    // {{{ letters()
+    /**
+     * @brief Cleans up strings
+     *
+     * Removes everything except letters from given string and returns it in
+     * lowercase.
+     *
+     * @return (string) cleaned up string
+     **/
+    protected function letters($string) {
+        return strtolower(preg_replace("[^A-Za-z]", '', $string));
+    }
+    // }}}
+    // {{{ mkPathToFile()
+    /**
+     * @brief Creates path to file
+     *
+     * @param   $file (string) path/file
+     * @return  void
+     **/
+    protected function mkPathToFile($file) {
+        $cachePath = dirname($file);
+        if (!is_dir($cachePath)) {
+            mkdir($cachePath, 0755, true);
         }
     }
     // }}}
