@@ -23,6 +23,7 @@ class graphics_controller {
         'background'    => 'transparent',
     );
 
+    // {{{ __construct()
     /**
      * @brief graphics_controller class constructor
      *
@@ -32,7 +33,9 @@ class graphics_controller {
         $conf = new config($options);
         $this->options = $conf->getDefaultsFromClass($this);
     }
+    // }}}
 
+    // {{{ convert()
     /**
      * @brief Translates GET data to graphics actions
      *
@@ -84,4 +87,5 @@ class graphics_controller {
             // TODO handle exception
         }
     }
+    // }}}
 }

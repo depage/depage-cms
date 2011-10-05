@@ -16,6 +16,7 @@ namespace depage\graphics;
  * extension.
  **/
 class graphics_gd extends graphics {
+    // {{{ crop()
     /**
      * @brief   Crop action
      *
@@ -46,7 +47,9 @@ class graphics_gd extends graphics {
             $this->size = array($width, $height);
         }
     }
+    // }}}
 
+    // {{{ resize()
     /**
      * @brief   Resize action
      *
@@ -67,7 +70,9 @@ class graphics_gd extends graphics {
             $this->size = $newSize;
         }
     }
+    // }}}
 
+    // {{{ thumb()
     /**
      * @brief   Thumb action
      *
@@ -98,7 +103,9 @@ class graphics_gd extends graphics {
             $this->size = array($width, $height);
         }
     }
+    // }}}
 
+    // {{{ load()
     /**
      * @brief   Loads image from file
      *
@@ -120,7 +127,9 @@ class graphics_gd extends graphics {
             throw new graphics_exception('Unknown image format.');
         }
     }
+    // }}}
 
+    // {{{ save()
     /**
      * @brief   Saves image to file.
      *
@@ -142,7 +151,9 @@ class graphics_gd extends graphics {
             imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
     }
+    // }}}
 
+    // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
      *
@@ -151,7 +162,9 @@ class graphics_gd extends graphics {
     protected function getImageSize() {
         return getimagesize($this->input);
     }
+    // }}}
 
+    // {{{ render()
     /**
      * @brief   Main method for image handling.
      *
@@ -176,7 +189,9 @@ class graphics_gd extends graphics {
             $this->save();
         }
     }
+    // }}}
 
+    // {{{ createCanvas()
     /**
      * @brief   Creates transparent canvas with given dimensions
      *
@@ -191,7 +206,9 @@ class graphics_gd extends graphics {
 
         return $canvas;
     }
+    // }}}
 
+    // {{{ createBackground()
     /**
      * @brief   Creates background with given dimensions
      *
@@ -248,4 +265,5 @@ class graphics_gd extends graphics {
 
         return $newImage;
     }
+    // }}}
 }

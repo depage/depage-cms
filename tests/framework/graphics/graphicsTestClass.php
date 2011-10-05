@@ -3,7 +3,7 @@
 use depage\graphics\graphics;
 
 /**
- * Override graphicsm class to access protected methods/attributes in
+ * Override graphics class to access protected methods/attributes in
  * tests
  **/
 class graphicsTestClass extends graphics {

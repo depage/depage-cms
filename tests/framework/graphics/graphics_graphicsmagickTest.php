@@ -4,13 +4,16 @@
  * Tests for graphicsmagick class
  **/
 class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
+    // {{{ setUp()
     /**
      * Prepares fresh test objects
      **/
     public function setUp() {
         $this->graphics = new graphics_graphicsmagickTestClass(array('executable' => 'bin'));
     }
+    // }}}
 
+    // {{{ testCropSimple()
     /**
      * Tests simple crop action
      **/
@@ -21,7 +24,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50+0+0! -gravity NorthWest -extent 50x50+0+0', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testCropOffset()
     /**
      * Tests crop action with offset
      **/
@@ -30,7 +35,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50+20+10! -gravity NorthWest -extent 50x50+0+0', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testCropNegativeOffset()
     /**
      * Tests crop action with negative offset
      **/
@@ -39,7 +46,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50-20-10! -gravity NorthWest -extent 50x50-20-10', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testActionChain()
     /**
      * Tests chaining of multiple actions
      **/
@@ -54,7 +63,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $expected = ' -gravity NorthWest -crop 50x50+0+0! -gravity NorthWest -extent 50x50+0+0 -resize 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
         $this->assertSame($expected, $this->graphics->getCommand(), 'Action chain error.');
     }
+    // }}}
 
+    // {{{ testRenderSimple()
     /**
      * Tests rendering without actions
      **/
@@ -65,7 +76,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('bin convert test.jpg -background none -quality 95 +page png:test2.png', $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
+    // }}}
 
+    // {{{ testRenderResize()
     /**
      * Tests rendering after resize
      **/
@@ -77,7 +90,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('bin convert test.jpg -background none -resize 200x200! -flatten -background #FFF -quality 90 +page jpg:test.jpg', $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
+    // }}}
 
+    // {{{ testRenderBypass()
     /**
      * Tests bypass
      **/
@@ -88,7 +103,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
 
         $this->assertFalse($this->graphics->getExecuted(), 'Command should not have been executed.');
     }
+    // }}}
 
+    // {{{ testGetBackground()
     /**
      * Tests background command string
      **/
@@ -112,7 +129,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg');
         $this->assertSame(' -flatten -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
     }
+    // }}}
 
+    // {{{ testBypassTestCrop()
     /**
      * Tests bypass test for crop action
      **/
@@ -127,4 +146,5 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg', 'test2.jpg');
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
+    // }}}
 }

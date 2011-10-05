@@ -4,13 +4,16 @@
  * Tests for imagesmagick class
  **/
 class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
+    // {{{ setUp()
     /**
      * Prepares fresh test objects
      **/
     public function setUp() {
         $this->graphics = new graphics_imagemagickTestClass(array('executable' => 'bin'));
     }
+    // }}}
 
+    // {{{ testCropSimple()
     /**
      * Tests simple crop action
      **/
@@ -21,7 +24,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50+0+0! -flatten', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testCropOffset()
     /**
      * Tests crop action with offset
      **/
@@ -30,7 +35,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50+20+10! -flatten', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testCropNegativeOffset()
     /**
      * Tests crop action with negative offset
      **/
@@ -39,7 +46,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity NorthWest -crop 50x50-20-10! -flatten', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testResizeSimple()
     /**
      * Tests simple resize action
      **/
@@ -48,7 +57,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -resize 50x50!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testResizeScaleX()
     /**
      * Tests resize action with automatic width
      **/
@@ -57,7 +68,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testResizeScaleY()
     /**
      * Tests resize action with automatic height
      **/
@@ -66,7 +79,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testThumbSimple()
     /**
      * Tests simple thumb action
      **/
@@ -75,7 +90,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame(' -gravity Center -thumbnail 50x50 -extent 50x50', $this->graphics->getCommand(), 'Thumb command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
     }
+    // }}}
 
+    // {{{ testActionChain()
     /**
      * Tests chaining of multiple actions
      **/
@@ -90,7 +107,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $expected = ' -gravity NorthWest -crop 50x50+0+0! -flatten -resize 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
         $this->assertSame($expected, $this->graphics->getCommand(), 'Action chain error.');
     }
+    // }}}
 
+    // {{{ testRenderSimple()
     /**
      * Tests render method (process & execution)
      **/
@@ -101,7 +120,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('bin -size 100x100 -background none ( test.jpg ) -flatten -quality 95 png:test2.png', $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
+    // }}}
 
+    // {{{ testRenderResize()
     /**
      * Tests render method after resize (process & execution)
      **/
@@ -113,7 +134,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->assertSame('bin -size 200x200 -background #FFF ( test.jpg -resize 200x200! ) -flatten -quality 90 jpg:test.jpg', $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
+    // }}}
 
+    // {{{ testRenderBypass()
     /**
      * Tests render method bypass
      **/
@@ -124,7 +147,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
 
         $this->assertFalse($this->graphics->getExecuted(), 'Command should not have been executed.');
     }
+    // }}}
 
+    // {{{ testGetBackground()
     /**
      * Tests background command string
      **/
@@ -152,7 +177,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg');
         $this->assertSame('-size 100x100 -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
     }
+    // }}}
 
+    // {{{ testGetQualityJpg()
     /**
      * Tests getQuality method for JPG
      **/
@@ -160,7 +187,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg');
         $this->assertSame('-quality 90', $this->graphics->getQuality(), 'JPG quality string error.');
     }
+    // }}}
 
+    // {{{ testGetQualityPng()
     /**
      * Tests getQuality method for PNG
      **/
@@ -168,7 +197,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.png');
         $this->assertSame('-quality 95', $this->graphics->getQuality(), 'PNG quality string error.');
     }
+    // }}}
 
+    // {{{ testGetQualityGif()
     /**
      * Tests getQuality method for GIF
      **/
@@ -176,7 +207,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.gif');
         $this->assertSame('', $this->graphics->getQuality(), 'GIF quality string error.');
     }
+    // }}}
 
+    // {{{ testBypassTestCrop()
     /**
      * Tests bypass test for crop action
      **/
@@ -191,7 +224,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg', 'test2.jpg');
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
+    // }}}
 
+    // {{{ testBypassTestResize()
     /**
      * Tests bypass test for resize action
      **/
@@ -206,7 +241,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg', 'test2.jpg');
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
+    // }}}
 
+    // {{{ testBypassTestThumb()
     /**
      * Tests bypass test for thumb action
      **/
@@ -221,4 +258,5 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
         $this->graphics->render('test.jpg', 'test2.jpg');
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
+    // }}}
 }

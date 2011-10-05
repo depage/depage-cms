@@ -16,6 +16,7 @@ namespace depage\graphics;
  * the ImageMagick library.
  **/
 class graphics_imagemagick extends graphics {
+    // {{{ variables
     /**
      * @brief Imagemagick command string
      **/
@@ -24,7 +25,9 @@ class graphics_imagemagick extends graphics {
      * @brief Imagemagick executable path
      **/
     protected $executable;
+    // }}}
 
+    // {{{ __construct()
     /**
      * @brief graphics_graphicsmagick class constructor
      *
@@ -35,7 +38,9 @@ class graphics_imagemagick extends graphics {
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
     }
+    // }}}
 
+    // {{{ crop()
     /**
      * @brief   Crop action
      *
@@ -57,7 +62,9 @@ class graphics_imagemagick extends graphics {
             $this->size = array($width, $height);
         }
     }
+    // }}}
 
+    // {{{ resize()
     /**
      * @brief   Resize action
      *
@@ -76,7 +83,9 @@ class graphics_imagemagick extends graphics {
             $this->size = $newSize;
         }
     }
+    // }}}
 
+    // {{{ thumb()
     /**
      * @brief   Thumb action
      *
@@ -92,7 +101,9 @@ class graphics_imagemagick extends graphics {
             $this->size = array($width, $height);
         }
     }
+    // }}}
 
+    // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
      *
@@ -112,7 +123,9 @@ class graphics_imagemagick extends graphics {
             }
         }
     }
+    // }}}
 
+    // {{{ render()
     /**
      * @brief   Main method for image handling.
      *
@@ -143,7 +156,9 @@ class graphics_imagemagick extends graphics {
             $this->execCommand();
         }
     }
+    // }}}
 
+    // {{{ execCommand()
     /**
      * @brief Executes ImageMagick command.
      * 
@@ -159,7 +174,9 @@ class graphics_imagemagick extends graphics {
             throw new graphics_exception(implode("\n", $commandOutput));
         }
     }
+    // }}}
 
+    // {{{ getBackground()
     /**
      * @brief Generates background command
      *
@@ -182,7 +199,9 @@ class graphics_imagemagick extends graphics {
 
         return $background;
     }
+    // }}}
 
+    // {{{ getQuality()
     /**
      * @brief Generates quality command
      *
@@ -198,4 +217,5 @@ class graphics_imagemagick extends graphics {
             return '';
         }
     }
+    // }}}
 }
