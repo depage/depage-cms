@@ -50,7 +50,7 @@ class graphics_ui {
 
         $action     = preg_replace("[^A-Za-z]", '', $command[0]);
         $file       = escapeshellcmd($_GET['file']);
-        $extension  = preg_replace("[^A-Za-z]", '', $_GET['ext']);
+        $extension  = strtolower(preg_replace("[^A-Za-z]", '', $_GET['ext']));
         $width      = intval($size[0]);
         $height     = intval($size[1]);
 
@@ -76,6 +76,9 @@ class graphics_ui {
         } else if ($extension === 'png') {
             header("Content-type: image/png");
             imagejpeg(imagecreatefrompng($cachedFile));
+        } else if ($extension === 'gif') {
+            header("Content-type: image/gif");
+            imagejpeg(imagecreatefromgif($cachedFile));
         }
     }
 }
