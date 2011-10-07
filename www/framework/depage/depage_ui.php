@@ -130,7 +130,7 @@ class depage_ui {
                 $content = call_user_func_array(array($this, $dp_func), $dp_params);
             } else {
                 // show error for notfound
-                $content = $this->notfound();
+                $content = $this->notfound($this->urlpath);
             }
             $content = $this->package($content);
         } catch (Exception $e) {
