@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/cms_ui.php
+ * @file    framework/cms/ui_main.php
  *
  * depage cms ui module
  *
@@ -10,7 +10,11 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class cms_ui extends depage_ui {
+namespace depage\cms;
+
+use \html;
+
+class ui_main extends \depage_ui {
     protected $html_options = array();
     protected $basetitle = "";
 
@@ -19,7 +23,7 @@ class cms_ui extends depage_ui {
         parent::__construct($options);
 
         // get database instance
-        $this->pdo = new db_pdo (
+        $this->pdo = new \db_pdo (
             $this->options->db->dsn, // dsn
             $this->options->db->user, // user
             $this->options->db->password, // password
@@ -29,7 +33,7 @@ class cms_ui extends depage_ui {
         );
 
         // get auth object
-        $this->auth = auth::factory(
+        $this->auth = \auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
@@ -42,12 +46,13 @@ class cms_ui extends depage_ui {
             'clean' => "space",
             'env' => $this->options->env,
         );
-        $this->basetitle = depage::getName() . " " . depage::getVersion();
+        $this->basetitle = \depage::getName() . " " . \depage::getVersion();
     }
     // }}}
     // {{{ getSubHandler
     static function getSubHandler() {
         return array(
+            'jstree/fallback' => '\depage\websocket\jstree\jstree_fallback',
             'jstree' => 'cms_jstree',
             'edit' => 'cms_edit',
         );
@@ -252,8 +257,8 @@ class cms_ui extends depage_ui {
         $this->auth->enforce();
 
         // get data
-        $cp = new cms_project($this->pdo);
-        $projects = $cp->get_projects();
+        $cp = new project($this->pdo);
+        $projects = $cp->getProjects();
 
         // construct template
         $h = new html("box.tpl", array(
@@ -278,27 +283,17 @@ class cms_ui extends depage_ui {
     public function project($project = "") {
         $this->auth->enforce();
 
-        // get data
-        $cp = new cms_project($this->pdo);
-        $projects = $cp->get_projects();
+        // cms tree
+        $tree = new \cms_jstree($this->options);
 
-        $text = "Lorem Ipsum Dolor sitz amet. ";
-        for ($i = 0; $i < 12; $i++) {
-            $text .= "Lorem Ipsum Dolor sitz amet. ";
-        }
-        $text .= "<br>";
+        // get data
+        $cp = new project($this->pdo);
+        $projects = $cp->getProjects();
 
         // construct template
         $hProject = new html("projectmain.tpl", array(
-            'project' => "",
-            'text1' => $text,
-            'text2' => $text . $text,
-            'text3' => $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text,
+            'tree_pages' => $tree->index("pages"),
+            'tree_document' => $tree->index("testpage"),
         ), $this->html_options);
 
         $h = new html(array(
@@ -321,7 +316,7 @@ class cms_ui extends depage_ui {
         $this->auth->enforce();
 
         // get data
-        $cp = new cms_project($this->pdo);
+        $cp = new project($this->pdo);
 
         $h = "preview";
 
@@ -361,7 +356,7 @@ class cms_ui extends depage_ui {
      */
     public function user($username = "") {
         if ($user = $this->auth->enforce()) {
-            $puser = auth_user::get_by_username($this->pdo, $username);
+            $puser = \auth_user::get_by_username($this->pdo, $username);
 
             if ($puser !== false) {
                 $title = _("User Profile") . ": {$puser->fullname}";
