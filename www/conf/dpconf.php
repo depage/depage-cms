@@ -52,7 +52,7 @@ $conf = array(
     ),
     // }}}
     // {{{ graphics
-    '*/*.(jpg|gif)$' => array(
+    '*/depage-cms/*.(gif|jpg|jpeg|png)$' => array(
         'handler' => 'depage\graphics\graphics_ui',
         //'env' => 'production',
         'base' => 'inherit',
