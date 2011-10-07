@@ -19,7 +19,7 @@ class graphics_controller {
      * @brief Default options array for graphics factory
      **/
     public $defaults = array(
-        'extension'     => 'gd',
+        'extension'     => 'gm',
         'background'    => 'transparent',
     );
 
@@ -68,9 +68,12 @@ class graphics_controller {
 
         try {
             $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
+        } catch (depage\graphics\graphics_file_not_found_exception $expected) {
+            header("HTTP/1.1 404 Not Found");
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
         }
+
 
         $this->display($cachedFile, $extension);
     }
