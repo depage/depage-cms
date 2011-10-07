@@ -41,7 +41,7 @@ class auth_http_cookie extends auth {
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $login_url = DEPAGE_BASE . $this->loginUrl;
+                $login_url = html::link($this->loginUrl);
                 $request_url = strstr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
                 if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
                     $redirect_to = urlencode($_SERVER['REQUEST_URI']);
@@ -55,7 +55,7 @@ class auth_http_cookie extends auth {
         return $this->user;
     }
     /* }}} */
-    /* {{{  enforce_lazy*/
+    /* {{{ enforce_lazy*/
     /**
      * @return   function returns the authenticated user or false if not logged in
      */
