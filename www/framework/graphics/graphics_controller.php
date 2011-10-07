@@ -36,7 +36,7 @@ class graphics_controller {
     // }}}
     // {{{ convert()
     /**
-     * @brief Translates GET data to graphics actions
+     * @brief Translates GET data into graphics actions
      *
      * Createѕ graphics object and performs action on image. It saves the image
      * to the cache and displays it.
@@ -44,16 +44,20 @@ class graphics_controller {
      * @return void
      **/
     public function convert() {
-        $command    = explode('-', $_GET['command']);
-        $size       = explode('x', $command[1]);
-        $root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
+        preg_match('/(.*(jpg|jpeg|png))\.((resize|crop|thumb)-(.*x.*))\.(jpg|jpeg|png)/', $_SERVER['REQUEST_URI'], $request);
+
+        $base       = '/depage-cms/';
+        $root       = $_SERVER['DOCUMENT_ROOT'] . $base;
+
+        $size       = explode('x', $request[5]);
 
         // escape everything
-        $action     = $this->letters($command[0]);
-        $file       = escapeshellcmd($_GET['file']);
-        $extension  = $this->letters($_GET['ext']);
+        $action     = $this->letters($request[4]);
+        $file       = escapeshellcmd(str_replace($base, '', $request[1])); // TODO quick hack
+        $extension  = $this->letters($request[6]);
         $width      = intval($size[0]);
         $height     = intval($size[1]);
+
 
         $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
@@ -73,7 +77,6 @@ class graphics_controller {
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
         }
-
 
         $this->display($cachedFile, $extension);
     }
