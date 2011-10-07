@@ -12,14 +12,14 @@ use depage\graphics\graphics;
 /**
  * @brief Interface for accessing graphics via URI
  *
- * Translates GET data to graphics actions.
+ * Translates request to graphics actions.
  **/
 class graphics_controller {
     /**
      * @brief Default options array for graphics factory
      **/
     public $defaults = array(
-        'extension'     => 'gd',
+        'extension'     => 'gm',
         'background'    => 'transparent',
     );
 
@@ -36,7 +36,7 @@ class graphics_controller {
     // }}}
     // {{{ convert()
     /**
-     * @brief Translates GET data to graphics actions
+     * @brief Translates request into graphics actions
      *
      * Createѕ graphics object and performs action on image. It saves the image
      * to the cache and displays it.
@@ -44,16 +44,18 @@ class graphics_controller {
      * @return void
      **/
     public function convert() {
-        $command    = explode('-', $_GET['command']);
-        $size       = explode('x', $command[1]);
-        $root       = $_SERVER['DOCUMENT_ROOT'] . '/depage-cms/';
+        $base       = '/depage-cms/';
+        $root       = $_SERVER['DOCUMENT_ROOT'] . $base;
+        $request    = substr($_SERVER['REQUEST_URI'], strlen($base));
+
+        preg_match('/(.*jpg|jpeg|png)\.(resize|crop|thumb)-(.*)x(.*)\.(jpg|jpeg|png)/', $request, $command);
 
         // escape everything
-        $action     = $this->letters($command[0]);
-        $file       = escapeshellcmd($_GET['file']);
-        $extension  = $this->letters($_GET['ext']);
-        $width      = intval($size[0]);
-        $height     = intval($size[1]);
+        $file       = escapeshellcmd($command[1]);
+        $action     = $this->letters($command[2]);
+        $width      = intval($command[3]);
+        $height     = intval($command[4]);
+        $extension  = $this->letters($command[5]);
 
         $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
@@ -68,6 +70,8 @@ class graphics_controller {
 
         try {
             $img->{"add$action"}($width, $height)->render($root . $file, $cachedFile);
+        } catch (depage\graphics\graphics_file_not_found_exception $expected) {
+            header("HTTP/1.1 404 Not Found");
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
         }
