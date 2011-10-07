@@ -48,7 +48,14 @@ $conf = array(
     // }}}
     // {{{ cms.depagecms.net
     'cms.depagecms.net/' => array(
-        'handler' => "cms_ui",
+        'handler' => 'cms_ui',
+    ),
+    // }}}
+    // {{{ graphics
+    '*/*.(jpg|gif)$' => array(
+        'handler' => 'depage\graphics\graphics_ui',
+        //'env' => 'production',
+        'base' => 'inherit',
     ),
     // }}}
 );

@@ -35,28 +35,49 @@ class config implements Iterator {
      */
     public function readConfig($configFile) {
         $values = include $configFile;
+        $depage_base = "";
 
         $urls = array_keys($values);
+        
+        // sort that shorter urls with same beginning are tested first for a match
+        sort($urls);
+
         if (!isset($_SERVER['HTTP_HOST'])) {
             $_SERVER['HTTP_HOST'] = "";
             $_SERVER['REQUEST_URI'] = "";
         }
 
+        // test url against settings
         $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         foreach ($urls as $url) {
-            $pattern = "/(" . str_replace(array("?", "*", "/"), array("(.)", "(.*)", "\/"), $url) . ")/";
+            $pattern = "/(" . str_replace(array(".", "?", "*", "/"), array("\.", "(.)", "(.*)", "\/"), $url) . ")/";
             if (preg_match($pattern, $acturl, $matches)) {
                 // url fits into pattern
-                $depage_base = $matches[0];
+
+                if (isset($values[$url]['base']) && $values[$url]['base'] == "inherit") {
+                    // don't set the base when it is set to "inherit"
+                } else {
+                    $depage_base = $matches[0];
+                }
+
                 $this->setConfig($values[$url]);
             }
         }
+
+        // set protocol
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+            $protocol = "https://";
+        } else {
+            $protocol = "http://";
+        }
+
+        // set base-url
         if (!isset($depage_base[0])) {
             define("DEPAGE_BASE", "");
         } else if ($depage_base[0] != "*") {
-            define("DEPAGE_BASE", "http://" . $depage_base);
+            define("DEPAGE_BASE", $protocol . $depage_base);
         } else {
-            define("DEPAGE_BASE", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"]);
+            define("DEPAGE_BASE", $protocol . $_SERVER['HTTP_HOST']);
         }
     }
     // }}}
@@ -127,7 +148,7 @@ class config implements Iterator {
         return (object) $data;
     }
     // }}}
-    // {{{ getDefaulsFromClass
+    // {{{ getDefaultsFromClass
     /**
      * returns options based on defaults as array
      *
