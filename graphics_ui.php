@@ -118,5 +118,13 @@ class graphics_ui extends \depage_ui {
         }
     }
     // }}}
-    protected function send_time() {}
+    // {{{ send_time()
+    /**
+     * @brief Override depage_ui method
+     *
+     * @param   $time
+     * @return  void
+     **/
+    protected function send_time($time) {}
+    // }}}
 }
