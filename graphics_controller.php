@@ -12,7 +12,7 @@ use depage\graphics\graphics;
 /**
  * @brief Interface for accessing graphics via URI
  *
- * Translates GET data to graphics actions.
+ * Translates request to graphics actions.
  **/
 class graphics_controller {
     /**
@@ -36,7 +36,7 @@ class graphics_controller {
     // }}}
     // {{{ convert()
     /**
-     * @brief Translates GET data into graphics actions
+     * @brief Translates request into graphics actions
      *
      * Createѕ graphics object and performs action on image. It saves the image
      * to the cache and displays it.
@@ -44,20 +44,18 @@ class graphics_controller {
      * @return void
      **/
     public function convert() {
-        preg_match('/(.*(jpg|jpeg|png))\.((resize|crop|thumb)-(.*x.*))\.(jpg|jpeg|png)/', $_SERVER['REQUEST_URI'], $request);
-
         $base       = '/depage-cms/';
         $root       = $_SERVER['DOCUMENT_ROOT'] . $base;
+        $request    = substr($_SERVER['REQUEST_URI'], strlen($base));
 
-        $size       = explode('x', $request[5]);
+        preg_match('/(.*jpg|jpeg|png)\.(resize|crop|thumb)-(.*)x(.*)\.(jpg|jpeg|png)/', $request, $command);
 
         // escape everything
-        $action     = $this->letters($request[4]);
-        $file       = escapeshellcmd(str_replace($base, '', $request[1])); // TODO quick hack
-        $extension  = $this->letters($request[6]);
-        $width      = intval($size[0]);
-        $height     = intval($size[1]);
-
+        $file       = escapeshellcmd($command[1]);
+        $action     = $this->letters($command[2]);
+        $width      = intval($command[3]);
+        $height     = intval($command[4]);
+        $extension  = $this->letters($command[5]);
 
         $cachedFile = ("{$root}cache/graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
