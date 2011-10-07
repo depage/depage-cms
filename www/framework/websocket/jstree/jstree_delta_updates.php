@@ -7,9 +7,9 @@ class jstree_delta_updates {
     // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
     const MAX_UPDATES_BEFORE_RELOAD = 50;
 
-    function __construct($table_prefix, $db, $xmldb, $doc_id, $seq_nr = -1) {
-        $this->table_name = $table_prefix . "_delta_updates";
-        $this->db = $db;
+    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $seq_nr = -1) {
+        $this->table_name = $table_prefix . "_xmldeltaupdates";
+        $this->pdo = $pdo;
         $this->xmldb = $xmldb;
         $this->doc_id = (int)$doc_id;
 
@@ -19,7 +19,7 @@ class jstree_delta_updates {
     }
 
     public function currentChangeNumber() {
-        $query = $this->db->prepare("SELECT MAX(id) AS id FROM " . $this->table_name . " WHERE doc_id = ?");
+        $query = $this->pdo->prepare("SELECT MAX(id) AS id FROM " . $this->table_name . " WHERE doc_id = ?");
         if ($query->execute(array($this->doc_id)))
             if ($row = $query->fetch())
                 return (int)$row["id"];
@@ -28,23 +28,23 @@ class jstree_delta_updates {
     }
 
     public function recordChange($parent_id) {
-        $query = $this->db->prepare("INSERT INTO " . $this->table_name . " (node_id, doc_id) VALUES (?, ?)");
+        $query = $this->pdo->prepare("INSERT INTO " . $this->table_name . " (node_id, doc_id) VALUES (?, ?)");
         $query->execute(array((int)$parent_id, $this->doc_id));
     }
 
     public function discardOldChanges() {
-        $min_id_query = $this->db->prepare("SELECT id FROM " . $this->table_name . " WHERE doc_id = ? ORDER BY id DESC LIMIT " . (self::MAX_UPDATES_BEFORE_RELOAD - 1) . ", 1");
+        $min_id_query = $this->pdo->prepare("SELECT id FROM " . $this->table_name . " WHERE doc_id = ? ORDER BY id DESC LIMIT " . (self::MAX_UPDATES_BEFORE_RELOAD - 1) . ", 1");
         $min_id_query->execute(array($this->doc_id));
         $row = $min_id_query->fetch();
 
-        $delete_query = $this->db->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
+        $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
         $delete_query->execute(array((int)$row["id"], $this->doc_id));
     }
 
     private function changedParentIds() {
         $parent_ids = array();
 
-        $query = $this->db->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
+        $query = $this->pdo->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
         if ($query->execute(array($this->seq_nr, $this->doc_id))) {
             while ($row = $query->fetch()) {
                 $node_id = (int)$row["node_id"];

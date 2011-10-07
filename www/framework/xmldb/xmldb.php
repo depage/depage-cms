@@ -649,7 +649,9 @@ class xmldb {
     }
     // }}}
     // {{{ build_node()
-    public function build_node($doc_id, $name, $attributes) {
+    public function build_node($doc_id_or_name, $name, $attributes) {
+        $doc_id = $this->doc_exists($doc_id_or_name);
+
         $doc_info = $this->get_namespaces_and_entities($doc_id);
         $xml = "<$name {$doc_info->namespaces}";
         foreach ($attributes as $attr => $value) {
@@ -885,30 +887,17 @@ class xmldb {
 
         if ($doc_id !== false) {
             $query = $this->pdo->prepare(
-                "UPDATE {$this->table_docs} AS docs 
-                SET docs.permissions = :permissions 
-                WHERE docs.id = :doc_id"
+                "UPDATE {$this->table_docs} 
+                SET permissions = :permissions 
+                WHERE id = :doc_id"
             );
             $query->execute(array(
-                'permissione' => (string) $permission,
-                'doc_id' => $doc_id,
+                'permissions' => $permissions,
+                'doc_id' => $doc_id
             ));
         } else {
             return false;
         }
-    }
-    // }}}
-    // {{{ set_permissions()
-    public function set_permissions($doc_id, $permissions) {
-        $query = $this->pdo->prepare(
-            "UPDATE {$this->table_docs} 
-            SET permissions = :permissions 
-            WHERE id = :doc_id"
-        );
-        $query->execute(array(
-            'permissions' => $permissions,
-            'doc_id' => $doc_id
-        ));
     }
     // }}}
 

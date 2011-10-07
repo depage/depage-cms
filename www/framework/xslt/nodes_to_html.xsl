@@ -9,7 +9,7 @@
     <xsl:choose>
         <xsl:when test="count(node()) > 0">
             <ul>
-            <xsl:apply-templates />
+                <xsl:apply-templates />
             </ul>
         </xsl:when>
     </xsl:choose>
@@ -20,16 +20,20 @@
     <xsl:variable name="type" select="name()" />
     <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint" select="@hint" />
+    <xsl:variable name="ns" select="substring-before(name(), ':')" />
 
-    <li rel='{$type}' id='node_{$id}'><ins class='jstree-icon'>&#160;</ins><a href=''><ins class='jstree-icon'>&#160;</ins><xsl:value-of select="$name" /></a><span><xsl:value-of select="$hint" /></span>
-    <xsl:choose>
-        <xsl:when test="count(node()) > 0">
-            <ul>
-            <xsl:apply-templates />
-            </ul>
-        </xsl:when>
-    </xsl:choose>
-    </li>
+    <!-- only show nodes with namespace "pg" or "sec" in tree -->
+    <xsl:if test="$ns = 'pg' or $ns = 'sec'">
+        <li rel='{$type}' id='node_{$id}'><ins class='jstree-icon'>&#160;</ins><a href=''><ins class='jstree-icon'>&#160;</ins><xsl:value-of select="$name" /></a><span><xsl:value-of select="$hint" /></span>
+        <xsl:choose>
+            <xsl:when test="count(node()) > 0">
+                <ul>
+                    <xsl:apply-templates />
+                </ul>
+            </xsl:when>
+        </xsl:choose>
+        </li>
+    </xsl:if>
 </xsl:template>
 
 <!-- vim:set fenc=UTF-8 sw=4 sts=4 fdm=marker et : -->
