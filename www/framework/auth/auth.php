@@ -19,15 +19,15 @@
  */
 class auth {
     // {{{ variables
-    var $realm = "depage::cms";
-    var $sid, $uid;
-    var $valid = false;
-    var $session_lifetime = 1800; // in seconds
-    var $privateKey = "private Key";
-    var $user = null;
+    public $realm = "depage::cms";
+    public $sid, $uid;
+    public $valid = false;
+    public $session_lifetime = 1800; // in seconds
+    public $privateKey = "private Key";
+    public $user = null;
 
-    var $loginUrl = "login/";
-    var $logoutUrl = "logout/";
+    public $loginUrl = "login/";
+    public $logoutUrl = "logout/";
     // }}}
     
     // {{{ factory()
