@@ -121,7 +121,7 @@ class depage_ui {
 
         if ($parent == "" && Locale::getPrimaryLanguage($this->locale) != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
-            $this->redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale)));
+            $this->redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale), "auto"));
         }
 
         // first is function

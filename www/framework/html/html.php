@@ -397,13 +397,20 @@ class html {
      */
     static function link($link, $locale = null, $protocol = null) {
         if (is_null($locale)) {
-            $locale = DEPAGE_LANG;
+            $lang = DEPAGE_LANG;
         } else {
-            $locale = Locale::getPrimaryLanguage($locale);
+            $lang = Locale::getPrimaryLanguage($locale);
         }
         if (!is_null($protocol)) {
+            if ($protocol == "auto") {
+                $base = DEPAGE_BASE;
+            } else {
+                $base = preg_replace("/.*:\/\//", $protocol . "://", DEPAGE_BASE);
+            }
+        } else {
+            $base = "";
         }
-        return DEPAGE_BASE . $locale . '/' . $link;
+        return $base . $lang . '/' . $link;
     }
     // }}}
 

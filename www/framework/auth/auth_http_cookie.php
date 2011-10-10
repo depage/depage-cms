@@ -41,7 +41,7 @@ class auth_http_cookie extends auth {
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $login_url = html::link($this->loginUrl);
+                $login_url = html::link($this->loginUrl, null, "auto");
                 
                 // set protocol
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
