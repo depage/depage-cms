@@ -40,6 +40,7 @@ class config implements Iterator {
         $urls = array_keys($values);
         
         // sort that shorter urls with same beginning are tested first for a match
+        // @todo change sort order to have the inherited always at the end
         sort($urls);
 
         if (!isset($_SERVER['HTTP_HOST'])) {
