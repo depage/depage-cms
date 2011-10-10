@@ -27,6 +27,7 @@ class depage_ui {
                 'en' => 'en_US',
             ),
         ),
+        'urlHasLocale' => false,
     );
     protected $options = array();
     // }}}
@@ -57,8 +58,6 @@ class depage_ui {
         $this->log = new log(array(
             'file' => "logs/" . str_replace("\\", "_", get_class($this)) . ".log",
         ));
-
-        $this->setLanguage();
     }
     // }}}
     
@@ -69,14 +68,23 @@ class depage_ui {
      * @param   $options (array) named options for base class
      *
      * @return  null
+     *
+     * @todo split this function apart for better readability
      */
     public function run($parent = "") {
         // starting time
         $time_start = microtime(true);
 
+        // set protocol
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+            $protocol = "https://";
+        } else {
+            $protocol = "http://";
+        }
+
         // get depage specific query string
         // @todo use parseurl?
-        $dp_request_uri =  substr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
+        $dp_request_uri =  substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
         if (strpos('?', $dp_request_uri)) {
             list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
@@ -91,8 +99,32 @@ class depage_ui {
             array_pop($dp_params);
         }
 
-        $this->urlpath = $dp_request_path;
-        
+        // strip locale
+        if ($this->options->urlHasLocale) {
+            if (strlen($dp_params[0]) == 2) {
+                $dp_lang = array_shift($dp_params);
+                $this->setLanguage($this->options->lang->subdomain_to_locale->$dp_lang);
+            } else {
+                $dp_lang = "";
+                $this->setLanguage();
+            }
+        } else {
+            $this->setLanguage();
+            $dp_lang = Locale::getPrimaryLanguage($this->locale);
+        }
+
+        // save path (without localization)
+        $this->urlpath = implode($dp_params, "/");
+        if ($this->urlpath != "") {
+            $this->urlpath .= "/";
+        }
+
+        if ($parent == "" && Locale::getPrimaryLanguage($this->locale) != $dp_lang) {
+            // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
+            $this->redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale)));
+        }
+
+        // first is function
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
 
@@ -109,10 +141,15 @@ class depage_ui {
                         }
                     }
                 }
-                if ($name == $test) {
+                if ($name == $test && class_exists($class, true)) {
                     // has a valid subhandler, so use this instead of $this
                     $handler = new $class($this->options);
-                    $handler->run($name . "/");
+                    $handler->locale = $this->locale;
+                    if ($this->options->urlHasLocale) {
+                        $handler->run($dp_lang . "/" . $name . "/");
+                    } else {
+                        $handler->run($name . "/");
+                    }
 
                     return;
                 }
@@ -215,7 +252,7 @@ class depage_ui {
      *
      * @return  null
      */
-    public function notfound() {
+    public function notfound($function = "") {
         header('HTTP/1.1 404 Not Found');
     }
     // }}}
@@ -265,10 +302,17 @@ class depage_ui {
      * overwrite this method to change this
      */
     protected function setLanguage($locale = null) {
+        if (defined("DEPAGE_LANG")) {
+            return;
+        }
         $availableLocales = array_keys($this->getAvailableLocales());
 
         if (!in_array($locale, $availableLocales)) {
-            $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+            } else {
+                $browserLocales = array();
+            }
 
             foreach ($browserLocales as $lang) {
                 list($lang) = explode(';', $lang);
@@ -309,6 +353,7 @@ class depage_ui {
         textdomain($this->options->lang->domain);
 
         $this->locale = $locale;
+        define("DEPAGE_LANG", Locale::getPrimaryLanguage($this->locale));
     } 
     // }}}
     // {{{ getAvailableLocales
