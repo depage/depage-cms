@@ -233,8 +233,13 @@ class depage {
         ini_set("zlib.output_compression", "On");
 
         // setup handler class
-        $this->handler = new $handler($this->conf);
-        $this->handler->run();
+        if (class_exists($handler, true)) {
+            $this->handler = new $handler($this->conf);
+            $this->handler->run();
+        } else {
+            // no config -> setup/config?
+            die("This url is not configured");
+        }
     }
     // }}}
     // {{{ handlePhpError()
@@ -254,7 +259,6 @@ class depage {
 
         $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
-        //$this->handler->showError($error, $this->options['env']);
         if (isset($this->handler) && is_callable($this->handler, "error")) {
             $this->handler->error($error, $this->options['env']);
         }
