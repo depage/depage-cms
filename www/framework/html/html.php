@@ -370,6 +370,53 @@ class html {
         }
     }
     // }}}
+    // {{{ a()
+    /**
+     * outputs the url to a localized link
+     *
+     * @param   $link (string) page to link to 
+     * @param   $locale (string) locale to link to 
+     * @param   $protocol (string) protocol to use for the link
+     *
+     * @return  void
+     */
+    static function a($link, $locale = null, $protocol = null) {
+        html::t(html::link($link, $locale, $protocol));
+    }
+    // }}}
+    
+    // {{{ link()
+    /**
+     * builds a localized link
+     *
+     * @param   $link (string) page to link to 
+     * @param   $locale (string) locale to link to 
+     * @param   $protocol (string) protocol to use for the link
+     *
+     * @return  url
+     */
+    static function link($link, $locale = null, $protocol = null) {
+        if (is_null($locale)) {
+            $lang = DEPAGE_LANG;
+        } else {
+            $lang = Locale::getPrimaryLanguage($locale);
+        }
+        if (!is_null($protocol)) {
+            if ($protocol == "auto") {
+                $base = DEPAGE_BASE;
+            } else {
+                $base = preg_replace("/.*:\/\//", $protocol . "://", DEPAGE_BASE);
+            }
+        } else {
+            $base = "";
+        }
+        if (DEPAGE_URL_HAS_LOCALE) {
+            return $base . $lang . '/' . $link;
+        } else {
+            return $base . $link;
+        }
+    }
+    // }}}
 
     // {{{ markdown()
     /**

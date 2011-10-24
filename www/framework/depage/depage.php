@@ -131,7 +131,7 @@ class depage {
             $php_file = DEPAGE_PATH . "modules/" . $file;
         }
         
-	//echo("class: $class - file: $file - php_file: $php_file<br>");
+        //echo("class: $class - file: $file - php_file: $php_file<br>");
 
         if ($php_file != "") {
             require_once($php_file);
@@ -217,6 +217,13 @@ class depage {
     }
     // }}}
     
+    // {{{ redirect
+    static public function redirect($url) {
+        header('Location: ' . $url);
+        die( "Tried to redirect you to " . $url);
+    }
+    // }}}
+    
     // {{{ handleRequest()
     /**
      * analyses request and decieds what to do
@@ -233,8 +240,13 @@ class depage {
         ini_set("zlib.output_compression", "On");
 
         // setup handler class
-        $this->handler = new $handler($this->conf);
-        $this->handler->run();
+        if (class_exists($handler, true)) {
+            $this->handler = new $handler($this->conf);
+            $this->handler->run();
+        } else {
+            // no config -> setup/config?
+            die("This url is not configured");
+        }
     }
     // }}}
     // {{{ handlePhpError()
@@ -254,7 +266,6 @@ class depage {
 
         $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
-        //$this->handler->showError($error, $this->options['env']);
         if (isset($this->handler) && is_callable($this->handler, "error")) {
             $this->handler->error($error, $this->options['env']);
         }

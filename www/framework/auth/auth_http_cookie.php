@@ -41,8 +41,16 @@ class auth_http_cookie extends auth {
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $login_url = DEPAGE_BASE . $this->loginUrl;
-                $request_url = strstr("http://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
+                $login_url = html::link($this->loginUrl, null, "auto");
+                
+                // set protocol
+                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+                    $protocol = "https://";
+                } else {
+                    $protocol = "http://";
+                }
+
+                $request_url = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
                 if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
                     $redirect_to = urlencode($_SERVER['REQUEST_URI']);
 
@@ -55,7 +63,7 @@ class auth_http_cookie extends auth {
         return $this->user;
     }
     /* }}} */
-    /* {{{  enforce_lazy*/
+    /* {{{ enforce_lazy*/
     /**
      * @return   function returns the authenticated user or false if not logged in
      */
@@ -109,8 +117,8 @@ class auth_http_cookie extends auth {
 
                 return $user;
             } else {
-                $this->destroy_session();
                 $this->log->log("http_auth_cookie: invalid session ID");
+                $this->destroy_session();
             }
         } else {
             $this->log->log("http_auth_cookie: no session");

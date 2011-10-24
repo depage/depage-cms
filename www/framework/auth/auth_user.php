@@ -120,7 +120,7 @@ class auth_user {
             $browscap = new browscap($cachepath);
             $browscap->silent = true;
             $browscap->doAutoUpdate = false; // don't update now
-            $browscap->lowercase = true; // don't update now
+            $browscap->lowercase = true; 
             //$browscap->updateMethod = Browscap::UPDATE_CURL;
             $info = $browscap->getBrowser($this->useragent);
         }

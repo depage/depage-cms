@@ -171,7 +171,7 @@ class cms_ui extends depage_ui {
     public function login() {
         if ($this->auth->enforce()) {
             // logged in
-            $this->redirect(DEPAGE_BASE);
+            depage::redirect(DEPAGE_BASE);
         } else {
             // not logged in
             $form = new depage\htmlform\htmlform("login", array(
