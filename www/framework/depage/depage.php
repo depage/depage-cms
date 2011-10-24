@@ -131,7 +131,7 @@ class depage {
             $php_file = DEPAGE_PATH . "modules/" . $file;
         }
         
-	//echo("class: $class - file: $file - php_file: $php_file<br>");
+        //echo("class: $class - file: $file - php_file: $php_file<br>");
 
         if ($php_file != "") {
             require_once($php_file);
@@ -214,6 +214,13 @@ class depage {
         }
 
         return $version;
+    }
+    // }}}
+    
+    // {{{ redirect
+    static public function redirect($url) {
+        header('Location: ' . $url);
+        die( "Tried to redirect you to " . $url);
     }
     // }}}
     

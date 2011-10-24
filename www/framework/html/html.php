@@ -410,7 +410,11 @@ class html {
         } else {
             $base = "";
         }
-        return $base . $lang . '/' . $link;
+        if (DEPAGE_URL_HAS_LOCALE) {
+            return $base . $lang . '/' . $link;
+        } else {
+            return $base . $link;
+        }
     }
     // }}}
 
