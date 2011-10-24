@@ -121,7 +121,7 @@ class depage_ui {
 
         if ($parent == "" && Locale::getPrimaryLanguage($this->locale) != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
-            $this->redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale), "auto"));
+            depage::redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale), "auto"));
         }
 
         // first is function
@@ -226,12 +226,6 @@ class depage_ui {
         return $output;
     }
     // }}}
-    // {{{ redirect
-    public function redirect($url) {
-        header('Location: ' . $url);
-        die( "Tried to redirect you to " . $url);
-    }
-    // }}}
     
     // {{{ index
     /**
@@ -305,6 +299,8 @@ class depage_ui {
         if (defined("DEPAGE_LANG")) {
             return;
         }
+        define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
+
         $availableLocales = array_keys($this->getAvailableLocales());
 
         if (!in_array($locale, $availableLocales)) {
