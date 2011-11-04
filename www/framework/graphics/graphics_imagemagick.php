@@ -99,6 +99,23 @@ class graphics_imagemagick extends graphics {
         }
     }
     // }}}
+    // {{{ thumbfill()
+    /**
+     * @brief   Thumb action
+     *
+     * Adds thumb command to command string.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
+    protected function thumbfill($width, $height) {
+        if (!$this->bypassTest($width, $height)) {
+            $this->command .= " -gravity Center -thumbnail {$width}x{$height}^ -extent {$width}x{$height}";
+            $this->size = array($width, $height);
+        }
+    }
+    // }}}
 
     // {{{ getImageSize()
     /**
@@ -217,3 +234,5 @@ class graphics_imagemagick extends graphics {
     }
     // }}}
 }
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

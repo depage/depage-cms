@@ -102,6 +102,38 @@ class graphics_gd extends graphics {
         }
     }
     // }}}
+    // {{{ thumbfill()
+    /**
+     * @brief   Thumb-Fill action
+     *
+     * Applies thumb-fill action to $this->image.
+     *
+     * @param   $width  (int) output width
+     * @param   $height (int) output height
+     * @return  void
+     **/
+    protected function thumbfill($width, $height) {
+        if (!$this->bypassTest($width, $height)) {
+            $newSize = $this->dimensions($width, null);
+
+            if ($newSize[1] < $height) {
+                $newSize = $this->dimensions(null, $height);
+                $xOffset = round(($width - $newSize[0]) / 2);
+                $yOffset = 0;
+            } else {
+                $xOffset = 0;
+                $yOffset = round(($height - $newSize[1]) / 2);
+            }
+
+            $newImage = $this->createCanvas($width, $height);
+
+            imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
+
+            $this->image = $newImage;
+            $this->size = array($width, $height);
+        }
+    }
+    // }}}
 
     // {{{ load()
     /**
@@ -263,3 +295,5 @@ class graphics_gd extends graphics {
     }
     // }}}
 }
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
