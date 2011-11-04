@@ -39,7 +39,7 @@ class graphics_ui extends \depage_ui {
      * @return void
      **/
     private function convert($request) {
-        preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
+        preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
 
         // escape everything
         $file       = escapeshellcmd($command[1]);

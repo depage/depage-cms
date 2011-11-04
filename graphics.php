@@ -169,6 +169,21 @@ class graphics {
         return $this;
     }
     // }}}
+    // {{{ addThumbfill()
+    /**
+     * @brief   Adds thumb-fill action
+     *
+     * Adds thumb-fill action to action queue.
+     *
+     * @param   $width  (int)       output width
+     * @param   $height (int)       output height
+     * @return  $this   (object)
+     **/
+    public function addThumbfill($width, $height) {
+        $this->queue[] = array('thumbfill', func_get_args());
+        return $this;
+    }
+    // }}}
 
     // {{{ escapeNumber()
     /**
@@ -385,3 +400,5 @@ class graphics {
     }
     // }}}
 }
+
+/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
