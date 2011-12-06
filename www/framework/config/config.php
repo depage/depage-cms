@@ -50,8 +50,18 @@ class config implements Iterator {
 
         // test url against settings
         $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        
+        // remove url-parameters before matching
+        list($acturl) = explode("?", $acturl, 2);
+
         foreach ($urls as $url) {
-            $pattern = "/(" . str_replace(array(".", "?", "*", "/"), array("\.", "(.)", "(.*)", "\/"), $url) . ")/";
+            $simplepatterns = array(
+                "." => "\.",
+                "?" => "(.)",
+                "*" => "(.*?)", // always use smallest possible match for wildcards
+                "/" => "\/",
+            );
+            $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $url) . ")/";
             if (preg_match($pattern, $acturl, $matches)) {
                 // url fits into pattern
 
@@ -244,4 +254,4 @@ class config implements Iterator {
     // }}}
 }
 
-/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
