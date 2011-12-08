@@ -229,6 +229,19 @@ class auth {
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
+
+
+            // update time of last login in user-table
+            $update_query = $this->pdo->prepare(
+                "UPDATE 
+                    {$this->pdo->prefix}_auth_user
+                SET
+                    date_lastlogin = NOW()
+                WHERE
+                    id = :uid"
+            )->execute(array(
+                ':uid' => $this->uid,
+            ));
         }
 
         $this->valid = true;
