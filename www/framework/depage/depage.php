@@ -56,6 +56,7 @@ class depage {
      * @return  null
      */
     public function __construct($configFile = '') {
+        $this->setEncoding();
 
         /* @todo check include path
             ;include_path = ".:/usr/local/lib/php"
@@ -224,6 +225,28 @@ class depage {
     }
     // }}}
     
+    // {{{ setEncoding
+    /**
+     * sets the defaults for multibyte encodings
+     *
+     * @param   $encoding (string) encoding to set
+     *
+     * @return  null
+     */
+    public function setEncoding($encoding = "utf-8") {
+        if (is_callable("mb_internal_encoding")) {
+            mb_internal_encoding($encoding);
+            mb_http_input($encoding);
+            mb_http_output($encoding);
+        }
+        if (is_callable("iconv_set_encoding")) {
+            iconv_set_encoding("internal_encoding", $encoding);
+            iconv_set_encoding("input_encoding", $encoding);
+            iconv_set_encoding("output_encoding", $encoding);
+        }
+    }
+    // }}}
+    
     // {{{ handleRequest()
     /**
      * analyses request and decieds what to do
@@ -300,4 +323,4 @@ class depage {
     // }}}
 }
 
-/* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
