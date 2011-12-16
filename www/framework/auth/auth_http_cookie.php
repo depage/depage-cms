@@ -29,7 +29,7 @@ class auth_http_cookie extends auth {
     
     // {{{ hash_user_pass() 
     public function hash_user_pass($user, $pass) {
-	return md5($user . ':' . $this->realm . ':' . $pass);
+        return md5($user . ':' . $this->realm . ':' . $pass);
     }
     // }}}
 
@@ -120,8 +120,6 @@ class auth_http_cookie extends auth {
                 $this->log->log("http_auth_cookie: invalid session ID");
                 $this->destroy_session();
             }
-        } else {
-            $this->log->log("http_auth_cookie: no session");
         }
 
         $this->send_auth_header();
