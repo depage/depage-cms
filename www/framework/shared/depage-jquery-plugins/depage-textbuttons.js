@@ -27,15 +27,26 @@
                 // hide button
                 $(button).css({
                     position: "absolute",
-                    left: "-10000px"
+                    left: "-10000px",
+                    width: "100px"
                 });
 
                 // add link and click event to it
-                $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + this.value + "</a>").insertAfter(this).click( function() {
+                $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + button.value + "</a>").insertAfter(this).click( function() {
                     if ($(button).filter(":submit").length == 0) {
                         $(button).click();
                     } else {
-                        $(button).parents("form").submit();
+                        var $form = $(button).parents("form");
+
+                        if ($(button).parent().hasClass("cancel")) {
+                            // dont validate when cancel-button was pressed
+                            $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + button.value + "\">").appendTo($form);
+                            $form.data("validator").destroy();
+                        } else {
+                            $form.find("input.formSubmit:hidden").remove();
+                        }
+
+                        $form.submit();
                     }
 
                     return false;
