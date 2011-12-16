@@ -25,56 +25,22 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 </head>
 <body>
 <div id="container">
-
-<!-- TODO: remove? 
-<div id="mmenu" style="height:30px; overflow:hidden;">
-<input type="button" id="add_folder" value="add folder" style="display:block; float:left;"/>
-<input type="button" id="add_default" value="add file" style="display:block; float:left;"/>
-<input type="button" id="rename" value="rename" style="display:block; float:left;"/>
-<input type="button" id="remove" value="remove" style="display:block; float:left;"/>
-<input type="button" id="cut" value="cut" style="display:block; float:left;"/>
-<input type="button" id="copy" value="copy" style="display:block; float:left;"/>
-<input type="button" id="paste" value="paste" style="display:block; float:left;"/>
+    <div
+        id="node_<?php echo $this->root_id; ?>"
+        class="jstree-container"
+        data-doc-id = "<?php echo $this->doc_id; ?>"
+        data-seq-nr = "<?php echo $this->seq_nr; ?>"
+        data-selected-nodes = ""
+        data-open-nodes = ""
+        data-theme = "framework/cms/css/jstree.css"
+        data-delta-updates-websocket-url = ""
+        data-delta-updates-fallback-poll-url = "jstree/fallback/updates/"
+        data-delta-updates-post-url = "jstree/"
+        data-types-settings-url = "jstree/types_settings/"
+        data-add-marker-special-children = "folder separator"
+    >
+        <!--data-delta-updates-websocket-url = "ws://127.0.0.1:8000/jstree/"-->
+        <?php echo $this->nodes; ?>
+    </div>
 </div>
--->
-
-<div id="notification"></div>
-<!-- the tree container (notice NOT an UL node) -->
-<div
-    id="node_<?php echo $this->root_id; ?>"
-    class="jstree-container"
-    data-doc-id = "<?php echo $this->doc_id; ?>"
-    data-seq-nr = "<?php echo $this->seq_nr; ?>"
-    data-selected-nodes = ""
-    data-open-nodes = ""
-    data-theme = "../framework/cms/css/jstree.css"
-    data-delta-updates-websocket-url = "ws://127.0.0.1:8000/jstree/"
-    data-delta-updates-fallback-poll-url = "./fallback/updates/"
-    data-delta-updates-post-url = "./"
-    data-types-settings-url = "./types_settings/"
-    data-add-marker-special-children = "folder separator"
->
-    <?php echo $this->nodes; ?>
-</div>
-
-<!-- TODO: remove? 
-<script type="text/javascript">
-$(function () { 
-	$("#mmenu input").click(function () {
-		switch(this.id) {
-			case "add_default":
-			case "add_folder":
-				$("#demo").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
-				break;
-			default:
-				$("#demo").jstree(this.id);
-				break;
-		}
-	});
-});
-</script>
--->
-</div>
-
-</body>
-</html>
+<?php // vim:set ft=php sw=4 sts=4 fdm=marker et :
