@@ -918,6 +918,7 @@ class xmldb {
         $target = $query->fetchObject();
 
         $permissions = $this->get_permissions($doc_id);
+
         return $permissions->is_element_allowed_in($node->name, $target->name);
     }
     // }}}
@@ -930,6 +931,7 @@ class xmldb {
         $node_name = $node->nodeName;
 
         $permissions = $this->get_permissions($doc_id);
+
         return $permissions->is_element_allowed_in($node_name, $target_name);
     }
     // }}}
@@ -966,8 +968,6 @@ class xmldb {
      * @param    $needed (int) mininum number of ids, that are requested
      */
     private function get_free_elementIds($needed = 1) {
-        global $conf;
-
         $num = 0;
         
         $this->free_element_ids = array();
@@ -1517,8 +1517,6 @@ class xmldb {
      *            from textnodes or not.
      */
     public function save_node($doc_id, $node, $target_id = null, $target_pos = -1, $stripwhitespace = true) {
-        global $conf, $log;
-        
         $this->begin_transaction();
         
         //get all nodes in array
@@ -2006,8 +2004,6 @@ class xmldb {
      * @return    $db_id (int)
      */
     public function get_node_elementId($node) {
-        global $log;
-
         $db_id = null;
         if ($node->nodeType == XML_ELEMENT_NODE) {
             $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_attribute);
@@ -2027,8 +2023,6 @@ class xmldb {
      * @return    $db_id (int)
      */
     public function get_node_dataId($node) {
-        global $log;
-
         $db_id = null;
         if ($node->nodeType == XML_ELEMENT_NODE) {
             $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute);
