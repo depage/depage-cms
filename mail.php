@@ -158,8 +158,8 @@ class mail {
      * @return string
      */
     function wordwrap($string, $width = 75, $break = "\n", $cut = false, $charset = 'utf-8') {
-        $stringWidth = iconv_strlen($string, $charset);
-        $breakWidth  = iconv_strlen($break, $charset);
+        $stringWidth = mb_strlen($string, $charset);
+        $breakWidth  = mb_strlen($break, $charset);
 
         if (strlen($string) === 0) {
             return '';
@@ -173,36 +173,36 @@ class mail {
         $lastStart = $lastSpace = 0;
 
         for ($current = 0; $current < $stringWidth; $current++) {
-            $char = iconv_substr($string, $current, 1, $charset);
+            $char = mb_substr($string, $current, 1, $charset);
 
             if ($breakWidth === 1) {
                 $possibleBreak = $char;
             } else {
-                $possibleBreak = iconv_substr($string, $current, $breakWidth, $charset);
+                $possibleBreak = mb_substr($string, $current, $breakWidth, $charset);
             }
 
             if ($possibleBreak === $break) {
-                $result    .= iconv_substr($string, $lastStart, $current - $lastStart + $breakWidth, $charset);
+                $result    .= mb_substr($string, $lastStart, $current - $lastStart + $breakWidth, $charset);
                 $current   += $breakWidth - 1;
                 $lastStart  = $lastSpace = $current + 1;
             } elseif ($char === ' ') {
                 if ($current - $lastStart >= $width) {
-                    $result    .= iconv_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
+                    $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
                     $lastStart  = $current + 1;
                 }
 
                 $lastSpace = $current;
             } elseif ($current - $lastStart >= $width && $cut && $lastStart >= $lastSpace) {
-                $result    .= iconv_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
+                $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
                 $lastStart  = $lastSpace = $current;
             } elseif ($current - $lastStart >= $width && $lastStart < $lastSpace) {
-                $result    .= iconv_substr($string, $lastStart, $lastSpace - $lastStart, $charset) . $break;
+                $result    .= mb_substr($string, $lastStart, $lastSpace - $lastStart, $charset) . $break;
                 $lastStart  = $lastSpace = $lastSpace + 1;
             }
         }
 
         if ($lastStart !== $current) {
-            $result .= iconv_substr($string, $lastStart, $current - $lastStart, $charset);
+            $result .= mb_substr($string, $lastStart, $current - $lastStart, $charset);
         }
 
         return $result;
