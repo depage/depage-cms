@@ -28,16 +28,21 @@
                     });
                     var $detail = $head.nextAll("dd:first");
 
+                    $(this).prepend("<span class=\"opener\"></span>");
+
                     $detail.hide();
                     $head.click(function() {
                         if (!$head.hasClass("active")) {
                             $("dt", $details).removeClass("active");
                             $head.addClass("active")
                             $head.siblings("dd").slideUp();
+                            $detail.addClass("active")
                             $detail.slideDown();
                         } else {
-                            $head.removeClass("active")
-                            $detail.slideUp();
+                            $detail.removeClass("active")
+                            $detail.slideUp("normal", function() {
+                                $head.removeClass("active");
+                            });
                         }
                     });
                 });
