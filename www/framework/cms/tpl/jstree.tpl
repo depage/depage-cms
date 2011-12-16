@@ -1,6 +1,4 @@
 <div id="container">
-    <div id="notification"></div>
-    <!-- the tree container (notice NOT an UL node) -->
     <div
         id="node_<?php echo $this->root_id; ?>"
         class="jstree-container"
@@ -19,4 +17,4 @@
         <?php echo $this->nodes; ?>
     </div>
 </div>
-<?php // vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et :
+<?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

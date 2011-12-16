@@ -8,4 +8,4 @@
         <li><a href="logout/" id="logout">logout</a></li>
     </menu>
 </div>
-<?php // vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et :
+<?php // vim:set ft=php sw=4 sts=4 fdm=marker et :
