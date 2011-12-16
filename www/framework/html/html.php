@@ -14,7 +14,7 @@
  */
 
 class html {
-    private $args;
+    public $args;
     private $param = null;
     private $template;
 
@@ -268,6 +268,8 @@ class html {
         // only include files once
         $all_files = array_unique($all_files);
 
+        // @todo added version to libaries like jquery with min and/or max version to include
+
         return $all_files;
     }
     // }}}
@@ -438,14 +440,20 @@ class html {
      * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
      * @return  string
      */
-    static function format_date($date, $date_format = IntlDateFormatter::LONG, $time_format = IntlDateFormatter::SHORT) {
+    static function format_date($date, $date_format = IntlDateFormatter::LONG, $time_format = IntlDateFormatter::SHORT, $pattern = null) {
+        if (!is_integer($date_format)) {
+            $pattern = $date_format;
+            $date_format = IntlDateFormatter::LONG;
+        }
         // there is not getlocale, so use setlocale with null
         $current_locale = setlocale(LC_ALL, null);
-        $fmt = new IntlDateFormatter($current_locale, $date_format, $time_format); 
+        $fmt = new IntlDateFormatter($current_locale, $date_format, $time_format, null, null, $pattern); 
         
-        $timestamp = $date;
-        if ($date instanceof DateTime)
+        if ($date instanceof DateTime) {
             $timestamp = $date->getTimestamp();
+        } else {
+            $timestamp = $date;
+        }
 
         return $fmt->format($timestamp);
     }
