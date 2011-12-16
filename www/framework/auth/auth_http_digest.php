@@ -197,10 +197,15 @@ class auth_http_digest extends auth_http_basic {
                 $digest_header = substr($headers['Authorization'], strpos($headers['Authorization'],' ') + 1);
             }
         } else {
-            $_ENV["HTTP_AUTHORIZATION"] = str_replace('\"', '"', $_ENV["HTTP_AUTHORIZATION"]);
-            $digest_header = substr($_ENV["HTTP_AUTHORIZATION"], strpos($_ENV["HTTP_AUTHORIZATION"],' ') + 1);
+            if (isset($_ENV["HTTP_AUTHORIZATION"])) {
+                $header = $_ENV["HTTP_AUTHORIZATION"];
+            } else {
+                $header = $_SERVER["HTTP_AUTHORIZATION"];
+            }
+            $header = str_replace('\"', '"', $header);
+            $digest_header = substr($header, strpos($header,' ') + 1);
         }
-        
+
         return $digest_header;
     } 
     // }}}
