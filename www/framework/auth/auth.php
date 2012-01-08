@@ -25,6 +25,7 @@ class auth {
     public $session_lifetime = 1800; // in seconds
     public $privateKey = "private Key";
     public $user = null;
+    public $justLoggedOut = false;
 
     public $loginUrl = "login/";
     public $logoutUrl = "logout/";
