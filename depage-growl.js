@@ -8,7 +8,7 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-(function( $ ){
+;(function( $ ){
     $.extend($.depage, {
         /* {{{ growl */
         /**
