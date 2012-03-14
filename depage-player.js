@@ -41,6 +41,7 @@
      * @return context
      */
     $.depage.player = function(el, index, options){
+        // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this
         // class from internal events and functions.
         var base = this;
@@ -66,6 +67,7 @@
         
         // Cache the control selectors
         base.controls = {};
+        // }}}
         
         // {{{ init()
         /**
@@ -82,9 +84,10 @@
             base.options.height = base.options.height || base.$el.height();
             
             base.options.playerId = base.options.playerId + index;
+
+            $.depage.player.instances[base.options.playerId] = base;
         };
         // }}}
-        
         
         // {{{ videoSupport()
         /**
@@ -117,8 +120,7 @@
         };
         // }}}
         
-        
-        // {{{ video
+        // {{{ video()
         /**
          * Video
          * 
@@ -150,17 +152,18 @@
                  base.flash.transport();
                  
                  // preload
-                 if (typeof(video.preload) !== 'undefined' && video.preload != 'none') {
+                 var preloadAttr = $video.attr('preload');
+                 if (typeof preloadAttr !== 'undefined' && preloadAttr !== false) {
                      base.flash.insertPlayer();
                  }
                  // autoplay
-                 if (video.autoplay) {
+                 var autoplayAttr = $video.attr('autoplay');
+                 if (typeof autoplayAttr !== 'undefined' && autoplayAttr !== false) {
                      base.player.play();
                  }
                  
                  // TODO support for loop
-            }
-            else {
+            } else {
                 // fallback
                 return false;
             }
@@ -174,12 +177,11 @@
         };
         // }}}
         
-        
         /**
          * Namespace HTML5 funcitons
          */
         base.html5 = {
-            // {{ html5 setup
+            // {{{ html5 setup
             /**
              * HTML5 Setup the handlers for the HTML5 video
              * 
@@ -324,7 +326,6 @@
          * Namespace Flash Functions
          */
         base.flash = {
-            
             // flash.transport() {{{
             /**
              * Flash Transport
@@ -343,7 +344,7 @@
                 /**
                  * serialize
                  * 
-                 * Seriliazes the arguments passed to the flash player object
+                 * Serializes the arguments passed to the flash player object
                  * 
                  * @param string action - control action called
                  * @param array args - flash player arguments
@@ -401,7 +402,6 @@
             },
             // }}}
             
-            
             // {{{ flash.insertPlayer()
             /**
              * Insert Flash Player
@@ -413,75 +413,37 @@
              * @return void
              */
             insertPlayer : function() {
+                // get absolute url from source attribute with mp4-type
+                var url = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>")[0].toString()
                 
-                var url = $indicator[0].href;
-                
+                var flashParams = {
+                    rand: Math.random(),
+                    id : base.options.playerId
+                };
+                if (window.console && base.options.debug) {
+                    flashParams.debug = "true";
+                }
                 var html = $.depage.flash().build({
-                    src    : base.options.playerPath,
+                    src    : base.options.assetPath + "depage_player.swf",
                     // TODO needs to fit screen for resize
                     //width  : base.options.width,
                     //height : base.options.height,
                     id     : base.options.playerId,
                     wmode  : 'transparent',
-                    params : {
-                        id : base.options.playerId
-                    }
+                    params : flashParams
                 });
                 
                 // use innerHTML for IE < 9 otherwise player breaks!!
                 $wrapper[0].innerHTML = html.plainhtml;
                 
-                window.setPlayerVar = base.flash.setPlayerVar;
-                
                 base.player.initialized = true;
                 
                 base.player.load(url);
-            },
-            // }}}
-            
-            
-            // {{{ setPlayerVar()
-            /**
-             * Flash Set Player Var
-             * 
-             * This is a callback for the flash player.
-             * 
-             * @param action
-             * @param value
-             * 
-             * @return void
-             */
-            setPlayerVar : function(playerId, action, value) {
-                
-                base.player[action] = value;
-                
-                switch (action) {
-                    case "paused" : 
-                        if (base.player.paused){
-                            base.pause();
-                        } else {
-                            base.play();
-                        }
-                        break;
-                        
-                    case "currentTime" :
-                        base.setCurrentTime(base.player.currentTime);
-                        break;
-                        
-                    case "percentLoaded" :
-                        base.percentLoaded(base.player.percentLoaded);
-                        break;
-                        
-                    case "duration" :
-                        base.duration();
-                        break;
-                }
             }
+            // }}}
         };
-        // }}}
-        
-        
-        // {{{ resize
+            
+        // {{{ resize()
         /**
          * Resize Player
          * 
@@ -544,8 +506,7 @@
         };
         // }}}
         
-        
-        // Overlay {{{
+        // {{{ Overlay()
         /**
          * Overlay
          * 
@@ -578,7 +539,7 @@
             
             if (!$wrapper) {
                 $wrap.wrap('<div class="wrapper" />');
-                $wrapper = $('.wrapper'); // cache after dom append for IE < 9 ?!
+                $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
             }
             
             if (!$.isEmptyObject(style)) {
@@ -587,8 +548,7 @@
         };
         // }}}
         
-        
-        // {{{
+        // {{{ fullscreen()
         /**
          * Fullscreen
          * 
@@ -740,7 +700,6 @@
         };
         // }}}
         
-        
         // {{{ addControls()
         /**
          * Add Controls
@@ -758,28 +717,28 @@
             
             var div = $("<div class=\"controls\"></div>");
             
-            base.controls.play = $("<a class=\"play\"><img src=\"" + base.options.scriptPath + "play_button" + imgSuffix + "\" alt=\"play\"></a>")
+            base.controls.play = $("<a class=\"play\"><img src=\"" + base.options.assetPath + "play_button" + imgSuffix + "\" alt=\"play\"></a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.play();
                     return false;
                 });
             
-            base.controls.pause = $("<a class=\"pause\" style=\"display: none\"><img src=\"" + base.options.scriptPath + "pause_button" + imgSuffix + "\" alt=\"pause\"></a>")
+            base.controls.pause = $("<a class=\"pause\" style=\"display: none\"><img src=\"" + base.options.assetPath + "pause_button" + imgSuffix + "\" alt=\"pause\"></a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.pause();
                     return false;
                 });
             
-            base.controls.rewind = $("<a class=\"rewind\"><img src=\"" + base.options.scriptPath + "rewind_button" + imgSuffix + "\" alt=\"rewind\"></a>")
+            base.controls.rewind = $("<a class=\"rewind\"><img src=\"" + base.options.assetPath + "rewind_button" + imgSuffix + "\" alt=\"rewind\"></a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.seek(0.1); // setting to zero breaks iOS 3.2
                     return false;
                 });
             
-            base.controls.rewind = $("<a class=\"fullscreen\"><img src=\"" + base.options.scriptPath + "fullscreen_button" + imgSuffix + "\" alt=\"fullscreen\"></a>")
+            base.controls.rewind = $("<a class=\"fullscreen\"><img src=\"" + base.options.assetPath + "fullscreen_button" + imgSuffix + "\" alt=\"fullscreen\"></a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.fullscreen();
@@ -846,8 +805,7 @@
         };
         // }}}
         
-        
-        // {{ setCurrentTime
+        // {{{ setCurrentTime()
         /**
          * Set Current Time
          * 
@@ -859,8 +817,7 @@
         };
         // }}}
         
-        
-        // {{{ percentLoaded
+        // {{{ percentLoaded()
         /**
          * Percent Loaded
          * 
@@ -874,8 +831,7 @@
         };
         // }}}
         
-        
-        // {{{ duration ()
+        // {{{ duration()
         /**
          * Duration 
          * 
@@ -886,7 +842,6 @@
             base.controls.duration.html(base.floatToTime(duration));
         };
         // }}}
-        
         
         // {{{ floatToTime() 
         /**
@@ -916,25 +871,73 @@
         return base;
     };
     
+    // {{{ setPlayerVar()
+    /**
+     * Flash Set Player Var
+     * 
+     * This is a callback for the flash player.
+     * 
+     * @param action
+     * @param value
+     * 
+     * @return void
+     */
+    $.depage.player.setPlayerVar = function(playerId, action, value) {
+        var instance = $.depage.player.instances[playerId];
+        
+        instance.player[action] = value;
+        
+        switch (action) {
+            case "paused" : 
+                if (instance.player.paused){
+                    instance.pause();
+                } else {
+                    instance.play();
+                }
+                break;
+                
+            case "currentTime" :
+                instance.setCurrentTime(instance.player.currentTime);
+                break;
+                
+            case "percentLoaded" :
+                instance.percentLoaded(instance.player.percentLoaded);
+                break;
+                
+            case "duration" :
+                instance.duration();
+                break;
+        }
+    }
+// }}}
+
+    /**
+     * instances
+     *
+     * Holds all player instances by id
+     */
+    $.depage.player.instances = [];
+    
     /**
      * Options
      * 
-     * @param playerPath - absolute path to player folder 
+     * @param assetPath - path to the asset-folder (with flash-player and images for buttons)
      * @param playerName - name of the flash swf
      * @param playerId
      * @param width - video width
      * @param height - video height
      * @param crop - crop this video when resizing
      * @param constrain - constrain dimensions of this video when resizing
+     * @param debug - if set, the flash player will send console.log messages for his actions
      */
     $.depage.player.defaultOptions = {
-        playerPath : window.location.href + "js/depage_player/depage_player.swf",
-        scriptPath : "js/depage_player/",
+        assetPath : $("script[src *= '/depage-player.js']")[0].src.match(/^.*\//).toString() + "depage_player/",
         playerId : "dpPlayer",
         width : false,
         height : false,
         crop: true,
-        constrain: true
+        constrain: true,
+        debug: false
     };
     
     $.fn.depage_player = function(param1, options){
@@ -944,3 +947,4 @@
     };
     
 })(jQuery);
+/* vim:set ft=javascript sw=4 sts=4 fdm=marker : */
