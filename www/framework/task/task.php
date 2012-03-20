@@ -3,15 +3,18 @@
 namespace depage\task;
 
 class task {
+    private $tmpvars = array();
+
     public function __construct($task_id_or_name, $table_prefix, $pdo) {
         $this->task_table = $table_prefix . "_tasks";
         $this->subtask_table = $table_prefix . "_subtasks";
         $this->pdo = $pdo;
 
-        if (is_int($task_id_or_name))
+        if (is_int($task_id_or_name)) {
             $this->task_id = $task_id_or_name;
-        else
+        } else {
             $this->task_id = $this->create_task($task_id_or_name);
+        }
 
         $this->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $this->task_id . '.lock';
 
@@ -44,7 +47,19 @@ class task {
 
     /* @return NULL|false returns NULL for no error, false for a parse error */
     public function run_subtask($subtask) {
-        return eval($subtask->php);
+        // readd local variables
+        foreach ($this->tmpvars as $_tmpindex => $_tmpvar) {
+            $$_tmpindex = $_tmpvar;
+        }
+
+        // evaluate statement
+        $value = eval($subtask->php);
+
+        // unset internal variables
+        unset($subtask, $_tmpindex, $_tmpvar);
+        $this->tmpvars = get_defined_vars();
+
+        return $value;
     }
 
     public function lock() {
@@ -82,13 +97,15 @@ class task {
      */
     public function create_subtasks($tasks) {
         foreach ($tasks as &$task) {
-            if (!is_array($task))
+            if (!is_array($task)) {
                 throw new \Exception ("malformed task array");
+            }
 
-            if (isset($tasks[$task["depends_on"]]))
+            if (isset($tasks[$task["depends_on"]])) {
                 $depends_on = $tasks[$task["depends_on"]]["id"];
-            else
+            } else {
                 $depends_on = NULL;
+            }
 
             $task["id"] = $this->create_subtask($task["name"], $task["php"], $depends_on);
         }

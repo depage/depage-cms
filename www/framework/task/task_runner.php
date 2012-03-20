@@ -75,9 +75,7 @@ class task_runner extends \depage_ui {
             )
         );
 
-        // TODO: set project correctly
-        $proj = "proj";
-        $this->prefix = "{$this->pdo->prefix}_{$proj}";
+        $this->prefix = $this->pdo->prefix;
         
         $this->force_login = false; // TODO: !$cli;
         if ($this->force_login) {
@@ -92,8 +90,8 @@ class task_runner extends \depage_ui {
     }
     // }}}
     
-    // {{{ run
-    public function task($task_id) {
+    // {{{ execute
+    public function execute($task_id) {
         if ($this->force_login)
             $this->auth->enforce();
 
@@ -156,7 +154,7 @@ class task_runner extends \depage_ui {
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cli') {
     $task_runner = new task_runner(NULL, true);
-    $task_runner->task($argv[1]);
+    $task_runner->execute($argv[1]);
 }
 
 /* TODO:
