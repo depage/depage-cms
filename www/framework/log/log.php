@@ -13,7 +13,7 @@
 class log {
     // {{{ default config
     protected $defaults = array(
-        'file' => "logs/depage.log",
+        'file' => "",
         'mail' => "",
     );
     protected $conf;
@@ -30,6 +30,10 @@ class log {
     public function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getFromDefaults($this->defaults);
+
+        if (!$this->options->file) {
+            $this->options->file = DEPAGE_PATH . "/logs/depage.log";
+        }
     }
     // }}}
     // {{{ getMessage
