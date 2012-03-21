@@ -46,22 +46,23 @@ class depage_ui {
     public function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getDefaultsFromClass($this);
+
+        $this->log = new log(array(
+            'file' => DEPAGE_PATH . "/logs/" . str_replace("\\", "_", get_class($this)) . ".log",
+        ));
     }
     // }}}
-    // {{{ init()
+    // {{{ _init()
     /**
      * initialize needed objects like pdo or auth-objects
      *
      * @return  null
      */
-    public function init() {
-        $this->log = new log(array(
-            'file' => "logs/" . str_replace("\\", "_", get_class($this)) . ".log",
-        ));
+    public function _init() {
     }
     // }}}
     
-    // {{{ run
+    // {{{ _run
     /**
      * default function to call if no function is given in handler
      *
@@ -71,7 +72,7 @@ class depage_ui {
      *
      * @todo split this function apart for better readability
      */
-    public function run($parent = "") {
+    public function _run($parent = "") {
         // starting time
         $time_start = microtime(true);
 
@@ -103,13 +104,13 @@ class depage_ui {
         if ($this->options->urlHasLocale) {
             if (strlen($dp_params[0]) == 2) {
                 $dp_lang = array_shift($dp_params);
-                $this->setLanguage($this->options->lang->subdomain_to_locale->$dp_lang);
+                $this->_setLanguage($this->options->lang->subdomain_to_locale->$dp_lang);
             } else {
                 $dp_lang = "";
-                $this->setLanguage();
+                $this->_setLanguage();
             }
         } else {
-            $this->setLanguage();
+            $this->_setLanguage();
             $dp_lang = Locale::getPrimaryLanguage($this->locale);
         }
 
@@ -128,8 +129,8 @@ class depage_ui {
         $dp_func = array_shift($dp_params);
         $dp_func = str_replace("-", "_", $dp_func);
 
-        if (is_callable(array($this, "getSubHandler"))) {
-            $subHandler = $this::getSubHandler();
+        if (is_callable(array($this, "_getSubHandler"))) {
+            $subHandler = $this::_getSubHandler();
             foreach ($subHandler as $name => $class) {
                 $subsub = explode("/", $name);
                 $test = $dp_func;
@@ -157,19 +158,19 @@ class depage_ui {
         }
 
         try {
-            $this->init();
+            $this->_init();
 
             if ($dp_func == "") {
                 // show index page
-                $content = $this->index();
+                $content = $this->_index();
             } else if (is_callable(array($this, $dp_func))) {
                 // call function
                 $content = call_user_func_array(array($this, $dp_func), $dp_params);
             } else {
                 // show error for notfound
-                $content = $this->notfound($this->urlpath);
+                $content = $this->_notfound($this->urlpath);
             }
-            $content = $this->package($content);
+            $content = $this->_package($content);
         } catch (Exception $e) {
             $error = (object) array(
                 'exception' => $e,
@@ -178,10 +179,10 @@ class depage_ui {
                 'msg' => $e->getMessage(),
                 'backtrace' => debug_backtrace(),
             );
-            $content = $this->error($error, $this->options->env);
+            $content = $this->_error($error, $this->options->env);
         }
 
-        $this->send_headers($content);
+        $this->_sendHeaders($content);
         if (is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
@@ -190,21 +191,21 @@ class depage_ui {
 
         // finishing time
         $time = microtime(true) - $time_start;
-        $this->send_time($time);
+        $this->_send_time($time);
     }
     // }}}
 
-    // {{{ send_time
-    protected function send_time($time) {
+    // {{{ _send_time
+    protected function _send_time($time) {
         echo("<!-- $time sec -->");
     }
     // }}}
 
-    // {{{ send_headers
+    // {{{ _sendHeaders
     /**
      * sends out headers
      */
-    protected function send_headers($content) {
+    protected function _sendHeaders($content) {
         if (is_object($content)) {
             if (isset($content->content_type) && isset($content->charset)) {
                 header("Content-type: {$content->content_type}; charset={$content->charset}");
@@ -214,7 +215,7 @@ class depage_ui {
         }
     }
     // }}}
-    // {{{ package
+    // {{{ _package
     /**
      * default function to call if no function is given in handler
      *
@@ -222,12 +223,12 @@ class depage_ui {
      *
      * @return  null
      */
-    protected function package($output) {
+    protected function _package($output) {
         return $output;
     }
     // }}}
     
-    // {{{ index
+    // {{{ _index
     /**
      * default function to call if no function is given in handler
      *
@@ -235,10 +236,10 @@ class depage_ui {
      *
      * @return  null
      */
-    public function index() {
+    public function _index() {
     }
     // }}}
-    // {{{ notfound
+    // {{{ _notfound
     /**
      * default function to call if no function is given in handler
      *
@@ -246,11 +247,11 @@ class depage_ui {
      *
      * @return  null
      */
-    public function notfound($function = "") {
+    public function _notfound($function = "") {
         header('HTTP/1.1 404 Not Found');
     }
     // }}}
-    // {{{ error
+    // {{{ _error
     /**
      * automatically loads classes from the framework or the private modules
      *
@@ -258,7 +259,7 @@ class depage_ui {
      *
      * @return  null
      */
-    public function error($error, $env) {
+    public function _error($error, $env) {
         $h = "";
 
         $h .= "<h1>Error</h1>";
@@ -288,19 +289,19 @@ class depage_ui {
     }
     // }}}
 
-    // {{{ setLanguage
+    // {{{ _setLanguage
     /**
      * set language and prepare gettext functionality
      * by default language is infered by HTTP_ACCEPT_LANGUAGE
      * overwrite this method to change this
      */
-    protected function setLanguage($locale = null) {
+    protected function _setLanguage($locale = null) {
         if (defined("DEPAGE_LANG")) {
             return;
         }
         define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
 
-        $availableLocales = array_keys($this->getAvailableLocales());
+        $availableLocales = array_keys($this->_getAvailableLocales());
 
         if (!in_array($locale, $availableLocales)) {
             if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
@@ -351,11 +352,11 @@ class depage_ui {
         define("DEPAGE_LANG", Locale::getPrimaryLanguage($this->locale));
     } 
     // }}}
-    // {{{ getAvailableLocales
+    // {{{ _getAvailableLocales
     /**
      * gets all available locales
      */
-    protected function getAvailableLocales() {
+    protected function _getAvailableLocales() {
         // @todo add available locales and descriptions automatically
         $availableLocales = array(
             "en_US" => _("english"),

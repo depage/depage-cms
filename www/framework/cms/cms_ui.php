@@ -45,21 +45,21 @@ class cms_ui extends depage_ui {
         $this->basetitle = depage::getName() . " " . depage::getVersion();
     }
     // }}}
-    // {{{ getSubHandler
-    static function getSubHandler() {
+    // {{{ _getSubHandler
+    static function _getSubHandler() {
         return array(
             'jstree' => 'cms_jstree',
             'edit' => 'cms_edit',
         );
     }
     // }}}
-    // {{{ package
+    // {{{ _package
     /**
      * gets a list of projects
      *
      * @return  null
      */
-    public function package($output) {
+    public function _package($output) {
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "html")) {
             // pack into body html
@@ -74,30 +74,13 @@ class cms_ui extends depage_ui {
     }
     // }}}
     
-    // {{{ toolbar
-    protected function toolbar() {
-        if ($user = $this->auth->enforce_lazy()) {
-            $h = new html("toolbar_main.tpl", array(
-                'title' => $this->basetitle,
-                'username' => $user->name,
-            ), $this->html_options);
-        } else {
-            $h = new html("toolbar_plain.tpl", array(
-                'title' => $this->basetitle,
-            ), $this->html_options);
-        }
-
-        return $h;
-    }
-    // }}}
-    
-    // {{{ index
+    // {{{ _index
     /**
      * default function to call if no function is given in handler
      *
      * @return  null
      */
-    public function index() {
+    public function _index() {
         if ($this->auth->enforce_lazy()) {
             // logged in
             $h = new html(array(
@@ -124,14 +107,14 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
-    // {{{ notfound
+    // {{{ _notfound
     /**
      * function to call if action/function is not defined
      *
      * @return  null
      */
-    public function notfound() {
-        parent::notfound();
+    public function _notfound() {
+        parent::_notfound();
 
         $h = new html("box.tpl", array(
             'id' => "error",
@@ -145,13 +128,13 @@ class cms_ui extends depage_ui {
         return $h;
     }
     // }}}
-    // {{{ error
+    // {{{ _error
     /**
      * function to show error messages
      *
      * @return  null
      */
-    public function error($error, $env) {
+    public function _error($error, $env) {
         $content = parent::error($error, $env);
 
         $h = new html("box.tpl", array(
@@ -163,6 +146,23 @@ class cms_ui extends depage_ui {
         ), $this->html_options);
 
         return $this->package($h);
+    }
+    // }}}
+    
+    // {{{ toolbar
+    protected function toolbar() {
+        if ($user = $this->auth->enforce_lazy()) {
+            $h = new html("toolbar_main.tpl", array(
+                'title' => $this->basetitle,
+                'username' => $user->name,
+            ), $this->html_options);
+        } else {
+            $h = new html("toolbar_plain.tpl", array(
+                'title' => $this->basetitle,
+            ), $this->html_options);
+        }
+
+        return $h;
     }
     // }}}
     

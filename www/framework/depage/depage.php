@@ -34,7 +34,7 @@ class depage {
     public $conf;
     public $log;
 
-    protected $configFile = "conf/dpconf.php";
+    protected $configFile;
     
     // {{{ default config
     protected $defaults = array(
@@ -61,8 +61,6 @@ class depage {
         /* @todo check include path
             ;include_path = ".:/usr/local/lib/php"
             include_path = "/usr/local/lib/php:."
-
-            If you use REST techniques - so that POST requests do work and then send the browser a 303 redirect to GET to view the results, you quickly achieve two things:
          */
         
         $this->log = new log();
@@ -71,6 +69,8 @@ class depage {
 
         if ($configFile != '') {
             $this->configFile = $configFile;
+        } else {
+            $this->configFile = DEPAGE_PATH . "conf/dpconf.php";
         }
 
         $this->conf = new config();
@@ -139,6 +139,61 @@ class depage {
         }
     }
     // }}}
+    // {{{ getCliOptions()
+    /**
+     * gets the default options when called from cli
+     *
+     * @return  path
+     */
+    static function getCliOptions() {
+        static $options;
+               
+        if (!isset($options)) {
+            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+                $printHelp = false;
+                $errorMsg = "";
+
+                $options = getopt("h", array(
+                    "dp-path:",
+                    "conf-url:",
+                ));
+
+                if (isset($options['h'])) {
+                    $printHelp = true;
+                } else {
+                    // get path paramater
+                    if (empty($options['dp-path']) || !is_dir($options['dp-path'])) {
+                        $printHelp = true;
+                        $errorMsg .= "You must a set a valid path as root directory\n";
+                        $errorMsg .= "    (See --dp-path)\n";
+                    }
+
+                    // conf-url paramater
+                    if (empty($options['conf-url'])) {
+                        $options['conf-url'] = "/";
+                    }
+                }
+                if ($printHelp) {
+                    if ($errorMsg != "") {
+                        echo("ERROR:\n");
+                        echo($errorMsg);
+                        echo("\n");
+                    }
+
+                    echo("PARAMETERS:\n");
+                    echo("--dp-path        path to the root directory of the current depage installation\n");
+                    echo("--conf-url       url which is used to select current configuration\n");
+                    echo("                 if you don't set one the default configuration will be used\n");
+                    die();
+                }
+
+                define("DEPAGE_CLI_URL", $options['conf-url']) ;
+            }
+        }
+
+        return $options;
+    }
+    // }}}
     // {{{ getDepagePath()
     /**
      * gets the path of the calles script
@@ -149,10 +204,16 @@ class depage {
         static $path;
                
         if (!isset($path)) {
-            if (getcwd() == "") {
-                $path = dirname($_SERVER['SCRIPT_FILENAME']) . "/";
+            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+                $options = depage::getCliOptions();
+                $path = $options['dp-path'];
             } else {
-                $path = getcwd() . "/";
+                // http
+                if (getcwd() == "") {
+                    $path = dirname($_SERVER['SCRIPT_FILENAME']) . "/";
+                } else {
+                    $path = getcwd() . "/";
+                }
             }
         }
 
@@ -221,7 +282,7 @@ class depage {
     // {{{ redirect
     static public function redirect($url) {
         header('Location: ' . $url);
-        die( "Tried to redirect you to " . $url);
+        die("Tried to redirect you to <a href=\"$url\">$url</a>");
     }
     // }}}
     
@@ -265,7 +326,7 @@ class depage {
         // setup handler class
         if (class_exists($handler, true)) {
             $this->handler = new $handler($this->conf);
-            $this->handler->run();
+            $this->handler->_run();
         } else {
             // no config -> setup/config?
             die("This url is not configured");
