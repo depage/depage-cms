@@ -97,6 +97,40 @@ class auth_user {
         return $user;
     }
     // }}}
+    // {{{ get_by_id()
+    /**
+     * gets a user-object by id directly from database
+     *
+     * @public
+     *
+     * @param       PDO     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function get_by_id($pdo, $id) {
+        $uid_query = $pdo->prepare(
+                "SELECT 
+                    user.id AS id,
+                    user.name as name,
+                    user.name_full as fullname,
+                    user.pass as passwordhash,
+                    user.email as email,
+                    user.settings as settings,
+                    user.level as level
+                FROM
+        {$pdo->prefix}_auth_user AS user
+                WHERE
+                    id = :id"
+        );
+        $uid_query->execute(array(
+                ':id' => $id,
+        ));
+        $user = $uid_query->fetchObject("auth_user", array($pdo));
+    
+        return $user;
+    }
+    // }}}    
     // {{{ get_useragent()
     /**
      * gets a user-object by sid (session-id) directly from database
