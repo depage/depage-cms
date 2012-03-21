@@ -8,8 +8,8 @@
  * handling. 
  *
  *
- * copyright (c) 2010 Lion Vollnhals
  * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2010 Lion Vollnhals
  *
  * @author    Lion Vollnhals
  * @author    Frank Hellenkamp [jonas@depagecms.net]
@@ -27,7 +27,9 @@ class auth_http_cookie extends auth {
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
         $this->cookiepath = $url['path'];
-        session_set_cookie_params(0, $this->cookiepath, "", false, true);
+
+        session_name("depage-session-id");
+        session_set_cookie_params($this->session_lifetime, $this->cookiepath, "", false, true);
     }
     /* }}} */
     
@@ -153,7 +155,7 @@ class auth_http_cookie extends auth {
     // }}}
     // {{{ destroy_session()
     protected function destroy_session() {
-        $this->start_session();
+        //$this->start_session();
 
         setcookie(session_name(), "", time() - 3600, $this->cookiepath);
         session_destroy();
