@@ -45,22 +45,11 @@ require_once(__DIR__ . "/../depage/depage.php");
 
 */
 
-
-class task_runner extends \depage_ui {
+class taskrunner extends \depage_ui {
     // {{{ constructor
-    public function __construct($options = NULL, $cli = false) {
+    public function __construct($options = NULL) {
         parent::__construct($options);
 
-        // overwrite config with real values. TODO: find a better way to do that
-        if ($cli) {
-            $conf = new \config();
-            $conf->readConfig(__DIR__ . "/../../conf/dpconf.php");
-            $this->options = $conf->getFromDefaults($this->defaults);
-            
-            // create log
-            $this->_init();
-        }
-        
         // get database instance
         $this->pdo = new \db_pdo (
             $this->options->db->dsn, // dsn
@@ -71,7 +60,7 @@ class task_runner extends \depage_ui {
             )
         );
 
-        $this->prefix = $this->pdo->prefix;
+        $this->table_prefix = $this->pdo->prefix;
         
         $this->force_login = false; // TODO: !$cli;
         if ($this->force_login) {
@@ -86,26 +75,27 @@ class task_runner extends \depage_ui {
     }
     // }}}
     
-    // {{{ run
-    public function run($task_id) {
+    // {{{ runNow
+    public function runNow($task_id) {
         if ($this->force_login)
             $this->auth->enforce();
 
-        $this->task = task::load((int)$task_id, $this->prefix, $this->pdo);
+        $this->task = task::load((int)$task_id, $this->table_prefix, $this->pdo);
         $this->abnormal_exit = true;
-        register_shutdown_function(array($this, "atShutdown"));
+        register_shutdown_function(array($this, "_atShutdown"));
         
         if ($this->task->lock()) {
             try {
                 $this->log->log("starting task {$task_id} ({$this->task->task_name})");
 
                 while ($subtask = $this->task->getNextSubtask()) {
+                    // @todo change logging to log output of a task to one file per task
                     $subtask_name = "{$subtask->id} ({$subtask->name})";
                     $this->log->log("    starting subtask $subtask_name");
 
                     $status = $this->task->runSubtask($subtask);
                     if ($status === false) {
-                        throw new \Exception("Parse Error");
+                        throw new \Exception("Parse Error or subtask returned false");
                     }
                     
                     $this->log->log("    finished subtask $subtask_name");
@@ -114,6 +104,7 @@ class task_runner extends \depage_ui {
 
                 $this->log->log("finished task {$task_id} ({$this->task->task_name})");
                 $this->task->setTaskStatus("done");
+                $this->task->remove();
             } catch (\Exception $e) {
                 $this->task->setSubtaskStatus($subtask, "failed: " . $e->getMessage());
                 $this->task->setTaskStatus("failed");
@@ -128,23 +119,29 @@ class task_runner extends \depage_ui {
         $this->abnormal_exit = false;        
     }
     // }}}
-    // {{{ runInBackground
-    public function runInBackground($task_id, $lowPriority = false) {
+    // {{{ run
+    public function run($task_id, $lowPriority = false) {
         $this->lowPriority = $lowPriority;
         $this->task = task::load((int)$task_id, $this->table_prefix, $this->pdo);
         $this->abnormal_exit = true;
 
-        register_shutdown_function(array($this, "atShutdown"));
+        register_shutdown_function(array($this, "_atShutdown"));
     }
     // }}}
 
-    // {{{ atShutdown
-    public function atShutdown() {
+    // {{{ _atShutdown
+    public function _atShutdown() {
         if ($this->abnormal_exit) {
             // release last held lock, so that new task can grab it
             $this->task->unlock();
 
-            $this->executeInBackground(__DIR__ . "/../../", "framework/task/" . basename(__FILE__), $this->task->task_id, $this->lowPriority);
+            $args = array(
+                "dp-path" => DEPAGE_PATH,
+                "conf-url" => DEPAGE_BASE,
+                "task-id" => $this->task->task_id,
+            );
+
+            $this->executeInBackground(__DIR__ . "/../../", "framework/task/" . basename(__FILE__), $args, $this->lowPriority);
         } else {
             $this->log->log("normal exit");
         }
@@ -166,26 +163,33 @@ class task_runner extends \depage_ui {
     * @param    $args (string)
     * @param    $start_low_priority (bool)
     */
-    private function executeInBackground($path, $script, $args = '', $start_low_priority = false) {
+    private function executeInBackground($path, $script, $args = array(), $start_low_priority = false) {
         $path_phpcli = $this->getPhpExecutable();
 
         if ($path_phpcli && is_executable($path_phpcli)) {
+            $param = "";
+            foreach ($args as $key => $value) {
+                $param .= " --$key " . escapeshellarg($value);
+            }
+
             // call script in background through cli executable
             // this is the finest, because cli scripts has generally no timeout
             // but unfortunately not available in all cases/platforms
             if (file_exists($path . $script) || $path == '') {
+
                 chdir($path);
                 $prio_param = "";
                 if (substr(php_uname(), 0, 7) == 'Windows') {
                     if ($start_low_priority) {
                         $prio_param = "/belownormal";
                     }
-                    pclose(popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $path_phpcli) . "\" -f $script " . escapeshellarg($args), "r"));    
+                    pclose(popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $path_phpcli) . "\" -f $script $args", "r"));    
                 } else {
                     if ($start_low_priority) {
                         $prio_param = "nice -10";
                     }
-                    pclose(popen("$prio_param \"$path_phpcli\" -f $script -- " . escapeshellarg($args) . " > /dev/null &", "r"));    
+                    //echo("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &");    
+                    pclose(popen("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &", "r"));    
                 }
             }
         // should only be called if original request was not by cli
@@ -202,7 +206,7 @@ class task_runner extends \depage_ui {
                 $host = "localhost";
             }
             //$url = "http://{$host}{$conf->path_base}framework/{$script}?arg=" . urlencode($args);
-            // TODO: frank fragen ob korrekt
+            // TODO: fix url to adjust according to handlers
             $url = "http://{$host}{$_SERVER['REQUEST_URI']}";
             
             if (is_callable('curl_init')) {
@@ -212,6 +216,7 @@ class task_runner extends \depage_ui {
                 curl_setopt($fp, CURLOPT_HEADER, false);
                 // hack for "non-blocking" -> has always a timout of 1 second
                 curl_setopt($fp, CURLOPT_TIMEOUT, 1);
+                curl_setopt($fp, CURLOPT_RETURNTRANSFER, true);
 
                 curl_exec($fp);
                 curl_close($fp);
@@ -243,6 +248,8 @@ class task_runner extends \depage_ui {
                 // call script through fopen -> this is ugly because it's blocking until 
                 // called script is finished or parent script has timed out
                 $fp = fopen($url, 'r');
+                stream_set_blocking($fp, 0); // @todo test non-blocking
+                
                 if ($fp) {
                     fclose($fp);
                 } else {
@@ -255,11 +262,12 @@ class task_runner extends \depage_ui {
     // {{{ getPhpExecutable()
     private function getPhpExecutable() {
         // only some shells set this variable
-        $exe = $_SERVER["_"];
+        if (isset($_SERVER["_"])) {
+            $exe = $_SERVER["_"];
+        }
         if (empty($exe) || strpos($exe, "php") === false) {
             $exe = $this->getPhpExecutableFromPath();
         }
-        echo($exe);
         
         return $exe;
     }
@@ -279,14 +287,20 @@ class task_runner extends \depage_ui {
     // }}}
 }
 
-
 // run task if called from cli
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cli') {
     $dp = new \depage();
 
-    $task_runner = new task_runner($dp->conf, true);
-    $task_runner->run(end($argv));
+    // test getopt without "standard"-options
+    $options = getopt("h", array(
+        "task-id:",
+        "dp-path:",
+        "conf-url:",
+    ));
+
+    $task_runner = new taskrunner($dp->conf);
+    $task_runner->runNow($options['task-id'], true);
 }
 
 /* TODO:

@@ -34,10 +34,62 @@ class task {
 
         $task->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task->task_id . '.lock';
 
-        $task->loadTask();
-        $task->loadSubtasks();
+        if ($task->loadTask()) {
+            $task->loadSubtasks();
 
-        return $task;
+            return $task;
+        } else {
+            return false;
+        }
+    }
+    // }}}
+    // {{{ loadByName()
+    static public function loadByName($task_name, $table_prefix, $pdo) {
+        $task = new task($table_prefix, $pdo);
+
+        $query = $pdo->prepare(
+            "SELECT id 
+            FROM {$task->task_table} 
+            WHERE name = :name"
+        );
+        $query->execute(array(
+            "name" => $task_name,
+        ));
+
+        $tasks = array();
+
+        while ($result = $query->fetchObject()) {
+            $tasks[] = task::load($result->id, $table_prefix, $pdo);
+        }
+
+        if (count($tasks) == 0) {
+            return false;
+        } else {
+            return $tasks;
+        }
+    }
+    // }}}
+    // {{{ loadAll()
+    static public function loadAll($table_prefix, $pdo) {
+        $task = new task($table_prefix, $pdo);
+
+        $query = $pdo->prepare(
+            "SELECT id 
+            FROM {$task->task_table}"
+        );
+        $query->execute();
+
+        $tasks = array();
+
+        while ($result = $query->fetchObject()) {
+            $tasks[] = task::load($result->id, $table_prefix, $pdo);
+        }
+
+        if (count($tasks) == 0) {
+            return false;
+        } else {
+            return $tasks;
+        }
     }
     // }}}
     // {{{ create()
@@ -48,15 +100,30 @@ class task {
         $task->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task->task_id . '.lock';
 
         $task->loadTask();
-        $task->loadSubtasks();
 
         return $task;
     }
     // }}}
     
+    // {{{ remove()
+    public function remove() {
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->task_table} 
+            WHERE id = :id"
+        );
+        $query->execute(array(
+            "id" => $this->task_id,
+        ));
+    }
+    // }}}
+    
     // {{{ setTaskStatus()
     public function setTaskStatus($status) {
-        $query = $this->pdo->prepare("UPDATE {$this->task_table} SET status = :status WHERE id = :id");
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->task_table} 
+            SET status = :status 
+            WHERE id = :id"
+        );
         $query->execute(array(
             "status" => $status,
             "id" => $this->task_id,
@@ -65,7 +132,11 @@ class task {
     // }}}
     // {{{ setSubtaskStatus()
     public function setSubtaskStatus($subtask, $status) {
-        $query = $this->pdo->prepare("UPDATE {$this->subtask_table} SET status = :status WHERE id = :id");
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->subtask_table} 
+            SET status = :status 
+            WHERE id = :id"
+        );
         $query->execute(array(
             "status" => $status,
             "id" => $subtask->id,
@@ -83,7 +154,7 @@ class task {
     // {{{ runSubtask()
     /* @return NULL|false returns NULL for no error, false for a parse error */
     public function runSubtask($subtask) {
-        // readd local variables
+        // re-add local variables
         foreach ($this->tmpvars as $_tmpindex => $_tmpvar) {
             $$_tmpindex = $_tmpvar;
         }
@@ -101,13 +172,33 @@ class task {
     
     // {{{ lock()
     public function lock() {
-        $this->lock_file = fopen($this->lock_name, 'w');
-        return flock($this->lock_file, LOCK_EX | LOCK_NB);
+        $this->lock_fp = fopen($this->lock_name, 'w');
+
+        $locked = flock($this->lock_fp, LOCK_EX | LOCK_NB);
+
+        if ($locked) {
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->task_table} 
+                SET time_started = NOW() 
+                WHERE 
+                    id = :id AND 
+                    time_started IS NULL"
+            );
+            $query->execute(array(
+                "id" => $this->task_id,
+            ));
+        }
+
+        return $locked;
     }
     // }}}
     // {{{ unlock()
     public function unlock() {
-        flock($this->lock_file, LOCK_UN);
+        if (isset($this->lock_fp)) {
+            flock($this->lock_fp, LOCK_UN);
+
+            unlink($this->lock_name);
+        }
     }
     // }}}
     
@@ -121,13 +212,21 @@ class task {
      * @return int return id of created subtask that can be used for depends_on
      */
     public function addSubtask($name, $php, $depends_on = NULL) {
-        $query = $this->pdo->prepare("INSERT INTO {$this->subtask_table} (task_id, name, php, depends_on) VALUES (:task_id, :name, :php, :depends_on)");
+        $query = $this->pdo->prepare(
+            "INSERT INTO {$this->subtask_table} 
+                (task_id, name, php, depends_on) VALUES (:task_id, :name, :php, :depends_on)"
+        );
         $query->execute(array(
             "task_id" => $this->task_id,
             "name" => $name,
             "php" => $php,
             "depends_on" => $depends_on,
         ));
+
+        if ($this->status == "done") {
+            // reset done status when adding new subtasks
+            $this->setTaskStatus(null);
+        }
 
         return $this->pdo->lastInsertId();
     }
@@ -154,10 +253,71 @@ class task {
     }
     // }}}
     
+    // {{{ getProgress()
+    public function getProgress() {
+        $progress = array();
+
+        // {{{ get progress
+        $query = $this->pdo->prepare(
+            "SELECT COUNT(*) AS count, status
+            FROM {$this->subtask_table}
+            WHERE task_id = :task_id
+            GROUP BY status"
+        );
+        $query->execute(array(
+            "task_id" => $this->task_id,
+        ));
+        $result = $query->fetchALL(\PDO::FETCH_COLUMN);
+
+        $tasksPlanned = $result[0];
+        $tasksDone = $result[1];
+        $tasksSum = $tasksPlanned + $tasksDone;
+
+        $progress['percent'] = (int) ($tasksDone / $tasksSum * 100);
+        // }}}
+        // {{{ get estimated times
+        $query = $this->pdo->prepare(
+            "SELECT UNIX_TIMESTAMP(time_started) AS time_started, TIMESTAMPDIFF(SECOND, time_started, NOW()) AS time
+            FROM {$this->task_table}
+            WHERE id = :task_id"
+        );
+        $query->execute(array(
+            "task_id" => $this->task_id,
+        ));
+        $result = $query->fetchObject();
+
+        $progress['estimated'] = (int) (($result->time / $tasksDone) * $tasksPlanned);
+        $progress['time_started'] = (int) $result->time_started;
+        // }}}
+        // {{{ get name of running subtask
+        $query = $this->pdo->prepare(
+            "SELECT name
+            FROM {$this->subtask_table}
+            WHERE 
+                task_id = :task_id AND
+                status IS NULL
+            ORDER BY id ASC
+            LIMIT 1"
+        );
+        $query->execute(array(
+            "task_id" => $this->task_id,
+        ));
+        $result = $query->fetchObject();
+
+        $progress['description'] = $result->name;
+        // }}}
+
+        return (object) $progress;
+    }
+    // }}}
+    
     // private functions
     // {{{ createTask()
     private function createTask($task_name) {
-        $query = $this->pdo->prepare("INSERT INTO {$this->task_table} (name) VALUES (:name)");
+        $query = $this->pdo->prepare(
+            "INSERT INTO {$this->task_table} 
+                (name, time_added) VALUES (:name, NOW())"
+        );
         $query->execute(array(
             "name" => $task_name,
         ));
@@ -167,20 +327,24 @@ class task {
     // }}}
     // {{{ loadTask();
     private function loadTask() {
-        $query = $this->pdo->prepare("SELECT name, status FROM {$this->task_table} WHERE id = :id");
+        $query = $this->pdo->prepare(
+            "SELECT name, status 
+            FROM {$this->task_table} 
+            WHERE id = :id"
+        );
         $query->execute(array(
             "id" => $this->task_id,
         ));
 
         $result = $query->fetchObject();
         if (empty($result)) {
-            throw new \Exception("no such task");
-        }
-        if (!empty($result->status)) {
-            throw new \Exception("task was already run.");
+            return false;
         }
 
         $this->task_name = $result->name;
+        $this->status = $result->status;
+
+        return $this;
     }
     // }}}
     // {{{ loadSubtasks()
