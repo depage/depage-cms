@@ -139,6 +139,7 @@ class depage {
         }
     }
     // }}}
+    
     // {{{ getCliOptions()
     /**
      * gets the default options when called from cli
@@ -180,6 +181,8 @@ class depage {
                         echo("\n");
                     }
 
+                    echo("Usage: " . $_SERVER['argv'][0] . " <option>\n");
+                    echo("\n");
                     echo("PARAMETERS:\n");
                     echo("--dp-path        path to the root directory of the current depage installation\n");
                     echo("--conf-url       url which is used to select current configuration\n");
@@ -285,6 +288,20 @@ class depage {
         die("Tried to redirect you to <a href=\"$url\">$url</a>");
     }
     // }}}
+    // {{{ sendHeaders
+    /**
+     * sends out headers
+     */
+    static public function sendHeaders($content) {
+        if (is_object($content)) {
+            if (isset($content->content_type) && isset($content->charset)) {
+                header("Content-type: {$content->content_type}; charset={$content->charset}");
+            } else if (isset($content->content_type)) {
+                header("Content-type: $content->content_type");
+            }
+        }
+    }
+    // }}}
     
     // {{{ setEncoding
     /**
@@ -306,6 +323,111 @@ class depage {
             iconv_set_encoding("output_encoding", $encoding);
         }
     }
+    // }}}
+    // {{{ setLanguage
+    /**
+     * set language and prepare gettext functionality
+     * by default language is infered by HTTP_ACCEPT_LANGUAGE
+     * overwrite this method to change this
+     */
+    static public function setLanguage($textdomain, $locale = null, $availableLocales = array()) {
+        if (defined("DEPAGE_LANG")) {
+            return DEPAGE_LANG;
+        }
+
+        if (!is_array($availableLocales) || count($availableLocales) == 0) {
+            $availableLocales = depage::getAvailableLocales();
+        }
+
+        $availableLocales = array_keys($availableLocales);
+
+        // test if locale-parameter is in available_locale
+        $locale = depage::localeLookup($availableLocales, $locale);
+
+        if (!$locale) {
+            // test locales from browser header
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+
+                foreach ($browserLocales as $lang) {
+                    list($lang) = explode(';', $lang);
+
+                    if ($locale = depage::localeLookup($availableLocales, $lang)) {
+                        break;
+                    }
+                }
+            }
+
+            if ($locale == "") {
+                // if not locale is found, take the first of all available locales
+                $locale = $availableLocales[0];
+            }
+        }
+
+        putenv('LC_ALL=' . $locale);
+        setlocale(LC_ALL, $locale);
+
+        // Specify location of translation tables
+        bindtextdomain($textdomain, "./locale");
+        bind_textdomain_codeset($textdomain, 'UTF-8'); 
+
+        // Choose domain
+        textdomain($textdomain);
+
+        // set LANG and LOCALE constants
+        define("DEPAGE_LOCALE", $locale);
+        define("DEPAGE_LANG", Locale::getPrimaryLanguage($locale));
+
+        return DEPAGE_LANG;
+    } 
+    // }}}
+    // {{{ localeLookup
+    static protected function localeLookup($availableLocales, $lang) {
+        $locale = "";
+
+        if (strlen($lang) == 2) {
+            // this is a hack when Locale::lookup does not return a valid value
+            // for simple locales like "de", "fr" or "en"
+            foreach ($availableLocales as $fallback) {
+                if (Locale::getPrimaryLanguage($fallback) == $lang) {
+                    $locale = $fallback;
+
+                    break;
+                }
+            }
+        } else if ($lang) {
+            $locale = Locale::lookup($availableLocales, $lang, false, "");
+        }
+
+        return $locale;
+    } 
+    // }}}
+    // {{{ getAvailableLocales
+    /**
+     * gets all available locales
+     */
+    static public function getAvailableLocales() {
+        static $availableLocales;
+
+        if (!$availableLocales) {
+            $availableLocales = array();
+
+            // test for locales in main path
+            $dirs = glob("locale/*", GLOB_ONLYDIR);
+
+            foreach ($dirs as $dir) {
+                $locale = basename($dir);
+                $availableLocales[$locale] = Locale::getDisplayLanguage($locale, $locale);
+            }
+
+            if (count($availableLocales) == 0) {
+                // have en_US as fallback
+                $availableLocales['en_US'] = Locale::getDisplayLanguage("en_US", "en_US");
+            }
+        }
+
+        return $availableLocales;
+    } 
     // }}}
     
     // {{{ handleRequest()
