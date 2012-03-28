@@ -8,22 +8,28 @@
  * handling. 
  *
  *
- * copyright (c) 2010 Lion Vollnhals
  * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2010 Lion Vollnhals
  *
  * @author    Lion Vollnhals
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-
 class auth_http_cookie extends auth {
+    // {{{ variables
+    protected $cookiepath = "";
+    // }}}
+    
     /* {{{ constructor */
     public function __construct($pdo, $realm, $domain) {
         parent::__construct($pdo, $realm, $domain);
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        session_set_cookie_params(0, $url['path'], "", false, true);
+        $this->cookiepath = $url['path'];
+
+        session_name("depage-session-id");
+        session_set_cookie_params($this->session_lifetime, $this->cookiepath, "", false, true);
     }
     /* }}} */
     
@@ -54,8 +60,7 @@ class auth_http_cookie extends auth {
                 if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
                     $redirect_to = urlencode($_SERVER['REQUEST_URI']);
 
-                    header("Location: $login_url?redirect_to=$redirect_to");
-                    die( "Tried to redirect you to " . $login_url);
+                    depage::redirect("$login_url?redirect_to=$redirect_to");
                 }
             }
         }
@@ -69,8 +74,14 @@ class auth_http_cookie extends auth {
      */
     public function enforce_lazy() {
         if ($this->user === null) {
-            if ($this->has_session() && $this->is_valid_sid($_COOKIE[session_name()])) {
-                $this->user = $this->auth_cookie();
+            if ($this->has_session()) {
+                if ($this->is_valid_sid($_COOKIE[session_name()])) {
+                    $this->user = $this->auth_cookie();
+                } else {
+                    $this->destroy_session();
+                    $this->justLoggedOut = true;
+                    $this->user = false;
+                }
             } else {
                 $this->user = false;
             }
@@ -82,6 +93,7 @@ class auth_http_cookie extends auth {
     /* {{{ enforce_logout */
     public function enforce_logout() {
         if ($this->has_session()) {
+            $this->justLoggedOut = true;
             $this->logout($_COOKIE[session_name()]);
             $this->destroy_session();
         }
@@ -117,12 +129,14 @@ class auth_http_cookie extends auth {
 
                 return $user;
             } else {
+                $this->justLoggedOut = true;
                 $this->log->log("http_auth_cookie: invalid session ID");
                 $this->destroy_session();
             }
         }
 
         $this->send_auth_header();
+        
         //throw new Exception("you are not allowed to do this!");
         return false;
     }
@@ -141,9 +155,9 @@ class auth_http_cookie extends auth {
     // }}}
     // {{{ destroy_session()
     protected function destroy_session() {
-        $this->start_session();
+        //$this->start_session();
 
-        setcookie(session_name(), "", time() - 3600);
+        setcookie(session_name(), "", time() - 3600, $this->cookiepath);
         session_destroy();
         unset($_COOKIE[session_name()]);
     } 

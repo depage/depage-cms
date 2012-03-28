@@ -34,7 +34,7 @@ class depage {
     public $conf;
     public $log;
 
-    protected $configFile = "conf/dpconf.php";
+    protected $configFile;
     
     // {{{ default config
     protected $defaults = array(
@@ -61,8 +61,6 @@ class depage {
         /* @todo check include path
             ;include_path = ".:/usr/local/lib/php"
             include_path = "/usr/local/lib/php:."
-
-            If you use REST techniques - so that POST requests do work and then send the browser a 303 redirect to GET to view the results, you quickly achieve two things:
          */
         
         $this->log = new log();
@@ -71,6 +69,8 @@ class depage {
 
         if ($configFile != '') {
             $this->configFile = $configFile;
+        } else {
+            $this->configFile = DEPAGE_PATH . "conf/dpconf.php";
         }
 
         $this->conf = new config();
@@ -139,6 +139,64 @@ class depage {
         }
     }
     // }}}
+    
+    // {{{ getCliOptions()
+    /**
+     * gets the default options when called from cli
+     *
+     * @return  path
+     */
+    static function getCliOptions() {
+        static $options;
+               
+        if (!isset($options)) {
+            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+                $printHelp = false;
+                $errorMsg = "";
+
+                $options = getopt("h", array(
+                    "dp-path:",
+                    "conf-url:",
+                ));
+
+                if (isset($options['h'])) {
+                    $printHelp = true;
+                } else {
+                    // get path paramater
+                    if (empty($options['dp-path']) || !is_dir($options['dp-path'])) {
+                        $printHelp = true;
+                        $errorMsg .= "You must a set a valid path as root directory\n";
+                        $errorMsg .= "    (See --dp-path)\n";
+                    }
+
+                    // conf-url paramater
+                    if (empty($options['conf-url'])) {
+                        $options['conf-url'] = "/";
+                    }
+                }
+                if ($printHelp) {
+                    if ($errorMsg != "") {
+                        echo("ERROR:\n");
+                        echo($errorMsg);
+                        echo("\n");
+                    }
+
+                    echo("Usage: " . $_SERVER['argv'][0] . " <option>\n");
+                    echo("\n");
+                    echo("PARAMETERS:\n");
+                    echo("--dp-path        path to the root directory of the current depage installation\n");
+                    echo("--conf-url       url which is used to select current configuration\n");
+                    echo("                 if you don't set one the default configuration will be used\n");
+                    die();
+                }
+
+                define("DEPAGE_CLI_URL", $options['conf-url']) ;
+            }
+        }
+
+        return $options;
+    }
+    // }}}
     // {{{ getDepagePath()
     /**
      * gets the path of the calles script
@@ -149,10 +207,16 @@ class depage {
         static $path;
                
         if (!isset($path)) {
-            if (getcwd() == "") {
-                $path = dirname($_SERVER['SCRIPT_FILENAME']) . "/";
+            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+                $options = depage::getCliOptions();
+                $path = $options['dp-path'];
             } else {
-                $path = getcwd() . "/";
+                // http
+                if (getcwd() == "") {
+                    $path = dirname($_SERVER['SCRIPT_FILENAME']) . "/";
+                } else {
+                    $path = getcwd() . "/";
+                }
             }
         }
 
@@ -221,7 +285,21 @@ class depage {
     // {{{ redirect
     static public function redirect($url) {
         header('Location: ' . $url);
-        die( "Tried to redirect you to " . $url);
+        die("Tried to redirect you to <a href=\"$url\">$url</a>");
+    }
+    // }}}
+    // {{{ sendHeaders
+    /**
+     * sends out headers
+     */
+    static public function sendHeaders($content) {
+        if (is_object($content)) {
+            if (isset($content->content_type) && isset($content->charset)) {
+                header("Content-type: {$content->content_type}; charset={$content->charset}");
+            } else if (isset($content->content_type)) {
+                header("Content-type: $content->content_type");
+            }
+        }
     }
     // }}}
     
@@ -246,6 +324,111 @@ class depage {
         }
     }
     // }}}
+    // {{{ setLanguage
+    /**
+     * set language and prepare gettext functionality
+     * by default language is infered by HTTP_ACCEPT_LANGUAGE
+     * overwrite this method to change this
+     */
+    static public function setLanguage($textdomain, $locale = null, $availableLocales = array()) {
+        if (defined("DEPAGE_LANG")) {
+            return DEPAGE_LANG;
+        }
+
+        if (!is_array($availableLocales) || count($availableLocales) == 0) {
+            $availableLocales = depage::getAvailableLocales();
+        }
+
+        $availableLocales = array_keys($availableLocales);
+
+        // test if locale-parameter is in available_locale
+        $locale = depage::localeLookup($availableLocales, $locale);
+
+        if (!$locale) {
+            // test locales from browser header
+            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
+
+                foreach ($browserLocales as $lang) {
+                    list($lang) = explode(';', $lang);
+
+                    if ($locale = depage::localeLookup($availableLocales, $lang)) {
+                        break;
+                    }
+                }
+            }
+
+            if ($locale == "") {
+                // if not locale is found, take the first of all available locales
+                $locale = $availableLocales[0];
+            }
+        }
+
+        putenv('LC_ALL=' . $locale);
+        setlocale(LC_ALL, $locale);
+
+        // Specify location of translation tables
+        bindtextdomain($textdomain, "./locale");
+        bind_textdomain_codeset($textdomain, 'UTF-8'); 
+
+        // Choose domain
+        textdomain($textdomain);
+
+        // set LANG and LOCALE constants
+        define("DEPAGE_LOCALE", $locale);
+        define("DEPAGE_LANG", Locale::getPrimaryLanguage($locale));
+
+        return DEPAGE_LANG;
+    } 
+    // }}}
+    // {{{ localeLookup
+    static protected function localeLookup($availableLocales, $lang) {
+        $locale = "";
+
+        if (strlen($lang) == 2) {
+            // this is a hack when Locale::lookup does not return a valid value
+            // for simple locales like "de", "fr" or "en"
+            foreach ($availableLocales as $fallback) {
+                if (Locale::getPrimaryLanguage($fallback) == $lang) {
+                    $locale = $fallback;
+
+                    break;
+                }
+            }
+        } else if ($lang) {
+            $locale = Locale::lookup($availableLocales, $lang, false, "");
+        }
+
+        return $locale;
+    } 
+    // }}}
+    // {{{ getAvailableLocales
+    /**
+     * gets all available locales
+     */
+    static public function getAvailableLocales() {
+        static $availableLocales;
+
+        if (!$availableLocales) {
+            $availableLocales = array();
+
+            // test for locales in main path
+            $dirs = glob("locale/*", GLOB_ONLYDIR);
+
+            foreach ($dirs as $dir) {
+                $locale = basename($dir);
+                $availableLocales[$locale] = Locale::getDisplayLanguage($locale, $locale);
+            }
+
+            if (count($availableLocales) == 0) {
+                // have en_US as fallback
+                $availableLocales['en_US'] = Locale::getDisplayLanguage("en_US", "en_US");
+            }
+        }
+
+        return $availableLocales;
+    } 
+    // }}}
     
     // {{{ handleRequest()
     /**
@@ -265,7 +448,7 @@ class depage {
         // setup handler class
         if (class_exists($handler, true)) {
             $this->handler = new $handler($this->conf);
-            $this->handler->run();
+            $this->handler->_run();
         } else {
             // no config -> setup/config?
             die("This url is not configured");

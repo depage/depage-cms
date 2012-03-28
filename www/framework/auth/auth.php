@@ -25,6 +25,7 @@ class auth {
     public $session_lifetime = 1800; // in seconds
     public $privateKey = "private Key";
     public $user = null;
+    public $justLoggedOut = false;
 
     public $loginUrl = "login/";
     public $logoutUrl = "logout/";
@@ -70,13 +71,6 @@ class auth {
         $this->realm = $realm;
         $this->domain = $domain;
         $this->log = new log();
-
-        $url = parse_url($this->domain);
-
-        // set session configuration
-        session_name("depage-session-id");
-        //session_set_cookie_params($this->session_lifetime, $url['path'], $url['host'], false, true);
-        session_set_cookie_params($this->session_lifetime, $url['path'], "", false, true);
     }
     // }}}
     // {{{ enforce()

@@ -23,9 +23,6 @@ class depage_ui {
         'env' => "development",
         'lang' => array(
             'domain' => 'messages',
-            'subdomain_to_locale' => array(
-                'en' => 'en_US',
-            ),
         ),
         'urlHasLocale' => false,
     );
@@ -33,7 +30,6 @@ class depage_ui {
     // }}}
 
     protected $urlpath = null;
-    public $locale = null;
 
     // {{{ constructor
     /**
@@ -46,22 +42,23 @@ class depage_ui {
     public function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getDefaultsFromClass($this);
+
+        $this->log = new log(array(
+            'file' => DEPAGE_PATH . "/logs/" . str_replace("\\", "_", get_class($this)) . ".log",
+        ));
     }
     // }}}
-    // {{{ init()
+    // {{{ _init()
     /**
      * initialize needed objects like pdo or auth-objects
      *
      * @return  null
      */
-    public function init() {
-        $this->log = new log(array(
-            'file' => "logs/" . str_replace("\\", "_", get_class($this)) . ".log",
-        ));
+    public function _init() {
     }
     // }}}
     
-    // {{{ run
+    // {{{ _run
     /**
      * default function to call if no function is given in handler
      *
@@ -71,7 +68,7 @@ class depage_ui {
      *
      * @todo split this function apart for better readability
      */
-    public function run($parent = "") {
+    public function _run($parent = "") {
         // starting time
         $time_start = microtime(true);
 
@@ -99,18 +96,20 @@ class depage_ui {
             array_pop($dp_params);
         }
 
+        define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
+
         // strip locale
-        if ($this->options->urlHasLocale) {
+        if (DEPAGE_URL_HAS_LOCALE) {
             if (strlen($dp_params[0]) == 2) {
                 $dp_lang = array_shift($dp_params);
-                $this->setLanguage($this->options->lang->subdomain_to_locale->$dp_lang);
+                depage::setLanguage($this->options->lang->domain, $dp_lang);
             } else {
                 $dp_lang = "";
-                $this->setLanguage();
+                depage::setLanguage($this->options->lang->domain);
             }
         } else {
-            $this->setLanguage();
-            $dp_lang = Locale::getPrimaryLanguage($this->locale);
+            $dp_lang = "";
+            depage::setLanguage($this->options->lang->domain);
         }
 
         // save path (without localization)
@@ -119,17 +118,16 @@ class depage_ui {
             $this->urlpath .= "/";
         }
 
-        if ($parent == "" && Locale::getPrimaryLanguage($this->locale) != $dp_lang) {
+        if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
-            depage::redirect(html::link($this->urlpath, Locale::getPrimaryLanguage($this->locale), "auto"));
+            depage::redirect(html::link($this->urlpath, DEPAGE_LANG, "auto"));
         }
 
         // first is function
-        $dp_func = array_shift($dp_params);
-        $dp_func = str_replace("-", "_", $dp_func);
+        $dp_func = str_replace("-", "_", array_shift($dp_params));
 
-        if (is_callable(array($this, "getSubHandler"))) {
-            $subHandler = $this::getSubHandler();
+        if (is_callable(array($this, "_getSubHandler"))) {
+            $subHandler = $this::_getSubHandler();
             foreach ($subHandler as $name => $class) {
                 $subsub = explode("/", $name);
                 $test = $dp_func;
@@ -144,11 +142,10 @@ class depage_ui {
                 if ($name == $test && class_exists($class, true)) {
                     // has a valid subhandler, so use this instead of $this
                     $handler = new $class($this->options);
-                    $handler->locale = $this->locale;
-                    if ($this->options->urlHasLocale) {
-                        $handler->run($dp_lang . "/" . $name . "/");
+                    if (DEPAGE_URL_HAS_LOCALE) {
+                        $handler->_run($dp_lang . "/" . $name . "/");
                     } else {
-                        $handler->run($name . "/");
+                        $handler->_run($name . "/");
                     }
 
                     return;
@@ -157,7 +154,7 @@ class depage_ui {
         }
 
         try {
-            $this->init();
+            $this->_init();
 
             if ($dp_func == "") {
                 // show index page
@@ -169,7 +166,7 @@ class depage_ui {
                 // show error for notfound
                 $content = $this->notfound($this->urlpath);
             }
-            $content = $this->package($content);
+            $content = $this->_package($content);
         } catch (Exception $e) {
             $error = (object) array(
                 'exception' => $e,
@@ -179,9 +176,11 @@ class depage_ui {
                 'backtrace' => debug_backtrace(),
             );
             $content = $this->error($error, $this->options->env);
+            $content = $this->_package($content);
         }
 
-        $this->send_headers($content);
+        depage::sendHeaders($content);
+
         if (is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
@@ -190,31 +189,17 @@ class depage_ui {
 
         // finishing time
         $time = microtime(true) - $time_start;
-        $this->send_time($time);
+        $this->_send_time($time);
     }
     // }}}
 
-    // {{{ send_time
-    protected function send_time($time) {
+    // {{{ _send_time
+    protected function _send_time($time) {
         echo("<!-- $time sec -->");
     }
     // }}}
 
-    // {{{ send_headers
-    /**
-     * sends out headers
-     */
-    protected function send_headers($content) {
-        if (is_object($content)) {
-            if (isset($content->content_type) && isset($content->charset)) {
-                header("Content-type: {$content->content_type}; charset={$content->charset}");
-            } else if (isset($content->content_type)) {
-                header("Content-type: $content->content_type");
-            }
-        }
-    }
-    // }}}
-    // {{{ package
+    // {{{ _package
     /**
      * default function to call if no function is given in handler
      *
@@ -222,7 +207,7 @@ class depage_ui {
      *
      * @return  null
      */
-    protected function package($output) {
+    protected function _package($output) {
         return $output;
     }
     // }}}
@@ -286,84 +271,6 @@ class depage_ui {
 
         return $h;
     }
-    // }}}
-
-    // {{{ setLanguage
-    /**
-     * set language and prepare gettext functionality
-     * by default language is infered by HTTP_ACCEPT_LANGUAGE
-     * overwrite this method to change this
-     */
-    protected function setLanguage($locale = null) {
-        if (defined("DEPAGE_LANG")) {
-            return;
-        }
-        define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
-
-        $availableLocales = array_keys($this->getAvailableLocales());
-
-        if (!in_array($locale, $availableLocales)) {
-            if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-                $browserLocales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);    
-            } else {
-                $browserLocales = array();
-            }
-
-            foreach ($browserLocales as $lang) {
-                list($lang) = explode(';', $lang);
-
-                if (strlen($lang) == 2) {
-                    // this is a hack when Locale::lookup does not return a valid value
-                    // for simple locales like "de", "fr" or "en"
-                    foreach ($availableLocales as $fallback) {
-                        if (Locale::getPrimaryLanguage($fallback) == $lang) {
-                            $locale = $fallback;
-
-                            break;
-                        }
-                    }
-                } else {
-                    $locale = Locale::lookup($availableLocales, $lang, false, "");
-                }
-                
-                if ($locale != "") {
-                    // locale found
-                    break;
-                }
-            }
-            if ($locale == "") {
-                // if not locale is found, take the first of all available locales
-                $locale = $availableLocales[0];
-            }
-        }
-
-        putenv('LC_ALL=' . $locale);
-        setlocale(LC_ALL, $locale);
-
-        // Specify location of translation tables
-        bindtextdomain($this->options->lang->domain, "./locale");
-        bind_textdomain_codeset($this->options->lang->domain, 'UTF-8'); 
-
-        // Choose domain
-        textdomain($this->options->lang->domain);
-
-        $this->locale = $locale;
-        define("DEPAGE_LANG", Locale::getPrimaryLanguage($this->locale));
-    } 
-    // }}}
-    // {{{ getAvailableLocales
-    /**
-     * gets all available locales
-     */
-    protected function getAvailableLocales() {
-        // @todo add available locales and descriptions automatically
-        $availableLocales = array(
-            "en_US" => _("english"),
-            "de_DE" => _("deutsch"),
-        );
-
-        return $availableLocales;
-    } 
     // }}}
 }
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

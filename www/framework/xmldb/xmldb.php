@@ -898,19 +898,6 @@ class xmldb {
         }
     }
     // }}}
-    // {{{ set_permissions()
-    public function set_permissions($doc_id, $permissions) {
-        $query = $this->pdo->prepare(
-            "UPDATE {$this->table_docs} 
-            SET permissions = :permissions 
-            WHERE id = :doc_id"
-        );
-        $query->execute(array(
-            'permissions' => $permissions,
-            'doc_id' => $doc_id
-        ));
-    }
-    // }}}
 
     /* private */
     // {{{ allow_move()

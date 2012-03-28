@@ -49,7 +49,11 @@ class config implements Iterator {
         }
 
         // test url against settings
-        $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        if (substr(php_sapi_name(), 0, 3) == 'cli') {
+            $acturl = DEPAGE_CLI_URL;
+        } else {
+            $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        }
         
         // remove url-parameters before matching
         list($acturl) = explode("?", $acturl, 2);
