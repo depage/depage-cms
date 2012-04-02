@@ -392,12 +392,12 @@ class html {
      * builds a localized link
      *
      * @param   $link (string) page to link to 
-     * @param   $locale (string) locale to link to 
      * @param   $protocol (string) protocol to use for the link
+     * @param   $locale (string) locale to link to 
      *
      * @return  url
      */
-    static function link($link, $locale = null, $protocol = null) {
+    static function link($link, $protocol = null, $locale = null) {
         if (is_null($locale)) {
             $lang = DEPAGE_LANG;
         } else {

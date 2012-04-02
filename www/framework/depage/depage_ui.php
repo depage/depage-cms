@@ -120,7 +120,7 @@ class depage_ui {
 
         if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
-            depage::redirect(html::link($this->urlpath, DEPAGE_LANG, "auto"));
+            depage::redirect(html::link($this->urlpath, "auto", DEPAGE_LANG));
         }
 
         // first is function
