@@ -24,7 +24,7 @@ class depage_ui {
         'lang' => array(
             'domain' => 'messages',
         ),
-        'urlHasLocale' => false,
+        'urlHasLocale' => false
     );
     protected $options = array();
     // }}}
@@ -89,8 +89,9 @@ class depage_ui {
             $dp_request_path = $dp_request_uri;
             $dp_query_string = '';
         }
-        $dp_params = explode("/", $dp_request_path);
-
+        
+        $dp_params = $this->getParams($dp_request_path);
+        
         // ignore trailing '/', so that params are equal with or without the trailing '/'
         if ($dp_request_path[strlen($dp_request_path) - 1] == '/') {
             array_pop($dp_params);
@@ -117,21 +118,22 @@ class depage_ui {
         if ($this->urlpath != "") {
             $this->urlpath .= "/";
         }
-
+        
         if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
             depage::redirect(html::link($this->urlpath, "auto", DEPAGE_LANG));
         }
-
+        
         // first is function
         $dp_func = str_replace("-", "_", array_shift($dp_params));
-
+        
         if (is_callable(array($this, "_getSubHandler"))) {
             $subHandler = $this::_getSubHandler();
             foreach ($subHandler as $name => $class) {
-                $subsub = explode("/", $name);
+                
                 $test = $dp_func;
-
+                
+                $subsub = explode("/", $name);
                 if (count($subsub) > 1) {
                     for ($i = 0; $i < count($subsub) - 1; $i++) {
                         if (isset($dp_params[$i])) {
@@ -139,23 +141,26 @@ class depage_ui {
                         }
                     }
                 }
+                $name = str_replace(array('*','/'), '', $name); // remove sub handler wildcards
                 if ($name == $test && class_exists($class, true)) {
-                    // has a valid subhandler, so use this instead of $this
+                    // strip sub args in recursive call if present
+                    foreach($this->urlSubArgs as $arg) {
+                        $name .= "/{$arg}";
+                    }
                     $handler = new $class($this->options);
+                    $handler->urlSubArgs = $this->urlSubArgs;
                     if (DEPAGE_URL_HAS_LOCALE) {
                         $handler->_run($dp_lang . "/" . $name . "/");
                     } else {
                         $handler->_run($name . "/");
                     }
-
                     return;
                 }
             }
         }
-
+        
         try {
             $this->_init();
-
             if ($dp_func == "") {
                 // show index page
                 $content = $this->index();
@@ -178,21 +183,51 @@ class depage_ui {
             $content = $this->error($error, $this->options->env);
             $content = $this->_package($content);
         }
-
+        
         depage::sendHeaders($content);
-
+        
         if (is_callable(array($content, 'clean'))) {
             echo($content->clean($content));
         } else {
             echo($content);
         }
-
+        
         // finishing time
         $time = microtime(true) - $time_start;
         $this->_send_time($time);
     }
     // }}}
-
+    
+    // getParams{{{
+    private function getParams($dp_request_path){
+        $dp_params = explode("/", $dp_request_path);
+        if (is_callable(array($this, "_getSubHandler"))) {
+            
+            $subHandler = $this::_getSubHandler();
+            
+            $simplepatterns = array(
+                "." => "\.",
+                "?" => "(.)",
+                "*" => "(.*)?",
+                "/" => "\/",
+            );
+            
+            foreach ($subHandler as $name => &$class) {
+                $pattern = "/.*(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
+                if (preg_match($pattern, $dp_request_path, $matches)) {
+                    if (!empty($matches[2])) {
+                        $this->urlSubArgs = explode('/', $matches[2]);
+                    }
+                    if (count($matches)){
+                        array_splice($dp_params, DEPAGE_URL_HAS_LOCALE ? 2 : 1, count($this->urlSubArgs));
+                    }
+                }
+            }
+        }
+        return $dp_params;
+    }
+    //}}}
+    
     // {{{ _send_time
     protected function _send_time($time) {
         echo("<!-- $time sec -->");

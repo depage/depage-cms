@@ -94,7 +94,7 @@ class graphics_gd extends graphics {
             }
 
             $newImage = $this->createCanvas($width, $height);
-
+            
             imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
             $this->image = $newImage;
@@ -170,15 +170,16 @@ class graphics_gd extends graphics {
         $bg = $this->createBackground($this->size[0], $this->size[1]);
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
         $this->image = $bg;
-
+        $result = false;
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
-            imagegif($this->image, $this->output);
+            $result = imagegif($this->image, $this->output);
         } else if ($this->outputFormat == 'jpg') {
-            imagejpeg($this->image, $this->output, $this->getQuality());
+            $result = imagejpeg($this->image, $this->output, $this->getQuality());
         } else if ($this->outputFormat == 'png') {
             $quality = $this->getQuality();
-            imagepng($this->image, $this->output, $quality[0], $quality[1]);
+            $result = imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
+        if (!$result) throw new graphics_exception('Could not save output image.');
     }
     // }}}
 
