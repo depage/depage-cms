@@ -6,9 +6,7 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
-
 namespace depage\graphics;
-
 /**
  * @brief Interface for accessing graphics via URI
  *
@@ -40,25 +38,27 @@ class graphics_ui extends \depage_ui {
      **/
     private function convert($request) {
         preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
-
+        
         // escape everything
         $file       = escapeshellcmd($command[1]);
         $action     = $this->letters($command[3]);
         $width      = intval($command[4]);
         $height     = intval($command[5]);
         $extension  = $this->letters($command[6]);
-
+        
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
-
+        
         $img = graphics::factory(
             array(
                 'extension'     => $this->defaults['extension'],
                 'background'    => $this->defaults['background'],
             )
         );
-
-        $this->mkPathToFile($cachedFile);
-
+        
+        if (!$this->mkPathToFile($request)) {
+            throw new graphics_exception("Could not create cache directory");
+        }
+        
         try {
             $img->{"add$action"}($width, $height)->render($file, $cachedFile);
         } catch (depage\graphics\graphics_file_not_found_exception $expected) {
@@ -66,7 +66,6 @@ class graphics_ui extends \depage_ui {
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
         }
-
         $this->display($cachedFile, $extension);
     }
     // }}}
@@ -112,10 +111,11 @@ class graphics_ui extends \depage_ui {
      * @return  void
      **/
     protected function mkPathToFile($file) {
-        $cachePath = dirname($file);
+        $cachePath = DEPAGE_CACHE_PATH."graphics/".dirname($file);
         if (!is_dir($cachePath)) {
-            mkdir($cachePath, 0755, true);
+            return mkdir($cachePath, 0755, true);
         }
+        return true;
     }
     // }}}
     // {{{ send_time()
