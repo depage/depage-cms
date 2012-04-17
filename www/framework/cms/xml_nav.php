@@ -78,7 +78,7 @@ class xml_nav {
     }
     // }}}
     
-    // addUrls()
+    // addUrls() {{{
     /**
      * Add Urls
      * 
@@ -90,7 +90,7 @@ class xml_nav {
      * 
      * @return \DOMDocument $xml
      */
-    private static function addUrls(\DOMElement $node, $url = '/')
+    private static function addUrls(\DOMElement $node, $url = '')
     {
         if($node->nodeName == 'pg:folder') {
             $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
@@ -130,7 +130,7 @@ class xml_nav {
         return $xml;
         */
     }
-    // }}
+    // }}}
     
     // {{{ transform()
     /**
@@ -172,4 +172,4 @@ class xml_nav {
     // }}}
 }
 
-?>
+// vim:set ft=php sw=4 sts=4 fdm=marker et :
