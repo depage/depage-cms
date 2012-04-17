@@ -8,7 +8,7 @@
  *
  * copyright (c) 2011 Frank Hellenkamp [jonas@depagecms.net]
  */
-(function( $ ){
+;(function( $ ){
     $.extend($.depage.fnMethods, {
         /* {{{ details */
         /**
