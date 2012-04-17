@@ -37,7 +37,7 @@
         option1: "default"
     };
     
-    $.fn.depage_slideshow = function(param1, options){
+    $.fn.depageSlideshow = function(param1, options){
         return this.each(function(){
             (new $.depage.slideshow(this, param1, options));
         });
