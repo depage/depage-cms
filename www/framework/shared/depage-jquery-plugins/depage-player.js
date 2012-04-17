@@ -1,6 +1,5 @@
 /**
  * @require framework/shared/jquery-1.4.2.js
- * @require depage-flash.js
  * 
  * @file depage-player.js
  * 
@@ -61,6 +60,7 @@
         var $wrapper = null;
         
         var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
+        var playing = false;
         
         // Set the player mode - 'html5' / 'flash' / false (fallback)
         var mode = false;
@@ -86,6 +86,20 @@
             base.options.playerId = base.options.playerId + index;
 
             $.depage.player.instances[base.options.playerId] = base;
+            
+            // listen to space
+            $(document).bind('keypress', function(e){
+                if (e.charCode == 32) {
+                    if (playing) {
+                        base.player.pause();
+                    } else {
+                        base.player.play();
+                    }
+
+                    return false;
+                }
+            });
+
         };
         // }}}
         
@@ -789,6 +803,10 @@
             base.controls.play.hide();
             base.controls.pause.show();
             base.controls.rewind.show();
+
+            base.options.onPlay && base.options.onPlay();
+
+            playing = true;
         };
         // }}}
         
@@ -802,6 +820,10 @@
             base.controls.play.show();
             base.controls.pause.hide();
             base.controls.rewind.show();
+
+            base.options.onPause && base.options.onPause();
+
+            playing = false;
         };
         // }}}
         
@@ -918,6 +940,11 @@
      */
     $.depage.player.instances = [];
     
+    var $scriptElement = $("script[src *= '/depage-player.js']");
+    var basePath = "";
+    if ($scriptElement.length > 0) {
+        basePath = $scriptElement[0].src.match(/^.*\//).toString();
+    }
     /**
      * Options
      * 
@@ -931,16 +958,19 @@
      * @param debug - if set, the flash player will send console.log messages for his actions
      */
     $.depage.player.defaultOptions = {
-        assetPath : $("script[src *= '/depage-player.js']")[0].src.match(/^.*\//).toString() + "depage_player/",
+        assetPath : basePath + "depage_player/",
         playerId : "dpPlayer",
         width : false,
         height : false,
         crop: true,
         constrain: true,
-        debug: false
+        debug: false,
+        onPlay: false,
+        onPause: false,
+        onEnd: false
     };
     
-    $.fn.depage_player = function(param1, options){
+    $.fn.depage_player = function(options){
         return this.each(function(index){
             (new $.depage.player(this, index, options));
         });
