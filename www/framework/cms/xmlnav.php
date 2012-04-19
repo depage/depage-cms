@@ -71,21 +71,25 @@ class xmlnav {
      * 
      * @return (string) last url
      */
-    private function addUrls(\DOMElement $node, $url = '') {
-        if ($url !== '' && substr($url, -1) != '/') {
-            $url .= "/";
-        }
+    private function addUrls(\DOMElement $node, $url = '', $lang) {
         if($node->nodeName == 'pg:folder') {
             $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
         } elseif ($node->nodeName == 'pg:page') {
             $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
-            $node->setAttribute('url', $url);
+
+            if ($node->getAttribute("isIndex") == "true") {
+                // set url as empty when index page
+                $node->setAttribute('url', $lang);
+            } else {
+                // set url calculated path
+                $node->setAttribute('url', $url);
+            }
         }
         if ($node->hasChildNodes()) {
             $i = 0;
             foreach($node->childNodes as $child){
                 if ($child instanceof \DOMElement) {
-                    $lastUrl = $this->addUrls($child, $url);
+                    $lastUrl = $this->addUrls($child, $url, $lang);
 
                     if ($i == 0) {
                         // keep url of first child as url for folder
@@ -116,11 +120,8 @@ class xmlnav {
      * @return \DOMDocument $xml 
      */
     private function addStatus(\DOMDocument $xml, $activeUrl, $lang) {
-        if ($lang !== '' && substr($lang, -1) != '/') {
-            $url = $lang . "/" . $activeUrl;
-        } else {
-            $url = $lang . $activeUrl;
-        }
+        $url = $lang . $activeUrl;
+
         $xpath = new \DOMXpath($xml);
         
         $pages = $xpath->query("//pg:page[@url='{$url}']");
@@ -160,8 +161,12 @@ class xmlnav {
             throw new \exception('You have to load a navigation xml-file.');
         }
 
+        if ($lang !== '' && substr($lang, -1) != '/') {
+            $lang .= "/";
+        }
+
         // add attributes to dom tree
-        $this->addUrls($this->xmlDOM, $lang);
+        $this->addUrls($this->xmlDOM, $lang, $lang);
         $this->addStatus($this->xmlDOM, $activeUrl, $lang);
 
         // initialize processor and transform
