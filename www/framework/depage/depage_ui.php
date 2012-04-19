@@ -83,7 +83,7 @@ class depage_ui {
         // @todo use parseurl?
         $dp_request_uri =  substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
-        if (strpos('?', $dp_request_uri)) {
+        if (strpos($dp_request_uri, '?')) {
             list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
         } else {
             $dp_request_path = $dp_request_uri;
