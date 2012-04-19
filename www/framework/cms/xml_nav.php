@@ -90,7 +90,7 @@ class xml_nav {
      * 
      * @return \DOMDocument $xml
      */
-    private static function addUrls(\DOMElement $node, $url = '/')
+    private static function addUrls($node, $url = '/')
     {
         if($node->nodeName == 'pg:folder') {
             $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';

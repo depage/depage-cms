@@ -30,6 +30,8 @@ class depage_ui {
     // }}}
 
     protected $urlpath = null;
+    
+    protected $urlSubArgs = array();
 
     // {{{ constructor
     /**
@@ -42,7 +44,11 @@ class depage_ui {
     public function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getDefaultsFromClass($this);
-
+        
+        if (!defined("DEPAGE_URL_HAS_LOCALE")) {
+            define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
+        }
+        
         $this->log = new log(array(
             'file' => DEPAGE_PATH . "/logs/" . str_replace("\\", "_", get_class($this)) . ".log",
         ));
@@ -96,8 +102,6 @@ class depage_ui {
         if ($dp_request_path[strlen($dp_request_path) - 1] == '/') {
             array_pop($dp_params);
         }
-
-        define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
 
         // strip locale
         if (DEPAGE_URL_HAS_LOCALE) {
