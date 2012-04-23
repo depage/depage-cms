@@ -116,8 +116,6 @@ class xmlnav {
      * Sets parent folder statuses to 'parent-of-active'.
      *
      * @param \DOMDocument $xml
-     * 
-     * @return \DOMDocument $xml 
      */
     private function addStatus(\DOMDocument $xml, $activeUrl, $lang) {
         $url = $lang . $activeUrl;
@@ -136,8 +134,22 @@ class xmlnav {
                 $ancestor->setAttribute('status', $this::PARENT_STATUS);
             }
         }
+    }
+    // }}}
+    // addLocalized() {{{
+    /**
+     * Add localized name
+     * 
+     * @param \DOMDocument $xml
+     */
+    private function addLocalized(\DOMDocument $xml, $lang) {
+        $xpath = new \DOMXpath($xml);
         
-        return $xml;
+        $nodes = $xpath->query("//*[@name]");
+        
+        foreach ($nodes as $node) {
+            $node->setAttribute('localized', _($node->getAttribute('name')));
+        }
     }
     // }}}
     
@@ -151,7 +163,7 @@ class xmlnav {
      * @param \DOMDocument $xml
      * @param \DOMDocument $xslt
      *  
-     * @return $html
+     * @return (string) $html
      */
     public function transform($activeUrl, $lang, $xslParam = array()) {
         if (!($this->xslDOM instanceof \DOMDocument)) {
@@ -168,6 +180,7 @@ class xmlnav {
         // add attributes to dom tree
         $this->addUrls($this->xmlDOM, $lang, $lang);
         $this->addStatus($this->xmlDOM, $activeUrl, $lang);
+        $this->addLocalized($this->xmlDOM, $lang);
 
         // initialize processor and transform
         $xslt = new \XSLTProcessor();
