@@ -41,6 +41,8 @@ class auth_user {
     static public function get_by_username($pdo, $username) {
         $uid_query = $pdo->prepare(
             "SELECT 
+                user.type,
+                user.type AS type,
                 user.id AS id,
                 user.name as name,
                 user.name_full as fullname,
@@ -53,11 +55,13 @@ class auth_user {
             WHERE
                 name = :name"
         );
+        
         $uid_query->execute(array(
             ':name' => $username,
         ));
-        $user = $uid_query->fetchObject("auth_user", array($pdo));
-
+        
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        
         return $user;
     }
     // }}}
@@ -74,7 +78,9 @@ class auth_user {
      */
     static public function get_by_sid($pdo, $sid) {
         $uid_query = $pdo->prepare(
-            "SELECT 
+            "SELECT
+                user.type,
+                user.type AS type,
                 user.id AS id,
                 user.name as name,
                 user.name_full as fullname,
@@ -92,8 +98,9 @@ class auth_user {
         $uid_query->execute(array(
             ':sid' => $sid,
         ));
-        $user = $uid_query->fetchObject("auth_user", array($pdo));
-
+        
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        
         return $user;
     }
     // }}}
@@ -110,7 +117,9 @@ class auth_user {
      */
     static public function get_by_id($pdo, $id) {
         $uid_query = $pdo->prepare(
-                "SELECT 
+                "SELECT
+                    user.type
+                    user.type AS type,
                     user.id AS id,
                     user.name as name,
                     user.name_full as fullname,
@@ -126,8 +135,9 @@ class auth_user {
         $uid_query->execute(array(
                 ':id' => $id,
         ));
-        $user = $uid_query->fetchObject("auth_user", array($pdo));
-    
+        
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        
         return $user;
     }
     // }}}    
@@ -147,7 +157,7 @@ class auth_user {
         if (!is_dir($cachepath)) {
             mkdir($cachepath, 0777, true);
         }
-
+        
         if (ini_get("browscap")) {
             $info = get_browser($this->useragent);
         } else {
@@ -158,7 +168,7 @@ class auth_user {
             //$browscap->updateMethod = Browscap::UPDATE_CURL;
             $info = $browscap->getBrowser($this->useragent);
         }
-
+        
         return "{$info->browser} {$info->version} on {$info->platform}";
     }
     // }}}
