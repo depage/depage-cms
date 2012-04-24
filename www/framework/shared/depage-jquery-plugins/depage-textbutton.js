@@ -26,36 +26,44 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.textbutton", base);
 
-        // @todo check if element is input/button and make it also work if element is form
         base.init = function(){
             base.options = $.extend({},$.depage.textbutton.defaultOptions, options);
             
-            // Put your initialization code here
-            base.$el.css({
-                position: "absolute",
-                left: "-10000px",
-                width: "100px"
-            });
+            var $inputs = base.$el.filter("input");
+            if ($inputs.length == 0) {
+                // base.$el is not a input so we search for the children
+                $inputs = base.$el.find(base.options.elements);
+            }
 
-            // add link and click event to it
-            $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + base.el.value + "</a>").insertAfter(base.el).click( function() {
-                if (base.$el.filter(":submit").length == 0) {
-                    base.$el.click();
-                } else {
-                    var $form = base.$el.parents("form");
+            $inputs.each( function() {
+                var $button = $(this);
 
-                    if (base.$el.parent().hasClass("cancel")) {
-                        // dont validate when cancel-button was pressed
-                        $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + base.el.value + "\">").appendTo($form);
-                        $form.data("validator").destroy();
+                $button.css({
+                    position: "absolute",
+                    left: "-10000px",
+                    width: "100px"
+                });
+
+                // add link and click event to it
+                $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + this.value + "</a>").insertAfter(this).click( function() {
+                    if ($button.filter(":submit").length == 0) {
+                        $button.click();
                     } else {
-                        $form.find("input.formSubmit:hidden").remove();
+                        var $form = $button.parents("form");
+
+                        if ($button.parent().hasClass("cancel")) {
+                            // dont validate when cancel-button was pressed
+                            $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + this.value + "\">").appendTo($form);
+                            $form.data("validator").destroy();
+                        } else {
+                            $form.find("input.formSubmit:hidden").remove();
+                        }
+
+                        $form.submit();
                     }
 
-                    $form.submit();
-                }
-
-                return false;
+                    return false;
+                });
             });
         };
         // Run initializer
@@ -63,7 +71,7 @@
     };
     
     $.depage.textbutton.defaultOptions = {
-        option1: "default"
+        elements: "input:submit, input:reset, input:button"
     };
     
     $.fn.depageTextbutton = function(options){
