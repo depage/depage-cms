@@ -1,5 +1,6 @@
 /**
  * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/depage-jquery-plugins/depage-flash.js
  * 
  * @file depage-player.js
  * 
@@ -90,6 +91,7 @@
             // listen to space
             $(document).bind('keypress', function(e){
                 if (e.charCode == 32) {
+                    // space
                     if (playing) {
                         base.player.pause();
                     } else {
@@ -97,6 +99,15 @@
                     }
 
                     return false;
+                } else if (e.keyCode == 102) {
+                    // f
+                    base.player.fullscreen();
+                } else if (e.keyCode == 39) {
+                    // cursor right
+                    base.player.seek(base.player.currentTime + 10);
+                } else if (e.keyCode == 37) {
+                    // cursor left
+                    base.player.seek(base.player.currentTime - 9);
                 }
             });
 
@@ -284,7 +295,6 @@
                  * @return false
                  */
                 base.player.fullscreen = function(){
-                    
                     if (typeof(base.player.webkitEnterFullScreen) !== 'undefined') {
                         base.player.webkitEnterFullScreen();
                     } else if (typeof(base.player.webkitRequestFullScreen) !== 'undefined') {
@@ -752,12 +762,14 @@
                     return false;
                 });
             
-            base.controls.rewind = $("<a class=\"fullscreen\"><img src=\"" + base.options.assetPath + "fullscreen_button" + imgSuffix + "\" alt=\"fullscreen\"></a>")
-                .appendTo(div)
-                .click(function() {
-                    base.player.fullscreen();
-                    return false;
-            });
+            if (mode != "flash") {
+                base.controls.fullscreen = $("<a class=\"fullscreen\"><img src=\"" + base.options.assetPath + "fullscreen_button" + imgSuffix + "\" alt=\"fullscreen\"></a>")
+                    .appendTo(div)
+                    .click(function() {
+                        base.player.fullscreen();
+                        return false;
+                });
+            }
             
             base.controls.progress = $("<span class=\"progress\" />")
                 .mouseup(function(e) {
@@ -970,7 +982,7 @@
         onEnd: false
     };
     
-    $.fn.depage_player = function(options){
+    $.fn.depagePlayer = function(options){
         return this.each(function(index){
             (new $.depage.player(this, index, options));
         });
