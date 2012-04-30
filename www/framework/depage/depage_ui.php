@@ -282,7 +282,9 @@ class depage_ui {
         $h = "";
 
         $h .= "<h1>Error</h1>";
-        if ($env == "production") {
+        if (is_string($error)) {
+            $h .= "<p>{$error}</p>";
+        } elseif ($env == "production") {
             $h .= "<p>{$error->msg}</p>";
         } elseif ($env == "development") {
             $h .= "<p>{$error->msg}";

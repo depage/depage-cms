@@ -99,13 +99,11 @@ class html {
 
         ob_start();
         if ($this->template !== null) {
-
-            try {
-                require($this->param["template_path"] . $this->template);
-            } catch (Exception $e) {
-                echo($e);
+            //require($this->param["template_path"] . $this->template);
+            if(!@include($this->param["template_path"] . $this->template)) {
+                echo("<h1>Template error</h1>");
+                echo("<p>Could not load template '$this->template'<p>");
             }
-
         } else {
             html::e($this->content);
         }
