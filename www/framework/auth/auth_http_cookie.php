@@ -150,16 +150,25 @@ class auth_http_cookie extends auth {
     // }}}
     // {{{ has_session()
     protected function has_session() {
-        return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+        if (is_callable("session_status") && session_status() == PHP_SESSION_ACTIVE) {
+            // PHP 5.4
+            return true;
+        } else {
+            return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+        }
     } 
     // }}}
     // {{{ destroy_session()
     protected function destroy_session() {
-        //$this->start_session();
-
-        setcookie(session_name(), "", time() - 3600, $this->cookiepath);
-        session_destroy();
-        unset($_COOKIE[session_name()]);
+        if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+            session_destroy();
+            unset($_COOKIE[session_name()]);
+        }
     } 
     // }}}
     
