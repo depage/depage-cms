@@ -67,11 +67,11 @@ class xmlnav {
      * The url is built from the page name and the names of ancestor folders.
      * e.g. folder1/folder2/page1
      * 
-     * @param \DOMDocument $xml
+     * @param \DOMNode $xml
      * 
      * @return (string) last url
      */
-    private function addUrls(\DOMElement $node, $url = '', $lang) {
+    private function addUrls(\DOMNode $node, $url = '', $lang) {
         if($node->nodeName == 'pg:folder') {
             $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
         } elseif ($node->nodeName == 'pg:page') {
