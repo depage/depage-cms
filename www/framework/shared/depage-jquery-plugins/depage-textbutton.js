@@ -36,6 +36,7 @@
             }
 
             $inputs.each( function() {
+                var button = this;
                 var $button = $(this);
 
                 $button.css({
@@ -45,7 +46,7 @@
                 });
 
                 // add link and click event to it
-                $("<a href=\"#" + this.value + "\" class=\"textbutton\">" + this.value + "</a>").insertAfter(this).click( function() {
+                $("<a href=\"#" + button.value + "\" class=\"textbutton\">" + button.value + "</a>").insertAfter(button).click( function() {
                     if ($button.filter(":submit").length == 0) {
                         $button.click();
                     } else {
@@ -53,7 +54,7 @@
 
                         if ($button.parent().hasClass("cancel")) {
                             // dont validate when cancel-button was pressed
-                            $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + this.value + "\">").appendTo($form);
+                            $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + button.value + "\">").appendTo($form);
                             $form.data("validator").destroy();
                         } else {
                             $form.find("input.formSubmit:hidden").remove();
