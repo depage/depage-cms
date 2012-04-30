@@ -1,6 +1,7 @@
 /**
  * @require framework/shared/jquery-1.4.2.js
  * @require framework/shared/depage-jquery-plugins/depage-flash.js
+ * @require framework/shared/depage-jquery-plugins/depage-browser.js
  * 
  * @file depage-player.js
  * 
@@ -62,6 +63,9 @@
         
         var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
         var playing = false;
+
+        // use the build-in controls for iPhone and iPad
+        var useCustomControls = !$.browser.iphone && !$.browser.ipad;
         
         // Set the player mode - 'html5' / 'flash' / false (fallback)
         var mode = false;
@@ -198,7 +202,15 @@
                 return false;
             });
             
-            base.addControls();
+            var div = $("<div class=\"controls\"></div>");
+            if (useCustomControls) {
+                base.addControls(div);
+            } else {
+                $indicator.remove();
+                $video.attr("controls", "true");
+            }
+            base.addLegend(div);
+            div.appendTo(base.$el);
         };
         // }}}
         
@@ -206,14 +218,13 @@
          * Namespace HTML5 funcitons
          */
         base.html5 = {
-            // {{{ html5 setup
+            // {{{ setup
             /**
              * HTML5 Setup the handlers for the HTML5 video
              * 
              * @return void
              */
-            setup : function(){
-                
+            setup : function() {
                 $video.bind("play", function(){
                     base.play();
                 });
@@ -224,7 +235,7 @@
                 
                 $video.bind("pause", function(){
                     base.pause();
-                    });
+                });
                 
                 $video.bind("durationchange", function(){
                     base.duration(this.duration);
@@ -724,6 +735,24 @@
         };
         // }}}
         
+        // {{{ addLegend()
+        /**
+         * Add Control and Legend-Wrapper
+         * 
+         * @return void
+         */
+        base.addLegend = function(div){
+            var requirements = $("p.requirements", base.$el);
+            var legend = $("p.legend", base.$el);
+            
+            $("<p class=\"legend\"><span>" + legend.text() + "</span></p>").appendTo(div);
+            
+            legend.hide();
+            requirements.hide();
+
+            return div;
+        };
+        // }}}
         // {{{ addControls()
         /**
          * Add Controls
@@ -732,14 +761,25 @@
          * 
          * @return void
          */
-        base.addControls = function(){
-            
-            var legend = $("p.legend", base.$el);
-            var requirements = $("p.requirements", base.$el);
-            
+        base.addControls = function(div){
             var imgSuffix = ($.browser.msie && $.browser.version < 7) ? ".gif" : ".png";
+
+            $video.removeAttr("controls");
+
+            base.controls.progress = $("<span class=\"progress\" />")
+                .mouseup(function(e) {
+                    var offset = (e.pageX - $(this).offset().left) / $(this).width() * duration;
+                    base.player.seek(offset);
+                });
             
-            var div = $("<div class=\"controls\"></div>");
+            base.controls.buffer = $("<span class=\"buffer\"></span>")
+                .appendTo(base.controls.progress);
+            
+            base.controls.position = $("<span class=\"position\"></span>")
+                .appendTo(base.controls.progress);
+            
+            base.controls.progress.appendTo(div);
+            
             
             base.controls.play = $("<a class=\"play\"><img src=\"" + base.options.assetPath + "play_button" + imgSuffix + "\" alt=\"play\"></a>")
                 .appendTo(div)
@@ -771,20 +811,6 @@
                 });
             }
             
-            base.controls.progress = $("<span class=\"progress\" />")
-                .mouseup(function(e) {
-                    var offset = (e.pageX - $(this).offset().left) / $(this).width() * duration;
-                    base.player.seek(offset);
-                });
-            
-            base.controls.buffer = $("<span class=\"buffer\"></span>")
-                .appendTo(base.controls.progress);
-            
-            base.controls.position = $("<span class=\"position\"></span>")
-                .appendTo(base.controls.progress);
-            
-            base.controls.progress.appendTo(div);
-            
             base.controls.time = $("<span class=\"time\" />");
             
             base.controls.current = $("<span class=\"current\">00:00/</span>")
@@ -794,13 +820,6 @@
                 .appendTo(base.controls.time);
             
             base.controls.time.appendTo(div);
-            
-            $("<p class=\"legend\"><span>" + legend.text() + "</span></p>").appendTo(div);
-            
-            div.appendTo(base.$el);
-            
-            legend.hide();
-            requirements.hide();
         };
         // }}}
         
@@ -812,6 +831,7 @@
          */
         base.play = function() {
             $indicator.hide();
+
             base.controls.play.hide();
             base.controls.pause.show();
             base.controls.rewind.show();
@@ -829,6 +849,8 @@
          * @return void
          */
         base.pause = function() {
+            $indicator.show();
+
             base.controls.play.show();
             base.controls.pause.hide();
             base.controls.rewind.show();
