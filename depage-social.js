@@ -17,6 +17,9 @@
         // {{{ init
         base.init = function(){
             base.options = $.extend({}, $.depage.socialButtons.defaultOptions, options);
+            
+            base.url = encodeURIComponent(base.options.location);
+            base.title = encodeURIComponent(base.options.title);
 
             $.each(base.options.services, function(i, name) {
                 // normalize name
@@ -38,7 +41,7 @@
         base.addSocialButton = function(name, link, text) {
             var html = "";
 
-            html += "<a href=\"" + link + "\" class=\"" + name + "\">";
+            html += "<a class=\"" + name + "\">";
             if (base.options.assetPath !== "") {
                 // image link
                 html += "<img src=\"" + base.options.assetPath + name.toLowerCase() + ".png\" alt=\"" + name + "\">";
@@ -48,44 +51,79 @@
             }
             html += "</a>";
 
-            base.$el.append(html);
+            var $link = $(html).appendTo(base.$el)
+
+            if (link !== "") {
+                $link.attr("href", link);
+            }
+            if (link.substr(0, 4) == "http")  {
+                $link.attr("target", "_blank");
+                $link.click(function() {
+                    var w = 850;
+                    var h = 500;
+                    var options = "height=" + h + ",width=" + w + ",fullscreen=0,dependent=0,location=0,menubar=0,resizable=1,scrollbars=0,status=1,titlebar=0,toolbar=0";
+                    
+                    return !window.open(this.href, name, options);
+                });
+            }
+
+            return $link;
         };
         // }}}
         
         // {{{ addTwitter
         base.addTwitter = function(name) {
-            var link = "twitter";
+            var link = "http://twitter.com/share?text=" + base.title + "&url=" + base.url;
             base.addSocialButton(name, link, "t");
         };
         // }}}
         // {{{ addFacebookshare
         base.addFacebookshare = function(name) {
-            var link = "facebookShare";
+            var link = "http://www.facebook.com/sharer.php?t=" + base.title + "&u=" + base.url;
             base.addSocialButton(name, link, "f");
         };
         // }}}
         // {{{ addFacebooklike
         base.addFacebooklike = function(name) {
-            var link = "facebookLike";
+            if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+                // opacity not supported
+                return;
+            }
+            var link = "";
+            var iframe = "<iframe id=\"facebook\" src=\"//www.facebook.com/plugins/like.php?href=" + base.url + "&amp;send=false&amp;layout=standard&amp;width=30&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;height=30\" scrolling=\"no\" frameborder=\"0\" style=\"border:none; overflow:hidden; width:30px; height:30;\" allowTransparency=\"true\"></iframe>";
+
             base.addSocialButton(name, link, "♥");
+            $(iframe).appendTo(base.$el);
         };
         // }}}
         // {{{ addGoogleplusshare
         base.addGoogleplusshare = function(name) {
-            var link = "googleplusShare";
+            var link = "https://plusone.google.com/_/+1/confirm?url=" + base.url;
             base.addSocialButton(name, link, "+1");
+        };
+        // }}}
+        // {{{ addLinkedin
+        base.addLinkedin = function(name) {
+            var link = "http://www.linkedin.com/cws/share?url=" + base.url;
+            base.addSocialButton(name, link, "li");
         };
         // }}}
         // {{{ addDigg
         base.addDigg = function(name) {
-            var link = "digg";
+            var link = "http://digg.com/submit?url=" + base.url;
             base.addSocialButton(name, link, "digg");
         };
         // }}}
         // {{{ addReddit
         base.addReddit = function(name) {
-            var link = "reddit";
+            var link = "http://www.reddit.com/submit?url=" + base.url;
             base.addSocialButton(name, link, "reddit");
+        };
+        // }}}
+        // {{{ addMail
+        base.addMail = function(name) {
+            var link = "mailto:?subject=link . " + base.title + "&body=" + base.url;
+            base.addSocialButton(name, link, "mail");
         };
         // }}}
         
@@ -111,6 +149,8 @@
             'facebookShare',
             'googleplusShare',
             'facebookLike',
+            'mail',
+            'linkedin',
             'digg',
             'reddit'
         ]
