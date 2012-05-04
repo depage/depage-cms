@@ -19,7 +19,11 @@
             base.options = $.extend({}, $.depage.socialButtons.defaultOptions, options);
             
             base.url = encodeURIComponent(base.options.location);
-            base.title = encodeURIComponent(base.options.title);
+            if (base.options.title !== "") {
+                base.title = encodeURIComponent(base.options.title);
+            } else {
+                base.title = document.title;
+            }
 
             $.each(base.options.services, function(i, name) {
                 // normalize name
@@ -143,7 +147,7 @@
     $.depage.socialButtons.defaultOptions = {
         assetPath: '',
         location: document.location.href,
-        title: $("head title").text(),
+        title: "",
         services: [
             'twitter',
             'facebookShare',
