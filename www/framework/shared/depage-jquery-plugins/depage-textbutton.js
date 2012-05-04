@@ -60,7 +60,8 @@
                             $form.find("input.formSubmit:hidden").remove();
                         }
 
-                        $form.submit();
+                        //$form.submit();
+                        $button.click();
                     }
 
                     return false;
