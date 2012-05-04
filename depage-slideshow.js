@@ -27,12 +27,12 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.slideshow", base);
 
-        var divs = base.$el.children("div, span");
+        var divs;
         var timer;
 
         base.activeSlide = 0;
         base.playing = false;
-        base.num = divs.length;
+        base.num = 0;
         /* }}} */
         
         /* {{{ init() */
@@ -40,6 +40,9 @@
             base.options = $.extend({},$.depage.slideshow.defaultOptions, options);
             base.options.speed = Number(base.$el.attr("data-slideshow-speed")) || base.options.speed;
             base.options.pause = Number(base.$el.attr("data-slideshow-pause")) || base.options.pause;
+
+            divs = base.$el.children(base.options.elements);
+            base.num = divs.length;
 
             if ($.browser.iphone) {
                 // disable fading on the iPhone > just skip to next image
@@ -157,6 +160,7 @@
     
     /* {{{ defaultOptions() */
     $.depage.slideshow.defaultOptions = {
+        elements: "div, span",
         speed: 3000,
         pause: 3000
     };
