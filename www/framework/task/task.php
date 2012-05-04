@@ -92,6 +92,17 @@ class task {
         }
     }
     // }}}
+    // {{{ loadOrCreate()
+    static public function loadOrCreate($task_name, $table_prefix, $pdo) {
+        list($task) = self::loadByName($task_name, $table_prefix, $pdo);
+
+        if (!$task) {
+            $task = self::create($task_name, $table_prefix, $pdo);
+        }
+
+        return $task;
+    }
+    // }}}
     // {{{ create()
     static public function create($task_name, $table_prefix, $pdo) {
         $task = new task($table_prefix, $pdo);
@@ -146,6 +157,12 @@ class task {
     // {{{ getNextSubtask();
     public function getNextSubtask() {
         $subtask = current($this->subtasks);
+
+        if (!$subtask) {
+            // check if there have been added new subtasks to the database
+            $this->loadSubtasks();
+            $subtask = current($this->subtasks);
+        }
         next($this->subtasks);
 
         return $subtask;
