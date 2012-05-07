@@ -22,7 +22,7 @@
             if (base.options.title !== "") {
                 base.title = encodeURIComponent(base.options.title);
             } else {
-                base.title = document.title;
+                base.title = encodeURIComponent(document.title);
             }
 
             $.each(base.options.services, function(i, name) {
@@ -94,7 +94,7 @@
                 return;
             }
             var link = "";
-            var iframe = "<iframe id=\"facebook\" src=\"//www.facebook.com/plugins/like.php?href=" + base.url + "&amp;send=false&amp;layout=standard&amp;width=30&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;height=30\" scrolling=\"no\" frameborder=\"0\" style=\"border:none; overflow:hidden; width:30px; height:30;\" allowTransparency=\"true\"></iframe>";
+            var iframe = "<span class=\"over\"><iframe id=\"facebook\" src=\"//www.facebook.com/plugins/like.php?href=" + base.url + "&amp;send=false&amp;layout=standard&amp;width=30&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;height=30\" scrolling=\"no\" frameborder=\"0\" style=\"border:none; overflow:hidden; width:30px; height:30px;\" allowTransparency=\"true\"></iframe><span>";
 
             base.addSocialButton(name, link, "♥");
             $(iframe).appendTo(base.$el);
