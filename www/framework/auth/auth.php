@@ -316,6 +316,7 @@ class auth {
         // get user object for info
         $user = auth_user::get_by_sid($this->pdo, $sid);
         if ($user) {
+            $user->logout($sid);
             $this->log->log("'{$user->name}' has logged out with $sid", "auth");
         }
 

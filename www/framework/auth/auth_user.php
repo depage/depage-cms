@@ -140,7 +140,8 @@ class auth_user {
         
         return $user;
     }
-    // }}}    
+    // }}} 
+       
     // {{{ get_useragent()
     /**
      * gets a user-object by sid (session-id) directly from database
@@ -170,6 +171,21 @@ class auth_user {
         }
         
         return "{$info->browser} {$info->version} on {$info->platform}";
+    }
+    // }}}
+    // logout {{{
+    /**
+     * Logout
+     * 
+     * Called when the user is logged out.
+     * 
+     * Override in inheriting classes to provide session end functionality.
+     * 
+     * @param $session_id
+     * 
+     * @return void
+     */
+    public function logout($session_id) {
     }
     // }}}
 }
