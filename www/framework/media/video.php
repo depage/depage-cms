@@ -6,8 +6,8 @@ class video
 {
     const FFMPEG = '/opt/local/bin/ffmpeg';
     
-    public static function toMp4($file, $width, $height) {
-        $out = self::stripExt($file) . '.mp4';
+    public static function toMp4($input_name, $output_name, $width, $height) {
+        $output_name = pathinfo($output_name, PATHINFO_FILENAME) . '.mp4';
         
         $codec = 'libxvid';
         $maxrate = '1000';
@@ -15,11 +15,11 @@ class video
         $qmax = 5;
         $bufsize = 4096;
         
-        $cmd = self::FFMPEG . " -i \"{$file}\" -f mp4 -vcodec {$codec} -maxrate {$maxrate} -qmin {$qmin} -qmax {$qmin} -bufsize {$bufsize} -g 300 -acodec aac -strict experimental -mbd 2 -s {$width}x{$height} -ab 256 -b:v 400 \"{$out}\"";
+        $cmd = self::FFMPEG . " -i \"{$input_name}\" -f mp4 -vcodec {$codec} -maxrate {$maxrate} -qmin {$qmin} -qmax {$qmin} -bufsize {$bufsize} -g 300 -acodec aac -strict experimental -mbd 2 -s {$width}x{$height} -ab 256 -b:v 400 \"{$output_name}\"";
         
         self::call($cmd);
         
-        return self::getInfo($out);
+        return self::getInfo($output_name);
     }
     
     public static function getDuration($file) {
@@ -71,17 +71,17 @@ class video
     -s = resolution size
     -f = force format
     */    
-    public static function getThumbnails($file, $width, $height) {
-        $duration = self::getDuration($file);
+    public static function getThumbnails($input_name, $output_name, $width, $height) {
+        $duration = self::getDuration($input_name);
         $thumbnails = array();
-        $path = self::stripExt($file);
+        $path =  pathinfo($output_name, PATHINFO_FILENAME);
         
         $basename = basename($path);
         
         for ($i = 1; $i <= 5; $i++ ) {
             $out = $path . $i.  '.jpg';
             $interval = $duration * $i / 6;
-            $cmd = '"' . self::FFMPEG . "\" -i \"{$file}\" -f mjpeg -an -y -ss {$interval} -s {$width}x{$height} \"{$out}\"";
+            $cmd = '"' . self::FFMPEG . "\" -i \"{$input_name}\" -f mjpeg -an -y -ss {$interval} -s {$width}x{$height} \"{$out}\"";
             self::call($cmd);
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
@@ -109,11 +109,6 @@ class video
         */
         
         return $output;
-    }
-    
-    private static function stripExt($path) {
-        $info = pathinfo($path);
-        return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'];
     }
 }
 
