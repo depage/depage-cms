@@ -49,7 +49,7 @@ class video {
         'width' => 640,
         'height' => 360,
         'vrate' => "1000k",
-        'arate' => "128k",
+        'arate' => "64k",
         'qmin' => 3,
         'qmax' => 5,
         'bufsize' => 4096,
@@ -59,6 +59,7 @@ class video {
     // properties {{{
     var $ffmpeg = 'ffmpeg';
     var $ffprobe = 'ffprobe';
+    var $qtfaststart = 'qtfaststart';
     // }}}
     
     // {{{ constructor
@@ -93,12 +94,11 @@ class video {
         if (empty($outfile)) {
             $outfile = $infile;
         }
-        $outfile = pathinfo($outfile, PATHINFO_FILENAME) . '.mp4';
+        $outfile = $this->stripExt($outfile) . '.mp4';
         
         $vcodec = 'libxvid';
         $acodec = 'aac';
         $extra = '-strict experimental -f mp4';
-        
         $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
         $this->mp4faststart($outfile);
         
@@ -120,7 +120,7 @@ class video {
         if (empty($outfile)) {
             $outfile = $infile;
         }
-        $outfile = pathinfo($outfile, PATHINFO_FILENAME) . '.mp4';
+        $outfile = $this->stripExt($outfile) . '.webm';
         
         $vcodec = 'libvpx';
         $acodec = 'libvorbis';
@@ -144,7 +144,10 @@ class video {
         $in = $file . ".tmp.mp4";
         $out = $file;
         
-        @unlink($in);
+        if (file_exists($in)) {
+            unlink($in);
+        }
+        
         rename($out, $in);
         
         $inArg = escapeshellarg($in);
@@ -175,7 +178,6 @@ class video {
         
         $cmd = "{$this->ffmpeg} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
         $this->call($cmd);
-        
         return $this->getInfo($outfile);
     }
     // }}}
@@ -206,11 +208,11 @@ class video {
      * @param string $file
      * @throws \exception
      * 
-     * @return array $info = ('duration'=>...,'filesize'=>... ,'format'=>...,'filename'=>...)
+     * @return array $info = ('filename'=>..., 'duration'=>...,'filesize'=>... ,'bitrate'=>...,'format'=>...,)
      */
     public function getInfo($file) {
-        
         $info = array(
+            'filename'=>basename($file),
             'duration'=>0,
             'filesize'=>0,
             'bitrate'=>0,
@@ -236,7 +238,7 @@ class video {
         
         if (preg_match('/bitrate: (.\d+)/s', $result, $matches)) {
             $info['bitrate'] = $matches[1];
-            $info['filesize'] = $bitrate * $duration * 1000; // TODO verify bitrate is kbs
+            $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000; // TODO verify bitrate is kbs
         } else {
             throw new \exception("Could not read ffmpeg bitrate.");
         }
@@ -261,17 +263,16 @@ class video {
      */
     public function getThumbnails($infile, $outfile, $width = null, $height = null, $intervals = 5) {
         if (empty($width)){
-            $width = $this->option->width;
+            $width = $this->width;
         }
         if (empty($height)){
-            $height = $this->option->height;
+            $height = $this->height;
         }
-        
         $duration = $this->getDuration($infile);
         $thumbnails = array();
-        $path =  pathinfo($outfile, PATHINFO_FILENAME);
+        $path =  $this->stripExt($outfile);
         
-        $fileArg = escapeshellarg($file);
+        $fileArg = escapeshellarg($infile);
         
         $basename = basename($path);
         
@@ -312,9 +313,22 @@ class video {
             
             //throw new \Exception('Error executing ffmpeg');
         }
-        exit;
         return $output;
     }
+    // }}}
+    
+    // stripExt() {{{
+    /**
+     * Strip File Extension
+     * 
+     * @param string - file path
+     * @return string
+     */
+    private function stripExt($file) {
+        $pathinfo = pathinfo($file);
+        return "{$pathinfo['dirname']}/{$pathinfo['filename']}";
+    }
+    // }}}
 }
 // }}}
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
