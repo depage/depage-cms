@@ -45,6 +45,9 @@ class graphics_ui extends \depage_ui {
         $width      = intval($command[4]);
         $height     = intval($command[5]);
         $extension  = $this->letters($command[6]);
+
+        if ($width == 0) $width = null;
+        if ($height == 0) $height = null;
         
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
         
@@ -60,11 +63,18 @@ class graphics_ui extends \depage_ui {
         }
         
         try {
-            $img->{"add$action"}($width, $height)->render($file, $cachedFile);
+            if (is_callable(array($img, "add$action"))) {
+                $img->{"add$action"}($width, $height)->render($file, $cachedFile);
+            } else {
+                header("HTTP/1.1 500 Internal Server Error");
+                echo("unknown action");
+            }
         } catch (depage\graphics\graphics_file_not_found_exception $expected) {
             header("HTTP/1.1 404 Not Found");
+            echo("file not found");
         } catch (depage\graphics\graphics_exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
+            echo("an error occured");
         }
         $this->display($cachedFile, $extension);
     }
@@ -80,13 +90,13 @@ class graphics_ui extends \depage_ui {
     protected function display($fileName, $format) {
         if ($format === 'jpg' || $format === 'jpeg') {
             header("Content-type: image/jpeg");
-            imagejpeg(imagecreatefromjpeg($fileName));
+            readfile($fileName);
         } else if ($format === 'png') {
             header("Content-type: image/png");
-            imagejpeg(imagecreatefrompng($fileName));
+            readfile($fileName);
         } else if ($format === 'gif') {
             header("Content-type: image/gif");
-            imagejpeg(imagecreatefromgif($fileName));
+            readfile($fileName);
         }
     }
     // }}}
