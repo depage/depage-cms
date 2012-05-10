@@ -41,29 +41,29 @@ class html {
         }
 
         if ($this->param !== null) {
-            $this->set_html_options($this->param);
+            $this->setHtmlOptions($this->param);
         }
     }
     // }}}
-    // {{{ set_child_options()
+    // {{{ setHtmlOptions()
     /**
      * gives the options to child-templates
      */
-    public function set_html_options($param) {
+    public function setHtmlOptions($param) {
         $this->param = $param;
 
         foreach ($this->args as $arg) {
             // set to parent params to params if not set
             if (is_object($arg) and get_class($arg) == "html") {
                 if ($arg->param === null) {
-                    $arg->set_html_options($param);
+                    $arg->setHtmlOptions($param);
                 }
             } else if (is_array($arg)) {
                 // set to parent params to params for subarray if not set
                 foreach ($arg as $a) {
                     if (is_object($a) and get_class($a) == "html") {
                         if ($a->param === null) {
-                            $a->set_html_options($param);
+                            $a->setHtmlOptions($param);
                         }
                     }
                 }
@@ -217,11 +217,11 @@ class html {
                 $cache->setFile($identifier, $src, true);
             }
 
-            echo("<script type=\"text/javascript\" src=\"" . $cache->getUrl($identifier) . "\"></script>\n");
+            echo("<script src=\"" . $cache->getUrl($identifier) . "\"></script>\n");
         } else {
             // development environement
             foreach ($files as $file) {
-                echo("<script type=\"text/javascript\" src=\"$file\"></script>\n");
+                echo("<script src=\"$file\"></script>\n");
             }
         }
     }
@@ -375,13 +375,25 @@ class html {
      * outputs the url to a localized link
      *
      * @param   $link (string) page to link to 
-     * @param   $locale (string) locale to link to 
      * @param   $protocol (string) protocol to use for the link
+     * @param   $locale (string) locale to link to 
      *
      * @return  void
      */
-    static function a($link, $locale = null, $protocol = null) {
-        html::t(html::link($link, $locale, $protocol));
+    static function a($link, $protocol = null, $locale = null) {
+        html::t(html::link($link, $protocol, $locale));
+    }
+    // }}}
+    // {{{ hash()
+    /**
+     * creates hash tag for locations from text
+     *
+     * @param   $text (string) text to escape for used in url hash
+     *
+     * @return  (string) escaped string
+     */
+    static function hash($text = "") {
+        return htmlspecialchars(self::get_url_escaped($text));
     }
     // }}}
     
@@ -396,25 +408,7 @@ class html {
      * @return  url
      */
     static function link($link, $protocol = null, $locale = null) {
-        if (is_null($locale)) {
-            $lang = DEPAGE_LANG;
-        } else {
-            $lang = Locale::getPrimaryLanguage($locale);
-        }
-        if (!is_null($protocol)) {
-            if ($protocol == "auto") {
-                $base = DEPAGE_BASE;
-            } else {
-                $base = preg_replace("/.*:\/\//", $protocol . "://", DEPAGE_BASE);
-            }
-        } else {
-            $base = "";
-        }
-        if (DEPAGE_URL_HAS_LOCALE) {
-            return $base . $lang . '/' . $link;
-        } else {
-            return $base . $link;
-        }
+        return new \depage\html\link($link, $protocol, $locale);
     }
     // }}}
 
@@ -470,76 +464,76 @@ class html {
     public static function get_url_escaped ($text, $limit = 100) {
         // {{{ substitutes
         $substitutes = array(
-                'Å '=>'S',
-                'Å¡'=>'s',
-                'Ã�'=>'Dj',
-                'Å½'=>'Z',
-                'Å¾'=>'z',
-                'Ã€'=>'A',
-                'Ã�'=>'A',
-                'Ã‚'=>'A',
-                'Ãƒ'=>'A',
-                'Ã„'=>'AE',
-                'Ã…'=>'A',
-                'Ã†'=>'A',
-                'Ã‡'=>'C',
-                'Ãˆ'=>'E',
-                'Ã‰'=>'E',
-                'ÃŠ'=>'E',
-                'Ã‹'=>'E',
-                'ÃŒ'=>'I',
-                'Ã�'=>'I',
-                'ÃŽ'=>'I',
-                'Ã�'=>'I',
-                'Ã‘'=>'N',
-                'Ã’'=>'O',
-                'Ã“'=>'O',
-                'Ã”'=>'O',
-                'Ã•'=>'O',
-                'Ã–'=>'OE',
-                'Ã˜'=>'O',
-                'Ã™'=>'U',
-                'Ãš'=>'U',
-                'Ã›'=>'U',
-                'Ãœ'=>'UE',
-                'Ã�'=>'Y',
-                'Ãž'=>'B',
-                'ÃŸ'=>'ss',
-                'Ã '=>'a',
-                'Ã¡'=>'a',
-                'Ã¢'=>'a',
-                'Ã£'=>'a',
-                'Ã¤'=>'ae',
-                'Ã¥'=>'a',
-                'Ã¦'=>'a',
-                'Ã§'=>'c',
-                'Ã¨'=>'e',
-                'Ã©'=>'e',
-                'Ãª'=>'e',
-                'Ã«'=>'e',
-                'Ã¬'=>'i',
-                'Ã­'=>'i',
-                'Ã®'=>'i',
-                'Ã¯'=>'i',
-                'Ã°'=>'o',
-                'Ã±'=>'n',
-                'Ã²'=>'o',
-                'Ã³'=>'o',
-                'Ã´'=>'o',
-                'Ãµ'=>'o',
-                'Ã¶'=>'oe',
-                'Ã¸'=>'o',
-                'Ã¹'=>'u',
-                'Ãº'=>'u',
-                'Ã»'=>'u',
-                'Ã¼'=>'ue',
-                'Ã½'=>'y',
-                'Ã½'=>'y',
-                'Ã¾'=>'b',
-                'Ã¿'=>'y',
-                'Æ’'=>'f',
-                'Â§'=>'-',
-                'Â°'=>'-',
+            'Š'=>'S',
+            'š'=>'s',
+            'Ð'=>'Dj',
+            'Ž'=>'Z',
+            'ž'=>'z',
+            'À'=>'A',
+            'Á'=>'A',
+            'Â'=>'A',
+            'Ã'=>'A',
+            'Ä'=>'AE',
+            'Å'=>'A',
+            'Æ'=>'A',
+            'Ç'=>'C',
+            'È'=>'E',
+            'É'=>'E',
+            'Ê'=>'E',
+            'Ë'=>'E',
+            'Ì'=>'I',
+            'Í'=>'I',
+            'Î'=>'I',
+            'Ï'=>'I',
+            'Ñ'=>'N',
+            'Ò'=>'O',
+            'Ó'=>'O',
+            'Ô'=>'O',
+            'Õ'=>'O',
+            'Ö'=>'OE',
+            'Ø'=>'O',
+            'Ù'=>'U',
+            'Ú'=>'U',
+            'Û'=>'U',
+            'Ü'=>'UE',
+            'Ý'=>'Y',
+            'Þ'=>'B',
+            'ß'=>'ss',
+            'à'=>'a',
+            'á'=>'a',
+            'â'=>'a',
+            'ã'=>'a',
+            'ä'=>'ae',
+            'å'=>'a',
+            'æ'=>'a',
+            'ç'=>'c',
+            'è'=>'e',
+            'é'=>'e',
+            'ê'=>'e',
+            'ë'=>'e',
+            'ì'=>'i',
+            'í'=>'i',
+            'î'=>'i',
+            'ï'=>'i',
+            'ð'=>'o',
+            'ñ'=>'n',
+            'ò'=>'o',
+            'ó'=>'o',
+            'ô'=>'o',
+            'õ'=>'o',
+            'ö'=>'oe',
+            'ø'=>'o',
+            'ù'=>'u',
+            'ú'=>'u',
+            'û'=>'u',
+            'ü'=>'ue',
+            'ý'=>'y',
+            'ý'=>'y',
+            'þ'=>'b',
+            'ÿ'=>'y',
+            'ƒ'=>'f',
+            '§'=>'-',
+            '°'=>'-',
         );
         // }}}
         
@@ -560,5 +554,4 @@ class html {
     }
     // }}}
 }
-
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -1,95 +1,302 @@
-<?php
-
+<?php 
+/**
+ * @file    video.php
+ * @brief   video conversion class which uses ffmpeg
+ * 
+ * http://stackoverflow.com/questions/5487085/ffmpeg-covert-html-5-video-not-working
+ *
+ * MP4:
+ * ffmpeg -i "INPUTFILE" -b 1500k -vcodec libx264 -vpre slow -vpre baseline -g 30 "OUTPUTFILE.mp4"
+ * qt-faststart "INPUTFILE" "OUTPUTFILE"
+ *
+ * WebM:
+ * ffmpeg -i "INPUTFILE"  -b 1500k -vcodec libvpx -acodec libvorbis -ab 160000 -f webm -g 30 "OUTPUTFILE.webm"
+ *
+ * OGV:
+ * ffmpeg -i "INPUTFILE" -b 1500k -vcodec libtheora -acodec libvorbis -ab 160000 -g 30 "OUTPUTFILE.ogv"
+ * 
+ * 
+ * FFMPEG OPTIONS:
+ * 
+ *   -i = input file
+ *   -deinterlace = deinterlace pictures
+ *   -an = disable audio recording
+ *   -ss = start time in the video (seconds)
+ *   -t = duration of the recording (seconds)
+ *   -r = set frame rate
+ *   -y = overwrite existing file
+ *   -s = resolution size
+ *   -f = force format
+ * 
+ * @author  Frank Hellenkamp <jonas@depage.net>
+ * @author  Ben Wallis [benedict_wallis@yahoo.co.uk]
+ *
+ */
 namespace depage\media;
 
-class video
-{
-    const FFMPEG = '/opt/local/bin/ffmpeg';
+// video () {{{
+class video {
+    // defaults {{{
+    /**
+     * Defaults array for ffmpeg conversion
+     * 
+     * @var array
+     */
+    var $defaults = array(
+        'ffmpeg' => "ffmpeg",
+        'ffprobe' => "ffprobe",
+        'qtfaststart' => "qt-faststart",
+        'width' => 640,
+        'height' => 360,
+        'vrate' => "1000k",
+        'arate' => "128k",
+        'qmin' => 3,
+        'qmax' => 5,
+        'bufsize' => 4096,
+    );
+    // }}}
     
-    public static function toMp4($input_name, $output_name, $width, $height) {
-        $output_name = pathinfo($output_name, PATHINFO_FILENAME) . '.mp4';
-        
-        $codec = 'libxvid';
-        $maxrate = '1000';
-        $qmin = 3;
-        $qmax = 5;
-        $bufsize = 4096;
-        
-        $cmd = self::FFMPEG . " -i \"{$input_name}\" -f mp4 -vcodec {$codec} -maxrate {$maxrate} -qmin {$qmin} -qmax {$qmin} -bufsize {$bufsize} -g 300 -acodec aac -strict experimental -mbd 2 -s {$width}x{$height} -ab 256 -b:v 400 \"{$output_name}\"";
-        
-        self::call($cmd);
-        
-        return self::getInfo($output_name);
+    // properties {{{
+    var $ffmpeg = 'ffmpeg';
+    var $ffprobe = 'ffprobe';
+    // }}}
+    
+    // {{{ constructor
+    /**
+     * Constructor
+     * 
+     * Build the default options for ffmpeg conversion.
+     * 
+     * @param array $options
+     * 
+     * @return void
+     */
+    public function __construct($options) {
+        $options = array_change_key_case($options);
+        foreach ($this->defaults as $option => $default) {
+            $this->$option = isset($options[strtolower($option)]) ? $options[strtolower($option)] : $default;
+        }
     }
+    // }}}
     
-    public static function getDuration($file) {
-        $info = self::getInfo($file);
+    // {{{ toMP4
+    /**
+     * toMP4
+     * 
+     * Attempts to convert the provided video file to .mp4 format.
+     * 
+     * @param string $file - file path
+     * 
+     * @return multitype:number string Ambigous <string, unknown>
+     */
+    public function toMp4($infile, $outfile = null) {
+        if (empty($outfile)) {
+            $outfile = $infile;
+        }
+        $outfile = pathinfo($outfile, PATHINFO_FILENAME) . '.mp4';
+        
+        $vcodec = 'libxvid';
+        $acodec = 'aac';
+        $extra = '-strict experimental -f mp4';
+        
+        $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+        $this->mp4faststart($outfile);
+        
+        return $this->getInfo($outfile);
+    }
+    // }}}
+    
+    // {{{ toWebM
+    /**
+     * toWebM
+     *
+     * Attempts to convert the provided video file to .webm format.
+     *
+     * @param string $infile - file path
+     *
+     * @return multitype:number string Ambigous <string, unknown>
+     */
+    public function toWebM($infile, $outfile = null) {
+        if (empty($outfile)) {
+            $outfile = $infile;
+        }
+        $outfile = pathinfo($outfile, PATHINFO_FILENAME) . '.mp4';
+        
+        $vcodec = 'libvpx';
+        $acodec = 'libvorbis';
+        $extra = '-g 30 -f webm';
+        
+        return $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+    }
+    // }}}
+    
+    // {{{ mp4faststart()
+    /**
+     * mp4faststart
+     *
+     * Attempts to convert the provided video file to .mp4 fast start format.
+     *
+     * @param string $file - file path
+     *
+     * @return multitype:number string Ambigous <string, unknown>
+     */
+    public function mp4faststart($file) {
+        $in = $file . ".tmp.mp4";
+        $out = $file;
+        
+        @unlink($in);
+        rename($out, $in);
+        
+        $inArg = escapeshellarg($in);
+        $outArg = escapeshellarg($out);
+        
+        $cmd = "{$this->qtfaststart} $inArg $outArg";
+        $this->call($cmd);
+        
+        unlink($in);
+    }
+    // }}}
+    
+    // {{{ convert
+    /**
+     * convert
+     * 
+     * @param string $infile
+     * @param string $outfile
+     * @param string $vcodec
+     * @param string $acodec
+     * @param string $extra
+     * 
+     * @return multitype:number string Ambigous <string, unknown>
+     */
+    public function convert($infile, $outfile, $vcodec, $acodec, $extra) {
+        $infileArg = escapeshellarg($infile);
+        $outfileArg = escapeshellarg($outfile);
+        
+        $cmd = "{$this->ffmpeg} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
+        $this->call($cmd);
+        
+        return $this->getInfo($outfile);
+    }
+    // }}}
+    
+    // {{{ getDuration
+    /**
+     * Get Duration
+     * 
+     * Wrapper to getInfo() - reads the file info and parses the duration.
+     * 
+     * @param string $file
+     * 
+     * @return decimal
+     */
+    public function getDuration($file) {
+        $info = $this->getInfo($file);
         return $info['duration'];
     }
+    // }}}
     
-    private static function getInfo($file) {
-        $cmd = self::FFMPEG . " -i {$file}";
-        $info = self::call($cmd);
+    // {{{ getInfo
+    /**
+     * Get Info
+     * 
+     * Gets the ffprobe file info and regex parses to return:
+     * -  duration / filesize / format / filename
+     * 
+     * @param string $file
+     * @throws \exception
+     * 
+     * @return array $info = ('duration'=>...,'filesize'=>... ,'format'=>...,'filename'=>...)
+     */
+    public function getInfo($file) {
         
-        $duration = 0;
-        $filesize = 0;
-        $bitrate = 0;
-        $format = '';
+        $info = array(
+            'duration'=>0,
+            'filesize'=>0,
+            'bitrate'=>0,
+            'format'=>''
+        );
         
-        if (preg_match('/Input #0, (.\w+)/s', $info, $matches)) {
-            $format = $matches[1];
-        }
-        
+        $fileArg = escapeshellarg($file);
+        $cmd = "{$this->ffprobe} {$fileArg}";
+        $result = $this->call($cmd);
         $matches = null;
-        if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/s', $info, $matches)) {
-            $duration = ($matches[2] * 3600) + ($matches[3] * 60) + $matches[4];
+        
+        if (preg_match('/Input #0, (.\w+)/s', $result, $matches)) {
+            $info['format'] = $matches[1];
         } else {
             throw new \exception("Could not read ffmpeg info.");
         }
         
-        if (preg_match('/bitrate: (.\d+)/s', $info, $matches)) {
-            $bitrate = $matches[1];
-            $filesize = $bitrate * $duration * 1000; // TODO verify bitrate is kbs
+        if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/s', $result, $matches)) {
+            $info['duration'] = ($matches[2] * 3600) + ($matches[3] * 60) + $matches[4];
+        } else {
+            throw new \exception("Could not read ffmpeg duration.");
         }
         
-        return array(
-            'duration'=>$duration,
-            'filesize'=>$filesize,
-            'format'=>$format,
-            'filename'=>basename($file)
-        );
+        if (preg_match('/bitrate: (.\d+)/s', $result, $matches)) {
+            $info['bitrate'] = $matches[1];
+            $info['filesize'] = $bitrate * $duration * 1000; // TODO verify bitrate is kbs
+        } else {
+            throw new \exception("Could not read ffmpeg bitrate.");
+        }
+        
+        return $info;
     }
+    // }}}
     
-    /*
-    -i = input file
-    -deinterlace = deinterlace pictures
-    -an = disable audio recording
-    -ss = start time in the video (seconds)
-    -t = duration of the recording (seconds)
-    -r = set frame rate
-    -y = overwrite existing file
-    -s = resolution size
-    -f = force format
-    */    
-    public static function getThumbnails($input_name, $output_name, $width, $height) {
-        $duration = self::getDuration($input_name);
+    // {{{ getThumbnails
+    /**
+     * getThumbnails
+     * 
+     * Extracts thumbnails from input file at given number of intervals.
+     * 
+     * @param string $infile - input file path
+     * @param string $outfile - output file path
+     * @param int $width
+     * @param int $height
+     * @param int intervals - number of thumbnails to return
+     * 
+     * @return array("thumb1.jpg"=>"/path/thumb1.jpg", ...)
+     */
+    public function getThumbnails($infile, $outfile, $width = null, $height = null, $intervals = 5) {
+        if (empty($width)){
+            $width = $this->option->width;
+        }
+        if (empty($height)){
+            $height = $this->option->height;
+        }
+        
+        $duration = $this->getDuration($infile);
         $thumbnails = array();
-        $path =  pathinfo($output_name, PATHINFO_FILENAME);
+        $path =  pathinfo($outfile, PATHINFO_FILENAME);
+        
+        $fileArg = escapeshellarg($file);
         
         $basename = basename($path);
         
-        for ($i = 1; $i <= 5; $i++ ) {
+        for ($i = 1; $i <= $intervals; $i++ ) {
             $out = $path . $i.  '.jpg';
-            $interval = $duration * $i / 6;
-            $cmd = '"' . self::FFMPEG . "\" -i \"{$input_name}\" -f mjpeg -an -y -ss {$interval} -s {$width}x{$height} \"{$out}\"";
-            self::call($cmd);
+            $interval = $duration * $i / ($intervals + 1);
+            $cmd = '"' . $this->ffmpeg . "\" -i {$fileArg} -f mjpeg -an -y -ss {$interval} -s {$width}x{$height} \"{$out}\"";
+            $this->call($cmd);
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
         return $thumbnails;
     }
+    // }}}
     
-    private static function call($cmd)
-    {
+    // {{{ call()
+    /**
+     * Call
+     * 
+     * Executes the shell command.
+     * 
+     * @param string $cmd - command to execute
+     * 
+     * @return string output
+     */
+    private function call($cmd) {
         $cmd = escapeshellcmd($cmd) . ' 2>&1';
         
         exec($cmd, $output, $var);
@@ -98,7 +305,6 @@ class video
             $output = implode('', $output);
         }
         
-        /*
         if ($var) {
             var_dump($cmd);
             var_dump($output);
@@ -106,10 +312,9 @@ class video
             
             //throw new \Exception('Error executing ffmpeg');
         }
-        */
-        
+        exit;
         return $output;
     }
 }
-
-?>
+// }}}
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

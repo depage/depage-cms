@@ -61,6 +61,7 @@
                         }
 
                         $form.submit();
+                        $button.click();
                     }
 
                     return false;

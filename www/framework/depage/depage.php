@@ -288,6 +288,20 @@ class depage {
         die("Tried to redirect you to <a href=\"$url\">$url</a>");
     }
     // }}}
+    // {{{ sendContent
+    /**
+     * sends out headers
+     */
+    static public function sendContent($content) {
+        self::sendHeaders($content);
+
+        if (is_callable(array($content, 'clean'))) {
+            echo($content->clean($content));
+        } else {
+            echo($content);
+        }
+    }
+    // }}}
     // {{{ sendHeaders
     /**
      * sends out headers

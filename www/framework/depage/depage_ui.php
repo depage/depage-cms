@@ -89,38 +89,26 @@ class depage_ui {
         // @todo use parseurl?
         $dp_request_uri =  substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
-        if (strpos($dp_request_uri, '?')) {
-            list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
+        // remove get parameters
+        if (strpos($dp_request_uri, '?') !== false) {
+            list($dp_request_path, $dp_query_string) = @explode("?", $dp_request_uri, 2);
         } else {
             $dp_request_path = $dp_request_uri;
             $dp_query_string = '';
         }
-        
-        $dp_params = $this->getParams($dp_request_path);
-        
-        // ignore trailing '/', so that params are equal with or without the trailing '/'
-        if ($dp_request_path[strlen($dp_request_path) - 1] == '/') {
-            array_pop($dp_params);
-        }
 
-        // strip locale
-        if (DEPAGE_URL_HAS_LOCALE) {
-            if (strlen($dp_params[0]) == 2) {
-                $dp_lang = array_shift($dp_params);
-                depage::setLanguage($this->options->lang->domain, $dp_lang);
-            } else {
-                $dp_lang = "";
-                depage::setLanguage($this->options->lang->domain);
-            }
-        } else {
-            $dp_lang = "";
-            depage::setLanguage($this->options->lang->domain);
-        }
+        // get parameters from url
+        list($dp_lang, $dp_params, $dp_subhandler, $dp_parent) = $this->getParams($dp_request_path);
 
+        // set language
+        depage::setLanguage($this->options->lang->domain, $dp_lang);
+        
         // save path (without localization)
-        $this->urlpath = implode($dp_params, "/");
-        if ($this->urlpath != "") {
-            $this->urlpath .= "/";
+        if ($parent == "") {
+            $this->urlpath = DEPAGE_URL_HAS_LOCALE ? substr($dp_request_path, 3) : $dp_request_path;
+            if ($this->urlpath != "") {
+                //$this->urlpath .= "/";
+            }
         }
         
         if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
@@ -128,40 +116,21 @@ class depage_ui {
             depage::redirect(html::link($this->urlpath, "auto", DEPAGE_LANG));
         }
         
-        // first is function
-        $dp_func = str_replace("-", "_", array_shift($dp_params));
-        
-        if (is_callable(array($this, "_getSubHandler"))) {
-            $subHandler = $this::_getSubHandler();
-            foreach ($subHandler as $name => $class) {
-                
-                $test = $dp_func;
-                
-                $subsub = explode("/", $name);
-                if (count($subsub) > 1) {
-                    for ($i = 0; $i < count($subsub) - 1; $i++) {
-                        if (isset($dp_params[$i])) {
-                            $test .= "/" . $dp_params[$i];
-                        }
-                    }
-                }
-                $name = str_replace(array('*','/'), '', $name); // remove sub handler wildcards
-                if ($name == $test && class_exists($class, true)) {
-                    // strip sub args in recursive call if present
-                    foreach($this->urlSubArgs as $arg) {
-                        $name .= "/{$arg}";
-                    }
-                    $handler = new $class($this->options);
-                    $handler->urlSubArgs = $this->urlSubArgs;
-                    if (DEPAGE_URL_HAS_LOCALE) {
-                        $handler->_run($dp_lang . "/" . $name . "/");
-                    } else {
-                        $handler->_run($name . "/");
-                    }
-                    return;
-                }
+        if ($dp_subhandler != "") {
+            // forward handling of request to a subhandler
+            $handler = new $dp_subhandler($this->options);
+            $handler->urlSubArgs = $this->urlSubArgs;
+            $handler->urlpath = $this->urlpath;
+
+            if (DEPAGE_URL_HAS_LOCALE) {
+                return $handler->_run($dp_lang . "/" . $dp_parent . "/");
+            } else {
+                return $handler->_run($dp_parent . "/");
             }
         }
+        
+        // first paramater is function
+        $dp_func = str_replace("-", "_", array_shift($dp_params));
         
         try {
             $this->_init();
@@ -177,6 +146,7 @@ class depage_ui {
             }
             $content = $this->_package($content);
         } catch (Exception $e) {
+            // show error page for exceptions
             $error = (object) array(
                 'exception' => $e,
                 'file' => $e->getFile(),
@@ -188,13 +158,7 @@ class depage_ui {
             $content = $this->_package($content);
         }
         
-        depage::sendHeaders($content);
-        
-        if (is_callable(array($content, 'clean'))) {
-            echo($content->clean($content));
-        } else {
-            echo($content);
-        }
+        depage::sendContent($content);
         
         // finishing time
         $time = microtime(true) - $time_start;
@@ -204,37 +168,59 @@ class depage_ui {
     
     // getParams{{{
     private function getParams($dp_request_path){
+        $dp_lang = "";
+        $dp_parent = "";
         $dp_params = explode("/", $dp_request_path);
+        $dp_subhandler = "";
+
+        // strip locale, if it is part of url
+        if (DEPAGE_URL_HAS_LOCALE && strlen($dp_params[0]) == 2) {
+            $dp_lang = array_shift($dp_params);
+        }
+
+        $dp_request_path = implode("/", $dp_params);
+
+        // test for subhandlers
         if (is_callable(array($this, "_getSubHandler"))) {
-            
             $subHandler = $this::_getSubHandler();
             
             $simplepatterns = array(
-                "." => "\.",
-                "?" => "(.)",
-                "*" => "(.*)?",
-                "/" => "\/",
+                "." => "\.",        // dot
+                "/" => "\/",        // slash
+                "?" => "([^\/])",    // single character
+                "**" => "(.+)?",    // multiple characters including slash
+                "*" => "([^\/]*)?",  // multiple character without slash
             );
             
-            foreach ($subHandler as $name => &$class) {
-                $pattern = "/.*(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
+            foreach ($subHandler as $name => $class) {
+                $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
                 if (preg_match($pattern, $dp_request_path, $matches)) {
+                    $dp_parent = $matches[1];
                     if (!empty($matches[2])) {
                         $this->urlSubArgs = explode('/', $matches[2]);
                     }
                     if (count($matches)){
-                        array_splice($dp_params, DEPAGE_URL_HAS_LOCALE ? 2 : 1, count($this->urlSubArgs));
+                        array_splice($dp_params, 1, count($this->urlSubArgs));
                     }
+                    $dp_subhandler = $class;
                 }
             }
         }
-        return $dp_params;
+        
+        // ignore trailing '/', so that params are equal with or without the trailing '/'
+        if (end($dp_params) === "") {
+            array_pop($dp_params);
+        }
+
+        return array($dp_lang, $dp_params, $dp_subhandler, $dp_parent);
     }
     //}}}
     
     // {{{ _send_time
     protected function _send_time($time) {
-        echo("<!-- $time sec -->");
+        if ($this->options->env == "development") {
+            echo("<!-- $time sec -->");
+        }
     }
     // }}}
 
