@@ -250,7 +250,6 @@ class graphics {
      * @return  void
      **/
     public function render($input, $output = null) {
-        debug_print_backtrace();
         if (!file_exists($input)) throw new graphics_file_not_found_exception();
         
         $this->input        = $input;
