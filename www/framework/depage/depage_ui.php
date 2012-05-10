@@ -90,7 +90,12 @@ class depage_ui {
         $dp_request_uri =  substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
         // remove get parameters
-        list($dp_request_path, $dp_query_string) = explode("?", $dp_request_uri, 2);
+        if (strpos($dp_request_uri, '?') !== false) {
+            list($dp_request_path, $dp_query_string) = @explode("?", $dp_request_uri, 2);
+        } else {
+            $dp_request_path = $dp_request_uri;
+            $dp_query_string = '';
+        }
 
         // get parameters from url
         list($dp_lang, $dp_params, $dp_subhandler, $dp_parent) = $this->getParams($dp_request_path);
@@ -99,9 +104,11 @@ class depage_ui {
         depage::setLanguage($this->options->lang->domain, $dp_lang);
         
         // save path (without localization)
-        $this->urlpath = implode($dp_params, "/");
-        if ($this->urlpath != "") {
-            $this->urlpath .= "/";
+        if ($parent == "") {
+            $this->urlpath = substr($dp_request_path, 3);
+            if ($this->urlpath != "") {
+                //$this->urlpath .= "/";
+            }
         }
         
         if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
@@ -113,6 +120,7 @@ class depage_ui {
             // forward handling of request to a subhandler
             $handler = new $dp_subhandler($this->options);
             $handler->urlSubArgs = $this->urlSubArgs;
+            $handler->urlpath = $this->urlpath;
 
             if (DEPAGE_URL_HAS_LOCALE) {
                 return $handler->_run($dp_lang . "/" . $dp_parent . "/");
@@ -210,7 +218,9 @@ class depage_ui {
     
     // {{{ _send_time
     protected function _send_time($time) {
-        echo("<!-- $time sec -->");
+        if ($this->options->env == "development") {
+            echo("<!-- $time sec -->");
+        }
     }
     // }}}
 
