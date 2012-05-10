@@ -61,7 +61,7 @@ class auth_user {
         ));
         
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        
+        $user->pdo = $pdo;
         return $user;
     }
     // }}}
@@ -100,7 +100,7 @@ class auth_user {
         ));
         
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        
+        $user->pdo = $pdo;
         return $user;
     }
     // }}}
@@ -137,7 +137,7 @@ class auth_user {
         ));
         
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        
+        $user->pdo = $pdo;
         return $user;
     }
     // }}} 
