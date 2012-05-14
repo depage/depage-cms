@@ -126,7 +126,7 @@
         // }}}
         // {{{ addMail
         base.addMail = function(name) {
-            var link = "mailto:?subject=link . " + base.title + "&body=" + base.url;
+            var link = "mailto:?subject=" + base.title + "&body=" + base.url;
             base.addSocialButton(name, link, "mail");
         };
         // }}}
