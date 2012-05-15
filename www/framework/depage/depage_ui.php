@@ -184,16 +184,9 @@ class depage_ui {
         if (is_callable(array($this, "_getSubHandler"))) {
             $subHandler = $this::_getSubHandler();
             
-            $simplepatterns = array(
-                "." => "\.",        // dot
-                "/" => "\/",        // slash
-                "?" => "([^\/])",    // single character
-                "**" => "(.+)?",    // multiple characters including slash
-                "*" => "([^\/]*)?",  // multiple character without slash
-            );
-            
+            $simplepatterns = \config::getSimplePatterns();
             foreach ($subHandler as $name => $class) {
-                $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
+                $pattern = "/^(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
                 if (preg_match($pattern, $dp_request_path, $matches)) {
                     $dp_parent = $matches[1];
                     if (!empty($matches[2])) {
