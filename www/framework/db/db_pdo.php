@@ -43,10 +43,10 @@ class db_pdo {
         $this->driver_options = $driver_options;
     }
     /* }}} */
-    /* {{{ late_initialize */
+    /* {{{ lateInitialize */
     /**
      */
-    private function late_initialize() {
+    private function lateInitialize() {
         $this->pdo = new pdo($this->dsn, $this->username, $this->password, $this->driver_options);
 
         // set error mode to exception by default
@@ -59,7 +59,7 @@ class db_pdo {
      */
     public function __set($name, $value) {
         if (is_null($this->pdo)) {
-            $this->late_initialize();
+            $this->lateInitialize();
         }
         $this->$name = $value;
     }
@@ -69,7 +69,7 @@ class db_pdo {
      */
     public function __get($name) {
         if (is_null($this->pdo)) {
-            $this->late_initialize();
+            $this->lateInitialize();
         }
         return $this->$name;
     }
@@ -79,7 +79,7 @@ class db_pdo {
      */
     public function __call($name, $arguments) {
         if (is_null($this->pdo)) {
-            $this->late_initialize();
+            $this->lateInitialize();
         }
         return call_user_func_array(array($this->pdo, $name), $arguments);
     }
@@ -91,6 +91,30 @@ class db_pdo {
         return call_user_func_array("pdo::$name", $arguments);
     }
     /* }}} */
+
+    // {{{ __sleep()
+    /**
+     * allows db_pdo-object to be serialized
+     */
+    public function __sleep() {
+        return array(
+            'dsn', 
+            'username', 
+            'password', 
+            'driver_options', 
+            'prefix'
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows db_pdo-object to be unserialized
+     *
+     * We don't need to initialize the connection because we are already initializing them late.
+     */
+    public function __wakeup() {
+    }
+    // }}}
     
     /* {{{ dsn_parts */
     /**
