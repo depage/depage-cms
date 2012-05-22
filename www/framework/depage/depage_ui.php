@@ -29,7 +29,7 @@ class depage_ui {
     protected $options = array();
     // }}}
 
-    protected $urlpath = null;
+    protected $urlPath = null;
     
     protected $urlSubArgs = array();
 
@@ -108,22 +108,22 @@ class depage_ui {
         
         // save path (without localization)
         if ($parent == "") {
-            $this->urlpath = DEPAGE_URL_HAS_LOCALE ? substr($dp_request_path, 3) : $dp_request_path;
-            if ($this->urlpath != "") {
-                //$this->urlpath .= "/";
+            $this->urlPath = DEPAGE_URL_HAS_LOCALE ? substr($dp_request_path, 3) : $dp_request_path;
+            if ($this->urlPath != "") {
+                //$this->urlPath .= "/";
             }
         }
         
         if ($parent == "" && DEPAGE_URL_HAS_LOCALE && DEPAGE_LANG != $dp_lang) {
             // redirect to page with lang-identifier if is not set correctly, but only if it is not a subhandler
-            depage::redirect(html::link($this->urlpath, "auto", DEPAGE_LANG));
+            depage::redirect(html::link($this->urlPath, "auto", DEPAGE_LANG));
         }
         
         if ($dp_subhandler != "") {
             // forward handling of request to a subhandler
             $handler = $dp_subhandler::_factory($this->options);
             $handler->urlSubArgs = $this->urlSubArgs;
-            $handler->urlpath = $this->urlpath;
+            $handler->urlPath = $this->urlPath;
 
             if (DEPAGE_URL_HAS_LOCALE) {
                 return $handler->_run($dp_lang . "/" . $dp_parent . "/");
@@ -140,12 +140,12 @@ class depage_ui {
             if ($dp_func == "") {
                 // show index page
                 $content = $this->index();
-            } else if (is_callable(array($this, $dp_func))) {
+            } else if ($dp_func[0] != "_" && is_callable(array($this, $dp_func))) {
                 // call function
                 $content = call_user_func_array(array($this, $dp_func), $dp_params);
             } else {
                 // show error for notfound
-                $content = $this->notfound($this->urlpath);
+                $content = $this->notfound($this->urlPath);
             }
             $content = $this->_package($content);
         } catch (Exception $e) {

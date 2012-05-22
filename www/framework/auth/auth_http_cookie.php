@@ -58,9 +58,9 @@ class auth_http_cookie extends auth {
 
                 $request_url = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
                 if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
-                    $redirect_to = urlencode($_SERVER['REQUEST_URI']);
+                    $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    depage::redirect("$login_url?redirect_to=$redirect_to");
+                    depage::redirect("$login_url?redirectTo=$redirectTo");
                 }
             }
         }
