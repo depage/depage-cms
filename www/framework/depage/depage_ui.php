@@ -41,7 +41,7 @@ class depage_ui {
      *
      * @return  null
      */
-    public function __construct($options = NULL) {
+    protected function __construct($options = NULL) {
         $conf = new config($options);
         $this->options = $conf->getDefaultsFromClass($this);
         
@@ -60,7 +60,10 @@ class depage_ui {
      *
      * @return  null
      */
-    public function _init() {
+    public function _init(Array $importVariables = array()) {
+        foreach ($importVariables as $name => $value) {
+            $this->$name = $value;
+        }
     }
     // }}}
     
@@ -118,7 +121,7 @@ class depage_ui {
         
         if ($dp_subhandler != "") {
             // forward handling of request to a subhandler
-            $handler = new $dp_subhandler($this->options);
+            $handler = $dp_subhandler::_factory($this->options);
             $handler->urlSubArgs = $this->urlSubArgs;
             $handler->urlpath = $this->urlpath;
 
@@ -163,6 +166,37 @@ class depage_ui {
         // finishing time
         $time = microtime(true) - $time_start;
         $this->_send_time($time);
+    }
+    // }}}
+    // {{{ _factory
+    /**
+     * gets a new instance for the current class
+     *
+     * @param   $options (array) named options for base class
+     *
+     * @return  null
+     */
+    static public function _factory($options) {
+        $class = get_called_class();
+
+        return new $class($options);
+    }
+    // }}}
+    // {{{ _factoryAndInit
+    /**
+     * gets a new instance for the current class and
+     * calls the _init method on it
+     *
+     * @param   $options (array) named options for base class
+     * @param   $importVariables (array) named options for base class
+     *
+     * @return  null
+     */
+    static public function _factoryAndInit($options, $importVariables) {
+        $instance = self::_factory($options);
+        $instance->_init($importVariables);
+
+        return $instance;
     }
     // }}}
     
