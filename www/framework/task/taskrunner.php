@@ -46,6 +46,14 @@ require_once(__DIR__ . "/../depage/depage.php");
 */
 
 class taskrunner extends \depage_ui {
+    // {{{ default config
+    public $defaults = array(
+        'env' => "development",
+        'phpcli' => "",
+    );
+    protected $options = array();
+    // }}}
+    
     // {{{ constructor
     public function __construct($options = NULL) {
         parent::__construct($options);
@@ -261,6 +269,9 @@ class taskrunner extends \depage_ui {
     // }}}
     // {{{ getPhpExecutable()
     private function getPhpExecutable() {
+        if ($this->options->phpcli != "") {
+            return $this->options->phpcli;
+        }
         // only some shells set this variable
         if (isset($_SERVER["_"])) {
             $exe = $_SERVER["_"];

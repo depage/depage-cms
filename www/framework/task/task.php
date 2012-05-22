@@ -26,6 +26,7 @@ class task {
     }
     // }}}
     
+    // static functions
     // {{{ load()
     static public function load($task_id, $table_prefix, $pdo) {
         $task = new task($table_prefix, $pdo);
@@ -116,6 +117,13 @@ class task {
     }
     // }}}
     
+    // {{{ escapeParam()
+    static public function escapeParam($param) {
+        return "unserialize('" . serialize($param) . "')";
+    }
+    // }}}
+    
+    // public functions
     // {{{ remove()
     public function remove() {
         $query = $this->pdo->prepare(
