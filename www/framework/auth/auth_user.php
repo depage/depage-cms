@@ -23,7 +23,7 @@ class auth_user {
      *
      * @return      void
      */
-    public function __construct($pdo) {
+    public function __construct(\db_pdo $pdo) {
         $this->pdo = $pdo;
     }
     // }}}
@@ -60,8 +60,9 @@ class auth_user {
             ':name' => $username,
         ));
         
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        $user->pdo = $pdo;
         return $user;
     }
     // }}}
@@ -99,8 +100,9 @@ class auth_user {
             ':sid' => $sid,
         ));
         
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        $user->pdo = $pdo;
         return $user;
     }
     // }}}
@@ -136,8 +138,9 @@ class auth_user {
                 ':id' => $id,
         ));
         
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-        $user->pdo = $pdo;
         return $user;
     }
     // }}} 
