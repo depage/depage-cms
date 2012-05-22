@@ -48,7 +48,7 @@ class video {
         'qtfaststart' => "qt-faststart",
         'width' => 640,
         'height' => 360,
-        'vrate' => "1000k",
+        'vrate' => "600k",
         'arate' => "64k",
         'qmin' => 3,
         'qmax' => 5,
@@ -276,10 +276,15 @@ class video {
         
         $basename = basename($path);
         
+        /*
+         * @TODO look into mplayer if there are problems with ffmpeg for tumbnails, e.g.
+         * mplayer VIDEO_FILE -ss 00:10:11 -frames 1 -vo jpeg:outdir=THUMBNAILS_DIRECTORY
+         */
         for ($i = 1; $i <= $intervals; $i++ ) {
             $out = $path . $i.  '.jpg';
+            $outArg = escapeshellarg($out);
             $interval = $duration * $i / ($intervals + 1);
-            $cmd = '"' . $this->ffmpeg . "\" -i {$fileArg} -f mjpeg -an -y -ss {$interval} -s {$width}x{$height} \"{$out}\"";
+            $cmd = '"' . $this->ffmpeg . "\" -ss {$interval} -i {$fileArg} -r 1 -vframes 1 -f mjpeg -an -y -s {$width}x{$height} {$outArg}";
             $this->call($cmd);
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
@@ -306,6 +311,7 @@ class video {
             $output = implode('', $output);
         }
         
+        /*
         if ($var) {
             var_dump($cmd);
             var_dump($output);
@@ -313,6 +319,7 @@ class video {
             
             //throw new \Exception('Error executing ffmpeg');
         }
+         */
         return $output;
     }
     // }}}
