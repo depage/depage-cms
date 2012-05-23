@@ -141,6 +141,7 @@ class upload
      */
     public static function getExtension ( $filename_inc_ext ) {
         $segments = preg_split('/\./', basename($filename_inc_ext));
-        return strtolower($segments[count($segments)-1]);
+        $ext = strtolower($segments[count($segments)-1]);
+        $ext = ($ext === 'jpeg') ? 'jpg' : $ext;
     }
 }
