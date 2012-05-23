@@ -27,6 +27,8 @@
  *   -y = overwrite existing file
  *   -s = resolution size
  *   -f = force format
+ *   -threads = number of threads
+ *
  * 
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Ben Wallis [benedict_wallis@yahoo.co.uk]
@@ -53,6 +55,7 @@ class video {
         'qmin' => 3,
         'qmax' => 5,
         'bufsize' => 4096,
+        'threads' => 1,
     );
     // }}}
     
@@ -96,7 +99,7 @@ class video {
         }
         $outfile = $this->stripExt($outfile) . '.mp4';
         
-        $vcodec = 'libxvid';
+        $vcodec = 'libx264';
         $acodec = 'aac';
         $extra = '-strict experimental -f mp4';
         $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
@@ -176,7 +179,7 @@ class video {
         $infileArg = escapeshellarg($infile);
         $outfileArg = escapeshellarg($outfile);
         
-        $cmd = "{$this->ffmpeg} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
+        $cmd = "{$this->ffmpeg} -threads {$this->threads} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
         $this->call($cmd);
         return $this->getInfo($outfile);
     }
@@ -240,7 +243,8 @@ class video {
             $info['bitrate'] = $matches[1];
             $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000; // TODO verify bitrate is kbs
         } else {
-            throw new \exception("Could not read ffmpeg bitrate.");
+            // @todo exception temporarily disabled -> check why there is a problem with webm-format
+            //throw new \exception("Could not read ffmpeg bitrate.");
         }
         
         return $info;
@@ -311,15 +315,10 @@ class video {
             $output = implode('', $output);
         }
         
-        /*
         if ($var) {
-            var_dump($cmd);
-            var_dump($output);
-            var_dump($var);
-            
-            //throw new \Exception('Error executing ffmpeg');
+            throw new \Exception("Error executing ffmpeg\n$cmd\n$output");
         }
-         */
+
         return $output;
     }
     // }}}
