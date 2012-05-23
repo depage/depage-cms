@@ -34,6 +34,16 @@
  */
 namespace depage\media;
 
+// ffmpegException () {{{
+/**
+ * ffmpegException
+ * 
+ * Wraps FFMPEG Exceptions
+ */
+class ffmpegException extends \exception {
+}
+// }}}
+
 // video () {{{
 class video {
     // defaults {{{
@@ -227,20 +237,20 @@ class video {
         if (preg_match('/Input #0, (.\w+)/s', $result, $matches)) {
             $info['format'] = $matches[1];
         } else {
-            throw new \exception("Could not read ffmpeg info.");
+            throw new ffmpegException("Could not read ffmpeg info.");
         }
         
         if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/s', $result, $matches)) {
             $info['duration'] = ($matches[2] * 3600) + ($matches[3] * 60) + $matches[4];
         } else {
-            throw new \exception("Could not read ffmpeg duration.");
+            throw new ffmpegException("Could not read ffmpeg duration.");
         }
         
         if (preg_match('/bitrate: (.\d+)/s', $result, $matches)) {
             $info['bitrate'] = $matches[1];
             $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000; // TODO verify bitrate is kbs
         } else {
-            throw new \exception("Could not read ffmpeg bitrate.");
+            throw new ffmpegException("Could not read ffmpeg bitrate.");
         }
         
         return $info;
@@ -307,11 +317,12 @@ class video {
         }
         
         if ($var) {
+            /*
             var_dump($cmd);
             var_dump($output);
             var_dump($var);
-            
-            //throw new \Exception('Error executing ffmpeg');
+            */
+            //throw new ffmpegException('Error executing ffmpeg');
         }
         return $output;
     }
