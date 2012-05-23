@@ -94,6 +94,10 @@
             
             // listen to space
             $(document).bind('keypress', function(e){
+                if ($(document.activeElement).is(':input')){
+                    // continue only if an input is not the focus
+                    return true;
+                }
                 if (e.charCode == 32) {
                     // space
                     if (playing) {
@@ -642,7 +646,7 @@
             var opacity  = function (val) {
                 return {
                     'opactity': val,
-                    'filter': 'alpha(opacity='+ val +')', // IE < 8
+                    'filter': 'alpha(opacity='+ val +')' // IE < 8
                     // '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=' + val + ')', // IE8 ?
                     // 'filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=' + val + ')' // IE8 ?
                 };
