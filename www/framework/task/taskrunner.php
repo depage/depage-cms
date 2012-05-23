@@ -191,12 +191,13 @@ class taskrunner extends \depage_ui {
                     if ($start_low_priority) {
                         $prio_param = "/belownormal";
                     }
-                    pclose(popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $path_phpcli) . "\" -f $script $args", "r"));    
+                    $fp = popen("start \"php subTask\" /min $prio_param \"" . str_replace("/", "\\", $path_phpcli) . "\" -f $script $args", "r");    
+                    usleep(500);
+                    pclose($fp);
                 } else {
                     if ($start_low_priority) {
-                        $prio_param = "nice -10";
+                        $prio_param = "nice -n 19";
                     }
-                    //echo("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &");    
                     $fp = popen("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &", "r");   
                     usleep(500);
                     pclose($fp);
