@@ -78,7 +78,6 @@ class auth_http_cookie extends auth {
                 if ($this->is_valid_sid($_COOKIE[session_name()])) {
                     $this->user = $this->auth_cookie();
                 } else {
-                    $this->destroy_session();
                     $this->justLoggedOut = true;
                     $this->user = false;
                 }
@@ -131,7 +130,6 @@ class auth_http_cookie extends auth {
             } else {
                 $this->justLoggedOut = true;
                 $this->log->log("http_auth_cookie: invalid session ID");
-                $this->destroy_session();
             }
         }
 
