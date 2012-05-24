@@ -461,7 +461,7 @@ class depage {
 
         // setup handler class
         if (class_exists($handler, true)) {
-            $this->handler = new $handler($this->conf);
+            $this->handler = $handler::_factory($this->conf);
             $this->handler->_run();
         } else {
             // no config -> setup/config?

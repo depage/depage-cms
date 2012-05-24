@@ -58,13 +58,8 @@ class config implements Iterator {
         // remove url-parameters before matching
         list($acturl) = explode("?", $acturl, 2);
 
+        $simplepatterns = self::getSimplePatterns();
         foreach ($urls as $url) {
-            $simplepatterns = array(
-                "." => "\.",
-                "?" => "(.)",
-                "*" => "(.*?)", // always use smallest possible match for wildcards
-                "/" => "\/",
-            );
             $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $url) . ")/";
             if (preg_match($pattern, $acturl, $matches)) {
                 // url fits into pattern
@@ -188,6 +183,23 @@ class config implements Iterator {
     }
     // }}}
     
+    // {{{ getSimplePatterns
+    /**
+     * returns array of simple patterns 
+     *
+     * @return  array of replacements
+     */
+    static public function getSimplePatterns() {
+        return array(
+            "." => "\.",        // dot
+            "/" => "\/",        // slash
+            "?" => "([^\/])",    // single character
+            "**" => "(.+)?",    // multiple characters including slash
+            "*" => "([^\/]*)?",  // multiple character without slash
+        );
+    }
+    // }}}
+   
     // {{{ __get
     /**
      * gets a value from configuration

@@ -46,6 +46,14 @@ require_once(__DIR__ . "/../depage/depage.php");
 */
 
 class taskrunner extends \depage_ui {
+    // {{{ default config
+    public $defaults = array(
+        'env' => "development",
+        'phpcli' => "",
+    );
+    protected $options = array();
+    // }}}
+    
     // {{{ constructor
     public function __construct($options = NULL) {
         parent::__construct($options);
@@ -189,7 +197,9 @@ class taskrunner extends \depage_ui {
                         $prio_param = "nice -10";
                     }
                     //echo("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &");    
-                    pclose(popen("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &", "r"));    
+                    $fp = popen("$prio_param \"$path_phpcli\" -f $script -- $param > /dev/null &", "r");   
+                    usleep(500);
+                    pclose($fp);
                 }
             }
         // should only be called if original request was not by cli
@@ -261,6 +271,9 @@ class taskrunner extends \depage_ui {
     // }}}
     // {{{ getPhpExecutable()
     private function getPhpExecutable() {
+        if ($this->options->phpcli != "") {
+            return $this->options->phpcli;
+        }
         // only some shells set this variable
         if (isset($_SERVER["_"])) {
             $exe = $_SERVER["_"];
