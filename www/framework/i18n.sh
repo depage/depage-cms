@@ -12,7 +12,7 @@ filesPHP=$(mktemp /tmp/localize.XXXXXXX)
 filesXML=$(mktemp /tmp/localize.XXXXXXX)
 potAll=$(mktemp /tmp/localize.XXXXXXX)
 
-find . -name "*.php" -or -name "*.tpl" > $filesPHP
+find -f . framework/htmlform/ -name "*.php" -or -name "*.tpl" > $filesPHP
 xgettext \
     -f $filesPHP \
     --from-code=UTF-8 -L PHP -o - \
