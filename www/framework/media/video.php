@@ -64,7 +64,7 @@ class video {
         'arate' => "64k",
         'qmin' => 3,
         'qmax' => 5,
-        'bufsize' => 4096,
+        'bufsize' => "4096k",
         'threads' => 1,
     );
     // }}}
@@ -111,8 +111,13 @@ class video {
         
         $vcodec = 'libx264';
         $acodec = 'aac';
+        $presets = array(
+            "slow", 
+            //"baseline", 
+            "ipod640"
+        );
         $extra = '-strict experimental -f mp4';
-        $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+        $this->convert($infile, $outfile, $vcodec, $acodec, $presets, $extra);
         $this->mp4faststart($outfile);
         
         return $this->getInfo($outfile);
@@ -137,9 +142,12 @@ class video {
         
         $vcodec = 'libvpx';
         $acodec = 'libvorbis';
+        $presets = array(
+            //"360p",
+        );
         $extra = '-g 30 -f webm';
         
-        return $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+        return $this->convert($infile, $outfile, $vcodec, $acodec, $presets, $extra);
     }
     // }}}
     
@@ -185,11 +193,15 @@ class video {
      * 
      * @return multitype:number string Ambigous <string, unknown>
      */
-    public function convert($infile, $outfile, $vcodec, $acodec, $extra) {
+    public function convert($infile, $outfile, $vcodec, $acodec, $presets, $extra) {
         $infileArg = escapeshellarg($infile);
         $outfileArg = escapeshellarg($outfile);
+        $presetArg = "";
+        foreach ($presets as $preset) {
+            $presetArg .= " -fpre " . escapeshellarg(__DIR__ . "/presets/{$vcodec}-{$preset}.avpreset");
+        }
         
-        $cmd = "{$this->ffmpeg} -threads {$this->threads} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
+        $cmd = "{$this->ffmpeg} -threads {$this->threads} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} {$presetArg} -y {$outfileArg}";
         $this->call($cmd);
         return $this->getInfo($outfile);
     }
