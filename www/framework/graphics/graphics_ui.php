@@ -37,6 +37,7 @@ class graphics_ui extends \depage_ui {
      * @return void
      **/
     private function convert($request) {
+        $request = rawurldecode($request);
         preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
         
         // escape everything
@@ -138,3 +139,4 @@ class graphics_ui extends \depage_ui {
     protected function send_time($time) {}
     // }}}
 }
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
