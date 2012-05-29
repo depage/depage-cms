@@ -225,6 +225,9 @@ class depage_ui {
                     $dp_parent = $matches[1];
                     if (!empty($matches[2])) {
                         $this->urlSubArgs = explode('/', $matches[2]);
+                        for ($i = 0; $i < count($this->urlSubArgs); $i++) {
+                            $this->urlSubArgs[$i] = rawurldecode($this->urlSubArgs[$i]);
+                        }
                     }
                     if (count($matches)){
                         array_splice($dp_params, 1, count($this->urlSubArgs));

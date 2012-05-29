@@ -27,6 +27,8 @@
  *   -y = overwrite existing file
  *   -s = resolution size
  *   -f = force format
+ *   -threads = number of threads
+ *
  * 
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Ben Wallis [benedict_wallis@yahoo.co.uk]
@@ -62,7 +64,8 @@ class video {
         'arate' => "64k",
         'qmin' => 3,
         'qmax' => 5,
-        'bufsize' => 4096,
+        'bufsize' => "4096k",
+        'threads' => 1,
     );
     // }}}
     
@@ -106,10 +109,15 @@ class video {
         }
         $outfile = $this->stripExt($outfile) . '.mp4';
         
-        $vcodec = 'libxvid';
+        $vcodec = 'libx264';
         $acodec = 'aac';
+        $presets = array(
+            "slow", 
+            //"baseline", 
+            "ipod640"
+        );
         $extra = '-strict experimental -f mp4';
-        $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+        $this->convert($infile, $outfile, $vcodec, $acodec, $presets, $extra);
         $this->mp4faststart($outfile);
         
         return $this->getInfo($outfile);
@@ -134,9 +142,12 @@ class video {
         
         $vcodec = 'libvpx';
         $acodec = 'libvorbis';
+        $presets = array(
+            //"360p",
+        );
         $extra = '-g 30 -f webm';
         
-        return $this->convert($infile, $outfile, $vcodec, $acodec, $extra);
+        return $this->convert($infile, $outfile, $vcodec, $acodec, $presets, $extra);
     }
     // }}}
     
@@ -182,11 +193,15 @@ class video {
      * 
      * @return multitype:number string Ambigous <string, unknown>
      */
-    public function convert($infile, $outfile, $vcodec, $acodec, $extra) {
+    public function convert($infile, $outfile, $vcodec, $acodec, $presets, $extra) {
         $infileArg = escapeshellarg($infile);
         $outfileArg = escapeshellarg($outfile);
+        $presetArg = "";
+        foreach ($presets as $preset) {
+            $presetArg .= " -fpre " . escapeshellarg(__DIR__ . "/presets/{$vcodec}-{$preset}.avpreset");
+        }
         
-        $cmd = "{$this->ffmpeg} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} -y {$outfileArg}";
+        $cmd = "{$this->ffmpeg} -threads {$this->threads} -i {$infileArg} -vcodec {$vcodec} -qmin {$this->qmin} -qmax {$this->qmin} -bufsize {$this->bufsize} -acodec {$acodec} {$extra} -s {$this->width}x{$this->height} -ab {$this->arate} -b:v {$this->vrate} {$presetArg} -y {$outfileArg}";
         $this->call($cmd);
         return $this->getInfo($outfile);
     }
@@ -250,7 +265,8 @@ class video {
             $info['bitrate'] = $matches[1];
             $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000; // TODO verify bitrate is kbs
         } else {
-            throw new ffmpegException("Could not read ffmpeg bitrate.");
+            // @todo exception temporarily disabled -> check why there is a problem with webm-format
+            //throw new \exception("Could not read ffmpeg bitrate.");
         }
         
         return $info;
@@ -321,16 +337,10 @@ class video {
             $output = implode('', $output);
         }
         
-        /*
         if ($var) {
-            /*
-            var_dump($cmd);
-            var_dump($output);
-            var_dump($var);
-            */
-            //throw new ffmpegException('Error executing ffmpeg');
+            throw new ffmpegException("Error executing ffmpeg\n$cmd\n$output");
         }
-         */
+
         return $output;
     }
     // }}}

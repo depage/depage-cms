@@ -45,13 +45,18 @@ class task {
     }
     // }}}
     // {{{ loadByName()
-    static public function loadByName($task_name, $table_prefix, $pdo) {
+    static public function loadByName($task_name, $table_prefix, $pdo, $condition = "") {
         $task = new task($table_prefix, $pdo);
+
+        if ($condition != "") {
+            $condition = " AND ($condition)";
+        }
 
         $query = $pdo->prepare(
             "SELECT id 
             FROM {$task->task_table} 
-            WHERE name = :name"
+            WHERE name = :name
+                $condition"
         );
         $query->execute(array(
             "name" => $task_name,
@@ -95,7 +100,8 @@ class task {
     // }}}
     // {{{ loadOrCreate()
     static public function loadOrCreate($task_name, $table_prefix, $pdo) {
-        list($task) = self::loadByName($task_name, $table_prefix, $pdo);
+        list($task) = self::loadByName($task_name, $table_prefix, $pdo, "status != 'failed'");
+        //list($task) = self::loadByName($task_name, $table_prefix, $pdo);
 
         if (!$task) {
             $task = self::create($task_name, $table_prefix, $pdo);
