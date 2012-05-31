@@ -55,17 +55,17 @@ class video {
      * @var array
      */
     var $defaults = array(
-        'ffmpeg' => "ffmpeg",
-        'ffprobe' => "ffprobe",
+        'ffmpeg'      => "ffmpeg",
+        'ffprobe'     => "ffprobe",
         'qtfaststart' => "qt-faststart",
-        'width' => 640,
-        'height' => 360,
-        'vrate' => "600k",
-        'arate' => "64k",
-        'qmin' => 3,
-        'qmax' => 5,
-        'bufsize' => "4096k",
-        'threads' => 1,
+        'width'       => 640,
+        'height'      => 360,
+        'vrate'       => "600k",
+        'arate'       => "64k",
+        'qmin'        => 3,
+        'qmax'        => 5,
+        'bufsize'     => "4096k",
+        'threads'     => 1,
     );
     // }}}
     
@@ -112,7 +112,7 @@ class video {
         $vcodec = 'libx264';
         $acodec = 'aac';
         $presets = array(
-            "slow", 
+            // "slow", 
             //"baseline", 
             "ipod640"
         );
@@ -233,15 +233,16 @@ class video {
      * @param string $file
      * @throws \exception
      * 
-     * @return array $info = ('filename'=>..., 'duration'=>...,'filesize'=>... ,'bitrate'=>...,'format'=>...,)
+     * @return array $info = ('filename'=>..., 'duration'=>...,'filesize'=>... ,'bitrate'=>...,'format'=>..., 'dar'=>...,)
      */
     public function getInfo($file) {
         $info = array(
-            'filename'=>basename($file),
-            'duration'=>0,
-            'filesize'=>0,
-            'bitrate'=>0,
-            'format'=>''
+            'filename'    => basename($file),
+            'duration'    => 0,
+            'filesize'    => 0,
+            'bitrate'     => 0,
+            'format'      => '',
+            'DAR'         => '',
         );
         
         $fileArg = escapeshellarg($file);
@@ -267,6 +268,27 @@ class video {
         } else {
             // @todo exception temporarily disabled -> check why there is a problem with webm-format
             //throw new \exception("Could not read ffmpeg bitrate.");
+        }
+        
+        if (preg_match('/DAR\s*(\d+:\d+)/', $result, $matches)) {
+            $info['DAR'] = $matches[1]; // display aspect ratio
+        }
+         // square pixels - manually calculate DAR
+        else if (preg_match('/Video:.*(\d+)x(\d+),/', $result, $matches)) {
+            /*
+             * GCD (Greatest Common Denominator)
+             * 
+             * Euclid's algorithm 
+             */
+            function gcd($a, $b) {
+                return ($b) ? gcd($b, $a % $b) : $a;
+            }
+            $w = $matches[1];
+            $h = $matches[2];
+            $gcd = gcd($w, $h);
+            $info['DAR'] = $w/$gcd . ':' . $h/$gcd;
+        } else {
+            throw new ffmpegException("Could not read display aspect ratio.");
         }
         
         return $info;
