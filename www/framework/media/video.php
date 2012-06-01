@@ -270,23 +270,12 @@ class video {
             //throw new \exception("Could not read ffmpeg bitrate.");
         }
         
-        if (preg_match('/DAR\s*(\d+:\d+)/', $result, $matches)) {
-            $info['DAR'] = $matches[1]; // display aspect ratio
+        if (preg_match('/DAR\s*(\d+):(\d+)/', $result, $matches)) {
+            $info['DAR'] = $matches[1] / $matches[2]; // display aspect ratio
         }
-         // square pixels - manually calculate DAR
+        // square pixels - manually calculate DAR
         else if (preg_match('/Video:.*(\d+)x(\d+),/', $result, $matches)) {
-            /*
-             * GCD (Greatest Common Denominator)
-             * 
-             * Euclid's algorithm 
-             */
-            function gcd($a, $b) {
-                return ($b) ? gcd($b, $a % $b) : $a;
-            }
-            $w = $matches[1];
-            $h = $matches[2];
-            $gcd = gcd($w, $h);
-            $info['DAR'] = $w/$gcd . ':' . $h/$gcd;
+            $info['DAR'] = $matches[1] / $matches[2];
         } else {
             throw new ffmpegException("Could not read display aspect ratio.");
         }
