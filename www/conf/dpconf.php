@@ -46,6 +46,15 @@ $conf = array(
         ),
     ),
     // }}}
+    // {{{ localhost/depage-cms/test/
+    'localhost/depage-cms/test/' => array(
+        'handler' => "test",
+        'env' => "development",
+        'cms' => array(
+            'project' => "depagecms",
+        ),
+    ),
+    // }}}
     // {{{ cms.depagecms.net
     'cms.depagecms.net/' => array(
         'handler' => 'cms_ui',
