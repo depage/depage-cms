@@ -90,7 +90,7 @@ class depage_ui {
 
         // get depage specific query string
         // @todo use parseurl?
-        $dp_request_uri =  substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
+        $dp_request_uri = (string) substr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'], strlen(DEPAGE_BASE . $parent));
 
         // remove get parameters
         if (strpos($dp_request_uri, '?') !== false) {
@@ -108,9 +108,10 @@ class depage_ui {
         
         // save path (without localization)
         if ($parent == "") {
-            $this->urlPath = DEPAGE_URL_HAS_LOCALE ? substr($dp_request_path, 3) : $dp_request_path;
-            if ($this->urlPath != "") {
-                //$this->urlPath .= "/";
+            if (DEPAGE_URL_HAS_LOCALE && $dp_lang != '') {
+                $this->urlPath = (string) substr($dp_request_path, 3);
+            } else {
+                $this->urlPath = $dp_request_path;
             }
         }
         
