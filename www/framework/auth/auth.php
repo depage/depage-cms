@@ -22,7 +22,7 @@ class auth {
     public $realm = "depage::cms";
     public $sid, $uid;
     public $valid = false;
-    public $session_lifetime = 1800; // in seconds
+    public $session_lifetime = 10800; // in seconds
     public $privateKey = "private Key";
     public $user = null;
     public $justLoggedOut = false;
