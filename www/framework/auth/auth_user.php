@@ -62,7 +62,7 @@ class auth_user {
         
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }
     // }}}
@@ -102,7 +102,7 @@ class auth_user {
         
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }
     // }}}
@@ -140,7 +140,7 @@ class auth_user {
         
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }
     // }}} 
