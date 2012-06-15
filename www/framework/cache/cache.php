@@ -167,21 +167,33 @@ class cache {
     public function delete($key) {
         // @todo throw error if there are wildcards in identifier to be compatioble with memcached
         
-        if ($key[strlen($key) - 1] == "/") {
-            $dir = $key;
-            $key .= "*";
-        }
         $files = array_merge(
             (array) glob($this->cachepath . $key),
             (array) glob($this->cachepath . $key . ".gz")
         );
 
         foreach ($files as $file) {
-            unlink($file);
+            $this->rmr($file);
         }
-
-        if (isset($dir)) {
-            rmdir($this->cachepath . $dir);
+    }
+    // }}}
+    // {{{ rmdir */
+    /**
+     * @brief deletes files and direcories recursively
+     *
+     * @param   $path (string) path to file or directory
+     *
+     * @return  void
+     */
+    public function rmr($path) {
+        if (!is_link($path) && is_dir($path)) {
+            $files = glob($path . "/*");
+            foreach ($files as $file) {
+                $this->rmr($file);
+            }
+            rmdir($path);
+        } else {
+            unlink($path);
         }
     }
     // }}}
