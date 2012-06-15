@@ -58,14 +58,15 @@ class video {
         'ffmpeg'      => "ffmpeg",
         'ffprobe'     => "ffprobe",
         'qtfaststart' => "qt-faststart",
+
         'width'       => 640,
         'height'      => 360,
-        'vrate'       => "600k",
-        'arate'       => "64k",
+        'vrate'       => "500k",
+        'arate'       => "128k",
         'qmin'        => 3,
         'qmax'        => 5,
         'bufsize'     => "4096k",
-        'threads'     => 1,
+        'threads'     => 1, 
     );
     // }}}
     
@@ -112,7 +113,7 @@ class video {
         $vcodec = 'libx264';
         $acodec = 'aac';
         $presets = array(
-            // "slow", 
+            //"slow", 
             //"baseline", 
             "ipod640"
         );
@@ -321,7 +322,7 @@ class video {
             $out = $path . $i.  '.jpg';
             $outArg = escapeshellarg($out);
             $interval = $duration * $i / ($intervals + 1);
-            $cmd = '"' . $this->ffmpeg . "\" -ss {$interval} -i {$fileArg} -r 1 -vframes 1 -f mjpeg -an -y -s {$width}x{$height} {$outArg}";
+            $cmd = "{$this->ffmpeg} -ss {$interval} -i {$fileArg} -r 1 -vframes 1 -f mjpeg -an -y -s {$width}x{$height} {$outArg}";
             $this->call($cmd);
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
@@ -345,11 +346,11 @@ class video {
         exec($cmd, $output, $var);
         
         if (is_array($output)) {
-            $output = implode('', $output);
+            $output = implode('\n', $output);
         }
         
         if ($var) {
-            throw new ffmpegException("Error executing ffmpeg\n$cmd\n$output");
+            //throw new ffmpegException("Error executing ffmpeg\n$cmd\n$output");
         }
 
         return $output;
