@@ -59,14 +59,16 @@ class video {
         'ffprobe'     => "ffprobe",
         'qtfaststart' => "qt-faststart",
 
+        'aaccodec'    => "libfaac",
+
         'width'       => 640,
         'height'      => 360,
-        'vrate'       => "500k",
+        'vrate'       => "400k",
         'arate'       => "128k",
         'qmin'        => 3,
         'qmax'        => 5,
         'bufsize'     => "4096k",
-        'threads'     => 1, 
+        'threads'     => 0, // automatic number of threads
     );
     // }}}
     
@@ -111,7 +113,7 @@ class video {
         $outfile = $this->stripExt($outfile) . '.mp4';
         
         $vcodec = 'libx264';
-        $acodec = 'aac';
+        $acodec = $this->aaccodec;
         $presets = array(
             //"slow", 
             //"baseline", 
