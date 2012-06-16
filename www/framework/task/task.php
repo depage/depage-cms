@@ -100,8 +100,7 @@ class task {
     // }}}
     // {{{ loadOrCreate()
     static public function loadOrCreate($task_name, $table_prefix, $pdo) {
-        list($task) = self::loadByName($task_name, $table_prefix, $pdo, "status != 'failed'");
-        //list($task) = self::loadByName($task_name, $table_prefix, $pdo);
+        list($task) = self::loadByName($task_name, $table_prefix, $pdo, "status IS NULL OR status != 'failed'");
 
         if (!$task) {
             $task = self::create($task_name, $table_prefix, $pdo);
