@@ -48,7 +48,7 @@ class mail {
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
-        $this->text = strip_tags($this->htmlText);
+        $this->text = $this->stripTags($this->htmlText);
     }
     // }}}
     
@@ -206,6 +206,39 @@ class mail {
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ stripTags()
+    /**
+     * stripTags
+     *
+     * @param  string  $string
+     * @return string
+     */
+    function stripTags($string) {
+        $stripped = preg_replace(array(
+            // Remove invisible content
+            '@<style[^>]*?>.*?</style>@siu',
+            '@<script[^>]*?.*?</script>@siu',
+            '@<object[^>]*?.*?</object>@siu',
+            '@<embed[^>]*?.*?</embed>@siu',
+            '@<applet[^>]*?.*?</applet>@siu',
+            '@<noframes[^>]*?.*?</noframes>@siu',
+            '@<noscript[^>]*?.*?</noscript>@siu',
+            '@<noembed[^>]*?.*?</noembed>@siu', 
+        ), array(
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ), $string);
+
+        $stripped = strip_tags($stripped);
+        return $stripped;
     }
     // }}}
     // {{{ quotedPrintableEncode()
