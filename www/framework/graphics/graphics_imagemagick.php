@@ -128,7 +128,7 @@ class graphics_imagemagick extends graphics {
             return getimagesize($this->input);
         } else {
             $identify       = preg_replace('/convert$/', 'identify', $this->executable);
-            $command        = "{$identify} -format \"%wx%h\" {$this->input}";
+            $command        = "{$identify} -format \"%wx%h\" " . escapeshellarg($this->input);
             $escapedCommand = str_replace('!', '\!', escapeshellcmd($command));
 
             exec($escapedCommand . ' 2>&1', $commandOutput, $returnStatus);
@@ -166,8 +166,8 @@ class graphics_imagemagick extends graphics {
             $background = $this->getBackground();
             $quality    = $this->getQuality();
 
-            $this->command = "{$this->executable} {$background} ( {$this->input}{$this->command}";
-            $this->command .= " ) -flatten {$quality} {$this->outputFormat}:{$this->output}";
+            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$this->command}";
+            $this->command .= " ) -flatten {$quality} {$this->outputFormat}:" . escapeshellarg($this->output);
 
             $this->execCommand();
         }

@@ -18,6 +18,7 @@ class graphics_ui extends \depage_ui {
      **/
     public $defaults = array(
         'extension'     => 'gd',
+        'executable'    => '',
         'background'    => 'transparent',
     );
 
@@ -47,15 +48,16 @@ class graphics_ui extends \depage_ui {
         $height     = intval($command[5]);
         $extension  = $this->letters($command[6]);
 
-        if ($width == 0) $width = null;
-        if ($height == 0) $height = null;
+        if ($width == 0) $width = "X";
+        if ($height == 0) $height = "X";
         
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
         
         $img = graphics::factory(
             array(
-                'extension'     => $this->defaults['extension'],
-                'background'    => $this->defaults['background'],
+                'extension'     => $this->options->extension,
+                'executable'    => $this->options->executable,
+                'background'    => $this->options->background,
             )
         );
         
