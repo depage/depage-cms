@@ -47,10 +47,10 @@ class messaging {
     );
     
     // {{{ constructor()
-    public function __construct(\db_pdo $pdo, $table_prefix = 'dp', array $options = array()) {
+    public function __construct(\db_pdo $pdo, array $options = array()) {
         $this->pdo = $pdo;
-        $this->messages_table = $table_prefix . '_messages';
-        $this->user_table = $table_prefix . '_auth_user';
+        $this->messages_table = $this->pdo->prefix . '_messages';
+        $this->user_table = $this->pdo->prefix . '_auth_user';
         
         $conf = new \config($options);
         $this->options = $conf->getFromDefaults($this->defaults);
