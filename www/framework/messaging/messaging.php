@@ -106,6 +106,7 @@ class messaging {
                 'content'       => $message->content,
                 'type'          => $message->type,
             ));
+            $message->message_id = $this->pdo->lastInsertId();
         }
         if (!$result) {
             //print_r($query->errorInfo());
@@ -139,7 +140,12 @@ class messaging {
      * @return array $messages - array of message object
      */
     protected function getMessages(array $params = array(), $exclude_deleted = true){
-        $cmd = "SELECT s.name AS 'from', r.name AS 'to', m.*
+        $cmd = "SELECT 
+                s.name AS 'from', 
+                r.name AS 'to', 
+                s.name_full AS 'fullfrom', 
+                r.name_full AS 'fullto', 
+                m.*
             FROM {$this->messages_table} AS m
             INNER JOIN {$this->user_table} AS r ON m.recipient_id = r.id
             INNER JOIN {$this->user_table} AS s ON m.sender_id = s.id";
@@ -200,7 +206,7 @@ class messaging {
     // }}}
     
     
-    // bindParams {{
+    // bindParams {{{
     // TODO duplicated from Entity - could inherit or share ?
     /**
      * BindParams
@@ -218,7 +224,7 @@ class messaging {
             }
         }
     }
-    // }}
+    // }}}
     
     // sendNotifications {{{
     /**
