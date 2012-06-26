@@ -125,14 +125,25 @@ class xmlnav {
         $pages = $xpath->query("//pg:page[@url='{$url}']");
         
         if($pages->length) {
+            // a page has activeUrl
             $page = $pages->item(0);
             $page->setAttribute('status', $this::ACTIVE_STATUS);
-            
-            $ancestors = $xpath->query("//pg:page[@url='{$url}']/ancestor::pg:*");
-            
-            foreach($ancestors as $ancestor) {
-                $ancestor->setAttribute('status', $this::PARENT_STATUS);
+            $page = $page->parentNode;
+        } else {
+            // search for parent urls
+            while ($pages->length == 0 && strrpos($url, "/") !== false) {
+                $url = substr($url, 0, strrpos($url, "/"));
+                $pages = $xpath->query("//pg:page[@url='{$url}/']");
             }
+            if($pages->length) {
+                $page = $pages->item(0);
+            }
+        }
+
+        while ($page && $page->nodeType == XML_ELEMENT_NODE) {
+            // loop to top
+            $page->setAttribute('status', $this::PARENT_STATUS);
+            $page = $page->parentNode;
         }
     }
     // }}}
