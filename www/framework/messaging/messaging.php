@@ -30,6 +30,8 @@ class messaging {
     protected $pdo = null;
     protected $messages_table = null;
     protected $user_table = null;
+    
+    public $page_size = 20;
     public $options = array();
     
     private $cols = array(
@@ -47,8 +49,9 @@ class messaging {
     );
     
     // {{{ constructor()
-    public function __construct(\db_pdo $pdo, array $options = array()) {
+    public function __construct(\db_pdo $pdo, array $options = array(), $page_size = 2) {
         $this->pdo = $pdo;
+        $this->page_size = $page_size;
         $this->messages_table = $this->pdo->prefix . '_messages';
         $this->user_table = $this->pdo->prefix . '_auth_user';
         
@@ -181,12 +184,20 @@ class messaging {
         }
         
         if (isset($params['limit'])) {
-            $cmd .= ' LIMIT :offset, :max';
+            $cmd .= ' LIMIT :page, :size';
         }
         
         $query = $this->pdo->prepare($cmd);
         
         $this->bindParams($query, $params);
+        
+        if (isset($params['limit'])) {
+            // bind limit params TODO refactor to use entity
+            $page = (int)$params['limit']['page'];
+            $size = (int)$params['limit']['size'];
+            $query->bindParam(":page", $page, \PDO::PARAM_INT);
+            $query->bindParam(":size", $size, \PDO::PARAM_INT);
+        }
         
         $query->execute();
         
@@ -246,16 +257,19 @@ class messaging {
     /**
      * getMessagesForUser
      * 
-     * Gets messages for a given user (wraps getMessages) 
+     * Gets messages to a given user (wraps getMessages) 
      * 
      * @param int $recipient_id - message recipient
-     * @param array $params - filter
+     * @param int $page - index
      *
      * @return array
      */
-    public function getMessagesForUser($recipient_id, array $params = array()) {
-        $params['recipient_id'] = $recipient_id;
-        return $this->getMessages($params);
+    public function getMessagesForUser($recipient_id, $page = 1, $exclude_deleted = true) {
+        $params = array (
+            'recipient_id' => $recipient_id,
+            'limit' => array('page'=>$page,'size'=>$this->page_size)
+        );
+        return $this->getMessages($params, $exclude_deleted);
     }
     // }}}
     
@@ -270,9 +284,12 @@ class messaging {
      *
      * @return array
      */
-    public function getMessagesForSender($sender_id, array $params = array()) {
-        $params['sender_id'] = $sender_id;
-        return $this->getMessages($params);
+    public function getMessagesForSender($sender_id, $page = 1, $exclude_deleted = true) {
+        $params = array (
+            'sender_id' => $sender_id,
+            'limit' => array('page'=>$page,'size'=>$this->page_size)
+        );
+        return $this->getMessages($params, $exclude_deleted);
     }
     // }}}
     
@@ -287,16 +304,21 @@ class messaging {
      *
      * @return array
      */
-    public function getUnread($recipient_id, $exclude_deleted = true){
-        return $this->getMessagesForUser($recipient_id, array('status'=>1), $exclude_deleted);
+    public function getUnread($recipient_id, $page = 1, $exclude_deleted = true){
+        $params = array(
+            'status'=>1,
+            'recipient_id' => $recipient_id,
+            'limit'=>array('page'=>$page,'size'=>$this->page_size)
+        );
+        return $this->getMessages($params, $exclude_deleted);
     }
     // }}}
     
-    // countUnread {{{
+    // countMessages {{{
     /**
      * Count Messages
      *
-     * Counts the unread messages for a given user.
+     * Counts the messages for a given user.
      *
      * @param int $recipient_id
      * @param bool $unread only count unread
@@ -323,6 +345,32 @@ class messaging {
         $result = $cmd->fetch();
         
         return $result['unread'];
+    }
+    // }}}
+    
+    // countSent {{{
+    /**
+     * Count Sent
+     *
+     * Counts the sent messages for a given user.
+     *
+     * @param int $sender_id
+     *
+     * @return int
+     */
+    public function countSent($sender_id){
+        $query = "SELECT COUNT(message_id) AS sent
+            FROM {$this->messages_table}
+            WHERE sender_id = :sender_id";
+        
+        $cmd = $this->pdo->prepare($query);
+        $cmd->bindParam(":sender_id", $sender_id, \PDO::PARAM_INT);
+        
+        $cmd->execute();
+        
+        $result = $cmd->fetch();
+        
+        return $result['sent'];
     }
     // }}}
     
