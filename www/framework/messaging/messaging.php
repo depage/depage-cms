@@ -137,7 +137,9 @@ class messaging {
      * 
      * Fetches messages from the database according to the provided filter params
      * 
-     * @param array $params - ['status'=>0,'type'=>0,'limit'=>array(offset,max)]
+     * NB $params['limit']['page'] is converted to zero indexed for the LIMIT clause
+     * 
+     * @param array $params - ['status'=>0,'type'=>0,'limit'=>array('page'=>1,'size'=>10)]
      * 
      * @return array $messages - array of message object
      */
@@ -193,10 +195,12 @@ class messaging {
         
         if (isset($params['limit'])) {
             // bind limit params TODO refactor to use entity
-            $page = (int)$params['limit']['page'];
+            // NB LIMIT is zero indexed
+            $page = (int)$params['limit']['page'] - 1;
             $size = (int)$params['limit']['size'];
-            $query->bindParam(":page", $page, \PDO::PARAM_INT);
-            $query->bindParam(":size", $size, \PDO::PARAM_INT);
+            
+            $query->bindParam("page", $page, \PDO::PARAM_INT);
+            $query->bindParam("size", $size, \PDO::PARAM_INT);
         }
         
         $query->execute();
@@ -264,11 +268,19 @@ class messaging {
      *
      * @return array
      */
-    public function getMessagesForUser($recipient_id, $page = 1, $exclude_deleted = true) {
+    public function getMessagesForUser($recipient_id, $page = null, $message_id = null, $exclude_deleted = true) {
         $params = array (
             'recipient_id' => $recipient_id,
-            'limit' => array('page'=>$page,'size'=>$this->page_size)
         );
+        
+        if ($message_id) {
+            $params['message_id'] = $message_id;
+        }
+        
+        if ($page) {
+            $params['limit'] = array('page'=>$page,'size'=>$this->page_size);
+        }
+        
         return $this->getMessages($params, $exclude_deleted);
     }
     // }}}
@@ -284,11 +296,19 @@ class messaging {
      *
      * @return array
      */
-    public function getMessagesForSender($sender_id, $page = 1, $exclude_deleted = true) {
+    public function getMessagesForSender($sender_id, $page = null, $message_id = null, $exclude_deleted = true) {
         $params = array (
             'sender_id' => $sender_id,
-            'limit' => array('page'=>$page,'size'=>$this->page_size)
         );
+        
+        if ($message_id) {
+            $params['message_id'] = $message_id;
+        }
+        
+        if ($page) {
+            $params['limit'] = array('page'=>$page,'size'=>$this->page_size);
+        }
+        
         return $this->getMessages($params, $exclude_deleted);
     }
     // }}}
@@ -327,7 +347,7 @@ class messaging {
      * @return int
      */
     public function countMessages($recipient_id, $unread = false, $exclude_deleted = true){
-        $query = "SELECT COUNT(message_id) AS unread
+        $query = "SELECT COUNT(message_id) AS count
             FROM {$this->messages_table}
             WHERE recipient_id = :recipient_id";
         
@@ -344,7 +364,7 @@ class messaging {
         
         $result = $cmd->fetch();
         
-        return $result['unread'];
+        return $result['count'];
     }
     // }}}
     
@@ -387,7 +407,7 @@ class messaging {
      * @return depage\messaging\message
      */
     public function getInboxMessage($user_id, $message_id, $exclude_delete = true){
-         $results = $this->getMessagesForUser($user_id, array('message_id'=>$message_id), $exclude_delete);
+         $results = $this->getMessagesForUser($user_id, null, $message_id, $exclude_delete);
          if (count($results)){
              return $results[0];
          }
@@ -408,7 +428,7 @@ class messaging {
      * @return depage\messaging\message
      */
     public function getSentMessage($sender_id, $message_id, $exclude_delete = true){
-         $results = $this->getMessagesForSender($sender_id, array('message_id'=>$message_id), $exclude_delete);
+         $results = $this->getMessagesForSender($sender_id, null, $message_id, $exclude_delete);
          if (count($results)){
              return $results[0];
          }
