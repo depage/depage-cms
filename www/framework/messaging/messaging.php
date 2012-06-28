@@ -31,7 +31,7 @@ class messaging {
     protected $messages_table = null;
     protected $user_table = null;
     
-    public $page_size = 20;
+    public $page_size = 10;
     public $options = array();
     
     private $cols = array(
@@ -49,7 +49,7 @@ class messaging {
     );
     
     // {{{ constructor()
-    public function __construct(\db_pdo $pdo, array $options = array(), $page_size = 2) {
+    public function __construct(\db_pdo $pdo, array $options = array(), $page_size = 10) {
         $this->pdo = $pdo;
         $this->page_size = $page_size;
         $this->messages_table = $this->pdo->prefix . '_messages';
