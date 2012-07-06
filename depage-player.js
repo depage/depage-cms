@@ -1,4 +1,4 @@
-/**
+    /**
  * @require framework/shared/jquery-1.4.2.js
  * @require framework/shared/depage-jquery-plugins/depage-flash.js
  * @require framework/shared/depage-jquery-plugins/depage-browser.js
@@ -63,7 +63,7 @@
         
         var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
         var playing = false;
-
+        
         // use the build-in controls for iPhone and iPad
         var useCustomControls = !$.browser.iphone && !$.browser.ipad;
         
@@ -87,9 +87,8 @@
             
             base.options.width = base.options.width || base.$el.width();
             base.options.height = base.options.height || base.$el.height();
-            
             base.options.playerId = base.options.playerId + index;
-
+            
             $.depage.player.instances[base.options.playerId] = base;
             
             // listen to space
@@ -105,7 +104,6 @@
                     } else {
                         base.player.play();
                     }
-
                     return false;
                 } else if (e.keyCode == 102) {
                     // f
@@ -118,7 +116,6 @@
                     base.player.seek(base.player.currentTime - 9);
                 }
             });
-
         };
         // }}}
         
@@ -453,7 +450,7 @@
              */
             insertPlayer : function() {
                 // get absolute url from source attribute with mp4-type
-                var url = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>")[0].toString()
+                var url = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>")[0].toString();
                 
                 var flashParams = {
                     rand: Math.random(),
@@ -665,12 +662,6 @@
                     
                     $this.stop();
                     
-                    var val = 0;
-                    
-                    if ($this.css('opacity') < 1) {
-                        val = 1;
-                    }
-                    
                     $this.animate(opacity(1));
                 });
             
@@ -753,7 +744,7 @@
             
             legend.hide();
             requirements.hide();
-
+            
             return div;
         };
         // }}}
@@ -767,9 +758,9 @@
          */
         base.addControls = function(div){
             var imgSuffix = ($.browser.msie && $.browser.version < 7) ? ".gif" : ".png";
-
+            
             $video.removeAttr("controls");
-
+            
             base.controls.progress = $("<span class=\"progress\" />")
                 .mouseup(function(e) {
                     var offset = (e.pageX - $(this).offset().left) / $(this).width() * duration;
@@ -835,13 +826,13 @@
          */
         base.play = function() {
             $indicator.hide();
-
+            
             base.controls.play.hide();
             base.controls.pause.show();
             base.controls.rewind.show();
-
+            
             base.options.onPlay && base.options.onPlay();
-
+            
             playing = true;
         };
         // }}}
@@ -854,13 +845,13 @@
          */
         base.pause = function() {
             $indicator.show();
-
+            
             base.controls.play.show();
             base.controls.pause.hide();
             base.controls.rewind.show();
-
+            
             base.options.onPause && base.options.onPause();
-
+            
             playing = false;
         };
         // }}}
@@ -921,7 +912,6 @@
         };
         // }}}
         
-        
         // Run initializer
         base.init();
         
@@ -968,9 +958,9 @@
                 instance.duration();
                 break;
         }
-    }
-// }}}
-
+    };
+    // }}}
+    
     /**
      * instances
      *
