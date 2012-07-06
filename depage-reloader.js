@@ -48,8 +48,8 @@
          * Init
          * 
          * Get the plugin options.
-         * Setup onchange handlers for file inputs.
-         * Add the progress bar elements.
+         * Build URL.
+         * Init reload.
          * 
          * @return void
          */
