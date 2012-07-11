@@ -249,7 +249,7 @@ class depage_ui {
     
     // {{{ _send_time
     protected function _send_time($time) {
-        if ($this->options->env == "development") {
+        if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
             echo("<!-- $time sec -->");
         }
     }
