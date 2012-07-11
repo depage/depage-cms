@@ -41,7 +41,7 @@
          * @return void
          */
         base.init = function(){
-            base.options = $.extend({}, $.depage.reloader.defaultOptions, options);
+            base.options = $.extend({}, $.depage.shyDialogue.defaultOptions, options);
             base.dialogue();
         };
         // }}}
@@ -50,13 +50,55 @@
         /**
          * Dialogue
          * 
-         * Create timer polling on elements with ajax reload-url.
-         * 
          * @return void
          */
         base.dialogue = function(){
+            base.$el.bind('click.shy', function(e) {
+                base.show(e);
+            });
         };
         /// }}}
+        
+        // {{{ show()
+        /**
+         * Show
+         * 
+         * @return void
+         */
+        base.show = function(e) {
+            var left = e.pageX || 0;
+            var top = e.pageY || 0;
+            var $wrapper = $('<div/>').attr({
+                id: base.options.id,
+                style: 'position: absolute; left:' + left + '; top: ' + top + ';'
+            });
+            $wrapper.append('<span />').html(base.options.message);
+            for(var button in base.option.buttons){
+                var $btn = ($('<a href="#" />')
+                    .attr('id', base.options.id + '-' + button)
+                    .html(button)
+                    .click(function(e){
+                        base.$el.trigger(button, e);
+                        base.options.hide();
+                        return false;
+                    }));
+                
+                $wrapper.append($btn);
+            }
+            base.$el.after(wrapper);
+        };
+        // }}}
+        
+        // {{{ hide()
+        /**
+         * Hide
+         * 
+         * @return void
+         */
+        base.hide = function() {
+            $(base.options.id).hide();
+        };
+        // }}}
         
         base.init();
         return base;
@@ -66,13 +108,18 @@
     /**
      * Options
      * 
+     * - dialogue_id - the id of the dialogue element wrapper to display
+     * 
      */
-    $.depage.reloader.defaultOptions = {
+    $.depage.shyDialogue.defaultOptions = {
+        id : 'depage-shy-dialogue',
+        message: '',
+        buttons: ['accept', 'cancel']
     };
     
-    $.fn.depageReloader = function(options){
+    $.fn.depageShyDialogue = function(options){
         return this.each(function(index){
-            (new $.depage.reloader(this, index, options));
+            (new $.depage.shyDialogue(this, index, options));
         });
     };
     
