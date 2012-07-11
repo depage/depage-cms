@@ -84,10 +84,10 @@ class cache {
         if (!is_dir(dirname($path))) { 
             mkdir(dirname($path), 0777, true);
         }
-        $success = file_put_contents($path, $data);
+        $success = file_put_contents($path, $data, \LOCK_EX);
 
         if ($saveGzippedContent) {
-            $success = $success && file_put_contents($path . ".gz", gzencode($data));
+            $success = $success && file_put_contents($path . ".gz", gzencode($data), \LOCK_EX);
         }
 
         return $success;
