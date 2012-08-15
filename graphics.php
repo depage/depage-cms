@@ -307,7 +307,7 @@ class graphics {
      * @param   $binary             (string) filename of binary to look for
      * @return  $commandOutput[0]   (string) first line of output (path to binary)
      **/
-    protected function which($binary) {
+    static protected function which($binary) {
         exec('which ' . $binary, $commandOutput, $returnStatus);
         if ($returnStatus === 0) {
             return $commandOutput[0];
