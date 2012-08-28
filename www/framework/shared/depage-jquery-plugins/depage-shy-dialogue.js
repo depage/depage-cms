@@ -73,13 +73,13 @@
             var left = e.pageX || 0;
             var top = e.pageY || 0;
             if (!$wrapper) {
-                $wrapper = $('<div/>');
+                $wrapper = $('<div />').addClass(base.options.classes.wrapper);
             }
             $wrapper.attr({
                 id: base.options.id,
                 style: 'position: absolute; left:' + left + '; top: ' + top + ';'
             });
-            $span = $('<span />').html(base.options.message);
+            $span = $('<span />').addClass(base.options.classes.content).html(base.options.message);
             $wrapper.empty().append($span);
             for(var i in base.options.buttons){
                 (function() {
@@ -152,6 +152,7 @@
         id : 'depage-shy-dialogue',
         message: '',
         buttons: ['OK', 'Cancel'],
+        classes : { wrapper : 'shy-dialogue', content : 'content' }
     };
     
     $.fn.depageShyDialogue = function(options){
