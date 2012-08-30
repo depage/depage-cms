@@ -170,23 +170,22 @@
                 // remove url hash component
                 href = href.substring(0, href.indexOf('#') > 0 ? href.indexOf('#') : href.length);
                 
-                $.get(href, null, function(data){
-                    var $data = $(data).find('div.' + base.options.classes.content);
-                    $('div.' + base.options.classes.content + ':first').replaceWith($data).show();
-                    
-                    if(e.type !== 'popstate') {
-                        history.pushState($(e.target).attr('href'), e.target.textContent, href);
+                $('div.' + base.options.classes.content + ':first')
+                    .show()
+                    .load(href + '?ajax=true', null, function(data){
+                        if(e.type !== 'popstate') {
+                            history.pushState($(e.target).attr('href'), e.target.textContent, href);
+                            
+                            $(window).bind('popstate', function(pop) {
+                                var href = pop.originalEvent.state;
+                                base.axTabs.load(pop, href);
+                                base.setActive($('a[href="' + href + '"]', base.$el));
+                                return false;
+                            });
+                        }
                         
-                        $(window).bind('popstate', function(pop) {
-                            var href = pop.originalEvent.state;
-                            base.axTabs.load(pop, href);
-                            base.setActive($('a[href="' + href + '"]', base.$el));
-                            return false;
-                        });
-                    }
-                    
-                    base.$el.trigger('load', e, [$data]);
-                });
+                        base.$el.trigger('load', e, [data]);
+                    });
             }
         };
         
