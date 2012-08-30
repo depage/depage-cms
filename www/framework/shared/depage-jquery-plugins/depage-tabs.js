@@ -46,6 +46,8 @@
         };
         // }}}
         
+        var $tabs = $('li a', base.$el);
+        
         // {{{ tags()
         /**
          * Tabs
@@ -53,13 +55,14 @@
          * @return void
          */
         base.tabs = function(){
-            $('li a', base.$el).each(function(){
-                var $this = $(this);
-                var href = $this.attr('href');
+            base.hide();
+            $tabs.each(function(){
+                var $tab = $(this);
+                var href = $tab.attr('href');
                 if (href.substring(0,1) === '#') {
-                    base.jsTabs.init();
+                    base.jsTabs.init($tab);
                 } else {
-                    base.axTabs.init();
+                    base.axTabs.init($tab);
                 }
             });
         };
@@ -75,43 +78,35 @@
             /**
              * Init
              */
-            init : function() {
-                base.jsTabs.hide();
+            init : function($tab) {
                 /*
                  * show the active tab
                  */
-                if ($this.hasClass(base.options.classes.active)) {
-                    base.jsTabs.show($this.attr('href'));
+                if ($tab.hasClass(base.options.classes.active)) {
+                    base.jsTabs.load($tab.attr('href'));
                 }
                 /*
                  * add tab click handlers
                  */
-                $this.click(function() {
-                    base.jsTabs.show($(this).attr('href'));
+                $tab.click(function(e) {
+                    base.hide();
+                    base.jsTabs.load(e, $tab.attr('href'));
+                    base.setActive($(this));
+                    base.$el.trigger('select', e);
                     return false;
                 });
             },
             
             /**
-             * Hide
-             */
-            hide : function() {
-                $('div.' + base.options.classes.content).each(function() {
-                    $(this).hide();
-                });
-            },
-            
-            /**
-             * Show
+             * Load
              * 
              * @param href - the anchor name to show
              */
-            show : function(href) {
-                var href = $(this).attr('href');
+            load : function(e, href) {
                 // get the anchor name
                 href = href.substring(1,href.length);
-                $('a[name=' + href + ']').parent('div.' + base.options.classes.content).show();
-                base.$el.trigger('tab_show');
+                var $data = $('a[name=' + href + ']').parent('div.' + base.options.classes.content).show();
+                base.$el.trigger('load', e, $data);
             }
         };
         
@@ -123,51 +118,66 @@
          * 
          */
         base.axTabs = {
-                
             /**
              * Init
              */
-            init : function() {
-                var $this = $(this);
-                base.axTabs.hide();
+            init : function($tab) {
                 /*
                  * Show the active tab
                  */
-                if ($this.hasClass(base.options.classes.active)) {
-                    base.axTabs.show(href);
-                }
+                $('div.' + base.options.classes.content + ':first').show();
+                
                 /*
                  * Add Tab click handlers
                  */
-                $this.click(function() {
-                    base.axTabs.show($(this).attr('href'));
+                $tab.click(function(e) {
+                    base.hide();
+                    base.axTabs.load(e, $tab.attr('href'));
+                    base.setActive($(this));
+                    base.$el.trigger('select', e);
                     return false;
                 });
             },
             
             /**
-             * Hide
-             * 
-             * Hide inactive containers
-             */
-            hide : function() {
-                $('div.' + base.options.classes.content + '.not(:first)').each(function() {
-                    $(this).hide();
-                });
-            },
-            
-            /**
-             * Show
+             * Load
              * 
              * @param href -  the ajax url to fetch content from
              */
-            show : function(href) {
+            load : function(e, href) {
+                // remove url hash component
+                href = href.substring(0, href.indexOf('#') > 0 ? href.indexOf('#') : href.length);
                 $.get(href, null, function(data){
-                    $('div.' + base.options.classes.content + ':first').replaceWith($(data).find('div.' + base.options.classes.content));
-                    history.pushState({}, 'title', href);
-                    base.$el.trigger('tab_show');
+                    var $data = $(data).find('div.' + base.options.classes.content);
+                    $('div.' + base.options.classes.content + ':first').replaceWith($data).show();
+                    if (href != "") {
+                        history.pushState({}, 'title', href);
+                    }
+                    base.$el.trigger('load', e, [$data]);
                 });
             }
+        };
+        
+        /**
+         * Set Active
+         * 
+         * Set the tab Active class
+         * 
+         * @param $tab - the active tab
+         */
+        base.setActive = function($tab){
+            $tabs.parent('li').removeClass(base.options.classes.active);
+            $tab.parent('li').addClass(base.options.classes.active);
+        };
+        
+        
+        /**
+         * Hide
+         * 
+         * Hide inactive containers
+         */
+        base.hide = function() {
+            $('div.' + base.options.classes.content).hide();
         };
         
         base.init();
