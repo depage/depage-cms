@@ -176,7 +176,7 @@
                         if(e.type !== 'popstate') {
                             history.pushState($(e.target).attr('href'), e.target.textContent, href);
                             
-                            $(window).bind('popstate', function(pop) {
+                            $(window).unbind('popstate').bind('popstate', function(pop) {
                                 var href = pop.originalEvent.state;
                                 base.axTabs.load(pop, href);
                                 base.setActive($('a[href="' + href + '"]', base.$el));
