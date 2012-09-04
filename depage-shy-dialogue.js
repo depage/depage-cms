@@ -143,9 +143,12 @@
     // }}}
     
     /**
-     * Options
+     * Default Options
      * 
-     * - dialogue_id - the id of the dialogue element wrapper to display
+     * id - the id of the dialogue element wrapper to display
+     * message - message the dialouge will display
+     * buttons - buttons to supply (with corresponding event triggered)
+     * classes - css classes to supply to the wrapper and content elements
      * 
      */
     $.depage.shyDialogue.defaultOptions = {
