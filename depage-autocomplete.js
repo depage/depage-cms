@@ -5,11 +5,9 @@
  *
  * Depage AutoComplete plugin to supply user with hints or data while filling forms.
  * 
- * Provide a url in the options to dynamically load via AJAX an HTML5 datalist
- * filtered on the value of the input element. 
+ * Provide a url in the options to dynamically load via AJAX into the corresponding unordered list.
  * 
- * If the browser does not support datalists an unordered list of hyperlinks is built with
- * functionality to mimic the datalist behaviour.
+ * Fires a "selected" event when the item is picked
  * 
  * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -19,20 +17,6 @@
     if(!$.depage){
         $.depage = {};
     };
-    
-    // shiv {{{ 
-    /**
-     * Shiv DataList
-     * 
-     * Adds datalist element to the DOM to enable IE < 9.
-     * 
-     * @return void
-     */
-    if ($.browser.msie && $.browser.version < 9) {
-        $('head').append('<style>datalist{display:none}</style>');
-        document.createElement("datalist");
-    }
-    // }}}
     
     /**
      * autocomplete
@@ -52,11 +36,10 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.autocomplete", base);
         
-        // HTML5 datalist element is supported 
-        base.datalist = true;
-        
         // List element associated with input
-        base.$list = $(base.$el.attr('list'));
+        base.$list = null;
+        
+        var $body = $('body');
         
         // {{{ init
         /**
@@ -67,14 +50,15 @@
          * @return void
          */
         base.init = function(){
-            base.options = $.extend({}, $.depage.shyDialogue.defaultOptions, options);
+            base.options = $.extend({}, $.depage.autocomplete.defaultOptions, options);
             
-            base.datalist =  (typeof(HTMLDataListElement) !== "undefined"); // && false; // DEBUG fallback
+            base.options.list_id = base.options.list_id
+                || (base.$el.parents("p.input-text").attr("id") + "-list");
             
-            if (!base.datalist) {
-                base.fallback();
-            }
+            // disable browser autocomplete
+            base.$el.attr("autocomplete", "off");
             
+            base.setup();
             base.autocomplete();
         };
         // }}}
@@ -85,44 +69,54 @@
          * 
          * Binds to keypress and loads list element with options.
          * 
-         * Note that the "datalist" paramteter of the ajax request determines the format of returned HTML.
-         * i.e. <option> elements for datalist = true, otherwise <li> elements for fallback.
-         *  
          * @return void
          */
         base.autocomplete = function(){
             if(base.options.url) {
-                base.$el.bind("keypress.autocomplete", function() {
-                    
-                    var url = $("base").attr("href")
-                        + $('html').attr('lang')
-                        + base.options.url
-                        + "?ajax=true"
-                        + "&datalist=" + base.datalist
-                        + "&value=" + $(this).val();
-                    
-                    $.get(url , null, function(data) {
-                        var $data = $(data);
-                        base.$list.empty().append($data);
-                        base.$el.trigger("load", [$data]);
-                    });
+                base.$el.bind("keypress.autocomplete", function(e) {
+                    var code = e.keyCode ? e.keyCode : e.which;
+                    if(!(code == 40 || code == 38 || code == 13 ||  code == 27)) { // ignore arrow and enter keys
+                        var url = $("base").attr("href")
+                            + $('html').attr('lang')
+                            + base.options.url
+                            + "?ajax=true"
+                            + "&value=" + $(this).val();
+                        $.get(url , null, function(data) {
+                            var $items = $(data);
+                            base.$el.trigger("load.autocomplete", [$items]);
+                        });
+                    }
                 });
             }
         };
         /// }}}
         
-        // {{{ fallback()
+        // {{{ setup()
         /**
-         * Setup DataList Fallback
+         * Setup UL
          * 
-         * Replace <datalist> with <ul> list.
          * Clicking <li> adds contents to the input element.
          * 
          */
-        base.fallback =  function(){
-            $ul = $("<ul class='autocomplete' />").attr("id", base.$list.attr("id")).hide();
-            base.$list.replaceWith($ul);
-            base.$list = $ul;
+        base.setup =  function(){
+            base.$list = $("#" + base.options.list_id);
+            if (!base.$list.length){
+                // add a hidden <ul> for the autocomplete list if it doesn not already exist
+                base.$list = $("<ul class='autocomplete' />")
+                    .attr({
+                        "id" : base.options.list_id,
+                    })
+                    .css({
+                        "position" : "absolute",
+                        "left" : base.$el.offset().left,
+                        "top" : base.$el.offset().top + base.$el.height(),
+                        "z-index" : "1000",
+                        "background-color" : "#FFF"
+                    })
+                    .hide();
+                
+                $body.prepend(base.$list);
+            }
             
             /*
              * Select
@@ -131,9 +125,11 @@
              * 
              * @param $item - $('li') 
              */
-            var select = function($item) {
-                base.$el.val($item.text());
-                base.$list.hide();
+            var select = function(e, $content) {
+                $content.removeClass("hover");
+                base.$el.val($content.find('.content').text());
+                base.hide();
+                base.$el.trigger("selected", [$content]);
             };
             
             /*
@@ -141,18 +137,21 @@
              * 
              * Bind to the autocomplete load event and setup the dynamic functionality.
              */
-            base.$el.bind("load", function(e, $data) {
-                var $items = $data.children("a");
-                
+            base.$el.bind("load.autocomplete", function(e, $items) {
+                $items = $items.children("li");
+                // truncate the list
+                if(base.options.max_items){
+                    $items = $items.slice(0,base.options.max_items -1);
+                }
+                // append the list items...
+                base.$list.empty().append($items);
                 // on click select the list item.
-                $items.click(function() {
-                    select($(this).text());
+                $items.children("a").click(function(e) {
+                    select(e, $(this).parent("li"));
                     return false;
                 });
                 
                 if($items.length) {
-                    $items = $data.filter("li");
-                    
                      // add hover class on mouse over
                     $items.hover(function(){
                         $items.filter(".hover").removeClass("hover");
@@ -160,33 +159,63 @@
                     });
                     
                     // Bind to keyup events on the input
-                    base.$el.bind('keyup.autocomplete', function(e) {
-                        // find the selected list item
-                        var $item =  $items.filter(".hover").removeClass("hover");
-                        if ($item.length){
-                            var code = e.keyCode ? e.keyCode : e.which;
-                            switch (code) {
-                                case 40 : // arrow down
-                                    $item = $item.next();
-                                    break;
-                                case 38 : // arrow up
-                                    $item = $item.prev();
-                                    break;
-                                case 13 : // enter key
-                                    select($item);
-                                    break;
-                            } 
-                        } else {
-                            // default to the first item
-                            $item = $($items[0]);
+                    base.$el.bind("keyup.autocomplete", function(e) {
+                            // find the selected list item
+                            var $item =  $items.filter(".hover").removeClass("hover");
+                            if ($item.length){
+                                var code = e.keyCode ? e.keyCode : e.which;
+                                switch (code) {
+                                    case 40 : // arrow down
+                                        $item = $item.next();
+                                        break;
+                                    case 38 : // arrow up
+                                        $item = $item.prev();
+                                        break;
+                                    case 13 : // enter key
+                                        select(e, $item);
+                                        break;
+                                    case 27 : // escape key
+                                        base.hide();
+                                        break;
+                                } 
+                            } else {
+                                // default to the first item
+                                $item = $($items[0]);
+                            }
+                            // show the hover class on the selected itm
+                            $item.addClass("hover");
+                        });
+                    
+                    // we have items so position and show the list
+                    base.$list
+                        .css({
+                            "left" : base.$el.offset().left,
+                            "top" : base.$el.offset().top + base.$el.height(),
+                        })
+                        .show();
+                    
+                    /**
+                     * Remove menu on click out 
+                     */
+                    $body.bind('click.autocomplete', function(e) {
+                        if (e.target.type !== 'submit') {
+                            $body.unbind('click.autocomplete');
+                            base.hide();
                         }
-                        // show the hover class on the selected itm
-                        $item.addClass("hover");
                     });
-                    // we have items so show the list
-                    base.$list.show();
                 }
             });
+        };
+        // }}}
+        
+        // {{{ base.hide()
+        /**
+         * Base Hide 
+         */
+        base.hide = function() {
+            base.$el.unbind("keyup.autocomplete");
+            base.$list.hide();
+            return false;
         };
         // }}}
         
@@ -198,10 +227,12 @@
      * Default Options
      * 
      * url - the ajax lander url
-     * 
+     * html5 - if false this will force the autoloader to work via ajax
      */
     $.depage.autocomplete.defaultOptions = {
         url : false,
+        list_id : false,
+        max_items : 8
     };
     
     $.fn.depageAutoComplete = function(options){
