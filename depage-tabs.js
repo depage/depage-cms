@@ -72,7 +72,7 @@
          * 
          * Determines if this tab is in ajax or js mode:
          * 
-         * If the ahref is different to the page base url use ajax.
+         * If the href is different to the page base url use ajax.
          * 
          * If the href contains a hash which matches an id on the page we
          * are loading content dynamically with javascript. 
@@ -80,7 +80,7 @@
          * @return void
          */
         base.isAjaxTab = function(href) {
-            if (href.match('^' + $('base').attr('href'))) {
+            if (!href.match('^' + $('base').attr('href'))) {
                 var hash = href.match("#[^?&/]+")[0];
                 return !(hash && $(hash).length);
             }
@@ -102,8 +102,8 @@
                 /*
                  * show the active tab
                  */
-                if ($tab.hasClass(base.options.classes.active)) {
-                    base.jsTabs.load($tab.attr('href'));
+                if ($tab.parent('li').hasClass(base.options.classes.active)) {
+                    base.jsTabs.load(null, $tab.attr('href'));
                 }
                 /*
                  * add tab click handlers
@@ -124,9 +124,9 @@
              */
             load : function(e, href) {
                 // get the anchor name
-                href = href.substring(href.indexOf('#') -1, href.length);
+                href = href.substring(href.indexOf('#'), href.length);
                 var $data = $(href).show();
-                base.$el.trigger('load',$data);
+                //base.$el.trigger('load', $data);
             }
         };
         
