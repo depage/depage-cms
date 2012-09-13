@@ -72,7 +72,7 @@
          * 
          * Determines if this tab is in ajax or js mode:
          * 
-         * If the ahref is different to the page base url use ajax.
+         * If the href is different to the page base url use ajax.
          * 
          * If the href contains a hash which matches an id on the page we
          * are loading content dynamically with javascript. 
@@ -80,7 +80,7 @@
          * @return void
          */
         base.isAjaxTab = function(href) {
-            if (href.match('^' + $('base').attr('href'))) {
+            if (!href.match('^' + $('base').attr('href'))) {
                 var hash = href.match("#[^?&/]+")[0];
                 return !(hash && $(hash).length);
             }
@@ -102,8 +102,8 @@
                 /*
                  * show the active tab
                  */
-                if ($tab.hasClass(base.options.classes.active)) {
-                    base.jsTabs.load($tab.attr('href'));
+                if ($tab.parent('li').hasClass(base.options.classes.active)) {
+                    base.jsTabs.load(null, $tab.attr('href'));
                 }
                 /*
                  * add tab click handlers
@@ -124,9 +124,9 @@
              */
             load : function(e, href) {
                 // get the anchor name
-                href = href.substring(href.indexOf('#') -1, href.length);
+                href = href.substring(href.indexOf('#'), href.length);
                 var $data = $(href).show();
-                base.$el.trigger('load', e, $data);
+                //base.$el.trigger('load', $data);
             }
         };
         
@@ -169,23 +169,20 @@
             load : function(e, href) {
                 // remove url hash component
                 href = href.substring(0, href.indexOf('#') > 0 ? href.indexOf('#') : href.length);
-                
-                $('div.' + base.options.classes.content + ':first')
-                    .show()
-                    .load(href + '?ajax=true', null, function(data){
-                        if(e.type !== 'popstate') {
-                            history.pushState($(e.target).attr('href'), e.target.textContent, href);
-                            
-                            $(window).bind('popstate', function(pop) {
-                                var href = pop.originalEvent.state;
-                                base.axTabs.load(pop, href);
-                                base.setActive($('a[href="' + href + '"]', base.$el));
-                                return false;
-                            });
-                        }
-                        
-                        base.$el.trigger('load', e, [data]);
-                    });
+                $.get(href, {"ajax":"true"}, function(data) {
+                    var $data = $(data);
+                    $('div.' + base.options.classes.content + ':first').empty().html($data).show();
+                    if(e.type !== 'popstate') {
+                        history.pushState($(e.target).attr('href'), e.target.textContent, href);
+                        $(window).unbind('popstate').bind('popstate', function(pop) {
+                            var href = pop.originalEvent.state;
+                            base.axTabs.load(pop, href);
+                            base.setActive($('a[href="' + href + '"]', base.$el));
+                            return false;
+                        });
+                    }
+                    base.$el.trigger('load', [$data]);
+                });
             }
         };
         
