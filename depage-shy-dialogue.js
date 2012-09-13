@@ -21,7 +21,7 @@
      * @param index
      * @param options
      */
-    $.depage.shyDialogue = function(el, index, options){
+    $.depage.shyDialogue = function(el, index, buttons, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
         
@@ -45,6 +45,7 @@
          */
         base.init = function(){
             base.options = $.extend({}, $.depage.shyDialogue.defaultOptions, options);
+            base.buttons = buttons;
             base.dialogue();
         };
         // }}}
@@ -73,36 +74,71 @@
             var left = e.pageX || 0;
             var top = e.pageY || 0;
             if (!$wrapper) {
-                $wrapper = $('<div />').addClass(base.options.classes.wrapper);
+                $wrapper = $('#' + base.options.id);
+                if ($wrapper.length == 0) {
+                    $wrapper = $('<div />');
+                } else {
+                    $wrapper.data("depage.shyDialogue").hide(0);
+                }
             }
+            $wrapper.data("depage.shyDialogue", base);
             $wrapper.attr({
+                class: base.options.classes.wrapper,
                 id: base.options.id,
-                style: 'position: absolute; left:' + left + '; top: ' + top + ';'
+                style: 'position: absolute; left:' + left + 'px; top: ' + top + 'px;'
             });
-            $span = $('<span />').addClass(base.options.classes.content).html(base.options.message);
-            $wrapper.empty().append($span);
-            for(var i in base.options.buttons){
+
+            var $title = $('<h1 />').html(base.options.title);
+            var $message = $('<p />').html(base.options.message);
+            var $buttonwrapper = $('<div class="buttons" />');
+            $wrapper.empty()
+                .append($title)
+                .append($message)
+                .append($buttonwrapper);
+            
+
+            for(var i in base.buttons){
                 (function() {
-                    var button = base.options.buttons[i];
-                    var $btn = ($('<a href="#" />')
-                        .attr('id', base.options.id + '-' + button)
-                        .html(button)
+                    var button = base.buttons[i];
+                    var title = button.title || i;
+                    var className = "button";
+                    if (button.class) {
+                        className += " " + button.class;
+                    }
+                    var $btn = $('<a href="#" class="' + className + '" />')
+                        .attr('id', base.options.id + '-' + i)
+                        .text(title)
+                        .data('depage.shyDialogue', base) 
                         .click(function(e){
-                            switch (button.toLowerCase()) {
-                                case 'cancel':
-                                    base.hide(500);
-                                default :
-                                    base.$el.trigger('shy_' + button.toLowerCase(), e);
+                            if (typeof(button.click) !== 'function' || button.click(e) !== false) {
+                                base.hide();
                             }
-                            
                             return false;
-                        }));
+                        });
                     
-                    $wrapper.append($btn);
+                    $buttonwrapper.append($btn);
                 })();
                 
             }
-            base.$el.after($wrapper);
+            $("body").append($wrapper);
+
+            $(".button.default", $wrapper).focus().css("border: 1px solid");
+
+            // bind escape key to cancel
+            $(document).bind('keyup.shy-dialogue', function(e){
+                var key = e.which || e.keyCode;
+                if (key == 27) {
+                    base.hide();
+                    $(document).unbind('keyup.shy-dialogue');
+                }
+            });
+            // hide dialog when clicked outside
+            $("html").bind("click.shy-dialogue", function() {
+                base.hide();
+            });
+            $wrapper.click( function(e) {
+                e.stopPropagation();
+            });
         };
         // }}}
         
@@ -116,8 +152,12 @@
          * @return void
          */
         base.hide = function(duration, callback) {
-            duration = duration || 0;
-            $('#' + base.options.id).fadeOut(duration, callback);
+            $("html").unbind("click.shy-dialogue");
+
+            if (!$wrapper) return;
+
+            duration = duration || base.options.fadeoutDuration;
+            $wrapper.fadeOut(duration, callback);
         };
         // }}}
         
@@ -129,10 +169,10 @@
          * 
          * @return void
          */
-        base.swapContent = function(html, fadeout) {
+        base.swapContent = function(html, duration) {
             $('#' + base.options.id).empty().html(html);
-            if (fadeout) {
-                setTimeout(function(){base.hide(fadeout);}, 3000);
+            if (duration) {
+                setTimeout(function(){base.hide(base.options.fadeoutDuration);}, duration);
             }
         };
         // }}}
@@ -150,14 +190,17 @@
      */
     $.depage.shyDialogue.defaultOptions = {
         id : 'depage-shy-dialogue',
+        icon: '',
+        title: '',
         message: '',
-        buttons: ['OK', 'Cancel'],
-        classes : { wrapper : 'shy-dialogue', content : 'content' }
+        fadeoutDuration: 300,
+        buttons: {},
+        classes : { wrapper : 'depage-shy-dialogue'}
     };
     
-    $.fn.depageShyDialogue = function(options){
+    $.fn.depageShyDialogue = function(buttons, options){
         return this.each(function(index){
-            (new $.depage.shyDialogue(this, index, options));
+            (new $.depage.shyDialogue(this, index, buttons, options));
         });
     };
     
