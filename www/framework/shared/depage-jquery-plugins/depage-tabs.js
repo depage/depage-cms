@@ -32,6 +32,9 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.tabs", base);
         
+        // store the tabs
+        var $tabs = [];
+        
         // {{{ init
         /**
          * Init
@@ -42,11 +45,11 @@
          */
         base.init = function(){
             base.options = $.extend({}, $.depage.tabs.defaultOptions, options);
+            $tabs = $('ul.' + base.options.classes.ul + ' li a', base.$el);
+            // go
             base.tabs();
         };
         // }}}
-        
-        var $tabs = $('li a', base.$el);
         
         // {{{ tags()
         /**
@@ -126,7 +129,7 @@
                 // get the anchor name
                 href = href.substring(href.indexOf('#'), href.length);
                 var $data = $(href).show();
-                //base.$el.trigger('load', $data);
+                base.$el.trigger('load', ['js', $data]);
             }
         };
         
@@ -181,7 +184,7 @@
                             return false;
                         });
                     }
-                    base.$el.trigger('load', [$data]);
+                    base.$el.trigger('load', ['ajax', $data]);
                 });
             }
         };
@@ -214,9 +217,12 @@
     /**
      * Options
      * 
+     * @param classes styles to apply to tabs, active tab, and content containers 
+     * 
      */
     $.depage.tabs.defaultOptions = {
         classes : {
+            ul      : 'nav',
             active  : 'active',
             content : 'content'
         }
