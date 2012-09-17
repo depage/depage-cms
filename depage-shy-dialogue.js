@@ -76,23 +76,9 @@
             var left = e.pageX || 0;
             var top = e.pageY || 0;
 
-            // remove old wrapper (also with multiple dialogues)
-            $('#' + base.options.id).remove();
+            base.addWrapper();
 
-            $wrapper = $('<div />');
-
-            $contentWrapper = $('<div class="message" />');
-            $wrapper.append($contentWrapper);
-
-            $buttonWrapper = $('<div class="buttons" />');
-            $wrapper.append($buttonWrapper);
-
-            $("body").append($wrapper);
-
-            $wrapper.data("depage.shyDialogue", base);
             $wrapper.attr({
-                class: base.options.classes.wrapper,
-                id: base.options.id,
                 style: 'position: absolute; left:' + left + 'px; top: ' + top + 'px; z-index: 10000;'
             });
 
@@ -166,6 +152,36 @@
         };
         // }}}
         
+        // {{{ addWrapper()
+        /**
+         * removes old and adds the new html wrapper
+         * 
+         * @return void
+         */
+        base.addWrapper = function() {
+            // remove old wrapper (also with multiple dialogues)
+            $('#' + base.options.id).remove();
+
+            $wrapper = $('<div />');
+
+            $contentWrapper = $('<div class="message" />');
+            $wrapper.append($contentWrapper);
+
+            $buttonWrapper = $('<div class="buttons" />');
+            $wrapper.append($buttonWrapper);
+
+            $("body").append($wrapper);
+
+            $wrapper.data("depage.shyDialogue", base);
+            $wrapper.attr({
+                class: base.options.classes.wrapper,
+                id: base.options.id
+            });
+            
+            // allow chaining
+            return this;
+        };
+        // }}}
         // {{{ setButtons()
         /**
          * setButtons
