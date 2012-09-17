@@ -75,20 +75,20 @@
         base.show = function(e) {
             var left = e.pageX || 0;
             var top = e.pageY || 0;
-            if (!$wrapper) {
-                $wrapper = $('#' + base.options.id);
-                if ($wrapper.length == 0) {
-                    $wrapper = $('<div />');
 
-                    $contentWrapper = $('<div class="message" />');
-                    $wrapper.append($contentWrapper);
+            // remove old wrapper (also with multiple dialogues)
+            $('#' + base.options.id).remove();
 
-                    $buttonWrapper = $('<div class="buttons" />');
-                    $wrapper.append($buttonWrapper);
-                } else {
-                    $wrapper.data("depage.shyDialogue").hide(0);
-                }
-            }
+            $wrapper = $('<div />');
+
+            $contentWrapper = $('<div class="message" />');
+            $wrapper.append($contentWrapper);
+
+            $buttonWrapper = $('<div class="buttons" />');
+            $wrapper.append($buttonWrapper);
+
+            $("body").append($wrapper);
+
             $wrapper.data("depage.shyDialogue", base);
             $wrapper.attr({
                 class: base.options.classes.wrapper,
@@ -98,8 +98,6 @@
 
             base.setContent(base.options.title, base.options.message, base.options.icon);
             base.setButtons(base.buttons);
-
-            $("body").append($wrapper);
 
             // set focus to default button when available
             $(".button.default", $wrapper).focus();
@@ -120,6 +118,9 @@
             $wrapper.click( function(e) {
                 e.stopPropagation();
             });
+            
+            // allow chaining
+            return this;
         };
         // }}}
         
@@ -127,7 +128,7 @@
         /**
          * Hide
          * 
-         * @param duration - gradually fades out default 0
+         * @param duration - gradually fades out default 300
          * @param callback - optional callback function
          * 
          * @return void
@@ -139,6 +140,29 @@
 
             duration = duration || base.options.fadeoutDuration;
             $wrapper.fadeOut(duration, callback);
+            
+            // allow chaining
+            return this;
+        };
+        // }}}
+        // {{{ hideAfter()
+        /**
+         * HideAfter
+         *
+         * hides dialog automatically after a duration
+         *
+         * @param duration - duration after
+         * @param callback - optional callback function
+         * 
+         * @return void
+         */
+        base.hideAfter = function(duration, callback) {
+            setTimeout(function(){
+                base.hide(base.options.fadeoutDuration, callback);
+            }, duration);
+
+            // allow chaining
+            return this;
         };
         // }}}
         
@@ -175,6 +199,9 @@
                     $buttonWrapper.append($btn);
                 })();
             }
+
+            // allow chaining
+            return this;
         };
         // }}}
         // {{{ setContent()
@@ -188,27 +215,15 @@
          * @return void
          */
         base.setContent = function(title, message, icon) {
-            var $title = $('<h1 />').html(base.options.title);
-            var $message = $('<p />').html(base.options.message);
+            var $title = $('<h1 />').text(title);
+            var $message = $('<p />').text(message);
 
             $contentWrapper.empty()
                 .append($title)
                 .append($message);
-        };
-        // }}}
-        // {{{ swapContent()
-        /**
-         * swapContent
-         * 
-         * @param fadeout if set will hide the dialogue
-         * 
-         * @return void
-         */
-        base.swapContent = function(html, duration) {
-            $('#' + base.options.id).empty().html(html);
-            if (duration) {
-                setTimeout(function(){base.hide(base.options.fadeoutDuration);}, duration);
-            }
+
+            // allow chaining
+            return this;
         };
         // }}}
         
