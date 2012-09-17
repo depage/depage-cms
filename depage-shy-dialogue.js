@@ -34,6 +34,8 @@
         
         // reference the wrapper div
         var $wrapper = null;
+        var $contentWrapper = null;
+        var $buttonWrapper = null;
         
         // {{{ init
         /**
@@ -77,6 +79,12 @@
                 $wrapper = $('#' + base.options.id);
                 if ($wrapper.length == 0) {
                     $wrapper = $('<div />');
+
+                    $contentWrapper = $('<div class="message" />');
+                    $wrapper.append($contentWrapper);
+
+                    $buttonWrapper = $('<div class="buttons" />');
+                    $wrapper.append($buttonWrapper);
                 } else {
                     $wrapper.data("depage.shyDialogue").hide(0);
                 }
@@ -85,44 +93,16 @@
             $wrapper.attr({
                 class: base.options.classes.wrapper,
                 id: base.options.id,
-                style: 'position: absolute; left:' + left + 'px; top: ' + top + 'px;'
+                style: 'position: absolute; left:' + left + 'px; top: ' + top + 'px; z-index: 10000;'
             });
 
-            var $title = $('<h1 />').html(base.options.title);
-            var $message = $('<p />').html(base.options.message);
-            var $buttonwrapper = $('<div class="buttons" />');
-            $wrapper.empty()
-                .append($title)
-                .append($message)
-                .append($buttonwrapper);
-            
+            base.setContent(base.options.title, base.options.message, base.options.icon);
+            base.setButtons(base.buttons);
 
-            for(var i in base.buttons){
-                (function() {
-                    var button = base.buttons[i];
-                    var title = button.title || i;
-                    var className = "button";
-                    if (button.class) {
-                        className += " " + button.class;
-                    }
-                    var $btn = $('<a href="#" class="' + className + '" />')
-                        .attr('id', base.options.id + '-' + i)
-                        .text(title)
-                        .data('depage.shyDialogue', base) 
-                        .click(function(e){
-                            if (typeof(button.click) !== 'function' || button.click(e) !== false) {
-                                base.hide();
-                            }
-                            return false;
-                        });
-                    
-                    $buttonwrapper.append($btn);
-                })();
-                
-            }
             $("body").append($wrapper);
 
-            $(".button.default", $wrapper).focus().css("border: 1px solid");
+            // set focus to default button when available
+            $(".button.default", $wrapper).focus();
 
             // bind escape key to cancel
             $(document).bind('keyup.shy-dialogue', function(e){
@@ -132,6 +112,7 @@
                     $(document).unbind('keyup.shy-dialogue');
                 }
             });
+            
             // hide dialog when clicked outside
             $("html").bind("click.shy-dialogue", function() {
                 base.hide();
@@ -161,6 +142,60 @@
         };
         // }}}
         
+        // {{{ setButtons()
+        /**
+         * setButtons
+         * 
+         * @param buttons
+         * 
+         * @return void
+         */
+        base.setButtons = function(buttons) {
+            $buttonWrapper.empty();
+
+            for(var i in buttons){
+                (function() {
+                    var button = base.buttons[i];
+                    var title = button.title || i;
+                    var className = "button";
+                    if (button.class) {
+                        className += " " + button.class;
+                    }
+                    var $btn = $('<a href="#" class="' + className + '" />')
+                        .attr('id', base.options.id + '-' + i)
+                        .text(title)
+                        .data('depage.shyDialogue', base) 
+                        .click(function(e){
+                            if (typeof(button.click) !== 'function' || button.click(e) !== false) {
+                                base.hide();
+                            }
+                            return false;
+                        });
+                    
+                    $buttonWrapper.append($btn);
+                })();
+            }
+        };
+        // }}}
+        // {{{ setContent()
+        /**
+         * setContent
+         * 
+         * @param title
+         * @param message
+         * @param icon (optional)
+         * 
+         * @return void
+         */
+        base.setContent = function(title, message, icon) {
+            var $title = $('<h1 />').html(base.options.title);
+            var $message = $('<p />').html(base.options.message);
+
+            $contentWrapper.empty()
+                .append($title)
+                .append($message);
+        };
+        // }}}
         // {{{ swapContent()
         /**
          * swapContent
