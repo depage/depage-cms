@@ -76,7 +76,7 @@ class messaging {
             $messages = array($messages);
         }
         
-        foreach($messages as $message){
+        foreach($messages as &$message){
             $this->insert($messages);
             if ($notify) {
                 $this->sendNotification($message);
