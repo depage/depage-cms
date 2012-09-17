@@ -41,6 +41,8 @@ namespace depage\media;
  * ffmpegException
  * 
  * Wraps FFMPEG Exceptions
+ * 
+ * Throw for more general exceptions
  */
 class ffmpegException extends \exception {
 }
@@ -58,9 +60,7 @@ class video {
         'ffmpeg'      => "ffmpeg",
         'ffprobe'     => "ffprobe",
         'qtfaststart' => "qt-faststart",
-
         'aaccodec'    => "libfaac",
-
         'width'       => 640,
         'height'      => 360,
         'vrate'       => "400k",
@@ -253,36 +253,51 @@ class video {
         $result = $this->call($cmd);
         $matches = null;
         
-        if (preg_match('/Input #0, (.\w+)/s', $result, $matches)) {
+        if (preg_match('/Invalid data found/si', $result, $matches)) {
+            throw new ffmpegException("Invalid file type.");
+        }
+        
+        if (preg_match('/Unsupported Audio/si', $result, $matches)) {
+            throw new ffmpegException("Unsupported audio codec.");
+        }
+        
+        if (preg_match('/Error while opening codec for input/si', $result, $matches)) {
+            throw new ffmpegException("Unsupported codec.");
+        }
+        
+        if (preg_match('/Input #0, (.\w+)/si', $result, $matches)) {
             $info['format'] = $matches[1];
         } else {
-            throw new ffmpegException("Could not read ffmpeg info.");
+            throw new ffmpegException("Could not read file.");
         }
         
-        if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/s', $result, $matches)) {
-            $info['duration'] = ($matches[2] * 3600) + ($matches[3] * 60) + $matches[4];
+        if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/si', $result, $matches)) {
+            $duration = ($matches[2] * 3600) + ($matches[3] * 60) + $matches[4];
+            if($duration < 1){
+                throw new ffmpegException("Unrecognized video: Duration too short.");
+            }
+            $info['duration'] = $duration;
         } else {
-            throw new ffmpegException("Could not read ffmpeg duration.");
+            throw new ffmpegException("Could not read file duration.");
         }
         
-        if (preg_match('/bitrate: (.\d+)/s', $result, $matches)) {
+        if (preg_match('/bitrate: (.\d+)/si', $result, $matches)) {
             $info['bitrate'] = $matches[1];
-            $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000; // TODO verify bitrate is kbs
+            $info['filesize'] = $info['bitrate'] * $info['duration'] * 1000;
         } else {
             // @todo exception temporarily disabled -> check why there is a problem with webm-format
-            //throw new \exception("Could not read ffmpeg bitrate.");
+            //throw new \exception("Could not read file bitrate.");
         }
         
-        if (preg_match('/DAR\s*(\d+):(\d+)/', $result, $matches)) {
+        if (preg_match('/DAR\s*(\d+):(\d+)/si', $result, $matches)) {
             $info['DAR'] = $matches[1] / $matches[2]; // display aspect ratio
         }
         // square pixels - manually calculate DAR
-        else if (preg_match('/Video:.*(\d+)x(\d+),/', $result, $matches)) {
+        else if (preg_match('/Video:.*(\d+)x(\d+),/si', $result, $matches)) {
             $info['DAR'] = $matches[1] / $matches[2];
         } else {
-            throw new ffmpegException("Could not read display aspect ratio.");
+            throw new ffmpegException("Could not read file display aspect ratio.");
         }
-        
         return $info;
     }
     // }}}
@@ -328,6 +343,7 @@ class video {
             $this->call($cmd);
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
+        
         return $thumbnails;
     }
     // }}}
@@ -351,10 +367,10 @@ class video {
             $output = implode('\n', $output);
         }
         
-        if ($var) {
-            //throw new ffmpegException("Error executing ffmpeg\n$cmd\n$output");
+        if ($var == 0) {
+            //throw new ffmpegException("Error executing ffmpeg\n{$cmd}:\n\n{$output}");
         }
-
+        
         return $output;
     }
     // }}}
