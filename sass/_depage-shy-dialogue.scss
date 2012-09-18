@@ -37,61 +37,77 @@
 }
 
 @mixin depage-shy-dialogue (
-    $corner-radius: 1em,
+    $width: 20em,
+    $height: 10em,
     $padding: 1em,
+    $corner-radius: 1em,
     $background: #e3e3e3,
-    $border: none
+    $border: none,
+    $direction-size: 2em
 ){
-    .depage-shy-dialogue {
+    position: absolute;
+    z-index: 10000;
+
+    .wrapper {
         @include radius($corner-radius);
         @include shadow();
 
+        position: absolute;
         border: $border;
         background: $background;
         padding: $padding;
+        width: $width;
+        height: $height;
+    }
 
-        margin-left: 2 * -$padding;
-        margin-top: 2 * -$padding;
+    h1,
+    p {
+        font-size: 1.2em;
+    }
+    h1 {
+        font-weight: bold;
+    }
 
-        h1,
-        p {
-            font-size: 1.2em;
+    .buttons {
+        position: absolute;
+        right: $padding;
+        bottom: $padding;
+    }
+
+    $default-multiplier: 2;
+
+    a.button {
+        @include radius($corner-radius / 2);
+        display: block;
+        float: left;
+        padding: ($corner-radius / 3);
+        margin-top: 1em * $default-multiplier - 1em;
+        margin-right: 0.2em;
+        border: 1px solid $background;
+
+        &:focus {
+            background: #eeeeee;
+            outline: 0;
         }
-        h1 {
-            font-weight: bold;
+        &:hover {
+            background: #ffffff;
         }
+    }
+    a.button.default {
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1em * $default-multiplier;
+        margin-top: 0;
+        padding: ($corner-radius / 4);
+    }
 
-        .buttons {
-            padding-top: 0.5em;
-            float: right;
-        }
-
-        $default-multiplier: 2;
-
-        a.button {
-            @include radius($corner-radius / 2);
-            display: block;
-            float: left;
-            padding: ($corner-radius / 3);
-            margin-top: 1em * $default-multiplier - 1em;
-            margin-right: 0.2em;
-            border: 1px solid $background;
-
-            &:focus {
-                background: #eeeeee;
-                outline: 0;
-            }
-            &:hover {
-                background: #ffffff;
-            }
-        }
-        a.button.default {
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1em * $default-multiplier;
-            margin-top: 0;
-            padding: ($corner-radius / 4);
-        }
+    .direction-marker {
+        position: absolute;
+        display: block;
+        width: $direction-size;
+        height: $direction-size;
+        border: 1px solid;
+        background: #ffffff;
     }
 }
 /* }}} */
