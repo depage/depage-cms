@@ -166,7 +166,7 @@
             $wrapper = $('<div class="wrapper" />');
             $dialogue.append($wrapper);
 
-            if (base.options.direction) {
+            if (base.options.directionMarker) {
                 // add direction marker
                 $directionMarker = $('<span class="direction-marker" />');
                 $wrapper.append($directionMarker);
@@ -200,15 +200,28 @@
             $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
 
             direction = direction.toLowerCase();
+            directions = {
+                l: 'left',
+                r: 'right',
+                t: 'top',
+                b: 'bottom',
+                c: 'center'
+            };
 
-            var dHeight = $directionMarker.height();
-            var dWidth = $directionMarker.width();
             var wrapperHeight = $wrapper.height();
             var wrapperWidth = $wrapper.width();
             var paddingLeft = parseInt($wrapper.css("padding-left"), 10);
             var paddingRight = parseInt($wrapper.css("padding-right"), 10);
             var paddingTop = parseInt($wrapper.css("padding-top"), 10);
             var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
+
+            if ($directionMarker) {
+                var dHeight = $directionMarker.height();
+                var dWidth = $directionMarker.width();
+            } else {
+                var dHeight = - paddingTop * 2;
+                var dWidth = - paddingLeft * 2;
+            }
 
             var wrapperPos = {};
             var markerPos = {};
@@ -231,6 +244,10 @@
                     wrapperPos.right = dWidth / 2;
                     markerPos.right = -dWidth;
                     break;
+                case 'c': // center
+                    wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
+                    wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
+                    break;
             }
 
             // on which position will it be displayed 
@@ -247,7 +264,7 @@
                     if (direction[0] == "t" || direction[0] == "b") { // horizontal
                         wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
                         markerPos.left = (wrapperWidth + paddingLeft + paddingRight) / 2 - dWidth / 2;
-                    } else { // vertical
+                    } else if (direction[0] == "l" || direction[0] == "r") { // vertical
                         wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
                         markerPos.top = (wrapperHeight + paddingTop + paddingBottom) / 2 - dHeight / 2;
                     }
@@ -263,7 +280,9 @@
             }
 
             $wrapper.css(wrapperPos);
-            $directionMarker.css(markerPos);
+            if ($directionMarker) {
+                $directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
+            }
         };
         // }}}
         // {{{ setButtons()
@@ -347,8 +366,8 @@
         icon: '',
         title: '',
         message: '',
-        direction : '',
-        directionMarker : '',
+        direction : 'TL',
+        directionMarker : null,
         fadeoutDuration: 300,
         buttons: {},
     };
