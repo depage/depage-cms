@@ -357,8 +357,14 @@
              * Begin the XHR Upload. Handles progress and load events.
              * 
              * @param fileinput - file to upload
+             * 
+             * return bool
              */
             upload : function(fileinput){
+                if (base.options.max_filesize && base.options.max_filesize > fileinput.filesize) {
+                    base.error('max file size exceeded');
+                    return false;
+                }
                 base.xhrHttpRequest.open('POST', base.options.src, true);
                 base.xhrHttpRequest.upload.onprogress = function(e) {
                     // TODO x-browser test and fallback 
@@ -371,7 +377,8 @@
                     if (base.xhrHttpRequest.status == 200) {  
                         base.complete(e.target.response);
                     } else {  
-                        base.error();
+                        base.error(base.xhrHttpRequest.status);
+                        return false;
                     }
                 };
                 base.start();
@@ -414,8 +421,7 @@
          * 
          * @return
          */
-        base.error = function(){
-            // TODO
+        base.error = function(message){
             switch (base.mode) {
                 case 'apc':
                 case 'nginx':
@@ -423,6 +429,7 @@
                     break;
             }
             base.clear();
+            base.$el.trigger('error', message);
         };
         // }}}
         
@@ -474,7 +481,7 @@
         base.clear = function () {
             base.$el.val(''); // TODO not IE?
             base.setProgress(0);
-            base.controls.progress.hide();
+            //base.controls.progress.hide();
             $(window).unbind('unload.uploader');
         };
         // }}}
@@ -598,18 +605,21 @@
     /**
      * Options
      * 
-     * classes : progress and percent element classes.
-     * iframe : iframe id / name.
-     * src : iframe source - form posted to.
-     * server_src: the AJAX lander for the APC upload progress calculation
-     * server_upload_key: the hidden file element name matches APC upload key.
-     * loader_img: the fallback image - animated gif or similar.
-     * getUniqueId: function for getting the unique APC upload ID.
+     * @param classes : progress and percent element classes.
+     * @param iframe : iframe id / name.
+     * @param src : iframe source - form posted to.
+     * @param server_src: the AJAX lander for the APC upload progress calculation
+     * @param server_upload_key: the hidden file element name matches APC upload key.
+     * @param loader_img: the fallback image - animated gif or similar.
+     * @param getUniqueId: function for getting the unique APC upload ID.
+     * @param unload_message
+     * @param complete event
+     * @param max_filesize - max file size test used in xhr upload
      */
     $.depage.uploader.defaultOptions = {
         classes : {
            progress: 'progress',
-           percent: 'percent',
+           percent:  'percent',
            textinfo: 'textinfo'
         },
         src: document.location.href,
@@ -619,7 +629,8 @@
         loader_img : 'lib/global/images/loader.gif',
         getUniqueId: function() { return new Date().getTime(); },
         unload_message: 'Navigating away from the page will cancel the file upload. Do you want to continue?',
-        complete_event: 'complete'
+        complete_event: 'complete',
+        max_filesize: false
     };
     
     $.fn.depageUploader = function(options){
