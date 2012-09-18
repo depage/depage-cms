@@ -33,9 +33,11 @@
         base.$el.data("depage.shyDialogue", base);
         
         // reference the wrapper div
+        var $dialogue = null;
         var $wrapper = null;
         var $contentWrapper = null;
         var $buttonWrapper = null;
+        var $directionMarker = null;
         
         // {{{ init
         /**
@@ -78,12 +80,9 @@
 
             base.addWrapper();
 
-            $wrapper.attr({
-                style: 'position: absolute; left:' + left + 'px; top: ' + top + 'px; z-index: 10000;'
-            });
-
             base.setContent(base.options.title, base.options.message, base.options.icon);
             base.setButtons(base.buttons);
+            base.setPosition(top, left, base.options.direction);
 
             // set focus to default button when available
             $(".button.default", $wrapper).focus();
@@ -122,7 +121,7 @@
         base.hide = function(duration, callback) {
             $("html").unbind("click.shy-dialogue");
 
-            if (!$wrapper) return;
+            if (!$dialogue) return;
 
             duration = duration || base.options.fadeoutDuration;
             $wrapper.fadeOut(duration, callback);
@@ -162,24 +161,109 @@
             // remove old wrapper (also with multiple dialogues)
             $('#' + base.options.id).remove();
 
-            $wrapper = $('<div />');
+            $dialogue = $('<div />');
 
+            $wrapper = $('<div class="wrapper" />');
+            $dialogue.append($wrapper);
+
+            if (base.options.direction) {
+                // add direction marker
+                $directionMarker = $('<span class="direction-marker" />');
+                $wrapper.append($directionMarker);
+            }
+            
             $contentWrapper = $('<div class="message" />');
             $wrapper.append($contentWrapper);
 
             $buttonWrapper = $('<div class="buttons" />');
             $wrapper.append($buttonWrapper);
 
-            $("body").append($wrapper);
+            $("body").append($dialogue);
 
             $wrapper.data("depage.shyDialogue", base);
-            $wrapper.attr({
-                class: base.options.classes.wrapper,
+            $dialogue.attr({
+                class: "depage-shy-dialogue " + base.options.class,
                 id: base.options.id
             });
-            
+
             // allow chaining
             return this;
+        };
+        // }}}
+        // {{{ setPosition()
+        /**
+         * set the position of the dialogue including the direction marker
+         * 
+         * @return void
+         */
+        base.setPosition = function(newTop, newLeft, direction) {
+            $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
+
+            direction = direction.toLowerCase();
+
+            var dHeight = $directionMarker.height();
+            var dWidth = $directionMarker.width();
+            var wrapperHeight = $wrapper.height();
+            var wrapperWidth = $wrapper.width();
+            var paddingLeft = parseInt($wrapper.css("padding-left"), 10);
+            var paddingRight = parseInt($wrapper.css("padding-right"), 10);
+            var paddingTop = parseInt($wrapper.css("padding-top"), 10);
+            var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
+
+            var wrapperPos = {};
+            var markerPos = {};
+
+            // to which side will the direction-marker attached to
+            switch (direction[0]) {
+                case 't': // top
+                    wrapperPos.top = dHeight / 2;
+                    markerPos.top = -dHeight;
+                    break;
+                case 'b': // bottom
+                    wrapperPos.bottom = dHeight / 2;
+                    markerPos.bottom = -dHeight;
+                    break;
+                case 'l': // left
+                    wrapperPos.left = dWidth / 2;
+                    markerPos.left = -dWidth;
+                    break;
+                case 'r': // right
+                    wrapperPos.right = dWidth / 2;
+                    markerPos.right = -dWidth;
+                    break;
+            }
+
+            // on which position will it be displayed 
+            switch (direction[1]) {
+                case 'l': // left
+                    wrapperPos.left = -paddingLeft - dWidth / 2;
+                    markerPos.left = paddingLeft;
+                    break;
+                case 'r': // right
+                    wrapperPos.right = -paddingRight - dWidth / 2;
+                    markerPos.right = paddingRight;
+                    break;
+                case 'c': // center
+                    if (direction[0] == "t" || direction[0] == "b") { // horizontal
+                        wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
+                        markerPos.left = (wrapperWidth + paddingLeft + paddingRight) / 2 - dWidth / 2;
+                    } else { // vertical
+                        wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
+                        markerPos.top = (wrapperHeight + paddingTop + paddingBottom) / 2 - dHeight / 2;
+                    }
+                    break;
+                case 't': // top
+                    wrapperPos.top = -paddingTop - dHeight / 2;
+                    markerPos.top = paddingTop;
+                    break;
+                case 'b': // bottom
+                    wrapperPos.bottom = -paddingBottom - dHeight / 2;
+                    markerPos.bottom = paddingBottom;
+                    break;
+            }
+
+            $wrapper.css(wrapperPos);
+            $directionMarker.css(markerPos);
         };
         // }}}
         // {{{ setButtons()
@@ -259,12 +343,14 @@
      */
     $.depage.shyDialogue.defaultOptions = {
         id : 'depage-shy-dialogue',
+        class : '',
         icon: '',
         title: '',
         message: '',
+        direction : '',
+        directionMarker : '',
         fadeoutDuration: 300,
         buttons: {},
-        classes : { wrapper : 'depage-shy-dialogue'}
     };
     
     $.fn.depageShyDialogue = function(buttons, options){
