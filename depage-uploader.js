@@ -448,6 +448,7 @@
                 }
             });
             base.controls.progress.show();
+            base.$el.trigger('start');
         };
         // }}}
         
