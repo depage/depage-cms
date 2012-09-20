@@ -16,6 +16,9 @@
         $.depage = {};
     };
     
+    // save an event stream cache object for the element
+    depage.eventstream.cache = {};
+    
     /**
      * Event Stream
      * 
@@ -30,8 +33,7 @@
         base.el = el;
         base.$el = $(el);
         
-        // save an event stream cache object for the element
-        var cache = {};
+        var cache = depage.eventstream.cache;
         
         // {{{ init
         /**
