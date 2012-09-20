@@ -1,9 +1,11 @@
 /**
  * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
  * 
  * @file    depage-shy-dialogue
+ * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
  *
- * Unobstrusive jQuery dialogue box.
+ * Unobstrusive jQuery dialogue box, extends marker box
  * 
  * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -32,12 +34,8 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.shyDialogue", base);
         
-        // reference the wrapper div
-        var $dialogue = null;
-        var $wrapper = null;
-        var $contentWrapper = null;
+        // enable buttons in the dialogue
         var $buttonWrapper = null;
-        var $directionMarker = null;
         
         // {{{ init
         /**
@@ -49,6 +47,7 @@
          */
         base.init = function(){
             base.options = $.extend({}, $.depage.shyDialogue.defaultOptions, options);
+            $.extend(base, $.depage.markerbox(base.options));
             base.buttons = buttons;
             base.dialogue();
         };
@@ -63,228 +62,25 @@
         base.dialogue = function(){
             base.$el.bind('click.shy', function(e) {
                 base.show(e);
+                base.showButtons();
                 return false;
             });
         };
         /// }}}
         
-        // {{{ show()
+        // {{{ showButtons()
         /**
-         * Show
+         * Show Buttons
          * 
          * @return void
          */
-        base.show = function(e) {
-            var left = e.pageX || 0;
-            var top = e.pageY || 0;
-
-            base.addWrapper();
-
-            base.setContent(base.options.title, base.options.message, base.options.icon);
-            base.setButtons(base.buttons);
-            base.setPosition(top, left, base.options.direction);
-
-            // set focus to default button when available
-            $(".button.default", $wrapper).focus();
-
-            // bind escape key to cancel
-            $(document).bind('keyup.shy-dialogue', function(e){
-                var key = e.which || e.keyCode;
-                if (key == 27) {
-                    base.hide();
-                    $(document).unbind('keyup.shy-dialogue');
-                }
-            });
-            
-            // hide dialog when clicked outside
-            $("html").bind("click.shy-dialogue", function() {
-                base.hide();
-            });
-            $wrapper.click( function(e) {
-                e.stopPropagation();
-            });
-            
-            // allow chaining
-            return this;
-        };
-        // }}}
-        
-        // {{{ hide()
-        /**
-         * Hide
-         * 
-         * @param duration - gradually fades out default 300
-         * @param callback - optional callback function
-         * 
-         * @return void
-         */
-        base.hide = function(duration, callback) {
-            $("html").unbind("click.shy-dialogue");
-
-            if (!$dialogue) return;
-
-            duration = duration || base.options.fadeoutDuration;
-            $wrapper.fadeOut(duration, callback);
-            
-            // allow chaining
-            return this;
-        };
-        // }}}
-        // {{{ hideAfter()
-        /**
-         * HideAfter
-         *
-         * hides dialog automatically after a duration
-         *
-         * @param duration - duration after
-         * @param callback - optional callback function
-         * 
-         * @return void
-         */
-        base.hideAfter = function(duration, callback) {
-            setTimeout(function(){
-                base.hide(base.options.fadeoutDuration, callback);
-            }, duration);
-
-            // allow chaining
-            return this;
-        };
-        // }}}
-        
-        // {{{ addWrapper()
-        /**
-         * removes old and adds the new html wrapper
-         * 
-         * @return void
-         */
-        base.addWrapper = function() {
-            // remove old wrapper (also with multiple dialogues)
-            $('#' + base.options.id).remove();
-
-            $dialogue = $('<div />');
-
-            $wrapper = $('<div class="wrapper" />');
-            $dialogue.append($wrapper);
-
-            if (base.options.directionMarker) {
-                // add direction marker
-                $directionMarker = $('<span class="direction-marker" />');
-                $wrapper.append($directionMarker);
-            }
-            
-            $contentWrapper = $('<div class="message" />');
-            $wrapper.append($contentWrapper);
-
+        base.showButtons = function() {
             $buttonWrapper = $('<div class="buttons" />');
             $wrapper.append($buttonWrapper);
-
-            $("body").append($dialogue);
-
-            $wrapper.data("depage.shyDialogue", base);
-            $dialogue.attr({
-                class: "depage-shy-dialogue " + base.options.class,
-                id: base.options.id
-            });
-
-            // allow chaining
-            return this;
+            base.setButtons(base.buttons);
         };
         // }}}
-        // {{{ setPosition()
-        /**
-         * set the position of the dialogue including the direction marker
-         * 
-         * @return void
-         */
-        base.setPosition = function(newTop, newLeft, direction) {
-            $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
-
-            direction = direction.toLowerCase();
-            directions = {
-                l: 'left',
-                r: 'right',
-                t: 'top',
-                b: 'bottom',
-                c: 'center'
-            };
-
-            var wrapperHeight = $wrapper.height();
-            var wrapperWidth = $wrapper.width();
-            var paddingLeft = parseInt($wrapper.css("padding-left"), 10);
-            var paddingRight = parseInt($wrapper.css("padding-right"), 10);
-            var paddingTop = parseInt($wrapper.css("padding-top"), 10);
-            var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
-
-            if ($directionMarker) {
-                var dHeight = $directionMarker.height();
-                var dWidth = $directionMarker.width();
-            } else {
-                var dHeight = - paddingTop * 2;
-                var dWidth = - paddingLeft * 2;
-            }
-
-            var wrapperPos = {};
-            var markerPos = {};
-
-            // to which side will the direction-marker attached to
-            switch (direction[0]) {
-                case 't': // top
-                    wrapperPos.top = dHeight / 2;
-                    markerPos.top = -dHeight;
-                    break;
-                case 'b': // bottom
-                    wrapperPos.bottom = dHeight / 2;
-                    markerPos.bottom = -dHeight;
-                    break;
-                case 'l': // left
-                    wrapperPos.left = dWidth / 2;
-                    markerPos.left = -dWidth;
-                    break;
-                case 'r': // right
-                    wrapperPos.right = dWidth / 2;
-                    markerPos.right = -dWidth;
-                    break;
-                case 'c': // center
-                    wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
-                    wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
-                    break;
-            }
-
-            // on which position will it be displayed 
-            switch (direction[1]) {
-                case 'l': // left
-                    wrapperPos.left = -paddingLeft - dWidth / 2;
-                    markerPos.left = paddingLeft;
-                    break;
-                case 'r': // right
-                    wrapperPos.right = -paddingRight - dWidth / 2;
-                    markerPos.right = paddingRight;
-                    break;
-                case 'c': // center
-                    if (direction[0] == "t" || direction[0] == "b") { // horizontal
-                        wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
-                        markerPos.left = (wrapperWidth + paddingLeft + paddingRight) / 2 - dWidth / 2;
-                    } else if (direction[0] == "l" || direction[0] == "r") { // vertical
-                        wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
-                        markerPos.top = (wrapperHeight + paddingTop + paddingBottom) / 2 - dHeight / 2;
-                    }
-                    break;
-                case 't': // top
-                    wrapperPos.top = -paddingTop - dHeight / 2;
-                    markerPos.top = paddingTop;
-                    break;
-                case 'b': // bottom
-                    wrapperPos.bottom = -paddingBottom - dHeight / 2;
-                    markerPos.bottom = paddingBottom;
-                    break;
-            }
-
-            $wrapper.css(wrapperPos);
-            if ($directionMarker) {
-                $directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
-            }
-        };
-        // }}}
+        
         // {{{ setButtons()
         /**
          * setButtons
@@ -295,7 +91,7 @@
          */
         base.setButtons = function(buttons) {
             $buttonWrapper.empty();
-
+            
             for(var i in buttons){
                 (function() {
                     var button = base.buttons[i];
@@ -318,29 +114,7 @@
                     $buttonWrapper.append($btn);
                 })();
             }
-
-            // allow chaining
-            return this;
-        };
-        // }}}
-        // {{{ setContent()
-        /**
-         * setContent
-         * 
-         * @param title
-         * @param message
-         * @param icon (optional)
-         * 
-         * @return void
-         */
-        base.setContent = function(title, message, icon) {
-            var $title = $('<h1 />').text(title);
-            var $message = $('<p />').text(message);
-
-            $contentWrapper.empty()
-                .append($title)
-                .append($message);
-
+            
             // allow chaining
             return this;
         };
@@ -362,7 +136,7 @@
      */
     $.depage.shyDialogue.defaultOptions = {
         id : 'depage-shy-dialogue',
-        class : '',
+        class : 'depage-shy-dialogue',
         icon: '',
         title: '',
         message: '',

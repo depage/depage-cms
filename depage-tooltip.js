@@ -1,11 +1,10 @@
 /**
  * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
  * 
- * @file    depage-tooltip
+ * @file    depage-tool-tip
  *
- * Depage Tool Tip Plugin.
- *  
- * Display custom tool tips
+ * Tooltip box extends Marker box
  * 
  * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -17,7 +16,7 @@
     };
     
     /**
-     * tabs
+     * tooltip
      * 
      * @param el - file input
      * @param index
@@ -44,44 +43,58 @@
          */
         base.init = function(){
             base.options = $.extend({}, $.depage.tooltip.defaultOptions, options);
-            
-            base.tooltip();
+            $.extend(base, $.depage.markerbox(base.options));
+            base.tip();
         };
         // }}}
         
-        // {{{ tooltip()
+        // {{{ tip()
         /**
-         * Tool Tip
+         * tip
          * 
          * @return void
          */
-        base.tooltip = function(){
-            
+        base.tip = function(){
+            base.$el
+                .bind('mouseenter.tooltip', function(e) {
+                    base.show(e);
+                    return false;
+                })
+                .bind('mouseleave.tooltip', function(e) {
+                    base.hide(e);
+                    return false;
+                });
         };
-        
-        base.build = function(text){
-            base.$el.appendTo("<div />").html(text);
-        };
+        /// }}}
         
         base.init();
+        return base;
     };
+    // }}}
     
     /**
-     * Options
+     * Default Options
      * 
-     * @param image
-     * @param title
-     * @param text
+     * id - the id of the dialogue element wrapper to display
+     * message - message the dialouge will display
+     * buttons - buttons to supply (with corresponding event triggered)
+     * classes - css classes to supply to the wrapper and content elements
      * 
      */
-    $.depage.textlimiter.defaultOptions = {
-        image : null,
-        text : null,
+    $.depage.tooltip.defaultOptions = {
+        id : 'depage-tooltip',
+        class : 'depage-tooltip',
+        icon: '',
+        title: '',
+        message: '',
+        direction : 'TL',
+        directionMarker : null,
+        fadeoutDuration: 300,
     };
     
-    $.fn.depageTextLimiter = function(options){
+    $.fn.depageTooltip = function(options){
         return this.each(function(index){
-            (new $.depage.textlimiter(this, index, options));
+            (new $.depage.tooltip(this, index, options));
         });
     };
     
