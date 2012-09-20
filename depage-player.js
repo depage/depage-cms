@@ -327,13 +327,8 @@
                  * @return void
                  */
                 $video.bind("waiting", function(){
-                    if (base.options.buffer_image) {
-                        if(typeof(base.html5.$buffer_image) !== 'undefined'){
-                            base.html5.$buffer_image.show();
-                        } else {
-                            base.html5.$buffer_image = $('<img id="buffer_image" />').attr('src', base.options.buffer_image);
-                            base.$el.append(base.html5.$buffer_image);
-                        }
+                    if (base.options.buffer_image && typeof(base.html5.$buffer_image) !== 'undefined') {
+                        base.html5.$buffer_image.show();
                     }
                 });
                 
@@ -575,7 +570,9 @@
              */
             insertPlayer : function() {
                 // get absolute url from source attribute with mp4-type
-                var url = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>")[0].toString();
+                var $link = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>").appendTo("body");
+                var url = $link[0].toString();
+                $link.remove();
                 
                 var flashParams = {
                     rand: Math.random(),
@@ -1001,6 +998,11 @@
                 .appendTo(base.controls.time);
             
             base.controls.time.appendTo(div);
+
+            if (mode != "flash") {
+                base.html5.$buffer_image = $('<img class="buffer-image" />').attr('src', base.options.buffer_image).hide();
+                base.$el.append(base.html5.$buffer_image);
+            }
         };
         // }}}
         
