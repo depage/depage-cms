@@ -124,7 +124,15 @@ class task {
     
     // {{{ escapeParam()
     static public function escapeParam($param) {
-        return "unserialize('" . serialize($param) . "')";
+        switch (gettype($param)) {
+            case 'object':
+            case 'array':
+                return "unserialize(" . var_export(serialize($param), true) . ")";
+            break;
+            default:
+                return var_export($param, true);
+        }
+
     }
     // }}}
     
