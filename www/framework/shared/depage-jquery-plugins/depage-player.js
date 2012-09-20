@@ -327,9 +327,7 @@
                  * @return void
                  */
                 $video.bind("waiting", function(){
-                    if (base.options.buffer_image && typeof(base.html5.$buffer_image) !== 'undefined') {
-                        base.html5.$buffer_image.show();
-                    }
+                    base.html5.$buffer_image.show();
                 });
                 
                 /**
@@ -342,9 +340,7 @@
                  * @return void
                  */
                 $video.bind("playing", function(){
-                    if (base.options.buffer_image && typeof(base.html5.$buffer_image) !== 'undefined') {
-                        base.html5.$buffer_image.hide();
-                    }
+                    base.html5.$buffer_image.hide();
                 });
                 
                 // resize
@@ -998,9 +994,9 @@
                 .appendTo(base.controls.time);
             
             base.controls.time.appendTo(div);
-
+            
             if (mode != "flash") {
-                base.html5.$buffer_image = $('<img class="buffer-image" />').attr('src', base.options.buffer_image).hide();
+                base.html5.$buffer_image = $('<img class="buffer-image" />').attr('src', base.options.assetPath + 'buffering_indicator.gif').hide();
                 base.$el.append(base.html5.$buffer_image);
             }
         };
@@ -1181,7 +1177,6 @@
      * @param onEnd - pass callback function to trigger on end play event 
      * @param onFullscreen - pass callback function to trigger on entering fullscreen mode.
      * @param onExitFullscreen - pass callback funtion to trigger on exiting fullscreen mode.
-     * @param buffer_image - location of image source to load when buffering playback, defaulf false prevents functionality. 
      */
     $.depage.player.defaultOptions = {
         assetPath : basePath + "depage_player/",
@@ -1196,7 +1191,6 @@
         onEnd: false,
         onFullscreen: false,
         onExitFullscreen: false,
-        buffer_image: false 
     };
     
     $.fn.depagePlayer = function(options){
