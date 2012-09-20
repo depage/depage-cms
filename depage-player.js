@@ -268,6 +268,10 @@
                     base.setCurrentTime(this.currentTime);
                 });
                 
+                $video.bind("ended", function(){
+                    base.end();
+                });
+                
                 /**
                  * HTML5 Progress Event
                  * 
@@ -1041,6 +1045,18 @@
             base.options.onPause && base.options.onPause();
             
             playing = false;
+        };
+        // }}}
+        
+        // {{{ end()
+        /**
+         * End
+         * 
+         * @return void
+         */
+        base.end = function() {
+            base.pause();
+            base.options.onEnd && base.options.onEnd();
         };
         // }}}
         
