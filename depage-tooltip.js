@@ -83,7 +83,7 @@
      */
     $.depage.tooltip.defaultOptions = {
         id : 'depage-tooltip',
-        class : 'depage-tooltip',
+        classes : 'depage-tooltip',
         icon: '',
         title: '',
         message: '',
