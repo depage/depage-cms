@@ -175,7 +175,7 @@
                 $.get(href, {"ajax":"true"}, function(data) {
                     var $data = $(data);
                     $('div.' + base.options.classes.content + ':first').empty().html($data).show();
-                    if(e.type !== 'popstate') {
+                    if(typeof(history.pushState) !== 'undefined' && e.type !== 'popstate') {
                         history.pushState($(e.target).attr('href'), e.target.textContent, href);
                         $(window).unbind('popstate').bind('popstate', function(pop) {
                             var href = pop.originalEvent.state;
