@@ -1,7 +1,4 @@
 /**
- * @require framework/shared/jquery-1.4.2.js
- * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
- * 
  * @file    depage-shy-dialogue
  * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
  *
@@ -97,8 +94,8 @@
                     var button = base.buttons[i];
                     var title = button.title || i;
                     var className = "button";
-                    if (button.class) {
-                        className += " " + button.class;
+                    if (button.classes) {
+                        className += " " + button.classes;
                     }
                     var $btn = $('<a href="#" class="' + className + '" />')
                         .attr('id', base.options.id + '-' + i)
@@ -136,7 +133,7 @@
      */
     $.depage.shyDialogue.defaultOptions = {
         id : 'depage-shy-dialogue',
-        class : 'depage-shy-dialogue',
+        classes : 'depage-shy-dialogue',
         icon: '',
         title: '',
         message: '',
