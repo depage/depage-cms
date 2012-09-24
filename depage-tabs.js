@@ -51,7 +51,7 @@
         };
         // }}}
         
-        // {{{ tags()
+        // {{{ tabs()
         /**
          * Tabs
          * 
@@ -69,7 +69,9 @@
                 }
             });
         };
+        // }}}
         
+        // {{{ isAjaxTab()
         /**
          * isAjaxTab
          * 
@@ -80,7 +82,7 @@
          * If the href contains a hash which matches an id on the page we
          * are loading content dynamically with javascript. 
          * 
-         * @return void
+         * @return bool
          */
         base.isAjaxTab = function(href) {
             if (!href.match('^' + $('base').attr('href'))) {
@@ -89,7 +91,9 @@
             }
             return true;
         };
+        // }}}
         
+        // {{{ jsTabs()
         /**
          * jsTabs
          * 
@@ -132,8 +136,9 @@
                 base.$el.trigger('load', ['js', $data]);
             }
         };
+        // }}}
         
-        
+        // {{{ axTabs
         /**
          * axTabs
          * 
@@ -188,7 +193,9 @@
                 });
             }
         };
+        // }}}
         
+        // {{{ setActive()
         /**
          * Set Active
          * 
@@ -200,8 +207,9 @@
             $tabs.parent('li').removeClass(base.options.classes.active);
             $tab.parent('li').addClass(base.options.classes.active);
         };
+        // }}}
         
-        
+        // {{{ hide()
         /**
          * Hide
          * 
@@ -210,6 +218,7 @@
         base.hide = function() {
             $('div.' + base.options.classes.content).hide();
         };
+        // }}}
         
         base.init();
     };
