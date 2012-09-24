@@ -152,8 +152,8 @@
                 
                 $wrapper.data("depage.markerbox", base);
                 $dialogue.attr({
-                    class: "depage-markerbox " + base.options.class,
-                    id: base.options.id
+                    'class': "depage-markerbox " + base.options.classes,
+                    'id': base.options.id
                 });
                 
                 // allow chaining
@@ -297,7 +297,7 @@
      */
     $.depage.markerbox.defaultOptions = {
         id : 'depage-markerbox',
-        class : 'depage-markerbox',
+        classes : 'depage-markerbox',
         icon: '',
         title: '',
         message: '',
