@@ -73,6 +73,9 @@
         // variable used to save element styles when using the fallback fullscreen
         var styles_cache = null;
         
+        // cache window selector
+        var $window = $(window); 
+        
         // cache the control selectors
         base.controls = {};
         // }}}
@@ -467,6 +470,11 @@
                     base.options.onExitFullscreen && base.options.onExitFullscreen();
                     return false;
                 };
+                
+                /**
+                 * Bind to resize
+                 */
+                $(window).resize(base.resize);
             }
             // }}}
         };
@@ -658,9 +666,8 @@
                     .width(toWidth)
                     .height(toHeight);
             } else {
-                $player
-                    .width(toWidth)
-                    .height(toHeight);
+                $player[0].width = toWidth;
+                $player[0].height = toHeight;
             }
             
             if (playing) {
@@ -724,7 +731,6 @@
          * @return void
          */
         base.fullscreen = function () {
-            var $window = $(window); 
             var $body = $('body');
             var $controls = $('.controls', base.$el);
             var $button = $('.fullscreen', base.$el);
