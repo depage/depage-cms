@@ -111,7 +111,8 @@
                         "left" : base.$el.offset().left,
                         "top" : base.$el.offset().top + base.$el.height(),
                         "z-index" : "1000",
-                        "background-color" : "#FFF"
+                        "background-color" : "#FFF",
+                        "width" : base.$el.width()
                     })
                     .hide();
                 
