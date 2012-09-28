@@ -192,7 +192,7 @@ class messaging {
         }
         
         if (isset($params['limit'])) {
-            $cmd .= ' LIMIT :page, :size';
+            $cmd .= ' LIMIT :start, :size';
         }
         
         $query = $this->pdo->prepare($cmd);
@@ -202,10 +202,10 @@ class messaging {
         if (isset($params['limit'])) {
             // bind limit params TODO refactor to use entity
             // NB LIMIT is zero indexed
-            $page = (int)$params['limit']['page'] - 1;
             $size = (int)$params['limit']['size'];
+            $start = ((int)$params['limit']['page'] - 1) * $size;
             
-            $query->bindParam("page", $page, \PDO::PARAM_INT);
+            $query->bindParam("start", $start, \PDO::PARAM_INT);
             $query->bindParam("size", $size, \PDO::PARAM_INT);
         }
         
