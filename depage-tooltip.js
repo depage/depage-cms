@@ -57,11 +57,11 @@
         base.tip = function(){
             base.$el
                 .bind('mouseenter.tooltip', function(e) {
-                    base.show(e);
+                    base.show(e.pageX, e.PageY);
                     return false;
                 })
                 .bind('mouseleave.tooltip', function(e) {
-                    base.hide(e);
+                    base.hide();
                     return false;
                 });
         };
