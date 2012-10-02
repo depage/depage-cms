@@ -48,9 +48,9 @@
              * 
              * @return void
              */
-            show : function(e) {
-                var left = e.pageX || 0;
-                var top = e.pageY || 0;
+            show : function(left, top) {
+                left = left || this.$el.offset().left + this.$el.width();
+                top = top || Math.ceil(this.$el.offset().top - this.$el.height());
                 
                 base.addWrapper();
                 base.setContent(base.options.title, base.options.message, base.options.icon);
@@ -66,11 +66,16 @@
                 });
                 
                 // hide dialog when clicked outside
-                $("html").bind("click.marker", function() {
+                $(document).bind("click.marker", function() {
                     base.hide();
                 });
                 
-                $wrapper.click( function(e) {
+                // stop propagation of hide when clicking inside the wrapper or input
+                $wrapper.click(function(e) {
+                    e.stopPropagation();
+                });
+                
+                this.$el.click(function(e) {
                     e.stopPropagation();
                 });
                 
@@ -187,7 +192,7 @@
                 var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
                 
                 var dHeight = dWidth = 0;
-                if ($directionMarker) {
+                if (typeof($directionMarker) !== "undefined") {
                     dHeight = $directionMarker.height();
                     dWidth = $directionMarker.width();
                 } else {
@@ -252,7 +257,7 @@
                 }
                 
                 $wrapper.css(wrapperPos);
-                if ($directionMarker) {
+                if (typeof($directionMarker) !== "undefined") {
                     $directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
                 }
             },
