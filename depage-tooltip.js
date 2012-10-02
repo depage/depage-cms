@@ -61,7 +61,23 @@
                     return false;
                 })
                 .bind('mouseleave.tooltip', function(e) {
-                    base.hide();
+                    var hideIfOut = function(e) {
+                        if ($(e.toElement).parents('#depage-tooltip').length === 0) {
+                            base.hide();
+                            return true;
+                        }
+                        return false;
+                    };
+                    
+                    if (!hideIfOut(e)) {
+                        var $document = $(document);
+                        // workaround for mouseleave events caused by the dialogue appearance
+                        $document.bind('mousemove.tooltip', function(e){
+                            if(hideIfOut(e)){
+                                $document.unbind('mousemove.tooltip');
+                            }
+                        });
+                    }
                     return false;
                 });
         };
