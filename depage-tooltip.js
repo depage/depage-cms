@@ -62,7 +62,8 @@
                 })
                 .bind('mouseleave.tooltip', function(e) {
                     var hideIfOut = function(e) {
-                        if ($(e.toElement).parents('#depage-tooltip').length === 0) {
+                        // FF does not have toElement, and only relatedTarget on mouseleave - e.target is for mousemove 
+                        if ($(e.toElement || e.relatedTarget || e.target).parents('#depage-tooltip').length === 0) {
                             base.hide();
                             return true;
                         }
