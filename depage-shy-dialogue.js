@@ -58,7 +58,7 @@
          */
         base.dialogue = function(){
             base.$el.bind('click.shy', function(e) {
-                base.show(e);
+                base.show(e.pageX, e.pageY);
                 base.showButtons();
                 return false;
             });

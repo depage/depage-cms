@@ -85,7 +85,7 @@
          * @return bool
          */
         base.isAjaxTab = function(href) {
-            if (!href.match('^' + $('base').attr('href'))) {
+            if (!base.options.force_ajax && !href.match('^' + $('base').attr('href'))) {
                 var hash = href.match("#[^?&/]+")[0];
                 return !(hash && $(hash).length);
             }
@@ -233,8 +233,9 @@
         classes : {
             ul      : 'nav',
             active  : 'active',
-            content : 'content'
-        }
+            content : 'content',
+        },
+        force_ajax : false
     };
     
     $.fn.depageTabs = function(options){

@@ -55,7 +55,10 @@
                         if ($button.parent().hasClass("cancel")) {
                             // dont validate when cancel-button was pressed
                             $("<input type=\"hidden\" class=\"formSubmit\" name=\"formSubmit\" value=\"" + button.value + "\">").appendTo($form);
-                            $form.data("validator").destroy();
+                            if(typeof($form.data("validator")) !== 'undefined') {
+                                // @todo validation should be handled in effects 
+                                $form.data("validator").destroy();
+                            }
                         } else {
                             $form.find("input.formSubmit:hidden").remove();
                         }
