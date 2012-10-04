@@ -45,7 +45,7 @@
         base.addSocialButton = function(name, link, text) {
             var html = "";
 
-            html += "<a class=\"" + name + "\">";
+            html += "<a class=\"" + name + "\" title=\"" + name + "\">";
             if (base.options.assetPath !== "") {
                 // image link
                 html += "<img src=\"" + base.options.assetPath + name.toLowerCase() + ".png\" alt=\"" + name + "\">";
@@ -112,6 +112,12 @@
             base.addSocialButton(name, link, "li");
         };
         // }}}
+        // {{{ addXing
+        base.addXing = function(name) {
+            var link = "https://www.xing.com/app/user?op=share&url=" + base.url + ";title=" + base.title + ";";
+            base.addSocialButton(name, link, "x");
+        };
+        // }}}
         // {{{ addDigg
         base.addDigg = function(name) {
             var link = "http://digg.com/submit?url=" + base.url;
@@ -155,6 +161,7 @@
             'facebookLike',
             'mail',
             'linkedin',
+            'xing',
             'digg',
             'reddit'
         ]
