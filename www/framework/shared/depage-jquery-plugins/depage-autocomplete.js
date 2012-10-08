@@ -73,7 +73,7 @@
          */
         base.autocomplete = function(){
             if(base.options.url) {
-                base.$el.bind("keypress.autocomplete", function(e) {
+                base.$el.bind("keyup.autocomplete", function(e) {
                     var code = e.keyCode ? e.keyCode : e.which;
                     if(!(code == 40 || code == 38 || code == 13 ||  code == 27)) { // ignore arrow and enter keys
                         var url = $("base").attr("href")
@@ -214,7 +214,6 @@
          * Base Hide 
          */
         base.hide = function() {
-            base.$el.unbind("keyup.autocomplete");
             base.$list.hide();
             return false;
         };
