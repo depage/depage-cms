@@ -351,7 +351,7 @@
                 });
                 
                 // resize
-                if (base.options.width != video.videoWidth || base.options.height != video.videoHeight) {
+                if (useCustomControls && (base.options.width != video.videoWidth || base.options.height != video.videoHeight)) {
                      var height = base.options.height || base.$el.height();
                      var width = base.options.width || base.$el.width();
                      base.resize(width, height);
@@ -1025,9 +1025,11 @@
                 $('#poster', base.$el).hide();
             }
             
-            base.controls.play.hide();
-            base.controls.pause.show();
-            base.controls.rewind.show();
+            if (useCustomControls){
+                base.controls.play.hide();
+                base.controls.pause.show();
+                base.controls.rewind.show();
+            }
             
             base.options.onPlay && base.options.onPlay();
             
@@ -1044,9 +1046,11 @@
         base.pause = function() {
             $indicator.show();
             
-            base.controls.play.show();
-            base.controls.pause.hide();
-            base.controls.rewind.show();
+            if (useCustomControls){
+                base.controls.play.show();
+                base.controls.pause.hide();
+                base.controls.rewind.show();
+            }
             
             base.options.onPause && base.options.onPause();
             
