@@ -59,6 +59,7 @@ class video {
     var $defaults = array(
         'ffmpeg'      => "ffmpeg",
         'ffprobe'     => "ffprobe",
+        'mplayer'     => "",
         'qtfaststart' => "qt-faststart",
         'aaccodec'    => "libfaac",
         'width'       => 640,
@@ -338,9 +339,17 @@ class video {
         for ($i = 1; $i <= $intervals; $i++ ) {
             $out = $path . $i.  '.jpg';
             $outArg = escapeshellarg($out);
+            $pathArg = escapeshellarg(dirname($path));
             $interval = $duration * $i / ($intervals + 1);
-            $cmd = "{$this->ffmpeg} -ss {$interval} -i {$fileArg} -r 1 -vframes 1 -f mjpeg -an -y -s {$width}x{$height} {$outArg}";
-            $this->call($cmd);
+
+            if (is_executable($this->mplayer)) {
+                $cmd = "{$this->mplayer} {$fileArg} -ss {$interval} -frames 1 -nosound -vo jpeg:outdir={$pathArg}";
+                $this->call($cmd);
+                rename(dirname($path) . "/00000001.jpg", $out);
+            } else {
+                $cmd = "{$this->ffmpeg} -ss {$interval} -i {$fileArg} -r 1 -vframes 1 -f mjpeg -an -y -s {$width}x{$height} {$outArg}";
+                $this->call($cmd);
+            }
             $thumbnails[$basename . $i . '.jpg'] = $out;
         }
         
