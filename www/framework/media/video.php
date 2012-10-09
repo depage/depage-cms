@@ -332,18 +332,18 @@ class video {
         
         $basename = basename($path);
         
-        /*
-         * @TODO look into mplayer if there are problems with ffmpeg for tumbnails, e.g.
-         * mplayer VIDEO_FILE -ss 00:10:11 -frames 1 -vo jpeg:outdir=THUMBNAILS_DIRECTORY
-         */
         for ($i = 1; $i <= $intervals; $i++ ) {
             $out = $path . $i.  '.jpg';
+            if (file_exists($out)) {
+                unlink($out);
+            }
+
             $outArg = escapeshellarg($out);
             $pathArg = escapeshellarg(dirname($path));
-            $interval = $duration * $i / ($intervals + 1);
+            $interval = (int) $duration * $i / ($intervals + 1);
 
             if (is_executable($this->mplayer)) {
-                $cmd = "{$this->mplayer} {$fileArg} -ss {$interval} -frames 1 -nosound -vo jpeg:outdir={$pathArg}";
+                $cmd = "{$this->mplayer} {$fileArg} -ss {$interval} -frames 1 -quiet -nosound -vf scale={$width}:{$height} -vo jpeg:outdir={$pathArg}";
                 $this->call($cmd);
                 rename(dirname($path) . "/00000001.jpg", $out);
             } else {
@@ -369,7 +369,7 @@ class video {
      */
     private function call($cmd) {
         $cmd = escapeshellcmd($cmd) . ' 2>&1';
-        
+
         exec($cmd, $output, $var);
         
         if (is_array($output)) {
