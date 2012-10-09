@@ -47,7 +47,7 @@
 ){
     .wrapper {
         @include radius($corner-radius);
-        @include shadow();
+        //@include shadow();
 
         position: absolute;
         border: $border;
@@ -56,7 +56,7 @@
         width: $width;
         height: $height;
     }
-    .message {
+    &.depage-shy-dialogue .message {
         padding-bottom: 5em;
     }
 
