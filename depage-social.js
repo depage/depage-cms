@@ -115,7 +115,7 @@
         // {{{ addXing
         base.addXing = function(name) {
             var link = "https://www.xing.com/app/user?op=share&url=" + base.url + ";title=" + base.title + ";";
-            base.addSocialButton(name, link, "x");
+            base.addSocialButton(name, link, "xing");
         };
         // }}}
         // {{{ addDigg
