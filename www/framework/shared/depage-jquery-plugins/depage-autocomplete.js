@@ -14,6 +14,11 @@
  * @author    Ben Wallis
  */
 (function($){
+    // add focus expression for jquery > 1.6
+    $.expr[':'].focus = function( elem ) {
+        return elem === document.activeElement && ( elem.type || elem.href );
+    };
+    
     if(!$.depage){
         $.depage = {};
     };
@@ -38,8 +43,11 @@
         
         // List element associated with input
         base.$list = null;
+        base.$form = null;
+        base.$items = null;
         
         var $body = $('body');
+        base.visible = false;
         
         // {{{ init
         /**
@@ -62,6 +70,22 @@
             base.autocomplete();
         };
         // }}}
+
+        // {{{ select
+        /*
+            * Select
+            * 
+            * Set the list-item as selected, and hide the autocompelete list.
+            * 
+            * @param $item - $('li') 
+            */
+        var select = function(e, $content) {
+            $content.removeClass("hover");
+            base.$el.val($content.find('.content').text());
+            base.hide();
+            base.$el.trigger("selected", [$content]);
+        };
+        // }}}
         
         // {{{ autocomplete()
         /**
@@ -81,9 +105,10 @@
                             + base.options.url
                             + "?ajax=true"
                             + "&value=" + $(this).val();
+
+                        base.$items = null;
                         $.get(url , null, function(data) {
-                            var $items = $(data);
-                            base.$el.trigger("load.autocomplete", [$items]);
+                            base.$el.trigger("load.autocomplete", [$(data)]);
                         });
                     }
                 });
@@ -100,6 +125,7 @@
          */
         base.setup =  function(){
             base.$list = $("#" + base.options.list_id);
+            base.$form = base.$el.parents("form");
             if (!base.$list.length){
                 // add a hidden <ul> for the autocomplete list if it doesn not already exist
                 base.$list = $("<ul class='autocomplete' />")
@@ -120,92 +146,124 @@
             }
             
             /*
-             * Select
-             * 
-             * Set the list-item as selected, and hide the autocompelete list.
-             * 
-             * @param $item - $('li') 
-             */
-            var select = function(e, $content) {
-                $content.removeClass("hover");
-                base.$el.val($content.find('.content').text());
-                base.hide();
-                base.$el.trigger("selected", [$content]);
-            };
-            
-            /*
              * Load
              * 
              * Bind to the autocomplete load event and setup the dynamic functionality.
              */
-            base.$el.bind("load.autocomplete", function(e, $items) {
-                $items = $items.children("li");
+            base.$el.bind("load.autocomplete", function(e, $newItems) {
+                base.$list.empty();
+                base.$items = null;
+                if (!$newItems) {
+                    return;
+                }
+                $newItems = $newItems.children("li");
+                
                 // truncate the list
                 if(base.options.max_items){
-                    $items = $items.slice(0,base.options.max_items -1);
+                    $newItems = $newItems.slice(0,base.options.max_items -1);
                 }
+                base.$items = $newItems;
+
                 // append the list items...
-                base.$list.empty().append($items);
+                base.$list.append(base.$items);
                 // on click select the list item.
-                $items.children("a").click(function(e) {
-                    select(e, $(this).parent("li"));
+                base.$items.click(function(e) {
+                    select(e, $(this));
                     return false;
                 });
                 
-                if($items.length) {
-                     // add hover class on mouse over
-                    $items.hover(function(){
-                        $items.filter(".hover").removeClass("hover");
+                if(base.$items.length) {
+                    if (base.$items.filter(".hover").length == 0) {
+                        $(base.$items[0]).addClass("hover");
+                    }
+                    // add hover class on mouse over
+                    base.$items.hover(function(){
+                        base.$items.filter(".hover").removeClass("hover");
                         $(this).addClass("hover");
                     });
-                    
-                    // Bind to keyup events on the input
-                    base.$el.bind("keyup.autocomplete", function(e) {
-                            // find the selected list item
-                            var $item =  $items.filter(".hover").removeClass("hover");
-                            if ($item.length){
-                                var code = e.keyCode ? e.keyCode : e.which;
-                                switch (code) {
-                                    case 40 : // arrow down
-                                        $item = $item.next();
-                                        break;
-                                    case 38 : // arrow up
-                                        $item = $item.prev();
-                                        break;
-                                    case 13 : // enter key
-                                        select(e, $item);
-                                        break;
-                                    case 27 : // escape key
-                                        base.hide();
-                                        break;
-                                } 
-                            } else {
-                                // default to the first item
-                                $item = $($items[0]);
-                            }
-                            // show the hover class on the selected itm
-                            $item.addClass("hover");
-                        });
-                    
-                    // we have items so position and show the list
-                    base.$list
-                        .css({
-                            "left" : base.$el.offset().left,
-                            "top" : base.$el.offset().top + base.$el.height(),
-                        })
-                        .show();
-                    
-                    /**
-                     * Remove menu on click out 
-                     */
-                    $body.bind('click.autocomplete', function(e) {
-                        if (e.target.type !== 'submit') {
-                            $body.unbind('click.autocomplete');
-                            base.hide();
-                        }
-                    });
+                    base.show();
+                } else {
+                    base.hide();
                 }
             });
+            
+            // Bind to keyup events on the input
+            base.$el.bind("keyup.autocomplete", function(e) {
+                var code = e.keyCode ? e.keyCode : e.which;
+
+                if (code == 27) {
+                    // escape key
+                    base.hide();
+                    base.$el.val("");
+                } 
+                if (base.$items) {
+                    // find the selected list item
+                    var $item = base.$items.filter(".hover").removeClass("hover");
+                    if ($item.length){
+                        switch (code) {
+                            case 40 : // arrow down
+                                $item = $item.next();
+                                if (!$item.length) $item = base.$items.first();
+                                break;
+                            case 38 : // arrow up
+                                $item = $item.prev();
+                                if (!$item.length) $item = base.$items.last();
+                                break;
+                            case 13 : // enter key
+                                select(e, $item);
+                                base.$el.val("");
+                                break;
+                        } 
+                    } else {
+                        // default to the first item
+                        $item = $(base.$items[0]);
+                    }
+                    // show the hover class on the selected itm
+                    $item.addClass("hover");
+                }
+                return false;
+            });
+
+            base.$form.bind("submit.autocomplete", function(e) {
+                if (base.$el.is("input:focus")) {
+                    // stop submission when the input has the focus to capture submission on enter
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        };
+        // }}}
+        
+        // {{{ base.show()
+        /**
+         * Base Show 
+         */
+        base.show = function() {
+            if (base.visible) {
+                return;
+            }
+                    
+            // we have items so position and show the list
+            base.$list
+                .css({
+                    "left" : base.$el.offset().left,
+                    "top" : base.$el.offset().top + base.$el.height(),
+                })
+                .show();
+
+            /**
+             * Remove menu on click out 
+             */
+            $body.bind('click.autocomplete', function(e) {
+                if (e.target.type !== 'submit') {
+                    base.hide();
+                }
+            });
+
+            base.visible = true;
+
+            return false;
         };
         // }}}
         
@@ -214,7 +272,15 @@
          * Base Hide 
          */
         base.hide = function() {
+            if (!base.visible) {
+                return false;
+            }
+
+            $body.unbind('click.autocomplete');
             base.$list.hide();
+
+            base.visible = false;
+
             return false;
         };
         // }}}
