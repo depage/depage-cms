@@ -98,6 +98,8 @@
         base.autocomplete = function(){
             if(base.options.url) {
                 base.$el.bind("keyup.autocomplete", function(e) {
+                    // @TODO check search term if changed from last search
+                    // @TODO add timer so that we do not search for every keypress, when someone types fast
                     var code = e.keyCode ? e.keyCode : e.which;
                     if(!(code == 40 || code == 38 || code == 13 ||  code == 27)) { // ignore arrow and enter keys
                         var url = $("base").attr("href")

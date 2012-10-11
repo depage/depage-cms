@@ -255,8 +255,9 @@
                 });
                 
                 $video.bind("playing", function(){
-                    // TODO uncommented because this was firing base.play() twice ?
-                    //base.play();
+                    // @TODO commented because this was firing base.play() twice ?
+                    // @TODO uncommented because of problems in firefox when video finished playing
+                    base.play();
                 });
                 
                 $video.bind("pause", function(){
