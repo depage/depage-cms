@@ -277,7 +277,7 @@ class html {
     /**
      * includes css files into html
      */
-    public function include_css($name, $files = array(), $for = "") {
+    public function include_css($name, $files = array(), $for = "", $inline = false) {
         if ($for != "") {
             $media = "media=\"$for\"";
         } else {
@@ -324,11 +324,25 @@ class html {
                 $cache->setFile($identifier, $src, true);
             }
 
-            echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->getUrl($identifier) . "\">\n");
+            if (!$inline) {
+                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->getUrl($identifier) . "\">\n");
+            } else {
+                echo("<style type=\"text/css\" $media>\n");
+                echo($cache->getFile($identifier));
+                echo("</style>\n");
+            }
         } else {
             // development environement
-            foreach ($files as $file) {
-                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
+            if (!$inline) {
+                foreach ($files as $file) {
+                    echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
+                }
+            } else {
+                echo("<style type=\"text/css\" $media>\n");
+                    foreach ($files as $file) {
+                        readfile($file);
+                    }
+                echo("</style>\n");
             }
         }
     }
