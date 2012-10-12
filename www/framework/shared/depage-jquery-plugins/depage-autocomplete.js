@@ -132,7 +132,7 @@
                 // add a hidden <ul> for the autocomplete list if it doesn not already exist
                 base.$list = $("<ul class='autocomplete' />")
                     .attr({
-                        "id" : base.options.list_id,
+                        "id" : base.options.list_id
                     })
                     .css({
                         "position" : "absolute",
@@ -250,7 +250,7 @@
             base.$list
                 .css({
                     "left" : base.$el.offset().left,
-                    "top" : base.$el.offset().top + base.$el.height(),
+                    "top" : base.$el.offset().top + base.$el.height()
                 })
                 .show();
 

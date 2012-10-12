@@ -88,7 +88,7 @@
     $.depage.address.defaultOptions = {
         city_selector    : 'input[name="city"]',
         state_selector   : 'select[name="state"]',
-        country_selector : 'select[name="country"]',
+        country_selector : 'select[name="country"]'
     };
     
     $.fn.depageAddress = function(options){

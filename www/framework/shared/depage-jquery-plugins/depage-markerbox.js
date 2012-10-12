@@ -308,7 +308,7 @@
         message: '',
         direction : 'TL',
         directionMarker : null,
-        fadeoutDuration: 300,
+        fadeoutDuration: 300
     };
     // }}}
 })(jQuery);
