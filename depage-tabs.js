@@ -233,7 +233,7 @@
         classes : {
             ul      : 'nav',
             active  : 'active',
-            content : 'content',
+            content : 'content'
         },
         force_ajax : false
     };

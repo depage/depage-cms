@@ -140,7 +140,7 @@
         direction : 'TL',
         directionMarker : null,
         fadeoutDuration: 300,
-        buttons: {},
+        buttons: {}
     };
     
     $.fn.depageShyDialogue = function(buttons, options){

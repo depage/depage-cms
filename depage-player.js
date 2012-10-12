@@ -1217,7 +1217,7 @@
         onPause: false,
         onEnd: false,
         onFullscreen: false,
-        onExitFullscreen: false,
+        onExitFullscreen: false
     };
     
     $.fn.depagePlayer = function(options){
