@@ -182,7 +182,7 @@ class html {
     /**
      * includes javascript files into html
      */
-    public function include_js($name, $files = array()) {
+    public function include_js($name, $files = array(), $attr = "") {
         // get file-dependencies that are required from javascript header
         $files = $this->include_js_get_dependencies($files);
         
@@ -219,11 +219,11 @@ class html {
                 $cache->setFile($identifier, $src, true);
             }
 
-            echo("<script src=\"" . $cache->getUrl($identifier) . "\"></script>\n");
+            echo("<script src=\"" . $cache->getUrl($identifier) . "\" $attr></script>\n");
         } else {
             // development environement
             foreach ($files as $file) {
-                echo("<script src=\"$file\"></script>\n");
+                echo("<script src=\"$file\" $attr></script>\n");
             }
         }
     }
