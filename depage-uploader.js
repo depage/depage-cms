@@ -190,11 +190,12 @@
                     base.$form.append(base.iframe.$iframe);
                 }
                 
+                var iframeUrl = base.options.src + (base.options.src.indexOf("?") == -1 ? "?" : "&") + "iframe=true";
                 base.iframe.$iframe.attr({
                     //name:base.options.iframe,
                     frameborder:0,
                     border:0,
-                    src:base.options.src + '?iframe=true',
+                    src: iframeUrl,
                     scrolling:'no',
                     scrollbar:'no',
                     width: 0,
@@ -216,8 +217,8 @@
                 base.$upload_id = $('input[name=' + base.options.server_upload_key + ']');
                 
                 var oldAction = base.$form.attr("action");
-                if (oldAction.indexOf("?X-Progress-ID") == -1) {
-                    base.$form.attr('action', oldAction + "?X-Progress-ID=" + base.$upload_id[0].value);
+                if (oldAction.indexOf("X-Progress-ID") == -1) {
+                    base.$form.attr('action', oldAction + (oldAction.indexOf("?") == -1 ? "?" : "&") + "X-Progress-ID=" + base.$upload_id[0].value);
                 }
             },
             // }}}
@@ -265,8 +266,8 @@
              * @return void
              */
             removeDepageInputs : function() {
-                base.$form.remove($('input[name="formAutosave"]'));
-                base.$form.remove($('input[name="ajax"]'));
+                $('input[name="formAutosave"]', base.$form).remove();
+                $('input[name="ajax"]', base.$form).remove();
             },
             // }}}
             
@@ -309,7 +310,7 @@
                                 }
                             } else {
                                 // 1st call in IE is not returning a percentage ? 
-                                base.iframe.timeout_id = setTimeout(base.iframe.getProgress, 250);
+                                base.iframe.timeout_id = setTimeout(base.iframe.getProgress, 2250);
                                 //base.fallback();
                             }
                         }
@@ -425,6 +426,7 @@
             switch (base.mode) {
                 case 'apc':
                 case 'nginx':
+                case 'iframe' :
                     base.iframe.removeDepageInputs();
                     break;
             }
@@ -461,6 +463,10 @@
          * @return void
          */
         base.complete = function(response){
+            if (base.mode == "iframe") {
+                base.iframe.removeDepageInputs();
+            }
+
             base.$el.trigger(base.options.complete_event, [response]);
             base.setProgress(100);
             base.clear();
@@ -480,9 +486,19 @@
          * @return void
          */
         base.clear = function () {
-            base.$el.val(''); // TODO not IE?
+            // replace input with copy to clear input on Internet Explorer
+            var $originalInput = base.$el;
+            base.$el = $originalInput.clone(true);
+            base.el = base.$el[0];
+            $originalInput.replaceWith(base.$el);
+            base.$el.val('');
+
+            base.$el.change(function() {
+                base.upload(this);
+            });
+
             base.setProgress(0);
-            //base.controls.progress.hide();
+            base.controls.progress.hide();
             $(window).unbind('unload.uploader');
         };
         // }}}
@@ -561,8 +577,11 @@
             var $img = $('<img />')
                 .attr({
                     'id' : base.options.iframe + '-loader',
-                    'src' : base.options.loader_img})
-                .error(function(){$(this).hide();}); // hide if not found
+                    'src' : base.options.loader_img,
+                    'alt' : "uploading"
+                }).error(function(){
+                    $img.replaceWith("uploading..."); // replace with text if not found
+                });
             
             base.controls.percent.html($img);
         };
