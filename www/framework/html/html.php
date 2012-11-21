@@ -88,6 +88,31 @@ class html {
         }
     }
     // }}}
+    // {{{ __set()
+    /**
+     * set parameter in args array
+     *
+     * @param $name (string) name of parameter
+     * @param $value () value of parameter
+     *
+     * @return void
+     */
+    public function __set($name, $value) {
+        $this->args[$name] = $value;
+    }
+    // }}}
+    // {{{ __isset()
+    /**
+     * test args array if argument is set
+     *
+     * @param $name (string) name of parameter
+     *
+     * @return bool 
+     */
+    public function __isset($name) {
+        return isset($this->args[$name]);
+    }
+    // }}}
     // {{{ __toString()
     /**
      * renders template 
