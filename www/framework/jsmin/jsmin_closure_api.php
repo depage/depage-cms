@@ -11,8 +11,9 @@ namespace depage\jsmin;
 /**
  * @brief Main jsmin class
  **/
-abstract class jsmin {
+class jsmin_closure_api extends jsmin {
     // {{{ variables
+    var $apiUrl = "http://closure-compiler.appspot.com/compile";
     // }}}
     // {{{ factory()
     /**
@@ -33,7 +34,7 @@ abstract class jsmin {
     // }}}
     // {{{ __construct()
     /**
-     * @brief graphics class constructor
+     * @brief jsmin class constructor
      *
      * @param $options (array) image processing parameters
      **/
@@ -47,7 +48,17 @@ abstract class jsmin {
      *
      * @param $src javascript source code
      **/
-    abstract public function minify($src);
+    public function minify($src) {
+        $rq = new \depage\http\request($this->apiUrl, array(
+            'js_code' => $src,
+            'compilation_level' => "SIMPLE_OPTIMIZATIONS",
+            'output_info' => "compiled_code",
+            'output_format' => "text",
+        ));
+        $result = $rq->execute();
+
+        return $result;
+    }
     // }}}
 }
 
