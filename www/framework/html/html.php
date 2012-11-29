@@ -235,7 +235,11 @@ class html {
             }
             if ($regenerate) {
                 $src = false;
-                $jsmin = \depage\jsmin\jsmin::factory();
+                $jsmin = \depage\jsmin\jsmin::factory(array(
+                    'extension' => $this->param['jsmin']->extension,
+                    'jar' => $this->param['jsmin']->jar,
+                    'java' => $this->param['jsmin']->java,
+                ));
                 try {
                     $src = $jsmin->minifyFiles($name, $files);
                 } catch (\depage\jsmin\exceptions\jsminException $e) {
