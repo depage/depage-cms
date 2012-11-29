@@ -234,18 +234,15 @@ class html {
                 $regenerate = true;
             }
             if ($regenerate) {
-                $src = "";
-
-                foreach ($files as $file) {
-                    $src .= file_get_contents($file);
-                }
-
+                $src = false;
                 $jsmin = \depage\jsmin\jsmin::factory();
-                $src = $jsmin->minify($src);
-                if ($src !== false) {
-                    // save cache file
-                    $cache->setFile($identifier, $src, true);
-                } else {
+                try {
+                    $src = $jsmin->minifyFiles($name, $files);
+                } catch (\depage\jsmin\exceptions\jsminException $e) {
+                    $log = new \log();
+                    $log->log("closure compiler: " . $e->getMessage());
+                }
+                if ($src === false) {
                     // could not minify -> use unminified version
                     $useCached = false;
                 }

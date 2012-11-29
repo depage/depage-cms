@@ -39,25 +39,34 @@ class jsmin_closure_api extends jsmin {
      * @param $options (array) image processing parameters
      **/
     public function __construct($options = array()) {
+        parent::__construct($options);
     }
     // }}}
     
-    // {{{ minify()
+    // {{{ minifySrc()
     /**
      * @brief minifies js-source
      *
      * @param $src javascript source code
      **/
-    public function minify($src) {
+    public function minifySrc($src) {
         $rq = new \depage\http\request($this->apiUrl, array(
             'js_code' => $src,
             'compilation_level' => "SIMPLE_OPTIMIZATIONS",
             'output_info' => "compiled_code",
-            'output_format' => "text",
+            'output_format' => "xml",
         ));
-        $result = $rq->execute();
+        $data = $rq->execute();
+        $xml = simplexml_load_string($data);
+        if (!empty($xml->compiledCode)) {
+            return $xml->compiledCode;
+        } else {
+            foreach ($xml->serverErrors as $error) {
+                throw new exceptions\jsminException($error->error);
+            }
 
-        return $result;
+            return false;
+        }
     }
     // }}}
 }
