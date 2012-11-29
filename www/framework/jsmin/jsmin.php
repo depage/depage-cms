@@ -13,7 +13,9 @@ namespace depage\jsmin;
  **/
 abstract class jsmin {
     // {{{ variables
+    private $cache = null;
     // }}}
+    
     // {{{ factory()
     /**
      * @brief   jsmin object factory
@@ -24,11 +26,13 @@ abstract class jsmin {
      * @return  (object) jsmin object
      **/
     public static function factory($options = array()) {
-        $extension = (isset($options['extension'])) ? $options['extension'] : 'closure-api';
+        $extension = (isset($options['extension'])) ? $options['extension'] : 'closureApi';
 
-        if ( $extension == 'closure-api' ) {
+        if ( $extension == 'closureLocal' ) {
+            return new providers\closureLocal($options);
+        } else {
+            return new providers\closureApi($options);
         }
-        return new jsmin_closure_api($options);
     }
     // }}}
     // {{{ __construct()
@@ -75,7 +79,7 @@ abstract class jsmin {
         }
         if ($regenerate || !($src = $this->cache->getFile($identifier))) {
             foreach ($files as $file) {
-                $src .= $this->minifyFile($file) . ";";
+                $src .= $this->minifyFile($file);
             }
             $this->cache->setFile($identifier, $src, true);
         }

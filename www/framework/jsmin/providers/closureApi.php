@@ -6,41 +6,14 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  **/
 
-namespace depage\jsmin;
+namespace depage\jsmin\providers;
 
 /**
  * @brief Main jsmin class
  **/
-class jsmin_closure_api extends jsmin {
+class closureApi extends \depage\jsmin\jsmin {
     // {{{ variables
     var $apiUrl = "http://closure-compiler.appspot.com/compile";
-    // }}}
-    // {{{ factory()
-    /**
-     * @brief   jsmin object factory
-     * 
-     * Generates minify object
-     *
-     * @param   $options (array) jsmin processing parameters
-     * @return  (object) jsmin object
-     **/
-    public static function factory($options = array()) {
-        $extension = (isset($options['extension'])) ? $options['extension'] : 'closure-api';
-
-        if ( $extension == 'closure-api' ) {
-        }
-        return new jsmin_closure_api($options);
-    }
-    // }}}
-    // {{{ __construct()
-    /**
-     * @brief jsmin class constructor
-     *
-     * @param $options (array) image processing parameters
-     **/
-    public function __construct($options = array()) {
-        parent::__construct($options);
-    }
     // }}}
     
     // {{{ minifySrc()
