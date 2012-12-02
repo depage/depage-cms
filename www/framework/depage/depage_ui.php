@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class depage_ui {
+abstract class depage_ui {
     // {{{ default config
     public $defaults = array(
         'auth' => null,
@@ -276,8 +276,7 @@ class depage_ui {
      *
      * @return  null
      */
-    public function index() {
-    }
+    abstract public function index();
     // }}}
     // {{{ notfound
     /**
