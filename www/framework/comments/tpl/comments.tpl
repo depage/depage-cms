@@ -1,4 +1,4 @@
-<div class="comments">
+<div class="depage-comments">
     <h2>Comments</h2>
     <?php foreach ($this->comments as $comment) { ?>
         <?php 
@@ -8,6 +8,7 @@
         <article class="comment" itemprop="comment" itemscope itemtype="http://schema.org/UserComments" id="<?php html::t($id); ?>">
             <link itemprop="url" href="#<?php html::t($id); ?>">
             <footer>
+                <img itemprop="img" src="<?php html::t($comment->getProfileImageUrl()); ?>">
                 <p><span itemprop="creator" itemscope itemtype="http://schema.org/Person">
                     <span itemprop="name"><?php html::t($comment->author_name); ?></span>
                     <?php if(!empty($comment->author_url)) { ?>
@@ -16,7 +17,7 @@
                 </span></p>
                 <p><time itemprop="commentTime" datetime="<?php html::t($comment->date); ?>"><?php html::t($comment->date); ?></time></p>
             </footer>
-            <p><?php html::e($comment->getCommentHtml()); ?></p>
+            <?php html::e($comment->getCommentHtml()); ?>
         </article>
     <?php } ?>
     <?php html::e($this->commentForm); ?>

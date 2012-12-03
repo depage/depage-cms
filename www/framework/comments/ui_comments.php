@@ -42,6 +42,9 @@ class ui_comments extends \depage_ui {
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
         
+        $this->project = $this->urlSubArgs[0];
+        $this->pageId = $this->urlSubArgs[1];
+
         // setup database instance
         if (!$this->pdo) {
             $this->pdo = new \db_pdo(

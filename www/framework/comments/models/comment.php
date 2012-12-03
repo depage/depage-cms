@@ -52,23 +52,50 @@ class comment extends \depage\entity\entity {
     protected static $primary = array('id');
     // }}}
 
+    // {{{ loadByPageId()
+    static public function loadByPageId($pdo, $pageId) {
+        return self::load($pdo, array(
+            'page_id' => $pageId,
+        ));
+    }
+    // }}}
+    
     // {{{ getCommentHtml()
     public function getCommentHtml() {
-        // escape message input
-        $content = htmlspecialchars($this->comment, ENT_NOQUOTES);
-
-        // embed links and line breaks from plain text content
-        $content = nl2br(preg_replace(array('/((https?|ftp):[^\'"\s]+)/i'), array('<a href="$0" rel="nofollow">$0</a>'), $content));
-        return $content;
-        
         $h = "";
         $lines = explode("\n", $this->comment);
         foreach ($lines as $line) {
-            $h .= htmlspecialchars($line);
-            $h .= "<br>";
+            $h .= "<p>";
+            $h .= preg_replace(array('/((https?|ftp):[^\'"\s]+)/i'), array('<a href="$0" rel="nofollow">$0</a>'), htmlspecialchars($line));
+            $h .= "</p>";
         }
 
         return $h;
+    }
+    // }}}
+    
+    // {{{ getProfileImage()
+    public function getProfileImageUrl() {
+        $hash = md5(strtolower(trim($this->author_email)));
+
+        $param = http_build_query(array(
+            'default' => "mm",
+            'rating' => "g",
+        ), '', '&amp;');
+        return "http://www.gravatar.com/avatar/$hash?$param";
+    }
+    // }}}
+    
+    // {{{ setAuthor_ip()
+    public function setAuthor_ip($value) {
+        $this->data['author_ip'] = inet_pton($value);
+        $this->dirty['author_ip'] = true;
+    }
+    // }}}
+    
+    // {{{ getAuthor_ip()
+    public function getAuthor_ip() {
+         return inet_ntop($this->data['author_ip']);
     }
     // }}}
 }

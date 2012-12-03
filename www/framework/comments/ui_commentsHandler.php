@@ -15,28 +15,59 @@ namespace depage\comments;
 use \html;
 
 class ui_commentsHandler extends ui_comments {
+    // {{{ _init
+    /**
+     * Initializer
+     * 
+     * Handles initialization of the user interface
+     * 
+     * @return void
+     */
+    public function _init(array $importVariables = array()) {
+        parent::_init($importVariables);
+        
+        // @todo test project name for availability
+        $this->project = $this->urlSubArgs[0];
+        $this->pageId = (int) $this->urlSubArgs[1];
+
+        // setup database instance
+        $this->pdo = new \db_pdo(
+            $this->options->db->dsn,
+            $this->options->db->user,
+            $this->options->db->password,
+            array(
+                'prefix' => $this->options->db->prefix . "_proj_" . $this->project,
+            )
+        );
+    }
+    // }}}
+    
     // {{{ index()
     public function index() {
-        var_dump($this->urlSubArgs);
-
-        $comments = array();
-
-        $form = new forms\commentForm("comment", array());
+        return $this->show();
+    }
+    // }}}
+    
+    // {{{ show()
+    public function show() {
+        $form = new forms\commentForm("comment_{$this->project}_{$this->pageId}", array());
         $form->process();
         if ($form->validate()) {
             $values = $form->getValues();
             $comment = new models\comment($this->pdo, array(
-                'page_id' => $this->urlSubArgs[1],
+                'page_id' => $this->pageId,
                 'author_name' => $values['name'],
                 'author_email' => $values['email'],
                 'author_url' => $values['website'],
                 'author_ip' => $_SERVER["REMOTE_ADDR"],
                 'comment' => $values['text'],
             ));
-            $comments[] = $comment;
+            $result = $comment->save();
 
-            //$form->clearSession();
+            $form->clearSession();
         }
+
+        $comments = models\comment::loadByPageId($this->pdo, $this->pageId);
 
         return new html("comments.tpl", array(
             'comments' => $comments,

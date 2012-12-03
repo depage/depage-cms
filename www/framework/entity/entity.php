@@ -93,7 +93,7 @@ abstract class entity {
      * 
      * @return void
      */
-    public function __construct(\db_pdo $pdo = null, array $data = array(), $clean = false, $insert_ignore = null){
+    public function __construct(\db_pdo $pdo = null, array $data = array(), $clean = true, $insert_ignore = null){
         $this->pdo = $pdo;
         
         foreach ($data AS $key => $value) {
@@ -201,7 +201,7 @@ abstract class entity {
             $query .= " WHERE " . join(' AND ', $where);
         }
         
-        return self::fetchArray($pdo, $query, $params);
+        return self::fetchEntities($pdo, $query, $params);
     }
     // }}}
     
