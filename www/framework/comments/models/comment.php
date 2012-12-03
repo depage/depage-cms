@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\comments;
+namespace depage\comments\models;
 
 class comment extends \depage\entity\entity {
     // variables {{{
@@ -50,6 +50,26 @@ class comment extends \depage\entity\entity {
      * @var array
      */
     protected static $primary = array('id');
+    // }}}
+
+    // {{{ getCommentHtml()
+    public function getCommentHtml() {
+        // escape message input
+        $content = htmlspecialchars($this->comment, ENT_NOQUOTES);
+
+        // embed links and line breaks from plain text content
+        $content = nl2br(preg_replace(array('/((https?|ftp):[^\'"\s]+)/i'), array('<a href="$0" rel="nofollow">$0</a>'), $content));
+        return $content;
+        
+        $h = "";
+        $lines = explode("\n", $this->comment);
+        foreach ($lines as $line) {
+            $h .= htmlspecialchars($line);
+            $h .= "<br>";
+        }
+
+        return $h;
+    }
     // }}}
 }
 
