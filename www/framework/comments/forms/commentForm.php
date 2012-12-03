@@ -15,17 +15,20 @@ class commentForm extends \depage\htmlform\htmlform {
      * @return void
      */
     public function __construct($name, $parameters = array()) {
-        $parameters['validator'] = function($form, $values) {
-            return $values['mustbeempty'] == "";
-        };
-        
         $parameters['label'] = _("Send");
         //$parameters['submitUrl'] = \html::link('login/', "auto");
         
         parent::__construct($name, $parameters);
         
+        $this->addTextarea("text", array(
+            'label' => _('Text'),
+            'required' => true,
+            'autogrow' => true,
+        ));
+
         $this->addText("name", array(
             'label' => _('Name'),
+            'defaultValue' => $_COOKIE['depage-comment-name'],
             'placeholder' => _('Your name'),
             'required' => true,
             'helpMessage' => _("Please fill in your full name, e.g. the name you established as a writer in the film market. First your first name, then your last name."),
@@ -33,28 +36,44 @@ class commentForm extends \depage\htmlform\htmlform {
         
         $this->addEmail("email", array(
             'label' => _('Email'),
+            'defaultValue' => $_COOKIE['depage-comment-email'],
             'placeholder' => _('email@domain.com'),
-            'defaultValue' => isset($user->email) ? $user->email : ($parameters['email'] ? $parameters['email'] : ''),
             'required' => true,
             'helpMessage' => _("Enter your email address. You will need it to confirm your account."),
         ));
         
         $this->addUrl("website", array(
             'label' => _('Website') . ' ' . _('(public)'),
+            'defaultValue' => $_COOKIE['depage-comment-website'],
             'placeholder' => _('http://domain.com'),
             'helpMessage' => _("If you don't have a website of your own, you can also link a meaningful profile, e.g. IMDB or Crew United."),
         ));
 
         $this->mustbeempty = $this->addText("mustbeempty", array(
             'label' => _("must be left empty"),
+            'class' => "mustbeempty",
         ));
         
-        $this->addTextarea("text", array(
-            'label' => _('Text'),
-            'required' => true,
-            'autogrow' => true,
-        ));
         
+    }
+    // }}}
+    
+    // {{{ onValidate()
+    /**
+     * @brief   sets cookies for some fields to keep longer than session
+     *
+     * @return  true
+     **/
+    public function onValidate() {
+        $values = $this->getValues();
+        $expire = time() + (20 * 365 * 24 * 60 * 60);
+        $path = parse_url(DEPAGE_BASE, PHP_URL_PATH);
+
+        foreach (array("name", "email", "website") as $field) {
+            if ($values[$field] != "") setcookie("depage-comment-$field", $values[$field], $expire, $path);
+        }
+
+        return true;
     }
     // }}}
 }

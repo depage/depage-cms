@@ -189,7 +189,7 @@ abstract class entity {
      * 
      * @return object
      */
-    protected static function load(\db_pdo $pdo, $params){
+    protected static function load(\db_pdo $pdo, $params, $orderBy = ""){
         $query = "SELECT * FROM {$pdo->prefix}_" . static::$table_name;
         
         $where = array();
@@ -199,6 +199,9 @@ abstract class entity {
         
         if (count($where)) {
             $query .= " WHERE " . join(' AND ', $where);
+        }
+        if (!empty($orderBy)) {
+            $query .= " ORDER BY $orderBy";
         }
         
         return self::fetchEntities($pdo, $query, $params);

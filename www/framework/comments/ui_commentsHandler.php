@@ -52,18 +52,21 @@ class ui_commentsHandler extends ui_comments {
     public function show() {
         $form = new forms\commentForm("comment_{$this->project}_{$this->pageId}", array());
         $form->process();
+
         if ($form->validate()) {
             $values = $form->getValues();
-            $comment = new models\comment($this->pdo, array(
-                'page_id' => $this->pageId,
-                'author_name' => $values['name'],
-                'author_email' => $values['email'],
-                'author_url' => $values['website'],
-                'author_ip' => $_SERVER["REMOTE_ADDR"],
-                'comment' => $values['text'],
-            ));
-            $result = $comment->save();
 
+            if ($values['mustbeempty'] == "") {
+                $comment = new models\comment($this->pdo, array(
+                    'page_id' => $this->pageId,
+                    'author_name' => $values['name'],
+                    'author_email' => $values['email'],
+                    'author_url' => $values['website'],
+                    'author_ip' => $_SERVER["REMOTE_ADDR"],
+                    'comment' => $values['text'],
+                ));
+                $result = $comment->save();
+            }
             $form->clearSession();
         }
 

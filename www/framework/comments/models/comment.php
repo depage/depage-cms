@@ -53,10 +53,12 @@ class comment extends \depage\entity\entity {
     // }}}
 
     // {{{ loadByPageId()
-    static public function loadByPageId($pdo, $pageId) {
+    static public function loadByPageId($pdo, $pageId, $showSpam = false) {
         return self::load($pdo, array(
             'page_id' => $pageId,
-        ));
+            'hidden' => false,
+            'spam' => $showSpam,
+        ), "date ASC");
     }
     // }}}
     
@@ -75,14 +77,17 @@ class comment extends \depage\entity\entity {
     // }}}
     
     // {{{ getProfileImage()
-    public function getProfileImageUrl() {
+    public function getProfileImageUrl($size = null) {
         $hash = md5(strtolower(trim($this->author_email)));
 
-        $param = http_build_query(array(
+        $settings = array(
             'default' => "mm",
             'rating' => "g",
-        ), '', '&amp;');
-        return "http://www.gravatar.com/avatar/$hash?$param";
+        );
+        if ($size !== null) $settings['size'] = $size;
+
+        $param = http_build_query($settings);
+        return "https://secure.gravatar.com/avatar/$hash?$param";
     }
     // }}}
     
