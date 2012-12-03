@@ -224,11 +224,15 @@ abstract class depage_ui {
                 $pattern = "/^(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
                 if (preg_match($pattern, $dp_request_path, $matches)) {
                     $dp_parent = $matches[1];
-                    if (!empty($matches[2])) {
-                        $this->urlSubArgs = explode('/', $matches[2]);
-                        for ($i = 0; $i < count($this->urlSubArgs); $i++) {
-                            $this->urlSubArgs[$i] = rawurldecode($this->urlSubArgs[$i]);
-                        }
+                    $i = 2;
+                    $this->urlSubArgs = array();
+                    // test for non-empty subArgs
+                    while (isset($matches[$i]) && !empty($matches[$i])) {
+                        $this->urlSubArgs[] = $matches[$i];
+                        $i++;
+                    }
+                    for ($i = 0; $i < count($this->urlSubArgs); $i++) {
+                        $this->urlSubArgs[$i] = rawurldecode($this->urlSubArgs[$i]);
                     }
                     if (count($matches)){
                         array_splice($dp_params, 1, count($this->urlSubArgs));
