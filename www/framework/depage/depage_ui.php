@@ -216,9 +216,9 @@ abstract class depage_ui {
         $dp_request_path = implode("/", $dp_params);
 
         // test for subhandlers
-        if (is_callable(array($this, "_getSubHandler"))) {
-            $subHandler = $this::_getSubHandler();
-            
+        $subhandlerMethod = get_class($this) . "::_getSubHandler";
+        if (is_callable($subhandlerMethod)) {
+            $subHandler = call_user_func($subhandlerMethod);
             $simplepatterns = \config::getSimplePatterns();
             foreach ($subHandler as $name => $class) {
                 $pattern = "/^(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
@@ -280,7 +280,8 @@ abstract class depage_ui {
      *
      * @return  null
      */
-    abstract public function index();
+    public function index() {
+    }
     // }}}
     // {{{ notfound
     /**
