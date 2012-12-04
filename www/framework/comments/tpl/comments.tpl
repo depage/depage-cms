@@ -9,7 +9,7 @@
             <link itemprop="url" href="#<?php html::t($id); ?>">
             <footer>
                 <p>
-                <?php if(!empty($comment->author_url)) { ?><a href="<?php html::t($comment->author_url); ?>" rel="nofollow" itemprop="url"><?php } ?>
+                <?php if(!empty($comment->author_url)) { ?><a href="<?php html::t($comment->author_url); ?>" rel="nofollow" itemprop="url" target="_blank"><?php } ?>
                     <span itemprop="creator" itemscope itemtype="http://schema.org/Person">
                         <img itemprop="image" src="<?php html::t($comment->getProfileImageUrl()); ?>" class="profile-image">
                         <span itemprop="name"><?php html::t($comment->author_name); ?></span>

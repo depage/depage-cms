@@ -68,7 +68,7 @@ class comment extends \depage\entity\entity {
         $lines = explode("\n", $this->comment);
         foreach ($lines as $line) {
             $h .= "<p>";
-            $h .= preg_replace(array('/((https?|ftp):[^\'"\s]+)/i'), array('<a href="$0" rel="nofollow">$0</a>'), htmlspecialchars($line));
+            $h .= preg_replace(array('/((https?|ftp):[^\'"\s]+)/i'), array('<a href="$0" rel="nofollow" target="_blank">$0</a>'), htmlspecialchars($line));
             $h .= "</p>";
         }
 
