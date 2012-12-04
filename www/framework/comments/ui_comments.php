@@ -46,7 +46,7 @@ class ui_comments extends \depage_ui {
         $this->pageId = $this->urlSubArgs[1];
 
         // setup database instance
-        if (!$this->pdo) {
+        if (!isset($this->pdo)) {
             $this->pdo = new \db_pdo(
                 $this->options->db->dsn,
                 $this->options->db->user,
@@ -68,15 +68,15 @@ class ui_comments extends \depage_ui {
             'template_path' => __DIR__ . "/tpl/",
             'clean' => "space",
             'env' => $this->options->env,
-            'jsmin' => $this->options->jsmin,
+            //'jsmin' => $this->options->jsmin,
         );
         
         $this->basetitle = "";
         
         // establish if the user is logged in
-        if ($this->auth_user === null) {
+        //if ($this->auth_user === null) {
             //$this->auth_user = $this->auth->enforce_lazy();
-        }
+        //}
     }
     // }}}
     

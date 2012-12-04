@@ -14,7 +14,6 @@
         <?php
             $this->include_css("global", array(
                 "framework/htmlform/lib/css/depage-forms.css",
-                //"modules/screenpitch/lib/global/css/global.css",
             ));
             
             $this->include_js("global", array(
