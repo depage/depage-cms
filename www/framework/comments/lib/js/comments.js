@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $(".depage-comments[data-comments-url]").each( function() {
         var $comments = $(this);
-        var commentUrl = $(this).attr('data-comments-url');
+        var commentUrl = $(this).attr('data-comments-url') + "?ajax=true";
 
         var setupCommentForm = function(form) {
             var $form = $(form);
