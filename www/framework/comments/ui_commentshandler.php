@@ -39,6 +39,7 @@ class ui_commentsHandler extends ui_comments {
                 'prefix' => $this->options->db->prefix . "_proj_" . $this->project,
             )
         );
+        header("Access-Control-Allow-Origin: http://cms.depagecms.net");
     }
     // }}}
     
