@@ -63,7 +63,7 @@ class ui_commentsHandler extends ui_comments {
                     'author_name' => $values['name'],
                     'author_email' => $values['email'],
                     'author_url' => $values['website'],
-                    'author_ip' => $_SERVER["REMOTE_ADDR"],
+                    'author_ip' => inet_pton($_SERVER["REMOTE_ADDR"]),
                     'comment' => $values['text'],
                 ));
                 $result = $comment->save();

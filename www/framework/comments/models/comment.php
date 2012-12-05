@@ -90,19 +90,6 @@ class comment extends \depage\entity\entity {
         return "https://secure.gravatar.com/avatar/$hash?$param";
     }
     // }}}
-    
-    // {{{ setAuthor_ip()
-    public function setAuthor_ip($value) {
-        $this->data['author_ip'] = inet_pton($value);
-        $this->dirty['author_ip'] = true;
-    }
-    // }}}
-    
-    // {{{ getAuthor_ip()
-    public function getAuthor_ip() {
-         return inet_ntop($this->data['author_ip']);
-    }
-    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
