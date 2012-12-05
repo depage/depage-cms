@@ -210,10 +210,12 @@ class html {
     public function include_js($name, $files = array(), $attr = "") {
         // get file-dependencies that are required from javascript header
         $files = $this->include_js_get_dependencies($files);
+        $useCached = false;
         
         if ($this->param['env'] === "production") {
             // production environement
             $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
+            $useCached = true;
             
             // get cache instance
             $cache = depage\cache\cache::factory("js");
@@ -232,18 +234,25 @@ class html {
                 $regenerate = true;
             }
             if ($regenerate) {
-                $src = "";
-
-                foreach ($files as $file) {
-                    $src .= file_get_contents($file);
+                $src = false;
+                $jsmin = \depage\jsmin\jsmin::factory(array(
+                    'extension' => $this->param['jsmin']->extension,
+                    'jar' => $this->param['jsmin']->jar,
+                    'java' => $this->param['jsmin']->java,
+                ));
+                try {
+                    $src = $jsmin->minifyFiles($name, $files);
+                } catch (\depage\jsmin\exceptions\jsminException $e) {
+                    $log = new \log();
+                    $log->log("closure compiler: " . $e->getMessage());
                 }
-
-                $src = JSMin::minify($src);
-
-                // save cache file
-                $cache->setFile($identifier, $src, true);
+                if ($src === false) {
+                    // could not minify -> use unminified version
+                    $useCached = false;
+                }
             }
-
+        }
+        if ($useCached) {
             echo("<script src=\"" . $cache->getUrl($identifier) . "\" $attr></script>\n");
         } else {
             // development environement
