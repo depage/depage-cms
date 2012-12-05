@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $(".depage-comments[data-comments-url]").each( function() {
         var $comments = $(this);
-        var commentUrl = $(this).attr('data-comments-url') + "?ajax=true";
+        var commentUrl = $(this).attr('data-comments-url') + "&ajax=true&successURL=" + encodeURIComponent(document.location);
 
         var setupCommentForm = function(form) {
             var $form = $(form);
@@ -28,16 +28,42 @@ $(document).ready(function() {
                     }
                 });
                 
-                $comments.load(commentUrl + ' .depage-comments > *', data, function() {
-                    setupCommentForm($comments.find("form"));
+                $.ajax({
+                    url: commentUrl,
+                    data: data,
+                    type: 'POST',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function(data, textStatus, xhr) {
+                        $comments.html( $("<div>").append(data).find(".depage-comments > *") );
+                        setupCommentForm($comments.find("form"));
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("Comment could not be sent - please try again later");
+                    },
+                    complete: function(jqXHR, textStatus) {
+                    }
                 });
 
                 return false;
             });
         }
 
-        $comments.load(commentUrl + ' .depage-comments > *', function() {
-            setupCommentForm($comments.find("form"));
+        $.ajax({
+            url: commentUrl,
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function(data, textStatus, xhr) {
+                $comments.html( $("<div>").append(data).find(".depage-comments > *") );
+                setupCommentForm($comments.find("form"));
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            },
+            complete: function(jqXHR, textStatus) {
+            }
         });
     });
 });

@@ -16,7 +16,11 @@ class commentForm extends \depage\htmlform\htmlform {
      */
     public function __construct($name, $parameters = array()) {
         $parameters['label'] = _("Send");
-        //$parameters['submitUrl'] = \html::link('login/', "auto");
+        $parameters['submitURL'] = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        if (!empty($_GET['successURL'])) {
+            $parameters['submitURL'] = $_GET['successURL'];
+            $parameters['successURL'] = $_GET['successURL'];
+        }
         
         parent::__construct($name, $parameters);
         
@@ -28,7 +32,7 @@ class commentForm extends \depage\htmlform\htmlform {
 
         $this->addText("name", array(
             'label' => _('Name'),
-            'defaultValue' => $_COOKIE['depage-comment-name'],
+            'defaultValue' => !empty($_COOKIE['depage-comment-name']) ? $_COOKIE['depage-comment-name'] : '',
             'placeholder' => _('Your name'),
             'required' => true,
             'helpMessage' => _("Please fill in your full name, e.g. the name you established as a writer in the film market. First your first name, then your last name."),
@@ -36,7 +40,7 @@ class commentForm extends \depage\htmlform\htmlform {
         
         $this->addEmail("email", array(
             'label' => _('Email'),
-            'defaultValue' => $_COOKIE['depage-comment-email'],
+            'defaultValue' => !empty($_COOKIE['depage-comment-email']) ? $_COOKIE['depage-comment-email'] : '',
             'placeholder' => _('email@domain.com'),
             'required' => true,
             'helpMessage' => _("Enter your email address. You will need it to confirm your account."),
@@ -44,7 +48,7 @@ class commentForm extends \depage\htmlform\htmlform {
         
         $this->addUrl("website", array(
             'label' => _('Website') . ' ' . _('(public)'),
-            'defaultValue' => $_COOKIE['depage-comment-website'],
+            'defaultValue' => !empty($_COOKIE['depage-comment-website']) ? $_COOKIE['depage-comment-website'] : '',
             'placeholder' => _('http://domain.com'),
             'helpMessage' => _("If you don't have a website of your own, you can also link a meaningful profile, e.g. IMDB or Crew United."),
         ));
