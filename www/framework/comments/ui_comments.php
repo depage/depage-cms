@@ -15,6 +15,13 @@ namespace depage\comments;
 use \html;
 
 class ui_comments extends \depage_ui {
+    // {{{ default config
+    public $defaults = array(
+        'urlHasLocale' => true,
+    );
+    protected $options = array();
+    // }}}
+    
     // {{{ _getSubHandler
     /**
      * Subhandler

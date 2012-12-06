@@ -1,0 +1,1432 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-06 18:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: cms/cms_ui.php:367 cms/cms_ui.php:373 cms/ui_main.php:362
+#: cms/ui_main.php:368
+msgid "User Profile"
+msgstr ""
+
+#: cms/cms_ui.php:374 cms/ui_main.php:369
+msgid "unknown user profile"
+msgstr ""
+
+#: cms/tpl/projectlist.tpl:6
+msgid "edit"
+msgstr ""
+
+#: cms/tpl/projectlist.tpl:9
+msgid "preview"
+msgstr ""
+
+#: comments/forms/commentform.php:18
+msgid "Send"
+msgstr ""
+
+#: comments/forms/commentform.php:28
+msgid "Text"
+msgstr ""
+
+#: comments/forms/commentform.php:34
+msgid "Name"
+msgstr ""
+
+#: comments/forms/commentform.php:36
+msgid "Your name"
+msgstr ""
+
+#: comments/forms/commentform.php:38
+msgid ""
+"Please fill in your full name, e.g. the name you established as a writer in "
+"the film market. First your first name, then your last name."
+msgstr ""
+
+#: comments/forms/commentform.php:42
+msgid "Email"
+msgstr ""
+
+#: comments/forms/commentform.php:44
+msgid "email@domain.com"
+msgstr ""
+
+#: comments/forms/commentform.php:46
+msgid "Enter your email address. You will need it to confirm your account."
+msgstr ""
+
+#: comments/forms/commentform.php:50
+msgid "Website"
+msgstr ""
+
+#: comments/forms/commentform.php:50
+msgid "(public)"
+msgstr ""
+
+#: comments/forms/commentform.php:52
+msgid "http://domain.com"
+msgstr ""
+
+#: comments/forms/commentform.php:53
+msgid ""
+"If you don't have a website of your own, you can also link a meaningful "
+"profile, e.g. IMDB or Crew United."
+msgstr ""
+
+#: comments/forms/commentform.php:57
+msgid "must be left empty"
+msgstr ""
+
+#: datetime/datetime.php:27
+msgid "now"
+msgstr ""
+
+#: datetime/datetime.php:29
+msgid "just now"
+msgstr ""
+
+#: datetime/datetime.php:32
+#, php-format
+msgid "%d minute ago"
+msgstr ""
+
+#: datetime/datetime.php:32
+#, php-format
+msgid "%d minutes ago"
+msgstr ""
+
+#: datetime/datetime.php:35
+#, php-format
+msgid "%d hour ago"
+msgstr ""
+
+#: datetime/datetime.php:35
+#, php-format
+msgid "%d hours ago"
+msgstr ""
+
+#: datetime/datetime.php:40
+msgid "Monday"
+msgstr ""
+
+#: datetime/datetime.php:41
+msgid "Tuesday"
+msgstr ""
+
+#: datetime/datetime.php:42
+msgid "Wednesday"
+msgstr ""
+
+#: datetime/datetime.php:43
+msgid "Thursday"
+msgstr ""
+
+#: datetime/datetime.php:44
+msgid "Friday"
+msgstr ""
+
+#: datetime/datetime.php:45
+msgid "Saturday"
+msgstr ""
+
+#: datetime/datetime.php:46
+msgid "Sunday"
+msgstr ""
+
+#: datetime/datetime.php:51
+#, php-format
+msgid "%d week ago"
+msgstr ""
+
+#: datetime/datetime.php:51
+#, php-format
+msgid "%d weeks ago"
+msgstr ""
+
+#: htmlform/abstracts/input.php:115
+msgid "Please enter valid data"
+msgstr ""
+
+#: htmlform/elements/address.php:100
+msgid "Address 1"
+msgstr ""
+
+#: htmlform/elements/address.php:101
+msgid "Address 2"
+msgstr ""
+
+#: htmlform/elements/address.php:102
+msgid "City"
+msgstr ""
+
+#: htmlform/elements/address.php:103
+msgid "State"
+msgstr ""
+
+#: htmlform/elements/address.php:104
+msgid "Zip"
+msgstr ""
+
+#: htmlform/elements/address.php:105
+msgid "Country"
+msgstr ""
+
+#: htmlform/elements/address.php:183
+msgid "State and Country do not match"
+msgstr ""
+
+#: htmlform/elements/boolean.php:60
+msgid "Please check this box if you want to proceed"
+msgstr ""
+
+#: htmlform/elements/country.php:58
+msgid "Andorra"
+msgstr ""
+
+#: htmlform/elements/country.php:59
+msgid "United Arab Emirates"
+msgstr ""
+
+#: htmlform/elements/country.php:60
+msgid "Afghanistan"
+msgstr ""
+
+#: htmlform/elements/country.php:61
+msgid "Antigua &amp; Barbuda"
+msgstr ""
+
+#: htmlform/elements/country.php:62
+msgid "Anguilla"
+msgstr ""
+
+#: htmlform/elements/country.php:63
+msgid "Albania"
+msgstr ""
+
+#: htmlform/elements/country.php:64
+msgid "Armenia"
+msgstr ""
+
+#: htmlform/elements/country.php:65
+msgid "Netherlands Antilles"
+msgstr ""
+
+#: htmlform/elements/country.php:66
+msgid "Angola"
+msgstr ""
+
+#: htmlform/elements/country.php:67
+msgid "Antarctica"
+msgstr ""
+
+#: htmlform/elements/country.php:68
+msgid "Argentina"
+msgstr ""
+
+#: htmlform/elements/country.php:69 htmlform/elements/state.php:126
+msgid "American Samoa"
+msgstr ""
+
+#: htmlform/elements/country.php:70
+msgid "Austria"
+msgstr ""
+
+#: htmlform/elements/country.php:71
+msgid "Australia"
+msgstr ""
+
+#: htmlform/elements/country.php:72
+msgid "Aruba"
+msgstr ""
+
+#: htmlform/elements/country.php:73
+msgid "Azerbaijan"
+msgstr ""
+
+#: htmlform/elements/country.php:74
+msgid "Bosnia and Herzegovina"
+msgstr ""
+
+#: htmlform/elements/country.php:75
+msgid "Barbados"
+msgstr ""
+
+#: htmlform/elements/country.php:76
+msgid "Bangladesh"
+msgstr ""
+
+#: htmlform/elements/country.php:77
+msgid "Belgium"
+msgstr ""
+
+#: htmlform/elements/country.php:78
+msgid "Burkina Faso"
+msgstr ""
+
+#: htmlform/elements/country.php:79
+msgid "Bulgaria"
+msgstr ""
+
+#: htmlform/elements/country.php:80
+msgid "Bahrain"
+msgstr ""
+
+#: htmlform/elements/country.php:81
+msgid "Burundi"
+msgstr ""
+
+#: htmlform/elements/country.php:82
+msgid "Benin"
+msgstr ""
+
+#: htmlform/elements/country.php:83
+msgid "Bermuda"
+msgstr ""
+
+#: htmlform/elements/country.php:84
+msgid "Brunei Darussalam"
+msgstr ""
+
+#: htmlform/elements/country.php:85
+msgid "Bolivia"
+msgstr ""
+
+#: htmlform/elements/country.php:86
+msgid "Brazil"
+msgstr ""
+
+#: htmlform/elements/country.php:87
+msgid "Bahama"
+msgstr ""
+
+#: htmlform/elements/country.php:88
+msgid "Bhutan"
+msgstr ""
+
+#: htmlform/elements/country.php:89
+msgid "Bouvet Island"
+msgstr ""
+
+#: htmlform/elements/country.php:90
+msgid "Botswana"
+msgstr ""
+
+#: htmlform/elements/country.php:91
+msgid "Belarus"
+msgstr ""
+
+#: htmlform/elements/country.php:92
+msgid "Belize"
+msgstr ""
+
+#: htmlform/elements/country.php:93
+msgid "Canada"
+msgstr ""
+
+#: htmlform/elements/country.php:94
+msgid "Cocos (Keeling) Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:95
+msgid "Central African Republic"
+msgstr ""
+
+#: htmlform/elements/country.php:96
+msgid "Congo"
+msgstr ""
+
+#: htmlform/elements/country.php:97
+msgid "Switzerland"
+msgstr ""
+
+#: htmlform/elements/country.php:98
+msgid "Côte D\\'ivoire (Ivory Coast)"
+msgstr ""
+
+#: htmlform/elements/country.php:99
+msgid "Cook Iislands"
+msgstr ""
+
+#: htmlform/elements/country.php:100
+msgid "Chile"
+msgstr ""
+
+#: htmlform/elements/country.php:101
+msgid "Cameroon"
+msgstr ""
+
+#: htmlform/elements/country.php:102
+msgid "China"
+msgstr ""
+
+#: htmlform/elements/country.php:103
+msgid "Colombia"
+msgstr ""
+
+#: htmlform/elements/country.php:104
+msgid "Costa Rica"
+msgstr ""
+
+#: htmlform/elements/country.php:105
+msgid "Cuba"
+msgstr ""
+
+#: htmlform/elements/country.php:106
+msgid "Cape Verde"
+msgstr ""
+
+#: htmlform/elements/country.php:107
+msgid "Christmas Island"
+msgstr ""
+
+#: htmlform/elements/country.php:108
+msgid "Cyprus"
+msgstr ""
+
+#: htmlform/elements/country.php:109
+msgid "Czech Republic"
+msgstr ""
+
+#: htmlform/elements/country.php:110
+msgid "Germany"
+msgstr ""
+
+#: htmlform/elements/country.php:111
+msgid "Djibouti"
+msgstr ""
+
+#: htmlform/elements/country.php:112
+msgid "Denmark"
+msgstr ""
+
+#: htmlform/elements/country.php:113
+msgid "Dominica"
+msgstr ""
+
+#: htmlform/elements/country.php:114
+msgid "Dominican Republic"
+msgstr ""
+
+#: htmlform/elements/country.php:115
+msgid "Algeria"
+msgstr ""
+
+#: htmlform/elements/country.php:116
+msgid "Ecuador"
+msgstr ""
+
+#: htmlform/elements/country.php:117
+msgid "Estonia"
+msgstr ""
+
+#: htmlform/elements/country.php:118
+msgid "Egypt"
+msgstr ""
+
+#: htmlform/elements/country.php:119
+msgid "Western Sahara"
+msgstr ""
+
+#: htmlform/elements/country.php:120
+msgid "Eritrea"
+msgstr ""
+
+#: htmlform/elements/country.php:121
+msgid "Spain"
+msgstr ""
+
+#: htmlform/elements/country.php:122
+msgid "Ethiopia"
+msgstr ""
+
+#: htmlform/elements/country.php:123
+msgid "Finland"
+msgstr ""
+
+#: htmlform/elements/country.php:124
+msgid "Fiji"
+msgstr ""
+
+#: htmlform/elements/country.php:125
+msgid "Falkland Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:126
+msgid "Micronesia"
+msgstr ""
+
+#: htmlform/elements/country.php:127
+msgid "Faroe Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:128
+msgid "France"
+msgstr ""
+
+#: htmlform/elements/country.php:129
+msgid "France, Metropolitan"
+msgstr ""
+
+#: htmlform/elements/country.php:130
+msgid "Gabon"
+msgstr ""
+
+#: htmlform/elements/country.php:131
+msgid "United Kingdom"
+msgstr ""
+
+#: htmlform/elements/country.php:132
+msgid "Grenada"
+msgstr ""
+
+#: htmlform/elements/country.php:133 htmlform/elements/state.php:84
+msgid "Georgia"
+msgstr ""
+
+#: htmlform/elements/country.php:134
+msgid "French Guiana"
+msgstr ""
+
+#: htmlform/elements/country.php:135
+msgid "Ghana"
+msgstr ""
+
+#: htmlform/elements/country.php:136
+msgid "Gibraltar"
+msgstr ""
+
+#: htmlform/elements/country.php:137
+msgid "Greenland"
+msgstr ""
+
+#: htmlform/elements/country.php:138
+msgid "Gambia"
+msgstr ""
+
+#: htmlform/elements/country.php:139
+msgid "Guinea"
+msgstr ""
+
+#: htmlform/elements/country.php:140
+msgid "Guadeloupe"
+msgstr ""
+
+#: htmlform/elements/country.php:141
+msgid "Equatorial Guinea"
+msgstr ""
+
+#: htmlform/elements/country.php:142
+msgid "Greece"
+msgstr ""
+
+#: htmlform/elements/country.php:143
+msgid "South Georgia and the South Sandwich Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:144
+msgid "Guatemala"
+msgstr ""
+
+#: htmlform/elements/country.php:145 htmlform/elements/state.php:127
+msgid "Guam"
+msgstr ""
+
+#: htmlform/elements/country.php:146
+msgid "Guinea-Bissau"
+msgstr ""
+
+#: htmlform/elements/country.php:147
+msgid "Guyana"
+msgstr ""
+
+#: htmlform/elements/country.php:148
+msgid "Hong Kong"
+msgstr ""
+
+#: htmlform/elements/country.php:149
+msgid "Heard &amp; McDonald Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:150
+msgid "Honduras"
+msgstr ""
+
+#: htmlform/elements/country.php:151
+msgid "Croatia"
+msgstr ""
+
+#: htmlform/elements/country.php:152
+msgid "Haiti"
+msgstr ""
+
+#: htmlform/elements/country.php:153
+msgid "Hungary"
+msgstr ""
+
+#: htmlform/elements/country.php:154
+msgid "Indonesia"
+msgstr ""
+
+#: htmlform/elements/country.php:155
+msgid "Ireland"
+msgstr ""
+
+#: htmlform/elements/country.php:156
+msgid "Israel"
+msgstr ""
+
+#: htmlform/elements/country.php:157
+msgid "India"
+msgstr ""
+
+#: htmlform/elements/country.php:158
+msgid "British Indian Ocean Territory"
+msgstr ""
+
+#: htmlform/elements/country.php:159
+msgid "Iraq"
+msgstr ""
+
+#: htmlform/elements/country.php:160
+msgid "Islamic Republic of Iran"
+msgstr ""
+
+#: htmlform/elements/country.php:161
+msgid "Iceland"
+msgstr ""
+
+#: htmlform/elements/country.php:162
+msgid "Italy"
+msgstr ""
+
+#: htmlform/elements/country.php:163
+msgid "Jamaica"
+msgstr ""
+
+#: htmlform/elements/country.php:164
+msgid "Jordan"
+msgstr ""
+
+#: htmlform/elements/country.php:165
+msgid "Japan"
+msgstr ""
+
+#: htmlform/elements/country.php:166
+msgid "Kenya"
+msgstr ""
+
+#: htmlform/elements/country.php:167
+msgid "Kyrgyzstan"
+msgstr ""
+
+#: htmlform/elements/country.php:168
+msgid "Cambodia"
+msgstr ""
+
+#: htmlform/elements/country.php:169
+msgid "Kiribati"
+msgstr ""
+
+#: htmlform/elements/country.php:170
+msgid "Comoros"
+msgstr ""
+
+#: htmlform/elements/country.php:171
+msgid "St. Kitts and Nevis"
+msgstr ""
+
+#: htmlform/elements/country.php:172
+msgid "Korea, Democratic People\\'s Republic of"
+msgstr ""
+
+#: htmlform/elements/country.php:173
+msgid "Korea, Republic of"
+msgstr ""
+
+#: htmlform/elements/country.php:174
+msgid "Kuwait"
+msgstr ""
+
+#: htmlform/elements/country.php:175
+msgid "Cayman Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:176
+msgid "Kazakhstan"
+msgstr ""
+
+#: htmlform/elements/country.php:177
+msgid "Lao People\\'s Democratic Republic"
+msgstr ""
+
+#: htmlform/elements/country.php:178
+msgid "Lebanon"
+msgstr ""
+
+#: htmlform/elements/country.php:179
+msgid "Saint Lucia"
+msgstr ""
+
+#: htmlform/elements/country.php:180
+msgid "Liechtenstein"
+msgstr ""
+
+#: htmlform/elements/country.php:181
+msgid "Sri Lanka"
+msgstr ""
+
+#: htmlform/elements/country.php:182
+msgid "Liberia"
+msgstr ""
+
+#: htmlform/elements/country.php:183
+msgid "Lesotho"
+msgstr ""
+
+#: htmlform/elements/country.php:184
+msgid "Lithuania"
+msgstr ""
+
+#: htmlform/elements/country.php:185
+msgid "Luxembourg"
+msgstr ""
+
+#: htmlform/elements/country.php:186
+msgid "Latvia"
+msgstr ""
+
+#: htmlform/elements/country.php:187
+msgid "Libyan Arab Jamahiriya"
+msgstr ""
+
+#: htmlform/elements/country.php:188
+msgid "Morocco"
+msgstr ""
+
+#: htmlform/elements/country.php:189
+msgid "Monaco"
+msgstr ""
+
+#: htmlform/elements/country.php:190
+msgid "Moldova, Republic of"
+msgstr ""
+
+#: htmlform/elements/country.php:191
+msgid "Madagascar"
+msgstr ""
+
+#: htmlform/elements/country.php:192
+msgid "Marshall Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:193
+msgid "Mali"
+msgstr ""
+
+#: htmlform/elements/country.php:194
+msgid "Mongolia"
+msgstr ""
+
+#: htmlform/elements/country.php:195
+msgid "Myanmar"
+msgstr ""
+
+#: htmlform/elements/country.php:196
+msgid "Macau"
+msgstr ""
+
+#: htmlform/elements/country.php:197 htmlform/elements/state.php:128
+msgid "Northern Mariana Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:198
+msgid "Martinique"
+msgstr ""
+
+#: htmlform/elements/country.php:199
+msgid "Mauritania"
+msgstr ""
+
+#: htmlform/elements/country.php:200
+msgid "Monserrat"
+msgstr ""
+
+#: htmlform/elements/country.php:201
+msgid "Malta"
+msgstr ""
+
+#: htmlform/elements/country.php:202
+msgid "Mauritius"
+msgstr ""
+
+#: htmlform/elements/country.php:203
+msgid "Maldives"
+msgstr ""
+
+#: htmlform/elements/country.php:204
+msgid "Malawi"
+msgstr ""
+
+#: htmlform/elements/country.php:205
+msgid "Mexico"
+msgstr ""
+
+#: htmlform/elements/country.php:206
+msgid "Malaysia"
+msgstr ""
+
+#: htmlform/elements/country.php:207
+msgid "Mozambique"
+msgstr ""
+
+#: htmlform/elements/country.php:208
+msgid "Namibia"
+msgstr ""
+
+#: htmlform/elements/country.php:209
+msgid "New Caledonia"
+msgstr ""
+
+#: htmlform/elements/country.php:210
+msgid "Niger"
+msgstr ""
+
+#: htmlform/elements/country.php:211
+msgid "Norfolk Island"
+msgstr ""
+
+#: htmlform/elements/country.php:212
+msgid "Nigeria"
+msgstr ""
+
+#: htmlform/elements/country.php:213
+msgid "Nicaragua"
+msgstr ""
+
+#: htmlform/elements/country.php:214
+msgid "Netherlands"
+msgstr ""
+
+#: htmlform/elements/country.php:215
+msgid "Norway"
+msgstr ""
+
+#: htmlform/elements/country.php:216
+msgid "Nepal"
+msgstr ""
+
+#: htmlform/elements/country.php:217
+msgid "Nauru"
+msgstr ""
+
+#: htmlform/elements/country.php:218
+msgid "Niue"
+msgstr ""
+
+#: htmlform/elements/country.php:219
+msgid "New Zealand"
+msgstr ""
+
+#: htmlform/elements/country.php:220
+msgid "Oman"
+msgstr ""
+
+#: htmlform/elements/country.php:221
+msgid "Panama"
+msgstr ""
+
+#: htmlform/elements/country.php:222
+msgid "Peru"
+msgstr ""
+
+#: htmlform/elements/country.php:223
+msgid "French Polynesia"
+msgstr ""
+
+#: htmlform/elements/country.php:224
+msgid "Papua New Guinea"
+msgstr ""
+
+#: htmlform/elements/country.php:225
+msgid "Philippines"
+msgstr ""
+
+#: htmlform/elements/country.php:226
+msgid "Pakistan"
+msgstr ""
+
+#: htmlform/elements/country.php:227
+msgid "Poland"
+msgstr ""
+
+#: htmlform/elements/country.php:228
+msgid "St. Pierre &amp; Miquelon"
+msgstr ""
+
+#: htmlform/elements/country.php:229
+msgid "Pitcairn"
+msgstr ""
+
+#: htmlform/elements/country.php:230 htmlform/elements/state.php:129
+msgid "Puerto Rico"
+msgstr ""
+
+#: htmlform/elements/country.php:231
+msgid "Portugal"
+msgstr ""
+
+#: htmlform/elements/country.php:232
+msgid "Palau"
+msgstr ""
+
+#: htmlform/elements/country.php:233
+msgid "Paraguay"
+msgstr ""
+
+#: htmlform/elements/country.php:234
+msgid "Qatar"
+msgstr ""
+
+#: htmlform/elements/country.php:235
+msgid "Réunion"
+msgstr ""
+
+#: htmlform/elements/country.php:236
+msgid "Romania"
+msgstr ""
+
+#: htmlform/elements/country.php:237
+msgid "Russian Federation"
+msgstr ""
+
+#: htmlform/elements/country.php:238
+msgid "Rwanda"
+msgstr ""
+
+#: htmlform/elements/country.php:239
+msgid "Saudi Arabia"
+msgstr ""
+
+#: htmlform/elements/country.php:240
+msgid "Solomon Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:241
+msgid "Seychelles"
+msgstr ""
+
+#: htmlform/elements/country.php:242
+msgid "Sudan"
+msgstr ""
+
+#: htmlform/elements/country.php:243
+msgid "Sweden"
+msgstr ""
+
+#: htmlform/elements/country.php:244
+msgid "Singapore"
+msgstr ""
+
+#: htmlform/elements/country.php:245
+msgid "St. Helena"
+msgstr ""
+
+#: htmlform/elements/country.php:246
+msgid "Slovenia"
+msgstr ""
+
+#: htmlform/elements/country.php:247
+msgid "Svalbard &amp; Jan Mayen Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:248
+msgid "Slovakia"
+msgstr ""
+
+#: htmlform/elements/country.php:249
+msgid "Sierra Leone"
+msgstr ""
+
+#: htmlform/elements/country.php:250
+msgid "San Marino"
+msgstr ""
+
+#: htmlform/elements/country.php:251
+msgid "Senegal"
+msgstr ""
+
+#: htmlform/elements/country.php:252
+msgid "Somalia"
+msgstr ""
+
+#: htmlform/elements/country.php:253
+msgid "Suriname"
+msgstr ""
+
+#: htmlform/elements/country.php:254
+msgid "Sao Tome &amp; Principe"
+msgstr ""
+
+#: htmlform/elements/country.php:255
+msgid "El Salvador"
+msgstr ""
+
+#: htmlform/elements/country.php:256
+msgid "Syrian Arab Republic"
+msgstr ""
+
+#: htmlform/elements/country.php:257
+msgid "Swaziland"
+msgstr ""
+
+#: htmlform/elements/country.php:258
+msgid "Turks &amp; Caicos Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:259
+msgid "Chad"
+msgstr ""
+
+#: htmlform/elements/country.php:260
+msgid "French Southern Territories"
+msgstr ""
+
+#: htmlform/elements/country.php:261
+msgid "Togo"
+msgstr ""
+
+#: htmlform/elements/country.php:262
+msgid "Thailand"
+msgstr ""
+
+#: htmlform/elements/country.php:263
+msgid "Tajikistan"
+msgstr ""
+
+#: htmlform/elements/country.php:264
+msgid "Tokelau"
+msgstr ""
+
+#: htmlform/elements/country.php:265
+msgid "Turkmenistan"
+msgstr ""
+
+#: htmlform/elements/country.php:266
+msgid "Tunisia"
+msgstr ""
+
+#: htmlform/elements/country.php:267
+msgid "Tonga"
+msgstr ""
+
+#: htmlform/elements/country.php:268
+msgid "East Timor"
+msgstr ""
+
+#: htmlform/elements/country.php:269
+msgid "Turkey"
+msgstr ""
+
+#: htmlform/elements/country.php:270
+msgid "Trinidad &amp; Tobago"
+msgstr ""
+
+#: htmlform/elements/country.php:271
+msgid "Tuvalu"
+msgstr ""
+
+#: htmlform/elements/country.php:272
+msgid "Taiwan, Province of China"
+msgstr ""
+
+#: htmlform/elements/country.php:273
+msgid "Tanzania, United Republic of"
+msgstr ""
+
+#: htmlform/elements/country.php:274
+msgid "Ukraine"
+msgstr ""
+
+#: htmlform/elements/country.php:275
+msgid "Uganda"
+msgstr ""
+
+#: htmlform/elements/country.php:276 htmlform/elements/state.php:130
+msgid "United States Minor Outlying Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:277
+msgid "United States of America"
+msgstr ""
+
+#: htmlform/elements/country.php:278
+msgid "Uruguay"
+msgstr ""
+
+#: htmlform/elements/country.php:279
+msgid "Uzbekistan"
+msgstr ""
+
+#: htmlform/elements/country.php:280
+msgid "Vatican City State (Holy See)"
+msgstr ""
+
+#: htmlform/elements/country.php:281
+msgid "St. Vincent &amp; the Grenadines"
+msgstr ""
+
+#: htmlform/elements/country.php:282
+msgid "Venezuela"
+msgstr ""
+
+#: htmlform/elements/country.php:283
+msgid "British Virgin Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:284
+msgid "United States Virgin Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:285
+msgid "Viet Nam"
+msgstr ""
+
+#: htmlform/elements/country.php:286
+msgid "Vanuatu"
+msgstr ""
+
+#: htmlform/elements/country.php:287
+msgid "Wallis &amp; Futuna Islands"
+msgstr ""
+
+#: htmlform/elements/country.php:288
+msgid "Samoa"
+msgstr ""
+
+#: htmlform/elements/country.php:289
+msgid "Yemen"
+msgstr ""
+
+#: htmlform/elements/country.php:290
+msgid "Mayotte"
+msgstr ""
+
+#: htmlform/elements/country.php:291
+msgid "Yugoslavia"
+msgstr ""
+
+#: htmlform/elements/country.php:292
+msgid "South Africa"
+msgstr ""
+
+#: htmlform/elements/country.php:293
+msgid "Zambia"
+msgstr ""
+
+#: htmlform/elements/country.php:294
+msgid "Zaire"
+msgstr ""
+
+#: htmlform/elements/country.php:295
+msgid "Zimbabwe"
+msgstr ""
+
+#: htmlform/elements/country.php:356 htmlform/elements/state.php:177
+msgid "Please Select"
+msgstr ""
+
+#: htmlform/elements/email.php:50
+msgid "Please enter a valid e-mail address"
+msgstr ""
+
+#: htmlform/elements/number.php:77
+msgid "Please enter a valid number"
+msgstr ""
+
+#: htmlform/elements/state.php:56
+msgid "Baden-Württemberg"
+msgstr ""
+
+#: htmlform/elements/state.php:57
+msgid "Bayern"
+msgstr ""
+
+#: htmlform/elements/state.php:58
+msgid "Berlin"
+msgstr ""
+
+#: htmlform/elements/state.php:59
+msgid "Brandenburg"
+msgstr ""
+
+#: htmlform/elements/state.php:60
+msgid "Bremen"
+msgstr ""
+
+#: htmlform/elements/state.php:61
+msgid "Hamburg"
+msgstr ""
+
+#: htmlform/elements/state.php:62
+msgid "Hessen"
+msgstr ""
+
+#: htmlform/elements/state.php:63
+msgid "Mecklenburg-Vorpommern"
+msgstr ""
+
+#: htmlform/elements/state.php:64
+msgid "Niedersachsen"
+msgstr ""
+
+#: htmlform/elements/state.php:65
+msgid "Nordrhein-Westfalen"
+msgstr ""
+
+#: htmlform/elements/state.php:66
+msgid "Rheinland-Pfalz"
+msgstr ""
+
+#: htmlform/elements/state.php:67
+msgid "Saarland"
+msgstr ""
+
+#: htmlform/elements/state.php:68
+msgid "Sachsen"
+msgstr ""
+
+#: htmlform/elements/state.php:69
+msgid "Sachsen-Anhalt"
+msgstr ""
+
+#: htmlform/elements/state.php:70
+msgid "Schleswig-Holstein"
+msgstr ""
+
+#: htmlform/elements/state.php:71
+msgid "Thüringen"
+msgstr ""
+
+#: htmlform/elements/state.php:75
+msgid "Alabama"
+msgstr ""
+
+#: htmlform/elements/state.php:76
+msgid "Alaska"
+msgstr ""
+
+#: htmlform/elements/state.php:77
+msgid "Arizona"
+msgstr ""
+
+#: htmlform/elements/state.php:78
+msgid "Arkansas"
+msgstr ""
+
+#: htmlform/elements/state.php:79
+msgid "California"
+msgstr ""
+
+#: htmlform/elements/state.php:80
+msgid "Colorado"
+msgstr ""
+
+#: htmlform/elements/state.php:81
+msgid "Connecticut"
+msgstr ""
+
+#: htmlform/elements/state.php:82
+msgid "Delaware"
+msgstr ""
+
+#: htmlform/elements/state.php:83
+msgid "Florida"
+msgstr ""
+
+#: htmlform/elements/state.php:85
+msgid "Hawaii"
+msgstr ""
+
+#: htmlform/elements/state.php:86
+msgid "Idaho"
+msgstr ""
+
+#: htmlform/elements/state.php:87
+msgid "Illinois"
+msgstr ""
+
+#: htmlform/elements/state.php:88
+msgid "Indiana"
+msgstr ""
+
+#: htmlform/elements/state.php:89
+msgid "Iowa"
+msgstr ""
+
+#: htmlform/elements/state.php:90
+msgid "Kansas"
+msgstr ""
+
+#: htmlform/elements/state.php:91
+msgid "Kentucky"
+msgstr ""
+
+#: htmlform/elements/state.php:92
+msgid "Louisiana"
+msgstr ""
+
+#: htmlform/elements/state.php:93
+msgid "Maine"
+msgstr ""
+
+#: htmlform/elements/state.php:94
+msgid "Maryland"
+msgstr ""
+
+#: htmlform/elements/state.php:95
+msgid "Massachusetts"
+msgstr ""
+
+#: htmlform/elements/state.php:96
+msgid "Michigan"
+msgstr ""
+
+#: htmlform/elements/state.php:97
+msgid "Minnesota"
+msgstr ""
+
+#: htmlform/elements/state.php:98
+msgid "Mississippi"
+msgstr ""
+
+#: htmlform/elements/state.php:99
+msgid "Missouri"
+msgstr ""
+
+#: htmlform/elements/state.php:100
+msgid "Montana"
+msgstr ""
+
+#: htmlform/elements/state.php:101
+msgid "Nebraska"
+msgstr ""
+
+#: htmlform/elements/state.php:102
+msgid "Nevada"
+msgstr ""
+
+#: htmlform/elements/state.php:103
+msgid "New Hampshire"
+msgstr ""
+
+#: htmlform/elements/state.php:104
+msgid "New Jersey"
+msgstr ""
+
+#: htmlform/elements/state.php:105
+msgid "New Mexico"
+msgstr ""
+
+#: htmlform/elements/state.php:106
+msgid "New York"
+msgstr ""
+
+#: htmlform/elements/state.php:107
+msgid "North Carolina"
+msgstr ""
+
+#: htmlform/elements/state.php:108
+msgid "North Dakota"
+msgstr ""
+
+#: htmlform/elements/state.php:109
+msgid "Ohio"
+msgstr ""
+
+#: htmlform/elements/state.php:110
+msgid "Oklahoma"
+msgstr ""
+
+#: htmlform/elements/state.php:111
+msgid "Oregon"
+msgstr ""
+
+#: htmlform/elements/state.php:112
+msgid "Pennsylvania"
+msgstr ""
+
+#: htmlform/elements/state.php:113
+msgid "Rhode Island"
+msgstr ""
+
+#: htmlform/elements/state.php:114
+msgid "South Carolina"
+msgstr ""
+
+#: htmlform/elements/state.php:115
+msgid "South Dakota"
+msgstr ""
+
+#: htmlform/elements/state.php:116
+msgid "Tennessee"
+msgstr ""
+
+#: htmlform/elements/state.php:117
+msgid "Texas"
+msgstr ""
+
+#: htmlform/elements/state.php:118
+msgid "Utah"
+msgstr ""
+
+#: htmlform/elements/state.php:119
+msgid "Vermont"
+msgstr ""
+
+#: htmlform/elements/state.php:120
+msgid "Virginia"
+msgstr ""
+
+#: htmlform/elements/state.php:121
+msgid "Washington"
+msgstr ""
+
+#: htmlform/elements/state.php:122
+msgid "West Virginia"
+msgstr ""
+
+#: htmlform/elements/state.php:123
+msgid "Wisconsin"
+msgstr ""
+
+#: htmlform/elements/state.php:124
+msgid "Wyoming"
+msgstr ""
+
+#: htmlform/elements/state.php:125
+msgid "District of Columbia"
+msgstr ""
+
+#: htmlform/elements/state.php:131
+msgid "Virgin Islands, U.S.)"
+msgstr ""
+
+#: htmlform/elements/tel.php:51
+msgid "Please enter a valid telephone number"
+msgstr ""
+
+#: htmlform/elements/url.php:50
+msgid "Please enter a valid URL"
+msgstr ""
