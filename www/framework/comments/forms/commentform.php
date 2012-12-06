@@ -71,7 +71,7 @@ class commentForm extends \depage\htmlform\htmlform {
     public function onValidate() {
         $values = $this->getValues();
         $expire = time() + (20 * 365 * 24 * 60 * 60);
-        $path = parse_url(DEPAGE_BASE, PHP_URL_PATH);
+        $path = "/";
 
         foreach (array("name", "email", "website") as $field) {
             if ($values[$field] != "") setcookie("depage-comment-$field", $values[$field], $expire, $path);
