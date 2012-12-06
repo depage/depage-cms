@@ -74,7 +74,7 @@ class commentForm extends \depage\htmlform\htmlform {
         $path = "/";
 
         foreach (array("name", "email", "website") as $field) {
-            if ($values[$field] != "") setcookie("depage-comment-$field", $values[$field], $expire, $path);
+            if (!empty($values[$field])) setcookie("depage-comment-$field", $values[$field], $expire, $path);
         }
 
         return true;
