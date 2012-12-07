@@ -18,6 +18,8 @@ class ui_comments extends \depage_ui {
     // {{{ default config
     public $defaults = array(
         'urlHasLocale' => true,
+        'comments' => array(),
+        'email' => array(),
     );
     protected $options = array();
     // }}}
@@ -75,7 +77,7 @@ class ui_comments extends \depage_ui {
             'template_path' => __DIR__ . "/tpl/",
             'clean' => "space",
             'env' => $this->options->env,
-            //'jsmin' => $this->options->jsmin,
+            'jsmin' => $this->options->jsmin,
         );
         
         $this->basetitle = "";
@@ -109,8 +111,33 @@ class ui_comments extends \depage_ui {
         return $output;
     }
     // }}}
+        
+    // {{{ _projectExists()
+    public function _projectExists() {
+        if (isset($this->options->comments->{$this->project})) {
+            $this->notificationEmail = $this->options->comments->{$this->project}->notificationEmail;
 
-    
+            return true;
+        } else {
+            return false;
+        }
+    }
+    // }}}
+
+    protected function _sendCommentNotification($comment) {
+        if (!empty($this->notificationEmail)) {
+            $mail = new \depage\mail\mail($this->options->email->from);
+            $mail->setSubject(sprintf(_("depage comments") . " . " . _("new comment for '%s'"), $this->project));
+            $mail->setText(
+                "{$comment->author_name} <{$comment->author_email}>\n" .
+                "{$comment->author_url}\n" .
+                "\n" .
+                "{$comment->comment}\n"
+            );
+            $mail->send($this->notificationEmail);
+        }
+    }
+
     public function index() {
         return $this->notfound();
     }

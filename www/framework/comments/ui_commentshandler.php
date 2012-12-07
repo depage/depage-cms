@@ -39,7 +39,19 @@ class ui_commentsHandler extends ui_comments {
                 'prefix' => $this->options->db->prefix . "_proj_" . $this->project,
             )
         );
-        header("Access-Control-Allow-Origin: http://cms.depagecms.net");
+        $allowedDomains = array(
+            "http://cms.depagecms.net",
+            "http://dev.depage.net", 
+            "http://romanatiozzo.es",
+        );
+        /*
+        if (($key = array_search($_SERVER['HTTP_ORIGIN'], $allowedDomains)) !== false) {
+            header("Access-Control-Allow-Origin: {$allowedDomains[$key]}");
+        }
+        header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+        header("Access-Control-Allow-Headers: Authorization");
+        header("Access-Control-Allow-Credentials: true");
+         */
     }
     // }}}
     
@@ -51,6 +63,10 @@ class ui_commentsHandler extends ui_comments {
     
     // {{{ show()
     public function show() {
+        if (!$this->_projectExists()) {
+            return $this->notfound();
+        }
+
         $form = new forms\commentForm("comment_{$this->project}_{$this->pageId}", array());
         $form->process();
 
@@ -67,6 +83,9 @@ class ui_commentsHandler extends ui_comments {
                     'comment' => $values['text'],
                 ));
                 $result = $comment->save();
+                if ($result) {
+                    $this->_sendCommentNotification($comment);
+                }
             }
             $form->clearSession();
         }

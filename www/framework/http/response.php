@@ -13,16 +13,10 @@ namespace depage\http;
  **/
 class response {
     // {{{ __construct()
-    /**
-     * @brief jsmin class constructor
-     *
-     * @param $options (array) image processing parameters
-     **/
     public function __construct($header, $body, $info = array()) {
         $this->header = array_filter(explode("\r\n", $header), function($val) {
             return !empty($val);
         });
-
         
         $this->body = $body;
         $this->info = $info;
