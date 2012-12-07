@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-06 18:27+0100\n"
+"POT-Creation-Date: 2012-12-07 13:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,12 +50,8 @@ msgid "Your name"
 msgstr "Dein Name"
 
 #: comments/forms/commentform.php:38
-msgid ""
-"Please fill in your full name, e.g. the name you established as a writer in "
-"the film market. First your first name, then your last name."
+msgid "Please fill in your name."
 msgstr ""
-"Bitte trage hier den Namen ein, unter dem Du in der Branche bekannt bist "
-"(bzw. Deinen wahren Namen). Zuerst Vor- dann Nachname."
 
 #: comments/forms/commentform.php:42
 msgid "Email"
@@ -66,10 +62,8 @@ msgid "email@domain.com"
 msgstr ""
 
 #: comments/forms/commentform.php:46
-msgid "Enter your email address. You will need it to confirm your account."
-msgstr ""
-"Bitte geben Sie hier Ihre Email-Adresse an. Sie benötigen diese um Ihre "
-"Anmeldung zu bestätigen."
+msgid "Enter your email address."
+msgstr "Bitte geben Sie ihre E-Mail Adresse an."
 
 #: comments/forms/commentform.php:50
 msgid "Website"
@@ -85,82 +79,85 @@ msgstr ""
 
 #: comments/forms/commentform.php:53
 msgid ""
-"If you don't have a website of your own, you can also link a meaningful "
-"profile, e.g. IMDB or Crew United."
+"If you don't have a website of your own or don't want to link to it, leave "
+"it blank."
 msgstr ""
-"Sollten Sie z.B. als Freelancer keine (Firmen)Webseite haben, können Sie "
-"auch auf ein aussagekräftiges Branchenprofil, z.B. IMDB oder Crew United, "
-"verlinken."
+"Wenn Sie keine Website haben oder diese nicht angeben möchten, dann lassen "
+"Sie dieses Feld einfach leer."
 
 #: comments/forms/commentform.php:57
 msgid "must be left empty"
-msgstr ""
+msgstr "Muss leer bleiben"
+
+#: comments/forms/commentform.php:60
+msgid "mandatory field"
+msgstr "Pflichtfeld"
 
 #: datetime/datetime.php:27
 msgid "now"
-msgstr ""
+msgstr "jetzt"
 
 #: datetime/datetime.php:29
 msgid "just now"
-msgstr ""
+msgstr "gerade eben"
 
 #: datetime/datetime.php:32
 #, php-format
 msgid "%d minute ago"
-msgstr ""
+msgstr "vor %d Minute"
 
 #: datetime/datetime.php:32
 #, php-format
 msgid "%d minutes ago"
-msgstr ""
+msgstr "vor %d Minuten"
 
 #: datetime/datetime.php:35
 #, php-format
 msgid "%d hour ago"
-msgstr ""
+msgstr "vor %d Stunde"
 
 #: datetime/datetime.php:35
 #, php-format
 msgid "%d hours ago"
-msgstr ""
+msgstr "vor %d Stunden"
 
 #: datetime/datetime.php:40
 msgid "Monday"
-msgstr ""
+msgstr "Montag"
 
 #: datetime/datetime.php:41
 msgid "Tuesday"
-msgstr ""
+msgstr "Dienstag"
 
 #: datetime/datetime.php:42
 msgid "Wednesday"
-msgstr ""
+msgstr "Mittwoch"
 
 #: datetime/datetime.php:43
 msgid "Thursday"
-msgstr ""
+msgstr "Donnerstag"
 
 #: datetime/datetime.php:44
 msgid "Friday"
-msgstr ""
+msgstr "Freitag"
 
 #: datetime/datetime.php:45
 msgid "Saturday"
-msgstr ""
+msgstr "Samstag"
 
 #: datetime/datetime.php:46
 msgid "Sunday"
-msgstr ""
+msgstr "Sonntag"
 
 #: datetime/datetime.php:51
 #, php-format
 msgid "%d week ago"
-msgstr ""
+msgstr "vor %d Woche"
 
 #: datetime/datetime.php:51
 #, php-format
 msgid "%d weeks ago"
-msgstr ""
+msgstr "vor %d Wochen"
 
 #: htmlform/abstracts/input.php:115
 msgid "Please enter valid data"

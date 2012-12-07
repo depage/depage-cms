@@ -35,7 +35,7 @@ class commentForm extends \depage\htmlform\htmlform {
             'defaultValue' => !empty($_COOKIE['depage-comment-name']) ? $_COOKIE['depage-comment-name'] : '',
             'placeholder' => _('Your name'),
             'required' => true,
-            'helpMessage' => _("Please fill in your full name, e.g. the name you established as a writer in the film market. First your first name, then your last name."),
+            'helpMessage' => _("Please fill in your name."),
         ));
         
         $this->addEmail("email", array(
@@ -43,20 +43,21 @@ class commentForm extends \depage\htmlform\htmlform {
             'defaultValue' => !empty($_COOKIE['depage-comment-email']) ? $_COOKIE['depage-comment-email'] : '',
             'placeholder' => _('email@domain.com'),
             'required' => true,
-            'helpMessage' => _("Enter your email address. You will need it to confirm your account."),
+            'helpMessage' => _("Enter your email address."),
         ));
         
         $this->addUrl("website", array(
             'label' => _('Website') . ' ' . _('(public)'),
             'defaultValue' => !empty($_COOKIE['depage-comment-website']) ? $_COOKIE['depage-comment-website'] : '',
             'placeholder' => _('http://domain.com'),
-            'helpMessage' => _("If you don't have a website of your own, you can also link a meaningful profile, e.g. IMDB or Crew United."),
+            'helpMessage' => _("If you don't have a website of your own or don't want to link to it, leave it blank."),
         ));
 
         $this->mustbeempty = $this->addText("mustbeempty", array(
             'label' => _("must be left empty"),
             'class' => "mustbeempty",
         ));
+        $this->addHtml("<p class=\"hint\"><small>* " . htmlspecialchars(_("mandatory field")) . "</small></p>");
         
         
     }

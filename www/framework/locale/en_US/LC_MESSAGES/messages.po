@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-06 18:27+0100\n"
+"POT-Creation-Date: 2012-12-07 13:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,9 +50,7 @@ msgid "Your name"
 msgstr ""
 
 #: comments/forms/commentform.php:38
-msgid ""
-"Please fill in your full name, e.g. the name you established as a writer in "
-"the film market. First your first name, then your last name."
+msgid "Please fill in your name."
 msgstr ""
 
 #: comments/forms/commentform.php:42
@@ -64,7 +62,7 @@ msgid "email@domain.com"
 msgstr ""
 
 #: comments/forms/commentform.php:46
-msgid "Enter your email address. You will need it to confirm your account."
+msgid "Enter your email address."
 msgstr ""
 
 #: comments/forms/commentform.php:50
@@ -81,12 +79,16 @@ msgstr ""
 
 #: comments/forms/commentform.php:53
 msgid ""
-"If you don't have a website of your own, you can also link a meaningful "
-"profile, e.g. IMDB or Crew United."
+"If you don't have a website of your own or don't want to link to it, leave "
+"it blank."
 msgstr ""
 
 #: comments/forms/commentform.php:57
 msgid "must be left empty"
+msgstr ""
+
+#: comments/forms/commentform.php:60
+msgid "mandatory field"
 msgstr ""
 
 #: datetime/datetime.php:27
