@@ -33,8 +33,6 @@ class DateTime extends \DateTime {
         } else if ($ti < 86400) {
             $diff = round($ti / 60 / 60);
             return $diff == 1 ? sprintf(_("%d hour ago"), $diff) : sprintf(_("%d hours ago"), $diff); // date diff: in hours
-//        } else if ($ti < 172800) {
-//            return _("yesterday");
         } else if ($ti < 604800) {
             if (false) {
                 _("Monday");

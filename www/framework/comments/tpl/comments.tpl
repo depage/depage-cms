@@ -4,6 +4,7 @@
         <?php 
             //var_dump($comment); 
             $id = "comment-{$comment->id}";
+            $date = \depage\datetime\DateTime::createFromFormat("Y-m-d H:i:s", $comment->date);
         ?>
         <article class="comment" itemprop="comment" itemscope itemtype="http://schema.org/UserComments" id="<?php html::t($id); ?>">
             <link itemprop="url" href="#<?php html::t($id); ?>">
@@ -16,7 +17,7 @@
                     </span>
                 <?php if(!empty($comment->author_url)) { ?></a><?php } ?>
                 </p>
-                <p class="date"><time itemprop="commentTime" datetime="<?php html::t($comment->date); ?>"><?php html::t($comment->date); ?></time></p>
+                <p class="date"><time itemprop="commentTime" datetime="<?php html::t($comment->date); ?>"><?php html::t($date->getDiffNatural()); ?></time></p>
             </footer>
             <div class="comment-text">
                 <?php html::e($comment->getCommentHtml()); ?>
