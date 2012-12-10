@@ -14,7 +14,7 @@ namespace depage\http;
 class request {
     protected $url = "";
     protected $postData = array();
-    protected $headers = "";
+    protected $headers = array();
     protected $cookie = "";
 
     // {{{ __construct()

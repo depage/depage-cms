@@ -20,6 +20,7 @@ class ui_comments extends \depage_ui {
         'urlHasLocale' => true,
         'comments' => array(),
         'email' => array(),
+        'jsmin' => array(),
     );
     protected $options = array();
     // }}}

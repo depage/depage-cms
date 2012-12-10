@@ -23,7 +23,8 @@ class closureApi extends \depage\jsmin\jsmin {
      * @param $src javascript source code
      **/
     public function minifySrc($src) {
-        $rq = new \depage\http\request($this->apiUrl, array(
+        $rq = new \depage\http\request($this->apiUrl);
+        $rq->setPostData(array(
             'js_code' => $src,
             'compilation_level' => "SIMPLE_OPTIMIZATIONS",
             'output_info' => "compiled_code",
