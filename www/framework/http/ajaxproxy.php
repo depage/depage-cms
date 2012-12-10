@@ -84,7 +84,6 @@ class ajaxproxy {
         // send headers
         $headers = $this->filterHeaders($response->headers);
         foreach($headers as $header) {
-            error_log($header . "<br>\n");
             header($header, stripos($header, "Set-Cookie") !== 0);
         }
         // send body
