@@ -13,8 +13,8 @@ namespace depage\http;
  **/
 class response {
     // {{{ __construct()
-    public function __construct($header, $body, $info = array()) {
-        $this->header = array_filter(explode("\r\n", $header), function($val) {
+    public function __construct($headers, $body, $info = array()) {
+        $this->headers = array_filter(explode("\r\n", $headers), function($val) {
             return !empty($val);
         });
         
