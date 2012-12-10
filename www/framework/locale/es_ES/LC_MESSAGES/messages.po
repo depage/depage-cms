@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-10 16:27+0100\n"
+"POT-Creation-Date: 2012-12-10 18:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,10 +92,14 @@ msgstr ""
 msgid "mandatory field"
 msgstr "Campo obligatorio"
 
+#: comments/tpl/comments.tpl:2
+msgid "Comments"
+msgstr "Comentarios"
+
 #: comments/ui_comments.php:130
 #, php-format
 msgid "depage comments"
-msgstr ""
+msgstr "depage comentarios"
 
 #: comments/ui_comments.php:130
 #, php-format
@@ -117,47 +121,47 @@ msgid_plural "%d minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: datetime/datetime.php:36
+#: datetime/datetime.php:35
 #, php-format
 msgid "%d hour ago"
 msgid_plural "%d hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: datetime/datetime.php:40
+#: datetime/datetime.php:38
 msgid "Monday"
 msgstr ""
 
-#: datetime/datetime.php:41
+#: datetime/datetime.php:39
 msgid "Tuesday"
 msgstr ""
 
-#: datetime/datetime.php:42
+#: datetime/datetime.php:40
 msgid "Wednesday"
 msgstr ""
 
-#: datetime/datetime.php:43
+#: datetime/datetime.php:41
 msgid "Thursday"
 msgstr ""
 
-#: datetime/datetime.php:44
+#: datetime/datetime.php:42
 msgid "Friday"
 msgstr ""
 
-#: datetime/datetime.php:45
+#: datetime/datetime.php:43
 msgid "Saturday"
 msgstr ""
 
-#: datetime/datetime.php:46
+#: datetime/datetime.php:44
 msgid "Sunday"
 msgstr ""
 
-#: datetime/datetime.php:51
+#: datetime/datetime.php:49
 #, php-format
 msgid "%d week ago"
 msgstr ""
 
-#: datetime/datetime.php:51
+#: datetime/datetime.php:49
 #, php-format
 msgid "%d weeks ago"
 msgstr ""

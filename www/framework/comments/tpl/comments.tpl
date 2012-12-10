@@ -1,8 +1,7 @@
 <div class="depage-comments">
-    <h2>Comments</h2>
+    <h2><?php html::t(_("Comments")); ?></h2>
     <?php foreach ($this->comments as $comment) { ?>
         <?php 
-            //var_dump($comment); 
             $id = "comment-{$comment->id}";
             $date = \depage\datetime\DateTime::createFromFormat("Y-m-d H:i:s", $comment->date);
         ?>
