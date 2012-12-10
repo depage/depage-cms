@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-07 13:36+0100\n"
+"POT-Creation-Date: 2012-12-10 16:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,6 +93,16 @@ msgstr "Muss leer bleiben"
 msgid "mandatory field"
 msgstr "Pflichtfeld"
 
+#: comments/ui_comments.php:130
+#, php-format
+msgid "depage comments"
+msgstr ""
+
+#: comments/ui_comments.php:130
+#, php-format
+msgid "new comment for '%s'"
+msgstr ""
+
 #: datetime/datetime.php:27
 msgid "now"
 msgstr "jetzt"
@@ -104,22 +114,16 @@ msgstr "gerade eben"
 #: datetime/datetime.php:32
 #, php-format
 msgid "%d minute ago"
-msgstr "vor %d Minute"
+msgid_plural "%d minutes ago"
+msgstr[0] "vor %d Minute"
+msgstr[1] "vor %d Minuten"
 
-#: datetime/datetime.php:32
-#, php-format
-msgid "%d minutes ago"
-msgstr "vor %d Minuten"
-
-#: datetime/datetime.php:35
+#: datetime/datetime.php:36
 #, php-format
 msgid "%d hour ago"
-msgstr "vor %d Stunde"
-
-#: datetime/datetime.php:35
-#, php-format
-msgid "%d hours ago"
-msgstr "vor %d Stunden"
+msgid_plural "%d hours ago"
+msgstr[0] "vor %d Stunde"
+msgstr[1] "vor %d Stunden"
 
 #: datetime/datetime.php:40
 msgid "Monday"
@@ -1434,3 +1438,9 @@ msgstr "Bitte geben Sie eine gültige Telefonnummer an"
 #: htmlform/elements/url.php:50
 msgid "Please enter a valid URL"
 msgstr "Bitte geben Sie eine gültige URL an"
+
+#~ msgid "%d minutes ago"
+#~ msgstr "vor %d Minuten"
+
+#~ msgid "%d hours ago"
+#~ msgstr "vor %d Stunden"
