@@ -50,6 +50,7 @@ $(document).ready(function() {
             });
         }
 
+        $comments.append("<div class=\"loading\"><span>loading comments</span></div>");
         $.ajax({
             url: commentUrl,
             type: 'GET',
@@ -61,9 +62,11 @@ $(document).ready(function() {
                 setupCommentForm($comments.find("form"));
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                $comments.html( $("<div>error while loading comments: " + textStatus + "</div>") );
             },
             complete: function(jqXHR, textStatus) {
             }
         });
     });
 });
+/* vim:set ft=javascript sw=4 sts=4 fdm=marker : */
