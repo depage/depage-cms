@@ -28,6 +28,9 @@ $(document).ready(function() {
                     }
                 });
                 
+                $(this).before("<div class=\"loading\"><span>sending comment</span></div>");
+                $(this).hide();
+
                 $.ajax({
                     url: commentUrl,
                     data: data,
@@ -41,6 +44,8 @@ $(document).ready(function() {
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("Comment could not be sent - please try again later");
+                        $comments.find(".loading").remove();
+                        $form.show();
                     },
                     complete: function(jqXHR, textStatus) {
                     }
