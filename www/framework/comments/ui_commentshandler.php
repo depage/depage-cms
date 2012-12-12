@@ -15,6 +15,20 @@ namespace depage\comments;
 use \html;
 
 class ui_commentsHandler extends ui_comments {
+    // {{{ _getSubHandler
+    /**
+     * Subhandler
+     * 
+     * Defines the subhandler classes identified by given url routes.
+     * 
+     * @return array
+     * 
+     */
+    public static function _getSubHandler() {
+        return array();
+    }
+    // }}}
+    
     // {{{ _init
     /**
      * Initializer
@@ -95,6 +109,20 @@ class ui_commentsHandler extends ui_comments {
         return new html("comments.tpl", array(
             'comments' => $comments,
             'commentForm' => $form,
+        ), $this->html_options);
+    }
+    // }}}
+    
+    // {{{ count()
+    public function count() {
+        if (!$this->_projectExists()) {
+            return $this->notfound();
+        }
+
+        $count = models\comment::countByPageId($this->pdo, $this->pageId);
+
+        return new html("commentcount.tpl", array(
+            'count' => $count,
         ), $this->html_options);
     }
     // }}}

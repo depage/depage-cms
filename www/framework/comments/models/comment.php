@@ -62,6 +62,16 @@ class comment extends \depage\entity\entity {
     }
     // }}}
     
+    // {{{ countByPageId()
+    static public function countByPageId($pdo, $pageId, $showSpam = false) {
+        return self::fetchCount($pdo, "SELECT COUNT(*) as count FROM {$pdo->prefix}_" . static::$table_name . " WHERE page_id = :page_id AND hidden = :hidden AND spam = :spam", array(
+            'page_id' => $pageId,
+            'hidden' => false,
+            'spam' => $showSpam,
+        ));
+    }
+    // }}}
+    
     // {{{ getCommentHtml()
     public function getCommentHtml() {
         $h = "";
