@@ -3,8 +3,18 @@ $(document).ready(function() {
         var $comments = $(this);
         var commentUrl = $(this).attr('data-comments-url') + "&ajax=true";
 
+        // {{{ setupCommentForm
         var setupCommentForm = function(form) {
             var $form = $(form);
+            var $senderData = $form.find(".sender-data")
+
+            if ($form.find("input[name='name']").val() == "") {
+                $senderData.hide();
+            }
+
+            $form.find("textarea").focus( function() {
+                $senderData.slideDown();
+            } );
 
             setupForm($form);
             $form.submit( function() {
@@ -12,7 +22,7 @@ $(document).ready(function() {
 
                 var data = {};
                 
-                $("input, select, textarea", form).each( function () {
+                $("input, select, textarea", $form).each( function () {
                     var type = $(this).attr("type");
                     if ((type == "radio")) {
                         if (this.checked) {
@@ -54,24 +64,30 @@ $(document).ready(function() {
                 return false;
             });
         }
-
-        $comments.append("<div class=\"loading\"><span>loading comments</span></div>");
-        $.ajax({
-            url: commentUrl,
-            type: 'GET',
-            xhrFields: {
-                withCredentials: true
-            },
-            success: function(data, textStatus, xhr) {
-                $comments.html( $("<div>").append(data).find(".depage-comments > *") );
-                setupCommentForm($comments.find("form"));
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $comments.html( $("<div>error while loading comments: " + textStatus + "</div>") );
-            },
-            complete: function(jqXHR, textStatus) {
-            }
-        });
+        // }}}
+        // {{{ loadComments()
+        var loadComments = function () {
+            $comments.append("<div class=\"loading\"><span>loading comments</span></div>");
+            $.ajax({
+                url: commentUrl,
+                type: 'GET',
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(data, textStatus, xhr) {
+                    $comments.html( $("<div>").append(data).find(".depage-comments > *") );
+                    setupCommentForm($comments.find("form"));
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $comments.html( $("<div>error while loading comments: " + textStatus + "</div>") );
+                },
+                complete: function(jqXHR, textStatus) {
+                }
+            });
+        };
+        // }}}
+        
+        loadComments();
     });
 });
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

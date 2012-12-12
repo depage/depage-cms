@@ -28,30 +28,33 @@ class commentForm extends \depage\htmlform\htmlform {
             'label' => _('Text'),
             'required' => true,
             'autogrow' => true,
+            'placeholder' => _('Leave a message...'),
         ));
 
-        $this->addText("name", array(
-            'label' => _('Name'),
-            'defaultValue' => !empty($_COOKIE['depage-comment-name']) ? $_COOKIE['depage-comment-name'] : '',
-            'placeholder' => _('Your name'),
-            'required' => true,
-            'helpMessage' => _("Please fill in your name."),
-        ));
-        
-        $this->addEmail("email", array(
-            'label' => _('Email'),
-            'defaultValue' => !empty($_COOKIE['depage-comment-email']) ? $_COOKIE['depage-comment-email'] : '',
-            'placeholder' => _('email@domain.com'),
-            'required' => true,
-            'helpMessage' => _("Enter your email address."),
-        ));
-        
-        $this->addUrl("website", array(
-            'label' => _('Website') . ' ' . _('(public)'),
-            'defaultValue' => !empty($_COOKIE['depage-comment-website']) ? $_COOKIE['depage-comment-website'] : '',
-            'placeholder' => _('http://domain.com'),
-            'helpMessage' => _("If you don't have a website of your own or don't want to link to it, leave it blank."),
-        ));
+        $this->addHtml("<div class=\"sender-data\">");
+            $this->addText("name", array(
+                'label' => _('Name'),
+                'defaultValue' => !empty($_COOKIE['depage-comment-name']) ? $_COOKIE['depage-comment-name'] : '',
+                'placeholder' => _('Your name'),
+                'required' => true,
+                'helpMessage' => _("Please fill in your name."),
+            ));
+            
+            $this->addEmail("email", array(
+                'label' => _('Email'),
+                'defaultValue' => !empty($_COOKIE['depage-comment-email']) ? $_COOKIE['depage-comment-email'] : '',
+                'placeholder' => _('email@domain.com'),
+                'required' => true,
+                'helpMessage' => _("Enter your email address."),
+            ));
+            
+            $this->addUrl("website", array(
+                'label' => _('Website') . ' ' . _('(public)'),
+                'defaultValue' => !empty($_COOKIE['depage-comment-website']) ? $_COOKIE['depage-comment-website'] : '',
+                'placeholder' => _('http://domain.com'),
+                'helpMessage' => _("If you don't have a website of your own or don't want to link to it, leave it blank."),
+            ));
+        $this->addHtml("</div>");
 
         $this->mustbeempty = $this->addText("mustbeempty", array(
             'label' => _("must be left empty"),
