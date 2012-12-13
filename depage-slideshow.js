@@ -50,6 +50,7 @@
                 base.options.speed = 0;
             }
             
+            base.$el.height( $(divs[0]).height() );
             divs.css({
                 position: "absolute",
                 left: 0,
@@ -113,7 +114,7 @@
                 opacity: 1
             }).animate({
                 opacity: 0
-            });
+            }, base.options.speed);
             
             base.activeSlide = n;
 
