@@ -1,5 +1,12 @@
 <div class="depage-comments">
-    <h2><?php html::t(_("Comments")); ?></h2>
+    <h2><?php 
+        $c = count($this->comments);
+        if ($c > 0) {
+            html::t(sprintf(ngettext("%d Comment", "%d Comments", $c), $c)); 
+        } else {
+            html::t(_("Comments")); 
+        }
+    ?></h2>
     <?php foreach ($this->comments as $comment) { ?>
         <?php 
             $id = "comment-{$comment->id}";
