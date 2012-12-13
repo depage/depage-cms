@@ -218,41 +218,25 @@ class html {
             $useCached = true;
             
             // get cache instance
-            $cache = depage\cache\cache::factory("js");
-
-            $regenerate = false;
-
-            if (($age = $cache->age($identifier)) !== false) {
-                foreach ($files as $file) {
-                    $fage = filemtime($file);
-                    
-                    // regenerate cache if one file is newer then the cached file
-                    $regenerate = $regenerate || $age < $fage;
-                }
-            } else {
-                //regenerate if cache file does not exist
-                $regenerate = true;
+            $src = false;
+            $jsmin = \depage\jsmin\jsmin::factory(array(
+                'extension' => $this->param['jsmin']->extension,
+                'jar' => $this->param['jsmin']->jar,
+                'java' => $this->param['jsmin']->java,
+            ));
+            try {
+                $src = $jsmin->minifyFiles($name, $files);
+            } catch (\depage\jsmin\exceptions\jsminException $e) {
+                $log = new \log();
+                $log->log("closure compiler: " . $e->getMessage());
             }
-            if ($regenerate) {
-                $src = false;
-                $jsmin = \depage\jsmin\jsmin::factory(array(
-                    'extension' => $this->param['jsmin']->extension,
-                    'jar' => $this->param['jsmin']->jar,
-                    'java' => $this->param['jsmin']->java,
-                ));
-                try {
-                    $src = $jsmin->minifyFiles($name, $files);
-                } catch (\depage\jsmin\exceptions\jsminException $e) {
-                    $log = new \log();
-                    $log->log("closure compiler: " . $e->getMessage());
-                }
-                if ($src === false) {
-                    // could not minify -> use unminified version
-                    $useCached = false;
-                }
+            if ($src === false) {
+                // could not minify -> use unminified version
+                $useCached = false;
             }
         }
         if ($useCached) {
+            $cache = depage\cache\cache::factory("js");
             echo("<script src=\"" . $cache->getUrl($identifier) . "\" $attr></script>\n");
         } else {
             // development environement
@@ -352,7 +336,9 @@ class html {
                     $src .= $css;
                 }
 
-                $src = CssMin::minify($src);
+                $cssmin = \depage\cssmin\cssmin::factory(array(
+                ));
+                $src = $cssmin->minifySrc($src);
 
                 // save cache file
                 $cache->setFile($identifier, $src, true);
