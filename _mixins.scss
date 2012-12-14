@@ -1,0 +1,95 @@
+// {{{ mixins
+@mixin debug {
+    border: 1px solid #000000;
+}
+// }}}
+// {{{ centeredcontainer()
+@mixin centeredcontainer($width) {
+    position: relative;
+    width: $width;
+    margin: 0 auto;
+    text-align: left;
+}
+// }}}
+// {{{ minheight()
+@mixin minheight($height) {
+    height: auto !important;
+    height: $height;
+    min-height: $height;
+}
+// }}}
+// {{{ clearfix()
+@mixin clearfix($direction: 'both') {
+    display: inline-block;
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: $direction;
+        visibility: hidden;
+    }
+    * html & { height: 1px }
+}
+// }}}
+// {{{ radius
+@mixin radius($radius, $vert: "", $horiz: "") {
+    $other: "";
+    $moz: "";
+
+    @if $vert != '' and $horiz != '' {
+        $other: "#{$vert}-#{$horiz}-";
+        $moz: "#{$vert}#{$horiz}-";
+    } @else if $horiz != '' {
+        $other: "#{$horiz}-";
+        $moz: "#{$horiz}-";
+    } @else if $vert != '' {
+        $other: "#{$vert}-";
+        $moz: "#{$vert}-";
+    }
+
+    -webkit-border-#{$other}radius: $radius;
+    -moz-border-#{$moz}radius: $radius;
+    -ms-border-#{$other}radius: $radius;
+    -o-border-#{$other}radius: $radius;
+    border-#{$other}radius: $radius;
+}
+// }}}
+// {{{ custom-bullet
+@mixin custom-bullet($character, $indent: 1.5em) {
+    margin-left: $indent;
+    position: relative;
+
+    &::before {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: - $indent;
+        width: $indent;
+        content: $character;
+    }
+}
+// }}}
+// {{{ size-box
+@mixin size-box($size, $baseLineHeight: 1.5em) {
+    // recalculate smaller lineHeigth based on size (1.5 is base)
+    $lineHeight: $baseLineHeight - ($size * 0.1 - 0.15);
+    margin-bottom: $lineHeight * $size * 0.75;
+
+    h1,
+    h2,
+    h3,
+    p,
+    li {
+        font-size: #{$size}em;
+        line-height: $lineHeight;
+    }
+    li {
+        p {
+            font-size: 1em;
+            margin-bottom: 0;
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
