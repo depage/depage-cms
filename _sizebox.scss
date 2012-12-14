@@ -1,0 +1,24 @@
+// {{{ size-box
+@mixin size-box($size, $baseLineHeight: 1.5em) {
+    // recalculate smaller lineHeigth based on size (1.5 is base)
+    $lineHeight: $baseLineHeight - ($size * 0.1 - 0.15);
+    margin-bottom: $lineHeight * $size * 0.75;
+
+    h1,
+    h2,
+    h3,
+    p,
+    li {
+        font-size: #{$size}em;
+        line-height: $lineHeight;
+    }
+    li {
+        p {
+            font-size: 1em;
+            margin-bottom: 0;
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
