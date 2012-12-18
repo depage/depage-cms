@@ -400,7 +400,7 @@ var depage = {
 
         $("form input.textbutton, form.depage-form :submit").depageTextbutton();
 
-        //$(".depage-scroller").depage('customScrollBar');
+        $(".depage-scroller").depageScroller();
     },
     /* }}} */
     /* {{{ initLayout() */
