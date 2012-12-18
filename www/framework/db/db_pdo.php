@@ -32,7 +32,7 @@ class db_pdo {
      * @return  void
      */
     public function __construct($dsn, $username = '', $password = '', $driver_options = array()) {
-        $this->dsn = $dsn;
+        $this->dsn = $dsn . ";charset=utf8";
         $this->username = $username;
         $this->password = $password;
 

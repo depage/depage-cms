@@ -41,7 +41,9 @@ class config implements Iterator {
         
         // sort that shorter urls with same beginning are tested first for a match
         // @todo change sort order to have the inherited always at the end
-        sort($urls);
+        usort($urls, function($a, $b) {
+            return strlen($a) > strlen($b);
+        });
 
         if (!isset($_SERVER['HTTP_HOST'])) {
             $_SERVER['HTTP_HOST'] = "";
