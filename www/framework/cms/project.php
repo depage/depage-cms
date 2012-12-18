@@ -10,7 +10,9 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class cms_project {
+namespace depage\cms;
+
+class project {
     /* {{{ constructor */
     /**
      * constructor
@@ -26,7 +28,7 @@ class cms_project {
     }
     /* }}} */
 
-    // {{{ get_projects()
+    // {{{ getProjects()
     /**
      * gets available projects from database.
      *
@@ -34,7 +36,7 @@ class cms_project {
      *
      * @return    $projects (array) available projects
      */
-    function get_projects($all = true) {
+    function getProjects($all = true) {
         $projects = array();
 
         return array(

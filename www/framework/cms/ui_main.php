@@ -49,8 +49,8 @@ class ui_main extends \depage_ui {
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
     }
     // }}}
-    // {{{ getSubHandler
-    static function getSubHandler() {
+    // {{{ _getSubHandler
+    static function _getSubHandler() {
         return array(
             'jstree/fallback' => '\depage\websocket\jstree\jstree_fallback',
             'jstree' => 'cms_jstree',
@@ -58,13 +58,13 @@ class ui_main extends \depage_ui {
         );
     }
     // }}}
-    // {{{ package
+    // {{{ _package
     /**
      * gets a list of projects
      *
      * @return  null
      */
-    public function package($output) {
+    public function _package($output) {
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "html")) {
             // pack into body html
@@ -167,7 +167,7 @@ class ui_main extends \depage_ui {
             )),
         ), $this->html_options);
 
-        return $this->package($h);
+        return $this->_package($h);
     }
     // }}}
     
@@ -175,7 +175,7 @@ class ui_main extends \depage_ui {
     public function login() {
         if ($this->auth->enforce()) {
             // logged in
-            $this->redirect(DEPAGE_BASE);
+            \depage::redirect(DEPAGE_BASE);
         } else {
             // not logged in
             $form = new depage\htmlform\htmlform("login", array(

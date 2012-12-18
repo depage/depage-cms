@@ -48,6 +48,7 @@ class cms_ui extends depage_ui {
     // {{{ _getSubHandler
     static function _getSubHandler() {
         return array(
+            'jstree/fallback' => '\depage\websocket\jstree\jstree_fallback',
             'jstree' => 'cms_jstree',
             'edit' => 'cms_edit',
         );
@@ -282,23 +283,9 @@ class cms_ui extends depage_ui {
         $cp = new cms_project($this->pdo);
         $projects = $cp->get_projects();
 
-        $text = "Lorem Ipsum Dolor sitz amet. ";
-        for ($i = 0; $i < 12; $i++) {
-            $text .= "Lorem Ipsum Dolor sitz amet. ";
-        }
-        $text .= "<br>";
-
         // construct template
         $hProject = new html("projectmain.tpl", array(
-            'project' => "",
-            'text1' => $text,
-            'text2' => $text . $text,
-            'text3' => $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text . $text . $text . $text . $text . $text .
-                       $text,
+            'project' => $project,
         ), $this->html_options);
 
         $h = new html(array(

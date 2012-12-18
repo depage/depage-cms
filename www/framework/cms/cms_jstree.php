@@ -28,9 +28,9 @@ class cms_jstree extends depage_ui {
         );
 
         // TODO: set project correctly
-        $proj = "proj";
-        $this->prefix = "{$this->pdo->prefix}_{$proj}";
-        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
+        $projectname = "depage";
+        $this->prefix = $this->pdo->prefix . "_proj_" . $projectname;
+        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"));
 
         // get auth object
         $this->auth = auth::factory(
@@ -95,7 +95,6 @@ class cms_jstree extends depage_ui {
         return new json(array("status" => $status, "id" => $id));
     }
     // }}}
-
     // {{{ rename_node
     public function rename_node() {
         $this->auth->enforce();
@@ -107,7 +106,6 @@ class cms_jstree extends depage_ui {
         return new json(array("status" => 1));
     }
     // }}}
-
     // {{{ move_node
     public function move_node() {
         $this->auth->enforce();
@@ -121,7 +119,6 @@ class cms_jstree extends depage_ui {
         return new json(array("status" => $status));
     }
     // }}}
-
     // {{{ remove_node
     public function remove_node() {
         $this->auth->enforce();
@@ -207,9 +204,12 @@ class cms_jstree extends depage_ui {
 
     public function get_permissions($doc_id) {
         $permissions = $this->xmldb->get_permissions($doc_id);
+        /*
         print_r($permissions);
         echo "<br /><br />Valid Children:<br />";
         print_r($permissions->valid_children());
+         */
+        return $permissions;
     }
 
     // {{{ recordChange
@@ -229,7 +229,6 @@ class cms_jstree extends depage_ui {
         return $doc_list[$doc_name]->id;
     }
     // }}}
-
     // {{{ get_html_nodes
     protected function get_html_nodes($doc_name) {
         $doc = $this->xmldb->get_doc($doc_name);
@@ -238,20 +237,18 @@ class cms_jstree extends depage_ui {
         return current($html);
     }
     // }}}
-
+    
     // {{{ get_current_seq_nr
     protected function get_current_seq_nr($doc_id) {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }
     // }}}
-
     // {{{ send_time
     protected function send_time($time) {
         // do nothing
     }
     // }}}
-
     // {{{ valid_children_or_none
     static private function valid_children_or_none(&$valid_children, $element) {
         if (empty($valid_children[$element])) {
@@ -261,7 +258,6 @@ class cms_jstree extends depage_ui {
         }
     }
     // }}}
-
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

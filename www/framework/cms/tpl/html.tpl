@@ -12,6 +12,15 @@
 
         <?php $this->include_js("interface", array(
             "framework/cms/js/interface.js",
+            "framework/shared/jquery.cookie.js",
+            "framework/shared/jquery.hotkeys.js",
+        )); ?>
+        <?php $this->include_js("jstree", array(
+            "framework/cms/js/jquery.jstree.js",
+            "framework/cms/js/jquery.jstree.plugins.js",
+            "framework/shared/jquery.json-2.2.js",
+            "framework/shared/jquery.gracefulWebSocket.js",
+            "framework/cms/js/jstree.js",
         )); ?>
         <?php $this->include_css("interface", array(
             "framework/htmlform/lib/css/depage-forms.css",
