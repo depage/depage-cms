@@ -27,7 +27,12 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.scroller", base);
 
+        // ratio between frame and content
+        var ratio;
+
+        // dragging related variables
         base.dragging = false;
+        base.dragHandleY = 0;
 
         // {{{ references to new elements
         // new layout wrapper (styled like original)
@@ -95,23 +100,25 @@
         
         // {{{ onScroll()
         base.onScroll = function() {
-            var ratio = base.$scrollContent.height() / base.$scrollFrame.height();
-            var h = base.$scrollFrame.height() / ratio;
+            if (!base.dragging) {
+                ratio = base.$scrollContent.height() / base.$scrollFrame.height();
+                var h = base.$scrollFrame.height() / ratio;
 
-            if (h >= base.$scrollFrame.height()) {
-                h = bae.$scrollFrame.height();
+                if (h >= base.$scrollFrame.height()) {
+                    h = base.$scrollFrame.height();
 
-                base.$scrollBar.hide();
-            } else {
-                base.$scrollBar.show();
+                    base.$scrollBar.hide();
+                } else {
+                    base.$scrollBar.show();
+                }
+
+                var t = base.$scrollFrame.scrollTop() / ratio;
+
+                base.$scrollHandle.css({
+                    height: h,
+                    top: t
+                });
             }
-
-            var t = base.$scrollFrame.scrollTop() / ratio;
-
-            base.$scrollHandle.css({
-                height: h,
-                top: t
-            });
         };
         // }}}
 
@@ -127,6 +134,7 @@
         
         // {{{ startDrag()
         base.startDrag = function(e) {
+            base.dragHandleY = e.offsetY || e.pageY - $(e.target).offset().top;
             base.dragging = true;
 
             base.$scrollOrigin.addClass("dragging");
@@ -143,9 +151,22 @@
         // {{{ onDrag()
         base.onDrag = function(e) {
             if (base.dragging) {
+                var scrollY = e.pageY - base.dragHandleY;
+                var offset = base.$scrollOrigin.offset();
+                var min = offset.top;
+                var max = offset.top + base.$scrollOrigin.height() - base.$scrollHandle.height();
+
+                if (scrollY < min) {
+                    scrollY = min;
+                } else if (scrollY > max) {
+                    scrollY = max;
+                }
+
                 base.$scrollHandle.offset({
-                    top: e.pageY
+                    top: scrollY
                 });
+
+                base.$scrollFrame.scrollTop((scrollY - offset.top) * ratio);
             }
         };
         // }}}
@@ -156,6 +177,8 @@
             $(window).unbind(".depageScroller");
 
             base.enableIframes();
+
+            base.dragging = false;
 
             return false;
         };
