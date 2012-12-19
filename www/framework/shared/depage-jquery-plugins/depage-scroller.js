@@ -26,95 +26,143 @@
         
         // Add a reverse reference to the DOM object
         base.$el.data("depage.scroller", base);
+
+        base.dragging = false;
+
+        // {{{ references to new elements
+        // new layout wrapper (styled like original)
+        base.$scrollOrigin = null;
         
-        base.init = function(){
+        // new wrapper for scrolling content
+        base.$scrollFrame = null;
+
+        // content inside the scroller
+        base.$scrollContent = null;
+
+        // scroll bar
+        base.$scrollBar = null
+
+        // scroll handle
+        base.$scrollHandle = null;
+        // }}}
+        
+        // {{{ init()
+        base.init = function() {
             base.options = $.extend({},$.depage.scroller.defaultOptions, options);
             
-            var distance = 25;
-            var $scrollContent = base.$el;
+            base.$scrollContent = base.$el;
 
-            var className = $scrollContent[0].className;
+            var className = base.$scrollContent[0].className;
 
             // wrap into additional depage-scroller divs and move classes tp parent
-            var $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
-            var $scrollOrigin = $scrollFrame.parent();
+            base.$scrollFrame = base.$scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
+            base.$scrollOrigin = base.$scrollFrame.parent();
 
             // move classes to parent
-            $scrollContent.removeClass(className);
-            $scrollContent.addClass("depage-scroller-content");
+            base.$scrollContent.removeClass(className);
+            base.$scrollContent.addClass("depage-scroller-content");
 
-            $scrollOrigin.attr("style", $scrollContent.attr("style"));
-            $scrollContent.removeAttr("style");
+            base.$scrollOrigin.attr("style", base.$scrollContent.attr("style"));
+            base.$scrollContent.removeAttr("style");
 
             // make origin relative or absolute
-            if ($scrollOrigin.css("position") == "static") {
-                $scrollOrigin.css("position", "relative");
+            if (base.$scrollOrigin.css("position") == "static") {
+                base.$scrollOrigin.css("position", "relative");
             }
 
             // add scrollbar and -handle
-            $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollOrigin);
+            $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo(base.$scrollOrigin);
 
-            var $scrollBar = $(".scroll-bar", $scrollOrigin);
-            var $scrollHandle = $(".scroll-handle", $scrollOrigin);
+            base.$scrollBar = $(".scroll-bar", base.$scrollOrigin);
+            base.$scrollHandle = $(".scroll-handle", base.$scrollOrigin);
+
+            // added drag event to handle
+            base.$scrollHandle.mousedown( base.startDrag );
 
             // add scroll events
-            $scrollFrame.scroll( function() {
-                var ratio = $scrollContent.height() / $scrollFrame.height();
-                var h = $scrollFrame.height() / ratio;
-
-                if (h >= $scrollFrame.height()) {
-                    h = $scrollFrame.height();
-
-                    $scrollBar.hide();
-                } else {
-                    $scrollBar.show();
-                }
-
-                var t = $scrollFrame.scrollTop() / ratio;
-
-                $scrollHandle.css({
-                    height: h,
-                    top: t
-                });
-            });
-            // call scroll event for initialization
-            $scrollFrame.scroll();
+            base.$scrollFrame.scroll( base.onScroll );
             
             // call scroll event also when window resizes
-            $(window).resize( function() {
-                $scrollFrame.scroll();
-            });
-
+            $(window).resize( base.onScroll );
+            
+            // call scroll event for initialization
+            base.onScroll();
+            
             // add mousewheel events
-            $scrollFrame.mousewheel( function(e, delta) {
-                if ($scrollFrame.height() < $scrollContent.height()) {
-                    $scrollFrame.scrollTop($scrollFrame.scrollTop() - distance * delta);
+            base.$scrollFrame.mousewheel( base.onMousewheel );
+        };
+        // }}}
+        
+        // {{{ onScroll()
+        base.onScroll = function() {
+            var ratio = base.$scrollContent.height() / base.$scrollFrame.height();
+            var h = base.$scrollFrame.height() / ratio;
 
-                    return false;
-                }
+            if (h >= base.$scrollFrame.height()) {
+                h = bae.$scrollFrame.height();
+
+                base.$scrollBar.hide();
+            } else {
+                base.$scrollBar.show();
+            }
+
+            var t = base.$scrollFrame.scrollTop() / ratio;
+
+            base.$scrollHandle.css({
+                height: h,
+                top: t
             });
         };
+        // }}}
+
+        // {{{ onMousewheel()
+        base.onMousewheel = function(e, delta) {
+            if (base.$scrollFrame.height() < base.$scrollContent.height()) {
+                base.$scrollFrame.scrollTop(base.$scrollFrame.scrollTop() - base.options.distance * delta);
+
+                return false;
+            }
+        };
+        // }}}
         
-        /* {{{ customScrollBar */
-        /**
-         * @function customScrollBar()
-         *
-         * adds a custom scrollbar instead of the default system scrollbars
-         *
-         * @param selector  elements to which the custom scrollbar will be added
-         */
-        base.custumScrollBar = function(selector) {
-            return this.each( function() {
-            });
-        }
-        /* }}} */
+        // {{{ startDrag()
+        base.startDrag = function(e) {
+            base.dragging = true;
+
+            base.$scrollOrigin.addClass("dragging");
+
+            $(document.body).bind("mousemove.depageScroller", base.onDrag);
+            $(document.body).bind("mouseup.depageScroller", base.stopDrag);
+
+            return false;
+        };
+        // }}}
+        
+        // {{{ onDrag()
+        base.onDrag = function(e) {
+            if (base.dragging) {
+                base.$scrollHandle.offset({
+                    top: e.pageY
+                });
+            }
+        };
+        // }}}
+        
+        // {{{ stopDrag()
+        base.stopDrag = function() {
+            base.$scrollOrigin.removeClass("dragging");
+            $(document.body).unbind(".depageScroller");
+
+            return false;
+        };
+        // }}}
         
         // Run initializer
         base.init();
     };
     
     $.depage.scroller.defaultOptions = {
-        option1: "default"
+        distance: 25 // number of pixels to scroll on mouse wheel events
     };
     
     $.fn.depageScroller = function(options){
