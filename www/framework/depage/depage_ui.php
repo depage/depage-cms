@@ -166,7 +166,7 @@ abstract class depage_ui {
         
         // finishing time
         $time = microtime(true) - $time_start;
-        $this->_send_time($time);
+        $this->_send_time($time, $content);
     }
     // }}}
     // {{{ _factory
@@ -252,9 +252,15 @@ abstract class depage_ui {
     //}}}
     
     // {{{ _send_time
-    protected function _send_time($time) {
-        if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
-            echo("<!-- $time sec -->");
+    protected function _send_time($time, $content = null) {
+        if (isset($content) && isset($content->content_type)) {
+            if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
+                switch ($content->content_type) {
+                    case 'text/html':
+                        echo("<!-- $time sec -->");
+                        break;
+                }
+            }
         }
     }
     // }}}

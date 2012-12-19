@@ -135,7 +135,7 @@ class ui_main extends \depage_ui {
      *
      * @return  null
      */
-    public function notfound() {
+    public function notfound($function = "") {
         parent::notfound();
 
         $h = new html("box.tpl", array(

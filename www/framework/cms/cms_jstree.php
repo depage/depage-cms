@@ -244,11 +244,6 @@ class cms_jstree extends depage_ui {
        return $delta_updates->currentChangeNumber();
     }
     // }}}
-    // {{{ send_time
-    protected function send_time($time) {
-        // do nothing
-    }
-    // }}}
     // {{{ valid_children_or_none
     static private function valid_children_or_none(&$valid_children, $element) {
         if (empty($valid_children[$element])) {

@@ -4,14 +4,39 @@ $(function () {
     $(".jstree-container").each(function () {
         $(this).jstree({ 
             // the list of plugins to include
-            "plugins" : ($(this).attr("data-plugins") || "themes pedantic_html_data ui crrm dnd_placeholder types_from_url hotkeys contextmenu span dblclick_rename tooltips select_created_nodes delta_updates add_marker" ).split(" "),
+            plugins : [
+                "themes",
+                "pedantic_html_data",
+                "ui",
+                "crrm",
+                "dnd_placeholder",
+                "types_from_url",
+                "hotkeys",
+                "contextmenu",
+                "span",
+                "dblclick_rename",
+                "tooltips",
+                "select_created_nodes",
+                "add_marker",
+                "delta_updates",
+            ],
+            ui : {
+                // TODO:
+                "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
+            },
+            core : { 
+                animation : 0,
+                initially_open : ($(this).attr("data-open-nodes") || "").split(" ")
+            },
+            themes : {
+                "url" : $(this).attr("data-theme")
+            },
             // Plugin configuration
             delta_updates : {
                 "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
                 "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
                 "postURL" : $(this).attr("data-delta-updates-post-url"),
             },
-            animation : 0,
             contextmenu : {
                 items : function (obj) {
                     var default_items = { // Could be a function that should return an object like this one
@@ -72,17 +97,7 @@ $(function () {
 
                     return default_items;
                 }
-            },
-            ui : {
-                // TODO:
-                "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
-            },
-            core : { 
-                "initially_open" : ($(this).attr("data-open-nodes") || "").split(" ")
-            },
-            themes : {
-                "url" : $(this).attr("data-theme")
-            },
+            }
         });
     });
 });
