@@ -31,61 +31,61 @@
         var ratio;
 
         // dragging related variables
-        base.dragging = false;
-        base.dragHandleY = 0;
+        var dragging = false;
+        var dragHandleY = 0;
 
         // {{{ references to new elements
         // new layout wrapper (styled like original)
-        base.$scrollOrigin = null;
+        var $scrollOrigin = null;
         
         // new wrapper for scrolling content
-        base.$scrollFrame = null;
+        var $scrollFrame = null;
 
         // content inside the scroller
-        base.$scrollContent = null;
+        var $scrollContent = null;
 
         // scroll bar
-        base.$scrollBar = null
+        var $scrollBar = null
 
         // scroll handle
-        base.$scrollHandle = null;
+        var $scrollHandle = null;
         // }}}
         
         // {{{ init()
         base.init = function() {
             base.options = $.extend({},$.depage.scroller.defaultOptions, options);
             
-            base.$scrollContent = base.$el;
+            $scrollContent = base.$el;
 
-            var className = base.$scrollContent[0].className;
+            var className = $scrollContent[0].className;
 
             // wrap into additional depage-scroller divs and move classes tp parent
-            base.$scrollFrame = base.$scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
-            base.$scrollOrigin = base.$scrollFrame.parent();
+            $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
+            $scrollOrigin = $scrollFrame.parent();
 
             // move classes to parent
-            base.$scrollContent.removeClass(className);
-            base.$scrollContent.addClass("depage-scroller-content");
+            $scrollContent.removeClass(className);
+            $scrollContent.addClass("depage-scroller-content");
 
-            base.$scrollOrigin.attr("style", base.$scrollContent.attr("style"));
-            base.$scrollContent.removeAttr("style");
+            $scrollOrigin.attr("style", $scrollContent.attr("style"));
+            $scrollContent.removeAttr("style");
 
             // make origin relative or absolute
-            if (base.$scrollOrigin.css("position") == "static") {
-                base.$scrollOrigin.css("position", "relative");
+            if ($scrollOrigin.css("position") == "static") {
+                $scrollOrigin.css("position", "relative");
             }
 
             // add scrollbar and -handle
-            $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo(base.$scrollOrigin);
+            $("<div class=\"scroll-bar\"><div class=\"scroll-handle\"></div></div>").prependTo($scrollOrigin);
 
-            base.$scrollBar = $(".scroll-bar", base.$scrollOrigin);
-            base.$scrollHandle = $(".scroll-handle", base.$scrollOrigin);
+            $scrollBar = $(".scroll-bar", $scrollOrigin);
+            $scrollHandle = $(".scroll-handle", $scrollOrigin);
 
             // added drag event to handle
-            base.$scrollHandle.mousedown( base.startDrag );
+            $scrollHandle.mousedown( base.startDrag );
 
             // add scroll events
-            base.$scrollFrame.scroll( base.onScroll );
+            $scrollFrame.scroll( base.onScroll );
             
             // call scroll event also when window resizes
             $(window).resize( base.onScroll );
@@ -94,27 +94,27 @@
             base.onScroll();
             
             // add mousewheel events
-            base.$scrollFrame.mousewheel( base.onMousewheel );
+            $scrollFrame.mousewheel( base.onMousewheel );
         };
         // }}}
         
         // {{{ onScroll()
         base.onScroll = function() {
-            if (!base.dragging) {
-                ratio = base.$scrollContent.height() / base.$scrollFrame.height();
-                var h = base.$scrollFrame.height() / ratio;
+            if (!dragging) {
+                ratio = $scrollContent.height() / $scrollFrame.height();
+                var h = $scrollFrame.height() / ratio;
 
-                if (h >= base.$scrollFrame.height()) {
-                    h = base.$scrollFrame.height();
+                if (h >= $scrollFrame.height()) {
+                    h = $scrollFrame.height();
 
-                    base.$scrollBar.hide();
+                    $scrollBar.hide();
                 } else {
-                    base.$scrollBar.show();
+                    $scrollBar.show();
                 }
 
-                var t = base.$scrollFrame.scrollTop() / ratio;
+                var t = $scrollFrame.scrollTop() / ratio;
 
-                base.$scrollHandle.css({
+                $scrollHandle.css({
                     height: h,
                     top: t
                 });
@@ -124,8 +124,8 @@
 
         // {{{ onMousewheel()
         base.onMousewheel = function(e, delta) {
-            if (base.$scrollFrame.height() < base.$scrollContent.height()) {
-                base.$scrollFrame.scrollTop(base.$scrollFrame.scrollTop() - base.options.distance * delta);
+            if ($scrollFrame.height() < $scrollContent.height()) {
+                $scrollFrame.scrollTop($scrollFrame.scrollTop() - base.options.distance * delta);
 
                 return false;
             }
@@ -134,10 +134,10 @@
         
         // {{{ startDrag()
         base.startDrag = function(e) {
-            base.dragHandleY = e.offsetY || e.pageY - $(e.target).offset().top;
-            base.dragging = true;
+            dragHandleY = e.offsetY || e.pageY - $(e.target).offset().top;
+            dragging = true;
 
-            base.$scrollOrigin.addClass("dragging");
+            $scrollOrigin.addClass("dragging");
 
             $(window).bind("mousemove.depageScroller", base.onDrag);
             $(window).bind("mouseup.depageScroller", base.stopDrag);
@@ -150,11 +150,11 @@
         
         // {{{ onDrag()
         base.onDrag = function(e) {
-            if (base.dragging) {
-                var scrollY = e.pageY - base.dragHandleY;
-                var offset = base.$scrollOrigin.offset();
+            if (dragging) {
+                var scrollY = e.pageY - dragHandleY;
+                var offset = $scrollOrigin.offset();
                 var min = offset.top;
-                var max = offset.top + base.$scrollOrigin.height() - base.$scrollHandle.height();
+                var max = offset.top + $scrollOrigin.height() - $scrollHandle.height();
 
                 if (scrollY < min) {
                     scrollY = min;
@@ -162,23 +162,23 @@
                     scrollY = max;
                 }
 
-                base.$scrollHandle.offset({
+                $scrollHandle.offset({
                     top: scrollY
                 });
 
-                base.$scrollFrame.scrollTop((scrollY - offset.top) * ratio);
+                $scrollFrame.scrollTop((scrollY - offset.top) * ratio);
             }
         };
         // }}}
         
         // {{{ stopDrag()
         base.stopDrag = function() {
-            base.$scrollOrigin.removeClass("dragging");
+            $scrollOrigin.removeClass("dragging");
             $(window).unbind(".depageScroller");
 
             base.enableIframes();
 
-            base.dragging = false;
+            dragging = false;
 
             return false;
         };
