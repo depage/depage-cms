@@ -131,8 +131,10 @@
 
             base.$scrollOrigin.addClass("dragging");
 
-            $(document.body).bind("mousemove.depageScroller", base.onDrag);
-            $(document.body).bind("mouseup.depageScroller", base.stopDrag);
+            $(window).bind("mousemove.depageScroller", base.onDrag);
+            $(window).bind("mouseup.depageScroller", base.stopDrag);
+
+            base.disableIframes();
 
             return false;
         };
@@ -151,10 +153,37 @@
         // {{{ stopDrag()
         base.stopDrag = function() {
             base.$scrollOrigin.removeClass("dragging");
-            $(document.body).unbind(".depageScroller");
+            $(window).unbind(".depageScroller");
+
+            base.enableIframes();
 
             return false;
         };
+        // }}}
+        
+        // {{{ disableIframes()
+        base.disableIframes = function() {
+            $("iframe").each( function() {
+                var $iframe = $(this);
+                var offset = $iframe.offset();
+                var $disabler = $("<div class=\"disable-iframe-events\"></div>").appendTo(document.body);
+
+                $disabler.css({
+                    position: "absolute",
+                    zIndex: 10000,
+                    top: offset.top,
+                    left: offset.left,
+                    width: $iframe.width(),
+                    height: $iframe.height()
+                });
+            });
+        } 
+        // }}}
+        
+        // {{{ enableIframes()
+        base.enableIframes = function() {
+            $(".disable-iframe-events").remove();
+        } 
         // }}}
         
         // Run initializer
