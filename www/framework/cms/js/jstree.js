@@ -1,11 +1,11 @@
 "use strict";
 
 $(function () {
-	$(".jstree-container").each(function () {
-		$(this).jstree({ 
-			// the list of plugins to include
-			"plugins" : ($(this).attr("data-plugins") || "themes pedantic_html_data ui crrm dnd_placeholder types_from_url hotkeys contextmenu span dblclick_rename tooltips select_created_nodes delta_updates add_marker" ).split(" "),
-			// Plugin configuration
+    $(".jstree-container").each(function () {
+        $(this).jstree({ 
+            // the list of plugins to include
+            "plugins" : ($(this).attr("data-plugins") || "themes pedantic_html_data ui crrm dnd_placeholder types_from_url hotkeys contextmenu span dblclick_rename tooltips select_created_nodes delta_updates add_marker" ).split(" "),
+            // Plugin configuration
             delta_updates : {
                 "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
                 "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
