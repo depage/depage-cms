@@ -117,6 +117,7 @@ class xmldb {
 
                 if ($result === false) {
                     // document does not exist
+                    // @todo thow exception?
                     return false;
                 }
 

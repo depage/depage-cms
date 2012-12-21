@@ -21,14 +21,15 @@ class ui_project extends ui_base {
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
 
-        $this->project = $this->urlSubArgs[0];
+        $this->projectName = $this->urlSubArgs[0];
     }
     // }}}
     
     // {{{ index()
     function index() {
         // cms tree
-        $tree = new \cms_jstree($this->options);
+        //$tree = new \cms_jstree($this->options);
+        $tree = ui_tree::_factory($this->options);
 
         // get data
         $cp = new project($this->pdo);
@@ -36,8 +37,8 @@ class ui_project extends ui_base {
 
         // construct template
         $hProject = new html("projectmain.tpl", array(
-            'tree_pages' => $tree->index("pages"),
-            'tree_document' => $tree->index("testpage"),
+            //'tree_pages' => $tree->index("pages"),
+            //'tree_document' => $tree->index("testpage"),
         ), $this->html_options);
 
         $h = new html(array(

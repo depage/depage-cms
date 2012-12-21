@@ -19,9 +19,9 @@ class ui_main extends ui_base {
     static function _getSubHandler() {
         return array(
             'project/*' => '\depage\cms\ui_project',
+            'project/*/tree/*' => '\depage\cms\ui_tree',
+            'project/*/tree/*/fallback' => '\depage\cms\ui_socketfallback',
             'edit/*' => 'cms_edit',
-            'jstree/*/fallback' => '\depage\websocket\jstree\jstree_fallback',
-            'jstree/*' => 'cms_jstree',
         );
     }
     // }}}
@@ -67,7 +67,7 @@ class ui_main extends ui_base {
             \depage::redirect(DEPAGE_BASE);
         } else {
             // not logged in
-            $form = new depage\htmlform\htmlform("login", array(
+            $form = new \depage\htmlform\htmlform("login", array(
                 'submitLabel' => "Anmelden",
                 'validator' => array($this, 'validate_login'),
             ));
@@ -110,7 +110,7 @@ class ui_main extends ui_base {
     }
     // }}}
     // {{{ validate_login
-    public function validate_login($values) {
+    public function validate_login($form, $values) {
         return (bool) $this->auth->login($values['name'], $values['pass']);
     }
     // }}}
@@ -159,55 +159,6 @@ class ui_main extends ui_base {
                 'projects' => $projects,
             )),
         ), $this->html_options);
-
-        return $h;
-    }
-    // }}}
-    // {{{ project
-    /**
-     * gets start page for a project
-     *
-     * @return  null
-     */
-    public function project($project = "") {
-        $this->auth->enforce();
-
-        // cms tree
-        $tree = new \cms_jstree($this->options);
-
-        // get data
-        $cp = new project($this->pdo);
-        $projects = $cp->getProjects();
-
-        // construct template
-        $hProject = new html("projectmain.tpl", array(
-            'tree_pages' => $tree->index("pages"),
-            'tree_document' => $tree->index("testpage"),
-        ), $this->html_options);
-
-        $h = new html(array(
-            'content' => array(
-                $this->toolbar(),
-                $hProject,
-            ),
-        ));
-
-        return $h;
-    }
-    // }}}
-    // {{{ preview
-    /**
-     * gets the preview for a project
-     *
-     * @return  null
-     */
-    public function preview($project = "") {
-        $this->auth->enforce();
-
-        // get data
-        $cp = new project($this->pdo);
-
-        $h = "preview";
 
         return $h;
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/cms_jstree.php
+ * @file    framework/cms/ui_tree.php
  *
  * depage cms jstree module
  *
@@ -10,42 +10,21 @@
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  */
 
-class cms_jstree extends depage_ui {
-    protected $html_options = array();
+namespace depage\cms;
 
-    // {{{ constructor
-    public function __construct($options = NULL) {
-        parent::__construct($options);
+use \html;
 
-        // get database instance
-        $this->pdo = new db_pdo (
-            $this->options->db->dsn, // dsn
-            $this->options->db->user, // user
-            $this->options->db->password, // password
-            array(
-                'prefix' => $this->options->db->prefix, // database prefix
-            )
-        );
+class ui_tree extends ui_base {
+    // {{{ _init
+    public function _init(array $importVariables = array()) {
+        parent::_init($importVariables);
 
-        // TODO: set project correctly
-        $projectname = "depage";
-        $this->prefix = $this->pdo->prefix . "_proj_" . $projectname;
+        $this->projectName = $this->urlSubArgs[0];
+        $this->docName = $this->urlSubArgs[1];
+        $this->actionUrl = "project/{$this->projectName}/tree/{$this->docName}/";
+        
+        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"));
-
-        // get auth object
-        $this->auth = auth::factory(
-            $this->pdo, // db_pdo 
-            $this->options->auth->realm, // auth realm
-            DEPAGE_BASE, // domain
-            $this->options->auth->method // method
-        );
-
-        // set html-options
-        $this->html_options = array(
-            'template_path' => __DIR__ . "/tpl/",
-            'clean' => "space",
-            'env' => $this->options->env,
-        );
     }
     // }}}
 
@@ -59,17 +38,16 @@ class cms_jstree extends depage_ui {
     // }}}
 
     // {{{ index
-    public function index($doc_name = "pages") {
-        $this->auth->enforce();
-
-        $doc_id = $this->get_doc_id($doc_name);
-        $doc_info = $this->xmldb->get_doc_info($doc_id);
+    public function index() {
+        $doc_info = $this->xmldb->get_doc_info($this->docName);
+        $doc_id = $doc_info->id;
 
         $h = new html("jstree.tpl", array(
+            'actionUrl' => $this->actionUrl,
             'doc_id' => $doc_id,
             'root_id' => $doc_info->rootid, 
             'seq_nr' => $this->get_current_seq_nr($doc_id),
-            'nodes' => $this->get_html_nodes($doc_name),
+            'nodes' => $this->get_html_nodes($this->docName),
         ), $this->html_options); 
 
         return $h;
@@ -92,7 +70,7 @@ class cms_jstree extends depage_ui {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
         }
 
-        return new json(array("status" => $status, "id" => $id));
+        return new \json(array("status" => $status, "id" => $id));
     }
     // }}}
     // {{{ rename_node
@@ -103,7 +81,7 @@ class cms_jstree extends depage_ui {
         $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->recordChange($_REQUEST["doc_id"], array($parent_id));
 
-        return new json(array("status" => 1));
+        return new \json(array("status" => 1));
     }
     // }}}
     // {{{ move_node
@@ -116,7 +94,7 @@ class cms_jstree extends depage_ui {
             $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
         }
 
-        return new json(array("status" => $status));
+        return new \json(array("status" => $status));
     }
     // }}}
     // {{{ remove_node
@@ -130,16 +108,15 @@ class cms_jstree extends depage_ui {
             $this->recordChange($_REQUEST["doc_id"], array($parent_id));
         }
 
-        return new json(array("status" => $status));
+        return new \json(array("status" => $status));
     }
     // }}}
 
     // TODO: set icons?
     // {{{ types_settings
-    public function types_settings($doc_id) {
-        $this->auth->enforce();
-
-        $doc_info = $this->xmldb->get_doc_info($doc_id);
+    public function types_settings() {
+        $doc_info = $this->xmldb->get_doc_info($this->docName);
+        $doc_id = $doc_info->id;
         $root_element_name = $this->xmldb->get_nodeName_by_elementId($doc_id, $doc_info->rootid);
 
         $permissions = $this->xmldb->get_permissions($doc_id);
@@ -187,7 +164,7 @@ class cms_jstree extends depage_ui {
             );
         }
 
-        return new json($settings);
+        return new \json($settings);
     }
     // }}}
 

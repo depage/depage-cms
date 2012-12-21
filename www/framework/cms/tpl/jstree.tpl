@@ -9,8 +9,8 @@
         data-theme="framework/cms/css/jstree.css"
         data-delta-updates-websocket-url=""
         data-delta-updates-fallback-poll-url="<?php html::a("jstree/fallback/updates/", "auto"); ?>"
-        data-delta-updates-post-url="<?php html::a("jstree/", "auto"); ?>"
-        data-types-settings-url="<?php html::a("jstree/types_settings/", "auto"); ?>"
+        data-delta-updates-post-url="<?php html::a($this->actionUrl, "auto"); ?>"
+        data-types-settings-url="<?php html::a($this->actionUrl . "types-settings/", "auto"); ?>"
         data-add-marker-special-children="folder separator"
     >
         <!--data-delta-updates-websocket-url="ws://127.0.0.1:8000/jstree/"-->
