@@ -817,7 +817,7 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
             _fn : {
                 _load_type_settings : function() {
                     var _this = this;
-                    var url = this.get_container().attr("data-types-settings-url") + this.get_container().attr("data-doc-id");
+                    var url = this.get_container().attr("data-types-settings-url");
 
                     $.getJSON(url, function(new_types_settings) {
                         _this._set_settings(new_types_settings);

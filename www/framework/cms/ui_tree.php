@@ -19,15 +19,17 @@ class ui_tree extends ui_base {
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
 
-        $this->projectName = $this->urlSubArgs[0];
-        $this->docName = $this->urlSubArgs[1];
-        $this->actionUrl = "project/{$this->projectName}/tree/{$this->docName}/";
-        
+        if (!empty($this->urlSubArgs[0])) {
+            $this->projectName = $this->urlSubArgs[0];
+        }
+        if (!empty($this->urlSubArgs[1])) {
+            $this->docName = $this->urlSubArgs[1];
+        }
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"));
     }
     // }}}
-
+    
     // {{{ destructor
     public function __destruct() {
         if (isset($_REQUEST["doc_id"])) {
@@ -39,15 +41,22 @@ class ui_tree extends ui_base {
 
     // {{{ index
     public function index() {
-        $doc_info = $this->xmldb->get_doc_info($this->docName);
+        return $this->tree($this->docName);
+    }
+    // }}}
+    // {{{ tree()
+    public function tree($docName) {
+        $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
+
+        $doc_info = $this->xmldb->get_doc_info($docName);
         $doc_id = $doc_info->id;
 
         $h = new html("jstree.tpl", array(
-            'actionUrl' => $this->actionUrl,
+            'actionUrl' => $actionUrl,
             'doc_id' => $doc_id,
             'root_id' => $doc_info->rootid, 
             'seq_nr' => $this->get_current_seq_nr($doc_id),
-            'nodes' => $this->get_html_nodes($this->docName),
+            'nodes' => $this->get_html_nodes($docName),
         ), $this->html_options); 
 
         return $h;
@@ -179,16 +188,6 @@ class ui_tree extends ui_base {
     }
     // }}}
 
-    public function get_permissions($doc_id) {
-        $permissions = $this->xmldb->get_permissions($doc_id);
-        /*
-        print_r($permissions);
-        echo "<br /><br />Valid Children:<br />";
-        print_r($permissions->valid_children());
-         */
-        return $permissions;
-    }
-
     // {{{ recordChange
     protected function recordChange($doc_id, $parent_ids) {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
@@ -200,12 +199,6 @@ class ui_tree extends ui_base {
     }
     // }}}
 
-    // {{{ get_doc_id
-    protected function get_doc_id($doc_name) {
-        $doc_list = $this->xmldb->get_doc_list($doc_name);
-        return $doc_list[$doc_name]->id;
-    }
-    // }}}
     // {{{ get_html_nodes
     protected function get_html_nodes($doc_name) {
         $doc = $this->xmldb->get_doc($doc_name);

@@ -67,7 +67,7 @@ class jstree_delta_updates {
         $parent_ids = $this->changedParentIds();
 
         // very unlikely case that more delta updates happened than will be retained in db. reload whole document
-        if ($this->seq_nr - $initial_seq_nr > MAX_UPDATES_BEFORE_RELOAD) {
+        if ($this->seq_nr - $initial_seq_nr > self::MAX_UPDATES_BEFORE_RELOAD) {
             $level_of_children = PHP_INT_MAX;
             $doc_info = $this->xmldb->get_doc_info($this->doc_id);
             $parent_ids = array($doc_info->rootid);

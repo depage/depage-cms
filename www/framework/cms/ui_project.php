@@ -28,17 +28,15 @@ class ui_project extends ui_base {
     // {{{ index()
     function index() {
         // cms tree
-        //$tree = new \cms_jstree($this->options);
-        $tree = ui_tree::_factory($this->options);
-
-        // get data
-        $cp = new project($this->pdo);
-        $projects = $cp->getProjects();
+        $tree = ui_tree::_factoryAndInit($this->options, array(
+            'pdo' => $this->pdo,
+            'projectName' => $this->projectName,
+        ));
 
         // construct template
         $hProject = new html("projectmain.tpl", array(
-            //'tree_pages' => $tree->index("pages"),
-            //'tree_document' => $tree->index("testpage"),
+            'tree_pages' => $tree->tree("pages"),
+            'tree_document' => $tree->tree("testpage"),
         ), $this->html_options);
 
         $h = new html(array(

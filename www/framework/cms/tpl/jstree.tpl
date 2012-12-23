@@ -8,7 +8,7 @@
         data-open-nodes=""
         data-theme="framework/cms/css/jstree.css"
         data-delta-updates-websocket-url=""
-        data-delta-updates-fallback-poll-url="<?php html::a("jstree/fallback/updates/", "auto"); ?>"
+        data-delta-updates-fallback-poll-url="<?php html::a($this->actionUrl . "fallback/updates/", "auto"); ?>"
         data-delta-updates-post-url="<?php html::a($this->actionUrl, "auto"); ?>"
         data-types-settings-url="<?php html::a($this->actionUrl . "types-settings/", "auto"); ?>"
         data-add-marker-special-children="folder separator"

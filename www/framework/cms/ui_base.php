@@ -23,7 +23,7 @@ class ui_base extends \depage_ui {
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
 
-        if (!$this->pdo) {
+        if (empty($this->pdo)) {
             // get database instance
             $this->pdo = new \db_pdo (
                 $this->options->db->dsn, // dsn
@@ -52,7 +52,7 @@ class ui_base extends \depage_ui {
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
         
         // establish if the user is logged in
-        if ($this->auth_user === null) {
+        if (empty($this->auth_user)) {
             if ($this->autoEnforceAuth) {
                 $this->auth_user = $this->auth->enforce();
             } else {
