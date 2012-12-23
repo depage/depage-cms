@@ -13,33 +13,19 @@
 
 namespace depage\cms;
 
-class ui_socketfallback extends \depage_ui {
-    // {{{ constructor
-    public function __construct($options = NULL) {
-        parent::__construct($options);
+class ui_socketfallback extends ui_base {
+    // {{{ _init
+    public function _init(array $importVariables = array()) {
+        parent::_init($importVariables);
 
-        // get database instance
-        $this->pdo = new \db_pdo (
-            $this->options->db->dsn, // dsn
-            $this->options->db->user, // user
-            $this->options->db->password, // password
-            array(
-                'prefix' => $this->options->db->prefix, // database prefix
-            )
-        );
-
-        // TODO: set project correctly
-        $proj = "depage";
-        $this->prefix = "{$this->pdo->prefix}_proj_{$proj}";
-        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
-
-        // get auth object
-        $this->auth = \auth::factory(
-            $this->pdo, // db_pdo 
-            $this->options->auth->realm, // auth realm
-            DEPAGE_BASE, // domain
-            $this->options->auth->method // method
-        );
+        if (!empty($this->urlSubArgs[0])) {
+            $this->projectName = $this->urlSubArgs[0];
+        }
+        if (!empty($this->urlSubArgs[1])) {
+            $this->docName = $this->urlSubArgs[1];
+        }
+        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"));
     }
     // }}}
 

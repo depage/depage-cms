@@ -18,6 +18,7 @@
 // Firefox 4 needs global variables declared
 var placeholder;
 
+// {{{ dnd_placeholder
 /*
  * jsTree DND plugin 1.0
  * Drag and drop plugin for moving/copying nodes
@@ -565,7 +566,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         });
     });
 })(jQuery);
+// }}}
 
+// {{{ pedantic_html_data
 /* 
  * jsTree pedantic HTML data 1.0
  * The pedantic HTML data store. No automatic processing of given html structure. Uses the same settings as the original html data store. 
@@ -678,8 +681,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         }
     });
 })(jQuery);
-//*/
+// }} }}}
 
+// {{{ span
 /*
  * hide / show span when renaming plugin
  */
@@ -694,7 +698,7 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         // hide span before rename
         _fn : {
             rename : function (obj) {
-                node = this._get_node(obj);
+                var node = this._get_node(obj);
                 node.children("span").hide();
                 // call without any argument, so that original arguments are used
                 return this.__call_old();
@@ -702,8 +706,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
-//*/
+// }}}
 
+// {{{ dblclick_rename 
 /*
  * double click rename plugin
  */
@@ -719,8 +724,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
-//*/
+// }}}
 
+// {{{ tooltips
 /*
  * hover tooltips plugin
  */
@@ -738,8 +744,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
-//*/
+// }}}
 
+// {{{ select_created_nodes 
 /*
  * select newly created nodes plugin
  */
@@ -754,8 +761,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
-//*/
+// }}}
 
+// {{{ types_from_url
 /* 
  * jsTree types_from_url plugin 1.0 based on original types plugin
  * Adds support types of nodes
@@ -946,8 +954,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
             }
         });
     })(jQuery);
-//*/
+// }}}
 
+// {{{ delta_updates
 /*
  * delta updates
  *   expects JSON strings from Server, mapping ids to html code 
@@ -1158,6 +1167,7 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
                 }
             },
             _ajax_call : function (args) {
+                console.log(args);
                 var tree = this.get_container();
                 var settings = this.get_settings().delta_updates;
                 var _this = this;
@@ -1188,8 +1198,9 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
+// }}}
 
-
+// {{{ add_marker
 /*
  * add marker plugin
  */
@@ -1353,4 +1364,6 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
         },
     });
 })(jQuery);
+// }}}
+
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

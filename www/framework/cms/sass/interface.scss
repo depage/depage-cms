@@ -365,12 +365,15 @@ a img {
     border: 1px solid #dfdfdf;
 }
 .depage-scroller {
+    //border: 1px solid;
+
     .depage-scroller-frame {
         width: 100%;
         height: 100%;
         overflow: hidden;
     }
     .depage-scroller-content {
+        min-height: 100%;
         padding-right: 7px;
     }
     .scroll-bar {
@@ -545,4 +548,4 @@ ul.projectlisting {
 }
 /* }}} */
 
-/* vim:set ft=css sw=4 sts=4 fdm=marker : */
+/* vim:set ft=scss sw=7 sts=4 fdm=marker : */
