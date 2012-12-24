@@ -31,13 +31,13 @@
                 <xsl:value-of select="$name" />
                 <span><xsl:value-of select="$hint" />additional node info</span>
             </a>
-        <xsl:choose>
-            <xsl:when test="count(node()) > 0">
-                <ul>
-                    <xsl:apply-templates />
-                </ul>
-            </xsl:when>
-        </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="count(node()) > 0">
+                    <ul>
+                        <xsl:apply-templates />
+                    </ul>
+                </xsl:when>
+            </xsl:choose>
         </li>
     </xsl:if>
 </xsl:template>

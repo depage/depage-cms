@@ -6,6 +6,7 @@
  * @require framework/cms/js/jstree/jstree.dnd.js
  * @require framework/cms/js/jstree/jstree.hotkeys.js
  * @require framework/cms/js/jstree/jstree.nodeinfo.js
+ * @require framework/cms/js/jstree/jstree.tooltips.js
  * @require framework/cms/js/jstree/jstree.contextmenu.js
  * @require framework/cms/js/jstree/jstree.dblclickrename.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
@@ -30,7 +31,7 @@ $(function () {
                 //"contextmenu",
                 "nodeinfo",
                 "dblclickrename",
-                //"tooltips",
+                "tooltips",
                 //"select_created_nodes",
                 //"add_marker",
                 //"delta_updates",
