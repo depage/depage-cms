@@ -10,7 +10,7 @@
   overflow: auto;
   overflow-x: hidden;
   min-height: 100%;
-  min-width: 100%;
+  width: 100%;
 }
 
 .jstree li {
@@ -80,14 +80,17 @@
   background-position: -36px 0;
 }
 .jstree-default .jstree-hovered {
-  background: #e7f4f9;
-  border: 1px solid #d8f0fa;
+  background: #ffffff;
+  border: 1px solid #ff9900;
   padding: 0 2px 0 1px;
 }
 .jstree-default .jstree-clicked {
-  background: #beebff;
-  border: 1px solid #99defd;
+  background: #ff9900;
+  border: 1px solid #ff9900;
   padding: 0 2px 0 1px;
+}
+.jstree-default a {
+  border: 1px solid;
 }
 .jstree-default a .jstree-icon {
   background-position: -56px -19px;
@@ -184,7 +187,9 @@ li ul {
 /* placeholder height is set in js to match line height of li elements */
 /* placeholder width is set to match dragged element */
 #jstree-placeholder {
-  background-color: red;
+  width: 300px !important;
+  background-color: #ffffff;
+  border: 1px solid #ff9900;
   margin-left: 35px;
 }
 
