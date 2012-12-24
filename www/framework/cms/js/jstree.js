@@ -4,7 +4,9 @@
  * @require framework/cms/js/jstree/jstree.themes.js
  * @require framework/cms/js/jstree/jstree.ui.js
  * @require framework/cms/js/jstree/jstree.dnd.js
+ * @require framework/cms/js/jstree/jstree.hotkeys.js
  * @require framework/cms/js/jstree/jstree.contextmenu.js
+ * @require framework/cms/js/jstree/jstree.dblclickrename.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
  *
  * @require framework/shared/jquery.json-2.2.js
@@ -23,10 +25,10 @@ $(function () {
                 "dnd",
                 //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
                 //"types_from_url",
-                //"hotkeys",
-                "contextmenu",
+                "hotkeys",
+                //"contextmenu",
                 //"span",
-                //"dblclick_rename",
+                "dblclickrename",
                 //"tooltips",
                 //"select_created_nodes",
                 //"add_marker",
