@@ -1,3 +1,15 @@
+/*
+ * @require framework/cms/js/jstree/vakata.js
+ * @require framework/cms/js/jstree/jstree.js
+ * @require framework/cms/js/jstree/jstree.themes.js
+ * @require framework/cms/js/jstree/jstree.ui.js
+ * @require framework/cms/js/jstree/jstree.dnd.js
+ * @require framework/cms/js/jstree/jstree.contextmenu.js
+ * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
+ *
+ * @require framework/shared/jquery.json-2.2.js
+ * @require framework/shared/jquery.gracefulWebSocket.js
+ */
 "use strict";
 
 $(function () {
@@ -6,19 +18,19 @@ $(function () {
             // the list of plugins to include
             plugins : [
                 "themes",
-                "pedantic_html_data",
+                //"pedantic_html_data",
                 "ui",
-                "crrm",
-                "dnd_placeholder",
-                "types_from_url",
-                "hotkeys",
+                "dnd",
+                //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
+                //"types_from_url",
+                //"hotkeys",
                 "contextmenu",
-                "span",
-                "dblclick_rename",
-                "tooltips",
-                "select_created_nodes",
-                "add_marker",
-                "delta_updates",
+                //"span",
+                //"dblclick_rename",
+                //"tooltips",
+                //"select_created_nodes",
+                //"add_marker",
+                //"delta_updates",
             ],
             ui : {
                 // TODO:
@@ -29,6 +41,7 @@ $(function () {
                 initially_open : ($(this).attr("data-open-nodes") || "").split(" ")
             },
             themes : {
+                "theme" : "default",
                 "url" : $(this).attr("data-theme")
             },
             // Plugin configuration
@@ -84,7 +97,7 @@ $(function () {
                         }
                     };
 
-                    if (obj.attr(this._get_settings().types_from_url.type_attr) != "default") {
+                    //if (obj.attr(this._get_settings().types_from_url.type_attr) != "default") {
                         default_items = $.extend({
                             "create" : {
                                 "separator_before"  : false,
@@ -93,7 +106,7 @@ $(function () {
                                 "action"            : function (obj) { this.create(obj); }
                             },
                         }, default_items);
-                    }
+                    //}
 
                     return default_items;
                 }
