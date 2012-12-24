@@ -24,7 +24,13 @@
 
     <!-- only show nodes with namespace "pg" or "sec" in tree -->
     <xsl:if test="$ns = 'pg' or $ns = 'sec'">
-        <li rel='{$type}' id='node_{$id}'><ins class='jstree-icon'>&#160;</ins><a href=''><ins class='jstree-icon'>&#160;</ins><xsl:value-of select="$name" /></a><span><xsl:value-of select="$hint" /></span>
+        <li rel='{$type}' id='node_{$id}'>
+            <ins class='jstree-icon'>&#160;</ins>
+            <a href=''>
+                <ins class='jstree-icon'>&#160;</ins>
+                <xsl:value-of select="$name" />
+                <span><xsl:value-of select="$hint" />additional node info</span>
+            </a>
         <xsl:choose>
             <xsl:when test="count(node()) > 0">
                 <ul>

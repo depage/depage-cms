@@ -5,6 +5,7 @@
  * @require framework/cms/js/jstree/jstree.ui.js
  * @require framework/cms/js/jstree/jstree.dnd.js
  * @require framework/cms/js/jstree/jstree.hotkeys.js
+ * @require framework/cms/js/jstree/jstree.nodeinfo.js
  * @require framework/cms/js/jstree/jstree.contextmenu.js
  * @require framework/cms/js/jstree/jstree.dblclickrename.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
@@ -20,14 +21,14 @@ $(function () {
             // the list of plugins to include
             plugins : [
                 "themes",
-                //"pedantic_html_data",
+                //"pedantic_html_data", // @todo check if still needed
                 "ui",
                 "dnd",
                 //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
                 //"types_from_url",
                 "hotkeys",
                 //"contextmenu",
-                //"span",
+                "nodeinfo",
                 "dblclickrename",
                 //"tooltips",
                 //"select_created_nodes",

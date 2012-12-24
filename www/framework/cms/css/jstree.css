@@ -22,10 +22,8 @@
   min-height: 24px !important;
 }
 .jstree span {
-  margin-left: 10em;
-  font-style: italic;
-  color: #666;
-  font-size: 8px;
+  margin-left: 10px;
+  color: #999999;
 }
 
 #jstree-add-marker {
