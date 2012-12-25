@@ -7,6 +7,7 @@
  * @require framework/cms/js/jstree/jstree.hotkeys.js
  * @require framework/cms/js/jstree/jstree.nodeinfo.js
  * @require framework/cms/js/jstree/jstree.tooltips.js
+ * @require framework/cms/js/jstree/jstree.typesfromurl.js
  * @require framework/cms/js/jstree/jstree.contextmenu.js
  * @require framework/cms/js/jstree/jstree.dblclickrename.js
  * @require framework/cms/js/jstree/jstree.deltaupdates.js
@@ -27,9 +28,9 @@ $(function () {
                 "ui",
                 "dnd",
                 //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
-                //"types_from_url",
+                "typesfromurl",
                 "hotkeys",
-                //"contextmenu",
+                "contextmenu",
                 "nodeinfo",
                 "dblclickrename",
                 "tooltips",
@@ -62,7 +63,8 @@ $(function () {
                 },
                 "return" : function() {
                     // @todo bind enter key to prevent default so that we dont leave input on enter
-                    this.edit();
+                    var node = this;
+                    setTimeout(function () { node.edit(); }, 300);
                     return false;
                 }
             },
@@ -73,14 +75,25 @@ $(function () {
                             "separator_before"  : false,
                             "separator_after"   : false,
                             "label"             : "Rename",
-                            "action"            : function (obj) { this.rename(obj); }
+                            "action"            : function (data) {
+                                var inst = $.jstree._reference(data.reference), 
+                                    obj = inst.get_node(data.reference);
+                                inst.edit(obj);
+                            }
                         },
                         "remove" : {
                             "separator_before"  : false,
                             "icon"              : false,
                             "separator_after"   : false,
                             "label"             : "Delete",
-                            "action"            : function (obj) { this.remove(obj); }
+                            "action"            : function (data) {
+                                var inst = $.jstree._reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                if(inst.data.ui && inst.is_selected(obj)) {
+                                    obj = inst.get_selected();
+                                }
+                                inst.delete_node(obj);
+                            }
                         },
                         "ccp" : {
                             "separator_before"  : true,
@@ -93,36 +106,60 @@ $(function () {
                                     "separator_before"  : false,
                                     "separator_after"   : false,
                                     "label"             : "Cut",
-                                    "action"            : function (obj) { this.cut(obj); }
+                                    "action"            : function (data) {
+                                        var inst = $.jstree._reference(data.reference),
+                                            obj = inst.get_node(data.reference);
+                                        if(data.ui && inst.is_selected(obj)) {
+                                            obj = inst.get_selected();
+                                        }
+                                        inst.cut(obj);
+                                    }
                                 },
                                 "copy" : {
                                     "separator_before"  : false,
                                     "icon"              : false,
                                     "separator_after"   : false,
                                     "label"             : "Copy",
-                                    "action"            : function (obj) { this.copy(obj); }
+                                    "action"            : function (data) {
+                                        var inst = $.jstree._reference(data.reference),
+                                            obj = inst.get_node(data.reference);
+                                        if(data.ui && inst.is_selected(obj)) {
+                                            obj = inst.get_selected();
+                                        }
+                                        inst.copy(obj);
+                                    }
                                 },
                                 "paste" : {
                                     "separator_before"  : false,
                                     "icon"              : false,
                                     "separator_after"   : false,
                                     "label"             : "Paste",
-                                    "action"            : function (obj) { this.paste(obj); }
+                                    "action"            : function (data) {
+                                        var inst = $.jstree._reference(data.reference),
+                                            obj = inst.get_node(data.reference);
+                                        inst.paste(obj);
+                                    }
                                 }
                             }
                         }
                     };
 
-                    //if (obj.attr(this._get_settings().types_from_url.type_attr) != "default") {
+                    if (obj.attr(this.get_settings().typesfromurl.type_attr) != "default") {
                         default_items = $.extend({
                             "create" : {
                                 "separator_before"  : false,
                                 "separator_after"   : true,
                                 "label"             : "Create",
-                                "action"            : function (obj) { this.create(obj); }
+                                "action"            : function (data) {
+                                    var inst = $.jstree._reference(data.reference), 
+                                        obj = inst.get_node(data.reference);
+                                    inst.create_node(obj, {}, "last", function (new_node) {
+                                        setTimeout(function () { inst.edit(new_node); },0);
+                                    });
+                                }
                             },
                         }, default_items);
-                    //}
+                    }
 
                     return default_items;
                 }
