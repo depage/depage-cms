@@ -1958,50 +1958,6 @@ Some static functions and variables, unless you know exactly what you are doing 
 			}
 		}
 	});
-
-	// add core CSS
-	$(function() {
-		var css_string = '' +
-				'.jstree * { -webkit-box-sizing:content-box; -moz-box-sizing:content-box; box-sizing:content-box; }' +
-				'.jstree ul, .jstree li { display:block; margin:0 0 0 0; padding:0 0 0 0; list-style-type:none; } ' +
-				'.jstree li { display:block; min-height:18px; line-height:18px; white-space:nowrap; margin-left:18px; min-width:18px; } ' +
-				'.jstree-rtl li { margin-left:0; margin-right:18px; } ' +
-				'.jstree > ul > li { margin-left:0px; } ' +
-				'.jstree-rtl > ul > li { margin-right:0px; } ' +
-				'.jstree .jstree-icon { display:inline-block; text-decoration:none; margin:0; padding:0; vertical-align:top; } ' +
-				'.jstree .jstree-ocl { width:18px; height:18px; text-align:center; line-height:18px; cursor:pointer; vertical-align:top; } ' +
-				'.jstree a { display:inline-block; line-height:16px; height:16px; color:black; white-space:nowrap; padding:1px 2px; margin:0; } ' +
-				'.jstree a:focus { outline: none; } ' +
-				'li.jstree-open > ul { display:block; } ' +
-				'li.jstree-closed > ul { display:none; } ';
-		// Correct IE 6 (does not support the > CSS selector)
-		if($.jstree.IS_IE6) {
-			try { document.execCommand("BackgroundImageCache", false, true); } catch (err) { } // prevents flickers
-			css_string += '' +
-				'.jstree li { height:18px; margin-left:0; margin-right:0; } ' +
-				'.jstree li li { margin-left:18px; } ' +
-				'.jstree-rtl li li { margin-left:0px; margin-right:18px; } ' +
-				'li.jstree-open ul { display:block; } ' +
-				'li.jstree-closed ul { display:none !important; } ' +
-				'.jstree li a { display:inline; border-width:0 !important; padding:0px 2px !important; } ';
-		}
-		// Correct IE 7 (shifts anchor nodes onhover)
-		if($.jstree.IS_IE7) {
-			css_string += '.jstree li a { border-width:0 !important; padding:0px 2px !important; } ';
-		}
-		// Correct ff2 lack of display:inline-block
-		if($.jstree.IS_FF2) {
-			css_string += '' +
-				'.jstree .jstree-icon { display:-moz-inline-box; } ' +
-				'.jstree li { line-height:12px; } ' + // WHY??
-				'.jstree a { display:-moz-inline-box; } ';
-				/* за темите
-				'.jstree .jstree-no-icons .jstree-checkbox { display:-moz-inline-stack !important; } ';
-				*/
-		}
-		// the default stylesheet
-		$.vakata.css.add_sheet({ str : css_string, title : "jstree" });
-	});
 })(jQuery);
 
 })();

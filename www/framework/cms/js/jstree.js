@@ -9,6 +9,7 @@
  * @require framework/cms/js/jstree/jstree.tooltips.js
  * @require framework/cms/js/jstree/jstree.contextmenu.js
  * @require framework/cms/js/jstree/jstree.dblclickrename.js
+ * @require framework/cms/js/jstree/jstree.deltaupdates.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
  *
  * @require framework/shared/jquery.json-2.2.js
@@ -34,7 +35,7 @@ $(function () {
                 "tooltips",
                 //"select_created_nodes",
                 //"add_marker",
-                //"delta_updates",
+                "deltaupdates",
             ],
             ui : {
                 // TODO:
@@ -49,7 +50,7 @@ $(function () {
                 "url" : $(this).attr("data-theme")
             },
             // Plugin configuration
-            delta_updates : {
+            deltaupdates : {
                 "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
                 "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
                 "postURL" : $(this).attr("data-delta-updates-post-url"),
