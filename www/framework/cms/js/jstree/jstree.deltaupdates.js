@@ -176,7 +176,6 @@
                                     node.append(data.nodes[id]);
                                 }
 
-                                /*
                                 // reattach second level children
                                 second_level_childs.each(function () {
                                     var node = $("#" + $(this).attr("id"));
@@ -184,19 +183,17 @@
                                     if (!node.children("ul").length)
                                         node.append($(this).children("ul"));
                                 });
-                                */
                             }
                         }
-
                         // all jstree-open classes were lost: restore them
                         open_nodes.each(function () {
                             $("#" + $(this).attr("id")).filter(":has(li)").addClass("jstree-open");
                         });
-                        // jstree-clicked class was lost: restore it
-                        $("#" + clicked_node.attr("id")).children("a").addClass("jstree-clicked");
-
                         // fix up remaining jstree classes
-                        tree.jstree("clean_node");
+                        tree.jstree("clean_node", node);
+                        
+                        // jstree-clicked class was lost: restore it
+                        $("#" + clicked_node.attr("id")).children("a").click();
 
                         tree.attr("data-seq-nr", new_seq_nr);
                     }
