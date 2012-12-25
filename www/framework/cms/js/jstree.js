@@ -55,6 +55,17 @@ $(function () {
                 "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
                 "postURL" : $(this).attr("data-delta-updates-post-url"),
             },
+            hotkeys : {
+                "del" : function () { 
+                    this.delete_node(); 
+                    return false;
+                },
+                "return" : function() {
+                    // @todo bind enter key to prevent default so that we dont leave input on enter
+                    this.edit();
+                    return false;
+                }
+            },
             contextmenu : {
                 items : function (obj) {
                     var default_items = { // Could be a function that should return an object like this one
