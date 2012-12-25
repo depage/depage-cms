@@ -28,7 +28,7 @@ $(function () {
                 "ui",
                 "dnd",
                 //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
-                "typesfromurl",
+                //"typesfromurl",
                 "hotkeys",
                 "contextmenu",
                 "nodeinfo",

@@ -149,7 +149,7 @@ class ui_tree extends ui_base {
         $permissions = $this->xmldb->get_permissions($doc_id);
         $valid_children = $permissions->valid_children();
         $settings = array(
-            "types_from_url" => array(
+            "typesfromurl" => array(
                 "max_depth" => -2,
                 "max_children" => -2,
                 "valid_children" => self::valid_children_or_none($valid_children, $root_element_name),
@@ -158,7 +158,7 @@ class ui_tree extends ui_base {
         );
 
         $known_elements = $permissions->known_elements();
-        $types = &$settings["types_from_url"]["types"];
+        $types = &$settings["typesfromurl"]["types"];
         foreach ($known_elements as $element) {
             if ($element != $root_element_name) {
                 $setting = array();
