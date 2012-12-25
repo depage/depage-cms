@@ -903,6 +903,7 @@ class xmldb {
     /* private */
     // {{{ allow_move()
     private function allow_move($doc_id, $node_id, $target_id) {
+        // @todo check this function in detail (for copy)
         $query = $this->pdo->prepare(
             "SELECT name FROM {$this->table_xml} WHERE id = :node_id AND id_doc = :doc_id
             UNION ALL SELECT name FROM {$this->table_xml} WHERE id = :target_id AND id_doc = :doc_id"

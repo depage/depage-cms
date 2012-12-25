@@ -102,8 +102,7 @@
                         "doc_id" : tree.attr("data-doc-id"),
                         "id" : $(this).attr("id").replace("node_",""),
                         "target_id" : data.rslt.parent.attr("id").replace("node_",""),
-                        "position" : data.rslt.position,
-                        "copy" : data.rslt.cy ? 1 : 0
+                        "position" : data.rslt.position
                     };
 
                     _this._ajax_call({
@@ -122,8 +121,35 @@
                 });
             });
             // }}}
-            // {{{ event: remove.jstree
-            tree.bind("remove.jstree", function (e, data) {
+            // {{{ event: copy_node.jstree
+            tree.bind("copy_node.jstree", function (e, data) {
+                _this._init_update_seq();
+                data.rslt.obj.each(function (i) {
+                    var d = {
+                        "doc_id" : tree.attr("data-doc-id"),
+                        "id" : $(this).attr("id").replace("copy_node_",""),
+                        "target_id" : data.rslt.parent.attr("id").replace("node_",""),
+                        "position" : data.rslt.position
+                    };
+
+                    _this._ajax_call({
+                        operation : "copy_node",
+                        data : d,
+                        success : function (r) {
+                            if(r.status) {
+                                $(data.rslt.oc).attr("id", "node_" + r.id);
+                            }
+                            else {
+                                _this._rollback_in_order(this.seq, data.rlbk);
+                            }
+                        },
+                        rollback : data.rlbk,
+                    });
+                });
+            });
+            // }}}
+            // {{{ event: delete_node.jstree
+            tree.bind("delete_node.jstree", function (e, data) {
                 _this._init_update_seq();
                 data.rslt.obj.each(function () {
                     _this._ajax_call({
@@ -210,7 +236,7 @@
                 }
             },
             // }}}
-            // {{{ _rollback_ind_order
+            // {{{ _rollback_in_order
             _rollback_in_order : function (seq, rlbk) {
                 // only allow rollbacks in correct order
                 // in case rollback overwrites a successful update wait for a delta update

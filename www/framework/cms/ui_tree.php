@@ -44,6 +44,12 @@ class ui_tree extends ui_base {
         return $this->tree($this->docName);
     }
     // }}}
+    // {{{ error
+    public function error($error, $env) {
+        parent::error($error, $env);
+        //@todo return error in json format to catch from javascript
+    }
+    // }}}
     // {{{ tree()
     public function tree($docName) {
         $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
@@ -101,6 +107,18 @@ class ui_tree extends ui_base {
         $status = $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
+        }
+
+        return new \json(array("status" => $status));
+    }
+    // }}}
+    // {{{ copy_node
+    public function copy_node() {
+        $this->auth->enforce();
+
+        $status = $this->xmldb->copy_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        if ($status) {
+            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
         }
 
         return new \json(array("status" => $status));
