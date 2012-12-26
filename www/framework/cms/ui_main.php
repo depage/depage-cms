@@ -15,13 +15,15 @@ namespace depage\cms;
 use \html;
 
 class ui_main extends ui_base {
+    protected $autoEnforceAuth = false;
+
     // {{{ _getSubHandler
     static function _getSubHandler() {
         return array(
             'project/*' => '\depage\cms\ui_project',
             'project/*/tree/*' => '\depage\cms\ui_tree',
             'project/*/tree/*/fallback' => '\depage\cms\ui_socketfallback',
-            'edit/*' => 'cms_edit',
+            'project/*/edit/*' => '\depage\cms\ui_edit',
         );
     }
     // }}}

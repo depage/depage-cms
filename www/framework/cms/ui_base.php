@@ -17,7 +17,7 @@ use \html;
 class ui_base extends \depage_ui {
     protected $html_options = array();
     protected $basetitle = "";
-    protected $autoEnforceAuth = false;
+    protected $autoEnforceAuth = true;
 
     // {{{ _init
     public function _init(array $importVariables = array()) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/cms_edit.php
+ * @file    framework/cms/ui_edit.php
  *
  * depage cms edit module
  *
@@ -10,48 +10,32 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class cms_edit extends depage_ui {
-    // {{{ constructor
-    public function __construct($options = NULL) {
-        parent::__construct($options);
+namespace depage\cms;
 
-        // get database instance
-        $this->pdo = new db_pdo (
-            $this->options->db->dsn, // dsn
-            $this->options->db->user, // user
-            $this->options->db->password, // password
-            array(
-                'prefix' => $this->options->db->prefix, // database prefix
-            )
-        );
+use \html;
 
-        // get auth object
-        $this->auth = auth::factory(
-            $this->pdo, // db_pdo 
-            $this->options->auth->realm, // auth realm
-            DEPAGE_BASE, // domain
-            $this->options->auth->method // method
-        );
+class ui_edit extends ui_base {
+    // {{{ _init()
+    public function _init(array $importVariables = array()) {
+        parent::_init($importVariables);
 
-        // set html-options
-        $this->html_options = array(
-            'template_path' => __DIR__ . "/tpl/",
-            'clean' => "space",
-            'env' => $this->options->env,
-        );
-        $this->basetitle = depage::getName() . " " . depage::getVersion();
-        
+        if (!empty($this->urlSubArgs[0])) {
+            $this->projectName = $this->urlSubArgs[0];
+        }
+        if (!empty($this->urlSubArgs[1])) {
+            $this->docName = $this->urlSubArgs[1];
+        }
+
         // get cache instance
-        $cache = depage\cache\cache::factory("xmldb", array(
+        $cache = \depage\cache\cache::factory("xmldb", array(
             //'disposition' => "memory",
             //'disposition' => "uncached",
             'host' => "twins.local",
         ));
 
         // get xmldb instance
-        $projectname = "depage";
-        $this->prefix = $this->pdo->prefix . "_proj_" . $projectname;
-        $this->xmldb = new depage\xmldb\xmldb($this->prefix, $this->pdo, $cache, array(
+        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        $this->xmldb = new \depage\xmldb\xmldb($this->prefix, $this->pdo, $cache, array(
             "edit:text_headline",
             "edit:text_formatted",
         ));
@@ -87,7 +71,7 @@ class cms_edit extends depage_ui {
     public function index() {
         $this->auth->enforce();
 
-        $docName = "testpage";
+        $docName = $this->docName;
 
         // {{{ $pagedataXml
         $pagedataXml = '<?xml version="1.0" encoding="UTF-8"?>
@@ -133,8 +117,6 @@ class cms_edit extends depage_ui {
         //$this->xmldb->saveDoc("testpage", $doc);
 
         $docs = $this->xmldb->getDocList($docName);
-        $docId = $docs[$docName]->id;
-
         $doc = $this->xmldb->getDoc($docName);
 
         $xsl = new \DOMDocument();
@@ -164,7 +146,7 @@ class cms_edit extends depage_ui {
                  */
                 $nodelist = $values['value']->getBodyNodes();
 
-                $savexml = $this->xmldb->getSubdocByNodeId($docId, (int) $values['dbid']);
+                $savexml = $this->xmldb->getSubdocByNodeId($docName, (int) $values['dbid']);
                 $rootnode = $savexml->documentElement;
 
                 for ($i = $rootnode->childNodes->length - 1; $i >= 0; $i--) {
@@ -176,7 +158,7 @@ class cms_edit extends depage_ui {
                     $newnode = $savexml->importNode($node, true);
                     $rootnode->appendChild($newnode);
                 }
-                $this->xmldb->saveNode($docId, $savexml);
+                $this->xmldb->saveNode($docName, $savexml);
 
                 $form->clearSession();
             }

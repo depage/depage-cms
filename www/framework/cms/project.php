@@ -41,9 +41,9 @@ class project {
 
         return array(
             "depage" => 1,
-            "test" => 2,
         );
 
+        //@todo implement this correctly
         $sid = $this->user->sid;
         if ($all || $this->user->get_level_by_sid() == 1) {
             // get all projects for admins
