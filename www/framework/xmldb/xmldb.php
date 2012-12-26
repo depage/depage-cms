@@ -1497,7 +1497,9 @@ class xmldb {
      * @param    $stripwhitespace (bool) wether to strip whitespace
      *            from textnodes or not.
      */
-    public function saveNode($doc_id, $node, $target_id = null, $target_pos = -1, $stripwhitespace = true) {
+    public function saveNode($doc_id_or_name, $node, $target_id = null, $target_pos = -1, $stripwhitespace = true) {
+        $doc_id = $this->docExists($doc_id_or_name);
+
         $this->beginTransaction();
         
         //get all nodes in array
