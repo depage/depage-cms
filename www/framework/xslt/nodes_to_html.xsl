@@ -19,7 +19,13 @@
     <xsl:variable name="id" select="@db:id" />
     <xsl:variable name="type" select="name()" />
     <xsl:variable name="name" select="@name" />
-    <xsl:variable name="hint" select="@hint" />
+    <xsl:variable name="hint">
+        <xsl:value-of select="@hint" />
+        <xsl:choose>
+            <xsl:when test="$type = 'pg:separator'">—</xsl:when>
+            <xsl:otherwise><xsl:value-of select="substring($type, 4)" /></xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="ns" select="substring-before(name(), ':')" />
 
     <!-- only show nodes with namespace "pg" or "sec" in tree -->
@@ -29,7 +35,7 @@
             <a href=''>
                 <ins class='jstree-icon jstree-themeicon'>&#160;</ins>
                 <xsl:value-of select="$name" />
-                <span><xsl:value-of select="$hint" />additional node info</span>
+                <span><xsl:value-of select="$hint" /></span>
             </a>
             <xsl:choose>
                 <xsl:when test="count(node()) > 0">
