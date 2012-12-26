@@ -130,12 +130,12 @@ class cms_edit extends depage_ui {
 
         //$doc = new \DOMDocument();
         //$doc->loadXML($pagedataXml);
-        //$this->xmldb->save_doc("testpage", $doc);
+        //$this->xmldb->saveDoc("testpage", $doc);
 
-        $docs = $this->xmldb->get_doc_list($docName);
+        $docs = $this->xmldb->getDocList($docName);
         $docId = $docs[$docName]->id;
 
-        $doc = $this->xmldb->get_doc($docName);
+        $doc = $this->xmldb->getDoc($docName);
 
         $xsl = new \DOMDocument();
         $xsl->load(DEPAGE_FM_PATH . "xslt/cms_htmlform_edit.xsl", LIBXML_NOCDATA);
@@ -164,7 +164,7 @@ class cms_edit extends depage_ui {
                  */
                 $nodelist = $values['value']->getBodyNodes();
 
-                $savexml = $this->xmldb->get_subdoc_by_elementId($docId, (int) $values['dbid']);
+                $savexml = $this->xmldb->getSubdocByNodeId($docId, (int) $values['dbid']);
                 $rootnode = $savexml->documentElement;
 
                 for ($i = $rootnode->childNodes->length - 1; $i >= 0; $i--) {
@@ -176,7 +176,7 @@ class cms_edit extends depage_ui {
                     $newnode = $savexml->importNode($node, true);
                     $rootnode->appendChild($newnode);
                 }
-                $this->xmldb->save_node($docId, $savexml);
+                $this->xmldb->saveNode($docId, $savexml);
 
                 $form->clearSession();
             }

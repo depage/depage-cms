@@ -54,7 +54,7 @@ class ui_tree extends ui_base {
     public function tree($docName) {
         $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
 
-        $doc_info = $this->xmldb->get_doc_info($docName);
+        $doc_info = $this->xmldb->getDocInfo($docName);
         $doc_id = $doc_info->id;
 
         $h = new html("jstree.tpl", array(
@@ -79,7 +79,7 @@ class ui_tree extends ui_base {
         $this->auth->enforce();
 
         $node = $this->xmldb->build_node($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["node"]);
-        $id = $this->xmldb->add_node($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
+        $id = $this->xmldb->addNode($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
         $status = $id !== false;
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
@@ -92,8 +92,8 @@ class ui_tree extends ui_base {
     public function rename_node() {
         $this->auth->enforce();
 
-        $this->xmldb->set_attribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
-        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $this->xmldb->setAttribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
+        $parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->recordChange($_REQUEST["doc_id"], array($parent_id));
 
         return new \json(array("status" => 1));
@@ -103,8 +103,8 @@ class ui_tree extends ui_base {
     public function move_node() {
         $this->auth->enforce();
 
-        $old_parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $status = $this->xmldb->move_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $old_parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $status = $this->xmldb->moveNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
         }
@@ -116,7 +116,7 @@ class ui_tree extends ui_base {
     public function copy_node() {
         $this->auth->enforce();
 
-        $status = $this->xmldb->copy_node($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $status = $this->xmldb->copyNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
         }
@@ -128,8 +128,8 @@ class ui_tree extends ui_base {
     public function remove_node() {
         $this->auth->enforce();
 
-        $parent_id = $this->xmldb->get_parentId_by_elementId($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $ids = $this->xmldb->unlink_node($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $ids = $this->xmldb->unlinkNode($_REQUEST["doc_id"], $_REQUEST["id"]);
         $status = $ids !== false;
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($parent_id));
@@ -142,9 +142,9 @@ class ui_tree extends ui_base {
     // TODO: set icons?
     // {{{ types_settings
     public function types_settings() {
-        $doc_info = $this->xmldb->get_doc_info($this->docName);
+        $doc_info = $this->xmldb->getDocInfo($this->docName);
         $doc_id = $doc_info->id;
-        $root_element_name = $this->xmldb->get_nodeName_by_elementId($doc_id, $doc_info->rootid);
+        $root_element_name = $this->xmldb->getNodeNameByNodeId($doc_id, $doc_info->rootid);
 
         $permissions = $this->xmldb->get_permissions($doc_id);
         $valid_children = $permissions->valid_children();
@@ -219,7 +219,7 @@ class ui_tree extends ui_base {
 
     // {{{ get_html_nodes
     protected function get_html_nodes($doc_name) {
-        $doc = $this->xmldb->get_doc($doc_name);
+        $doc = $this->xmldb->getDoc($doc_name);
         $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
 
         return current($html);
