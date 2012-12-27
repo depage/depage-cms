@@ -37,6 +37,8 @@ class xmldb {
 
     protected $table_docs;
     protected $table_xml;
+
+    private $doctypeHandlers = array();
     // }}}
 
     /* public */
@@ -238,7 +240,11 @@ class xmldb {
                 $this->namespaces[] = $this->db_ns;
 
                 $query = $this->pdo->prepare(
-                    "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
+                    "SELECT 
+                        xml.id AS id, 
+                        xml.name AS name, 
+                        xml.type AS type, 
+                        xml.value AS value
                     FROM {$this->table_xml} AS xml
                     WHERE xml.id = :id AND xml.id_doc = :doc_id"
                 );
@@ -431,8 +437,8 @@ class xmldb {
     public function unlinkNode($doc_id_or_name, $node_id) {
         $doc_id = $this->docExists($doc_id_or_name);
 
-        if ($doc_id !== false && $this->allow_unlink($doc_id, $node_id)) {
-            return $this->unlinkNode($doc_id, $node_id);
+        if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedUnlink($node_id)) {
+            return $this->unlinkNodeById($doc_id, $node_id);
         } else {
             return false;
         }
@@ -442,7 +448,7 @@ class xmldb {
     public function addNode($doc_id_or_name, $node, $target_id, $target_pos) {
         $doc_id = $this->docExists($doc_id_or_name);
 
-        if ($doc_id !== false && $this->allow_add($doc_id, $node, $target_id)) {
+        if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedAdd($node, $target_id)) {
             return $this->saveNode($doc_id, $node, $target_id, $target_pos, true);
         } else {
             return false;
@@ -584,11 +590,7 @@ class xmldb {
 
         $doc_id = $this->docExists($doc_id_or_name);
 
-        if ($doc_id !== false) {
-            if (!$this->allow_move($doc_id, $node_id, $target_id)) {
-                //return false;
-            }
-
+        if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedMove($node_id, $target_id)) {
             $node_parent_id = $this->getParentIdByNodeId($doc_id, $node_id);
             $node_pos = $this->getPosByNodeId($doc_id, $node_id);
             
@@ -755,11 +757,7 @@ class xmldb {
     public function copyNode($doc_id_or_name, $node_id, $target_id, $target_pos) {
         $doc_id = $this->docExists($doc_id_or_name);
         
-        if ($doc_id !== false) {
-            if (!$this->allow_move($doc_id, $node_id, $target_id)) {
-                return false;
-            }
-
+        if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedMove($node_id, $target_id)) {
             $xml_doc = $this->getSubdocByNodeId($doc_id, $node_id, false);
             $root_node = $xml_doc;
             
@@ -979,8 +977,8 @@ class xmldb {
     }
     // }}}
 
-    // {{{ get_permissions()
-    public function get_permissions($doc_id_or_name) {
+    // {{{ getPermissions()
+    public function getPermissions($doc_id_or_name) {
         // @todo get this from document type
         $doc_id = $this->docExists($doc_id_or_name);
 
@@ -996,54 +994,25 @@ class xmldb {
     // }}}
 
     /* private */
-    // {{{ allow_move()
-    private function allow_move($doc_id, $node_id, $target_id) {
-        return true;
+    // {{{ getDoctypeHandler()
+    public function getDoctypeHandler($doc_id) {
+        if (!isset($this->doctypeHandlers[$doc_id])) {
+            $className = $this->getDocInfo($doc_id)->type;
 
-        // @todo check this function in detail (for copy)
-        // @todo put this into handler for document type
-        $query = $this->pdo->prepare(
-            "SELECT name FROM {$this->table_xml} WHERE id = :node_id AND id_doc = :doc_id
-            UNION ALL SELECT name FROM {$this->table_xml} WHERE id = :target_id AND id_doc = :doc_id"
-        );
-        $query->execute(array(
-            'doc_id' => $doc_id,
-            'node_id' => $node_id,
-            'target_id' => $target_id,
-        ));
+            if (empty($className)) {
+                $handler = new xmldoctypes\base($this, $doc_id);
+            } else {
+                $className = "\\" . $className;
+                $handler = new $className($this, $doc_id);
+            }
 
-        $node = $query->fetchObject();
-        $target = $query->fetchObject();
-
-        $permissions = $this->get_permissions($doc_id);
-
-        return $permissions->is_element_allowed_in($node->name, $target->name);
-    }
-    // }}}
-    // {{{ allow_add()
-    private function allow_add($doc_id, $node, $target_id) {
-        // @todo add this to handler for document type
-        $target_name = $this->getNodeNameByNodeId($doc_id, $target_id);
-        if ($node->nodeType == XML_DOCUMENT_NODE) {
-            $node = $node->documentElement;
+            $this->doctypeHandlers[$doc_id] = $handler;
         }
-        $node_name = $node->nodeName;
 
-        $permissions = $this->get_permissions($doc_id);
-
-        return $permissions->is_element_allowed_in($node_name, $target_name);
+        return $this->doctypeHandlers[$doc_id];
     }
     // }}}
-    // {{{ allow_unlink()
-    private function allow_unlink($doc_id, $node_id) {
-        // @todo add this into handler for document type
-        $node_name = $this->getNodeNameByNodeId($doc_id, $node_id);
-        $permissions = $this->get_permissions($doc_id);
-
-        return $permissions->is_unlink_allowed_of($node_name);
-    }
-    // }}}
-
+    
     // {{{ beginTransaction()
     private function beginTransaction() {
         if ($this->transaction == 0) {

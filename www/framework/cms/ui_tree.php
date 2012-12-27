@@ -55,13 +55,14 @@ class ui_tree extends ui_base {
         $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
 
         $doc_info = $this->xmldb->getDocInfo($docName);
-        $doc_id = $doc_info->id;
+
+        $this->xmldb->getDoctypeHandler($doc_info->id);
 
         $h = new html("jstree.tpl", array(
             'actionUrl' => $actionUrl,
-            'doc_id' => $doc_id,
+            'doc_id' => $doc_info->id,
             'root_id' => $doc_info->rootid, 
-            'seq_nr' => $this->get_current_seq_nr($doc_id),
+            'seq_nr' => $this->get_current_seq_nr($doc_info->id),
             'nodes' => $this->get_html_nodes($docName),
         ), $this->html_options); 
 
@@ -146,7 +147,7 @@ class ui_tree extends ui_base {
         $doc_id = $doc_info->id;
         $root_element_name = $this->xmldb->getNodeNameByNodeId($doc_id, $doc_info->rootid);
 
-        $permissions = $this->xmldb->get_permissions($doc_id);
+        $permissions = $this->xmldb->getPermissions($doc_id);
         $valid_children = $permissions->valid_children();
         $settings = array(
             "typesfromurl" => array(
@@ -198,7 +199,7 @@ class ui_tree extends ui_base {
     // TODO: disable
     // {{{ add_permissions
     public function add_permissions($doc_id, $element, $parent) {
-        $permissions = $this->xmldb->get_permissions($doc_id);
+        $permissions = $this->xmldb->getPermissions($doc_id);
         $permissions->allow_element_in($element, $parent);
 
         $this->xmldb->set_permissions($doc_id, $permissions);
