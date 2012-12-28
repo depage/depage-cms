@@ -56,8 +56,6 @@ class ui_tree extends ui_base {
 
         $doc_info = $this->xmldb->getDocInfo($docName);
 
-        $this->xmldb->getDoctypeHandler($doc_info->id);
-
         $h = new html("jstree.tpl", array(
             'actionUrl' => $actionUrl,
             'doc_id' => $doc_info->id,
@@ -94,7 +92,7 @@ class ui_tree extends ui_base {
         $this->auth->enforce();
 
         $this->xmldb->setAttribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
-        $parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->recordChange($_REQUEST["doc_id"], array($parent_id));
 
         return new \json(array("status" => 1));
@@ -104,7 +102,7 @@ class ui_tree extends ui_base {
     public function move_node() {
         $this->auth->enforce();
 
-        $old_parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $old_parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $status = $this->xmldb->moveNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
@@ -129,7 +127,7 @@ class ui_tree extends ui_base {
     public function remove_node() {
         $this->auth->enforce();
 
-        $parent_id = $this->xmldb->getParentIdByNodeId($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $ids = $this->xmldb->unlinkNode($_REQUEST["doc_id"], $_REQUEST["id"]);
         $status = $ids !== false;
         if ($status) {
@@ -145,7 +143,7 @@ class ui_tree extends ui_base {
     public function types_settings() {
         $doc_info = $this->xmldb->getDocInfo($this->docName);
         $doc_id = $doc_info->id;
-        $root_element_name = $this->xmldb->getNodeNameByNodeId($doc_id, $doc_info->rootid);
+        $root_element_name = $this->xmldb->getNodeNameById($doc_id, $doc_info->rootid);
 
         $permissions = $this->xmldb->getPermissions($doc_id);
         $valid_children = $permissions->valid_children();

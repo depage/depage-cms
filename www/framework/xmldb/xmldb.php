@@ -471,8 +471,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            $target_id = $this->getParentIdByNodeId($doc_id, $id_to_replace);
-            $target_pos = $this->getPosByNodeId($doc_id, $id_to_replace);
+            $target_id = $this->getParentIdById($doc_id, $id_to_replace);
+            $target_pos = $this->getPosById($doc_id, $id_to_replace);
             
             $this->unlinkNodeById($doc_id, $id_to_replace, array(), true);
 
@@ -536,8 +536,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            $target_parent_id = $this->getParentIdByNodeId($doc_id, $target_id);
-            $target_pos = $this->getPosByNodeId($doc_id, $target_id);
+            $target_parent_id = $this->getParentIdById($doc_id, $target_id);
+            $target_pos = $this->getPosById($doc_id, $target_id);
             
             $success = $this->moveNode($doc_id, $node_id, $target_parent_id, $target_pos);
         } else {
@@ -562,8 +562,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            $target_parent_id = $this->getParentIdByNodeId($doc_id, $target_id);
-            $target_pos = $this->getPosByNodeId($doc_id, $target_id) + 1;
+            $target_parent_id = $this->getParentIdById($doc_id, $target_id);
+            $target_pos = $this->getPosById($doc_id, $target_id) + 1;
             
             $success = $this->moveNode($doc_id, $node_id, $target_parent_id, $target_pos);
         } else {
@@ -591,8 +591,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedMove($node_id, $target_id)) {
-            $node_parent_id = $this->getParentIdByNodeId($doc_id, $node_id);
-            $node_pos = $this->getPosByNodeId($doc_id, $node_id);
+            $node_parent_id = $this->getParentIdById($doc_id, $node_id);
+            $node_pos = $this->getPosById($doc_id, $node_id);
             
             if ($target_id == $node_parent_id && $target_pos > $node_pos) {
                 $target_pos--;
@@ -705,8 +705,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            $target_parent_id = $this->getParentIdByNodeId($doc_id, $target_id);
-            $target_pos = $this->getPosByNodeId($doc_id, $target_id);
+            $target_parent_id = $this->getParentIdById($doc_id, $target_id);
+            $target_pos = $this->getPosById($doc_id, $target_id);
             
             $success = $this->copyNode($doc_id, $node_id, $target_parent_id, $target_pos);
         } else {
@@ -731,8 +731,8 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            $target_parent_id = $this->getParentIdByNodeId($doc_id, $target_id);
-            $target_pos = $this->getPosByNodeId($doc_id, $target_id) + 1;
+            $target_parent_id = $this->getParentIdById($doc_id, $target_id);
+            $target_pos = $this->getPosById($doc_id, $target_id) + 1;
             
             $success = $this->copyNode($doc_id, $node_id, $target_parent_id, $target_pos);
         } else {
@@ -916,7 +916,7 @@ class xmldb {
     }
     // }}}
     
-    // {{{ getParentIdByNodeId
+    // {{{ getParentIdById
     /**
      * gets parent db-id by one of its child_nodes-id
      *
@@ -925,7 +925,7 @@ class xmldb {
      * @return    $parent_id (id) db-id of parent node, false, if
      *            node doesn't exist.
      */
-    public function getParentIdByNodeId($doc_id_or_name, $id) {
+    public function getParentIdById($doc_id_or_name, $id) {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
@@ -946,7 +946,7 @@ class xmldb {
         return false;
     }
     // }}}
-    // {{{ getNodeNameByNodeId
+    // {{{ getNodeNameById
     /**
      * gets node_name by node db-id
      *
@@ -955,7 +955,7 @@ class xmldb {
      * @return    $node_name (string) name of node, false, if
      *            node doesn't exist.
      */
-    public function getNodeNameByNodeId($doc_id_or_name, $id) {
+    public function getNodeNameById($doc_id_or_name, $id) {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
@@ -983,10 +983,7 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         if ($doc_id !== false) {
-            // @todo get from doc type
-            $permissions = new permissions();
-
-            return $permissions;
+            return $this->getDoctypeHandler($doc_id)->getPermissions();
         } else {
             return false;
         }
@@ -995,7 +992,7 @@ class xmldb {
 
     /* private */
     // {{{ getDoctypeHandler()
-    public function getDoctypeHandler($doc_id) {
+    protected function getDoctypeHandler($doc_id) {
         if (!isset($this->doctypeHandlers[$doc_id])) {
             $className = $this->getDocInfo($doc_id)->type;
 
@@ -1079,7 +1076,7 @@ class xmldb {
     }
     // }}}
     
-    // {{{ getPosByNodeId
+    // {{{ getPosById
     /**
      * gets node position in its parents childlist by node db-id.
      *
@@ -1087,7 +1084,7 @@ class xmldb {
      *
      * @return    $pos (int) position in node parents childlist
      */
-    private function getPosByNodeId($doc_id, $id) {
+    private function getPosById($doc_id, $id) {
         $query = $this->pdo->prepare(
             "SELECT xml.pos AS pos
             FROM {$this->table_xml} AS xml
@@ -1571,8 +1568,8 @@ class xmldb {
 
         if ($node_array[0]['id'] != null && $target_id === null) {
             //set target_id/pos/doc
-            $target_id = $this->getParentIdByNodeId($doc_id, $node_array[0]['id']);
-            $target_pos = $this->getPosByNodeId($doc_id, $node_array[0]['id']);
+            $target_id = $this->getParentIdById($doc_id, $node_array[0]['id']);
+            $target_pos = $this->getPosById($doc_id, $node_array[0]['id']);
 
             if ($target_id === false) {
                 $target_id = null;
@@ -1585,7 +1582,7 @@ class xmldb {
             $target_id = null;
             $target_pos = 0;
         } else if ($target_id !== null) {
-            $parent_id = $this->getParentIdByNodeId($doc_id, $target_id);
+            $parent_id = $this->getParentIdById($doc_id, $target_id);
             //unlink child nodes, if target is document
             if ($parent_id === false) {
                 $query = $this->pdo->prepare(
