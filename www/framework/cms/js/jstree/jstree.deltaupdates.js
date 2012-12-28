@@ -67,7 +67,7 @@
                             $(data.rslt.obj).attr("id", "node_" + r.id);
                         }
                         else {
-                            _this._rollback_in_order(this.seq, data.rlbk);
+                            _this.refresh();
                         }
                     },
                     rollback : data.rlbk,
@@ -87,7 +87,7 @@
                     data : d,
                     success : function (r) {
                         if(!r.status) {
-                            _this._rollback_in_order(this.seq, data.rlbk);
+                            _this.refresh();
                         }
                     },
                     rollback : data.rlbk,
@@ -113,7 +113,7 @@
                                 $(data.rslt.oc).attr("id", "node_" + r.id);
                             }
                             else {
-                                _this._rollback_in_order(this.seq, data.rlbk);
+                                _this.refresh();
                             }
                         },
                         rollback : data.rlbk,
@@ -140,7 +140,7 @@
                                 $(data.rslt.oc).attr("id", "node_" + r.id);
                             }
                             else {
-                                _this._rollback_in_order(this.seq, data.rlbk);
+                                _this.refresh();
                             }
                         },
                         rollback : data.rlbk,
@@ -160,7 +160,7 @@
                         },
                         success : function (r) {
                             if(!r.status) {
-                                _this._rollback_in_order(this.seq, data.rlbk);
+                                _this.refresh();
                             }
                         },
                         rollback : data.rlbk,
