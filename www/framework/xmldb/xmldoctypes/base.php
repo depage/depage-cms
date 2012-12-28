@@ -32,11 +32,6 @@ class base {
     
     // {{{ isAllowedIn
     function isAllowedIn($nodeName, $targetNodeName) {
-        $log = new \log();
-        $log->log($this->validParents);
-        $log->log("nodeName: " . $nodeName);
-        $log->log("targetNodeName: " . $targetNodeName);
-
         if (isset($this->validParents['*'])) {
             return in_array('*', $this->validParents['*']) || in_array($targetNodeName, $this->validParents['*']);
         } else if (isset($this->validParents[$nodeName])) {
