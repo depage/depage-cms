@@ -75,10 +75,8 @@ class ui_tree extends ui_base {
      * @param $position position for new child in parent
      */
     public function create_node() {
-        $this->auth->enforce();
-
-        $node = $this->xmldb->build_node($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["node"]);
-        $id = $this->xmldb->addNode($_REQUEST["doc_id"], $node, $_REQUEST["target_id"], $_REQUEST["position"]);   
+        $this->log->log($_REQUEST);
+        $id = $this->xmldb->addNodeByName($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["target_id"], $_REQUEST["position"]);   
         $status = $id !== false;
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
@@ -89,8 +87,6 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ rename_node
     public function rename_node() {
-        $this->auth->enforce();
-
         $this->xmldb->setAttribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
         $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $this->recordChange($_REQUEST["doc_id"], array($parent_id));
@@ -100,8 +96,6 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ move_node
     public function move_node() {
-        $this->auth->enforce();
-
         $old_parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $status = $this->xmldb->moveNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
@@ -113,8 +107,6 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ copy_node
     public function copy_node() {
-        $this->auth->enforce();
-
         $status = $this->xmldb->copyNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
@@ -125,8 +117,6 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ remove_node
     public function remove_node() {
-        $this->auth->enforce();
-
         $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
         $ids = $this->xmldb->unlinkNode($_REQUEST["doc_id"], $_REQUEST["id"]);
         $status = $ids !== false;
@@ -146,49 +136,15 @@ class ui_tree extends ui_base {
         $root_element_name = $this->xmldb->getNodeNameById($doc_id, $doc_info->rootid);
 
         $permissions = $this->xmldb->getPermissions($doc_id);
-        $valid_children = $permissions->valid_children();
+        $this->log->log($permissions);
         $settings = array(
             "typesfromurl" => array(
                 "max_depth" => -2,
                 "max_children" => -2,
-                "valid_children" => self::valid_children_or_none($valid_children, $root_element_name),
-                "types" => array(),
+                "valid_parents" => $permissions->validParents,
+                "available_nodes" => $permissions->availableNodes
             ),
         );
-
-        $known_elements = $permissions->known_elements();
-        $types = &$settings["typesfromurl"]["types"];
-        foreach ($known_elements as $element) {
-            if ($element != $root_element_name) {
-                $setting = array();
-
-                /* TODO: disallow drags? is it better if every element is draggable even if it is not movable?
-                if (!$permissions->is_element_allowed_in_any($element)) {
-                    $setting["start_drag"] = false;
-                    $setting["move_node"] = false;
-                }
-                */
-
-                if (!$permissions->is_unlink_allowed_of($element)) {
-                    $setting["delete_node"] = false;
-                    $setting["remove"] = false;
-                }
-
-                if (isset($valid_children[$element])) {
-                    $setting["valid_children"] = $valid_children[$element];
-                } else if (isset($valid_children[\depage\xmldb\permissions::default_element])) {
-                    $setting["valid_children"] = self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element);
-                }
-
-                $types[$element] = $setting;
-            }
-        }
-
-        if (!isset($types[\depage\xmldb\permissions::default_element])) {
-            $types[\depage\xmldb\permissions::default_element] = array(
-                "valid_children" => self::valid_children_or_none($valid_children, \depage\xmldb\permissions::default_element),
-            );
-        }
 
         return new \json($settings);
     }

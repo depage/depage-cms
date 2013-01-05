@@ -15,8 +15,6 @@ namespace depage\cms;
 use \html;
 
 class ui_project extends ui_base {
-    protected $autoEnforceAuth = true;
-
     // {{{ _init
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);

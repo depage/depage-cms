@@ -4,6 +4,10 @@ namespace depage\xmldb\xmldoctypes;
     
 class base {
     // {{{ variables
+    // list of elements that may created by a user
+    protected $availableNodes = array();
+
+    // list of valid parents given by nodename
     protected $validParents = array(
         '*' => array(
             '*',
@@ -20,13 +24,49 @@ class base {
     
     // {{{ getPermissions
     function getPermissions() {
-        return array();
+        return (object) array(
+            'validParents' => $this->getValidParents(),
+            'availableNodes' => $this->getAvailableNodes(),
+        );
     }
     // }}}
     
     // {{{ getValidParents
     function getValidParents() {
         return $this->validParents;
+    }
+    // }}}
+    
+    // {{{ getAvailableNodes 
+    function getAvailableNodes() {
+        return $this->availableNodes;
+    }
+    // }}}
+    
+    // {{{ getNewNodeFor
+    function getNewNodeFor($name) {
+        if (isset($this->availableNodes[$name])) {
+            $nodeInfo = $this->availableNodes[$name];;
+            $docInfo = $this->xmldb->getNamespacesAndEntities($this->docId);
+
+            $xml = "<$name {$docInfo->namespaces}";
+            if (!empty($nodeInfo->new)) {
+                $xml .= " name=\"" . htmlspecialchars($nodeInfo['new']) . "\"";
+            }
+            if (isset($nodeInfo->attributes)) {
+                foreach ($nodeInfo->attributes as $attr => $value) {
+                    $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
+                }
+            }
+            $xml .= "/>";
+
+            $doc = new \DOMDocument;
+            $doc->loadXML($xml);
+
+            return $doc->documentElement;
+        } else {
+            return false;
+        }
     }
     // }}}
     
@@ -58,7 +98,10 @@ class base {
     
     // {{{ isAllowedAdd
     function isAllowedAdd($node, $targetId) {
-        return true;
+        return $this->isAllowedIn(
+            $node->nodeName, 
+            $this->xmldb->getNodeNameById($this->docId, $targetId)
+        );
     }
     // }}}
 }  

@@ -455,6 +455,21 @@ class xmldb {
         }
     }
     // }}}
+    // {{{ addNodeByName()
+    public function addNodeByName($doc_id_or_name, $name, $target_id, $target_pos) {
+        $doc_id = $this->docExists($doc_id_or_name);
+
+        $dth = $this->getDoctypeHandler($doc_id);
+        if ($doc_id !== false && $dth->isAllowedIn($name, $target_id)) {
+            $newNode = $dth->getNewNodeFor($name);
+            if ($newNode) {
+                $this->addNode($doc_id_or_name, $node, $target_id, $target_pos);
+                return true;
+            }
+        }
+        return false;
+    }
+    // }}}
     // {{{ replaceNode()
     /**
      * replaces a node in database
