@@ -28,7 +28,7 @@ $(function () {
                 "ui",
                 "dnd",
                 //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
-                //"typesfromurl",
+                "typesfromurl",
                 "hotkeys",
                 "contextmenu",
                 "nodeinfo",
@@ -144,6 +144,8 @@ $(function () {
                         }
                     };
 
+                    console.log(this.get_settings().typesfromurl);
+                    /*
                     if (obj.attr(this.get_settings().typesfromurl.type_attr) != "default") {
                         default_items = $.extend({
                             "create" : {
@@ -160,6 +162,7 @@ $(function () {
                             },
                         }, default_items);
                     }
+                    */
 
                     return default_items;
                 }

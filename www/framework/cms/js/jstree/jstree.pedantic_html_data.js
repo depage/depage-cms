@@ -5,7 +5,7 @@
  */
 (function ($) {
     $.jstree.plugin("pedantic_html_data", {
-        __init : function () { 
+        __construct : function () { 
             this.data.pedantic_html_data.original_container_html = this.get_container().children().clone(true);
             // LI nodes must not contain whitespace - otherwise nodes appear a bit to the right
         },

@@ -15,8 +15,7 @@
                     if($.inArray(data.func, this.data.typesfromurl.attach_to) !== -1) {
                         var s = this.get_settings().typesfromurl.types,
                             t = this.get_type(data.args[0]);
-                        if(
-                            ( 
+                        if(( 
                                 (s[t] && typeof s[t][data.func] !== "undefined") || 
                                 (s["default"] && typeof s["default"][data.func] !== "undefined")
                             ) && !this.check(data.func, data.args[0])
@@ -33,7 +32,9 @@
                 // defines the maximum depth of the tree (-1 means unlimited, -2 means disable max_depth checking)
                 max_depth: -2,
                 // defines valid node types for the root nodes
-                valid_children: "none",
+                valid_children: [],
+                valid_parents: [],
+                available_node: [],
 
                 // where is the type stores (the rel attribute of the LI element)
                 type_attr : "rel",
@@ -65,13 +66,16 @@
                         this.settings = $.extend(true, {}, this.settings, new_types_settings);
 
                         var s = _this.get_settings().typesfromurl;
-                        var types = s.types, 
-                            attr  = s.type_attr, 
+                        var types = s.available_nodes, 
                             icons_css = ""; 
 
+                        console.log(this.settings);
+                        console.log(types);
+                        //console.log(_this.data.typesfromurl);
+                        /*
                         $.each(types, function (i, tp) {
                             $.each(tp, function (k, v) { 
-                                if(!/^(max_depth|max_children|icon|valid_children)$/.test(k)) { _this.data.typesfromurl.attach_to.push(k); }
+                                if(!/^(max_depth|max_children|icon|valid_parents|available_nodes)$/.test(k)) { _this.data.typesfromurl.attach_to.push(k); }
                             });
                             if(!tp.icon) { return true; }
                             if( tp.icon.image || tp.icon.position) {
@@ -84,6 +88,7 @@
                             }
                         });
                         if(icons_css != "") { $.vakata.css.add_sheet({ 'str' : icons_css }); }
+                        */
                     });
                 },
                 get_type : function (obj) {

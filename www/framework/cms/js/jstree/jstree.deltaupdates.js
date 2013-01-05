@@ -42,8 +42,8 @@
 
             var _this = this;
 
-            // {{{ event: create.jstree
-            tree.bind("create.jstree", function (e, data) {
+            // {{{ event: create_node.jstree
+            tree.bind("create_node.jstree", function (e, data) {
                 var parent = data.rslt.parent;
                 if (parent == -1) {
                     parent = tree;
