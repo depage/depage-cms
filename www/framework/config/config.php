@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class config implements Iterator {
+class config implements Iterator, arrayaccess {
     protected $data = array();
 
     // {{{ constructor
@@ -268,6 +268,27 @@ class config implements Iterator {
     // {{{ valid()
     public function valid() {
         return $this->current() !== false;
+    }
+    // }}}
+    
+    // {{{ offsetSet()
+    public function offsetSet($offset, $value) {
+        // make readonly
+    }
+    // }}}
+    // {{{ offsetExists()
+    public function offsetExists($offset) {
+        return isset($this->data[$offset]);
+    }
+    // }}}
+    // {{{ offsetUnset()
+    public function offsetUnset($offset) {
+        // make readonly
+    }
+    // }}}
+    // {{{ offsetGet()
+    public function offsetGet($offset) {
+        return isset($this->data[$offset]) ? $this->data[$offset] : null;
     }
     // }}}
 }
