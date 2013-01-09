@@ -132,8 +132,25 @@
             base.playing = false;
         };
         /* }}} */
+        /* {{{ imagesReadyFor() */
+        base.imagesReadyFor = function(n) {
+            var $images = $("img", divs[n]);
+            var allLoaded = true;
+            $images.each(function() {
+                allLoaded = allLoaded && this.complete;
+            });
+
+            return allLoaded;
+        };
+        /* }}} */
         /* {{{ show() */
-        base.show = function(n) {
+        base.show = function(n, waitForImagesToLoad) {
+            waitForImagesToLoad = (typeof force === "undefined") ? !base.options.waitForImagesToLoad : waitForImagesToLoad;
+            if (waitForImagesToLoad && !base.imagesReadyFor(n)) {
+                setTimeout( function() { base.show(n); }, 100);
+                return false;
+            }
+
             base.$el.triggerHandler("depage.carrousel.show", [n]);
 
             if (n == base.activeSlide) {
@@ -224,11 +241,12 @@
     $.depage.carrousel.defaultOptions = {
         speed: 3000,
         pause: 3000,
+        waitForImagesToLoad: true,
         direction: "horizontal"
     };
     /* }}} */
     
-    /* {{{ $.fn.depageSlideshow() */
+    /* {{{ $.fn.depageCarrousel() */
     $.fn.depageCarrousel = function(options){
         return this.each(function(){
             (new $.depage.carrousel(this, options));
