@@ -53,7 +53,8 @@ class db_pdo {
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // disable emulated prepares
-        $this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // @todo check why this does not work with some queries
+        //$this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     }
     /* }}} */
 
