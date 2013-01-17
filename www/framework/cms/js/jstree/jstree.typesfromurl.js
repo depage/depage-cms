@@ -9,7 +9,8 @@
     $.jstree.plugin("typesfromurl", {
         __construct : function () {
             this._load_type_settings();
-            this.data.typesfromurl.attach_to = [];
+
+            /* DEPRECATE
             this.get_container()
                 .bind("before.jstree", $.proxy(function (e, data) { 
                     if($.inArray(data.func, this.data.typesfromurl.attach_to) !== -1) {
@@ -25,81 +26,170 @@
                         }
                     }
                 }, this));
+                */
             },
+
             defaults : {
                 // defines maximum number of root nodes (-1 means unlimited, -2 means disable max_children checking)
                 max_children: -2,
                 // defines the maximum depth of the tree (-1 means unlimited, -2 means disable max_depth checking)
                 max_depth: -2,
+
+                // where is the type stored (the rel attribute of the LI element)
+                type_attr: "rel",
+
                 // defines valid node types for the root nodes
-                valid_children: [],
-                valid_parents: [],
-                available_node: [],
+                valid_children: {},
+                valid_parents: {},
+                available_nodes: {},
 
-                // where is the type stores (the rel attribute of the LI element)
-                type_attr : "rel",
-                // a list of types
-                types : {
-                    // the default type
-                    "default" : {
-                        "max_children": -2,
-                        "max_depth": -2,
-                        "valid_children": "none",
-                        "delete_node": false,
-                        "remove" : false
-
-                        // Bound functions - you can bind any other function here (using boolean or function)
-                        //"select_node": true,
-                        //"open_node": true,
-                        //"close_node": true,
-                        //"create_node": true,
-                    }
-                }
+                // bound functions - you can bind any other function here (using boolean or function)
+                "delete_node": false,
+                "move_node": true
+                //"select_node": true,
+                //"open_node": true,
+                //"close_node": true,
+                //"create_node": true
             },
+
             _fn : {
                 _load_type_settings : function() {
                     var _this = this;
                     var url = this.get_container().attr("data-types-settings-url");
 
                     $.getJSON(url, function(new_types_settings) {
-                        new_types_settings.typesfromurl.attach_to = [];
-                        this.settings = $.extend(true, {}, this.settings, new_types_settings);
+                        // get a reference to the settings
+                        var s =  _this.get_settings(true).typesfromurl;
 
-                        var s = _this.get_settings().typesfromurl;
-                        var types = s.available_nodes, 
-                            icons_css = ""; 
+                        // write the new settings
+                        $.extend(true, s, new_types_settings.typesfromurl);
 
-                        console.log(this.settings);
-                        console.log(types);
-                        //console.log(_this.data.typesfromurl);
-                        /*
-                        $.each(types, function (i, tp) {
-                            $.each(tp, function (k, v) { 
-                                if(!/^(max_depth|max_children|icon|valid_parents|available_nodes)$/.test(k)) { _this.data.typesfromurl.attach_to.push(k); }
+                        // add create context menu
+                        $.each(s.available_nodes, function (type, node) {
+
+                            // check create is not disabled
+                            if (typeof(node.attributes.create_node) !== "undefined"
+                                && !node.attributes.create_node) { return true; }
+
+                            // add 'create' to the context menu items
+                            _this.get_settings()['contextmenu']['items'](null, {
+                                "create" : {
+                                    "separator_before"  : false,
+                                        "separator_after"   : true,
+                                        "label"             : "Create",
+                                        "action"            : function (data) {
+                                            var inst = $.jstree._reference(data.reference),
+                                                obj = inst.get_node(data.reference);
+
+                                            inst.create_node(obj, {}, "last", function (new_node) {
+                                                setTimeout(function () {
+                                                    inst.edit(new_node);
+                                                }, 0);
+                                        });
+                                    }
+                                }
                             });
-                            if(!tp.icon) { return true; }
-                            if( tp.icon.image || tp.icon.position) {
-                                if(i == "default")  { icons_css += '.jstree-' + _this.get_index() + ' a > .jstree-icon { '; }
-                                else                                { icons_css += '.jstree-' + _this.get_index() + ' li[' + attr + '=' + i + '] > a > .jstree-icon { '; }
-                                if(tp.icon.image)   { icons_css += ' background-image:url(' + tp.icon.image + '); '; }
-                                if(tp.icon.position){ icons_css += ' background-position:' + tp.icon.position + '; '; }
-                                else                                { icons_css += ' background-position:0 0; '; }
-                                icons_css += '} ';
+
+                        });
+
+                        // build icons css
+                        icons_css = "";
+                        $.each(s.available_nodes, function (type, node) {
+                            if( node.icon ) {
+                                icons_css = '.jstree-' + _this.get_index() + ' li[' + s.type_attr + '=' + type + '] > a > .jstree-icon {' +
+                                        'background-image:url(' + type.icon.image + ');' +
+                                        'background-position:0 0;' +
+                                    '}';
+
                             }
                         });
-                        if(icons_css != "") { $.vakata.css.add_sheet({ 'str' : icons_css }); }
-                        */
+
+                        // add icons
+                        if(icons_css != "") {
+                            $.vakata.css.add_sheet({ 'str' : icons_css });
+                        }
                     });
                 },
+
                 get_type : function (obj) {
                     obj = this.get_node(obj);
                     return (!obj || !obj.length) ? false : obj.attr(this.get_settings().typesfromurl.type_attr) || "default";
                 },
+
                 set_type : function (str, obj) {
                     obj = this.get_node(obj);
                     return (!obj.length || !str) ? false : obj.attr(this.get_settings().typesfromurl.type_attr, str);
                 },
-                //check : function (chk, obj, par, pos) {
+
+                /**
+                 * Check
+                 *
+                 * @param event - event function
+                 * @param element - original
+                 * @param target - target
+                 * @param index - index position
+                 * @return {Boolean}
+                 */
+                check : function (event, element, target, index) {
+                    // if(this.__call_old() === false) { return false; }
+                    if(target === -1) {return false;}
+
+                    var s  = this.get_settings().typesfromurl;
+
+                    // event disabled (master)
+                    if(typeof(s[event]) === "undefined" || !s[event]) { return false; }
+
+                    // no type defined
+                    if(typeof(element.attr("rel")) === "undefined") { return false; }
+
+                    var type = element.attr("rel");
+
+                    // node unavailable
+                    if (typeof(s.available_nodes[type]) === "undefined" ) { return false; }
+
+                    // check operation is not disabled for node for node
+                    if (typeof(s.available_nodes[type]["attributes"][event]) !== "undefined"
+                        && !s.available_nodes[type]["attributes"][event]) { return false; }
+
+                    switch(event) {
+
+                        case "move_node":
+
+                            // check max children
+                            if(s.max_children !== -2 && s.max_children !== -1) {
+                                var children = target.children('li').siblings().length;
+                                if(children > s.max_children) { return false; }
+                            }
+
+                            // check max depth
+                            if(s.max_depth !== -2 && s.max_depth !== -1) {
+                                var depth = element.parentsUntil(this.get_container(), 'ul').length;
+                                if(depth > s.max_depth) { return false; }
+                            }
+
+                            // type has no available parents defined
+                            if(!$.isArray(s.valid_parents[type])) { return false; }
+
+                            // wildcard all
+                            if ($.inArray('*', s.valid_parents[type]) === -1) {
+
+                                // the target is not in the available parents
+                                if ($.inArray(target.attr("rel"), s.valid_parents[type]) === -1) { return false; }
+
+                            }
+
+                            return true;
+
+                        case "copy_node":
+                        case "create_node":
+                        case "delete_node":
+                    }
+
+                    return true;
+                }
+
+                /* DEPRECATE
+
                 check : function (rule, obj, opts) {
                     var v = false, t = this.get_type(obj), d = 0, _this = this, s = this.get_settings().typesfromurl;
                     if(obj === -1) { 
@@ -190,6 +280,7 @@
                     }
                     return this.__call_old(true, obj, position, js, callback, is_loaded, skip_check);
                 }
+                */
             }
         });
     })(jQuery);

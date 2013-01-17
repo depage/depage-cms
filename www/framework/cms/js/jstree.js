@@ -70,6 +70,7 @@ $(function () {
             },
             contextmenu : {
                 items : function (obj) {
+
                     var default_items = { // Could be a function that should return an object like this one
                         "rename" : {
                             "separator_before"  : false,
@@ -144,25 +145,39 @@ $(function () {
                         }
                     };
 
-                    console.log(this.get_settings().typesfromurl);
-                    /*
-                    if (obj.attr(this.get_settings().typesfromurl.type_attr) != "default") {
-                        default_items = $.extend({
+                    var create_menu = {};
+
+                    // build the create menu based on the available nodes fetched in typesfromurl
+                    if(typeof(this.get_settings) !== "undefined" &&
+                        typeof(this.get_settings().typesfromurl.available_nodes) !== "undefined") {
+
+                        var available_nodes = this.get_settings().typesfromurl.available_nodes;
+                        var sub_menu = {};
+
+                        $.each(available_nodes, function(type, node){
+                            sub_menu[type] = {
+                                "label"             : type,
+                                "separator_before"  : false,
+                                "separator_after"   : false,
+                                "action"            : function (data) {
+                                    $.jstree._reference(data.reference)
+                                        .create_node(data.reference, type, 'after');
+                                }
+                            }
+                        });
+
+                        create_menu = {
                             "create" : {
+                            "label"             : "Create",
                                 "separator_before"  : false,
                                 "separator_after"   : true,
-                                "label"             : "Create",
-                                "action"            : function (data) {
-                                    var inst = $.jstree._reference(data.reference), 
-                                        obj = inst.get_node(data.reference);
-                                    inst.create_node(obj, {}, "last", function (new_node) {
-                                        setTimeout(function () { inst.edit(new_node); },0);
-                                    });
-                                }
-                            },
-                        }, default_items);
+                                "action"            : false,
+                                "submenu"           : sub_menu
+                            }
+                        }
                     }
-                    */
+
+                    default_items = $.extend(create_menu, default_items);
 
                     return default_items;
                 }
