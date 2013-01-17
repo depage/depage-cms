@@ -1,5 +1,5 @@
 /**
- * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/jquery-1.8.3.js
  *
  * @file    depage-uploader.js
  *
@@ -393,6 +393,7 @@
             }
             // }}}
         };
+        // }}}
         
         // {{{ cancel() 
         /**
