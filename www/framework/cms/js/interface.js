@@ -1,8 +1,7 @@
 /*
- * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/jquery-1.8.3.js
  * @require framework/shared/jquery.cookie.js
- * @require framework/shared/depage-jquery-plugins/depage-base.js
- * @require framework/shared/depage-jquery-plugins/depage-textbuttons.js
+ * @require framework/shared/depage-jquery-plugins/depage-textbutton.js
  * @require framework/shared/depage-jquery-plugins/depage-scroller.js
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
  * @require framework/htmlform/lib/js/effect.js
@@ -399,9 +398,9 @@ var depage = {
         this.registerEvents();
         this.initLayout();
 
-        $("form input.textbutton, form.depage-form :submit").depage('replaceTextButtons');
+        $("form input.textbutton, form.depage-form :submit").depageTextbutton();
 
-        $(".depage-scroller").depage('customScrollBar');
+        $(".depage-scroller").depageScroller();
     },
     /* }}} */
     /* {{{ initLayout() */

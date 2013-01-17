@@ -191,6 +191,7 @@ class depage {
                 }
 
                 define("DEPAGE_CLI_URL", $options['conf-url']) ;
+                define("DEPAGE_BASE", $options['conf-url']) ;
             }
         }
 

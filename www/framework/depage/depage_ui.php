@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class depage_ui {
+abstract class depage_ui {
     // {{{ default config
     public $defaults = array(
         'auth' => null,
@@ -166,7 +166,7 @@ class depage_ui {
         
         // finishing time
         $time = microtime(true) - $time_start;
-        $this->_send_time($time);
+        $this->_send_time($time, $content);
     }
     // }}}
     // {{{ _factory
@@ -216,19 +216,23 @@ class depage_ui {
         $dp_request_path = implode("/", $dp_params);
 
         // test for subhandlers
-        if (is_callable(array($this, "_getSubHandler"))) {
-            $subHandler = $this::_getSubHandler();
-            
+        $subhandlerMethod = get_class($this) . "::_getSubHandler";
+        if (is_callable($subhandlerMethod)) {
+            $subHandler = call_user_func($subhandlerMethod);
             $simplepatterns = \config::getSimplePatterns();
             foreach ($subHandler as $name => $class) {
                 $pattern = "/^(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $name) . ")/";
                 if (preg_match($pattern, $dp_request_path, $matches)) {
                     $dp_parent = $matches[1];
-                    if (!empty($matches[2])) {
-                        $this->urlSubArgs = explode('/', $matches[2]);
-                        for ($i = 0; $i < count($this->urlSubArgs); $i++) {
-                            $this->urlSubArgs[$i] = rawurldecode($this->urlSubArgs[$i]);
-                        }
+                    $i = 2;
+                    $this->urlSubArgs = array();
+                    // test for non-empty subArgs
+                    while (isset($matches[$i]) && !empty($matches[$i])) {
+                        $this->urlSubArgs[] = $matches[$i];
+                        $i++;
+                    }
+                    for ($i = 0; $i < count($this->urlSubArgs); $i++) {
+                        $this->urlSubArgs[$i] = rawurldecode($this->urlSubArgs[$i]);
                     }
                     if (count($matches)){
                         array_splice($dp_params, 1, count($this->urlSubArgs));
@@ -248,9 +252,15 @@ class depage_ui {
     //}}}
     
     // {{{ _send_time
-    protected function _send_time($time) {
-        if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
-            echo("<!-- $time sec -->");
+    protected function _send_time($time, $content = null) {
+        if (isset($content) && isset($content->content_type)) {
+            if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
+                switch ($content->content_type) {
+                    case 'text/html':
+                        echo("<!-- $time sec -->");
+                        break;
+                }
+            }
         }
     }
     // }}}

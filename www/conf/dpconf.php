@@ -1,5 +1,4 @@
 <?php
-
 /**
  * depage config file
  */
@@ -8,41 +7,51 @@ $conf = array(
     // {{{ global
     '*' => array(
         'db' => array(
-            'dsn' => "mysql:dbname=depage_depagecms;host=192.168.1.22",
-            'user' => "root",
-            'password' => "",
-            'prefix' => "tt",
+            'dsn' => 'mysql:dbname=depage_2_0;host=localhost',
+            'user' => 'root',
+            'password' => '',
+            'prefix' => 'dp',
         ),
         'auth' => array(
-            'realm' => "depage::cms",
-            //'method' => "http_digest",
-            'method' => "http_cookie",
+            'realm' => 'depage::cms',
+            'method' => 'http_digest',
+            //'method' => 'http_cookie',
         ),
-        'timezone' => "Europe/Berlin",
+        'timezone' => 'Europe/Berlin',
+        //'env' => 'production',
     ),
     // }}}
     
     // {{{ */depage-cms/
     '*/depage-cms/' => array(
-        'handler' => "cms_ui",
-        //'env' => "production",
+        'handler' => 'depage\cms\ui_main',
+        //'env' => 'production',
+    ),
+    '*/depage-cms-dev/' => array(
+        'handler' => 'depage\cms\ui_main',
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/
     'localhost/depage_1.5/live/' => array(
-        'handler' => "cms_live",
-        'env' => "production",
+        'handler' => 'depage\cms\live',
+        'env' => 'production',
         'cms' => array(
-            'project' => "depagecms",
+            'project' => 'depagecms',
         ),
     ),
     // }}}
-    // {{{ localhost/depage_1.5/test/
-    'localhost/depage_1.5/test/' => array(
-        'handler' => "test",
-        'env' => "development",
+    // {{{ localhost/depage-cms/test/
+    'localhost/depage-cms/test/' => array(
+        'handler' => 'test',
+        'env' => 'development',
         'cms' => array(
-            'project' => "depagecms",
+            'project' => 'test',
+        ),
+        'db' => array(
+            'dsn' => 'mysql:dbname=depage_2_0;host=localhost',
+            'user' => 'root',
+            'password' => '',
+            'prefix' => 'dp',
         ),
     ),
     // }}}

@@ -1,6 +1,6 @@
 <div class="preview zoom100">
     <div class="zoomwrapper">
-        <iframe src="http://metultelet.local/manuals/depage/"></iframe>
+        <iframe src="http://aomame.local/manuals/depage/"></iframe>
     </div>
 </div>
 <div class="trees">

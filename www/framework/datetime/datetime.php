@@ -29,12 +29,10 @@ class DateTime extends \DateTime {
             return _("just now"); // date diff: just now
         } else if ($ti < 3600) {
             $diff = round($ti / 60);
-            return $diff == 1 ? sprintf(_("%d minute ago"), $diff) : sprintf(_("%d minutes ago"), $diff); // date diff: in minutes
+            return sprintf(ngettext("%d minute ago", "%d minutes ago", $diff), $diff); // date diff: in minutes
         } else if ($ti < 86400) {
             $diff = round($ti / 60 / 60);
-            return $diff == 1 ? sprintf(_("%d hour ago"), $diff) : sprintf(_("%d hours ago"), $diff); // date diff: in hours
-//        } else if ($ti < 172800) {
-//            return _("yesterday");
+            return sprintf(ngettext("%d hour ago", "%d hours ago", $diff), $diff); // date diff: in minutes
         } else if ($ti < 604800) {
             if (false) {
                 _("Monday");
