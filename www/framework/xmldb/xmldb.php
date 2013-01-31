@@ -595,6 +595,8 @@ class xmldb {
     /**
      * moves node in database
      *
+     * // TODO prevent moving a node to its children
+     *
      * @public
      *
      * @param    $node_id (int) db-id of node
@@ -602,11 +604,12 @@ class xmldb {
      * @param    $target_pos (int) position to move to
      */
     public function moveNode($doc_id_or_name, $node_id, $target_id, $target_pos) {
+
         $this->beginTransaction();
 
         $doc_id = $this->docExists($doc_id_or_name);
 
-        if ($doc_id !== false && $this->getDoctypeHandler($doc_id)->isAllowedMove($node_id, $target_id)) {
+        if ($doc_id !== false && $node_id !== $target_id && $this->getDoctypeHandler($doc_id)->isAllowedMove($node_id, $target_id)) {
             $node_parent_id = $this->getParentIdById($doc_id, $node_id);
             $node_pos = $this->getPosById($doc_id, $node_id);
             
