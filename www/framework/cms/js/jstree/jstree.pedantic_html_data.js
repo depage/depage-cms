@@ -33,10 +33,12 @@
                 switch(!0) {
                     case (!s.data && !s.ajax):
                         if(!obj || obj == -1) {
+                                /*
                                 console.log(obj);
                                 console.log(this.data);
                                 console.log(this.data.pedantic_html_data);
                                 console.log(this.data.pedantic_html_data.original_container_html);
+                                */
                                 this.get_container()
                                         .children("ul")
                                         .replaceWith(this.data.pedantic_html_data.original_container_html)

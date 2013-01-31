@@ -56,8 +56,7 @@
             
             // Override defaults with user properties
             var opts = $.extend({}, this.defaults, options);
-                        console.log(opts);
-            
+
             /**
              * Creates a fallback object implementing the WebSocket interface
              */

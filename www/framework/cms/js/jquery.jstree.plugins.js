@@ -1167,7 +1167,6 @@ placeholder = $("<li>").attr({ id : 'jstree-placeholder'}).hide();
                 }
             },
             _ajax_call : function (args) {
-                console.log(args);
                 var tree = this.get_container();
                 var settings = this.get_settings().delta_updates;
                 var _this = this;
