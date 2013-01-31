@@ -160,8 +160,11 @@ $(function () {
                                 "separator_before"  : false,
                                 "separator_after"   : false,
                                 "action"            : function (data) {
-                                    $.jstree._reference(data.reference)
-                                        .create_node(data.reference, type, 'after');
+                                    var inst = $.jstree._reference(data.reference);
+                                    var obj = inst.create_node(data.reference, type, 'inside');
+
+                                    // focus for edit
+                                    inst.edit(obj);
                                 }
                             }
                         });
