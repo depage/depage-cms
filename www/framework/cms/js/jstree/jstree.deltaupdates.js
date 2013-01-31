@@ -35,7 +35,9 @@
                     // only apply delta updates if no updates are in progress
                     // pending delta updates are applied when local update ajax calls return
                     if (!this.data.deltaupdates.active_ajax_requests) {
-                        this.apply_delta_updates();
+                        if (!$(".jstree-rename-input").unbind('end_edit').bind('end_edit', function() { _this.apply_delta_updates(); }).length) {
+                            _this.apply_delta_updates();
+                        }
                     }
                 }
             }, this);
@@ -101,7 +103,7 @@
                     var d = {
                         "doc_id" : tree.attr("data-doc-id"),
                         "id" : $(this).attr("id").replace("node_",""),
-                        "target_id" : data.rslt.parent.attr("id").replace("node_",""),
+                        "target_id" : data.rslt.parent !== -1 ? data.rslt.parent.attr("id").replace("node_","") : -1,
                         "position" : data.rslt.position
                     };
 
@@ -251,7 +253,6 @@
             // }}}
             // {{{ _ajax_call
             _ajax_call : function (args) {
-                console.log(args);
                 var tree = this.get_container();
                 var settings = this.get_settings().deltaupdates;
                 var _this = this;
@@ -274,7 +275,9 @@
                         _this.data.deltaupdates.active_ajax_requests -= 1;
                         // apply delta updates if this is last outstanding request
                         if (!_this.data.deltaupdates.active_ajax_requests) {
-                            _this.apply_delta_updates();
+                            if (!$(".jstree-rename-input").unbind('end_edit').bind('end_edit', function() { _this.apply_delta_updates(); }).length) {
+                                _this.apply_delta_updates();
+                            }
                         }
                     }
                 });
