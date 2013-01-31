@@ -1723,7 +1723,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 					new_par = (!pos.toString().match(/^(before|after)$/) || par === -1) ? par : this.get_parent(par),
 					old_ins = $.jstree._reference(obj),
 					new_ins = par === -1 ? this : $.jstree._reference(par),
-					is_multi = (old_ins.get_index() !== new_ins.get_index());
+					is_multi = old_ins ? (old_ins.get_index() !== new_ins.get_index()) : false;
 				if(new_par === -1) {
 					par = new_ins.get_container();
 					if(pos === "before") { pos = "first"; }
@@ -1761,7 +1761,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 					obj.find('.jstree-icon, .jstree-ocl').remove();
 					this.clean_node(obj);
 				}
-				old_ins.correct_node(old_par, true);
+				if(old_ins) old_ins.correct_node(old_par, true);
 				new_ins.correct_node(new_par, true);
 				if(callback) { callback.call(this, obj, new_par, obj.index()); }
 				this.__callback({ "obj" : obj, "parent" : new_par, "position" : pos, "old_parent" : old_par, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
@@ -1928,6 +1928,8 @@ Some static functions and variables, unless you know exactly what you are doing 
 								i.remove();
 								this.rename_node(obj, v);
 								obj.css("position", "");
+                                // BW end_edit event triggered to apply blocked delta updates
+                                i.trigger('end_edit');
 							}, this),
 							"keyup" : function (event) {
 								var key = event.keyCode || event.which;
