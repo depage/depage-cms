@@ -130,7 +130,6 @@
                  * @return {Boolean}
                  */
                 check : function (event, element, target, index) {
-                    // if(this.__call_old() === false) { return false; }
                     if(target === -1) {return false;}
 
                     var s  = this.get_settings().typesfromurl;
@@ -153,6 +152,12 @@
                     switch(event) {
 
                         case "move_node":
+
+                            if ( target.is(element) || $.contains(element[0], target[0]) ) {
+                                return false
+                            }
+
+
                         case "copy_node":
                         case "create_node":
 
@@ -218,10 +223,10 @@
                             break;
                     }
 
-                    parent.children("ul").children("li").eq(position).after(li);
+                    parent.children("ul").children("li").eq(position).before(li);
 
                     // fire the callback to send the ajax request
-                    this.__callback({ "obj" : li, "parent" : parent, "position" : li.index() });
+                    this.__callback({ "obj" : li, "parent" : parent, "position" : position });
 
                     return li;
                 }
