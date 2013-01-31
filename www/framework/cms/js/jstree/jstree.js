@@ -1762,7 +1762,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 					this.clean_node(obj);
 				}
 				if(old_ins) old_ins.correct_node(old_par, true);
-				new_ins.correct_node(new_par, true);
+				if(new_ins) new_ins.correct_node(new_par, true);
 				if(callback) { callback.call(this, obj, new_par, obj.index()); }
 				this.__callback({ "obj" : obj, "parent" : new_par, "position" : pos, "old_parent" : old_par, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
 				return true;
