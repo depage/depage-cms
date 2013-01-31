@@ -156,7 +156,7 @@ $(function () {
 
                         $.each(available_nodes, function(type, node){
                             sub_menu[type] = {
-                                "label"             : type,
+                                "label"             : node.name,
                                 "separator_before"  : false,
                                 "separator_after"   : false,
                                 "action"            : function (data) {
