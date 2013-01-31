@@ -1538,7 +1538,6 @@ Some static functions and variables, unless you know exactly what you are doing 
 						break;
 				}
 				if(!this.check("create_node", li, par, pos)) { return false; }
-
 				tmp = par === -1 ? this.get_container() : par;
 				if(!tmp.children("ul").length) { tmp.append("<ul />"); }
 				if(tmp.children("ul").children("li").eq(pos).length) {
@@ -1765,7 +1764,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 				old_ins.correct_node(old_par, true);
 				new_ins.correct_node(new_par, true);
 				if(callback) { callback.call(this, obj, new_par, obj.index()); }
-				this.__callback({ "obj" : obj, "parent" : new_par, "position" : obj.index(), "old_parent" : old_par, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
+				this.__callback({ "obj" : obj, "parent" : new_par, "position" : pos, "old_parent" : old_par, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
 				return true;
 			},
 			/*
