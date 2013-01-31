@@ -460,11 +460,12 @@ class xmldb {
         $doc_id = $this->docExists($doc_id_or_name);
 
         $dth = $this->getDoctypeHandler($doc_id);
-        if ($doc_id !== false && $dth->isAllowedIn($name, $target_id)) {
+        $target_name = $this->getNodeNameById($doc_id, $target_id);
+
+        if ($doc_id !== false && $dth->isAllowedIn($name, $target_name)) {
             $newNode = $dth->getNewNodeFor($name);
             if ($newNode) {
-                $this->addNode($doc_id_or_name, $node, $target_id, $target_pos);
-                return true;
+                return $this->addNode($doc_id_or_name, $newNode, $target_id, $target_pos);
             }
         }
         return false;
@@ -1547,7 +1548,7 @@ class xmldb {
     }
     // }}}
     // {{{ getNamespacesAndEntities()
-    private function getNamespacesAndEntities($doc_id) {
+    public function getNamespacesAndEntities($doc_id) {
         $query = $this->pdo->prepare(
             "SELECT docs.entities AS entities, docs.ns AS namespaces
             FROM {$this->table_docs} AS docs

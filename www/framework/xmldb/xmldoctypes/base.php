@@ -51,7 +51,7 @@ class base {
 
             $xml = "<$name {$docInfo->namespaces}";
             if (!empty($nodeInfo->new)) {
-                $xml .= " name=\"" . htmlspecialchars($nodeInfo['new']) . "\"";
+                $xml .= " name=\"" . htmlspecialchars($nodeInfo->new) . "\"";
             }
             if (isset($nodeInfo->attributes)) {
                 foreach ($nodeInfo->attributes as $attr => $value) {
