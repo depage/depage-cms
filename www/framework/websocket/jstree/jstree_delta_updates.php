@@ -82,12 +82,12 @@ class jstree_delta_updates {
     }
 
     public function encodedDeltaUpdate() {
-        $changed_notes = $this->changedNodes();
-        if (empty($changed_notes))
+        $changed_nodes = $this->changedNodes();
+        if (empty($changed_nodes))
             return "";
 
         $result = array(
-            'nodes' => \depage\cms\jstree_xml_to_html::toHTML($changed_notes),
+            'nodes' => \depage\cms\jstree_xml_to_html::toHTML($changed_nodes),
             'seq_nr' => $this->seq_nr,
         );
 
