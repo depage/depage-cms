@@ -44,12 +44,13 @@
                 available_nodes: {},
 
                 // bound functions - you can bind any other function here (using boolean or function)
-                "delete_node": false,
-                "move_node": true
-                //"select_node": true,
-                //"open_node": true,
-                //"close_node": true,
-                //"create_node": true
+                "delete_node": true,
+                "move_node": true,
+                "select_node": true,
+                "open_node": true,
+                "close_node": true,
+                "create_node": true,
+                "rename_node": true
             },
 
             _fn : {
@@ -75,21 +76,19 @@
                             _this.get_settings()['contextmenu']['items'](null, {
                                 "create" : {
                                     "separator_before"  : false,
-                                        "separator_after"   : true,
-                                        "label"             : "Create",
-                                        "action"            : function (data) {
-                                            var inst = $.jstree._reference(data.reference),
-                                                obj = inst.get_node(data.reference);
+                                    "separator_after"   : true,
+                                    "label"             : "Create",
+                                    "action"            : function (data) {
+                                        var inst = $.jstree._reference(data.reference),
+                                            obj = inst.get_node(data.reference);
 
-                                            inst.create_node(obj, {}, "last", function (new_node) {
-                                                setTimeout(function () {
-                                                    inst.edit(new_node);
-                                                }, 0);
-                                        });
-                                    }
+                                        inst.create_node(obj, {}, "last", function (new_node) {
+                                            setTimeout(function () {
+                                                inst.edit(new_node);
+                                            }, 0);
+                                    });
                                 }
-                            });
-
+                            }});
                         });
 
                         // build icons css
@@ -154,11 +153,15 @@
                     switch(event) {
 
                         case "move_node":
+                        case "copy_node":
+                        case "create_node":
 
                             // check max children
                             if(s.max_children !== -2 && s.max_children !== -1) {
                                 var children = target.children('li').siblings().length;
-                                if(children > s.max_children) { return false; }
+                                if(children > s.max_children) {
+                                    return false;
+                                }
                             }
 
                             // check max depth
@@ -168,25 +171,61 @@
                             }
 
                             // type has no available parents defined
-                            if(!$.isArray(s.valid_parents[type])) { return false; }
+                            if(!$.isArray(s.valid_parents[type])) {
+                                return false;
+                            }
 
                             // wildcard all
                             if ($.inArray('*', s.valid_parents[type]) === -1) {
 
                                 // the target is not in the available parents
-                                if ($.inArray(target.attr("rel"), s.valid_parents[type]) === -1) { return false; }
-
+                                if ($.inArray(target.attr("rel"), s.valid_parents[type]) === -1) {
+                                    return false;
+                                }
                             }
-
-                            return true;
-
-                        case "copy_node":
-                        case "create_node":
-                        case "delete_node":
                     }
 
                     return true;
+                },
+
+                create_node : function (parent, type, position) {
+
+                    parent = this.get_node(parent);
+                    position = position || "last";
+
+                    var node =  this.get_settings().typesfromurl.available_nodes[type];
+
+                    var li = $("<li />").attr({rel: type}).append($("<a />").html(node.new).attr({href:"#"}));
+
+                    switch(position) {
+                        case "before":
+                            position = parent.index();
+                            parent = this.get_parent(parent);
+                            break;
+                        case "after" :
+                            position = parent.index() + 1;
+                            parent = this.get_parent(parent);
+                            break;
+                        case "inside":
+                        case "first":
+                            position = 0;
+                            break;
+                        case "last":
+                            position = parent.children('ul').children('li').length;
+                            break;
+                        default:
+                            position = 0;
+                            break;
+                    }
+
+                    parent.children("ul").children("li").eq(position).after(li);
+
+                    // fire the callback to send the ajax request
+                    this.__callback({ "obj" : li, "parent" : parent, "position" : li.index() });
+
+                    return li;
                 }
+
 
                 /* DEPRECATE
 
