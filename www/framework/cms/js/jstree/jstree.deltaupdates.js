@@ -17,6 +17,7 @@
             if (settings.webSocketURL != "") {
                 webSocketURL = settings.webSocketURL + tree.attr("data-doc-id");
             }
+
             this.data.deltaupdates.ws = $.gracefulWebSocket(webSocketURL, {
                 fallbackPollURL: settings.fallbackPollURL,
                 fallbackPollParams:  {
@@ -211,15 +212,17 @@
                                     if (!node.children("ul").length)
                                         node.append($(this).children("ul"));
                                 });
+
+                                // fix up remaining jstree classes
+                                tree.jstree("clean_node", node);
                             }
                         }
+
                         // all jstree-open classes were lost: restore them
                         open_nodes.each(function () {
-                            $("#" + $(this).attr("id")).filter(":has(li)").addClass("jstree-open");
+                            $("#" + $(this).attr("id")).filter(":has(li)").removeClass("jstree-closed").addClass("jstree-open");
                         });
-                        // fix up remaining jstree classes
-                        tree.jstree("clean_node", node);
-                        
+
                         // jstree-clicked class was lost: restore it
                         $("#" + clicked_node.attr("id")).children("a").click();
 
