@@ -16,13 +16,12 @@
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
  *
- * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  */
 "use strict";
 
 $(function () {
     $(".jstree-container").each(function () {
-        $(this).jstree({ 
+        $(this).jstree({
             // the list of plugins to include
             plugins : [
                 "themes",
@@ -38,7 +37,7 @@ $(function () {
                 "tooltips",
                 //"select_created_nodes",
                 //"add_marker",
-                "deltaupdates",
+                "deltaupdates"
             ],
             ui : {
                 // TODO:
@@ -56,12 +55,24 @@ $(function () {
             deltaupdates : {
                 "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
                 "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
-                "postURL" : $(this).attr("data-delta-updates-post-url"),
+                "postURL" : $(this).attr("data-delta-updates-post-url")
             },
             hotkeys : {
-                "del" : function () { 
-                    this.delete_node(); 
-                    return false;
+                "del" : function () {
+                    var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
+
+                    var offset = node.offset();
+
+                    $.jstree.confirmDelete(offset.left, offset.top, function(){
+                        var inst = $.jstree._reference(node);
+                        var obj = inst.get_node(node);
+
+                        if(inst.data.ui && inst.is_selected(obj)) {
+                            obj = inst.get_selected();
+                        }
+
+                        inst.delete_node(obj);
+                    });
                 },
                 "return" : function() {
                     // @todo bind enter key to prevent default so that we dont leave input on enter
@@ -90,27 +101,17 @@ $(function () {
                             "separator_after"   : false,
                             "label"             : "Delete",
                             "action"            : function (data) {
+                                var offset = data.reference.offset();
 
-                                // setup confirm on the delete context menu using shy-dialogue
-                                var buttons = {
-                                    yes: {click: function() {
-                                        var inst = $.jstree._reference(data.reference),
-                                            obj = inst.get_node(data.reference);
-                                        if(inst.data.ui && inst.is_selected(obj)) {
-                                            obj = inst.get_selected();
-                                        }
-                                        inst.delete_node(obj);
-                                    }},
-                                    no : false
-                                };
-
-                                // bind to link? TODO maybe just show?
-                                $("a[rel=6]").depageShyDialogue(
-                                    buttons, {
-                                        title: "Delete?",
-                                        message: "Are you sure you want to delete tis menu item?"
-                                    });
-                                }
+                                $.jstree.confirmDelete(offset.left, offset.top, function() {
+                                    var inst = $.jstree._reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                    if(inst.data.ui && inst.is_selected(obj)) {
+                                        obj = inst.get_selected();
+                                    }
+                                    inst.delete_node(obj);
+                                });
+                            }
                         },
                         "ccp" : {
                             "separator_before"  : true,
@@ -203,4 +204,30 @@ $(function () {
             }
         });
     });
+
+    $.jstree.confirmDelete = function(left, top, delete_callback) {
+        // setup confirm on the delete context menu using shy-dialogue
+        var buttons = {
+            yes: {click: function() {
+                delete_callback();
+            }},
+            no : false
+        };
+
+        $("#node_1").depageShyDialogue(
+            buttons, {
+                title: "Delete?",
+                message: "Are you sure you want to delete this menu item?",
+                bind_el: false // show manually
+            });
+
+        // prevent the click event hiding the menu
+        $(document).bind("click.marker", function(e) {
+            e.stopImmediatePropagation();
+            return false;
+        });
+
+
+        $("#node_1").data('depage.shyDialogue').showDialogue(left, top);
+    };
 });

@@ -6,6 +6,8 @@
  * You can set an attribute on each li node, that represents its type.
  * According to the type setting the node may get custom icon/validation rules
  *
+ * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
+ *
  */
 (function ($) {
     $.jstree.plugin("typesfromurl", {
@@ -248,7 +250,7 @@
 
                 check : function (rule, obj, opts) {
                     var v = false, t = this.get_type(obj), d = 0, _this = this, s = this.get_settings().typesfromurl;
-                    if(obj === -1) { 
+                    if(obj === -1) {
                         if(!!s[rule]) { v = s[rule]; }
                         else { return; }
                     }
@@ -283,7 +285,7 @@
                         vc = m.rt.check("valid_children", m.cr),
                         ch = 0, d = 1, t;
 
-                    if(vc === "none") { return false; } 
+                    if(vc === "none") { return false; }
                     if($.isArray(vc) && m.ot && m.ot.get_type) {
                         m.o.each(function () {
                             if($.inArray(m.ot.get_type(this), vc) === -1) { d = false; return false; }
@@ -319,11 +321,11 @@
                             vc = this.check("valid_children", p),
                             ch;
                         if(!js) { js = {}; }
-                        if(vc === "none") { return false; } 
+                        if(vc === "none") { return false; }
                         if($.isArray(vc)) {
-                            if(!js.attr || !js.attr[s.type_attr]) { 
+                            if(!js.attr || !js.attr[s.type_attr]) {
                                 if(!js.attr) { js.attr = {}; }
-                                js.attr[s.type_attr] = vc[0]; 
+                                js.attr[s.type_attr] = vc[0];
                             } else {
                                 if($.inArray(js.attr[s.type_attr], vc) === -1) { return false; }
                             }
