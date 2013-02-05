@@ -2,7 +2,11 @@
  * @file    depage-shy-dialogue
  * @require framework/shared/depage-jquery-plugins/depage-markerbox.js
  *
- * Unobstrusive jQuery dialogue box, extends marker box
+ * Unobstrusive jQuery dialogue box, extends marker box.
+ *
+ * Builds the dialogue around an element, when clicked the dialgoue appears.
+ *
+ * Plugin takes a 'buttons' argument which is defines the buttons to display.
  * 
  * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -45,26 +49,53 @@
         base.init = function(){
             base.options = $.extend({}, $.depage.shyDialogue.defaultOptions, options);
             $.extend(base, $.depage.markerbox(base.options));
+
+            // if no element is specified to bind the click handler to, default to the base element
+            if (base.options.bind_el === null) {
+                base.options.bind_el = base.$el;
+            }
+
+            if (base.options.bind_el) {
+                base.bind();
+            }
+
             base.buttons = buttons;
-            base.dialogue();
+
         };
         // }}}
         
-        // {{{ dialogue()
+        // {{{ bind()
         /**
          * Dialogue
          * 
          * @return void
          */
-        base.dialogue = function(){
-            base.$el.bind('click.shy', function(e) {
-                base.show(e.pageX, e.pageY);
-                base.showButtons();
+        base.bind = function(){
+            base.bind_el.bind('click.shy', function(e) {
+                base.showDialogue(e.pageX, e.pageY);
                 return false;
             });
         };
         /// }}}
-        
+
+        // {{{ showDialogue()
+        /**
+         * showDialogue
+         *
+         * This is the action call to show the dialogue
+         *
+         * @param e = triggering event (need to stop propagation of marker click)
+         * @param x
+         * @param y
+         *
+         * @return void
+         */
+        base.showDialogue = function(x, y){
+            base.show(x, y);
+            base.showButtons();
+        };
+        /// }}}
+
         // {{{ showButtons()
         /**
          * Show Buttons
@@ -75,6 +106,7 @@
             $buttonWrapper = $('<div class="buttons" />');
             $wrapper.append($buttonWrapper);
             base.setButtons(base.buttons);
+            $wrapper.find('a:first').focus();
         };
         // }}}
         
@@ -127,9 +159,10 @@
      * 
      * id - the id of the dialogue element wrapper to display
      * message - message the dialouge will display
-     * buttons - buttons to supply (with corresponding event triggered)
+     * buttons - buttons to supply (with corresponding event triggered) { button_text: {click: function() {}}, ...}
      * classes - css classes to supply to the wrapper and content elements
-     * 
+     * bind_el: override to specify a different element to bind the onclick to. false means no click handler -
+     *
      */
     $.depage.shyDialogue.defaultOptions = {
         id : 'depage-shy-dialogue',
@@ -140,7 +173,8 @@
         direction : 'TL',
         directionMarker : null,
         fadeoutDuration: 300,
-        buttons: {}
+        buttons: {},
+        bind_el: null
     };
     
     $.fn.depageShyDialogue = function(buttons, options){
