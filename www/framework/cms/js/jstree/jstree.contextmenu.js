@@ -17,6 +17,7 @@ Enables a rightclick contextmenu.
                             this._hide_contextmenu();
                         }
                     }, this));
+
             $(document).bind("context_hide.vakata", $.proxy(function () { this.data.contextmenu = false; }, this));
         },
         __destruct : function () {
@@ -28,6 +29,7 @@ Enables a rightclick contextmenu.
             select_node : true,
             show_at_node : true,
             items : function (o) { // Could be an object directly
+
                 // TODO: in "_disabled" call this._check()
                 return {
                     "create" : {
@@ -147,9 +149,6 @@ Enables a rightclick contextmenu.
                 this.data.contextmenu.visible = true;
                 $.vakata.context.show(a, { 'x' : x, 'y' : y }, i);
                 this.__callback({ "obj" : obj, "x" : x, "y" : y });
-            },
-
-            show_toolbar : function (obj, x, y) {
             }
         }
     });

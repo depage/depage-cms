@@ -12,6 +12,7 @@
  * @require framework/cms/js/jstree/jstree.dblclickrename.js
  * @require framework/cms/js/jstree/jstree.deltaupdates.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
+ * @require framework/cms/js/jstree/jstree.toolbar.js
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
@@ -37,7 +38,8 @@ $(function () {
                 "tooltips",
                 //"select_created_nodes",
                 //"add_marker",
-                "deltaupdates"
+                "deltaupdates",
+                "toolbar"
             ],
             ui : {
                 // TODO:
@@ -64,14 +66,7 @@ $(function () {
                     var offset = node.offset();
 
                     $.jstree.confirmDelete(offset.left, offset.top, function(){
-                        var inst = $.jstree._reference(node);
-                        var obj = inst.get_node(node);
-
-                        if(inst.data.ui && inst.is_selected(obj)) {
-                            obj = inst.get_selected();
-                        }
-
-                        inst.delete_node(obj);
+                        $.jstree.contextDelete(node);
                     });
                 },
                 "return" : function() {
@@ -90,9 +85,7 @@ $(function () {
                             "separator_after"   : false,
                             "label"             : "Rename",
                             "action"            : function (data) {
-                                var inst = $.jstree._reference(data.reference), 
-                                    obj = inst.get_node(data.reference);
-                                inst.edit(obj);
+                                $.jstree.contextRename(data);
                             }
                         },
                         "remove" : {
@@ -101,16 +94,7 @@ $(function () {
                             "separator_after"   : false,
                             "label"             : "Delete",
                             "action"            : function (data) {
-                                var offset = data.reference.offset();
-
-                                $.jstree.confirmDelete(offset.left, offset.top, function() {
-                                    var inst = $.jstree._reference(data.reference),
-                                        obj = inst.get_node(data.reference);
-                                    if(inst.data.ui && inst.is_selected(obj)) {
-                                        obj = inst.get_selected();
-                                    }
-                                    inst.delete_node(obj);
-                                });
+                                $.jstree.contextDelete(data);
                             }
                         },
                         "ccp" : {
@@ -125,12 +109,7 @@ $(function () {
                                     "separator_after"   : false,
                                     "label"             : "Cut",
                                     "action"            : function (data) {
-                                        var inst = $.jstree._reference(data.reference),
-                                            obj = inst.get_node(data.reference);
-                                        if(data.ui && inst.is_selected(obj)) {
-                                            obj = inst.get_selected();
-                                        }
-                                        inst.cut(obj);
+                                        $.jstree.contextDelete(data);
                                     }
                                 },
                                 "copy" : {
@@ -139,12 +118,7 @@ $(function () {
                                     "separator_after"   : false,
                                     "label"             : "Copy",
                                     "action"            : function (data) {
-                                        var inst = $.jstree._reference(data.reference),
-                                            obj = inst.get_node(data.reference);
-                                        if(data.ui && inst.is_selected(obj)) {
-                                            obj = inst.get_selected();
-                                        }
-                                        inst.copy(obj);
+                                        $.jstree.contextCopy(data);
                                     }
                                 },
                                 "paste" : {
@@ -153,9 +127,7 @@ $(function () {
                                     "separator_after"   : false,
                                     "label"             : "Paste",
                                     "action"            : function (data) {
-                                        var inst = $.jstree._reference(data.reference),
-                                            obj = inst.get_node(data.reference);
-                                        inst.paste(obj);
+                                        $.jstree.contextPaste(data);
                                     }
                                 }
                             }
@@ -177,11 +149,7 @@ $(function () {
                                 "separator_before"  : false,
                                 "separator_after"   : false,
                                 "action"            : function (data) {
-                                    var inst = $.jstree._reference(data.reference);
-                                    var obj = inst.create_node(data.reference, type, 'inside');
-
-                                    // focus for edit
-                                    inst.edit(obj);
+                                    this.contextCreate(data);
                                 }
                             }
                         });
@@ -201,9 +169,85 @@ $(function () {
 
                     return default_items;
                 }
+            },
+            toolbar : {
+                "create" : {
+                    "label"             : "Create",
+                    "action"            : function () {
+                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
+                        $.jstree.contextCreate(node);
+                    }
+                },
+                "remove" : {
+                    "label"             : "Delete",
+                    "action"            : function () {
+                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
+                        $.jstree.contextDelete(node);
+                    }
+                },
+                "duplicate" : {
+                    "label"             : "Duplicate",
+                    "action"            : function () {
+                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
+                        $.jstree.contextCopy(node);
+                        $.jstree.contextPaste(node);
+                    }
+                }
             }
-        });
+        })
     });
+
+    // TODO can these extensions be scoped better?
+
+    $.jstree.contextDelete = function() {
+        var offset = data.reference.offset();
+
+        $.jstree.confirmDelete(offset.left, offset.top, function() {
+            var inst = $.jstree._reference(data.reference),
+                obj = inst.get_node(data.reference);
+            if(inst.data.ui && inst.is_selected(obj)) {
+                obj = inst.get_selected();
+            }
+            inst.delete_node(obj);
+        });
+    };
+
+    $.jstree.contextCut = function(data) {
+        var inst = $.jstree._reference(data.reference),
+            obj = inst.get_node(data.reference);
+        if(data.ui && inst.is_selected(obj)) {
+            obj = inst.get_selected();
+        }
+        inst.cut(obj);
+    };
+    $.jstree.contextCreate = function(data) {
+        var inst = $.jstree._reference(data.reference);
+        var obj = inst.create_node(data.reference, type, 'inside');
+
+        // focus for edit
+        inst.edit(obj);
+    };
+
+    $.jstree.contextCopy = function(data) {
+        var inst = $.jstree._reference(data.reference),
+            obj = inst.get_node(data.reference);
+        if(data.ui && inst.is_selected(obj)) {
+            obj = inst.get_selected();
+        }
+        inst.copy(obj);
+    };
+
+    $.jstree.contextPaste = function(data) {
+        var inst = $.jstree._reference(data.reference),
+            obj = inst.get_node(data.reference);
+        inst.paste(obj);
+    };
+
+    $.jstree.contextRename = function(data) {
+        var inst = $.jstree._reference(data.reference),
+            obj = inst.get_node(data.reference);
+        inst.edit(obj);
+    };
 
     $.jstree.confirmDelete = function(left, top, delete_callback) {
         // setup confirm on the delete context menu using shy-dialogue
