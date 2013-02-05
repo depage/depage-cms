@@ -1,9 +1,11 @@
 // {{{ typesfromurl
-/* 
+/**
+ *
  * jsTree typesfromurl plugin 1.0 based on original types plugin
  * Adds support types of nodes
  * You can set an attribute on each li node, that represents its type.
  * According to the type setting the node may get custom icon/validation rules
+ *
  */
 (function ($) {
     $.jstree.plugin("typesfromurl", {
@@ -172,7 +174,9 @@
                             // check max depth
                             if(s.max_depth !== -2 && s.max_depth !== -1) {
                                 var depth = element.parentsUntil(this.get_container(), 'ul').length;
-                                if(depth > s.max_depth) { return false; }
+                                if(depth > s.max_depth) {
+                                    return false;
+                                }
                             }
 
                             // type has no available parents defined
@@ -193,6 +197,15 @@
                     return true;
                 },
 
+                /**
+                 * create_node
+                 *
+                 * @param parent - parent node
+                 * @param type - type of node to create
+                 * @param position - index to create at
+                 *
+                 * @return node
+                 */
                 create_node : function (parent, type, position) {
 
                     parent = this.get_node(parent);
@@ -230,7 +243,6 @@
 
                     return li;
                 }
-
 
                 /* DEPRECATE
 

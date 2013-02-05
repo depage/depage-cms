@@ -15,6 +15,8 @@
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
+ *
+ * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  */
 "use strict";
 
@@ -88,13 +90,27 @@ $(function () {
                             "separator_after"   : false,
                             "label"             : "Delete",
                             "action"            : function (data) {
-                                var inst = $.jstree._reference(data.reference),
-                                    obj = inst.get_node(data.reference);
-                                if(inst.data.ui && inst.is_selected(obj)) {
-                                    obj = inst.get_selected();
+
+                                // setup confirm on the delete context menu using shy-dialogue
+                                var buttons = {
+                                    yes: {click: function() {
+                                        var inst = $.jstree._reference(data.reference),
+                                            obj = inst.get_node(data.reference);
+                                        if(inst.data.ui && inst.is_selected(obj)) {
+                                            obj = inst.get_selected();
+                                        }
+                                        inst.delete_node(obj);
+                                    }},
+                                    no : false
+                                };
+
+                                // bind to link? TODO maybe just show?
+                                $("a[rel=6]").depageShyDialogue(
+                                    buttons, {
+                                        title: "Delete?",
+                                        message: "Are you sure you want to delete tis menu item?"
+                                    });
                                 }
-                                inst.delete_node(obj);
-                            }
                         },
                         "ccp" : {
                             "separator_before"  : true,
