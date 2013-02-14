@@ -62,144 +62,50 @@ $(function () {
             },
             hotkeys : {
                 "up" : function() {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var prev = this.get_prev(o);
-                    if (prev.length) {
-                        this.deselect_node(o);
-                        this.select_node(prev);
-                    }
-                    return false;
+                    $.jstree.keyUp.apply(this);
                 },
                 "ctrl+up" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var prev = this.get_prev(o);
-                    if (prev.length) {
-                        this.deselect_node(o);
-                        this.select_node(prev);
-                    }
+                    $.jstree.keyUp.apply(this);
                     return false;
                 },
                 "shift+up" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var prev = this.get_prev(o);
-                    if (prev.length) {
-                        this.deselect_node(o);
-                        this.select_node(prev);
-                    }
+                    $.jstree.keyUp.apply(this);
                     return false;
                 },
                 "down" : function(){
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var next = this.get_next(o);
-                    if (next.length) {
-                        this.deselect_node(o);
-                        this.select_node(next);
-                    }
+                    $.jstree.keyDown.apply(this);
                     return false;
                 },
                 "ctrl+down" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var next = this.get_next(o);
-                    if (next.length) {
-                        this.deselect_node(o);
-                        this.select_node(next);
-                    }
+                    $.jstree.keyDown.apply(this);
                     return false;
                 },
                 "shift+down" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-                    var next = this.get_next(o);
-                    if (next.length) {
-                        this.deselect_node(o);
-                        this.select_node(next);
-                    }
+                    $.jstree.keyDown.apply(this);
                     return false;
                 },
                 "left" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-                    if(o) {
-                        if(o.hasClass("jstree-open")) {
-                            this.close_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_prev(o));
-                        }
-                    }
+                    $.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "ctrl+left" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-                    if(o) {
-                        if(o.hasClass("jstree-open")) {
-                            this.close_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_prev(o));
-                        }
-                    }
+                    $.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "shift+left" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-                    if(o) {
-                        if(o.hasClass("jstree-open")) {
-                            this.close_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_prev(o));
-                        }
-                    }
+                    $.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "right" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-
-                    if(o && o.length) {
-                        if(o.hasClass("jstree-closed")) {
-                            this.open_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_next(o));
-                        }
-                    }
+                    $.jstree.keyRight.apply(this);
                     return false;
                 },
                 "ctrl+right" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-
-                    if(o && o.length) {
-                        if(o.hasClass("jstree-closed")) {
-                            this.open_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_next(o));
-                        }
-                    }
+                    $.jstree.keyRight.apply(this);
                     return false;
                 },
                 "shift+right" : function () {
-                    var o = this.data.ui.hovered || this.data.ui.last_selected;
-
-                    if(o && o.length) {
-                        if(o.hasClass("jstree-closed")) {
-                            this.open_node(o);
-                        }
-                        else {
-                            this.deselect_node(o);
-                            this.select_node(this.get_next(o));
-                        }
-                    }
+                    $.jstree.keyRight.apply(this);
                     return false;
                 },
                 "del" : function () {
@@ -382,6 +288,51 @@ $(function () {
 
         return create_menu;
     };
+
+    $.jstree.keyLeft = function() {
+        var o = this.data.ui.hovered || this.data.ui.last_selected;
+        if(o) {
+            if(o.hasClass("jstree-open")) {
+                this.close_node(o);
+            }
+            else {
+                $.jstree.keyUp.apply(this);
+            }
+        }
+    };
+
+    $.jstree.keyRight = function(){
+        var o = this.data.ui.hovered || this.data.ui.last_selected;
+
+        if(o && o.length) {
+            if(o.hasClass("jstree-closed")) {
+                this.open_node(o);
+            }
+            else {
+                $.jstree.keyDown.apply(this);
+            }
+        }
+    };
+
+    $.jstree.keyUp = function(){
+        var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+        var prev = this.get_prev(o);
+        if (prev.length) {
+            this.deselect_node(o);
+            this.select_node(prev);
+        }
+    };
+
+    $.jstree.keyDown = function(){
+        var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+        var next = this.get_next(o);
+        if (next.length) {
+            this.deselect_node(o);
+            this.select_node(next);
+        }
+    },
 
     $.jstree.contextDelete = function(data) {
         var offset = data.reference.offset();
