@@ -60,6 +60,147 @@ $(function () {
                 "postURL" : $(this).attr("data-delta-updates-post-url")
             },
             hotkeys : {
+                "up" : function() {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var prev = this.get_prev(o);
+                    if (prev.length) {
+                        this.deselect_node(o);
+                        this.select_node(prev);
+                    }
+                    return false;
+                },
+                "ctrl+up" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var prev = this.get_prev(o);
+                    if (prev.length) {
+                        this.deselect_node(o);
+                        this.select_node(prev);
+                    }
+                    return false;
+                },
+                "shift+up" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var prev = this.get_prev(o);
+                    if (prev.length) {
+                        this.deselect_node(o);
+                        this.select_node(prev);
+                    }
+                    return false;
+                },
+                "down" : function(){
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var next = this.get_next(o);
+                    if (next.length) {
+                        this.deselect_node(o);
+                        this.select_node(next);
+                    }
+                    return false;
+                },
+                "ctrl+down" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var next = this.get_next(o);
+                    if (next.length) {
+                        this.deselect_node(o);
+                        this.select_node(next);
+                    }
+                    return false;
+                },
+                "shift+down" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
+
+                    var next = this.get_next(o);
+                    if (next.length) {
+                        this.deselect_node(o);
+                        this.select_node(next);
+                    }
+                    return false;
+                },
+                "left" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+                    if(o) {
+                        if(o.hasClass("jstree-open")) {
+                            this.close_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_prev(o));
+                        }
+                    }
+                    return false;
+                },
+                "ctrl+left" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+                    if(o) {
+                        if(o.hasClass("jstree-open")) {
+                            this.close_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_prev(o));
+                        }
+                    }
+                    return false;
+                },
+                "shift+left" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+                    if(o) {
+                        if(o.hasClass("jstree-open")) {
+                            this.close_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_prev(o));
+                        }
+                    }
+                    return false;
+                },
+                "right" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+
+                    if(o && o.length) {
+                        if(o.hasClass("jstree-closed")) {
+                            this.open_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_next(o));
+                        }
+                    }
+                    return false;
+                },
+                "ctrl+right" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+
+                    if(o && o.length) {
+                        if(o.hasClass("jstree-closed")) {
+                            this.open_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_next(o));
+                        }
+                    }
+                    return false;
+                },
+                "shift+right" : function () {
+                    var o = this.data.ui.hovered || this.data.ui.last_selected;
+
+                    if(o && o.length) {
+                        if(o.hasClass("jstree-closed")) {
+                            this.open_node(o);
+                        }
+                        else {
+                            this.deselect_node(obj);
+                            this.select_node(this.get_next(o));
+                        }
+                    }
+                    return false;
+                },
                 "del" : function () {
                     var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
 
