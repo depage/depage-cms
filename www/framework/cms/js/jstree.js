@@ -134,72 +134,107 @@ $(function () {
                         }
                     };
 
-                    var create_menu = {};
-
                     // build the create menu based on the available nodes fetched in typesfromurl
                     if(typeof(this.get_settings) !== "undefined" &&
                         typeof(this.get_settings().typesfromurl.available_nodes) !== "undefined") {
 
                         var available_nodes = this.get_settings().typesfromurl.available_nodes;
-                        var sub_menu = {};
 
-                        $.each(available_nodes, function(type, node){
-                            sub_menu[type] = {
-                                "label"             : node.name,
-                                "separator_before"  : false,
-                                "separator_after"   : false,
-                                "action"            : function (data) {
-                                    this.contextCreate(data);
-                                }
-                            }
-                        });
-
-                        create_menu = {
-                            "create" : {
-                            "label"             : "Create",
-                                "separator_before"  : false,
-                                "separator_after"   : true,
-                                "action"            : false,
-                                "submenu"           : sub_menu
-                            }
-                        }
+                        default_items = $.extend($.jstree.buildCreateMenu(available_nodes), default_items);
                     }
-
-                    default_items = $.extend(create_menu, default_items);
 
                     return default_items;
                 }
             },
             toolbar : {
-                "create" : {
-                    "label"             : "Create",
-                    "action"            : function () {
-                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
-                        $.jstree.contextCreate(node);
-                    }
-                },
-                "remove" : {
-                    "label"             : "Delete",
-                    "action"            : function () {
-                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
-                        $.jstree.contextDelete(node);
-                    }
-                },
-                "duplicate" : {
-                    "label"             : "Duplicate",
-                    "action"            : function () {
-                        var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
-                        $.jstree.contextCopy(node);
-                        $.jstree.contextPaste(node);
+                items : {
+                    "create" : {
+                        "label"             : "Create",
+                        "separator_before"  : false,
+                        "separator_after"   : true,
+                        "action"            : function(obj) {
+
+                            var node = $(".jstree-clicked");
+                            var offset = $(this).offset();
+
+                            var data = {
+                                "reference" : node,
+                                "element"   : node,
+                                position    : {
+                                    "x"     : offset.left,
+                                    "y"     : offset.top
+                                }
+                            };
+
+                            if (data.reference.length) {
+                                var inst = $.jstree._reference(data.reference);
+
+                                // build the create menu based on the available nodes fetched in typesfromurl
+                                if(typeof(inst.get_settings) !== "undefined" &&
+                                    typeof(inst.get_settings().typesfromurl.available_nodes) !== "undefined") {
+
+                                    var available_nodes = inst.get_settings().typesfromurl.available_nodes;
+                                    var create_menu = $.jstree.buildCreateMenu(available_nodes);
+                                }
+
+                                $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+                            }
+                        }
+                    },
+                    "remove" : {
+                        "label"             : "Delete",
+                        "action"            : function () {
+                            var data = { "reference" : $(".jstree-clicked") };
+                            if (data.reference.length) {
+                                $.jstree.contextDelete(data);
+                            }
+                        }
+                    },
+                    "duplicate" : {
+                        "label"             : "Duplicate",
+                        "action"            : function () {
+                            var data = { "reference" : $(".jstree-clicked").parent("li") };
+                            if (data.reference.length) {
+                                $.jstree.contextCopy(data)
+                                $.jstree.contextPaste(data);
+                            }
+                        }
                     }
                 }
-            }
+        }
         })
     });
 
     // TODO can these extensions be scoped better?
 
-    $.jstree.contextDelete = function() {
+    $.jstree.buildCreateMenu = function (available_nodes){
+        var sub_menu = {};
+
+        $.each(available_nodes, function(type, node){
+            sub_menu[type] = {
+                "label"             : node.name,
+                "separator_before"  : false,
+                "separator_after"   : false,
+                "action"            : function (data) {
+                    $.jstree.contextCreate(data, type);
+                }
+            }
+        });
+
+        var create_menu = {
+            "create" : {
+                "label"             : "Create",
+                "separator_before"  : false,
+                "separator_after"   : true,
+                "action"            : false,
+                "submenu"           : sub_menu
+            }
+        }
+
+        return create_menu;
+    };
+
+    $.jstree.contextDelete = function(data) {
         var offset = data.reference.offset();
 
         $.jstree.confirmDelete(offset.left, offset.top, function() {
@@ -213,14 +248,15 @@ $(function () {
     };
 
     $.jstree.contextCut = function(data) {
-        var inst = $.jstree._reference(data.reference),
-            obj = inst.get_node(data.reference);
+        var inst = $.jstree._reference(data.reference);
+        var obj = inst.get_node(data.reference);
         if(data.ui && inst.is_selected(obj)) {
             obj = inst.get_selected();
         }
         inst.cut(obj);
     };
-    $.jstree.contextCreate = function(data) {
+
+    $.jstree.contextCreate = function(data, type) {
         var inst = $.jstree._reference(data.reference);
         var obj = inst.create_node(data.reference, type, 'inside');
 
@@ -229,23 +265,23 @@ $(function () {
     };
 
     $.jstree.contextCopy = function(data) {
-        var inst = $.jstree._reference(data.reference),
-            obj = inst.get_node(data.reference);
-        if(data.ui && inst.is_selected(obj)) {
+        var inst = $.jstree._reference(data.reference);
+        var obj = inst.get_node(data.reference);
+        if(inst.is_selected(obj)) {
             obj = inst.get_selected();
         }
         inst.copy(obj);
     };
 
     $.jstree.contextPaste = function(data) {
-        var inst = $.jstree._reference(data.reference),
-            obj = inst.get_node(data.reference);
+        var inst = $.jstree._reference(data.reference);
+        var obj = inst.get_node(data.reference);
         inst.paste(obj);
     };
 
     $.jstree.contextRename = function(data) {
-        var inst = $.jstree._reference(data.reference),
-            obj = inst.get_node(data.reference);
+        var inst = $.jstree._reference(data.reference);
+        var obj = inst.get_node(data.reference);
         inst.edit(obj);
     };
 
