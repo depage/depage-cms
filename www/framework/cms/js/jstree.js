@@ -47,7 +47,8 @@ $(function () {
             },
             core : { 
                 animation : 0,
-                initially_open : ($(this).attr("data-open-nodes") || "").split(" ")
+                initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
+                copy_node : function() {alert('hello');}
             },
             themes : {
                 "theme" : "default",
@@ -127,7 +128,7 @@ $(function () {
                             this.close_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_prev(o));
                         }
                     }
@@ -140,7 +141,7 @@ $(function () {
                             this.close_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_prev(o));
                         }
                     }
@@ -153,7 +154,7 @@ $(function () {
                             this.close_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_prev(o));
                         }
                     }
@@ -167,7 +168,7 @@ $(function () {
                             this.open_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_next(o));
                         }
                     }
@@ -181,7 +182,7 @@ $(function () {
                             this.open_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_next(o));
                         }
                     }
@@ -195,7 +196,7 @@ $(function () {
                             this.open_node(o);
                         }
                         else {
-                            this.deselect_node(obj);
+                            this.deselect_node(o);
                             this.select_node(this.get_next(o));
                         }
                     }
@@ -219,7 +220,6 @@ $(function () {
             },
             contextmenu : {
                 items : function (obj) {
-
                     var default_items = { // Could be a function that should return an object like this one
                         "rename" : {
                             "separator_before"  : false,
@@ -250,7 +250,7 @@ $(function () {
                                     "separator_after"   : false,
                                     "label"             : "Cut",
                                     "action"            : function (data) {
-                                        $.jstree.contextDelete(data);
+                                        $.jstree.contextCut(data);
                                     }
                                 },
                                 "copy" : {
@@ -267,6 +267,7 @@ $(function () {
                                     "icon"              : false,
                                     "separator_after"   : false,
                                     "label"             : "Paste",
+                                    "_disabled"         : typeof(this.can_paste) === "undefined" ? false : !(this.can_paste()),
                                     "action"            : function (data) {
                                         $.jstree.contextPaste(data);
                                     }
@@ -334,10 +335,17 @@ $(function () {
                     "duplicate" : {
                         "label"             : "Duplicate",
                         "action"            : function () {
-                            var data = { "reference" : $(".jstree-clicked").parent("li") };
-                            if (data.reference.length) {
-                                $.jstree.contextCopy(data)
-                                $.jstree.contextPaste(data);
+                            var obj = $(".jstree-clicked").parent("li");
+                            if (obj.length){
+                                var inst = $.jstree._reference(obj);
+
+                                var data = { "reference" : obj };
+
+                                $.jstree.contextCopy(data);
+
+                                data.reference = inst.get_parent(obj);
+
+                                $.jstree.contextPaste(data, obj.index() + 1);
                             }
                         }
                     }
@@ -407,17 +415,21 @@ $(function () {
 
     $.jstree.contextCopy = function(data) {
         var inst = $.jstree._reference(data.reference);
-        var obj = inst.get_node(data.reference);
-        if(inst.is_selected(obj)) {
-            obj = inst.get_selected();
+        if (inst){ // TODO why null?
+            var obj = inst.get_node(data.reference);
+            if(inst.is_selected(obj)) {
+                obj = inst.get_selected();
+            }
+            inst.copy(obj);
         }
-        inst.copy(obj);
     };
 
-    $.jstree.contextPaste = function(data) {
+    $.jstree.contextPaste = function(data, pos) {
+        pos = pos || "after";
         var inst = $.jstree._reference(data.reference);
         var obj = inst.get_node(data.reference);
-        inst.paste(obj);
+
+        inst.paste(obj, pos);
     };
 
     $.jstree.contextRename = function(data) {
@@ -429,9 +441,14 @@ $(function () {
     $.jstree.confirmDelete = function(left, top, delete_callback) {
         // setup confirm on the delete context menu using shy-dialogue
         var buttons = {
-            yes: {click: function() {
-                delete_callback();
-            }},
+            yes: {
+                click: function(e) {
+                    e.stopImmediatePropagation();
+                    delete_callback();
+                    $("#node_1").data('depage.shyDialogue').hide();
+                    return false;
+                }
+            },
             no : false
         };
 
