@@ -56,7 +56,8 @@
                 "create_node": true,
                 "rename_node": true,
                 "copy_node": true,
-                "paste_node": true
+                "paste_node": true,
+                "cut_node": true
             },
 
             _fn : {
