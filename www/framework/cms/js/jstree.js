@@ -398,11 +398,14 @@ $(function () {
 
     $.jstree.contextCut = function(data) {
         var inst = $.jstree._reference(data.reference);
-        var obj = inst.get_node(data.reference);
-        if(data.ui && inst.is_selected(obj)) {
-            obj = inst.get_selected();
+
+        if (inst) { // TODO why null?
+            var obj = inst.get_node(data.reference);
+            if(data.ui && inst.is_selected(obj)) {
+                obj = inst.get_selected();
+            }
+            inst.cut(obj);
         }
-        inst.cut(obj);
     };
 
     $.jstree.contextCreate = function(data, type) {
