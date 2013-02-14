@@ -1846,6 +1846,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 
 				if(!this.check("copy_node", org_obj, new_par, pos)) { return false; }
 
+                // BW TODO what is the new_parent and old parent for?! causing loads of bugs!
 				if(!par.children("ul").length) { par.append("<ul />"); }
 				if(par.children("ul").children("li").eq(pos).length) {
 					par.children("ul").children("li").eq(pos).before(obj);
@@ -1859,7 +1860,8 @@ Some static functions and variables, unless you know exactly what you are doing 
 				new_ins.clean_node(obj); // always clean so that selected states, etc. are removed
 				new_ins.correct_node(new_par, true); // no need to correct the old parent, as nothing has changed there
 				if(callback) { callback.call(this, obj, new_par, obj.index(), org_obj); }
-				this.__callback({ "obj" : obj, "parent" : new_par, "old_parent" : old_par, "position" : obj.index(), "original" : org_obj, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
+                // BW HACK send par to callback for delta updates, otherwise the wrong parent is used!
+				this.__callback({ "obj" : obj, "parent" : par, "old_parent" : old_par, "position" : obj.index(), "original" : org_obj, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });
 				return true;
 			},
 
@@ -1880,10 +1882,10 @@ Some static functions and variables, unless you know exactly what you are doing 
 			can_paste : function () {
 				return ccp_mode !== false && ccp_node !== false;
 			},
-			paste : function (obj) {
+			paste : function (obj, pos) {
 				obj = this.get_node(obj);
 				if(!obj || !ccp_mode || !ccp_mode.match(/^(copy_node|move_node)$/) || !ccp_node) { return false; }
-				this[ccp_mode](ccp_node, obj);
+				this[ccp_mode](ccp_node, obj, pos);
 				this.__callback({ "obj" : obj, "nodes" : ccp_node, "mode" : ccp_mode });
 				ccp_node = false;
 				ccp_mode = false;
