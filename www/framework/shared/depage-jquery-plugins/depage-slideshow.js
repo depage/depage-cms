@@ -125,9 +125,15 @@
                 return;
             }
             base.clearQueue();
-            
+
+            divs.each(function(i) {
+                if (i != n || i != base.activeSlide) {
+                    $(this).hide();
+                }
+            });
+
             // fadout active slide
-            $(divs[base.activeSlide]).css({
+            $(divs[base.activeSlide]).show().css({
                 opacity: 1
             }).animate({
                 opacity: 0
@@ -136,15 +142,11 @@
             base.activeSlide = n;
 
             // fadein next slide
-            $(divs[n]).css({
+            $(divs[n]).show().css({
                 opacity: 0
-            }).show().animate({
+            }).animate({
                 opacity: 1
             }, base.options.speed, function() {
-                // hide all others completely
-                divs.hide();
-                $(this).show();
-                
                 base.waitForNext();
             });
         };
