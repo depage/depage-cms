@@ -127,6 +127,17 @@ class ui_tree extends ui_base {
         return new \json(array("status" => $status));
     }
     // }}}
+    // {{{ duplicate_node
+    public function duplicate_node() {
+        $status = $this->xmldb->duplicateNode($_REQUEST["doc_id"], $_REQUEST["id"]);
+        if ($status) {
+            $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
+            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"], $parent_id));
+        }
+
+        return new \json(array("status" => $status));
+    }
+    // }}}
 
     // TODO: set icons?
     // {{{ types_settings

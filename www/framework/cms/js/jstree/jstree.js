@@ -1847,7 +1847,7 @@ Some static functions and variables, unless you know exactly what you are doing 
 
 				if(!this.check("copy_node", org_obj, new_par, pos)) { return false; }
 
-                // BW TODO what is the new_parent and old parent for?! causing loads of bugs!
+                // BW TODO what is the new_parent and old parent for?!
 				if(!par.children("ul").length) { par.append("<ul />"); }
 				if(par.children("ul").children("li").eq(pos).length) {
 					par.children("ul").children("li").eq(pos).before(obj);
@@ -1866,6 +1866,68 @@ Some static functions and variables, unless you know exactly what you are doing 
 				return true;
 			},
 
+            /*
+             Function: duplicate_node
+             This function copies a node and inserts it after.
+
+             Parameters:
+             obj - *mixed* the node to copy. This is used as a jquery selector, can be jQuery object, DOM node, string, etc.
+             callback - optional function to be executed once the node is moved
+
+             Returns:
+             boolean - indicating if the move was successful (may return _undefined_ if the parent node is not yet loaded, but will move the node)
+
+
+             Triggers:
+             <duplicate_node>
+
+             Event: duplicate_node
+             This event is triggered in the *jstree* namespace when a node is copied.
+
+             Parameters:
+             data.inst - the instance
+             data.args - *array* the arguments passed to the function
+             data.plugin - *string* the function's plugin (here it will be _"core"_ but if the function is extended it may be something else)
+             data.rslt - *object* which contains a five keys: _obj_ (the node), _parent_ (the new parent) and _position_ which is the numerical index, _original_ (the original object), is_multi (a boolean indicating if the node is coming from another tree instance, _old_instance_ (the source instance) and _new_instance_ (the receiving instance))
+
+             Example:
+             > $("div").bind("duplicate_node.jstree", function (e, data) {
+             >   alert("Duplicated `" + data.inst.get_text(data.rslt.original) );
+             > });
+             */
+            duplicate_node : function (obj, callback) {
+                obj = this.get_node(obj);
+                var par = this.get_parent(obj);
+                var pos = obj.index();
+
+                if(!obj || obj === -1 || !obj.length) { return false; }
+                if(par !== -1 && !par.length) { return false; }
+
+                var org_obj = obj,
+                    old_ins = $.jstree._reference(obj),
+                    new_ins = $.jstree._reference(par);
+
+                obj = obj.clone(true);
+
+                // remove sub tree
+                obj.find('ul').remove();
+
+                obj.find("*[id]").andSelf().each(function () {
+                    if(this.id) { this.id = "duplicate_" + this.id; }
+                });
+
+                if(!this.check("copy_node", org_obj, par, pos)) { return false; }
+
+                if(!par.children("ul").length) { par.append("<ul />"); }
+                par.children("ul").children("li").eq(pos).after(obj);
+
+                new_ins.clean_node(obj)
+
+                if(callback) { callback.call(this, obj, par, obj.index(), org_obj); }
+                this.__callback({ "obj" : obj, "parent" : par, "old_parent" : par, "position" : obj.index(), "original" : org_obj, "is_multi" : true, 'old_instance' : old_ins, 'new_instance' : new_ins });
+                return true;
+            },
+
 			cut : function (obj) {
 				obj = this.get_node(obj);
 				if(!obj || obj === -1 || !obj.length) { return false; }
@@ -1880,6 +1942,16 @@ Some static functions and variables, unless you know exactly what you are doing 
 				ccp_mode = 'copy_node';
 				this.__callback({ "obj" : obj });
 			},
+            duplicate : function (obj) {
+                obj = this.get_node(obj);
+                if(!obj || obj === -1 || !obj.length) { return false; }
+                ccp_node = obj;
+                ccp_mode = 'duplicate_node';
+                this[ccp_mode](ccp_node);
+                this.__callback({ "obj" : obj, "nodes" : ccp_node, "mode" : ccp_mode });
+                ccp_node = false;
+                ccp_mode = false;
+            },
 			can_paste : function () {
 				return ccp_mode !== false && ccp_node !== false;
 			},

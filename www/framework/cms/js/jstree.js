@@ -247,11 +247,7 @@ $(function () {
 
                                 var data = { "reference" : obj };
 
-                                $.jstree.contextCopy(data);
-
-                                data.reference = inst.get_parent(obj);
-
-                                $.jstree.contextPaste(data, obj.index() + 1);
+                                $.jstree.contextDuplicate(data);
                             }
                         }
                     }
@@ -338,12 +334,15 @@ $(function () {
         var offset = data.reference.offset();
 
         $.jstree.confirmDelete(offset.left, offset.top, function() {
-            var inst = $.jstree._reference(data.reference),
-                obj = inst.get_node(data.reference);
-            if(inst.data.ui && inst.is_selected(obj)) {
-                obj = inst.get_selected();
+            var inst = $.jstree._reference(data.reference);
+
+            if (inst) {
+                var obj = inst.get_node(data.reference);
+                if(inst.data.ui && inst.is_selected(obj)) {
+                    obj = inst.get_selected();
+                }
+                inst.delete_node(obj);
             }
-            inst.delete_node(obj);
         });
     };
 
@@ -375,6 +374,17 @@ $(function () {
                 obj = inst.get_selected();
             }
             inst.copy(obj);
+        }
+    };
+
+    $.jstree.contextDuplicate = function(data) {
+        var inst = $.jstree._reference(data.reference);
+        if (inst){
+            var obj = inst.get_node(data.reference);
+            if(inst.is_selected(obj)) {
+                obj = inst.get_selected();
+            }
+            inst.duplicate(obj);
         }
     };
 
