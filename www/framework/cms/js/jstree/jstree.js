@@ -1860,6 +1860,11 @@ Some static functions and variables, unless you know exactly what you are doing 
 				}
 				new_ins.clean_node(obj); // always clean so that selected states, etc. are removed
 				new_ins.correct_node(new_par, true); // no need to correct the old parent, as nothing has changed there
+
+                // select the new node
+                new_ins.deselect_all();
+                new_ins.select_node(obj);
+
 				if(callback) { callback.call(this, obj, new_par, obj.index(), org_obj); }
                 // BW HACK send par to callback for delta updates, otherwise the wrong parent is used!
 				this.__callback({ "obj" : obj, "parent" : par, "old_parent" : old_par, "position" : obj.index(), "original" : org_obj, "is_multi" : is_multi, 'old_instance' : old_ins, 'new_instance' : new_ins });

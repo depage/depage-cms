@@ -149,7 +149,7 @@
 
                                 var text = $node.find('a').attr('title').split(' - ')[0];
 
-                                // inst.edit($node);
+                                inst.edit($node);
                             }
                             else {
                                 _this.refresh();
