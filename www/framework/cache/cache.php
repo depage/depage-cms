@@ -179,7 +179,7 @@ class cache {
     // }}}
     // {{{ rmdir */
     /**
-     * @brief deletes files and direcories recursively
+     * @brief deletes files and directories recursively
      *
      * @param   $path (string) path to file or directory
      *
