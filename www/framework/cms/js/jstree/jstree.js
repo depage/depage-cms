@@ -1921,7 +1921,10 @@ Some static functions and variables, unless you know exactly what you are doing 
                 if(!par.children("ul").length) { par.append("<ul />"); }
                 par.children("ul").children("li").eq(pos).after(obj);
 
-                new_ins.clean_node(obj)
+                new_ins.clean_node(obj);
+
+                new_ins.deselect_all();
+                new_ins.select_node(obj);
 
                 if(callback) { callback.call(this, obj, par, obj.index(), org_obj); }
                 this.__callback({ "obj" : obj, "parent" : par, "old_parent" : par, "position" : obj.index(), "original" : org_obj, "is_multi" : true, 'old_instance' : old_ins, 'new_instance' : new_ins });
