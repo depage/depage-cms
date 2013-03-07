@@ -141,6 +141,15 @@
                         success : function (r) {
                             if(r.status) {
                                 $(data.rslt.oc).attr("id", "node_" + r.id);
+
+                                var $node = $(data.rslt.obj);
+                                $node.attr("id", "node_" + r.id);
+
+                                var inst = $.jstree._reference($node);
+
+                                var text = $node.find('a').attr('title').split(' - ')[0];
+
+                                // inst.edit($node);
                             }
                             else {
                                 _this.refresh();
@@ -165,7 +174,20 @@
                         data : d,
                         success : function (r) {
                             if(r.status) {
-                                $(data.rslt.oc).attr("id", "node_" + r.id);
+                                var $node = $(data.rslt.obj);
+                                $node.attr("id", "node_" + r.id);
+
+                                var inst = $.jstree._reference($node);
+
+                                var text = $node.find('a').attr('title').split(' - ')[0];
+
+                                if (text.match(/\d+$/)) {
+                                    text = text.replace(/\d+$/, function(n){ return ++n });  // increment if last char numeric
+                                } else {
+                                    text += ' 1';
+                                }
+
+                                inst.edit($node, text);
                             }
                             else {
                                 _this.refresh();
