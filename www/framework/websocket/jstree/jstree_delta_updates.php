@@ -75,6 +75,8 @@ class jstree_delta_updates {
 
         $changed_nodes = array();
         foreach ($parent_ids as $parent_id) {
+            // TODO this is not getting a sub doc but only top level (when $level = 0)
+            // TODO therefore don't want to save to cache
             $changed_nodes[$parent_id] = $this->xmldb->getSubdocByNodeId($this->doc_id, $parent_id, true, $level_of_children);
         }
 

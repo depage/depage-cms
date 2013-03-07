@@ -288,7 +288,8 @@ class xmldb {
                 $this->endTransaction();
 
                 // add xml to xml-cache
-                if (is_object($xml_doc) && $xml_doc->documentElement != null) {
+                // TODO bug in cache caused by saving when level is 0
+                if (is_object($xml_doc) && $xml_doc->documentElement != null && $level === PHP_INT_MAX) {
                     $this->cache->set($identifier, $xml_doc->saveXML());
                 }
             }
