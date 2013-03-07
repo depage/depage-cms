@@ -107,12 +107,15 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ copy_node
     public function copy_node() {
-        $status = $this->xmldb->copyNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $id = $this->xmldb->copyNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+
+        $status = $id !== false;
+
         if ($status) {
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
         }
 
-        return new \json(array("status" => $status));
+        return new \json(array("status" => $status, "id" => $status));
     }
     // }}}
     // {{{ remove_node
@@ -129,13 +132,16 @@ class ui_tree extends ui_base {
     // }}}
     // {{{ duplicate_node
     public function duplicate_node() {
-        $status = $this->xmldb->duplicateNode($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $id = $this->xmldb->duplicateNode($_REQUEST["doc_id"], $_REQUEST["id"]);
+
+        $status = $id !== false;
+
         if ($status) {
             $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
             $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"], $parent_id));
         }
 
-        return new \json(array("status" => $status));
+        return new \json(array("status" => $status, "id" => $id));
     }
     // }}}
 
