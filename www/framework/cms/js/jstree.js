@@ -368,7 +368,7 @@ $(function () {
 
     $.jstree.contextCopy = function(data) {
         var inst = $.jstree._reference(data.reference);
-        if (inst){ // TODO why null?
+        if (inst){ // TODO why null? BUG after delete?
             var obj = inst.get_node(data.reference);
             if(inst.is_selected(obj)) {
                 obj = inst.get_selected();
@@ -379,7 +379,7 @@ $(function () {
 
     $.jstree.contextDuplicate = function(data) {
         var inst = $.jstree._reference(data.reference);
-        if (inst){
+        if (inst){ // TODO why null? BUG after delete?
             var obj = inst.get_node(data.reference);
             if(inst.is_selected(obj)) {
                 obj = inst.get_selected();
