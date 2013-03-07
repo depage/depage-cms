@@ -29,7 +29,7 @@
                     }
                 }
             });
-            
+
             this.data.deltaupdates.ws.onmessage = $.proxy(function (event) {
                 if (event.data) {
                     this.data.deltaupdates.pending_updates.push(event);
@@ -147,7 +147,10 @@
 
                                 var inst = $.jstree._reference($node);
 
-                                var text = $node.find('a').attr('title').split(' - ')[0];
+                                // TODO maybe not here?
+                                var $tmp = $node.clone();
+                                $tmp.find('a').children().remove();
+                                var text = $tmp.find('a').text();
 
                                 inst.edit($node);
                             }
@@ -179,7 +182,10 @@
 
                                 var inst = $.jstree._reference($node);
 
-                                var text = $node.find('a').attr('title').split(' - ')[0];
+                                // TODO maybe not here?
+                                var $tmp = $node.clone();
+                                $tmp.find('a').children().remove();
+                                var text = $tmp.find('a').text();
 
                                 if (text.match(/\d+$/)) {
                                     text = text.replace(/\d+$/, function(n){ return ++n });  // increment if last char numeric
@@ -331,9 +337,9 @@
                         }
                     }
                 });
-            },
+            }
             // }}}
-        },
+        }
     });
 })(jQuery);
 
