@@ -1880,7 +1880,8 @@ class xmldb {
 
     // {{{ unlinkNodeById()
     /**
-     * unlinks and deletes a specific node from database
+     * unlinks and deletes a specific node from database.
+     * re-indexes the positions of the remaining elements.
      *
      * @public
      *
@@ -1893,17 +1894,44 @@ class xmldb {
      *
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
-    public function unlinkNodeById($doc_id, $id)  {
+    public function unlinkNodeById($doc_id, $node_id)  {
+        // get parent and position (enables other node positions to be updated after delete)
         $query = $this->pdo->prepare(
-            "DELETE FROM {$this->table_xml}
-            WHERE id_doc = :doc_id AND id = :id"
+            "SELECT xml.id_parent, xml.pos
+                FROM {$this->table_xml} AS xml
+                WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
         );
         $query->execute(array(
+            'node_id' => $node_id,
             'doc_id' => $doc_id,
-            'id' => $id,
         ));
 
-        $this->clearCache($doc_id);
+        $result = $query->fetchObject();
+        if ($result) {
+            // delete the node
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->table_xml}
+                WHERE id_doc = :doc_id AND id = :node_id"
+            );
+            $query->execute(array(
+                'doc_id' => $doc_id,
+                'node_id' => $node_id,
+            ));
+
+            $this->clearCache($doc_id);
+
+            // update position of remaining nodes
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                    SET pos=pos-1
+                    WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'node_parent_id' => $result->id_parent,
+                'node_pos' => $result->pos,
+                'doc_id' => $doc_id,
+            ));
+        }
 
         return array();
     }
