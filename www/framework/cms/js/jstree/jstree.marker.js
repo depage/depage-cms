@@ -161,9 +161,10 @@
                 this.data.add_marker.w = (page_y - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
                 marker_pos.top = this.data.add_marker.offset.top;
                 indicator_pos.top = this.data.add_marker.offset.top;
+
                 indicator_pos.left = target.is('a')
                     ? target.position().left + target.width()
-                    : target.children('a').position().left + target.children('a').width();
+                    : target.children('a').position().left;
 
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
@@ -179,6 +180,7 @@
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "last";
                     this.data.add_marker.marker.addClass("jstree-add-marker-inside").removeClass("jstree-add-marker-between");
+                    indicator_pos.left += target.children('a').width();
                 } else {
                     // after
                     var target_node = this.get_next(node);
