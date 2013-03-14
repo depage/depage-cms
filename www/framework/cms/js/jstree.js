@@ -37,7 +37,7 @@ $(function () {
                 "dblclickrename",
                 "tooltips",
                 //"select_created_nodes",
-                //"add_marker",
+                "add_marker",
                 "deltaupdates",
                 "toolbar"
             ],
