@@ -1,0 +1,7 @@
+www/cache/
+
+*.vis
+
+*.vim
+
+*.log
