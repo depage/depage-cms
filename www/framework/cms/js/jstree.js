@@ -13,6 +13,7 @@
  * @require framework/cms/js/jstree/jstree.deltaupdates.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
  * @require framework/cms/js/jstree/jstree.toolbar.js
+ * @require framework/cms/js/jstree/jstree.marker.js
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
@@ -182,13 +183,18 @@ $(function () {
                         }
                     };
 
-                    // build the create menu based on the available nodes fetched in typesfromurl
-                    if(typeof(this.get_settings) !== "undefined" &&
-                        typeof(this.get_settings().typesfromurl.available_nodes) !== "undefined") {
+                    // add the create menu based on the available nodes fetched in typesfromurl
+                    if(typeof(this.get_settings()['typesfromurl']) !== "undefined") {
 
-                        var available_nodes = this.get_settings().typesfromurl.available_nodes;
+                        var type_settings = this.get_settings()['typesfromurl'];
+
+                        var type = obj.attr(type_settings.type_attr);
+                        var available_nodes = type_settings.valid_children[type];
 
                         default_items = $.extend($.jstree.buildCreateMenu(available_nodes), default_items);
+
+                    } else {
+                        // TODO default create menu
                     }
 
                     return default_items;
@@ -218,14 +224,21 @@ $(function () {
                                 var inst = $.jstree._reference(data.reference);
 
                                 // build the create menu based on the available nodes fetched in typesfromurl
-                                if(typeof(inst.get_settings) !== "undefined" &&
-                                    typeof(inst.get_settings().typesfromurl.available_nodes) !== "undefined") {
 
-                                    var available_nodes = inst.get_settings().typesfromurl.available_nodes;
+                                if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
+
+                                    var type_settings = inst.get_settings()['typesfromurl'];
+
+                                    var type = data.reference.parent().attr(type_settings.type_attr);
+                                    var available_nodes = type_settings.valid_children[type];
+
                                     var create_menu = $.jstree.buildCreateMenu(available_nodes);
-                                }
 
-                                $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+                                    $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+
+                                } else {
+                                    // TODO default create menu
+                                }
                             }
                         }
                     },
@@ -255,8 +268,6 @@ $(function () {
         }
         })
     });
-
-    // TODO can these extensions be scoped better?
 
     $.jstree.buildCreateMenu = function (available_nodes){
         var sub_menu = {};

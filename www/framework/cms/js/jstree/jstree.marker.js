@@ -4,7 +4,7 @@
  */
 (function ($) {
     $.jstree.plugin("add_marker", {
-        __init : function () {
+        __construct : function () {
             this.data.add_marker = {
                 offset : null,
                 w : null,
@@ -42,11 +42,13 @@
             }, this));
         },
         _fn : {
+            // DEPRECATE
+            /*
             _get_valid_children : function () {
-                var types_settings = this._get_settings().types_from_url;
+                var types_settings = this.get_settings()['typesfromurl'];
                 if (this.data.add_marker.parent !== -1) {
                     var parent_type = this.data.add_marker.parent.attr(types_settings.type_attr);
-                    var valid_children = (types_settings.types[parent_type] || types_settings.types["default"]).valid_children;
+                    var valid_children = (types_settings.valid_children[parent_type] || types_settings.valid_children["default"]);
                 } else {
                     // root element
                     var valid_children = types_settings.valid_children;
@@ -88,7 +90,26 @@
 
                 return items;
             },
+             */
             _show_add_context_menu : function () {
+                var type_settings =  this.get_settings()['typesfromurl'];
+                var type = this.data.add_marker.target.attr(type_settings.type_attr);
+                var available_nodes = type_settings['valid_children'][type];
+
+                var create_menu = $.jstree.buildCreateMenu(available_nodes);
+
+                var position = {
+                    'x' : this.data.add_marker.marker.offset()['left'],
+                    'y' : this.data.add_marker.marker.offset()['top']
+                };
+
+                $.vakata.context.show(
+                    this.data.add_marker.target,
+                    position,
+                    create_menu.create.submenu);
+
+                // DEPRECATE
+                /*
                 var items = this._get_add_context_menu_items();
                 if (items.length) {
                     var a = this.data.add_marker.marker;
@@ -100,9 +121,11 @@
                     $.vakata.context.show(items, a, x, y, this, this.data.add_marker.target);
                     if(this.data.themes) { $.vakata.context.cnt.attr("class", "jstree-" + this.data.themes.theme + "-context"); }
                 }
+                */
             },
+
             _show_add_marker : function (target, page_x, page_y) {
-                var node = this._get_node(target);
+                var node = this.get_node(target);
                 if (!node || node == -1 || target[0].nodeName == "UL") {
                     this.data.add_marker.marker.hide();
                     return;
@@ -124,7 +147,7 @@
 
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
-                    this.data.add_marker.parent = this._get_parent(node);
+                    this.data.add_marker.parent = this.get_parent(node);
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "before";
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
@@ -137,26 +160,29 @@
                     this.data.add_marker.marker.addClass("jstree-add-marker-inside").removeClass("jstree-add-marker-between");
                 } else {
                     // after
-                    var target_node = this._get_next(node);
+                    var target_node = this.get_next(node);
                     if (target_node.length) {
-                        this.data.add_marker.parent = this._get_parent(target_node);
+                        this.data.add_marker.parent = this.get_parent(target_node);
                         this.data.add_marker.target = target_node;
                         this.data.add_marker.pos = "before";
                     } else {
                         // special case for last node
                         this.data.add_marker.target = node.parentsUntil(".jstree", "li:last").andSelf().eq(0);
-                        this.data.add_marker.parent = this._get_parent(this.data.add_marker.target);
+                        this.data.add_marker.parent = this.get_parent(this.data.add_marker.target);
                         this.data.add_marker.pos = "after";
                     }
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
                     top += this.data.core.li_height / 2;
                 }
 
+                // TODO check types
+                /*
                 if (this._has_valid_children()) {
                     this.data.add_marker.marker.removeClass("jstree-add-marker-disabled");
                 } else {
                     this.data.add_marker.marker.addClass("jstree-add-marker-disabled");
                 }
+                */
                 this.data.add_marker.marker.css({ "left" : x_pos + "px", "top" : top + "px" }).show();
             }
         }

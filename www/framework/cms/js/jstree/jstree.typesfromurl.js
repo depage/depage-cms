@@ -73,6 +73,7 @@
                         $.extend(true, s, new_types_settings.typesfromurl);
 
                         // add create context menu
+                        /*
                         $.each(s.available_nodes, function (type, node) {
 
                             // check create is not disabled
@@ -96,6 +97,19 @@
                                     });
                                 }
                             }});
+                        });
+                        */
+
+                        // build valid children
+                        $.each(s.valid_parents, function(parent, children) {
+                            $.each(children, function(i, child) {
+                                if(typeof(s.valid_children[child]) === 'undefined') {
+                                    s.valid_children[child] = {};
+                                }
+                                if (typeof(s.available_nodes[parent]) !== 'undefined') {
+                                    s.valid_children[child][parent] = s.available_nodes[parent];
+                                }
+                            });
                         });
 
                         // build icons css
