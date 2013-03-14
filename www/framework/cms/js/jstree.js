@@ -269,7 +269,10 @@ $(function () {
         })
     });
 
-    $.jstree.buildCreateMenu = function (available_nodes){
+    $.jstree.buildCreateMenu = function (available_nodes, position){
+
+        position = position || 'inside';
+
         var sub_menu = {};
 
         $.each(available_nodes, function(type, node){
@@ -278,7 +281,7 @@ $(function () {
                 "separator_before"  : false,
                 "separator_after"   : false,
                 "action"            : function (data) {
-                    $.jstree.contextCreate(data, type);
+                    $.jstree.contextCreate(data, type, position);
                 }
             }
         });
@@ -369,9 +372,10 @@ $(function () {
         }
     };
 
-    $.jstree.contextCreate = function(data, type) {
+    $.jstree.contextCreate = function(data, type, position) {
+        position = position || 'inside';
         var inst = $.jstree._reference(data.reference);
-        var obj = inst.create_node(data.reference, type, 'inside');
+        var obj = inst.create_node(data.reference, type, position);
 
         // focus for edit
         inst.edit(obj);

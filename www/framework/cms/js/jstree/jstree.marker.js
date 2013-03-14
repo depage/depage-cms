@@ -10,7 +10,8 @@
                 w : null,
                 target : null,
                 context_menu : false,
-                marker : $("<div>ADD</div>").attr({ id : "jstree-add-marker" }).hide().appendTo("body")
+                marker : $("<div>ADD</div>").attr({ id : "jstree-add-marker" }).hide().appendTo("body"),
+                indicator : $("<div />").attr({ id : "jstree-add-marker-indicator" }).hide().appendTo("body")
             };
 
             var c = this.get_container();
@@ -96,17 +97,23 @@
                 var type = this.data.add_marker.target.attr(type_settings.type_attr);
                 var available_nodes = type_settings['valid_children'][type];
 
-                var create_menu = $.jstree.buildCreateMenu(available_nodes);
+                var create_menu = $.jstree.buildCreateMenu(available_nodes, this.data.add_marker.pos);
 
                 var position = {
                     'x' : this.data.add_marker.marker.offset()['left'],
-                    'y' : this.data.add_marker.marker.offset()['top']
+                    'y' : this.data.add_marker.marker.offset()['top'] + this.data.core.li_height
                 };
 
                 $.vakata.context.show(
                     this.data.add_marker.target,
                     position,
                     create_menu.create.submenu);
+
+                $(document).bind("context_hide.vakata", $.proxy(function () {
+                    this.data.add_marker.context_menu = false;
+                }, this));
+
+                this.data.add_marker.context_menu = true;
 
                 // DEPRECATE
                 /*
@@ -126,16 +133,25 @@
 
             _show_add_marker : function (target, page_x, page_y) {
                 var node = this.get_node(target);
+
+                if(this.data.add_marker.context_menu) {
+                    return;
+                }
+
                 if (!node || node == -1 || target[0].nodeName == "UL") {
                     this.data.add_marker.marker.hide();
+                    this.data.add_marker.indicator.hide();
                     return;
                 }
 
                 var c = this.get_container();
-                var x_pos = c.offset().left + c.width() - (c.attr("data-add-marker-right") || 30) - (c.attr("data-add-marker-margin-right") || 10);
-                var min_x = x_pos - (c.attr("data-add-marker-margin-left") || 10);
+                var marker_pos = {'left' : 0, 'top' : 0};
+                var indicator_pos = {'left' : 0, 'top' : 0};
+                marker_pos.left = c.offset().left + c.width() - (c.attr("data-add-marker-right") || 30) - (c.attr("data-add-marker-margin-right") || 10);
+                var min_x = marker_pos.left - (c.attr("data-add-marker-margin-left") || 10);
                 if (page_x < min_x) {
                     this.data.add_marker.marker.hide();
+                    this.data.add_marker.indicator.hide();
                     return;
                 }
 
@@ -143,7 +159,11 @@
                 this.data.core.li_height = c.find("ul li.jstree-closed, ul li.jstree-leaf").eq(0).height() || 18;
                 this.data.add_marker.offset = target.offset();
                 this.data.add_marker.w = (page_y - (this.data.add_marker.offset.top || 0)) % this.data.core.li_height;
-                var top = this.data.add_marker.offset.top;
+                marker_pos.top = this.data.add_marker.offset.top;
+                indicator_pos.top = this.data.add_marker.offset.top;
+                indicator_pos.left = target.is('a')
+                    ? target.position().left + target.width()
+                    : target.children('a').position().left + target.children('a').width();
 
                 if (this.data.add_marker.w < this.data.core.li_height / 4) {
                     // before
@@ -151,7 +171,8 @@
                     this.data.add_marker.target = node;
                     this.data.add_marker.pos = "before";
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
-                    top -= this.data.core.li_height / 2;
+                    marker_pos.top -= this.data.core.li_height / 2;
+                    indicator_pos.top -= this.data.core.li_height / 2;
                 } else if (this.data.add_marker.w <= this.data.core.li_height * 3/4) {
                     // inside
                     this.data.add_marker.parent = node;
@@ -172,7 +193,8 @@
                         this.data.add_marker.pos = "after";
                     }
                     this.data.add_marker.marker.addClass("jstree-add-marker-between").removeClass("jstree-add-marker-inside");
-                    top += this.data.core.li_height / 2;
+                    marker_pos.top += this.data.core.li_height / 2;
+                    indicator_pos.top += this.data.core.li_height / 2;
                 }
 
                 // TODO check types
@@ -183,7 +205,15 @@
                     this.data.add_marker.marker.addClass("jstree-add-marker-disabled");
                 }
                 */
-                this.data.add_marker.marker.css({ "left" : x_pos + "px", "top" : top + "px" }).show();
+
+                // indicator width
+                var width = marker_pos.left - indicator_pos.left;
+
+                // set indicator position
+                this.data.add_marker.indicator.css({ "left" : indicator_pos.left + "px", "top" : indicator_pos.top + "px", "width" : width + "px"}).show();
+
+                // set marker position
+                this.data.add_marker.marker.css({ "left" : marker_pos.left + "px", "top" : marker_pos.top + "px" }).show();
             }
         }
     });
