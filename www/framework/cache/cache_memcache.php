@@ -102,7 +102,7 @@ class cache_memcache extends cache {
 
             $counter = $this->memc->get($key_ns);
             if($counter === false) {
-                $counter = rand(1, 10000);
+                $counter = mt_rand(1, 10000);
                 $this->memc->set($key_ns, $counter);
             }
 
