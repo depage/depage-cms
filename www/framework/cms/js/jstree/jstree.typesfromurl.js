@@ -234,14 +234,20 @@
 
                     var li = $("<li />").attr({rel: type}).append($("<a />").html(node.new).attr({href:"#"}));
 
+                    var new_parent = this.get_parent(parent);
+
+                    if (new_parent === -1) {
+                        new_parent = parent.parents('.jstree-0');
+                    }
+
                     switch(position) {
                         case "before":
                             position = parent.index();
-                            parent = this.get_parent(parent);
+                            parent = new_parent;
                             break;
                         case "after" :
                             position = parent.index() + 1;
-                            parent = this.get_parent(parent);
+                            parent = new_parent;
                             break;
                         case "inside":
                         case "first":
