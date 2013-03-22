@@ -12,13 +12,13 @@ filesPHP=$(mktemp /tmp/localize.XXXXXXX)
 filesXML=$(mktemp /tmp/localize.XXXXXXX)
 potAll=$(mktemp /tmp/localize.XXXXXXX)
 
-find -f . framework/htmlform/ -name "*.php" -or -name "*.tpl" > $filesPHP
+find . -name "*.php" -or -name "*.tpl" > $filesPHP
 xgettext \
     -f $filesPHP \
     --from-code=UTF-8 -L PHP -o - \
     | sed -e 's/charset=CHARSET/charset=UTF-8/' > $potAll
 
-find . -name "*.xml" > $filesXML
+find . -name "nav*.xml" > $filesXML
 xgettext \
     -f $filesXML \
     --from-code=UTF-8 \
@@ -34,6 +34,10 @@ for lang in $languages; do
     fi
     cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
     msgmerge locale/$lang/LC_MESSAGES/messages_old.po $potAll -o locale/$lang/LC_MESSAGES/messages.po
+    if [[ -a framework/locale/$lang/LC_MESSAGES/messages.po ]] ; then
+        cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
+        msgcat locale/$lang/LC_MESSAGES/messages_old.po framework/locale/$lang/LC_MESSAGES/messages.po -o locale/$lang/LC_MESSAGES/messages.po
+    fi
     rm locale/$lang/LC_MESSAGES/messages_old.po
 
     msgfmt -o locale/$lang/LC_MESSAGES/messages.mo locale/$lang/LC_MESSAGES/messages.po
