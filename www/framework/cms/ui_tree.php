@@ -54,17 +54,22 @@ class ui_tree extends ui_base {
     public function tree($docName) {
         $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
 
-        $doc_info = $this->xmldb->getDocInfo($docName);
+        if ($doc = $this->xmldb->getDoc($docName)) {
+            $doc_info = $doc->getDocInfo();
 
-        $h = new html("jstree.tpl", array(
-            'actionUrl' => $actionUrl,
-            'doc_id' => $doc_info->id,
-            'root_id' => $doc_info->rootid, 
-            'seq_nr' => $this->get_current_seq_nr($doc_info->id),
-            'nodes' => $this->get_html_nodes($docName),
-        ), $this->html_options); 
+            $h = new html("jstree.tpl", array(
+                'actionUrl' => $actionUrl,
+                'doc_id' => $doc_info->id,
+                'root_id' => $doc_info->rootid,
+                'seq_nr' => $this->get_current_seq_nr($doc_info->id),
+                'nodes' => $this->get_html_nodes($docName),
+            ), $this->html_options);
 
-        return $h;
+            return $h;
+        }
+
+        return false;
+
     }
     // }}}
 
@@ -75,72 +80,82 @@ class ui_tree extends ui_base {
      * @param $position position for new child in parent
      */
     public function create_node() {
+        $status = false;
         $this->log->log($_REQUEST);
-        $id = $this->xmldb->addNodeByName($_REQUEST["doc_id"], $_REQUEST["node"]["_type"], $_REQUEST["target_id"], $_REQUEST["position"]);   
-        $status = $id !== false;
-        if ($status) {
-            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $id = $doc->addNodeByName($_REQUEST["node"]["_type"], $_REQUEST["target_id"], $_REQUEST["position"]);
+            $status = $id !== false;
+            if ($status) {
+                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+            }
         }
-
         return new \json(array("status" => $status, "id" => $id));
     }
     // }}}
     // {{{ rename_node
     public function rename_node() {
-        $this->xmldb->setAttribute($_REQUEST["doc_id"], $_REQUEST["id"], "name", $_REQUEST["name"]);
-        $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        $status = false;
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $doc->setAttribute($_REQUEST["id"], "name", $_REQUEST["name"]);
+            $parent_id = $doc->getParentIdById($_REQUEST["id"]);
+            $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+            $status = true;
+        }
 
-        return new \json(array("status" => 1));
+        return new \json(array("status" => $status));
     }
     // }}}
     // {{{ move_node
     public function move_node() {
-        $old_parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $status = $this->xmldb->moveNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
-        if ($status) {
-            $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
+        $status = false;
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $old_parent_id = $doc->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
+            $status = $this->xmldb->moveNode($_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+            if ($status) {
+                $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
+            }
         }
-
         return new \json(array("status" => $status));
     }
     // }}}
     // {{{ copy_node
     public function copy_node() {
-        $id = $this->xmldb->copyNode($_REQUEST["doc_id"], $_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $status = false;
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $status = !! $this->xmldb->copyNode($_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
 
-        $status = $id !== false;
-
-        if ($status) {
-            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
+            if ($status) {
+                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
+            }
         }
-
         return new \json(array("status" => $status, "id" => $status));
     }
     // }}}
     // {{{ remove_node
     public function remove_node() {
-        $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $ids = $this->xmldb->unlinkNode($_REQUEST["doc_id"], $_REQUEST["id"]);
-        $status = $ids !== false;
-        if ($status) {
-            $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        $status = false;
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $parent_id = $doc->getParentIdById($_REQUEST["id"]);
+            $ids = $doc->unlinkNode($_REQUEST["id"]);
+            $status = $ids !== false;
+            if ($status) {
+                $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+            }
         }
-
         return new \json(array("status" => $status));
     }
     // }}}
     // {{{ duplicate_node
     public function duplicate_node() {
-        $id = $this->xmldb->duplicateNode($_REQUEST["doc_id"], $_REQUEST["id"]);
+        $status = false;
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $id = $doc->duplicateNode($_REQUEST["id"]);
 
-        $status = $id !== false;
-
-        if ($status) {
-            $parent_id = $this->xmldb->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
-            $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"], $parent_id));
+            if ($status) {
+                $parent_id = $doc->getParentIdById($_REQUEST["id"]);
+                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"], $parent_id));
+            }
         }
-
         return new \json(array("status" => $status, "id" => $id));
     }
     // }}}
@@ -148,20 +163,19 @@ class ui_tree extends ui_base {
     // TODO: set icons?
     // {{{ types_settings
     public function types_settings() {
-        $doc_info = $this->xmldb->getDocInfo($this->docName);
-        $doc_id = $doc_info->id;
-        $root_element_name = $this->xmldb->getNodeNameById($doc_id, $doc_info->rootid);
-
-        $permissions = $this->xmldb->getPermissions($doc_id);
-        $this->log->log($permissions);
-        $settings = array(
-            "typesfromurl" => array(
-                "max_depth" => -2,
-                "max_children" => -2,
-                "valid_parents" => $permissions->validParents,
-                "available_nodes" => $permissions->availableNodes
-            ),
-        );
+        $settings = array();
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $permissions = $doc->getPermissions();
+            $this->log->log($permissions);
+            $settings = array(
+                "typesfromurl" => array(
+                    "max_depth" => -2,
+                    "max_children" => -2,
+                    "valid_parents" => $permissions->validParents,
+                    "available_nodes" => $permissions->availableNodes
+                ),
+            );
+        }
 
         return new \json($settings);
     }
@@ -170,10 +184,12 @@ class ui_tree extends ui_base {
     // TODO: disable
     // {{{ add_permissions
     public function add_permissions($doc_id, $element, $parent) {
-        $permissions = $this->xmldb->getPermissions($doc_id);
-        $permissions->allow_element_in($element, $parent);
+        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+            $permissions = $doc->getPermissions();
+            $permissions->allow_element_in($element, $parent);
 
-        $this->xmldb->set_permissions($doc_id, $permissions);
+            $doc->set_permissions($permissions);
+        }
         echo $permissions;
     }
     // }}}
@@ -191,7 +207,7 @@ class ui_tree extends ui_base {
 
     // {{{ get_html_nodes
     protected function get_html_nodes($doc_name) {
-        $doc = $this->xmldb->getDoc($doc_name);
+        $doc = $this->xmldb->getDocXml($doc_name);
         $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
 
         return current($html);

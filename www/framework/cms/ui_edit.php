@@ -112,12 +112,7 @@ class ui_edit extends ui_base {
       </pg:page_data>';
         // }}}
 
-        //$doc = new \DOMDocument();
-        //$doc->loadXML($pagedataXml);
-        //$this->xmldb->saveDoc("testpage", $doc);
-
-        $docs = $this->xmldb->getDocList($docName);
-        $doc = $this->xmldb->getDoc($docName);
+        $doc = $this->xmldb->getDocXml($docName);
 
         $xsl = new \DOMDocument();
         $xsl->load(DEPAGE_FM_PATH . "xslt/cms_htmlform_edit.xsl", LIBXML_NOCDATA);
@@ -146,7 +141,7 @@ class ui_edit extends ui_base {
                  */
                 $nodelist = $values['value']->getBodyNodes();
 
-                $savexml = $this->xmldb->getSubdocByNodeId($docName, (int) $values['dbid']);
+                $savexml = $this->xmldb->getDocXml($docName);
                 $rootnode = $savexml->documentElement;
 
                 for ($i = $rootnode->childNodes->length - 1; $i >= 0; $i--) {
@@ -158,7 +153,10 @@ class ui_edit extends ui_base {
                     $newnode = $savexml->importNode($node, true);
                     $rootnode->appendChild($newnode);
                 }
-                $this->xmldb->saveNode($docName, $savexml);
+
+                if($doc = $this->xmldb->getDoc($docName)){
+                    $doc->saveNode($savexml);
+                }
 
                 $form->clearSession();
             }
