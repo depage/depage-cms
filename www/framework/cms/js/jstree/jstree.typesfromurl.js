@@ -57,6 +57,7 @@
                 "rename_node": true,
                 "copy_node": true,
                 "paste_node": true,
+                "duplicate_node": true,
                 "cut_node": true
             },
 
@@ -151,7 +152,6 @@
                  * @return {Boolean}
                  */
                 check : function (event, element, target, index) {
-                    if(target === -1) {return false;}
 
                     var s  = this.get_settings().typesfromurl;
 
@@ -166,7 +166,7 @@
                     // node unavailable
                     if (typeof(s.available_nodes[type]) === "undefined" ) { return false; }
 
-                    // check operation is not disabled for node for node
+                    // check operation is not disabled for node
                     if (typeof(s.available_nodes[type]["attributes"][event]) !== "undefined"
                         && !s.available_nodes[type]["attributes"][event]) { return false; }
 
@@ -178,9 +178,12 @@
                                 return false
                             }
 
-
+                        case "duplicate_node":
                         case "copy_node":
                         case "create_node":
+
+                            // if no parent and event not delete
+                            if(target === -1) { return false; }
 
                             // check max children
                             if(s.max_children !== -2 && s.max_children !== -1) {
@@ -211,6 +214,13 @@
                                     return false;
                                 }
                             }
+
+                            break;
+
+                        case "delete_node" :
+
+                            // ensure there is always one root node
+                            if (target === -1 && element.siblings('li').length === 0) { return false; }
                     }
 
                     return true;

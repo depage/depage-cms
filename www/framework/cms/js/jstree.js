@@ -127,8 +127,10 @@ $(function () {
             },
             contextmenu : {
                 items : function (obj) {
+
                     var default_items = { // Could be a function that should return an object like this one
                         "rename" : {
+                            "_disabled"         : !this.check('rename_node', obj, this.get_parent()),
                             "separator_before"  : false,
                             "separator_after"   : false,
                             "label"             : "Rename",
@@ -137,6 +139,7 @@ $(function () {
                             }
                         },
                         "remove" : {
+                            "_disabled"          : !this.check('delete_node', obj, this.get_parent()),
                             "separator_before"  : false,
                             "icon"              : false,
                             "separator_after"   : false,
@@ -153,6 +156,7 @@ $(function () {
                             "action"            : false,
                             "submenu" : { 
                                 "cut" : {
+                                    "_disabled"         : !this.check('cut_node', obj, this.get_parent()),
                                     "separator_before"  : false,
                                     "separator_after"   : false,
                                     "label"             : "Cut",
@@ -161,6 +165,7 @@ $(function () {
                                     }
                                 },
                                 "copy" : {
+                                    "_disabled"         : !this.check('copy_node', obj, this.get_parent()),
                                     "separator_before"  : false,
                                     "icon"              : false,
                                     "separator_after"   : false,
@@ -201,71 +206,76 @@ $(function () {
                 }
             },
             toolbar : {
-                items : {
-                    "create" : {
-                        "label"             : "Create",
-                        "separator_before"  : false,
-                        "separator_after"   : true,
-                        "action"            : function(obj) {
+                items : function(obj) {
+                    return {
+                        "create" : {
+                            "label"             : "Create",
+                            "separator_before"  : false,
+                            "separator_after"   : true,
+                            "_disabled"         : !this.check('create_node', obj, this.get_parent()),
+                            "action"            : function(obj) {
 
-                            var node = $(".jstree-clicked");
-                            var offset = $(this).offset();
+                                var node = $(".jstree-clicked");
+                                var offset = obj.offset();
 
-                            var data = {
-                                "reference" : node,
-                                "element"   : node,
-                                position    : {
-                                    "x"     : offset.left,
-                                    "y"     : offset.top
-                                }
-                            };
+                                var data = {
+                                    "reference" : node,
+                                    "element"   : node,
+                                    position    : {
+                                        "x"     : offset.left,
+                                        "y"     : offset.top
+                                    }
+                                };
 
-                            if (data.reference.length) {
-                                var inst = $.jstree._reference(data.reference);
+                                if (data.reference.length) {
+                                    var inst = $.jstree._reference(data.reference);
 
-                                // build the create menu based on the available nodes fetched in typesfromurl
+                                    // build the create menu based on the available nodes fetched in typesfromurl
 
-                                if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
+                                    if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
 
-                                    var type_settings = inst.get_settings()['typesfromurl'];
+                                        var type_settings = inst.get_settings()['typesfromurl'];
 
-                                    var type = data.reference.parent().attr(type_settings.type_attr);
-                                    var available_nodes = type_settings.valid_children[type];
+                                        var type = data.reference.parent().attr(type_settings.type_attr);
+                                        var available_nodes = type_settings.valid_children[type];
 
-                                    var create_menu = $.jstree.buildCreateMenu(available_nodes);
+                                        var create_menu = $.jstree.buildCreateMenu(available_nodes);
 
-                                    $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+                                        $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
 
-                                } else {
-                                    // TODO default create menu
+                                    } else {
+                                        // TODO default create menu
+                                    }
                                 }
                             }
-                        }
-                    },
-                    "remove" : {
-                        "label"             : "Delete",
-                        "action"            : function () {
-                            var data = { "reference" : $(".jstree-clicked") };
-                            if (data.reference.length) {
-                                $.jstree.contextDelete(data);
+                        },
+                        "remove" : {
+                            "label"             : "Delete",
+                            "_disabled"         : !this.check('delete_node', obj, this.get_parent()),
+                            "action"            : function () {
+                                var data = { "reference" : $(".jstree-clicked") };
+                                if (data.reference.length) {
+                                    $.jstree.contextDelete(data);
+                                }
                             }
-                        }
-                    },
-                    "duplicate" : {
-                        "label"             : "Duplicate",
-                        "action"            : function () {
-                            var obj = $(".jstree-clicked").parent("li");
-                            if (obj.length){
-                                var inst = $.jstree._reference(obj);
+                        },
+                        "duplicate" : {
+                            "label"             : "Duplicate",
+                            "_disabled"         : !this.check('duplicate_node', obj, this.get_parent()),
+                            "action"            : function () {
+                                var obj = $(".jstree-clicked").parent("li");
+                                if (obj.length){
+                                    var inst = $.jstree._reference(obj);
 
-                                var data = { "reference" : obj };
+                                    var data = { "reference" : obj };
 
-                                $.jstree.contextDuplicate(data);
+                                    $.jstree.contextDuplicate(data);
+                                }
                             }
                         }
                     }
                 }
-        }
+            }
         })
     });
 
@@ -443,7 +453,6 @@ $(function () {
             e.stopImmediatePropagation();
             return false;
         });
-
 
         $("#node_1").data('depage.shyDialogue').showDialogue(left, top);
     };
