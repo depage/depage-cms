@@ -235,7 +235,7 @@
                  *
                  * @return node
                  */
-                create_node : function (parent, type, position) {
+                create_node : function (parent, type, position, callback) {
 
                     parent = this.get_node(parent);
                     position = position || "last";
@@ -271,7 +271,14 @@
                             break;
                     }
 
-                    parent.children("ul").children("li").eq(position).before(li);
+                    // create element ...
+                    if(!parent.children("ul").length) {
+                        // add a submenu if there isn't already one
+                        var $ul = $('<ul />').append(li);
+                        parent.append($ul);
+                    } else {
+                        parent.children("ul").children("li").eq(position).before(li);
+                    }
 
                     // fire the callback to send the ajax request
                     this.__callback({ "obj" : li, "parent" : parent, "position" : position });

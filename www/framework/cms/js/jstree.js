@@ -385,10 +385,19 @@ $(function () {
     $.jstree.contextCreate = function(data, type, position) {
         position = position || 'inside';
         var inst = $.jstree._reference(data.reference);
-        var obj = inst.create_node(data.reference, type, position);
 
-        // focus for edit
-        inst.edit(obj);
+        // TODO bug why is inst not defined - clicked to quickly?
+        if (inst) {
+
+            // open the node (so states are remembered after delataupdate)
+            data.reference.parent('li').addClass("jstree-open");
+
+            var obj = inst.create_node(data.reference, type, position);
+
+            // focus for edit
+            inst.edit(obj);
+
+        }
     };
 
     $.jstree.contextCopy = function(data) {

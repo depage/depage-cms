@@ -80,6 +80,10 @@
             // {{{ event: rename_node.jstree
             tree.bind("rename_node.jstree", function (e, data) {
                 _this._init_update_seq();
+
+                // TODO bug - when rename is initiated after create_node
+                // TODO attr id may be missing if the create deltaupdate has not yet returned
+
                 var d = {
                     "doc_id" : tree.attr("data-doc-id"),
                     "id" : data.rslt.obj.attr("id").replace("node_",""),
