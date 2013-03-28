@@ -47,7 +47,7 @@ class history {
      * @return mixed
      */
     public function getVersions($published = null) {
-        $query = "SELECT h.lastchange, h.lastchange_uid, h.released
+        $query = "SELECT h.hash, h.lastchange, h.lastchange_uid, h.released
             FROM {$this->table_history} AS h
             WHERE h.data_id = :doc_id";
 
@@ -74,7 +74,7 @@ class history {
                     'saved' => $result['lastchange'],
                     'user_id' => $result['lastchange_uid'],
                     'published' => $result['released'],
-                    // 'digest' => $result['digest'],
+                    'hash' => $result['hash'],
                 );
             }
         }
@@ -141,15 +141,18 @@ class history {
 
         // TODO ADD SHA1 hash
         $query = $this->pdo->prepare(
-            "INSERT INTO {$this->table_history} (data_id, value, lastchange, lastchange_uid, released)
-             VALUES(:doc_id, :xml, :timestamp, :user_id, :published);"
+            "INSERT INTO {$this->table_history} (data_id, hash, value, lastchange, lastchange_uid, released)
+             VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
         );
 
         $timestamp = time();
 
+        $xml = $this->document->getXml()->saveXml();
+
         $params = array(
             'doc_id' => $this->document->getDocId(),
-            'xml' => $this->document->getXml()->saveXml(),
+            'hash' => sha1($xml),
+            'xml' => $xml,
             'timestamp' => date('Y-m-d H:i:s', $timestamp),
             'user_id' => $user_id,
             'published' => $published,
