@@ -14,8 +14,6 @@
             "framework/cms/js/interface.js",
             "framework/shared/jquery.cookie.js",
             "framework/shared/jquery.hotkeys.js",
-        )); ?>
-        <?php $this->include_js("jstree", array(
             "framework/cms/js/jstree.js",
         )); ?>
         <?php $this->include_css("interface", array(
