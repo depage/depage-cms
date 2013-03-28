@@ -20,6 +20,7 @@ class document {
 
     protected $db_ns;
 
+    private $table_prefix;
     private $table_docs;
     private $table_xml;
 
@@ -63,10 +64,35 @@ class document {
         $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
 
         $this->xmldb = $xmldb;
+
+        $this->table_prefix = $xmldb->table_prefix;
         $this->table_docs = $xmldb->table_docs;
         $this->table_xml = $xmldb->table_xml;
 
         $this->doc_id = $doc_id;
+    }
+    // }}}
+
+    // {{{ getHistory
+    /**
+     * getHistory
+     *
+     * @return history
+     */
+    public function getHistory() {
+        return new history($this->pdo, $this->table_prefix, $this);
+    }
+    // }}}
+
+    // {{{ getXml
+    /**
+     * getXml
+     *
+     * @return string
+     */
+    public function getXml($add_id_attribute = true) {
+        $root_id = $this->getDocInfo()->rootid;
+        return $this->getSubdocByNodeId($root_id, $add_id_attribute);
     }
     // }}}
 
@@ -278,7 +304,7 @@ class document {
         }
 
         // @TODO get document and entities or set html_entities as standard as long as php does not inherit the entites() function
-        $doc_info->rootid = $this->saveNode($doc_info->id, $xml);
+        $doc_info->rootid = $this->saveNode($xml);
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -996,7 +1022,7 @@ class document {
             //save element nodes
             for ($i = 1; $i < count($node_array); $i++) {
                 if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($this->doc_id,$node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
+                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
             }
 

@@ -178,8 +178,7 @@ class xmldb {
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             $doc = new document($this, $doc_id);
-            $root_id = $doc->getDocInfo()->rootid;
-            $xml = $doc->getSubdocByNodeId($root_id, $add_id_attribute);
+            $xml = $doc->getXml($add_id_attribute);
         }
 
         return $xml;
