@@ -281,6 +281,7 @@ $(function () {
 
     $.jstree.buildCreateMenu = function (available_nodes, position){
 
+        available_nodes = available_nodes || {};
         position = position || 'inside';
 
         var sub_menu = {};
@@ -298,6 +299,7 @@ $(function () {
 
         var create_menu = {
             "create" : {
+                "_disabled"         : !$(available_nodes).size(),
                 "label"             : "Create",
                 "separator_before"  : false,
                 "separator_after"   : true,
