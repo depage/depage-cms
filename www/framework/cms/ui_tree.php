@@ -54,7 +54,8 @@ class ui_tree extends ui_base {
     public function tree($docName) {
         $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
 
-        if ($doc = $this->xmldb->getDoc($docName)) {
+        if($doc = $this->xmldb->getDoc($docName)) {
+
             $doc_info = $doc->getDocInfo();
 
             $h = new html("jstree.tpl", array(
@@ -82,11 +83,18 @@ class ui_tree extends ui_base {
     public function create_node() {
         $status = false;
         $this->log->log($_REQUEST);
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $id = $doc->addNodeByName($_REQUEST["node"]["_type"], $_REQUEST["target_id"], $_REQUEST["position"]);
+
+        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $id = $doc->addNodeByName($type, $target_id, $position);
             $status = $id !== false;
             if ($status) {
-                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"]));
+                $this->recordChange($doc_id, array($target_id));
             }
         }
         return new \json(array("status" => $status, "id" => $id));
@@ -95,10 +103,14 @@ class ui_tree extends ui_base {
     // {{{ rename_node
     public function rename_node() {
         $status = false;
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $doc->setAttribute($_REQUEST["id"], "name", $_REQUEST["name"]);
-            $parent_id = $doc->getParentIdById($_REQUEST["id"]);
-            $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $doc->setAttribute($id, "name", $name);
+            $parent_id = $doc->getParentIdById($id);
+            $this->recordChange($doc_id, array($parent_id));
             $status = true;
         }
 
@@ -108,11 +120,16 @@ class ui_tree extends ui_base {
     // {{{ move_node
     public function move_node() {
         $status = false;
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $old_parent_id = $doc->getParentIdById($_REQUEST["doc_id"], $_REQUEST["id"]);
-            $status = $this->xmldb->moveNode($_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $old_parent_id = $doc->getParentIdById($doc_id, $id);
+            $status = $this->xmldb->moveNode($id, $target_id, $position);
             if ($status) {
-                $this->recordChange($_REQUEST["doc_id"], array($old_parent_id, $_REQUEST["target_id"]));
+                $this->recordChange($doc_id, array($old_parent_id, $target_id));
             }
         }
         return new \json(array("status" => $status));
@@ -121,11 +138,16 @@ class ui_tree extends ui_base {
     // {{{ copy_node
     public function copy_node() {
         $status = false;
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $status = !! $this->xmldb->copyNode($_REQUEST["id"], $_REQUEST["target_id"], $_REQUEST["position"]);
+        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $status = !! $doc->copyNode($id, $target_id, $position);
 
             if ($status) {
-                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["target_id"], $status));
+                $this->recordChange($doc_id, array($target_id, $status));
             }
         }
         return new \json(array("status" => $status, "id" => $status));
@@ -134,12 +156,15 @@ class ui_tree extends ui_base {
     // {{{ remove_node
     public function remove_node() {
         $status = false;
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $parent_id = $doc->getParentIdById($_REQUEST["id"]);
-            $ids = $doc->unlinkNode($_REQUEST["id"]);
+        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $parent_id = $doc->getParentIdById($id);
+            $ids = $doc->unlinkNode($id);
             $status = $ids !== false;
             if ($status) {
-                $this->recordChange($_REQUEST["doc_id"], array($parent_id));
+                $this->recordChange($doc_id, array($parent_id));
             }
         }
         return new \json(array("status" => $status));
@@ -148,12 +173,15 @@ class ui_tree extends ui_base {
     // {{{ duplicate_node
     public function duplicate_node() {
         $status = false;
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
-            $id = $doc->duplicateNode($_REQUEST["id"]);
+        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
+            $id = $doc->duplicateNode($id);
 
             if ($status) {
-                $parent_id = $doc->getParentIdById($_REQUEST["id"]);
-                $this->recordChange($_REQUEST["doc_id"], array($_REQUEST["id"], $parent_id));
+                $parent_id = $doc->getParentIdById($id);
+                $this->recordChange($doc_id, array($id, $parent_id));
             }
         }
         return new \json(array("status" => $status, "id" => $id));
@@ -164,7 +192,8 @@ class ui_tree extends ui_base {
     // {{{ types_settings
     public function types_settings() {
         $settings = array();
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
             $permissions = $doc->getPermissions();
             $this->log->log($permissions);
             $settings = array(
@@ -184,7 +213,8 @@ class ui_tree extends ui_base {
     // TODO: disable
     // {{{ add_permissions
     public function add_permissions($doc_id, $element, $parent) {
-        if ($doc = $this->xmldb->getDoc($_REQUEST["doc_id"])) {
+        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
+        if ($doc = $this->xmldb->getDoc($doc_id)) {
             $permissions = $doc->getPermissions();
             $permissions->allow_element_in($element, $parent);
 

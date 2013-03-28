@@ -15,45 +15,58 @@ namespace depage\xmldb;
 class document {
 
     // {{{ variables
-    private $doc_id;
-    private $xmldb;
-
     private $pdo;
     private $cache;
 
-    private $db_ns;
+    protected $db_ns;
+
+    private $table_docs;
+    private $table_xml;
+
+    private $transaction = 0;
+
+    private $xmldb;
+    private $doc_id;
+
     private $id_attribute = "id";
     private $id_data_attribute = "dataid";
 
     private $dont_strip_white = array(); // TODO set when document is loaded - add to doctypes base
     private $free_element_ids = array();
 
-    private $table_docs;
-    private $table_xml;
-
     private $doctypeHandlers = array();
-
-    private $transaction = 0;
     // }}}
 
     /* public */
 
+    /**
+     * Get Doc ID
+     *
+     * @return int
+     */
     public function getDocId() {
         return $this->doc_id;
     }
 
     // {{{ constructor()
+    /**
+     * Construct
+     *
+     * @param $xmldb
+     * @param $doc_id
+     */
     public function __construct($xmldb, $doc_id) {
-        $this->doc_id = $doc_id;
-        $this->xmldb = $xmldb;
 
         $this->pdo = $xmldb->pdo;
         $this->cache = $xmldb->cache;
 
         $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
 
-        $this->table_docs = $xmldb->tableprefix . "_xmldocs";
-        $this->table_xml = $xmldb->tableprefix . "_xmltree";
+        $this->xmldb = $xmldb;
+        $this->table_docs = $xmldb->table_docs;
+        $this->table_xml = $xmldb->table_xml;
+
+        $this->doc_id = $doc_id;
     }
     // }}}
 
@@ -65,13 +78,13 @@ class document {
      */
     public function getDoctypeHandler() {
         if (!isset($this->doctypeHandlers[$this->doc_id])) {
-            $className = $this->getDocInfo($this->doc_id)->type;
+            $className = $this->getDocInfo()->type;
 
             if (empty($className)) {
-                $handler = new xmldoctypes\base($this, $this->doc_id);
+                $handler = new xmldoctypes\base($this->xmldb, $this->doc_id);
             } else {
                 $className = "\\" . $className;
-                $handler = new $className($this, $this->doc_id);
+                $handler = new $className($this->xmldb, $this->doc_id);
             }
 
             $this->doctypeHandlers[$this->doc_id] = $handler;
@@ -123,7 +136,7 @@ class document {
 
         $xml_str = $this->cache->get($identifier);
 
-        if ($xml_str !== false) {
+        if ($xml_str) {
             // read from cache
             $xml_doc->loadXML($xml_str);
         } else {
@@ -180,7 +193,7 @@ class document {
                 $xml_str .= $node_data;
 
                 //add child_nodes
-                $xml_str .= $this->getChildnodesByParentId($doc_id, $row->id, $level);
+                $xml_str .= $this->getChildnodesByParentId($row->id, $level);
 
                 $xml_str .= "</{$row->name}>";
 
@@ -218,11 +231,72 @@ class document {
      * @return    $doc (domxmlobject)
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true) {
-        $ids = $this->getNodeIdsByXpath($this->doc_id, $xpath);
+        $ids = $this->getNodeIdsByXpath($xpath);
         if (count($ids) > 0) {
-            return $this->getSubdocByNodeId($this->doc_id, $ids[0], $add_id_attribute);
+            return $this->getSubdocByNodeId($ids[0], $add_id_attribute);
         }
         return false;
+    }
+    // }}}
+
+    // {{{ save()
+    /**
+     * @param $xml
+     * @return mixed
+     * @throws xmldbException
+     */
+    public function save($xml) {
+        if (!is_object($xml) || !(get_class($xml) == 'DOMDocument') || is_null($xml->documentElement)) {
+            throw new xmldbException("This document is not a valid XML-Document");
+        }
+
+        $this->beginTransaction();
+
+        $doc_info = $this->getDocInfo();
+
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->table_xml}
+            WHERE id_doc = :doc_id"
+        );
+
+        $query->execute(array(
+            'doc_id' => $this->doc_id,
+        ));
+
+        $this->clearCache($this->doc_id);
+
+        $xml_text = $xml->saveXML();
+
+        // @TODO get namespaces from document at this moment it is only per preg_match not by the domxml interface, because
+        // @TODO namespace definitions are not available
+        preg_match_all("/ xmlns:([^=]*)=\"([^\"]*)\"/", $xml_text, $matches, PREG_SET_ORDER);
+        $namespaces = "";
+        for ($i = 0; $i < count($matches); $i++) {
+            if ($matches[$i][1] != $this->db_ns->ns) {
+                $namespaces .= $matches[$i][0];
+            }
+        }
+
+        // @TODO get document and entities or set html_entities as standard as long as php does not inherit the entites() function
+        $doc_info->rootid = $this->saveNode($doc_info->id, $xml);
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->table_docs}
+            SET
+                rootid = :rootid,
+                ns = :ns,
+                entities=''
+            WHERE id = :doc_id"
+        );
+
+        $query->execute(array(
+            'rootid' => $doc_info->rootid,
+            'ns' => $namespaces,
+            'doc_id' => $doc_info->id,
+        ));
+
+        $this->endTransaction();
+
+        return $doc_info->id;
     }
     // }}}
 
@@ -232,8 +306,8 @@ class document {
      * @return bool
      */
     public function unlinkNode($node_id) {
-        if ($this->getDoctypeHandler($this->doc_id)->isAllowedUnlink($node_id)) {
-            return $this->unlinkNodeById($this->doc_id, $node_id);
+        if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
+            return $this->unlinkNodeById($node_id);
         }
         return false;
     }
@@ -247,8 +321,8 @@ class document {
      * @return bool
      */
     public function addNode($node, $target_id, $target_pos) {
-       if ($this->getDoctypeHandler($this->doc_id)->isAllowedAdd($node, $target_id)) {
-            return $this->saveNode($this->doc_id, $node, $target_id, $target_pos, true);
+       if ($this->getDoctypeHandler()->isAllowedAdd($node, $target_id)) {
+            return $this->saveNode($node, $target_id, $target_pos, true);
         }
         return false;
     }
@@ -262,8 +336,8 @@ class document {
      * @return bool
      */
     public function addNodeByName($name, $target_id, $target_pos) {
-        $dth = $this->getDoctypeHandler($this->doc_id);
-        $target_name = $this->getNodeNameById($this->doc_id, $target_id);
+        $dth = $this->getDoctypeHandler();
+        $target_name = $this->getNodeNameById($target_id);
 
         if ($dth->isAllowedIn($name, $target_name)) {
             $newNode = $dth->getNewNodeFor($name);
@@ -288,13 +362,13 @@ class document {
     public function replaceNode($node, $id_to_replace) {
         $this->beginTransaction();
 
-        $target_id = $this->getParentIdById($this->doc_id, $id_to_replace);
-        $target_pos = $this->getPosById($this->doc_id, $id_to_replace);
+        $target_id = $this->getParentIdById($id_to_replace);
+        $target_pos = $this->getPosById($id_to_replace);
 
-        $this->unlinkNodeById($this->doc_id, $id_to_replace, array(), true);
+        $this->unlinkNodeById($id_to_replace, array(), true);
 
         $changed_ids = array();
-        $changed_ids[] = $this->saveNode($this->doc_id, $node, $target_id, $target_pos, true);
+        $changed_ids[] = $this->saveNode($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
@@ -324,7 +398,7 @@ class document {
         ));
         $result = $query->fetchObject();
 
-        $success = $this->moveNode($this->doc_id, $node_id, $target_id, $result->newpos);
+        $success = $this->moveNode($node_id, $target_id, $result->newpos);
 
         $this->endTransaction();
 
@@ -342,10 +416,10 @@ class document {
     public function moveNodeBefore($node_id, $target_id) {
         $this->beginTransaction();
 
-        $target_parent_id = $this->getParentIdById($this->doc_id, $target_id);
-        $target_pos = $this->getPosById($this->doc_id, $target_id);
+        $target_parent_id = $this->getParentIdById($target_id);
+        $target_pos = $this->getPosById($target_id);
 
-        $success = $this->moveNode($this->doc_id, $node_id, $target_parent_id, $target_pos);
+        $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
 
         $this->endTransaction();
 
@@ -363,10 +437,10 @@ class document {
     public function moveNodeAfter($node_id, $target_id) {
         $this->beginTransaction();
 
-        $target_parent_id = $this->getParentIdById($this->doc_id, $target_id);
-        $target_pos = $this->getPosById($this->doc_id, $target_id) + 1;
+        $target_parent_id = $this->getParentIdById($target_id);
+        $target_pos = $this->getPosById($target_id) + 1;
 
-        $success = $this->moveNode($this->doc_id, $node_id, $target_parent_id, $target_pos);
+        $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
 
         $this->endTransaction();
 
@@ -391,9 +465,9 @@ class document {
 
         $this->beginTransaction();
 
-        if ($node_id !== $target_id && $this->getDoctypeHandler($this->doc_id)->isAllowedMove($node_id, $target_id)) {
-            $node_parent_id = $this->getParentIdById($this->doc_id, $node_id);
-            $node_pos = $this->getPosById($this->doc_id, $node_id);
+        if ($node_id !== $target_id && $this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+            $node_parent_id = $this->getParentIdById($node_id);
+            $node_pos = $this->getPosById($node_id);
 
             if ($target_id == $node_parent_id && $target_pos > $node_pos) {
                 $target_pos--;
@@ -479,7 +553,7 @@ class document {
         ));
         $result = $query->fetchObject();
 
-        $success = $this->copyNode($this->doc_id, $node_id, $target_id, $result->newpos);
+        $success = $this->copyNode($node_id, $target_id, $result->newpos);
 
         $this->endTransaction();
 
@@ -497,10 +571,10 @@ class document {
     public function copyNodeBefore($node_id, $target_id) {
         $this->beginTransaction();
 
-        $target_parent_id = $this->getParentIdById($this->doc_id, $target_id);
-        $target_pos = $this->getPosById($this->doc_id, $target_id);
+        $target_parent_id = $this->getParentIdById($target_id);
+        $target_pos = $this->getPosById($target_id);
 
-        $success = $this->copyNode($this->doc_id, $node_id, $target_parent_id, $target_pos);
+        $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
         $this->endTransaction();
 
@@ -518,10 +592,10 @@ class document {
     public function copyNodeAfter($node_id, $target_id) {
         $this->beginTransaction();
 
-        $target_parent_id = $this->getParentIdById($this->doc_id, $target_id);
-        $target_pos = $this->getPosById($this->doc_id, $target_id) + 1;
+        $target_parent_id = $this->getParentIdById($target_id);
+        $target_pos = $this->getPosById($target_id) + 1;
 
-        $success = $this->copyNode($this->doc_id, $node_id, $target_parent_id, $target_pos);
+        $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
         $this->endTransaction();
 
@@ -540,13 +614,13 @@ class document {
      * @param    $target_pos (int) pos to copy to
      */
     public function copyNode($node_id, $target_id, $target_pos) {
-        if ($this->getDoctypeHandler($this->doc_id)->isAllowedMove($node_id, $target_id)) {
-            $xml_doc = $this->getSubdocByNodeId($this->doc_id, $node_id, false);
+        if ($this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+            $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
             $this->clearCache($this->doc_id);
 
-            return $this->saveNode($this->doc_id, $root_node, $target_id, $target_pos, false);
+            return $this->saveNode($root_node, $target_id, $target_pos, false);
         }
 
         return false;
@@ -565,30 +639,30 @@ class document {
      */
     public function duplicateNode($node_id) {
         // get parent and position for new node
-        $target_id = $this->getParentIdById($this->doc_id, $node_id);
-        $target_pos = $this->getPosById($this->doc_id, $node_id) + 1;
+        $target_id = $this->getParentIdById($node_id);
+        $target_pos = $this->getPosById($node_id) + 1;
 
-        if ($this->getDoctypeHandler($this->doc_id)->isAllowedMove($node_id, $target_id)) {
-            $xml_doc = $this->getSubdocByNodeId($this->doc_id, $node_id, false);
+        if ($this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+            $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
             $this->clearCache($this->doc_id);
 
-            return $this->saveNode($this->doc_id, $root_node, $target_id, $target_pos, false, false);
+            return $this->saveNode($root_node, $target_id, $target_pos, false, false);
         }
 
         return false;
     }
     // }}}
 
-    // {{{ build_node()
+    // {{{ buildNode()
     /**
-     * TODO camelCase function name
+     *
      * @param $name
      * @param $attributes
      * @return \DOMElement
      */
-    public function build_node($name, $attributes) {
+    public function buildNode($name, $attributes) {
         //@todo dont build node directly but get from templates according to document type
         $doc_info = $this->getNamespacesAndEntities($this->doc_id);
         $xml = "<$name {$doc_info->namespaces}";
@@ -673,7 +747,7 @@ class document {
      * @return    $val (string) value
      */
     public function getAttribute($node_id, $attr_name) {
-        $attributes = $this->getAttributes($this->doc_id, $node_id);
+        $attributes = $this->getAttributes($node_id);
 
         if (isset($attributes[$attr_name])) {
             return $attributes[$attr_name];
@@ -772,7 +846,7 @@ class document {
      */
     public function getNodeDataId($node) {
         return $node->nodeType == XML_ELEMENT_NODE
-            ?  $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute
+            ?  $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute)
             : null;
     }
     // }}}
@@ -849,21 +923,21 @@ class document {
 
         if ($node_array[0]['id'] != null && $target_id === null) {
             //set target_id/pos/doc
-            $target_id = $this->getParentIdById($this->doc_id, $node_array[0]['id']);
-            $target_pos = $this->getPosById($this->doc_id, $node_array[0]['id']);
+            $target_id = $this->getParentIdById($node_array[0]['id']);
+            $target_pos = $this->getPosById($node_array[0]['id']);
 
             if ($target_id === false) {
                 $target_id = null;
             }
 
             //unlink old node
-            $this->unlinkNodeById($this->doc_id, $node_array[0]['id']);
+            $this->unlinkNodeById($node_array[0]['id']);
             $this->clearCache($this->doc_id);
         } else if ($target_id === null) {
             $target_id = null;
             $target_pos = 0;
         } else if ($target_id !== null) {
-            $parent_id = $this->getParentIdById($this->doc_id, $target_id);
+            $parent_id = $this->getParentIdById($target_id);
             //unlink child nodes, if target is document
             if ($parent_id === false) {
                 $query = $this->pdo->prepare(
@@ -916,7 +990,7 @@ class document {
         }
 
         //save root node
-        $node_array[0]['id'] = $this->saveNodeToDb($this->doc_id, $node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
+        $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
 
         if($inc_children) {
             //save element nodes
@@ -929,7 +1003,7 @@ class document {
             //save other nodes
             for ($i = 1; $i < count($node_array); $i++) {
                 if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($this->doc_id, $node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
+                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
             }
         }
@@ -951,8 +1025,8 @@ class document {
      */
     public function unlinkNodeById($node_id)  {
         // get parent and position (enables other node positions to be updated after delete)
-        $target_id = $this->getParentIdById($this->doc_id, $node_id);
-        $target_pos = $this->getPosById($this->doc_id, $node_id);
+        $target_id = $this->getParentIdById($node_id);
+        $target_pos = $this->getPosById($node_id);
 
         // delete the node
         $query = $this->pdo->prepare(
@@ -979,6 +1053,15 @@ class document {
         ));
 
         return array();
+    }
+    // }}}
+
+    // {{{ getPermissions
+    /**
+     * @return mixed
+     */
+    public function getPermissions() {
+        return $this->getDoctypeHandler()->getPermissions();
     }
     // }}}
 
@@ -1012,7 +1095,6 @@ class document {
     /**
      * gets node-ids by name from specific document
      *
-     * @param    $this->doc_id (int) document db-id
      * @param    $node_ns (string) namespace-prefix
      * @param    $node_name (string) nodename
      *
@@ -1226,7 +1308,7 @@ class document {
                          * "... /ns:name ..."
                          */
                         foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($this->doc_id, $actual_id, $ns, $name, null, true));
+                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, null, true));
                         }
                         // }}}
                         // {{{ fetch by name and position:
@@ -1235,7 +1317,7 @@ class document {
                          * "... /ns:name[n] ..."
                          */
                         foreach ($actual_ids as $actual_id) {
-                            $temp_ids = $this->getChildIdsByName($this->doc_id, $actual_id, $ns, $name, null, true);
+                            $temp_ids = $this->getChildIdsByName($actual_id, $ns, $name, null, true);
                             $fetched_ids[] = $temp_ids[((int) $condition) - 1];
                         }
                         // }}}
@@ -1248,7 +1330,7 @@ class document {
                          */
                         $cond_array = $this->get_condition_attributes($temp_condition, $strings);
                         foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($this->doc_id, $actual_id, $ns, $name, $cond_array, true));
+                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, $cond_array, true));
                         }
                         // }}}
                     } else {
@@ -1260,7 +1342,7 @@ class document {
                         /*
                          * "//ns:name ..."
                          */
-                        $fetched_ids = $this->getNodeIdsByName($this->doc_id, $ns, $name);
+                        $fetched_ids = $this->getNodeIdsByName($ns, $name);
                         // }}}
                         // {{{ fetch by simple attributes:
                     } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
@@ -1271,7 +1353,7 @@ class document {
                          */
                         $cond_array = $this->get_condition_attributes($temp_condition, $strings);
                         foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = $this->getNodeIdsByName($this->doc_id, $ns, $name, $cond_array);
+                            $fetched_ids = $this->getNodeIdsByName($ns, $name, $cond_array);
                         }
                         // }}}
                     } else {
@@ -1398,7 +1480,7 @@ class document {
 
                 //add child_nodes
                 if ($level > 0) {
-                    $xml_doc .= $this->getChildnodesByParentId($this->doc_id, $row->id, $level - 1);
+                    $xml_doc .= $this->getChildnodesByParentId($row->id, $level - 1);
                 }
 
                 $xml_doc .= "</{$row->name}>";
@@ -1675,7 +1757,6 @@ class document {
     /**
      * clears the node-cache
      *
-     * @public
      */
     private function clearCache() {
         if (is_null($this->doc_id)) {

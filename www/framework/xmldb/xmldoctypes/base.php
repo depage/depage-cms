@@ -45,7 +45,8 @@ class base {
     
     // {{{ getNewNodeFor
     function getNewNodeFor($name) {
-        if ($doc = $this->xmldb->getDoc($this->docId) && isset($this->availableNodes[$name])) {
+        $doc = $this->xmldb->getDoc($this->docId);
+        if ($doc && isset($this->availableNodes[$name])) {
             $nodeInfo = $this->availableNodes[$name];
             $docInfo = $doc->getNamespacesAndEntities();
 
