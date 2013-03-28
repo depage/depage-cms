@@ -13,6 +13,7 @@
  * @require framework/cms/js/jstree/jstree.deltaupdates.js
  * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
  * @require framework/cms/js/jstree/jstree.toolbar.js
+ * @require framework/cms/js/jstree/jstree.marker.js
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
@@ -37,7 +38,7 @@ $(function () {
                 "dblclickrename",
                 "tooltips",
                 //"select_created_nodes",
-                //"add_marker",
+                "add_marker",
                 "deltaupdates",
                 "toolbar"
             ],
@@ -126,8 +127,10 @@ $(function () {
             },
             contextmenu : {
                 items : function (obj) {
+
                     var default_items = { // Could be a function that should return an object like this one
                         "rename" : {
+                            "_disabled"         : !this.check('rename_node', obj, this.get_parent()),
                             "separator_before"  : false,
                             "separator_after"   : false,
                             "label"             : "Rename",
@@ -136,6 +139,7 @@ $(function () {
                             }
                         },
                         "remove" : {
+                            "_disabled"          : !this.check('delete_node', obj, this.get_parent()),
                             "separator_before"  : false,
                             "icon"              : false,
                             "separator_after"   : false,
@@ -152,6 +156,7 @@ $(function () {
                             "action"            : false,
                             "submenu" : { 
                                 "cut" : {
+                                    "_disabled"         : !this.check('cut_node', obj, this.get_parent()),
                                     "separator_before"  : false,
                                     "separator_after"   : false,
                                     "label"             : "Cut",
@@ -160,6 +165,7 @@ $(function () {
                                     }
                                 },
                                 "copy" : {
+                                    "_disabled"         : !this.check('copy_node', obj, this.get_parent()),
                                     "separator_before"  : false,
                                     "icon"              : false,
                                     "separator_after"   : false,
@@ -182,83 +188,101 @@ $(function () {
                         }
                     };
 
-                    // build the create menu based on the available nodes fetched in typesfromurl
-                    if(typeof(this.get_settings) !== "undefined" &&
-                        typeof(this.get_settings().typesfromurl.available_nodes) !== "undefined") {
+                    // add the create menu based on the available nodes fetched in typesfromurl
+                    if(typeof(this.get_settings()['typesfromurl']) !== "undefined") {
 
-                        var available_nodes = this.get_settings().typesfromurl.available_nodes;
+                        var type_settings = this.get_settings()['typesfromurl'];
+
+                        var type = obj.attr(type_settings.type_attr);
+                        var available_nodes = type_settings.valid_children[type];
 
                         default_items = $.extend($.jstree.buildCreateMenu(available_nodes), default_items);
+
+                    } else {
+                        // TODO default create menu
                     }
 
                     return default_items;
                 }
             },
             toolbar : {
-                items : {
-                    "create" : {
-                        "label"             : "Create",
-                        "separator_before"  : false,
-                        "separator_after"   : true,
-                        "action"            : function(obj) {
+                items : function(obj) {
+                    return {
+                        "create" : {
+                            "label"             : "Create",
+                            "separator_before"  : false,
+                            "separator_after"   : true,
+                            "_disabled"         : !this.check('create_node', obj, this.get_parent()),
+                            "action"            : function(obj) {
 
-                            var node = $(".jstree-clicked");
-                            var offset = $(this).offset();
+                                var node = $(".jstree-clicked");
+                                var offset = obj.offset();
 
-                            var data = {
-                                "reference" : node,
-                                "element"   : node,
-                                position    : {
-                                    "x"     : offset.left,
-                                    "y"     : offset.top
+                                var data = {
+                                    "reference" : node,
+                                    "element"   : node,
+                                    position    : {
+                                        "x"     : offset.left,
+                                        "y"     : offset.top
+                                    }
+                                };
+
+                                if (data.reference.length) {
+                                    var inst = $.jstree._reference(data.reference);
+
+                                    // build the create menu based on the available nodes fetched in typesfromurl
+
+                                    if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
+
+                                        var type_settings = inst.get_settings()['typesfromurl'];
+
+                                        var type = data.reference.parent().attr(type_settings.type_attr);
+                                        var available_nodes = type_settings.valid_children[type];
+
+                                        var create_menu = $.jstree.buildCreateMenu(available_nodes);
+
+                                        $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+
+                                    } else {
+                                        // TODO default create menu
+                                    }
                                 }
-                            };
-
-                            if (data.reference.length) {
-                                var inst = $.jstree._reference(data.reference);
-
-                                // build the create menu based on the available nodes fetched in typesfromurl
-                                if(typeof(inst.get_settings) !== "undefined" &&
-                                    typeof(inst.get_settings().typesfromurl.available_nodes) !== "undefined") {
-
-                                    var available_nodes = inst.get_settings().typesfromurl.available_nodes;
-                                    var create_menu = $.jstree.buildCreateMenu(available_nodes);
+                            }
+                        },
+                        "remove" : {
+                            "label"             : "Delete",
+                            "_disabled"         : !this.check('delete_node', obj, this.get_parent()),
+                            "action"            : function () {
+                                var data = { "reference" : $(".jstree-clicked") };
+                                if (data.reference.length) {
+                                    $.jstree.contextDelete(data);
                                 }
-
-                                $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
                             }
-                        }
-                    },
-                    "remove" : {
-                        "label"             : "Delete",
-                        "action"            : function () {
-                            var data = { "reference" : $(".jstree-clicked") };
-                            if (data.reference.length) {
-                                $.jstree.contextDelete(data);
-                            }
-                        }
-                    },
-                    "duplicate" : {
-                        "label"             : "Duplicate",
-                        "action"            : function () {
-                            var obj = $(".jstree-clicked").parent("li");
-                            if (obj.length){
-                                var inst = $.jstree._reference(obj);
+                        },
+                        "duplicate" : {
+                            "label"             : "Duplicate",
+                            "_disabled"         : !this.check('duplicate_node', obj, this.get_parent()),
+                            "action"            : function () {
+                                var obj = $(".jstree-clicked").parent("li");
+                                if (obj.length){
+                                    var inst = $.jstree._reference(obj);
 
-                                var data = { "reference" : obj };
+                                    var data = { "reference" : obj };
 
-                                $.jstree.contextDuplicate(data);
+                                    $.jstree.contextDuplicate(data);
+                                }
                             }
                         }
                     }
                 }
-        }
+            }
         })
     });
 
-    // TODO can these extensions be scoped better?
+    $.jstree.buildCreateMenu = function (available_nodes, position){
 
-    $.jstree.buildCreateMenu = function (available_nodes){
+        position = position || 'inside';
+
         var sub_menu = {};
 
         $.each(available_nodes, function(type, node){
@@ -267,7 +291,7 @@ $(function () {
                 "separator_before"  : false,
                 "separator_after"   : false,
                 "action"            : function (data) {
-                    $.jstree.contextCreate(data, type);
+                    $.jstree.contextCreate(data, type, position);
                 }
             }
         });
@@ -358,12 +382,22 @@ $(function () {
         }
     };
 
-    $.jstree.contextCreate = function(data, type) {
+    $.jstree.contextCreate = function(data, type, position) {
+        position = position || 'inside';
         var inst = $.jstree._reference(data.reference);
-        var obj = inst.create_node(data.reference, type, 'inside');
 
-        // focus for edit
-        inst.edit(obj);
+        // TODO bug why is inst not defined - clicked to quickly?
+        if (inst) {
+
+            // open the node (so states are remembered after delataupdate)
+            data.reference.parent('li').addClass("jstree-open");
+
+            var obj = inst.create_node(data.reference, type, position);
+
+            // focus for edit
+            inst.edit(obj);
+
+        }
     };
 
     $.jstree.contextCopy = function(data) {
@@ -428,7 +462,6 @@ $(function () {
             e.stopImmediatePropagation();
             return false;
         });
-
 
         $("#node_1").data('depage.shyDialogue').showDialogue(left, top);
     };

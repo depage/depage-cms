@@ -57,6 +57,7 @@
                 "rename_node": true,
                 "copy_node": true,
                 "paste_node": true,
+                "duplicate_node": true,
                 "cut_node": true
             },
 
@@ -73,6 +74,7 @@
                         $.extend(true, s, new_types_settings.typesfromurl);
 
                         // add create context menu
+                        /*
                         $.each(s.available_nodes, function (type, node) {
 
                             // check create is not disabled
@@ -96,6 +98,19 @@
                                     });
                                 }
                             }});
+                        });
+                        */
+
+                        // build valid children
+                        $.each(s.valid_parents, function(parent, children) {
+                            $.each(children, function(i, child) {
+                                if(typeof(s.valid_children[child]) === 'undefined') {
+                                    s.valid_children[child] = {};
+                                }
+                                if (typeof(s.available_nodes[parent]) !== 'undefined') {
+                                    s.valid_children[child][parent] = s.available_nodes[parent];
+                                }
+                            });
                         });
 
                         // build icons css
@@ -137,7 +152,6 @@
                  * @return {Boolean}
                  */
                 check : function (event, element, target, index) {
-                    if(target === -1) {return false;}
 
                     var s  = this.get_settings().typesfromurl;
 
@@ -152,7 +166,7 @@
                     // node unavailable
                     if (typeof(s.available_nodes[type]) === "undefined" ) { return false; }
 
-                    // check operation is not disabled for node for node
+                    // check operation is not disabled for node
                     if (typeof(s.available_nodes[type]["attributes"][event]) !== "undefined"
                         && !s.available_nodes[type]["attributes"][event]) { return false; }
 
@@ -164,9 +178,12 @@
                                 return false
                             }
 
-
+                        case "duplicate_node":
                         case "copy_node":
                         case "create_node":
+
+                            // if no parent and event not delete
+                            if(target === -1) { return false; }
 
                             // check max children
                             if(s.max_children !== -2 && s.max_children !== -1) {
@@ -197,6 +214,13 @@
                                     return false;
                                 }
                             }
+
+                            break;
+
+                        case "delete_node" :
+
+                            // ensure there is always one root node
+                            if (target === -1 && element.siblings('li').length === 0) { return false; }
                     }
 
                     return true;
@@ -211,7 +235,7 @@
                  *
                  * @return node
                  */
-                create_node : function (parent, type, position) {
+                create_node : function (parent, type, position, callback) {
 
                     parent = this.get_node(parent);
                     position = position || "last";
@@ -220,14 +244,20 @@
 
                     var li = $("<li />").attr({rel: type}).append($("<a />").html(node.new).attr({href:"#"}));
 
+                    var new_parent = this.get_parent(parent);
+
+                    if (new_parent === -1) {
+                        new_parent = parent.parents('.jstree-0');
+                    }
+
                     switch(position) {
                         case "before":
                             position = parent.index();
-                            parent = this.get_parent(parent);
+                            parent = new_parent;
                             break;
                         case "after" :
                             position = parent.index() + 1;
-                            parent = this.get_parent(parent);
+                            parent = new_parent;
                             break;
                         case "inside":
                         case "first":
@@ -241,7 +271,14 @@
                             break;
                     }
 
-                    parent.children("ul").children("li").eq(position).before(li);
+                    // create element ...
+                    if(!parent.children("ul").length) {
+                        // add a submenu if there isn't already one
+                        var $ul = $('<ul />').append(li);
+                        parent.append($ul);
+                    } else {
+                        parent.children("ul").children("li").eq(position).before(li);
+                    }
 
                     // fire the callback to send the ajax request
                     this.__callback({ "obj" : li, "parent" : parent, "position" : position });
