@@ -83,7 +83,7 @@ class htmldom extends \DOMDocument implements \Serializable {
      *
      * @return  (boolean) true on success, false on error
      **/
-    public function loadHTML($html) {
+    public function loadHTML($source, $options = null) {
         $tmpDOM = new \DOMDocument();
 
         $encoding = mb_http_input();
@@ -92,7 +92,7 @@ class htmldom extends \DOMDocument implements \Serializable {
         }
 
         // @todo take original content-type if available
-        $success = @$tmpDOM->loadHTML("<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\">$html");
+        $success = @$tmpDOM->loadHTML("<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\">$source");
 
         $xpath = new \DOMXPath($tmpDOM);
         $nodelist = $xpath->query("//body/*");
