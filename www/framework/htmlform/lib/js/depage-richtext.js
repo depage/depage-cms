@@ -35,15 +35,16 @@
     /* new selector to check if the tags submitted are inline elements */
     $.extend($.expr[':'],{
         inline: function(element) {
+            var $element = $(element);
             return (
-                $(element).is('a') ||
-                $(element).is('em') ||
-                $(element).is('i') ||
-                $(element).is('font') ||
-                $(element).is('span') ||
-                $(element).is('strong') ||
-                $(element).is('b') ||
-                $(element).is('u')
+                $element.is('a') ||
+                $element.is('em') ||
+                $element.is('i') ||
+                $element.is('font') ||
+                $element.is('span') ||
+                $element.is('strong') ||
+                $element.is('b') ||
+                $element.is('u')
             );
         }
     });
@@ -58,10 +59,10 @@
             // }}}
             // {{{ createDOM()
             createDOM : function() {
-                this.textarea = element;
-                this.container = document.createElement("div");
+                this.$textarea = $(element).wrap("<div/>");
+                this.$container = this.$textarea.parent();
                 this.iframe = document.createElement("iframe");
-                this.input = document.createElement("input");
+                this.$iframe = $(this.iframe);
                 this.stylesheetLink = document.createElement("a");
 
                 // make stylesheet an absolute url
@@ -69,27 +70,18 @@
                     href : this.settings.stylesheet
                 })[0].href;
 
-                $(this.input).attr({
-                    type : 'hidden',
-                    name : $(this.textarea).attr('name'),
-                    value : $(this.textarea).attr('value') // old textarea value
-                });
+                this.$textarea.addClass('depageEditorTextarea');
 
-                $(this.textarea).addClass('depageEditorTextarea');
-                $(this.textarea).attr('name', $(this.textarea).attr('name') + "depageEditorTextarea");
-                $(this.textarea).hide();
-
-                $(this.container).addClass(settings.containerClass);
-                $(this.iframe).addClass('depageEditorIframe');
+                this.$container.addClass(settings.containerClass);
+                this.$iframe.addClass('depageEditorIframe');
 
                 this.toolbar = new depageEditorToolbar(this);
-                $(this.container).append(this.toolbar.itemsList);
-                $(this.container).append(this.iframe);
-                $(this.container).append(this.input);
-                $(this.container).hide();
+                this.$container.append(this.toolbar.itemsList);
+                this.$container.append(this.iframe);
+                this.$container.hide();
 
-                this.input.depageEditorObject = this;
-                $(this.textarea).replaceWith(this.container);
+                this.$textarea[0].depageEditorObject = this;
+                this.$textarea.hide();
             },
             // }}}
             // {{{ writeDocument()
@@ -101,20 +93,20 @@
                             <link rel="stylesheet" type="text/css" href="' + settings.stylesheet + '"></link>\
                         </head>\
                         <body id="iframeBody">\
-                            ' + $(this.input).val() + '\
+                            ' + this.$textarea.val() + '\
                         </body>\
                     </html>\
                 ';
                 
                 //documentTemplate = documentTemplate.replace(/INSERT:STYLESHEET:END/, '<link rel="stylesheet" type="text/css" href="' + settings.stylesheet + '"></link>');
-                documentTemplate = documentTemplate.replace(/INSERT:CONTENT:END/, $(this.input).val());
+                documentTemplate = documentTemplate.replace(/INSERT:CONTENT:END/, this.$textarea.val());
 
                 this.iframe.contentWindow.document.open();
                 this.iframe.contentWindow.document.write(documentTemplate);
                 this.iframe.contentWindow.document.close();
 
                 var self = this;
-                $(this.iframe).load( function() {
+                this.$iframe.load( function() {
                     self.autogrow();
                 });
             },
@@ -130,14 +122,15 @@
                     return false;
                 }
 
-                $(this.container).show();
-                $(this.textarea).show();
+                this.$container.show();
+                //this.$textarea.show();
                 $(this.iframe.contentWindow.document).mouseup(function() { 
                     self.toolbar.checkState(self);
                     self.autogrow();
                 }).keyup(function() { 
                     self.toolbar.checkState(self);
                     self.autogrow();
+                    self.updateDepageEditorInput();
                 }).keydown(function(e){ 
                     self.detectPaste(e); 
                     self.autogrow();
@@ -170,7 +163,7 @@
             // {{{ modifyFormSubmit()
             modifyFormSubmit : function() {
                 var self = this;
-                var form = $(this.container).parents('form');
+                var form = this.$container.parents('form');
                 form.submit(function() {
                     return self.updateDepageEditorInput();
                 });
@@ -178,7 +171,7 @@
             // }}}
             // {{{ insertNewParagraph()
             insertNewParagraph : function(elementArray, succeedingElement) {
-                var body = $(this.iframe).contents().find('body');
+                var body = this.$iframe.contents().find('body');
                 var paragraph = this.iframe.contentWindow.document.createElement("p");
                 $(elementArray).each(function(){
                     $(paragraph).append(this);
@@ -189,60 +182,64 @@
             // {{{ paragraphise()
             paragraphise : function() {
                 if (settings.insertParagraphs && this.wysiwyg) {
-                    var bodyNodes = $(this.iframe).contents().find('body').contents();
+                    var bodyNodes = this.$iframe.contents().find('body').contents();
 
                     /* Remove all text nodes containing just whitespace */
+                    /*
+                    // @todo fix removing whitespace
                     bodyNodes.each(function() {
                         // something like $(this).is('#text')); would be great
                         if (this.nodeName.toLowerCase() == "#text" &&
                             this.data.search(/^\s*$/) != -1) {
-                            this.data = '';
+                            //this.data = this.data.replace(/^(\s)\s*$/, "$1-");
+                            this.data = ' ';
                         }
                     });
+                    */
                     
                     var self = this;
                     var removedElements = new Array();
 
                     bodyNodes.each(function() {
-                        if($(this).is(':inline') || this.nodeType == 3) {
-                            removedElements.push(this);
-                            $(this).remove();
-                        }
-                        else if($(this).is('br')) {
-                            if(!$(this).is(':last-child')) {
+                        var el = this;
+                        var $el = $(this);
+
+                        if($el.is(':inline') || $el[0].nodeType == 3) {
+                            removedElements.push(el);
+                            $el.remove();
+                        } else if($el.is('br')) {
+                            if(!$el.is(':last-child')) {
                                 /* If the current break tag is followed by another break tag  */
-                                if($(this).next().is('br')) {
+                                if($el.next().is('br')) {
                                     /* Remove consecutive break tags  */
-                                    while($(this).next().is('br')) {
-                                        $(this).remove();
+                                    while($el.next().is('br')) {
+                                        $el.remove();
                                     }
                                     if (removedElements.length) {
-                                        self.insertNewParagraph(removedElements, this);
+                                        self.insertNewParagraph(removedElements, el);
                                         removedElements = new Array();
                                     }
                                 }
                                 /* If the break tag appears before a block element */
-                                else if (!$(this).is(':inline')  && this.nodeType != 3) {
-                                    $(this).remove();
+                                else if (!$el.is(':inline')  && el.nodeType != 3) {
+                                    $el.remove();
                                 }
                                 else if (removedElements.length) {
-                                    removedElements.push(this.cloneNode(true));
-                                    $(this).remove();
+                                    removedElements.push(el.cloneNode(true));
+                                    $el.remove();
                                 }
                                 else {
-                                    $(this).remove();
+                                    $el.remove();
                                 }
                             }
-                        }
-                        else if (removedElements.length) {
-                            self.insertNewParagraph(removedElements, this);
+                        } else if (removedElements.length) {
+                            self.insertNewParagraph(removedElements, el);
                             removedElements = new Array();
                         }
 
                     });
 
-                    if (removedElements.length > 0)
-                    {
+                    if (removedElements.length > 0) {
                         this.insertNewParagraph(removedElements);
                     }
                 }
@@ -256,8 +253,8 @@
                     /* Switch to HTML source */
                     if (this.wysiwyg) {
                         this.updateDepageEditorInput();
-                        $(this.textarea).val($(this.input).val());
-                        $(this.iframe).replaceWith(this.textarea);
+                        this.$textarea.show();
+                        this.$iframe.hide();
                         this.toolbar.disable();
                         this.wysiwyg = false;
                         this.locked = false;
@@ -265,8 +262,9 @@
                     /* Switch to WYSIWYG */
                     else {
                         this.updateDepageEditorInput();
-                        $(this.textarea).replaceWith(this.iframe);
-                        this.writeDocument(this.input.value);
+                        this.$textarea.hide();
+                        this.$iframe.show();
+                        this.writeDocument(this.$textarea.val());
                         this.toolbar.enable();
                         this.makeEditable();
                         this.wysiwyg = true;
@@ -338,12 +336,14 @@
                 if (this.wysiwyg) {
                     html = body.html();
                 } else {
-                    html = $(this.textarea).val();
+                    html = this.$textarea.val();
                 }
 
-                /* Remove leading and trailing whitespace */
+                /* Remove leading whitespace */
                 html = html.replace(/^\s*/, "");
-                html = html.replace(/\s*$/, "");
+
+                /* remove double whitespace */
+                html = html.replace(/\s{2,}/g, " ");
 
                 /* remove comments */
                 html = html.replace(/<--.*-->/, "");
@@ -393,22 +393,16 @@
                 html = html.replace(/\n/g, "");
                 html = html.replace(/(<\/(p|h1|h2|li|ul|ol)>)/g, "$1\n");
 
-                if (this.wysiwyg) {
-                    $(this.iframe.contentWindow.document).find("body").html(html);
-                } else {
-                    $(this.textarea).val(html);
-                }
+                //$(this.iframe.contentWindow.document).find("body").html(html);
+                this.$textarea.val(html);
                 
-                $(this.input).val(html);
                 this.cleaning = false;
             },
             // }}}
             // {{{ refreshDisplay()
             refreshDisplay : function() {
                 if (this.wysiwyg) {
-                    $(this.iframe.contentWindow.document).find("body").html($(this.input).val());
-                } else {
-                    $(this.textarea).val($(this.input).val());
+                    $(this.iframe.contentWindow.document).find("body").html(this.$textarea.val());
                 }
             },
             // }}}
@@ -427,8 +421,8 @@
                         return;
                     }
 
-                    var offset = Math.max(0, $(window).scrollTop() - $(this.iframe).offset().top);
-                    offset = Math.min(offset, $(this.iframe).height() - toolbarList.height());
+                    var offset = Math.max(0, $(window).scrollTop() - this.$iframe.offset().top);
+                    offset = Math.min(offset, this.$iframe.height() - toolbarList.height());
 
                     toolbarList.css({
                         top: offset
@@ -448,9 +442,9 @@
                         scroll: "no"
                     });
 
-                    $(this.iframe).height(newHeight);
-                    $(this.textarea).height(newHeight);
+                    this.$iframe.height(newHeight);
                 } else {
+                    //this.$textarea.height(newHeight);
                 }
             },
             // }}}
@@ -460,8 +454,8 @@
                     /* Convert spans to semantics in Mozilla */
                     this.paragraphise();
                     this.cleanSource();
-                } else {
-                    $(this.input).val($(this.textarea).val());
+                    this.$textarea.change();
+                    //console.log(this.$textarea.val());
                 }
             },
             // }}}
@@ -690,6 +684,7 @@
                     editor.iframe.contentWindow.document.execCommand('bold', false, null);
                     editor.toolbar.setState('bold', "on");
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             },
             // }}}
@@ -703,6 +698,7 @@
                     editor.iframe.contentWindow.document.execCommand('italic', false, null);
                     editor.toolbar.setState('italic', "on");
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             },
             // }}}
@@ -730,6 +726,7 @@
                         editor.iframe.contentWindow.document.execCommand("CreateLink", false, url);
                         editor.toolbar.setState('link', "on");
                         editor.focusEditor();
+                        editor.updateDepageEditorInput();
                     }
                 }
             },
@@ -744,6 +741,7 @@
                     editor.iframe.contentWindow.document.execCommand('insertorderedlist', false, null);
                     editor.toolbar.setState('orderedlist', "on");
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             },
             // }}}
@@ -757,6 +755,7 @@
                     editor.iframe.contentWindow.document.execCommand('insertunorderedlist', false, null);
                     editor.toolbar.setState('unorderedlist', "on");
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             },
             // }}}
@@ -776,6 +775,7 @@
                         }, null, true);
                     }
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             },
             // }}}
@@ -799,6 +799,7 @@
                     editor.styleWithCSS();
                     editor.iframe.contentWindow.document.execCommand('FormatBlock', false, tag);
                     editor.focusEditor();
+                    editor.updateDepageEditorInput();
                 }
             }
             // }}}
@@ -941,6 +942,7 @@
                     settings.selectBlockOptions.splice(i, 1);
                 }
             }
+            settings.allowedTags.push("br");
             
             settings.undesiredTags = (settings.undesiredTags.length != defaultUndesiredTags.length) ?
                 $.removeDuplicate($.merge(settings.undesiredTags, defaultUndesiredTags)) : settings.undesiredTags;

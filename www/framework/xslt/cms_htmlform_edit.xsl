@@ -24,6 +24,7 @@
     <xsl:processing-instruction name="php">
         $form = new \depage\htmlform\htmlform("xmledit_<xsl:value-of select="@db:id" />", array(
             'label' => "save",
+            'jsAutosave' => true,
         ));
 
         $form->addHtml("&lt;h1&gt;Textarea&lt;/h1&gt;");
