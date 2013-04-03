@@ -275,8 +275,10 @@ class depage {
     static function getVersion() {
         static $version;
 
-        if (!isset($version)) {
-            $version = file_get_contents(__DIR__ . "/version.txt");
+        $txt = __DIR__ . "/version.txt";
+
+        if (!isset($version) && file_exists($txt)) {
+            $version = file_get_contents($txt);
         }
 
         return $version;

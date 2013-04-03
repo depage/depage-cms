@@ -64,9 +64,10 @@
             _fn : {
                 _load_type_settings : function() {
                     var _this = this;
-                    var url = this.get_container().attr("data-types-settings-url");
+                    var container = this.get_container();
+                    var url = container.attr("data-types-settings-url");
 
-                    $.getJSON(url, function(new_types_settings) {
+                    $.getJSON(url, {'doc_id' : container.attr("data-doc-id")}, function(new_types_settings) {
                         // get a reference to the settings
                         var s =  _this.get_settings(true).typesfromurl;
 

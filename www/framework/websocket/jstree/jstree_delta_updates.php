@@ -61,23 +61,27 @@ class jstree_delta_updates {
 
     // returns an associative array of parent node id keys and children node values, that where involved in a recent change
     public function changedNodes() {
-        // do a partial update with only immediate children by default
-        $level_of_children = 0;
-        $initial_seq_nr = $this->seq_nr;
-        $parent_ids = $this->changedParentIds();
-
-        // very unlikely case that more delta updates happened than will be retained in db. reload whole document
-        if ($this->seq_nr - $initial_seq_nr > self::MAX_UPDATES_BEFORE_RELOAD) {
-            $level_of_children = PHP_INT_MAX;
-            $doc_info = $this->xmldb->getDocInfo($this->doc_id);
-            $parent_ids = array($doc_info->rootid);
-        }
-
         $changed_nodes = array();
-        foreach ($parent_ids as $parent_id) {
-            // TODO this is not getting a sub doc but only top level (when $level = 0)
-            // TODO therefore don't want to save to cache
-            $changed_nodes[$parent_id] = $this->xmldb->getSubdocByNodeId($this->doc_id, $parent_id, true, $level_of_children);
+
+        if ($doc = $this->xmldb->getDoc($this->doc_id)) {
+            // do a partial update with only immediate children by default
+            $level_of_children = 0;
+            $initial_seq_nr = $this->seq_nr;
+            $parent_ids = $this->changedParentIds();
+
+            // very unlikely case that more delta updates happened than will be retained in db. reload whole document
+            if ($this->seq_nr - $initial_seq_nr > self::MAX_UPDATES_BEFORE_RELOAD) {
+                $level_of_children = PHP_INT_MAX;
+                $doc_info = $doc->getDocInfo();
+                $parent_ids = array($doc_info->rootid);
+            }
+
+            $changed_nodes = array();
+            foreach ($parent_ids as $parent_id) {
+                // TODO this is not getting a sub doc but only top level (when $level = 0)
+                // TODO therefore don't want to save to cache
+                $changed_nodes[$parent_id] = $doc->getSubdocByNodeId($parent_id, true, $level_of_children);
+            }
         }
 
         return $changed_nodes;

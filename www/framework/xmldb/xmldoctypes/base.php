@@ -45,9 +45,10 @@ class base {
     
     // {{{ getNewNodeFor
     function getNewNodeFor($name) {
-        if (isset($this->availableNodes[$name])) {
-            $nodeInfo = $this->availableNodes[$name];;
-            $docInfo = $this->xmldb->getNamespacesAndEntities($this->docId);
+        $doc = $this->xmldb->getDoc($this->docId);
+        if ($doc && isset($this->availableNodes[$name])) {
+            $nodeInfo = $this->availableNodes[$name];
+            $docInfo = $doc->getNamespacesAndEntities();
 
             $xml = "<$name {$docInfo->namespaces}";
             if (!empty($nodeInfo->new)) {
@@ -64,9 +65,9 @@ class base {
             $doc->loadXML($xml);
 
             return $doc->documentElement;
-        } else {
-            return false;
         }
+
+        return false;
     }
     // }}}
     
@@ -83,10 +84,14 @@ class base {
     
     // {{{ isAllowedMove
     function isAllowedMove($nodeId, $targetId) {
-        return $this->isAllowedIn(
-            $this->xmldb->getNodeNameById($this->docId, $nodeId),
-            $this->xmldb->getNodeNameById($this->docId, $targetId)
-        );
+        if($doc = $this->xmldb->getDoc($this->docId)) {
+            return $this->isAllowedIn(
+                $doc->getNodeNameById($nodeId),
+                $doc->getNodeNameById($targetId)
+            );
+        }
+
+        return false;
     }
     // }}}
     
@@ -98,10 +103,14 @@ class base {
     
     // {{{ isAllowedAdd
     function isAllowedAdd($node, $targetId) {
-        return $this->isAllowedIn(
-            $node->nodeName, 
-            $this->xmldb->getNodeNameById($this->docId, $targetId)
-        );
+        if($doc = $this->xmldb->getDoc($this->docId)) {
+            return $this->isAllowedIn(
+                $node->nodeName,
+                $doc->getNodeNameById($targetId)
+            );
+        }
+
+        return false;
     }
     // }}}
 }  
