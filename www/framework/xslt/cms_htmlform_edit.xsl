@@ -44,30 +44,9 @@
 </xsl:template>
 <!-- }}} -->
 
-<!-- {{{ p -->
-<xsl:template match="p">&lt;p&gt;<xsl:apply-templates />&lt;/p&gt;
-</xsl:template>
-<!-- }}} -->
-<!-- {{{ h1 -->
-<xsl:template match="h1">&lt;h1&gt;<xsl:apply-templates />&lt;/h1&gt;
-</xsl:template>
-<!-- }}} -->
-<!-- {{{ h2 -->
-<xsl:template match="h2">&lt;h2&gt;<xsl:apply-templates />&lt;/h2&gt;
-</xsl:template>
-<!-- }}} -->
-<!-- {{{ ol -->
-<xsl:template match="ol">&lt;ol&gt;
-    <xsl:apply-templates />&lt;/ol&gt;
-</xsl:template>
-<!-- }}} -->
-<!-- {{{ ul -->
-<xsl:template match="ul">&lt;ul&gt;
-    <xsl:apply-templates />&lt;/ul&gt;
-</xsl:template>
-<!-- }}} -->
-<!-- {{{ li -->
-<xsl:template match="li">&lt;li&gt;<xsl:apply-templates />&lt;/li&gt;
+<!-- {{{ block level elements -->
+<xsl:template match="p|h1|h2|h3|h4|h5|h6|ol|ul|li">&lt;<xsl:value-of select="name()" />&gt;<xsl:apply-templates />&lt;/<xsl:value-of select="name()" />&gt;<xsl:text>
+    </xsl:text>
 </xsl:template>
 <!-- }}} -->
 
