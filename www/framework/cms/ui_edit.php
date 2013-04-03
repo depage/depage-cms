@@ -112,7 +112,17 @@ class ui_edit extends ui_base {
       </pg:page_data>';
         // }}}
 
-        $doc = $this->xmldb->getDocXml($docName);
+        $doc = $this->xmldb->getDoc($docName);
+
+        // reset data
+        $initDoc = new \DOMDocument();
+        $initDoc->loadXML($pagedataXml);
+
+        /*
+        if($doc){
+            $doc->save($initDoc);
+        }
+        /* */
 
         $xsl = new \DOMDocument();
         $xsl->load(DEPAGE_FM_PATH . "xslt/cms_htmlform_edit.xsl", LIBXML_NOCDATA);
@@ -122,7 +132,7 @@ class ui_edit extends ui_base {
 
         $forms = array();
 
-        $php = $xslt->transformToXML($doc);
+        $php = $xslt->transformToXML($doc->getXML());
         
         // add form elements based on xml
         eval("?>$php");
@@ -131,31 +141,26 @@ class ui_edit extends ui_base {
         foreach ($forms as $form) {
             $form->process();
 
-            if (!$form->isEmpty() && $form->validate()) {
+            if (!$form->isEmpty() && $form->validateAutosave()) {
                 $values = $form->getValues();
 
-                /*
-                $value = $values['value'];
-                $xpath = new \DOMXPath($value);
-                $nodelist = $xpath->query("//body/*");
-                 */
-                $nodelist = $values['value']->getBodyNodes();
+                if($doc && $values['value']){
+                    $nodelist = $values['value']->getBodyNodes();
 
-                $savexml = $this->xmldb->getDocXml($docName);
-                $rootnode = $savexml->documentElement;
+                    $savexml = $doc->getSubdocByNodeId($values['dbid']);
+                    $rootnode = $savexml->documentElement;
 
-                for ($i = $rootnode->childNodes->length - 1; $i >= 0; $i--) {
-                    $rootnode->removeChild($rootnode->childNodes->item($i));
-                }
+                    for ($i = $rootnode->childNodes->length - 1; $i >= 0; $i--) {
+                        $rootnode->removeChild($rootnode->childNodes->item($i));
+                    }
 
-                foreach($nodelist as $node) {
-                    // copy all nodes inside the body tag
-                    $newnode = $savexml->importNode($node, true);
-                    $rootnode->appendChild($newnode);
-                }
+                    foreach($nodelist as $node) {
+                        // copy all nodes inside the body tag
+                        $newnode = $savexml->importNode($node, true);
+                        $rootnode->appendChild($newnode);
+                    }
 
-                if($doc = $this->xmldb->getDoc($docName)){
-                    $doc->saveNode($savexml);
+                    $doc->replaceNode($rootnode, $values['dbid']);
                 }
 
                 $form->clearSession();

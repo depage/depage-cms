@@ -26,8 +26,9 @@ class xmldb {
     private $table_prefix = 'dp_';
     private $table_docs;
     private $table_xml;
+    // }}}
 
-    // {{{
+    // {{{ __get()
     /**
      * Get
      *
@@ -151,7 +152,7 @@ class xmldb {
     }
     // }}}
 
-    // {{{
+    // {{{ getDoc()
     /**
      * Get xmldb\document
      *
@@ -185,7 +186,7 @@ class xmldb {
     }
     // }}}
 
-    // {{{
+    // {{{ createDoc()
     /**
      * CreateDoc
      *
