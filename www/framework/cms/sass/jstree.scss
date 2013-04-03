@@ -201,6 +201,14 @@
     background-repeat:no-repeat; 
     display:none;
 }
+#jstree-add-marker-indicator {
+    background-color: #fff;
+    border-top: 1px solid #000;
+    height: 1px;
+    margin: 10px 0;
+    position: absolute;
+    display: none;
+}
 .jstree-add-marker-between {
     background-color:yellow;
 }
