@@ -84,12 +84,14 @@
                     items = items.call(this, obj);
                 }
 
-                var $ul = $("<ul />");
+                var $ul = $("<menu />");
+                var $toolbar = $("<div class=\"toolbar\" />");
+                $toolbar.append($ul);
                 $.each(items, function(i, item) {
                     additem($ul, item);
                 });
 
-                $("body").prepend($ul);
+                self.get_container().before($toolbar);
             },
 
             node_selected : function (obj) {

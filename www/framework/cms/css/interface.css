@@ -245,6 +245,7 @@ a img {
 
 .toolbar {
   padding: 2px 8px;
+  height: 26px;
 }
 .toolbar menu,
 .toolbar ul,
