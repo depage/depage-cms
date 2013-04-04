@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" xmlns:dpg="http://www.depagecms.net/ns/depage" extension-element-prefixes="xsl rpc db proj pg sec edit backup dpg">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:php="http://php.net/xsl">
 
 <xsl:output method="html" indent="no" omit-xml-declaration="yes" />
 <xsl:strip-space elements="*" />
@@ -21,6 +21,8 @@
 <!-- }}} -->
 <!-- {{{ textarea -->
 <xsl:template name="textarea">
+    <xsl:variable name="value"><xsl:apply-templates select="*" /></xsl:variable>
+
     <xsl:processing-instruction name="php">
         $form = new \depage\htmlform\htmlform("xmledit_<xsl:value-of select="@db:id" />", array(
             'label' => "save",
@@ -32,7 +34,7 @@
             'defaultValue' => "<xsl:value-of select="@db:id" />",
         )); 
         $form->addRichtext("value", array(
-            'defaultValue' => "<xsl:apply-templates select="*" />",
+            'defaultValue' => <xsl:value-of select="php:function('var_export', $value, true())" />,
             'cols' => 80,
             'rows' => 10,
             'label' => "<xsl:value-of select="@lang" />",

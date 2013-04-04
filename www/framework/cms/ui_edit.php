@@ -129,11 +129,21 @@ class ui_edit extends ui_base {
 
         $xslt = new \XSLTProcessor();
         $xslt->importStylesheet($xsl);
+        $xslt->registerPHPFunctions(array(
+            'str_replace',
+            'var_export',
+        ));
 
         $forms = array();
 
         $php = $xslt->transformToXML($doc->getXML());
         
+        /*
+        echo("<pre>");
+        echo(htmlentities($php));
+        echo("</pre>");
+         */ 
+
         // add form elements based on xml
         eval("?>$php");
 
@@ -144,7 +154,7 @@ class ui_edit extends ui_base {
             if (!$form->isEmpty() && $form->validateAutosave()) {
                 $values = $form->getValues();
 
-                if($doc && $values['value']){
+                if($doc){
                     $nodelist = $values['value']->getBodyNodes();
 
                     $savexml = $doc->getSubdocByNodeId($values['dbid']);
