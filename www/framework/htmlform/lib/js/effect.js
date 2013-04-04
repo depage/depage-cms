@@ -110,12 +110,14 @@ function setupForm(form) {
             
             data['formAutosave'] = "true";
             form.data.saving = true;
+            $form.addClass("saving");
 
             $.post(form.action, data, function(response, textStatus) {
                 now = new Date();
                 
                 form.data.lastsave = now.getTime();
                 form.data.saving = false;
+                $form.removeClass("saving");
             });
         };
         form.data.changed = function(saveImmediately) {
@@ -125,8 +127,9 @@ function setupForm(form) {
             if (!form.data.saving) {
                 if (saveImmediately || now.getTime() - form.data.lastsave > saveInterval) {
                     form.data.autosave();
+                    clearTimeout(form.data.timer);
                 } else {
-                    setTimeout(function() {
+                    form.data.timer = setTimeout(function() {
                         form.data.changed();
                     }, saveInterval);
                 }

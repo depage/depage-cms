@@ -454,7 +454,7 @@
                     /* Convert spans to semantics in Mozilla */
                     this.paragraphise();
                     this.cleanSource();
-                    this.$textarea.change();
+                    this.$textarea.keyup();
                     //console.log(this.$textarea.val());
                 }
             },

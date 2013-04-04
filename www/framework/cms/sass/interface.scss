@@ -406,8 +406,16 @@ a img {
 /* }}} */
 /* {{{ depage-forms */
 .depage-form {
+    position: relative;
     width: 100%;
     max-width: 100%;
+
+    &.saving::before {
+        content: "saving";
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
 }
 /* }}} */
 
