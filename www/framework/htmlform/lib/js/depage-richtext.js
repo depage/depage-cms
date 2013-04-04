@@ -61,19 +61,17 @@
             createDOM : function() {
                 this.$textarea = $(element).wrap("<div/>");
                 this.$container = this.$textarea.parent();
-                this.iframe = document.createElement("iframe");
-                this.$iframe = $(this.iframe);
-                this.stylesheetLink = document.createElement("a");
+                this.$iframe = $("<iframe class=\"depageEditorIframe loading\" />");
+                this.iframe = this.$iframe[0];
 
                 // make stylesheet an absolute url
-                this.settings.stylesheet = $(this.stylesheetLink).attr({
+                this.settings.stylesheet = $("<a/>").attr({
                     href : this.settings.stylesheet
                 })[0].href;
 
                 this.$textarea.addClass('depageEditorTextarea');
 
                 this.$container.addClass(settings.containerClass);
-                this.$iframe.addClass('depageEditorIframe');
 
                 this.toolbar = new depageEditorToolbar(this);
                 this.$container.append(this.toolbar.itemsList);
@@ -86,27 +84,28 @@
             // }}}
             // {{{ writeDocument()
             writeDocument : function() {
+                var self = this;
+                var doc = this.iframe.contentWindow.document;
+
                 /* HTML template into which the HTML Editor content is inserted */
                 var documentTemplate = '\
                     <html>\
                         <head>\
                             <link rel="stylesheet" type="text/css" href="' + settings.stylesheet + '"></link>\
                         </head>\
-                        <body id="iframeBody">\
+                        <body id="iframeBody" style="display: none">\
                             ' + this.$textarea.val() + '\
                         </body>\
                     </html>\
                 ';
                 
-                //documentTemplate = documentTemplate.replace(/INSERT:STYLESHEET:END/, '<link rel="stylesheet" type="text/css" href="' + settings.stylesheet + '"></link>');
-                documentTemplate = documentTemplate.replace(/INSERT:CONTENT:END/, this.$textarea.val());
+                doc.open();
+                doc.write(documentTemplate);
+                doc.close();
 
-                this.iframe.contentWindow.document.open();
-                this.iframe.contentWindow.document.write(documentTemplate);
-                this.iframe.contentWindow.document.close();
-
-                var self = this;
                 this.$iframe.load( function() {
+                    self.$iframe.removeClass("loading");
+                    $(doc).find("body").show();
                     self.autogrow();
                 });
             },

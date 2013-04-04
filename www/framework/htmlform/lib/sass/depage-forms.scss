@@ -178,6 +178,11 @@
         position: relative;
         margin-left: 25px;
     }
+    .depageEditorIframe {
+        &.loading {
+            opacity: 0.5;
+        }
+    }
     ul.depageEditorToolbar {
         position: absolute;
         left: -25px;
