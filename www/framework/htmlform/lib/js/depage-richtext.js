@@ -123,18 +123,20 @@
                 }
 
                 this.$container.show();
-                //this.$textarea.show();
-                $(this.iframe.contentWindow.document).mouseup(function() { 
+                $(this.iframe.contentWindow.document).on("mouseup", function() { 
                     self.toolbar.checkState(self);
                     self.autogrow();
-                }).keyup(function() { 
+                }).on("keyup", function() { 
                     self.toolbar.checkState(self);
                     self.autogrow();
                     self.updateDepageEditorInput();
-                }).keydown(function(e){ 
+                }).on("keydown", function(e){ 
                     self.detectPaste(e); 
                     self.autogrow();
-                }).scroll(function() { 
+                }).on("scroll", function(e) { 
+                    self.autogrow();
+                }).on("paste", function(e) {
+                    self.detectPaste(e); 
                     self.autogrow();
                 });
                 this.locked = false;
@@ -274,10 +276,10 @@
             // }}}
             // {{{ detectPaste()
             detectPaste : function(e) {
-                if ((e.ctrlKey && e.keyCode == 86) && !this.cleaning) {
+                if (((e.ctrlKey && e.keyCode == 86) || e.type == "paste") && !this.cleaning) {
                     var self = this;
                     setTimeout(function(e){
-                        self.cleanSource();
+                        self.cleanSource(true);
                     }, 100);
                 }
                 if (e.keyCode == 13) {
@@ -300,7 +302,9 @@
             },
             // }}}
             // {{{ cleanSource()
-            cleanSource : function() {
+            cleanSource : function(replaceIframeContent) {
+                replaceIframeContent = replaceIframeContent || false;
+
                 this.cleaning = true;
                 var html = "";
                 var body = $(this.iframe.contentWindow.document).find("body");
@@ -393,7 +397,9 @@
                 html = html.replace(/\n/g, "");
                 html = html.replace(/(<\/(p|h1|h2|li|ul|ol)>)/g, "$1\n");
 
-                //$(this.iframe.contentWindow.document).find("body").html(html);
+                if (replaceIframeContent) {
+                    $(this.iframe.contentWindow.document).find("body").html(html);
+                }
                 this.$textarea.val(html);
                 
                 this.cleaning = false;
@@ -451,11 +457,12 @@
             // {{{ updateDepageEditorInput()
             updateDepageEditorInput : function() {
                 if (this.wysiwyg) {
-                    /* Convert spans to semantics in Mozilla */
+                    // Convert spans to semantics in Mozilla
                     this.paragraphise();
                     this.cleanSource();
+
+                    // tells the textarea that something has changed / for autosaving
                     this.$textarea.keyup();
-                    //console.log(this.$textarea.val());
                 }
             },
             // }}}
