@@ -80,7 +80,7 @@ function setupForm(form) {
     
     // {{{ autosave
     if (autosave == "true") {
-        var saveInterval = 1000;
+        var saveInterval = 700;
         var now = new Date();
         
         form.data = form.data || {};
@@ -186,7 +186,10 @@ function setupForm(form) {
     // }}}
     // {{{ add richtext-editor to richtext inputs
     $('.input-richtext', form).each(function() {
-        var options = $.parseJSON($(this).attr('data-textarea-options')) || $.parseJSON($(this).attr('data-richtext-options'));
+        var options = $.extend({},
+            $.parseJSON($(this).attr('data-textarea-options')),
+            $.parseJSON($(this).attr('data-richtext-options'))
+        );
         var $textarea = $("textarea", this);
         $textarea.depageEditor(options);
     });
