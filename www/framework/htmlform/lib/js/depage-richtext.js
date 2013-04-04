@@ -448,8 +448,7 @@
                     });
 
                     this.$iframe.height(newHeight);
-                } else {
-                    //this.$textarea.height(newHeight);
+                    this.$textarea.height(newHeight);
                 }
             },
             // }}}
