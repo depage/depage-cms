@@ -113,7 +113,7 @@ function setupForm(form) {
             $form.addClass("saving");
 
             $.post(form.action, data, function(response, textStatus) {
-                now = new Date();
+                var now = new Date();
                 
                 form.data.lastsave = now.getTime();
                 form.data.saving = false;
@@ -121,14 +121,13 @@ function setupForm(form) {
             });
         };
         form.data.changed = function(saveImmediately) {
-            now = new Date();
-            clearTimeout(form.data.timer);
-            
+            var now = new Date();
+
             if (!form.data.saving) {
                 if (saveImmediately || now.getTime() - form.data.lastsave > saveInterval) {
                     form.data.autosave();
-                    clearTimeout(form.data.timer);
                 } else {
+                    clearTimeout(form.data.timer);
                     form.data.timer = setTimeout(function() {
                         form.data.changed();
                     }, saveInterval);

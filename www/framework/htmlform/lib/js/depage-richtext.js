@@ -6,7 +6,7 @@
  * based on 
  * - uEditor (http://www.upian.com/upiansource/ueditor/en) by Denis Hovart 
  * - widgEditor (http://www.themaninblue.com/experiment/widgEditor) by Cameron Adams
- * - extended by Frank Hellenkamp
+ * - extended by Frank Hellenkamp (http://depage.net)
  *  
  * the markup is much better and more consistent than with jwysiwyg e.g.
  *
@@ -54,9 +54,12 @@
     // depageEditor class
     var depageEditor = function(element, settings) {
         $.extend(this, {
-            // {{{ settings
+            // {{{ variables
             settings : settings,
+            timer : null,
+            lastTextareaUpdate: null,
             // }}}
+            
             // {{{ createDOM()
             createDOM : function() {
                 this.$textarea = $(element).wrap("<div/>");
@@ -99,15 +102,15 @@
                     </html>\
                 ';
                 
-                doc.open();
-                doc.write(documentTemplate);
-                doc.close();
-
-                this.$iframe.load( function() {
+                this.$iframe.on("load", function() {
                     self.$iframe.removeClass("loading");
                     $(doc).find("body").show();
                     self.autogrow();
                 });
+
+                doc.open();
+                doc.write(documentTemplate);
+                doc.close();
             },
             // }}}
             // {{{ makeEditable()
@@ -128,7 +131,7 @@
                 }).on("keyup", function() { 
                     self.toolbar.checkState(self);
                     self.autogrow();
-                    self.updateDepageEditorInput();
+                    self.updateDepageEditorInputDeferred();
                 }).on("keydown", function(e){ 
                     self.detectPaste(e); 
                     self.autogrow();
@@ -452,15 +455,30 @@
                 }
             },
             // }}}
+            // {{{ updateDepageEditorInputDeferred()
+            updateDepageEditorInputDeferred : function() {
+                var self = this;
+                var now = new Date();
+
+                if (now.getTime() - self.lastTextareaUpdate > 700) {
+                    self.updateDepageEditorInput();
+                    self.lastTextareaUpdate = now.getTime();
+                } else {
+                    clearTimeout(self.timer);
+                    self.timer = setTimeout(function() {
+                        self.updateDepageEditorInputDeferred();
+                    }, 700);
+                }
+            },
+            // }}}
             // {{{ updateDepageEditorInput()
             updateDepageEditorInput : function() {
-                if (this.wysiwyg) {
-                    // Convert spans to semantics in Mozilla
+                if (this.wysiwyg) { // Convert spans to semantics in Mozilla
                     this.paragraphise();
                     this.cleanSource();
 
                     // tells the textarea that something has changed / for autosaving
-                    this.$textarea.keyup();
+                    this.$textarea.change();
                 }
             },
             // }}}

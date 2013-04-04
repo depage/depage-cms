@@ -154,7 +154,7 @@ class ui_edit extends ui_base {
             if (!$form->isEmpty() && $form->validateAutosave()) {
                 $values = $form->getValues();
 
-                if($doc){
+                if($doc && !empty($values['value'])) {
                     $nodelist = $values['value']->getBodyNodes();
 
                     $savexml = $doc->getSubdocByNodeId($values['dbid']);
