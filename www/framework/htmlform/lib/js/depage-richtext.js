@@ -430,7 +430,7 @@
 
                     var lastElement = innerBody.children(":last");
                     if (lastElement.length > 0) {
-                        newHeight = lastElement.offset().top + lastElement.height() + extraSpace - $(window).scrollTop();
+                        newHeight = lastElement.offset().top + lastElement.height() + extraSpace;
                     } else {
                         newHeight = innerBody.offsetHeight + extraSpace;
                     }
