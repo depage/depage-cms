@@ -47,21 +47,21 @@ class history {
      * @return mixed
      */
     public function getVersions($published = null) {
-        $query = "SELECT h.hash, h.lastchange, h.lastchange_uid, h.released
+        $query = "SELECT h.hash, h.last_saved_at, h.user_id, h.published
             FROM {$this->table_history} AS h
-            WHERE h.data_id = :doc_id";
+            WHERE h.doc_id = :doc_id";
 
         $params = array(
             'doc_id' => $this->document->getDocId(),
         );
 
         if ($published !== null) {
-            $query .= " AND h.released = :published";
+            $query .= " AND h.published = :published";
             $params['published'] = $published == true;
         }
 
         $query .= "
-            ORDER BY h.lastchange DESC;";
+            ORDER BY h.last_saved_at DESC;";
 
         $sth = $this->pdo->prepare($query);
 
@@ -70,10 +70,10 @@ class history {
         if ($sth->execute($params)) {
             $results = $sth->fetchAll();
             foreach($results as &$result) {
-                $versions[strtotime($result['lastchange'])] = array(
-                    'saved' => $result['lastchange'],
-                    'user_id' => $result['lastchange_uid'],
-                    'published' => $result['released'],
+                $versions[strtotime($result['last_saved_at'])] = array(
+                    'last_saved_at' => $result['last_saved_at'],
+                    'user_id' => $result['user_id'],
+                    'published' => $result['published'],
                     'hash' => $result['hash'],
                 );
             }
@@ -94,9 +94,9 @@ class history {
         $xml_doc = new \DOMDocument();
 
         $query = $this->pdo->prepare(
-            "SELECT h.value
+            "SELECT h.xml
             FROM {$this->table_history} AS h
-            WHERE h.lastchange = :timestamp"
+            WHERE h.last_saved_at = :timestamp"
         );
 
         $params = array(
@@ -106,7 +106,7 @@ class history {
         if ($query->execute($params)) {
             $result = $query->fetchObject();
 
-            $xml_doc->loadXML($result->value);
+            $xml_doc->loadXML($result->xml);
         }
 
         return $xml_doc;
@@ -141,7 +141,7 @@ class history {
 
         // TODO ADD SHA1 hash
         $query = $this->pdo->prepare(
-            "INSERT INTO {$this->table_history} (data_id, hash, value, lastchange, lastchange_uid, released)
+            "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
              VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
         );
 
@@ -190,7 +190,7 @@ class history {
     public function delete($timestamp) {
         $query = $this->pdo->prepare(
             "DELETE FROM {$this->table_history}
-             WHERE data_id = :doc_id AND lastchange = :timestamp;"
+             WHERE doc_id = :doc_id AND last_saved_at = :timestamp;"
         );
 
         $params = array(
