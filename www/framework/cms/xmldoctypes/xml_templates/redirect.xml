@@ -1,0 +1,10 @@
+<pg:page_data>
+    <pg:meta db:invalid="del,move,name,dupl" db:name="tree_name_metatags" colorscheme="%insert_default_colorscheme%">
+        <pg:title lang="" value="" />
+        <pg:linkdesc lang="" value="" />
+        <pg:desc lang="" />
+    </pg:meta>
+    <sec:redirect name="Redirect" icon="edit_a">
+            <edit:a href="" target="" lang=""></edit:a>
+    </sec:redirect>
+</pg:page_data>

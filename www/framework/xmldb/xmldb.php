@@ -194,18 +194,19 @@ class xmldb {
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($doc_id_or_name) {
+    public function createDoc($doc_name, $doc_type = 'depage\xmldb\xmldoctypes\base') {
         // @TODO add option to generate doc name
-        if (!is_string($doc_id_or_name)) {
+        if (!is_string($doc_name)) {
             throw new xmldbException("You have to give a valid name to save a new document.");
         }
 
         $query = $this->pdo->prepare(
             "INSERT {$this->table_docs} SET
-                            name = :name"
+                name = :name, type = :type;"
         );
         $query->execute(array(
-            'name' => $doc_id_or_name,
+            'name' => $doc_name,
+            'type' => $doc_type,
         ));
 
         $doc_id = $this->pdo->lastInsertId();
