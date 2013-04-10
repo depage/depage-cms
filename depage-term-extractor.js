@@ -34,7 +34,8 @@
 
             $(window).on(base.options.events, base.onScroll);
 
-            base.onScroll();
+            // call with timeout to let calling script add events
+            setTimeout(base.onScroll, 300);
         };
         // }}}
         // {{{ getTerms
@@ -75,11 +76,11 @@
                 }
             });
 
-            if ($addedTerms.length > 0) {
-                base.$el.trigger("add.depageTermExtractor", [$addedTerms]);
-            }
             if ($removedTerms.length > 0) {
                 base.$el.trigger("remove.depageTermExtractor", [$removedTerms]);
+            }
+            if ($addedTerms.length > 0) {
+                base.$el.trigger("add.depageTermExtractor", [$addedTerms]);
             }
             if ($addedTerms.length > 0 || $removedTerms.length > 0) {
                 base.$el.trigger("change.depageTermExtractor", [base.$highlightedTerms, $addedTerms, $removedTerms]);
