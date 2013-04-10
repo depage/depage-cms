@@ -77,10 +77,10 @@
             });
 
             if ($removedTerms.length > 0) {
-                base.$el.trigger("remove.depageTermExtractor", [$removedTerms]);
+                base.$el.trigger("darken.depageTermExtractor", [$removedTerms]);
             }
             if ($addedTerms.length > 0) {
-                base.$el.trigger("add.depageTermExtractor", [$addedTerms]);
+                base.$el.trigger("highlight.depageTermExtractor", [$addedTerms]);
             }
             if ($addedTerms.length > 0 || $removedTerms.length > 0) {
                 base.$el.trigger("change.depageTermExtractor", [base.$highlightedTerms, $addedTerms, $removedTerms]);
@@ -95,7 +95,8 @@
     // {{{ defaultOptions
     $.depage.termExtractor.defaultOptions = {
         selector: "*[data-term-id]",
-        events: "scroll.depageTermextractor, resize.depageTermextractor"
+        events: "scroll.depageTermextractor, resize.depageTermextractor",
+        maxTerms: -1
     };
     // }}}
     
