@@ -50,11 +50,13 @@
                 base.options.speed = 0;
             }
             
-            base.$el.height( $(divs[0]).height() );
             divs.css({
                 position: "absolute",
                 left: 0,
                 top: 0
+            });
+            divs.first().css({
+                position: "static"
             });
             for (var i = 1; i < divs.length; i++) {
                 $(divs[i]).hide();
@@ -127,7 +129,7 @@
             base.clearQueue();
 
             divs.each(function(i) {
-                if (i != n || i != base.activeSlide) {
+                if (i > 0  && (i != n || i != base.activeSlide)) {
                     $(this).hide();
                 }
             });
