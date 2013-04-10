@@ -21,7 +21,7 @@
 (function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     /**
      * Uploader
@@ -79,7 +79,7 @@
                 // make iframe id unique // TODO enforce
                 base.options.iframe = base.el.name + '_' + index + '_' + base.options.iframe;
                 base.iframe.build();
-            };
+            }
             
             base.addProgress();
             
@@ -518,7 +518,7 @@
             
             base.controls.percent.width(percent + '%');
             
-            if (loaded != undefined && total != undefined) {
+            if (loaded !== undefined && total !== undefined) {
                 text += Math.floor(percent * 10) / 10;
                 text += " % uploaded (";
                 text += base.bytesToSize(loaded, 1);

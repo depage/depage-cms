@@ -13,7 +13,7 @@
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.slideshow = function(el, options){
         /* {{{ variables */
@@ -160,7 +160,7 @@
                 // fade in first image
                 base.show(0);
             }
-        }
+        };
         /* }}} */
         /* {{{ prev() */
         base.prev = function() {
@@ -171,7 +171,7 @@
                 // fade in first image
                 base.show(divs.length - 1);
             }
-        }
+        };
         /* }}} */
         
         // Run initializer
