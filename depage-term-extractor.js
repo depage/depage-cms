@@ -16,6 +16,13 @@
         
         // Add a reverse reference to the DOM object
         base.$el.data("depage.termExtractor", base);
+
+        // holds available terms
+        base.$terms;
+
+        // holds highlighted terms
+        base.$highlightedTerms = $();
+        
         // }}}
         
         // {{{ init()
@@ -32,7 +39,10 @@
         // }}}
         // {{{ getTerms
         base.getTerms = function(){
-            base.$terms = $(base.options.selector, base.$el);
+            base.$terms = $(base.options.selector, base.$el).addClass("term");
+            base.$highlightedTerms = $();
+
+            return base.$terms;
         };
         // }}}
         // {{{ onScroll
@@ -40,16 +50,40 @@
             var scrollTop = $(window).scrollTop();
             var topOffset = $(window).height() * 0.1 + scrollTop;
             var bottomOffset = $(window).height() * 0.6 + scrollTop;
-        
+
+            var $addedTerms = $();
+            var $removedTerms = $();
+
             base.$terms.each( function() {
-                var termOffset = $(this).offset().top;
+                var $term = $(this);
+                var termOffset = $term.offset().top;
 
                 if (termOffset > topOffset && termOffset < bottomOffset) {
-                    $(this).addClass("highlighted");
+                    if (!$term.hasClass("highlighted")) {
+                        $term.addClass("highlighted");
+                        base.$highlightedTerms = base.$highlightedTerms.add($term);
+
+                        $addedTerms = $addedTerms.add($term);
+                    }
                 } else {
-                    $(this).removeClass("highlighted");
+                    if ($term.hasClass("highlighted")) {
+                        $term.removeClass("highlighted");
+                        base.$highlightedTerms = base.$highlightedTerms.not($term);
+
+                        $removedTerms = $removedTerms.add($term);
+                    }
                 }
             });
+
+            if ($addedTerms.length > 0) {
+                base.$el.trigger("add.depageTermExtractor", [$addedTerms]);
+            }
+            if ($removedTerms.length > 0) {
+                base.$el.trigger("remove.depageTermExtractor", [$removedTerms]);
+            }
+            if ($addedTerms.length > 0 || $removedTerms.length > 0) {
+                base.$el.trigger("change.depageTermExtractor", [base.$highlightedTerms, $addedTerms, $removedTerms]);
+            }
         };
         // }}}
         
