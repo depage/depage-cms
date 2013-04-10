@@ -4,10 +4,10 @@
     </div>
 </div>
 <div class="trees">
-    <div class="testbox depage-scroller">
+    <div id="page-tree" class="testbox depage-scroller">
         <?php html::e($this->tree_pages); ?>
     </div>
-    <div class="testbox depage-scroller">
+    <div id="doc-tree" class="testbox depage-scroller">
         <?php html::e($this->tree_document); ?>
     </div>
 </div>

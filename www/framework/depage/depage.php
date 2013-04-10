@@ -449,7 +449,7 @@ class depage {
     
     // {{{ handleRequest()
     /**
-     * analyses request and decieds what to do
+     * analyses request and decides what to do
      *
      * @return  framework path
      */

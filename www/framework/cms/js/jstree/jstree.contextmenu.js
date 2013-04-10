@@ -1,7 +1,10 @@
-/* File: jstree.contextmenu.js
-Enables a rightclick contextmenu.
-*/
-/* Group: jstree sort plugin */
+/**
+ * File: jstree.contextmenu.js
+ *
+ * Enables a rightclick contextmenu.
+ *
+ * Group: jstree sort plugin
+ */
 (function ($) {
     $.jstree.plugin("contextmenu", {
         __construct : function () {

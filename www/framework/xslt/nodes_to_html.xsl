@@ -30,7 +30,7 @@
 
     <!-- only show nodes with namespace "pg" or "sec" in tree -->
     <xsl:if test="$ns = 'pg' or $ns = 'sec'">
-        <li rel='{$type}' id='node_{$id}'>
+        <li rel='{$type}' id='node_{$id}' data-db-ref='{@db:ref}'>
             <ins class='jstree-icon jstree-ocl'>&#160;</ins>
             <a href=''>
                 <ins class='jstree-icon jstree-themeicon'>&#160;</ins>

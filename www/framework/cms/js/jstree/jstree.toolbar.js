@@ -55,6 +55,10 @@
                 // function adds toolbar list items
                 var self = this;
 
+                if(self.get_container().find('.toolbar').length) {
+                    return false;
+                }
+
                 var additem = function($ul, item) {
                     var $li = $('<li class="js-tree-toolbar-item" />');
 
