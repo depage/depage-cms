@@ -205,7 +205,18 @@
                 background-repeat: none;
                 background-position: 25px 0;
 
-                &.depageEditorButtonBold {
+                &.icon {
+                    color: #000000;
+                    background-color: #ffffff;
+
+                    &:hover, 
+                    &.on {
+                        background-color: #ccc8c4;
+                    }
+                }
+
+                &.icon-editor-bold {
+                    @extend .icon;
                     background-position: 0 0;
 
                     &:hover, 
@@ -213,7 +224,8 @@
                         background-position: -25px 0;
                     }
                 }
-                &.depageEditorButtonItalic {
+                &.icon-editor-italic {
+                    @extend .icon;
                     background-position: 0 -25px;
 
                     &:hover, 
@@ -221,7 +233,8 @@
                         background-position: -25px -25px;
                     }
                 }
-                &.depageEditorButtonHyperlink {
+                &.icon-editor-hyperlink {
+                    @extend .icon;
                     background-position: 0 -50px;
 
                     &:hover, 
@@ -229,7 +242,8 @@
                         background-position: -25px -50px;
                     }
                 }
-                &.depageEditorButtonOrderedList {
+                &.icon-editor-ordered-list {
+                    @extend .icon;
                     background-position: 0 -75px;
 
                     &:hover, 
@@ -237,7 +251,8 @@
                         background-position: -25px -75px;
                     }
                 }
-                &.depageEditorButtonUnorderedList {
+                &.icon-editor-unordered-list {
+                    @extend .icon;
                     background-position: 0 -100px;
 
                     &:hover, 
@@ -245,7 +260,8 @@
                         background-position: -25px -100px;
                     }
                 }
-                &.depageEditorButtonHTML {
+                &.icon-editor-htmlsource {
+                    @extend .icon;
                     background-position: 0 -125px;
 
                     &:hover, 

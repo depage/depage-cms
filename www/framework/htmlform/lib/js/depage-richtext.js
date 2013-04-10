@@ -13,6 +13,10 @@
  * @author Frank Hellenkamp
  * @author Cameron Adams
  * @author Denis Hovart 
+ *
+ * @todo look into webworkers for cleaning uo data: 
+ * - https://developer.mozilla.org/en-US/docs/DOM/Using_web_workers
+ * - https://gist.github.com/stefanw/462880
  */
 (function($){
     // {{{ jquery.removeDuplicate()
@@ -697,7 +701,7 @@
         $.extend(depageEditorToolbarItemsClass.singleton, {
             // {{{ bold()
             bold : {
-                className : 'depageEditorButtonBold',
+                className : 'icon-editor-bold',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) {
@@ -713,7 +717,7 @@
             // }}}
             // {{{ italic()
             italic : {
-                className : 'depageEditorButtonItalic',
+                className : 'icon-editor-italic',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) return;
@@ -727,7 +731,7 @@
             // }}}
             // {{{ link()
             link : {
-                className : 'depageEditorButtonHyperlink',
+                className : 'icon-editor-hyperlink',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) return;
@@ -756,7 +760,7 @@
             // }}}
             // {{{ orderedList()
             orderedlist : {
-                className : 'depageEditorButtonOrderedList',
+                className : 'icon-editor-ordered-list',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) return;
@@ -770,7 +774,7 @@
             // }}}
             // {{{ unorderedList()
             unorderedlist : {
-                className : 'depageEditorButtonUnorderedList',
+                className : 'icon-editor-unordered-list',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) return;
@@ -784,7 +788,7 @@
             // }}}
             // {{{ image()
             image : {
-                className : 'depageEditorButtonImage',
+                className : 'icon-editor-image',
                 action : function(){
                     var editor = $.data(this, 'editor');
                     if(!editor.wysiwyg) return;
@@ -804,7 +808,7 @@
             // }}}
             // {{{ htmlsource()
             htmlsource : {
-                className : 'depageEditorButtonHTML',
+                className : 'icon-editor-htmlsource',
                 action : function() {
                     var editor = $.data(this, 'editor');
                     editor.switchMode();
@@ -813,7 +817,7 @@
             // }}}
             // {{{ formatBlock()
             formatblock : {
-                className : 'depageEditorSelectformatblock',
+                className : 'icon-editor-format-block',
                 action : function(){
                     // @todo test if this is inside a class
                     var editor = $.data(this, 'editor');
