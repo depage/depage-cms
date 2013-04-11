@@ -2,10 +2,7 @@
  * File: jstree.toolbar.js
  * Enables a toolbar
  *
- * Group: jstree sort plugin
- *
- **/
-
+ */
 (function ($) {
     $.jstree.plugin("toolbar", {
 

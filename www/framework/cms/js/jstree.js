@@ -85,50 +85,50 @@ $(function($){
              */
             hotkeys : {
                 "up" : function() {
-                    $.jstree.keyUp.apply(this);
+                    $.depage.jstree.keyUp.apply(this);
                 },
                 "ctrl+up" : function () {
-                    $.jstree.keyUp.apply(this);
+                    $.depage.jstree.keyUp.apply(this);
                     return false;
                 },
                 "shift+up" : function () {
-                    $.jstree.keyUp.apply(this);
+                    $.depage.jstree.keyUp.apply(this);
                     return false;
                 },
                 "down" : function(){
-                    $.jstree.keyDown.apply(this);
+                    $.depage.jstree.keyDown.apply(this);
                     return false;
                 },
                 "ctrl+down" : function () {
-                    $.jstree.keyDown.apply(this);
+                    $.depage.jstree.keyDown.apply(this);
                     return false;
                 },
                 "shift+down" : function () {
-                    $.jstree.keyDown.apply(this);
+                    $.depage.jstree.keyDown.apply(this);
                     return false;
                 },
                 "left" : function () {
-                    $.jstree.keyLeft.apply(this);
+                    $.depage.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "ctrl+left" : function () {
-                    $.jstree.keyLeft.apply(this);
+                    $.depage.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "shift+left" : function () {
-                    $.jstree.keyLeft.apply(this);
+                    $.depage.jstree.keyLeft.apply(this);
                     return false;
                 },
                 "right" : function () {
-                    $.jstree.keyRight.apply(this);
+                    $.depage.jstree.keyRight.apply(this);
                     return false;
                 },
                 "ctrl+right" : function () {
-                    $.jstree.keyRight.apply(this);
+                    $.depage.jstree.keyRight.apply(this);
                     return false;
                 },
                 "shift+right" : function () {
-                    $.jstree.keyRight.apply(this);
+                    $.depage.jstree.keyRight.apply(this);
                     return false;
                 },
                 "del" : function () {
@@ -136,8 +136,10 @@ $(function($){
 
                     var offset = node.offset();
 
-                    $.jstree.confirmDelete(offset.left, offset.top, function(){
-                        $.jstree.contextDelete(node);
+                    $depageTree = $.depage.jstree;
+
+                    $depageTree.confirmDelete(offset.left, offset.top, function(){
+                        $depageTree.contextDelete(node);
                     });
                 },
                 "return" : function() {
@@ -161,7 +163,7 @@ $(function($){
                             "separator_after"   : false,
                             "label"             : "Rename",
                             "action"            : function (data) {
-                                $.jstree.contextRename(data);
+                                $.depage.jstree.contextRename(data);
                             }
                         },
                         "remove" : {
@@ -171,7 +173,7 @@ $(function($){
                             "separator_after"   : false,
                             "label"             : "Delete",
                             "action"            : function (data) {
-                                $.jstree.contextDelete(data);
+                                $.depage.jstree.contextDelete(data);
                             }
                         },
                         "ccp" : {
@@ -187,7 +189,7 @@ $(function($){
                                     "separator_after"   : false,
                                     "label"             : "Cut",
                                     "action"            : function (data) {
-                                        $.jstree.contextCut(data);
+                                        $depageTree = $.depage.jstree.contextCut(data);
                                     }
                                 },
                                 "copy" : {
@@ -197,7 +199,7 @@ $(function($){
                                     "separator_after"   : false,
                                     "label"             : "Copy",
                                     "action"            : function (data) {
-                                        $.jstree.contextCopy(data);
+                                        $depageTree = $.depage.jstree.contextCopy(data);
                                     }
                                 },
                                 "paste" : {
@@ -207,7 +209,7 @@ $(function($){
                                     "label"             : "Paste",
                                     "_disabled"         : typeof(this.can_paste) === "undefined" ? false : !(this.can_paste()),
                                     "action"            : function (data) {
-                                        $.jstree.contextPaste(data);
+                                        $depageTree = $.depage.jstree.contextPaste(data);
                                     }
                                 }
                             }
@@ -222,7 +224,7 @@ $(function($){
                         var type = obj.attr(type_settings.type_attr);
                         var available_nodes = type_settings.valid_children[type];
 
-                        default_items = $.extend($.jstree.buildCreateMenu(available_nodes), default_items);
+                        default_items = $.extend($depageTree = $.depage.jstree.buildCreateMenu(available_nodes), default_items);
 
                     } else {
                         // TODO default create menu
@@ -243,17 +245,16 @@ $(function($){
                             "separator_before"  : false,
                             "separator_after"   : true,
                             "_disabled"         : !this.check('create_node', obj, this.get_parent()),
-                            "action"            : function(obj) {
+                            "action"            : function(obj, top, left) {
 
                                 var node = $(".jstree-clicked");
-                                var offset = obj.offset();
 
                                 var data = {
                                     "reference" : node,
                                     "element"   : node,
                                     position    : {
-                                        "x"     : offset.left,
-                                        "y"     : offset.top
+                                        "x"     : left,
+                                        "y"     : top
                                     }
                                 };
 
@@ -269,7 +270,7 @@ $(function($){
                                         var type = data.reference.parent().attr(type_settings.type_attr);
                                         var available_nodes = type_settings.valid_children[type];
 
-                                        var create_menu = $.jstree.buildCreateMenu(available_nodes);
+                                        var create_menu = $.depage.jstree.buildCreateMenu(available_nodes);
 
                                         $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
 
@@ -285,7 +286,7 @@ $(function($){
                             "action"            : function () {
                                 var data = { "reference" : $(".jstree-clicked") };
                                 if (data.reference.length) {
-                                    $.jstree.contextDelete(data);
+                                    $.depage.jstree.contextDelete(data);
                                 }
                             }
                         },
@@ -295,11 +296,11 @@ $(function($){
                             "action"            : function () {
                                 var obj = $(".jstree-clicked").parent("li");
                                 if (obj.length){
-                                    var inst = $.jstree._reference(obj);
+                                    var inst = $.depage.jstree._reference(obj);
 
                                     var data = { "reference" : obj };
 
-                                    $.jstree.contextDuplicate(data);
+                                    $.depage.jstree.contextDuplicate(data);
                                 }
                             }
                         }
