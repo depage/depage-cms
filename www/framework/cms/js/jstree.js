@@ -6,9 +6,8 @@
  * TODO consider refactor or at least namespacing
  *
  * @param tree
+ *
  */
-// init the tree
-
 $(function($){
 
     $('.jstree-container').each(function(){
@@ -25,7 +24,7 @@ $(function($){
             plugins : [
                 //"select_created_nodes",
                 //"pedantic_html_data", // @todo check if still needed
-                //"dnd_placeholder", // @todo check dnd vs dnd_palceholder
+                //"dnd_placeholder", // @todo check dnd vs dnd_placeholder
 
                 "themes",
                 "ui",
@@ -309,4 +308,5 @@ $(function($){
             }
         });
     });
+
 });
