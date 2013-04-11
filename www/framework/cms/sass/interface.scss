@@ -245,6 +245,12 @@ a img {
             top: -3px;
         }
     }
+    a.disabled,
+    a.disabled:hover {
+      background-color: #fff;
+      color: #aaa;
+      cursor: default;
+    }
 }
 /* }}} */
 
