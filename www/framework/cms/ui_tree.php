@@ -82,13 +82,15 @@ class ui_tree extends ui_base {
      * @return bool|\html
      */
     public function tree($docName) {
-        $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
+        $treeUrl = "project/{$this->projectName}/tree/";
+        $actionUrl = "{$treeUrl}{$docName}/";
 
         if($doc = $this->xmldb->getDoc($docName)) {
 
             $doc_info = $doc->getDocInfo();
 
             $h = new html("jstree.tpl", array(
+                'treeUrl' => $treeUrl,
                 'actionUrl' => $actionUrl,
                 'doc_id' => $doc_info->id,
                 'root_id' => $doc_info->rootid,

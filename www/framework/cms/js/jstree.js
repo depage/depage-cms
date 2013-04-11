@@ -3,310 +3,319 @@
  *
  * Global function allows tree to be init with required options
  *
- * TODO consider refactor or at least namespacing
+ * TODO refactor and namespacing of global func
  *
  * @param tree
  *
  */
-$(function($){
+function init_tree() {
 
-    $('.jstree-container').each(function(){
+    /**
+     * Init depage tree
+     */
+    $(this).depageTree({
+        /**
+         * Plugins
+         *
+         * The list of plugins to include
+         */
+        plugins : [
+            //"select_created_nodes",
+            //"pedantic_html_data", // @todo check if still needed
+            //"dnd_placeholder", // @todo check dnd vs dnd_placeholder
+
+            "themes",
+            "ui",
+            "dnd",
+            "typesfromurl",
+            "hotkeys",
+            "contextmenu",
+            "nodeinfo",
+            "dblclickrename",
+            "tooltips",
+            "add_marker",
+            "deltaupdates",
+            "toolbar",
 
         /**
-         * Init depage tree
+         * custom doctype handlers
          */
-        $(this).depageTree({
-            /**
-             * Plugins
-             *
-             * The list of plugins to include
-             */
-            plugins : [
-                //"select_created_nodes",
-                //"pedantic_html_data", // @todo check if still needed
-                //"dnd_placeholder", // @todo check dnd vs dnd_placeholder
+            "doctype_page"
+        ],
 
-                "themes",
-                "ui",
-                "dnd",
-                "typesfromurl",
-                "hotkeys",
-                "contextmenu",
-                "nodeinfo",
-                "dblclickrename",
-                "tooltips",
-                "add_marker",
-                "deltaupdates",
-                "toolbar",
+        /**
+         * Plugin configuration
+         */
+        ui : {
+            // TODO:
+            "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
+        },
 
-                /**
-                 * custom doctype handlers
-                 */
-                "doctype_page"
-            ],
+        /**
+         * Core
+         */
+        core : {
+            animation : 0,
+            initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
+            copy_node : function() {alert('hello');}
+        },
 
-            /**
-             * Plugin configuration
-             */
-            ui : {
-                // TODO:
-                "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
+        /**
+         * Themes
+         */
+        themes : {
+            "theme" : "default",
+            "url" : $(this).attr("data-theme")
+        },
+
+        /**
+         * Delta Updates
+         */
+        deltaupdates : {
+            "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
+            "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
+            "postURL" : $(this).attr("data-delta-updates-post-url")
+        },
+
+        /**
+         * Hotkeys
+         */
+        hotkeys : {
+            "up" : function() {
+                $.depage.jstree.keyUp.apply(this);
             },
-
-            /**
-             * Core
-             */
-            core : {
-                animation : 0,
-                initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
-                copy_node : function() {alert('hello');}
+            "ctrl+up" : function () {
+                $.depage.jstree.keyUp.apply(this);
+                return false;
             },
-
-            /**
-             * Themes
-             */
-            themes : {
-                "theme" : "default",
-                "url" : $(this).attr("data-theme")
+            "shift+up" : function () {
+                $.depage.jstree.keyUp.apply(this);
+                return false;
             },
-
-            /**
-             * Delta Updates
-             */
-            deltaupdates : {
-                "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
-                "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
-                "postURL" : $(this).attr("data-delta-updates-post-url")
+            "down" : function(){
+                $.depage.jstree.keyDown.apply(this);
+                return false;
             },
-
-            /**
-             * Hotkeys
-             */
-            hotkeys : {
-                "up" : function() {
-                    $.depage.jstree.keyUp.apply(this);
-                },
-                "ctrl+up" : function () {
-                    $.depage.jstree.keyUp.apply(this);
-                    return false;
-                },
-                "shift+up" : function () {
-                    $.depage.jstree.keyUp.apply(this);
-                    return false;
-                },
-                "down" : function(){
-                    $.depage.jstree.keyDown.apply(this);
-                    return false;
-                },
-                "ctrl+down" : function () {
-                    $.depage.jstree.keyDown.apply(this);
-                    return false;
-                },
-                "shift+down" : function () {
-                    $.depage.jstree.keyDown.apply(this);
-                    return false;
-                },
-                "left" : function () {
-                    $.depage.jstree.keyLeft.apply(this);
-                    return false;
-                },
-                "ctrl+left" : function () {
-                    $.depage.jstree.keyLeft.apply(this);
-                    return false;
-                },
-                "shift+left" : function () {
-                    $.depage.jstree.keyLeft.apply(this);
-                    return false;
-                },
-                "right" : function () {
-                    $.depage.jstree.keyRight.apply(this);
-                    return false;
-                },
-                "ctrl+right" : function () {
-                    $.depage.jstree.keyRight.apply(this);
-                    return false;
-                },
-                "shift+right" : function () {
-                    $.depage.jstree.keyRight.apply(this);
-                    return false;
-                },
-                "del" : function () {
-                    var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
-
-                    var offset = node.offset();
-
-                    $depageTree = $.depage.jstree;
-
-                    $depageTree.confirmDelete(offset.left, offset.top, function(){
-                        $depageTree.contextDelete(node);
-                    });
-                },
-                "return" : function() {
-                    // @todo bind enter key to prevent default so that we dont leave input on enter
-                    var node = this;
-                    setTimeout(function () { node.edit(); }, 300);
-                    return false;
-                }
+            "ctrl+down" : function () {
+                $.depage.jstree.keyDown.apply(this);
+                return false;
             },
+            "shift+down" : function () {
+                $.depage.jstree.keyDown.apply(this);
+                return false;
+            },
+            "left" : function () {
+                $.depage.jstree.keyLeft.apply(this);
+                return false;
+            },
+            "ctrl+left" : function () {
+                $.depage.jstree.keyLeft.apply(this);
+                return false;
+            },
+            "shift+left" : function () {
+                $.depage.jstree.keyLeft.apply(this);
+                return false;
+            },
+            "right" : function () {
+                $.depage.jstree.keyRight.apply(this);
+                return false;
+            },
+            "ctrl+right" : function () {
+                $.depage.jstree.keyRight.apply(this);
+                return false;
+            },
+            "shift+right" : function () {
+                $.depage.jstree.keyRight.apply(this);
+                return false;
+            },
+            "del" : function () {
+                var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
 
-            /**
-             * Context Menu
-             */
-            contextmenu : {
-                items : function (obj) {
+                var offset = node.offset();
 
-                    var default_items = {
-                        "rename" : {
-                            "_disabled"         : !this.check('rename_node', obj, this.get_parent()),
-                            "separator_before"  : false,
-                            "separator_after"   : false,
-                            "label"             : "Rename",
-                            "action"            : function (data) {
-                                $.depage.jstree.contextRename(data);
-                            }
-                        },
-                        "remove" : {
-                            "_disabled"          : !this.check('delete_node', obj, this.get_parent()),
-                            "separator_before"  : false,
-                            "icon"              : false,
-                            "separator_after"   : false,
-                            "label"             : "Delete",
-                            "action"            : function (data) {
-                                $.depage.jstree.contextDelete(data);
-                            }
-                        },
-                        "ccp" : {
-                            "separator_before"  : true,
-                            "icon"              : false,
-                            "separator_after"   : false,
-                            "label"             : "Edit",
-                            "action"            : false,
-                            "submenu" : {
-                                "cut" : {
-                                    "_disabled"         : !this.check('cut_node', obj, this.get_parent()),
-                                    "separator_before"  : false,
-                                    "separator_after"   : false,
-                                    "label"             : "Cut",
-                                    "action"            : function (data) {
-                                        $depageTree = $.depage.jstree.contextCut(data);
-                                    }
-                                },
-                                "copy" : {
-                                    "_disabled"         : !this.check('copy_node', obj, this.get_parent()),
-                                    "separator_before"  : false,
-                                    "icon"              : false,
-                                    "separator_after"   : false,
-                                    "label"             : "Copy",
-                                    "action"            : function (data) {
-                                        $depageTree = $.depage.jstree.contextCopy(data);
-                                    }
-                                },
-                                "paste" : {
-                                    "separator_before"  : false,
-                                    "icon"              : false,
-                                    "separator_after"   : false,
-                                    "label"             : "Paste",
-                                    "_disabled"         : typeof(this.can_paste) === "undefined" ? false : !(this.can_paste()),
-                                    "action"            : function (data) {
-                                        $depageTree = $.depage.jstree.contextPaste(data);
-                                    }
+                $depageTree = $.depage.jstree;
+
+                $depageTree.confirmDelete(offset.left, offset.top, function(){
+                    $depageTree.contextDelete(node);
+                });
+            },
+            "return" : function() {
+                // @todo bind enter key to prevent default so that we dont leave input on enter
+                var node = this;
+                setTimeout(function () { node.edit(); }, 300);
+                return false;
+            }
+        },
+
+        /**
+         * Context Menu
+         */
+        contextmenu : {
+            items : function (obj) {
+
+                var default_items = {
+                    "rename" : {
+                        "_disabled"         : !this.check('rename_node', obj, this.get_parent()),
+                        "separator_before"  : false,
+                        "separator_after"   : false,
+                        "label"             : "Rename",
+                        "action"            : function (data) {
+                            $.depage.jstree.contextRename(data);
+                        }
+                    },
+                    "remove" : {
+                        "_disabled"          : !this.check('delete_node', obj, this.get_parent()),
+                        "separator_before"  : false,
+                        "icon"              : false,
+                        "separator_after"   : false,
+                        "label"             : "Delete",
+                        "action"            : function (data) {
+                            $.depage.jstree.contextDelete(data);
+                        }
+                    },
+                    "ccp" : {
+                        "separator_before"  : true,
+                        "icon"              : false,
+                        "separator_after"   : false,
+                        "label"             : "Edit",
+                        "action"            : false,
+                        "submenu" : {
+                            "cut" : {
+                                "_disabled"         : !this.check('cut_node', obj, this.get_parent()),
+                                "separator_before"  : false,
+                                "separator_after"   : false,
+                                "label"             : "Cut",
+                                "action"            : function (data) {
+                                    $depageTree = $.depage.jstree.contextCut(data);
+                                }
+                            },
+                            "copy" : {
+                                "_disabled"         : !this.check('copy_node', obj, this.get_parent()),
+                                "separator_before"  : false,
+                                "icon"              : false,
+                                "separator_after"   : false,
+                                "label"             : "Copy",
+                                "action"            : function (data) {
+                                    $depageTree = $.depage.jstree.contextCopy(data);
+                                }
+                            },
+                            "paste" : {
+                                "separator_before"  : false,
+                                "icon"              : false,
+                                "separator_after"   : false,
+                                "label"             : "Paste",
+                                "_disabled"         : typeof(this.can_paste) === "undefined" ? false : !(this.can_paste()),
+                                "action"            : function (data) {
+                                    $depageTree = $.depage.jstree.contextPaste(data);
                                 }
                             }
                         }
-                    };
-
-                    // add the create menu based on the available nodes fetched in typesfromurl
-                    if(typeof(this.get_settings()['typesfromurl']) !== "undefined") {
-
-                        var type_settings = this.get_settings()['typesfromurl'];
-
-                        var type = obj.attr(type_settings.type_attr);
-                        var available_nodes = type_settings.valid_children[type];
-
-                        default_items = $.extend($depageTree = $.depage.jstree.buildCreateMenu(available_nodes), default_items);
-
-                    } else {
-                        // TODO default create menu
                     }
+                };
 
-                    return default_items;
+                // add the create menu based on the available nodes fetched in typesfromurl
+                if(typeof(this.get_settings()['typesfromurl']) !== "undefined") {
+
+                    var type_settings = this.get_settings()['typesfromurl'];
+
+                    var type = obj.attr(type_settings.type_attr);
+                    var available_nodes = type_settings.valid_children[type];
+
+                    default_items = $.extend($depageTree = $.depage.jstree.buildCreateMenu(available_nodes), default_items);
+
+                } else {
+                    // TODO default create menu
                 }
-            },
 
-            /**
-             * Toolbar
-             */
-            toolbar : {
-                items : function(obj) {
-                    return {
-                        "create" : {
-                            "label"             : "Create",
-                            "separator_before"  : false,
-                            "separator_after"   : true,
-                            "_disabled"         : !this.check('create_node', obj, this.get_parent()),
-                            "action"            : function(obj, top, left) {
+                return default_items;
+            }
+        },
 
-                                var node = $(".jstree-clicked");
+        /**
+         * Toolbar
+         */
+        toolbar : {
+            items : function(obj) {
+                return {
+                    "create" : {
+                        "label"             : "Create",
+                        "separator_before"  : false,
+                        "separator_after"   : true,
+                        "_disabled"         : !this.check('create_node', obj, this.get_parent()),
+                        "action"            : function(obj, top, left) {
 
-                                var data = {
-                                    "reference" : node,
-                                    "element"   : node,
-                                    position    : {
-                                        "x"     : left,
-                                        "y"     : top
-                                    }
-                                };
+                            var node = $(".jstree-clicked");
 
-                                if (data.reference.length) {
-                                    var inst = $.jstree._reference(data.reference);
+                            var data = {
+                                "reference" : node,
+                                "element"   : node,
+                                position    : {
+                                    "x"     : left,
+                                    "y"     : top
+                                }
+                            };
 
-                                    // build the create menu based on the available nodes fetched in typesfromurl
+                            if (data.reference.length) {
+                                var inst = $.jstree._reference(data.reference);
 
-                                    if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
+                                // build the create menu based on the available nodes fetched in typesfromurl
 
-                                        var type_settings = inst.get_settings()['typesfromurl'];
+                                if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
 
-                                        var type = data.reference.parent().attr(type_settings.type_attr);
-                                        var available_nodes = type_settings.valid_children[type];
+                                    var type_settings = inst.get_settings()['typesfromurl'];
 
-                                        var create_menu = $.depage.jstree.buildCreateMenu(available_nodes);
+                                    var type = data.reference.parent().attr(type_settings.type_attr);
+                                    var available_nodes = type_settings.valid_children[type];
 
-                                        $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+                                    var create_menu = $.depage.jstree.buildCreateMenu(available_nodes);
 
-                                    } else {
-                                        // TODO default create menu
-                                    }
+                                    $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
+
+                                } else {
+                                    // TODO default create menu
                                 }
                             }
-                        },
-                        "remove" : {
-                            "label"             : "Delete",
-                            "_disabled"         : !this.check('delete_node', obj, this.get_parent()),
-                            "action"            : function () {
-                                var data = { "reference" : $(".jstree-clicked") };
-                                if (data.reference.length) {
-                                    $.depage.jstree.contextDelete(data);
-                                }
+                        }
+                    },
+                    "remove" : {
+                        "label"             : "Delete",
+                        "_disabled"         : !this.check('delete_node', obj, this.get_parent()),
+                        "action"            : function () {
+                            var data = { "reference" : $(".jstree-clicked") };
+                            if (data.reference.length) {
+                                $.depage.jstree.contextDelete(data);
                             }
-                        },
-                        "duplicate" : {
-                            "label"             : "Duplicate",
-                            "_disabled"         : !this.check('duplicate_node', obj, this.get_parent()),
-                            "action"            : function () {
-                                var obj = $(".jstree-clicked").parent("li");
-                                if (obj.length){
-                                    var inst = $.depage.jstree._reference(obj);
+                        }
+                    },
+                    "duplicate" : {
+                        "label"             : "Duplicate",
+                        "_disabled"         : !this.check('duplicate_node', obj, this.get_parent()),
+                        "action"            : function () {
+                            var obj = $(".jstree-clicked").parent("li");
+                            if (obj.length){
+                                var inst = $.depage.jstree._reference(obj);
 
-                                    var data = { "reference" : obj };
+                                var data = { "reference" : obj };
 
-                                    $.depage.jstree.contextDuplicate(data);
-                                }
+                                $.depage.jstree.contextDuplicate(data);
                             }
                         }
                     }
                 }
             }
-        });
+        }
+    });
+}
+
+$(function($){
+
+    $('.jstree-container').each(function(){
+        init_tree.apply(this);
+    });
+
+    // TODO sort out biding
+    $('#doc-tree .jstree-container').bind('doc_load', function(){
+        init_tree.apply(this);
     });
 
 });

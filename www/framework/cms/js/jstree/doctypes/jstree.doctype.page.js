@@ -66,17 +66,15 @@
              */
             load : function (id) {
 
-                // TODO namespace
-                $('#doc-tree .jstree').empty();
-                $($('#doc-tree .jstree').attr('data-doc-id', id)).data('depage.jstree').jstree();
+                var self = this;
 
-                /*
-                $tree = $('#doc-tree .jstree');
-                $tree.empty();/
-                $tree.attr('data-doc-id', id);
-                $tree.data('depage.jstree').jstree();
-                */
+                var $container = this.get_container();
 
+                $.get($container.data('tree-url') + id, function(data) {
+                    data = $(data).filter('.jstree-container');
+                    $('#doc-tree .jstree-container').replaceWith(data);
+                    $container.trigger('doc_load', data);
+                });
             }
         }
     });
