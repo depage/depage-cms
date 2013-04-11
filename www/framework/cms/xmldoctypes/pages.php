@@ -18,7 +18,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Untitled Page"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\xmldb\xmldoctypes\page',
+                'doc_type' => 'depage\cms\xmldoctypes\page',
                 'xml_template' => 'page.xml'
             ),
             'pg:folder' => (object) array(
@@ -26,7 +26,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Untitled Folder"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\xmldb\xmldoctypes\folder',
+                'doc_type' => 'depage\cms\xmldoctypes\folder',
                 'xml_template' => 'folder.xml',
             ),
             'pg:redirect' => (object) array(
@@ -34,7 +34,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Redirect"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\xmldb\xmldoctypes\redirect',
+                'doc_type' => 'depage\cms\xmldoctypes\redirect',
                 'xml_template' => 'redirect.xml',
             ),
             'pg:separator' => (object) array(
