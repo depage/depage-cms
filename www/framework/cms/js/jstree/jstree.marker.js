@@ -89,7 +89,7 @@
             });
 
             $(document).bind("context_hide.vakata", function () {
-                clearTimeout(timer);
+                clearTimeout(self.timer);
                 self.data.add_marker.context_menu = false;
                 $indicator.hide();
                 $marker.hide();
