@@ -1,10 +1,19 @@
-/* File: jstree.toolbar.js
+/**
+ * File: jstree.toolbar.js
  * Enables a toolbar
- */
-/* Group: jstree sort plugin */
+ *
+ * Group: jstree sort plugin
+ *
+ **/
 
 (function ($) {
     $.jstree.plugin("toolbar", {
+
+        /**
+         * Construct
+         *
+         * @private
+         */
         __construct : function () {
             this.get_container()
                 .bind("__loaded.jstree", $.proxy(function(e) {
@@ -14,6 +23,11 @@
                     this.node_selected(obj.args[0]);
             }, this))
         },
+
+        /**
+         * Defaults
+         *
+         */
         defaults : {
 
             items : function(obj) {
@@ -50,12 +64,24 @@
                 }
             }
         },
+
+        /**
+         * Functions
+         *
+         */
         _fn : {
+
+            /**
+             * Show Toolbar
+             *
+             * @param obj
+             * @return {Boolean}
+             */
             show_toolbar : function (obj) {
                 // function adds toolbar list items
                 var self = this;
 
-                if(self.get_container().find('.toolbar').length) {
+                if(self.get_container().siblings('.toolbar').length) {
                     return false;
                 }
 
@@ -98,11 +124,16 @@
                 self.get_container().before($toolbar);
             },
 
+            /**
+             * Node Selected
+             *
+             * @param obj
+             */
             node_selected : function (obj) {
                 var self = this;
                 var items = this.get_toolbar_items(obj);
                 $.each(items, function(i, item){
-                    var $a = $('a.js-tree-toolbar-' + item.label.toLowerCase());
+                    var $a = $('a.js-tree-toolbar-' + item.label.toLowerCase(), self.get_container().siblings('.toolbar'));
                     $a.unbind('click.jstree');
                     if (item._disabled) {
                         $a.addClass('disabled');
@@ -120,12 +151,25 @@
                 });
             },
 
+            /**
+             * Get Toolbar Items
+             *
+             * @param obj
+             * @return {*}
+             */
             get_toolbar_items: function(obj) {
                 return obj.data("jstree") && obj.data("jstree").toolbar ?
                     obj.data("jstree").toolbar :
                     this.get_settings().toolbar.items.apply(this, [obj]);
             },
 
+            /**
+             * Click Handler
+             *
+             * @param item
+             * @param obj
+             * @return {Boolean}
+             */
             click_handler: function(item, obj) {
                 var $a = $(this);
 
@@ -140,5 +184,7 @@
             }
         }
     });
+
     $.jstree.defaults.plugins.push("toolbar");
+
 })(jQuery);
