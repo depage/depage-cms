@@ -216,7 +216,7 @@ class ui_tree extends ui_base {
         if ($doc = $this->xmldb->getDoc($doc_id)) {
             $parent_id = $doc->getParentIdById($id);
             $ids = $doc->unlinkNode($id);
-            $status = $ids !== false;
+            $status = count($ids) > 0;
             if ($status) {
                 $this->recordChange($doc_id, array($parent_id));
             }

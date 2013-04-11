@@ -112,7 +112,8 @@ class pages extends \depage\xmldb\xmldoctypes\base {
      * @return boolean
      */
     public function onDeleteNode($doc_id) {
-        return $this->xmldb->removeDoc($doc_id);
+        $this->xmldb->removeDoc($doc_id);
+        return true;
     }
     // }}}
 
