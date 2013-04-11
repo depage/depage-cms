@@ -91,7 +91,7 @@
                     var $a = $('<a href="#">' + item.label + '</a>').addClass('js-tree-toolbar-' + item.label.toLowerCase());
 
                     $a.bind('click.js-tree', function() {
-                        self.click_handler(item, obj);
+                        self.click_handler(this, item, obj);
                         return false;
                     });
 
@@ -144,7 +144,7 @@
                     } else {
                         $a.removeClass('disabled');
                         $a.bind('click.jstree', function() {
-                            self.click_handler(item, obj);
+                            self.click_handler(this, item, obj);
                             return false;
                         });
                     }
@@ -170,12 +170,14 @@
              * @param obj
              * @return {Boolean}
              */
-            click_handler: function(item, obj) {
-                var $a = $(this);
+            click_handler: function(context, item, obj) {
+                var $a = $(context);
+
+                var offset = $a.offset();
 
                 if (!item._disabled) {
                     if (item.action) {
-                        item.action.apply(this, [obj]);
+                        item.action.apply(this, [obj, offset.top, offset.left]);
                     } else if(item.submenu)  {
                         $a.children("ul.closed").removeClass("closed").addClass("open");
                     }
