@@ -313,9 +313,12 @@ $(function($){
         init_tree.apply(this);
     });
 
-    // TODO sort out biding
-    $('#doc-tree .jstree-container').bind('doc_load', function(){
-        init_tree.apply(this);
+    /**
+     * When a new doc type is loaded replace the sub tree with the new doc type tree
+     */
+    $('.jstree-container').bind('doc_load.jstree', function(e, data){
+        init_tree.apply(data);
+        $('#doc-tree .jstree-container').replaceWith(data);
     });
 
 });

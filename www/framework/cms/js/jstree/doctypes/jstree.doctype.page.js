@@ -72,8 +72,7 @@
 
                 $.get($container.data('tree-url') + id, function(data) {
                     data = $(data).filter('.jstree-container');
-                    $('#doc-tree .jstree-container').replaceWith(data);
-                    $container.trigger('doc_load', data);
+                    self.__trigger('doc_load', data);
                 });
             }
         }
