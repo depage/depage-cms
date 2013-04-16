@@ -23,15 +23,8 @@
 
             var $container = this.get_container();
 
-            var $marker = $('#jstree-add-marker');
-            if(!$marker.length) {
-                $marker = $("<div>add</div>").attr({ id : "jstree-add-marker" }).hide().appendTo('body');
-            }
-
-            var $indicator = $('#jstree-add-marker-indicator');
-            if(!$indicator.length) {
-              $indicator = $("<div />").attr({ id : "jstree-add-marker-indicator" }).hide().appendTo('body');
-            }
+            $marker = $("<div>add</div>").attr({ class : "jstree-add-marker" }).hide().appendTo('body');
+            $indicator = $("<div />").attr({ class : "jstree-add-marker-indicator" }).hide().appendTo('body');
 
             // set defaults
             this.data.add_marker = {

@@ -167,7 +167,7 @@
 .jstree li.jstree-closed > ul {
   display: none; }
 
-#jstree-add-marker {
+.jstree-add-marker {
   padding: 0 4px 0 6px;
   margin: 0;
   overflow: hidden;
@@ -180,7 +180,7 @@
   display: none;
   cursor: pointer; }
 
-#jstree-add-marker-indicator {
+.jstree-add-marker-indicator {
   background-color: #fff;
   border-top: 1px solid black;
   height: 1px;
