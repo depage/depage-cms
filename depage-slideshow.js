@@ -129,8 +129,12 @@
             base.clearQueue();
 
             divs.each(function(i) {
-                if (i > 0  && (i != n || i != base.activeSlide)) {
-                    $(this).hide();
+                if (i != n && i != base.activeSlide) {
+                    if (i > 0) {
+                        $(this).hide();
+                    } else {
+                        $(this).css({visibility: "hidden"});
+                    }
                 }
             });
 
@@ -145,6 +149,7 @@
 
             // fadein next slide
             $(divs[n]).show().css({
+                visibility: "visible",
                 opacity: 0
             }).animate({
                 opacity: 1
