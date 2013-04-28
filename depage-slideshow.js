@@ -6,10 +6,37 @@
  * adds a custom slideshow 
  *
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
- */
+ * @author    Frank Hellenkamp [jonas@depage.net]
+ **/
+
+// {{{ documentation
+/**
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-forms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @section Usage
+ *
+ * depage-jquery-slideshow
+ *
+ * @endsection 
+ *
+ * @subpage developer
+ *
+ * @htmlinclude main-extended.html
+ **/
+
+/**
+ * @page usage Usage
+ *
+ **/
+// }}}
+
 ;(function($){
     if(!$.depage){
         $.depage = {};
