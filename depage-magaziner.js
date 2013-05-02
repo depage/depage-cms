@@ -34,22 +34,20 @@
             drag_lock_to_axis: true
         };
         var scrollTop;
+        base.currentPage = $pages.index(".current-page");
 
         base.init = function(){
             base.options = $.extend({},$.depage.magaziner.defaultOptions, options);
             
-            // Put your initialization code here
+            // initialize Events
             base.$el.on('touchmove', function (e) {
                 e.preventDefault();
-            });
-            base.$el.hammer(hammerOptions).on("dragstart", function(e) {
-                // save initial data
             });
             base.$el.hammer(hammerOptions).on("dragleft", function(e) {
                 $pages.each( function(i) {
                     var $page = $(this);
                     $page.css({
-                        left: (i - 1) * pageWidth + e.gesture.deltaX
+                        left: (i - base.currentPage) * pageWidth + e.gesture.deltaX
                     });
                 });
             });
@@ -57,7 +55,7 @@
                 $pages.each( function(i) {
                     var $page = $(this);
                     $page.css({
-                        left: (i - 1) * pageWidth + e.gesture.deltaX
+                        left: (i - base.currentPage) * pageWidth + e.gesture.deltaX
                     });
                 });
             });
@@ -76,23 +74,17 @@
                 var newYOffset = 0;
 
                 if (e.gesture.deltaX < - pageWidth / 3 || (e.gesture.deltaX < 0 && e.gesture.velocityX > 1)) {
-                    newXOffset = -1;
+                    base.next();
                 } else if (e.gesture.deltaX > pageWidth / 3 || (e.gesture.deltaX > 0 && e.gesture.velocityX > 1)) {
-                    newXOffset = 1;
+                    base.prev();
+                } else {
+                    base.show(base.currentPage);
                 }
                 if (e.gesture.deltaY < 0 && e.gesture.velocityY > 0.2) {
                     newYOffset = -1;
                 } else if (e.gesture.deltaY > 0 && e.gesture.velocityY > 0.2) {
                     newYOffset = 1;
                 }
-
-                // horizontal scrolling between pages
-                $pages.each( function(i) {
-                    var $page = $(this);
-                    $page.animate({
-                        left: (i - 1 + newXOffset) * pageWidth
-                    }, speed);
-                });
 
                 // vertical scrolling on current page
                 base.$el.css({
@@ -118,12 +110,48 @@
                     top: $(window).scrollTop()
                 });
             });
+
+            base.show(base.currentPage);
         };
         
-        // Sample Function, Uncomment to use
-        // base.functionName = function(paramaters){
-        // 
-        // };
+        // {{{ show()
+        base.show = function(n) {
+            console.log("show", n);
+            base.currentPage = n;
+
+            // horizontal scrolling between pages
+            $pages.each( function(i) {
+                var $page = $(this);
+                this.id = "page-" + i;
+                $page.animate({
+                    left: (i - base.currentPage) * pageWidth
+                }, speed);
+            });
+
+            $pages.removeClass("current-page");
+            $pages.eq(n).addClass("current-page");
+        };
+        // }}}
+        // {{{ next()
+        base.next = function() {
+            if (base.currentPage < $pages.length - 1) {
+                // scroll to next page
+                base.show(base.currentPage + 1);
+            } else {
+                base.show(base.currentPage);
+            }
+        };
+        // }}}
+        // {{{ prev()
+        base.prev = function() {
+            if (base.currentPage > 0) {
+                // scroll to previous page
+                base.show(base.currentPage - 1);
+            } else {
+                base.show(base.currentPage);
+            }
+        };
+        // }}}
         
         // Run initializer
         base.init();
