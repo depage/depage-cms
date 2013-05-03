@@ -125,8 +125,12 @@
             });
             $(window).scroll( function() {
                 $pages.not(".current-page").css({
-                    //top: $(window).scrollTop()
+                    top: $(window).scrollTop()
                 });
+            });
+            $(window).resize( function() {
+                pageWidth = base.$el.width();
+                base.show(base.currentPage);
             });
 
             base.show(base.currentPage);
@@ -141,7 +145,6 @@
             // horizontal scrolling between pages
             $pages.each( function(i) {
                 var $page = $(this);
-                this.id = "page-" + i;
                 $page.stop().animate({
                     left: (i - base.currentPage) * pageWidth
                 }, speed);
