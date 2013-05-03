@@ -148,6 +148,8 @@
 
             $pages.removeClass("current-page");
             $pages.eq(n).addClass("current-page");
+
+            base.$el.triggerHandler("depage.magaziner.show", [n]);
         };
         // }}}
         // {{{ next()
@@ -155,6 +157,8 @@
             if (base.currentPage < $pages.length - 1) {
                 // scroll to next page
                 base.show(base.currentPage + 1);
+                base.$el.triggerHandler("depage.magaziner.next");
+
             } else {
                 base.show(base.currentPage);
             }
@@ -165,6 +169,7 @@
             if (base.currentPage > 0) {
                 // scroll to previous page
                 base.show(base.currentPage - 1);
+                base.$el.triggerHandler("depage.magaziner.prev");
             } else {
                 base.show(base.currentPage);
             }
