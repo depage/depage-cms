@@ -105,9 +105,27 @@
                     }, 300 * e.gesture.velocityY);
                 }
             });
+            $(document).on("keypress", function(e) {
+                if ($(document.activeElement).is(':input')){
+                    // continue only if an input is not the focus
+                    return true;
+                }
+                switch (parseInt(e.which || e.keyCode)) {
+                    case 39 : // cursor right
+                    case 108 : // vim nav: l
+                        base.next();
+                        e.preventDefault();
+                        break;
+                    case 37 : // cursor left
+                    case 104 : // vim nav: h
+                        base.prev();
+                        e.preventDefault();
+                        break;
+                }
+            });
             $(window).scroll( function() {
                 $pages.not(".current-page").css({
-                    top: $(window).scrollTop()
+                    //top: $(window).scrollTop()
                 });
             });
 
