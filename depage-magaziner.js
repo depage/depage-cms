@@ -134,16 +134,26 @@
         
         // {{{ show()
         base.show = function(n) {
-            console.log("show", n);
+            var resetScroll = base.currentPage != n;
+
             base.currentPage = n;
 
             // horizontal scrolling between pages
             $pages.each( function(i) {
                 var $page = $(this);
                 this.id = "page-" + i;
-                $page.animate({
+                $page.stop().animate({
                     left: (i - base.currentPage) * pageWidth
                 }, speed);
+            });
+            $pages.last().queue( function() {
+                if (resetScroll) {
+                    window.scrollTo(0, 0);
+
+                    $pages.css({
+                        top: 0
+                    });
+                }
             });
 
             $pages.removeClass("current-page");
