@@ -27,7 +27,7 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.magaziner", base);
         
-        var $pages = $(".page");
+        var $pages = base.$el.children(".page");
         var pageWidth = base.$el.width();
         var speed = 300;
         var hammerOptions = {
@@ -35,6 +35,9 @@
         };
         var scrollTop;
         base.currentPage = $pages.index(".current-page");
+        if (base.currentPage == -1) {
+            base.currentPage = 0;
+        }
 
         base.init = function(){
             base.options = $.extend({},$.depage.magaziner.defaultOptions, options);
@@ -105,9 +108,12 @@
                     }, 300 * e.gesture.velocityY);
                 }
             });
-            $(document).on("keypress", function(e) {
+            $(document).on("keyup", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
+                    return true;
+                }
+                if (e.altKey, e.ctrlKey, e.shiftKey) {
                     return true;
                 }
                 switch (parseInt(e.which || e.keyCode)) {
@@ -136,11 +142,19 @@
             base.show(base.currentPage);
         };
         
+        // {{{ showPagesAround(n)
+        base.showPagesAround = function(n) {
+            $pages.eq(n - 1).show();
+            $pages.eq(n).show();
+            $pages.eq(n + 1).show();
+        };
+        // }}}
         // {{{ show()
         base.show = function(n) {
             var resetScroll = base.currentPage != n;
 
             base.currentPage = n;
+            base.showPagesAround(base.currentPage)
 
             // horizontal scrolling between pages
             $pages.each( function(i) {
@@ -156,6 +170,8 @@
                     $pages.css({
                         top: 0
                     });
+                    $pages.hide();
+                    base.showPagesAround(base.currentPage)
                 }
             });
 
@@ -204,3 +220,4 @@
     };
     
 })(jQuery);
+/* vim:set ft=javascript sw=4 sts=4 fdm=marker : */
