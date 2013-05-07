@@ -82,7 +82,7 @@
                 left: 0,
                 top: 0
             });
-            divs.first().css({
+            divs.eq(0).css({
                 position: "static"
             });
             for (var i = 1; i < divs.length; i++) {
