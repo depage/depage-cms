@@ -188,15 +188,15 @@
             // support = { 'flash' : true }; 
             
             // determine the supported player mode - flash or html5
-            if ( support.h264 && $('source:[type="video/mp4"]', video).length > 0
-                || support.ogg && $('source:[type="video/ogg"]', video).length > 0
-                || support.webm && $('source:[type="video/webm"]', video).length > 0) {
+            if ( support.h264 && $('source[type="video/mp4"]', video).length > 0
+                || support.ogg && $('source[type="video/ogg"]', video).length > 0
+                || support.webm && $('source[type="video/webm"]', video).length > 0) {
                 mode = 'html5';
                 base.player = video;
                 base.html5.setup();
             } else if (support.flash) {
                  mode = 'flash';
-                 base.overlay($video);
+                 base.overlay($video, $video.width(), $video.height());
                  
                  // setup flash player
                  base.player = { initialized: false };
@@ -209,7 +209,7 @@
                  }
                  // autoplay
                  var autoplayAttr = $video.attr('autoplay');
-                 if (typeof(autoplayAttr) !== 'undefined' && autoplayAttr == 'true') {
+                 if (typeof(autoplayAttr) !== 'undefined' && (autoplayAttr == 'true' || autoplayAttr == 'autoplay')) {
                      base.player.play();
                  }
                  
@@ -579,7 +579,7 @@
              */
             insertPlayer : function() {
                 // get absolute url from source attribute with mp4-type
-                var $link = $("<a href=\"" + $('source:[type="video/mp4"]', video).attr("src") + "\"></a>").appendTo("body");
+                var $link = $("<a href=\"" + $('source[type="video/mp4"]', video).attr("src") + "\"></a>").appendTo("body");
                 var url = $link[0].toString();
                 $link.remove();
                 
@@ -593,8 +593,8 @@
                 var html = $.depage.flash().build({
                     src    : base.options.assetPath + "depage_player.swf",
                     // TODO needs to fit screen for resize
-                    //width  : base.options.width,
-                    //height : base.options.height,
+                    width  : "100%",
+                    height : "100%",
                     id     : base.options.playerId,
                     wmode  : 'transparent',
                     params : flashParams

@@ -71,7 +71,7 @@
             divs = base.$el.children(base.options.elements);
             base.num = divs.length;
 
-            if ($.browser.iphone) {
+            if ($.browser != undefined && $.browser.iphone) {
                 // disable fading on the iPhone > just skip to next image
                 base.options.pause = base.options.speed + base.options.pause;
                 base.options.speed = 0;
@@ -82,7 +82,7 @@
                 left: 0,
                 top: 0
             });
-            divs.first().css({
+            divs.eq(0).css({
                 position: "static"
             });
             for (var i = 1; i < divs.length; i++) {
