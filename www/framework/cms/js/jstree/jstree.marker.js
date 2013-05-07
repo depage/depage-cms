@@ -36,6 +36,21 @@
                 indicator : $indicator
             };
 
+            // don't show the markers during drag & drop
+            var dragging = false;
+            // check browser drag and drop support
+            var div = document.createElement('div');
+            if (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) {
+                // set the dragging variable
+                $(document)
+                    .on('dragover', function () {
+                        dragging = true;
+                    })
+                    .on('dragend', function () {
+                        dragging = false;
+                    });
+            }
+
              // hide the marker when mouse leaves the container.
             var bind_doc_move = function(){
                 $(document).bind('mousemove.jstree-marker', function(e) {
@@ -57,7 +72,7 @@
 
             $container.delegate("li", "mousemove.jstree", function(e) {
                 if (!self.data.add_marker.context_menu){
-                    if (!$marker.is(':visible')) {
+                    if (!$marker.is(':visible') && !dragging) {
                         clearTimeout(self.timer);
                         self.timer = setTimeout(function() {
                             self._show_add_marker($(e.target), e.pageX, e.pageY);
@@ -68,7 +83,7 @@
             });
 
             $marker.mousemove(function (e) {
-                if (!self.data.add_marker.context_menu) {
+                if (!self.data.add_marker.context_menu && !dragging) {
                     clearTimeout(self.timer);
                     // add marker swallows mousemove event. try to delegate to correct li_node.
                     // TODO: fix for Opera < 10.5, Safari 4.0 Win. see http://www.quirksmode.org/dom/w3c%5Fcssom.html#documentview
