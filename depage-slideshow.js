@@ -6,14 +6,41 @@
  * adds a custom slideshow 
  *
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
- */
+ * @author    Frank Hellenkamp [jonas@depage.net]
+ **/
+
+// {{{ documentation
+/**
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-forms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @section Usage
+ *
+ * depage-jquery-slideshow
+ *
+ * @endsection 
+ *
+ * @subpage developer
+ *
+ * @htmlinclude main-extended.html
+ **/
+
+/**
+ * @page usage Usage
+ *
+ **/
+// }}}
+
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.slideshow = function(el, options){
         /* {{{ variables */
@@ -50,11 +77,13 @@
                 base.options.speed = 0;
             }
             
-            base.$el.height( $(divs[0]).height() );
             divs.css({
                 position: "absolute",
                 left: 0,
                 top: 0
+            });
+            divs.first().css({
+                position: "static"
             });
             for (var i = 1; i < divs.length; i++) {
                 $(divs[i]).hide();
@@ -127,8 +156,12 @@
             base.clearQueue();
 
             divs.each(function(i) {
-                if (i != n || i != base.activeSlide) {
-                    $(this).hide();
+                if (i != n && i != base.activeSlide) {
+                    if (i > 0) {
+                        $(this).hide();
+                    } else {
+                        $(this).css({visibility: "hidden"});
+                    }
                 }
             });
 
@@ -143,6 +176,7 @@
 
             // fadein next slide
             $(divs[n]).show().css({
+                visibility: "visible",
                 opacity: 0
             }).animate({
                 opacity: 1
@@ -160,7 +194,7 @@
                 // fade in first image
                 base.show(0);
             }
-        }
+        };
         /* }}} */
         /* {{{ prev() */
         base.prev = function() {
@@ -171,7 +205,7 @@
                 // fade in first image
                 base.show(divs.length - 1);
             }
-        }
+        };
         /* }}} */
         
         // Run initializer
