@@ -14,7 +14,7 @@
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.magaziner = function(el, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
@@ -38,6 +38,8 @@
         if (base.currentPage == -1) {
             base.currentPage = 0;
         }
+        // @todo delete/do not commit
+        //base.currentPage = 9;
 
         base.init = function(){
             base.options = $.extend({},$.depage.magaziner.defaultOptions, options);
@@ -102,29 +104,37 @@
                     top: currentPos
                 });
 
-                if (newYOffset != 0) {
+                if (newYOffset !== 0) {
                     $("html, body").animate({
                         scrollTop: targetPos
                     }, 300 * e.gesture.velocityY);
                 }
             });
-            $(document).on("keyup", function(e) {
+            $(document).on("keypress, keyup", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
                 }
-                if (e.altKey, e.ctrlKey, e.shiftKey) {
+                if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) {
                     return true;
                 }
-                switch (parseInt(e.which || e.keyCode)) {
+                switch (parseInt(e.which || e.keyCode, 10)) {
                     case 39 : // cursor right
-                    case 108 : // vim nav: l
+                    case 76 : // vim nav: l
                         base.next();
                         e.preventDefault();
                         break;
                     case 37 : // cursor left
-                    case 104 : // vim nav: h
+                    case 72 : // vim nav: h
                         base.prev();
+                        e.preventDefault();
+                        break;
+                    case 74 : // vim nav: j
+                        window.scrollTo(0, $(window).scrollTop() + 50);
+                        e.preventDefault();
+                        break;
+                    case 75 : // vim nav: k
+                        window.scrollTo(0, $(window).scrollTop() - 50);
                         e.preventDefault();
                         break;
                 }
@@ -154,7 +164,7 @@
             var resetScroll = base.currentPage != n;
 
             base.currentPage = n;
-            base.showPagesAround(base.currentPage)
+            base.showPagesAround(base.currentPage);
 
             // horizontal scrolling between pages
             $pages.each( function(i) {
@@ -171,7 +181,7 @@
                         top: 0
                     });
                     $pages.hide();
-                    base.showPagesAround(base.currentPage)
+                    base.showPagesAround(base.currentPage);
                 }
             });
 
@@ -206,7 +216,7 @@
         // }}}
         
         // Run initializer
-        base.init();
+        setTimeout(base.init, 50);
     };
     
     $.depage.magaziner.defaultOptions = {
