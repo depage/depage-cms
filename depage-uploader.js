@@ -776,7 +776,12 @@
             base.$el.after(base.controls.textinfo);
 
             base.controls.progress.append(base.controls.percent);
-            base.$el.after(base.controls.progress);
+
+            if(base.options.$progress_container) {
+                base.options.$progress_container.append(base.controls.progress);
+            } else {
+                base.$el.after(base.controls.progress);
+            }
         };
         // }}}
 
@@ -798,7 +803,8 @@
      * @param max_filesize - max file size test used in xhr upload
      * @param custom_button - selector for a css customisable file element, if false default is browser standard
      * @param cancel_button - selector for a cancel button
-     * @param $drop_area - area for receiving dropped files if supported by browser
+     * @param $drop_area - a selector user for receiving dropped files if supported by browser
+     * @param $progress_container - a selector to append the progress controls to.
      */
     $.depage.uploader.defaultOptions = {
         classes : {
@@ -817,7 +823,8 @@
         max_filesize: false,
         custom_button: false,
         cancel_button: false,
-        $drop_area: null
+        $drop_area: null,
+        $progress_container: null
     };
 
     $.fn.depageUploader = function(options){
