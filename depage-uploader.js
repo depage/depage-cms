@@ -13,6 +13,8 @@
  *  - PHP server side upload progress with APC - http://php.net/manual/en/book.apc.php or
  *  - NGINX server with upload-progress-module - http://wiki.nginx.org/NginxHttpUploadProgressModule
  *  - Fallsback to iframe with gif loader
+ *  - Multiple file uploads
+ *  - Drag and Drop Upload via options.$drag_area (defaults to file input)
  *
  * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -81,11 +83,19 @@
                 base.iframe.build();
             };
 
+            // for multiple files input name should be an array
+            /*
+             var name = base.$el.attr('name');
+             if (base.$el.prop('multiple') && !name.match(/.*\[\]$/)){
+             base.$el.attr('name', name += '[]');
+             }
+             */
+
             base.addProgress();
 
             // add file click handlers
             base.$el.change(function() {
-                base.upload(this);
+                base.upload();
             });
 
             // bind cancel button if provided
@@ -100,6 +110,12 @@
             // setup custom button if provided
             if (base.options.custom_button) {
                 base.setupCustomButton();
+            }
+
+            // default drag and drop for input
+            if (base.options.$drop_area === null) {
+                base.options.$drop_area = base.$el;
+                base.dropAndDrop();
             }
         };
         // }}}
@@ -131,89 +147,125 @@
             }
             return base.mode;
         },
-        // }}}
+            // }}}
 
-        // {{{ setupCustomButton
+            // {{{ setupCustomButton
         /**
          * setupCustomButton
          *
          * Based on http://goo.gl/uu5k6
          *
          */
-        base.setupCustomButton = function (){
+            base.setupCustomButton = function (){
 
-            base.$el.wrap('<div class="custom-file-input-wrapper" style="position: relative;"/>');
+                base.$el.wrap('<div class="custom-file-input-wrapper" style="position: relative;"/>');
 
-            base.$custom_button = $('<div class="custom-upload-button">upload</div>').css({
-                'position': 'absolute',
-                'z-index':  1
-            }).insertBefore(base.$el);
+                base.$custom_button = $('<div class="custom-upload-button">upload</div>').css({
+                    'position': 'absolute',
+                    'z-index':  1
+                }).insertBefore(base.$el);
 
-            // make the fileinput transparent and positioned on top of the new button
-            $(base.$el).css({
-                'opacity':    '0.1',
-                'filter':     'alpha(opacity=0.1)',
-                'display':    'block',
-                'text-align': 'left',
-                'width':      base.$custom_button.outerWidth(),
-                'height':     base.$custom_button.outerHeight(),
-                'position':   'absolute',
-                'cursor':     'pointer',
-                'z-index':    999
-            });
+                // make the fileinput transparent and positioned on top of the new button
+                $(base.$el).css({
+                    'opacity':    '0.1',
+                    'filter':     'alpha(opacity=0.1)',
+                    'display':    'block',
+                    'text-align': 'left',
+                    'width':      base.$custom_button.outerWidth(),
+                    'height':     base.$custom_button.outerHeight(),
+                    'position':   'absolute',
+                    'cursor':     'pointer',
+                    'z-index':    999
+                });
 
-            // for ie and opera make sure change event fires
-            function check_change() {
-                if (base.$el.val() && base.$el.val() !== base.$el.data('val')) {
-                    base.$el.trigger('change');
+                // for ie and opera make sure change event fires
+                function check_change() {
+                    if (base.$el.val() && base.$el.val() !== base.$el.data('val')) {
+                        base.$el.trigger('change');
+                    }
+                }
+
+                base.$custom_button.addClass('custom-fileinput')
+                    // keep file input under the cursor to steal the click (IE)
+                    .mousemove(function(e){
+                        base.$el.css({
+                            'left': e.pageX - base.$custom_button.offset().left - base.$el.outerWidth() + 20,
+                            'top': e.pageY - base.$custom_button.offset().top  - base.$el.outerHeight() + 5
+                        });
+                    });
+
+                base.$el
+                    // check for change (IE)
+                    .click(function(){
+                        base.$el.data('val', base.$el.val());
+                        setTimeout(function(){
+                            check_change();
+                        }, 100);
+                    })
+                    .mouseover(function() {
+                        base.$custom_button.addClass('custom-fileinput-hover');
+                    })
+                    .mouseout(function() {
+                        base.$custom_button.removeClass('custom-fileinput-hover');
+                    })
+                    .focus(function(){
+                        base.$custom_button.addClass('custom-fileinput-focus');
+                        base.$el.data('val', base.$el.val());
+                    })
+                    .blur(function(){
+                        base.$custom_button.addClass('custom-fileinput-blur');
+                        check_change();
+                    })
+                    .bind('disable',function(){
+                        base.$el.attr('disabled', true);
+                        base.$custom_button.addClass('custom-fileinput-disabled');
+                    })
+                    .bind('enable',function(){
+                        base.$el.removeAttr('disabled');
+                        base.$custom_button.removeClass('custom-fileinput-disabled');
+                    });
+
+                // match disabled state
+                if(base.$el.is('[disabled]')) {
+                    base.$el.trigger('disable');
+                }
+            },
+            // }}}
+
+            // {{{
+        /**
+         * Setup drag and drop
+         *
+         * Implements HTML5 drag'n'drop file uploads by monitoring browser drag events
+         */
+            base.dropAndDrop = function() {
+                // check browser drag and drop support
+                var div = document.createElement('div'); // TODO could move this to support() function
+                if (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div && !!window.FileReader)) {
+
+                    // TODO deprecate on jquery upgrade
+                    // fix for jquery 1.7 bug http://bugs.jquery.com/ticket/10756
+                    $.event.fixHooks.drop = { props:["dataTransfer"] };
+
+                    $(document)
+                        .on('dragover', function () {
+                            base.options.$drop_area.addClass('drag-over');
+                            return false;
+                        })
+                        .on('dragend', function () {
+                            base.options.$drop_area.removeClass('drag-over');
+                            return false;
+                        })
+                        .on('drop', function (e) {
+                            if ($(e.target).is(base.options.$drop_area) || $.contains(base.options.$drop_area[0], e.target)){
+                                base.options.$drop_area.removeClass('drag-over');
+                                // append the dropped files to the input element (triggers upload via change event)
+                                base.$el.prop("files", e.dataTransfer.files);
+                            }
+                            return false;
+                        });
                 }
             }
-
-            base.$custom_button.addClass('custom-fileinput')
-                // keep file input under the cursor to steal the click (IE)
-                .mousemove(function(e){
-                    base.$el.css({
-                        'left': e.pageX - base.$custom_button.offset().left - base.$el.outerWidth() + 20,
-                        'top': e.pageY - base.$custom_button.offset().top  - base.$el.outerHeight() + 5
-                    });
-                });
-
-            base.$el
-                // check for change (IE)
-                .click(function(){
-                    base.$el.data('val', base.$el.val());
-                    setTimeout(function(){
-                        check_change();
-                    }, 100);
-                })
-                .mouseover(function() {
-                    base.$custom_button.addClass('custom-fileinput-hover');
-                })
-                .mouseout(function() {
-                    base.$custom_button.removeClass('custom-fileinput-hover');
-                })
-                .focus(function(){
-                    base.$custom_button.addClass('custom-fileinput-focus');
-                    base.$el.data('val', base.$el.val());
-                })
-                .blur(function(){
-                    base.$custom_button.addClass('custom-fileinput-blur');
-                    check_change();
-                })
-                .bind('disable',function(){
-                    base.$el.attr('disabled', true);
-                    base.$custom_button.addClass('custom-fileinput-disabled');
-                })
-                .bind('enable',function(){
-                    base.$el.removeAttr('disabled');
-                    base.$custom_button.removeClass('custom-fileinput-disabled');
-                });
-
-            // match disabled state
-            if(base.$el.is('[disabled]')) {
-                base.$el.trigger('disable');
-            }
-        },
         // }}}
 
         // {{{ upload()
@@ -225,18 +277,18 @@
          * @param fileinput
          * @return void
          */
-            base.upload = function(fileinput){
-                switch(base.mode){
-                    case 'iframe' :
-                    case 'nginx' :
-                    case 'apc' :
-                        base.iframe.upload();
-                        break;
-                    case 'xhr' :
-                        base.xhr.upload(fileinput);
-                        break;
-                }
-            };
+        base.upload = function(fileinput){
+            switch(base.mode){
+                case 'iframe' :
+                case 'nginx' :
+                case 'apc' :
+                    base.iframe.upload();
+                    break;
+                case 'xhr' :
+                    base.xhr.upload();
+                    break;
+            }
+        };
         // }}}
 
         // {{{ IFRAME
@@ -455,12 +507,10 @@
              *
              * Begin the XHR Upload. Handles progress and load events.
              *
-             * @param fileinput - file to upload
-             *
              * return bool
              */
-            upload : function(fileinput){
-                if (base.options.max_filesize && base.options.max_filesize > fileinput.filesize) {
+            upload : function(){
+                if (base.options.max_filesize && base.options.max_filesize > base.el.filesize) {
                     base.error('max file size exceeded');
                     return false;
                 }
@@ -486,7 +536,12 @@
                 formData.append('formName', $('input[name="formName"]', base.$form).val());
                 formData.append('formAutosave', 'true');
                 formData.append('ajax', 'true');
-                formData.append(fileinput.name, fileinput.files[0]);
+
+                // append the files
+                for(var i in base.el.files) {
+                    formData.append(base.el.name, base.el.files[i]);
+                }
+
                 base.xhrHttpRequest.send(formData);
             }
             // }}}
@@ -599,7 +654,7 @@
 
             // rebind change
             base.$el.change(function() {
-                base.upload(this);
+                base.upload();
             });
 
             base.setProgress(0);
@@ -743,6 +798,7 @@
      * @param max_filesize - max file size test used in xhr upload
      * @param custom_button - selector for a css customisable file element, if false default is browser standard
      * @param cancel_button - selector for a cancel button
+     * @param $drop_area - area for receiving dropped files if supported by browser
      */
     $.depage.uploader.defaultOptions = {
         classes : {
@@ -760,7 +816,8 @@
         complete_event: 'complete',
         max_filesize: false,
         custom_button: false,
-        cancel_button: false
+        cancel_button: false,
+        $drop_area: null
     };
 
     $.fn.depageUploader = function(options){
