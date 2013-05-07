@@ -18,12 +18,23 @@
         base.init = function(){
             base.options = $.extend({}, $.depage.socialButtons.defaultOptions, options);
             
-            base.url = encodeURIComponent(base.options.location);
-            if (base.options.title !== "") {
-                base.title = encodeURIComponent(base.options.title);
+            if (base.options.url !== "") {
+                base.url = base.options.url;
+            } else if (base.$el.attr("data-share-url") !== undefined) {
+                base.url = base.$el.attr("data-share-url");
             } else {
-                base.title = encodeURIComponent(document.title);
+                base.url = document.location.href;
             }
+
+            if (base.options.title !== "") {
+                base.title = base.options.title;
+            } else if (base.$el.attr("data-share-title") !== undefined) {
+                base.title = base.$el.attr("data-share-title");
+            } else {
+                base.title = document.title;
+            }
+            base.title = encodeURIComponent(base.title);
+            base.url = encodeURIComponent(base.url);
 
             $.each(base.options.services, function(i, name) {
                 // normalize name
@@ -55,7 +66,7 @@
             }
             html += "</a>";
 
-            var $link = $(html).appendTo(base.$el)
+            var $link = $(html).appendTo(base.$el);
 
             if (link !== "") {
                 $link.attr("href", link);
@@ -152,8 +163,8 @@
      */
     $.depage.socialButtons.defaultOptions = {
         assetPath: '',
-        location: document.location.href,
-        title: "",
+        url: '',
+        title: '',
         services: [
             'twitter',
             'facebookShare',

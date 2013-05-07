@@ -1,7 +1,7 @@
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.slideshow = function(el, param1, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.

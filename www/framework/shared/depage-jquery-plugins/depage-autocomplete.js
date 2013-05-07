@@ -21,7 +21,7 @@
     
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     /**
      * autocomplete
@@ -60,8 +60,7 @@
         base.init = function(){
             base.options = $.extend({}, $.depage.autocomplete.defaultOptions, options);
             
-            base.options.list_id = base.options.list_id
-                || (base.$el.parents("p.input-text").attr("id") + "-list");
+            base.options.list_id = base.options.list_id || (base.$el.parents("p.input-text").attr("id") + "-list");
             
             // disable browser autocomplete
             base.$el.attr("autocomplete", "off");
@@ -102,11 +101,7 @@
                     // @TODO add timer so that we do not search for every keypress, when someone types fast
                     var code = e.keyCode ? e.keyCode : e.which;
                     if(!(code == 40 || code == 38 || code == 13 ||  code == 27)) { // ignore arrow and enter keys
-                        var url = $("base").attr("href")
-                            + $('html').attr('lang')
-                            + base.options.url
-                            + "?ajax=true"
-                            + "&value=" + $(this).val();
+                        var url = $("base").attr("href") + $('html').attr('lang') + base.options.url + "?ajax=true" + "&value=" + $(this).val();
 
                         base.$items = null;
                         $.get(url , null, function(data) {
@@ -175,7 +170,7 @@
                 });
                 
                 if(base.$items.length) {
-                    if (base.$items.filter(".hover").length == 0) {
+                    if (base.$items.filter(".hover").length === 0) {
                         $(base.$items[0]).addClass("hover");
                     }
                     // add hover class on mouse over
