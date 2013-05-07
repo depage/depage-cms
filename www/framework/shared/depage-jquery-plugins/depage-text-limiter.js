@@ -87,9 +87,6 @@
         base.filter = function(e) {
             var val = base.$el.val();
             if (val.length >= base.options.max) {
-                if (e) {
-                    e.preventDefault();
-                }
                 val = val.substr(0, base.options.max);
                 base.$el.val(val);
             }

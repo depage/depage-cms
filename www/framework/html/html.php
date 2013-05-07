@@ -462,6 +462,16 @@ class html {
     }
     // }}}
 
+    // {{{ truncate()
+    static function truncate ($string, $max = 50, $rep = "") {
+        if (strlen($string) <= $max) {
+            $rep = "";
+        }
+        $leave = $max - strlen ($rep);
+        return substr_replace($string, $rep, $leave);
+    } 
+    // }}}
+
     // {{{ format_date()
     /**
      * formats date parameter based on current locale
