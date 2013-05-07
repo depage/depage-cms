@@ -12,7 +12,7 @@
 (function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.flash = function(el, param1, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
@@ -71,7 +71,6 @@
         };
         /// }}}
         
-        
         // {{{ version()
         /**
          * Version
@@ -99,7 +98,7 @@
             }
             return version;
         };
-        
+        // }}}
         
         // {{{ build()
         /**
@@ -170,7 +169,7 @@
         requiredVersion: "0,0,0"
     };
     
-    $.fn.depage_flash = function(param1, options){
+    $.fn.depageFlash = function(param1, options){
         return this.each(function(){
             (new $.depage.flash(this, param1, options));
         });
