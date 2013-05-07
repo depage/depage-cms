@@ -125,7 +125,7 @@
         // }}}
 
         // {{{ onMousewheel()
-        base.onMousewheel = function(e, delta, i, j) {
+        base.onMousewheel = function(e, delta) {
             if ($scrollFrame.height() < $scrollContent.height()) {
                 $scrollFrame.scrollTop($scrollFrame.scrollTop() - base.options.distance * delta);
 

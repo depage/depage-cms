@@ -1,5 +1,7 @@
 <?php 
-    $form = new depage\htmlform\htmlform("userprofile_edit");
+    $form = new depage\htmlform\htmlform("userprofile_edit", array(
+        'jsautosave' => "true",
+    ));
 
     // define formdata
     $form->addText("name", array(
@@ -19,7 +21,7 @@
         echo("<p>saving</p>");
         var_dump($form->getValues());
 
-        $form->clearSession();
+        //$form->clearSession();
     }
 
     echo($form);

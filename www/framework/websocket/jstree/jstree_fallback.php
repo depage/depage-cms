@@ -30,6 +30,7 @@ class jstree_fallback extends \depage_ui {
 
         // TODO: set project correctly
         $proj = "proj";
+        $proj = "depage";
         $this->prefix = "{$this->pdo->prefix}_{$proj}";
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
@@ -53,13 +54,7 @@ class jstree_fallback extends \depage_ui {
     }
     // }}}
 
-    // {{{ send_time
-    protected function send_time($time) {
-        // do nothing
-    }
-    // }}}
-
-    // {{{ send_headers
+    // {{{ _send_headers
     protected function send_headers($content) {
         header("HTTP/1.0 200 OK");
         header('Content-type: text/json; charset=utf-8');
@@ -70,4 +65,4 @@ class jstree_fallback extends \depage_ui {
     // }}}
 }
 
-?>
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

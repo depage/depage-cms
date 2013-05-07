@@ -81,7 +81,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // {{{ testGet_doc_list()
     public function testGet_doc_list() {
         // get list for one document
-        $docs = $this->xmldb->get_doc_list("pages");
+        $docs = $this->xmldb->getDocList("pages");
 
         $this->assertEquals(array(
             'pages' => (object) array(
@@ -93,7 +93,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         ), $docs);
 
         // get list of all documents
-        $docs = $this->xmldb->get_doc_list();
+        $docs = $this->xmldb->getDocList();
 
         $this->assertEquals(array(
             'pages' => (object) array(
@@ -119,7 +119,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_doc_info_by_id()
     public function testGet_doc_info_by_id() {
-        $info = $this->xmldb->get_doc_info(1);
+        $info = $this->xmldb->getDocInfo(1);
 
         $this->assertEquals((object) array(
             'name' => 'pages',
@@ -131,7 +131,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_doc_info_by_name()
     public function testGet_doc_info_by_name() {
-        $info = $this->xmldb->get_doc_info("pages");
+        $info = $this->xmldb->getDocInfo("pages");
 
         $this->assertEquals((object) array(
             'name' => 'pages',
@@ -143,10 +143,10 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testDoc_exists()
     public function testDoc_exists() {
-        $this->assertFalse($this->xmldb->doc_exists("non existent document"));
-        $this->assertFalse($this->xmldb->doc_exists(100));
-        $this->assertEquals(1, $this->xmldb->doc_exists("pages"));
-        $this->assertEquals(1, $this->xmldb->doc_exists(1));
+        $this->assertFalse($this->xmldb->docExists("non existent document"));
+        $this->assertFalse($this->xmldb->docExists(100));
+        $this->assertEquals(1, $this->xmldb->docExists("pages"));
+        $this->assertEquals(1, $this->xmldb->docExists(1));
     }
     // }}}
     
@@ -155,13 +155,13 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml_str = '<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
 
-        $xml = $this->xmldb->get_doc(1);
+        $xml = $this->xmldb->getDoc(1);
         $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
 
-        $xml = $this->xmldb->get_doc("1");
+        $xml = $this->xmldb->getDoc("1");
         $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
 
-        $xml = $this->xmldb->get_doc("pages");
+        $xml = $this->xmldb->getDoc("pages");
         $this->assertXmlStringEqualsXmlString($xml_str, $xml->saveXML());
     }
     // }}}
@@ -170,10 +170,10 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
      * @todo Implement testGet_doc().
      */
     public function testGet_doc_non_existent() {
-        $xml = $this->xmldb->get_doc("non existing document");
+        $xml = $this->xmldb->getDoc("non existing document");
         $this->assertFalse($xml);
 
-        $xml = $this->xmldb->get_doc(100);
+        $xml = $this->xmldb->getDoc(100);
         $this->assertFalse($xml);
     }
     // }}}
@@ -186,8 +186,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -204,8 +204,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -218,8 +218,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -232,8 +232,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -246,8 +246,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -260,8 +260,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
@@ -274,19 +274,19 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $xml = new \DOMDocument;
         $xml->loadXML($xml_str);
 
-        $this->xmldb->save_doc("testdoc", $xml);
-        $saved_xml = $this->xmldb->get_doc("testdoc", false);
+        $this->xmldb->saveDoc("testdoc", $xml);
+        $saved_xml = $this->xmldb->getDoc("testdoc", false);
 
         $this->assertXmlStringEqualsXmlString($xml_str, $saved_xml->saveXML());
     }
     // }}}
     // {{{ testSave_doc_existing()
     public function testSave_doc_existing() {
-        $xml = $this->xmldb->get_doc("pages");
+        $xml = $this->xmldb->getDoc("pages");
 
-        $this->xmldb->save_doc("pages", $xml);
+        $this->xmldb->saveDoc("pages", $xml);
 
-        $saved_xml = $this->xmldb->get_doc("pages");
+        $saved_xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString($xml->saveXML(), $saved_xml->saveXML());
     }
@@ -294,7 +294,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // {{{ testSave_doc_no_xml()
     public function testSave_doc_no_xml() {
         try {
-            $this->xmldb->save_doc("pages", "");
+            $this->xmldb->saveDoc("pages", "");
         } catch (\depage\xmldb\xmldbException $expected) {
             return;
         }
@@ -304,24 +304,24 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testRemove_doc()
     public function testRemove_doc() {
-        $val = $this->xmldb->remove_doc("pages");
+        $val = $this->xmldb->removeDoc("pages");
 
         $this->assertTrue($val);
-        $this->assertArrayNotHasKey("pages", $this->xmldb->get_doc_list("pages"));
+        $this->assertArrayNotHasKey("pages", $this->xmldb->getDocList("pages"));
     }
     // }}}
     // {{{ testRemove_doc_nodoc()
     public function testRemove_doc_nodoc() {
-        $val = $this->xmldb->remove_doc("non existent document");
+        $val = $this->xmldb->removeDoc("non existent document");
 
         $this->assertFalse($val);
-        $this->assertArrayNotHasKey("non existent document", $this->xmldb->get_doc_list("non existent document"));
+        $this->assertArrayNotHasKey("non existent document", $this->xmldb->getDocList("non existent document"));
     }
     // }}}
     
     // {{{ testGet_subdoc_by_xpath_by_name_all()
     public function testGet_subdoc_by_xpath_by_name_all() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "//pg:page");
+        $xml = $this->xmldb->getSubDocByXpath(1, "//pg:page");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page name="Home" multilang="true" file_type="html" db:dataid="3" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page>', $xml->saveXML());
@@ -329,7 +329,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_name_all_with_attribute()
     public function testGet_subdoc_by_xpath_by_name_all_with_attribute() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "//pg:page[@name = 'bla blub']");
+        $xml = $this->xmldb->getSubDocByXpath(1, "//pg:page[@name = 'bla blub']");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page name="bla blub" multilang="true" file_type="html" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:dataid="6" db:id="8">bla bla bla </pg:page>', $xml->saveXML());
@@ -337,7 +337,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_name_with_child()
     public function testGet_subdoc_by_xpath_by_name_with_child() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page>', $xml->saveXML());
@@ -345,7 +345,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_name_and_position()
     public function testGet_subdoc_by_xpath_by_name_and_position() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/pg:page[3]");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/pg:page[3]");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page name="bla blub" multilang="true" file_type="html" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:dataid="6" db:id="8">bla bla bla </pg:page>', $xml->saveXML());
@@ -353,7 +353,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_name_and_attribute()
     public function testGet_subdoc_by_xpath_by_name_and_attribute() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/pg:page[@name]");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/pg:page[@name]");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/>', $xml->saveXML());
@@ -361,7 +361,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_name_and_attribute_with_value()
     public function testGet_subdoc_by_xpath_by_name_and_attribute_with_value() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/pg:page[@name = 'Subpage']");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/pg:page[@name = 'Subpage']");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/>', $xml->saveXML());
@@ -369,7 +369,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_wildcard_and_attribute_with_value()
     public function testGet_subdoc_by_xpath_by_wildcard_and_attribute_with_value() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/*[@name = 'Subpage']");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/*[@name = 'Subpage']");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/>', $xml->saveXML());
@@ -377,7 +377,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_wildcard_ns_and_attribute_with_value()
     public function testGet_subdoc_by_xpath_by_wildcard_ns_and_attribute_with_value() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/*:page[@name = 'Subpage']");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/*:page[@name = 'Subpage']");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/>', $xml->saveXML());
@@ -385,7 +385,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_by_wildcard_name_and_attribute_with_value()
     public function testGet_subdoc_by_xpath_by_wildcard_name_and_attribute_with_value() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/dpg:pages/pg:page/pg:*[@name = 'Subpage']");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/dpg:pages/pg:page/pg:*[@name = 'Subpage']");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/>', $xml->saveXML());
@@ -393,7 +393,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_subdoc_by_xpath_no_result()
     public function testGet_subdoc_by_xpath_no_result() {
-        $xml = $this->xmldb->get_subdoc_by_xpath(1, "/nonode");
+        $xml = $this->xmldb->getSubDocByXpath(1, "/nonode");
 
         $this->assertFalse($xml);
     }
@@ -404,15 +404,15 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
      * @todo Implement testUnlink_node().
      */
     public function testUnlink_node() {
-        $deleted = $this->xmldb->unlink_node(1, 9);
+        $deleted = $this->xmldb->unlinkNode(1, 9);
 
-        $xml = $this->xmldb->get_doc("pages");
+        $xml = $this->xmldb->getDoc("pages");
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
 
-        $deleted = $this->xmldb->unlink_node(1, 2);
+        $deleted = $this->xmldb->unlinkNode(1, 2);
 
-        $xml = $this->xmldb->get_doc("pages");
+        $xml = $this->xmldb->getDoc("pages");
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"></dpg:pages>', $xml->saveXML());
     }
@@ -422,8 +422,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $doc = new DOMDocument();
         $doc->loadXML('<root><node/></root>');
 
-        $this->xmldb->add_node(1, $doc, 2, 1);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->addNode(1, $doc, 2, 1);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><root db:id="12"><node db:id="13"/></root><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -434,8 +434,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $doc = new DOMDocument();
         $doc->loadXML('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
-        $this->xmldb->save_node(1, $doc);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->saveNode(1, $doc);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>', $xml->saveXML());
@@ -443,10 +443,10 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testSave_node_root()
     public function testSave_node_root() {
-        $xml = $this->xmldb->get_doc("pages");
-        $this->xmldb->save_node(1, $xml);
+        $xml = $this->xmldb->getDoc("pages");
+        $this->xmldb->saveNode(1, $xml);
 
-        $saved_xml = $this->xmldb->get_doc("pages");
+        $saved_xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString($xml->saveXML(), $saved_xml->saveXML());
     }
@@ -457,8 +457,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $doc = new DOMDocument();
         $doc->loadXML('<root><node/></root>');
 
-        $this->xmldb->replace_node(1, $doc, 2, 1);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->replaceNode(1, $doc, 2, 1);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>', $xml->saveXML());
@@ -467,8 +467,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testMove_node_in()
     public function testMove_node_in() {
-        $this->xmldb->move_node_in("pages", 7, 8);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->moveNodeIn("pages", 7, 8);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla <pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/></pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -476,8 +476,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testMove_node_before()
     public function testMove_node_before() {
-        $this->xmldb->move_node_before(1, 7, 2);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->moveNodeBefore(1, 7, 2);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -485,8 +485,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testMove_node_after()
     public function testMove_node_after() {
-        $this->xmldb->move_node_after(1, 7, 2);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->moveNodeAfter(1, 7, 2);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/></dpg:pages>', $xml->saveXML());
@@ -494,8 +494,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testMove_node_after_same_level()
     public function testMove_node_after_same_level() {
-        $this->xmldb->move_node_after(1, 6, 7);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->moveNodeAfter(1, 6, 7);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -504,8 +504,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testCopy_node_in()
     public function testCopy_node_in() {
-        $this->xmldb->copy_node_in(1, 7, 8);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->copyNodeIn(1, 7, 8);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla <pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="12"/></pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -513,8 +513,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testCopy_node_before()
     public function testCopy_node_before() {
-        $this->xmldb->copy_node_before(1, 7, 2);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->copyNodeBefore(1, 7, 2);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="12"/><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -522,8 +522,8 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testCopy_node_after()
     public function testCopy_node_after() {
-        $this->xmldb->copy_node_after(1, 7, 2);
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->copyNodeAfter(1, 7, 2);
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="12"/></dpg:pages>', $xml->saveXML());
@@ -532,9 +532,9 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     
     // {{{ testSet_attribute()
     public function testSet_attribute() {
-        $this->xmldb->set_attribute(1, 2, "textattr", "new value");
-        $this->xmldb->set_attribute(1, 6, "multilang", "false");
-        $xml = $this->xmldb->get_doc("pages");
+        $this->xmldb->setAttribute(1, 2, "textattr", "new value");
+        $this->xmldb->setAttribute(1, 6, "multilang", "false");
+        $xml = $this->xmldb->getDoc("pages");
 
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0"?>
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" textattr="new value" db:id="2"><pg:page name="Subpage" multilang="false" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $xml->saveXML());
@@ -542,18 +542,18 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ testGet_attribute()
     public function testGet_attribute() {
-        $attr = $this->xmldb->get_attribute(1, 2, "name");
+        $attr = $this->xmldb->getAttribute(1, 2, "name");
 
         $this->assertEquals("Home", $attr);
 
-        $attr = $this->xmldb->get_attribute(1, 2, "undefindattr");
+        $attr = $this->xmldb->getAttribute(1, 2, "undefindattr");
 
         $this->assertFalse($attr);
     }
     // }}}
     // {{{ testGet_attributes()
     public function testGet_attributes() {
-        $attrs = $this->xmldb->get_attributes(1, 2);
+        $attrs = $this->xmldb->getAttribute(1, 2);
 
         $this->assertEquals(array(
             'name' => "Home",
@@ -570,7 +570,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $doc = new DOMDocument();
         $doc->loadXML('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
-        $id = $this->xmldb->get_node_elementId($doc->documentElement);
+        $id = $this->xmldb->getNodeId($doc->documentElement);
 
         $this->assertEquals(2, $id);
     }
@@ -580,7 +580,7 @@ class xmldbTest extends \PHPUnit_Extensions_Database_TestCase
         $doc = new DOMDocument();
         $doc->loadXML('<root db:dataid="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
-        $id = $this->xmldb->get_node_dataId($doc->documentElement);
+        $id = $this->xmldb->getNodeDataId($doc->documentElement);
 
         $this->assertEquals(2, $id);
     }
