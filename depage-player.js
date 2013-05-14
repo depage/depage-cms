@@ -742,13 +742,13 @@
             
             var $background = $('#fullscreen-background');
             if (!$background.length) {
-                $background = $('<div id="fullscreen-background" />').css({
+                $background = $('<div id="depage-player-fullscreen-background" />').css({
                     'z-index' : '1001',
-                    'width' : screen.width,
-                    'height' : screen.height,
+                    'width' : "100%",
+                    'height' : "100%",
                     'position' : 'fixed',
-                    'top' : '0px',
-                    'left' : '0px',
+                    'top' : 0,
+                    'left' : 0,
                     'background-color' : '#fff'
                 });
                 $body.prepend($background);
@@ -759,7 +759,8 @@
             styles_cache = styles_cache || {
                 'body' : $body.attr('style'),
                 'controls' : $controls.attr('style'),
-                'el' : base.$el.attr('style')
+                'el' : base.$el.attr('style'),
+                'wrapper' : $wrapper.attr('style')
             };
             
             // set screen position to top corner
@@ -778,15 +779,20 @@
             var screenHeight = $window.height();
             
             // resize container and position absolutely
-            base.$el
-                .css({
-                    'z-index' : '1002',
-                    'position' : 'fixed',
-                    'top' : 0,
-                    'left' : 0,
-                    'width' : screenWidth,
-                    'height' : screenHeight
-                });
+            base.$el.css({
+                zIndex : '1002',
+                position : 'fixed',
+                top : 0,
+                left : 0,
+                width : screenWidth,
+                height : screenHeight - $controls.height(),
+                padding: 0,
+                margin: 0
+            });
+            $wrapper.css({
+                width: "100%",
+                height: "100%"
+            });
             
             // resize video
             //base.resize(screenWidth, screenHeight);
@@ -794,10 +800,10 @@
             // reposition controls
             $controls
                 .css({
-                    'position' : 'absolute',
-                    'bottom' : '0px',
-                    'width' : '100%',
-                    'background-color': '#fff'
+                    position : 'absolute',
+                    bottom : - $controls.height(),
+                    width : '100%',
+                    backgroundColor: '#fff'
                 })
                 // animate the controls on hover
                 // TODO 
@@ -838,7 +844,7 @@
 
             base.player.play();
             
-            // {{{
+            // {{{ exitFullscreen()
             /**
              * Exit Fullscreen
              * 
@@ -869,6 +875,10 @@
                     
                     if (typeof(styles_cache.el) !== 'undefined'){
                          base.$el.css(styles_cache.el);
+                    }
+
+                    if (typeof(styles_cache.wrapper) !== 'undefined'){
+                         $wrapper.css(styles_cache.wrapper);
                     }
                 }
                 
