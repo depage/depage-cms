@@ -74,7 +74,7 @@
         
         // set the player mode - 'html5' / 'flash' / false (fallback)
         var mode = false;
-        
+
         // variable used to save element styles when using the fallback fullscreen
         var styles_cache = null;
         
@@ -565,14 +565,12 @@
                  */
                 base.player.fullscreen = function() {
                     // DISABLE FULLSCREEN FLASH
-                    return false;
+                    //return false;
                     
-                    /*
                     if (!base.player.initialized) {
                         base.flash.insertPlayer();
                     }
                     base.fullscreen();
-                    */
                 };
             },
             // }}}
@@ -791,7 +789,7 @@
                 });
             
             // resize video
-            base.resize(screenWidth, screenHeight);
+            //base.resize(screenWidth, screenHeight);
             
             // reposition controls
             $controls
@@ -837,6 +835,8 @@
                     base.fullscreen(styles_cache);
                 }, 500);
             });
+
+            base.player.play();
             
             // {{{
             /**
@@ -935,8 +935,6 @@
          * @return void
          */
         base.addControls = function(div){
-            var imgSuffix = ($.browser.msie && $.browser.version < 7) ? ".gif" : ".png";
-            
             $video.removeAttr("controls");
             
             base.controls.progress = $("<span class=\"progress\" />")
@@ -970,7 +968,7 @@
             
             base.controls.progress.appendTo(div);
             
-            base.controls.play = $("<a class=\"play\"><img src=\"" + base.options.assetPath + "play_button" + imgSuffix + "\" alt=\"play\"></a>")
+            base.controls.play = $("<a class=\"play\">play</a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.play();
@@ -978,23 +976,23 @@
                 });
             
             // NB fullscreen disabled for flash - should be handled internally by flash object
-            if (mode != "flash") {
-                base.controls.fullscreen = $("<a class=\"fullscreen\"><img src=\"" + base.options.assetPath + "fullscreen_button" + imgSuffix + "\" alt=\"fullscreen\"></a>")
+            //if (mode != "flash") {
+                base.controls.fullscreen = $("<a class=\"fullscreen\">fullscreen</a>")
                     .appendTo(div)
                     .click(function() {
                         base.player.fullscreen();
                         return false;
                 });
-            }
+            //}
             
-            base.controls.pause = $("<a class=\"pause\" style=\"display: none\"><img src=\"" + base.options.assetPath + "pause_button" + imgSuffix + "\" alt=\"pause\"></a>")
+            base.controls.pause = $("<a class=\"pause\" style=\"display: none\">pause</a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.pause();
                     return false;
                 });
             
-            base.controls.rewind = $("<a class=\"rewind\"><img src=\"" + base.options.assetPath + "rewind_button" + imgSuffix + "\" alt=\"rewind\"></a>")
+            base.controls.rewind = $("<a class=\"rewind\">rewind</a>")
                 .appendTo(div)
                 .click(function() {
                     base.player.seek(0.1); // setting to zero breaks iOS 3.2
