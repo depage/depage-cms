@@ -1,4 +1,4 @@
-    /**
+/**
  * @require framework/shared/jquery-1.4.2.js
  * @require framework/shared/depage-jquery-plugins/depage-flash.js
  * @require framework/shared/depage-jquery-plugins/depage-browser.js
@@ -12,6 +12,10 @@
  * @author Ben Wallis
  */
 ;(function($){
+    "use strict";
+    /*jslint browser: true*/
+    /*global $:false */
+    
     if(!$.depage){
         $.depage = {};
     }
@@ -55,9 +59,10 @@
         base.$el.data("depage.player", base);
         
         // cache selectors
-        var video = $('video', base.$el)[0];
-        var $video = $(video);
-        var $indicator = $("a.indicator", base.$el);
+        var $video = $('video', base.$el);
+        var video = $video[0];
+        //var $indicator = $("a.indicator", base.$el);
+        var $indicator = null;
         
         var $wrapper = null;
         
@@ -96,14 +101,17 @@
             base.options.playerId = base.options.playerId + index;
             
             $.depage.player.instances[base.options.playerId] = base;
-            
+
+            // wrap video
+            base.wrap();
+
             // listen to key events
             $(document).bind('keypress', function(e){
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
                 }
-                switch (parseInt(e.which || e.keyCode)) {
+                switch (parseInt(e.which || e.keyCode, 10)) {
                     case 32 : // spacebar
                         if (playing) {
                             base.player.pause();
@@ -125,7 +133,7 @@
                     // continue only if an input is not the focus
                     return true;
                 }
-                switch (parseInt(e.which || e.keyCode)) {
+                switch (parseInt(e.which || e.keyCode, 10)) {
                     case 39 : // cursor right
                         base.player.seek(base.player.currentTime + 10);
                         e.preventDefault();
@@ -188,15 +196,15 @@
             // support = { 'flash' : true }; 
             
             // determine the supported player mode - flash or html5
-            if ( support.h264 && $('source[type="video/mp4"]', video).length > 0
-                || support.ogg && $('source[type="video/ogg"]', video).length > 0
-                || support.webm && $('source[type="video/webm"]', video).length > 0) {
+            if ( support.h264 && $('source[type="video/mp4"]', video).length > 0 ||
+                support.ogg && $('source[type="video/ogg"]', video).length > 0 ||
+                support.webm && $('source[type="video/webm"]', video).length > 0) {
                 mode = 'html5';
+
                 base.player = video;
                 base.html5.setup();
             } else if (support.flash) {
                  mode = 'flash';
-                 base.overlay($video, $video.width(), $video.height());
                  
                  // setup flash player
                  base.player = { initialized: false };
@@ -207,11 +215,6 @@
                  if (typeof(preloadAttr) !== 'undefined' && preloadAttr == 'true') {
                      base.flash.insertPlayer();
                  }
-                 // autoplay
-                 var autoplayAttr = $video.attr('autoplay');
-                 if (typeof(autoplayAttr) !== 'undefined' && (autoplayAttr == 'true' || autoplayAttr == 'autoplay')) {
-                     base.player.play();
-                 }
                  
                  // TODO support for loop
             } else {
@@ -219,6 +222,13 @@
                 return false;
             }
             
+            // autoplay
+            var autoplayAttr = $video.attr('autoplay');
+            if (typeof(autoplayAttr) !== 'undefined' && (autoplayAttr == 'true' || autoplayAttr == 'autoplay')) {
+                base.player.play();
+            }
+            
+            $indicator = $("a.indicator", base.$el);
             $indicator.click(function() {
                 base.player.play();
                 return false;
@@ -293,8 +303,8 @@
                             loaded = video.buffered.end(video.buffered.length-1) / video.duration;
                         } 
                         // for browsers not supporting buffered.end (e.g., FF3.6 and Safari 5)
-                        else if (typeof(video.bytesTotal) !== 'undefined' && video.bytesTotal > 0
-                                && typeof(video.bufferedBytes) !== 'undefined') {
+                        else if (typeof(video.bytesTotal) !== 'undefined' && video.bytesTotal > 0 &&
+                                 typeof(video.bufferedBytes) !== 'undefined') {
                             loaded = video.bufferedBytes / video.bytesTotal;
                         }
                         
@@ -441,7 +451,7 @@
                     }
                     
                     // trigger onfullscreen event
-                    base.options.onFullscreen && base.options.onFullscreen();
+                    if (base.options.onFullscreen) base.options.onFullscreen();
                     
                     return false;
                 };
@@ -468,7 +478,7 @@
                     }
                     
                     $video.removeAttr('controls');
-                    base.options.onExitFullscreen && base.options.onExitFullscreen();
+                    if (base.options.onExitFullscreen) base.options.onExitFullscreen();
                     return false;
                 };
                 
@@ -535,8 +545,8 @@
                         
                         var caller = function() {
                             try {
-                                if (($.browser.msie && eval("window['" + base.options.playerId + "'].f" + code))
-                                         || eval("document['" + base.options.playerId + "'].f" + code)){
+                                if (($.browser.msie && eval("window['" + base.options.playerId + "'].f" + code)) ||
+                                         eval("document['" + base.options.playerId + "'].f" + code)) {
                                      clearInterval(defer);
                                 }
                             } catch (e) { }
@@ -601,7 +611,8 @@
                 });
                 
                 // use innerHTML for IE < 9 otherwise player breaks!!
-                $wrapper[0].innerHTML = html.plainhtml;
+                $(video).remove();
+                $wrapper[0].innerHTML += html.plainhtml;
                 
                 base.player.initialized = true;
                 
@@ -621,16 +632,13 @@
          * @return void
          */
         base.resize = function(toWidth, toHeight) {
+            return false;
             // get the player object
-            var $player = mode==='flash'
-                ? $('object', base.$el)
-                : $video;
+            var $player = (mode==='flash') ? $('object', base.$el) : $video;
             
             // note that if the ready state is 0 (when not preloaded we do not have dimensions)
             // fallback to element dom attributes
-            var ratio = mode==='flash' || $player[0].readyState === 0
-                ? $player[0].width / $player[0].height
-                : $player[0].videoWidth / $player[0].videoHeight;
+            var ratio = (mode==='flash' || $player[0].readyState === 0) ? $player[0].width / $player[0].height : $player[0].videoWidth / $player[0].videoHeight;
             
             // scale to outer div maintain constraints
             if (base.options.constrain && !isNaN(ratio)) {
@@ -648,27 +656,30 @@
                 var cropHeight = base.$el.height();
                 
                 if (cropWidth && cropHeight) {
-                    
-                    base.overlay($player, cropWidth, cropHeight);
-                    
                     // center video
+                    /*
                     $player
                        .css({ 
                             position: 'relative',
                             left: (cropWidth - toWidth) / 2,
                             top: (cropHeight - toHeight) / 2
                     });
+                    */
                 }
             }
             
             if (mode === 'flash') {
                 // resize by scaling wrapper
+                /*
                 $wrapper
                     .width(toWidth)
                     .height(toHeight);
+                    */
             } else {
+                /*
                 $player[0].width = toWidth;
                 $player[0].height = toHeight;
+                */
             }
             
             if (playing) {
@@ -677,9 +688,9 @@
         };
         // }}}
         
-        // {{{ Overlay()
+        // {{{ wrap()
         /**
-         * Overlay
+         * wrap
          * 
          * Adds an overlay container if not present.
          * Adds inline styling where provided.
@@ -692,24 +703,19 @@
          * 
          * @return void
          */
-        base.overlay = function($wrap, width, height, overflow) {
+        base.wrap = function() {
             var style = {};
             
-            if (width) {
-                style.width = width + 'px';
-            }
-            
-            if (height) {
-                style.height = height + 'px'; 
-            }
-            
-            if (true || overflow) {
-                style.overflow  = 'hidden';
-            };
+            style.overflow  = 'hidden';
             
             if (!$wrapper) {
-                $wrap.wrap('<div class="wrapper" />');
+                base.$el.find("video img").addClass("placeholder");
+
+                $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
+                //$("video img", base.$el).add($video).wrapAll('<div class="wrapper" />');
                 $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
+
+                $indicator = $wrapper.children("a.indicator").attr("href", "#play");
             }
             
             if (!$.isEmptyObject(style)) {
@@ -895,7 +901,7 @@
                         base.player.fullscreen();
                     });
                 
-                base.options.onExitFullscreen && base.options.onExitFullscreen();
+                if (base.options.onExitFullscreen) base.options.onExitFullscreen();
             };
             // }}}
         };
@@ -952,7 +958,6 @@
                         // TODO not firing in firefox!
                         if (e.pageX > 0) { // TODO HACK last drag event in chrome fires pageX = 0?
                             var position = (e.pageX - offset) / width * duration;
-                            // console.log(position);
                             base.player.seek(position);
                         }
                     });
@@ -961,7 +966,7 @@
                     // unbind drag
                     $(this).unbind('drag.seek');
                     return false;
-                });;
+                });
             
             base.controls.progress.appendTo(div);
             
@@ -1020,6 +1025,7 @@
          * @return void
          */
         base.play = function() {
+            $indicator = $("a.indicator", base.$el);
             $indicator.hide();
             
             if (mode == 'flash' ) {
@@ -1032,7 +1038,7 @@
                 base.controls.rewind.show();
             }
             
-            base.options.onPlay && base.options.onPlay();
+            if (base.options.onPlay) base.options.onPlay();
             
             playing = true;
         };
@@ -1045,6 +1051,7 @@
          * @return void
          */
         base.pause = function() {
+            $indicator = $("a.indicator", base.$el);
             $indicator.show();
             
             if (useCustomControls){
@@ -1053,7 +1060,7 @@
                 base.controls.rewind.show();
             }
             
-            base.options.onPause && base.options.onPause();
+            if (base.options.onPause) base.options.onPause();
             
             playing = false;
         };
@@ -1067,7 +1074,7 @@
          */
         base.end = function() {
             base.pause();
-            base.options.onEnd && base.options.onEnd();
+            if (base.options.onEnd) base.options.onEnd();
         };
         // }}}
         
@@ -1129,7 +1136,7 @@
         
         // Run initializer
         base.init();
-        
+
         // Build the video
         base.video();
         
