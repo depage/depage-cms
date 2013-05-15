@@ -309,7 +309,7 @@
                         }
                         
                         base.percentLoaded(loaded);
-                        
+
                         // last progress event not fired in all browsers
                         if ( !defer && loaded < 1 ) {
                             defer = setInterval(function(){ progress(); }, 1500);
@@ -345,7 +345,7 @@
                  * @return void
                  */
                 $video.bind("waiting", function(){
-                    base.html5.$buffer_image.show();
+                    base.html5.$buffering.show();
                 });
                 
                 /**
@@ -357,8 +357,8 @@
                  * 
                  * @return void
                  */
-                $video.bind("playing", function(){
-                    base.html5.$buffer_image.hide();
+                $video.bind("playing, seeked", function(){
+                    base.html5.$buffering.hide();
                 });
                 
                 // resize
@@ -631,6 +631,7 @@
          */
         base.resize = function(toWidth, toHeight) {
             return false;
+
             // get the player object
             var $player = (mode==='flash') ? $('object', base.$el) : $video;
             
@@ -789,6 +790,7 @@
                 padding: 0,
                 margin: 0
             });
+            base.$el.addClass("in-fullscreen");
             $wrapper.css({
                 width: "100%",
                 height: "100%"
@@ -802,8 +804,7 @@
                 .css({
                     position : 'absolute',
                     bottom : - $controls.height(),
-                    width : '100%',
-                    backgroundColor: '#fff'
+                    width : '100%'
                 })
                 // animate the controls on hover
                 // TODO 
@@ -911,6 +912,8 @@
                         base.player.fullscreen();
                     });
                 
+                base.$el.removeClass("in-fullscreen");
+
                 if (base.options.onExitFullscreen) base.options.onExitFullscreen();
             };
             // }}}
@@ -985,6 +988,13 @@
                     return false;
                 });
             
+            base.controls.pause = $("<a class=\"pause\" style=\"display: none\">pause</a>")
+                .appendTo(div)
+                .click(function() {
+                    base.player.pause();
+                    return false;
+                });
+            
             // NB fullscreen disabled for flash - should be handled internally by flash object
             //if (mode != "flash") {
                 base.controls.fullscreen = $("<a class=\"fullscreen\">fullscreen</a>")
@@ -994,13 +1004,6 @@
                         return false;
                 });
             //}
-            
-            base.controls.pause = $("<a class=\"pause\" style=\"display: none\">pause</a>")
-                .appendTo(div)
-                .click(function() {
-                    base.player.pause();
-                    return false;
-                });
             
             base.controls.rewind = $("<a class=\"rewind\">rewind</a>")
                 .appendTo(div)
@@ -1020,8 +1023,8 @@
             base.controls.time.appendTo(div);
             
             if (mode != "flash") {
-                base.html5.$buffer_image = $('<img class="buffer-image" />').attr('src', base.options.assetPath + 'buffering_indicator.gif').hide();
-                base.$el.append(base.html5.$buffer_image);
+                base.html5.$buffering = $('<span class="buffer-indicator">buffering</span>').hide();
+                base.$el.append(base.html5.$buffering);
             }
         };
         // }}}
@@ -1209,11 +1212,13 @@
      * @param assetPath - path to the asset-folder (with flash-player and images for buttons)
      * @param playerName - name of the flash swf
      * @param playerId
+     *
      * @param width - video width
      * @param height - video height
      * @param crop - crop this video when resizing
      * @param constrain - constrain dimensions of this video when resizing
      * @param debug - if set, the flash player will send console.log messages for his actions
+     * 
      * @param onPlay - pass callback function to trigger on play event
      * @param onPause - pass callback function to trigger on pause event
      * @param onEnd - pass callback function to trigger on end play event 

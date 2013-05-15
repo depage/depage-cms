@@ -1,12 +1,79 @@
-// {{{ text-shadow
+// {{{ mixin: text-shadow
 @mixin text-shadow($properties) {
     -webkit-text-shadow: $properties;
     -moz-text-shadow: $properties;
     text-shadow: $properties;
 }
 // }}}
+// {{{ mixin: depage-player-icon
+@mixin depage-player-icon() {
+    text-indent: -1000em;
+
+    &:before {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1em;
+        margin-top: -0.5em;
+        line-height: 1em;
+        font-family: 'depage-player';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        font-size: 1.5em;
+        text-align: center;
+        -webkit-font-smoothing: antialiased;
+        text-indent: 0;
+    }
+}
+// }}}
+// {{{ mixin: depage-player-icon-animation
+@-moz-keyframes playerspin {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes playerspin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@-o-keyframes playerspin {
+    from { -o-transform: rotate(0deg); }
+    to { -o-transform: rotate(360deg); }
+}
+@keyframes playerspin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+@mixin depage-player-icon-animation($name, $duration: 1000ms, $timing: linear, $iterations: infinite) {
+    -webkit-animation-name: $name;
+    -webkit-animation-duration: $duration;
+    -webkit-animation-timing-function: $timing;
+    -webkit-animation-iteration-count: $iterations;
+    -moz-animation-name: $name;
+    -moz-animation-duration: $duration;
+    -moz-animation-timing-function: $timing;
+    -moz-animation-iteration-count: $iterations;
+    -ms-animation-name: $name;
+    -ms-animation-duration: $duration;
+    -ms-animation-timing-function: $timing;
+    -ms-animation-iteration-count: $iterations;
+    -o-animation-name: $name;
+    -o-animation-duration: $duration;
+    -o-animation-timing-function: $timing;
+    -o-animation-iteration-count: $iterations;
+    animation-name: $name;
+    animation-duration: $duration;
+    animation-timing-function: $timing;
+    animation-iteration-count: $iterations;
+}
+// }}}
 
 @mixin depage-player($assetPath: "../fonts/", $buttonSize: 2.6em) {
+    // {{{ icon font
     @font-face {
         font-family: 'depage-player';
         src:url('#{$assetPath}depage-player.eot');
@@ -17,7 +84,9 @@
         font-weight: normal;
         font-style: normal;
     }
+    // }}}
 
+    // {{{ icons
     .icon-stop:before {
         content: "\e002";
     }
@@ -54,8 +123,9 @@
     .icon-contract-2:before {
         content: "\e00b";
     }
+    // }}}
 
-    /* {{{ video */
+    // {{{ video base
     .video {
         position: relative;
 
@@ -72,6 +142,9 @@
                 background: #000000;
             }
         }
+        a {
+            text-decoration: none;
+        }
         img,
         video,
         object {
@@ -84,25 +157,16 @@
             opacity: 0;
             //left: -100em;
         }
-        .indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 999;
-            width: 100%;
-            height: 100%;
-            min-height: 100% !important;
-            color: #666666;
-            color: #ffffff;
-
-            @include text-shadow(0 0 1em rgba(0, 0, 0, 0.5));
+    }
+    // }}}
+    // {{{ video icons
+    .video {
+        .indicator:before {
+            content: "\e000";
         }
-        .controls {
-            position: relative;
-            line-height: $buttonSize;
-            color: #666666;
+        .buffer-indicator:before {
+            content: "\e005";
         }
-        .indicator:before,
         .play:before {
             content: "\e000";
         }
@@ -115,6 +179,52 @@
         .fullscreen:before {
             content: "\e008";
         }
+    }
+    .video.in-fullscreen {
+        .fullscreen:before {
+            content: "\e009";
+        }
+    }
+    // }}}
+    // {{{ video indicators
+    .video {
+        .buffer-indicator,
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            min-height: 100% !important;
+            color: #666666;
+            color: #ffffff;
+            text-indent: -1000em;
+
+            @include text-shadow(0 0 1em rgba(0, 0, 0, 0.5));
+            @include depage-player-icon();
+
+        }
+        .indicator {
+            &:before {
+                font-size: 12em;
+            }
+        }
+        .buffer-indicator {
+            &:before {
+                font-size: 6em;
+            }
+
+            @include depage-player-icon-animation(playerspin);
+        }
+    }
+    // }}}
+    // {{{ video controls
+    .video .controls {
+        position: relative;
+        line-height: $buttonSize;
+        color: #666666;
+
         .play,
         .pause,
         .rewind,
@@ -122,10 +232,10 @@
         .time,
         .legend {
             display: block;
-            position: absolute;
-            top: 1em;
+            position: relative;
             z-index: 998;
             font-size: 1em;
+            float: left;
         }
         .play,
         .pause,
@@ -134,47 +244,8 @@
             cursor: pointer;
             width: $buttonSize;
             height: $buttonSize;
-        }
-        .play,
-        .pause,
-        .rewind,
-        .fullscreen,
-        .indicator {
-            text-indent: -1000em;
 
-            &:before {
-                position: absolute;
-                top: 50%;
-                left: 0;
-                width: 100%;
-                height: 1em;
-                margin-top: -0.5em;
-                line-height: 1em;
-                font-family: 'depage-player';
-                speak: none;
-                font-style: normal;
-                font-weight: normal;
-                font-variant: normal;
-                text-transform: none;
-                line-height: 1;
-                font-size: 1.5em;
-                text-align: center;
-                -webkit-font-smoothing: antialiased;
-                text-indent: 0;
-            }
-        }
-        .indicator:before {
-            font-size: 12em;
-        }
-        .play,
-        .pause {
-            left: 0;
-        }
-        .rewind {
-            left: $buttonSize * 2;
-        }
-        .fullscreen {
-            left: $buttonSize;
+            @include depage-player-icon();
         }
         .progress {
             position: relative;
@@ -200,22 +271,31 @@
                 background: #e3e3e3;
             }
         }
+        .time span,
+        .legend span {
+            line-height: 1.3em;
+            font-size: 1.1em;
+        }
         .time {
-            left: $buttonSize * 3;
-            padding-left: 1.0em;
+            padding: 0 1.0em;
+            white-space: nowrap;
         }
         .legend {
             position: relative;
-            left: $buttonSize * 3 + 9.5em;
             color: #000000;
             top: 0;
             padding-bottom: 1.5em;
+            padding-bottom: 0.5em;
+            float: none;
             z-index: 997;
-        }
-        .time span,
-        .legend span {
-            font-size: 1.1em;
+
+            span {
+                padding-top: $buttonSize * 0.2;
+                display: block;
+            }
         }
     }
-    /* }}} */
+    // }}}
 }
+
+/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
