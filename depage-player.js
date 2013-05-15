@@ -929,6 +929,9 @@
                 
                 // resize video
                 base.resize(base.$el.width(), base.$el.height());
+
+                // clear resize timeout
+                clearTimeout(resize_timeout); 
                 
                 // unbind control animations
                 // TODO control amimations
