@@ -68,6 +68,7 @@
         
         var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
         var playing = false;
+        var buffering = false;
         
         // use the build-in controls for iPhone and iPad
         var useCustomControls = !$.browser.iphone && !$.browser.ipad;
@@ -345,7 +346,33 @@
                  * @return void
                  */
                 $video.bind("waiting", function(){
+                    var rotate = function() {
+                        if (!playing) {
+                            return;
+                        }
+                        base.html5.$buffering.css({
+                            borderSpacing: 0
+                        }).animate({
+                            borderSpacing: 360
+                        }, {
+                            step: function(now, fx) {
+                                $(this).css({
+                                    '-webkit-transform': 'rotate('+now+'deg)',
+                                    '-moz-transform': 'rotate('+now+'deg)',
+                                    '-ms-transform': 'rotate('+now+'deg)',
+                                    '-o-transform': 'rotate('+now+'deg)',
+                                    'transform': 'rotate('+now+'deg)'
+                                });
+                            },
+                            complete: rotate,
+                            easing: "linear",
+                            duration: 1000
+                        });
+                    };
+
                     base.html5.$buffering.show();
+
+                    rotate();
                 });
                 
                 /**
@@ -357,7 +384,12 @@
                  * 
                  * @return void
                  */
-                $video.bind("playing, seeked", function(){
+                $video.bind("playing", function(){
+                    // for other browsers
+                    base.html5.$buffering.hide();
+                });
+                $video.bind("seeked", function(){
+                    // for IE
                     base.html5.$buffering.hide();
                 });
                 

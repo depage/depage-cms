@@ -6,7 +6,7 @@
 }
 // }}}
 // {{{ mixin: depage-player-icon
-@mixin depage-player-icon() {
+@mixin depage-player-icon($fontSize: 1.5em) {
     text-indent: -1000em;
 
     &:before {
@@ -24,51 +24,11 @@
         font-variant: normal;
         text-transform: none;
         line-height: 1;
-        font-size: 1.5em;
+        font-size: $fontSize;
         text-align: center;
         -webkit-font-smoothing: antialiased;
         text-indent: 0;
     }
-}
-// }}}
-// {{{ mixin: depage-player-icon-animation
-@-moz-keyframes playerspin {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes playerspin {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
-}
-@-o-keyframes playerspin {
-    from { -o-transform: rotate(0deg); }
-    to { -o-transform: rotate(360deg); }
-}
-@keyframes playerspin {
-    from {transform:rotate(0deg);}
-    to {transform:rotate(360deg);}
-}
-@mixin depage-player-icon-animation($name, $duration: 1000ms, $timing: linear, $iterations: infinite) {
-    -webkit-animation-name: $name;
-    -webkit-animation-duration: $duration;
-    -webkit-animation-timing-function: $timing;
-    -webkit-animation-iteration-count: $iterations;
-    -moz-animation-name: $name;
-    -moz-animation-duration: $duration;
-    -moz-animation-timing-function: $timing;
-    -moz-animation-iteration-count: $iterations;
-    -ms-animation-name: $name;
-    -ms-animation-duration: $duration;
-    -ms-animation-timing-function: $timing;
-    -ms-animation-iteration-count: $iterations;
-    -o-animation-name: $name;
-    -o-animation-duration: $duration;
-    -o-animation-timing-function: $timing;
-    -o-animation-iteration-count: $iterations;
-    animation-name: $name;
-    animation-duration: $duration;
-    animation-timing-function: $timing;
-    animation-iteration-count: $iterations;
 }
 // }}}
 
@@ -214,8 +174,6 @@
             &:before {
                 font-size: 6em;
             }
-
-            @include depage-player-icon-animation(playerspin);
         }
     }
     // }}}
@@ -245,7 +203,7 @@
             width: $buttonSize;
             height: $buttonSize;
 
-            @include depage-player-icon();
+            @include depage-player-icon($buttonSize * 0.58);
         }
         .progress {
             position: relative;
