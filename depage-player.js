@@ -640,8 +640,10 @@
                     params : flashParams
                 });
                 
-                // use innerHTML for IE < 9 otherwise player breaks!!
+                // remove video tag
                 $(video).remove();
+
+                // use innerHTML for IE < 9 otherwise player breaks!!
                 $wrapper[0].innerHTML += html.plainhtml;
                 
                 base.player.initialized = true;
@@ -735,22 +737,13 @@
          * @return void
          */
         base.wrap = function() {
-            var style = {};
-            
-            style.overflow  = 'hidden';
-            
             if (!$wrapper) {
                 base.$el.find("video img").addClass("placeholder");
 
                 $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
-                //$("video img", base.$el).add($video).wrapAll('<div class="wrapper" />');
                 $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
 
                 $indicator = $wrapper.children("a.indicator").attr("href", "#play");
-            }
-            
-            if (!$.isEmptyObject(style)) {
-                $wrapper.css(style);
             }
         };
         // }}}
