@@ -67,6 +67,7 @@
         var $wrapper = null;
         
         var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
+        var currentTime = 0;
         var playing = false;
         var buffering = false;
         
@@ -589,7 +590,7 @@
                 /**
                  * Fullscreen
                  * 
-                 * Add a custom fullscreen acion for the flash player
+                 * Add a custom fullscreen action for the flash player
                  * 
                  * TODO disabled in favour of native full screen flash
                  * 
@@ -613,16 +614,11 @@
              * 
              * Insert the flash object for the player using the depage flash plugin.
              * 
-             * Overwrites the video and placeholder image.
+             * Removes the video.
              * 
              * @return void
              */
             insertPlayer : function() {
-                // get absolute url from source attribute with mp4-type
-                var $link = $("<a href=\"" + $('source[type="video/mp4"]', video).attr("src") + "\"></a>").appendTo("body");
-                var url = $link[0].toString();
-                $link.remove();
-                
                 var flashParams = {
                     rand: Math.random(),
                     id : base.options.playerId
@@ -647,8 +643,45 @@
                 $wrapper[0].innerHTML += html.plainhtml;
                 
                 base.player.initialized = true;
+            },
+            // }}}
+            
+            // {{{ flash.initialize()
+            /**
+             * Initializes Flash Player
+             * 
+             * tells flash player to load video 
+             * 
+             * @return void
+             */
+            initialize : function() {
+                // get absolute url from source attribute with mp4-type
+                var $link = $("<a href=\"" + $('source[type="video/mp4"]', video).attr("src") + "\"></a>").appendTo("body");
+                var url = $link[0].toString();
+                $link.remove();
                 
                 base.player.load(url);
+            },
+            // }}}
+            
+            // {{{ flash.loaded()
+            /**
+             * Called when video has been loaded
+             * 
+             * tells flash player to play video and seek to current position
+             * 
+             * @return void
+             */
+            loaded : function() {
+                console.log("video loaded in flash");
+                if (playing) {
+                    console.log("start playing");
+                    base.player.play();
+                }
+                if (currentTime !== 0) {
+                    console.log("seeking to " + currentTime);
+                    base.player.seek(currentTime);
+                }
             }
             // }}}
         };
@@ -699,20 +732,6 @@
                     });
                     */
                 }
-            }
-            
-            if (mode === 'flash') {
-                // resize by scaling wrapper
-                /*
-                $wrapper
-                    .width(toWidth)
-                    .height(toHeight);
-                    */
-            } else {
-                /*
-                $player[0].width = toWidth;
-                $player[0].height = toHeight;
-                */
             }
             
             if (playing) {
@@ -766,7 +785,7 @@
             var $controls = $('.controls', base.$el);
             var $button = $('.fullscreen', base.$el);
             
-            var $background = $('#fullscreen-background');
+            var $background = $('#depage-player-fullscreen-background');
             if (!$background.length) {
                 $background = $('<div id="depage-player-fullscreen-background" />').css({
                     'z-index' : '1001',
@@ -807,7 +826,7 @@
             // resize container and position absolutely
             base.$el.css({
                 zIndex : '1002',
-                position : 'fixed',
+                //position : 'fixed',
                 top : 0,
                 left : 0,
                 width : screenWidth,
@@ -1123,9 +1142,10 @@
          * 
          * @return void
          */        
-        base.setCurrentTime = function(currentTime) {
-            base.controls.current.html(base.floatToTime(currentTime) + "/");
-            base.controls.position.width(Math.min(currentTime / duration * 100, 100) + "%");
+        base.setCurrentTime = function(newTime) {
+            currentTime = newTime;
+            base.controls.current.html(base.floatToTime(newTime) + "/");
+            base.controls.position.width(Math.min(newTime / duration * 100, 100) + "%");
         };
         // }}}
         
@@ -1199,7 +1219,7 @@
         instance.player[action] = value;
         
         switch (action) {
-            case "paused" : 
+            case "paused": 
                 if (instance.player.paused){
                     instance.pause();
                 } else {
@@ -1207,16 +1227,26 @@
                 }
                 break;
                 
-            case "currentTime" :
+            case "currentTime":
                 instance.setCurrentTime(instance.player.currentTime);
                 break;
                 
-            case "percentLoaded" :
+            case "percentLoaded":
                 instance.percentLoaded(instance.player.percentLoaded);
                 break;
                 
-            case "duration" :
+            case "duration":
                 instance.duration();
+                break;
+
+            case "initialized":
+                // flash player got initialized or reinitialized
+                instance.flash.initialize();
+                break;
+
+            case "loaded":
+                // flash player got initialized or reinitialized
+                instance.flash.loaded();
                 break;
         }
     };
