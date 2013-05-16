@@ -672,14 +672,12 @@
              * 
              * @return void
              */
-            loaded : function() {
-                console.log("video loaded in flash");
+            loaded : function(firstSeekPoint) {
                 if (playing) {
-                    console.log("start playing");
                     base.player.play();
                 }
-                if (currentTime !== 0) {
-                    console.log("seeking to " + currentTime);
+                if (currentTime > firstSeekPoint) {
+                    // don't seek before first seekpoint, or the flash player will reload the video
                     base.player.seek(currentTime);
                 }
             }
@@ -1246,7 +1244,7 @@
 
             case "loaded":
                 // flash player got initialized or reinitialized
-                instance.flash.loaded();
+                instance.flash.loaded(value);
                 break;
         }
     };
