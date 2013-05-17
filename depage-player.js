@@ -202,7 +202,7 @@
             var support = base.videoSupport();
             
             // SET TO DEBUG FLASH MODE
-            support = { 'flash' : true }; 
+            //support = { 'flash' : true }; 
             
             // determine the supported player mode - flash or html5
             if ( support.h264 && $('source[type="video/mp4"]', video).length > 0 ||
@@ -402,10 +402,8 @@
                 });
                 
                 // resize
-                if (useCustomControls && (base.options.width != video.videoWidth || base.options.height != video.videoHeight)) {
-                     var height = base.options.height || base.$el.height();
-                     var width = base.options.width || base.$el.width();
-                     base.resize(width, height);
+                if (useCustomControls) {
+                     base.resize();
                 }
                 
                 /**
@@ -437,7 +435,6 @@
                  */
                 base.player.fullscreen = function(){
                     // start playback on fullscreen
-                    base.play();
                     base.player.play();
                     
                     var native_fullscreen_support = false;
@@ -701,15 +698,15 @@
          * 
          * @return void
          */
-        base.resize = function(toWidth, toHeight) {
-            return false;
-
+        base.resize = function() {
             // get the player object
             var $player = (mode==='flash') ? $('object', base.$el) : $video;
             
             // note that if the ready state is 0 (when not preloaded we do not have dimensions)
             // fallback to element dom attributes
-            var ratio = (mode==='flash' || $player[0].readyState === 0) ? $player[0].width / $player[0].height : $player[0].videoWidth / $player[0].videoHeight;
+            var ratio = (mode==='flash' || $player[0].readyState === 0) ? 16 / 9 : $player[0].videoWidth / $player[0].videoHeight;
+            var toWidth = $wrapper.width();
+            var toHeight = $wrapper.height();
             
             // scale to outer div maintain constraints
             if (base.options.constrain && !isNaN(ratio)) {
@@ -719,28 +716,25 @@
                     toHeight = Math.ceil(toWidth / ratio);
                 }
             }
-            
+
             // crop to wrapper
             if (mode==='html5' && base.options.crop){
+                console.log("cropping", toWidth, toHeight);
                 
                 var cropWidth = base.$el.width();
                 var cropHeight = base.$el.height();
-                
+
                 if (cropWidth && cropHeight) {
                     // center video
-                    /*
                     $player
-                       .css({ 
-                            position: 'relative',
+                        .css({ 
+                            position: "absolute",
                             left: (cropWidth - toWidth) / 2,
-                            top: (cropHeight - toHeight) / 2
+                            top: (cropHeight - toHeight) / 2,
+                            width: toWidth,
+                            height: toHeight
                     });
-                    */
                 }
-            }
-            
-            if (playing) {
-                base.player.play();
             }
         };
         // }}}
@@ -790,7 +784,6 @@
                 enterFullscreenFallback();
 
                 base.player.play();
-                $window.trigger("resize.fullscreen");
             } else {
                 exitFullscreenFallback();
             }
@@ -914,6 +907,8 @@
                 padding: 0,
                 margin: 0
             });
+
+            base.resize();
         };
         // }}}
         // {{{ exitFullscreenFallback()
@@ -972,7 +967,7 @@
             */
             
             // resize video
-            base.resize(base.$el.width(), base.$el.height());
+            base.resize();
 
             // unbind control animations
             // TODO control amimations
@@ -1094,7 +1089,7 @@
             base.controls.current = $("<span class=\"current\">00:00/</span>")
                 .appendTo(base.controls.time);
             
-            base.controls.duration = $("<span class=\"duration\">" + base.floatToTime(duration) + "</span>")
+            base.controls.duration = $("<span class=\"duration\">" + floatToTime(duration) + "</span>")
                 .appendTo(base.controls.time);
             
             base.controls.time.appendTo(div);
@@ -1174,7 +1169,7 @@
          */        
         base.setCurrentTime = function(newTime) {
             currentTime = newTime;
-            base.controls.current.html(base.floatToTime(newTime) + "/");
+            base.controls.current.html(floatToTime(newTime) + "/");
             base.controls.position.width(Math.min(newTime / duration * 100, 100) + "%");
         };
         // }}}
@@ -1201,7 +1196,7 @@
          * 
          */
         base.duration = function(duration) {
-            base.controls.duration.html(base.floatToTime(duration));
+            base.controls.duration.html(floatToTime(duration));
         };
         // }}}
         
@@ -1215,7 +1210,7 @@
          * 
          * @return string - "MM:SS"
          */
-        base.floatToTime = function(value) {
+        var floatToTime = function(value) {
             var mins = String("00" + Math.floor(value / 60)).slice(-2);
             var secs = String("00" + Math.floor(value) % 60).slice(-2);
            
