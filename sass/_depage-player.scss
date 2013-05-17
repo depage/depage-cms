@@ -255,6 +255,20 @@
         }
     }
     // }}}
+    // {{{ video fullscreen
+    #depage-player-fullscreen-background {
+        z-index: 1001;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
+    }
+    .video.in-fullscreen {
+        position: fixed;
+    }
+    // }}}
 }
 
 /* vim:set ft=scss sw=4 sts=4 fdm=marker : */

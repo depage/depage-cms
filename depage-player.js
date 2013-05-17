@@ -70,12 +70,17 @@
         var currentTime = 0;
         var playing = false;
         var buffering = false;
+
+        // reference for defering fullscreen event
+        var resize_timeout = null;
         
         // use the build-in controls for iPhone and iPad
         var useCustomControls = !$.browser.iphone && !$.browser.ipad;
         
         // set the player mode - 'html5' / 'flash' / false (fallback)
         var mode = false;
+
+        var isInFullscreen = false;
 
         // variable used to save element styles when using the fallback fullscreen
         var styles_cache = null;
@@ -195,7 +200,7 @@
             var support = base.videoSupport();
             
             // SET TO DEBUG FLASH MODE
-            // support = { 'flash' : true }; 
+            support = { 'flash' : true }; 
             
             // determine the supported player mode - flash or html5
             if ( support.h264 && $('source[type="video/mp4"]', video).length > 0 ||
@@ -779,21 +784,35 @@
          * @return void
          */
         base.fullscreen = function () {
+            if (!isInFullscreen) {
+                enterFullscreenFallback();
+
+                base.player.play();
+                $window.trigger("resize.fullscreen");
+            } else {
+                exitFullscreenFallback();
+            }
+            
+            isInFullscreen = !isInFullscreen;
+        };
+        // }}}
+            
+        // {{{ enterFullscreenFallback()
+        /**
+         * Enter Fullscreen
+         * 
+         * FALLBACK for non native fullscreen support
+         * 
+         * @return void
+         */
+         var enterFullscreenFallback = function() {
             var $body = $('body');
             var $controls = $('.controls', base.$el);
             var $button = $('.fullscreen', base.$el);
-            
             var $background = $('#depage-player-fullscreen-background');
+
             if (!$background.length) {
-                $background = $('<div id="depage-player-fullscreen-background" />').css({
-                    'z-index' : '1001',
-                    'width' : "100%",
-                    'height' : "100%",
-                    'position' : 'fixed',
-                    'top' : 0,
-                    'left' : 0,
-                    'background-color' : '#fff'
-                });
+                $background = $("<div id=\"depage-player-fullscreen-background\" />");
                 $body.prepend($background);
             }
             
@@ -817,29 +836,14 @@
                 'overflow': mode==='html5' ? 'hidden' : ''
             });
             
-            // get screen dimensions
-            var screenWidth = $window.width();
-            var screenHeight = $window.height();
-            
-            // resize container and position absolutely
-            base.$el.css({
-                zIndex : '1002',
-                //position : 'fixed',
-                top : 0,
-                left : 0,
-                width : screenWidth,
-                height : screenHeight - $controls.height(),
-                padding: 0,
-                margin: 0
-            });
             base.$el.addClass("in-fullscreen");
+
+            resizeFullscreenFallback();
+
             $wrapper.css({
                 width: "100%",
                 height: "100%"
             });
-            
-            // resize video
-            //base.resize(screenWidth, screenHeight);
             
             // reposition controls
             $controls
@@ -864,104 +868,130 @@
             $(document).bind('keyup.fullscreen', function(e){
                 var key = e.which || e.keyCode;
                 if (key == 27) {
-                    exitFullscreen();
+                    exitFullscreenFallback();
                     $(document).unbind('keyup.fullscreen');
                 }
             });
             
-            // change button click handler behaviour to exit fullscreen
-            $button
-                .unbind('click')
-                .click(function(){
-                    exitFullscreen();
-                });
-            
-            var resize_timeout = null;
             // bind to window resize event and re-init fullscreen
             $window.bind('resize.fullscreen', function(){
                 clearTimeout(resize_timeout); // nb - some browsers file resize contiously wait 500ms
                 resize_timeout = setTimeout(function() {
-                    base.fullscreen(styles_cache);
+                    resizeFullscreenFallback();
                 }, 500);
             });
 
-            base.player.play();
-            
-            // {{{ exitFullscreen()
-            /**
-             * Exit Fullscreen
-             * 
-             * FALLBACK for non native fullscreen support
-             * 
-             * @param styles_chache - {controls: {...}, body {...}} - styles to apply (or restore) to elements on exit
-             * 
-             * @return void
-             */
-            var exitFullscreen = function() {
-                // remove styles
-                $body.removeAttr('style');
-                $controls.removeAttr('style');
-                base.$el.removeAttr('style');
-                
-                // remove background
-                $background.remove();
-                
-                // restore cached css attributes
-                if (styles_cache) {
-                    if (typeof(styles_cache.body) !== 'undefined'){
-                         $body.css(styles_cache.body);
-                    }
-                    
-                    if (typeof(styles_cache.controls) !== 'undefined'){
-                         $controls.css(styles_cache.controls);
-                    }
-                    
-                    if (typeof(styles_cache.el) !== 'undefined'){
-                         base.$el.css(styles_cache.el);
-                    }
+        };
+        // }}}
+        // {{{ resizeFullscreenFallback()
+        /**
+         * Resize Fullscreen
+         * 
+         * FALLBACK for non native fullscreen support
+         * 
+         * @return void
+         */
+         var resizeFullscreenFallback = function() {
+            var $body = $('body');
+            var $controls = $('.controls', base.$el);
+            var $button = $('.fullscreen', base.$el);
+            var $background = $('#depage-player-fullscreen-background');
 
-                    if (typeof(styles_cache.wrapper) !== 'undefined'){
-                         $wrapper.css(styles_cache.wrapper);
-                    }
+            // get screen dimensions
+            var screenWidth = $window.width();
+            var screenHeight = $window.height();
+            
+            // resize container and position absolutely
+            base.$el.css({
+                zIndex : '1002',
+                //position : 'fixed',
+                top : 0,
+                left : 0,
+                width : screenWidth,
+                height : screenHeight - $controls.height(),
+                padding: 0,
+                margin: 0
+            });
+        };
+        // }}}
+        // {{{ exitFullscreenFallback()
+        /**
+         * Exit Fullscreen
+         * 
+         * FALLBACK for non native fullscreen support
+         * 
+         * @param styles_chache - {controls: {...}, body {...}} - styles to apply (or restore) to elements on exit
+         * 
+         * @return void
+         */
+        var exitFullscreenFallback = function() {
+            var $body = $('body');
+            var $controls = $('.controls', base.$el);
+            var $button = $('.fullscreen', base.$el);
+            var $background = $('#depage-player-fullscreen-background');
+
+            // remove styles
+            $body.removeAttr('style');
+            $controls.removeAttr('style');
+            base.$el.removeAttr('style');
+            
+            // remove background
+            $background.remove();
+            
+            // restore cached css attributes
+            if (styles_cache) {
+                if (typeof(styles_cache.body) !== 'undefined'){
+                        $body.css(styles_cache.body);
                 }
                 
-                // clear styles cache (prevents issues with resizing)
-                styles_cache = null;
+                if (typeof(styles_cache.controls) !== 'undefined'){
+                        $controls.css(styles_cache.controls);
+                }
                 
-                // make sure opacity is restored
-                // TODO animate fade in / out of controls
-                /*
-                $controls.css({
-                    'opactity': '0',
-                    'filter': 'alpha(opacity=0)' // IE < 8
+                if (typeof(styles_cache.el) !== 'undefined'){
+                        base.$el.css(styles_cache.el);
+                }
+
+                if (typeof(styles_cache.wrapper) !== 'undefined'){
+                        $wrapper.css(styles_cache.wrapper);
+                }
+            }
+            
+            // clear styles cache (prevents issues with resizing)
+            styles_cache = null;
+            
+            // make sure opacity is restored
+            // TODO animate fade in / out of controls
+            /*
+            $controls.css({
+                'opactity': '0',
+                'filter': 'alpha(opacity=0)' // IE < 8
+            });
+            */
+            
+            // resize video
+            base.resize(base.$el.width(), base.$el.height());
+
+            // unbind control animations
+            // TODO control amimations
+            // $controls.unbind('mouseover.fullscreen');
+            
+            // unbind resize
+            $window.unbind('resize.fullscreen');
+            
+            // clear resize timeout
+            clearTimeout(resize_timeout); 
+            
+            // restore button click handler
+            $button
+                .unbind()
+                .click(function(){
+                    base.player.fullscreen();
                 });
-                */
-                
-                // resize video
-                base.resize(base.$el.width(), base.$el.height());
+            
+            base.$el.removeClass("in-fullscreen");
 
-                // clear resize timeout
-                clearTimeout(resize_timeout); 
-                
-                // unbind control animations
-                // TODO control amimations
-                // $controls.unbind('mouseover.fullscreen');
-                
-                // unbind resize
-                $window.unbind('resize.fullscreen');
-                
-                // restore button click handler
-                $button
-                    .unbind()
-                    .click(function(){
-                        base.player.fullscreen();
-                    });
-                
-                base.$el.removeClass("in-fullscreen");
-
-                if (base.options.onExitFullscreen) base.options.onExitFullscreen();
-            };
-            // }}}
+            if (base.options.onExitFullscreen) base.options.onExitFullscreen();
         };
         // }}}
         
