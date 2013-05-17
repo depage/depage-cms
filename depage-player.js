@@ -7,7 +7,9 @@
  * 
  * Adds a custom video player, using either HTML5 video if available, or falling back to flash if not.
  * 
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * @todo look into seekable to get better seeking directly to keyframes, also possible with the flash fallback
  * 
  * @author Ben Wallis
  */
