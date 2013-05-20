@@ -115,6 +115,7 @@
             base.wrap();
 
             // listen to key events
+            // @todo choose current instance for events when more than one player on page
             $(document).bind('keypress', function(e){
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
