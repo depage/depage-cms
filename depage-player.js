@@ -1106,9 +1106,9 @@
             $indicator = $("a.indicator", base.$el);
             $indicator.hide();
             
-            if (mode == 'flash' ) {
-                $('#poster', base.$el).hide();
-            }
+            $(".placeholder", base.$el).css({
+                visibility: "hidden"
+            });
             
             if (useCustomControls){
                 base.controls.play.hide();
