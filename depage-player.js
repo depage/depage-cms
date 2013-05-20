@@ -804,6 +804,8 @@
             if (!$background.length) {
                 $background = $("<div id=\"depage-player-fullscreen-background\" />");
                 $body.prepend($background);
+            } else {
+                $background.show();
             }
             
             // save original css attributes if none cached
@@ -822,8 +824,7 @@
             $body.css( {
                 'margin':0,
                 'padding':0,
-                // body overflow in FF causes flash to reframe
-                'overflow': mode==='html5' ? 'hidden' : ''
+                'overflow': "hidden"
             });
             
             base.$el.addClass("in-fullscreen");
@@ -839,6 +840,7 @@
             $controls
                 .css({
                     position : 'absolute',
+                    zIndex : 1003,
                     bottom : - $controls.height(),
                     width : '100%'
                 })
@@ -928,7 +930,7 @@
             base.$el.removeAttr('style');
             
             // remove background
-            $background.remove();
+            $background.hide();
             
             // restore cached css attributes
             if (styles_cache) {
