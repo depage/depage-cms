@@ -68,7 +68,7 @@
         
         var $wrapper = null;
         
-        var duration = video.currentTime || $("a", base.$el).attr("data-video-duration");
+        var duration = video.currentTime || base.$el.attr("data-video-duration");
         var currentTime = 0;
         var playing = false;
         var buffering = false;
@@ -238,7 +238,7 @@
             }
             
             $indicator = $("a.indicator", base.$el);
-            $indicator.click(function() {
+            $indicator.bind("click touchstart", function() {
                 base.player.play();
                 return false;
             });
@@ -248,7 +248,7 @@
                 base.addControls(div);
             } else {
                 $indicator.remove();
-                $video.attr("controls", "true");
+                $video.attr("controls", true);
             }
             base.addLegend(div);
             div.appendTo(base.$el);
@@ -266,143 +266,135 @@
              * @return void
              */
             setup : function() {
-                // attribute fixes issue with IE9 poster not displaying - add in html
-                // $video.attr('preload', 'none'); 
-                
-                $video.bind("play", function(){
-                    base.play();
-                });
-                
-                $video.bind("playing", function(){
-                    // @TODO commented because this was firing base.play() twice ?
-                    // @TODO uncommented because of problems in firefox when video finished playing
-                    base.play();
-                });
-                
-                $video.bind("pause", function(){
-                    base.pause();
-                });
-                
-                $video.bind("durationchange", function(){
-                    base.duration(this.duration);
-                });
-                
-                $video.bind("timeupdate", function(){
-                    base.setCurrentTime(this.currentTime);
-                });
-                
-                $video.bind("ended", function(){
-                    base.end();
-                });
-                
-                /**
-                 * HTML5 Progress Event
-                 * 
-                 * Fired when buffering
-                 * 
-                 * TODO doesn't always seem to fire?
-                 * 
-                 * @return false
-                 */
-                $video.bind("progress", function(){
-                    var defer = null;
-                    var progress = function(){
-                        var loaded = 0;
-                        if (video.buffered && video.buffered.length > 0 && video.buffered.end && video.duration) {
-                            loaded = video.buffered.end(video.buffered.length-1) / video.duration;
-                        } 
-                        // for browsers not supporting buffered.end (e.g., FF3.6 and Safari 5)
-                        else if (typeof(video.bytesTotal) !== 'undefined' && video.bytesTotal > 0 &&
-                                 typeof(video.bufferedBytes) !== 'undefined') {
-                            loaded = video.bufferedBytes / video.bytesTotal;
-                        }
-                        
-                        base.percentLoaded(loaded);
-
-                        // last progress event not fired in all browsers
-                        if ( !defer && loaded < 1 ) {
-                            defer = setInterval(function(){ progress(); }, 1500);
-                        }
-                        else if (loaded >= 1) {
-                             clearInterval(defer);
-                        }
-                    };
-                    
-                    progress();
-                });
-                
-                /**
-                 * HTML5 Loaded Data Event
-                 * 
-                 * Fired when the player is fully loaded
-                 * 
-                 * TODO doesn't always seem to fire?
-                 * 
-                 * @return false
-                 */
-                $video.bind("loadeddata", function(){
-                    base.percentLoaded(1);
-                });
-                
-                /**
-                 * HTML5 Waiting Event
-                 * 
-                 * Fired when the player stops becasue the next frame is not buffered.
-                 * 
-                 * Display a buffering image if available.
-                 * 
-                 * @return void
-                 */
-                $video.bind("waiting", function(){
-                    var rotate = function() {
-                        if (!playing) {
-                            return;
-                        }
-                        base.html5.$buffering.css({
-                            borderSpacing: 0
-                        }).animate({
-                            borderSpacing: 360
-                        }, {
-                            step: function(now, fx) {
-                                $(this).css({
-                                    '-webkit-transform': 'rotate('+now+'deg)',
-                                    '-moz-transform': 'rotate('+now+'deg)',
-                                    '-ms-transform': 'rotate('+now+'deg)',
-                                    '-o-transform': 'rotate('+now+'deg)',
-                                    'transform': 'rotate('+now+'deg)'
-                                });
-                            },
-                            complete: rotate,
-                            easing: "linear",
-                            duration: 1000
-                        });
-                    };
-
-                    base.html5.$buffering.show();
-
-                    rotate();
-                });
-                
-                /**
-                 * HTML5 Playing Event
-                 * 
-                 * Fired when the playback starts after pausing or buffering.
-                 * 
-                 * Clear the buffering image.
-                 * 
-                 * @return void
-                 */
-                $video.bind("playing", function(){
-                    // for other browsers
-                    base.html5.$buffering.hide();
-                });
-                $video.bind("seeked", function(){
-                    // for IE
-                    base.html5.$buffering.hide();
-                });
-                
-                // resize
                 if (useCustomControls) {
+                    // attribute fixes issue with IE9 poster not displaying - add in html
+                    // $video.attr('preload', 'none'); 
+                    
+                    $video.bind("play", base.play);
+
+                    $video.bind("canplay", base.resize);
+                    
+                    $video.bind("playing", base.play);
+                    
+                    $video.bind("pause", base.pause);
+                    
+                    $video.bind("durationchange", function(){
+                        base.duration(this.duration);
+                    });
+                    
+                    $video.bind("timeupdate", function(){
+                        base.setCurrentTime(this.currentTime);
+                    });
+                    
+                    $video.bind("ended", base.end);
+                    
+                    /**
+                    * HTML5 Progress Event
+                    * 
+                    * Fired when buffering
+                    * 
+                    * TODO doesn't always seem to fire?
+                    * 
+                    * @return false
+                    */
+                    $video.bind("progress", function(){
+                        var defer = null;
+                        var progress = function(){
+                            var loaded = 0;
+                            if (video.buffered && video.buffered.length > 0 && video.buffered.end && video.duration) {
+                                loaded = video.buffered.end(video.buffered.length-1) / video.duration;
+                            } 
+                            // for browsers not supporting buffered.end (e.g., FF3.6 and Safari 5)
+                            else if (typeof(video.bytesTotal) !== 'undefined' && video.bytesTotal > 0 &&
+                                    typeof(video.bufferedBytes) !== 'undefined') {
+                                loaded = video.bufferedBytes / video.bytesTotal;
+                            }
+                            
+                            base.percentLoaded(loaded);
+
+                            // last progress event not fired in all browsers
+                            if ( !defer && loaded < 1 ) {
+                                defer = setInterval(function(){ progress(); }, 1500);
+                            }
+                            else if (loaded >= 1) {
+                                clearInterval(defer);
+                            }
+                        };
+                        
+                        progress();
+                    });
+                    
+                    /**
+                    * HTML5 Loaded Data Event
+                    * 
+                    * Fired when the player is fully loaded
+                    * 
+                    * TODO doesn't always seem to fire?
+                    * 
+                    * @return false
+                    */
+                    $video.bind("loadeddata", function(){
+                        base.percentLoaded(1);
+                    });
+                    
+                    /**
+                    * HTML5 Waiting Event
+                    * 
+                    * Fired when the player stops becasue the next frame is not buffered.
+                    * 
+                    * Display a buffering image if available.
+                    * 
+                    * @return void
+                    */
+                    $video.bind("waiting", function(){
+                        var rotate = function() {
+                            if (!playing) {
+                                return;
+                            }
+                            base.html5.$buffering.css({
+                                borderSpacing: 0
+                            }).animate({
+                                borderSpacing: 360
+                            }, {
+                                step: function(now, fx) {
+                                    $(this).css({
+                                        '-webkit-transform': 'rotate('+now+'deg)',
+                                        '-moz-transform': 'rotate('+now+'deg)',
+                                        '-ms-transform': 'rotate('+now+'deg)',
+                                        '-o-transform': 'rotate('+now+'deg)',
+                                        'transform': 'rotate('+now+'deg)'
+                                    });
+                                },
+                                complete: rotate,
+                                easing: "linear",
+                                duration: 1000
+                            });
+                        };
+
+                        base.html5.$buffering.show();
+
+                        rotate();
+                    });
+                    
+                    /**
+                    * HTML5 Playing Event
+                    * 
+                    * Fired when the playback starts after pausing or buffering.
+                    * 
+                    * Clear the buffering image.
+                    * 
+                    * @return void
+                    */
+                    $video.bind("playing", function(){
+                        // for other browsers
+                        base.html5.$buffering.hide();
+                    });
+                    $video.bind("seeked", function(){
+                        // for IE
+                        base.html5.$buffering.hide();
+                    });
+                
+                    // resize
                      base.resize();
                 }
                 
@@ -466,7 +458,7 @@
                     
                     // make sure the native player controls are displayed when going full screen (n.b. not automatic in firefox)
                     if (native_fullscreen_support) {
-                        $video.attr('controls', 'controls');
+                        $video.attr('controls', true);
                         var is_fullscreen = true;
                         // bind to fullscreenchange event and clear up controls if exiting...
                         $(document).bind('fullscreenchange mozfullscreenchange webkitfullscreenchange', function(e) {
@@ -701,28 +693,31 @@
         base.resize = function() {
             // get the player object
             var $player = (mode==='flash') ? $('object', base.$el) : $video;
-            
-            // note that if the ready state is 0 (when not preloaded we do not have dimensions)
-            // fallback to element dom attributes
-            var ratio = (mode==='flash' || $player[0].readyState === 0) ? 16 / 9 : $player[0].videoWidth / $player[0].videoHeight;
-            var toWidth = $wrapper.width();
-            var toHeight = $wrapper.height();
-            
-            // scale to outer div maintain constraints
-            if (base.options.constrain && !isNaN(ratio)) {
-                if (toWidth / toHeight < ratio) {
-                    toWidth = Math.ceil(ratio * toHeight);
-                } else {
-                    toHeight = Math.ceil(toWidth / ratio);
-                }
-            }
 
             // crop to wrapper
             if (mode==='html5' && base.options.crop){
-                console.log("cropping", toWidth, toHeight);
-                
-                var cropWidth = base.$el.width();
-                var cropHeight = base.$el.height();
+                // note that if the ready state is 0 (when not preloaded we do not have dimensions)
+                // fallback to element dom attributes
+                var $placeholder = $(".placeholder", base.$el);
+                var ratio = (mode==='flash' || $player[0].readyState === 0) ? $placeholder.width() / $placeholder.height() : $player[0].videoWidth / $player[0].videoHeight;
+                var toWidth = $wrapper.width();
+                var toHeight = $wrapper.height();
+
+                if (toWidth === 0 || toHeight === 0 || $placeholder.width() === 0 || $placeholder.height() === 0) {
+                    $placeholder.bind("load.depage-player", base.resize);
+                    return;
+                }
+                // scale to outer div maintain constraints
+                if (base.options.constrain && !isNaN(ratio)) {
+                    if (toWidth / toHeight < ratio) {
+                        toWidth = Math.ceil(ratio * toHeight);
+                    } else {
+                        toHeight = Math.ceil(toWidth / ratio);
+                    }
+                }
+
+                var cropWidth = $wrapper.width();
+                var cropHeight = $wrapper.height();
 
                 if (cropWidth && cropHeight) {
                     // center video
@@ -755,7 +750,7 @@
          * @return void
          */
         base.wrap = function() {
-            if (!$wrapper) {
+            if (useCustomControls && !$wrapper) {
                 base.$el.find("video img").addClass("placeholder");
 
                 $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
@@ -1055,14 +1050,14 @@
             
             base.controls.play = $("<a class=\"play\">play</a>")
                 .appendTo(div)
-                .click(function() {
+                .bind("click touchstart", function() {
                     base.player.play();
                     return false;
                 });
             
             base.controls.pause = $("<a class=\"pause\" style=\"display: none\">pause</a>")
                 .appendTo(div)
-                .click(function() {
+                .bind("click touchstart", function() {
                     base.player.pause();
                     return false;
                 });
@@ -1071,7 +1066,7 @@
             //if (mode != "flash") {
                 base.controls.fullscreen = $("<a class=\"fullscreen\">fullscreen</a>")
                     .appendTo(div)
-                    .click(function() {
+                    .bind("click touchstart", function() {
                         base.player.fullscreen();
                         return false;
                 });
@@ -1079,7 +1074,7 @@
             
             base.controls.rewind = $("<a class=\"rewind\">rewind</a>")
                 .appendTo(div)
-                .click(function() {
+                .bind("click touchstart touchmove", function() {
                     base.player.seek(0.1); // setting to zero breaks iOS 3.2
                     return false;
                 });
