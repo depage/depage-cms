@@ -911,6 +911,7 @@
             // get screen dimensions
             var screenWidth = $window.width();
             var screenHeight = $window.height();
+            var controlsHeight = $controls.is(":visible") ? $controls.height() : 0;
             
             // resize container and position absolutely
             base.$el.css({
@@ -919,7 +920,7 @@
                 top : 0,
                 left : 0,
                 width : screenWidth,
-                height : screenHeight - $controls.height(),
+                height : screenHeight - controlsHeight,
                 padding: 0,
                 margin: 0
             });
