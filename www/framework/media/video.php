@@ -266,10 +266,10 @@ class video {
             throw new ffmpegException("Unsupported codec.");
         }
         
-        if (preg_match('/(Input|Stream) #0, (.\w+)/si', $result, $matches)) {
-            $info['format'] = $matches[2];
+        if (preg_match('/Input #0, (.\w+)/si', $result, $matches)) {
+            $info['format'] = $matches[1];
         } else {
-            throw new ffmpegException("Could not read file.");
+            //throw new ffmpegException("Could not read file.");
         }
         
         if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/si', $result, $matches)) {
