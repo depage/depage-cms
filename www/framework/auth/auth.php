@@ -11,6 +11,8 @@
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
 
 /**
