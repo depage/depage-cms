@@ -45,7 +45,7 @@
 }
 // }}}
 
-@mixin depage-player($assetPath: "../fonts/", $buttonSize: 2.6em) {
+@mixin depage-player($assetPath: "../fonts/", $buttonSize: 3em) {
     // {{{ icon font
     @font-face {
         font-family: 'depage-player';
@@ -96,29 +96,31 @@
     // {{{ video icons
     .video {
         .indicator:before {
-            content: "\e001";
-            //content: "\e00e";
+            content: "\25b6";
+            //content: "\25b7";
         }
         .buffer-indicator:before {
-            content: "\e014";
+            content: "\21ba";
         }
         .play:before {
-            content: "\e00d";
+            content: "\25b8";
         }
         .pause:before {
-            content: "\e010";
+            content: "\25a0";
         }
         .rewind:before {
-            content: "\e00c";
+            content: "\21e4";
         }
         .fullscreen:before {
-            content: "\e005";
-            //content: "\e00f";
+            //content: "\25ba";
+            content: "\25f9";
+            //content: "\25e5";
         }
     }
     .video.in-fullscreen {
         .fullscreen:before {
-            content: "\e012";
+            content: "\25fa";
+            //content: "\25e3";
         }
     }
     // }}}
@@ -172,7 +174,7 @@
             width: $buttonSize;
             height: $buttonSize;
 
-            @include depage-player-icon($buttonSize * 0.75);
+            @include depage-player-icon($buttonSize / 3 * 1.8);
         }
         .progress {
             position: relative;
