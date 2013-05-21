@@ -69,7 +69,7 @@
         
         var duration = video.currentTime || base.$el.attr("data-video-duration");
         var currentTime = 0;
-        var playing = false;
+        base.playing = false;
         var buffering = false;
 
         // reference for defering fullscreen event
@@ -109,6 +109,15 @@
             base.options.playerId = base.options.playerId + index;
             
             $.depage.player.instances[base.options.playerId] = base;
+            if (!$.depage.player.currentInstance) {
+                // make the first instance the current instance
+                $.depage.player.currentInstance = $.depage.player.instances[base.options.playerId];
+            }
+
+            base.$el.click( function() {
+                // clicking on the player makes it the current instance
+                $.depage.player.currentInstance = $.depage.player.instances[base.options.playerId];
+            });
 
             // wrap video
             base.wrap();
@@ -123,15 +132,15 @@
                 switch (parseInt(e.which || e.keyCode, 10)) {
                     case 32 : // spacebar
                     case 112 : // 'p' key
-                        if (playing) {
-                            base.player.pause();
+                        if ($.depage.player.currentInstance.playing) {
+                            $.depage.player.currentInstance.player.pause();
                         } else {
-                            base.player.play();
+                            $.depage.player.currentInstance.player.play();
                         }
                         e.preventDefault();
                         break;
                     case 102 : // 'f' key
-                        base.player.fullscreen();
+                        $.depage.player.currentInstance.player.fullscreen();
                         e.preventDefault();
                         break;
                 }
@@ -145,11 +154,11 @@
                 }
                 switch (parseInt(e.which || e.keyCode, 10)) {
                     case 39 : // cursor right
-                        base.player.seek(base.player.currentTime + 10);
+                        $.depage.player.currentInstance.player.seek(base.player.currentTime + 10);
                         e.preventDefault();
                         break;
                     case 37 : // cursor left
-                        base.player.seek(base.player.currentTime - 9);
+                        $.depage.player.currentInstance.player.seek(base.player.currentTime - 9);
                         e.preventDefault();
                         break;
                 }
@@ -241,14 +250,6 @@
             $indicator = $("a.indicator", base.$el);
             $indicator.bind("click touchstart", function() {
                 base.player.play();
-                return false;
-            });
-            base.$el.bind("click touchstart", function() {
-                if (!playing) {
-                    base.player.play();
-                } else {
-                    base.player.pause();
-                }
                 return false;
             });
             
@@ -359,7 +360,7 @@
                 */
                 $video.bind("waiting", function(){
                     var rotate = function() {
-                        if (!playing) {
+                        if (!base.playing) {
                             return;
                         }
                         base.html5.$buffering.css({
@@ -678,7 +679,7 @@
              * @return void
              */
             loaded : function(firstSeekPoint) {
-                if (playing) {
+                if (base.playing) {
                     base.player.play();
                 }
                 if (currentTime > firstSeekPoint) {
@@ -760,13 +761,17 @@
          */
         base.wrap = function() {
             if (useCustomControls && !$wrapper) {
-            //if (!$wrapper) {
                 base.$el.find("video img").addClass("placeholder");
 
                 $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
                 $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
 
                 $indicator = $wrapper.children("a.indicator").attr("href", "#play");
+
+                if (mode != "flash") {
+                    base.html5.$buffering = $('<span class="buffer-indicator">buffering</span>').hide();
+                    $wrapper.append(base.html5.$buffering);
+                }
             } else {
                 base.$el.find("video img").addClass("placeholder").prependTo(base.el);
             }
@@ -796,6 +801,8 @@
             }
             
             isInFullscreen = !isInFullscreen;
+
+            $.depage.player.currentInstance = $.depage.player.instances[base.options.playerId];
         };
         // }}}
             
@@ -1099,11 +1106,6 @@
                 .appendTo(base.controls.time);
             
             base.controls.time.appendTo(div);
-            
-            if (mode != "flash") {
-                base.html5.$buffering = $('<span class="buffer-indicator">buffering</span>').hide();
-                base.$el.append(base.html5.$buffering);
-            }
         };
         // }}}
         
@@ -1128,7 +1130,9 @@
             
             if (base.options.onPlay) base.options.onPlay();
             
-            playing = true;
+            base.playing = true;
+
+            $.depage.player.currentInstance = $.depage.player.instances[base.options.playerId];
         };
         // }}}
         
@@ -1149,7 +1153,9 @@
             
             if (base.options.onPause) base.options.onPause();
             
-            playing = false;
+            base.playing = false;
+
+            $.depage.player.currentInstance = $.depage.player.instances[base.options.playerId];
         };
         // }}}
         
@@ -1293,6 +1299,9 @@
      * Holds all player instances by id
      */
     $.depage.player.instances = [];
+
+    // holds current instance (for key events)
+    $.depage.player.currentInstance = null;
     
     var $scriptElement = $("script[src *= '/depage-player.js']");
     var basePath = "";
