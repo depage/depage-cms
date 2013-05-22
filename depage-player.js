@@ -774,6 +774,11 @@
                 }
             } else {
                 base.$el.find("video img").addClass("placeholder").prependTo(base.el);
+                $video.css({
+                    position: "absolute",
+                    top: 0,
+                    left: 0
+                });
             }
         };
         // }}}
