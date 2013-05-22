@@ -265,6 +265,8 @@
             }
             base.addLegend(div);
             div.appendTo(base.$el);
+
+            setTimeout(base.resize, 20);
         };
         // }}}
         
@@ -740,6 +742,7 @@
                             height: toHeight
                     });
                 }
+            } else if (!useCustomControls) {
             }
         };
         // }}}
@@ -760,20 +763,32 @@
          * @return void
          */
         base.wrap = function() {
-            if (useCustomControls && !$wrapper) {
+            if (!$wrapper) {
                 base.$el.find("video img").addClass("placeholder");
 
-                $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
-                $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
+                if (!useCustomControls && $video[0].outerHTML) {
+                    // re-add html instead of using wrapAll when outerHTML is available
+                    // because safari on iPhone and iPad don't show controls otherwise
+                    var html = $video[0].outerHTML;
 
+                    $video.remove();
+
+                    $wrapper = $('<div class="wrapper" />').appendTo(base.el);
+                    $wrapper.html(html);
+
+                    $("video img, a.indicator", $wrapper).prependTo($wrapper);
+
+                    $video = $("video", $wrapper);
+                } else {
+                    $("video img, a.indicator", base.$el).add($video).wrapAll('<div class="wrapper" />');
+                    $wrapper = $('.wrapper', base.el); // cache after dom append for IE < 9 ?!
+                }
                 $indicator = $wrapper.children("a.indicator").attr("href", "#play");
 
                 if (mode != "flash") {
                     base.html5.$buffering = $('<span class="buffer-indicator">buffering</span>').hide();
                     $wrapper.append(base.html5.$buffering);
                 }
-            } else {
-                base.$el.find("video img").addClass("placeholder").prependTo(base.el);
             }
         };
         // }}}
