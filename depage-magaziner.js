@@ -12,11 +12,16 @@
  * @author    Frank Hellenkamp [jonas@depage.net]
  **/
 ;(function($){
+    "use strict";
+    /*jslint browser: true*/
+    /*global $:false */
+    
     if(!$.depage){
         $.depage = {};
     }
     
     $.depage.magaziner = function(el, options){
+        // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
         
@@ -27,27 +32,48 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.magaziner", base);
         
+        //list of currently loaded pages
         var $pages = base.$el.children(".page");
+
+        // width of one page
         var pageWidth = base.$el.width();
+
+        // speed for animations
         var speed = 300;
+
+        // global hammer options to drag only in one direction
         var hammerOptions = {
             drag_lock_to_axis: true
         };
         var scrollTop;
+
+        // get the currently loaded page
         base.currentPage = $pages.index(".current-page");
         if (base.currentPage == -1) {
             base.currentPage = 0;
         }
         // @todo delete/do not commit
         //base.currentPage = 9;
+        // }}}
 
-        base.init = function(){
+        // {{{ init()
+        base.init = function() {
             base.options = $.extend({},$.depage.magaziner.defaultOptions, options);
-            
-            // initialize Events
+
+            base.registerEvents();
+
+            base.show(base.currentPage);
+        };
+        // }}}
+        // {{{ registerEvents()
+        base.registerEvents = function() {
+            // {{{ prevent default behaviour on touchmove to disable native scrolling
             base.$el.on('touchmove', function (e) {
                 e.preventDefault();
             });
+            // }}}
+            
+            // {{{ horizontal scrolling between pages
             base.$el.hammer(hammerOptions).on("dragleft", function(e) {
                 $pages.each( function(i) {
                     var $page = $(this);
@@ -64,6 +90,8 @@
                     });
                 });
             });
+            // }}}
+            // {{{ vertical scrolling
             base.$el.hammer(hammerOptions).on("dragup", function(e) {
                 base.$el.css({
                     top: e.gesture.deltaY
@@ -74,6 +102,8 @@
                     top: e.gesture.deltaY
                 });
             });
+            // }}}
+            // {{{ dragend actions after horizontal or vertical scrolling
             base.$el.hammer(hammerOptions).on("dragend", function(e) {
                 var newXOffset = 0;
                 var newYOffset = 0;
@@ -110,7 +140,10 @@
                     }, 300 * e.gesture.velocityY);
                 }
             });
-            $(document).on("keypress, keyup", function(e) {
+            // }}}
+            
+            // {{{ key events
+            $(document).on("keypress keyup", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
@@ -139,18 +172,23 @@
                         break;
                 }
             });
+            // }}}
+            
+            // {{{ scroll event
             $(window).scroll( function() {
                 $pages.not(".current-page").css({
                     top: $(window).scrollTop()
                 });
             });
+            // }}}
+            // {{{ resize event
             $(window).resize( function() {
                 pageWidth = base.$el.width();
                 base.show(base.currentPage);
             });
-
-            base.show(base.currentPage);
+            // }}}
         };
+        // }}}
         
         // {{{ showPagesAround(n)
         base.showPagesAround = function(n) {
