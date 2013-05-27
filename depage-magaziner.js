@@ -19,8 +19,57 @@
     if(!$.depage){
         $.depage = {};
     }
+
+    var rootUrl = History.getRootUrl();
     
-    $.depage.magaziner = function(el, options){
+    // {{{ jquery.internal expression helper
+    $.expr[':'].internal = function(obj, index, meta, stack){
+        var url = $(obj).attr('href') || '';
+        
+        // Check link
+        return url.substring(0, rootUrl.length) === rootUrl || url.indexOf(':') === -1;
+    };
+    // }}}
+    // {{{ HTML Helper
+    var documentHtml = function(html){
+        // Prepare
+        var result = String(html)
+            .replace(/<\!DOCTYPE[^>]*>(\n)?/i, '')
+            .replace(/<(body)[\s]class="([^"]*)"([\s\>])/gi,'<div class="document-$1 $2"$3')
+            .replace(/<(html|head|body|title|meta|script)([\s\>])/gi,'<div class="document-$1"$2')
+            .replace(/<\/(html|head|body|title|meta|script)\>/gi,'</div>')
+        ;
+        
+        return result;
+    };
+    // }}}
+    // {{{ jquery.ajaxify Helper
+    $.fn.ajaxify = function() {
+        var $this = $(this);
+        
+        // Ajaxify
+        $this.find('a:internal:not(.no-ajaxy)').click(function(event){
+            // Prepare
+            var
+                $this = $(this),
+                url = $this.attr('href'),
+                title = $this.attr('title') || null;
+            
+            // Continue as normal for cmd clicks etc
+            if ( event.which == 2 || event.metaKey ) { return true; }
+            
+            // Ajaxify this link
+            History.pushState(null,title,url);
+            event.preventDefault();
+            return false;
+        });
+        
+        // Chain
+        return $this;
+    };
+    // }}}
+    
+    $.depage.magaziner = function(el, pagelinkSelector, options){
         // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
@@ -31,7 +80,14 @@
         
         // Add a reverse reference to the DOM object
         base.$el.data("depage.magaziner", base);
-        
+
+        // jquery object of body
+        var $body = $("body");
+
+        // holds page-numbers by urls
+        var pagesByUrl = [];
+        var urlsByPages = [];
+
         //list of currently loaded pages
         var $pages = base.$el.children(".page");
 
@@ -48,10 +104,8 @@
         var scrollTop;
 
         // get the currently loaded page
-        base.currentPage = $pages.index(".current-page");
-        if (base.currentPage == -1) {
-            base.currentPage = 0;
-        }
+        base.currentPage = 0;
+        
         // @todo delete/do not commit
         //base.currentPage = 9;
         // }}}
@@ -60,7 +114,38 @@
         base.init = function() {
             base.options = $.extend({},$.depage.magaziner.defaultOptions, options);
 
+            var $pagelinks = $(pagelinkSelector);
+            for (var i = 0; i < $pagelinks.length; i++) {
+                pagesByUrl[$pagelinks[i].href] = i;
+                urlsByPages[i] = $pagelinks[i].href;
+            }
+
             base.registerEvents();
+            $body.ajaxify();
+
+            base.currentPage = pagesByUrl[document.location];
+            var $currentPage = $(".page").addClass("current-page");
+            var beforeHtml = "";
+            var afterHtml = "";
+
+            $currentPage.data("loaded", true);
+
+            // add empty page containers
+            for (var i = 0; i < $pagelinks.length; i++) {
+                if (i < base.currentPage) {
+                    beforeHtml += "<div class=\"page\" style=\"display: none\"></div>";
+                } else if (i > base.currentPage) {
+                    afterHtml += "<div class=\"page\" style=\"display: none\"></div>";
+                }
+            }
+            $(beforeHtml).insertBefore($currentPage);
+            $(afterHtml).insertAfter($currentPage);
+
+            $pages = base.$el.children(".page");
+            $pages.not(".current-page").data("loaded", false);
+
+
+            base.$el.triggerHandler("depage.magaziner.initialized");
 
             base.show(base.currentPage);
         };
@@ -141,9 +226,8 @@
                 }
             });
             // }}}
-            
-            // {{{ key events
-            $(document).on("keypress keyup", function(e) {
+            // {{{ key events
+            $(document).on("keypress ", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
@@ -187,6 +271,19 @@
                 base.show(base.currentPage);
             });
             // }}}
+            
+            // {{{ statechange event
+            $(window).bind("statechange", function() {
+                var
+                    State = History.getState(),
+                    url = State.url,
+                    relativeUrl = url.replace(rootUrl,'');
+
+                if (pagesByUrl[url]) {
+                    base.show(pagesByUrl[url]);
+                }
+            });
+            // }}}
         };
         // }}}
         
@@ -197,12 +294,100 @@
             $pages.eq(n + 1).show();
         };
         // }}}
+        // {{{ preloadPage()
+        base.preloadPage = function(url) {
+            if (!url) {
+                return;
+            }
+            // Prepare Variables
+            var relativeUrl = url.replace(rootUrl,'');
+
+            // get page element for current url
+            var $page = $pages.eq(pagesByUrl[url]);
+
+            if ($page.data("loaded")) {
+                // data is already loaded into element
+                return true;
+            }
+                
+            $page.addClass("loading");
+            
+            // Ajax Request the Traditional Page
+            $.ajax({
+                url: url,
+                success: function(data, textStatus, jqXHR){
+                    // Prepare
+                    var
+                        $data = $(documentHtml(data)),
+                        $dataBody = $data.find('.document-body:first'),
+                        $dataContent = $dataBody.find(".page").filter(':first'),
+                        contentHtml, 
+                        $scripts;
+                    
+                    // Fetch the scripts
+                    $scripts = $dataContent.find('.document-script');
+                    if ( $scripts.length ) {
+                        $scripts.detach();
+                    }
+
+                    // Fetch the content
+                    contentHtml = $dataContent.html() || $data.html();
+                    if ( !contentHtml ) {
+                        document.location.href = url;
+                        return false;
+                    }
+                    
+                    // Update the content
+                    $page.html(contentHtml).ajaxify();
+
+                    // Add the scripts
+                    $scripts.each(function(){
+                        var $script = $(this), scriptText = $script.text(), scriptNode = document.createElement('script');
+                        scriptNode.appendChild(document.createTextNode(scriptText));
+                        contentNode.appendChild(scriptNode);
+                    });
+
+                    $body.attr('class', $dataBody.attr("class"));
+                    $body.removeClass('document-body');
+                    $page.removeClass('loading');
+                    $page.data("loaded", true);
+
+                    /* @todo move this to event handler when moving between pages
+                    $window.trigger(completedEventName);
+
+                    // Update the title
+                    document.title = $data.find('.document-title:first').text();
+                    try {
+                        document.getElementsByTagName('title')[0].innerHTML = document.title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
+                    }
+                    catch ( Exception ) { }
+                    
+                    // Inform Google Analytics of the change
+                    if ( typeof window._gaq !== 'undefined' ) {
+                        window._gaq.push(['_trackPageview', relativeUrl]);
+                    }
+
+                    // Inform ReInvigorate of a state change
+                    if ( typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined' ) {
+                            reinvigorate.ajax_track(url);
+                            // ^ we use the full url here as that is what reinvigorate supports
+                    }
+                    */
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    document.location.href = url;
+                    return false;
+                }
+            }); // end ajax
+        };
+        // }}}
         // {{{ show()
         base.show = function(n) {
             var resetScroll = base.currentPage != n;
 
             base.currentPage = n;
             base.showPagesAround(base.currentPage);
+            base.preloadPage(urlsByPages[n]);
 
             // horizontal scrolling between pages
             $pages.each( function(i) {
@@ -220,6 +405,8 @@
                     });
                     $pages.hide();
                     base.showPagesAround(base.currentPage);
+                    base.preloadPage(urlsByPages[n - 1]);
+                    base.preloadPage(urlsByPages[n + 1]);
                 }
             });
 
@@ -227,6 +414,10 @@
             $pages.eq(n).addClass("current-page");
 
             base.$el.triggerHandler("depage.magaziner.show", [n]);
+
+            if (resetScroll) {
+                History.pushState(null, null, urlsByPages[base.currentPage]);
+            }
         };
         // }}}
         // {{{ next()
@@ -261,9 +452,9 @@
         option1: "default"
     };
     
-    $.fn.depageMagaziner = function(options){
+    $.fn.depageMagaziner = function(pagelinkSelector, options){
         return this.each(function(){
-            (new $.depage.magaziner(this, options));
+            (new $.depage.magaziner(this, pagelinkSelector, options));
         });
     };
     
