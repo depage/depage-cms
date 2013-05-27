@@ -83,6 +83,8 @@
 
         // jquery object of body
         var $body = $("body");
+        var $window = $(window);
+        var $document = $(document);
 
         // holds page-numbers by urls
         var pagesByUrl = [];
@@ -105,9 +107,7 @@
 
         // get the currently loaded page
         base.currentPage = 0;
-        
-        // @todo delete/do not commit
-        //base.currentPage = 9;
+        var $currentPage = null
         // }}}
 
         // {{{ init()
@@ -124,11 +124,12 @@
             $body.ajaxify();
 
             base.currentPage = pagesByUrl[document.location];
-            var $currentPage = $(".page").addClass("current-page");
+            $currentPage = $(".page").addClass("current-page");
             var beforeHtml = "";
             var afterHtml = "";
 
             $currentPage.data("loaded", true);
+            $currentPage.data("title", document.title);
 
             // add empty page containers
             for (var i = 0; i < $pagelinks.length; i++) {
@@ -210,10 +211,10 @@
                 base.$el.css({
                     top: 0
                 });
-                var currentPos = $(window).scrollTop() - e.gesture.deltaY;
-                var targetPos = $(window).scrollTop() - e.gesture.deltaY - 300 * e.gesture.velocityY * newYOffset;
+                var currentPos = $window.scrollTop() - e.gesture.deltaY;
+                var targetPos = $window.scrollTop() - e.gesture.deltaY - 300 * e.gesture.velocityY * newYOffset;
 
-                window.scrollTo(0, $(window).scrollTop() - e.gesture.deltaY);
+                window.scrollTo(0, $window.scrollTop() - e.gesture.deltaY);
 
                 $pages.not(".current-page").css({
                     top: currentPos
@@ -227,7 +228,7 @@
             });
             // }}}
             // {{{ key events
-            $(document).on("keypress ", function(e) {
+            $document.on("keypress ", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
@@ -247,11 +248,11 @@
                         e.preventDefault();
                         break;
                     case 74 : // vim nav: j
-                        window.scrollTo(0, $(window).scrollTop() + 50);
+                        window.scrollTo(0, $window.scrollTop() + 50);
                         e.preventDefault();
                         break;
                     case 75 : // vim nav: k
-                        window.scrollTo(0, $(window).scrollTop() - 50);
+                        window.scrollTo(0, $window.scrollTop() - 50);
                         e.preventDefault();
                         break;
                 }
@@ -259,21 +260,21 @@
             // }}}
             
             // {{{ scroll event
-            $(window).scroll( function() {
+            $window.scroll( function() {
                 $pages.not(".current-page").css({
-                    top: $(window).scrollTop()
+                    top: $window.scrollTop()
                 });
             });
             // }}}
             // {{{ resize event
-            $(window).resize( function() {
+            $window.resize( function() {
                 pageWidth = base.$el.width();
                 base.show(base.currentPage);
             });
             // }}}
             
             // {{{ statechange event
-            $(window).bind("statechange", function() {
+            $window.bind("statechange", function() {
                 var
                     State = History.getState(),
                     url = State.url,
@@ -281,6 +282,34 @@
 
                 if (pagesByUrl[url]) {
                     base.show(pagesByUrl[url]);
+                }
+            });
+            // }}}
+            // {{{ statechangecomplete event
+            $window.bind("statechangecomplete", function() {
+                var
+                    State = History.getState(),
+                    url = State.url,
+                    title = $currentPage.data("title"); 
+
+                if (title) {
+                    // Update the title
+                    document.title = title;
+                    try {
+                        document.getElementsByTagName('title')[0].innerHTML = document.title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
+                    }
+                    catch ( Exception ) { }
+                }
+                
+                // Inform Google Analytics of the change
+                if ( typeof window._gaq !== 'undefined' ) {
+                    window._gaq.push(['_trackPageview', url]);
+                }
+
+                // Inform ReInvigorate of a state change
+                if ( typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined' ) {
+                    reinvigorate.ajax_track(url);
+                    // ^ we use the full url here as that is what reinvigorate supports
                 }
             });
             // }}}
@@ -295,18 +324,24 @@
         };
         // }}}
         // {{{ preloadPage()
-        base.preloadPage = function(url) {
-            if (!url) {
+        base.preloadPage = function(n) {
+            if (n < 0 || n >= $pages.length) {
                 return;
             }
+            var url = urlsByPages[n];
+
             // Prepare Variables
             var relativeUrl = url.replace(rootUrl,'');
 
             // get page element for current url
-            var $page = $pages.eq(pagesByUrl[url]);
+            var $page = $pages.eq(n);
 
             if ($page.data("loaded")) {
                 // data is already loaded into element
+                if (n === base.currentPage) {
+                    $window.trigger("statechangecomplete");
+                }
+
                 return true;
             }
                 
@@ -351,28 +386,11 @@
                     $body.removeClass('document-body');
                     $page.removeClass('loading');
                     $page.data("loaded", true);
+                    $page.data("title", $data.find('.document-title:first').text());
 
-                    /* @todo move this to event handler when moving between pages
-                    $window.trigger(completedEventName);
-
-                    // Update the title
-                    document.title = $data.find('.document-title:first').text();
-                    try {
-                        document.getElementsByTagName('title')[0].innerHTML = document.title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
+                    if (n === base.currentPage) {
+                        $window.trigger("statechangecomplete");
                     }
-                    catch ( Exception ) { }
-                    
-                    // Inform Google Analytics of the change
-                    if ( typeof window._gaq !== 'undefined' ) {
-                        window._gaq.push(['_trackPageview', relativeUrl]);
-                    }
-
-                    // Inform ReInvigorate of a state change
-                    if ( typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined' ) {
-                            reinvigorate.ajax_track(url);
-                            // ^ we use the full url here as that is what reinvigorate supports
-                    }
-                    */
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     document.location.href = url;
@@ -381,13 +399,21 @@
             }); // end ajax
         };
         // }}}
+        // {{{ clearPage()
+        base.clearPage = function(n) {
+            var $page = $pages.eq(n);
+
+            $page.data("loaded", false);
+            $page.empty();
+        };
+        // }}}
         // {{{ show()
         base.show = function(n) {
             var resetScroll = base.currentPage != n;
 
             base.currentPage = n;
             base.showPagesAround(base.currentPage);
-            base.preloadPage(urlsByPages[n]);
+            base.preloadPage(n);
 
             // horizontal scrolling between pages
             $pages.each( function(i) {
@@ -405,13 +431,15 @@
                     });
                     $pages.hide();
                     base.showPagesAround(base.currentPage);
-                    base.preloadPage(urlsByPages[n - 1]);
-                    base.preloadPage(urlsByPages[n + 1]);
+
+                    base.preloadPage(n - 1);
+                    base.preloadPage(n + 1);
                 }
             });
 
             $pages.removeClass("current-page");
-            $pages.eq(n).addClass("current-page");
+            $currentPage = $pages.eq(n);
+            $currentPage.addClass("current-page");
 
             base.$el.triggerHandler("depage.magaziner.show", [n]);
 
