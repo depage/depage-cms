@@ -61,7 +61,7 @@
             $this.click(function(e) {
                 // Continue as normal for cmd clicks etc
                 if ( e.which == 2 || e.metaKey ) { return true; }
-                
+
                 // Ajaxify this link
                 History.pushState(null,title,url);
                 e.preventDefault();
@@ -152,6 +152,9 @@
 
 
             base.$el.triggerHandler("depage.magaziner.initialized");
+
+            base.preloadPage(base.currentPage - 1);
+            base.preloadPage(base.currentPage + 1);
 
             base.show(base.currentPage);
         };
@@ -285,7 +288,7 @@
                     url = State.url,
                     relativeUrl = url.replace(rootUrl,'');
 
-                if (pagesByUrl[url]) {
+                if (typeof pagesByUrl[url] != undefined) {
                     base.show(pagesByUrl[url]);
                 }
             });
@@ -349,7 +352,7 @@
 
                 return true;
             }
-                
+
             $page.addClass("loading");
             
             // Ajax Request the Traditional Page
