@@ -431,8 +431,8 @@
                     left: (i - base.currentPage) * pageWidth
                 }, speed);
             });
-            $pages.last().queue( function() {
-                if (resetScroll) {
+            if (resetScroll) {
+                $pages.last().queue( function() {
                     window.scrollTo(0, 0);
 
                     $pages.css({
@@ -441,10 +441,10 @@
                     $pages.hide();
                     base.showPagesAround(base.currentPage);
 
-                    base.preloadPage(n - 1);
-                    base.preloadPage(n + 1);
-                }
-            });
+                    base.preloadPage(base.currentPage - 1);
+                    base.preloadPage(base.currentPage + 1);
+                });
+            }
 
             $pages.removeClass("current-page");
             $currentPage = $pages.eq(n);
