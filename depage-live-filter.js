@@ -35,7 +35,8 @@
             base.options = $.extend({},$.depage.liveFilter.defaultOptions, options);
             
             // Put your initialization code here
-            base.$input = $("<input type=\"search\">").prependTo(base.$el);
+            var $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").insertBefore(base.$el);
+            base.$input = $("<input type=\"search\" placeholder=\"" + base.options.placeholder + "\">").prependTo($container);
 
             base.$input.on("input keyup", function() {
                 base.filterBy(this.value);
@@ -78,7 +79,8 @@
     };
     
     $.depage.liveFilter.defaultOptions = {
-        option1: "default"
+        inputClass: "depage-live-filter",
+        placeholder: "Search"
     };
     
     $.fn.depageLiveFilter = function(itemSelector, searchSelector, options){
