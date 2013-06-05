@@ -452,7 +452,7 @@
 
             base.$el.triggerHandler("depage.magaziner.show", [n]);
 
-            if (resetScroll) {
+            if (resetScroll && document.location.href != urlsByPages[base.currentPage]) {
                 History.pushState(null, null, urlsByPages[base.currentPage]);
             }
         };
