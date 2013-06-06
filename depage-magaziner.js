@@ -128,7 +128,7 @@
             base.registerEvents();
             $body.ajaxify();
 
-            base.currentPage = pagesByUrl[document.location];
+            base.currentPage = pagesByUrl[document.location.href];
             $currentPage = $(".page").addClass("current-page");
             var beforeHtml = "";
             var afterHtml = "";
