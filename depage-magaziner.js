@@ -319,6 +319,11 @@
                     reinvigorate.ajax_track(url);
                     // ^ we use the full url here as that is what reinvigorate supports
                 }
+
+                // Inform piwik of the change
+                if ( typeof window._paq !== 'undefined' ) {
+                    window._paq.push(['_trackPageview', url]);
+                }
             });
             // }}}
         };
