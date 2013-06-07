@@ -75,6 +75,10 @@
     // }}}
     
     $.depage.magaziner = function(el, pagelinkSelector, options){
+        if (!History.enabled) {
+            return;
+        }
+
         // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
