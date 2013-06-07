@@ -14,7 +14,6 @@
         if (base.$el.data("depage.liveFilter") !== undefined) {
             // test if this is already a liveFilter object
             // @todo remove and re-add liveFilter when called with different options
-            console.log("is already a liveFilter");
             return;
         }
 
