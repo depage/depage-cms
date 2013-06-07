@@ -125,8 +125,13 @@
 
             var $pagelinks = $(pagelinkSelector);
             for (var i = 0; i < $pagelinks.length; i++) {
-                pagesByUrl[$pagelinks[i].href] = i;
-                urlsByPages[i] = $pagelinks[i].href;
+                var url = $pagelinks[i].href;
+                if ($pagelinks.eq(i).attr("href") == "") {
+                    // normalize empty links that go to current page for IE
+                    url = document.location.href;
+                }
+                pagesByUrl[url] = i;
+                urlsByPages[i] = url;
             }
 
             base.registerEvents();
