@@ -14,7 +14,7 @@
 ;(function($){
     "use strict";
     /*jslint browser: true*/
-    /*global $:false */
+    /*global $:false History:false reinvigorate:false */
     
     if(!$.depage){
         $.depage = {};
@@ -116,7 +116,7 @@
 
         // get the currently loaded page
         base.currentPage = 0;
-        var $currentPage = null
+        var $currentPage = null;
         // }}}
 
         // {{{ init()
@@ -126,7 +126,7 @@
             var $pagelinks = $(pagelinkSelector);
             for (var i = 0; i < $pagelinks.length; i++) {
                 var url = $pagelinks[i].href;
-                if ($pagelinks.eq(i).attr("href") == "") {
+                if ($pagelinks.eq(i).attr("href") === "") {
                     // normalize empty links that go to current page for IE
                     url = document.location.href;
                 }
@@ -146,7 +146,7 @@
             $currentPage.data("title", document.title);
 
             // add empty page containers
-            for (var i = 0; i < $pagelinks.length; i++) {
+            for (i = 0; i < $pagelinks.length; i++) {
                 if (i < base.currentPage) {
                     beforeHtml += "<div class=\"page\" style=\"display: none\"></div>";
                 } else if (i > base.currentPage) {
@@ -297,7 +297,7 @@
                     url = State.url,
                     relativeUrl = url.replace(rootUrl,'');
 
-                if (typeof pagesByUrl[url] != undefined) {
+                if (typeof pagesByUrl[url] !== undefined) {
                     base.show(pagesByUrl[url]);
                 }
             });
@@ -317,7 +317,7 @@
                     }
                     catch ( Exception ) { }
                 }
-                
+
                 // Inform Google Analytics of the change
                 if ( typeof window._gaq !== 'undefined' ) {
                     window._gaq.push(['_trackPageview', url]);
@@ -331,7 +331,7 @@
 
                 // Inform piwik of the change
                 if ( typeof window._paq !== 'undefined' ) {
-                    window._paq.push(['_trackPageview', url]);
+                    window._paq.push(['trackPageView', url]);
                 }
             });
             // }}}
@@ -360,7 +360,7 @@
 
             if ($page.data("loaded")) {
                 // data is already loaded into element
-                if (n === base.currentPage) {
+                if (url ===  document.location.href) {
                     $window.trigger("statechangecomplete");
                 }
 
@@ -401,7 +401,7 @@
                     $scripts.each(function(){
                         var $script = $(this), scriptText = $script.text(), scriptNode = document.createElement('script');
                         scriptNode.appendChild(document.createTextNode(scriptText));
-                        contentNode.appendChild(scriptNode);
+                        //contentNode.appendChild(scriptNode);
                     });
 
                     $body.attr('class', $dataBody.attr("class"));
@@ -411,7 +411,7 @@
                     $page.data("loaded", true);
                     $page.data("title", $data.find('.document-title:first').text());
 
-                    if (n === base.currentPage) {
+                    if (url === document.location.href) {
                         $window.trigger("statechangecomplete");
                     }
                 },
