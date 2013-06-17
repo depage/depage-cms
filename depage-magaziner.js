@@ -284,9 +284,13 @@
             });
             // }}}
             // {{{ resize event
-            $window.resize( function() {
+            var onResize =  function() {
                 pageWidth = base.$el.width();
                 base.show(base.currentPage);
+            };
+
+            $window.on("resize", function() {
+                setTimeout( onResize, 200 );
             });
             // }}}
             
