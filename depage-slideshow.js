@@ -135,6 +135,12 @@
             base.next();
         };
         /* }}} */
+        /* {{{ resume() */
+        base.resume = function() {
+            base.playing = true;
+            base.waitForNext();
+        };
+        /* }}} */
         /* {{{ pause() */
         base.pause = function() {
             base.$el.triggerHandler("depage.slideshow.pause");
@@ -180,11 +186,17 @@
             });
 
             // fadout active slide
-            $(divs[base.activeSlide]).show().css({
-                opacity: 1
-            }).animate({
-                opacity: 0
-            }, base.options.speed);
+            $(divs[base.activeSlide]).each( function() {
+                var $div = $(this);
+
+                $div.show().css({
+                    opacity: 1
+                }).animate({
+                    opacity: 0
+                }, base.options.speed, function() {
+                    $div.css({visibility: "hidden"});
+                });
+            });
             
             base.activeSlide = n;
 
