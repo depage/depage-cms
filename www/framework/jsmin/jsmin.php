@@ -62,22 +62,10 @@ abstract class jsmin {
      **/
     public function minifyFiles($name, $files) {
         $src = "";
-        $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
+        $mtimes = $this->getFileModTimes($files);
+        $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".js";
         
-        $regenerate = false;
-
-        if (($age = $this->cache->age($identifier)) !== false) {
-            foreach ($files as $file) {
-                $fage = filemtime($file);
-                
-                // regenerate cache if one file is newer then the cached file
-                $regenerate = $regenerate || $age < $fage;
-            }
-        } else {
-            //regenerate if cache file does not exist
-            $regenerate = true;
-        }
-        if ($regenerate || !($src = $this->cache->getFile($identifier))) {
+        if (!($src = $this->cache->getFile($identifier))) {
             foreach ($files as $file) {
                 $src .= $this->minifyFile($file);
             }
@@ -110,10 +98,26 @@ abstract class jsmin {
             $log->log("jsmin: minifying '$file'");
 
             $src = $this->minifySrc(file_get_contents($file));
-            $this->cache->setFile($file, $src, true);
+            $this->cache->setFile($file, $src, false);
         }
 
         return $src;
+    }
+    // }}}
+    
+    // {{{ getFileModTimes()
+    /**
+     * @brief gets modification times for files
+     *
+     * @param $files array of filenames
+     **/
+    protected function getFileModTimes($files) {
+        $mtimes = array();
+        foreach ($files as $i => $file) {
+            $mtimes[$i] = filemtime($file);
+        }
+
+        return $mtimes;
     }
     // }}}
 }

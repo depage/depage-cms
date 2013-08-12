@@ -13,7 +13,7 @@
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.carrousel = function(el, options){
         /* {{{ variables */
@@ -57,7 +57,7 @@
             base.$el.wrapInner("<div class=\"passepartout\"></div>");
 
             base.$el.css({
-                overflow: "hidden",
+                overflow: "hidden"
             });
             base.$passepartout = base.$el.find(".passepartout").css({
                 position: "absolute"
@@ -161,15 +161,15 @@
 
             if (base.options.direction == "vertical") {
                 var newMarginTop = -n * base.height;
-                if (n == 0 && base.activeSlide != 1 ) {
+                if (n === 0 && base.activeSlide != 1 ) {
                     // animate to duplicate
                     newMarginTop = -divs.length * base.height; 
-                } else if (n == 1 && base.activeSlide == 0) {
+                } else if (n === 1 && base.activeSlide === 0) {
                     // reset to first position
                     base.$passepartout.css({
                         marginTop: 0
                     });
-                } else if (base.activeSlide == 0 && n == divs.length - 1) {
+                } else if (base.activeSlide === 0 && n === divs.length - 1) {
                     // reset to last position
                     base.$passepartout.css({
                         marginTop: -divs.length * base.height
@@ -184,15 +184,15 @@
                 });
             } else {
                 var newMarginLeft = -n * base.width;
-                if (n == 0 && base.activeSlide != 1 ) {
+                if (n === 0 && base.activeSlide !== 1 ) {
                     // animate to duplicate
                     newMarginLeft = -divs.length * base.width; 
-                } else if (n == 1 && base.activeSlide == 0) {
+                } else if (n === 1 && base.activeSlide === 0) {
                     // reset to first position
                     base.$passepartout.css({
                         marginLeft: 0
                     });
-                } else if (base.activeSlide == 0 && n == divs.length - 1) {
+                } else if (base.activeSlide === 0 && n === divs.length - 1) {
                     // reset to last position
                     base.$passepartout.css({
                         marginLeft: -divs.length * base.width
@@ -219,7 +219,7 @@
                 // show first slide
                 base.show(0);
             }
-        }
+        };
         /* }}} */
         /* {{{ prev() */
         base.prev = function() {
@@ -230,7 +230,7 @@
                 // show last slide
                 base.show(divs.length - 1);
             }
-        }
+        };
         /* }}} */
         
         // Run initializer

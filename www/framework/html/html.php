@@ -214,7 +214,8 @@ class html {
         
         if ($this->param['env'] === "production") {
             // production environement
-            $identifier = "{$name}_" . sha1(serialize($files)) . ".js";
+            $mtimes = $this->getFileModTimes($files);
+            $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".js";
             $useCached = true;
             
             // get cache instance
@@ -304,25 +305,13 @@ class html {
 
         if ($this->param['env'] === "production") {
             // production environement
-            $identifier = "{$name}_" . sha1(serialize($files)) . ".css";
+            $mtimes = $this->getFileModTimes($files);
+            $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".css";
             
             // get cache instance
             $cache = depage\cache\cache::factory("css");
 
-            $regenerate = false;
-
-            if (($age = $cache->age($identifier)) !== false) {
-                foreach ($files as $file) {
-                    $fage = filemtime($file);
-                    
-                    // regenerate cache if one file is newer then the cached file
-                    $regenerate = $regenerate || $age < $fage;
-                }
-            } else {
-                //regenerate if cache file does not exist
-                $regenerate = true;
-            }
-            if ($regenerate) {
+            if ($cache->age($identifier) === false) {
                 $src = "";
 
                 foreach ($files as $file) {
@@ -365,6 +354,21 @@ class html {
                 echo("</style>\n");
             }
         }
+    }
+    // }}}
+    // {{{ getFileModTimes()
+    /**
+     * @brief gets modification times for files
+     *
+     * @param $files array of filenames
+     **/
+    protected function getFileModTimes($files) {
+        $mtimes = array();
+        foreach ($files as $i => $file) {
+            $mtimes[$i] = filemtime($file);
+        }
+
+        return $mtimes;
     }
     // }}}
     
@@ -460,6 +464,16 @@ class html {
 
         echo(Markdown(htmlspecialchars($param), $nofollow, $gamut_filter));
     }
+    // }}}
+
+    // {{{ truncate()
+    static function truncate ($string, $max = 50, $rep = "") {
+        if (strlen($string) <= $max) {
+            $rep = "";
+        }
+        $leave = $max - strlen ($rep);
+        return substr_replace($string, $rep, $leave);
+    } 
     // }}}
 
     // {{{ format_date()

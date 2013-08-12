@@ -98,7 +98,6 @@ class depage {
      * @return  null
      */
     static function autoload($class) {
-        $class = strtolower($class);
         $php_file = "";
         $namespaces = explode("\\", $class);
 
@@ -130,6 +129,14 @@ class depage {
         //searching for class in local modules
         } elseif (file_exists(DEPAGE_PATH . "modules/" . $file)) {
             $php_file = DEPAGE_PATH . "modules/" . $file;
+            
+        //searching for class in global modules with lower string filename
+        } elseif (file_exists(DEPAGE_FM_PATH . strtolower($file))) {
+            $php_file = DEPAGE_FM_PATH . strtolower($file);
+
+        //searching for class in local modules with lower string filename
+        } elseif (file_exists(DEPAGE_PATH . "modules/" . strtolower($file))) {
+            $php_file = DEPAGE_PATH . "modules/" . strtolower($file);
         }
         
         //echo("class: $class - file: $file - php_file: $php_file<br>");

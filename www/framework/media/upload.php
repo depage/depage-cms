@@ -120,7 +120,7 @@ class upload
      *
      */
     public static function uniqueRename( $base='', $postfix='' ) {
-        $base = empty($base) ? uniqid(rand(), 1) : $base;
+        $base = empty($base) ? uniqid(mt_rand(), 1) : $base;
         $rand = substr( md5($base), 0, 20);
         if ($postfix) {
             $rand .= $postfix;

@@ -11,6 +11,8 @@
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
 
 /**
@@ -167,7 +169,7 @@ class auth {
     // }}}
     // {{{ get_new_sid()
     protected function get_new_sid() {
-        $this->sid = md5(uniqid(dechex(rand(256, 4095))));
+        $this->sid = md5(uniqid(dechex(mt_rand(256, 4095))));
 
         return $this->sid;
     }
@@ -181,7 +183,7 @@ class auth {
      * @return    $id (string) new id
      */
     protected function uniqid16() {
-        return uniqid(dechex(rand(256, 4095)));
+        return uniqid(dechex(mt_rand(256, 4095)));
     }
     // }}}
     // {{{ register_session()

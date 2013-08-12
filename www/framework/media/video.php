@@ -269,7 +269,7 @@ class video {
         if (preg_match('/Input #0, (.\w+)/si', $result, $matches)) {
             $info['format'] = $matches[1];
         } else {
-            throw new ffmpegException("Could not read file.");
+            throw new ffmpegException("Could not read file: $result");
         }
         
         if (preg_match('/Duration: ((\d+):(\d+):(\d+(\.\d+))?)/si', $result, $matches)) {

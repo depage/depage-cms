@@ -58,14 +58,16 @@
             $scrollContent = base.$el;
 
             var className = $scrollContent[0].className;
+            var id = $scrollContent[0].id;
 
             // wrap into additional depage-scroller divs and move classes tp parent
-            $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
+            $scrollFrame = $scrollContent.wrap("<div class=\"" + className + "\" id=\"" + id + "\"><div class=\"depage-scroller-frame\"></div></div>").parent();
             $scrollOrigin = $scrollFrame.parent();
 
             // move classes to parent
-            $scrollContent.removeClass(className);
+            $scrollContent.removeAttr(className);
             $scrollContent.addClass("depage-scroller-content");
+            $scrollContent.removeAttr("id");
 
             $scrollOrigin.attr("style", $scrollContent.attr("style"));
             $scrollContent.removeAttr("style");

@@ -13,7 +13,7 @@
 ;(function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.antispam = function(el, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
@@ -54,7 +54,7 @@
             mail = mail.replace(/mailto: /, "mailto:");
 
             return mail;
-        }
+        };
         // }}}
         
         // Run initializer

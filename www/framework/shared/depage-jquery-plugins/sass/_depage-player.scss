@@ -1,0 +1,246 @@
+// {{{ mixin: text-shadow
+@mixin text-shadow($properties) {
+    -webkit-text-shadow: $properties;
+    -moz-text-shadow: $properties;
+    text-shadow: $properties;
+}
+// }}}
+// {{{ mixin: depage-player-icon
+@mixin depage-player-icon($fontSize: 1.5em) {
+    text-indent: -1000em;
+
+    &:before {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1em;
+        margin-top: -0.5em;
+        line-height: 1em;
+        font-family: 'depage-player';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        font-size: $fontSize;
+        text-align: center;
+        -webkit-font-smoothing: antialiased;
+        text-indent: 0;
+    }
+}
+// }}}
+// {{{ mixin: clearfix()
+@mixin clearfix($direction: 'both') {
+    display: inline-block;
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: $direction;
+        visibility: hidden;
+    }
+    * html & { height: 1px }
+}
+// }}}
+
+@mixin depage-player($assetPath: "../fonts/", $buttonSize: 3em) {
+    // {{{ icon font
+    @font-face {
+        font-family: 'depage-player';
+        src:url('#{$assetPath}depage-player.eot');
+        src:url('#{$assetPath}depage-player.eot?#iefix') format('embedded-opentype'),
+            url('#{$assetPath}depage-player.woff') format('woff'),
+            url('#{$assetPath}depage-player.ttf') format('truetype'),
+            url('#{$assetPath}depage-player.svg#depage-player') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    // }}}
+
+    // {{{ video base
+    .video {
+        position: relative;
+
+        div.wrapper {
+            position: relative;
+            overflow: hidden;
+
+            video,
+            object {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        a {
+            text-decoration: none;
+        }
+        img,
+        video,
+        object {
+            display: block;
+            width: 100%;
+            border: none;
+        }
+        img.placeholder {
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+    }
+    // }}}
+    // {{{ video icons
+    .video {
+        .indicator:before {
+            content: "\25b6";
+            //content: "\25b7";
+        }
+        .buffer-indicator:before {
+            content: "\21ba";
+        }
+        .play:before {
+            content: "\25b8";
+        }
+        .pause:before {
+            content: "\25a0";
+        }
+        .rewind:before {
+            content: "\21e4";
+        }
+        .fullscreen:before {
+            //content: "\25ba";
+            content: "\25f9";
+            //content: "\25e5";
+        }
+    }
+    .video.in-fullscreen {
+        .fullscreen:before {
+            content: "\25fa";
+            //content: "\25e3";
+        }
+    }
+    // }}}
+    // {{{ video indicators
+    .video {
+        .buffer-indicator,
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            min-height: 100% !important;
+            color: #ffffff;
+            text-indent: -1000em;
+
+            @include text-shadow(0 0 1em rgba(0, 0, 0, 0.5));
+            @include depage-player-icon();
+
+            &:before {
+                font-size: 12em;
+            }
+        }
+    }
+    // }}}
+    // {{{ video controls
+    .video .controls {
+        position: relative;
+        line-height: $buttonSize;
+        color: #666666;
+        width: 100%;
+
+        .play,
+        .pause,
+        .rewind,
+        .fullscreen,
+        .time,
+        .legend {
+            display: block;
+            position: relative;
+            z-index: 998;
+            font-size: 1em;
+            float: left;
+        }
+        .play,
+        .pause,
+        .rewind,
+        .fullscreen {
+            cursor: pointer;
+            width: $buttonSize;
+            height: $buttonSize;
+
+            @include depage-player-icon($buttonSize / 3 * 1.8);
+        }
+        .progress {
+            position: relative;
+            display: block;
+            height: 1em;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dddddd;
+            cursor: pointer;
+            overflow: hidden;
+
+            span {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+            }
+            .position {
+                background: #666666;
+            }
+            .buffer {
+                background: #e3e3e3;
+            }
+        }
+        .time span,
+        .legend span {
+            line-height: 1.3em;
+            font-size: 1.1em;
+        }
+        .time {
+            padding: 0 1.0em;
+            white-space: nowrap;
+        }
+        .legend {
+            position: relative;
+            color: #000000;
+            top: 0;
+            padding-bottom: 1.5em;
+            padding-bottom: 0.5em;
+            float: none;
+            z-index: 997;
+
+            @include clearfix();
+
+            span {
+                padding-top: $buttonSize * 0.2;
+                display: block;
+            }
+        }
+    }
+    // }}}
+    // {{{ video fullscreen
+    #depage-player-fullscreen-background {
+        z-index: 1001;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
+    }
+    .video.in-fullscreen {
+        position: fixed;
+    }
+    // }}}
+}
+
+/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
