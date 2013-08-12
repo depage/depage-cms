@@ -188,20 +188,20 @@
 }
 // }}}
 // {{{ marker @todo add to subclass?
-#jstree-add-marker {
-    padding:0; 
+.jstree-add-marker {
+    padding:0 4px 0 6px;
     margin:0;
-    /*line-height:12px; font-size:1px; */
-    overflow:hidden; 
-    height:24px; 
+    overflow:hidden;
+    height:24px;
+    line-height: 24px;
     width:24px; 
     position: absolute; 
-    top:-30px; 
-    z-index:10000; 
+    z-index:10000;
     background-repeat:no-repeat; 
     display:none;
+    cursor: pointer;
 }
-#jstree-add-marker-indicator {
+.jstree-add-marker-indicator {
     background-color: #fff;
     border-top: 1px solid #000;
     height: 1px;

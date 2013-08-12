@@ -1,103 +1,129 @@
 // {{{ add_marker
-/*
- * add marker plugin
+/**
+ * File: jstree.add_marker.js
+ *
+ * Adds a marker position indicator with an "add" button that allows the user to pick the position of the
+ * node they wish to insert.
+ *
  */
 (function ($) {
+
     $.jstree.plugin("add_marker", {
+
+        timer: null,
+
+        /**
+         * Construct
+         *
+         * @private
+         */
         __construct : function () {
+
+            var self = this;
+
+            var $container = this.get_container();
+
+            $marker = $("<div>add</div>").attr({ class : "jstree-add-marker" }).hide().appendTo('body');
+            $indicator = $("<div />").attr({ class : "jstree-add-marker-indicator" }).hide().appendTo('body');
+
+            // set defaults
             this.data.add_marker = {
                 offset : null,
                 w : null,
                 target : null,
                 context_menu : false,
-                marker : $("<div>ADD</div>").attr({ id : "jstree-add-marker" }).hide().appendTo("body"),
-                indicator : $("<div />").attr({ id : "jstree-add-marker-indicator" }).hide().appendTo("body")
+                marker : $marker,
+                indicator : $indicator
             };
 
-            var c = this.get_container();
-            c.bind("mouseleave.jstree", $.proxy(function(e) {
-                if (!this.data.add_marker.context_menu) {
-                    this.data.add_marker.marker.hide();
-                }
-            }, this))
-                .delegate("li", "mousemove.jstree", $.proxy(function(e) {
-                if (!this.data.add_marker.context_menu) {
-                    this._show_add_marker($(e.target), e.pageX, e.pageY);
-                }
-            }, this));
+            // don't show the markers during drag & drop
+            var dragging = false;
+            // check browser drag and drop support
+            var div = document.createElement('div');
+            if (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) {
+                // set the dragging variable
+                $(document)
+                    .on('dragover', function () {
+                        dragging = true;
+                    })
+                    .on('dragend', function () {
+                        dragging = false;
+                    });
+            }
 
-            this.data.add_marker.marker.mousemove($.proxy(function (e) {
-                if (!this.data.add_marker.context_menu) {
+             // hide the marker when mouse leaves the container.
+            var bind_doc_move = function(){
+                $(document).bind('mousemove.jstree-marker', function(e) {
+                    var offset = $container.offset();
+                    var boundary = {
+                        x1 : offset.left,
+                        x2 : offset.left + $container.outerWidth(),
+                        y1 : offset.top,
+                        y2 : offset.top + $container.outerHeight()
+                    }
+                    if(e.clientX < boundary.x1 || e.clientX > boundary.x2 || e.clientY < boundary.y1 || e.clientY > boundary.y2) {
+                        clearTimeout(self.timer);
+                        $indicator.hide();
+                        $marker.hide();
+                        $(document).unbind('mousemove.jstree-marker');
+                    }
+                });
+            }
+
+            $container.delegate("li", "mousemove.jstree", function(e) {
+                if (!self.data.add_marker.context_menu){
+                    if (!$marker.is(':visible') && !dragging) {
+                        clearTimeout(self.timer);
+                        self.timer = setTimeout(function() {
+                            self._show_add_marker($(e.target), e.pageX, e.pageY);
+                            bind_doc_move();
+                        }, 200);
+                    }
+                }
+            });
+
+            $marker.mousemove(function (e) {
+                if (!self.data.add_marker.context_menu && !dragging) {
+                    clearTimeout(self.timer);
                     // add marker swallows mousemove event. try to delegate to correct li_node.
                     // TODO: fix for Opera < 10.5, Safari 4.0 Win. see http://www.quirksmode.org/dom/w3c%5Fcssom.html#documentview
-                    var element = $(document.elementFromPoint(e.clientX - this.data.add_marker.marker.width(), e.clientY));
-                    this._show_add_marker(element, e.pageX, e.pageY);
+                    var element = $(document.elementFromPoint(e.clientX - $marker.width(), e.clientY));
+                    self._show_add_marker(element, e.pageX, e.pageY);
                 }
-            }, this))
-                .click($.proxy(function (e) {
-                this._show_add_context_menu();
-            }, this));
-            $(document).bind("context_hide.vakata", $.proxy(function () {
-                this.data.add_marker.context_menu = false;
-                this.data.add_marker.marker.hide();
-            }, this));
+            });
+
+            $marker.click(function (e) {
+                self._show_add_context_menu();
+            });
+
+            $(document).bind("context_hide.vakata", function () {
+                clearTimeout(self.timer);
+                self.data.add_marker.context_menu = false;
+                $indicator.hide();
+                $marker.hide();
+            });
         },
+
+        /**
+         * Functions
+         *
+         */
         _fn : {
-            // DEPRECATE
-            /*
-            _get_valid_children : function () {
-                var types_settings = this.get_settings()['typesfromurl'];
-                if (this.data.add_marker.parent !== -1) {
-                    var parent_type = this.data.add_marker.parent.attr(types_settings.type_attr);
-                    var valid_children = (types_settings.valid_children[parent_type] || types_settings.valid_children["default"]);
-                } else {
-                    // root element
-                    var valid_children = types_settings.valid_children;
-                }
 
-                return valid_children;
-            },
-            _has_valid_children : function () {
-                return this._get_valid_children() != "none";
-            },
-            _get_add_context_menu_item : function (name, separator) {
-                return {
-                    separator_before : separator || false,
-                    separator_after : false,
-                    label : "Create " + name,
-                    action : function (obj) {
-                        this.create(this.data.add_marker.target, this.data.add_marker.pos, { attr : { rel : name } });
-                    }
-                };
-            },
-            _get_add_context_menu_items : function () {
-                var valid_children = this._get_valid_children();
-                var special_children = (this.get_container().attr("data-add-marker-special-children") || "").split(" ");
-                var items = [];
-
-                if ($.isArray(valid_children)) {
-                    for (var i = 0; i < special_children.length; i++) {
-                        if ($.inArray(special_children[i], valid_children) != -1) {
-                            items.push(this._get_add_context_menu_item(special_children[i]));
-                        }
-                    }
-
-                    for (var i = 0; i < valid_children.length; i++) {
-                        if ($.inArray(valid_children[i], special_children) == -1) {
-                            items.push(this._get_add_context_menu_item(valid_children[i], i == 0));
-                        }
-                    }
-                }
-
-                return items;
-            },
+            /**
+             * Show Context Menu
+             *
+             * @private
              */
             _show_add_context_menu : function () {
+
+                var self = this;
+
                 var type_settings =  this.get_settings()['typesfromurl'];
-                var type = this.data.add_marker.target.attr(type_settings.type_attr);
+                var type = self.data.add_marker.target.attr(type_settings.type_attr);
                 var available_nodes = type_settings['valid_children'][type];
 
-                var create_menu = $.jstree.buildCreateMenu(available_nodes, this.data.add_marker.pos);
+                var create_menu = $.depage.jstree.buildCreateMenu(available_nodes, this.data.add_marker.pos);
 
                 var position = {
                     'x' : this.data.add_marker.marker.offset()['left'],
@@ -107,41 +133,37 @@
                 $.vakata.context.show(
                     this.data.add_marker.target,
                     position,
-                    create_menu.create.submenu);
+                    create_menu.create.submenu
+                );
 
-                $(document).bind("context_hide.vakata", $.proxy(function () {
-                    this.data.add_marker.context_menu = false;
-                }, this));
+                $(document).bind("context_hide.vakata", function () {
+                    self.data.add_marker.context_menu = false;
+                });
 
                 this.data.add_marker.context_menu = true;
-
-                // DEPRECATE
-                /*
-                var items = this._get_add_context_menu_items();
-                if (items.length) {
-                    var a = this.data.add_marker.marker;
-                    var o = a.offset();
-                    var x = o.left;
-                    var y = o.top + this.data.core.li_height;
-
-                    this.data.add_marker.context_menu = true;
-                    $.vakata.context.show(items, a, x, y, this, this.data.add_marker.target);
-                    if(this.data.themes) { $.vakata.context.cnt.attr("class", "jstree-" + this.data.themes.theme + "-context"); }
-                }
-                */
             },
 
+            /**
+             * Show Add Marker
+             *
+             * @param target
+             * @param page_x
+             * @param page_y
+             * @private
+             */
             _show_add_marker : function (target, page_x, page_y) {
-                var node = this.get_node(target);
 
                 if(this.data.add_marker.context_menu) {
                     return;
                 }
 
+                var node = this.get_node(target);
+
                 if (!node || node == -1 || target[0].nodeName == "UL") {
+                    clearTimeout(self.timer);
                     this.data.add_marker.marker.hide();
                     this.data.add_marker.indicator.hide();
-                    return;
+                    return false;
                 }
 
                 var c = this.get_container();
@@ -150,9 +172,10 @@
                 marker_pos.left = c.offset().left + c.width() - (c.attr("data-add-marker-right") || 30) - (c.attr("data-add-marker-margin-right") || 10);
                 var min_x = marker_pos.left - (c.attr("data-add-marker-margin-left") || 10);
                 if (page_x < min_x) {
+                    clearTimeout(self.timer);
                     this.data.add_marker.marker.hide();
                     this.data.add_marker.indicator.hide();
-                    return;
+                    return false;
                 }
 
                 // fix li_height
@@ -199,15 +222,6 @@
                     indicator_pos.top += this.data.core.li_height / 2;
                 }
 
-                // TODO check types
-                /*
-                if (this._has_valid_children()) {
-                    this.data.add_marker.marker.removeClass("jstree-add-marker-disabled");
-                } else {
-                    this.data.add_marker.marker.addClass("jstree-add-marker-disabled");
-                }
-                */
-
                 // indicator width
                 var width = marker_pos.left - indicator_pos.left;
 
@@ -219,6 +233,7 @@
             }
         }
     });
+
 })(jQuery);
 // }}}
 

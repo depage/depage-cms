@@ -82,13 +82,15 @@ class ui_tree extends ui_base {
      * @return bool|\html
      */
     public function tree($docName) {
-        $actionUrl = "project/{$this->projectName}/tree/{$docName}/";
+        $treeUrl = "project/{$this->projectName}/tree/";
+        $actionUrl = "{$treeUrl}{$docName}/";
 
         if($doc = $this->xmldb->getDoc($docName)) {
 
             $doc_info = $doc->getDocInfo();
 
             $h = new html("jstree.tpl", array(
+                'treeUrl' => $treeUrl,
                 'actionUrl' => $actionUrl,
                 'doc_id' => $doc_info->id,
                 'root_id' => $doc_info->rootid,
@@ -216,7 +218,7 @@ class ui_tree extends ui_base {
         if ($doc = $this->xmldb->getDoc($doc_id)) {
             $parent_id = $doc->getParentIdById($id);
             $ids = $doc->unlinkNode($id);
-            $status = $ids !== false;
+            $status = count($ids) > 0;
             if ($status) {
                 $this->recordChange($doc_id, array($parent_id));
             }

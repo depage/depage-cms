@@ -184,7 +184,7 @@
                         case "create_node":
 
                             // if no parent and event not delete
-                            if(target === -1) { return false; }
+                            // if(target === -1) { return false; }
 
                             // check max children
                             if(s.max_children !== -2 && s.max_children !== -1) {
@@ -210,8 +210,12 @@
                             // wildcard all
                             if ($.inArray('*', s.valid_parents[type]) === -1) {
 
+                                target = (target !== -1)
+                                    ? target.attr("rel")
+                                    : 'dpg:pages'; // TODO hack for root node
+
                                 // the target is not in the available parents
-                                if ($.inArray(target.attr("rel"), s.valid_parents[type]) === -1) {
+                                if ($.inArray(target, s.valid_parents[type]) === -1) {
                                     return false;
                                 }
                             }

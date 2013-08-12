@@ -316,6 +316,12 @@ a img {
   position: absolute;
   top: -3px;
 }
+.toolbar a.disabled,
+.toolbar a.disabled:hover {
+  background-color: #fff;
+  color: #aaa;
+  cursor: default;
+}
 
 /* }}} */
 /* {{{ preview */
@@ -333,7 +339,7 @@ a img {
 }
 
 .layout-wide .preview {
-  left: 250px;
+  left: 310px;
   border-left: 1px solid #000000;
 }
 

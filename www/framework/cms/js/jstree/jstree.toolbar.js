@@ -1,10 +1,16 @@
-/* File: jstree.toolbar.js
+/**
+ * File: jstree.toolbar.js
  * Enables a toolbar
+ *
  */
-/* Group: jstree sort plugin */
-
 (function ($) {
     $.jstree.plugin("toolbar", {
+
+        /**
+         * Construct
+         *
+         * @private
+         */
         __construct : function () {
             this.get_container()
                 .bind("__loaded.jstree", $.proxy(function(e) {
@@ -14,6 +20,11 @@
                     this.node_selected(obj.args[0]);
             }, this))
         },
+
+        /**
+         * Defaults
+         *
+         */
         defaults : {
 
             items : function(obj) {
@@ -50,10 +61,26 @@
                 }
             }
         },
+
+        /**
+         * Functions
+         *
+         */
         _fn : {
+
+            /**
+             * Show Toolbar
+             *
+             * @param obj
+             * @return {Boolean}
+             */
             show_toolbar : function (obj) {
                 // function adds toolbar list items
                 var self = this;
+
+                if(self.get_container().siblings('.toolbar').length) {
+                    return false;
+                }
 
                 var additem = function($ul, item) {
                     var $li = $('<li class="js-tree-toolbar-item" />');
@@ -61,7 +88,7 @@
                     var $a = $('<a href="#">' + item.label + '</a>').addClass('js-tree-toolbar-' + item.label.toLowerCase());
 
                     $a.bind('click.js-tree', function() {
-                        self.click_handler(item, obj);
+                        self.click_handler(this, item, obj);
                         return false;
                     });
 
@@ -94,11 +121,16 @@
                 self.get_container().before($toolbar);
             },
 
+            /**
+             * Node Selected
+             *
+             * @param obj
+             */
             node_selected : function (obj) {
                 var self = this;
                 var items = this.get_toolbar_items(obj);
                 $.each(items, function(i, item){
-                    var $a = $('a.js-tree-toolbar-' + item.label.toLowerCase());
+                    var $a = $('a.js-tree-toolbar-' + item.label.toLowerCase(), self.get_container().siblings('.toolbar'));
                     $a.unbind('click.jstree');
                     if (item._disabled) {
                         $a.addClass('disabled');
@@ -109,25 +141,40 @@
                     } else {
                         $a.removeClass('disabled');
                         $a.bind('click.jstree', function() {
-                            self.click_handler(item, obj);
+                            self.click_handler(this, item, obj);
                             return false;
                         });
                     }
                 });
             },
 
+            /**
+             * Get Toolbar Items
+             *
+             * @param obj
+             * @return {*}
+             */
             get_toolbar_items: function(obj) {
                 return obj.data("jstree") && obj.data("jstree").toolbar ?
                     obj.data("jstree").toolbar :
                     this.get_settings().toolbar.items.apply(this, [obj]);
             },
 
-            click_handler: function(item, obj) {
-                var $a = $(this);
+            /**
+             * Click Handler
+             *
+             * @param item
+             * @param obj
+             * @return {Boolean}
+             */
+            click_handler: function(context, item, obj) {
+                var $a = $(context);
+
+                var offset = $a.offset();
 
                 if (!item._disabled) {
                     if (item.action) {
-                        item.action.apply(this, [obj]);
+                        item.action.apply(this, [obj, offset.top, offset.left]);
                     } else if(item.submenu)  {
                         $a.children("ul.closed").removeClass("closed").addClass("open");
                     }
@@ -136,5 +183,7 @@
             }
         }
     });
+
     $.jstree.defaults.plugins.push("toolbar");
+
 })(jQuery);

@@ -271,11 +271,7 @@ class document {
      * @return mixed
      * @throws xmldbException
      */
-    public function save($xml) {
-        if (!is_object($xml) || !(get_class($xml) == 'DOMDocument') || is_null($xml->documentElement)) {
-            throw new xmldbException("This document is not a valid XML-Document");
-        }
-
+    public function save(\DomDocument $xml) {
         $this->beginTransaction();
 
         $doc_info = $this->getDocInfo();
@@ -346,8 +342,10 @@ class document {
      * @param $target_pos
      * @return bool
      */
-    public function addNode($node, $target_id, $target_pos) {
-       if ($this->getDoctypeHandler()->isAllowedAdd($node, $target_id)) {
+    public function addNode(\DomElement $node, $target_id, $target_pos) {
+        $dth = $this->getDoctypeHandler();
+        if ($dth->isAllowedAdd($node, $target_id)) {
+            $dth->onAddNode($node, $target_id, $target_pos);
             return $this->saveNode($node, $target_id, $target_pos, true);
         }
         return false;
@@ -368,6 +366,7 @@ class document {
         if ($dth->isAllowedIn($name, $target_name)) {
             $newNode = $dth->getNewNodeFor($name);
             if ($newNode) {
+                $dth->onAddNode($newNode, $target_id, $target_pos);
                 return $this->addNode($newNode, $target_id, $target_pos);
             }
         }
@@ -1054,30 +1053,34 @@ class document {
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id);
 
-        // delete the node
-        $query = $this->pdo->prepare(
-            "DELETE FROM {$this->table_xml}
-            WHERE id_doc = :doc_id AND id = :node_id"
-        );
-        $query->execute(array(
-            'doc_id' => $this->doc_id,
-            'node_id' => $node_id,
-        ));
+        $dth = $this->getDoctypeHandler();
 
-        $this->clearCache($this->doc_id);
+        if($dth->onDeleteNode($node_id)) {
 
-        // update position of remaining nodes
-        $query = $this->pdo->prepare(
-            "UPDATE {$this->table_xml}
-                SET pos=pos-1
-                WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
-        );
-        $query->execute(array(
-            'node_parent_id' => $target_id,
-            'node_pos' => $target_pos,
-            'doc_id' => $this->doc_id,
-        ));
+            // delete the node
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->table_xml}
+                WHERE id_doc = :doc_id AND id = :node_id"
+            );
+            $query->execute(array(
+                'doc_id' => $this->doc_id,
+                'node_id' => $node_id,
+            ));
 
+            $this->clearCache($this->doc_id);
+
+            // update position of remaining nodes
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                    SET pos=pos-1
+                    WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'node_parent_id' => $target_id,
+                'node_pos' => $target_pos,
+                'doc_id' => $this->doc_id,
+            ));
+        }
         return array();
     }
     // }}}

@@ -6,6 +6,7 @@
     data-selected-nodes=""
     data-open-nodes=""
     data-theme="framework/cms/css/jstree.css"
+    data-tree-url="<?php html::a($this->treeUrl, "auto"); ?>"
     data-delta-updates-websocket-url=""
     data-delta-updates-fallback-poll-url="<?php html::a($this->actionUrl . "fallback/updates/", "auto"); ?>"
     data-delta-updates-post-url="<?php html::a($this->actionUrl, "auto"); ?>"
