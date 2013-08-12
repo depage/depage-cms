@@ -38,6 +38,10 @@
 // }}}
 
 ;(function($){
+    "use strict";
+    /*jslint browser: true*/
+    /*global $:false */
+    
     if(!$.depage){
         $.depage = {};
     }
@@ -50,6 +54,12 @@
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
+
+        if (base.$el.data("depage.slideshow") !== undefined) {
+            // test if this is already a slideshow object
+            // @todo remove and re-add slideshow when called with different options
+            return;
+        }
 
         // Add a reverse reference to the DOM object
         base.$el.data("depage.slideshow", base);
@@ -71,20 +81,24 @@
             divs = base.$el.children(base.options.elements);
             base.num = divs.length;
 
-            if ($.browser != undefined && $.browser.iphone) {
+            if ($.browser !== undefined && $.browser.iphone) {
                 // disable fading on the iPhone > just skip to next image
                 base.options.pause = base.options.speed + base.options.pause;
                 base.options.speed = 0;
             }
             
+            var wasAbsolute = divs.eq(0).css("position") == "absolute";
+
             divs.css({
                 position: "absolute",
                 left: 0,
                 top: 0
             });
-            divs.eq(0).css({
-                position: "static"
-            });
+            if (!wasAbsolute) {
+                divs.eq(0).css({
+                    position: "static"
+                });
+            }
             for (var i = 1; i < divs.length; i++) {
                 $(divs[i]).hide();
             }

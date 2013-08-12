@@ -48,20 +48,25 @@
         var $this = $(this);
         
         // Ajaxify
-        $this.find('a:internal:not(.no-ajaxy)').click(function(event){
+        $this.find('a:internal:not(.no-ajaxy)').each(function(){
             // Prepare
             var
                 $this = $(this),
-                url = $this.attr('href'),
+                url = this.href,
                 title = $this.attr('title') || null;
-            
-            // Continue as normal for cmd clicks etc
-            if ( event.which == 2 || event.metaKey ) { return true; }
-            
-            // Ajaxify this link
-            History.pushState(null,title,url);
-            event.preventDefault();
-            return false;
+
+            // make links absolute;
+            $this.attr("href", url);
+
+            $this.click(function(e) {
+                // Continue as normal for cmd clicks etc
+                if ( e.which == 2 || e.metaKey ) { return true; }
+
+                // Ajaxify this link
+                History.pushState(null,title,url);
+                e.preventDefault();
+                return false;
+            });
         });
         
         // Chain
@@ -148,6 +153,9 @@
 
             base.$el.triggerHandler("depage.magaziner.initialized");
 
+            base.preloadPage(base.currentPage - 1);
+            base.preloadPage(base.currentPage + 1);
+
             base.show(base.currentPage);
         };
         // }}}
@@ -228,7 +236,7 @@
             });
             // }}}
             // {{{ key events
-            $document.on("keypress ", function(e) {
+            $document.on("keyup", function(e) {
                 if ($(document.activeElement).is(':input')){
                     // continue only if an input is not the focus
                     return true;
@@ -280,7 +288,7 @@
                     url = State.url,
                     relativeUrl = url.replace(rootUrl,'');
 
-                if (pagesByUrl[url]) {
+                if (typeof pagesByUrl[url] != undefined) {
                     base.show(pagesByUrl[url]);
                 }
             });
@@ -344,7 +352,7 @@
 
                 return true;
             }
-                
+
             $page.addClass("loading");
             
             // Ajax Request the Traditional Page
@@ -384,6 +392,7 @@
 
                     $body.attr('class', $dataBody.attr("class"));
                     $body.removeClass('document-body');
+
                     $page.removeClass('loading');
                     $page.data("loaded", true);
                     $page.data("title", $data.find('.document-title:first').text());
@@ -422,8 +431,8 @@
                     left: (i - base.currentPage) * pageWidth
                 }, speed);
             });
-            $pages.last().queue( function() {
-                if (resetScroll) {
+            if (resetScroll) {
+                $pages.last().queue( function() {
                     window.scrollTo(0, 0);
 
                     $pages.css({
@@ -432,10 +441,10 @@
                     $pages.hide();
                     base.showPagesAround(base.currentPage);
 
-                    base.preloadPage(n - 1);
-                    base.preloadPage(n + 1);
-                }
-            });
+                    base.preloadPage(base.currentPage - 1);
+                    base.preloadPage(base.currentPage + 1);
+                });
+            }
 
             $pages.removeClass("current-page");
             $currentPage = $pages.eq(n);
