@@ -21,7 +21,7 @@
 (function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     var timer = null;
     

@@ -51,7 +51,6 @@
             var perc = 100 / divs.length;
             var percZoomed = 40 / (divs.length - 1);
 
-            base.$el.height( $(divs[0]).height() );
             for (var i = 0; i < divs.length; i++) {
                 $(divs[i]).css({
                     position: "absolute",
@@ -59,6 +58,9 @@
                     top: 0
                 });
             }
+            divs.first().css({
+                position: "static"
+            });
             base.$el.mouseover( function(e) {
                 var activeDiv = $(e.target).parent()[0];
 

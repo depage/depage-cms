@@ -6,14 +6,45 @@
  * adds a custom slideshow 
  *
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
- */
+ * @author    Frank Hellenkamp [jonas@depage.net]
+ **/
+
+// {{{ documentation
+/**
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-forms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @section Usage
+ *
+ * depage-jquery-slideshow
+ *
+ * @endsection 
+ *
+ * @subpage developer
+ *
+ * @htmlinclude main-extended.html
+ **/
+
+/**
+ * @page usage Usage
+ *
+ **/
+// }}}
+
 ;(function($){
+    "use strict";
+    /*jslint browser: true*/
+    /*global $:false */
+    
     if(!$.depage){
         $.depage = {};
-    };
+    }
     
     $.depage.slideshow = function(el, options){
         /* {{{ variables */
@@ -23,6 +54,12 @@
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
+
+        if (base.$el.data("depage.slideshow") !== undefined) {
+            // test if this is already a slideshow object
+            // @todo remove and re-add slideshow when called with different options
+            return;
+        }
 
         // Add a reverse reference to the DOM object
         base.$el.data("depage.slideshow", base);
@@ -44,18 +81,24 @@
             divs = base.$el.children(base.options.elements);
             base.num = divs.length;
 
-            if ($.browser.iphone) {
+            if ($.browser !== undefined && $.browser.iphone) {
                 // disable fading on the iPhone > just skip to next image
                 base.options.pause = base.options.speed + base.options.pause;
                 base.options.speed = 0;
             }
             
-            base.$el.height( $(divs[0]).height() );
+            var wasAbsolute = divs.eq(0).css("position") == "absolute";
+
             divs.css({
                 position: "absolute",
                 left: 0,
                 top: 0
             });
+            if (!wasAbsolute) {
+                divs.eq(0).css({
+                    position: "static"
+                });
+            }
             for (var i = 1; i < divs.length; i++) {
                 $(divs[i]).hide();
             }
@@ -125,9 +168,19 @@
                 return;
             }
             base.clearQueue();
-            
+
+            divs.each(function(i) {
+                if (i != n && i != base.activeSlide) {
+                    if (i > 0) {
+                        $(this).hide();
+                    } else {
+                        $(this).css({visibility: "hidden"});
+                    }
+                }
+            });
+
             // fadout active slide
-            $(divs[base.activeSlide]).css({
+            $(divs[base.activeSlide]).show().css({
                 opacity: 1
             }).animate({
                 opacity: 0
@@ -136,15 +189,12 @@
             base.activeSlide = n;
 
             // fadein next slide
-            $(divs[n]).css({
+            $(divs[n]).show().css({
+                visibility: "visible",
                 opacity: 0
-            }).show().animate({
+            }).animate({
                 opacity: 1
             }, base.options.speed, function() {
-                // hide all others completely
-                divs.hide();
-                $(this).show();
-                
                 base.waitForNext();
             });
         };
@@ -158,7 +208,7 @@
                 // fade in first image
                 base.show(0);
             }
-        }
+        };
         /* }}} */
         /* {{{ prev() */
         base.prev = function() {
@@ -169,7 +219,7 @@
                 // fade in first image
                 base.show(divs.length - 1);
             }
-        }
+        };
         /* }}} */
         
         // Run initializer
