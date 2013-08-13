@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- {{{ head -->
+    <head>
+        <title>depage-slideshow example - depage jquery plugins</title>
+
+        <style type="text/css">
+            .slideshow {
+                //border: 1px solid;
+            }
+            img {
+                width: 20em;
+            }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script>!window.jQuery && document.write('<script src="lib/global/js/jquery-1.9.1.min.js"><\/script>')</script>
+        <script src="../../depage-slideshow.js"></script>
+        <script>
+            $(document).ready(function() {
+                $(".slideshow").depageSlideshow();
+            });
+        </script>
+    </head>
+    <!-- }}} -->
+    <body>
+        <!-- {{{ header -->
+        <header>
+            <a href="index.html">depage-jquery-plugins</a>
+        </header>
+        <!-- }}} -->
+
+        <div id="content">
+            <h1>depage-slideshow – depage-jquery-plugins</h1>
+            <h2>simple slideshow</h2>
+            <div class="slideshow">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+            <h2>slideshow with timing in data attributes</h2>
+            <div class="slideshow" data-slideshow-speed="1200" data-slideshow-pause="1200">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+            <h2>slideshow with different elements</h2>
+            <div class="slideshow">
+                <div>
+                    <h3>1</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                    <p>This is the first image</p>
+                </div>
+                <div>
+                    <h3>2</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                    <p>This is the second image</p>
+                </div>
+                <div>
+                    <h3>3</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+                    <p>This is the third image</p>
+                </div>
+            </div>
+            <h2>no-javascript fallback</h2>
+            <div>
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+        </div>
+
+        <!-- {{{ footer -->
+        <footer>
+            <p>&copy; 2012 Frank Hellenkamp</p>
+        </footer>
+        <!-- }}} -->
+    </body>
+    <!-- vim:set ft=html sw=4 sts=4 fdm=marker : -->
+</html>
+
+
