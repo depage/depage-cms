@@ -720,13 +720,7 @@ class htmlform extends abstracts\container {
      * @return  void
      **/
     public function clearSession() {
-        // clean uploaded files
-        foreach($this->getElements(true) as $element) {
-            if ($element instanceof elements\file) {
-                $element->clearUploadedFiles();
-            }
-            $element->clearValue();
-        }
+        $this->clearValue();
 
         unset($_SESSION[$this->sessionSlotName]);
         unset($this->sessionSlot);
