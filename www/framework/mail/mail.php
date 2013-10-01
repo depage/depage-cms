@@ -52,6 +52,8 @@ namespace depage\mail;
 class mail {
     protected $sender;
     protected $recipients;
+    protected $cc;
+    protected $bcc;
     protected $replyto;
     protected $subject;
     protected $text;
@@ -91,7 +93,7 @@ class mail {
      * @brief Sets the recipients of the mail.
      *
      * Recipients can either be set as a string or as an array of strings. All 
-     * strings can also be comma seperated emails.
+     * strings can also be comma separated emails.
      *
      * You also can use all valid email notations:
      *
@@ -104,6 +106,32 @@ class mail {
      */
     public function setRecipients($recipients) {
         $this->recipients = $recipients;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setCC()
+    /**
+     * @brief Sets the CC recipients of the mail.
+     *
+     * @param  string|array     $recipients new recipients 
+     * @return object           returns the mail object (for chaining)
+     */
+    public function setCC($recipients) {
+        $this->cc = $recipients;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setBCC()
+    /**
+     * @brief Sets the BCC recipients of the mail.
+     *
+     * @param  string|array     $recipients new recipients 
+     * @return object           returns the mail object (for chaining)
+     */
+    public function setBCC($recipients) {
+        $this->bcc = $recipients;
 
         return $this;
     }
@@ -206,18 +234,12 @@ class mail {
     // }}}
     // {{{ getRecipients()
     /**
-     * @brief Gets the mail recipients as a comma seperated list.
+     * @brief Gets the mail recipients as a comma separated list.
      *
-     * @return string   $recipients all recipients (comma seperated)
+     * @return string   $recipients all recipients (comma separated)
      */
     public function getRecipients() {
-        if (is_array($this->recipients)) {
-            $recipients = implode(",", $this->recipients);
-        } else {
-            $recipients = $this->recipients;
-        }
-
-        return trim($recipients);
+        return $this->normalizeRecipients($this->recipients);
     }
     // }}}
     // {{{ getHeaders()
@@ -232,6 +254,12 @@ class mail {
         $headers .= "From: {$this->sender}{$this->eol}";
         if ($this->replyto != "") {
             $headers .= "Reply-To: {$this->replyto}{$this->eol}";
+        }
+        if ($this->cc != "") {
+            $headers .= "CC: " . $this->normalizeRecipients($this->cc) . $this->eol;
+        }
+        if ($this->bcc != "") {
+            $headers .= "BCC: " . $this->normalizeRecipients($this->bcc) . $this->eol;
         }
         $headers .= "X-Mailer: depage-mail (1.4.0){$this->eol}";
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
@@ -417,6 +445,21 @@ class mail {
         $string = str_replace(array("\r\n", "\r"), $this->eol, $string);
 
         return $string;
+    }
+    // }}}
+    // {{{ normalizeRecipients()
+    /**
+     * @brief Normalize recipients from array to a list of comma separated emails
+     *
+     * @param  string|array     $recipients new recipients 
+     * @return string           $recipients all recipients (comma separated)
+     */
+    protected function normalizeRecipients($recipients) {
+        if (is_array($recipients)) {
+            $recipients = implode(",", $recipients);
+        }
+
+        return trim($recipients);
     }
     // }}}
 }
