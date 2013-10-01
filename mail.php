@@ -1,171 +1,332 @@
 <?php
 /**
  * @file    mail.php
+ * @brief   simple mail generator and sender
  *
- * mail module
- *
- *
- * copyright (c) 2006-2011 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+// {{{ documentation
+/**
+ * @mainpage
+ *
+ * @intro
+ * @image html icon_depage-forms.png
+ * @htmlinclude main-intro.html
+ * @endintro
+ *
+ * @section Usage
+ *
+ * @endsection 
+ *
+ * @htmlinclude main-extended.html
+ **/
+// }}}
+//
 namespace depage\mail;
 
+/**
+ * @brief A simple mail generator and sender
+ *
+ * depage::mail::mail is a simple class to generate emails with text- and/or 
+ * html-content with the simple ability to add various attachments. It takes 
+ * care of mail-boundaries automatically and sends the mail through the native 
+ * mail() function.
+ *
+ * It also wordwraps text automatically, and tries to generate a plain-text 
+ * version of an html-text when no plain-text is provided.
+ *
+ * @code
+ * <?php
+ *      $mail = new depage\mail\mail("sender@domain.com");
+ *
+ *      $mail->setSubject("new mail subject")
+ *           ->setText("This will be the text inside of the mail")
+ *           ->attachFile("path/to/filename.pdf");
+ *
+ *      $mail->send("recipient@domain.com");
+ * @endcode
+ */
 class mail {
-    var $sender;
-    var $recipients;
-    var $subject;
-    var $text;
-    var $htmlText;
-    var $attachements = array();
+    protected $sender;
+    protected $recipients;
+    protected $replyto;
+    protected $subject;
+    protected $text;
+    protected $htmlText;
+    protected $attachements = array();
+    protected $boundary;
+    protected $encoding = "UTF-8";
+    protected $eol = "\n";
 
     // {{{ constructor()
-    function __construct($sender, $replyto = "", $recipients = "") {
+    /**
+     * @brief construct a new mail object
+     *
+     * @param string    $sender email of the sender
+     */
+    public function __construct($sender) {
         $this->sender = $sender;
-        $this->replyto = $replyto;
-        $this->recipients = $recipients;
-        $this->boundary = "=====PHP" . md5(date("r"));
-        $this->mail_header_line_ending = "\n";
-        $this->encoding = "UTF-8";
+        $this->boundary = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
     }
     // }}}
     
     // {{{ setSubject()
-    function setSubject($subject) {
+    /**
+     * @brief Sets the mails subject.
+     *
+     * @param  string   $subject new subject
+     * @return object   returns the mail object (for chaining)
+     */
+    public function setSubject($subject) {
         $this->subject = $subject;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setRecipients()
+    /**
+     * @brief Sets the recipients of the mail.
+     *
+     * Recipients can either be set as a string or as an array of strings. All 
+     * strings can also be comma seperated emails.
+     *
+     * You also can use all valid email notations:
+     *
+     * - recipient@domain.com
+     * - recipient1@domain.com, recipient2@domain.com
+     * - Displayname <recipient@domain.com>
+     *
+     * @param  string|array     $recipients new recipients 
+     * @return object           returns the mail object (for chaining)
+     */
+    public function setRecipients($recipients) {
+        $this->recipients = $recipients;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setReplyTo()
+    /**
+     * @brief Sets the reply-to header
+     *
+     * @param  string   $subject new reply-to address
+     * @return object   returns the mail object (for chaining)
+     */
+    public function setReplyTo($email) {
+        $this->replyto = $email;
+
+        return $this;
     }
     // }}}
     // {{{ setText()
-    function setText($mailtext) {
+    /**
+     * @brief Sets the content of the mail as plain text.
+     *
+     * @param  string   $mailtext new mail content
+     * @return object   returns the mail object (for chaining)
+     */
+    public function setText($mailtext) {
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->text = $mailtext;
+
+        return $this;
     }
     // }}}
     // {{{ setHtmlText()
-    function setHtmlText($mailtext) {
+    /**
+     * @brief Sets the content of the mail as html text.
+     *
+     * It also sets the plaintext-content of the message by stripping out any 
+     * tags but leaving the whitespace.
+     *
+     * @param  string   $mailtext new mail html-content
+     * @return object   returns the mail object (for chaining)
+     */
+    public function setHtmlText($mailtext) {
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
         $this->text = $this->stripTags($this->htmlText);
+
+        return $this;
     }
     // }}}
     
     // {{{ attachFile()
-    function attachFile($filename, $mimetype = "application/octet_stream") {
+    /**
+     * @brief Attaches a file to a message.
+     *
+     * @param  string   $filename path to filename to attach
+     * @param  string   $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream" 
+     * @return object   returns the mail object (for chaining)
+     */
+    public function attachFile($filename, $mimetype = "application/octet_stream") {
         $fstring = file_get_contents($filename);
 
         $this->attachStr($fstring, $mimetype, basename($filename));
     }
     // }}}
     // {{{ attachStr()
-    function attachStr($string, $mimetype, $filename = "") {
-        $astring = "--{$this->boundary}{$this->mail_header_line_ending}" . 
-            "Content-type: $mimetype{$this->mail_header_line_ending}" .
-            "Content-transfer-encoding: base64{$this->mail_header_line_ending}" .
-            "Content-disposition: attachement;{$this->mail_header_line_ending}  filename=\"$filename\"{$this->mail_header_line_ending}{$this->mail_header_line_ending}";
-        $astring .= chunk_split(base64_encode($string)) . "{$this->mail_header_line_ending}";
+    /**
+     * @brief Attaches a string as a file to a message.
+     *
+     * @param  string   $filename path to filename to attach
+     * @param  string   $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream" 
+     * @param  string   $filename filename to use as a name for the attachment
+     * @return object   returns the mail object (for chaining)
+     */
+    public function attachStr($string, $mimetype, $filename = "") {
+        $astring = "--{$this->boundary}{$this->eol}" . 
+            "Content-type: $mimetype{$this->eol}" .
+            "Content-transfer-encoding: base64{$this->eol}" .
+            "Content-disposition: attachement;{$this->eol}  filename=\"$filename\"{$this->eol}{$this->eol}";
+        $astring .= chunk_split(base64_encode($string)) . "{$this->eol}";
 
         $this->attachements[] = $astring;
+
+        return $this;
     }
     // }}}
-    // {{{ attachHtml()
-    function attachHtml($string) {
-        $string = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $string);
+    
+    // {{{ getSubject()
+    /**
+     * @brief Gets the mail subject as an encoded string.
+     *
+     * @return string   $subject encoded subject
+     */
+    public function getSubject() {
+        $subject = "=?{$this->encoding}?B?" . base64_encode($this->subject) . "?=";
 
-        $astring = "--{$this->boundary}{$this->mail_header_line_ending}" . 
-            "Content-type: text/html; charset=\"{$this->encoding}\"{$this->mail_header_line_ending}" .
-            "Content-Transfer-encoding: quoted-printable{$this->mail_header_line_ending}{$this->mail_header_line_ending}";
-        $astring .= $this->quotedPrintableEncode($this->wordwrap($string)) . "{$this->mail_header_line_ending}";
+        return $subject;
+    }
+    // }}}
+    // {{{ getRecipients()
+    /**
+     * @brief Gets the mail recipients as a comma seperated list.
+     *
+     * @return string   $recipients all recipients (comma seperated)
+     */
+    public function getRecipients() {
+        if (is_array($this->recipients)) {
+            $recipients = implode(",", $this->recipients);
+        } else {
+            $recipients = $this->recipients;
+        }
 
-        $this->attachements[] = $astring;
+        return trim($recipients);
+    }
+    // }}}
+    // {{{ getHeaders()
+    /**
+     * @brief Gets the mail headers.
+     *
+     * @return string   $headers the mail headers
+     */
+    public function getHeaders() {
+        $headers = "";
+
+        $headers .= "From: {$this->sender}{$this->eol}";
+        if ($this->replyto != "") {
+            $headers .= "Reply-To: {$this->replyto}{$this->eol}";
+        }
+        $headers .= "X-Mailer: depage-mail (1.4.0){$this->eol}";
+        if (count($this->attachements) == 0 && empty($this->htmlText)) {
+            $headers .= 
+                "Content-type: text/plain; charset={$this->encoding}{$this->eol}" . 
+                "Content-transfer-encoding: quoted-printable";
+        } else {
+            $headers .=
+                "MIME-Version: 1.0{$this->eol}" .
+                // @todo add to boundaries (mixed/alternative) depending on attachements
+                //"Content-Type: multipart/mixed; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
+                "Content-Type: multipart/alternative; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
+        }
+
+        return $headers;
+    }
+    // }}}
+    // {{{ getBody()
+    /**
+     * @brief Gets the message mail body including all attachments.
+     *
+     * @return string   $message the mail body
+     */
+    public function getBody() {
+        $message = "";
+
+        if (count($this->attachements) == 0 && empty($this->htmlText)) {
+            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
+        } else {
+            $message .= 
+                _("This is a MIME encapsulated multipart message.") . $this->eol .
+                _("Please use a MIME-compliant e-mail program to open it.") . $this->eol . $this->eol;
+            $message .= 
+                "--{$this->boundary}{$this->eol}" .
+                "Content-type: text/plain; charset=\"{$this->encoding}\"{$this->eol}" . 
+                "Content-transfer-encoding: quoted-printable{$this->eol}{$this->eol}"; 
+            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
+
+            if (!empty($this->htmlText)) {
+                $htmlText = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $this->htmlText);
+
+                $message .= "{$this->eol}{$this->eol}";
+                $message .= "--{$this->boundary}{$this->eol}" . 
+                    "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
+                    "Content-Transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
+                $message .= $this->quotedPrintableEncode($this->wordwrap($htmlText)) . "{$this->eol}";
+            }
+
+            foreach ($this->attachements as $att) {
+                $message .= "{$this->eol}{$this->eol}$att";
+            }
+            $message .= "--{$this->boundary}--{$this->eol}";
+        }
+
+        return $message;
     }
     // }}}
     
     // {{{ send()
-    function send($recipients = null) {
-        $headers = "";
-        $message = "";
-        $subject = "";
-
+    /**
+     * @brief Sends the mail out to all recipients.
+     *
+     * @param  string|array     $recipients new recipients
+     * @return bool             true on success, false on error
+     */
+    public function send($recipients = null) {
         if (!is_null($recipients)) {
-            $this->recipients = $recipients;
-        }
-        if (is_array($recipients)) {
-            $recipient = implode(",", $recipients);
-        } else {
-            $recipient = $recipients;
+            $this->setRecipients($recipients);
         }
 
-        if ($this->htmlText != "") {
-            $this->attachHtml($this->htmlText);
-        }
+        $success = mail($this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
 
-        $headers .= "From: {$this->sender}{$this->mail_header_line_ending}";
-        if ($this->replyto != "") {
-            $headers .= "Reply-To: {$this->replyto}{$this->mail_header_line_ending}";
-        }
-        $headers .= "X-Mailer: PHP/" . phpversion() . "{$this->mail_header_line_ending}";
-        if (count($this->attachements) == 0) {
-            $headers .= 
-            "Content-type: text/plain; charset={$this->encoding}{$this->mail_header_line_ending}" . 
-            "Content-transfer-encoding: quoted-printable";
-        } else {
-            $headers .=
-            "MIME-Version: 1.0{$this->mail_header_line_ending}" .
-            // @todo add to boundaries (mixed/alternative) depending on attachements
-            //"Content-Type: multipart/mixed; {$this->mail_header_line_ending}\tboundary=\"{$this->boundary}\"{$this->mail_header_line_ending}";
-            "Content-Type: multipart/alternative; {$this->mail_header_line_ending}\tboundary=\"{$this->boundary}\"{$this->mail_header_line_ending}";
-        }
-
-        $subject .= "=?{$this->encoding}?B?" . base64_encode($this->subject) . "?=";
-
-        if (count($this->attachements) == 0) {
-            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
-        } else {
-            $message .= 
-                "This is a MIME encapsulated multipart message - {$this->mail_header_line_ending}" .
-                "please use a MIME-compliant e-mail program to open it. {$this->mail_header_line_ending}{$this->mail_header_line_ending}" .
-
-                "Dies ist eine mehrteilige Nachricht im MIME-Format - {$this->mail_header_line_ending}" .
-                "bitte verwenden Sie zum Lesen ein MIME-konformes Mailprogramm.{$this->mail_header_line_ending}{$this->mail_header_line_ending}";
-            $message .= 
-                "--{$this->boundary}{$this->mail_header_line_ending}" .
-                "Content-type: text/plain; charset=\"{$this->encoding}\"{$this->mail_header_line_ending}" . 
-                "Content-transfer-encoding: quoted-printable{$this->mail_header_line_ending}{$this->mail_header_line_ending}"; 
-            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
-
-            foreach ($this->attachements as $att) {
-                $message .= "{$this->mail_header_line_ending}{$this->mail_header_line_ending}$att";
-            }
-            $message .= "--{$this->boundary}--{$this->mail_header_line_ending}";
-        }
-
-        return mail($recipient, $subject, $message, $headers);
+        return $success;
     }
     // }}}
     
     // {{{ wordwrap()
     /**
-     * Word wrap
+     * @brief Word wraps the text content
      *
-     * @param  string  $string
-     * @param  integer $width
-     * @param  string  $break
-     * @param  boolean $cut
-     * @param  string  $charset
-     * @return string
+     * @param  string   $string     text to wrao
+     * @param  integer  $width      text width to wrap after, defaults to 75
+     * @param  boolean  $forceCut   force the textbreak, even whan a word is longer the the text-width
+     * @param  string   $charset    charset to use, defaults to utf-8
+     * @return string   wordwrapped text
      */
-    function wordwrap($string, $width = 75, $break = "\n", $cut = false, $charset = 'utf-8') {
+    protected function wordwrap($string, $width = 75, $forceCut = false, $charset = 'utf-8') {
         $stringWidth = mb_strlen($string, $charset);
-        $breakWidth  = mb_strlen($break, $charset);
+        $breakWidth  = mb_strlen($this->eol, $charset);
 
         if (strlen($string) === 0) {
             return '';
         } elseif ($breakWidth === null) {
             throw new Exception('Break string cannot be empty');
-        } elseif ($width === 0 && $cut) {
+        } elseif ($width === 0 && $forceCut) {
             throw new Exception('Can\'t force cut when width is zero');
         }
 
@@ -181,22 +342,22 @@ class mail {
                 $possibleBreak = mb_substr($string, $current, $breakWidth, $charset);
             }
 
-            if ($possibleBreak === $break) {
+            if ($possibleBreak === $this->eol) {
                 $result    .= mb_substr($string, $lastStart, $current - $lastStart + $breakWidth, $charset);
                 $current   += $breakWidth - 1;
                 $lastStart  = $lastSpace = $current + 1;
             } elseif ($char === ' ') {
                 if ($current - $lastStart >= $width) {
-                    $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
+                    $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $this->eol;
                     $lastStart  = $current + 1;
                 }
 
                 $lastSpace = $current;
-            } elseif ($current - $lastStart >= $width && $cut && $lastStart >= $lastSpace) {
-                $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $break;
+            } elseif ($current - $lastStart >= $width && $forceCut && $lastStart >= $lastSpace) {
+                $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $this->eol;
                 $lastStart  = $lastSpace = $current;
             } elseif ($current - $lastStart >= $width && $lastStart < $lastSpace) {
-                $result    .= mb_substr($string, $lastStart, $lastSpace - $lastStart, $charset) . $break;
+                $result    .= mb_substr($string, $lastStart, $lastSpace - $lastStart, $charset) . $this->eol;
                 $lastStart  = $lastSpace = $lastSpace + 1;
             }
         }
@@ -210,14 +371,14 @@ class mail {
     // }}}
     // {{{ stripTags()
     /**
-     * stripTags
+     * @brief Strips tags from the html content.
      *
-     * @param  string  $string
-     * @return string
+     * @param  string   $string html-markup
+     * @return string   text with tags removed
      */
-    function stripTags($string) {
+    protected function stripTags($string) {
         $stripped = preg_replace(array(
-            // Remove invisible content
+            // Remove invisible/unwanted content
             '@<style[^>]*?>.*?</style>@siu',
             '@<script[^>]*?.*?</script>@siu',
             '@<object[^>]*?.*?</object>@siu',
@@ -226,31 +387,34 @@ class mail {
             '@<noframes[^>]*?.*?</noframes>@siu',
             '@<noscript[^>]*?.*?</noscript>@siu',
             '@<noembed[^>]*?.*?</noembed>@siu', 
-        ), array(
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-        ), $string);
+        ), '', $string);
 
         $stripped = strip_tags($stripped);
         return $stripped;
     }
     // }}}
     // {{{ quotedPrintableEncode()
-    function quotedPrintableEncode($string) {
+    /**
+     * @brief encodes text a quoted-printable and normalizes line endings.
+     *
+     * @param  string   $string text to be encoded
+     * @return string   encoded string
+     */
+    protected function quotedPrintableEncode($string) {
         $string = $this->normalizeLineEndings(quoted_printable_encode($string));
 
         return $string;
     }
     // }}}
     // {{{ normalizeLineEndings()
-    function normalizeLineEndings($string) {
-        $string = str_replace(array("\r\n", "\r"), $this->mail_header_line_ending, $string);
+    /**
+     * @brief Normalizes line endings to current eol.
+     *
+     * @param  string   $string text to be normalized
+     * @return string   normalized string
+     */
+    protected function normalizeLineEndings($string) {
+        $string = str_replace(array("\r\n", "\r"), $this->eol, $string);
 
         return $string;
     }
