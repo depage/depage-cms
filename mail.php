@@ -211,7 +211,7 @@ class mail {
         $astring = "--{$this->boundary}{$this->eol}" . 
             "Content-type: $mimetype{$this->eol}" .
             "Content-transfer-encoding: base64{$this->eol}" .
-            "Content-disposition: attachement;{$this->eol}  filename=\"$filename\"{$this->eol}{$this->eol}";
+            "Content-disposition: attachement;{$this->eol} filename=\"$filename\"{$this->eol}{$this->eol}";
         $astring .= chunk_split(base64_encode($string)) . "{$this->eol}";
 
         $this->attachements[] = $astring;
@@ -313,6 +313,23 @@ class mail {
             }
             $message .= "--{$this->boundary}--{$this->eol}";
         }
+
+        return $message;
+    }
+    // }}}
+    // {{{ getEml()
+    /**
+     * @brief Gets the whole message in EML format
+     *
+     * @return string   $message whole message
+     */
+    public function getEml() {
+        $message = "";
+
+        $message .= "To: " . $this->getRecipients() . $this->eol;
+        $message .= "Subject: " . $this->getSubject(). $this->eol;
+        $message .= $this->getHeaders() . $this->eol . $this->eol;
+        $message .= $this->getBody() . $this->eol;
 
         return $message;
     }
@@ -442,7 +459,7 @@ class mail {
      * @return string   normalized string
      */
     protected function normalizeLineEndings($string) {
-        $string = str_replace(array("\r\n", "\r"), $this->eol, $string);
+        $string = str_replace(array("\r\n", "\r", "\n"), $this->eol, $string);
 
         return $string;
     }
