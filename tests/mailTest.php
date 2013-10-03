@@ -9,12 +9,23 @@ use depage\mail\mail;
  * Input is abstract, so we need this test class to instantiate it.
  **/
 class mailTestClass extends mail {
-    // needed for testSetAutofocus
-    /*
-    public function getAutofocus() {
-        return $this->autofocus;
+    public function __construct($sender) {
+        parent::__construct($sender);
+
+        $this->mailFunction = array($this, "mailStub");
     }
-     */
+
+    public function mailStub() {
+        return func_get_args();
+    }
+
+    public function wordwrapTest($string, $width = 75, $forceCut = false) {
+        return $this->wordwrap($string, $width, $forceCut);
+    }
+
+    public function stripTagsTest($string) {
+        return $this->stripTags($string);
+    }
 }
 // }}}
 
@@ -24,7 +35,7 @@ class mailTestClass extends mail {
 class mailTest extends PHPUnit_Framework_TestCase {
     // {{{ setUp()
     public function setUp() {
-        $this->mail     = new mail("sender@domain.com");
+        $this->mail     = new mailTestClass("sender@domain.com");
     }
     // }}}
     
@@ -172,21 +183,51 @@ class mailTest extends PHPUnit_Framework_TestCase {
         $this->assertStringEqualsFile($filename, $attachment);
     }
     // }}}
+    // {{{ testWorwrap
+    public function testWordwrap() {
+        $wrapped1 = $this->mail->wordwrapTest("This is a text", 5);
+        $wrapped2 = $this->mail->wordwrapTest("ThisIsALongWord", 8);
+        $wrapped3 = $this->mail->wordwrapTest("ThisIsALongWord", 8, true);
+
+        $this->assertEquals("This\nis a\ntext", $wrapped1);
+        $this->assertEquals("ThisIsALongWord", $wrapped2);
+        $this->assertEquals("ThisIsAL\nongWord", $wrapped3);
+    }
+    // }}}
+    // {{{ testStripTags
+    public function testStripTags() {
+        $stripped1 = $this->mail->stripTagsTest("Te<p>Text</p>st");
+        $stripped2 = $this->mail->stripTagsTest("Te<style>Text</style>st");
+        $stripped3 = $this->mail->stripTagsTest("Te<object>Text</object>st");
+        $stripped4 = $this->mail->stripTagsTest("Te<embed>Text</embed>st");
+        $stripped5 = $this->mail->stripTagsTest("Te<applet>Text</applet>st");
+        $stripped6 = $this->mail->stripTagsTest("Te<noframes>Text</noframes>st");
+        $stripped7 = $this->mail->stripTagsTest("Te<noembed>Text</noembed>st");
+        $stripped8 = $this->mail->stripTagsTest("Te<script>Text</script>st");
+
+        $this->assertEquals("TeTextst", $stripped1);
+        $this->assertEquals("Test", $stripped2);
+        $this->assertEquals("Test", $stripped3);
+        $this->assertEquals("Test", $stripped4);
+        $this->assertEquals("Test", $stripped5);
+        $this->assertEquals("Test", $stripped6);
+        $this->assertEquals("Test", $stripped7);
+        $this->assertEquals("Test", $stripped8);
+        $this->assertEquals("Test", $stripped8);
+    }
+    // }}}
     // {{{ testSend
     public function testSend() {
-        /*
-        rename_function('mail', 'mail_orig');
-        rename_function('mail_mock', 'mail');
-        
-        $this->mail->setSubject("Subject");
+        $this->mail
+            ->setSubject("Subject")
+            ->setText("Text");
 
-        $results = $this->mail->send();
+        $results = $this->mail->send("recipient@domain.com");
 
-        $this->assertSame('foo@example.com', $results[0]);
-        $this->assertSame('Default Title', $results[1]);
-        $this->assertSame('Default Message', $results[2]);
-        $this->assertSame('Default Message', $results[3]);
-         */
+        $this->assertEquals("recipient@domain.com", $results[0]);
+        $this->assertEquals("=?UTF-8?B?U3ViamVjdA==?=", $results[1]);
+        $this->assertEquals("Text", $results[2]);
+        $this->assertEquals("From: sender@domain.com\nX-Mailer: depage-mail (" . $this->mail->getVersion() . ")\nContent-type: text/plain; charset=UTF-8\nContent-transfer-encoding: quoted-printable", $results[3]);
     }
     // }}}
 }

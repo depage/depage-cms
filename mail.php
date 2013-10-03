@@ -50,6 +50,7 @@ namespace depage\mail;
  * @endcode
  */
 class mail {
+    protected $version = "1.4.1";
     protected $sender;
     protected $recipients;
     protected $cc;
@@ -62,6 +63,7 @@ class mail {
     protected $boundary;
     protected $encoding = "UTF-8";
     protected $eol = "\n";
+    protected $mailFunction = "mail";
 
     // {{{ constructor()
     /**
@@ -261,7 +263,7 @@ class mail {
         if ($this->bcc != "") {
             $headers .= "BCC: " . $this->normalizeRecipients($this->bcc) . $this->eol;
         }
-        $headers .= "X-Mailer: depage-mail (1.4.1){$this->eol}";
+        $headers .= "X-Mailer: depage-mail ({$this->getVersion()}){$this->eol}";
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
             $headers .= 
                 "Content-type: text/plain; charset={$this->encoding}{$this->eol}" . 
@@ -334,6 +336,16 @@ class mail {
         return $message;
     }
     // }}}
+    // {{{ getVersion()
+    /**
+     * @brief Gets the Version number of depage-mail
+     *
+     * @return string   $version version number
+     */
+    public function getVersion() {
+        return $this->version;
+    }
+    // }}}
     
     // {{{ send()
     /**
@@ -347,7 +359,7 @@ class mail {
             $this->setRecipients($recipients);
         }
 
-        $success = mail($this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
+        $success = call_user_func($this->mailFunction, $this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
 
         return $success;
     }
@@ -360,17 +372,14 @@ class mail {
      * @param  string   $string     text to wrao
      * @param  integer  $width      text width to wrap after, defaults to 75
      * @param  boolean  $forceCut   force the textbreak, even whan a word is longer the the text-width
-     * @param  string   $charset    charset to use, defaults to utf-8
      * @return string   wordwrapped text
      */
-    protected function wordwrap($string, $width = 75, $forceCut = false, $charset = 'utf-8') {
-        $stringWidth = mb_strlen($string, $charset);
-        $breakWidth  = mb_strlen($this->eol, $charset);
+    protected function wordwrap($string, $width = 75, $forceCut = false) {
+        $stringWidth = mb_strlen($string, $this->encoding);
+        $breakWidth  = mb_strlen($this->eol, $this->encoding);
 
         if (strlen($string) === 0) {
             return '';
-        } elseif ($breakWidth === null) {
-            throw new Exception('Break string cannot be empty');
         } elseif ($width === 0 && $forceCut) {
             throw new Exception('Can\'t force cut when width is zero');
         }
@@ -379,36 +388,36 @@ class mail {
         $lastStart = $lastSpace = 0;
 
         for ($current = 0; $current < $stringWidth; $current++) {
-            $char = mb_substr($string, $current, 1, $charset);
+            $char = mb_substr($string, $current, 1, $this->encoding);
 
             if ($breakWidth === 1) {
                 $possibleBreak = $char;
             } else {
-                $possibleBreak = mb_substr($string, $current, $breakWidth, $charset);
+                $possibleBreak = mb_substr($string, $current, $breakWidth, $this->encoding);
             }
 
             if ($possibleBreak === $this->eol) {
-                $result    .= mb_substr($string, $lastStart, $current - $lastStart + $breakWidth, $charset);
+                $result    .= mb_substr($string, $lastStart, $current - $lastStart + $breakWidth, $this->encoding);
                 $current   += $breakWidth - 1;
                 $lastStart  = $lastSpace = $current + 1;
             } elseif ($char === ' ') {
                 if ($current - $lastStart >= $width) {
-                    $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $this->eol;
+                    $result    .= mb_substr($string, $lastStart, $current - $lastStart, $this->encoding) . $this->eol;
                     $lastStart  = $current + 1;
                 }
 
                 $lastSpace = $current;
             } elseif ($current - $lastStart >= $width && $forceCut && $lastStart >= $lastSpace) {
-                $result    .= mb_substr($string, $lastStart, $current - $lastStart, $charset) . $this->eol;
+                $result    .= mb_substr($string, $lastStart, $current - $lastStart, $this->encoding) . $this->eol;
                 $lastStart  = $lastSpace = $current;
             } elseif ($current - $lastStart >= $width && $lastStart < $lastSpace) {
-                $result    .= mb_substr($string, $lastStart, $lastSpace - $lastStart, $charset) . $this->eol;
+                $result    .= mb_substr($string, $lastStart, $lastSpace - $lastStart, $this->encoding) . $this->eol;
                 $lastStart  = $lastSpace = $lastSpace + 1;
             }
         }
 
         if ($lastStart !== $current) {
-            $result .= mb_substr($string, $lastStart, $current - $lastStart, $charset);
+            $result .= mb_substr($string, $lastStart, $current - $lastStart, $this->encoding);
         }
 
         return $result;
@@ -430,7 +439,6 @@ class mail {
             '@<embed[^>]*?.*?</embed>@siu',
             '@<applet[^>]*?.*?</applet>@siu',
             '@<noframes[^>]*?.*?</noframes>@siu',
-            '@<noscript[^>]*?.*?</noscript>@siu',
             '@<noembed[^>]*?.*?</noembed>@siu', 
         ), '', $string);
 
