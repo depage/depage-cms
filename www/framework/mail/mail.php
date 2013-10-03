@@ -62,7 +62,7 @@ class mail {
     protected $attachements = array();
     protected $boundary;
     protected $encoding = "UTF-8";
-    protected $eol = "\n";
+    protected $eol = PHP_EOL;
     protected $mailFunction = "mail";
 
     // {{{ constructor()
@@ -468,7 +468,13 @@ class mail {
      * @return string   normalized string
      */
     protected function normalizeLineEndings($string) {
-        $string = str_replace(array("\r\n", "\r", "\n"), $this->eol, $string);
+        // replace with \n first
+        $string = str_replace(array("\r\n", "\r", "\n"), "\n", $string);
+
+        if ($this->eol !== "\n") {
+            // replace with real eol afterwords
+            $string = str_replace("\n", $this->eol, $string);
+        }
 
         return $string;
     }
@@ -476,6 +482,8 @@ class mail {
     // {{{ normalizeRecipients()
     /**
      * @brief Normalize recipients from array to a list of comma separated emails
+     *
+     * @todo validate emails
      *
      * @param  string|array     $recipients new recipients 
      * @return string           $recipients all recipients (comma separated)
