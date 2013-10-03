@@ -14,7 +14,7 @@
 ;(function($){
     "use strict";
     /*jslint browser: true*/
-    /*global $:false */
+    /*global $:false History:false reinvigorate:false */
     
     if(!$.depage){
         $.depage = {};
@@ -24,7 +24,7 @@
     
     // {{{ jquery.internal expression helper
     $.expr[':'].internal = function(obj, index, meta, stack){
-        var url = $(obj).attr('href') || '';
+        var url = $(obj).attr('href') || $(obj).attr('src') || '';
         
         // Check link
         return url.substring(0, rootUrl.length) === rootUrl || url.indexOf(':') === -1;
@@ -73,8 +73,29 @@
         return $this;
     };
     // }}}
+    // {{{ makeAbsolute
+    function makeAbsolute(base, relative) {
+        var stack = base.split("/"),
+            parts = relative.split("/");
+        stack.pop(); // remove current file name (or empty string)
+                    // (omit if "base" is the current folder without trailing slash)
+        for (var i=0; i<parts.length; i++) {
+            if (parts[i] == ".")
+                continue;
+            if (parts[i] == "..")
+                stack.pop();
+            else
+                stack.push(parts[i]);
+        }
+        return stack.join("/");
+    }
+    // }}}
     
     $.depage.magaziner = function(el, pagelinkSelector, options){
+        if (!History.enabled) {
+            return;
+        }
+
         // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
@@ -111,8 +132,8 @@
         var scrollTop;
 
         // get the currently loaded page
-        base.currentPage = 0;
-        var $currentPage = null
+        base.currentPage = -1;
+        var $currentPage = null;
         // }}}
 
         // {{{ init()
@@ -121,14 +142,19 @@
 
             var $pagelinks = $(pagelinkSelector);
             for (var i = 0; i < $pagelinks.length; i++) {
-                pagesByUrl[$pagelinks[i].href] = i;
-                urlsByPages[i] = $pagelinks[i].href;
+                var url = $pagelinks[i].href;
+                if ($pagelinks.eq(i).attr("href") === "") {
+                    // normalize empty links that go to current page for IE
+                    url = document.location.href;
+                }
+                pagesByUrl[url] = i;
+                urlsByPages[i] = url;
             }
 
             base.registerEvents();
             $body.ajaxify();
 
-            base.currentPage = pagesByUrl[document.location];
+            var currentPage = pagesByUrl[document.location.href];
             $currentPage = $(".page").addClass("current-page");
             var beforeHtml = "";
             var afterHtml = "";
@@ -137,10 +163,10 @@
             $currentPage.data("title", document.title);
 
             // add empty page containers
-            for (var i = 0; i < $pagelinks.length; i++) {
-                if (i < base.currentPage) {
+            for (i = 0; i < $pagelinks.length; i++) {
+                if (i < currentPage) {
                     beforeHtml += "<div class=\"page\" style=\"display: none\"></div>";
-                } else if (i > base.currentPage) {
+                } else if (i > currentPage) {
                     afterHtml += "<div class=\"page\" style=\"display: none\"></div>";
                 }
             }
@@ -153,10 +179,10 @@
 
             base.$el.triggerHandler("depage.magaziner.initialized");
 
-            base.preloadPage(base.currentPage - 1);
-            base.preloadPage(base.currentPage + 1);
+            base.preloadPage(currentPage - 1);
+            base.preloadPage(currentPage + 1);
 
-            base.show(base.currentPage);
+            base.show(currentPage);
         };
         // }}}
         // {{{ registerEvents()
@@ -275,9 +301,13 @@
             });
             // }}}
             // {{{ resize event
-            $window.resize( function() {
+            var onResize =  function() {
                 pageWidth = base.$el.width();
                 base.show(base.currentPage);
+            };
+
+            $window.on("resize", function() {
+                setTimeout( onResize, 200 );
             });
             // }}}
             
@@ -288,7 +318,7 @@
                     url = State.url,
                     relativeUrl = url.replace(rootUrl,'');
 
-                if (typeof pagesByUrl[url] != undefined) {
+                if (typeof pagesByUrl[url] !== undefined) {
                     base.show(pagesByUrl[url]);
                 }
             });
@@ -308,7 +338,7 @@
                     }
                     catch ( Exception ) { }
                 }
-                
+
                 // Inform Google Analytics of the change
                 if ( typeof window._gaq !== 'undefined' ) {
                     window._gaq.push(['_trackPageview', url]);
@@ -318,6 +348,11 @@
                 if ( typeof window.reinvigorate !== 'undefined' && typeof window.reinvigorate.ajax_track !== 'undefined' ) {
                     reinvigorate.ajax_track(url);
                     // ^ we use the full url here as that is what reinvigorate supports
+                }
+
+                // Inform piwik of the change
+                if ( typeof window._paq !== 'undefined' ) {
+                    window._paq.push(['trackPageView', url]);
                 }
             });
             // }}}
@@ -338,6 +373,10 @@
             }
             var url = urlsByPages[n];
 
+            if (typeof url === 'undefined') {
+                return;
+            }
+
             // Prepare Variables
             var relativeUrl = url.replace(rootUrl,'');
 
@@ -346,7 +385,7 @@
 
             if ($page.data("loaded")) {
                 // data is already loaded into element
-                if (n === base.currentPage) {
+                if (url ===  document.location.href) {
                     $window.trigger("statechangecomplete");
                 }
 
@@ -373,13 +412,22 @@
                         $scripts.detach();
                     }
 
+                    $data.find("a:internal").each( function() {
+                        var $el = $(this);
+                        $el.attr("href", makeAbsolute(url, $el.attr("href")));
+                    });
+                    $data.find("img:internal, iframe:internal").each( function() {
+                        var $el = $(this);
+                        $el.attr("src", makeAbsolute(url, $el.attr("src")));
+                    });
+
                     // Fetch the content
                     contentHtml = $dataContent.html() || $data.html();
                     if ( !contentHtml ) {
                         document.location.href = url;
                         return false;
                     }
-                    
+
                     // Update the content
                     $page.html(contentHtml).ajaxify();
 
@@ -387,7 +435,7 @@
                     $scripts.each(function(){
                         var $script = $(this), scriptText = $script.text(), scriptNode = document.createElement('script');
                         scriptNode.appendChild(document.createTextNode(scriptText));
-                        contentNode.appendChild(scriptNode);
+                        //contentNode.appendChild(scriptNode);
                     });
 
                     $body.attr('class', $dataBody.attr("class"));
@@ -397,7 +445,7 @@
                     $page.data("loaded", true);
                     $page.data("title", $data.find('.document-title:first').text());
 
-                    if (n === base.currentPage) {
+                    if (url === document.location.href) {
                         $window.trigger("statechangecomplete");
                     }
                 },
@@ -444,15 +492,15 @@
                     base.preloadPage(base.currentPage - 1);
                     base.preloadPage(base.currentPage + 1);
                 });
+
+                $pages.removeClass("current-page");
+                $currentPage = $pages.eq(n);
+                $currentPage.addClass("current-page");
+
+                base.$el.triggerHandler("depage.magaziner.show", [n]);
             }
 
-            $pages.removeClass("current-page");
-            $currentPage = $pages.eq(n);
-            $currentPage.addClass("current-page");
-
-            base.$el.triggerHandler("depage.magaziner.show", [n]);
-
-            if (resetScroll) {
+            if (resetScroll && document.location.href != urlsByPages[base.currentPage]) {
                 History.pushState(null, null, urlsByPages[base.currentPage]);
             }
         };
