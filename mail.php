@@ -261,7 +261,7 @@ class mail {
         if ($this->bcc != "") {
             $headers .= "BCC: " . $this->normalizeRecipients($this->bcc) . $this->eol;
         }
-        $headers .= "X-Mailer: depage-mail (1.4.0){$this->eol}";
+        $headers .= "X-Mailer: depage-mail (1.4.1){$this->eol}";
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
             $headers .= 
                 "Content-type: text/plain; charset={$this->encoding}{$this->eol}" . 
