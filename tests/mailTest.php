@@ -27,6 +27,10 @@ class mailTestClass extends mail {
         return $this->stripTags($string);
     }
 
+    public function normalizeLineEndingsTest($string) {
+        return $this->normalizeLineEndings($string);
+    }
+
     public function setEol($eol) {
         $this->eol = $eol;
     }
@@ -224,6 +228,22 @@ class mailTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Test", $stripped7);
         $this->assertEquals("Test", $stripped8);
         $this->assertEquals("Test", $stripped8);
+    }
+    // }}}
+    // {{{ testNormalizeLineEndings
+    public function testNormalizeLineEndings() {
+        $this->mail->setEol("\n");
+        $normalized1 = $this->mail->normalizeLineEndingsTest("This\r\nis\ra\ntext");
+
+        $this->mail->setEol("\r");
+        $normalized2 = $this->mail->normalizeLineEndingsTest("This\r\nis\ra\ntext");
+
+        $this->mail->setEol("\r\n");
+        $normalized3 = $this->mail->normalizeLineEndingsTest("This\r\nis\ra\ntext");
+
+        $this->assertEquals("This\nis\na\ntext", $normalized1, "failed for \\n");
+        $this->assertEquals("This\ris\ra\rtext", $normalized2, "failed for \\r");
+        $this->assertEquals("This\r\nis\r\na\r\ntext", $normalized3, "failed for \\r\\n");
     }
     // }}}
     // {{{ testSend
