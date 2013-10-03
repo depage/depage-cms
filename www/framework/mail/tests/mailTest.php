@@ -26,6 +26,10 @@ class mailTestClass extends mail {
     public function stripTagsTest($string) {
         return $this->stripTags($string);
     }
+
+    public function setEol($eol) {
+        $this->eol = $eol;
+    }
 }
 // }}}
 
@@ -185,13 +189,19 @@ class mailTest extends PHPUnit_Framework_TestCase {
     // }}}
     // {{{ testWorwrap
     public function testWordwrap() {
-        $wrapped1 = $this->mail->wordwrapTest("This is a text", 5);
+        $wrapped1 = $this->mail->wordwrapTest("This is a text", 7);
         $wrapped2 = $this->mail->wordwrapTest("ThisIsALongWord", 8);
         $wrapped3 = $this->mail->wordwrapTest("ThisIsALongWord", 8, true);
+        $wrapped4 = $this->mail->wordwrapTest("ThisIsALongWord", 0, true);
 
-        $this->assertEquals("This\nis a\ntext", $wrapped1);
+        $this->mail->setEol("\r\n");
+        $wrapped5 = $this->mail->wordwrapTest("This is a text", 7);
+
+        $this->assertEquals("This is\na text", $wrapped1);
         $this->assertEquals("ThisIsALongWord", $wrapped2);
         $this->assertEquals("ThisIsAL\nongWord", $wrapped3);
+        $this->assertEquals("ThisIsALongWord", $wrapped4);
+        $this->assertEquals("This is\r\na text", $wrapped5);
     }
     // }}}
     // {{{ testStripTags

@@ -380,8 +380,9 @@ class mail {
 
         if (strlen($string) === 0) {
             return '';
-        } elseif ($width === 0 && $forceCut) {
-            throw new Exception('Can\'t force cut when width is zero');
+        } elseif ($width < 1 && $forceCut) {
+            // Disable forceCut when width is lower than 1
+            $forceCut = false;
         }
 
         $result    = '';
