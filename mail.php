@@ -50,7 +50,7 @@ namespace depage\mail;
  * @endcode
  */
 class mail {
-    protected $version = "1.4.1";
+    protected $version = "1.4.2";
     protected $sender;
     protected $recipients;
     protected $cc;
