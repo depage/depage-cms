@@ -100,7 +100,7 @@
         // }}}
         // {{{ addFacebooklike
         base.addFacebooklike = function(name) {
-            if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+            if ($.browser && $.browser.msie && parseInt($.browser.version, 10) < 9) {
                 // opacity not supported
                 return;
             }

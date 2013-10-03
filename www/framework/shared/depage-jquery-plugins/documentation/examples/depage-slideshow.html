@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- {{{ head -->
+    <head>
+        <title>depage-slideshow example - depage jquery plugins</title>
+
+        <link rel="stylesheet" type="text/css" href="lib/css/global.css">
+        <style type="text/css">
+            .slideshow img {
+                display: block;
+                width: 20em;
+            }
+            .slideshow-controller {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                z-index: 100;
+            }
+            .slideshow-controller a {
+                display: inline-block;
+                padding: 0.5em;
+                background: #ffffff;
+                cursor: pointer;
+            }
+            .slideshow-controller a.active {
+                background: #ff9900;
+            }
+            .slideshow h3 {
+                position: absolute;
+                margin: 0;
+                left: 0;
+                top: 0;
+                padding: 0.5em;
+                background: #ffffff;
+            }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script>!window.jQuery && document.write('<script src="lib/global/js/jquery-1.9.1.min.js"><\/script>')</script>
+        <script src="../../depage-slideshow.js"></script>
+        <script type="text/javascript" src="http://www.depage.net/lib/global/js/prettify/prettify.js"></script>
+        <script src="lib/js/global.js"></script>
+    </head>
+    <!-- }}} -->
+    <body>
+        <!-- {{{ header -->
+        <header>
+            <a href="index.html">depage-jquery-plugins</a>
+        </header>
+        <!-- }}} -->
+
+        <h1>depage-slideshow – depage-jquery-plugins</h1>
+
+        <section class="example">
+            <script>
+                $(document).ready(function() {
+                    $(".slideshow-simple").depageSlideshow();
+                });
+            </script>
+            <h2>simple slideshow</h2>
+            <div class="slideshow slideshow-simple">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+        </section>
+        <section class="example">
+            <script>
+                $(document).ready(function() {
+                    $(".slideshow-data-attr").depageSlideshow();
+                });
+            </script>
+            <h2>slideshow with timing in data attributes</h2>
+            <div class="slideshow slideshow-data-attr" data-slideshow-speed="1200" data-slideshow-pause="1200">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+        </section>
+        <section class="example">
+            <script>
+                $(document).ready(function() {
+                    $(".slideshow-with-controller").each(function() {
+                        $(this).depageSlideshow({
+                            speed: 1000,
+                            pause: 5000
+                        });
+
+                        var slideshowController = $(this).data("depage.slideshow");
+                        var controllerHtml = $("<div class=\"slideshow-controller\"></div>").prependTo(this);
+
+                        for (var i = 0; i < slideshowController.num; i++) {
+                            var aClass = "dot";
+                            if (i == 0) aClass += " active";
+
+                            $("<a class=\"" + aClass + "\" data-num=\"" + i + "\">" + (i + 1) + "</a>").appendTo(controllerHtml).click( function() {
+                                var i = Number($(this).attr("data-num"));
+
+                                slideshowController.show(i);
+                            });
+                        }
+                        $(this).on("depage.slideshow.show", function(event, n) {
+                            $(".slideshow-controller .dot").removeClass("active").eq(n).addClass("active");
+                        });
+                    });
+                });
+            </script>
+            <h2>slideshow with controller</h2>
+            <div class="slideshow slideshow-with-controller">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+        </section>
+        <section class="example">
+            <script>
+                $(document).ready(function() {
+                    $(".slideshow-with-subelements").depageSlideshow();
+                });
+            </script>
+            <h2>slideshow with different elements</h2>
+            <div class="slideshow slideshow-with-subelements">
+                <div>
+                    <h3>image 1</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                    <p>This is the first image</p>
+                </div>
+                <div>
+                    <h3>image 2</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                    <p>This is the second image</p>
+                </div>
+                <div>
+                    <h3>image 3</h3>
+                    <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+                    <p>This is the third image</p>
+                </div>
+            </div>
+        </section>
+        <section class="example">
+            <h2>no-javascript fallback</h2>
+            <div class="slideshow slideshow-no-js">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot02.jpg" alt="Bild 2">
+                <img src="http://www.depage.net/lib/projects/alony/complete_shot01.jpg" alt="Bild 3">
+                <img src="http://www.depage.net/lib/projects/alony/label_shot01.jpg" alt="Bild 1">
+            </div>
+        </section>
+
+        <!-- {{{ footer -->
+        <footer>
+            <p>&copy; 2012-2013 Frank Hellenkamp / depage.net</p>
+        </footer>
+        <!-- }}} -->
+    </body>
+    <!-- vim:set ft=html sw=4 sts=4 fdm=marker : -->
+</html>
+
+
