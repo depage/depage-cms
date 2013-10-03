@@ -44,26 +44,22 @@ class mailTest extends PHPUnit_Framework_TestCase {
         return $parts;
     }
     // }}}
-    // {{{ getPartBody()
-    public function getPartBody($eml, $part) {
+    // {{{ getBodyForPart()
+    public function getBodyForPart($eml, $part) {
         $parts = $this->parseMailParts($eml);
 
         $start = $parts[$part]['starting-pos-body'];
         $end = $parts[$part]['ending-pos-body'];
         $body = substr($eml, $start, $end - $start);
+        $encodingType = $parts[$part]['transfer-encoding'];
 
-        return quoted_printable_decode($body);
-    }
-    // }}}
-    // {{{ getPartAttachment()
-    public function getPartAttachment($eml, $part) {
-        $parts = $this->parseMailParts($eml);
-
-        $start = $parts[$part]['starting-pos-body'];
-        $end = $parts[$part]['ending-pos-body'];
-        $body = substr($eml, $start, $end - $start);
-
-        return base64_decode($body);
+        if (strtolower($encodingType) == 'base64') {
+            return base64_decode($body);
+        } else if (strtolower($encodingType) == 'quoted-printable') {
+            return quoted_printable_decode($body);
+        } else {
+            return $body;
+        }
     }
     // }}}
 
@@ -125,7 +121,7 @@ class mailTest extends PHPUnit_Framework_TestCase {
     public function testPlainText() {
         $this->mail->setText("This is the text with a text line longer than the maximum text width of 75 characters\nSpecial Chars: äöüß");
 
-        $body = $this->getPartBody($this->mail->getEml(), '1');
+        $body = $this->getBodyForPart($this->mail->getEml(), '1');
 
         $this->assertEquals("This is the text with a text line longer than the maximum text width of 75\ncharacters\nSpecial Chars: äöüß\n", $body);
     }
@@ -137,8 +133,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
         $eml = $this->mail->getEml();
         $parts = $this->parseMailParts($eml);
 
-        $plainText = $this->getPartBody($eml, '1.1');
-        $htmlText = $this->getPartBody($eml, '1.2');
+        $plainText = $this->getBodyForPart($eml, '1.1');
+        $htmlText = $this->getBodyForPart($eml, '1.2');
 
         $this->assertEquals("text/plain; charset=\"UTF-8\"", $parts['1.1']['headers']['content-type']);
         $this->assertEquals("This is the text with a text line longer than the maximum text width of 75\ncharacters\nSpecial Chars: äöüß\n", $plainText);
@@ -149,14 +145,14 @@ class mailTest extends PHPUnit_Framework_TestCase {
     // }}}
     // {{{ testAttachString
     public function testAttachString() {
-        $this->mail->attachStr("Special Chars: äöüß", "application/octet_stream");
+        $this->mail->attachStr("Special Chars: äöüß", "text/plain");
 
         $eml = $this->mail->getEml();
         $parts = $this->parseMailParts($eml);
 
-        $attachment = $this->getPartAttachment($eml, '1.2');
+        $attachment = $this->getBodyForPart($eml, '1.2');
 
-        $this->assertEquals("application/octet_stream", $parts['1.2']['headers']['content-type']);
+        $this->assertEquals("text/plain", $parts['1.2']['headers']['content-type']);
         $this->assertEquals("Special Chars: äöüß", $attachment);
     }
     // }}}
@@ -169,11 +165,11 @@ class mailTest extends PHPUnit_Framework_TestCase {
         $eml = $this->mail->getEml();
         $parts = $this->parseMailParts($eml);
 
-        $attachment = $this->getPartAttachment($eml, '1.2');
+        $attachment = $this->getBodyForPart($eml, '1.2');
 
         $this->assertEquals("application/octet_stream", $parts['1.2']['headers']['content-type']);
         $this->assertEquals("attachement; filename=\"" . basename($filename) . "\"", $parts['1.2']['headers']['content-disposition']);
-        $this->assertEquals(file_get_contents($filename), $attachment);
+        $this->assertStringEqualsFile($filename, $attachment);
     }
     // }}}
     // {{{ testSend
