@@ -263,7 +263,9 @@ class mail {
         if ($this->bcc != "") {
             $headers .= "BCC: " . $this->normalizeRecipients($this->bcc) . $this->eol;
         }
+
         $headers .= "X-Mailer: depage-mail ({$this->getVersion()}){$this->eol}";
+
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
             $headers .= 
                 "Content-type: text/plain; charset={$this->encoding}{$this->eol}" . 
@@ -289,7 +291,7 @@ class mail {
         $message = "";
 
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
-            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
+            $message .= $this->quotedPrintableEncode($this->wordwrap($this->text)) . $this->eol;
         } else {
             $message .= 
                 _("This is a MIME encapsulated multipart message.") . $this->eol .
@@ -307,7 +309,7 @@ class mail {
                 $message .= "--{$this->boundary}{$this->eol}" . 
                     "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
                     "Content-Transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
-                $message .= $this->quotedPrintableEncode($this->wordwrap($htmlText)) . "{$this->eol}";
+                $message .= $this->quotedPrintableEncode($this->wordwrap($htmlText)) . $this->eol;
             }
 
             foreach ($this->attachements as $att) {
@@ -331,7 +333,7 @@ class mail {
         $message .= "To: " . $this->getRecipients() . $this->eol;
         $message .= "Subject: " . $this->getSubject(). $this->eol;
         $message .= $this->getHeaders() . $this->eol . $this->eol;
-        $message .= $this->getBody() . $this->eol;
+        $message .= $this->getBody();
 
         return $message;
     }
