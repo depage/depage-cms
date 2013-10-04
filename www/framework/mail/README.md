@@ -12,11 +12,15 @@ Features
 - may be used to send plain and html-text
 - generates plain-text based on html-text
 - simplifies attaching files
+- unit tested 
+
+[![Build Status](https://travis-ci.org/depage/depage-mail.png?branch=master)](https://travis-ci.org/depage/depage-mail)
+
 
 Prerequisites
 -------------
 
-- PHP 5.3
+- PHP >= 5.3
 
 For more information
 --------------------
