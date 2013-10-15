@@ -197,9 +197,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
      * Tests image format detection by filename extension.
      **/
     public function testObtainFormat() {
-        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpg'), 'Format parser error.');
-        $this->assertSame('jpg', $this->graphics->obtainFormat('test.jpeg'), 'Format parser error.');
-        $this->assertSame('foo', $this->graphics->obtainFormat('test.foo'), 'Format parser error.');
+        $this->assertSame('jpg', $this->graphics->obtainFormat('images/test.jpg'), 'Format parser error.');
+        $this->assertSame('jpg', $this->graphics->obtainFormat('images/test.jpeg'), 'Format parser error.');
+        $this->assertSame('foo', $this->graphics->obtainFormat('images/test.foo'), 'Format parser error.');
         $this->assertSame('png', $this->graphics->obtainFormat('/path.to/test.png'), 'Format parser error.');
     }
     // }}}
@@ -210,10 +210,10 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
      * subclass render methods).
      **/
     public function testRender() {
-        $this->graphics->render('test.jpg');
+        $this->graphics->render('images/test.jpg');
 
-        $this->assertSame('test.jpg', $this->graphics->getInput(), 'Input file setter error.');
-        $this->assertSame('test.jpg', $this->graphics->getOutput(), 'Output file should be same as input file if not set.');
+        $this->assertSame('images/test.jpg', $this->graphics->getInput(), 'Input file setter error.');
+        $this->assertSame('images/test.jpg', $this->graphics->getOutput(), 'Output file should be same as input file if not set.');
         $this->assertSame(array(100,100), $this->graphics->getSize(), 'Render method should set image size.');
         $this->assertSame('jpg', $this->graphics->getInputFormat(), 'Render method should set input format.');
         $this->assertSame('jpg', $this->graphics->getOutputFormat(), 'Render method should set output format.');
@@ -225,9 +225,9 @@ class graphicsTest extends PHPUnit_Framework_TestCase {
      * subclass render methods) for different input & output files.
      **/
     public function testRenderSetOutput() {
-        $this->graphics->render('test.jpg', 'test2.png');
+        $this->graphics->render('images/test.jpg', 'test2.png');
 
-        $this->assertSame('test.jpg', $this->graphics->getInput(), 'Input file setter error.');
+        $this->assertSame('images/test.jpg', $this->graphics->getInput(), 'Input file setter error.');
         $this->assertSame('test2.png', $this->graphics->getOutput(), 'Output file setter error.');
         $this->assertSame(array(100,100), $this->graphics->getSize(), 'Render method should set image size.');
         $this->assertSame('jpg', $this->graphics->getInputFormat(), 'Render method should set input format.');

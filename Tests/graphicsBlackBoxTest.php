@@ -1,6 +1,6 @@
 <?php
 
-use depage\graphics\graphics;
+use Depage\Graphics\Graphics;
 
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
@@ -34,7 +34,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase {
         foreach($this->extensions as $extension) {
             foreach($this->formats as $inFormat) {
                 foreach($this->formats as $outFormat) {
-                    $input  = "test.{$inFormat[1]}";
+                    $input  = "images/test.{$inFormat[1]}";
                     $output = "test-{$extension}.{$outFormat[1]}";
 
                     $this->graphics[$extension]->render($input, $output);
