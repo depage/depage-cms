@@ -9,15 +9,13 @@
 
 namespace Depage\Graphics\Providers;
 
-use Depage\Graphics;
-
 /**
  * @brief PHP GD extension interface
  *
  * The graphics_gd class provides depage::graphics features using the PHP GD
  * extension.
  **/
-class Gd extends Graphics {
+class Gd extends \Depage\Graphics\Graphics {
     // {{{ crop()
     /**
      * @brief   Crop action

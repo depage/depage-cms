@@ -72,10 +72,10 @@ class Graphics_ui extends \depage_ui {
                 header("HTTP/1.1 500 Internal Server Error");
                 echo("unknown action");
             }
-        } catch (depage\graphics\graphics_file_not_found_exception $expected) {
+        } catch (Depage\Graphics\Exceptions\FileNotFound $expected) {
             header("HTTP/1.1 404 Not Found");
             echo("file not found");
-        } catch (depage\graphics\graphics_exception $expected) {
+        } catch (Depage\Graphics\Exceptions\Exception $expected) {
             header("HTTP/1.1 500 Internal Server Error");
             echo("an error occured");
         }

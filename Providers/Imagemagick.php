@@ -9,15 +9,13 @@
 
 namespace Depage\Graphics\Providers;
 
-use Depage\Graphics;
-
 /**
  * @brief ImageMagick interface
  *
  * The graphics_imagemagick class provides depage::graphics features using
  * the ImageMagick library.
  **/
-class Imagemagick extends Graphics {
+class Imagemagick extends \Depage\Graphics\Graphics {
     // {{{ variables
     /**
      * @brief Imagemagick command string

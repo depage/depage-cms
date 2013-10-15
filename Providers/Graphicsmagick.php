@@ -73,7 +73,7 @@ class Graphicsmagick extends Imagemagick {
      * @return  void
      **/
     public function render($input, $output = null) {
-        graphics::render($input, $output);
+        \Depage\Graphics\Graphics::render($input, $output);
 
         $this->command = $this->executable . " convert " . escapeshellarg($this->input) . " -background none";
         $this->processQueue();
