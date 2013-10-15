@@ -15,20 +15,22 @@ namespace Depage\Graphics\Providers;
  * The graphics_graphicsmagick class provides depage::graphics features using
  * the GraphicsMagick library.
  **/
-class Graphicsmagick extends Imagemagick {
+class Graphicsmagick extends Imagemagick
+{
     // {{{ crop
     /**
      * @brief   Crop action
      *
      * Adds crop command to command string.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @param   $x      (int) crop x-offset
-     * @param   $y      (int) crop y-offset
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @param  int  $x      crop x-offset
+     * @param  int  $y      crop y-offset
+     * @return void
      **/
-    protected function crop($width, $height, $x = 0, $y = 0) {
+    protected function crop($width, $height, $x = 0, $y = 0)
+    {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             // '+' for positive offset (the '-' is already there)
             $x = ($x < 0) ? $x : '+' . $x;
@@ -46,9 +48,10 @@ class Graphicsmagick extends Imagemagick {
     /**
      * @brief   Determine size of input image
      *
-     * @return  void
+     * @return void
      **/
-    protected function getImageSize() {
+    protected function getImageSize()
+    {
         if (is_callable('getimagesize')) {
             return getimagesize($this->input);
         } else {
@@ -68,11 +71,12 @@ class Graphicsmagick extends Imagemagick {
      *
      * Starts actions, saves image, calls bypass if necessary.
      *
-     * @param   $input  (string) input filename
-     * @param   $output (string) output filename
-     * @return  void
+     * @param  string $input  input filename
+     * @param  string $output output filename
+     * @return void
      **/
-    public function render($input, $output = null) {
+    public function render($input, $output = null)
+    {
         \Depage\Graphics\Graphics::render($input, $output);
 
         $this->command = $this->executable . " convert " . escapeshellarg($this->input) . " -background none";
@@ -114,12 +118,13 @@ class Graphicsmagick extends Imagemagick {
     /**
      * @brief Generates background command
      *
-     * @return $background (string) background part of the command string
+     * @return string $background background part of the command string
      **/
-    protected function getBackground() {
+    protected function getBackground()
+    {
         if ($this->background[0] === '#') {
             $background = " -flatten -background {$this->background}";
-        } else if ($this->outputFormat == 'jpg') {
+        } elseif ($this->outputFormat == 'jpg') {
             $background = " -flatten -background #FFF";
         } else {
             $background = '';

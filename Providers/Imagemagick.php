@@ -15,7 +15,8 @@ namespace Depage\Graphics\Providers;
  * The graphics_imagemagick class provides depage::graphics features using
  * the ImageMagick library.
  **/
-class Imagemagick extends \Depage\Graphics\Graphics {
+class Imagemagick extends \Depage\Graphics\Graphics
+{
     // {{{ variables
     /**
      * @brief Imagemagick command string
@@ -30,9 +31,10 @@ class Imagemagick extends \Depage\Graphics\Graphics {
     /**
      * @brief graphics_graphicsmagick class constructor
      *
-     * @param $options (array) image processing parameters
+     * @param array $options image processing parameters
      **/
-    public function __construct($options = array()) {
+    public function __construct($options = array())
+    {
         parent::__construct($options);
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
@@ -45,13 +47,14 @@ class Imagemagick extends \Depage\Graphics\Graphics {
      *
      * Adds crop command to command string.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @param   $x      (int) crop x-offset
-     * @param   $y      (int) crop y-offset
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @param  int  $x      crop x-offset
+     * @param  int  $y      crop y-offset
+     * @return void
      **/
-    protected function crop($width, $height, $x = 0, $y = 0) {
+    protected function crop($width, $height, $x = 0, $y = 0)
+    {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             // '+' for positive offset (the '-' is already there)
             $x = ($x < 0) ? $x : '+' . $x;
@@ -68,11 +71,12 @@ class Imagemagick extends \Depage\Graphics\Graphics {
      *
      * Adds resize command to command string.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function resize($width, $height) {
+    protected function resize($width, $height)
+    {
         $newSize = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
@@ -88,11 +92,12 @@ class Imagemagick extends \Depage\Graphics\Graphics {
      *
      * Adds thumb command to command string.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function thumb($width, $height) {
+    protected function thumb($width, $height)
+    {
         if (!$this->bypassTest($width, $height)) {
             $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
             $this->size = array($width, $height);
@@ -105,11 +110,12 @@ class Imagemagick extends \Depage\Graphics\Graphics {
      *
      * Adds thumb command to command string.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function thumbfill($width, $height) {
+    protected function thumbfill($width, $height)
+    {
         if (!$this->bypassTest($width, $height)) {
             $this->command .= " -gravity Center -thumbnail {$width}x{$height}^ -extent {$width}x{$height}";
             $this->size = array($width, $height);
@@ -121,9 +127,10 @@ class Imagemagick extends \Depage\Graphics\Graphics {
     /**
      * @brief   Determine size of input image
      *
-     * @return  void
+     * @return void
      **/
-    protected function getImageSize() {
+    protected function getImageSize()
+    {
         if (is_callable('getimagesize')) {
             return getimagesize($this->input);
         } else {
@@ -147,11 +154,12 @@ class Imagemagick extends \Depage\Graphics\Graphics {
      *
      * Starts actions, saves image, calls bypass if necessary.
      *
-     * @param   $input  (string) input filename
-     * @param   $output (string) output filename
-     * @return  void
+     * @param  string $input  input filename
+     * @param  string $output output filename
+     * @return void
      **/
-    public function render($input, $output = null) {
+    public function render($input, $output = null)
+    {
         parent::render($input, $output);
 
         $this->command = '';
@@ -177,12 +185,13 @@ class Imagemagick extends \Depage\Graphics\Graphics {
     // {{{ execCommand()
     /**
      * @brief Executes ImageMagick command.
-     * 
+     *
      * Escapes $this->command and executes it.
      *
      * @return void
      **/
-    protected function execCommand() {
+    protected function execCommand()
+    {
         $command = str_replace('!', '\!', escapeshellcmd($this->command));
 
         exec($command . ' 2>&1', $commandOutput, $returnStatus);
@@ -196,14 +205,15 @@ class Imagemagick extends \Depage\Graphics\Graphics {
     /**
      * @brief Generates background command
      *
-     * @return $background (string) background part of the command string
+     * @return string $background background part of the command string
      **/
-    protected function getBackground() {
+    protected function getBackground()
+    {
         $background = "-size {$this->size[0]}x{$this->size[1]}";
 
         if ($this->background[0] === '#') {
             $background .= " -background {$this->background}";
-        } else if ($this->background == 'checkerboard') {
+        } elseif ($this->background == 'checkerboard') {
             $background .= " -background none pattern:checkerboard";
         } else {
             if ($this->outputFormat == 'jpg') {
@@ -220,9 +230,10 @@ class Imagemagick extends \Depage\Graphics\Graphics {
     /**
      * @brief Generates quality command
      *
-     * @return (string) quality part of the command string
+     * @return string quality part of the command string
      **/
-    protected function getQuality() {
+    protected function getQuality()
+    {
         if (
             $this->outputFormat == 'jpg'
             || $this->outputFormat == 'png'

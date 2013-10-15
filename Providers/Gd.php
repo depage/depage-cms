@@ -15,20 +15,22 @@ namespace Depage\Graphics\Providers;
  * The graphics_gd class provides depage::graphics features using the PHP GD
  * extension.
  **/
-class Gd extends \Depage\Graphics\Graphics {
+class Gd extends \Depage\Graphics\Graphics
+{
     // {{{ crop()
     /**
      * @brief   Crop action
      *
      * Applies crop action to $this->image.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @param   $x      (int) crop x-offset
-     * @param   $y      (int) crop y-offset
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @param  int  $x      crop x-offset
+     * @param  int  $y      crop y-offset
+     * @return void
      **/
-    protected function crop($width, $height, $x = 0, $y = 0) {
+    protected function crop($width, $height, $x = 0, $y = 0)
+    {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             $newImage = $this->createCanvas($width, $height);
 
@@ -54,11 +56,12 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Applies resize action to $this->image.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function resize($width, $height) {
+    protected function resize($width, $height)
+    {
         $newSize = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
@@ -76,11 +79,12 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Applies thumb action to $this->image.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function thumb($width, $height) {
+    protected function thumb($width, $height)
+    {
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
 
@@ -94,7 +98,7 @@ class Gd extends \Depage\Graphics\Graphics {
             }
 
             $newImage = $this->createCanvas($width, $height);
-            
+
             imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
             $this->image = $newImage;
@@ -108,11 +112,12 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Applies thumb-fill action to $this->image.
      *
-     * @param   $width  (int) output width
-     * @param   $height (int) output height
-     * @return  void
+     * @param  int  $width  output width
+     * @param  int  $height output height
+     * @return void
      **/
-    protected function thumbfill($width, $height) {
+    protected function thumbfill($width, $height)
+    {
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
 
@@ -141,16 +146,17 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Determines image format and loads it to $this->image.
      *
-     * @return  void
+     * @return void
      **/
-    protected function load() {
+    protected function load()
+    {
         if ($this->inputFormat == 'gif' && function_exists('imagecreatefromgif')) {
             //GIF
             $this->image = imagecreatefromgif($this->input);
-        } else if ($this->inputFormat == 'jpg') {
+        } elseif ($this->inputFormat == 'jpg') {
             //JPEG
             $this->image = imagecreatefromjpeg($this->input);
-        } else if ($this->inputFormat == 'png') {
+        } elseif ($this->inputFormat == 'png') {
             //PNG
             $this->image = imagecreatefrompng($this->input);
         } else {
@@ -164,18 +170,19 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Adds background and saves $this->image to file.
      *
-     * @return  void
+     * @return void
      **/
-    protected function save() {
+    protected function save()
+    {
         $bg = $this->createBackground($this->size[0], $this->size[1]);
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
         $this->image = $bg;
         $result = false;
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
             $result = imagegif($this->image, $this->output);
-        } else if ($this->outputFormat == 'jpg') {
+        } elseif ($this->outputFormat == 'jpg') {
             $result = imagejpeg($this->image, $this->output, $this->getQuality());
-        } else if ($this->outputFormat == 'png') {
+        } elseif ($this->outputFormat == 'png') {
             $quality = $this->getQuality();
             $result = imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
@@ -187,9 +194,10 @@ class Gd extends \Depage\Graphics\Graphics {
     /**
      * @brief   Determine size of input image
      *
-     * @return  void
+     * @return void
      **/
-    protected function getImageSize() {
+    protected function getImageSize()
+    {
         return getimagesize($this->input);
     }
     // }}}
@@ -200,11 +208,12 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Starts actions, saves image, calls bypass if necessary.
      *
-     * @param   $input  (string) input filename
-     * @param   $output (string) output filename
-     * @return  void
+     * @param  string $input  input filename
+     * @param  string $output output filename
+     * @return void
      **/
-    public function render($input, $output = null) {
+    public function render($input, $output = null)
+    {
         parent::render($input, $output);
 
         $this->load();
@@ -225,11 +234,12 @@ class Gd extends \Depage\Graphics\Graphics {
     /**
      * @brief   Creates transparent canvas with given dimensions
      *
-     * @param   $width  (int)       canvas width
-     * @param   $height (int)       canvas height
-     * @return  $canvas (object)    image resource identifier
+     * @param  int    $width  canvas width
+     * @param  int    $height canvas height
+     * @return object $canvas image resource identifier
      **/
-    private function createCanvas($width, $height) {
+    private function createCanvas($width, $height)
+    {
         $canvas = imagecreatetruecolor($width, $height);
         $bg = imagecolorallocatealpha($canvas, 255, 255, 255, 127);
         imagefill($canvas, 0, 0, $bg);
@@ -243,11 +253,12 @@ class Gd extends \Depage\Graphics\Graphics {
      *
      * Creates image background specified in $this->background
      *
-     * @param   $width      (int)       canvas width
-     * @param   $height     (int)       canvas height
-     * @return  $newImage   (object)    image resource identifier
+     * @param  int    $width  canvas width
+     * @param  int    $height canvas height
+     * @return object $newImage   image resource identifier
      **/
-    private function createBackground($width, $height) {
+    private function createBackground($width, $height)
+    {
         $newImage = imagecreatetruecolor($width, $height);
 
         if ($this->background[0] == '#') {
@@ -269,7 +280,7 @@ class Gd extends \Depage\Graphics\Graphics {
             $r = hexdec($r); $g = hexdec($g); $b = hexdec($b);
 
             imagefill($newImage, 0, 0, imagecolorallocate($newImage, $r, $g, $b));
-        } else if ($this->background == 'checkerboard') {
+        } elseif ($this->background == 'checkerboard') {
             $transLen = 15;
             $transColor = array();
             $transColor[0] = imagecolorallocate ($newImage, 153, 153, 153);
@@ -286,7 +297,7 @@ class Gd extends \Depage\Graphics\Graphics {
                     );
                 }
             }
-        } else if ($this->background == 'transparent') {
+        } elseif ($this->background == 'transparent') {
             imagefill($newImage, 0, 0, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
             if ($this->outputFormat == 'gif') imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
             imagesavealpha($newImage, true);

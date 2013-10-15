@@ -12,7 +12,8 @@ namespace Depage\Graphics;
  *
  * Translates request to graphics actions.
  **/
-class Graphics_ui extends \depage_ui {
+class Graphics_ui extends \depage_ui
+{
     /**
      * @brief Default options array for graphics factory
      **/
@@ -24,7 +25,8 @@ class Graphics_ui extends \depage_ui {
 
     // }}}
     // {{{ notfound()
-    public function notfound($function = "") {
+    public function notfound($function = "")
+    {
         $this->convert($function);
     }
     // }}}
@@ -37,10 +39,11 @@ class Graphics_ui extends \depage_ui {
      *
      * @return void
      **/
-    private function convert($request) {
+    private function convert($request)
+    {
         $request = rawurldecode($request);
         preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
-        
+
         // escape everything
         $file       = escapeshellcmd($command[1]);
         $action     = $this->letters($command[3]);
@@ -50,9 +53,9 @@ class Graphics_ui extends \depage_ui {
 
         if ($width == 0) $width = "X";
         if ($height == 0) $height = "X";
-        
+
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
-        
+
         $img = graphics::factory(
             array(
                 'extension'     => $this->options->extension,
@@ -60,11 +63,11 @@ class Graphics_ui extends \depage_ui {
                 'background'    => $this->options->background,
             )
         );
-        
+
         if (!$this->mkPathToFile($request)) {
             throw new Exceptions\Exception("Could not create cache directory");
         }
-        
+
         try {
             if (is_callable(array($img, "add$action"))) {
                 $img->{"add$action"}($width, $height)->render($file, $cachedFile);
@@ -86,18 +89,19 @@ class Graphics_ui extends \depage_ui {
     /**
      * @brief Displays image
      *
-     * @param   $fileName (string) path to image
-     * @param   $format   (string) image format
-     * @return  void
+     * @param  string $fileName path to image
+     * @param  string $format   image format
+     * @return void
      **/
-    protected function display($fileName, $format) {
+    protected function display($fileName, $format)
+    {
         if ($format === 'jpg' || $format === 'jpeg') {
             header("Content-type: image/jpeg");
             readfile($fileName);
-        } else if ($format === 'png') {
+        } elseif ($format === 'png') {
             header("Content-type: image/png");
             readfile($fileName);
-        } else if ($format === 'gif') {
+        } elseif ($format === 'gif') {
             header("Content-type: image/gif");
             readfile($fileName);
         }
@@ -110,9 +114,10 @@ class Graphics_ui extends \depage_ui {
      * Removes everything except letters from given string and returns it in
      * lowercase.
      *
-     * @return (string) cleaned up string
+     * @return string cleaned up string
      **/
-    protected function letters($string) {
+    protected function letters($string)
+    {
         return strtolower(preg_replace("[^A-Za-z]", '', $string));
     }
     // }}}
@@ -120,14 +125,16 @@ class Graphics_ui extends \depage_ui {
     /**
      * @brief Creates path to file
      *
-     * @param   $file (string) path/file
-     * @return  void
+     * @param  string $file path/file
+     * @return void
      **/
-    protected function mkPathToFile($file) {
+    protected function mkPathToFile($file)
+    {
         $cachePath = DEPAGE_CACHE_PATH."graphics/".dirname($file);
         if (!is_dir($cachePath)) {
             return mkdir($cachePath, 0755, true);
         }
+
         return true;
     }
     // }}}
@@ -135,8 +142,8 @@ class Graphics_ui extends \depage_ui {
     /**
      * @brief Override depage_ui method
      *
-     * @param   $time
-     * @return  void
+     * @param       $time
+     * @return void
      **/
     protected function send_time($time) {}
     // }}}

@@ -4,95 +4,117 @@
  * Override graphics class to access protected methods/attributes in
  * tests
  **/
-class graphicsTestClass extends \Depage\Graphics\Graphics {
+class graphicsTestClass extends \Depage\Graphics\Graphics
+{
     protected $testQueueString = '';
     // imaginary test image size
     protected $size = array(100, 100);
 
-    public function getBackground() {
+    public function getBackground()
+    {
         return $this->background;
     }
 
-    public function getQueue() {
+    public function getQueue()
+    {
         return $this->queue;
     }
 
-    public function escapeNumber($number) {
+    public function escapeNumber($number)
+    {
         return parent::escapeNumber($number);
     }
 
     // simulating queue
-    public function crop($width, $height, $x, $y) {
+    public function crop($width, $height, $x, $y)
+    {
         $this->testQueueString .= "-crop-{$width}-{$height}-{$x}-{$y}-";
     }
 
     // simulating queue
-    public function resize($width, $height) {
+    public function resize($width, $height)
+    {
         $this->testQueueString .= "-resize-{$width}-{$height}-";
     }
 
     // simulating queue
-    public function thumb($width, $height) {
+    public function thumb($width, $height)
+    {
         $this->testQueueString .= "-thumb-{$width}-{$height}-";
     }
 
-    public function getTestQueueString() {
+    public function getTestQueueString()
+    {
         return $this->testQueueString;
     }
 
-    public function processQueue() {
+    public function processQueue()
+    {
         parent::processQueue();
     }
 
-    public function setSize($size) {
+    public function setSize($size)
+    {
         $this->size = $size;
     }
 
-    public function dimensions($width, $height) {
+    public function dimensions($width, $height)
+    {
         return parent::dimensions($width, $height);
     }
 
-    public function getInput() {
+    public function getInput()
+    {
         return $this->input;
     }
 
-    public function getOutput() {
+    public function getOutput()
+    {
         return $this->output;
     }
 
-    public function getSize() {
+    public function getSize()
+    {
         return $this->size;
     }
 
     // imaginary test image size
-    public function getImageSize() {
+    public function getImageSize()
+    {
         return array(100, 100);
     }
-    public function getInputFormat() {
+    public function getInputFormat()
+    {
         return $this->inputFormat;
     }
 
-    public function getOutputFormat() {
+    public function getOutputFormat()
+    {
         return $this->outputFormat;
     }
 
-    public function obtainFormat($fileName) {
+    public function obtainFormat($fileName)
+    {
         return parent::obtainFormat($fileName);
     }
 
-    public function setOutputFormat($format) {
+    public function setOutputFormat($format)
+    {
         $this->outputFormat = $format;
     }
 
-    public function setQuality($quality) {
+    public function setQuality($quality)
+    {
         $this->quality = $quality;
     }
 
-    public function getQuality() {
+    public function getQuality()
+    {
         return parent::getQuality();
     }
 
-    public function bypassTest($width, $height, $x = 0, $y = 0) {
+    public function bypassTest($width, $height, $x = 0, $y = 0)
+    {
         return parent::bypassTest($width, $height, $x, $y);
     }
 }

@@ -3,12 +3,14 @@
 /**
  * Tests for graphicsmagick class
  **/
-class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
+class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
+{
     // {{{ setUp()
     /**
      * Prepares fresh test objects
      **/
-    public function setUp() {
+    public function setUp()
+    {
         $this->graphics = new graphics_graphicsmagickTestClass(array('executable' => 'bin'));
     }
     // }}}
@@ -17,7 +19,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests simple crop action
      **/
-    public function testCropSimple() {
+    public function testCropSimple()
+    {
         $this->assertSame('', $this->graphics->getCommand(), 'Command string should be empty when queue is empty.');
 
         $this->graphics->crop(50, 50);
@@ -29,7 +32,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests crop action with offset
      **/
-    public function testCropOffset() {
+    public function testCropOffset()
+    {
         $this->graphics->crop(50, 50, 20, 10);
         $this->assertSame(' -gravity NorthWest -crop 50x50+20+10! -gravity NorthWest -extent 50x50+0+0', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -39,7 +43,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests crop action with negative offset
      **/
-    public function testCropNegativeOffset() {
+    public function testCropNegativeOffset()
+    {
         $this->graphics->crop(50, 50, -20, -10);
         $this->assertSame(' -gravity NorthWest -crop 50x50-20-10! -gravity NorthWest -extent 50x50-20-10', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -50,7 +55,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests chaining of multiple actions
      **/
-    public function testActionChain() {
+    public function testActionChain()
+    {
         $this->graphics->crop(50, 50);
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
         $this->graphics->resize(60, 60);
@@ -67,7 +73,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests rendering without actions
      **/
-    public function testRenderSimple() {
+    public function testRenderSimple()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render('images/test.jpg', 'test2.png');
 
@@ -79,7 +86,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests rendering after resize
      **/
-    public function testRenderResize() {
+    public function testRenderResize()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(200, 200);
         $this->graphics->render('images/test.jpg');
@@ -92,7 +100,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests bypass
      **/
-    public function testRenderBypass() {
+    public function testRenderBypass()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(100, 100);
         $this->graphics->render('images/test.jpg', 'test2.jpg');
@@ -105,7 +114,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests background command string
      **/
-    public function testGetBackground() {
+    public function testGetBackground()
+    {
         // default (transparent)
         $this->assertSame('', $this->graphics->getBackground(), 'Default background should be transparent.');
 
@@ -131,7 +141,8 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests bypass test for crop action
      **/
-    public function testBypassTestCrop() {
+    public function testBypassTestCrop()
+    {
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addCrop(100, 100, 0, 0)->addCrop(100, 100);

@@ -3,12 +3,14 @@
 /**
  * Tests for imagesmagick class
  **/
-class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
+class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
+{
     // {{{ setUp()
     /**
      * Prepares fresh test objects
      **/
-    public function setUp() {
+    public function setUp()
+    {
         $this->graphics = new graphics_imagemagickTestClass(array('executable' => 'bin'));
     }
     // }}}
@@ -17,7 +19,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests simple crop action
      **/
-    public function testCropSimple() {
+    public function testCropSimple()
+    {
         $this->assertSame('', $this->graphics->getCommand(), 'Command string should be empty when queue is empty.');
 
         $this->graphics->crop(50, 50);
@@ -29,7 +32,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests crop action with offset
      **/
-    public function testCropOffset() {
+    public function testCropOffset()
+    {
         $this->graphics->crop(50, 50, 20, 10);
         $this->assertSame(' -gravity NorthWest -crop 50x50+20+10! -flatten', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -39,7 +43,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests crop action with negative offset
      **/
-    public function testCropNegativeOffset() {
+    public function testCropNegativeOffset()
+    {
         $this->graphics->crop(50, 50, -20, -10);
         $this->assertSame(' -gravity NorthWest -crop 50x50-20-10! -flatten', $this->graphics->getCommand(), 'Crop command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -50,7 +55,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests simple resize action
      **/
-    public function testResizeSimple() {
+    public function testResizeSimple()
+    {
         $this->graphics->resize(50, 50);
         $this->assertSame(' -resize 50x50!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -60,7 +66,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests resize action with automatic width
      **/
-    public function testResizeScaleX() {
+    public function testResizeScaleX()
+    {
         $this->graphics->resize('X', 60);
         $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
@@ -70,7 +77,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests resize action with automatic height
      **/
-    public function testResizeScaleY() {
+    public function testResizeScaleY()
+    {
         $this->graphics->resize(60, 'X');
         $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
@@ -81,7 +89,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests simple thumb action
      **/
-    public function testThumbSimple() {
+    public function testThumbSimple()
+    {
         $this->graphics->thumb(50, 50);
         $this->assertSame(' -gravity Center -thumbnail 50x50 -extent 50x50', $this->graphics->getCommand(), 'Thumb command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
@@ -92,7 +101,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests chaining of multiple actions
      **/
-    public function testActionChain() {
+    public function testActionChain()
+    {
         $this->graphics->crop(50, 50);
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
         $this->graphics->resize(60, 60);
@@ -109,7 +119,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests render method (process & execution)
      **/
-    public function testRenderSimple() {
+    public function testRenderSimple()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render('images/test.jpg', 'test2.png');
 
@@ -121,7 +132,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests render method after resize (process & execution)
      **/
-    public function testRenderResize() {
+    public function testRenderResize()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(200, 200);
         $this->graphics->render('images/test.jpg');
@@ -134,7 +146,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests render method bypass
      **/
-    public function testRenderBypass() {
+    public function testRenderBypass()
+    {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(100, 100);
         $this->graphics->render('images/test.jpg', 'test2.jpg');
@@ -147,7 +160,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests background command string
      **/
-    public function testGetBackground() {
+    public function testGetBackground()
+    {
         // default (transparent)
         $this->assertSame('-size 100x100 -background none', $this->graphics->getBackground(), 'Default background should be transparent.');
 
@@ -176,7 +190,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests getQuality method for JPG
      **/
-    public function testGetQualityJpg() {
+    public function testGetQualityJpg()
+    {
         $this->graphics->render('images/test.jpg');
         $this->assertSame('-quality 90', $this->graphics->getQuality(), 'JPG quality string error.');
     }
@@ -185,7 +200,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests getQuality method for PNG
      **/
-    public function testGetQualityPng() {
+    public function testGetQualityPng()
+    {
         $this->graphics->render('images/test.png');
         $this->assertSame('-quality 95', $this->graphics->getQuality(), 'PNG quality string error.');
     }
@@ -194,7 +210,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests getQuality method for GIF
      **/
-    public function testGetQualityGif() {
+    public function testGetQualityGif()
+    {
         $this->graphics->render('images/test.gif');
         $this->assertSame('', $this->graphics->getQuality(), 'GIF quality string error.');
     }
@@ -204,7 +221,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests bypass test for crop action
      **/
-    public function testBypassTestCrop() {
+    public function testBypassTestCrop()
+    {
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addCrop(100, 100, 0, 0)->addCrop(100, 100);
@@ -220,7 +238,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests bypass test for resize action
      **/
-    public function testBypassTestResize() {
+    public function testBypassTestResize()
+    {
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addResize(100, 100);
@@ -236,7 +255,8 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests bypass test for thumb action
      **/
-    public function testBypassTestThumb() {
+    public function testBypassTestThumb()
+    {
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addThumb(100, 100);
