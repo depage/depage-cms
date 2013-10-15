@@ -7,7 +7,9 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics\Providers;
+
+use Depage\Graphics;
 
 /**
  * @brief ImageMagick interface
@@ -15,7 +17,7 @@ namespace depage\graphics;
  * The graphics_imagemagick class provides depage::graphics features using
  * the ImageMagick library.
  **/
-class graphics_imagemagick extends graphics {
+class Imagemagick extends Graphics {
     // {{{ variables
     /**
      * @brief Imagemagick command string
@@ -135,7 +137,7 @@ class graphics_imagemagick extends graphics {
             if ($returnStatus === 0) {
                 return explode('x', $commandOutput[0]);
             } else {
-                throw new graphics_exception(implode("\n", $commandOutput));
+                throw new Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
     }
@@ -187,7 +189,7 @@ class graphics_imagemagick extends graphics {
 
         exec($command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
-            throw new graphics_exception(implode("\n", $commandOutput));
+            throw new Exceptions\Exception(implode("\n", $commandOutput));
         }
     }
     // }}}

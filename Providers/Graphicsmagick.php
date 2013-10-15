@@ -7,7 +7,7 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics\Providers;
 
 /**
  * @brief GraphicsMagick interface
@@ -15,7 +15,7 @@ namespace depage\graphics;
  * The graphics_graphicsmagick class provides depage::graphics features using
  * the GraphicsMagick library.
  **/
-class graphics_graphicsmagick extends graphics_imagemagick {
+class Graphicsmagick extends Imagemagick {
     // {{{ crop
     /**
      * @brief   Crop action
@@ -56,7 +56,7 @@ class graphics_graphicsmagick extends graphics_imagemagick {
             if ($returnStatus === 0) {
                 return explode('x', $commandOutput[0]);
             } else {
-                throw new graphics_exception(implode("\n", $commandOutput));
+                throw new Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
     }

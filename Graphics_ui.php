@@ -6,13 +6,13 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
-namespace depage\graphics;
+namespace Depage\Graphics;
 /**
  * @brief Interface for accessing graphics via URI
  *
  * Translates request to graphics actions.
  **/
-class graphics_ui extends \depage_ui {
+class Graphics_ui extends \depage_ui {
     /**
      * @brief Default options array for graphics factory
      **/
@@ -62,7 +62,7 @@ class graphics_ui extends \depage_ui {
         );
         
         if (!$this->mkPathToFile($request)) {
-            throw new graphics_exception("Could not create cache directory");
+            throw new Exceptions\Exception("Could not create cache directory");
         }
         
         try {

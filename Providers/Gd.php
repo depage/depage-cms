@@ -7,7 +7,9 @@
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics\Providers;
+
+use Depage\Graphics;
 
 /**
  * @brief PHP GD extension interface
@@ -15,7 +17,7 @@ namespace depage\graphics;
  * The graphics_gd class provides depage::graphics features using the PHP GD
  * extension.
  **/
-class graphics_gd extends graphics {
+class Gd extends Graphics {
     // {{{ crop()
     /**
      * @brief   Crop action
@@ -154,7 +156,7 @@ class graphics_gd extends graphics {
             //PNG
             $this->image = imagecreatefrompng($this->input);
         } else {
-            throw new graphics_exception('Unknown image format.');
+            throw new Exceptions\Exception('Unknown image format.');
         }
     }
     // }}}
@@ -179,7 +181,7 @@ class graphics_gd extends graphics {
             $quality = $this->getQuality();
             $result = imagepng($this->image, $this->output, $quality[0], $quality[1]);
         }
-        if (!$result) throw new graphics_exception('Could not save output image.');
+        if (!$result) throw new Exceptions\Exception('Could not save output image.');
     }
     // }}}
 

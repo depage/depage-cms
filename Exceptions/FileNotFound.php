@@ -7,9 +7,9 @@
  * @author   Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics\Exceptions;
 
 /**
  * @brief Input file not found exception
  **/
-class graphics_file_not_found_exception extends \Exception {}
+class FileNotFound extends \Exception {}

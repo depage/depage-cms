@@ -7,11 +7,11 @@
  * @author   Sebastian Reinhold <sebastian@bitbernd.de>
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics\Exceptions;
 
 /**
  * @brief general graphics related exception class
  *
  * For all important graphics related errors.
  **/
-class graphics_exception extends \Exception {}
+class Exception extends \Exception {}

@@ -5,9 +5,13 @@
  *
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
+ *
+ * @todo add interlacing/progressive loading to jpegs
+ *       gd: imageinterlace
+ *       im: PJPEG: 
  **/
 
-namespace depage\graphics;
+namespace Depage\Graphics;
 
 // {{{ autoloader
 /**
@@ -32,7 +36,7 @@ spl_autoload_register(__NAMESPACE__ . '\autoload');
  *
  * Contains graphics factory and tools. Collects actions with "add"-methods.
  **/
-class graphics {
+class Graphics {
     // {{{ variables
     /**
      * @brief Input filename
@@ -86,31 +90,31 @@ class graphics {
 
         if ( $extension == 'im' || $extension == 'imagemagick' ) {
             if (isset($options['executable'])) {
-                return new graphics_imagemagick($options);
+                return new Providers\Imagemagick($options);
             } else {
-                $executable = graphics::which('convert');
+                $executable = Graphics::which('convert');
                 if ($executable == null) {
                     trigger_error("Cannot find ImageMagick, falling back to GD", E_USER_WARNING);
                 } else {
                     $options['executable'] = $executable;
-                    return new graphics_imagemagick($options);
+                    return new Providers\Imagemagick($options);
                 }
             }
         } else if ( $extension == 'gm' || $extension == 'graphicsmagick' ) {
             if (isset($options['executable'])) {
-                return new graphics_graphicsmagick($options);
+                return new Providers\Graphicsmagick($options);
             } else {
                 $executable = graphics::which('gm');
                 if ($executable == null) {
                     trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_WARNING);
                 } else {
                     $options['executable'] = $executable;
-                    return new graphics_graphicsmagick($options);
+                    return new Providers\Graphicsmagick($options);
                 }
             }
         }
 
-        return new graphics_gd($options);
+        return new Providers\Gd($options);
     }
     // }}}
     // {{{ __construct()
@@ -268,7 +272,7 @@ class graphics {
      * @return  void
      **/
     public function render($input, $output = null) {
-        if (!file_exists($input)) throw new graphics_file_not_found_exception();
+        if (!file_exists($input)) throw new Exceptions\FileNotFound();
         
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;
@@ -390,7 +394,7 @@ class graphics {
             || ($height !== null && $height < 1)
             || ($width == null && $height == null)
         ) {
-            throw new graphics_exception('Invalid image size.');
+            throw new Exceptions\Exception('Invalid image size.');
         }
 
         $bypass = (
