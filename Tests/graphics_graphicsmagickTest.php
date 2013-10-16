@@ -76,9 +76,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
     public function testRenderSimple()
     {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
-        $this->graphics->render('images/test.jpg', 'test2.png');
+        $this->graphics->render('images/test.jpg', 'output/test2.png');
 
-        $this->assertSame("bin convert 'images/test.jpg' -background none -quality 95 +page png:'test2.png'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin convert 'images/test.jpg' -background none -quality 95 +page png:'output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -104,7 +104,7 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(100, 100);
-        $this->graphics->render('images/test.jpg', 'test2.jpg');
+        $this->graphics->render('images/test.jpg', 'output/test2.jpg');
 
         $this->assertFalse($this->graphics->getExecuted(), 'Command should not have been executed.');
     }
@@ -146,11 +146,11 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addCrop(100, 100, 0, 0)->addCrop(100, 100);
-        $this->graphics->render('images/test.jpg', 'test2.jpg');
+        $this->graphics->render('images/test.jpg', 'output/test2.jpg');
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should pass.');
 
         $this->graphics->addCrop(100, 100, 1, 0);
-        $this->graphics->render('images/test.jpg', 'test2.jpg');
+        $this->graphics->render('images/test.jpg', 'output/test2.jpg');
         $this->assertFalse($this->graphics->getBypass(), 'Bypass test should fail.');
     }
     // }}}

@@ -7,7 +7,11 @@ use Depage\Graphics\Graphics;
  **/
 class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
 {
-    protected $extensions   = array('gd', 'im', 'gm');
+    protected $extensions   = array(
+        'gd', 
+        'im', 
+        'gm',
+    );
     protected $formats      = array(
         array(1, 'gif'),
         array(2, 'jpg'),
@@ -22,7 +26,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     {
         foreach ($this->extensions as $extension) {
             foreach ($this->formats as $format) {
-                $file = "test-{$extension}.{$format[1]}";
+                $file = "output/test-{$extension}.{$format[1]}";
                 if (file_exists($file)) unlink($file);
             }
         }
@@ -38,20 +42,20 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             foreach ($this->formats as $inFormat) {
                 foreach ($this->formats as $outFormat) {
                     $input  = "images/test.{$inFormat[1]}";
-                    $output = "test-{$extension}.{$outFormat[1]}";
+                    $output = "output/test-{$extension}.{$outFormat[1]}";
+                    $compare  = "images/compare-{$message}-{$width}-{$height}.{$outFormat[1]}";
 
                     $this->graphics[$extension]->render($input, $output);
                     $info = getimagesize($output);
 
-                    $errorMessage = "{$extension} {$input} {$output} {$message}";
+                    $errorMessage = "{$extension} {$input} {$output} {$message} error.";
 
                     // can only check image dimensions and type
                     $this->assertSame($width, $info[0], "Width, {$errorMessage}");
                     $this->assertSame($height, $info[1], "Height, {$errorMessage}");
                     $this->assertSame($outFormat[0], $info[2], "Type, {$errorMessage}");
 
-                    if (
-                        $bypass
+                    if ($bypass
                         && $inFormat == $outFormat
                     ) {
                         // on bypass filesizes should be equal (copy)
@@ -96,7 +100,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addCrop(200, 200);
         }
 
-        $this->runSuite(200, 200, 'crop-simple error.');
+        $this->runSuite(200, 200, 'crop-simple');
     }
     // }}}
     // {{{ testCropOffset()
@@ -109,7 +113,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addCrop(200, 200, 20, 10);
         }
 
-        $this->runSuite(200, 200, 'crop-offset error.');
+        $this->runSuite(200, 200, 'crop-offset');
     }
     // }}}
     // {{{ testCropNegativeOffset()
@@ -122,7 +126,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addCrop(200, 200, -20, -10);
         }
 
-        $this->runSuite(200, 200, 'crop-negative-offset error.');
+        $this->runSuite(200, 200, 'crop-negative-offset');
     }
     // }}}
 
@@ -136,7 +140,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addResize(50, 50);
         }
 
-        $this->runSuite(50, 50, 'resize-simple error.');
+        $this->runSuite(50, 50, 'resize-simple');
     }
     // }}}
     // {{{ testResizeScaleWidth()
@@ -149,7 +153,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addResize('X', 60);
         }
 
-        $this->runSuite(77, 60, 'resize-scale-width error.');
+        $this->runSuite(77, 60, 'resize-scale-width');
     }
     // }}}
     // {{{ testResizeScaleHeight()
@@ -162,7 +166,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addResize(60, 'X');
         }
 
-        $this->runSuite(60, 47, 'resize-scale-height error.');
+        $this->runSuite(60, 47, 'resize-scale-height');
     }
     // }}}
 
@@ -176,7 +180,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(100, 50);
         }
 
-        $this->runSuite(100, 50, 'thumb-simple error.');
+        $this->runSuite(100, 50, 'thumb-simple');
     }
     // }}}
     // {{{ testThumbSimpleLargeHeight()
@@ -189,7 +193,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(50, 100);
         }
 
-        $this->runSuite(50, 100, 'thumb-simple error.');
+        $this->runSuite(50, 100, 'thumb-simple');
     }
     // }}}
     // {{{ testThumbColorShort()
@@ -202,7 +206,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123');
         }
 
-        $this->runSuite(50, 100, 'thumb-color error.');
+        $this->runSuite(50, 100, 'thumb-color');
     }
     // }}}
     // {{{ testThumbColorLong()
@@ -215,7 +219,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('#123456');
         }
 
-        $this->runSuite(50, 100, 'thumb-color error.');
+        $this->runSuite(50, 100, 'thumb-color');
     }
     // }}}
     // {{{ testThumbCheckerboard()
@@ -228,7 +232,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(50, 100)->addBackground('checkerboard');
         }
 
-        $this->runSuite(50, 100, 'thumb-checkerboard error.');
+        $this->runSuite(50, 100, 'thumb-checkerboard');
     }
     // }}}
 
@@ -242,7 +246,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addCrop(50, 50)->addResize(60, 60)->addThumb(70, 70);
         }
 
-        $this->runSuite(70, 70, 'action-chain error.');
+        $this->runSuite(70, 70, 'action-chain');
     }
     // }}}
 
@@ -252,7 +256,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
      **/
     public function testBypassClean()
     {
-        $this->runSuite(129, 101, 'clean bypass error.', true);
+        $this->runSuite(129, 101, 'clean-bypass', true);
     }
     // }}}
     // {{{ testBypassCrop()
@@ -265,7 +269,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addCrop(129, 101, 0, 0)->addCrop(129, 101);
         }
 
-        $this->runSuite(129, 101, 'crop bypass error.', true);
+        $this->runSuite(129, 101, 'crop-bypass', true);
     }
     // }}}
     // {{{ testBypassResize()
@@ -278,7 +282,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addResize(129, 101);
         }
 
-        $this->runSuite(129, 101, 'resize bypass error.', true);
+        $this->runSuite(129, 101, 'resize-bypass', true);
     }
     // }}}
     // {{{ testBypassThumb()
@@ -291,7 +295,8 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
             $this->graphics[$extension]->addThumb(129, 101);
         }
 
-        $this->runSuite(129, 101, 'thumb bypass error.', true);
+        $this->runSuite(129, 101, 'thumb-bypass', true);
     }
     // }}}
 }
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
