@@ -279,6 +279,33 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
         $this->runSuite(50, 100, 'thumb-checkerboard');
     }
     // }}}
+    
+    // {{{ testThumbfillSimpleLargeWidth()
+    /**
+     * Tests thumbfill action (different formats for gd thumb method)
+     **/
+    public function testThumbfillSimpleLargeWidth()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(100, 50);
+        }
+
+        $this->runSuite(100, 50, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeHeight()
+    /**
+     * Tests thumbfill action (different formats for gd thumb method)
+     **/
+    public function testThumbfillSimpleLargeHeight()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(50, 100);
+        }
+
+        $this->runSuite(50, 100, 'thumbfill-simple');
+    }
+    // }}}
 
     // {{{ testActionChain()
     /**
