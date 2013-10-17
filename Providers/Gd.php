@@ -183,10 +183,12 @@ class Gd extends \Depage\Graphics\Graphics
         } elseif ($this->outputFormat == 'jpg') {
             $result = imagejpeg($this->image, $this->output, $this->getQuality());
         } elseif ($this->outputFormat == 'png') {
-            $quality = $this->getQuality();
-            $result = imagepng($this->image, $this->output, $quality[0], $quality[1]);
+            $quality = (int) ($this->getQuality() / 10);
+            $result = imagepng($this->image, $this->output, $quality, PNG_ALL_FILTERS);
         }
-        if (!$result) throw new Exceptions\Exception('Could not save output image.');
+        if (!$result) {
+            throw new Exceptions\Exception('Could not save output image.');
+        }
     }
     // }}}
 
