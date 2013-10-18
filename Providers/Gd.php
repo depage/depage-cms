@@ -159,8 +159,11 @@ class Gd extends \Depage\Graphics\Graphics
         } elseif ($this->inputFormat == 'png') {
             //PNG
             $this->image = imagecreatefrompng($this->input);
+        } elseif ($this->inputFormat == 'webp' && function_exists('imagecreatefromwebp')) {
+            //WEBP
+            $this->image = imagecreatefromwebp($this->input);
         } else {
-            throw new Exceptions\Exception('Unknown image format.');
+            throw new \Depage\Graphics\Exceptions\Exception('Unknown image format.');
         }
     }
     // }}}
@@ -178,6 +181,7 @@ class Gd extends \Depage\Graphics\Graphics
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
         $this->image = $bg;
         $result = false;
+
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
             $result = imagegif($this->image, $this->output);
         } elseif ($this->outputFormat == 'jpg') {
@@ -185,9 +189,11 @@ class Gd extends \Depage\Graphics\Graphics
         } elseif ($this->outputFormat == 'png') {
             $quality = (int) ($this->getQuality() / 10);
             $result = imagepng($this->image, $this->output, $quality, PNG_ALL_FILTERS);
+        } elseif ($this->outputFormat == 'webp' && function_exists('imagewebp')) {
+            $result = imagewebp($this->image, $this->output, $this->getQuality());
         }
         if (!$result) {
-            throw new Exceptions\Exception('Could not save output image.');
+            throw new \Depage\Graphics\Exceptions\Exception('Could not save output image.');
         }
     }
     // }}}

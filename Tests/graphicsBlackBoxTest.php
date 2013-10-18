@@ -23,6 +23,35 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     /**
      * Cleanup method, deletes output test images
      **/
+    public function __construct()
+    {
+        $i = 1;
+        $types = imagetypes();
+        $aSupportedTypes = array();
+
+        $aPossibleImageTypeBits = array(
+            IMG_GIF  => 'gif',
+            IMG_JPG  => 'jpg',
+            IMG_PNG  => 'png',
+        );
+        if (defined('IMG_WEBP')) {
+            $aPossibleImageTypeBits[IMG_WEBP] = "webp";
+        }
+
+        foreach ($aPossibleImageTypeBits as $iImageTypeBits => $sImageTypeString) {
+            if (imagetypes() & $iImageTypeBits) {
+                $aSupportedTypes[] = array($i++, $sImageTypeString);
+            }
+        }
+
+        $this->formats = $aSupportedTypes;
+    }
+    // }}}
+    
+    // {{{ clean()
+    /**
+     * Cleanup method, deletes output test images
+     **/
     private function clean()
     {
         foreach ($this->extensions as $extension) {
