@@ -1,17 +1,5 @@
 <?php
 
-/**
- * @todo change the modification time to a date in the future to be able to
- *       have ttl in the setter instead of the getter
- *
- * @todo refactor into new directory 'provider' with file, uncached, memcache
- *       and memcached in it.
- *
- * @todo add increment/decrement ?
- *
- * @todo add clear to delete all items ?
- */
-
 namespace Depage\Cache\Providers;
 
 class File extends \Depage\Cache\Cache
@@ -181,39 +169,19 @@ class File extends \Depage\Cache\Cache
         }
     }
     // }}}
-    // {{{ rmr */
+    // {{{ clear */
     /**
-     * @brief deletes files and direcories recursively
-     *
-     * @param   $path (string) path to file or directory
+     * @brief clears all items from current cache
      *
      * @return void
      */
-    public function rmr($path)
+    public function clear()
     {
-        if (!is_link($path) && is_dir($path)) {
-            $files = glob($path . "/*");
-            foreach ($files as $file) {
-                $this->rmr($file);
-            }
-            rmdir($path);
-        } else {
-            unlink($path);
-        }
-    }
-    // }}}
+        $files = (array) glob($this->cachepath . "/*");
 
-    // {{{ getCachePath */
-    /**
-     * @brief gets file-path for a cache-item by key
-     *
-     * @param   key (string) key of item
-     *
-     * @return (string) file path to cache-item
-     */
-    private function getCachePath($key)
-    {
-        return $this->cachepath . $key;
+        foreach ($files as $file) {
+            $this->rmr($file);
+        }
     }
     // }}}
 }

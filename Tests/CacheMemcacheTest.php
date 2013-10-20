@@ -40,6 +40,11 @@ class CacheMemcacheTest extends CacheFileTest
      **/
     public function clean()
     {
+        /*
+        $memc = new \Memcache();
+        $memc->addServer("localhost", "11211");
+        $memc->flush();
+         */
     }
     // }}}
 }

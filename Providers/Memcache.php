@@ -153,6 +153,17 @@ class Memcache extends \Depage\Cache\Cache
         }
     }
     // }}}
+    // {{{ clear */
+    /**
+     * @brief clears all items from current cache
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        $this->memc->flush();
+    }
+    // }}}
 }
 
 /* vim:set ft=php sts=4 fdm=marker et : */

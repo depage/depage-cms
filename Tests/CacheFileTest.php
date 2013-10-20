@@ -177,6 +177,22 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($var, $this->cache->get($key3));
     }
     // }}}
+    
+    // {{{ testClear()
+    /**
+     * Tests clear function
+     **/
+    public function testClear()
+    {
+        $key = "key";
+        $content = "This is the content";
+
+        $this->cache->set($key, $content);
+        $this->cache->clear();
+
+        $this->assertFalse($this->cache->get($key));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sts=4 fdm=marker et : */
