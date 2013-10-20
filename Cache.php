@@ -5,6 +5,8 @@
  *       have ttl in the setter instead of the getter
  *
  * @todo add increment/decrement ?
+ *
+ * @todo add provider for redis ?
  */
 
 namespace Depage\Cache;
@@ -54,9 +56,8 @@ abstract class Cache
             return new \Depage\Cache\Providers\Memcache($prefix, $options);
         } elseif ($options['disposition'] == "uncached") {
             return new \Depage\Cache\Providers\Uncached($prefix, $options);
-        } else {
-            return new \Depage\Cache\Providers\File($prefix, $options);
         }
+        return new \Depage\Cache\Providers\File($prefix, $options);
     }
     // }}}
 
