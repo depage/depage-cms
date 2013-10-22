@@ -20,7 +20,7 @@ class CacheMemcacheTest extends CacheFileTest
         $this->clean();
 
         $this->cache = \Depage\Cache\Cache::factory("test", array(
-            'disposition' => "memory",
+            'disposition' => "memcache",
             'cachepath' => "cache",
         ));
     }
@@ -40,11 +40,9 @@ class CacheMemcacheTest extends CacheFileTest
      **/
     public function clean()
     {
-        /*
         $memc = new \Memcache();
         $memc->addServer("localhost", "11211");
         $memc->flush();
-         */
     }
     // }}}
 }
