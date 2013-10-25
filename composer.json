@@ -1,0 +1,41 @@
+{
+    "name": "depage/cache",
+    "description": "depage-cache is a simple caching class with different backends that are interchangable.",
+    "version": "1.4.2",
+    "type": "library",
+    "keywords": [
+        "cache",
+        "caching",
+        "memcache",
+        "memcached",
+        "redis"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "require-dev": {
+        "phpunit": "*"
+    },
+    "autoload": {
+        "psr-0": { "depage\\cache\\": "../../" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-cache",
+        "issues": "https://github.com/depage/depage-cache/issues"
+
+    },
+    "time": "2013-10-23",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
+
