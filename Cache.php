@@ -54,6 +54,8 @@ abstract class Cache
             return new \Depage\Cache\Providers\Memcached($prefix, $options);
         } elseif (in_array($options['disposition'], array("memcache", "memory")) && extension_loaded("memcache")) {
             return new \Depage\Cache\Providers\Memcache($prefix, $options);
+        } elseif (in_array($options['disposition'], array("redis", "memory")) && extension_loaded("redis")) {
+            return new \Depage\Cache\Providers\Redis($prefix, $options);
         } elseif ($options['disposition'] == "uncached") {
             return new \Depage\Cache\Providers\Uncached($prefix, $options);
         }
