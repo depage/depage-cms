@@ -10,6 +10,7 @@ Features
 - saves all serializable objects
 - different interchangable backends:
   - File
+  - Redis
   - Memcache
   - Memcached
 - transparent fallback to file caching if memory caching is not available with the disposition "memory" option
