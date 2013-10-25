@@ -2,7 +2,7 @@
 
 namespace Depage\Cache\Cache\Tests;
 
-require_once("bootstrap.php");
+require_once(__DIR__ . "/bootstrap.php");
 
 use Depage\Cache\Cache;
 

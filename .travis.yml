@@ -7,4 +7,4 @@ php:
 before_script:
     pecl install redis
 
-script: phpunit --bootstrap tests/bootstrap.php tests
+script: phpunit --bootstrap Tests/bootstrap.php Tests
