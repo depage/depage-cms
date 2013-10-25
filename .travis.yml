@@ -4,4 +4,8 @@ php:
   - 5.4
   - 5.3
 
-script: phpunit --bootstrap Tests/bootstrap.php Tests
+install:
+    sudo apt-get install graphicsmagick
+
+script: 
+    phpunit --bootstrap Tests/bootstrap.php Tests
