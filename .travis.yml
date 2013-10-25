@@ -6,5 +6,7 @@ php:
 
 before_script:
     pecl install redis
+    pecl install memcache
+    pecl install memcached
 
 script: phpunit --bootstrap Tests/bootstrap.php Tests
