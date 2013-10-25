@@ -111,6 +111,7 @@ class Redis extends \Depage\Cache\Cache
             // it is just one item - delete directly
             $this->redis->delete($key);
         } else {
+            // user patterns to delete all subkeys
             $keys = $this->redis->keys($key . "*");
             $this->redis->delete($keys);
         }

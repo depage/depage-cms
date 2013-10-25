@@ -12,8 +12,9 @@ class Memcache extends \Depage\Cache\Cache
         'host' => 'localhost:11211',
     );
     private $memc;
+    protected $keyNs = "~~namespace";
     // }}}
-    //
+    
     // {{{ constructor
     protected function __construct($prefix, $options = array())
     {
@@ -106,37 +107,35 @@ class Memcache extends \Depage\Cache\Cache
     // }}}
 
     // {{{ getMemcKey */
-    public function getMemcKey($key)
+    protected function getMemcKey($key)
     {
-        $k = $key;
-        $key_ns = "namespace";
-        $key_cache_item = "";
+        $keyNs = $this->keyNs;
+        $keyCacheItem = "";
 
         $namespaces = explode("/", $key);
         $last = array_pop($namespaces);
 
         foreach ($namespaces as $namespace) {
-            $key_ns .= "/" . $namespace;
+            $keyNs .= "/" . $namespace;
 
-            $counter = $this->memc->get($key_ns);
+            $counter = $this->memc->get($keyNs);
             if ($counter === false) {
                 $counter = mt_rand(1, 10000);
-                $this->memc->set($key_ns, $counter);
+                $this->memc->set($keyNs, $counter);
             }
 
-            $key_cache_item .= "$namespace~$counter/";
+            $keyCacheItem .= "$namespace~$counter/";
 
         }
-        $key_cache_item .= $last;
+        $keyCacheItem .= $last;
 
-        return $key_cache_item;
+        return $keyCacheItem;
     }
     // }}}
     // {{{ delete */
     public function delete($key)
     {
-        $k = $key;
-        $key_ns = "namespace";
+        $keyNs = $this->keyNs;
 
         $namespaces = explode("/", $key);
         $last = array_pop($namespaces);
@@ -147,9 +146,9 @@ class Memcache extends \Depage\Cache\Cache
         } else {
             // invalidate namespace with key
             foreach ($namespaces as $namespace) {
-                $key_ns .= "/" . $namespace;
+                $keyNs .= "/" . $namespace;
             }
-            $this->memc->increment($key_ns);
+            $this->memc->increment($keyNs);
         }
     }
     // }}}

@@ -161,20 +161,23 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $var = "This is a test content";
         $key1 = "test/sub/sub1";
         $key2 = "test/sub/sub2";
-        $key3 = "test/val";
+        $key3 = "test/sub/subsub/sub3";
+        $key4 = "test/val";
 
         $this->cache->set($key1, $var);
         $this->cache->set($key2, $var);
         $this->cache->set($key3, $var);
+        $this->cache->set($key4, $var);
 
         $this->cache->delete("test/sub/");
 
         // all inside the sub namespace should be deleted
         $this->assertFalse($this->cache->get($key1));
         $this->assertFalse($this->cache->get($key2));
+        $this->assertFalse($this->cache->get($key3));
         
         // things in the test namespace should still be set
-        $this->assertEquals($var, $this->cache->get($key3));
+        $this->assertEquals($var, $this->cache->get($key4));
     }
     // }}}
     
