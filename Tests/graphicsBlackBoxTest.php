@@ -19,9 +19,9 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     );
     protected $maxDifference = 0.5;
 
-    // {{{ clean()
+    // {{{ constructor()
     /**
-     * Cleanup method, deletes output test images
+     * Constructor function
      **/
     public function __construct()
     {
