@@ -70,6 +70,26 @@
         base.activeSlide = 0;
         base.playing = false;
         base.num = 0;
+
+        // test for css transition ability
+        var whichTransitionEvent = (function (){
+            var t;
+            var el = document.createElement('fakeelement');
+            var transitions = {
+                'transition'       :'transitionEnd transitionend',
+                'OTransition'      :'oTransitionEnd',
+                'MSTransition'     :'msTransitionEnd',
+                'MozTransition'    :'transitionend',
+                'WebkitTransition' :'webkitTransitionEnd'
+            };
+
+            for(t in transitions){
+                if( el.style[t] !== undefined ){
+                    return transitions[t];
+                }
+            }
+            return false;
+        }());
         /* }}} */
         
         /* {{{ init() */
@@ -87,20 +107,32 @@
                 base.options.speed = 0;
             }
             
+            // make parent "not static"
+            if (base.$el.css("position") == "static") {
+                base.$el.css({
+                    position: "relative"
+                });
+            }
+
             var wasAbsolute = divs.eq(0).css("position") == "absolute";
 
+            // make children "absolute"
             divs.css({
                 position: "absolute",
                 left: 0,
                 top: 0
             });
+            // make first child "static" to have an automatic height
             if (!wasAbsolute) {
                 divs.eq(0).css({
                     position: "static"
                 });
             }
             for (var i = 1; i < divs.length; i++) {
-                $(divs[i]).hide();
+                $(divs[i]).css({
+                    visibility: "hidden",
+                    opacity: 0
+                });
             }
 
             if (divs.length > 1) {
@@ -133,6 +165,12 @@
 
             base.playing = true;
             base.next();
+        };
+        /* }}} */
+        /* {{{ resume() */
+        base.resume = function() {
+            base.playing = true;
+            base.waitForNext();
         };
         /* }}} */
         /* {{{ pause() */
@@ -171,32 +209,64 @@
 
             divs.each(function(i) {
                 if (i != n && i != base.activeSlide) {
-                    if (i > 0) {
-                        $(this).hide();
-                    } else {
-                        $(this).css({visibility: "hidden"});
-                    }
+                    $(this).css({visibility: "hidden"});
                 }
             });
+            if (whichTransitionEvent) {
+                divs.css({
+                    transition: "opacity " + base.options.speed + "ms linear"
+                });
+            }
 
             // fadout active slide
-            $(divs[base.activeSlide]).show().css({
-                opacity: 1
-            }).animate({
-                opacity: 0
-            }, base.options.speed);
+            $(divs[base.activeSlide]).each( function() {
+                var $div = $(this);
+
+                if (whichTransitionEvent) {
+                    // css3 animation
+                    $div.css({
+                        opacity: 1
+                    }).one(whichTransitionEvent, function(e) {
+                        $div.css({visibility: "hidden"});
+                    }).css({
+                        opacity: 0
+                    });
+                } else {
+                    // javascript animation
+                    $div.css({
+                        opacity: 1
+                    }).animate({
+                        opacity: 0
+                    }, base.options.speed, function() {
+                        $div.css({visibility: "hidden"});
+                    });
+                }
+            });
             
             base.activeSlide = n;
 
             // fadein next slide
-            $(divs[n]).show().css({
-                visibility: "visible",
-                opacity: 0
-            }).animate({
-                opacity: 1
-            }, base.options.speed, function() {
-                base.waitForNext();
-            });
+            if (whichTransitionEvent) {
+                // css3 animation
+                $(divs[n]).css({
+                    visibility: "visible",
+                    opacity: 0
+                }).one(whichTransitionEvent, function(e) {
+                    base.waitForNext();
+                }).css({
+                    opacity: 1
+                });
+            } else {
+                // javascript animation
+                $(divs[n]).css({
+                    visibility: "visible",
+                    opacity: 0
+                }).animate({
+                    opacity: 1
+                }, base.options.speed, function() {
+                    base.waitForNext();
+                });
+            }
         };
         /* }}} */
         /* {{{ next() */
@@ -228,7 +298,7 @@
     
     /* {{{ defaultOptions() */
     $.depage.slideshow.defaultOptions = {
-        elements: "div, span",
+        elements: "div, span, img",
         speed: 3000,
         pause: 3000,
         waitForImagesToLoad: true

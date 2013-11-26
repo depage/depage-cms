@@ -41,7 +41,7 @@
         base.el = el;
 
         // require unique element id
-        if (base.el.id == ''){
+        if (base.el.id === ''){
             // throw 'Base element has no ID';
         }
 
@@ -266,7 +266,7 @@
                             return false;
                         });
                 }
-            }
+            };
         // }}}
 
         // {{{ upload()
@@ -325,7 +325,6 @@
                 if (!$input.length) {
                     $input = $('<input type="hidden" class="input-hidden" />').attr( {
                         name: base.options.server_upload_key,
-                        id: base.options.server_upload_key,
                         id: base.options.server_upload_key,
                         value: base.options.getUniqueId()
                     });
@@ -539,7 +538,7 @@
                 formData.append('ajax', 'true');
 
                 // append the files
-                for(var i in base.el.files) {
+                for(var i = 0; i < base.el.files.length; i++) {
                     formData.append(base.el.name, base.el.files[i]);
                 }
 
