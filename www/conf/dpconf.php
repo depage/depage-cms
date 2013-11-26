@@ -24,7 +24,7 @@ $conf = array(
     
     // {{{ */depage-cms/
     '*/depage-cms/' => array(
-        'handler' => 'depage\cms\ui_main',
+        'handler' => 'DepageLegacy\LegacyUI',
         //'env' => 'production',
     ),
     '*/depage-cms-dev/' => array(
