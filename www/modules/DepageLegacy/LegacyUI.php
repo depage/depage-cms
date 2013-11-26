@@ -25,6 +25,13 @@ class LegacyUI extends \depage_ui
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
 
+        // get cache instance
+        $this->cache = \depage\cache\cache::factory("xmldb", array(
+            //'disposition' => "memory",
+            //'disposition' => "uncached",
+            'host' => "twins.local",
+        ));
+
         if (empty($this->pdo)) {
             // get database instance
             $this->pdo = new \db_pdo (
@@ -47,7 +54,8 @@ class LegacyUI extends \depage_ui
 
         // set html-options
         $this->html_options = array(
-            'template_path' => __DIR__ . "/tpl/",
+            //'template_path' => __DIR__ . "/tpl/",
+            'template_path' => "framework/cms/tpl/",
             'clean' => "space",
             'env' => $this->options->env,
         );
@@ -151,8 +159,10 @@ class LegacyUI extends \depage_ui
      */
     public function import()
     {
-        $importXML = \DOMDocument::load("projects/{$this->project}/import/backup_full.xml");
-        return "test";
+        $import = new Import($this->project, $this->pdo, $this->cache);
+        $value = $import->importProject("projects/{$this->project}/import/backup_full.xml");
+
+        return $value;
     }
     // }}}
 }

@@ -158,7 +158,8 @@ class document {
     public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX) {
         $identifier = "{$this->table_docs}/d{$this->doc_id}/{$id}.xml";
 
-        $xml_doc = new \DOMDocument();
+        //$xml_doc = new \DOMDocument();
+        $xml_doc = new \depage\xml\Document();
 
         $xml_str = $this->cache->get($identifier);
 
@@ -696,7 +697,8 @@ class document {
         }
         $xml .= "/>";
 
-        $doc = new \DOMDocument;
+        //$doc = new \DOMDocument;
+        $doc = new \depage\xml\Document();
         $doc->loadXML($xml);
 
         return $doc->documentElement;
@@ -945,7 +947,6 @@ class document {
         $this->beginTransaction();
 
         $this->getNodeArrayForSaving($node_array, $node);
-
         if ($node_array[0]['id'] != null && $target_id === null) {
             //set target_id/pos/doc
             $target_id = $this->getParentIdById($node_array[0]['id']);
@@ -1626,7 +1627,7 @@ class document {
             } else {
                 $name_query = $node->localName;
             }
-            $attr_str = '';
+            $attr_str = "";
             foreach ($node->attributes as $attrib) {
                 if ($attrib->prefix . ':' . $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute && $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute) {
                     $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
@@ -1648,6 +1649,7 @@ class document {
                     'doc_id' => $this->doc_id,
                 ));
             }
+            
             $insert_query->execute(array(
                 'id_query' => $id_query,
                 'target_id' => $target_id,
@@ -1661,7 +1663,7 @@ class document {
             if ($id === null) {
                 $id = $query->lastInsertId();
                 $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
-            } else if ($this->getNodeId($node) == null) {
+            } else {
                 $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
             }
         } else {
