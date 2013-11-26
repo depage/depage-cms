@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @todo change the modification time to a date in the future to be able to 
+ *       have ttl in the setter instead of the getter
+ *
+ * @todo refactor into new directory 'provider' with file, uncached, memcache 
+ *       and memcached in it.
+ */
+
 namespace depage\cache; 
 
 class cache {
@@ -177,7 +185,7 @@ class cache {
         }
     }
     // }}}
-    // {{{ rmdir */
+    // {{{ rmr */
     /**
      * @brief deletes files and directories recursively
      *

@@ -171,8 +171,8 @@ abstract class input extends element {
     public function isEmpty() {
         return (
             empty($this->value)
-            && ((string) $this->value !== '0') 
-            && ($this->value !== false)
+            && $this->value !== '0'
+            && $this->value !== false
         );
     }
     // }}}
@@ -204,6 +204,17 @@ abstract class input extends element {
      **/
     public function getValue() {
         return $this->value;
+    }
+    // }}}
+
+    // {{{ getLabel()
+    /**
+     * @brief   Returns the current input elements' label.
+     *
+     * @return  $this->label HTML label
+     **/
+    public function getLabel() {
+        return $this->label;
     }
     // }}}
     
@@ -292,9 +303,6 @@ abstract class input extends element {
     protected function htmlClasses() {
         $classes = 'input-' . $this->htmlEscape($this->type);
 
-        if ($this->class) {
-            $classes .= ' ' . $this->htmlEscape($this->class);
-        }
         if ($this->required) {
             $classes .= ' required';
         }
@@ -307,7 +315,7 @@ abstract class input extends element {
         if (isset($this->skin)) {
             $classes .= ' skin-' . $this->htmlEscape($this->skin);
         }
-        if (isset($this->class)) {
+        if (!empty($this->class)) {
             $classes .= ' ' . $this->htmlEscape($this->class);
         }
 
@@ -387,7 +395,7 @@ abstract class input extends element {
      * @return  (mixed) element value
      **/
     protected function htmlValue() {
-        return ($this->value === null) ? $this->htmlEscape($this->defaultValue) : $this->value;
+        return $this->htmlEscape($this->value === null ? $this->defaultValue : $this->value);
     }
     // }}}
 

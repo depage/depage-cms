@@ -1,0 +1,190 @@
+$baseSize: 1.3em;
+$padding: 2em;
+
+// {{{ global 
+html {
+    font-size: 12pt;
+}
+body {
+    font-size: 62.5%;
+    padding: 2em;
+}
+body {
+    font-family: Verdana, Tahoma, Arial, Helvetica, Sans-Serif;
+}
+h1 {
+    font-family: Georgia, Times, Times New Roman, Serif;
+}
+// }}}
+
+// {{{ font styles
+h1 {
+    font-size: 2.5em;
+    font-weight: normal;
+}
+h2 {
+    margin-top: 0;
+    font-size: $baseSize;
+    font-weight: bold;
+}
+p {
+    font-size: $baseSize;
+}
+// }}}
+
+// {{{ section
+section {
+    &.example {
+        border-top: 1px solid #dddddd;
+        margin-top: $padding;
+        padding-top: $padding;
+        margin-right: $padding;
+
+        width: 45%;
+        min-width: 20em;
+        max-width: 50em;
+        float: left;
+    }
+}
+// }}}
+/* {{{ source */
+pre.prettyprint {
+    border-radius: 0.5em;
+    padding: 0.2em;
+
+    .pln {
+        color: #000000;
+    }
+    .str {
+        color: #009900;
+    }
+    .kwd {
+        color: #000099;
+    }
+    .com {
+        color: #990000;
+    }
+    .typ {
+        color: #990099;
+    }
+    .lit {
+        color: #009999;
+    }
+    .pun, .opn, .clo {
+        color: #999900;
+    }
+    .tag {
+        color: #000099;
+    }
+    .atn {
+        color: #990099;
+    }
+    .atv {
+        color: #009900;
+    }
+    .dec, .var {
+        color: #990099;
+    }
+    .fun {
+        color: red;
+    }
+    .str {
+        color: #009900;
+    }
+    .kwd {
+        color: #000099;
+        font-weight: bold;
+    }
+    .com {
+        color: #990000;
+        font-style: italic;
+    }
+    .typ {
+        color: #660066;
+        font-weight: bold;
+    }
+    .lit {
+        color: #006666;
+    }
+    .pun, .opn, .clo {
+        color: #666600;
+    }
+    .tag {
+        color: #000099;
+        font-weight: bold;
+    }
+    .atn {
+        color: #660066;
+    }
+    .atv {
+        color: #009900;
+    }
+    ol.linenums {
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+}
+.source {
+    font-size: 1em;
+
+    pre {
+        overflow: auto;
+        overflow-y: hidden;
+        margin: 1.2em 0;
+
+        code { 
+            display: block; 
+            min-height: 1.4em;
+        }
+        ol { 
+            font-size: 1em;
+            line-height: 1.4em !important;
+
+            list-style-type: none;
+            margin-left: $padding;
+
+            *list-style: decimal outside;
+
+            & > li {
+                counter-increment: linecounter;
+            }
+            & > li:before {
+                text-align: right;
+                content: counter(linecounter) " ";
+                font-weight: bold;
+                float: left;
+                width: $padding;
+                margin-left: -$padding;
+            }
+            &:first-child {
+                counter-reset: linecounter;
+            }
+        }
+        li { 
+            font-size: 1em;
+        }
+    }
+    div {
+        display: none;
+        border-left: 1.2em solid;
+        margin: 1em 0;
+    }
+    textarea {
+        width: 100%;
+        font-size: 1.3em;
+        border: none;
+    }
+}
+/* }}} */
+
+// {{{ footer
+footer {
+    clear: both;
+    padding: (2 * $padding) 0;
+    p {
+        font-size: 1.1em;
+    }
+}
+// }}}
+
+/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
