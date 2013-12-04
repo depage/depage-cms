@@ -111,7 +111,7 @@ class xmldb {
     }
     // }}}
 
-    // {{{ getDocList()
+    // {{{ getDocuments()
     /**
      * gets available documents in database
      *
@@ -210,6 +210,7 @@ class xmldb {
         ));
 
         $doc_id = $this->pdo->lastInsertId();
+
         $document = new Document($this, $doc_id);
 
         return $document;
@@ -233,7 +234,7 @@ class xmldb {
             $query->execute(array(
                 'doc_id' => $doc_id,
             ));
-            $this->clearCache($doc_id);
+            $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
 
             return true;
         }

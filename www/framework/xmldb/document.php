@@ -158,7 +158,6 @@ class document {
     public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX) {
         $identifier = "{$this->table_docs}/d{$this->doc_id}/{$id}.xml";
 
-        //$xml_doc = new \DOMDocument();
         $xml_doc = new \depage\xml\Document();
 
         $xml_str = $this->cache->get($identifier);
@@ -282,9 +281,11 @@ class document {
             WHERE id_doc = :doc_id"
         );
 
+        $this->pdo->execute("SET foreign_key_checks = 0;");
         $query->execute(array(
             'doc_id' => $this->doc_id,
         ));
+        $this->pdo->execute("SET foreign_key_checks = 1;");
 
         $this->clearCache($this->doc_id);
 
@@ -316,6 +317,8 @@ class document {
             'ns' => $namespaces,
             'doc_id' => $doc_info->id,
         ));
+
+        $this->clearCache($this->doc_id);
 
         $this->endTransaction();
 
@@ -697,7 +700,6 @@ class document {
         }
         $xml .= "/>";
 
-        //$doc = new \DOMDocument;
         $doc = new \depage\xml\Document();
         $doc->loadXML($xml);
 
@@ -1543,32 +1545,51 @@ class document {
      * @param    $needed (int) mininum number of ids, that are requested
      */
     private function getFreeNodeIds($needed = 1) {
-        $num = 0;
-
+        // @todo check to replace this with an extra table of deleted ids (trigger on delete)
+        /* see here:
+            CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
+            FOR EACH ROW
+            BEGIN
+            DELETE FROM patron_info
+                WHERE patron_info.pid = old.id;
+            END
+         */
         $this->free_element_ids = array();
+        $lastMax = 0;
+
         $query = $this->pdo->prepare(
             "SELECT row AS id FROM
                 (SELECT
                     @row := @row + 1 as row, xml.id
                 FROM
-                    {$this->table_xml} xml,
-                    (SELECT @row := 0) r
+                    {$this->table_xml} as xml,
+                    (SELECT @row := :start) r
                 WHERE @row <> id
                 ORDER BY xml.id) AS seq
             WHERE NOT EXISTS (
-                SELECT  1
-                FROM {$this->table_xml} xml
+                SELECT 1
+                FROM {$this->table_xml} as xml
                 WHERE xml.id = row
             );"
         );
 
+        /*
+        do {
+            $query->execute(array(
+                'start' => $lastMax,
+            ));
 
-        $query->execute();
+            $results = $query->fetchAll(\PDO::FETCH_OBJ);
+            foreach ($results as $id) {
+                $this->free_element_ids[] = $id->id;
+            }
+            if (count($results) > 0) {
+                $lastMax = $id->id;
+            }
+        } while (count($this->free_element_ids) < $needed && count($results) > 0);
+         */
 
-        $results = $query->fetchAll(\PDO::FETCH_OBJ);
-        foreach ($results as $id) {
-            $this->free_element_ids[] = $id->id;
-        }
+        $num = count($this->free_element_ids);
 
         if ($num < $needed) {
             $query = $this->pdo->prepare(
@@ -1578,7 +1599,8 @@ class document {
             $query->execute();
             $result = $query->fetchObject();
 
-            for ($i = 0; $i < $needed - $num; $i++) {
+            $until = $needed - $num;
+            for ($i = 0; $i < $until; $i++) {
                 $this->free_element_ids[] = $result->id_max + $i;
             }
         }
@@ -1603,7 +1625,7 @@ class document {
         static $insert_query = null;
         if (is_null($insert_query)) {
             $insert_query = $this->pdo->prepare(
-                "REPLACE {$this->table_xml}
+                "INSERT {$this->table_xml}
                 SET
                     id = :id_query,
                     id_parent = :target_id,
@@ -1611,14 +1633,15 @@ class document {
                     pos = :target_pos,
                     name = :name,
                     value = :value,
-                    type = :type"
+                    type = :type
+                ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)"
             );
         }
 
-        if ($id === null) {
+        if ($id === null || !is_numeric($id)) {
             $id_query = 'NULL';
         } else {
-            $id_query = $id;
+            $id_query = (int) $id;
         }
 
         if ($node->nodeType == XML_ELEMENT_NODE) {

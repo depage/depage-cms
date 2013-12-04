@@ -86,7 +86,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
 
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
 
-                $doc_name = '_' . strtolower($properties->name) . '_' . md5(uniqid(dechex(mt_rand(256, 4095))));
+                $doc_name = '_' . strtolower($properties->name) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
 
                 $document = $this->xmldb->createDoc($doc_name, $properties->doc_type);
 

@@ -54,7 +54,7 @@ class db_pdo {
 
         // disable emulated prepares
         // @todo check why this does not work with some queries
-        //$this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     }
     /* }}} */
 
