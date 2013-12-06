@@ -145,6 +145,41 @@ class document {
         return $query->fetchObject();
     }
     // }}}
+    
+    // {{{ cleanDoc()
+    /**
+     * clean all nodes inside of document
+     *
+     * @return $doc (array)
+     */
+    public function cleanDoc() {
+        $info = $this->getDocInfo();
+
+        $query = $this->pdo->prepare(
+            "REPLACE {$this->table_docs}
+            SET
+                id = :id,
+                name = :name,
+                rootid = :rootid,
+                type = :type,
+                ns = :ns"
+        );
+
+        if ($info) {
+            $query->execute(array(
+                'id' => $info->id,
+                'name' => $info->name,
+                'rootid' => $info->rootid,
+                'type' => $info->type,
+                'ns' => $info->namespaces,
+            ));
+
+            $this->clearCache($info->id);
+        }
+
+        return $info;
+    }
+    // }}}
 
     // {{{ getSubdocByNodeId()
     /**
@@ -274,21 +309,7 @@ class document {
     public function save(\DomDocument $xml) {
         $this->beginTransaction();
 
-        $doc_info = $this->getDocInfo();
-
-        $query = $this->pdo->prepare(
-            "DELETE FROM {$this->table_xml}
-            WHERE id_doc = :doc_id"
-        );
-
-        $this->pdo->execute("SET foreign_key_checks = 0;");
-        $query->execute(array(
-            'doc_id' => $this->doc_id,
-        ));
-        $this->pdo->execute("SET foreign_key_checks = 1;");
-
-        $this->clearCache($this->doc_id);
-
+        $doc_info = $this->cleanDoc();
         $xml_text = $xml->saveXML();
 
         // @TODO get namespaces from document at this moment it is only per preg_match not by the domxml interface, because
@@ -968,6 +989,7 @@ class document {
             $parent_id = $this->getParentIdById($target_id);
             //unlink child nodes, if target is document
             if ($parent_id === false) {
+                $this->pdo->exec("SET foreign_key_checks = 0;");
                 $query = $this->pdo->prepare(
                     "DELETE
                     FROM {$this->table_xml}
@@ -976,6 +998,7 @@ class document {
                 $query->execute(array(
                     'doc_id' => $this->doc_id,
                 ));
+                $this->pdo->exec("SET foreign_key_checks = 1;");
             }
             $this->clearCache($this->doc_id);
 
@@ -1573,7 +1596,6 @@ class document {
             );"
         );
 
-        /*
         do {
             $query->execute(array(
                 'start' => $lastMax,
@@ -1587,7 +1609,6 @@ class document {
                 $lastMax = $id->id;
             }
         } while (count($this->free_element_ids) < $needed && count($results) > 0);
-         */
 
         $num = count($this->free_element_ids);
 

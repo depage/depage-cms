@@ -216,7 +216,7 @@ class xmldb {
         return $document;
     }
     // }}}
-
+    
     // {{{ removeDoc()
     /**
      * @param $doc_id_or_name
