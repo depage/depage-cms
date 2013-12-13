@@ -149,9 +149,6 @@ class Import
 
         $this->docNavigation->save($this->xmlNavigation);
 
-        $xpath = new \DOMXPath($this->xmlNavigation);
-        $nodelist = $xpath->query("//pg:*[@db:id]");
-
         // save db:ids in pageIds
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
@@ -174,13 +171,15 @@ class Import
             $pagelist = $xpathImport->query("//*[@db:id = $dataId]");
 
             // save pagedata
-            for ($j = $pagelist->length - 1; $j >= 0; $j--) {
+            if ($pagelist->length === 1) {
                 $xmlData = new \depage\xml\Document();
 
-                $dataNode = $xmlData->importNode($pagelist->item($j), true);
+                $dataNode = $xmlData->importNode($pagelist->item(0), true);
                 $xmlData->appendChild($dataNode);
                 $docType = $pageNode->localName;
                 $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
+
+                $this->updatePageRefs($xmlData);
 
                 $doc = $this->xmldb->createDoc($docName, "depage\\cms\\xmldoctypes\\$docType");
                 $newId = $doc->save($xmlData);
@@ -200,15 +199,13 @@ class Import
         mkdir($this->xsltPath);
 
         // extract template tree
-        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+        if ($nodelist->length === 1) {
             $xmlTemplates = new \depage\xml\Document();
-            $node = $xmlTemplates->importNode($nodelist->item($i), true);
+            $node = $xmlTemplates->importNode($nodelist->item(0), true);
             $xmlTemplates->appendChild($node);
         }
 
         $this->extractTemplateData($xmlTemplates->documentElement);
-
-        return $xmlTemplates;
     }
     // }}}
     // {{{ extractTemplatesData()
@@ -226,8 +223,8 @@ class Import
                 $tpllist = $xpath->query("//*[@db:id = $dataId]");
 
                 // save template data
-                for ($j = $tpllist->length - 1; $j >= 0; $j--) {
-                    $dataNode = $tpllist->item($j);
+                if ($tpllist->length === 1) {
+                    $dataNode = $tpllist->item(0);
 
                     // make path for temlate group
                     $path = $this->xsltPath . $dataNode->getAttribute("type") . "/";
@@ -242,6 +239,8 @@ class Import
                         "    ",
                         "\n    ",
                     ), trim($dataNode->nodeValue));
+
+                    // @todo automatically replace custom php calls etc. for automatic xsl updates
 
                     file_put_contents($filename, "{$this->xslHeader}    {$xsl}\n{$this->xslFooter}");
                 }
@@ -264,6 +263,32 @@ class Import
             $this->xmlSettings->appendChild($node);
         }
 
+    }
+    // }}}
+    
+    // {{{ updatePageRefs()
+    protected function updatePageRefs($xmlData)
+    {
+        $xpath = new \DOMXPath($xmlData);
+        // @todo add condition that href starts with pagref
+        $nodelist = $xpath->query("//*[@href]");
+
+        // test all links with 
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $href = $node->getAttribute("href");
+
+            if (strpos($href, "pageref:") === 0) {
+                $id = substr($href, 8);
+
+                if (isset($this->pageIds[$id])) {
+                    $node->setAttribute("href", "pageref:{$this->pageIds[$id]}");
+                } else {
+                    $node->setAttribute("href", "");
+                }
+            }
+        }
+        
     }
     // }}}
 }
