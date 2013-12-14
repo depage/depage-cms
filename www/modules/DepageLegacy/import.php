@@ -55,14 +55,16 @@ class Import
         $this->getDocs();
 
         $this->extractNavigation();
-        $this->extractPagedata();
         $this->extractTemplates();
+        $this->extractNewnodes();
         $this->extractSettings();
 
-        $this->saveDocs();
+        return "";
 
-        var_dump($this->pageIds);
-        return;
+        foreach($this->pageIds as $pageId) {
+            $this->extractPagedataForId($pageId);
+        }
+
         return $this->xmlNavigation;
     }
     // }}}
@@ -117,13 +119,6 @@ class Import
         }
     }
     // }}}
-    // {{{ saveDocs()
-    public function saveDocs()
-    {
-        $this->docNavigation->save($this->xmlNavigation);
-        $this->docSettings->save($this->xmlSettings);
-    }
-    // }}}
     
     // {{{ extractNavigation()
     public function extractNavigation()
@@ -152,41 +147,38 @@ class Import
         // save db:ids in pageIds
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
-            $this->pageIds[$node->getAttribute("db:oldid")] = $node->getAttribute("db:id");
-            $node->removeAttribute("db:oldid");
+            $nodeId = $node->getAttribute("db:id");
+            $this->pageIds[$node->getAttribute("db:oldid")] = $nodeId;
+
+            $this->docNavigation->removeAttribute($nodeId, "db:oldid");
         }
     }
     // }}}
-    // {{{ extractPagedata()
-    public function extractPagedata()
+    // {{{ extractPagedataForId()
+    public function extractPagedataForId($pageId)
     {
-        $xpath = new \DOMXPath($this->xmlNavigation);
+        $dbref = $this->docNavigation->getAttribute($pageId, "db:ref");
+
         $xpathImport = new \DOMXPath($this->xmlImport);
-        $nodelist = $xpath->query("//*[@db:ref]");
+        $pagelist = $xpathImport->query("//*[@db:id = $dbref]");
+        
+        // save pagedata
+        if ($pagelist->length === 1) {
+            $xmlData = new \depage\xml\Document();
 
-        // loop through pages
-        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-            $pageNode = $nodelist->item($i);
-            $dataId = $pageNode->getAttribute("db:ref");
-            $pagelist = $xpathImport->query("//*[@db:id = $dataId]");
+            $dataNode = $xmlData->importNode($pagelist->item(0), true);
+            $xmlData->appendChild($dataNode);
+            list($ns, $docType) = explode(":", $this->docNavigation->getNodeNameById($pageId));
+            $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
 
-            // save pagedata
-            if ($pagelist->length === 1) {
-                $xmlData = new \depage\xml\Document();
+            $this->updatePageRefs($xmlData);
 
-                $dataNode = $xmlData->importNode($pagelist->item(0), true);
-                $xmlData->appendChild($dataNode);
-                $docType = $pageNode->localName;
-                $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
+            $doc = $this->xmldb->createDoc($docName, "depage\\cms\\xmldoctypes\\$docType");
+            $newId = $doc->save($xmlData);
 
-                $this->updatePageRefs($xmlData);
-
-                $doc = $this->xmldb->createDoc($docName, "depage\\cms\\xmldoctypes\\$docType");
-                $newId = $doc->save($xmlData);
-
-                $pageNode->removeAttribute("db:ref");
-                $pageNode->setAttribute("db:docref", $newId);
-            }
+            // updated reference attributes
+            $this->docNavigation->removeAttribute($pageId, "db:ref");
+            $this->docNavigation->setAttribute($pageId, "db:docref", $newId);
         }
     }
     // }}}
@@ -251,6 +243,30 @@ class Import
         }
     }
     // }}}
+    // {{{ extractNewnodes()
+    public function extractNewnodes()
+    {
+        $xpath = new \DOMXPath($this->xmlImport);
+        $nodelist = $xpath->query("//proj:tpl_newnodes/pg:newnode");
+
+        //for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+        for ($i = 0; $i < $nodelist->length; $i++) {
+            $node = $nodelist->item($i);
+
+            $name = $node->getAttribute("name");
+            $pos = $i;
+
+            $validParentsNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode_valid_parents")->item(0);
+            $validParents = explode(",", $validParentsNode->nodeValue);
+
+            $contentNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode")->item(0);
+            $contentDoc = new \depage\xml\Document();
+            $contentDoc->loadXML($contentNode->nodeValue);
+
+            $nodeTypes = new \depage\cms\xmldoctypes\page($this->xmldb, $this->docNavigation->getDocId());
+        }
+    }
+    // }}}
     // {{{ extractSettings()
     public function extractSettings()
     {
@@ -263,6 +279,7 @@ class Import
             $this->xmlSettings->appendChild($node);
         }
 
+        $this->docSettings->save($this->xmlSettings);
     }
     // }}}
     
