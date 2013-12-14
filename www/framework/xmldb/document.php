@@ -741,45 +741,75 @@ class document {
 
         $this->beginTransaction();
 
-        $attr_str = '';
+        $attributes = $this->getAttributes($node_id);
+
+        if ((isset($attributes[$attr_name]) && $attributes[$attr_name] !== htmlspecialchars($attr_value))
+            || !isset($attributes[$attr_name])
+        ) {
+            $attributes[$attr_name] = $attr_value;
+
+            $success = $this->saveAttributes($node_id, $attributes);
+        }
+
+        $this->endTransaction();
+
+        return $success;
+    }
+    // }}}
+    
+    // {{{ removeAttribute()
+    /**
+     * removes an attribute of a node
+     *
+     * @param    $node_id (int) db-id of node to set attribute
+     * @param    $attr_name (string) name of attribute
+     */
+    public function removeAttribute($node_id, $attr_name) {
+        $success = false;
+
+        $this->beginTransaction();
+
+        $attributes = $this->getAttributes($node_id);
+
+        if (isset($attributes[$attr_name])) {
+            unset($attributes[$attr_name]);
+
+            $success = $this->saveAttributes($node_id, $attributes);
+        }
+
+        $this->endTransaction();
+
+        return $success;
+    }
+    // }}}
+    
+    // {{{ saveAttributes()
+    /**
+     * sets attribute of node
+     *
+     * @param    $node_id (int) db-id of node to set attribute
+     * @param    $attributes (array) array of attribute values
+     */
+    protected function saveAttributes($node_id, $attributes) {
+        $this->beginTransaction();
+
+        $attr_str = "";
+        foreach($attributes as $name => $value) {
+            $attr_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
+        }
+
         $query = $this->pdo->prepare(
-            "SELECT xml.value
-            FROM {$this->table_xml} AS xml
+            "UPDATE {$this->table_xml} AS xml
+            SET xml.value = :attr_str
             WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
         );
-        $query->execute(array(
+        $success = $query->execute(array(
             'node_id' => $node_id,
+            'attr_str' => $attr_str,
             'doc_id' => $this->doc_id,
         ));
 
-        if ($result = $query->fetchObject()) {
-            $changed = false;
-            $attributes = preg_split("/(=\"|\"$|\" )/", $result->value);
-            for ($i = 0; $i < count($attributes) - 1; $i += 2) {
-                if ($attributes[$i] == $attr_name) {
-                    $attributes[$i + 1] = htmlspecialchars($attr_value);
-                    $changed = true;
-                }
-                $attr_str .= $attributes[$i] . "=\"" . $attributes[$i + 1] . "\" ";
-            }
-            if (!$changed) {
-                $attr_str .= $attr_name . "=\"" . htmlspecialchars($attr_value) . "\" ";
-            }
-            $query = $this->pdo->prepare(
-                "UPDATE {$this->table_xml} AS xml
-                SET xml.value = :attr_str
-                WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'node_id' => $node_id,
-                'attr_str' => $attr_str,
-                'doc_id' => $this->doc_id,
-            ));
-
-            $this->clearCache($this->doc_id);
-
-            $success = true;
-        }
+        $this->clearCache($this->doc_id);
 
         $this->endTransaction();
 
@@ -833,7 +863,7 @@ class document {
             $matches = array_chunk($matches, 2);
             foreach($matches as $match) {
                 if ($match[0] != '') {
-                    $attributes[$match[0]] = $match[1];
+                    $attributes[$match[0]] = htmlspecialchars_decode($match[1]);
                 }
             }
         }
