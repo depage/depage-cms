@@ -23,9 +23,12 @@ class Import
 
     protected $xmlImport;
     protected $xmlSettings;
+    protected $xmlColors;
     protected $xmlNavigation;
+
     protected $docSettings;
     protected $docNavigation;
+    protected $docColors;
 
     protected $xsltPath;
 
@@ -57,6 +60,7 @@ class Import
         $this->extractNavigation();
         $this->extractTemplates();
         $this->extractNewnodes();
+        $this->extractColorschemes();
         $this->extractSettings();
 
         return "";
@@ -99,6 +103,12 @@ class Import
         if (!$this->docSettings) {
             // @todo update doctype
             $this->docSettings = $this->xmldb->createDoc("settings", "depage\\xmldb\\xmldoctypes\\base");
+        }
+        
+        $this->docColors = $this->xmldb->getDoc("colors");
+        if (!$this->docColors) {
+            // @todo update doctype
+            $this->docColors = $this->xmldb->createDoc("colors", "depage\\xmldb\\xmldoctypes\\base");
         }
     }
     // }}}
@@ -264,7 +274,21 @@ class Import
             $contentDoc->loadXML($contentNode->nodeValue);
 
             $nodeTypes = new \depage\cms\xmldoctypes\page($this->xmldb, $this->docNavigation->getDocId());
+    }
+    // }}}
+    // {{{ extractColorschemes()
+    public function extractColorschemes()
+    {
+        $xpath = new \DOMXPath($this->xmlImport);
+        $nodelist = $xpath->query("//proj:colorschemes");
+
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $this->xmlColors = new \depage\xml\Document();
+            $node = $this->xmlColors->importNode($nodelist->item($i), true);
+            $this->xmlColors->appendChild($node);
         }
+
+        $this->docColors->save($this->xmlColors);
     }
     // }}}
     // {{{ extractSettings()
