@@ -26,11 +26,14 @@ class xmldb {
     private $table_prefix = 'dp_';
     private $table_docs;
     private $table_xml;
+    private $table_nodetypes;
+
+    private $options;
     // }}}
 
     // {{{ __get()
     /**
-     * Get
+     * Get properties (basically read-only)
      *
      * @param $property
      * @return mixed
@@ -43,17 +46,20 @@ class xmldb {
     // }}}
 
     // {{{ constructor()
-    public function __construct($table_prefix, $pdo, $cache) {
+    public function __construct($table_prefix, $pdo, $cache, $options = array()) {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
         $this->cache = $cache;
+
+        $this->options = $options;
 
         $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
 
         $this->table_prefix = $table_prefix;
         $this->table_docs = $table_prefix . "_xmldocs";
         $this->table_xml = $table_prefix . "_xmltree";
+        $this->table_nodetypes = $table_prefix . "_xmlnodetypes";
     }
     // }}}
 

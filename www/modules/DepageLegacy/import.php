@@ -31,6 +31,7 @@ class Import
     protected $docColors;
 
     protected $xsltPath;
+    protected $xmlPath;
 
     protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n    <!ENTITY nbsp \"&#160;\">\n]>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">\n";
     protected $xslFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
@@ -40,11 +41,14 @@ class Import
     {
         $this->projectName = $name;
 
+        $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
+        $this->xmlPath = "projects/" . $this->projectName . "/xml/";
+
         $this->pdo = $pdo;
         $this->cache = $cache;
-        $this->xmldb = new \depage\xmldb\xmldb("{$this->pdo->prefix}_proj_{$this->projectName}", $this->pdo, $this->cache);
-
-        $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
+        $this->xmldb = new \depage\xmldb\xmldb("{$this->pdo->prefix}_proj_{$this->projectName}", $this->pdo, $this->cache, array(
+            'pathXMLtemplate' => $this->xmlPath,
+        ));
     }
     // }}}
     // {{{ importProject()
@@ -62,8 +66,6 @@ class Import
         $this->extractNewnodes();
         $this->extractColorschemes();
         $this->extractSettings();
-
-        return "";
 
         foreach($this->pageIds as $pageId) {
             $this->extractPagedataForId($pageId);
@@ -259,6 +261,8 @@ class Import
         $xpath = new \DOMXPath($this->xmlImport);
         $nodelist = $xpath->query("//proj:tpl_newnodes/pg:newnode");
 
+        mkdir($this->xmlPath);
+
         //for ($i = $nodelist->length - 1; $i >= 0; $i--) {
         for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
@@ -274,6 +278,17 @@ class Import
             $contentDoc->loadXML($contentNode->nodeValue);
 
             $nodeTypes = new \depage\cms\xmldoctypes\page($this->xmldb, $this->docNavigation->getDocId());
+
+            $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, array(
+                'pos' => $pos,
+                'name' => $name,
+                'newName' => $contentDoc->documentElement->getAttribute("name"),
+                'icon' => $contentDoc->documentElement->getAttribute("icon"),
+                'validParents' => $validParents,
+                'xmlTemplate' => \html::get_url_escaped($name) . ".xml",
+                'xmlTemplateData' => $contentDoc->saveXML(),
+            ));
+        }
     }
     // }}}
     // {{{ extractColorschemes()
@@ -311,22 +326,20 @@ class Import
     protected function updatePageRefs($xmlData)
     {
         $xpath = new \DOMXPath($xmlData);
-        // @todo add condition that href starts with pagref
-        $nodelist = $xpath->query("//*[@href]");
+        $nodelist = $xpath->query("//*[@href and starts-with(@href,'pageref:')]");
 
-        // test all links with 
+        // test all links with a pageref
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $href = $node->getAttribute("href");
 
-            if (strpos($href, "pageref:") === 0) {
-                $id = substr($href, 8);
+            $id = substr($href, 8);
 
-                if (isset($this->pageIds[$id])) {
-                    $node->setAttribute("href", "pageref:{$this->pageIds[$id]}");
-                } else {
-                    $node->setAttribute("href", "");
-                }
+            if (isset($this->pageIds[$id])) {
+                $node->setAttribute("href", "pageref:{$this->pageIds[$id]}");
+            } else {
+                // clear links with a non-existant page reference
+                $node->setAttribute("href", "");
             }
         }
         

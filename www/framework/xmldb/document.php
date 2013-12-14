@@ -23,6 +23,7 @@ class document {
     private $table_prefix;
     private $table_docs;
     private $table_xml;
+    private $table_nodetypes;
 
     private $transaction = 0;
 
@@ -68,6 +69,7 @@ class document {
         $this->table_prefix = $xmldb->table_prefix;
         $this->table_docs = $xmldb->table_docs;
         $this->table_xml = $xmldb->table_xml;
+        $this->table_nodetypes = $xmldb->table_nodetypes;
 
         $this->doc_id = $doc_id;
     }
