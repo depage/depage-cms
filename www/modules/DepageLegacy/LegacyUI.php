@@ -21,6 +21,18 @@ class LegacyUI extends \depage_ui
     protected $autoEnforceAuth = true;
     protected $project = "depage";
 
+    // {{{ _getSubHandler
+    static function _getSubHandler() {
+        return array();
+        return array(
+            'project/*' => '\depage\cms\ui_project',
+            'project/*/tree/*' => '\depage\cms\ui_tree',
+            'project/*/tree/*/fallback' => '\depage\cms\ui_socketfallback',
+            'project/*/edit/*' => '\depage\cms\ui_edit',
+        );
+    }
+    // }}}
+    
     // {{{ _init
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
@@ -54,11 +66,12 @@ class LegacyUI extends \depage_ui
 
         // set html-options
         $this->html_options = array(
-            //'template_path' => __DIR__ . "/tpl/",
-            'template_path' => "framework/cms/tpl/",
+            'template_path' => __DIR__ . "/tpl/",
+            //'template_path' => "framework/cms/tpl/",
             'clean' => "space",
             'env' => $this->options->env,
         );
+
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
         
         // establish if the user is logged in
@@ -151,6 +164,40 @@ class LegacyUI extends \depage_ui
     }
     // }}}
     
+    // {{{ index
+    /**
+     * default function to call if no function is given in handler
+     *
+     * @return  null
+     */
+    public function index() {
+        if ($this->auth->enforce_lazy()) {
+            // logged in
+            $h = new html(array(
+                'content' => array(
+                    $this->toolbar(),
+                    //$this->projects(),
+                    //$this->users(),
+                ),
+            ));
+        } else {
+            // not logged in
+            $h = new html(array(
+                'content' => array(
+                    $this->toolbar(),
+                    'content' => new html("welcome.tpl", array(
+                        'title' => "Welcome to\n depage::cms ",
+                        'login' => "Login",
+                        'login_link' => "login/",
+                    )),
+                )
+            ), $this->html_options);
+        }
+
+        return $h;
+    }
+    // }}}
+    
     // {{{ import
     /**
      * function to show error messages
@@ -163,6 +210,91 @@ class LegacyUI extends \depage_ui
         $value = $import->importProject("projects/{$this->project}/import/backup_full.xml");
 
         return $value;
+    }
+    // }}}
+    // {{{ flash
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function flash($page = "", $standalone = "true")
+    {
+        if ($user = $this->auth->enforce()) {
+            // logged in
+            $h = new html("flash.tpl", array(
+                'project' => $this->project,
+                'page' => $page,
+                'standalone' => $standalone,
+                'sid' => $_COOKIE[session_name()],
+            ), $this->html_options);
+
+            return $h;
+        }
+    }
+    // }}}
+    // {{{ rpc
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function rpc()
+    {
+        if ($user = $this->auth->enforce()) {
+            $xmlInput = file_get_contents("php://input");
+
+            return $this->handleRpc($xmlInput);
+        }
+    }
+    // }}}
+    // {{{ test
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function test()
+    {
+        if ($user = $this->auth->enforce()) {
+            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><rpc:msg xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="get_config" /></rpc:msg>';
+
+            return $this->handleRpc($xmlInput);
+        }
+    }
+    // }}}
+    // {{{ handleRpc
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    protected function handleRpc($xmlInput)
+    {
+        $this->log->log($xmlInput);
+
+        $msgHandler = new RPC\Message(new RPC\CmsFuncs());
+
+        //call
+        $funcs = $msgHandler->parse($xmlInput);
+        $value = array();
+        foreach ($funcs as $func) {
+            $func->add_args(array('ip' => $_SERVER['REMOTE_ADDR']));
+            $tempval = $func->call();
+            if (is_a($tempval, 'DepageLegacy\\RPC\\Func')) {
+                $value[] = $tempval;
+            }
+        }
+        if (count($pocket_updates) > 0) {
+            //send_updates();
+        }
+        //$value = array_merge($value, $project->user->get_updates($project->user->sid));
+
+        if (count($value) == 0) {
+            $value[] = new RPC\Func('nothing', array('error' => 0));
+        }
+
+        return RPC\Message::create($value);
     }
     // }}}
 }

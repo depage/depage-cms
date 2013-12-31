@@ -40,30 +40,6 @@ $conf = array(
         ),
     ),
     // }}}
-    // {{{ localhost/depage-cms/test/
-    'localhost/depage-cms/test/' => array(
-        'handler' => 'test',
-        'env' => 'development',
-        'cms' => array(
-            'project' => 'test',
-        ),
-        'db' => array(
-            'dsn' => 'mysql:dbname=depage_2_0;host=localhost',
-            'user' => 'root',
-            'password' => '',
-            'prefix' => 'dp',
-        ),
-    ),
-    // }}}
-    // {{{ localhost/depage-cms/test/
-    'localhost/depage-cms/test/' => array(
-        'handler' => "test",
-        'env' => "development",
-        'cms' => array(
-            'project' => "depagecms",
-        ),
-    ),
-    // }}}
     // {{{ cms.depagecms.net
     'cms.depagecms.net/' => array(
         'handler' => 'cms_ui',
