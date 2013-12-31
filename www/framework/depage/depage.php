@@ -63,7 +63,7 @@ class depage {
             include_path = "/usr/local/lib/php:."
          */
         
-        $this->log = new log();
+        $this->log = new \depage\log\log();
 
         set_error_handler(array($this, "handlePhpError"));
 
@@ -85,7 +85,7 @@ class depage {
         // set default timezone from config
         date_default_timezone_set($this->options->timezone);
 
-        //$this->log = new log($this->options->log);
+        //$this->log = new \depage\log\log($this->options->log);
     }
     // }}}
     

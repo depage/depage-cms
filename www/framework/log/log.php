@@ -10,6 +10,8 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+namespace depage\log;
+
 class log {
     // {{{ default config
     protected $defaults = array(
@@ -28,7 +30,7 @@ class log {
      * @return  null
      */
     public function __construct($options = NULL) {
-        $conf = new config($options);
+        $conf = new \config($options);
         $this->options = $conf->getFromDefaults($this->defaults);
 
         if (!$this->options->file) {

@@ -72,7 +72,7 @@ class auth {
         $this->pdo = $pdo;
         $this->realm = $realm;
         $this->domain = $domain;
-        $this->log = new log();
+        $this->log = new \depage\log\log();
     }
     // }}}
     // {{{ enforce()

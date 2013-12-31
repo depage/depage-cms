@@ -49,7 +49,7 @@ abstract class depage_ui {
             define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
         }
         
-        $this->log = new log(array(
+        $this->log = new \depage\log\log(array(
             'file' => DEPAGE_PATH . "/logs/" . str_replace("\\", "_", get_class($this)) . ".log",
         ));
     }
