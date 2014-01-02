@@ -108,17 +108,18 @@ class Message{
 
             for ($i = 0; $i < $nodelist->length; $i++){
                 $func = $nodelist->item($i)->getAttribute('name');
+
                 if (method_exists($this->funcObj, $func)) {
                     $paramList = $xpath->query("./rpc:param", $nodelist->item($i));
                     $args = Array();
                     for ($j = 0; $j < $paramList->length; $j++) {
-                        $paramNode = $paramList->item($i);
+                        $paramNode = $paramList->item($j);
                         if ($paramNode->hasChildNodes()){
-                            $argnode = $paramNode->firstChild();
+                            $argnode = $paramNode->firstChild;
                             while($argnode !== null) {
                                 $args[$paramNode->getAttribute('name')] .= $xmlobj->saveXML($argnode, false);
                                 
-                                $argnode = $argnode->nextSibling();
+                                $argnode = $argnode->nextSibling;
                             }
                         }
                     }

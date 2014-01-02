@@ -87,14 +87,11 @@ class Func {
      */
     function call() {
         $val = call_user_func_array(array(&$this->funcObj, $this->name), Array($this->args));
-        if (php_sapi_name() == 'cli' && !in_array($this->name, $this->invisibleFuncs)) {
-            //echo("[" . $conf->dateUTC($conf->date_format_UTC) . "] $this->name called\n");
-        } elseif (!in_array($this->name, $this->invisibleFuncs)) {
-            $log = new \depage\log\log();
-            $log->log("calling $this->name");
-            foreach ($this->args as $id => $value) {
-                $log->log("    $id: $value");
-            }
+
+        $log = new \depage\log\log();
+        $log->log("calling $this->name");
+        foreach ($this->args as $id => $value) {
+            $log->log("    $id: $value");
         }
         
         return $val;

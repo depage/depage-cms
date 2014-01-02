@@ -44,6 +44,7 @@ function set_title(newtitle) {
 /* }}} */
 /* {{{ set_status */
 function set_status(message) {
+    console.log(unescape(message));
     window.status = unescape(message);
 }
 /* }}} */

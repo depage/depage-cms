@@ -257,7 +257,7 @@ class LegacyUI extends \depage_ui
     public function test()
     {
         if ($user = $this->auth->enforce()) {
-            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><rpc:msg xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="get_config" /></rpc:msg>';
+            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="get_project"><rpc:param name="sid">0d85e60b91e4ccf301d705f605523d78</rpc:param><rpc:param name="wid" /><rpc:param name="project_name">depage</rpc:param></rpc:func></rpc:msg>';
 
             return $this->handleRpc($xmlInput);
         }
@@ -273,10 +273,11 @@ class LegacyUI extends \depage_ui
     {
         $this->log->log($xmlInput);
 
-        $msgHandler = new RPC\Message(new RPC\CmsFuncs());
+        $msgHandler = new RPC\Message(new RPC\CmsFuncs($this->project));
 
         //call
         $funcs = $msgHandler->parse($xmlInput);
+
         $value = array();
         foreach ($funcs as $func) {
             $func->add_args(array('ip' => $_SERVER['REMOTE_ADDR']));

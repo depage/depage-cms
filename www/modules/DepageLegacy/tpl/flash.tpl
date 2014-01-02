@@ -6,7 +6,7 @@
         "nsrpc" => "rpc",
         "nsrpcuri" => "http://cms.depagecms.net/ns/rpc",
         "phost" => $phost['host'],
-        "pport" => 11117,
+        "pport" => 19123,
         "puse" => "false",
         "standalone" => $this->standalone,
         "project" => $this->project,
