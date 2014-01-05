@@ -116,10 +116,18 @@ class Message{
                         $paramNode = $paramList->item($j);
                         if ($paramNode->hasChildNodes()){
                             $argnode = $paramNode->firstChild;
-                            while($argnode !== null) {
-                                $args[$paramNode->getAttribute('name')] .= $xmlobj->saveXML($argnode, false);
-                                
-                                $argnode = $argnode->nextSibling;
+
+                            if ($paramNode->childNodes->length > 1 || $argnode->nodeType == \XML_ELEMENT_NODE) {
+                                $args[$paramNode->getAttribute('name')] = array();
+                                while($argnode !== null) {
+                                    if ($argnode->nodeType == \XML_ELEMENT_NODE) {
+                                        $args[$paramNode->getAttribute('name')][] = $argnode;
+                                    }
+                                    
+                                    $argnode = $argnode->nextSibling;
+                                }
+                            } else {
+                                $args[$paramNode->getAttribute('name')] = $xmlobj->saveXML($argnode, false);
                             }
                         }
                     }
@@ -127,6 +135,10 @@ class Message{
                     $pos = count($funcs);
                     $funcs[$pos] = new Func($func, $args);
                     $funcs[$pos]->set_func_obj($this->funcObj);
+                } else {
+                    $log = new \depage\log\log();
+                    $log->log("function undefined: $func");
+                    $log->log($xmldata);
                 }
             }
                 

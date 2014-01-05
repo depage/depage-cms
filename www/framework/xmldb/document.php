@@ -683,13 +683,13 @@ class document {
     /**
      * duplicate node in database, and inserts it in the next position
      *
-     * TODO behaviour should differ according to tree type - don't usually want to copy all sub nodes
+     * @TODO behaviour should differ according to tree type - don't usually want to copy all sub nodes
      *
      * @param    $node_id (int) db-id of node
      *
      * @return bool (success)
      */
-    public function duplicateNode($node_id) {
+    public function duplicateNode($node_id, $recursive = false) {
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
@@ -700,7 +700,7 @@ class document {
 
             $this->clearCache($this->doc_id);
 
-            return $this->saveNode($root_node, $target_id, $target_pos, false, false);
+            return $this->saveNode($root_node, $target_id, $target_pos, $recursive);
         }
 
         return false;
@@ -996,12 +996,21 @@ class document {
      * @param    $inc_children (bool) also save the related child nodes
      */
     public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true) {
-        //get all nodes in array
-        $node_array = array();
-
         $this->beginTransaction();
 
+        if ($target_id === null) {
+            /*
+             * if target_id is not set, assume we are saving an existing node with a node 
+             * db:id-attribute set. if target_id is set, assume we want to save a new node
+             * so remove alls existing node attributes first.
+             */
+            $this->removeIdAttr($node);
+        }
+
+        //get all nodes in array
+        $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
+
         if ($node_array[0]['id'] != null && $target_id === null) {
             //set target_id/pos/doc
             $target_id = $this->getParentIdById($node_array[0]['id']);
@@ -1113,7 +1122,7 @@ class document {
 
         $dth = $this->getDoctypeHandler();
 
-        if($dth->onDeleteNode($node_id)) {
+        if ($dth->onDeleteNode($node_id)) {
 
             // delete the node
             $query = $this->pdo->prepare(
@@ -1139,7 +1148,7 @@ class document {
                 'doc_id' => $this->doc_id,
             ));
         }
-        return array();
+        return $target_id;
     }
     // }}}
 

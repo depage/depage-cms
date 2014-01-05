@@ -173,6 +173,34 @@ class xmldb {
         return false;
     }
     // }}}
+    
+    // {{{ getDocByNodeId()
+    /**
+     * Get xmldb\document
+     *
+     * @param $nodeId
+     * @return bool|document
+     */
+    public function getDocByNodeId($nodeId) {
+        $query = $this->pdo->prepare(
+            "SELECT 
+                xml.id_doc AS id_doc 
+            FROM {$this->table_xml} AS xml
+            WHERE xml.id = :nodeId"
+        );
+
+        $query->execute(array(
+            'nodeId' => $nodeId,
+        ));
+        $result = $query->fetchObject();
+
+        if ($result && $doc_id = $this->docExists($result->id_doc)) {
+            return new document($this, $doc_id);
+        }
+
+        return false;
+    }
+    // }}}
 
     // {{{ getDocXml()
     /**

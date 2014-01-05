@@ -144,6 +144,47 @@ class auth_user {
         return $user;
     }
     // }}} 
+    // {{{ getAll()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       PDO     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function getAll($pdo) {
+        $users = array();
+        $uid_query = $pdo->prepare(
+            "SELECT
+                user.type,
+                user.type AS type,
+                user.id AS id,
+                user.name as name,
+                user.name_full as fullname,
+                user.pass as passwordhash,
+                user.email as email,
+                user.settings as settings,
+                user.level as level
+            FROM
+                {$pdo->prefix}_auth_user AS user"
+        );
+        $uid_query->execute();
+        
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        do {
+            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+            if ($user) {
+                array_push($users, $user);
+            }
+        } while ($user);
+
+        return $users;
+    }
+    // }}} 
        
     // {{{ get_useragent()
     /**

@@ -680,7 +680,7 @@ class_treeDisplayData_pages.prototype.setActiveNode = function(node, scrollToAct
 	
 	if (!this.interfaceObj.isDialog) {
 		this.timeoutObj.clear();
-                this.timeoutObj = setTimeout(conf.project.tree.page_data.load, conf.project.tree.page_data, 200, [node.attributes[conf.ns.database + ":ref"], node]);
+                this.timeoutObj = setTimeout(conf.project.tree.page_data.load, conf.project.tree.page_data, 200, [node.attributes[conf.ns.database + ":docref"], node]);
 	
 		conf.project.setPreviewNode(this.activeNode);
 		conf.project.preview();
@@ -960,7 +960,7 @@ class_treeDisplayData_templates.prototype.defineButtons = function() {
 class_treeDisplayData_templates.prototype.setActiveNode = function(node, scrollToActiveNode) {
 	super.setActiveNode(node, scrollToActiveNode);
 
-	this.treeObj.load_prop(this.activeNode.attributes[conf.ns.database + ":ref"], this.activeNode);
+	this.treeObj.load_prop(this.activeNode.attributes[conf.ns.database + ":docref"], this.activeNode);
 };
 // }}}
 	

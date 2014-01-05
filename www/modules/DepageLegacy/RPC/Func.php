@@ -88,10 +88,21 @@ class Func {
     function call() {
         $val = call_user_func_array(array(&$this->funcObj, $this->name), Array($this->args));
 
-        $log = new \depage\log\log();
-        $log->log("calling $this->name");
-        foreach ($this->args as $id => $value) {
-            $log->log("    $id: $value");
+        if (!in_array($this->name, $this->invisibleFuncs)) {
+            $log = new \depage\log\log();
+            $log->log("calling $this->name");
+
+            foreach ($this->args as $id => $value) {
+                if (is_array($value)) {
+                    $val = "";
+                    foreach($value as $v) {
+                        $val .= $v->ownerDocument->saveXML($v, false);
+                    }
+                    $log->log("    $id: $val");
+                } else {
+                    $log->log("    $id: $value");
+                }
+            }
         }
         
         return $val;

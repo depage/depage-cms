@@ -34,7 +34,9 @@ class Import
     protected $xmlPath;
 
     protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n    <!ENTITY nbsp \"&#160;\">\n]>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">\n";
-    protected $xslFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
+    protected $xslFooter = "\n    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
+    protected $xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<proj:newnode xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"proj sec edit \">\n";
+    protected $xmlFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</proj:newnode>";
 
     // {{{ constructor
     public function __construct($name, $pdo, $cache)
@@ -200,7 +202,7 @@ class Import
         $xpath = new \DOMXPath($this->xmlImport);
         $nodelist = $xpath->query("//proj:tpl_templates_struct");
 
-        mkdir($this->xsltPath);
+        if (!is_dir($this->xsltPath)) mkdir($this->xsltPath);
 
         // extract template tree
         if ($nodelist->length === 1) {
@@ -232,7 +234,7 @@ class Import
 
                     // make path for temlate group
                     $path = $this->xsltPath . $dataNode->getAttribute("type") . "/";
-                    mkdir($path);
+                    if (!is_dir($path)) mkdir($path);
                     $filename = $path . \html::get_url_escaped($namePrefix . $child->getAttribute("name")) . ".xsl";
 
                     // replace tabes with spaces and indent content
@@ -261,7 +263,7 @@ class Import
         $xpath = new \DOMXPath($this->xmlImport);
         $nodelist = $xpath->query("//proj:tpl_newnodes/pg:newnode");
 
-        mkdir($this->xmlPath);
+        if (!is_dir($this->xmlPath)) mkdir($this->xmlPath);
 
         //for ($i = $nodelist->length - 1; $i >= 0; $i--) {
         for ($i = 0; $i < $nodelist->length; $i++) {
@@ -275,7 +277,9 @@ class Import
 
             $contentNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode")->item(0);
             $contentDoc = new \depage\xml\Document();
-            $contentDoc->loadXML($contentNode->nodeValue);
+            //$contentDoc->preserveWhiteSpace = false;
+            //$contentDoc->formatOutput = true;
+            $contentDoc->loadXML($this->xmlHeader . trim($contentNode->nodeValue) . $this->xmlFooter);
 
             $nodeTypes = new \depage\cms\xmldoctypes\page($this->xmldb, $this->docNavigation->getDocId());
 

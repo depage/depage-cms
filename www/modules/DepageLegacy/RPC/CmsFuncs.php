@@ -16,13 +16,20 @@ class CmsFuncs {
     public $project;
     
     // {{{ __construct
-    function __construct($project) {
-        $this->project = $project;
+    function __construct($project, $pdo, $xmldb) {
+        $this->projectName = $project;
+        $this->pdo = $pdo;
+        $this->xmldb = $xmldb;
 
         $this->log = new \depage\log\log();
     }
     // }}}
 
+    // {{{ keepAlive()
+    function keepAlive($args) {
+        // @todo implement
+    }
+    // }}}
     // {{{ get_config()
     /**
      * gets global configuration data and interface texts from db
@@ -55,7 +62,7 @@ class CmsFuncs {
             $conf_array['interface_scheme'] .= "<color name=\"$key\" value=\"" . htmlspecialchars($val) . "\" />";
         }
         
-        $conf_array['projects'] = "<project name=\"$this->project\" preview=\"true\" />";
+        $conf_array['projects'] = "<project name=\"$this->projectName\" preview=\"true\" />";
         
         $conf_array['namespaces'] = "";
         $namespaces = $this->getGlobalNamespaces();
@@ -69,6 +76,7 @@ class CmsFuncs {
         $conf_array['global_entities'] = '';
         $globalEntities = array_keys($this->getGlobalEntities());
         foreach ($globalEntities as $val) {
+            // @todo check entities for right format
             $conf_array['global_entities'] .= "<entity name=\"$val\"/>";
         }
         
@@ -90,9 +98,7 @@ class CmsFuncs {
             $conf_array['output_methods'] .= "<output_method name=\"$val\" />";
         }
         
-        /*
-        $conf_array['users'] = $project->user->get_userlist();
-         */
+        $conf_array['users'] = $this->getUserList();
 
         return new Func('set_config', $conf_array);
     }
@@ -104,8 +110,175 @@ class CmsFuncs {
     // }}}
     // {{{ get_project()
     function get_project($args) {
-        $this->log->log($args);
-        return new Func('get_project', $args);
+        $data = array();
+
+        if ($xml = $this->xmldb->getDocXml("settings")) {
+            $data['name'] = $this->projectName;
+            $data['settings'] = $xml->saveXML($xml->documentElement);
+            $data['users'] = $this->getUserList();
+        } else {
+            $data['error'] = true;
+        }
+        
+        return new Func('set_project_data', $data);
+    }
+    // }}}
+    // {{{ get_tree()
+    function get_tree($args) {
+        $callbackFunc = "update_tree_{$args['type']}";    
+
+        $data = array();
+        $project_name = $this->projectName;
+
+        if ($args['type'] == 'settings') {
+            $data['data'] = $this->getTreeSettings();
+        } elseif ($args['type'] == 'colors') {
+            $data['data'] = $this->getTreeColors();
+        } elseif ($args['type'] == 'tpl_newnodes') {
+            $data['data'] = $this->getTreeTplNewnodes();
+        } elseif ($args['type'] == 'pages') {
+            $data['data'] = $this->getTreePages();
+        } elseif ($args['type'] == 'page_data') {
+            $data['data'] = $this->getTreePagedata($args['id']);
+        }
+
+        if (!$data['data']) {
+            $data['error'] = true;
+        }
+        
+        return new Func($callbackFunc, $data);
+    }
+    // }}}
+    // {{{ save_node()
+    function save_node($args) {
+        $node = $args['data'][0];
+        $nodeId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $savedId = $xmldoc->saveNode($node);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $savedId));
+    }
+    // }}}
+    // {{{ add_node()
+    function add_node($args) {
+        $targetId = $args['target_id'];
+        $newNodes = $args['node_type'];
+        $savedIds = array();
+
+        $xmldoc = $this->xmldb->getDocByNodeId($targetId);
+        if ($xmldoc) {
+            foreach($newNodes as $node) {
+                $savedIds[] = $xmldoc->saveNode($node, $targetId);
+            }
+        }
+        $savedIds[] = $targetId;
+
+        return $this->getCallback($args['type'], $savedIds);
+    }
+    // }}}
+    // {{{ move_node_in()
+    function move_node_in($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->moveNodeIn($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ move_node_before()
+    function move_node_before($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->moveNodeBefore($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ move_node_after()
+    function move_node_after($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->moveNodeAfter($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ copy_node_in()
+    function copy_node_in($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->copyNodeIn($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ copy_node_before()
+    function copy_node_before($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->copyNodeBefore($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ copy_node_after()
+    function copy_node_after($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->copyNodeAfter($nodeId, $targetId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $targetId));
+    }
+    // }}}
+    // {{{ duplicate_node()
+    function duplicate_node($args) {
+        $nodeId = $args['id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $newNodeId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data");
+        }
+
+        return $this->getCallback($args['type'], array($nodeId));
+    }
+    // }}}
+    // {{{ delete_node()
+    function delete_node($args) {
+        $nodeId = $args['id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $parentId = $xmldoc->unlinkNode($nodeId);
+        }
+
+        return $this->getCallback($args['type'], array($nodeId, $parentId));
     }
     // }}}
     
@@ -229,7 +402,7 @@ class CmsFuncs {
             'inhtml_user_administer' => _("manage users"),
             'msg_choose_file' => _("Please, choose a file"),
             'msg_choose_file_filter_height' => _("Height: "),
-            'msg_choose_file_filter_type' => _(""),
+            'msg_choose_file_filter_type' => _("-"),
             'msg_choose_file_filter_width' => _("Width: "),
             'msg_choose_file_link' => _("Please, choose a file to link to:"),
             'msg_choose_img' => _("Please, choose an image:"),
@@ -493,6 +666,18 @@ class CmsFuncs {
         );
     }
     // }}}
+    // {{{ getUserList()
+    function getUserList(){
+        $users = \auth_user::getAll($this->pdo);
+
+        $xml = "";
+        foreach ($users as $user) {
+            $xml .= "<user name=\"" . htmlspecialchars($user->name) . "\" fullname=\"" . htmlspecialchars($user->fullname) . "\" uid=\"" . htmlspecialchars($user->id) . "\" />";
+        }
+
+        return $xml;
+    }
+    // }}}
     // {{{ getScheme()
     /**
      * get interface-color-scheme
@@ -507,6 +692,83 @@ class CmsFuncs {
         $scheme = parse_ini_file($schemefile, false);
 
         return $scheme;
+    }
+    // }}}
+    // {{{ getTreeSettings()
+    function getTreeSettings() {
+        $xml = $this->xmldb->getDocXml("settings");
+
+        return $xml->saveXML($xml->documentElement);
+    }
+    // }}}
+    // {{{ getTreeColors()
+    function getTreeColors() {
+        $xml = $this->xmldb->getDocXml("colors");
+
+        return $xml->saveXML($xml->documentElement);
+    }
+    // }}}
+    // {{{ getTreeTplNewnodes()
+    function getTreeTplNewnodes() {
+        $doctypes = new \depage\cms\xmldoctypes\page($this->xmldb, 0);
+        $nodetypes = $doctypes->getNodeTypes();
+
+        $xml = "<proj:tpl_newnodes db:name=\"tree_nodename_newnodes_root\"";
+            $xml .= " xmlns:proj=\"http://cms.depagecms.net/ns/project\"";
+            $xml .= " xmlns:db=\"http://cms.depagecms.net/ns/database\"";
+            $xml .= " xmlns:pg=\"http://cms.depagecms.net/ns/page\"";
+            $xml .= " xmlns:edit=\"http://cms.depagecms.net/ns/edit\"";
+            $xml .= " xmlns:section=\"http://cms.depagecms.net/ns/section\"";
+        $xml .= ">";
+
+        foreach($nodetypes as $t) {
+            $xml .= "<pg:newnode name=\"" . htmlspecialchars($t->name) . "\" db:id=\"$t->id\">";
+                $xml .= "<edit:newnode_valid_parents>" . htmlspecialchars($t->validParents) . "</edit:newnode_valid_parents>";
+                $xml .= "<edit:newnode>" . htmlspecialchars($t->xmlTemplateData) . "</edit:newnode>";
+            $xml .= "</pg:newnode>";
+        }
+
+        $xml .= "</proj:tpl_newnodes>";
+
+        return $xml;
+    }
+    // }}}
+    // {{{ getTreePages()
+    function getTreePages() {
+        $xml = $this->xmldb->getDocXml("pages");
+
+        return $xml->saveXML($xml->documentElement);
+    }
+    // }}}
+    // {{{ getTreePagedata()
+    function getTreePagedata($id) {
+        $xml = $this->xmldb->getDocXml($id);
+
+        return $xml->saveXML($xml->documentElement);
+    }
+    // }}}
+    
+    // {{{ getCallback()
+    function getCallback($type, $ids = array()) {
+        if ($type == 'settings') {
+        } elseif ($type == 'colors') {
+        } elseif ($type == 'tpl_newnodes') {
+        } elseif ($type == 'pages') {
+        } elseif ($type == 'page_data') {
+            return $this->getCallbackForPagedata($ids);
+        }
+    }
+    // }}}
+    // {{{ getCallbackForPagedata()
+    function getCallbackForPagedata($ids = array()) {
+        $data = array();
+
+        for ($i = 0; $i < count($ids); $i++) {
+            $data['id' . ($i + 1)] = $ids[$i];
+        }
+        $data['id_num'] = count($ids);
+
+        return new Func("get_update_tree_page_data", $data);
     }
     // }}}
 }
