@@ -3,18 +3,21 @@
 // @note implement delete by wildcard as the following:
 // http://stackoverflow.com/questions/1595904/memcache-and-wildcards
 
-namespace depage\cache; 
+namespace Depage\Cache\Providers;
 
-class cache_memcache extends cache {
+class Memcache extends \Depage\Cache\Cache
+{
     // {{{ variables
     protected $defaults = array(
         'host' => 'localhost:11211',
     );
     private $memc;
+    protected $keyNs = "~~namespace";
     // }}}
-    //
+    
     // {{{ constructor
-    protected function __construct($prefix, $options = array()) {
+    protected function __construct($prefix, $options = array())
+    {
         parent::__construct($prefix, $options);
 
         $options = array_merge($this->defaults, $options);
@@ -39,22 +42,35 @@ class cache_memcache extends cache {
     }
     // }}}
     // {{{ init
-    protected function init() {
+    protected function init()
+    {
         return new \Memcache();
     }
     // }}}
-    
+
+    // {{{ exist
+    /**
+     * @brief return if a cache-item with $key exists
+     *
+     * @return (bool) true if cache for $key exists, false if not
+     */
+    public function exist($key)
+    {
+        $val = $this->get($key);
+        return ($val !== false);
+    }
+    // }}}
     // {{{ age */
     /**
      * @brief returns age of cache-item with key $key
      *
-     * @param       $key (string) key of cache item
+     * @param   $key (string) key of cache item
      *
-     * @return      (int) age as unix timestamp
+     * @return (int) age as unix timestamp
      */
-    public function age($key) {
+    public function age($key)
+    {
         // because we don't know the age in memcached we always return false
-
         return false;
     }
     // }}}
@@ -62,13 +78,14 @@ class cache_memcache extends cache {
     /**
      * @brief sets data ob a cache item
      *
-     * @param   $key (string) key to save under
+     * @param   $key  (string) key to save under
      * @param   $data (object) object to save. $data must be serializable
      *
-     * @return  (bool) true on success, false on failure
+     * @return (bool) true on success, false on failure
      */
-    public function set($key, $data) {
-        $k = $this->get_memc_key($key);
+    public function set($key, $data)
+    {
+        $k = $this->getMemcKey($key);
 
         return $this->memc->set($k, $data);
     }
@@ -79,45 +96,46 @@ class cache_memcache extends cache {
      *
      * @param   $key (string) key of item to get
      *
-     * @return  (object) unserialized content of cache item, false if the cache item does not exist
+     * @return (object) unserialized content of cache item, false if the cache item does not exist
      */
-    public function get($key) {
-        $k = $this->get_memc_key($key);
+    public function get($key)
+    {
+        $k = $this->getMemcKey($key);
 
         return $this->memc->get($k);
     }
     // }}}
-    
-    // {{{ get_memc_key */
-    public function get_memc_key($key) {
-        $k = $key;
-        $key_ns = "namespace";
-        $key_cache_item = "";
+
+    // {{{ getMemcKey */
+    protected function getMemcKey($key)
+    {
+        $keyNs = $this->keyNs;
+        $keyCacheItem = "";
 
         $namespaces = explode("/", $key);
         $last = array_pop($namespaces);
 
         foreach ($namespaces as $namespace) {
-            $key_ns .= "/" . $namespace;
+            $keyNs .= "/" . $namespace;
 
-            $counter = $this->memc->get($key_ns);
-            if($counter === false) {
+            $counter = $this->memc->get($keyNs);
+            if ($counter === false) {
                 $counter = mt_rand(1, 10000);
-                $this->memc->set($key_ns, $counter);
+                $this->memc->set($keyNs, $counter);
             }
 
-            $key_cache_item .= "$namespace~$counter/";
+            $keyCacheItem .= "$namespace~$counter/";
 
         }
-        $key_cache_item .= $last;
+        $keyCacheItem .= $last;
 
-        return $key_cache_item;
+        return $keyCacheItem;
     }
     // }}}
     // {{{ delete */
-    public function delete($key) {
-        $k = $key;
-        $key_ns = "namespace";
+    public function delete($key)
+    {
+        $keyNs = $this->keyNs;
 
         $namespaces = explode("/", $key);
         $last = array_pop($namespaces);
@@ -128,10 +146,21 @@ class cache_memcache extends cache {
         } else {
             // invalidate namespace with key
             foreach ($namespaces as $namespace) {
-                $key_ns .= "/" . $namespace;
+                $keyNs .= "/" . $namespace;
             }
-            $this->memc->increment($key_ns);
+            $this->memc->increment($keyNs);
         }
+    }
+    // }}}
+    // {{{ clear */
+    /**
+     * @brief clears all items from current cache
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        $this->memc->flush();
     }
     // }}}
 }

@@ -1,15 +1,17 @@
 <?php
 
-namespace depage\cache; 
+namespace Depage\Cache;
 
-class cache_uncached extends cache {
+class Uncached extends \Depage\Cache\Cache
+{
     // {{{ exist
     /**
      * @brief return if a cache-item with $key exists
      *
-     * @return      (bool) true if cache for $key exists, false if not
+     * @return (bool) true if cache for $key exists, false if not
      */
-    private function exist($key) {
+    public function exist($key)
+    {
         return false;
     }
     // }}}
@@ -17,11 +19,12 @@ class cache_uncached extends cache {
     /**
      * @brief returns age of cache-item with key $key
      *
-     * @param       $key (string) key of cache item
+     * @param   $key (string) key of cache item
      *
-     * @return      (int) age as unix timestamp
+     * @return (int) age as unix timestamp
      */
-    public function age($key) {
+    public function age($key)
+    {
         return false;
     }
     // }}}
@@ -29,13 +32,14 @@ class cache_uncached extends cache {
     /**
      * @brief saves cache data for key $key to a file
      *
-     * @param   $key (string) key to save data in, may include namespaces divided by a forward slash '/'
-     * @param   $data (string) data to save in file
+     * @param   $key                (string) key to save data in, may include namespaces divided by a forward slash '/'
+     * @param   $data               (string) data to save in file
      * @param   $saveGzippedContent (bool) if true, it saves a gzip file additional to plain string, defaults to false
      *
-     * @return  (bool) true if saved successfully
+     * @return (bool) true if saved successfully
      */
-    public function setFile($key, $data, $saveGzippedContent = false) {
+    public function setFile($key, $data, $saveGzippedContent = false)
+    {
         return false;
     }
     // }}}
@@ -45,9 +49,10 @@ class cache_uncached extends cache {
      *
      * @param   $key (string) key of item to get
      *
-     * @return  (string) content of cache item, false if the cache item does not exist
+     * @return (string) content of cache item, false if the cache item does not exist
      */
-    public function getFile($key) {
+    public function getFile($key)
+    {
         return false;
     }
     // }}}
@@ -55,12 +60,13 @@ class cache_uncached extends cache {
     /**
      * @brief sets data ob a cache item
      *
-     * @param   $key (string) key to save under
+     * @param   $key  (string) key to save under
      * @param   $data (object) object to save. $data must be serializable
      *
-     * @return  (bool) true on success, false on failure
+     * @return (bool) true on success, false on failure
      */
-    public function set($key, $data) {
+    public function set($key, $data)
+    {
         return false;
     }
     // }}}
@@ -70,9 +76,10 @@ class cache_uncached extends cache {
      *
      * @param   $key (string) key of item to get
      *
-     * @return  (object) unserialized content of cache item, false if the cache item does not exist
+     * @return (object) unserialized content of cache item, false if the cache item does not exist
      */
-    public function get($key) {
+    public function get($key)
+    {
         return false;
     }
     // }}}
@@ -82,9 +89,10 @@ class cache_uncached extends cache {
      *
      * @param   $key (string) key of cache item
      *
-     * @return  (string) url of cache-item
+     * @return (string) url of cache-item
      */
-    public function getUrl($key) {
+    public function getUrl($key)
+    {
         return false;
     }
     // }}}
@@ -96,9 +104,10 @@ class cache_uncached extends cache {
      *
      * @param   $key (string) key of item
      *
-     * @return  void
+     * @return void
      */
-    public function delete($key) {
+    public function delete($key)
+    {
     }
     // }}}
 }
