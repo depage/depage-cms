@@ -1,6 +1,6 @@
 <?php
 
-namespace Depage\Cache;
+namespace Depage\Cache\Providers;
 
 class Uncached extends \Depage\Cache\Cache
 {
@@ -107,6 +107,16 @@ class Uncached extends \Depage\Cache\Cache
      * @return void
      */
     public function delete($key)
+    {
+    }
+    // }}}
+    // {{{ clear */
+    /**
+     * @brief clears all items from current cache
+     *
+     * @return void
+     */
+    public function clear()
     {
     }
     // }}}

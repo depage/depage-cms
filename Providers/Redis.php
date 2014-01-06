@@ -80,9 +80,13 @@ class Redis extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        $str = serialize($data);
-
-        return $this->redis->set($key, $str);
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+            // do not serialize xml or json -> string expected
+            // @todo trigger error when not a string
+            return $this->redis->set($key, $data);
+        } else {
+            return $this->redis->set($key, serialize($data));
+        }
     }
     // }}}
     // {{{ get */
@@ -97,7 +101,12 @@ class Redis extends \Depage\Cache\Cache
     {
         $value = $this->redis->get($key);
 
-        return unserialize($value);
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+            // do not unserialize xml or json -> give back string
+            return $value;
+        } else {
+            return unserialize($value);
+        }
     }
     // }}}
 

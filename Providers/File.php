@@ -110,9 +110,13 @@ class File extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        $str = serialize($data);
-
-        return $this->setFile($key, $str);
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+            // do not serialize xml or json -> string expected
+            // @todo trigger error when not a string
+            return $this->setFile($key, $data);
+        } else {
+            return $this->setFile($key, serialize($data));
+        }
     }
     // }}}
     // {{{ get */
@@ -126,8 +130,13 @@ class File extends \Depage\Cache\Cache
     public function get($key)
     {
         $value = $this->getFile($key);
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+            // do not unserialize xml or json -> give back string
+            return $value;
+        } else {
+            return unserialize($value);
+        }
 
-        return unserialize($value);
     }
     // }}}
     // {{{ getUrl */
