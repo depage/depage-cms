@@ -39,9 +39,8 @@ class LegacyUI extends \depage_ui
 
         // get cache instance
         $this->cache = \depage\cache\cache::factory("xmldb", array(
-            //'disposition' => "memory",
-            //'disposition' => "uncached",
-            'host' => "twins.local",
+            'disposition' => "memory",
+            'host' => "localhost",
         ));
 
         if (empty($this->pdo)) {
@@ -289,6 +288,76 @@ class LegacyUI extends \depage_ui
         }
     }
     // }}}
+    // {{{ benchmark
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function benchmark()
+    {
+        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        $caches = array();
+        $xmldbs = array();
+        $xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
+            'pathXMLtemplate' => $this->xmlPath,
+        ));
+        $docs = array_keys($xmldb->getDocuments());
+
+        $caches['uncached'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "uncached",
+        ));
+        $caches['file'] = \depage\cache\cache::factory("xmldb", array(
+        ));
+        $caches['memcached'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "memcached",
+            'host' => "localhost",
+        ));
+        $caches['memcache'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "memcache",
+            'host' => "localhost",
+        ));
+        /*
+        $caches['memcached-twins'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "memcached",
+            'host' => "twins.local",
+        ));
+        $caches['memcache-twins'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "memcache",
+            'host' => "twins.local",
+        ));
+         */
+        $caches['redis'] = \depage\cache\cache::factory("xmldb", array(
+            'disposition' => "redis",
+            'host' => "localhost",
+        ));
+
+        foreach ($caches as $key => $cache) {
+            $xmldbs[$key] = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $cache, array(
+                'pathXMLtemplate' => $this->xmlPath,
+            ));
+        }
+
+        foreach ($xmldbs as $key => $xmldb) {
+            echo($key . "\n<br>");
+
+            foreach($docs as $doc) {
+                // cache first
+                $xmldb->getDocXml($doc);
+            }
+            $time_start = microtime(true);
+            for ($i = 0; $i < 10; $i++) {
+                foreach($docs as $doc) {
+                    $xmldb->getDocXml($doc);
+                }
+            }
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+            echo($time . "\n<br>");
+        }
+
+    }
+    // }}}
     // {{{ handleRpc
     /**
      * function to show error messages
@@ -306,7 +375,7 @@ class LegacyUI extends \depage_ui
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
-        $xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"), array(
+        $xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
         ));
 
@@ -316,12 +385,12 @@ class LegacyUI extends \depage_ui
         //call
         $funcs = $msgHandler->parse($xmlInput);
 
-        $value = array();
+        $results = array();
         foreach ($funcs as $func) {
             $func->add_args(array('ip' => $_SERVER['REMOTE_ADDR']));
             $tempval = $func->call();
             if (is_a($tempval, 'DepageLegacy\\RPC\\Func')) {
-                $value[] = $tempval;
+                $results[] = $tempval;
             }
         }
         /*
@@ -329,13 +398,13 @@ class LegacyUI extends \depage_ui
             send_updates();
         }
          */
-        //$value = array_merge($value, $project->user->get_updates($project->user->sid));
+        //$results = array_merge($results, $project->user->get_updates($project->user->sid));
 
-        if (count($value) == 0) {
-            $value[] = new RPC\Func('nothing', array('error' => 0));
+        if (count($results) == 0) {
+            $results[] = new RPC\Func('nothing', array('error' => 0));
         }
 
-        return RPC\Message::create($value);
+        return RPC\Message::create($results);
     }
     // }}}
 }

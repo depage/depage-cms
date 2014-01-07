@@ -176,7 +176,7 @@ class document {
                 'ns' => $info->namespaces,
             ));
 
-            $this->clearCache($info->id);
+            $this->clearCache();
         }
 
         return $info;
@@ -193,7 +193,7 @@ class document {
      * @param    $level (int) number of recursive getChildnodesByParentId calls. how deep to traverse the tree.
      */
     public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX) {
-        $identifier = "{$this->table_docs}/d{$this->doc_id}/{$id}.xml";
+        $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
 
         $xml_doc = new \depage\xml\Document();
 
@@ -341,7 +341,7 @@ class document {
             'doc_id' => $doc_info->id,
         ));
 
-        $this->clearCache($this->doc_id);
+        $this->clearCache();
 
         $this->endTransaction();
 
@@ -572,7 +572,7 @@ class document {
                     'doc_id' => $this->doc_id,
                 ));
 
-                $this->clearCache($this->doc_id);
+                $this->clearCache();
             }
 
             $success = true;
@@ -670,7 +670,7 @@ class document {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
-            $this->clearCache($this->doc_id);
+            $this->clearCache();
 
             return $this->saveNode($root_node, $target_id, $target_pos, false);
         }
@@ -698,7 +698,7 @@ class document {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
-            $this->clearCache($this->doc_id);
+            $this->clearCache();
 
             return $this->saveNode($root_node, $target_id, $target_pos, $recursive);
         }
@@ -811,7 +811,7 @@ class document {
             'doc_id' => $this->doc_id,
         ));
 
-        $this->clearCache($this->doc_id);
+        $this->clearCache();
 
         $this->endTransaction();
 
@@ -1022,7 +1022,7 @@ class document {
 
             //unlink old node
             $this->unlinkNodeById($node_array[0]['id']);
-            $this->clearCache($this->doc_id);
+            $this->clearCache();
         } else if ($target_id === null) {
             $target_id = null;
             $target_pos = 0;
@@ -1041,7 +1041,7 @@ class document {
                 ));
                 $this->pdo->exec("SET foreign_key_checks = 1;");
             }
-            $this->clearCache($this->doc_id);
+            $this->clearCache();
 
             //set target_id/pos/doc
             $query = $this->pdo->prepare(
@@ -1134,7 +1134,7 @@ class document {
                 'node_id' => $node_id,
             ));
 
-            $this->clearCache($this->doc_id);
+            $this->clearCache();
 
             // update position of remaining nodes
             $query = $this->pdo->prepare(
@@ -1370,7 +1370,7 @@ class document {
      * @todo    implement full xpath specifications
      */
     private function getNodeIdsByXpath($xpath) {
-        $identifier = "{$this->table_docs}/d{$this->doc_id}/xpath_" . sha1($xpath);
+        $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
 
         $fetched_ids = $this->cache->get($identifier);
 
@@ -1875,10 +1875,8 @@ class document {
      *
      */
     private function clearCache() {
-        if (is_null($this->doc_id)) {
-            $this->cache->delete("{$this->table_docs}/");
-        } else {
-            $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
+        if (!is_null($this->doc_id)) {
+            $this->cache->delete("{$this->table_docs}_d{$this->doc_id}/");
         }
     }
     // }}}
