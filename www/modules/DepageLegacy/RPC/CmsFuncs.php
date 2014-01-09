@@ -13,7 +13,8 @@
 namespace DepageLegacy\RPC;
 
 class CmsFuncs {
-    public $project;
+    protected $project;
+    protected $callbacks = array();
     
     // {{{ __construct
     function __construct($project, $pdo, $xmldb) {
@@ -153,30 +154,36 @@ class CmsFuncs {
     function save_node($args) {
         $node = $args['data'][0];
         $nodeId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+        $changedIds = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $savedId = $xmldoc->saveNode($node);
+            $changedIds[] = $xmldoc->saveNode($node);
         }
+        $changedIds[] = $nodeId;
 
-        return $this->getCallback($args['type'], array($nodeId, $savedId));
+        $this->addCallback($args['type'], $changedIds);
     }
     // }}}
     // {{{ add_node()
     function add_node($args) {
         $targetId = $args['target_id'];
         $newNodes = $args['node_type'];
-        $savedIds = array();
+        $changedIds = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
             foreach($newNodes as $node) {
-                $savedIds[] = $xmldoc->saveNode($node, $targetId);
+                $savedId = $xmldoc->saveNode($node, $targetId);
+                if (!empty($newName)) {
+                    $xmldoc->setAttribute($savedId, "name", $newName);
+                }
+                $changedIds[] = $savedId;
             }
         }
-        $savedIds[] = $targetId;
+        $changedIds[] = $targetId;
 
-        return $this->getCallback($args['type'], $savedIds);
+        $this->addCallback($args['type'], $changedIds, $changedIds[0]);
     }
     // }}}
     // {{{ move_node_in()
@@ -189,7 +196,7 @@ class CmsFuncs {
             $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ move_node_before()
@@ -202,7 +209,7 @@ class CmsFuncs {
             $xmldoc->moveNodeBefore($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ move_node_after()
@@ -215,7 +222,7 @@ class CmsFuncs {
             $xmldoc->moveNodeAfter($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_in()
@@ -228,7 +235,7 @@ class CmsFuncs {
             $xmldoc->copyNodeIn($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_before()
@@ -241,7 +248,7 @@ class CmsFuncs {
             $xmldoc->copyNodeBefore($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->getCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_after()
@@ -254,19 +261,26 @@ class CmsFuncs {
             $xmldoc->copyNodeAfter($nodeId, $targetId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($args['type'], array($nodeId, $targetId));
     }
     // }}}
     // {{{ duplicate_node()
     function duplicate_node($args) {
         $nodeId = $args['id'];
+        $newName = $args['new_name'];
+        $changedIds = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $newNodeId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data");
+            $savedId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data");
+            if (!empty($newName)) {
+                $xmldoc->setAttribute($savedId, "name", $newName);
+            }
+            $changedIds[] = $savedId;
         }
+        $changedIds[] = $nodeId;
 
-        return $this->getCallback($args['type'], array($nodeId));
+        $this->addCallback($args['type'], $changedIds, $changedIds[0]);
     }
     // }}}
     // {{{ delete_node()
@@ -278,7 +292,7 @@ class CmsFuncs {
             $parentId = $xmldoc->unlinkNode($nodeId);
         }
 
-        return $this->getCallback($args['type'], array($nodeId, $parentId));
+        $this->addCallback($args['type'], array($nodeId, $parentId));
     }
     // }}}
     
@@ -748,15 +762,23 @@ class CmsFuncs {
     }
     // }}}
     
-    // {{{ getCallback()
-    function getCallback($type, $ids = array()) {
+    // {{{ addCallback()
+    function addCallback($type, $ids = array(), $newActiveId = null) {
         if ($type == 'settings') {
         } elseif ($type == 'colors') {
         } elseif ($type == 'tpl_newnodes') {
         } elseif ($type == 'pages') {
         } elseif ($type == 'page_data') {
-            return $this->getCallbackForPagedata($ids);
+            $this->callbacks[] = $this->getCallbackForPagedata($ids);
         }
+        if (!is_null($newActiveId)) {
+            $this->callbacks[] = new Func("set_activeId_{$type}", array('id' => $newActiveId));
+        }
+    }
+    // }}}
+    // {{{ getCallbacks()
+    function getCallbacks() {
+        return $this->callbacks;
     }
     // }}}
     // {{{ getCallbackForPagedata()

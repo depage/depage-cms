@@ -998,7 +998,7 @@ class document {
     public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true) {
         $this->beginTransaction();
 
-        if ($target_id === null) {
+        if ($target_id !== null) {
             /*
              * if target_id is not set, assume we are saving an existing node with a node 
              * db:id-attribute set. if target_id is set, assume we want to save a new node
