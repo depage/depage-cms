@@ -41,6 +41,7 @@ class document {
 
     /* public */
 
+    // {{{ getDocId()
     /**
      * Get Doc ID
      *
@@ -49,6 +50,7 @@ class document {
     public function getDocId() {
         return $this->doc_id;
     }
+    // }}}
 
     // {{{ constructor()
     /**
@@ -85,7 +87,7 @@ class document {
         return new history($this->pdo, $this->table_prefix, $this);
     }
     // }}}
-
+    
     // {{{ getXml
     /**
      * getXml
@@ -207,7 +209,11 @@ class document {
             $this->beginTransaction();
 
             $query = $this->pdo->prepare(
-                "SELECT docs.entities AS entities, docs.ns AS namespaces
+                "SELECT 
+                    docs.entities AS entities, 
+                    docs.ns AS namespaces,
+                    docs.lastchange AS lastchange,
+                    docs.lastchange_uid AS lastchangeUid
                 FROM {$this->table_docs} AS docs
                 WHERE docs.id = :doc_id"
             );
@@ -220,6 +226,8 @@ class document {
             $this->namespace_string = $result->namespaces;
             $this->namespaces = $this->extractNamespaces($this->namespace_string);
             $this->namespaces[] = $this->db_ns;
+            $this->lastchange = $result->lastchange;
+            $this->lastchangeUid = $result->lastchangeUid;
 
             $query = $this->pdo->prepare(
                 "SELECT
@@ -251,7 +259,13 @@ class document {
                 $node_data .= " {$row->value}";
 
                 //add id_attribute to node
-                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
+                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\"";
+                
+                //add lastchange-data
+                $node_data .= " {$this->db_ns->ns}:lastchange=\"{$this->lastchange}\"";
+                $node_data .= " {$this->db_ns->ns}:lastchangeUid=\"{$this->lastchangeUid}\"";
+
+                $node_data .= ">";
 
                 $xml_str .= $node_data;
 
@@ -259,12 +273,16 @@ class document {
                 $xml_str .= $this->getChildnodesByParentId($row->id, $level);
 
                 $xml_str .= "</{$row->name}>";
-
             } else {
                 throw new xmldbException("This node is no ELEMENT_NODE or node does not exist");
             }
 
-            $xml_doc->loadXML($xml_str);
+            $success = $xml_doc->loadXML($xml_str);
+
+            if (!$success) {
+                $log = new \depage\log\log();
+                $log->log($xml_str);
+            }
 
             $this->endTransaction();
 
@@ -356,6 +374,8 @@ class document {
      */
     public function unlinkNode($node_id) {
         if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
+            $this->updateLastchange();
+
             return $this->unlinkNodeById($node_id);
         }
         return false;
@@ -571,6 +591,8 @@ class document {
                     'node_id' => $node_id,
                     'doc_id' => $this->doc_id,
                 ));
+
+                $this->updateLastchange();
 
                 $this->clearCache();
             }
@@ -795,11 +817,6 @@ class document {
     protected function saveAttributes($node_id, $attributes) {
         $this->beginTransaction();
 
-        $attr_str = "";
-        foreach($attributes as $name => $value) {
-            $attr_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
-        }
-
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_xml} AS xml
             SET xml.value = :attr_str
@@ -807,9 +824,11 @@ class document {
         );
         $success = $query->execute(array(
             'node_id' => $node_id,
-            'attr_str' => $attr_str,
+            'attr_str' => $this->getAttributeString($attributes),
             'doc_id' => $this->doc_id,
         ));
+
+        $this->updateLastchange();
 
         $this->clearCache();
 
@@ -818,7 +837,7 @@ class document {
         return $success;
     }
     // }}}
-
+    
     // {{{ getAttribute()
     /**
      * gets attribute of node
@@ -1099,6 +1118,8 @@ class document {
                 }
             }
         }
+
+        $this->updateLastchange();
 
         $this->endTransaction();
 
@@ -1669,7 +1690,6 @@ class document {
     }
     // }}}
 
-
     // {{{ saveNodeToDb()
     /**
      * saves a node to database
@@ -1712,16 +1732,15 @@ class document {
             } else {
                 $name_query = $node->localName;
             }
-            $attr_str = "";
+            $attributes = array();
             foreach ($node->attributes as $attrib) {
-                if ($attrib->prefix . ':' . $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute && $attrib->localName != $this->db_ns->ns . ':' . $this->id_attribute) {
-                    $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
-                    $attrib_name = $attrib->localName;
-                    $attrib_value = $attrib->value;
+                $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
+                $attrib_name = $attrib->localName;
 
-                    $attr_str .= $attrib_ns . $attrib_name . "=\"" . htmlspecialchars($attrib_value) . "\" ";
-                }
+                $attributes[$attrib_ns . $attrib_name] = $attrib->value;
             }
+            $attr_str = $this->getAttributeString($attributes);
+
             if ($target_id !== null && $increase_pos) {
                 $query = $this->pdo->prepare(
                     "UPDATE {$this->table_xml}
@@ -1785,6 +1804,41 @@ class document {
             }
         }
         return $id;
+    }
+    // }}}
+
+    // {{{ updateLastchange
+    /**
+     * updates the lastchange date and uid for the current document
+     */
+    protected function updateLastchange() {
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->table_docs} 
+            SET 
+                lastchange=:timestamp,
+                lastchange_uid=:user_id
+            WHERE 
+                id=:doc_id;"
+        );
+
+        $timestamp = time();
+
+        if (!empty($this->xmldb->options['userId'])) {
+            $user_id = $this->xmldb->options['userId'];
+        } else {
+            $user_id = null;
+        }
+
+        $params = array(
+            'doc_id' => $this->getDocId(),
+            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'user_id' => $user_id,
+        ); 
+        if ($query->execute($params)) {
+            return $timestamp;
+        }
+
+        return false;
     }
     // }}}
 
@@ -1866,6 +1920,29 @@ class document {
                 $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
             }
         }
+    }
+    // }}}
+    
+    // {{{ getAttributeString()
+    /**
+     * gets attribute string for saving
+     *
+     * @param    $attributes (array) array of attribute values
+     */
+    private function getAttributeString($attributes) {
+        $attr_str = "";
+        $autogeneratedAttr = array(
+            $this->db_ns->ns . ':' . $this->id_attribute,
+            $this->db_ns->ns . ":lastchange",
+            $this->db_ns->ns . ":lastchangeUid",
+        );
+        foreach($attributes as $name => $value) {
+            if (!in_array($name, $autogeneratedAttr)) {
+                $attr_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
+            }
+        }
+
+        return $attr_str;
     }
     // }}}
 

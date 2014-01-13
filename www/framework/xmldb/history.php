@@ -126,7 +126,7 @@ class history {
     }
     // }}}
 
-    // {{{
+    // {{{ save()
     /**
      *
      * gets the current docuemnt xml and saves a version to the history
