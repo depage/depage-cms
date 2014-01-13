@@ -308,6 +308,42 @@ class CmsFuncs {
         $this->addCallback($args['type'], array($nodeId));
     }
     // }}}
+    // {{{ set_page_navigations()
+    function set_page_navigations($args) {
+        $nodeId = $args['id'];
+        $navigationNode = $args['navigations'][0];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            foreach($navigationNode->attributes as $attr) {
+                $xmldoc->setAttribute($nodeId, $attr->name, $attr->value);
+            }
+        }
+
+        $this->addCallback($args['type'], array($nodeId));
+        $this->addCallback('pages', array($nodeId));
+
+        return new Func('preview_update', array('error' => 0));
+    }
+    // }}}
+    // {{{ set_page_file_options()
+    function set_page_file_options($args) {
+        $nodeId = $args['id'];
+        $multilang = $args['multilang'];
+        $filetype = $args['file_type'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->setAttribute($nodeId, "multilang", $multilang);
+            $xmldoc->setAttribute($nodeId, "file_type", $filetype);
+        }
+
+        $this->addCallback($args['type'], array($nodeId));
+        $this->addCallback('pages', array($nodeId));
+
+        return new Func('preview_update', array('error' => 0));
+    }
+    // }}}
     
     // {{{ getTexts()
     protected function getTexts() {
@@ -790,6 +826,7 @@ class CmsFuncs {
         } elseif ($type == 'colors') {
         } elseif ($type == 'tpl_newnodes') {
         } elseif ($type == 'pages') {
+            $this->callbacks[] = $this->getCallbackForPages($ids);
         } elseif ($type == 'page_data') {
             $this->callbacks[] = $this->getCallbackForPagedata($ids);
         }
@@ -801,6 +838,15 @@ class CmsFuncs {
     // {{{ getCallbacks()
     function getCallbacks() {
         return $this->callbacks;
+    }
+    // }}}
+    // {{{ getCallbackForPages()
+    function getCallbackForPages($ids = array()) {
+        $data = array();
+
+        $data['data'] = $this->getTreePages();
+
+        return new Func("update_tree_pages", $data);
     }
     // }}}
     // {{{ getCallbackForPagedata()
