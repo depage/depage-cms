@@ -295,6 +295,19 @@ class CmsFuncs {
         $this->addCallback($args['type'], array($nodeId, $parentId));
     }
     // }}}
+    // {{{ set_page_colorscheme()
+    function set_page_colorscheme($args) {
+        $nodeId = $args['id'];
+        $colorscheme = $args['colorscheme'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->setAttribute($nodeId, "colorscheme", $colorscheme);
+        }
+
+        $this->addCallback($args['type'], array($nodeId));
+    }
+    // }}}
     
     // {{{ getTexts()
     protected function getTexts() {
@@ -757,6 +770,15 @@ class CmsFuncs {
     // {{{ getTreePagedata()
     function getTreePagedata($id) {
         $xml = $this->xmldb->getDocXml($id);
+
+        $root = $xml->documentElement;
+        $meta = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
+
+        if ($meta) {
+            // copy global lastchange attributes to meta attribute for backwards compatibility
+            $meta->setAttribute("lastchange_UTC", $root->getAttribute("db:lastchange"));
+            $meta->setAttribute("lastchange_uid", $root->getAttribute("db:lastchangeUid"));
+        }
 
         return $xml->saveXML($xml->documentElement);
     }

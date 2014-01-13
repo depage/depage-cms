@@ -20,6 +20,7 @@ class LegacyUI extends \depage_ui
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
     protected $projectName = "depage";
+    protected $user;
 
     // {{{ _getSubHandler
     static function _getSubHandler() {
@@ -39,7 +40,6 @@ class LegacyUI extends \depage_ui
 
         // get cache instance
         $this->cache = \depage\cache\cache::factory("xmldb", array(
-            'disposition' => "memory",
             'host' => "localhost",
         ));
 
@@ -379,6 +379,7 @@ class LegacyUI extends \depage_ui
 
         $xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
+            'userId' => $this->auth_user->id,
         ));
 
         $funcHandler = new RPC\CmsFuncs($this->projectName, $this->pdo, $xmldb);
