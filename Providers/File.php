@@ -110,7 +110,7 @@ class File extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
             // do not serialize xml or json -> string expected
             // @todo trigger error when not a string
             return $this->setFile($key, $data);
@@ -130,7 +130,7 @@ class File extends \Depage\Cache\Cache
     public function get($key)
     {
         $value = $this->getFile($key);
-        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
             // do not unserialize xml or json -> give back string
             return $value;
         } else {
