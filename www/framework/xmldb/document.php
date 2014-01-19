@@ -278,13 +278,14 @@ class document {
             }
 
             $success = $xml_doc->loadXML($xml_str);
-
-            if (!$success) {
-                $log = new \depage\log\log();
-                $log->log($xml_str);
-            }
+            $dth = $this->getDoctypeHandler();
 
             $this->endTransaction();
+
+            $changed = $dth->testDocument($xml_doc);
+            if ($changed) {
+                $this->saveNode($xml_doc);
+            }
 
             // add xml to xml-cache
             // TODO bug in cache caused by saving when level is 0
@@ -389,7 +390,7 @@ class document {
      * @param $target_pos
      * @return bool
      */
-    public function addNode(\DomElement $node, $target_id, $target_pos) {
+    public function addNode(\DomElement $node, $target_id, $target_pos = -1) {
         $dth = $this->getDoctypeHandler();
         if ($dth->isAllowedAdd($node, $target_id)) {
             $dth->onAddNode($node, $target_id, $target_pos);
@@ -1390,7 +1391,7 @@ class document {
      *
      * @todo    implement full xpath specifications
      */
-    private function getNodeIdsByXpath($xpath) {
+    public function getNodeIdsByXpath($xpath) {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
 
         $fetched_ids = $this->cache->get($identifier);
@@ -1438,7 +1439,7 @@ class document {
                             $fetched_ids[] = $temp_ids[((int) $condition) - 1];
                         }
                         // }}}
-                        // {{{fetch by simple attributes:
+                        // {{{ fetch by simple attributes:
                     } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
                         /*
                          * "... /ns:name[@attr1] ..."
@@ -1902,11 +1903,9 @@ class document {
     /**
      * remove all db-id attributes recursive from nodes
      *
-     * @private
-     *
      * @param    $node (domxmlnode) node to remove attribute from
      */
-    private function removeIdAttr($node) {
+    public function removeIdAttr($node) {
         if ($node->nodeType == XML_ELEMENT_NODE || $node->nodeType == XML_DOCUMENT_NODE) {
             if ($node->nodeType == XML_ELEMENT_NODE) {
                 $xml_doc = $node->ownerDocument;
@@ -1915,7 +1914,7 @@ class document {
                 $node = $xml_doc->documentElement;
             }
             $xpath = new \DOMXPath($xml_doc);
-            $xp_result = $xpath->query("//*[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
+            $xp_result = $xpath->query("./descendant-or-self::node()[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
             foreach ($xp_result as $node) {
                 $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
             }

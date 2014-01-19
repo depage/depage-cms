@@ -139,6 +139,12 @@ class base {
         return true;
     }
     // }}}
+    
+    // {{{ testDocument
+    public function testDocument($xml) {
+        return false;
+    }
+    // }}}
 }  
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

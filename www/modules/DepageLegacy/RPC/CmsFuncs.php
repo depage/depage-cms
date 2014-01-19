@@ -174,7 +174,7 @@ class CmsFuncs {
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
             foreach($newNodes as $node) {
-                $savedId = $xmldoc->saveNode($node, $targetId);
+                $savedId = $xmldoc->addNode($node, $targetId);
                 if (!empty($newName)) {
                     $xmldoc->setAttribute($savedId, "name", $newName);
                 }
