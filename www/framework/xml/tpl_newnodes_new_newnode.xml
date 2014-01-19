@@ -1,4 +1,0 @@
-<pg:newnode name="%insert_default_name%">
-	<edit:newnode_valid_parents></edit:newnode_valid_parents>
-	<edit:newnode></edit:newnode>
-</pg:newnode>

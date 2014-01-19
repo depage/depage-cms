@@ -1,5 +1,0 @@
-<pg:template_data type="" active="false">
-	<edit:template><xsl:template match="">
-		<xsl:apply-templates />
-	</xsl:template></edit:template>
-</pg:template_data>
