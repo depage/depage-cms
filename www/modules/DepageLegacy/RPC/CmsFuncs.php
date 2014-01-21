@@ -186,6 +186,21 @@ class CmsFuncs {
         $this->addCallback($args['type'], $changedIds, $changedIds[0]);
     }
     // }}}
+    // {{{ rename_node()
+    function rename_node($args) {
+        $nodeId = $args['id'];
+        $newName = $args['new_name'];
+        $changedIds = array();
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            $xmldoc->setAttribute($nodeId, "name", $newName);
+        }
+        $changedIds[] = $nodeId;
+
+        $this->addCallback($args['type'], $changedIds);
+    }
+    // }}}
     // {{{ move_node_in()
     function move_node_in($args) {
         $nodeId = $args['id'];
