@@ -46,9 +46,12 @@ $conf = array(
     ),
     // }}}
     // {{{ graphics
-    '*/depage-cms/*.(gif|jpg|jpeg|png)$' => array(
+    '*/depage-cms/**.(gif|jpg|jpeg|png).*.(gif|jpg|jpeg|png)$' => array(
         'handler' => 'depage\graphics\graphics_ui',
         //'env' => 'production',
+        'extension' => "gm",
+        'executable' => "/opt/local/bin/gm",
+        'background' => "#CCC8C4",
         'base' => 'inherit',
     ),
     // }}}
