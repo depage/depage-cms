@@ -157,7 +157,7 @@ class depage {
         static $options;
                
         if (!isset($options)) {
-            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+            if (php_sapi_name() == 'cli') {
                 $printHelp = false;
                 $errorMsg = "";
 
@@ -215,7 +215,7 @@ class depage {
         static $path;
                
         if (!isset($path)) {
-            if (substr(php_sapi_name(), 0, 3) == 'cli') {
+            if (php_sapi_name() == 'cli') {
                 $options = depage::getCliOptions();
                 $path = $options['dp-path'];
             } else {

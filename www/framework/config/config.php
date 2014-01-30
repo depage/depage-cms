@@ -51,7 +51,7 @@ class config implements Iterator, arrayaccess {
         }
 
         // test url against settings
-        if (substr(php_sapi_name(), 0, 3) == 'cli') {
+        if (php_sapi_name() == 'cli') {
             $acturl = DEPAGE_CLI_URL;
         } else {
             $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];

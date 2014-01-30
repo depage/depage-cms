@@ -302,8 +302,7 @@ class taskrunner extends \depage_ui {
 }
 
 // run task if called from cli
-$sapi_type = php_sapi_name();
-if (substr($sapi_type, 0, 3) == 'cli') {
+if (php_sapi_name() == 'cli') {
     $dp = new \depage();
 
     // test getopt without "standard"-options
