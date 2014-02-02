@@ -13,7 +13,7 @@
 namespace DepageLegacy\RPC;
 
 class CmsFuncs {
-    protected $project;
+    protected $projectName;
     protected $callbacks = array();
     
     // {{{ __construct
@@ -29,6 +29,11 @@ class CmsFuncs {
     // {{{ keepAlive()
     function keepAlive($args) {
         // @todo implement
+    }
+    // }}}
+    // {{{ register_window()
+    function register_window($args) {
+        return new Func('registered_window', array('wid' => $args['sid'], 'user_level' => 3, 'error' => false));
     }
     // }}}
     // {{{ get_config()
@@ -104,11 +109,6 @@ class CmsFuncs {
         return new Func('set_config', $conf_array);
     }
     // }}}
-    // {{{ register_window()
-    function register_window($args) {
-        return new Func('registered_window', array('wid' => $args['sid'], 'user_level' => 3, 'error' => false));
-    }
-    // }}}
     // {{{ get_project()
     function get_project($args) {
         $data = array();
@@ -148,6 +148,31 @@ class CmsFuncs {
         }
         
         return new Func($callbackFunc, $data);
+    }
+    // }}}
+    // {{{ get_imageProp()
+    function get_imageProp($args) {
+        $info = array();
+        $data = array();
+        $filename = "projects/{$this->projectName}/lib{$args['filepath']}{$args['filename']}";
+
+        $mediainfo = new \depage\media\mediainfo($filename);
+        $info = $mediainfo->getInfo();
+
+        foreach ($info as $key => $value) {
+            if (is_bool($value)) {
+                $info[$key] = $info[$key] ? "true" : "false";
+            }
+        }
+        $sizeFormatter = new \Depage\Formatters\FileSize();
+        $dateFormatter = new \Depage\Formatters\DateNatural();
+
+        $info['name'] = $args['filename'];
+        $info['path'] = $args['filepath'];
+        $info['filesize'] = $sizeFormatter->format($info['filesize']);
+        $info['date'] = $dateFormatter->format($info['date']);
+
+        return new Func('set_imageProp', $info);
     }
     // }}}
     // {{{ save_node()
