@@ -156,21 +156,25 @@ class CmsFuncs {
         $data = array();
         $filename = "projects/{$this->projectName}/lib{$args['filepath']}{$args['filename']}";
 
-        $mediainfo = new \depage\media\mediainfo($filename);
+        $mediainfo = new \depage\media\mediainfo($filename, array(
+            //'ffprobe' => $this->conf->video
+        ));
         $info = $mediainfo->getInfo();
 
+        if ($info['exists']) {
+            $sizeFormatter = new \Depage\Formatters\FileSize();
+            $dateFormatter = new \Depage\Formatters\DateNatural();
+
+            $info['name'] = $args['filename'];
+            $info['path'] = $args['filepath'];
+            $info['filesize'] = $sizeFormatter->format($info['filesize']);
+            $info['date'] = $dateFormatter->format($info['date']);
+        }
         foreach ($info as $key => $value) {
             if (is_bool($value)) {
                 $info[$key] = $info[$key] ? "true" : "false";
             }
         }
-        $sizeFormatter = new \Depage\Formatters\FileSize();
-        $dateFormatter = new \Depage\Formatters\DateNatural();
-
-        $info['name'] = $args['filename'];
-        $info['path'] = $args['filepath'];
-        $info['filesize'] = $sizeFormatter->format($info['filesize']);
-        $info['date'] = $dateFormatter->format($info['date']);
 
         return new Func('set_imageProp', $info);
     }
