@@ -80,19 +80,30 @@ class mediainfo {
      * @return array
      */
     public function getBasicInfo() {
+        $info = array();
+
         if (file_exists($this->filename)) {
-            $this->info['exists'] = true;
+            $info['exists'] = true;
+            $info['mime'] = "application/octet-stream";
 
             $fileinfo = pathinfo($this->filename);
 
-            $this->info['name'] = $fileinfo['basename'];
-            $this->info['path'] = $fileinfo['dirname'];
-            $this->info['basename'] = $fileinfo['basename'];
-            $this->info['extension'] = $fileinfo['extension'];
-            $this->info['fullpath'] = $this->filename;
-            $this->info['realpath'] = realpath($this->filename);
-            $this->info['filesize'] = filesize($this->filename);
-            $this->info['date'] = filemtime($this->filename);
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($this->filename);
+            if (is_string($mime) && !empty($mime)) {
+                $info['mime'] = $mime;
+            }
+
+            $info['name'] = $fileinfo['basename'];
+            $info['path'] = $fileinfo['dirname'];
+            $info['basename'] = $fileinfo['basename'];
+            $info['extension'] = $fileinfo['extension'];
+            $info['fullpath'] = $this->filename;
+            $info['realpath'] = realpath($this->filename);
+            $info['filesize'] = filesize($this->filename);
+            $info['date'] = filemtime($this->filename);
+
+            $this->info = array_merge($this->info, $info);
         }
 
         return $this->info;
@@ -129,7 +140,7 @@ class mediainfo {
      */
     protected function getMediaInfo() {
         $info = array(
-            'streams'     => array(
+            'streams' => array(
                 'video' => array(),
                 'audio' => array(),
             ),
@@ -175,6 +186,12 @@ class mediainfo {
         } else {
             list($aspectW, $aspectH) = implode(":", $info['streams']['video'][0]['display_aspect_ratio']);
             $info['displayAspectRatio'] = $aspectW / $aspectH;
+        }
+        if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
+            $info['isVideo'] = true;
+        }
+        if (count($info['streams']['audio']) > 0) {
+            $info['isAudio'] = true;
         }
 
         $this->info = array_merge($this->info, $info);
