@@ -851,16 +851,19 @@ class CmsFuncs {
     function getTreePagedata($id) {
         $xml = $this->xmldb->getDocXml($id);
 
-        $root = $xml->documentElement;
-        $meta = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
+        if ($xml) {
+            $root = $xml->documentElement;
+            $meta = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
 
-        if ($meta) {
-            // copy global lastchange attributes to meta attribute for backwards compatibility
-            $meta->setAttribute("lastchange_UTC", $root->getAttribute("db:lastchange"));
-            $meta->setAttribute("lastchange_uid", $root->getAttribute("db:lastchangeUid"));
+            if ($meta) {
+                // copy global lastchange attributes to meta attribute for backwards compatibility
+                $meta->setAttribute("lastchange_UTC", $root->getAttribute("db:lastchange"));
+                $meta->setAttribute("lastchange_uid", $root->getAttribute("db:lastchangeUid"));
+            }
+
+            return $xml->saveXML($xml->documentElement);
         }
-
-        return $xml->saveXML($xml->documentElement);
+        return false;
     }
     // }}}
     
