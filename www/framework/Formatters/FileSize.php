@@ -11,25 +11,49 @@ class FileSize
 {
     protected $precision = 2;
     protected $base = 1024;
+    protected $suffix = "";
 
+    // {{{ constructor()
+    public function __construct($base = 1024, $precision = 2)
+    {
+        $this->base = $base;
+        $this->precision = $precision;
+
+        if ($this->base == "1024") {
+            $this->suffix = "iB";
+        } elseif ($this->base == "1000") {
+            $this->suffix = "B";
+        }
+    }
+    // }}}
     // {{{ format()
     public function format($size)
     {
-        $kb = $this->base;         // Kilobyte
-        $mb = $this->base * $kb;   // Megabyte
-        $gb = $this->base * $mb;   // Gigabyte
-        $tb = $this->base * $gb;   // Terabyte
-           
-        if ($size < $kb) {
-            return $size . 'B';
-        } elseif ($size < $mb) {
-            return round($size / $kb, $this->precision) . 'KB';
-        } elseif ($size < $gb) {
-            return round($size / $mb, $this->precision) . 'MB';
-        } elseif ($size < $tb) {
-            return round($size / $gb, $this->precision) . 'GB';
-        } else {
-            return round($size / $tb, $this->precision) . 'TB';
+        $exts = array(
+            "",
+            "K",
+            "M",
+            "G",
+            "T",
+            "P",
+            "E",
+            "Z",
+            "Y",
+        );
+        $last = end($exts);
+
+        foreach ($exts as $key => $ext) {
+            $minsize = pow($this->base, $key);
+            $maxsize = $minsize * $this->base;
+
+            if ($size < $maxsize || $ext === $last) {
+                if ($ext === "") {
+                    $suffix = "B";
+                } else {
+                    $suffix = $this->suffix;
+                }
+                return round($size / $minsize, $this->precision) . $ext . $suffix;
+            }
         }
     }
     // }}}
