@@ -315,13 +315,13 @@ class LegacyUI extends \depage_ui
         }
     }
     // }}}
-    // {{{ benchmark
+    // {{{ benchmark_cache():
     /**
      * function to show error messages
      *
      * @return  null
      */
-    public function benchmark()
+    public function benchmark_cache()
     {
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
         $caches = array();
@@ -376,6 +376,42 @@ class LegacyUI extends \depage_ui
             for ($i = 0; $i < 10; $i++) {
                 foreach($docs as $doc) {
                     $xmldb->getDocXml($doc);
+                }
+            }
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+            echo($time . "\n<br>");
+        }
+
+    }
+    // }}}
+    // {{{ benchmark_mediainfo():
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function benchmark_mediainfo()
+    {
+        $mediainfos = array(
+            "uncached" => new \depage\media\mediainfo(""),
+            "cached" => new \depage\media\mediainfo("", array(
+                'cache' => \Depage\Cache\Cache::factory("mediainfo"),
+            )),
+        );
+        $files = glob("projects/depage/lib/projects/*/*");
+
+        foreach ($mediainfos as $key => $mediainfo) {
+            echo($key . "\n<br>");
+
+            foreach($files as $file) {
+                // cache first
+                $mediainfo->getInfo($file);
+            }
+            $time_start = microtime(true);
+            for ($i = 0; $i < 10; $i++) {
+                foreach($files as $file) {
+                    $mediainfo->getInfo($file);
                 }
             }
             $time_end = microtime(true);
