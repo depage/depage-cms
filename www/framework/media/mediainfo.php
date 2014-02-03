@@ -224,6 +224,15 @@ class mediainfo {
     }
     // }}}
     
+    // {{{ clearInfo()
+    public function clearInfo($filename = null) {
+        if (!is_null($this->cache)) {
+            $identifier = $filename . ".ser";
+            $this->cache->clear($identifier);
+        }
+    }
+    // }}}
+    
     // {{{ isImage
     /**
      * checks if filename has a video extension
