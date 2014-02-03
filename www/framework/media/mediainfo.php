@@ -62,11 +62,18 @@ class mediainfo {
         $this->info = $this->getBasicInfo();
 
         if ($this->info['exists']) {
-            // @todo add caching
             if ($this->hasImageExtension()) {
                 $this->getImageInfo();
             } else if ($this->hasMediaExtension()) {
-                $this->getMediaInfo();
+                $identifier = $this->filename . ".ser";
+                if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['date']) {
+                    $this->info = $this->cache->get($identifier);
+                } else {
+                    $this->getMediaInfo();
+                    if (!is_null($this->cache)) {
+                        $this->cache->set($identifier, $this->info);
+                    }
+                }
             }
         }
 
