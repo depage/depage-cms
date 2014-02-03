@@ -14,7 +14,7 @@ class mediainfo {
      * 
      * @var array
      */
-    var $defaults = array(
+    protected $defaults = array(
         'cache'       => null,
         'ffprobe'     => "ffprobe",
         'mplayer'     => "mplayer",
@@ -25,12 +25,8 @@ class mediainfo {
     protected $ffprobe;
     protected $mplayer;
     protected $cache;
-    protected $info = array(
-        'exists' => false,
-        'isImage' => false,
-        'isVideo' => false,
-        'isAudio' => false,
-    );
+    protected $filename = "";
+    protected $info = array();
     // }}}
     
     // {{{ constructor
@@ -44,11 +40,25 @@ class mediainfo {
      * @return void
      */
     public function __construct($filename, $options) {
-        $this->filename = $filename;
+        $this->setFilename($filename);
+
         $options = array_change_key_case($options);
         foreach ($this->defaults as $option => $default) {
             $this->$option = isset($options[$option]) ? $options[$option] : $default;
         }
+    }
+    // }}}
+    
+    // {{{ setFilename()
+    public function setFilename($filename) {
+        $this->info = array(
+            'exists' => false,
+            'isImage' => false,
+            'isVideo' => false,
+            'isAudio' => false,
+        );
+
+        $this->filename = $filename;
     }
     // }}}
     
@@ -58,13 +68,18 @@ class mediainfo {
      * 
      * @return array
      */
-    public function getInfo() {
+    public function getInfo($filename = null) {
+        if (!is_null($filename)) {
+            $this->setFilename($filename);
+        }
+
         $this->info = $this->getBasicInfo();
 
         if ($this->info['exists']) {
             if ($this->hasImageExtension()) {
                 $this->getImageInfo();
             } else if ($this->hasMediaExtension()) {
+                // we cache only mediainfo because only this takes a longer time
                 $identifier = $this->filename . ".ser";
                 if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['date']) {
                     $this->info = $this->cache->get($identifier);
@@ -86,7 +101,11 @@ class mediainfo {
      * 
      * @return array
      */
-    public function getBasicInfo() {
+    public function getBasicInfo($filename = null) {
+        if (!is_null($filename)) {
+            $this->setFilename($filename);
+        }
+
         $info = array();
 
         if (file_exists($this->filename)) {
