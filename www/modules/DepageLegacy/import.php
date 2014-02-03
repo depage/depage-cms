@@ -76,6 +76,38 @@ class Import
         return $this->xmlNavigation;
     }
     // }}}
+    // {{{ addImportTask()
+    public function addImportTask($taskName, $xmlFile)
+    {
+        $task = \depage\task\task::loadOrCreate($taskName, "dp", $this->pdo);
+
+        $this->loadBackup($xmlFile);
+
+        $this->getDocs();
+
+        $this->extractNavigation();
+
+        $initId = $task->addSubtask("init", 
+            "\$pdo = " . \depage\task\task::escapeParam($this->pdo) . ";" .
+            "\$cache = " . \depage\task\task::escapeParam($this->cache) . ";" .
+            "\$import = new \DepageLegacy\Import(\"$this->projectName\", \$pdo, \$cache);"
+        );
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \depage\task\task::escapeParam($xmlFile) . ");", $initId);
+        $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", $loadId);
+
+        $task->addSubtask("extract navigation", "\$import->extractNavigation();", $getDocsId);
+        $task->addSubtask("extract templates", "\$import->extractTemplates();", $getDocsId);
+        $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", $getDocsId);
+        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", $getDocsId);
+        $task->addSubtask("extract settings", "\$import->extractSettings();", $getDocsId);
+
+        foreach($this->pageIds as $pageId) {
+            $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId($pageId);", $getDocsId);
+        }
+
+        return $task;
+    }
+    // }}}
     
     // {{{ loadBackup()
     public function loadBackup($xmlFile)

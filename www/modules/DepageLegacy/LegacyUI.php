@@ -20,6 +20,7 @@ class LegacyUI extends \depage_ui
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
     protected $projectName = "depage";
+    //protected $projectName = "klassehesse";
     protected $user;
 
     // {{{ _getSubHandler
@@ -209,6 +210,20 @@ class LegacyUI extends \depage_ui
         $value = $import->importProject("projects/{$this->projectName}/import/backup_full.xml");
 
         return $value;
+    }
+    // }}}
+    // {{{ import-task
+    /**
+     * function to show error messages
+     *
+     * @return  null
+     */
+    public function import_task()
+    {
+        $import = new Import($this->projectName, $this->pdo, $this->cache);
+        $task = $import->addImportTask("import {$this->projectName}", "projects/{$this->projectName}/import/backup_full.xml");
+
+        return "task added";
     }
     // }}}
     // {{{ flash
