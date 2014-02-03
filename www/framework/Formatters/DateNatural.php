@@ -12,7 +12,7 @@ class DateNatural
     // {{{ format()
     public function format($date)
     {
-        if (!$date instanceof \DateTime) {
+        if (is_integer($date)) {
             $datetime = new \DateTime();
             $date = $datetime->setTimestamp($date);
         }
@@ -52,11 +52,12 @@ class DateNatural
             $diff = round($ti / 60 / 60 / 24 / 7);
             return $diff == 1 ? sprintf(_("%d week ago"), $diff) : sprintf(_("%d weeks ago"), $diff); // date diff: in weeks
         } else if ($date->format('Y') == $now_date->format('Y')) {
-            return html::format_date($date, 'd. MMM');
+            return \html::format_date($date, 'd. MMM');
         } else {
             // Full Date dd. MMM YY
-            return html::format_date($date, IntlDateFormatter::SHORT);
+            return \html::format_date($date, \IntlDateFormatter::SHORT);
         }
     }
     // }}}
 }
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
