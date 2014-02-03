@@ -105,12 +105,17 @@ class mediainfo {
      * @return array
      */
     protected function getImageInfo() {
+        $info = array();
+
         $imageinfo = @getimagesize($this->filename);
         if ($imageinfo[2] > 0) {
-            $this->info['width'] = $imageinfo[0];
-            $this->info['height'] = $imageinfo[1];
-            $this->info['mime'] = $imageinfo['mime'];
-            $this->info['isImage'] = true;
+            $info['isImage'] = true;
+            $info['width'] = $imageinfo[0];
+            $info['height'] = $imageinfo[1];
+            $info['mime'] = $imageinfo['mime'];
+            $info['displayAspectRatio'] = $info['width'] / $info['height'];
+
+            $this->info = array_merge($this->info, $info);
         }
 
         return $this->info;
@@ -166,10 +171,10 @@ class mediainfo {
         $info['height'] = $info['streams']['video'][0]['height'];
 
         if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1") {
-            $info['DAR'] = $info['width'] / $info['height'];
+            $info['displayAspectRatio'] = $info['width'] / $info['height'];
         } else {
             list($aspectW, $aspectH) = implode(":", $info['streams']['video'][0]['display_aspect_ratio']);
-            $info['DAR'] = $aspectW / $aspectH;
+            $info['displayAspectRatio'] = $aspectW / $aspectH;
         }
 
         $this->info = array_merge($this->info, $info);
