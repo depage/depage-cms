@@ -39,9 +39,7 @@ class mediainfo {
      * 
      * @return void
      */
-    public function __construct($filename, $options) {
-        $this->setFilename($filename);
-
+    public function __construct($options) {
         $options = array_change_key_case($options);
         foreach ($this->defaults as $option => $default) {
             $this->$option = isset($options[$option]) ? $options[$option] : $default;

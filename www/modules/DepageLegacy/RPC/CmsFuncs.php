@@ -156,10 +156,11 @@ class CmsFuncs {
         $data = array();
         $filename = "projects/{$this->projectName}/lib{$args['filepath']}{$args['filename']}";
 
-        $mediainfo = new \depage\media\mediainfo($filename, array(
+        $mediainfo = new \depage\media\mediainfo(array(
             //'ffprobe' => $this->conf->video
+            'cache' => \Depage\Cache\Cache::factory("mediainfo"),
         ));
-        $info = $mediainfo->getInfo();
+        $info = $mediainfo->getInfo($filename);
 
         if ($info['exists']) {
             $sizeFormatter = new \Depage\Formatters\FileSize();
@@ -168,7 +169,7 @@ class CmsFuncs {
             $info['name'] = $args['filename'];
             $info['path'] = $args['filepath'];
             $info['filesize'] = $sizeFormatter->format($info['filesize']);
-            $info['date'] = $dateFormatter->format($info['date']);
+            $info['date'] = $dateFormatter->format($info['date'], true);
         }
         foreach ($info as $key => $value) {
             if (is_bool($value)) {

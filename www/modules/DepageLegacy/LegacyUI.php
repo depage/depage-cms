@@ -394,8 +394,8 @@ class LegacyUI extends \depage_ui
     public function benchmark_mediainfo()
     {
         $mediainfos = array(
-            "uncached" => new \depage\media\mediainfo(""),
-            "cached" => new \depage\media\mediainfo("", array(
+            "uncached" => new \depage\media\mediainfo(),
+            "cached" => new \depage\media\mediainfo(array(
                 'cache' => \Depage\Cache\Cache::factory("mediainfo"),
             )),
         );
