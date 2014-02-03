@@ -105,7 +105,7 @@ class depage {
             // adjust search path for namespaces
             $file = array_pop($namespaces) . ".php";
 
-            if ($namespaces[0] === "depage") {
+            if (strtolower($namespaces[0]) === "depage") {
                 // local depage-namespace -> remove it from searchpath
                 array_shift($namespaces);
             }
@@ -139,7 +139,7 @@ class depage {
             $php_file = DEPAGE_PATH . "modules/" . strtolower($file);
         }
         
-        //echo("class: $class - file: $file - php_file: $php_file<br>");
+        //echo("class: $class - file: $file - php_file: $php_file<br>\n");
 
         if ($php_file != "") {
             require_once($php_file);
