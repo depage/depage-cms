@@ -52,7 +52,7 @@ class CmsFuncs {
         
         $conf_array['thumb_width'] = 85;
         $conf_array['thumb_height'] = 72;
-        $conf_array['thumb_load_num'] = 10;
+        $conf_array['thumb_load_num'] = 100;
         
         $conf_array['interface_lib'] = "modules/DepageLegacy/lib/lib_interface.swf";
         
@@ -159,7 +159,6 @@ class CmsFuncs {
         $filename = "projects/{$this->projectName}/lib{$args['filepath']}{$args['filename']}";
 
         $mediainfo = new \depage\media\mediainfo(array(
-            //'ffprobe' => $this->conf->video
             'cache' => \Depage\Cache\Cache::factory("mediainfo"),
         ));
         $info = $mediainfo->getInfo($filename);
@@ -180,6 +179,18 @@ class CmsFuncs {
         }
 
         return new Func('set_imageProp', $info);
+    }
+    // }}}
+    // {{{ get_prop()
+    function get_prop($args) {
+        $data = array();
+        $callbackFunc = "update_prop_{$args['type']}";    
+
+        if ($args['type'] == 'files' && !empty($args['id'])) {
+            $data['data'] = $this->getFilesForPath($args['id']);
+        }
+
+        return new Func($callbackFunc, $data);
     }
     // }}}
     // {{{ save_node()
@@ -512,7 +523,7 @@ class CmsFuncs {
             'inhtml_user_administer' => _("manage users"),
             'msg_choose_file' => _("Please, choose a file"),
             'msg_choose_file_filter_height' => _("Height: "),
-            'msg_choose_file_filter_type' => _("-"),
+            'msg_choose_file_filter_type' => _("Type: "),
             'msg_choose_file_filter_width' => _("Width: "),
             'msg_choose_file_link' => _("Please, choose a file to link to:"),
             'msg_choose_img' => _("Please, choose an image:"),
@@ -874,22 +885,62 @@ class CmsFuncs {
         $path = "projects/{$this->projectName}/lib/";
 
         $dirXML = "<proj:dir xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:db=\"http://cms.depagecms.net/ns/database\" db:invalid=\"name\" name=\"" . htmlentities($this->projectName) . "\">";
-        $dirXML .= $this->getTreeFilesForPath($path);
+        $dirXML .= $this->getTreeDirectoriesForPath($path);
         $dirXML .= "</proj:dir>";
 
         return $dirXML;
     }
     // }}}
-    // {{{ getTreeFilesForPath()
-    function getTreeFilesForPath($path) {
+    // {{{ getTreeDirectoriesForPath()
+    function getTreeDirectoriesForPath($path) {
         $dirs = glob($path . "*", \GLOB_ONLYDIR | \GLOB_MARK);
         $dirXML = "";
 
         foreach ($dirs as $dir) {
             $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
-            $dirXML .= $this->getTreeFilesForPath($dir);
+            $dirXML .= $this->getTreeDirectoriesForPath($dir);
             $dirXML .= "</proj:dir>";
         }
+
+        return $dirXML;
+    }
+    // }}}
+    // {{{ getFilesForPath()
+    function getFilesForPath($path) {
+        $files = glob("projects/" . $this->projectName . "/lib" . $path . "*", \GLOB_MARK);
+        $dirXML = "";
+
+        $mediainfo = new \depage\media\mediainfo(array(
+            'cache' => \Depage\Cache\Cache::factory("mediainfo"),
+        ));
+        $sizeFormatter = new \Depage\Formatters\FileSize();
+        $dateFormatter = new \Depage\Formatters\DateNatural();
+
+        $dirXML .= "<proj:files xmlns:proj=\"http://cms.depagecms.net/ns/project\"><proj:filelist dir=\"" . htmlentities($path) . "\">";
+        foreach ($files as $file) {
+            if (substr($file, -1) != "/") {
+                $info = $mediainfo->getInfo($file);
+                $data = array(
+                    'name' => $info['name'],
+                    //'path' => $path,
+                    'size' => $sizeFormatter->format($info['filesize']),
+                    'date' => date("Y/m/d H:i:s", $info['date']),
+                    'type' => $info['mime'],
+                    'extension' => $info['extension'],
+                );
+                if (isset($info['width'])) {
+                    $data['width'] = $info['width'];
+                    $data['height'] = $info['height'];
+                }
+
+                $dirXML .= "<file";
+                foreach ($data as $key => $value) {
+                    $dirXML .= " $key=\"" . htmlspecialchars($value) . "\"";
+                }
+                $dirXML .= " />";
+            }
+        }
+        $dirXML .= "</proj:filelist></proj:files>";
 
         return $dirXML;
     }
