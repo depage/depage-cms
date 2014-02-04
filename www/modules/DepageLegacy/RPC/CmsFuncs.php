@@ -141,6 +141,8 @@ class CmsFuncs {
             $data['data'] = $this->getTreePages();
         } elseif ($args['type'] == 'page_data') {
             $data['data'] = $this->getTreePagedata($args['id']);
+        } elseif ($args['type'] == 'files') {
+            $data['data'] = $this->getTreeFiles();
         }
 
         if (!$data['data']) {
@@ -865,6 +867,31 @@ class CmsFuncs {
             return $xml->saveXML($xml->documentElement);
         }
         return false;
+    }
+    // }}}
+    // {{{ getTreeFiles()
+    function getTreeFiles() {
+        $path = "projects/{$this->projectName}/lib/";
+
+        $dirXML = "<proj:dir xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:db=\"http://cms.depagecms.net/ns/database\" db:invalid=\"name\" name=\"" . htmlentities($this->projectName) . "\">";
+        $dirXML .= $this->getTreeFilesForPath($path);
+        $dirXML .= "</proj:dir>";
+
+        return $dirXML;
+    }
+    // }}}
+    // {{{ getTreeFilesForPath()
+    function getTreeFilesForPath($path) {
+        $dirs = glob($path . "*", \GLOB_ONLYDIR | \GLOB_MARK);
+        $dirXML = "";
+
+        foreach ($dirs as $dir) {
+            $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
+            $dirXML .= $this->getTreeFilesForPath($dir);
+            $dirXML .= "</proj:dir>";
+        }
+
+        return $dirXML;
     }
     // }}}
     
