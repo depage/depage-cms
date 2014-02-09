@@ -94,7 +94,7 @@ abstract class jsmin {
             $regenerate = true;
         }
         if ($regenerate || !($src = $this->cache->getFile($file))) {
-            $log = new \log();
+            $log = new \depage\log\log();
             $log->log("jsmin: minifying '$file'");
 
             $src = $this->minifySrc(file_get_contents($file));
