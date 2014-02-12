@@ -120,12 +120,7 @@ class page extends \depage\xmldb\xmldoctypes\base
     // }}}
     // {{{ testNodeLanguages
     protected function testNodeLanguages($node) {
-        if ($node->nodeType == XML_DOCUMENT_NODE) {
-            $xml = $node;
-            $node = $xml->documentElement;
-        } else {
-            $xml = $node->ownerDocument;
-        }
+        list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
         $changed = false;
         $languages = array();

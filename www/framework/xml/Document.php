@@ -60,6 +60,28 @@ class Document extends \DOMDocument implements \Serializable
     }
     // }}}
     
+    // {{{ getDocAndNode()
+    /**
+     * @brief   helper function to get node and owner-document by document or node
+     *
+     * @param   $docOrNode \DOMNode
+     *
+     * @return  array($doc, $node)
+     **/
+    public static function getDocAndNode(\DOMNode $docOrNode)
+    {
+        if ($docOrNode->nodeType == XML_DOCUMENT_NODE) {
+            $doc = $docOrNode;
+            $node = $doc->documentElement;
+        } else {
+            $doc = $docOrNode->ownerDocument;
+            $node = $docOrNode;
+        }
+
+        return array($doc, $node);
+    }
+    // }}}
+    
     // {{{ __toString()
     /**
      * @brief   unserializes htmldom-objects

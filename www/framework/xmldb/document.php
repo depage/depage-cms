@@ -1907,13 +1907,9 @@ class document {
      */
     public function removeIdAttr($node) {
         if ($node->nodeType == XML_ELEMENT_NODE || $node->nodeType == XML_DOCUMENT_NODE) {
-            if ($node->nodeType == XML_ELEMENT_NODE) {
-                $xml_doc = $node->ownerDocument;
-            } else {
-                $xml_doc = $node;
-                $node = $xml_doc->documentElement;
-            }
-            $xpath = new \DOMXPath($xml_doc);
+            list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
+
+            $xpath = new \DOMXPath($xml);
             $xp_result = $xpath->query("./descendant-or-self::node()[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
             foreach ($xp_result as $node) {
                 $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
