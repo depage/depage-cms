@@ -217,7 +217,7 @@ class Import
             list($ns, $docType) = explode(":", $this->docNavigation->getNodeNameById($pageId));
             $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
 
-            $this->updatePageRefs($xmlData);
+            $this->updatePageData($xmlData);
 
             $doc = $this->xmldb->createDoc($docName, "depage\\cms\\xmldoctypes\\$docType");
             $newId = $doc->save($xmlData);
@@ -358,6 +358,13 @@ class Import
     }
     // }}}
     
+    // {{{ updatePageData()
+    protected function updatePageData($xmlData)
+    {
+        $this->updatePageRefs($xmlData);
+        $this->updateImageSizes($xmlData);
+    }
+    // }}}
     // {{{ updatePageRefs()
     protected function updatePageRefs($xmlData)
     {
@@ -377,6 +384,36 @@ class Import
                 // clear links with a non-existant page reference
                 $node->setAttribute("href", "");
             }
+        }
+        
+    }
+    // }}}
+    // {{{ updateImageSizes()
+    protected function updateImageSizes($xmlData)
+    {
+        $xpath = new \DOMXPath($xmlData);
+        $nodelist = $xpath->query("//edit:img[@force_width or @force_height]");
+
+        // test all images with a forced with or height
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+
+            $size = "";
+            $width = $node->getAttribute("force_width");
+            $height = $node->getAttribute("force_height");
+
+            if ($width != "" && $height != "") {
+                $size = $width . "x" . $height;
+            } elseif ($width != "") {
+                $size = $width . "xX";
+            } elseif ($height != "") {
+                $size = "Xx" . $height;
+            }
+            // @todo replace with variables to keep it dynamic
+            $node->setAttribute("force_size", $size);
+
+            $node->removeAttribute("force_width");
+            $node->removeAttribute("force_height");
         }
         
     }
