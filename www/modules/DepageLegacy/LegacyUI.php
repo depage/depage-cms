@@ -25,7 +25,9 @@ class LegacyUI extends \depage_ui
 
     // {{{ _getSubHandler
     static function _getSubHandler() {
-        return array();
+        return array(
+            'project/*/preview' => '\depage\cms\UI\Preview',
+        );
         return array(
             'project/*' => '\depage\cms\ui_project',
             'project/*/tree/*' => '\depage\cms\ui_tree',

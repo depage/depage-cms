@@ -59,9 +59,39 @@ class xmlnav {
     }
     // }}}
     
-    // addUrls() {{{
+    // getAllUrls() {{{
     /**
-     * Add Urls
+     * gets urls for all nodes
+     * 
+     * @param \DOMNode $xml
+     * 
+     * @return (array) array of nodes
+     */
+    public function getAllUrls(\DOMNode $node, $url = "") {
+        $urls = array();
+
+        list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
+
+        $xpath = new \DOMXpath($xml);
+        $pages = $xpath->query("//pg:page[@url]");
+
+        if ($pages->length == 0) {
+            // attribute not available -> add now
+            $this->addUrlAttributes($xml);
+            $pages = $xpath->query("//pg:page[@url]");
+        }
+
+        foreach ($pages as $page) {
+            $urls[$page->getAttribute("db:id")] = $page->getAttribute("url");
+        }
+
+        return $urls;
+    }
+    // }}}
+    
+    // addUrlAttributes() {{{
+    /**
+     * Add Urls Attributes
      * 
      * Adds a url attribute to each page in the XML DOM tree.
      * The url is built from the page name and the names of ancestor folders.
@@ -71,42 +101,45 @@ class xmlnav {
      * 
      * @return (string) last url
      */
-    private function addUrls(\DOMNode $node, $url = '', $lang) {
-        if($node->nodeName == 'pg:folder') {
-            $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
-        } elseif ($node->nodeName == 'pg:page') {
-            $url .= \html::get_url_escaped($node->getAttribute('name')) . '/';
+    public function addUrlAttributes(\DOMNode $node, $url = "") {
+        list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
-            if ($node->getAttribute("isIndex") == "true") {
-                // set url as empty when index page
-                $node->setAttribute('url', $lang);
-            } else {
-                // set url calculated path
-                $node->setAttribute('url', $url);
-            }
+        // get current part of url from name
+        if ($node->nodeName == 'pg:folder' || $node->nodeName == 'pg:page') {
+            $url .= \html::get_url_escaped(strtolower($node->getAttribute('name')));
         }
+
+        // loop through child nodes
         if ($node->hasChildNodes()) {
-            $i = 0;
             foreach($node->childNodes as $child){
                 if ($child instanceof \DOMElement) {
-                    $lastUrl = $this->addUrls($child, $url, $lang);
-
-                    if ($i == 0) {
-                        // keep url of first child as url for folder
-                        $folderUrl = $lastUrl;
-                    }
-                    $i++;
+                    $this->addUrlAttributes($child, $url . "/", $lang);
                 }
             }
         }
-        if($node->nodeName == 'pg:folder') {
-            $node->setAttribute('url', $folderUrl);
-        }
 
-        return $url;
+        // get url based on current node
+        if ($node->getAttribute("isIndex") == "true") {
+            // set url as empty when index page
+            $url = "";
+        } elseif ($node->nodeName == 'pg:folder' && $node->firstChild) {
+            // set url of folders to url of first child page
+            $url = $node->firstChild->getAttribute("url");
+        } elseif ($node->nodeName == 'pg:page') {
+            if ($ext = $node->getAttribute("file_type")) {
+                $url = $url . "." . $ext;
+            } else {
+                $url = $url . "/";
+            }
+        } else {
+            $url = null;
+        }
+        if (!is_null($url) && $node->getAttribute("url") !== $url) {
+            $node->setAttribute("url", $url);
+        }
     }
     // }}}
-    // addStatus() {{{
+    // addStatusAttributes() {{{
     /**
      * Add Status
      * 
@@ -117,8 +150,8 @@ class xmlnav {
      *
      * @param \DOMDocument $xml
      */
-    private function addStatus(\DOMDocument $xml, $activeUrl, $lang) {
-        $url = $lang . $activeUrl;
+    public function addStatusAttributes(\DOMNode $node, $url) {
+        list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXpath($xml);
         
@@ -147,13 +180,13 @@ class xmlnav {
         }
     }
     // }}}
-    // addLocalized() {{{
+    // addLocalizedAttributes() {{{
     /**
      * Add localized name
      * 
      * @param \DOMDocument $xml
      */
-    private function addLocalized(\DOMDocument $xml, $lang) {
+    private function addLocalizedAttributes(\DOMDocument $xml, $lang) {
         $xpath = new \DOMXpath($xml);
         
         $nodes = $xpath->query("//*[@name]");
@@ -189,9 +222,9 @@ class xmlnav {
         }
 
         // add attributes to dom tree
-        $this->addUrls($this->xmlDOM, $lang, $lang);
-        $this->addStatus($this->xmlDOM, $activeUrl, $lang);
-        $this->addLocalized($this->xmlDOM, $lang);
+        $this->addUrlAttributes($this->xmlDOM, $lang);
+        $this->addStatusAttributes($this->xmlDOM, $lang . $activeUrl);
+        $this->addLocalizedAttributes($this->xmlDOM, $lang);
 
         // initialize processor and transform
         $xslt = new \XSLTProcessor();

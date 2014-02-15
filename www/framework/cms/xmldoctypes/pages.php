@@ -101,7 +101,6 @@ class pages extends \depage\xmldb\xmldoctypes\base {
         return false;
     }
     // }}}
-
     // {{{ onDeleteNode()
     /**
      * On Delete Node
@@ -114,6 +113,13 @@ class pages extends \depage\xmldb\xmldoctypes\base {
     public function onDeleteNode($doc_id) {
         $this->xmldb->removeDoc($doc_id);
         return true;
+    }
+    // }}}
+    // {{{ testDocument
+    public function testDocument($node) {
+        $xmlnav = new \depage\cms\xmlnav();
+
+        $xmlnav->addUrlAttributes($node);
     }
     // }}}
 
