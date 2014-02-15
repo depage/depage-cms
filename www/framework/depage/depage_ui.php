@@ -134,15 +134,19 @@ abstract class depage_ui {
         }
         
         // first paramater is function
-        $dp_func = str_replace("-", "_", array_shift($dp_params));
+        $dp_func = str_replace("-", "_", $dp_params[0]);
         
         try {
             $this->_init();
-            if ($dp_func == "") {
+            if (isset($this->routeThroughIndex) && $this->routeThroughIndex === true) {
+                // route every request through index
+                $content = call_user_func_array(array($this, "index"), $dp_params);
+            } else if ($dp_func == "") {
                 // show index page
                 $content = $this->index();
             } else if ($dp_func[0] != "_" && is_callable(array($this, $dp_func))) {
                 // call function
+                array_shift($dp_params);
                 $content = call_user_func_array(array($this, $dp_func), $dp_params);
             } else {
                 // show error for notfound
