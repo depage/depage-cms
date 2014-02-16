@@ -33,7 +33,7 @@ class Import
     protected $xsltPath;
     protected $xmlPath;
 
-    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n    <!ENTITY nbsp \"&#160;\">\n]>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">\n";
+    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n<!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities;\n]>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">\n";
     protected $xslFooter = "\n    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
     protected $xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<proj:newnode xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"proj sec edit \">\n";
     protected $xmlFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</proj:newnode>";
@@ -279,7 +279,6 @@ class Import
                     // @todo automatically replace custom php calls etc. for automatic xsl updates
                     $replacements = array(
                         "document('get:navigation')" => "\$navigation",
-                        //"href=\"get:xslt/" => "href=\"../../../../framework/cms/xslt/",
                         "href=\"get:xslt/" => "href=\"xslt://",
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
