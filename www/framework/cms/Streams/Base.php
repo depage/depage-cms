@@ -2,16 +2,15 @@
 
 namespace depage\cms\Streams;
 
-class Navigation {
+abstract class Base {
     protected $position = 0;
     protected $data = null;
-    protected static $parameters;
 
     // {{{ registerAsStream()
-    public static function registerStream(\String $protocol, Array $parameters)
+    public static function registerStream($protocol, Array $parameters)
     {
         $class = get_called_class();
-        self::$parameters = $parameters;
+        static::$parameters = $parameters;
 
         if (in_array($class, stream_get_wrappers())) {
             stream_wrapper_unregister($protocol);
@@ -22,22 +21,14 @@ class Navigation {
     // {{{ init()
     public function init()
     {
-        foreach (self::$parameters as $key => $value) {
+        foreach (static::$parameters as $key => $value) {
             $this->$key = $value;
         }
     }
     // }}}
     
     // {{{ stream_open()
-    public function stream_open($path, $mode, $options, &$opened_path)
-    {
-        $this->init();
-
-        $url = parse_url($path);
-        $this->data = $this->xmldb->getDocXml("pages");
-
-        return true;
-    }
+    public abstract function stream_open($path, $mode, $options, &$opened_path);
     // }}}
     // {{{ stream_read()
     public function stream_read($count)

@@ -113,7 +113,7 @@ class xmlnav {
         if ($node->hasChildNodes()) {
             foreach($node->childNodes as $child){
                 if ($child instanceof \DOMElement) {
-                    $this->addUrlAttributes($child, $url . "/", $lang);
+                    $this->addUrlAttributes($child, $url . "/");
                 }
             }
         }

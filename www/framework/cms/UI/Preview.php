@@ -142,20 +142,17 @@ class Preview extends \depage_ui {
         $pageId = $this->getPageIdFor($urlPath);
         $xslDOM = $this->getXsltFor($this->template);
 
-        $pagesXml = $this->xmldb->getDocXml("pages");
         $pageXml = $this->xmldb->getDocXml($pageId);
         
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
-        \depage\cms\Streams\Navigation::registerStream("nav", array(
+        \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
             "xmldb" => $this->xmldb,
         ));
         
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", array(
-            // @todo this wont work -> user php streams
-            //"navigation" => $pagesXml,
         ));
         //$xslt->setProfiling('profiling.txt');
         $xslt->importStylesheet($xslDOM);
@@ -181,6 +178,12 @@ class Preview extends \depage_ui {
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
         $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+
+        // add basic variables
+        $xslt .= "\n<xsl:param name=\"navigation\" select=\"document('xmldb://pages')\" />";
+        $xslt .= "\n<xsl:param name=\"settings\" select=\"document('xmldb://settings')\" />";
+        $xslt .= "\n<xsl:param name=\"colors\" select=\"document('xmldb://colors')\" />";
+        
         foreach ($files as $file) {
             $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
         }
