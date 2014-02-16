@@ -270,15 +270,19 @@ class Import
                     $filename = $path . \html::get_url_escaped($namePrefix . $child->getAttribute("name")) . ".xsl";
 
                     // replace tabes with spaces and indent content
-                    $xsl = str_replace(array(
-                        "\t",
-                        "\n",
-                    ), array(
-                        "    ",
-                        "\n    ",
-                    ), trim($dataNode->nodeValue));
+                    $replacements = array(
+                        "\t" => "    ",
+                        "\n" => "\n    ",
+                    );
+                    $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
                     // @todo automatically replace custom php calls etc. for automatic xsl updates
+                    $replacements = array(
+                        "document('get:navigation')" => "\$navigation",
+                        //"href=\"get:xslt/" => "href=\"../../../../framework/cms/xslt/",
+                        "href=\"get:xslt/" => "href=\"xslt://",
+                    );
+                    $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
                     file_put_contents($filename, "{$this->xslHeader}    {$xsl}\n{$this->xslFooter}");
                 }

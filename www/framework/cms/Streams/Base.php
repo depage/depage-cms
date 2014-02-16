@@ -7,7 +7,7 @@ abstract class Base {
     protected $data = null;
 
     // {{{ registerAsStream()
-    public static function registerStream($protocol, Array $parameters)
+    public static function registerStream($protocol, Array $parameters = array())
     {
         $class = get_called_class();
         static::$parameters = $parameters;
@@ -35,6 +35,7 @@ abstract class Base {
     {
         $ret = substr($this->data, $this->position, $count); 
         $this->position += $count;   
+
         return $ret;
     }
     // }}}
@@ -47,7 +48,13 @@ abstract class Base {
     // {{{ stream_eof()
     public function stream_eof()
     {
-        return true;
+        return $this->position <= strlen($this->data);
+    }
+    // }}}
+    // {{{ stream_stat()
+    public function stream_stat(){
+        return array();     
+        
     }
     // }}}
     // {{{ url_stat()

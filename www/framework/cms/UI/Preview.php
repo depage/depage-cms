@@ -105,7 +105,7 @@ class Preview extends \depage_ui {
         // create xmldb-project
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
-            'userId' => $this->auth_user->id,
+            //'userId' => $this->auth_user->id,
         ));
 
         return $this->preview($urlPath);
@@ -150,7 +150,8 @@ class Preview extends \depage_ui {
         \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
             "xmldb" => $this->xmldb,
         ));
-        
+        \depage\cms\Streams\Xslt::registerStream("xslt");
+
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", array(
         ));
