@@ -45,10 +45,52 @@ abstract class Base {
         return 0;
     }
     // }}}
+    // {{{ stream_tell()
+    function stream_tell()
+    {
+        return $this->position;
+    }
+    // }}}
+    // {{{ stream_seek()
+function stream_seek($offset, $whence)
+    {
+        switch ($whence) {
+            case SEEK_SET:
+                if ($offset < strlen($this->data) && $offset >= 0) {
+                     $this->position = $offset;
+                     return true;
+                } else {
+                     return false;
+                }
+                break;
+
+            case SEEK_CUR:
+                if ($offset >= 0) {
+                     $this->position += $offset;
+                     return true;
+                } else {
+                     return false;
+                }
+                break;
+
+            case SEEK_END:
+                if (strlen($this->data) + $offset >= 0) {
+                     $this->position = strlen($this->data) + $offset;
+                     return true;
+                } else {
+                     return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+    // }}}
     // {{{ stream_eof()
     public function stream_eof()
     {
-        return $this->position <= strlen($this->data);
+        return $this->position >= strlen($this->data);
     }
     // }}}
     // {{{ stream_stat()
