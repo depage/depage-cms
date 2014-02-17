@@ -11,10 +11,16 @@ class Pageref extends Base {
         $this->init();
 
         $url = parse_url($path);
+        $path = "";
+        $parts = explode("/", $url['path']);
+        
         $pageId = $url['host'];
-        list($nothing, $lang, $absolute) = explode("/", $url['path']);
+        $lang = isset($parts[1]) ? $parts[1] : $this->lang;
+        $absolute = isset($parts[2]) ? $parts[2] : "";
 
-        $path = $lang . $this->urls[$pageId];
+        if (isset($this->urls[$pageId])) {
+            $path = $lang . $this->urls[$pageId];
+        }
 
         if ($absolute != "absolute") {
             $path = $this->preview->getRelativePathTo($path);

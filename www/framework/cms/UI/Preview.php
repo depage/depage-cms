@@ -149,19 +149,7 @@ class Preview extends \depage_ui {
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
-        // register stream to get documents from xmldb
-        \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
-            "xmldb" => $this->xmldb,
-        ));
-        
-        // register stream to get global xsl templates
-        \depage\cms\Streams\Xslt::registerStream("xslt");
-
-        // register stream to get page-links
-        \depage\cms\Streams\Pageref::registerStream("pageref", array(
-            "urls" => $this->urls,
-            "preview" => $this,
-        ));
+        $this->registerStreams();
 
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", array(
@@ -180,6 +168,51 @@ class Preview extends \depage_ui {
         }
 
         return $html;
+    }
+    // }}}
+    // {{{ registerStreams
+    /**
+     * @return  null
+     */
+    protected function registerStreams()
+    {
+        /*
+         * get:page
+         * get:redirect
+         * get:css
+         * get:template
+         * get:xslt
+         * get:navigation
+         * get:atom
+         * get:colors
+         * get:languages
+         * get:settings
+         * call:changesrc
+         * call:filetype
+         * call:doctype
+         * call:atomizetext
+         * call:urlencode
+         * call:phpescape
+         * call:formatdate
+         * call:replaceEmailChars
+         * call:getversion
+         * pageref:
+         * libref:
+         */
+        // register stream to get documents from xmldb
+        \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
+            "xmldb" => $this->xmldb,
+        ));
+        
+        // register stream to get global xsl templates
+        \depage\cms\Streams\Xslt::registerStream("xslt");
+
+        // register stream to get page-links
+        \depage\cms\Streams\Pageref::registerStream("pageref", array(
+            "urls" => $this->urls,
+            "preview" => $this,
+            "lang" => $this->lang,
+        ));
     }
     // }}}
     // {{{ getXslFor
@@ -249,7 +282,7 @@ class Preview extends \depage_ui {
             $targetPath = explode('/', $targetPath);
 
             $i = 0;
-            while ($currentPath[$i] == $targetPath[$i] && $i < count($currentPath)) {
+            while ((isset($currentPath[$i]) && $targetPath[$i]) && $currentPath[$i] == $targetPath[$i]) {
                 $i++;
             }
             
