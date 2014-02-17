@@ -269,17 +269,14 @@ class Import
                     if (!is_dir($path)) mkdir($path);
                     $filename = $path . \html::get_url_escaped($namePrefix . $child->getAttribute("name")) . ".xsl";
 
-                    // replace tabes with spaces and indent content
+                    // @todo automatically replace custom php calls etc. for automatic xsl updates
                     $replacements = array(
                         "\t" => "    ",
                         "\n" => "\n    ",
-                    );
-                    $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
-
-                    // @todo automatically replace custom php calls etc. for automatic xsl updates
-                    $replacements = array(
                         "document('get:navigation')" => "\$navigation",
                         "href=\"get:xslt/" => "href=\"xslt://",
+                        "pageref:/" => "pageref://",
+                        "libref:/" => "libref://",
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 

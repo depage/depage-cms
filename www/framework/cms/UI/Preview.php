@@ -19,6 +19,7 @@ class Preview extends \depage_ui {
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
+    protected $urls = array();
     public $routeThroughIndex = true;
 
     // {{{ _init
@@ -139,6 +140,7 @@ class Preview extends \depage_ui {
     protected function preview($urlPath)
     {
         $urlPath = "/$urlPath";
+        $this->currentPath = $this->lang . $urlPath;
         $pageId = $this->getPageIdFor($urlPath);
         $xslDOM = $this->getXsltFor($this->template);
 
@@ -147,13 +149,23 @@ class Preview extends \depage_ui {
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
+        // register stream to get documents from xmldb
         \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
             "xmldb" => $this->xmldb,
         ));
+        
+        // register stream to get global xsl templates
         \depage\cms\Streams\Xslt::registerStream("xslt");
+
+        // register stream to get page-links
+        \depage\cms\Streams\Pageref::registerStream("pageref", array(
+            "urls" => $this->urls,
+            "preview" => $this,
+        ));
 
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", array(
+            "tt_lang" => $this->lang,
         ));
         //$xslt->setProfiling('profiling.txt');
         $xslt->importStylesheet($xslDOM);
@@ -184,6 +196,7 @@ class Preview extends \depage_ui {
         $xslt .= "\n<xsl:param name=\"navigation\" select=\"document('xmldb://pages')\" />";
         $xslt .= "\n<xsl:param name=\"settings\" select=\"document('xmldb://settings')\" />";
         $xslt .= "\n<xsl:param name=\"colors\" select=\"document('xmldb://colors')\" />";
+        $xslt .= "\n<xsl:param name=\"tt_lang\" />";
         
         foreach ($files as $file) {
             $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
@@ -205,12 +218,46 @@ class Preview extends \depage_ui {
         $pages = $this->xmldb->getDoc("pages");
 
         $xmlnav = new \depage\cms\xmlnav();
-        $urls = $xmlnav->getAllUrls($pages->getXml());
-        $nodeId = array_search($urlPath, $urls);
+        $this->urls = $xmlnav->getAllUrls($pages->getXml());
+        $nodeId = array_search($urlPath, $this->urls);
 
         $pageId = $pages->getAttribute($nodeId, "db:docref");
 
         return $pageId;
+    }
+    // }}}
+    
+    // {{{ getRelativePathTo
+    /**
+     * gets relative path to path of active page
+     *
+     * @public
+     *
+     * @param    $targetPath (string) path to target file
+     *
+     * @return    $path (string) relative path
+     */
+    public function getRelativePathTo($targetPath, $currentPath = null) {
+        if ($currentPath === null) {
+            $currentPath = $this->currentPath;
+        }
+
+        // link to self by default
+        $path = '';
+        if ($targetPath != '' && $targetPath != $currentPath) {
+            $currentPath = explode('/', $currentPath);
+            $targetPath = explode('/', $targetPath);
+
+            $i = 0;
+            while ($currentPath[$i] == $targetPath[$i] && $i < count($currentPath)) {
+                $i++;
+            }
+            
+            if (count($currentPath) - $i >= 1) {
+                $path = str_repeat('../', count($currentPath) - $i - 1) . implode('/', array_slice($targetPath, $i));
+            }
+        }
+        return $path;
     }
     // }}}
 }

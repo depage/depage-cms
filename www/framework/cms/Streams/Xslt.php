@@ -17,12 +17,10 @@ class Xslt extends Base {
         } else {
             $path = $url['host'];
         }
-        $path = realpath("framework/cms/xslt/" . $path);
+        $path = realpath(DEPAGE_FM_PATH . "/cms/xslt/" . $path);
 
-        //var_dump(stat($path));
         if (file_exists($path)) {
             $this->data = file_get_contents("file://$path");
-            //var_dump($this->data);
             return true;
         } else {
             return false;
