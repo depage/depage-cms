@@ -19,7 +19,8 @@ class Preview extends \depage_ui {
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
-    protected $urls = array();
+    protected $urlsByPageId = array();
+    protected $pageIdByUrl = array();
     public $routeThroughIndex = true;
 
     // {{{ _init
@@ -209,7 +210,7 @@ class Preview extends \depage_ui {
 
         // register stream to get page-links
         \depage\cms\Streams\Pageref::registerStream("pageref", array(
-            "urls" => $this->urls,
+            "urls" => $this->urlsByPageId,
             "preview" => $this,
             "lang" => $this->lang,
         ));
@@ -251,8 +252,8 @@ class Preview extends \depage_ui {
         $pages = $this->xmldb->getDoc("pages");
 
         $xmlnav = new \depage\cms\xmlnav();
-        $this->urls = $xmlnav->getAllUrls($pages->getXml());
-        $nodeId = array_search($urlPath, $this->urls);
+        list($this->urlsByPageId, $this->pageIdByUrl) = $xmlnav->getAllUrls($pages->getXml());
+        $nodeId = $this->pageIdByUrl[$urlPath];
 
         $pageId = $pages->getAttribute($nodeId, "db:docref");
 

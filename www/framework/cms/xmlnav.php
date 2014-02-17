@@ -68,24 +68,28 @@ class xmlnav {
      * @return (array) array of nodes
      */
     public function getAllUrls(\DOMNode $node, $url = "") {
-        $urls = array();
+        $urlsByPageId = array();
+        $pageIdByUrl = array();
 
         list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXpath($xml);
-        $pages = $xpath->query("//pg:page[@url]");
+        $pages = $xpath->query("//pg:*[@url]");
 
         if ($pages->length == 0) {
             // attribute not available -> add now
             $this->addUrlAttributes($xml);
-            $pages = $xpath->query("//pg:page[@url]");
+            $pages = $xpath->query("//pg:*[@url]");
         }
 
         foreach ($pages as $page) {
-            $urls[$page->getAttribute("db:id")] = $page->getAttribute("url");
+            $urlsByPageId[$page->getAttribute("db:id")] = $page->getAttribute("url");
+            if ($page->nodeName == "pg:page") {
+                $pageIdByUrl[$page->getAttribute("url")] = $page->getAttribute("db:id");
+            }
         }
 
-        return $urls;
+        return array($urlsByPageId, $pageIdByUrl);
     }
     // }}}
     
