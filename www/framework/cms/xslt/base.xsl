@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xsl:stylesheet [ 
-    <!ENTITY nbsp "&#160;">
-]>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:db="http://cms.depagecms.net/ns/database" 
+    xmlns:proj="http://cms.depagecms.net/ns/project" 
+    xmlns:pg="http://cms.depagecms.net/ns/page" 
+    xmlns:sec="http://cms.depagecms.net/ns/section" 
+    xmlns:edit="http://cms.depagecms.net/ns/edit" 
+    extension-element-prefixes="xsl db proj pg sec edit ">
+
     <!-- {{{ edit:a -->
     <xsl:template match="edit:a" name="edit:a">
         <xsl:param name="href" select="@href"/>
@@ -317,13 +323,13 @@
 
         <xsl:choose>
             <xsl:when test="$class != ''">
-                <p class="{$class}"><xsl:apply-templates/>&nbsp;</p>
+                <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
             <xsl:when test="$linebreaks != ''">
                 <xsl:apply-templates/><xsl:if test="position() != last()"><br /></xsl:if>
             </xsl:when>
             <xsl:otherwise>
-                <p><xsl:apply-templates/>&nbsp;</p>
+                <p><xsl:apply-templates/>&#160;</p>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

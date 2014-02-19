@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xsl:stylesheet [ 
-    <!ENTITY nbsp "&#160;">
-]>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dp="http://cms.depagecms.net/ns/depage" xmlns:func="http://exslt.org/functions" version="1.0" extension-element-prefixes="xsl dp func ">
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dp="http://cms.depagecms.net/ns/depage" 
+    xmlns:func="http://exslt.org/functions" 
+    extension-element-prefixes="xsl dp func ">
+
+    <!-- {{{ if() -->
     <!--
-        if function:
         dp:if(test, on-true, on-false)
 
     -->
@@ -22,4 +25,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </func:function>
+    <!-- }}} -->
+
+    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
