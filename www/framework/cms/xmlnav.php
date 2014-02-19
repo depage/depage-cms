@@ -159,20 +159,21 @@ class xmlnav {
 
         $xpath = new \DOMXpath($xml);
         
+        $page = null;
         $pages = $xpath->query("//pg:page[@url='{$url}']");
         
-        if($pages->length) {
+        if ($pages && $pages->length) {
             // a page has activeUrl
             $page = $pages->item(0);
             $page->setAttribute('status', $this::ACTIVE_STATUS);
             $page = $page->parentNode;
         } else {
             // search for parent urls
-            while ($pages->length == 0 && strrpos($url, "/") !== false) {
+            while ($pages && $pages->length == 0 && strrpos($url, "/") !== false) {
                 $url = substr($url, 0, strrpos($url, "/"));
                 $pages = $xpath->query("//pg:page[@url='{$url}/']");
             }
-            if($pages->length) {
+            if ($pages && $pages->length) {
                 $page = $pages->item(0);
             }
         }

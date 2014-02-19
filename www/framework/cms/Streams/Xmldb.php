@@ -14,7 +14,7 @@ class Xmldb extends Base {
         $url = parse_url($path);
         $docName = $url['host'];
 
-        if ($this->xmldb->docExists($docName)) {
+        if (!empty($docName) && $this->xmldb->docExists($docName)) {
             $doc = $this->xmldb->getDoc($docName);
             $handler = $doc->getDoctypeHandler();
 

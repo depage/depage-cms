@@ -26,7 +26,7 @@ class Pageref extends Base {
             $path = $this->preview->getRelativePathTo($path);
         } 
 
-        $this->data = '<page_ref>' . htmlspecialchars($path) . '</page_ref>';
+        $this->data = '<return>' . htmlspecialchars($path) . '</return>';
 
         return true;
     }

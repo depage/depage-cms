@@ -63,17 +63,12 @@ class Preview extends \depage_ui {
      * @return  null
      */
     public function _package($output) {
-        // pack into base-html if output is html-object
-        if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "html")) {
-            // pack into body html
-            $output = new \html("html.tpl", array(
-                'title' => $this->basetitle,
-                'subtitle' => $output->title,
-                'content' => $output,
-            ), $this->html_options);
-        }
-
         return $output;
+    }
+    // }}}
+    // {{{ _send_time
+    protected function _send_time($time, $content = null) {
+        echo("<!-- $time sec -->");
     }
     // }}}
     
@@ -157,14 +152,14 @@ class Preview extends \depage_ui {
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
         ));
-        //$xslt->setProfiling('profiling.txt');
+        $xslt->setProfiling('logs/xslt-profiling.txt');
         $xslt->importStylesheet($xslDOM);
 
         if (!$html = $xslt->transformToXml($pageXml)) {   
             var_dump(libxml_get_errors());
             
             $error = libxml_get_last_error();
-            $error = empty($error)? 'Could not transform the navigation XML document.' : $error->message;
+            $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
             
             throw new \exception($error);
         }
