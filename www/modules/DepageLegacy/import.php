@@ -273,6 +273,7 @@ class Import
                     $replacements = array(
                         "\t" => "    ",
                         "\n" => "\n    ",
+                        "document('call:doctype/html/5')" => "'&lt;!DOCTYPE html&gt;&#xa;'",
                         "document('get:navigation')" => "\$navigation",
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
@@ -362,6 +363,7 @@ class Import
     protected function updatePageData($xmlData)
     {
         $this->updatePageRefs($xmlData);
+        $this->updateLibRefs($xmlData);
         $this->updateImageSizes($xmlData);
     }
     // }}}
@@ -376,14 +378,43 @@ class Import
             $node = $nodelist->item($i);
             $href = $node->getAttribute("href");
 
-            $id = substr($href, 8);
+            $id = substr($href, 9);
 
             if (isset($this->pageIds[$id])) {
-                $node->setAttribute("href", "pageref:{$this->pageIds[$id]}");
+                $node->setAttribute("href", "pageref://{$this->pageIds[$id]}");
             } else {
                 // clear links with a non-existant page reference
                 $node->setAttribute("href", "");
             }
+        }
+        
+    }
+    // }}}
+    // {{{ updateLibRefs()
+    protected function updateLibRefs($xmlData)
+    {
+        $xpath = new \DOMXPath($xmlData);
+        $nodelist = $xpath->query("//*[@href and starts-with(@href,'libref:')]");
+
+        // test all links with a pageref
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $href = $node->getAttribute("href");
+
+            $id = substr($href, 8);
+
+            $node->setAttribute("src", "libref://{$id}");
+        }
+        $nodelist = $xpath->query("//*[@src and starts-with(@src,'libref:')]");
+
+        // test all links with a pageref
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $href = $node->getAttribute("src");
+
+            $id = substr($href, 8);
+
+            $node->setAttribute("src", "libref://{$id}");
         }
         
     }

@@ -38,7 +38,7 @@
             <a>
                 <!-- {{{ href -->
                 <xsl:choose>
-                    <xsl:when test="$href and substring($href, 1, 8) = 'libref:/'">
+                    <xsl:when test="$href and substring($href, 1, 8) = 'libref://'">
                         <xsl:attribute name="href">
                             <xsl:value-of select="document($href)/." disable-output-escaping="yes"/>
                         </xsl:attribute>
@@ -48,14 +48,14 @@
                             <xsl:value-of select="$href" disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:when>
-                    <xsl:when test="$href and substring($href, 1, 8) = 'pageref:'">
+                    <xsl:when test="$href and substring($href, 1, 10) = 'pageref://'">
                         <xsl:attribute name="href">
                             <xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:when>
                     <xsl:when test="$href_id != ''">
                         <xsl:attribute name="href">
-                            <xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                            <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:when>
                     <xsl:otherwise>
@@ -172,7 +172,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:attribute name="src">
-                            <xsl:value-of select="document('libref:/grfx/all/null.gif')/."/>
+                            <xsl:value-of select="document('libref://grfx/all/null.gif')/."/>
                         </xsl:attribute>
                         <xsl:choose>
                             <xsl:when test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:when>
@@ -205,7 +205,7 @@
             <a>
                 <!-- {{{ href -->
                 <xsl:choose>
-                    <xsl:when test="$href and substring($href, 1, 8) = 'libref:/'">
+                    <xsl:when test="$href and substring($href, 1, 9) = 'libref://'">
                         <xsl:attribute name="href">
                             <xsl:value-of select="document($href)/." disable-output-escaping="yes"/>
                         </xsl:attribute>
@@ -215,14 +215,14 @@
                             <xsl:value-of select="$href" disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:when>
-                    <xsl:when test="$href and not(substring($href, 1, 8) = 'pageref:')">
+                    <xsl:when test="$href and not(substring($href, 1, 10) = 'pageref://')">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$href" disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:attribute name="href">
-                            <xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                            <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                         </xsl:attribute>
                     </xsl:otherwise>
                 </xsl:choose>
@@ -343,7 +343,7 @@
     <!-- {{{ a -->
     <xsl:template match="a">
         <xsl:choose>
-            <xsl:when test="substring(@href,1,8) = 'pageref:'">
+            <xsl:when test="substring(@href,1,19) = 'pageref://'">
                 <xsl:call-template name="edit:a">
                     <xsl:with-param name="justapply" select="true()" />
                     <xsl:with-param name="href_id" select="substring(@href,9)" />
@@ -456,9 +456,9 @@
     <xsl:if test="/pg:page/@redirect = 'true'">
         @header(<xsl:for-each select="//sec:redirect/edit:a[@lang = $tt_lang]">
             <xsl:choose>
-                <xsl:when test="@href and substring(@href, 1, 8) = 'libref:/'">"Location: <xsl:value-of select="concat($baseurl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
-                <xsl:when test="@href and not(substring(@href, 1, 8) = 'pageref:')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
-                <xsl:otherwise><xsl:variable name="cached"><xsl:if test="not($depage_is_live = 'true')">/cached</xsl:if></xsl:variable>"Location: <xsl:value-of select="concat(substring($baseurl,1,string-length($baseurl) - 1),$cached,document(concat('pageref:/', @href_id, '/', $tt_lang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
+                <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseurl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
+                <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
+                <xsl:otherwise><xsl:variable name="cached"><xsl:if test="not($depage_is_live = 'true')">/cached</xsl:if></xsl:variable>"Location: <xsl:value-of select="concat(substring($baseurl,1,string-length($baseurl) - 1),$cached,document(concat('pageref://', @href_id, '/', $tt_lang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>);
     </xsl:if>
@@ -469,19 +469,20 @@
 <xsl:template name="header_alternate_lang">
     <xsl:variable name="href_id"><xsl:value-of select="$tt_actual_id" /></xsl:variable>
 
-    <xsl:for-each select="document('get:languages')/proj:languages/proj:language">
+    <xsl:for-each select="$settings//proj:languages/proj:language">
         <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
         <xsl:variable name="linkdesc">
-            <xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/>
+            <xsl:value-of select="document(concat('xmldb://', $href_id))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/>
         </xsl:variable>
         <xsl:variable name="title">
-            <xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
+            <xsl:value-of select="document(concat('xmldb://', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
         </xsl:variable>
 
         <xsl:if test="$lang != $tt_lang">
+            <xsl:value-of select="$href_id" />
             <link rel="alternate">
                 <xsl:attribute name="href">
-                    <xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                    <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                 </xsl:attribute>
                 <xsl:attribute name="hreflang"><xsl:value-of select="$lang" /></xsl:attribute>
                 <xsl:attribute name="title">
@@ -499,17 +500,17 @@
 <xsl:template name="header_include_css">
     <xsl:param name="file" />
     <xsl:param name="media" select="''" />
-    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call:fileinfo/libref:/', $file))/file/@date,'/: ','')" /></xsl:variable>
+    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call:fileinfo/libref://', $file))/file/@date,'/: ','')" /></xsl:variable>
 
-    <link rel="stylesheet" type="text/css"><xsl:if test="$media != ''"><xsl:attribute name="media"><xsl:value-of select="$media" /></xsl:attribute></xsl:if><xsl:attribute name="href"><xsl:value-of select="document(concat('libref:/', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></link>
+    <link rel="stylesheet" type="text/css"><xsl:if test="$media != ''"><xsl:attribute name="media"><xsl:value-of select="$media" /></xsl:attribute></xsl:if><xsl:attribute name="href"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></link>
 </xsl:template>
 <!-- }}} -->
 <!-- {{{ header include js -->
 <xsl:template name="header_include_js">
     <xsl:param name="file" />
-    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call:fileinfo/libref:/', $file))/file/@date,'/: ','')" /></xsl:variable>
+    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call:fileinfo/libref://', $file))/file/@date,'/: ','')" /></xsl:variable>
 
-    <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref:/', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+    <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>
 <!-- }}} -->
 

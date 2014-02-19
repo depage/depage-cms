@@ -15,7 +15,17 @@ class Xmldb extends Base {
         $docName = $url['host'];
 
         if ($this->xmldb->docExists($docName)) {
-            $this->data = $this->xmldb->getDocXml($docName);
+            $doc = $this->xmldb->getDoc($docName);
+            $handler = $doc->getDoctypeHandler();
+
+            $this->data = $doc->getXml($docName);
+
+            if ($handler = "depage\xmldb\xmldoctypes\pages") {
+                // add status attributes for page tree
+                $xmlnav = new \depage\cms\xmlnav();
+
+                $xmlnav->addStatusAttributes($this->data, $this->currentPath);
+            }
 
             return true;
         } else {

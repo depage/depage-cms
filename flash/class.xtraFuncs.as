@@ -1103,10 +1103,10 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
 			targetStartIndex = htmlString.indexOf("target=\"", linkEndIndex);
 			targetEndIndex = htmlString.indexOf("\"", targetStartIndex + 8);
 
-            newURL = htmlString.substring(linkStartIndex + 9, linkEndIndex);
-            if (newURL.substring(0, 8) == "pageref:") {
-                newURL = conf.project.tree.pages.getUriById(newURL.substring(8));
-            }
+                        newURL = htmlString.substring(linkStartIndex + 9, linkEndIndex);
+                        if (newURL.substring(0, 10) == "pageref://") {
+                            newURL = conf.project.tree.pages.getUriById(newURL.substring(10));
+                        }
 			this._parent.textLinks.push([newURL, htmlString.substring(targetStartIndex + 8, targetEndIndex)]);
 
 			//insert as link
@@ -1163,7 +1163,7 @@ TextField.prototype.reducedHtmlXML = function(node) {
             linkIndex = link.substring(linkStartIndex + 20, linkEndIndex);
 
             if (this._parent.textLinks[linkIndex][0].substring(0, 8) == "pageref:") {
-                newURL = "pageref:" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
+                newURL = "pageref://" + conf.project.tree.pages.getIdByUri(this._parent.textLinks[linkIndex][0].substring(8));
             } else {
                 newURL = this._parent.textLinks[linkIndex][0];
             }
