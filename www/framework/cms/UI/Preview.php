@@ -234,18 +234,23 @@ class Preview extends \depage_ui {
     {
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
-        $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+        $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+
+        $xslt .= "<xsl:import href=\"xslt://functions.xsl\" />";
 
         // add basic variables
         $params = array(
+            'currentLang' => null,
+            'currentPageId' => null,
+        );
+        $variables = array(
             'navigation' => "document('xmldb://pages')",
             'settings' => "document('xmldb://settings')",
             'colors' => "document('xmldb://colors')",
-            'currentLang' => null,
-            'currentPageId' => null,
             'currentPage' => "\$navigation//pg:page[@status = 'active']",
             'currentHasMultipleLanguages' => "\$currentPage/@multilang",
-            'currentColorscheme' => null,
+            'currentColorscheme' => "dp:if(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name]/@name)",
+            //'currentColorscheme' => "\$colors//proj:colorscheme[@name]/@name",
         );
         foreach ($params as $key => $value) {
             if (!empty($value)) {
@@ -254,12 +259,17 @@ class Preview extends \depage_ui {
                 $xslt .= "\n<xsl:param name=\"$key\" />";
             }
         }
+        foreach ($variables as $key => $value) {
+            $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
+        }
         
         foreach ($files as $file) {
             $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
         }
-        $xslt .= "</xsl:stylesheet>";
+        $xslt .= "\n</xsl:stylesheet>";
 
+        //echo($xslt);
+        //die();
         $doc = new \depage\xml\Document();
         $doc->loadXML($xslt);
 
