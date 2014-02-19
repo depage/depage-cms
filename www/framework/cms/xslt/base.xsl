@@ -21,7 +21,7 @@
         <xsl:param name="target" select="@target"/>
         <xsl:param name="onMouseOver" select="@onMouseOver"/>
         <xsl:param name="onMouseOut" select="@onMouseOut"/>
-        <xsl:param name="lang" select="$tt_lang"/>
+        <xsl:param name="lang" select="$currentLang"/>
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
@@ -140,7 +140,7 @@
         <xsl:param name="onMouseOver" select="@onMouseOver"/>
         <xsl:param name="onMouseOut" select="@onMouseOut"/>
         <xsl:param name="onFocus" select="@onFocus"/>
-        <xsl:param name="lang" select="$tt_lang"/>
+        <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="src" select="@src"/>
         <xsl:param name="width" select="@width"/>
         <xsl:param name="height" select="@height"/>
@@ -294,7 +294,7 @@
         <xsl:param name="id" />
         <xsl:param name="linebreaks" />
 
-        <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
+        <xsl:if test="($currentHasMultipleLanguages = 'true' and @lang = $currentLang) or $currentHasMultipleLanguages != 'true'">
             <xsl:apply-templates>
                 <xsl:with-param name="class" select="$class"/>
                 <xsl:with-param name="id" select="$id"/>
@@ -305,7 +305,7 @@
     <!-- }}} -->
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
-        <xsl:if test="($tt_multilang = 'true' and @lang = $tt_lang) or $tt_multilang != 'true'">
+        <xsl:if test="($currentHasMultipleLanguages = 'true' and @lang = $currentLang) or $currentHasMultipleLanguages != 'true'">
             <xsl:apply-templates><xsl:with-param name="linebreaks" select="'true'"/></xsl:apply-templates>
         </xsl:if>
     </xsl:template>
@@ -391,7 +391,7 @@
         <xsl:value-of select="$day"/>.
         <xsl:text> </xsl:text>
 
-        <xsl:if test="$tt_lang = 'de' ">
+        <xsl:if test="$currentLang = 'de' ">
             <xsl:if test="$month = '01' ">Januar</xsl:if>
             <xsl:if test="$month = '02' ">Februar</xsl:if>
             <xsl:if test="$month = '03' ">März</xsl:if>
@@ -405,7 +405,7 @@
             <xsl:if test="$month = '11' ">November</xsl:if>
             <xsl:if test="$month = '12' ">Dezember</xsl:if>
         </xsl:if>
-        <xsl:if test="$tt_lang = 'en' ">
+        <xsl:if test="$currentLang = 'en' ">
             <xsl:if test="$month = '01' ">January</xsl:if>
             <xsl:if test="$month = '02' ">February</xsl:if>
             <xsl:if test="$month = '03' ">March</xsl:if>
@@ -430,10 +430,10 @@
         <xsl:variable name="month"><xsl:value-of select="substring($date,6,2)"/></xsl:variable>
         <xsl:variable name="day"><xsl:value-of select="substring($date,9,2)"/></xsl:variable>
 
-        <xsl:if test="$tt_lang = 'de' ">
+        <xsl:if test="$currentLang = 'de' ">
             <xsl:value-of select="$day"/>.<xsl:value-of select="$month"/>.<xsl:value-of select="$year"/>
         </xsl:if>
-        <xsl:if test="$tt_lang = 'en' ">
+        <xsl:if test="$currentLang = 'en' ">
             <xsl:value-of select="$day"/>/<xsl:value-of select="$month"/>/<xsl:value-of select="$year"/>
         </xsl:if>
     </xsl:template>
@@ -447,18 +447,18 @@
 
     <!-- {{{ sec:redirect -->
     <xsl:template match="sec:redirect">
-        <xsl:apply-templates select="edit:a[@lang = $tt_lang]" />
+        <xsl:apply-templates select="edit:a[@lang = $currentLang]" />
     </xsl:template>
     <!-- }}} -->
 
 <!-- {{{ PHP Header -->
 <xsl:template name="php_redirect">
     <xsl:if test="/pg:page/@redirect = 'true'">
-        @header(<xsl:for-each select="//sec:redirect/edit:a[@lang = $tt_lang]">
+        @header(<xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
             <xsl:choose>
                 <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseurl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
                 <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
-                <xsl:otherwise><xsl:variable name="cached"><xsl:if test="not($depage_is_live = 'true')">/cached</xsl:if></xsl:variable>"Location: <xsl:value-of select="concat(substring($baseurl,1,string-length($baseurl) - 1),$cached,document(concat('pageref://', @href_id, '/', $tt_lang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
+                <xsl:otherwise><xsl:variable name="cached"><xsl:if test="not($depage_is_live = 'true')">/cached</xsl:if></xsl:variable>"Location: <xsl:value-of select="concat(substring($baseurl,1,string-length($baseurl) - 1),$cached,document(concat('pageref://', @href_id, '/', $currentLang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>);
     </xsl:if>
@@ -467,7 +467,7 @@
 
 <!-- {{{ header alternate languages -->
 <xsl:template name="header_alternate_lang">
-    <xsl:variable name="href_id"><xsl:value-of select="$tt_actual_id" /></xsl:variable>
+    <xsl:variable name="href_id"><xsl:value-of select="$currentPageId" /></xsl:variable>
 
     <xsl:for-each select="$settings//proj:languages/proj:language">
         <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
@@ -478,7 +478,7 @@
             <xsl:value-of select="document(concat('xmldb://', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
         </xsl:variable>
 
-        <xsl:if test="$lang != $tt_lang">
+        <xsl:if test="$lang != $currentLang">
             <xsl:value-of select="$href_id" />
             <link rel="alternate">
                 <xsl:attribute name="href">

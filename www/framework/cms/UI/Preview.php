@@ -141,11 +141,11 @@ class Preview extends \depage_ui {
     protected function preview($urlPath)
     {
         $urlPath = "/$urlPath";
-        $this->currentPath = $this->lang . $urlPath;
-        $pageId = $this->getPageIdFor($urlPath);
+        $this->currentPath = $urlPath;
+        list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
         $xslDOM = $this->getXsltFor($this->template);
 
-        $pageXml = $this->xmldb->getDocXml($pageId);
+        $pageXml = $this->xmldb->getDocXml($pagedataId);
         
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
@@ -154,7 +154,8 @@ class Preview extends \depage_ui {
 
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", array(
-            "tt_lang" => $this->lang,
+            "currentLang" => $this->lang,
+            "currentPageId" => $pageId,
         ));
         //$xslt->setProfiling('profiling.txt');
         $xslt->importStylesheet($xslDOM);
@@ -178,11 +179,11 @@ class Preview extends \depage_ui {
     protected function registerStreams()
     {
         /*
+         * @todo
          * get:page
          * get:redirect
          * get:css
          * get:template
-         * get:xslt
          * get:navigation
          * get:atom
          * get:colors
@@ -197,12 +198,16 @@ class Preview extends \depage_ui {
          * call:formatdate
          * call:replaceEmailChars
          * call:getversion
+         *
+         * @done
          * pageref:
          * libref:
+         * get:xslt
          */
         // register stream to get documents from xmldb
         \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
             "xmldb" => $this->xmldb,
+            "currentPath" => $this->currentPath,
         ));
         
         // register stream to get global xsl templates
@@ -213,6 +218,11 @@ class Preview extends \depage_ui {
             "urls" => $this->urlsByPageId,
             "preview" => $this,
             "lang" => $this->lang,
+        ));
+
+        // register stream to get links to library
+        \depage\cms\Streams\Libref::registerStream("libref", array(
+            "preview" => $this,
         ));
     }
     // }}}
@@ -227,10 +237,23 @@ class Preview extends \depage_ui {
         $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
 
         // add basic variables
-        $xslt .= "\n<xsl:param name=\"navigation\" select=\"document('xmldb://pages')\" />";
-        $xslt .= "\n<xsl:param name=\"settings\" select=\"document('xmldb://settings')\" />";
-        $xslt .= "\n<xsl:param name=\"colors\" select=\"document('xmldb://colors')\" />";
-        $xslt .= "\n<xsl:param name=\"tt_lang\" />";
+        $params = array(
+            'navigation' => "document('xmldb://pages')",
+            'settings' => "document('xmldb://settings')",
+            'colors' => "document('xmldb://colors')",
+            'currentLang' => null,
+            'currentPageId' => null,
+            'currentPage' => "\$navigation//pg:page[@status = 'active']",
+            'currentHasMultipleLanguages' => "\$currentPage/@multilang",
+            'currentColorscheme' => null,
+        );
+        foreach ($params as $key => $value) {
+            if (!empty($value)) {
+                $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
+            } else {
+                $xslt .= "\n<xsl:param name=\"$key\" />";
+            }
+        }
         
         foreach ($files as $file) {
             $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
@@ -255,9 +278,10 @@ class Preview extends \depage_ui {
         list($this->urlsByPageId, $this->pageIdByUrl) = $xmlnav->getAllUrls($pages->getXml());
         $nodeId = $this->pageIdByUrl[$urlPath];
 
-        $pageId = $pages->getAttribute($nodeId, "db:docref");
+        $pageId = $pages->getAttribute($nodeId, "db:id");
+        $pagedataId = $pages->getAttribute($nodeId, "db:docref");
 
-        return $pageId;
+        return array($pageId, $pagedataId);
     }
     // }}}
     
@@ -273,7 +297,7 @@ class Preview extends \depage_ui {
      */
     public function getRelativePathTo($targetPath, $currentPath = null) {
         if ($currentPath === null) {
-            $currentPath = $this->currentPath;
+            $currentPath = $this->lang . $this->currentPath;
         }
 
         // link to self by default

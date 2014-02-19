@@ -278,6 +278,10 @@ class Import
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
                         "libref:/" => "libref://",
+                        "\$tt_lang" => "\$currentLang",
+                        "\$tt_actual_id" => "\$currentPageId",
+                        "\$tt_actual_colorscheme" => "\$currentColorscheme",
+                        "\$tt_multilang" => "\$currentHasMultipleLanguages",
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
