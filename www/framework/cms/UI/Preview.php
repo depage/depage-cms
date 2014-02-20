@@ -157,7 +157,11 @@ class Preview extends \depage_ui {
         $xslt->importStylesheet($xslDOM);
 
         if (!$html = $xslt->transformToXml($pageXml)) {   
-            var_dump(libxml_get_errors());
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log($error);
+                var_dump($error);
+            }
             
             $error = libxml_get_last_error();
             $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
@@ -176,7 +180,6 @@ class Preview extends \depage_ui {
     {
         /*
          * @todo
-         * get:page -> manual @db:id -> @db:docref
          * get:css -> replace with transforming css directly
          * get:redirect -> analogous to css
          * get:atom -> analogous to css
@@ -187,6 +190,9 @@ class Preview extends \depage_ui {
          * call:phpescape
          * call:formatdate
          * call:replaceEmailChars
+         *
+         * @thinkabout
+         * get:page -> replaced with dp:getpage function -> better replace manualy in template
          *
          * @done
          * pageref:
@@ -232,12 +238,15 @@ class Preview extends \depage_ui {
 
         $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
 
-        $xslt .= "<xsl:import href=\"xslt://functions.xsl\" />";
+        $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
-        // add basic variables
+        // add basic paramaters and variables
         $params = array(
             'currentLang' => null,
             'currentPageId' => null,
+            'depageIsLive' => "'false'",
+            // @todo complete baseurl this in a better way
+            'baseurl' => "'" . DEPAGE_BASE . 'project/' . $this->projectName . "/preview/" . $this->template . "/noncached/" . "'",
         );
         $variables = array(
             'navigation' => "document('xmldb://pages')",
@@ -245,9 +254,21 @@ class Preview extends \depage_ui {
             'colors' => "document('xmldb://colors')",
             'languages' => "\$settings//proj:languages",
             'currentPage' => "\$navigation//pg:page[@status = 'active']",
-            'currentHasMultipleLanguages' => "\$currentPage/@multilang",
             'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name]/@name)",
         );
+        
+        // add variables from settings
+        $settings = $this->xmldb->getDocXml("settings");
+
+        $xpath = new \DOMXPath($settings);
+        $nodelist = $xpath->query("//proj:variable");
+
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $variables["var-" . $node->getAttribute("name")] = "'" . htmlspecialchars($node->getAttribute("value")) . "'";
+        }
+
+        // now add to xslt
         foreach ($params as $key => $value) {
             if (!empty($value)) {
                 $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
@@ -258,14 +279,15 @@ class Preview extends \depage_ui {
         foreach ($variables as $key => $value) {
             $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
         }
+
         
         foreach ($files as $file) {
             $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
         }
         $xslt .= "\n</xsl:stylesheet>";
 
-        //echo($xslt);
-        //die();
+        //die($xslt);
+
         $doc = new \depage\xml\Document();
         $doc->loadXML($xslt);
 

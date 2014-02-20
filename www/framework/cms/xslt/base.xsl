@@ -300,7 +300,7 @@
         <xsl:param name="id" />
         <xsl:param name="linebreaks" />
 
-        <xsl:if test="($currentHasMultipleLanguages = 'true' and @lang = $currentLang) or $currentHasMultipleLanguages != 'true'">
+        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
             <xsl:apply-templates>
                 <xsl:with-param name="class" select="$class"/>
                 <xsl:with-param name="id" select="$id"/>
@@ -311,7 +311,7 @@
     <!-- }}} -->
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
-        <xsl:if test="($currentHasMultipleLanguages = 'true' and @lang = $currentLang) or $currentHasMultipleLanguages != 'true'">
+        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
             <xsl:apply-templates><xsl:with-param name="linebreaks" select="'true'"/></xsl:apply-templates>
         </xsl:if>
     </xsl:template>

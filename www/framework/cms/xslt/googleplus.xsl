@@ -13,9 +13,9 @@
     <xsl:param name="size" select="'medium'" />
     <xsl:param name="count" select="'false'" />
     <xsl:param name="base" select="$baseurl" />
-    <xsl:param name="href_id" select="$tt_actual_id"/>
+    <xsl:param name="href_id" select="$currentPageId"/>
 
-    <xsl:text disable-output-escaping="yes">&lt;g:plusone</xsl:text> size="<xsl:value-of select="$size" />" count="<xsl:value-of select="$count" />" <xsl:if test="$href_id != ''"> href="<xsl:value-of select="concat($baseurl,substring(document(concat('pageref:/', $href_id, '/', $tt_lang,'/absolute'))/., 2))" />" </xsl:if> <xsl:text disable-output-escaping="yes">&gt;&lt;/g:plusone&gt;</xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;g:plusone</xsl:text> size="<xsl:value-of select="$size" />" count="<xsl:value-of select="$count" />" <xsl:if test="$href_id != ''"> href="<xsl:value-of select="concat($baseurl,substring(document(concat('pageref://', $href_id, '/', $currentLang,'/absolute'))/., 2))" />" </xsl:if> <xsl:text disable-output-escaping="yes">&gt;&lt;/g:plusone&gt;</xsl:text>
 </xsl:template>
 <!-- }}} -->
     

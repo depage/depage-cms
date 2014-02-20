@@ -33,7 +33,7 @@ class Import
     protected $xsltPath;
     protected $xmlPath;
 
-    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n<!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities;\n]>\n<xsl:stylesheet\n    version=\"1.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n    xmlns:db=\"http://cms.depagecms.net/ns/database\"\n    xmlns:proj=\"http://cms.depagecms.net/ns/project\"\n    xmlns:pg=\"http://cms.depagecms.net/ns/page\"\n    xmlns:sec=\"http://cms.depagecms.net/ns/section\"\n    xmlns:edit=\"http://cms.depagecms.net/ns/edit\"\n    extension-element-prefixes=\"xsl db proj pg sec edit \">\n\n";
+    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n<!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities;\n]>\n<xsl:stylesheet\n    version=\"1.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n    xmlns:dp=\"http://cms.depagecms.net/ns/depage\"\n    xmlns:db=\"http://cms.depagecms.net/ns/database\"\n    xmlns:proj=\"http://cms.depagecms.net/ns/project\"\n    xmlns:pg=\"http://cms.depagecms.net/ns/page\"\n    xmlns:sec=\"http://cms.depagecms.net/ns/section\"\n    xmlns:edit=\"http://cms.depagecms.net/ns/edit\"\n    extension-element-prefixes=\"xsl db proj pg sec edit \">\n\n";
     protected $xslFooter = "\n    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
     protected $xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<proj:newnode xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"proj sec edit \">\n";
     protected $xmlFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</proj:newnode>";
@@ -279,13 +279,21 @@ class Import
                         "document('get:settings')" => "\$settings",
                         "document('get:languages')/proj:languages" => "\$languages",
                         "document('call:getversion')" => "\$depageVersion",
+                        "document(concat('get:page/'," => "(dp:getpage(",
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
                         "libref:/" => "libref://",
                         "\$tt_lang" => "\$currentLang",
                         "\$tt_actual_id" => "\$currentPageId",
                         "\$tt_actual_colorscheme" => "\$currentColorscheme",
-                        "\$tt_multilang" => "\$currentHasMultipleLanguages",
+                        "\$tt_multilang" => "\$currentPage/@multilang",
+                        "\$depage_is_live" => "\$depageIsLive",
+                        "\$tt_var_" => "\$var-",
+                        "/pg:page/pg:page_data" => "/pg:page_data",
+                        "/pg:page/@multilang" => "\$currentPage/@multilang",
+                        "\"/pg:page\"" => "\"\$currentPage\"",
+                        "\"/pg:page/" => "\"\$currentPage/",
+                        "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
