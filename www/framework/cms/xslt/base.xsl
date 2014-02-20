@@ -485,7 +485,6 @@
         </xsl:variable>
 
         <xsl:if test="$lang != $currentLang">
-            <xsl:value-of select="$href_id" />
             <link rel="alternate">
                 <xsl:attribute name="href">
                     <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
@@ -519,9 +518,6 @@
     <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>
 <!-- }}} -->
-
-
-    
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>

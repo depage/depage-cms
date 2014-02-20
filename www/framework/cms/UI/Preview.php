@@ -151,6 +151,7 @@ class Preview extends \depage_ui {
         $xslt->setParameter("", array(
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
+            "depageVersion" => \depage::getVersion(),
         ));
         $xslt->setProfiling('logs/xslt-profiling.txt');
         $xslt->importStylesheet($xslDOM);
@@ -175,29 +176,29 @@ class Preview extends \depage_ui {
     {
         /*
          * @todo
-         * get:page
-         * get:redirect
-         * get:css
-         * get:template
-         * get:navigation
-         * get:atom
-         * get:colors
-         * get:languages
-         * get:settings
+         * get:page -> manual @db:id -> @db:docref
+         * get:css -> replace with transforming css directly
+         * get:redirect -> analogous to css
+         * get:atom -> analogous to css
          * call:changesrc
          * call:filetype
-         * call:doctype
          * call:atomizetext
          * call:urlencode
          * call:phpescape
          * call:formatdate
          * call:replaceEmailChars
-         * call:getversion
          *
          * @done
          * pageref:
          * libref:
-         * get:xslt
+         * get:xslt -> replaced with xslt://
+         * get:template -> deleted
+         * get:navigation -> replaced with $navigation
+         * get:colors -> replaced with $colors
+         * get:settings -> replaced with $settings
+         * get:languages -> replaced with $languages
+         * call:doctype -> not necessary anymore
+         * call:getversion -> replaced by $depageVersion
          */
         // register stream to get documents from xmldb
         \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
@@ -242,10 +243,10 @@ class Preview extends \depage_ui {
             'navigation' => "document('xmldb://pages')",
             'settings' => "document('xmldb://settings')",
             'colors' => "document('xmldb://colors')",
+            'languages' => "\$settings//proj:languages",
             'currentPage' => "\$navigation//pg:page[@status = 'active']",
             'currentHasMultipleLanguages' => "\$currentPage/@multilang",
-            'currentColorscheme' => "dp:if(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name]/@name)",
-            //'currentColorscheme' => "\$colors//proj:colorscheme[@name]/@name",
+            'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name]/@name)",
         );
         foreach ($params as $key => $value) {
             if (!empty($value)) {
@@ -281,10 +282,9 @@ class Preview extends \depage_ui {
 
         $xmlnav = new \depage\cms\xmlnav();
         list($this->urlsByPageId, $this->pageIdByUrl) = $xmlnav->getAllUrls($pages->getXml());
-        $nodeId = $this->pageIdByUrl[$urlPath];
 
-        $pageId = $pages->getAttribute($nodeId, "db:id");
-        $pagedataId = $pages->getAttribute($nodeId, "db:docref");
+        $pageId = $this->pageIdByUrl[$urlPath];
+        $pagedataId = $pages->getAttribute($pageId, "db:docref");
 
         return array($pageId, $pagedataId);
     }

@@ -6,12 +6,12 @@
     xmlns:func="http://exslt.org/functions" 
     extension-element-prefixes="xsl dp func ">
 
-    <!-- {{{ if() -->
+    <!-- {{{ choose() -->
     <!--
-        dp:if(test, on-true, on-false)
+        dp:choose(test, on-true, on-false)
 
     -->
-    <func:function name="dp:if">
+    <func:function name="dp:choose">
         <xsl:param name="test"/>
         <xsl:param name="a" />
         <xsl:param name="b" />

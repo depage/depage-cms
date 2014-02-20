@@ -285,7 +285,7 @@ class depage {
         $txt = __DIR__ . "/version.txt";
 
         if (!isset($version) && file_exists($txt)) {
-            $version = file_get_contents($txt);
+            $version = trim(file_get_contents($txt));
         }
 
         return $version;
