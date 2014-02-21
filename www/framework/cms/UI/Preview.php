@@ -145,9 +145,11 @@ class Preview extends \depage_ui {
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
-        $this->registerStreams();
-
         $xslt = new \XSLTProcessor();
+
+        $this->registerStreams($xslt);
+        $this->registerFunctions($xslt);
+
         $xslt->setParameter("", array(
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
@@ -156,7 +158,9 @@ class Preview extends \depage_ui {
         $xslt->setProfiling('logs/xslt-profiling.txt');
         $xslt->importStylesheet($xslDOM);
 
-        if (!$html = $xslt->transformToXml($pageXml)) {   
+        if ($pageXml === false) {   
+            throw new \exception("no page data");
+        } elseif (!$html = $xslt->transformToXml($pageXml)) {   
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
@@ -176,22 +180,18 @@ class Preview extends \depage_ui {
     /**
      * @return  null
      */
-    protected function registerStreams()
+    protected function registerStreams($proc)
     {
         /*
          * @todo
          * get:css -> replace with transforming css directly
          * get:redirect -> analogous to css
          * get:atom -> analogous to css
-         * call:changesrc
-         * call:filetype
-         * call:atomizetext
-         * call:urlencode
-         * call:phpescape
-         * call:formatdate
-         * call:replaceEmailChars
          *
-         * @thinkabout
+         * @todo dp:functions ?
+         * call:fileinfo -> replaced with call://fileinfo
+         *
+         * @done but @thinkabout
          * get:page -> replaced with dp:getpage function -> better replace manualy in template
          *
          * @done
@@ -226,8 +226,38 @@ class Preview extends \depage_ui {
         \depage\cms\Streams\Libref::registerStream("libref", array(
             "preview" => $this,
         ));
+
+        // register stream for various php calls
+        \depage\cms\Streams\Call::registerStream("call", array(
+            "preview" => $this,
+        ));
     }
     // }}}
+    // {{{ registerFunctions
+    /**
+     * @return  null
+     */
+    protected function registerFunctions($proc)
+    {
+        /*
+         * @todo
+         * call:changesrc
+         * call:atomizetext
+         * call:urlencode
+         * call:phpescape
+         * call:formatdate
+         * call:replaceEmailChars
+         *
+         * @todo dp:functions ?
+         * call:fileinfo -> replaced with call://fileinfo
+         */
+
+        \depage\cms\xslt\FuncDelegate::registerFunctions($proc, array(
+            "changesrc" => array($this, "xsltCallChangeSrc"),
+        ));
+    }
+    // }}}
+    
     // {{{ getXslFor
     /**
      * @return  null
@@ -311,7 +341,6 @@ class Preview extends \depage_ui {
         return array($pageId, $pagedataId);
     }
     // }}}
-    
     // {{{ getRelativePathTo
     /**
      * gets relative path to path of active page
@@ -343,6 +372,60 @@ class Preview extends \depage_ui {
             }
         }
         return $path;
+    }
+    // }}}
+    
+    // {{{ xsltCallFileinfo
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallFileinfo($path) {
+        $xml = "";
+        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
+
+        $fileinfo = new \depage\media\mediainfo();
+
+        $info = $fileinfo->getInfo($path);
+        $info['date'] = $info['date']->format("Y-m-d H:i:s");
+
+        $xml = "<file";
+        foreach ($info as $key => $value) {
+            $xml .= " $key=\"" . htmlspecialchars($value) . "\"";
+        }
+        $xml .= " />";
+
+        return $xml;
+    }
+    // }}}
+    // {{{ xsltCallChangeSrc()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallChangeSrc($source) {
+        $newSource = "";
+        $posOffset = 0;
+        while (($startPos = strpos($source, '"libref:/', $posOffset)) !== false) {
+            $newSource .= substr($source, $posOffset, $startPos - $posOffset) . '"';
+            $posOffset = $startPos + strlen("libref:/") + 3;
+            $endPos = strpos($source, "\"", $posOffset);
+            $newSource .= $this->getRelativePathTo('/lib' . substr($source, $startPos + 8, $endPos - ($startPos + 8)));
+            $posOffset = $endPos;
+        }
+        $newSource .= substr($source, $posOffset);
+
+        return $newSource;
     }
     // }}}
 }

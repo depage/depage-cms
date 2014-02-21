@@ -283,6 +283,7 @@ class Import
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
                         "libref:/" => "libref://",
+                        "call:fileinfo" => "call://fileinfo",
                         "\$tt_lang" => "\$currentLang",
                         "\$tt_actual_id" => "\$currentPageId",
                         "\$tt_actual_colorscheme" => "\$currentColorscheme",

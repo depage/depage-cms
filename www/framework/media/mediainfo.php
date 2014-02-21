@@ -39,7 +39,7 @@ class mediainfo {
      * 
      * @return void
      */
-    public function __construct($options) {
+    public function __construct($options = array()) {
         $options = array_change_key_case($options);
         foreach ($this->defaults as $option => $default) {
             $this->$option = isset($options[$option]) ? $options[$option] : $default;
@@ -79,7 +79,7 @@ class mediainfo {
             } else if ($this->hasMediaExtension()) {
                 // we cache only mediainfo because only this takes a longer time
                 $identifier = $this->filename . ".ser";
-                if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['date']) {
+                if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['filemtime']) {
                     $this->info = $this->cache->get($identifier);
                 } else {
                     $this->getMediaInfo();
@@ -125,7 +125,11 @@ class mediainfo {
             $info['fullpath'] = $this->filename;
             $info['realpath'] = realpath($this->filename);
             $info['filesize'] = filesize($this->filename);
-            $info['date'] = filemtime($this->filename);
+            $info['filemtime'] = filemtime($this->filename);
+
+            $date = new \DateTime();
+            $date->setTimestamp($info['filemtime']);
+            $info['date'] = $date;
 
             $this->info = array_merge($this->info, $info);
         }

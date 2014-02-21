@@ -8,7 +8,7 @@
     xmlns:func="http://exslt.org/functions" 
     extension-element-prefixes="xsl dp func ">
 
-    <!-- {{{ choose() -->
+    <!-- {{{ dp:choose() -->
     <!--
         dp:choose(test, on-true, on-false)
 
@@ -28,7 +28,8 @@
         </xsl:choose>
     </func:function>
     <!-- }}} -->
-    <!-- {{{ getpage() -->
+
+    <!-- {{{ dp:getpage() -->
     <!--
         dp:getpage(pageid)
 
