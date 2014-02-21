@@ -3,6 +3,7 @@
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:php="http://php.net/xsl"
+    xmlns:dp="http://cms.depagecms.net/ns/depage" 
     xmlns:db="http://cms.depagecms.net/ns/database" 
     xmlns:proj="http://cms.depagecms.net/ns/project" 
     xmlns:pg="http://cms.depagecms.net/ns/page" 
@@ -450,8 +451,9 @@
     <xsl:template match="edit:plain_source">
         <!--
         <xsl:value-of select="document(concat('call:/changesrc/', string(.)))/*" disable-output-escaping="yes"/>
+        <xsl:value-of select="php:function('depage\cms\xslt\FuncDelegate::changesrc', string(.))" disable-output-escaping="yes" />
         -->
-        <xsl:value-of select="php:function('depage\cms\xslt\FuncDelegate::changesrc', string(.))" disable-output-escaping="yes"/>
+        <xsl:value-of select="dp:changesrc(string(.))" disable-output-escaping="yes"/>
     </xsl:template>
     <!-- }}} -->
 
