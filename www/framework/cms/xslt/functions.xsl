@@ -54,6 +54,53 @@
         <func:result select="php:function('depage\cms\xslt\FuncDelegate::changesrc', string($src))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:urlencode() -->
+    <!--
+        dp:urlencode(url)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:urlencode">
+        <xsl:param name="url" />
+
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::urlencode', string($url))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:replaceEmailChars() -->
+    <!--
+        dp:urlencode(url)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:replaceEmailChars">
+        <xsl:param name="email" />
+
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::replaceEmailChars', string($email))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:atomizeText() -->
+    <!--
+        dp:atomizeText(text)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:atomizeText">
+        <xsl:param name="text" />
+
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::atomizeText', string($text))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:fileinfo() -->
+    <!--
+        dp:fileinfo(libref)
+
+    -->
+    <func:function name="dp:fileinfo">
+        <xsl:param name="libref" />
+
+        <func:result select="$libref" />
+    </func:function>
+    <!-- }}} -->
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>

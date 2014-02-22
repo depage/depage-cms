@@ -241,19 +241,24 @@ class Preview extends \depage_ui {
     {
         /*
          * @todo
-         * call:changesrc
-         * call:atomizetext
-         * call:urlencode
          * call:phpescape
          * call:formatdate
-         * call:replaceEmailChars
          *
          * @todo dp:functions ?
          * call:fileinfo -> replaced with call://fileinfo
+         *
+         * @done
+         * call:changesrc
+         * call:urlencode
+         * call:replaceEmailChars
+         * call:atomizetext
          */
 
         \depage\cms\xslt\FuncDelegate::registerFunctions($proc, array(
             "changesrc" => array($this, "xsltCallChangeSrc"),
+            "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
+            "atomizeText" => array($this, "xsltCallAtomizeText"),
+            "urlencode" => "rawurlencode",
         ));
     }
     // }}}
@@ -426,6 +431,59 @@ class Preview extends \depage_ui {
         $newSource .= substr($source, $posOffset);
 
         return $newSource;
+    }
+    // }}}
+    // {{{ xsltCallReplaceEmailChars()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallReplaceEmailChars($email) {
+        $original = array(
+            "@",
+            ".",
+            "-",
+            "_",
+        );
+        if ($this->lang == "de") {
+            $repl = array(
+                " *at* ",
+                " *punkt* ",
+                " *minus* ",
+                " *unterstrich* ",
+            );
+        } else {
+            $repl = array(
+                " *at* ",
+                " *dot* ",
+                " *minus* ",
+                " *underscore* ",
+            );
+        }
+        $value = str_replace($original, $repl, $email);
+
+        return $value;
+    }
+    // }}}
+    // {{{ xsltCallAtomizeText()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallAtomizeText($text) {
+        $value = "<span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span>";
+
+        return $value;
     }
     // }}}
 }
