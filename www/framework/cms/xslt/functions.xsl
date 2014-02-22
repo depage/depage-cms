@@ -90,6 +90,31 @@
         <func:result select="php:function('depage\cms\xslt\FuncDelegate::atomizeText', string($text))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:phpEscape() -->
+    <!--
+        dp:phpEscape(text)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:phpEscape">
+        <xsl:param name="string" />
+
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::phpEscape', string($string))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:formatDate() -->
+    <!--
+        dp:formatDate(date)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:formatDate">
+        <xsl:param name="date" />
+        <xsl:param name="format" select="''" />
+
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::formatDate', string($date), string($format))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:fileinfo() -->
     <!--
         dp:fileinfo(libref)

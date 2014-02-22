@@ -240,10 +240,6 @@ class Preview extends \depage_ui {
     protected function registerFunctions($proc)
     {
         /*
-         * @todo
-         * call:phpescape
-         * call:formatdate
-         *
          * @todo dp:functions ?
          * call:fileinfo -> replaced with call://fileinfo
          *
@@ -252,12 +248,16 @@ class Preview extends \depage_ui {
          * call:urlencode
          * call:replaceEmailChars
          * call:atomizetext
+         * call:phpescape
+         * call:formatdate
          */
 
         \depage\cms\xslt\FuncDelegate::registerFunctions($proc, array(
             "changesrc" => array($this, "xsltCallChangeSrc"),
             "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
             "atomizeText" => array($this, "xsltCallAtomizeText"),
+            "phpEscape" => array($this, "xsltCallPhpEscape"),
+            "formatDate" => array($this, "xsltCallFormatDate"),
             "urlencode" => "rawurlencode",
         ));
     }
@@ -484,6 +484,41 @@ class Preview extends \depage_ui {
         $value = "<span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span>";
 
         return $value;
+    }
+    // }}}
+    // {{{ xsltCallPhpEscape()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallPhpEscape($string) {
+        $value = str_replace("\"", "\\\"", $string);
+
+        return $value;
+    }
+    // }}}
+    // {{{ xsltCallFormatDate()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltCallFormatDate($date, $format = '') {
+        if ($format == '') {
+            $format = "c";
+        }
+        $date = date($format, strtotime($date));
+
+        return $date;
     }
     // }}}
 }
