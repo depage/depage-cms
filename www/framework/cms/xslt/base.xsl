@@ -33,8 +33,8 @@
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
-            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
             <xsl:if test="name(../..) = 'sec:unordered_list'">
                 <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
@@ -463,19 +463,19 @@
     </xsl:template>
     <!-- }}} -->
 
-<!-- {{{ PHP Header -->
-<xsl:template name="php_redirect">
-    <xsl:if test="/pg:page/@redirect = 'true'">
-        @header(<xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
-            <xsl:choose>
-                <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseurl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
-                <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
-                <xsl:otherwise><xsl:variable name="cached"><xsl:if test="not($depage_is_live = 'true')">/cached</xsl:if></xsl:variable>"Location: <xsl:value-of select="concat(substring($baseurl,1,string-length($baseurl) - 1),$cached,document(concat('pageref://', @href_id, '/', $currentLang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
-            </xsl:choose>
-        </xsl:for-each>);
-    </xsl:if>
-</xsl:template>
-<!-- }}} -->
+    <!-- {{{ PHP Redirect -->
+    <xsl:template name="php_redirect">
+        <xsl:if test="$currentPage/@redirect = 'true'">
+            @header(<xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
+                <xsl:choose>
+                    <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseurl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
+                    <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
+                    <xsl:otherwise>"Location: <xsl:value-of select="concat($baseurl,document(concat('pageref://', @href_id, '/', $currentLang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>);
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
 
 <!-- {{{ header alternate languages -->
 <xsl:template name="header_alternate_lang">

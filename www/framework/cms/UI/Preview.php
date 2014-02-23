@@ -137,6 +137,7 @@ class Preview extends \depage_ui {
     {
         $urlPath = "/$urlPath";
         $this->currentPath = $urlPath;
+        $savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
         list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
         $xslDOM = $this->getXsltFor($this->template);
 
@@ -153,6 +154,8 @@ class Preview extends \depage_ui {
         $xslt->setParameter("", array(
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
+            "currentContentType" => "text/html",
+            "currentEncoding" => "UTF-8",
             "depageVersion" => \depage::getVersion(),
         ));
         $xslt->setProfiling('logs/xslt-profiling.txt');
@@ -173,7 +176,15 @@ class Preview extends \depage_ui {
             throw new \exception($error);
         }
 
-        return $html;
+        // cache transformed source
+        $dynamic = $this->saveTransformed($savePath, $html);
+
+        if ($dynamic) {
+            // @todo pass GET and POST data along?
+            return file_get_contents(DEPAGE_BASE . $savePath);
+        } else {
+            return $html;
+        }
     }
     // }}}
     // {{{ registerStreams
@@ -262,6 +273,24 @@ class Preview extends \depage_ui {
         ));
     }
     // }}}
+    // {{{ saveTransformed()
+    /**
+     * @return  null
+     */
+    protected function saveTransformed($savePath, $html)
+    {
+        $dynamic = array(
+            "php",
+            "php5",
+        );
+        $info = pathinfo($savePath);
+        @mkdir($info['dirname'], 0777, true);
+
+        file_put_contents($savePath, $html);
+
+        return in_array($info['extension'], $dynamic);
+    }
+    // }}}
     
     // {{{ getXslFor
     /**
@@ -346,6 +375,7 @@ class Preview extends \depage_ui {
         return array($pageId, $pagedataId);
     }
     // }}}
+    
     // {{{ getRelativePathTo
     /**
      * gets relative path to path of active page

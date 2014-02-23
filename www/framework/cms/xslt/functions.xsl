@@ -7,7 +7,7 @@
     xmlns:db="http://cms.depagecms.net/ns/database" 
     xmlns:pg="http://cms.depagecms.net/ns/page" 
     xmlns:func="http://exslt.org/functions" 
-    extension-element-prefixes="xsl dp func ">
+    extension-element-prefixes="xsl dp func php ">
 
     <!-- {{{ dp:choose() -->
     <!--
