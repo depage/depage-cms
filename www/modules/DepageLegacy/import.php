@@ -58,8 +58,7 @@ class Import
     {
         $this->loadBackup($xmlFile);
 
-        // @todo test why cleaning leads to constraint error
-        //$this->cleanDocs();
+        $this->cleanDocs();
 
         $this->getDocs();
 
@@ -120,11 +119,8 @@ class Import
     // {{{ cleanDocs()
     public function cleanDocs()
     {
-        $docs = $this->xmldb->getDocuments();
-
-        foreach ($docs as $name => $doc) {
-            $this->xmldb->removeDoc($name);
-        }
+        $this->xmldb->removeTables();
+        $this->xmldb->createTables();
     }
     // }}}
     // {{{ getDocs()

@@ -276,6 +276,82 @@ class xmldb {
         return false;
     }
     // }}}
+    
+    // {{{ createTables()
+    /**
+     * Creates SQL tables for current settings
+     */
+    public function createTables() {
+        $this->pdo->query("SET foreign_key_checks=0;");
+
+        $this->pdo->query("CREATE TABLE IF NOT EXISTS `{$this->table_xml}` (
+            `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+            `id_doc` int(10) unsigned DEFAULT '0',
+            `id_parent` int(10) unsigned DEFAULT NULL,
+            `pos` mediumint(8) unsigned DEFAULT '0',
+            `name` varchar(50) DEFAULT NULL,
+            `value` mediumtext NOT NULL,
+            `type` enum('ELEMENT_NODE','TEXT_NODE','CDATA_SECTION_NODE','PI_NODE','COMMENT_NODE','ENTITY_REF_NODE','WAIT_FOR_REPLACE','DELETED') NULL DEFAULT 'ELEMENT_NODE',
+
+            PRIMARY KEY (`id`),
+            KEY `SECONDARY` (`id_parent`,`id_doc`,`type`),
+            KEY `THIRD` (`name`),
+            KEY `id_doc` (`id_doc`),
+
+            CONSTRAINT `{$this->table_xml}_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `{$this->table_xml}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT `{$this->table_xml}_ibfk_2` FOREIGN KEY (`id_doc`) REFERENCES `{$this->table_docs}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;");
+
+        $this->pdo->query("CREATE TABLE IF NOT EXISTS `{$this->table_docs}` (
+            `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) NOT NULL DEFAULT '',
+            `type` varchar(50) NOT NULL DEFAULT '',
+            `ns` mediumtext NOT NULL,
+            `entities` mediumtext NOT NULL,
+            `rootid` int(10) unsigned DEFAULT NULL,
+            `lastchange` timestamp DEFAULT '0000-00-00 00:00:00',
+            `lastchange_uid` int(10) unsigned DEFAULT NULL,
+
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `SECONDARY` (`name`),
+            KEY `rootid` (`rootid`),
+            KEY `lastchange_uid` (`lastchange_uid`),
+
+            CONSTRAINT `{$this->table_docs}_ibfk_1` FOREIGN KEY (`lastchange_uid`) REFERENCES `dp_auth_user` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;");
+
+        $this->pdo->query("CREATE TABLE `{$this->table_nodetypes}` (
+            `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+            `pos` int(10) unsigned NOT NULL,
+            `nodename` varchar(255) NOT NULL DEFAULT '',
+            `name` varchar(255) NOT NULL DEFAULT '',
+            `newname` varchar(255) NOT NULL DEFAULT '',
+            `validparents` varchar(255) NOT NULL DEFAULT '',
+            `icon` varchar(255) NOT NULL DEFAULT '',
+            `xmltemplate` varchar(255) NOT NULL DEFAULT '',
+
+            PRIMARY KEY (`id`)/*,
+            UNIQUE KEY `SECONDARY` (`nodename`) */
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;");
+
+        $this->pdo->query("SET foreign_key_checks=1;");
+    }
+    // }}}
+    
+    // {{{ removeTables()
+    /**
+     * Removes SQL tables
+     */
+    public function removeTables() {
+        $this->pdo->query("SET foreign_key_checks=0;");
+
+        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_xml}`;");
+        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_docs}`;");
+        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_nodetypes}`;");
+
+        $this->pdo->query("SET foreign_key_checks=1;");
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
