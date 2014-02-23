@@ -511,7 +511,7 @@
 <xsl:template name="header_include_css">
     <xsl:param name="file" />
     <xsl:param name="media" select="''" />
-    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call://fileinfo/libref://', $file))/file/@date,'/:- ','')" /></xsl:variable>
+    <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
     <link rel="stylesheet" type="text/css"><xsl:if test="$media != ''"><xsl:attribute name="media"><xsl:value-of select="$media" /></xsl:attribute></xsl:if><xsl:attribute name="href"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></link>
 </xsl:template>
@@ -519,7 +519,7 @@
 <!-- {{{ header include js -->
 <xsl:template name="header_include_js">
     <xsl:param name="file" />
-    <xsl:variable name="date"><xsl:value-of select="translate(document(concat('call://fileinfo/libref://', $file))/file/@date,'/:- ','')" /></xsl:variable>
+    <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
     <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>

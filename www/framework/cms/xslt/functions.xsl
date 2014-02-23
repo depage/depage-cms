@@ -121,9 +121,10 @@
 
     -->
     <func:function name="dp:fileinfo">
-        <xsl:param name="libref" />
+        <xsl:param name="path" />
+        <xsl:param name="extended" select="true()" />
 
-        <func:result select="$libref" />
+        <func:result select="php:function('depage\cms\xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
 

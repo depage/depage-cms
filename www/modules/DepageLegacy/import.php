@@ -290,7 +290,7 @@ class Import
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
                         "libref:/" => "libref://",
-                        "call:fileinfo" => "call://fileinfo",
+                        "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
                         "\$tt_lang" => "\$currentLang",
                         "\$content_type" => "\$currentContentType",
                         "\$content_encoding" => "\$currentEncoding",

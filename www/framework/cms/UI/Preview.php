@@ -139,7 +139,7 @@ class Preview extends \depage_ui {
         $this->currentPath = $urlPath;
         $savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
         list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
-        $xslDOM = $this->getXsltFor($this->template);
+        $xslDOM = $this->getXsltTemplate($this->template);
 
         $pageXml = $this->xmldb->getDocXml($pagedataId);
         
@@ -180,7 +180,7 @@ class Preview extends \depage_ui {
         $dynamic = $this->saveTransformed($savePath, $html);
 
         if ($dynamic) {
-            // @todo pass GET and POST data along?
+            // @todo pass POST data along?
             return file_get_contents(DEPAGE_BASE . $savePath);
         } else {
             return $html;
@@ -198,9 +198,6 @@ class Preview extends \depage_ui {
          * get:css -> replace with transforming css directly
          * get:redirect -> analogous to css
          * get:atom -> analogous to css
-         *
-         * @todo dp:functions ?
-         * call:fileinfo -> replaced with call://fileinfo
          *
          * @done but @thinkabout
          * get:page -> replaced with dp:getpage function -> better replace manualy in template
@@ -237,11 +234,6 @@ class Preview extends \depage_ui {
         \depage\cms\Streams\Libref::registerStream("libref", array(
             "preview" => $this,
         ));
-
-        // register stream for various php calls
-        \depage\cms\Streams\Call::registerStream("call", array(
-            "preview" => $this,
-        ));
     }
     // }}}
     // {{{ registerFunctions
@@ -251,9 +243,6 @@ class Preview extends \depage_ui {
     protected function registerFunctions($proc)
     {
         /*
-         * @todo dp:functions ?
-         * call:fileinfo -> replaced with call://fileinfo
-         *
          * @done
          * call:changesrc
          * call:urlencode
@@ -261,6 +250,7 @@ class Preview extends \depage_ui {
          * call:atomizetext
          * call:phpescape
          * call:formatdate
+         * call:fileinfo
          */
 
         \depage\cms\xslt\FuncDelegate::registerFunctions($proc, array(
@@ -269,6 +259,7 @@ class Preview extends \depage_ui {
             "atomizeText" => array($this, "xsltCallAtomizeText"),
             "phpEscape" => array($this, "xsltCallPhpEscape"),
             "formatDate" => array($this, "xsltCallFormatDate"),
+            "fileinfo" => array($this, "xsltCallFileinfo"),
             "urlencode" => "rawurlencode",
         ));
     }
@@ -292,11 +283,11 @@ class Preview extends \depage_ui {
     }
     // }}}
     
-    // {{{ getXslFor
+    // {{{ getXsltTemplate
     /**
      * @return  null
      */
-    protected function getXsltFor($template)
+    protected function getXsltTemplate($template)
     {
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
@@ -420,13 +411,17 @@ class Preview extends \depage_ui {
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallFileinfo($path) {
+    public function xsltCallFileinfo($path, $extended = "true") {
         $xml = "";
         $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
 
         $fileinfo = new \depage\media\mediainfo();
 
-        $info = $fileinfo->getInfo($path);
+        if ($extended === "false") {
+            $info = $fileinfo->getBasicInfo($path);
+        } else {
+            $info = $fileinfo->getInfo($path);
+        }
         $info['date'] = $info['date']->format("Y-m-d H:i:s");
 
         $xml = "<file";
@@ -435,7 +430,10 @@ class Preview extends \depage_ui {
         }
         $xml .= " />";
 
-        return $xml;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+
+        return $doc;
     }
     // }}}
     // {{{ xsltCallChangeSrc()
