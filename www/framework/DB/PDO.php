@@ -1,16 +1,19 @@
 <?php
 /**
- * @file    framework/db/db_pdo.php
+ * @file    framework/DB/PDO.php
  *
  * depage database module
  *
  *
- * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class db_pdo {
+namespace depage\DB;
+
+class PDO
+{
     /* {{{ variables*/
     public $prefix;
     private $pdo = null;
@@ -47,14 +50,14 @@ class db_pdo {
     /**
      */
     private function lateInitialize() {
-        $this->pdo = new pdo($this->dsn, $this->username, $this->password, $this->driver_options);
+        $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->driver_options);
 
         // set error mode to exception by default
-        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         // disable emulated prepares
         // @todo check why this does not work with some queries
-        $this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $this->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
     }
     /* }}} */
 
@@ -98,7 +101,7 @@ class db_pdo {
 
     // {{{ __sleep()
     /**
-     * allows db_pdo-object to be serialized
+     * allows depage\DB\PDO-object to be serialized
      */
     public function __sleep() {
         return array(
@@ -106,13 +109,13 @@ class db_pdo {
             'username', 
             'password', 
             'driver_options', 
-            'prefix'
+            'prefix',
         );
     }
     // }}}
     // {{{ __wakeup()
     /**
-     * allows db_pdo-object to be unserialized
+     * allows depage\DB\PDO-object to be unserialized
      *
      * We don't need to initialize the connection because we are already initializing them late.
      */

@@ -45,7 +45,7 @@ class ui_commentsHandler extends ui_comments {
         $this->pageId = (int) $this->urlSubArgs[1];
 
         // setup database instance
-        $this->pdo = new \db_pdo(
+        $this->pdo = new \depage\DB\PDO(
             $this->options->db->dsn,
             $this->options->db->user,
             $this->options->db->password,

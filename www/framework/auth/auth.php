@@ -39,7 +39,7 @@ class auth {
      *
      * @public
      *
-     * @param       db_pdo  $pdo        db_pdo object for database access
+     * @param       depage\DB\PDO  $pdo        depage\DB\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -62,7 +62,7 @@ class auth {
      *
      * @public
      *
-     * @param       db_pdo  $pdo        db_pdo object for database access
+     * @param       depage\DB\PDO  $pdo        depage\DB\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *

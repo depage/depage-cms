@@ -23,7 +23,7 @@ abstract class entity {
     /**
      * PDO
      * 
-     * @var \db_pdo
+     * @var \depage\DB\PDO
      */
     protected $pdo = null;
     
@@ -86,14 +86,14 @@ abstract class entity {
     /**
      * Constructor
      * 
-     * @param \db_pdo $pdo
+     * @param \depage\DB\PDO $pdo
      * @param array $data  - data to build the object from
      * @param bool $clean - set as clean or dirty
      * @param bool $insert_ignore
      * 
      * @return void
      */
-    public function __construct(\db_pdo $pdo = null, array $data = array(), $clean = true, $insert_ignore = null){
+    public function __construct(\depage\DB\PDO $pdo = null, array $data = array(), $clean = true, $insert_ignore = null){
         $this->pdo = $pdo;
         
         foreach ($data AS $key => $value) {
@@ -184,12 +184,12 @@ abstract class entity {
      * 
      * Static factory to load the database entities.
      * 
-     * @param db_pdo $pdo - depage pdo class
+     * @param depage\DB\PDO $pdo - depage pdo class
      * @param array $params - array(key=>value) to build the WHERE clause on.
      * 
      * @return object
      */
-    protected static function load(\db_pdo $pdo, $params, $orderBy = ""){
+    protected static function load(\depage\DB\PDO $pdo, $params, $orderBy = ""){
         $query = "SELECT * FROM {$pdo->prefix}_" . static::$table_name;
         
         $where = array();
@@ -214,13 +214,13 @@ abstract class entity {
      * 
      * Prepares the query, binds the params, executes and fetches assoc array.
      * 
-     * @param \db_pdo $pdo
+     * @param \depage\DB\PDO $pdo
      * @param string $query
      * @param array $params
      * 
      * @return array $results
      */
-    protected static function fetchArray(\db_pdo $pdo, $query, array $params = array(), array $types = array()){
+    protected static function fetchArray(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array()){
         $cmd = $pdo->prepare($query);
         self::bindParams($cmd, $params, $types);
         try {
@@ -247,7 +247,7 @@ abstract class entity {
      * 
      * @return array 
      */
-    protected static function fetchEntities(\db_pdo $pdo, $query, array $params = array(), array $types = array(), $class = null) {
+    protected static function fetchEntities(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array(), $class = null) {
         $results = self::fetchArray($pdo, $query, $params, $types);
         $class = empty($class) ? get_called_class() : $class;
         foreach($results as &$result) {
@@ -263,13 +263,13 @@ abstract class entity {
      * 
      * Used for queries returning a single entity 
      *  
-     * @param \db_pdo $pdo
+     * @param \depage\DB\PDO $pdo
      * @param string $query
      * @param array $params
      * 
      * @return entity
      */
-    protected static function fetchEntity(\db_pdo $pdo, $query, array $params = array(), array $types = array(), $class = null) {
+    protected static function fetchEntity(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array(), $class = null) {
         $results = self::fetchEntities($pdo, $query, $params, $types, $class);
         if (count($results)){
             return $results[0];

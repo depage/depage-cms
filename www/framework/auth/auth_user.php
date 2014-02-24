@@ -23,7 +23,7 @@ class auth_user {
      *
      * @return      void
      */
-    public function __construct(\db_pdo $pdo) {
+    public function __construct(\depage\DB\PDO $pdo) {
         $this->pdo = $pdo;
     }
     // }}}

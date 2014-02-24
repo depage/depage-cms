@@ -49,7 +49,7 @@ class messaging {
     );
     
     // {{{ constructor()
-    public function __construct(\db_pdo $pdo, array $options = array(), $page_size = 10) {
+    public function __construct(\depage\DB\PDO $pdo, array $options = array(), $page_size = 10) {
         $this->pdo = $pdo;
         $this->page_size = $page_size;
         $this->messages_table = $this->pdo->prefix . '_messages';

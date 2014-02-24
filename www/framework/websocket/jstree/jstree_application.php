@@ -22,7 +22,7 @@ class JsTreeApplication extends \Websocket\Application\Application {
         $this->options = $conf->getFromDefaults($this->defaults);
 
         // get database instance
-        $this->pdo = new \db_pdo (
+        $this->pdo = new \depage\DB\PDO (
             $this->options->db->dsn, // dsn
             $this->options->db->user, // user
             $this->options->db->password, // password

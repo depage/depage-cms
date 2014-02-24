@@ -25,7 +25,7 @@ class history {
     // }}}
 
     // {{{ constructor()
-    public function __construct(\db_pdo $pdo, $table_prefix, document $document) {
+    public function __construct(\depage\DB\PDO $pdo, $table_prefix, document $document) {
         $this->document = $document;
 
         $this->pdo = $pdo;

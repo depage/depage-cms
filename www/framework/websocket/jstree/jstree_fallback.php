@@ -19,7 +19,7 @@ class jstree_fallback extends \depage_ui {
         parent::__construct($options);
 
         // get database instance
-        $this->pdo = new \db_pdo (
+        $this->pdo = new \depage\DB\PDO (
             $this->options->db->dsn, // dsn
             $this->options->db->user, // user
             $this->options->db->password, // password

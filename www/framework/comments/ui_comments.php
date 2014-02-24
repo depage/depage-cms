@@ -57,7 +57,7 @@ class ui_comments extends \depage_ui {
 
         // setup database instance
         if (!isset($this->pdo)) {
-            $this->pdo = new \db_pdo(
+            $this->pdo = new \depage\DB\PDO(
                 $this->options->db->dsn,
                 $this->options->db->user,
                 $this->options->db->password,
