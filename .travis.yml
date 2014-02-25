@@ -5,7 +5,12 @@ php:
   - 5.3
 
 install:
+    sudo apt-get install imagemagick
     sudo apt-get install graphicsmagick
+    sudo apt-get install optipng
+    sudo apt-get install pngcrush
+    sudo apt-get install jpegoptim
+    sudo apt-get install jpegtran
 
 script: 
     phpunit --bootstrap Tests/bootstrap.php Tests
