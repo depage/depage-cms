@@ -33,8 +33,8 @@
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
-            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
             <xsl:if test="name(../..) = 'sec:unordered_list'">
                 <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
@@ -46,7 +46,7 @@
             <a>
                 <!-- {{{ href -->
                 <xsl:choose>
-                    <xsl:when test="$href and substring($href, 1, 8) = 'libref://'">
+                    <xsl:when test="$href and substring($href, 1, 9) = 'libref://'">
                         <xsl:attribute name="href">
                             <xsl:value-of select="document($href)/." disable-output-escaping="yes"/>
                         </xsl:attribute>
@@ -207,8 +207,8 @@
         <!-- {{{ image with link -->
         <xsl:if test="$href != '' or $href_id">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
-            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
             <a>
                 <!-- {{{ href -->

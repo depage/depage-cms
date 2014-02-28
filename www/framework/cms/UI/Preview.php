@@ -139,6 +139,11 @@ class Preview extends \depage_ui {
         $this->currentPath = $urlPath;
         $savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
         list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
+
+        if ($pageId === false || $pagedataId === false) {
+            throw new \exception("site does not exist");
+        }
+
         $xslDOM = $this->getXsltTemplate($this->template);
 
         $pageXml = $this->xmldb->getDocXml($pagedataId);
@@ -162,7 +167,7 @@ class Preview extends \depage_ui {
         $xslt->importStylesheet($xslDOM);
 
         if ($pageXml === false) {   
-            throw new \exception("no page data");
+            throw new \exception("site does not exist");
         } elseif (!$html = $xslt->transformToXml($pageXml)) {   
             $errors = libxml_get_errors();
             foreach($errors as $error) {
@@ -275,7 +280,9 @@ class Preview extends \depage_ui {
             "php5",
         );
         $info = pathinfo($savePath);
-        @mkdir($info['dirname'], 0777, true);
+        if (!is_dir($info['dirname'])) {
+            @mkdir($info['dirname'], 0777, true);
+        }
 
         file_put_contents($savePath, $html);
 
@@ -360,10 +367,14 @@ class Preview extends \depage_ui {
         $xmlnav = new \depage\cms\xmlnav();
         list($this->urlsByPageId, $this->pageIdByUrl) = $xmlnav->getAllUrls($pages->getXml());
 
-        $pageId = $this->pageIdByUrl[$urlPath];
-        $pagedataId = $pages->getAttribute($pageId, "db:docref");
+        if (isset($this->pageIdByUrl[$urlPath])) {
+            $pageId = $this->pageIdByUrl[$urlPath];
+            $pagedataId = $pages->getAttribute($pageId, "db:docref");
 
-        return array($pageId, $pagedataId);
+            return array($pageId, $pagedataId);
+        } else {
+            return array(false, false);
+        }
     }
     // }}}
     

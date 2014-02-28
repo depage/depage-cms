@@ -285,7 +285,7 @@ class Import
                         "document(concat('call:formatdate/'," => "(dp:formatDate(",
                         "href=\"get:xslt/" => "href=\"xslt://",
                         "pageref:/" => "pageref://",
-                        "libref:/" => "libref://",
+                        "pageref:///" => "pageref://",
                         "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
                         "\$tt_lang" => "\$currentLang",
                         "\$content_type" => "\$currentContentType",
@@ -306,6 +306,8 @@ class Import
                     // regex replacement map
                     $replacements = array(
                         "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
+                        "/libref:[\/]{1,3}/i" => "libref://",
+                        "/pageref:[\/]{1,3}/i" => "pageref://",
                     );
                     foreach ($replacements as $pattern => $replacement) {
                         $xsl = preg_replace($pattern, $replacement, $xsl);
@@ -408,10 +410,10 @@ class Import
             $node = $nodelist->item($i);
             $href = $node->getAttribute("href");
 
-            $id = substr($href, 9);
+            $href = preg_replace("/pageref:[\/]{0,3}/", "pageref://", $href);
 
-            if (isset($this->pageIds[$id])) {
-                $node->setAttribute("href", "pageref://{$this->pageIds[$id]}");
+            if (isset($this->pageIds[$href])) {
+                $node->setAttribute("href", $href);
             } else {
                 // clear links with a non-existant page reference
                 $node->setAttribute("href", "");
@@ -426,25 +428,25 @@ class Import
         $xpath = new \DOMXPath($xmlData);
         $nodelist = $xpath->query("//*[@href and starts-with(@href,'libref:')]");
 
-        // test all links with a pageref
+        // test all links with a libref
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $href = $node->getAttribute("href");
 
-            $id = substr($href, 8);
+            $href = preg_replace("/libref:[\/]{1,3}/", "libref://", $href);
 
-            $node->setAttribute("src", "libref://{$id}");
+            $node->setAttribute("href", $href);
         }
         $nodelist = $xpath->query("//*[@src and starts-with(@src,'libref:')]");
 
-        // test all links with a pageref
+        // test all links with a libref
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $href = $node->getAttribute("src");
 
-            $id = substr($href, 8);
+            $href = preg_replace("/libref:[\/]{1,3}/", "libref://", $href);
 
-            $node->setAttribute("src", "libref://{$id}");
+            $node->setAttribute("src", $href);
         }
         
     }
@@ -453,6 +455,7 @@ class Import
     protected function updateImageSizes($xmlData)
     {
         $xpath = new \DOMXPath($xmlData);
+        $xpath->registerNamespace("edit", "http://cms.depagecms.net/ns/edit");
         $nodelist = $xpath->query("//edit:img[@force_width or @force_height]");
 
         // test all images with a forced with or height

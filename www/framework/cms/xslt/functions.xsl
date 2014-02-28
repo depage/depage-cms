@@ -40,7 +40,16 @@
         <xsl:param name="pageid" />
         <xsl:variable name="pagedataid" select="$navigation//pg:*[@db:id = $pageid]/@db:docref" />
 
-        <func:result select="document(concat('xmldb://', $pagedataid))" />
+        <xsl:choose>
+            <xsl:when test="$pagedataid = ''">
+                <func:result />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="document(concat('xmldb://', $pagedataid))" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:color() -->
     <!--
         dp:color(colorname)
