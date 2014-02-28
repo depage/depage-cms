@@ -433,7 +433,9 @@ class Preview extends \depage_ui {
         } else {
             $info = $fileinfo->getInfo($path);
         }
-        $info['date'] = $info['date']->format("Y-m-d H:i:s");
+        if (isset($info['date'])) {
+            $info['date'] = $info['date']->format("Y-m-d H:i:s");
+        }
 
         $xml = "<file";
         foreach ($info as $key => $value) {
