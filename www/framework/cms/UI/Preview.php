@@ -309,7 +309,7 @@ class Preview extends \depage_ui {
             'colors' => "document('xmldb://colors')",
             'languages' => "\$settings//proj:languages",
             'currentPage' => "\$navigation//pg:page[@status = 'active']",
-            'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name]/@name)",
+            'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
         );
         
         // add variables from settings

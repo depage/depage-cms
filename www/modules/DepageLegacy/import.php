@@ -265,7 +265,7 @@ class Import
                     if (!is_dir($path)) mkdir($path);
                     $filename = $path . \html::get_url_escaped($namePrefix . $child->getAttribute("name")) . ".xsl";
 
-                    // @todo automatically replace custom php calls etc. for automatic xsl updates
+                    // string replacement map
                     $replacements = array(
                         "\t" => "    ",
                         "\n" => "\n    ",
@@ -302,6 +302,14 @@ class Import
                         "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
+
+                    // regex replacement map
+                    $replacements = array(
+                        "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
+                    );
+                    foreach ($replacements as $pattern => $replacement) {
+                        $xsl = preg_replace($pattern, $replacement, $xsl);
+                    }
 
                     file_put_contents($filename, "{$this->xslHeader}    {$xsl}\n{$this->xslFooter}");
                 }

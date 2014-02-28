@@ -5,6 +5,7 @@
     xmlns:php="http://php.net/xsl"
     xmlns:dp="http://cms.depagecms.net/ns/depage" 
     xmlns:db="http://cms.depagecms.net/ns/database" 
+    xmlns:proj="http://cms.depagecms.net/ns/project" 
     xmlns:pg="http://cms.depagecms.net/ns/page" 
     xmlns:func="http://exslt.org/functions" 
     extension-element-prefixes="xsl dp func php ">
@@ -40,8 +41,19 @@
         <xsl:variable name="pagedataid" select="$navigation//pg:*[@db:id = $pageid]/@db:docref" />
 
         <func:result select="document(concat('xmldb://', $pagedataid))" />
+    <!-- {{{ dp:color() -->
+    <!--
+        dp:color(colorname)
+
+    -->
+    <func:function name="dp:color">
+        <xsl:param name="name" />
+        <xsl:param name="colorscheme" select="$currentColorscheme" />
+
+        <func:result select="translate($colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]/@value,'ABCDEF','abcdef')" />
     </func:function>
     <!-- }}} -->
+
     <!-- {{{ dp:changesrc() -->
     <!--
         dp:changesrc(src)
