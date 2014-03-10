@@ -150,8 +150,6 @@ class Preview extends \depage_ui {
             throw new \exception("site does not exist");
         }
 
-        $xslDOM = $this->getXsltTemplate($this->template);
-
         $pageXml = $this->xmldb->getDocXml($pagedataId);
         
         libxml_disable_entity_loader(false);
@@ -161,6 +159,8 @@ class Preview extends \depage_ui {
 
         $this->registerStreams($xslt);
         $this->registerFunctions($xslt);
+
+        $xslDOM = $this->getXsltTemplate($this->template);
 
         $xslt->setParameter("", array(
             "currentLang" => $this->lang,
@@ -319,7 +319,9 @@ class Preview extends \depage_ui {
         }
 
         if ($regenerate) {
-            $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+            $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+            $xslt .= "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>";
+            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
 
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
@@ -365,7 +367,17 @@ class Preview extends \depage_ui {
 
             
             foreach ($files as $file) {
-                $xslt .= "\n<xsl:include href=\"" . htmlentities(realpath($file)) . "\" />";
+                if ($this->previewType == "dev") {
+                    $xslt .= "\n<xsl:include href=\"" . htmlentities(realpath($file)) . "\" />";
+                } else {
+                    $tpl = new \depage\xml\Document();
+                    $tpl->load($file);
+
+                    foreach ($tpl->documentElement->childNodes as $node) {
+                        $xslt .= $tpl->saveXML($node);
+                    }
+
+                }
             }
             $xslt .= "\n</xsl:stylesheet>";
 
