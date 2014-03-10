@@ -161,16 +161,19 @@ class html {
             $html_lines = explode("\n", $html);
             $html = "";
 
-            $dont_clean_tags = array("pre", "textarea");
-            $dont_clean = 0;
+            $dontCleanTags = implode("|<", array(
+                "pre", 
+                "textarea",
+            ));
+            $dontClean = 0;
 
             foreach ($html_lines as $i => $line) {
                 // check for opening tags
-                if ($m = preg_match_all("/<" . implode("|<", $dont_clean_tags) . "/", $line, $matches)) {
-                    $dont_clean += $m;
+                if ($m = preg_match_all("/<$dontCleanTags/", $line, $matches)) {
+                    $dontClean += $m;
                 }
 
-                if ($dont_clean > 0) {
+                if ($dontClean > 0) {
                     // just copy the whole line
                     $html .= $line . "\n";
                 } else {
@@ -185,8 +188,8 @@ class html {
                 }
 
                 // check for closing tags
-                if ($m = preg_match_all("/<\/" . implode("|<\/", $dont_clean_tags) . "/", $line, $matches)) {
-                    $dont_clean -= $m;
+                if ($m = preg_match_all("/<\/$dontCleanTags/", $line, $matches)) {
+                    $dontClean -= $m;
                 }
             }
         }
@@ -512,6 +515,8 @@ class html {
     
     // {{{ get_url_escaped()
     public static function get_url_escaped ($text, $limit = 100) {
+        $origText = $text;
+
         // {{{ substitutes
         $substitutes = array(
             'Š'=>'S',
@@ -577,6 +582,10 @@ class html {
             'ú'=>'u',
             'û'=>'u',
             'ü'=>'ue',
+            // @todo find a better way for composite characters
+            //chr(227) . chr(188) =>'ue',
+            // \x{XXXX}
+            "\xe3\xbc" =>'ue',
             'ý'=>'y',
             'ý'=>'y',
             'þ'=>'b',
@@ -589,16 +598,37 @@ class html {
         
         $text = trim($text);
         
-        foreach ($substitutes as $o => $s) {
-            $text = mb_ereg_replace($o, $s, $text);
-        }
+        $text = str_replace(array_keys($substitutes), array_values($substitutes), $text);
         
         $text = mb_ereg_replace('[^\d\w]+', '-', $text);
         $text = trim($text, "-");
         if (mb_strlen($text) > $limit) {
             $title = mb_strcut($text, 0, $limit);
         }
+
         $text = rawurlencode($text);
+
+        return $text;
+
+        if ($text == "b%E3%BCro") {
+            for ($i = 0; $i < strlen($origText); $i++) {
+                $char = $origText[$i];
+            }
+            $text = $origText;
+
+            if (strpos($text = htmlentities($text, ENT_QUOTES, 'UTF-8'), '&') !== false) {
+                $text = html_entity_decode(preg_replace('/&([a-z]{1,2})(?:acute|caron|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);/i', '$1', $text), ENT_QUOTES, 'UTF-8');
+                var_dump($text);
+            } else {
+                var_dump("notfound");
+            }
+            
+            $text = strtolower(trim(preg_replace('/[^0-9a-z' . preg_quote($extra, '~') . ']++/i', $slug, $text), $slug));
+            die($text);
+
+            var_dump($origText);
+            die();
+        }
         
         return $text;
     }
