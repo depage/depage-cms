@@ -15,7 +15,7 @@ namespace depage\cms\UI;
 class Preview extends \depage_ui {
     protected $html_options = array();
     protected $basetitle = "";
-    protected $cached = false;
+    protected $previewType = "dev";
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
@@ -85,7 +85,7 @@ class Preview extends \depage_ui {
         // get parameters 
         $this->projectName = $this->urlSubArgs[0];
         $this->template = array_shift($args);
-        $this->cached = array_shift($args) == "cached" ? true : false;
+        $this->previewType = array_shift($args);
         $this->lang = array_shift($args);
 
         $urlPath = implode("/", $args);
@@ -96,11 +96,17 @@ class Preview extends \depage_ui {
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
-        // get cache instance
-        $this->cache = \depage\cache\cache::factory("xmldb");
+        // get cache instance for transforms
+        $this->transformCache = \depage\cache\cache::factory("transform");
+
+        // get cache instance for templates
+        $this->xsltCache = \depage\cache\cache::factory("xslt");
+
+        // get cache instance for xmldb
+        $this->xmldbCache = \depage\cache\cache::factory("xmldb");
 
         // create xmldb-project
-        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
+        $this->xmldb = new \depage\xmldb\xmldb($this->prefix, $this->pdo, $this->xmldbCache, array(
             'pathXMLtemplate' => $this->xmlPath,
             //'userId' => $this->auth_user->id,
         ));
@@ -188,7 +194,8 @@ class Preview extends \depage_ui {
             // @todo pass POST data along?
             return file_get_contents(DEPAGE_BASE . $savePath);
         } else {
-            return $html;
+            //return $html;
+            return new \html(null, array("content" => $html), $this->html_options);
         }
     }
     // }}}
@@ -296,62 +303,77 @@ class Preview extends \depage_ui {
      */
     protected function getXsltTemplate($template)
     {
+        $regenerate = false;
+        $xslFile = "{$this->projectName}/{$template}/{$this->previewType}.xsl";
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
-        $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
-
-        $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
-
-        // add basic paramaters and variables
-        $params = array(
-            'currentLang' => null,
-            'currentPageId' => null,
-            'depageIsLive' => "'false'",
-            // @todo complete baseurl this in a better way
-            'baseurl' => "'" . DEPAGE_BASE . 'project/' . $this->projectName . "/preview/" . $this->template . "/noncached/" . "'",
-        );
-        $variables = array(
-            'navigation' => "document('xmldb://pages')",
-            'settings' => "document('xmldb://settings')",
-            'colors' => "document('xmldb://colors')",
-            'languages' => "\$settings//proj:languages",
-            'currentPage' => "\$navigation//pg:page[@status = 'active']",
-            'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
-        );
-        
-        // add variables from settings
-        $settings = $this->xmldb->getDocXml("settings");
-
-        $xpath = new \DOMXPath($settings);
-        $nodelist = $xpath->query("//proj:variable");
-
-        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-            $node = $nodelist->item($i);
-            $variables["var-" . $node->getAttribute("name")] = "'" . htmlspecialchars($node->getAttribute("value")) . "'";
-        }
-
-        // now add to xslt
-        foreach ($params as $key => $value) {
-            if (!empty($value)) {
-                $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
-            } else {
-                $xslt .= "\n<xsl:param name=\"$key\" />";
+        if (($age = $this->xsltCache->age($xslFile)) !== false) {
+            foreach ($files as $file) {
+                $regenerate = $regenerate || $age < filemtime($file);
+                if ($regenerate) {
+                    break;
+                }
             }
-        }
-        foreach ($variables as $key => $value) {
-            $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
+        } else {
+            $regenerate = true;
         }
 
-        
-        foreach ($files as $file) {
-            $xslt .= "\n<xsl:include href=\"" . htmlentities($file) . "\" />";
-        }
-        $xslt .= "\n</xsl:stylesheet>";
+        if ($regenerate) {
+            $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
 
-        //die($xslt);
+            $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
+
+            // add basic paramaters and variables
+            $params = array(
+                'currentLang' => null,
+                'currentPageId' => null,
+                'depageIsLive' => "'false'",
+                // @todo complete baseurl this in a better way
+                'baseurl' => "'" . DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/'",
+            );
+            $variables = array(
+                'navigation' => "document('xmldb://pages')",
+                'settings' => "document('xmldb://settings')",
+                'colors' => "document('xmldb://colors')",
+                'languages' => "\$settings//proj:languages",
+                'currentPage' => "\$navigation//pg:page[@status = 'active']",
+                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
+            );
+            
+            // add variables from settings
+            $settings = $this->xmldb->getDocXml("settings");
+
+            $xpath = new \DOMXPath($settings);
+            $nodelist = $xpath->query("//proj:variable");
+
+            for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+                $node = $nodelist->item($i);
+                $variables["var-" . $node->getAttribute("name")] = "'" . htmlspecialchars($node->getAttribute("value")) . "'";
+            }
+
+            // now add to xslt
+            foreach ($params as $key => $value) {
+                if (!empty($value)) {
+                    $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
+                } else {
+                    $xslt .= "\n<xsl:param name=\"$key\" />";
+                }
+            }
+            foreach ($variables as $key => $value) {
+                $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
+            }
+
+            
+            foreach ($files as $file) {
+                $xslt .= "\n<xsl:include href=\"" . htmlentities(realpath($file)) . "\" />";
+            }
+            $xslt .= "\n</xsl:stylesheet>";
+
+            $this->xsltCache->set($xslFile, $xslt);
+        }
 
         $doc = new \depage\xml\Document();
-        $doc->loadXML($xslt);
+        $doc->load($this->xsltCache->getPath($xslFile));
 
         return $doc;
     }

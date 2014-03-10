@@ -110,7 +110,7 @@ class File extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
             // do not serialize xml or json -> string expected
             // @todo trigger error when not a string
             return $this->setFile($key, $data);
@@ -130,7 +130,7 @@ class File extends \Depage\Cache\Cache
     public function get($key)
     {
         $value = $this->getFile($key);
-        if (substr($key, -4) === ".xml" || substr($key, -5) === ".json") {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
             // do not unserialize xml or json -> give back string
             return $value;
         } else {
@@ -151,6 +151,21 @@ class File extends \Depage\Cache\Cache
     {
         if ($this->baseurl !== null) {
             return $this->baseurl . $key;
+        }
+    }
+    // }}}
+    // {{{ getPath */
+    /**
+     * @brief returns cache-url of cache-item for direct access through http
+     *
+     * @param   $key (string) key of cache item
+     *
+     * @return (string) url of cache-item
+     */
+    public function getPath($key)
+    {
+        if ($this->cachepath !== null) {
+            return $this->cachepath . $key;
         }
     }
     // }}}
