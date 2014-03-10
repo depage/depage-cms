@@ -73,6 +73,18 @@ class mediainfo {
 
         $this->info = $this->getBasicInfo();
 
+        // add mimetype info
+        $info['mime'] = "application/octet-stream";
+
+        $fileinfo = pathinfo($this->filename);
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($this->filename);
+        if (is_string($mime) && !empty($mime)) {
+            $info['mime'] = $mime;
+        }
+
+
         if ($this->info['exists']) {
             if ($this->hasImageExtension()) {
                 $this->getImageInfo();
@@ -108,16 +120,6 @@ class mediainfo {
 
         if (file_exists($this->filename)) {
             $info['exists'] = true;
-            $info['mime'] = "application/octet-stream";
-
-            $fileinfo = pathinfo($this->filename);
-
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
-            $mime = $finfo->file($this->filename);
-            if (is_string($mime) && !empty($mime)) {
-                $info['mime'] = $mime;
-            }
-
             $info['name'] = $fileinfo['basename'];
             $info['path'] = $fileinfo['dirname'];
             $info['basename'] = $fileinfo['basename'];
