@@ -173,13 +173,16 @@ class Imagemagick extends \Depage\Graphics\Graphics
         } else {
             $background = $this->getBackground();
             $quality    = $this->getQuality();
+            $optimize   = $this->getOptimize();
 
             $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$this->command}";
-            $this->command .= " ) -flatten {$quality} {$this->outputFormat}:" . escapeshellarg($this->output);
+            $this->command .= " ) -flatten {$quality}{$optimize}";
+
+            $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
 
             $this->execCommand();
 
-            if ($this->optimize) {
+            if ($this->optimize && $this->outputFormat == 'png') {
                 $this->optimizeImage($this->output);
             }
         }
@@ -200,7 +203,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
         exec($command . ' 2>&1', $commandOutput, $returnStatus);
         if ($returnStatus != 0) {
-            throw new Exceptions\Exception(implode("\n", $commandOutput));
+            throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
         }
     }
     // }}}
@@ -246,6 +249,26 @@ class Imagemagick extends \Depage\Graphics\Graphics
         } else {
             return '';
         }
+    }
+    // }}}
+    // {{{ getOptimize()
+    /**
+     * @brief Generates optimization parameters
+     *
+     * @return string optimization part of the command string
+     **/
+    protected function getOptimize()
+    {
+        $param = "";
+        if ($this->optimize) {
+            $param .= " -strip";
+
+            if ($this->outputFormat == 'jpg') {
+                $param .= " -interlace Plane";
+            }
+        }
+
+        return $param;
     }
     // }}}
 }

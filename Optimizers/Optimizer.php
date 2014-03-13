@@ -7,6 +7,11 @@ abstract class Optimizer
     protected $executable = '';
     protected $command = '';
 
+    protected function factory($imagetype)
+    {
+        // @todo implement
+    }
+
     protected function execCommand()
     {
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);

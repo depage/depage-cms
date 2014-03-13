@@ -110,7 +110,7 @@ class Graphicsmagick extends Imagemagick
 
                 $this->execCommand();
 
-                if ($this->optimize) {
+                if ($this->optimize && $this->outputFormat == 'png') {
                     $this->optimizeImage($this->output);
                 }
             }

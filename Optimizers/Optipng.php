@@ -21,6 +21,7 @@ class Optipng extends Optimizer
         //$this->command .= "-o 2 ";
         
         $this->command .= "-force ";
+        // test optipng version
         $this->command .= "-strip all ";
         $this->command .= "-preserve ";
 

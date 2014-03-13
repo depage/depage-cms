@@ -51,8 +51,12 @@ class Graphics_ui extends \depage_ui
         $height     = intval($command[5]);
         $extension  = $this->letters($command[6]);
 
-        if ($width == 0) $width = "X";
-        if ($height == 0) $height = "X";
+        if ($width == 0) {
+            $width = "X";
+        }
+        if ($height == 0) {
+            $height = "X";
+        }
 
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
@@ -61,6 +65,7 @@ class Graphics_ui extends \depage_ui
                 'extension'     => $this->options->extension,
                 'executable'    => $this->options->executable,
                 'background'    => $this->options->background,
+                'optimize'      => $this->options->optimize,
             )
         );
 
