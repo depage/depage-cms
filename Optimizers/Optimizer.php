@@ -4,7 +4,7 @@ namespace Depage\Graphics\Optimizers;
 
 abstract class Optimizer
 {
-    protected $executable = '';
+    protected $executable = null;
     protected $command = '';
 
     protected function factory($imagetype)

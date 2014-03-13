@@ -6,7 +6,9 @@ class Jpegoptim extends Optimizer
 {
     public function __construct()
     {
-        $this->executable = \Depage\Graphics\Graphics::which("jpegoptim");
+        if (is_null($this->executable)) {
+            $this->executable = \Depage\Graphics\Graphics::which("jpegoptim");
+        }
     }
 
     public function optimize($filename)

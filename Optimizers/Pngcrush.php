@@ -6,7 +6,9 @@ class Pngcrush extends Optimizer
 {
     public function __construct()
     {
-        $this->executable = \Depage\Graphics\Graphics::which("pngcrush");
+        if (is_null($this->executable)) {
+            $this->executable = \Depage\Graphics\Graphics::which("pngcrush");
+        }
     }
 
     public function optimize($filename)
