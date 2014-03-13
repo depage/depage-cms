@@ -109,6 +109,10 @@ class Graphicsmagick extends Imagemagick
                 $this->command .= "{$background} {$quality} +page {$this->outputFormat}:" . escapeshellarg($this->output);
 
                 $this->execCommand();
+
+                if ($this->optimize) {
+                    $this->optimizeImage($this->output);
+                }
             }
         }
     }

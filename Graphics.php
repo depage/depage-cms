@@ -65,6 +65,10 @@ class Graphics
      **/
     protected $quality = '';
     /**
+     * @brief Optimize output images
+     **/
+    protected $optimize = false;
+    /**
      * @brief Input image format
      **/
     protected $inputFormat;
@@ -108,7 +112,7 @@ class Graphics
             if (isset($options['executable'])) {
                 return new Providers\Graphicsmagick($options);
             } else {
-                $executable = graphics::which('gm');
+                $executable = Graphics::which('gm');
                 if ($executable == null) {
                     trigger_error("Cannot find GraphicsMagick, falling back to GD", E_USER_WARNING);
                 } else {
@@ -133,6 +137,7 @@ class Graphics
         $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
         $this->format       = (isset($options['format']))       ? $options['format']            : null;
+        $this->optimize     = (isset($options['optimize']))     ? $options['optimize']          : false;
     }
     // }}}
 
@@ -302,6 +307,31 @@ class Graphics
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
     }
     // }}}
+    // {{{ optimizeImage()
+    /**
+     * @brief   Opimizes final image through one of the optimization programs
+     *
+     * @param  string $file name of file to optimize
+     * @return void
+     **/
+    public function optimizeImage($file)
+    {
+        if (!file_exists($file)) throw new Exceptions\FileNotFound();
+
+        $optimizer = false;
+        $format = $this->obtainFormat($filename);
+
+        if ($format == "jpg") {
+            $optimizer = new Optimizer/Jpegtran();
+        } else if ($format == "png") {
+            $optimizer = new Optimizer/Pngcrush();
+        }
+
+        if ($optimizer) {
+            $optimizer->optimize($file);
+        }
+    }
+    // }}}
 
     // {{{ obtainFormat()
     /**
@@ -351,7 +381,7 @@ class Graphics
      * @param  string $binary filename of binary to look for
      * @return string $commandOutput[0]   first line of output (path to binary)
      **/
-    protected static function which($binary)
+    public static function which($binary)
     {
         exec('which ' . $binary, $commandOutput, $returnStatus);
         if ($returnStatus === 0) {

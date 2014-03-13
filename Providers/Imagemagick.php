@@ -178,6 +178,10 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $this->command .= " ) -flatten {$quality} {$this->outputFormat}:" . escapeshellarg($this->output);
 
             $this->execCommand();
+
+            if ($this->optimize) {
+                $this->optimizeImage($this->output);
+            }
         }
     }
     // }}}

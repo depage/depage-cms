@@ -227,13 +227,16 @@ class Gd extends \Depage\Graphics\Graphics
         $this->load();
         $this->processQueue();
 
-        if (
-            $this->bypass
+        if ($this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
             $this->bypass();
         } else {
             $this->save();
+
+            if ($this->optimize) {
+                $this->optimizeImage($this->output);
+            }
         }
     }
     // }}}
