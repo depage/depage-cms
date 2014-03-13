@@ -21,6 +21,12 @@ class optimizerTest extends PHPUnit_Framework_TestCase
         copy(__DIR__ . "/images/test.png", $this->testPng);
     }
 
+    function tearDown()
+    {
+        unlink($this->testJpeg);
+        unlink($this->testPng);
+    }
+
     function testJpegtran()
     {
         $optimizer = new \Depage\Graphics\Optimizers\Jpegtran();

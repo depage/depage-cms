@@ -67,7 +67,7 @@ class Graphics
     /**
      * @brief Optimize output images
      **/
-    protected $optimize = false;
+    protected $optimize;
     /**
      * @brief Input image format
      **/
@@ -314,22 +314,27 @@ class Graphics
      * @param  string $file name of file to optimize
      * @return void
      **/
-    public function optimizeImage($file)
+    public function optimizeImage($filename)
     {
-        if (!file_exists($file)) throw new Exceptions\FileNotFound();
+        if (!file_exists($filename)) {
+            return false;
+        }
 
+        $success = false;
         $optimizer = false;
         $format = $this->obtainFormat($filename);
 
         if ($format == "jpg") {
-            $optimizer = new Optimizer/Jpegtran();
+            $optimizer = new Optimizers\Jpegtran();
         } else if ($format == "png") {
-            $optimizer = new Optimizer/Pngcrush();
+            $optimizer = new Optimizers\Optipng();
         }
 
         if ($optimizer) {
-            $optimizer->optimize($file);
+            $success = $optimizer->optimize($filename);
         }
+
+        return $success;
     }
     // }}}
 

@@ -6,7 +6,7 @@ php:
 
 install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq imagemagick graphicsmagick optipng pngcrush jpegoptim 
+    - sudo apt-get install -qq imagemagick graphicsmagick optipng pngcrush jpegoptim libjpeg-progs
 
 script: 
     phpunit --bootstrap Tests/bootstrap.php Tests
