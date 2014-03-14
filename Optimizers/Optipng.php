@@ -14,10 +14,9 @@ class Optipng extends Optimizer
             if ($this->executable) {
                 exec($this->executable . ' --version 2>&1', $commandOutput, $returnStatus);
 
-                preg_match("/OptiPNG version (\d).(\d).(\d)/", $commandOutput[0], $matches);
-                array_shift($matches);
+                preg_match("/(\d+).(\d+).(\d+)/", $commandOutput[0], $matches);
 
-                $this->version = $matches;
+                $this->version = $matches[0];
             }
         }
     }
@@ -33,12 +32,11 @@ class Optipng extends Optimizer
         // 2 is the default (8 trials) -> may change between versions
         //$this->command .= "-o 2 ";
         
-        if ($this->version[0] >= 0 && $this->version[1] >= 7) {
+        if (version_compare($this->version, '0.7.0', '>=')) {
             // strip got added in version 0.7
             $this->command .= "-strip all ";
         }
         
-        //$this->command .= "-force ";
         $this->command .= "-preserve ";
 
         $this->command .= " " . escapeshellarg($filename);
