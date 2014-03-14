@@ -264,7 +264,7 @@ class graphicsTest extends PHPUnit_Framework_TestCase
     {
         $this->graphics->setOutputFormat('jpg');
 
-        $this->assertSame('90', $this->graphics->getQuality(), 'Default JPG quality should be 90.');
+        $this->assertSame('85', $this->graphics->getQuality(), 'Default JPG quality should be 85.');
 
         $this->graphics->setQuality(80);
         $this->assertSame('80', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
@@ -277,12 +277,12 @@ class graphicsTest extends PHPUnit_Framework_TestCase
 
         // boundary values
         $this->graphics->setQuality(-1);
-        $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
+        $this->assertSame('85', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
         $this->graphics->setQuality(101);
-        $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
+        $this->assertSame('85', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
 
         $this->graphics->setQuality('foo');
-        $this->assertSame('90', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
+        $this->assertSame('85', $this->graphics->getQuality(), 'Error in JPG quality calculator.');
     }
     // }}}
     // {{{ testGetQualityPng()

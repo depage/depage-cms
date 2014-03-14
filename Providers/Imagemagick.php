@@ -80,8 +80,12 @@ class Imagemagick extends \Depage\Graphics\Graphics
         $newSize = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
+            $resizeAction = $this->getResizeAction($newSize[0], $newSize[1]);
 
-            $this->command .= " -resize {$newSize[0]}x{$newSize[1]}!";
+            //$this->command .= " -colorspace Lab";
+            $this->command .= " $resizeAction {$newSize[0]}x{$newSize[1]}!";
+            //$this->command .= " -colorspace sRGB";
+
             $this->size = $newSize;
         }
     }
@@ -99,7 +103,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
     protected function thumb($width, $height)
     {
         if (!$this->bypassTest($width, $height)) {
-            $this->command .= " -gravity Center -thumbnail {$width}x{$height} -extent {$width}x{$height}";
+            $resizeAction = $this->getResizeAction($width, $height);
+
+            $this->command .= " -gravity Center $resizeAction {$width}x{$height} -extent {$width}x{$height}";
             $this->size = array($width, $height);
         }
     }
@@ -117,7 +123,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
     protected function thumbfill($width, $height)
     {
         if (!$this->bypassTest($width, $height)) {
-            $this->command .= " -gravity Center -thumbnail {$width}x{$height}^ -extent {$width}x{$height}";
+            $resizeAction = $this->getResizeAction($width, $height);
+
+            $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}";
             $this->size = array($width, $height);
         }
     }
@@ -182,7 +190,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
             $this->execCommand();
 
-            if ($this->optimize && $this->outputFormat == 'png') {
+            if ($this->optimize) {
                 $this->optimizeImage($this->output);
             }
         }
@@ -265,10 +273,30 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
             if ($this->outputFormat == 'jpg') {
                 $param .= " -interlace Plane";
+            } else if ($this->outputFormat == 'png') {
+                $param .= " -define png:format=png00";
             }
         }
 
         return $param;
+    }
+    // }}}
+    // {{{ getResizeAction()
+    /**
+     * @brief Gets the resize action depending on target size
+     *
+     * this assumes that all images below 160px width or height will be thumbnails
+     * everything bigger gets resized slowly in better quality
+     *
+     * @return string resize action as part of command string
+     **/
+    protected function getResizeAction($width, $height)
+    {
+        if ($width <= 160 && $height <= 160) {
+            return "-thumbnail";
+        } else {
+            return "-resize";
+        }
     }
     // }}}
 }

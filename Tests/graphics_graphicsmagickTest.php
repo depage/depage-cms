@@ -64,7 +64,7 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
         $this->graphics->thumb(70, 70);
         $this->assertSame(array(70, 70), $this->graphics->getSize(), 'Image size should have changed.');
 
-        $expected = ' -gravity NorthWest -crop 50x50+0+0! -gravity NorthWest -extent 50x50+0+0 -resize 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
+        $expected = ' -gravity NorthWest -crop 50x50+0+0! -gravity NorthWest -extent 50x50+0+0 -thumbnail 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
         $this->assertSame($expected, $this->graphics->getCommand(), 'Action chain error.');
     }
     // }}}
@@ -92,7 +92,7 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg');
 
-        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -quality 90 +page jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -quality 85 +page jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}

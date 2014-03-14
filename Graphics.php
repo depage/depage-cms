@@ -21,11 +21,13 @@ namespace Depage\Graphics;
  **/
 function autoload($class)
 {
-    $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
-    $file = __DIR__ . '/' .  $class . '.php';
+    if (strpos($class, __NAMESPACE__ . '\\') == 0) {
+        $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
+        $file = __DIR__ . '/' .  $class . '.php';
 
-    if (file_exists($file)) {
-        require_once($file);
+        if (file_exists($file)) {
+            require_once($file);
+        }
     }
 }
 
@@ -416,7 +418,7 @@ class Graphics
             ) {
                 $quality = $this->quality;
             } else {
-                $quality = 90;
+                $quality = 85;
             }
         } elseif ($this->outputFormat == 'png') {
             if (

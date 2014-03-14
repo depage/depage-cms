@@ -58,8 +58,19 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
     public function testResizeSimple()
     {
         $this->graphics->resize(50, 50);
-        $this->assertSame(' -resize 50x50!', $this->graphics->getCommand(), 'Resize command error.');
+        $this->assertSame(' -thumbnail 50x50!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertSame(array(50, 50), $this->graphics->getSize(), 'Image size should have changed.');
+    }
+    // }}}
+    // {{{ testResizeSimpleBig()
+    /**
+     * Tests simple resize action
+     **/
+    public function testResizeSimpleBig()
+    {
+        $this->graphics->resize(300, 300);
+        $this->assertSame(' -resize 300x300!', $this->graphics->getCommand(), 'Resize command error.');
+        $this->assertSame(array(300, 300), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
     // {{{ testResizeScaleX()
@@ -69,7 +80,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
     public function testResizeScaleX()
     {
         $this->graphics->resize('X', 60);
-        $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
+        $this->assertSame(' -thumbnail 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
@@ -80,7 +91,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
     public function testResizeScaleY()
     {
         $this->graphics->resize(60, 'X');
-        $this->assertSame(' -resize 60x60!', $this->graphics->getCommand(), 'Resize command error.');
+        $this->assertSame(' -thumbnail 60x60!', $this->graphics->getCommand(), 'Resize command error.');
         $this->assertEquals(array(60, 60), $this->graphics->getSize(), 'Image size should have changed.');
     }
     // }}}
@@ -110,7 +121,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
         $this->graphics->thumb(70, 70);
         $this->assertSame(array(70, 70), $this->graphics->getSize(), 'Image size should have changed.');
 
-        $expected = ' -gravity NorthWest -crop 50x50+0+0! -flatten -resize 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
+        $expected = ' -gravity NorthWest -crop 50x50+0+0! -flatten -thumbnail 60x60! -gravity Center -thumbnail 70x70 -extent 70x70';
         $this->assertSame($expected, $this->graphics->getCommand(), 'Action chain error.');
     }
     // }}}
@@ -138,7 +149,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg');
 
-        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 90 jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -193,7 +204,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
     public function testGetQualityJpg()
     {
         $this->graphics->render(__DIR__ . '/images/test.jpg');
-        $this->assertSame('-quality 90', $this->graphics->getQuality(), 'JPG quality string error.');
+        $this->assertSame('-quality 85', $this->graphics->getQuality(), 'JPG quality string error.');
     }
     // }}}
     // {{{ testGetQualityPng()
