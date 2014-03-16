@@ -48,8 +48,42 @@ class Imgurl
 
         $this->srcImg = $rel . $matches[1];
         $this->outImg = $this->cachePath . $matches[0];
-        $this->actions = explode(".", $matches[3]);
+        $this->actions = $this->analyzeActions($matches[3]);
         
+    }
+    // }}}
+    // {{{ analyzeActions
+    /*
+     * Analyzes actions and replaces shortcuts with real actions
+     */
+    protected function analyzeActions($actionString)
+    {
+        $aliases = array(
+            'r'          => "addResize",
+            'resize'     => "addResize",
+            't'          => "addThumb",
+            'thumb'      => "addThumb",
+            'tf'         => "addThumbfill",
+            'thumbfill'  => "addThumbfill",
+            'background' => "addBackground",
+            'bg'         => "addBackground",
+        );
+        $actions = explode(".", $actionString);
+
+        foreach ($actions as &$action) {
+            preg_match("/([a-z]+)(.*)/i", $action, $matches);
+            $func = $aliases[$matches[1]];
+
+            if (!empty($func)) {
+                preg_match_all("/[-x]([^-x]*)/", $action, $matches);
+                $params = $matches[1];
+                // @todo evaluate parameters
+
+                $action = array($func, $params);
+            }
+        }
+
+        return $actions;
     }
     // }}}
     // {{{ render
@@ -65,14 +99,10 @@ class Imgurl
             mkdir($outDir, 0755, true);
         }
 
-        foreach($this->actions as $action) {
-            preg_match("/([a-z]+)(.*)/i", $action, $matches);
-            $action = $matches[1];
-            preg_match_all("/[-x]([^-x]*)/i", $matches[2], $matches);
-            $params = $matches[1];
-            // @todo evaluate parameters
-
-            if (is_callable(array($graphics, "add$action"))) {
+        // add actions to graphics class
+        foreach ($this->actions as $action) {
+            list($func, $params) = $action;
+            if (is_callable(array($graphics, $func))) {
                 if ($action != "background") {
                     foreach ($params as &$p) {
                         $p = intval($p);
@@ -81,12 +111,14 @@ class Imgurl
                         }
                     }
                 }
-                call_user_func_array(array($graphics, "add$action"), $params);
+                call_user_func_array(array($graphics, $func), $params);
             }
         }
 
+        // render image out
         $graphics->render($this->srcImg, $this->outImg);
 
+        // send image to browser
         $this->sendImage();
     }
     // }}}
