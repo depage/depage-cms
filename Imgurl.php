@@ -4,40 +4,68 @@ namespace Depage\Graphics;
 
 class Imgurl
 {
+    protected $options = array();
     protected $actions = array();
+    protected $cachePath = '';
 
-    public function __construct()
+    // {{{ constructor
+    /*
+     * @param $options hold the same options as the graphics class
+     */
+    public function __construct($options = array())
     {
+        $this->options = $options;
     }
+    // }}}
 
-    public function render($graphics)
+    // {{{ analyze
+    /*
+     * Analyzes the image url and set the path for srcImg and outImg
+     */
+    protected function analyze()
     {
-        $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
-        $uriParts = explode("/", $_SERVER["REQUEST_URI"]);
+        if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
+            $baseUrl = DEPAGE_PATH;
+            $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
+            $rel = "";
+        } else {
+            $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
+            $uriParts = explode("/", $_SERVER["REQUEST_URI"]);
 
-        for ($i = 0; $i < count($uriParts); $i++) {
-            // find common parts of url up to lib parameter
-            if ($scriptParts[$i] != $uriParts[$i] || $uriParts[$i] == "lib") {
-                break;
+            for ($i = 0; $i < count($uriParts); $i++) {
+                // find common parts of url up to lib parameter
+                if ($scriptParts[$i] != $uriParts[$i] || $uriParts[$i] == "lib") {
+                    break;
+                }
             }
+            $baseUrl = implode("/", array_slice($uriParts, 0, $i));
+            $rel = str_repeat("../", $i - 1);
+            $this->cachePath = $rel . "lib/cache/graphics/";
         }
-        $baseUrl = implode("/", array_slice($uriParts, 0, $i));
         $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
 
         preg_match("/(.*\.(jpg|jpeg|gif|png))\.([^\\\]*)\.(jpg|jpeg|gif|png)/i", $imgUrl, $matches);
 
-        $rel = str_repeat("../", $i - 1);
-        $srcImg = $rel . $matches[1];
-        $outImg = $rel . "lib/cache/graphics/" . $matches[0];
-        $actions = explode(".", $matches[3]);
+        $this->srcImg = $rel . $matches[1];
+        $this->outImg = $this->cachePath . $matches[0];
+        $this->actions = explode(".", $matches[3]);
         
+    }
+    // }}}
+    // {{{ render
+    public function render()
+    {
+        $graphics = Graphics::factory($this->options);
+
+        $this->analyze();
+
         // make cache diretories
-        $cacheDir = dirname($outImg);
-        if (!is_dir($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
+        $outDir = dirname($this->outImg);
+        if (!is_dir($outDir)) {
+            mkdir($outDir, 0755, true);
         }
 
-        foreach($actions as $action) {
+        foreach($this->actions as $action) {
             preg_match("/([a-z]+)(.*)/i", $action, $matches);
             $action = $matches[1];
             preg_match_all("/[-x]([^-x]*)/i", $matches[2], $matches);
@@ -57,9 +85,16 @@ class Imgurl
             }
         }
 
-        $graphics->render($srcImg, $outImg);
+        $graphics->render($this->srcImg, $this->outImg);
 
-        $info = pathinfo($outImg);
+        $this->sendImage();
+    }
+    // }}}
+
+    // {{{ sendImage()
+    protected function sendImage()
+    {
+        $info = pathinfo($this->outImg);
         $ext = $info['extension'];
 
         if (in_array($ext, array("jpg", "jpeg", "JPG", "JPEG"))) {
@@ -69,11 +104,13 @@ class Imgurl
         } elseif (in_array($ext, array("gif", "GIF"))) {
             header("Content-type: image/gif");
         }
-        readfile($outImg);
+        readfile($this->outImg);
         // @todo disable deleting when finished
-        unlink($outImg);
+        unlink($this->outImg);
     }
+    // }}}
 
+    // {{{ getUrl()
     public function getUrl($img)
     {
         $info = pathinfo($img);
@@ -85,6 +122,7 @@ class Imgurl
             return $img;
         }
     }
+    // }}}
     
     // {{{ addBackground()
     public function addBackground($background)
