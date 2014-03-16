@@ -8,11 +8,14 @@ class Optimizer
     protected $command = '';
     protected $options = array();
 
+    // {{{ constructor()
     public function __construct($options = array())
     {
         $this->options = $options;
     }
+    // }}}
 
+    // {{{ execCommand()
     protected function execCommand()
     {
         exec($this->command . ' 2>&1', $commandOutput, $returnStatus);
@@ -22,7 +25,8 @@ class Optimizer
 
         return true;
     }
-
+    // }}}
+    // {{{ optimize()
     public function optimize($filename)
     {
         $parts = explode('.', $filename);
@@ -43,4 +47,7 @@ class Optimizer
         }
         return $optimizer->optimize($filename);
     }
+    // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

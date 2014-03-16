@@ -6,6 +6,7 @@ class Optipng extends Optimizer
 {
     protected $version;
 
+    // {{{ constructor()
     public function __construct($options = array())
     {
         parent::__construct($options);
@@ -26,7 +27,9 @@ class Optipng extends Optimizer
             $this->version = $matches[0];
         }
     }
+    // }}}
 
+    // {{{ optimize()
     public function optimize($filename)
     {
         if (!$this->executable) {
@@ -49,4 +52,7 @@ class Optipng extends Optimizer
 
         return $this->execCommand();
     }
+    // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -319,7 +319,7 @@ class Graphics
      * @brief   Opimizes final image through one of the optimization programs
      *
      * @param  string $file name of file to optimize
-     * @return void
+     * @return bool true if image has been optimized successfully
      **/
     public function optimizeImage($filename)
     {

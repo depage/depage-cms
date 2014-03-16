@@ -4,6 +4,7 @@ namespace Depage\Graphics\Optimizers;
 
 class Jpegoptim extends Optimizer
 {
+    // {{{ constructor()
     public function __construct($options = array())
     {
         parent::__construct($options);
@@ -16,7 +17,9 @@ class Jpegoptim extends Optimizer
             $this->executable = \Depage\Graphics\Graphics::which("jpegoptim");
         }
     }
+    // }}}
 
+    // {{{ optimize()
     public function optimize($filename)
     {
         if (!$this->executable) {
@@ -26,8 +29,12 @@ class Jpegoptim extends Optimizer
         $this->command = "{$this->executable} --strip-all";
 
         // jpegoptim unfortunately does not support progressive jpgs
+        
         $this->command .= " " . escapeshellarg($filename);
 
         return $this->execCommand();
     }
+    // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

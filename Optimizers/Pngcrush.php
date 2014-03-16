@@ -4,6 +4,7 @@ namespace Depage\Graphics\Optimizers;
 
 class Pngcrush extends Optimizer
 {
+    // {{{ constructor
     public function __construct($options = array())
     {
         parent::__construct($options);
@@ -16,7 +17,9 @@ class Pngcrush extends Optimizer
             $this->executable = \Depage\Graphics\Graphics::which("pngcrush");
         }
     }
+    // }}}
 
+    // {{{ optimize()
     public function optimize($filename)
     {
         if (!$this->executable) {
@@ -35,6 +38,8 @@ class Pngcrush extends Optimizer
         
         // blacken transparent areas
         $this->command .= "-blacken ";
+
+        // add file arguments
         $this->command .= " " . escapeshellarg($filename);
         $this->command .= " " . escapeshellarg($tmpfile);
 
@@ -49,5 +54,7 @@ class Pngcrush extends Optimizer
 
         return $success;
     }
+    // }}}
 }
 
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

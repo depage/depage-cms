@@ -4,6 +4,7 @@ namespace Depage\Graphics\Optimizers;
 
 class Jpegtran extends Optimizer
 {
+    // {{{ constructor()
     public function __construct($options = array())
     {
         parent::__construct($options);
@@ -16,7 +17,9 @@ class Jpegtran extends Optimizer
             $this->executable = \Depage\Graphics\Graphics::which("jpegtran");
         }
     }
+    // }}}
 
+    // {{{ optimize()
     public function optimize($filename)
     {
         if (!$this->executable) {
@@ -33,4 +36,7 @@ class Jpegtran extends Optimizer
 
         return $this->execCommand();
     }
+    // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
