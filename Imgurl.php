@@ -45,10 +45,12 @@ class Imgurl
     protected function analyze()
     {
         if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
+            // we are using depage-framework so use constants for paths
             $baseUrl = DEPAGE_PATH;
+            $relativePath = "";
             $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
-            $rel = "";
         } else {
+            // we using the library plainly -> get path through url
             $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
             $uriParts = explode("/", $_SERVER["REQUEST_URI"]);
 
@@ -59,14 +61,17 @@ class Imgurl
                 }
             }
             $baseUrl = implode("/", array_slice($uriParts, 0, $i));
-            $rel = str_repeat("../", count($scriptParts) - $i - 1);
-            $this->cachePath = $rel . "lib/cache/graphics/";
+            $relativePath = str_repeat("../", count($scriptParts) - $i - 1);
+            $this->cachePath = $relativePath . "lib/cache/graphics/";
         }
+
+        // get image name
         $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
 
+        // get action parameters
         preg_match("/(.*\.(jpg|jpeg|gif|png))\.([^\\\]*)\.(jpg|jpeg|gif|png)/i", $imgUrl, $matches);
 
-        $this->srcImg = $rel . $matches[1];
+        $this->srcImg = $relativePath . $matches[1];
         $this->outImg = $this->cachePath . $matches[0];
         $this->actions = $this->analyzeActions($matches[3]);
     }
@@ -139,13 +144,12 @@ class Imgurl
             die();
         }
 
-        // send image to browser
-        $this->display();
+        return $this;
     }
     // }}}
 
     // {{{ display()
-    protected function display()
+    public function display()
     {
         $info = pathinfo($this->outImg);
         $ext = $info['extension'];
@@ -160,6 +164,8 @@ class Imgurl
         readfile($this->outImg);
         // @todo disable deleting when finished
         //unlink($this->outImg);
+
+        return $this;
     }
     // }}}
 
