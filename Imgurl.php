@@ -59,7 +59,7 @@ class Imgurl
                 }
             }
             $baseUrl = implode("/", array_slice($uriParts, 0, $i));
-            $rel = str_repeat("../", $i - 1);
+            $rel = str_repeat("../", count($scriptParts) - $i - 1);
             $this->cachePath = $rel . "lib/cache/graphics/";
         }
         $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
@@ -69,7 +69,6 @@ class Imgurl
         $this->srcImg = $rel . $matches[1];
         $this->outImg = $this->cachePath . $matches[0];
         $this->actions = $this->analyzeActions($matches[3]);
-        
     }
     // }}}
     // {{{ analyzeActions
@@ -119,24 +118,34 @@ class Imgurl
             mkdir($outDir, 0755, true);
         }
 
-        // add actions to graphics class
-        foreach ($this->actions as $action) {
-            list($func, $params) = $action;
-            if (is_callable(array($graphics, $func))) {
-                call_user_func_array(array($graphics, $func), $params);
+        try {
+            // add actions to graphics class
+            foreach ($this->actions as $action) {
+                list($func, $params) = $action;
+                if (is_callable(array($graphics, $func))) {
+                    call_user_func_array(array($graphics, $func), $params);
+                }
             }
+
+            // render image out
+            $graphics->render($this->srcImg, $this->outImg);
+        } catch (Exceptions\FileNotFound $e) {
+            header("HTTP/1.1 404 Not Found");
+            echo("file not found");
+            die();
+        } catch (Exceptions\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo("an error occured");
+            die();
         }
 
-        // render image out
-        $graphics->render($this->srcImg, $this->outImg);
-
         // send image to browser
-        $this->sendImage();
+        $this->display();
     }
     // }}}
 
-    // {{{ sendImage()
-    protected function sendImage()
+    // {{{ display()
+    protected function display()
     {
         $info = pathinfo($this->outImg);
         $ext = $info['extension'];
