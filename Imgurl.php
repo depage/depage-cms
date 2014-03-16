@@ -7,6 +7,26 @@ class Imgurl
     protected $options = array();
     protected $actions = array();
     protected $cachePath = '';
+    /*
+     * action aliases
+     *
+     * Note that the order is important so shoter action names should
+     * come after larger ones
+     */
+    protected $aliases = array(
+        'quality'    => "setQuality",
+        'q'          => "setQuality",
+        'crop'       => "addCrop",
+        'c'          => "addCrop",
+        'resize'     => "addResize",
+        'r'          => "addResize",
+        'thumbfill'  => "addThumbfill",
+        'tf'         => "addThumbfill",
+        'thumb'      => "addThumb",
+        't'          => "addThumb",
+        'background' => "addBackground",
+        'bg'         => "addBackground",
+    );
 
     // {{{ constructor
     /*
@@ -58,26 +78,26 @@ class Imgurl
      */
     protected function analyzeActions($actionString)
     {
-        $aliases = array(
-            'r'          => "addResize",
-            'resize'     => "addResize",
-            't'          => "addThumb",
-            'thumb'      => "addThumb",
-            'tf'         => "addThumbfill",
-            'thumbfill'  => "addThumbfill",
-            'background' => "addBackground",
-            'bg'         => "addBackground",
-        );
         $actions = explode(".", $actionString);
 
         foreach ($actions as &$action) {
-            preg_match("/([a-z]+)(.*)/i", $action, $matches);
-            $func = $aliases[$matches[1]];
+            $regex = implode("|", array_keys($this->aliases));
+            preg_match("/^($regex)/i", $action, $matches);
+            $func = $this->aliases[$matches[1]];
+            $params = substr($action, strlen($matches[1]));
 
             if (!empty($func)) {
-                preg_match_all("/[-x]([^-x]*)/", $action, $matches);
-                $params = $matches[1];
+                $params = preg_split("/[-x,]+/", $params, null, PREG_SPLIT_NO_EMPTY);
                 // @todo evaluate parameters
+
+                if ($action != "addBackground") {
+                    foreach ($params as &$p) {
+                        $p = intval($p);
+                        if ($p == 0) {
+                            $p = null;
+                        }
+                    }
+                }
 
                 $action = array($func, $params);
             }
@@ -103,14 +123,6 @@ class Imgurl
         foreach ($this->actions as $action) {
             list($func, $params) = $action;
             if (is_callable(array($graphics, $func))) {
-                if ($action != "background") {
-                    foreach ($params as &$p) {
-                        $p = intval($p);
-                        if ($p == 0) {
-                            $p = null;
-                        }
-                    }
-                }
                 call_user_func_array(array($graphics, $func), $params);
             }
         }
@@ -138,7 +150,7 @@ class Imgurl
         }
         readfile($this->outImg);
         // @todo disable deleting when finished
-        unlink($this->outImg);
+        //unlink($this->outImg);
     }
     // }}}
 
@@ -165,25 +177,31 @@ class Imgurl
     // {{{ addCrop()
     public function addCrop($width, $height, $x = 0, $y = 0)
     {
-        $this->actions[] = "crop-{$width}x{$height}-{$x}x{$y}";
+        $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
     }
     // }}}
     // {{{ addResize()
     public function addResize($width, $height)
     {
-        $this->actions[] = "resize-{$width}x{$height}";
+        $this->actions[] = "resize{$width}x{$height}";
     }
     // }}}
     // {{{ addThumb()
     public function addThumb($width, $height)
     {
-        $this->actions[] = "thumb-{$width}x{$height}";
+        $this->actions[] = "thumb{$width}x{$height}";
     }
     // }}}
     // {{{ addThumbfill()
     public function addThumbfill($width, $height)
     {
-        $this->actions[] = "thumbfill-{$width}x{$height}";
+        $this->actions[] = "thumbfill{$width}x{$height}";
+    }
+    // }}}
+    // {{{ setQuality()
+    public function setQuality($quality)
+    {
+        $this->actions[] = "q{$quality}";
     }
     // }}}
 }

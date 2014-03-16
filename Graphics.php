@@ -399,6 +399,15 @@ class Graphics
     }
     // }}}
 
+    // {{{ setQuality()
+    /**
+     * @brief   Sets quality parameter
+     **/
+    public function setQuality($quality)
+    {
+        $this->quality = $quality;
+    }
+    // }}}
     // {{{ getQuality()
     /**
      * @brief   Returns quality-index for current image format.
