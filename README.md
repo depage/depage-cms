@@ -1,5 +1,5 @@
 depage-graphics
-==========
+===============
 
 depage-graphics is a helper class to get resized and optimized images
 and thumbnails.
@@ -19,24 +19,57 @@ Features
     - pngcrush
 - composer support
 
-Basic Usage
------------
+Basic Usage as Image Service
+----------------------------
     
+You can use the graphics class as an image service to automatically resize, 
+crop, convert and optimize your images, or to generate thumbnails.
+
+To convert your image you add specific action to your image:
+
+    /path-to/image.jpg.resize-400x400.jpg
+    /path-to/image.jpg.r400x400.jpg
+
+    /path-to/image.jpg.thumb-100x75.jpg
+    /path-to/image.jpg.t100x75.jpg
+
+    /path-to/image.jpg.crop-200x200-10x10.jpg
+    /path-to/image.jpg.c200x200-10x10.jpg
+
+You can also chain actions and parameters:
+
+    /path-to/image.png.resize-400x400.quality-50.background-ffffff.jpg
+    /path-to/image.png.r400x400.q50.bg-ffffff.jpg
+
+This would resize your image to 400x400px set the jpeg quality to 50 and
+add a white background for transparent pixels.
+
+
+### Basic image service ###
+
 Basic usage as image service with the gd library and no image optimization:
 
     <?php
+    /*
+     * @file getimage.php
+     */
     require_once(__DIR__ . "/php/Graphics/Graphics.php");
 
     $imgurl = new Depage\Graphics\Imgurl();
     $imgurl->render()->display();
 
+### Extended Usage with Options ###
+
 Extended usage as image service with the imagemagick as conversion utility
 and jpegtran and optipng as optimization tools:
 
     <?php
+    /*
+     * @file getimage.php
+     */
     require_once(__DIR__ . "/php/Graphics/Graphics.php");
 
-    $options = array(
+    $imgurl = new Depage\Graphics\Imgurl(array(
         'extension' => "im",
         'executable' => "/usr/bin/convert",
         'optimize' => true,
@@ -44,13 +77,35 @@ and jpegtran and optipng as optimization tools:
             'jpegtran' => "/usr/bin/jpegtran",
             'optipng' => "/usr/bin/optipng",
         ),
-    );
-
-    $imgurl = new Depage\Graphics\Imgurl($options);
+    ));
     $imgurl->render()->display();
 
-nginx configuration
--------------------
+
+Usage as Image-Editing/Conversion Tool
+--------------------------------------
+
+    <?php
+    require_once(__DIR__ . "/php/Graphics/Graphics.php");
+
+    $graphics = new Depage\Graphics\Graphics(array(
+        'extension' => "im",
+        'executable' => "/usr/bin/convert",
+        'optimize' => true,
+        'optimizers' => array(
+            'jpegtran' => "/usr/bin/jpegtran",
+            'optipng' => "/usr/bin/optipng",
+        ),
+    ));
+    $graphics->addResize(400, 400);
+    $graphics->addBackground("#ffffff");
+
+    $graphics->render("sourceImage.png", "targetImage.jpg");
+
+
+Webserver Configuration
+-----------------------
+
+### nginx ###
 
     location /basedirectory {
         location ~ (?i)/basedirectory/(.*)\.(jpg|jpeg|gif|png)\.([^/]*)\.(jpg|jpeg|gif|png)$ {
@@ -63,9 +118,13 @@ nginx configuration
     }
 
 
-Apache configuration
---------------------
+### Apache ###
 
+@todo
+
+### .htacess ###
+
+@todo
 
 Install Using Composer
 ----------------------
@@ -73,7 +132,7 @@ Get composer at <http://getcomposer.org> and then just add this to your composer
 
     {
         "require": {
-            "depage/graphics": "*"
+            "depage/graphics": "dev/master"
         }
     }
 
@@ -81,7 +140,7 @@ Now run
 
     composer install
 
-to install the current version of depage-htmlform into your vendor dir.
+to install the current version of depage-graphics into your vendor dir.
 
 
 Prerequisites
@@ -111,6 +170,4 @@ License (dual)
 
 - GPL2: http://www.gnu.org/licenses/gpl-2.0.html
 - MIT: http://www.opensource.org/licenses/mit-license.php
-
-
 
