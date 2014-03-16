@@ -4,8 +4,14 @@ namespace Depage\Graphics\Optimizers;
 
 class Jpegoptim extends Optimizer
 {
-    public function __construct()
+    public function __construct($options = array())
     {
+        parent::__construct($options);
+
+        if (isset($this->options['jpegoptim'])) {
+            $this->executable = $this->options['jpegoptim'];
+        }
+
         if (is_null($this->executable)) {
             $this->executable = \Depage\Graphics\Graphics::which("jpegoptim");
         }

@@ -4,8 +4,14 @@ namespace Depage\Graphics\Optimizers;
 
 class Pngcrush extends Optimizer
 {
-    public function __construct()
+    public function __construct($options = array())
     {
+        parent::__construct($options);
+
+        if (isset($this->options['pngcrush'])) {
+            $this->executable = $this->options['pngcrush'];
+        }
+
         if (is_null($this->executable)) {
             $this->executable = \Depage\Graphics\Graphics::which("pngcrush");
         }

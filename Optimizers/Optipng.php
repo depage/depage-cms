@@ -6,18 +6,24 @@ class Optipng extends Optimizer
 {
     protected $version;
 
-    public function __construct()
+    public function __construct($options = array())
     {
+        parent::__construct($options);
+
+        if (isset($this->options['optipng'])) {
+            $this->executable = $this->options['optipng'];
+        }
+
         if (is_null($this->executable)) {
             $this->executable = \Depage\Graphics\Graphics::which("optipng");
+        }
 
-            if ($this->executable) {
-                exec($this->executable . ' --version 2>&1', $commandOutput, $returnStatus);
+        if ($this->executable) {
+            exec($this->executable . ' --version 2>&1', $commandOutput, $returnStatus);
 
-                preg_match("/(\d+).(\d+).(\d+)/", $commandOutput[0], $matches);
+            preg_match("/(\d+).(\d+).(\d+)/", $commandOutput[0], $matches);
 
-                $this->version = $matches[0];
-            }
+            $this->version = $matches[0];
         }
     }
 

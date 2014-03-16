@@ -2,14 +2,15 @@
 
 namespace Depage\Graphics\Optimizers;
 
-abstract class Optimizer
+class Optimizer
 {
     protected $executable = null;
     protected $command = '';
+    protected $options = array();
 
-    protected function factory($imagetype)
+    public function __construct($options = array())
     {
-        // @todo implement
+        $this->options = $options;
     }
 
     protected function execCommand()
@@ -20,5 +21,26 @@ abstract class Optimizer
         }
 
         return true;
+    }
+
+    public function optimize($filename)
+    {
+        $parts = explode('.', $filename);
+        $extension = strtolower(end($parts));
+
+        if ($extension == "jpg" || $extension == "jpeg") {
+            if (isset($this->options['jpegoptim'])) {
+                $optimizer = new Jpegoptim($this->options);
+            } else {
+                $optimizer = new Jpegtran($this->options);
+            }
+        } elseif ($extension == "png") {
+            if (isset($this->options['pngcrush'])) {
+                $optimizer = new Pngcrush($this->options);
+            } else {
+                $optimizer = new Optipng($this->options);
+            }
+        }
+        return $optimizer->optimize($filename);
     }
 }

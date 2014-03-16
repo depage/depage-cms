@@ -71,6 +71,10 @@ class Graphics
      **/
     protected $optimize;
     /**
+     * @brief List of optimizer binaries
+     **/
+    protected $optimizers;
+    /**
      * @brief Input image format
      **/
     protected $inputFormat;
@@ -140,6 +144,7 @@ class Graphics
         $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
         $this->format       = (isset($options['format']))       ? $options['format']            : null;
         $this->optimize     = (isset($options['optimize']))     ? $options['optimize']          : false;
+        $this->optimizers   = (isset($options['optimizers']))   ? $options['optimizers']        : array();
     }
     // }}}
 
@@ -322,19 +327,8 @@ class Graphics
             return false;
         }
 
-        $success = false;
-        $optimizer = false;
-        $format = $this->obtainFormat($filename);
-
-        if ($format == "jpg") {
-            $optimizer = new Optimizers\Jpegtran();
-        } else if ($format == "png") {
-            $optimizer = new Optimizers\Optipng();
-        }
-
-        if ($optimizer) {
-            $success = $optimizer->optimize($filename);
-        }
+        $optimizer = new Optimizers\Optimizer($this->optimizers);
+        $success = $optimizer->optimize($filename);
 
         return $success;
     }
