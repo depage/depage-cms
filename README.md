@@ -6,7 +6,6 @@ and thumbnails.
 
 [![Latest Stable Version](https://poser.pugx.org/depage/graphics/v/stable.png)](https://packagist.org/packages/depage/graphics) [![Build Status](https://travis-ci.org/depage/depage-graphics.png?branch=master)](https://travis-ci.org/depage/depage-graphics)
 
-
 Features
 --------
 
@@ -18,6 +17,10 @@ Features
     - optipng
     - pngcrush
 - composer support
+
+You can compare depage-graphics to [SLIR, Smart Lencioni Image Resizer](https://github.com/lencioni/SLIR).
+But where SLIR is only gd-based, you can use Imagemagick or Graphicsmagick as conversion tools to achieve better image quality.
+
 
 Basic Usage as Image Service
 ----------------------------
