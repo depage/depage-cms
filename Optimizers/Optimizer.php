@@ -29,6 +29,7 @@ class Optimizer
     // {{{ optimize()
     public function optimize($filename)
     {
+        $optimizer = false;
         $parts = explode('.', $filename);
         $extension = strtolower(end($parts));
 
@@ -45,7 +46,10 @@ class Optimizer
                 $optimizer = new Optipng($this->options);
             }
         }
-        return $optimizer->optimize($filename);
+        if ($optimizer) {
+            return $optimizer->optimize($filename);
+        }
+        return false;
     }
     // }}}
 }

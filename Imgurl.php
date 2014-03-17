@@ -2,10 +2,17 @@
 
 namespace Depage\Graphics;
 
+/*
+ * @todo test to stay inside 3MP as maximum image size for safety reasons and
+ * to be able to support all iOS devices:
+ * http://www.williammalone.com/articles/html5-javascript-ios-maximum-image-size/
+ */
+
 class Imgurl
 {
     protected $options = array();
     protected $actions = array();
+    protected $invalidAction = false;
     protected $cachePath = '';
     /*
      * action aliases
@@ -69,7 +76,7 @@ class Imgurl
         $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
 
         // get action parameters
-        preg_match("/(.*\.(jpg|jpeg|gif|png))\.([^\\\]*)\.(jpg|jpeg|gif|png)/i", $imgUrl, $matches);
+        preg_match("/(.*\.(jpg|jpeg|gif|png|webp))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
         $this->srcImg = $relativePath . $matches[1];
         $this->outImg = $this->cachePath . $matches[0];
@@ -82,19 +89,30 @@ class Imgurl
      */
     protected function analyzeActions($actionString)
     {
+        $this->invalidAction = false;
+        $this->actions = array();
         $actions = explode(".", $actionString);
 
         foreach ($actions as &$action) {
             $regex = implode("|", array_keys($this->aliases));
             preg_match("/^($regex)/i", $action, $matches);
-            $func = $this->aliases[$matches[1]];
-            $params = substr($action, strlen($matches[1]));
+
+            if (isset($matches[1]) && isset($this->aliases[$matches[1]])) {
+                $func = $this->aliases[$matches[1]];
+                $params = substr($action, strlen($matches[1]));
+            } else {
+                $func = "";
+                $params = "";
+            }
 
             if (!empty($func)) {
                 $params = preg_split("/[-x,]+/", $params, null, PREG_SPLIT_NO_EMPTY);
-                // @todo evaluate parameters
 
-                if ($action != "addBackground") {
+                if ($func == "addBackground") {
+                    if (!in_array($params[0], array("transparent", "checkerboard"))) {
+                        $params[0] = "#{$params[0]}";
+                    }
+                } else {
                     foreach ($params as &$p) {
                         $p = intval($p);
                         if ($p == 0) {
@@ -103,11 +121,13 @@ class Imgurl
                     }
                 }
 
-                $action = array($func, $params);
+                $this->actions[] = array($func, $params);
+            } else {
+                $this->invalidAction = true;
             }
         }
 
-        return $actions;
+        return $this->actions;
     }
     // }}}
     // {{{ render
@@ -117,6 +137,11 @@ class Imgurl
 
         $this->analyze();
 
+        if ($this->invalidAction) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo("invalid image action");
+            die();
+        }
         // make cache diretories
         $outDir = dirname($this->outImg);
         if (!is_dir($outDir)) {
@@ -140,7 +165,7 @@ class Imgurl
             die();
         } catch (Exceptions\Exception $e) {
             header("HTTP/1.1 500 Internal Server Error");
-            echo("an error occured");
+            echo("invalid image action");
             die();
         }
 
@@ -152,14 +177,16 @@ class Imgurl
     public function display()
     {
         $info = pathinfo($this->outImg);
-        $ext = $info['extension'];
+        $ext = strtolower($info['extension']);
 
-        if (in_array($ext, array("jpg", "jpeg", "JPG", "JPEG"))) {
+        if ($ext == "jpg" || $ext ==  "jpeg") {
             header("Content-type: image/jpeg");
-        } elseif (in_array($ext, array("png", "PNG"))) {
+        } elseif ($ext == "png") {
             header("Content-type: image/png");
-        } elseif (in_array($ext, array("gif", "GIF"))) {
+        } elseif ($ext == "gif") {
             header("Content-type: image/gif");
+        } elseif ($ext == "webp") {
+            header("Content-type: image/webp");
         }
         readfile($this->outImg);
         // @todo disable deleting when finished
