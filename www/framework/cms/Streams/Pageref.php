@@ -15,15 +15,15 @@ class Pageref extends Base {
         $parts = explode("/", $url['path']);
         
         $pageId = $url['host'];
-        $lang = isset($parts[1]) ? $parts[1] : $this->lang;
+        $lang = isset($parts[1]) ? $parts[1] : $this->transformer->lang;
         $absolute = isset($parts[2]) ? $parts[2] : "";
 
-        if (isset($this->urls[$pageId])) {
-            $path = $lang . $this->urls[$pageId];
+        if (isset($this->transformer->urlsByPageId[$pageId])) {
+            $path = $lang . $this->transformer->urlsByPageId[$pageId];
         }
 
         if ($absolute != "absolute") {
-            $path = $this->preview->getRelativePathTo($path);
+            $path = $this->transformer->getRelativePathTo($path);
         } 
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';

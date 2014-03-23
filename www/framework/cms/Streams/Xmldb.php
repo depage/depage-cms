@@ -20,11 +20,11 @@ class Xmldb extends Base {
 
             $this->data = $doc->getXml($docName);
 
-            if ($handler = "depage\xmldb\xmldoctypes\pages") {
+            if ($handler = "depage\xmldb\xmldoctypes\pages" && isset($this->transformer)) {
                 // add status attributes for page tree
                 $xmlnav = new \depage\cms\xmlnav();
 
-                $xmlnav->addStatusAttributes($this->data, $this->currentPath);
+                $xmlnav->addStatusAttributes($this->data, $this->transformer->currentPath);
             }
 
             return true;

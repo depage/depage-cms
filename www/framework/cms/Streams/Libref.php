@@ -17,7 +17,7 @@ class Libref extends Base {
         } else {
             $path = "lib/" . $url['host'];
         }
-        $path = $this->preview->getRelativePathTo($path);
+        $path = $this->transformer->getRelativePathTo($path);
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';
 
