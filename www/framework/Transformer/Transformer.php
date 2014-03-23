@@ -2,25 +2,40 @@
 
 namespace depage\Transformer;
 
-class Transformer
+abstract class Transformer
 {
     protected $pdo;
     protected $projectName;
-    protected $previewType = "dev";
     protected $template;
     protected $xsltPath;
     protected $xmlPath;
     protected $xsltProc;
     protected $lang = "";
+    protected $isLive = false;
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
 
+    // {{{ factory()
+   static public function factory($previewType, $pdo, $projectName, $template, $cacheOptions = array())
+    {
+        if ($previewType == "live") {
+            return new Live($pdo, $projectName, $template, $cacheOptions);
+        } elseif ($previewType == "pre" || $previewType == "preview") {
+            return new Preview($pdo, $projectName, $template, $cacheOptions);
+        } else {
+            return new Dev($pdo, $projectName, $template, $cacheOptions);
+        }
+    }
+    // }}}
     // {{{ constructor()
     public function __construct($pdo, $projectName, $template, $cacheOptions = array())
     {
         $this->pdo = $pdo;
         $this->projectName = $projectName;
         $this->template = $template;
+
+        // @todo complete baseurl this in a better way, also based on previewTyoe
+        $this->baseurl = "'" . DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/'";
         
         // set basic variables
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
@@ -91,9 +106,7 @@ class Transformer
 
         if ($regenerate) {
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-            if ($this->previewType != "dev") {
-                $xslt .= "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>";
-            }
+            $xslt .= $this->getXsltEntities();
             $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
 
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
@@ -103,8 +116,7 @@ class Transformer
                 'currentLang' => null,
                 'currentPageId' => null,
                 'depageIsLive' => "false()",
-                // @todo complete baseurl this in a better way
-                'baseurl' => "'" . DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/'",
+                'baseurl' => $this->baseUrl,
             );
             $variables = array(
                 'navigation' => "document('xmldb://pages')",
@@ -139,19 +151,7 @@ class Transformer
             }
 
             
-            foreach ($files as $file) {
-                if ($this->previewType == "dev") {
-                    $xslt .= "\n<xsl:include href=\"" . htmlentities(realpath($file)) . "\" />";
-                } else {
-                    $tpl = new \depage\xml\Document();
-                    $tpl->load($file);
-
-                    foreach ($tpl->documentElement->childNodes as $node) {
-                        $xslt .= $tpl->saveXML($node);
-                    }
-
-                }
-            }
+            $xslt .= $this->getXsltIncludes($files);
             $xslt .= "\n</xsl:stylesheet>";
 
             $doc = new \depage\xml\Document();
@@ -165,6 +165,12 @@ class Transformer
 
         return $doc;
     }
+    // }}}
+    // {{{ getXsltEntities()
+    abstract protected function getXsltEntities();
+    // }}}
+    // {{{ getXsltIncludes()
+    abstract protected function getXsltIncludes($files);
     // }}}
     
     // {{{ transform()
@@ -188,7 +194,7 @@ class Transformer
             "currentContentType" => "text/html",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \depage::getVersion(),
-            "depageIsLive" => $this->previewType == "live" ? true : false,
+            "depageIsLive" => $this->isLive,
         ));
 
         if ($pageXml === false) {   

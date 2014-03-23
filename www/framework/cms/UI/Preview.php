@@ -121,7 +121,8 @@ class Preview extends \depage_ui {
      */
     protected function preview($urlPath, $lang)
     {
-        $transformer = new \depage\Transformer\Transformer($this->pdo, $this->projectName, $this->template);
+        $transformer = \depage\Transformer\Transformer::factory($this->previewType, $this->pdo, $this->projectName, $this->template);
+        //$transformer = new \depage\Transformer\Transformer($this->pdo, $this->projectName, $this->template);
         $html = $transformer->display("/" . $urlPath, $lang);
 
         return $html;
