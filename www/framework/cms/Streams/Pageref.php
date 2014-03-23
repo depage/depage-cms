@@ -18,8 +18,9 @@ class Pageref extends Base {
         $lang = isset($parts[1]) ? $parts[1] : $this->transformer->lang;
         $absolute = isset($parts[2]) ? $parts[2] : "";
 
-        if (isset($this->transformer->urlsByPageId[$pageId])) {
-            $path = $lang . $this->transformer->urlsByPageId[$pageId];
+        $urlsByPageId = $this->transformer->getUrlsByPageId();
+        if (isset($urlsByPageId[$pageId])) {
+            $path = $lang . $urlsByPageId[$pageId];
         }
 
         if ($absolute != "absolute") {

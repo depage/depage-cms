@@ -70,6 +70,7 @@ class xmlnav {
     public function getAllUrls(\DOMNode $node, $url = "") {
         $urlsByPageId = array();
         $pageIdByUrl = array();
+        $pagedataIdByPageId = array();
 
         list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
@@ -84,12 +85,13 @@ class xmlnav {
 
         foreach ($pages as $page) {
             $urlsByPageId[$page->getAttribute("db:id")] = $page->getAttribute("url");
+            $pagedataIdByPageId[$page->getAttribute("db:id")] = $page->getAttribute("db:docref");
             if ($page->nodeName == "pg:page") {
                 $pageIdByUrl[$page->getAttribute("url")] = $page->getAttribute("db:id");
             }
         }
 
-        return array($urlsByPageId, $pageIdByUrl);
+        return array($urlsByPageId, $pageIdByUrl, $pagedataIdByPageId);
     }
     // }}}
     

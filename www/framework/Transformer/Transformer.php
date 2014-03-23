@@ -14,13 +14,14 @@ abstract class Transformer
     protected $isLive = false;
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
+    public $pagedataIdByPageId = array();
 
     // {{{ factory()
    static public function factory($previewType, $pdo, $projectName, $template, $cacheOptions = array())
     {
         if ($previewType == "live") {
             return new Live($pdo, $projectName, $template, $cacheOptions);
-        } elseif ($previewType == "pre" || $previewType == "preview") {
+        } elseif ($previewType == "pre") {
             return new Preview($pdo, $projectName, $template, $cacheOptions);
         } else {
             return new Dev($pdo, $projectName, $template, $cacheOptions);
@@ -329,20 +330,48 @@ abstract class Transformer
     }
     // }}}
     
+    // {{{ getAllUrls
+    /**
+     * @return  null
+     */
+    public function getAllUrls()
+    {
+        if (empty($this->urlsByPageId) ||
+            empty($this->pageIdByUrl)
+        ) {
+            $pages = $this->xmlGetter->getDoc("pages");
+
+            $xmlnav = new \depage\cms\xmlnav();
+            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages->getXml());
+        }
+
+        return array_keys($this->pageIdByUrl);
+    }
+    // }}}
+    // {{{ getUrlsByPageId()
+    /**
+     * @return  null
+     */
+    public function getUrlsByPageId()
+    {
+        if (empty($this->urlsByPageId)) {
+            $this->getAllUrls();
+        }
+
+        return $this->urlsByPageId;
+    }
+    // }}}
     // {{{ getPageIdFor
     /**
      * @return  null
      */
     protected function getPageIdFor($urlPath)
     {
-        $pages = $this->xmlGetter->getDoc("pages");
-
-        $xmlnav = new \depage\cms\xmlnav();
-        list($this->urlsByPageId, $this->pageIdByUrl) = $xmlnav->getAllUrls($pages->getXml());
+        $this->getAllUrls();
 
         if (isset($this->pageIdByUrl[$urlPath])) {
             $pageId = $this->pageIdByUrl[$urlPath];
-            $pagedataId = $pages->getAttribute($pageId, "db:docref");
+            $pagedataId = $this->pagedataIdByPageId[$pageId];
 
             return array($pageId, $pagedataId);
         } else {
