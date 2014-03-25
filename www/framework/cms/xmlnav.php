@@ -112,7 +112,7 @@ class xmlnav {
 
         // get current part of url from name
         if ($node->nodeName == 'pg:folder' || $node->nodeName == 'pg:page') {
-            $url .= \html::get_url_escaped(strtolower($node->getAttribute('name')));
+            $url .= \html::getEscapedUrl(mb_strtolower($node->getAttribute('name')));
         }
 
         // loop through child nodes

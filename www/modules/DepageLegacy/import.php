@@ -263,7 +263,7 @@ class Import
                     // make path for temlate group
                     $path = $this->xsltPath . $dataNode->getAttribute("type") . "/";
                     if (!is_dir($path)) mkdir($path);
-                    $filename = $path . \html::get_url_escaped($namePrefix . $child->getAttribute("name")) . ".xsl";
+                    $filename = $path . \html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
 
                     // string replacement map
                     $replacements = array(
@@ -354,7 +354,7 @@ class Import
                 'newName' => $contentDoc->documentElement->getAttribute("name"),
                 'icon' => $contentDoc->documentElement->getAttribute("icon"),
                 'validParents' => $validParents,
-                'xmlTemplate' => \html::get_url_escaped($name) . ".xml",
+                'xmlTemplate' => \html::getEscapedUrl($name) . ".xml",
                 'xmlTemplateData' => $contentDoc->saveXML(),
             ));
         }

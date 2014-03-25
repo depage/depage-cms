@@ -205,7 +205,7 @@ abstract class depage_ui {
     }
     // }}}
     
-    // getParams{{{
+    // {{{ getParams
     private function getParams($dp_request_path){
         $dp_lang = "";
         $dp_parent = "";

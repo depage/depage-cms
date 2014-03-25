@@ -436,7 +436,7 @@ class html {
      * @return  (string) escaped string
      */
     static function hash($text = "") {
-        return htmlspecialchars(self::get_url_escaped($text));
+        return htmlspecialchars(self::getEscapedUrl($text));
     }
     // }}}
     
@@ -513,8 +513,8 @@ class html {
     }
     // }}}
     
-    // {{{ get_url_escaped()
-    public static function get_url_escaped ($text, $limit = 100) {
+    // {{{ getEscapedUrl()
+    public static function getEscapedUrl($text, $limit = 100) {
         $origText = $text;
 
         // {{{ substitutes
