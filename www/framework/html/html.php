@@ -603,7 +603,8 @@ class html {
         
         $text = str_replace(array_keys($substitutes), array_values($substitutes), $text);
         
-        $text = preg_replace("/[^\d\w]+/u", '-', $text);
+        //$text = mb_ereg_replace('[^\d\w]+', '-', $text);
+        $text = preg_replace('/[^0-9a-zA-Z]+/', '-', $text);
         $text = trim($text, "-");
         if (mb_strlen($text) > $limit) {
             $title = mb_strcut($text, 0, $limit);
