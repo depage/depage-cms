@@ -221,50 +221,9 @@ class html {
      * @return output
      */
     public function clean($html) {
-        if ($this->param["clean"] == "tidy") {
-            // clean html up
-            $tidy = new tidy();
-            $html = $tidy->repairString($html, array(
-                'indent' => false,
-                'output-xhtml' => false,
-                'wrap' => 0,
-                'doctype' => "html5",
-            ));
-        } else if ($this->param["clean"] == "space") {
-            $html_lines = explode("\n", $html);
-            $html = "";
-
-            $dontCleanTags = implode("|<", array(
-                "pre", 
-                "textarea",
-            ));
-            $dontClean = 0;
-
-            foreach ($html_lines as $i => $line) {
-                // check for opening tags
-                if ($m = preg_match_all("/<$dontCleanTags/", $line, $matches)) {
-                    $dontClean += $m;
-                }
-
-                if ($dontClean > 0) {
-                    // just copy the whole line
-                    $html .= $line . "\n";
-                } else {
-                    // trim line
-                    $line = trim($line); 
-                    // replace multiple spaces with only one space
-                    $line = preg_replace("/( )+/", " ", $line);
-                    // throw away empty lines
-                    if ($line != "") {
-                        $html .= $line . "\n";
-                    }
-                }
-
-                // check for closing tags
-                if ($m = preg_match_all("/<\/$dontCleanTags/", $line, $matches)) {
-                    $dontClean -= $m;
-                }
-            }
+        if ($this->param["clean"]) {
+            $cleaner = new \depage\html\Cleaner();
+            $html = $cleaner->clean($html);
         }
 
         return $html;

@@ -213,6 +213,9 @@ abstract class Transformer
             throw new \exception($error);
         }
 
+        $cleaner = new \depage\html\Cleaner();
+        $html = $cleaner->clean($html);
+
         return $html;
     }
     // }}}
