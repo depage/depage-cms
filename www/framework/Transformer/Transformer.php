@@ -44,9 +44,6 @@ abstract class Transformer
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
-        // get cache instance for transforms
-        $this->transformCache = \depage\cache\cache::factory("transform", $cacheOptions);
-
         // get cache instance for templates
         $this->xsltCache = \depage\cache\cache::factory("xslt", $cacheOptions);
 
@@ -180,17 +177,23 @@ abstract class Transformer
         $this->currentPath = $urlPath;
         $this->lang = $lang;
 
-        $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $lang . $this->currentPath;
+        $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
         list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
 
         if ($pageId === false || $pagedataId === false) {
             throw new \exception("site does not exist");
         }
 
+        return $this->transformXml($pageId, $pagedataId);
+    }
+    // }}}
+    // {{{ transformXml()
+    protected function transformXml($pageId, $pagedataId)
+    {
         $pageXml = $this->xmlGetter->getDocXml($pagedataId);
 
         $this->xsltProc->setParameter("", array(
-            "currentLang" => $lang,
+            "currentLang" => $this->lang,
             "currentPageId" => $pageId,
             "currentContentType" => "text/html",
             "currentEncoding" => "UTF-8",
