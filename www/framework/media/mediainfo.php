@@ -76,14 +76,11 @@ class mediainfo {
         // add mimetype info
         $info['mime'] = "application/octet-stream";
 
-        $fileinfo = pathinfo($this->filename);
-
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($this->filename);
         if (is_string($mime) && !empty($mime)) {
             $info['mime'] = $mime;
         }
-
 
         if ($this->info['exists']) {
             if ($this->hasImageExtension()) {
@@ -119,6 +116,8 @@ class mediainfo {
         $info = array();
 
         if (file_exists($this->filename)) {
+            $fileinfo = pathinfo($this->filename);
+
             $info['exists'] = true;
             $info['name'] = $fileinfo['basename'];
             $info['path'] = $fileinfo['dirname'];
