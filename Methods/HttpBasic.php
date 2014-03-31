@@ -39,18 +39,6 @@ class HttpBasic extends HttpCookie
         return $this->user;
     }
     // }}}
-    // {{{ enforce_logout()
-    /**
-     * enforces logout 
-     *
-     * @public
-     *
-     * @return      boolean             true
-     */
-    public function enforce_logout() {
-        // not implemented
-    }
-    // }}}
     
     // {{{ auth_basic()
     public function auth_basic() {
