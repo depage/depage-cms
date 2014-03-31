@@ -73,7 +73,7 @@ class taskrunner extends \depage_ui {
         $this->force_login = false; // TODO: !$cli;
         if ($this->force_login) {
             // get auth object
-            $this->auth = \auth::factory(
+            $this->auth = \depage\Auth\Auth::factory(
                 $this->pdo, // db_pdo 
                 $this->options->auth->realm, // auth realm
                 DEPAGE_BASE, // domain

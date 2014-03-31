@@ -67,7 +67,7 @@ class ui_comments extends \depage_ui {
             );
         }
         // get auth object
-        $this->auth = \auth::factory(
+        $this->auth = \depage\Auth\Auth::factory(
             $this->pdo,
             $this->options->auth->realm,
             DEPAGE_BASE, // domain

@@ -12,7 +12,12 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-class auth_http_digest extends auth_http_basic {
+namespace depage\Auth\Methods;
+
+use depage\Auth\User;
+
+class HttpDigest extends HttpBasic
+{
     // {{{ enforce()
     /**
      * enforces authentication 
@@ -83,7 +88,7 @@ class auth_http_digest extends auth_http_basic {
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
             // get new user object
-            $user = auth_user::get_by_username($this->pdo, $data['username']);
+            $user = User::get_by_username($this->pdo, $data['username']);
             $valid_response = $this->check_response($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
             if ($user && $valid_response) {
@@ -104,7 +109,7 @@ class auth_http_digest extends auth_http_basic {
         $this->send_auth_header($valid_response);
         $this->start_session();
 
-        throw new Exception("you are not allowed to to this!");
+        throw new \Exception("you are not allowed to to this!");
     } 
     // }}}
     // {{{ auth_digest_logout()

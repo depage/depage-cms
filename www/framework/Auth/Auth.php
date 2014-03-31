@@ -15,11 +15,13 @@
  * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
 
+namespace depage\Auth;
+
 /**
  * contains functions for handling user authentication
  * and session handling.
  */
-class auth {
+class Auth {
     // {{{ variables
     public $realm = "depage::cms";
     public $sid, $uid;
@@ -47,11 +49,11 @@ class auth {
      */
     public static function factory($pdo, $realm, $domain, $method) {
         if ($method == "http_digest") {
-            return new auth_http_digest($pdo, $realm, $domain);
+            return new Methods\HttpDigest($pdo, $realm, $domain);
         } elseif ($method == "http_basic") {
-            return new auth_http_basic($pdo, $realm, $domain);
+            return new Methods\HttpBasic($pdo, $realm, $domain);
         } else {
-            return new auth_http_cookie($pdo, $realm, $domain);
+            return new Methods\HttpCookie($pdo, $realm, $domain);
         }
     }
     // }}}

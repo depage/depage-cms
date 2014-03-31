@@ -8,11 +8,13 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
+namespace depage\Auth;
+
 /**
  * contains functions for handling user authentication
  * and session handling.
  */
-class auth_user {
+class User {
     // {{{ constructor()
     /**
      * constructor
@@ -36,7 +38,7 @@ class auth_user {
      * @param       PDO     $pdo        pdo object for database access
      * @param       string  $username   username of the user
      *
-     * @return      auth_user
+     * @return      User
      */
     static public function get_by_username($pdo, $username) {
         $uid_query = $pdo->prepare(
@@ -61,8 +63,9 @@ class auth_user {
         ));
         
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+
         return $user;
     }
     // }}}

@@ -36,7 +36,7 @@ class ui_base extends \depage_ui {
         }
 
         // get auth object
-        $this->auth = \auth::factory(
+        $this->auth = \depage\Auth\Auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain

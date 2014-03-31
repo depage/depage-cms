@@ -15,7 +15,13 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-class auth_http_cookie extends auth {
+namespace depage\Auth\Methods;
+
+use depage\Auth\Auth;
+use depage\Auth\User;
+
+class HttpCookie extends auth
+{
     // {{{ variables
     protected $cookiepath = "";
     // }}}
@@ -47,7 +53,7 @@ class auth_http_cookie extends auth {
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $login_url = html::link($this->loginUrl, "auto");
+                $login_url = \html::link($this->loginUrl, "auto");
                 
                 // set protocol
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
@@ -60,7 +66,7 @@ class auth_http_cookie extends auth {
                 if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
                     $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    depage::redirect("$login_url?redirectTo=$redirectTo");
+                    \depage::redirect("$login_url?redirectTo=$redirectTo");
                 }
             }
         }
@@ -100,7 +106,7 @@ class auth_http_cookie extends auth {
     /* }}} */
     /* {{{ login() */
     public function login($username, $password) {
-        $user = auth_user::get_by_username($this->pdo, $username);
+        $user = User::get_by_username($this->pdo, $username);
         $hash = $this->hash_user_pass($username, $password);
 
         if ($user && $user->passwordhash === $hash) {
@@ -112,7 +118,7 @@ class auth_http_cookie extends auth {
             return true;
         }
 
-        //throw new Exception("Login failed! Wrong username password combination.");
+        //throw new \Exception("Login failed! Wrong username password combination.");
         return false;
     }
     /* }}} */
@@ -124,7 +130,7 @@ class auth_http_cookie extends auth {
                 $this->set_sid($_COOKIE[session_name()]);
                 $this->start_session();
 
-                $user = auth_user::get_by_sid($this->pdo, $this->get_sid());
+                $user = User::get_by_sid($this->pdo, $this->get_sid());
 
                 return $user;
             } else {

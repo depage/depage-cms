@@ -12,7 +12,12 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-class auth_http_basic extends auth_http_cookie {
+namespace depage\Auth\Methods;
+
+use depage\Auth\User;
+
+class HttpBasic extends HttpCookie
+{
     // {{{ enforce()
     /**
      * enforces authentication 
@@ -57,7 +62,7 @@ class auth_http_basic extends auth_http_cookie {
 
         if (isset($_SERVER['PHP_AUTH_USER'])) { 
             // get new user object
-            $user = auth_user::get_by_username($this->pdo, $_SERVER['PHP_AUTH_USER']);
+            $user = User::get_by_username($this->pdo, $_SERVER['PHP_AUTH_USER']);
 
             if ($user) {
                 // generate the valid response
@@ -82,7 +87,7 @@ class auth_http_basic extends auth_http_cookie {
         $this->send_auth_header();
         $this->start_session();
 
-        throw new Exception("you are not allowed to to this!");
+        throw new \Exception("you are not allowed to to this!");
     } 
     // }}}
     // {{{ send_auth_header()

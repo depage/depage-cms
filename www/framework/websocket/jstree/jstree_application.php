@@ -37,7 +37,7 @@ class JsTreeApplication extends \Websocket\Application\Application {
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
 
         /* get auth object
-        $this->auth = \auth::factory(
+        $this->auth = \depage\Auth\Auth::factory(
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
