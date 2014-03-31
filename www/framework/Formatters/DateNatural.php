@@ -10,34 +10,45 @@ namespace Depage\Formatters;
 class DateNatural
 {
     // {{{ format()
-    public function format($date)
+    public function format($date, $addTime = false)
     {
+        $time = "";
+
         if (is_integer($date)) {
             $datetime = new \DateTime();
             $date = $datetime->setTimestamp($date);
         }
         if ($date instanceof \DateTime) {
-            $now_date = new \DateTime();
-            $now_ti = $now_date->getTimestamp();
+            $now = new \DateTime("now");
+            $yesterday = new \DateTime("yesterday");
+
             $date_ti = $date->getTimestamp();
-            $ti = $now_ti - $date_ti;
+            $now_ti = $now->getTimestamp();
+            $diff = $now_ti - $date_ti;
         } else {
             throw new InvalidArgumentException("date must be an instance of DateTime. Input was " . $date);
         }
 
-        if ($ti < 1) {
+        if ($addTime) {
+            $time = ", " . $date->format("H:i");
+        }
+
+        if ($diff < 1) {
             return _("now"); // date diff: now
-        } elseif ($ti < 60) {
+        } elseif ($diff < 60) {
             return _("just now"); // date diff: just now
-        } elseif ($ti < 3600) {
-            $diff = round($ti / 60);
+        } elseif ($diff < 3600) {
+            $diff = round($diff / 60);
             return sprintf(ngettext("%d minute ago", "%d minutes ago", $diff), $diff); // date diff: in minutes
-        } elseif ($ti < 86400) {
-            $diff = round($ti / 60 / 60);
+        } elseif ($diff < 86400) {
+            $diff = round($diff / 60 / 60);
             return sprintf(ngettext("%d hour ago", "%d hours ago", $diff), $diff); // date diff: in hours
-        //} elseif ($ti < 172800) {
-            //return _("yesterday");
-        } elseif ($ti < 604800) {
+        } elseif ($date->format("Ymd") == $yesterday->format("Ymd")) {
+            return _("Yesterday") . $time;
+        } elseif ($diff < 604800) {
+            return _($date->format('l')) . $time;
+
+            // Keep to have names localized by gettext script
             if (false) {
                 _("Monday");
                 _("Tuesday");
@@ -47,12 +58,11 @@ class DateNatural
                 _("Saturday");
                 _("Sunday");
             }
-            return _($date->format('l'));
-        } else if ($ti < 691200) {
-            $diff = round($ti / 60 / 60 / 24 / 7);
-            return $diff == 1 ? sprintf(_("%d week ago"), $diff) : sprintf(_("%d weeks ago"), $diff); // date diff: in weeks
-        } else if ($date->format('Y') == $now_date->format('Y')) {
-            return \html::format_date($date, 'd. MMM');
+        } else if ($diff < 691200) {
+            $diff = round($diff / 60 / 60 / 24 / 7);
+            return ($diff == 1 ? sprintf(_("%d week ago"), $diff) : sprintf(_("%d weeks ago"), $diff)) . $time; // date diff: in weeks
+        } else if ($date->format('Y') == $now->format('Y')) {
+            return \html::format_date($date, 'd. MMM') . $time;
         } else {
             // Full Date dd. MMM YY
             return \html::format_date($date, \IntlDateFormatter::SHORT);
