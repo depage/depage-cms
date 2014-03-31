@@ -35,7 +35,6 @@ class HttpCookie extends auth
         $this->cookiepath = $url['path'];
 
         session_name("depage-session-id");
-        session_set_cookie_params($this->session_lifetime, $this->cookiepath, "", false, true);
     }
     /* }}} */
     
@@ -149,7 +148,33 @@ class HttpCookie extends auth
     // {{{ start_session()
     protected function start_session() {
         session_id($this->get_sid());
+
+        $sessionName = session_name();
+        $sessionDomain = false;
+        $sessionSecure = false;
+        $sessionHttponly = true;
+
+        session_set_cookie_params(
+            $this->session_lifetime,
+            $this->cookiepath,
+            $sessionDomain,
+            $sessionSecure,
+            $sessionHttponly
+        );
         session_start();
+        
+        // Extend the expiration time upon page load
+        if (isset($_COOKIE[$sessionName])) {
+            setcookie(
+                $sessionName,
+                $_COOKIE[$sessionName],
+                time() + $this->session_lifetime,
+                $this->cookiepath,
+                $sessionDomain,
+                $sessionSecure,
+                $sessionHttponly
+            );
+        }
     } 
     // }}}
     // {{{ has_session()
