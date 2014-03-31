@@ -92,7 +92,7 @@ class video {
     public function __construct($options) {
         $options = array_change_key_case($options);
         foreach ($this->defaults as $option => $default) {
-            $this->$option = isset($options[strtolower($option)]) ? $options[strtolower($option)] : $default;
+            $this->$option = isset($options[$option]) ? $options[$option] : $default;
         }
     }
     // }}}
