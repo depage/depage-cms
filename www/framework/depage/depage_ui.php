@@ -134,7 +134,11 @@ abstract class depage_ui {
         }
         
         // first paramater is function
-        $dp_func = str_replace("-", "_", $dp_params[0]);
+        if (!empty($dp_params[0])) {
+            $dp_func = str_replace("-", "_", $dp_params[0]);
+        } else {
+            $dp_func = "";
+        }
         
         try {
             $this->_init();
