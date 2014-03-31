@@ -5,7 +5,7 @@
  * cms xmldb module
  *
  *
- * copyright (c) 2002-2011 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -13,8 +13,8 @@
 
 namespace depage\xmldb;
 
-class xmldb {
-
+class xmldb implements XmlGetter
+{
     // {{{ variables
     private $doc_ids = array();
 

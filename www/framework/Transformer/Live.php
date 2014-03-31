@@ -14,10 +14,15 @@ class Live extends Preview
         
         // get cache instance for transforms
         $this->transformCache = \depage\cache\cache::factory("transform", $cacheOptions);
-
     }
     // }}}
     
+    // {{{ initXmlGetter()
+    public function initXmlGetter()
+    {
+        $this->xmlGetter = new \depage\xmldb\XmldbHistory($this->prefix, $this->pdo);
+    }
+    // }}}
     // {{{ transformXml()
     protected function transformXml($pageId, $pagedataId)
     {

@@ -58,9 +58,7 @@ abstract class Transformer
     public function initXmlGetter()
     {
         // create xmldb-project
-        $this->xmlGetter = new \depage\xmldb\xmldb($this->prefix, $this->pdo, $this->xmldbCache, array(
-            'pathXMLtemplate' => $this->xmlPath,
-        ));
+        $this->xmlGetter = new \depage\xmldb\xmldb($this->prefix, $this->pdo, $this->xmldbCache);
     }
     // }}}
     // {{{ initXsltProc()
@@ -345,10 +343,10 @@ abstract class Transformer
         if (empty($this->urlsByPageId) ||
             empty($this->pageIdByUrl)
         ) {
-            $pages = $this->xmlGetter->getDoc("pages");
+            $pages = $this->xmlGetter->getDocXml("pages");
 
             $xmlnav = new \depage\cms\xmlnav();
-            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages->getXml());
+            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
         }
 
         return array_keys($this->pageIdByUrl);

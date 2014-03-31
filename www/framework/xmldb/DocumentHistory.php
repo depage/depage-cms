@@ -5,7 +5,7 @@
  * cms xmldb module
  *
  *
- * copyright (c) 2002-2011 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author   Ben Wallis
  *
@@ -13,8 +13,8 @@
 
 namespace depage\xmldb;
 
-class history {
-
+class DocumentHistory
+{
     // {{{ variables
     private $pdo;
     private $db_ns;
@@ -25,7 +25,7 @@ class history {
     // }}}
 
     // {{{ constructor()
-    public function __construct(\depage\DB\PDO $pdo, $table_prefix, document $document) {
+    public function __construct($table_prefix, \depage\DB\PDO $pdo, $table_prefix, document $document) {
         $this->document = $document;
 
         $this->pdo = $pdo;
@@ -46,7 +46,7 @@ class history {
      * @param null $published
      * @return mixed
      */
-    public function getVersions($published = null) {
+    public function getVersions($published = null, $maxResults = null) {
         $query = "SELECT h.hash, h.last_saved_at, h.user_id, h.published
             FROM {$this->table_history} AS h
             WHERE h.doc_id = :doc_id";
@@ -60,8 +60,14 @@ class history {
             $params['published'] = $published == true;
         }
 
-        $query .= "
-            ORDER BY h.last_saved_at DESC;";
+        $query .= " ORDER BY h.last_saved_at DESC;";
+
+        if ($maxResults > 0) {
+            $query .= " LIMIT :maxResults";
+            $params['maxResults'] = $maxResults;
+        }
+
+        $query .= ";";
 
         $sth = $this->pdo->prepare($query);
 
@@ -69,6 +75,7 @@ class history {
 
         if ($sth->execute($params)) {
             $results = $sth->fetchAll();
+
             foreach($results as &$result) {
                 $versions[strtotime($result['last_saved_at'])] = array(
                     'last_saved_at' => $result['last_saved_at'],
@@ -121,7 +128,7 @@ class history {
      *
      */
     public function getLastPublishedXml() {
-        $latest = reset($this->getVersions(true)->first());
+        $latest = reset($this->getVersions(true, 1)->first());
         return $this->getXml($latest['date']);
     }
     // }}}
