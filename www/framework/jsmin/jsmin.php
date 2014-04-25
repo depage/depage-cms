@@ -97,7 +97,12 @@ abstract class jsmin {
             $log = new \log();
             $log->log("jsmin: minifying '$file'");
 
-            $src = $this->minifySrc(file_get_contents($file));
+            if (preg_match("/\.min\.js$/", $file)) {
+                // dont minify already minified files
+                $src = file_get_contents($file);
+            } else {
+                $src = $this->minifySrc(file_get_contents($file));
+            }
             $this->cache->setFile($file, $src, false);
         }
 
