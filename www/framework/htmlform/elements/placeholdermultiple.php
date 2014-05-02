@@ -12,26 +12,28 @@ namespace depage\htmlform\elements;
 /**
  * @brief Placeholder for form multiple form values.
  *
- * @section usage
+ * Usage
+ * -----
  *
  * @code
- * <?php
- *     $form = new depage\htmlform\htmlform('myform');
- *
- *     // add a hidden field
- *     $form->addPlaceholderMutliple('nonce');
- *
- * ?>
- * @endcode
+    <?php
+        $form = new depage\htmlform\htmlform('myform');
+
+        // add a hidden field
+        $form->addPlaceholderMutliple('nonce');
+
+    @endcode
  **/
-class placeholderMultiple extends placeholder {
+class placeholdermultiple extends placeholder
+{
     // {{{ typeCastValue()
     /**
      * @brief   Casts to array.
      *
-     * @return  (array)
+     * @return array empty array
      **/
-    public function typeCastValue() {
+    public function typeCastValue()
+    {
         return array();
     }
     // }}}

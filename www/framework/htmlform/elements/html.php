@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file    html.php
  * @brief   html element
@@ -9,31 +9,30 @@
 
 namespace depage\htmlform\elements;
 
-use depage\htmlform\exceptions;
-
 /**
  * @brief Can be used to insert custom HTML between rendered HTML elements.
  *
  * Class for custom HTML code sections.
  *
- * @section usage
+ * Usage
+ * -----
  *
  * @code
- * <?php
- *     $form = new depage\htmlform\htmlform('myform');
- *
- *     // add HTML
- *     $form->addHtml('<div id="myimage"></div>');
- *
- *     // process form
- *     $form->process();
- *
- *     // Display the form.
- *     echo ($form);
- * ?>
- * @endcode
+    <?php
+        $form = new depage\htmlform\htmlform('myform');
+
+        // add HTML
+        $form->addHtml('<div id="myimage"></div>');
+
+        // process form
+        $form->process();
+
+        // Display the form.
+        echo ($form);
+    @endcode
  **/
-class html {
+class html
+{
     // {{{ variables
     /**
      * @brief HTML code to be printed
@@ -45,9 +44,10 @@ class html {
     /**
      * @brief html class constructor
      *
-     * @param $htmlString (string) HTML to be printed
+     * @param string $htmlString HTML to be printed
      **/
-    public function __construct($htmlString) {
+    public function __construct($htmlString)
+    {
         $this->htmlString = $htmlString;
     }
     // }}}
@@ -56,9 +56,10 @@ class html {
     /**
      * @brief   Renders element to HTML.
      *
-     * @return  $this->htmlString (string) HTML-rendered element
+     * @return string $this->htmlString HTML-rendered element
      **/
-    public function __toString() {
+    public function __toString()
+    {
         return (string) $this->htmlString;
     }
     // }}}

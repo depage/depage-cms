@@ -6,9 +6,12 @@ doc: depage-docu examples/main-*.html
 	cd ./depage-docu/ ; git pull origin master || true
 	doxygen Doxyfile
 	cp -r depage-docu/www/lib html/
-	sed -i".bak" "s/<body/<body class=\\\"home\\\"/" html/index.html
-	sed -i".bak" "s/div id=\\\"backcolor_\\\"/div id=\\\"${BACKCOLOR}\\\"/" html/*.html
+	sed -i".bak" "s/<body class=\\\"\\\"/<body class=\\\"home\\\"/" html/index.html
+	#sed -i".bak" "s/div id=\\\"backcolor_\\\"/div id=\\\"${BACKCOLOR}\\\"/" html/*.html
 	rm html/*.bak
+
+docset: doc
+	cd html; $(MAKE) $(MFLAGS)
 
 examples/main-*.html: ../README.md
 	csplit ../README.md '/Prerequisites/'

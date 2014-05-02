@@ -6,12 +6,14 @@ use depage\htmlform\exceptions;
 /**
  * General tests for the htmlform class.
  **/
-class htmlformTest extends PHPUnit_Framework_TestCase {
+class htmlformTest extends PHPUnit_Framework_TestCase
+{
     // {{{ testDuplicateElementNameException()
     /**
      * Throw exception when subelements have the same name.
      **/
-    public function testDuplicateElementNameException() {
+    public function testDuplicateElementNameException()
+    {
         $this->form = new htmlform('formName');
 
         $this->form->addFieldset('duplicate');
@@ -29,8 +31,9 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
      * Unsubmitted forms have to be invalid, so we don't redirect to success
      * page right away.
      **/
-    public function testEmptyFormBeforePostValidation() {
-        $_SESSION = array('formName-data' => array());
+    public function testEmptyFormBeforePostValidation()
+    {
+        $_SESSION = array('htmlform-formName-data' => array());
         $this->form = new htmlform('formName');
         $this->form->process();
         $this->assertFalse($this->form->validate());
@@ -41,7 +44,8 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
     /**
      * "Populating" the forms subelements with values.
      **/
-    public function testPopulate() {
+    public function testPopulate()
+    {
         $form = new htmlform('formName');
         $text1 = $form->addText('text1Name');
         $text2 = $form->addText('text2Name');
@@ -58,13 +62,13 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
         // populate() only sets (protected) default value. The easiest way to check is to render it.
         $expectedText1 = '<p id="formName-text1Name" class="input-text" data-errorMessage="Please enter valid data">' .
             '<label>' .
-                '<span class="label">text1Name</span>' .
+                '<span class="depage-label">text1Name</span>' .
                 '<input name="text1Name" type="text" value="text1Value">' .
             '</label>' .
         '</p>' . "\n";
         $expectedText2 = '<p id="formName-text2Name" class="input-text" data-errorMessage="Please enter valid data">' .
             '<label>' .
-                '<span class="label">text2Name</span>' .
+                '<span class="depage-label">text2Name</span>' .
                 '<input name="text2Name" type="text" value="">' .
             '</label>' .
         '</p>' . "\n";
@@ -78,7 +82,8 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
     /**
      * Adding step element.
      **/
-    public function testAddStep() {
+    public function testAddStep()
+    {
         $form = new htmlform('formName');
         $step = $form->addStep('stepName');
 
@@ -95,12 +100,14 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
      * This test is set up so that the update call happens when we're in the
      * right step (1). Hence, the element value should change to 'text0Value'.
      **/
-    public function testGetCurrentElementsInStep() {
+    public function testGetCurrentElementsInStep()
+    {
         $_POST['formName']  = 'formName';
+        $_POST['formCsrfToken']  = 'xxxxxxxx';
         $_POST['text0Name'] = 'text0Value';
         $_GET['step']       = '1';
 
-        $form   = new htmlform('formName');
+        $form   = new csrfTestForm('formName');
         $step0  = $form->addStep('step0');
         $step1  = $form->addStep('step1');
         $text0  = $step1->addText('text0Name');
@@ -119,12 +126,14 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
      * This test is set up so that the update call happens when we're not in
      * the current step, so the initial value shouldn't change.
      **/
-    public function testGetCurrentElementsNotInStep() {
+    public function testGetCurrentElementsNotInStep()
+    {
         $_POST['formName']  = 'formName';
+        $_POST['formCsrfToken']  = 'xxxxxxxx';
         $_POST['text0Name'] = 'text0Value';
         $_GET['step']       = '0';
 
-        $form   = new htmlform('formName');
+        $form   = new csrfTestForm('formName');
         $step0  = $form->addStep('step0');
         $step1  = $form->addStep('step1');
         $text0  = $step1->addText('text0Name');
@@ -139,11 +148,12 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
     /**
      * Tests if form has already been submitted
      **/
-    public function testIsEmpty() {
+    public function testIsEmpty()
+    {
         $form = new htmlform('formName');
         $this->assertTrue($form->isEmpty());
 
-        $_SESSION['formName-data']['formName'] = 'formName';
+        $_SESSION['htmlform-formName-data']['formName'] = 'formName';
         $this->assertFalse($form->isEmpty());
     }
     // }}}
@@ -154,15 +164,16 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
      * success page in order to check the validation result. The form object
      * alone can check its validation result in the session data.
      **/
-    public function testValidationResultWithoutValidate() {
+    public function testValidationResultWithoutValidate()
+    {
         $form = new htmlform('formName');
         $this->assertNull($form->valid);
 
-        $_SESSION['form2Name-data']['formIsValid'] = true;
+        $_SESSION['htmlform-form2Name-data']['formIsValid'] = true;
         $form2 = new htmlform('form2Name');
         $this->assertTrue($form2->valid);
 
-        $_SESSION['form3Name-data']['formIsValid'] = false;
+        $_SESSION['htmlform-form3Name-data']['formIsValid'] = false;
         $form3 = new htmlform('form3Name');
         $this->assertFalse($form3->valid);
     }
@@ -174,12 +185,14 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
      * when the rest of the form is successfully validated and an array of form
      * element values is parsed to it.
      **/
-    public function testCustomValidator() {
+    public function testCustomValidator()
+    {
         //custom validator function (valid)
         $validator = function () { return true; };
 
         // pretend the form has been submitted before
-        $_SESSION['formName-data']['formName'] = 'formName';
+        $_SESSION['htmlform-formName-data']['formName'] = 'formName';
+        $_SESSION['htmlform-formName-data']['formFinalPost'] = true;
 
         // building the form with custom validator
         $form = new htmlform('formName', array('validator' => $validator));
@@ -191,7 +204,7 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
         $validator2 = function () { return false; };
 
         // pretending the form has been submitted before
-        $_SESSION['form2Name-data']['form2Name'] = 'form2Name';
+        $_SESSION['htmlform-form2Name-data']['form2Name'] = 'form2Name';
 
         // building the form with custom validator
         $form2 = new htmlform('form2Name', array('validator' => $validator2));
@@ -205,8 +218,9 @@ class htmlformTest extends PHPUnit_Framework_TestCase {
     /**
      * See if deleting the forms session slot works.
      **/
-    public function testClearSession() {
-        $_SESSION['formName-data']['formName'] = 'formName';
+    public function testClearSession()
+    {
+        $_SESSION['htmlform-formName-data']['formName'] = 'formName';
         $form = new htmlform('formName');
 
         $form->clearSession();

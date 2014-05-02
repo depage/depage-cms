@@ -14,34 +14,35 @@ namespace depage\htmlform\elements;
  *
  * Class for HTML5 input type "number".
  *
- * @section usage
+ * Usage
+ * -----
  *
  * @code
- * <?php
- *     $form = new depage\htmlform\htmlform('myform');
- *
- *     // add a number field
- *     $form->addNumber('any', array(
- *         'label' => 'Any number',
- *     ));
- *
- *     // add a number field with restrictions
- *     $form->addNumber('even', array(
- *         'label' => 'Even number between 0 and 10, inclusive',
- *         'min'   => 0,
- *         'max'   => 10,
- *         'step'  => 2,
- *     ));
- *
- *     // process form
- *     $form->process();
- *
- *     // Display the form.
- *     echo ($form);
- * ?>
- * @endcode
+    <?php
+        $form = new depage\htmlform\htmlform('myform');
+
+        // add a number field
+        $form->addNumber('any', array(
+            'label' => 'Any number',
+        ));
+
+        // add a number field with restrictions
+        $form->addNumber('even', array(
+            'label' => 'Even number between 0 and 10, inclusive',
+            'min'   => 0,
+            'max'   => 10,
+            'step'  => 2,
+        ));
+
+        // process form
+        $form->process();
+
+        // Display the form.
+        echo ($form);
+    @endcode
  **/
-class number extends text {
+class number extends text
+{
     // {{{ variables
     /**
      * @brief Minimum range HTML attribute.
@@ -65,9 +66,10 @@ class number extends text {
      * attributes at runtime. It's a compact mechanism for initialising
      * a lot of variables.
      *
-     * @return  void
+     * @return void
      **/
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
 
         $this->defaults['defaultValue'] = 0;
@@ -82,9 +84,10 @@ class number extends text {
     /**
      * @brief   Renders element to HTML.
      *
-     * @return  (string) HTML rendered element
+     * @return string HTML rendered element
      **/
-    public function __toString() {
+    public function __toString()
+    {
         $value              = $this->htmlValue();
         $inputAttributes    = $this->htmlInputAttributes();
         $marker             = $this->htmlMarker();
@@ -99,7 +102,7 @@ class number extends text {
 
         return "<p {$wrapperAttributes}>" .
             "<label>" .
-                "<span class=\"label\">{$label}{$marker}</span>" .
+                "<span class=\"depage-label\">{$label}{$marker}</span>" .
                 "<input name=\"{$this->name}\" type=\"{$this->type}\"{$max}{$min}{$step}{$inputAttributes} value=\"{$value}\">" .
                 $list .
             "</label>" .
@@ -113,9 +116,10 @@ class number extends text {
     /**
      * @brief   Renders HTML min attribute.
      *
-     * @return  (string) HTML min attribute
+     * @return string HTML min attribute
      **/
-    protected function htmlMin() {
+    protected function htmlMin()
+    {
         return ($this->min === null) ? "" : " min=\"" . $this->htmlEscape($this->min) . "\"";
     }
     // }}}
@@ -124,9 +128,10 @@ class number extends text {
     /**
      * @brief   Renders HTML max attribute.
      *
-     * @return  (string) HTML max attribute
+     * @return string HTML max attribute
      **/
-    protected function htmlMax() {
+    protected function htmlMax()
+    {
         return ($this->max === null) ? "" : " max=\"" . $this->htmlEscape($this->max) . "\"";
     }
     // }}}
@@ -135,9 +140,10 @@ class number extends text {
     /**
      * @brief   Renders HTML step attribute.
      *
-     * @return  (string) HTML step attribute
+     * @return string HTML step attribute
      **/
-    protected function htmlStep() {
+    protected function htmlStep()
+    {
         return ($this->step === null) ? "" : " step=\"" . $this->htmlEscape($this->step) . "\"";
     }
     // }}}
@@ -148,13 +154,15 @@ class number extends text {
      *
      * Number specific validator call (includes min and max values)
      *
-     * @return  (bool) validaton result
+     * @return bool validaton result
      **/
-    protected function validatorCall() {
+    protected function validatorCall()
+    {
         $parameters = array(
             'min' => $this->min,
             'max' => $this->max,
         );
+
         return $this->validator->validate($this->value, $parameters);
     }
     // }}}
@@ -165,47 +173,61 @@ class number extends text {
      *
      * Based on (parseFloat) http://www.php.net/manual/en/function.floatval.php#84793
      *
-     * @return  void
+     * @return void
      **/
-    protected function typeCastValue() {
+    protected function typeCastValue()
+    {
         $ptString = $this->value;
 
         $pString = str_replace(" ", "", $ptString);
 
-        if (substr_count($pString, ",") > 1) {$pString = str_replace(",", "", $pString);}
-        if (substr_count($pString, ".") > 1) {$pString = str_replace(".", "", $pString);}
-
-        $pregResult = array();
-
-        $commaset = strpos($pString,',');
-        if ($commaset === false) {$commaset = -1;}
-
-        $pointset = strpos($pString,'.');
-        if ($pointset === false) {$pointset = -1;}
-
-        $pregResultA = array();
-        $pregResultB = array();
-
-        if ($pointset < $commaset) {
-            preg_match('#(([-]?[0-9]+(\.[0-9])?)+(,[0-9]+)?)#', $pString, $pregResultA);
+        // assume if we have more than one mark it's a thousand mark -> remove them
+        if (substr_count($pString, ",") > 1) {
+            $pString = str_replace(",", "", $pString);
         }
-        preg_match('#(([-]?[0-9]+(,[0-9])?)+(\.[0-9]+)?)#', $pString, $pregResultB);
-        if ((isset($pregResultA[0]) && (!isset($pregResultB[0])
-                        || strstr($preResultA[0],$pregResultB[0]) == 0
-                        || !$pointset))) {
-            $numberString = $pregResultA[0];
-            $numberString = str_replace('.','',$numberString);
-            $numberString = str_replace(',','.',$numberString);
+        if (substr_count($pString, ".") > 1) {
+            $pString = str_replace(".", "", $pString);
         }
-        elseif (isset($pregResultB[0]) && (!isset($pregResultA[0])
-                    || strstr($pregResultB[0],$preResultA[0]) == 0
-                    || !$commaset)) {
-            $numberString = $pregResultB[0];
-            $numberString = str_replace(',','',$numberString);
+
+        // assume last entry is decimal mark
+        $commaset = strrpos($pString, ',');
+        $pointset = strrpos($pString, '.');
+
+        // remove all remaining marks but the decimal mark
+        if ($commaset > $pointset) {
+            $pString = str_replace(".", "", $pString);
+        } else if ($commaset < $pointset) {
+            $pString = str_replace(",", "", $pString);
         }
-        $this->value = (float) $numberString;
+
+        // normalize to dot
+        $pString = str_replace(",", ".", $pString);
+
+        if ($pString !== "" && preg_match("/^[-+]?\d*\.?\d*$/", $pString)) {
+            $this->value = (float) $pString;
+        } else {
+            $this->value = null;
+        }
     }
     // }}}
+
+    // {{{ isEmpty()
+    /**
+     * @brief  custom empty check
+     *
+     * Number specific empty check (allows for zero int/float values)
+     *
+     * @return bool empty-check result
+     **/
+    public function isEmpty() {
+        return (
+            empty($this->value)
+            && $this->value !== 0
+            && $this->value !== .0
+        );
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

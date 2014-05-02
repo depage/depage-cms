@@ -7,6 +7,10 @@ but it also works as a standalone library. By abstracting HTML, browser flaws
 (duplicate form submissions) and form validation, it provides a comfortable 
 way to obtain reliable and validated data from users.
 
+[![Latest Stable Version](https://poser.pugx.org/depage/htmlform/v/stable.png)](https://packagist.org/packages/depage/htmlform)
+[![Build Status](https://travis-ci.org/depage/depage-forms.png?branch=master)](https://travis-ci.org/depage/depage-forms)
+
+
 Features
 --------
 
@@ -15,6 +19,7 @@ Features
     - client side [(jQuery Tools)](http://flowplayer.org/tools/ "jQuery Tools")
     - available for standard input elements
     - customizable with regular expressions
+    - basic CSRF protection
 - HTML5 form features
     - attributes : placeholder, autofocus, textbox datalists, title, pattern
     - input elements : boolean (checkbox), email, hidden, multiple (checkbox, select list), number, password, range, search, single (radio, select list), tel, text, textarea, url
@@ -27,23 +32,40 @@ Features
 - simple creditcard validation (by values)
 - unit tested
 
-[![Build Status](https://travis-ci.org/depage/depage-forms.png?branch=master)](https://travis-ci.org/depage/depage-forms)
-
 Prerequisites
 -------------
 
 - PHP 5.3
 - jQuery >=1.4.3 (optional, for client side validation and richtext field)
 
-Download
---------------------
-- <http://www.depage.net/downloads/depage-forms-latest.zip>
-
 Introduction
---------------------
+------------
 
 - You can get a basic introduction at:
   [depage-forms: html5 forms made easy (part I)](http://www.depage.net/en/blog/2011/07/depage-forms-html5-form-in-php-made-easy-part-1.html)
+- How to do Form Validation
+  [depage-forms: validation of html5 forms (part II)](http://www.depage.net/en/blog/2013/10/depage-forms-html5-form-validation-part-2.html)
+
+
+Download
+--------
+- <http://www.depage.net/downloads/depage-forms-latest.zip>
+
+Install Using Composer
+----------------------
+Get composer at <http://getcomposer.org> and then just add this to your composer.json.
+
+    {
+        "require": {
+            "depage/htmlform": "*"
+        }
+    }
+
+Now run
+
+    composer install
+
+to install the current version of depage-htmlform into your vendor dir.
 
 For more information
 --------------------

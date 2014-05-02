@@ -17,44 +17,48 @@ use depage\htmlform\abstracts;
  * Class for multiple-choice type HTML elements. Has the same return value,
  * regardless of skin type (checkbox or select).
  *
- * @section usage
+ * @see depage::htmlform::elements::single
+ * @see depage::htmlform::elements::boolean
+ *
+ * Usage
+ * -----
  *
  * @code
- * <?php
- *     $form = new depage\htmlform\htmlform('myform');
- *
- *     // add multiple-element (checkbox is the default skin)
- *     $form->addMultiple('listOne', array(
- *         'label' => 'Spoken languages',
- *         'list' => array(
- *             'en' => 'English',
- *             'es' => 'Spanish',
- *             'fr' => 'French',
- *         ),
- *     ));
- *
- *     // add a multiple-element with select-skin
- *     $form->addMultiple('listTwo', array(
- *         'label' => 'Spoken languages',
- *         'skin' => 'select',
- *         'list' => array(
- *             'en' => 'English',
- *             'es' => 'Spanish',
- *             'fr' => 'French',
- *         ),
- *     ));
- *
- *     // process form
- *     $form->process();
- *
- *     // Display the form.
- *     echo ($form);
- * ?>
- * @endcode
+    <?php
+        $form = new depage\htmlform\htmlform('myform');
+
+        // add multiple-element (checkbox is the default skin)
+        $form->addMultiple('listOne', array(
+            'label' => 'Spoken languages',
+            'list' => array(
+                'en' => 'English',
+                'es' => 'Spanish',
+                'fr' => 'French',
+            ),
+        ));
+
+        // add a multiple-element with select-skin
+        $form->addMultiple('listTwo', array(
+            'label' => 'Spoken languages',
+            'skin' => 'select',
+            'list' => array(
+                'en' => 'English',
+                'es' => 'Spanish',
+                'fr' => 'French',
+            ),
+        ));
+
+        // process form
+        $form->process();
+
+        // Display the form.
+        echo ($form);
+    @endcode
  **/
-class multiple extends abstracts\input {
+class multiple extends abstracts\input
+{
     // {{{ variables
-    /** 
+    /**
      * @brief Contains list of selectable options.
      **/
     protected $list = array();
@@ -64,12 +68,13 @@ class multiple extends abstracts\input {
     /**
      * @brief   multiple class constructor
      *
-     * @param   $name       (string)    element name
-     * @param   $parameters (array)     element parameters, HTML attributes, validator specs etc.
-     * @param   $form       (object)    parent form object
-     * @return  void
+     * @param  string $name       element name
+     * @param  array  $parameters element parameters, HTML attributes, validator specs etc.
+     * @param  object $form       parent form object
+     * @return void
      **/
-    public function __construct($name, $parameters, $form) {
+    public function __construct($name, $parameters, $form)
+    {
         parent::__construct($name, $parameters, $form);
 
         $this->list = (isset($parameters['list']) && is_array($parameters['list'])) ? $parameters['list'] : array();
@@ -84,9 +89,10 @@ class multiple extends abstracts\input {
      * attributes at runtime. It's a compact mechanism for initialising
      * a lot of variables.
      *
-     * @return  void
+     * @return void
      **/
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
 
         // multiple-choice-elements have values of type array
@@ -103,13 +109,14 @@ class multiple extends abstracts\input {
      * recursively in case of select-optgroups. If no parameters are parsed, it
      * uses the list attribute of this element.
      *
-     * @param   $options    (array)     list elements and subgroups
-     * @param   $value      (array)     values to be marked as selected
-     * @return  $list       (string)    rendered options-part of the HTML-select-element
+     * @param  array  $options list elements and subgroups
+     * @param  array  $value   values to be marked as selected
+     * @return string $list       rendered options-part of the HTML-select-element
      *
      * @see     __toString()
      **/
-    protected function htmlList($options = null, $value = null) {
+    protected function htmlList($options = null, $value = null)
+    {
         if ($value == null)     $value      = $this->htmlValue();
         if ($options == null)   $options    = $this->list;
 
@@ -118,7 +125,7 @@ class multiple extends abstracts\input {
 
         // select
         if ($this->skin === "select") {
-            foreach($options as $index => $option) {
+            foreach ($options as $index => $option) {
                 if (is_array($option)) {
                     $list       .= "<optgroup label=\"{$index}\">" . $this->htmlList($option, $value) . "</optgroup>";
                 } else {
@@ -130,7 +137,7 @@ class multiple extends abstracts\input {
         } else {
             $inputAttributes = $this->htmlInputAttributes();
 
-            foreach($options as $index => $option) {
+            foreach ($options as $index => $option) {
                 $selected = (is_array($value) && (in_array($index, $value))) ? " checked=\"yes\"" : '';
 
                 $list .= "<span>" .
@@ -141,6 +148,7 @@ class multiple extends abstracts\input {
                 "</span>";
             }
         }
+
         return $list;
     }
     // }}}
@@ -149,11 +157,12 @@ class multiple extends abstracts\input {
     /**
      * @brief   Renders element to HTML.
      *
-     * @return  (string) HTML rendered element
+     * @return string HTML rendered element
      *
      * @see     htmlList()
      **/
-    public function __toString() {
+    public function __toString()
+    {
         $marker             = $this->htmlMarker();
         $label              = $this->htmlLabel();
         $list               = $this->htmlList();
@@ -168,7 +177,7 @@ class multiple extends abstracts\input {
 
             return "<p {$wrapperAttributes}>" .
                 "<label>" .
-                    "<span class=\"label\">{$label}{$marker}</span>" .
+                    "<span class=\"depage-label\">{$label}{$marker}</span>" .
                     "<select multiple name=\"{$this->name}[]\"{$inputAttributes}>{$list}</select>" .
                 "</label>" .
                 $errorMessage .
@@ -176,9 +185,8 @@ class multiple extends abstracts\input {
             "</p>\n";
         } else {
             // render HTML checkbox
-
             return "<p {$wrapperAttributes}>" .
-                "<span class=\"label\">{$label}{$marker}</span>" .
+                "<span class=\"depage-label\">{$label}{$marker}</span>" .
                 "<span>{$list}</span>" .
                 $errorMessage .
                 $helpMessage .
@@ -194,15 +202,15 @@ class multiple extends abstracts\input {
      * (overrides parent to avoid awkward HTML5 checkbox validation (all
      * boxes need to be checked if required))
      *
-     * @return  $attributes (string) HTML attributes
+     * @return string $attributes HTML attributes
      **/
-    protected function htmlInputAttributes() {
+    protected function htmlInputAttributes()
+    {
         $attributes = '';
 
         // HTML5 validator hack
         if ($this->required && $this->skin === 'select') $attributes .= ' required="required"';
         if ($this->autofocus)                            $attributes .= ' autofocus="autofocus"';
-
         return $attributes;
     }
     // }}}
@@ -211,9 +219,10 @@ class multiple extends abstracts\input {
     /**
      * @brief   Converts value to element specific type.
      *
-     * @return  void
+     * @return void
      **/
-    protected function typeCastValue() {
+    protected function typeCastValue()
+    {
         if ($this->value == "") {
             $this->value = array();
         } else {

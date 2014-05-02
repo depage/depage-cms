@@ -6,10 +6,12 @@ use depage\htmlform\htmlform;
 /**
  * Custom htmlform class with overidden redirect method for easier testing
  **/
-class htmlformTestClass extends htmlform {
+class htmlformTestClass extends csrfTestForm
+{
     public $testRedirect;
 
-    public function redirect($url) {
+    public function redirect($url)
+    {
         $this->testRedirect = $url;
     }
 }
@@ -18,12 +20,14 @@ class htmlformTestClass extends htmlform {
 /**
 * Testing Post/Redirect/Get-relevant behavior
 **/
-class prgTest extends PHPUnit_Framework_TestCase {
+class prgTest extends PHPUnit_Framework_TestCase
+{
     // {{{ testRedirect()
     /**
      * Testing the test...
      **/
-    public function testRedirect() {
+    public function testRedirect()
+    {
         $this->form = new htmlformTestClass('formName');
         $this->form->redirect('http://www.depage.net');
 
@@ -36,9 +40,11 @@ class prgTest extends PHPUnit_Framework_TestCase {
      * Testing htmlform::updateInputValue() and htmlform::process()
      * in case of submitted form
      **/
-    public function testProcessOnPost() {
+    public function testProcessOnPost()
+    {
         // setting up the post-data (form-name and value for a text-element)
         $_POST['formName'] = 'formName';
+        $_POST['formCsrfToken']  = 'xxxxxxxx';
         $_POST['postedText'] = 'submitted';
 
         $form = new htmlformTestClass('formName', array('successURL' => 'http://www.depagecms.net'));
@@ -58,15 +64,54 @@ class prgTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('http://www.depagecms.net', $form->testRedirect);
     }
     // }}}
+    
+    // {{{ testProcessCorrectCsrf()
+    /**
+     * Testing validation with correct CSRF token
+     **/
+    public function testProcessCorrectCsrf()
+    {
+        // setting up the post-data (form-name and value for a text-element)
+        $_POST['formName'] = 'formName';
+        $_POST['formCsrfToken']  = 'xxxxxxxx';
+        $_POST['postedText'] = 'submitted';
+
+        $form = new htmlformTestClass('formName');
+        $postedTextElement = $form->addText('postedText');
+
+        $form->process();
+        $this->assertTrue($form->validate());
+    }
+    // }}}
+    
+    // {{{ testProcessIncorrectCsrf()
+    /**
+     * Testing validation with incorrect CSRF token
+     **/
+    public function testProcessIncorrectCsrf()
+    {
+        // setting up the post-data (form-name and value for a text-element)
+        $_POST['formName'] = 'formName';
+        $_POST['formCsrfToken']  = 'yyyyyyyy';
+        $_POST['postedText'] = 'submitted';
+
+        $form = new htmlformTestClass('formName');
+        $postedTextElement = $form->addText('postedText');
+
+        $form->process();
+        $this->assertFalse($form->validate());
+    }
+    // }}}
 
     // {{{ testProcessOnGet()
     /**
      * Testing htmlform::updateInputValue() and htmlform::process()
      * on GET-request with previously submitted data in session
      **/
-    public function testProcessOnGet() {
+    public function testProcessOnGet()
+    {
         // setting up session-data for text-element
-        $_SESSION['formName-data']['storedText'] = 'stored';
+        $_SESSION['htmlform-formName-data']['storedText'] = 'stored';
 
         $form = new htmlformTestClass('formName');
 
@@ -79,13 +124,15 @@ class prgTest extends PHPUnit_Framework_TestCase {
 
     // {{{ testProcessSteps()
     /**
-     * Test process() method for forms with steps. Setting an invalid step 
-     * number forces call of getFirstInvalidStep(). 
+     * Test process() method for forms with steps. Setting an invalid step
+     * number forces call of getFirstInvalidStep().
      *
      * The first invalid step should be step1.
      **/
-    public function testProcessSteps() {
+    public function testProcessSteps()
+    {
         $_POST['formName'] = 'formName';
+        $_POST['formStep'] = '0';
 
         $_GET['step'] = 'bogusStepId';
 
@@ -113,8 +160,10 @@ class prgTest extends PHPUnit_Framework_TestCase {
      * are valid and the free fieldset is invalid it should jump to the last
      * step.
      **/
-    public function testStepsFreeFieldset() {
+    public function testStepsFreeFieldset()
+    {
         $_POST['formName'] = 'formName';
+        $_POST['formStep'] = '0';
 
         $_GET['step'] = 'bogusStepId';
 

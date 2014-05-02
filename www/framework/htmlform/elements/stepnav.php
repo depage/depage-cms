@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file    stepnav.php
  * @brief   Navigation element for steps
@@ -11,9 +11,11 @@ namespace depage\htmlform\elements;
 /**
  * @brief Can be used to insert a step navigation
  *
- * @section usage
+ * Usage
+ * -----
  **/
-class stepnav  {
+class stepnav
+{
     // {{{ variables
     /**
      * @brief HTML code to be printed
@@ -25,11 +27,12 @@ class stepnav  {
     /**
      * @brief   stepnav class constructor
      *
-     * @param   $parameters (array)     input element parameters, HTML attributes, validator specs etc.
-     * @param   $form       (object)    parent form object
-     * @return  void
+     * @param  array  $parameters input element parameters, HTML attributes, validator specs etc.
+     * @param  object $form       parent form object
+     * @return void
      **/
-    public function __construct($parameters, $form) {
+    public function __construct($parameters, $form)
+    {
         $this->form = $form;
     }
     // }}}
@@ -38,9 +41,10 @@ class stepnav  {
     /**
      * @brief   Renders element to HTML.
      *
-     * @return  $htmlString (string) HTML-rendered element
+     * @return string $htmlString HTML-rendered element
      **/
-    public function __toString() {
+    public function __toString()
+    {
         $currentStepId = $this->form->getCurrentStepId();
         $firstInvalidStep = $this->form->getFirstInvalidStep();
 
@@ -52,7 +56,7 @@ class stepnav  {
 
             // add link to previously unsaved steps
             if ($stepNum <= $firstInvalidStep && $stepNum != $currentStepId) {
-                $link = "href=\"{$this->form->url['path']}{$this->form->buildUrlQuery('step='.$stepNum)}\"";
+                $link = "href=\"{$this->form->url['path']}" . htmlspecialchars($this->form->buildUrlQuery(array('step' => $stepNum))) . "\"";
             }
 
             // add valid-class to previous steps

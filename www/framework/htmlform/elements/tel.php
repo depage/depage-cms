@@ -14,27 +14,28 @@ namespace depage\htmlform\elements;
  *
  * Class for the HTML5 input-type "tel".
  *
- * @section usage
+ * Usage
+ * -----
  *
  * @code
- * <?php
- *     $form = new depage\htmlform\htmlform('myform');
- *
- *     // add a required tel field
- *     $form->addTel('tel', array(
- *         'label' => 'Telephone number',
- *         'required' => true,
- *     ));
- *
- *     // process form
- *     $form->process();
- *
- *     // Display the form.
- *     echo ($form);
- * ?>
- * @endcode
+    <?php
+        $form = new depage\htmlform\htmlform('myform');
+
+        // add a required tel field
+        $form->addTel('tel', array(
+            'label' => 'Telephone number',
+            'required' => true,
+        ));
+
+        // process form
+        $form->process();
+
+        // Display the form.
+        echo ($form);
+    @endcode
  **/
-class tel extends text {
+class tel extends text
+{
     // {{{ setDefaults()
     /**
      * @brief   collects initial values across subclasses
@@ -43,9 +44,10 @@ class tel extends text {
      * attributes at runtime. It's a compact mechanism for initialising
      * a lot of variables.
      *
-     * @return  void
+     * @return void
      **/
-    protected function setDefaults() {
+    protected function setDefaults()
+    {
         parent::setDefaults();
 
         $this->defaults['errorMessage'] = _('Please enter a valid telephone number');

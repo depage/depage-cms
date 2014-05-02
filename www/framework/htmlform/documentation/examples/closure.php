@@ -7,17 +7,26 @@ require_once '../../htmlform.php';
 /*
  * Create the example form 'simpleForm'
  */
-$form = new depage\htmlform\htmlform('simpleForm');
+$form = new depage\htmlform\htmlform('closureValidator');
 
 /*
- * Add the various input elements to the form by calling the '"add" + element
- * type' method.
- * The first parameter is the name of the element; it's a unique
- * identifier and therefore required. The optional second parameter is an array
- * of element settings.
+ * Adds a closure validator:
+ * Attach a function that validates the input.
+ * In this case you must enter "2" oder a string
+ * containing "yes" to pass validation.
  */
-$form->addText('username', array('label' => 'User name', 'required' => true));
-$form->addEmail('email', array('label' => 'Email address'));
+$form->addText('closure', array(
+    'label' => 'closure validated', 
+    'required' => true,
+    'validator' => function($value) {
+        if ($value == 2) {
+            return true;
+        } else {
+            return strpos($value, "yes") !== false;
+        }
+    },
+    'errorMessage' => "Your input must include 'yes' or be '2'",
+));
 
 /*
  * The process method is essential to the functionality of the form. It serves
