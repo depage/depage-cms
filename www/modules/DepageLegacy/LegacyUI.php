@@ -58,6 +58,9 @@ class LegacyUI extends \depage_ui
             );
         }
 
+        // resgister session handler
+        \depage\Session\SessionHandler::register($this->pdo);
+
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
             $this->pdo, // db_pdo 
@@ -81,7 +84,7 @@ class LegacyUI extends \depage_ui
             if ($this->autoEnforceAuth) {
                 $this->auth_user = $this->auth->enforce();
             } else {
-                $this->auth_user = $this->auth->enforce_lazy();
+                $this->auth_user = $this->auth->enforceLazy();
             }
         }
     }
@@ -109,7 +112,7 @@ class LegacyUI extends \depage_ui
     
     // {{{ toolbar
     protected function toolbar() {
-        if ($user = $this->auth->enforce_lazy()) {
+        if ($user = $this->auth->enforceLazy()) {
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
                 'username' => $user->name,
@@ -166,6 +169,92 @@ class LegacyUI extends \depage_ui
     }
     // }}}
     
+    // {{{ login()
+    /**
+     * Login
+     * 
+     * Displays and handles the user login:
+     * - Redirects to HTTPS if required.
+     * - Displays login form.
+     * - Validates input and redirects authenticated users.
+     * 
+     * @return string HTML - login template
+     */
+    public function login() {
+        // redirect to https when not on a secure connection
+        if ($this->options->auth->https && !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off")) {
+            $redirectTo = "";
+            if (!empty($_REQUEST['redirectTo'])) {
+                $redirectTo = "?redirectTo=" . urlencode($_REQUEST['redirectTo']);
+            }
+            depage::redirect(html::link("login/{$redirectTo}", "https"));
+        }
+        // not logged in
+        $form = new Forms\Login("login", array(
+            'validator' => array($this, '_validateLogin'),
+            'redirectTo' => isset($_REQUEST['redirectTo']) ? $_REQUEST['redirectTo'] : '',
+            'check' => true,
+        ));
+        
+        $this->log->log("processing login form, which sets session");
+        $form->process();
+        $form->validate(); // calls the onvalidate function
+        
+        return new html("box.tpl", array(
+            'title' => _("Welcome"),
+            'content' => $form,
+        ), $this->html_options);
+    }
+    // }}}
+    // {{{ logout()
+    /**
+     * Logout
+     * 
+     * This is the logout end point:
+     * - Clears session and redirects user to home page
+     * 
+     * @return void
+     */
+    public function logout() {
+        $this->auth->enforceLogout();
+        \depage::redirect(html::link("", "http"));
+    }
+    // }}}
+    // {{{ _validateLogin
+    /**
+     * Validate Login
+     * 
+     * This is the validation handler sent to the depage\htmlform validation
+     * to enable user authentication.
+     * 
+     * @param array $values - form inputs
+     * 
+     * @return user object or false - authentication state
+     */
+    public function _validateLogin($form, array $values) {
+        $username = $values['username'];
+        $password = $values['password'];
+        if (strpos($username, "@") !== false) {
+            // email login
+            $user = \depage\Auth\User::loadByEmail($this->pdo, $username);
+            if ($user) {
+                $username = $user->name;
+            }
+        } else {
+            // username login
+            $user = \depage\Auth\User::loadByUsername($this->pdo, $username);
+        }
+        if ($user && $this->auth->login($username, $password)) {
+            // authenticated
+            return (empty($user->confirm_id)) ? $user : false;
+        }
+        $el = $form->getElement('username');
+        $el->valid = false;
+        $this->log->log("login: wrong credentials");
+        return false;
+    }
+    // }}}
+    
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -173,7 +262,7 @@ class LegacyUI extends \depage_ui
      * @return  null
      */
     public function index() {
-        if ($this->auth->enforce_lazy()) {
+        if ($this->auth->enforceLazy()) {
             // logged in
             $h = new html(array(
                 'content' => array(

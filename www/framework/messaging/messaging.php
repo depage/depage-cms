@@ -252,7 +252,7 @@ class messaging {
      * @return boolean
      */
     private function sendNotification(message $message){
-        $user = \auth_user::get_by_id($this->pdo, $message->recipient_id);
+        $user = \depage\Auth\User::loadById($this->pdo, $message->recipient_id);
         if (!empty($user)) {
             $mail = new mail($this->defaults['notification_email']);
             $mail->setSubject($this->defaults['notification_subject']);

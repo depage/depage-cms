@@ -355,14 +355,17 @@ class htmlform extends abstracts\container
     {
         // check if there's an open session
         if (!session_id()) {
+            $oldParams = session_get_cookie_params();
+
             $sessionName = session_name();
             $sessionDomain = false;
             $sessionSecure = false;
             $sessionHttponly = true;
+            $sessionPath = $oldParams['path'];
 
             session_set_cookie_params(
                 $this->ttl,
-                "/",
+                $sessionPath,
                 $sessionDomain,
                 $sessionSecure,
                 $sessionHttponly
@@ -375,7 +378,7 @@ class htmlform extends abstracts\container
                     $sessionName,
                     $_COOKIE[$sessionName],
                     time() + $this->ttl,
-                    "/",
+                    $sessionPath,
                     $sessionDomain,
                     $sessionSecure,
                     $sessionHttponly

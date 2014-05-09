@@ -29,7 +29,7 @@ class User {
         $this->pdo = $pdo;
     }
     // }}}
-    // {{{ get_by_username()
+    // {{{ loadByUsername()
     /**
      * gets a user-object by username directly from database
      *
@@ -40,7 +40,7 @@ class User {
      *
      * @return      User
      */
-    static public function get_by_username($pdo, $username) {
+    static public function loadByUsername($pdo, $username) {
         $uid_query = $pdo->prepare(
             "SELECT 
                 user.type,
@@ -69,7 +69,7 @@ class User {
         return $user;
     }
     // }}}
-    // {{{ get_by_sid()
+    // {{{ loadBySid()
     /**
      * gets a user-object by sid (session-id) directly from database
      *
@@ -80,7 +80,7 @@ class User {
      *
      * @return      auth_user
      */
-    static public function get_by_sid($pdo, $sid) {
+    static public function loadBySid($pdo, $sid) {
         $uid_query = $pdo->prepare(
             "SELECT
                 user.type,
@@ -109,7 +109,7 @@ class User {
         return $user;
     }
     // }}}
-    // {{{ get_by_id()
+    // {{{ loadById()
     /**
      * gets a user-object by id directly from database
      *
@@ -120,29 +120,29 @@ class User {
      *
      * @return      auth_user
      */
-    static public function get_by_id($pdo, $id) {
+    static public function loadById($pdo, $id) {
         $uid_query = $pdo->prepare(
-                "SELECT
-                    user.type
-                    user.type AS type,
-                    user.id AS id,
-                    user.name as name,
-                    user.name_full as fullname,
-                    user.pass as passwordhash,
-                    user.email as email,
-                    user.settings as settings,
-                    user.level as level
-                FROM
-        {$pdo->prefix}_auth_user AS user
-                WHERE
-                    id = :id"
+            "SELECT
+                user.type,
+                user.type AS type,
+                user.id AS id,
+                user.name as name,
+                user.name_full as fullname,
+                user.pass as passwordhash,
+                user.email as email,
+                user.settings as settings,
+                user.level as level
+            FROM
+    {$pdo->prefix}_auth_user AS user
+            WHERE
+                id = :id"
         );
         $uid_query->execute(array(
-                ':id' => $id,
+            ':id' => $id,
         ));
         
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }

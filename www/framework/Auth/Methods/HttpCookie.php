@@ -23,7 +23,25 @@ use depage\Auth\User;
 class HttpCookie extends auth
 {
     // {{{ variables
-    protected $cookiepath = "";
+    protected $cookiePath = "";
+    /**
+     * @brief name of the session cookie
+     **/
+    public $cookieName = "depage-session-id";
+    /**
+     * @brief domain of the cookie
+     *
+     * false is the php default to use current domain automatically
+     **/
+    public $cookieDomain = false;
+    /**
+     * @brief set cookie only through secure connection
+     **/
+    public $cookieSecure = false;
+    /**
+     * @brief set http-only cookie -> no javascript access
+     **/
+    public $cookieHttponly = true;
     // }}}
     
     /* {{{ constructor */
@@ -32,9 +50,20 @@ class HttpCookie extends auth
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        $this->cookiepath = $url['path'];
+        $this->cookiePath = $url['path'];
 
-        session_name("depage-session-id");
+        $this->log->log("-- construct");
+        $this->log->log("cookiePath: " . $this->cookiePath);
+        $this->log->log("cookieDomain: " . $this->cookieDomain);
+
+        session_name($this->cookieName);
+        session_set_cookie_params(
+            $this->sessionLifetime,
+            $this->cookiePath,
+            $this->cookieDomain,
+            $this->cookieSecure,
+            $this->cookieHttponly
+        );
     }
     /* }}} */
     
@@ -73,14 +102,14 @@ class HttpCookie extends auth
         return $this->user;
     }
     /* }}} */
-    /* {{{ enforce_lazy*/
+    /* {{{ enforceLazy*/
     /**
      * @return   function returns the authenticated user or false if not logged in
      */
-    public function enforce_lazy() {
+    public function enforceLazy() {
         if ($this->user === null) {
-            if ($this->has_session()) {
-                if ($this->is_valid_sid($_COOKIE[session_name()])) {
+            if ($this->hasSession()) {
+                if ($this->isValidSid($_COOKIE[session_name()])) {
                     $this->user = $this->auth_cookie();
                 } else {
                     $this->justLoggedOut = true;
@@ -94,25 +123,25 @@ class HttpCookie extends auth
         return $this->user;
     }
     /* }}} */
-    /* {{{ enforce_logout */
-    public function enforce_logout() {
-        if ($this->has_session()) {
+    /* {{{ enforceLogout */
+    public function enforceLogout() {
+        if ($this->hasSession()) {
             $this->justLoggedOut = true;
             $this->logout($_COOKIE[session_name()]);
-            $this->destroy_session();
+            $this->destroySession();
         }
     }
     /* }}} */
     /* {{{ login() */
     public function login($username, $password) {
-        $user = User::get_by_username($this->pdo, $username);
+        $user = User::loadByUsername($this->pdo, $username);
         $hash = $this->hash_user_pass($username, $password);
 
         if ($user && $user->passwordhash === $hash) {
             // destroy session if logging in directly after registering user
-            $this->destroy_session();
-            $this->register_session($user->id);
-            $this->start_session();
+            $this->destroySession();
+            $this->registerSession($user->id);
+            $this->startSession();
 
             return true;
         }
@@ -124,12 +153,12 @@ class HttpCookie extends auth
 
     /* {{{ auth_cookie() */
     protected function auth_cookie() {
-        if ($this->has_session()) {
-            if ($this->is_valid_sid($_COOKIE[session_name()]) !== false) {
-                $this->set_sid($_COOKIE[session_name()]);
-                $this->start_session();
+        if ($this->hasSession()) {
+            if ($this->isValidSid($_COOKIE[$this->cookieName]) !== false) {
+                $this->setSid($_COOKIE[$this->cookieName]);
+                $this->startSession();
 
-                $user = User::get_by_sid($this->pdo, $this->get_sid());
+                $user = User::loadBySid($this->pdo, $this->getSid());
 
                 return $user;
             } else {
@@ -145,40 +174,28 @@ class HttpCookie extends auth
     }
     /* }}} */
     
-    // {{{ start_session()
-    protected function start_session() {
-        session_id($this->get_sid());
+    // {{{ startSession()
+    protected function startSession() {
+        $sid = $this->getSid();
 
-        $sessionName = session_name();
-        $sessionDomain = false;
-        $sessionSecure = false;
-        $sessionHttponly = true;
-
-        session_set_cookie_params(
-            $this->session_lifetime,
-            $this->cookiepath,
-            $sessionDomain,
-            $sessionSecure,
-            $sessionHttponly
-        );
+        session_id($sid);
         session_start();
-        
-        // Extend the expiration time upon page load
-        if (isset($_COOKIE[$sessionName])) {
-            setcookie(
-                $sessionName,
-                $_COOKIE[$sessionName],
-                time() + $this->session_lifetime,
-                $this->cookiepath,
-                $sessionDomain,
-                $sessionSecure,
-                $sessionHttponly
-            );
-        }
+
+        // Override session cookie and extend the expiration time upon page load
+        $params = session_get_cookie_params();
+        setcookie(
+            $this->cookieName,
+            $sid,
+            time() + $this->sessionLifetime,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
     } 
     // }}}
-    // {{{ has_session()
-    protected function has_session() {
+    // {{{ hasSession()
+    protected function hasSession() {
         if (is_callable("session_status") && session_status() == PHP_SESSION_ACTIVE) {
             // PHP 5.4
             return true;
@@ -187,16 +204,21 @@ class HttpCookie extends auth
         }
     } 
     // }}}
-    // {{{ destroy_session()
-    protected function destroy_session() {
+    // {{{ destroySession()
+    protected function destroySession() {
         if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
+            setcookie(
+                $this->cookieName,
+                '', 
+                time() - 42000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
             );
-            session_destroy();
             unset($_COOKIE[session_name()]);
+            session_destroy();
         }
     } 
     // }}}

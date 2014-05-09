@@ -35,7 +35,7 @@ class HttpDigest extends HttpBasic
         return $this->user;
     }
     // }}}
-    // {{{ enforce_lazy()
+    // {{{ enforceLazy()
     /**
      * enforces authentication but lazily with fallback content if someone is not logged in 
      *
@@ -43,11 +43,11 @@ class HttpDigest extends HttpBasic
      *
      * @return      user                user object or false if no valid authorization
      */
-    public function enforce_lazy() {
+    public function enforceLazy() {
         // only enforce authentication if not authenticated before
         if ($this->user === null) {
             // only authenticate if session cookie is set
-            if ($this->has_session() && $this->is_valid_sid($_COOKIE[session_name()])) {
+            if ($this->hasSession() && $this->isValidSid($_COOKIE[session_name()])) {
                 $this->user = $this->auth_digest();
             } else {
                 $this->user = false;
@@ -57,7 +57,7 @@ class HttpDigest extends HttpBasic
         return $this->user;
     }
     // }}}
-    // {{{ enforce_logout()
+    // {{{ enforceLogout()
     /**
      * enforces logout 
      *
@@ -65,7 +65,7 @@ class HttpDigest extends HttpBasic
      *
      * @return      boolean             true
      */
-    public function enforce_logout() {
+    public function enforceLogout() {
         // only enforce authentication if not authenticated before
         if ($this->user === null) {
             $this->user = $this->auth_digest_logout();
@@ -80,34 +80,34 @@ class HttpDigest extends HttpBasic
         $valid_response = false;
         $digest_header = $this->get_digest_header();
 
-        if ($this->has_session()) {
-            $this->set_sid($_COOKIE[session_name()]);
+        if ($this->hasSession()) {
+            $this->setSid($_COOKIE[session_name()]);
         } else {
-            $this->set_sid("");
+            $this->setSid("");
         }
 
         if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
             // get new user object
-            $user = User::get_by_username($this->pdo, $data['username']);
+            $user = User::loadByUsername($this->pdo, $data['username']);
             $valid_response = $this->check_response($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
             if ($user && $valid_response) {
-                if (($uid = $this->is_valid_sid($this->sid)) !== false) {
+                if (($uid = $this->isValidSid($this->sid)) !== false) {
                     if ($uid == "") {
                         $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                        $sid = $this->register_session($user->id, $this->sid);
+                        $sid = $this->registerSession($user->id, $this->sid);
                     }
-                    $this->start_session();
+                    $this->startSession();
 
                     return $user;
-                } elseif ($this->has_session()) {
-                    $this->destroy_session();
+                } elseif ($this->hasSession()) {
+                    $this->destroySession();
                 }
             }
         }
 
         $this->send_auth_header($valid_response);
-        $this->start_session();
+        $this->startSession();
 
         throw new \Exception("you are not allowed to to this!");
     } 
@@ -124,7 +124,7 @@ class HttpDigest extends HttpBasic
                 if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
                     $this->logout($_COOKIE[session_name()]);
 
-                    $this->destroy_session();
+                    $this->destroySession();
 
                     return true;
                 }
@@ -136,13 +136,13 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ send_auth_header()
     protected function send_auth_header($valid_response = false) {
-        $sid = $this->get_sid();
+        $sid = $this->getSid();
         $opaque = md5($sid);
         $realm = $this->realm;
         $domain = $this->domain;
         $nonce = $sid;
 
-        if ($this->has_session() && $valid_response) {
+        if ($this->hasSession() && $valid_response) {
             //$this->log->log("stale!!! sid: $sid - nonce: {$data['nonce']}");
             $stale = ", stale=true";
         } else {
@@ -216,7 +216,7 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ get_nonce
     protected function get_nonce() {
-        $time = ceil(time() / $this->session_lifetime) * $this->session_lifetime;
+        $time = ceil(time() / $this->sessionLifetime) * $this->sessionLifetime;
         $hash = md5(date('Y-m-d H:i', $time).':'.$_SERVER['REMOTE_ADDR'].':'.$this->privateKey);
 
         return $hash;
