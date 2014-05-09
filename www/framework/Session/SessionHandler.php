@@ -7,7 +7,7 @@ class SessionHandler implements \SessionHandlerInterface
     /**
      * @brief tableName
      **/
-    protected $tableName = null;
+    protected $tableName = "auth_sessions";
 
     /**
      * @brief sessionLock
@@ -33,6 +33,7 @@ class SessionHandler implements \SessionHandlerInterface
             array(&$handler, 'destroy'),
             array(&$handler, 'gc')
         );
+        register_shutdown_function("session_write_close");
     }
     // }}}
     // {{{ __construct()
@@ -47,9 +48,7 @@ class SessionHandler implements \SessionHandlerInterface
         $this->pdo = $pdo;
 
         if (isset($pdo->prefix)) {
-            $this->tableName = $pdo->prefix . "_auth_sessions";
-        } else {
-            $this->tableName = "auth_sessions";
+            $this->tableName = $pdo->prefix . "_" . $this->tableName;
         }
     }
     // }}}
@@ -116,6 +115,9 @@ class SessionHandler implements \SessionHandlerInterface
         if ($result) {
             return $result->session_data;
         } else {
+            // not a valid sid available -> give the user a new session_id
+            session_regenerate_id();
+
             return "";
         }
     }
@@ -164,6 +166,18 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function destroy($session_id)
     {
+        // logout user -> load user first
+        if (class_exists("\\depage\\Auth\\User")) {
+            $user = \depage\Auth\User::loadBySid($this->pdo, $session_id);
+            if ($user) {
+                $log = new \depage\log\log();
+                $log->log("logging out $user->name ($user->fullname)");
+
+                $user->onLogout($session_id);
+            }
+
+        }
+
         $query = $this->pdo->prepare(
             "DELETE FROM
                 {$this->tableName}
@@ -186,11 +200,31 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function gc($maxlifetime)
     {
+        // destory every session of loggin users
+        $query = $this->pdo->prepare(
+            "SELECT
+                sid
+            FROM
+                $this->tableName
+            WHERE
+                userid IS NOT NULL AND
+                last_update < DATE_SUB(NOW(), INTERVAL :maxlifetime SECOND)"
+        );
+        $query->execute(array(
+            ':maxlifetime' => $maxlifetime,
+        ));
+
+        while ($result = $query->fetchObject()) {
+            $this->destroy($result->sid);
+        }
+
+        // delete remaining sessions
         $result = $this->pdo->query(
             "DELETE FROM
                 $this->tableName
             WHERE
-               last_update < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
+                userid IS NULL AND
+                last_update < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
         );
 
         return true;
