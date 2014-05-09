@@ -21,12 +21,12 @@ namespace depage\Auth;
  * contains functions for handling user authentication
  * and session handling.
  */
-class Auth {
+abstract class Auth {
     // {{{ variables
     public $realm = "depage::cms";
     public $sid, $uid;
     public $valid = false;
-    public $session_lifetime = 10800; // in seconds
+    public $sessionLifetime = 10800; // in seconds
     public $privateKey = "private Key";
     public $user = null;
     public $justLoggedOut = false;
@@ -74,7 +74,10 @@ class Auth {
         $this->pdo = $pdo;
         $this->realm = $realm;
         $this->domain = $domain;
-        $this->log = new \depage\log\log();
+
+        if (class_exists("\\depage\\log\\log")) {
+            $this->log = new \depage\log\log();
+        }
     }
     // }}}
     // {{{ enforce()
@@ -86,11 +89,9 @@ class Auth {
      * @param       string  $method     method to use for authentication. Can be http
      * @return      void
      */
-    public function enforce() {
-        throw new Exception("no auth method set!");
-    }
+    abstract public function enforce();
     // }}}
-    // {{{ enforce_logout()
+    // {{{ enforceLazy()
     /**
      * enforces authentication 
      *
@@ -99,14 +100,23 @@ class Auth {
      * @param       string  $method     method to use for authentication. Can be http
      * @return      void
      */
-    public function enforce_logout() {
-        throw new Exception("no auth method set!");
-    }
+    abstract public function enforceLazy();
+    // }}}
+    // {{{ enforceLogout()
+    /**
+     * enforces authentication 
+     *
+     * @public
+     *
+     * @param       string  $method     method to use for authentication. Can be http
+     * @return      void
+     */
+    abstract public function enforceLogout();
     // }}}
     
-    // {{{ is_valid_sid()
-    protected function is_valid_sid($sid) {
-        $this->logout_timed_out_users();
+    // {{{ isValidSid()
+    protected function isValidSid($sid) {
+        $this->logoutTimedoutUsers();
 
         // test for validity
         $session_query = $this->pdo->prepare(
@@ -152,25 +162,25 @@ class Auth {
         }
     }
     // }}}
-    // {{{ set_sid()
-    function set_sid($sid) {
+    // {{{ setSid()
+    function setSid($sid) {
         $this->sid = $sid;
 
         return $sid;
     }
     // }}}
-    // {{{ get_sid()
-    protected function get_sid() {
+    // {{{ getSid()
+    protected function getSid() {
         if (!$this->valid) {
-            if (!$this->is_valid_sid($this->sid)) {
-                $this->register_session();
+            if (!$this->isValidSid($this->sid)) {
+                $this->registerSession();
             }
         }
         return $this->sid;
     }
     // }}}
-    // {{{ get_new_sid()
-    protected function get_new_sid() {
+    // {{{ getNewSid()
+    protected function getNewSid() {
         $this->sid = md5(uniqid(dechex(mt_rand(256, 4095))));
 
         return $this->sid;
@@ -188,10 +198,10 @@ class Auth {
         return uniqid(dechex(mt_rand(256, 4095)));
     }
     // }}}
-    // {{{ register_session()
-    protected function register_session($uid = null, $sid = null) {
+    // {{{ registerSession()
+    protected function registerSession($uid = null, $sid = null) {
         if (is_null($sid)) {
-            $this->sid = $this->get_new_sid();
+            $this->sid = $this->getNewSid();
         } else {
             $this->sid = $sid;
         }
@@ -248,11 +258,11 @@ class Auth {
     }
     // }}}
     
-    // {{{ get_active_users()
-    function get_active_users() {
+    // {{{ getActiveUsers()
+    function getActiveUsers() {
         $users = array();
 
-        $this->logout_timed_out_users();
+        $this->logoutTimedoutUsers();
 
         // get logged in users
         $user_query = $this->pdo->prepare(
@@ -283,8 +293,8 @@ class Auth {
     }
     // }}}
     
-    // {{{ logout_timed_out_users()
-    protected function logout_timed_out_users() {
+    // {{{ logoutTimedoutUsers()
+    protected function logoutTimedoutUsers() {
         // remove users which login is outdated
         $outdated_query = $this->pdo->query(
             "SELECT 
@@ -292,7 +302,7 @@ class Auth {
             FROM 
                 {$this->pdo->prefix}_auth_sessions
             WHERE 
-                last_update < DATE_SUB(NOW(), INTERVAL $this->session_lifetime SECOND)"
+                last_update < DATE_SUB(NOW(), INTERVAL $this->sessionLifetime SECOND)"
         );
         $result = $outdated_query->fetchAll();
 
@@ -318,7 +328,7 @@ class Auth {
         }
 
         // get user object for info
-        $user = auth_user::get_by_sid($this->pdo, $sid);
+        $user = User::loadById($this->pdo, $sid);
         if ($user) {
             $user->logout($sid);
             $this->log->log("'{$user->name}' has logged out with $sid", "auth");

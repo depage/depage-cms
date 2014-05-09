@@ -39,48 +39,60 @@ class HttpBasic extends HttpCookie
         return $this->user;
     }
     // }}}
-    
+    // {{{ enforceLogout()
+    /**
+     * enforces logout 
+     *
+     * @public
+     *
+     * @return      boolean             true
+     */
+    public function enforceLogout() {
+        // not implemented
+    }
+    // }}}
+
     // {{{ auth_basic()
     public function auth_basic() {
-        if ($this->has_session()) {
-            $this->set_sid($_COOKIE[session_name()]);
+        if ($this->hasSession()) {
+            $this->setSid($_COOKIE[session_name()]);
         } else {
-            $this->set_sid("");
+            $this->setSid("");
         }
 
         if (isset($_SERVER['PHP_AUTH_USER'])) { 
             // get new user object
-            $user = User::get_by_username($this->pdo, $_SERVER['PHP_AUTH_USER']);
+            $user = User::loadByUsername($this->pdo, $_SERVER['PHP_AUTH_USER']);
 
             if ($user) {
                 // generate the valid response
                 $HA1 = $user->passwordhash;
 
                 if ($HA1 == $this->hash_user_pass($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-                    if (($uid = $this->is_valid_sid($_COOKIE[session_name()])) !== false) {
+                    if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
                         if ($uid == "") {
                             $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                            $sid = $this->register_session($user->id, $_COOKIE[session_name()]);
+                            $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
                         }
-                        $this->start_session();
+                        $this->startSession();
 
                         return $user;
-                    } elseif ($this->has_session()) {
-                        $this->destroy_session();
+                    } elseif ($this->hasSession()) {
+                        $this->destroySession();
                     }
                 }
             }
         }
 
         $this->send_auth_header();
-        $this->start_session();
+        $this->startSession();
 
         throw new \Exception("you are not allowed to to this!");
     } 
     // }}}
     // {{{ send_auth_header()
     protected function send_auth_header($valid_response = false) {
-        $sid = $this->get_sid();
+        $sid = $this->getSid();
         $realm = $this->realm;
         $domain = $this->domain;
 
