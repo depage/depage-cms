@@ -9,13 +9,30 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     protected $tableName = null;
 
+    /**
+     * @brief sessionLock
+     **/
+    protected $sessionLock = null;
+
     // {{{ register()
     public static function register($pdo)
     {
         $class = __CLASS__;
 
         $handler = new $class($pdo);
-        session_set_save_handler($handler, true);
+        
+        // PHP 5.4 only
+        //session_set_save_handler($handler, true);
+        
+        // PHP 5.3 save
+        session_set_save_handler(
+            array(&$handler, 'open'),
+            array(&$handler, 'close'),
+            array(&$handler, 'read'),
+            array(&$handler, 'write'),
+            array(&$handler, 'destroy'),
+            array(&$handler, 'gc')
+        );
     }
     // }}}
     // {{{ __construct()
@@ -58,6 +75,9 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function close()
     {
+        // release session lock
+        $result = $this->pdo->query("SELECT RELEASE_LOCK(\"$this->sessionLock\")");
+
         return true;
     }
     // }}}
@@ -70,24 +90,31 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function read($session_id)
     {
+        // aquire session lock
+        $this->sessionLock = $this->pdo->quote("session_$session_id");
+        $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", 60)");
+
+        if (count($result) != 1) {
+            die("could not obtain session lock!");
+        }
+
+        // get session data
         $query = $this->pdo->prepare(
             "SELECT 
-                sid, data
+                sid, session_data
             FROM 
                 {$this->tableName}
             WHERE
-                sid = :sid AND
-                ip = :ip
+                sid = :sid
             LIMIT 1"
         );
         $query->execute(array(
             ':sid' => $session_id,
-            ':ip' => $_SERVER['REMOTE_ADDR'],
         ));
         $result = $query->fetchObject();
 
         if ($result) {
-            return $result->data;
+            return $result->session_data;
         } else {
             return "";
         }
@@ -109,11 +136,11 @@ class SessionHandler implements \SessionHandlerInterface
             SET
                 sid = :sid,
                 ip = :ip,
-                data = :data1,
+                session_data = :data1,
                 last_update = NOW(),
                 useragent = :useragent
             ON DUPLICATE KEY UPDATE
-                data = :data2,
+                session_data = :data2,
                 last_update = NOW()
                 "
         );
