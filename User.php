@@ -104,7 +104,7 @@ class User {
         ));
         
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }
@@ -232,7 +232,7 @@ class User {
      * 
      * @return void
      */
-    public function logout($session_id) {
+    public function onLogout($sid) {
     }
     // }}}
 }

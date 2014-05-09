@@ -116,8 +116,6 @@ abstract class Auth {
     
     // {{{ isValidSid()
     protected function isValidSid($sid) {
-        $this->logoutTimedoutUsers();
-
         // test for validity
         $session_query = $this->pdo->prepare(
             "SELECT 
@@ -181,7 +179,10 @@ abstract class Auth {
     // }}}
     // {{{ getNewSid()
     protected function getNewSid() {
-        $this->sid = md5(uniqid(dechex(mt_rand(256, 4095))));
+        session_start();
+        session_regenerate_id();
+
+        $this->sid = session_id();
 
         return $this->sid;
     }
@@ -262,8 +263,6 @@ abstract class Auth {
     function getActiveUsers() {
         $users = array();
 
-        $this->logoutTimedoutUsers();
-
         // get logged in users
         $user_query = $this->pdo->prepare(
             "SELECT 
@@ -293,24 +292,6 @@ abstract class Auth {
     }
     // }}}
     
-    // {{{ logoutTimedoutUsers()
-    protected function logoutTimedoutUsers() {
-        // remove users which login is outdated
-        $outdated_query = $this->pdo->query(
-            "SELECT 
-                sid 
-            FROM 
-                {$this->pdo->prefix}_auth_sessions
-            WHERE 
-                last_update < DATE_SUB(NOW(), INTERVAL $this->sessionLifetime SECOND)"
-        );
-        $result = $outdated_query->fetchAll();
-
-        foreach ($result as $s) {
-            $this->logout($s['sid']);
-        }
-    }
-    // }}}
     // {{{ logout()
     /**
      * logs user out
@@ -328,9 +309,9 @@ abstract class Auth {
         }
 
         // get user object for info
-        $user = User::loadById($this->pdo, $sid);
+        $user = User::loadBySid($this->pdo, $sid);
         if ($user) {
-            $user->logout($sid);
+            $user->onLogout($sid);
             $this->log->log("'{$user->name}' has logged out with $sid", "auth");
         }
 
