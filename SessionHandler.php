@@ -179,14 +179,21 @@ class SessionHandler implements \SessionHandlerInterface
     // }}}
     // {{{ gc()
     /**
-     * @brief gc
+     * @brief garbage collector
      *
      * @param mixed $maxlifetime
      * @return true
      **/
     public function gc($maxlifetime)
     {
-        
+        $result = $this->pdo->query(
+            "DELETE FROM
+                $this->tableName
+            WHERE
+               last_update < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
+        );
+
+        return true;
     }
     // }}}
 }
