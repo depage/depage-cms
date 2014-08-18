@@ -31,7 +31,7 @@ class HttpDigest extends HttpBasic
         if (!$this->user) {
             $this->user = $this->authDigest();
 
-            if ($this->user === null) {
+            if (!$this->user) {
                 throw new \Exception("you are not allowed to to this!");
             }
         }
@@ -121,12 +121,12 @@ class HttpDigest extends HttpBasic
         $digest_header = $this->getDigestHeader();
 
         if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) { 
-            $validResponse = $this->checkResponse($data, md5("logout" . ':' . $this->realm . ':' . ""));
+            $validResponse = $this->checkResponse($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
 
             if ($validResponse) {
                 if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
+                    $this->justLoggedOut = true;
                     $this->logout($_COOKIE[session_name()]);
-
                     $this->destroySession();
 
                     return true;
