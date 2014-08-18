@@ -195,6 +195,15 @@ class LegacyUI extends \depage_ui
             }
             depage::redirect(html::link("login/{$redirectTo}", "https"));
         }
+
+        if ($user = $this->auth->enforce()) {
+            if (!empty($_REQUEST['redirectTo'])) {
+                \depage::redirect($redirectTo);
+            } else {
+                \depage::redirect(html::link("", "auto"));
+            }
+        }
+
         // not logged in
         $form = new Forms\Login("login", array(
             'validator' => array($this, '_validateLogin'),
