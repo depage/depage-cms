@@ -28,8 +28,12 @@ class HttpDigest extends HttpBasic
      */
     public function enforce() {
         // only enforce authentication if not authenticated before
-        if ($this->user === null) {
-            $this->user = $this->auth_digest();
+        if (!$this->user) {
+            $this->user = $this->authDigest();
+
+            if ($this->user === null) {
+                throw new \Exception("you are not allowed to to this!");
+            }
         }
 
         return $this->user;
@@ -47,8 +51,8 @@ class HttpDigest extends HttpBasic
         // only enforce authentication if not authenticated before
         if ($this->user === null) {
             // only authenticate if session cookie is set
-            if ($this->hasSession() && $this->isValidSid($_COOKIE[session_name()])) {
-                $this->user = $this->auth_digest();
+            if ($this->hasSession() && ($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
+                $this->user = $this->authDigest();
             } else {
                 $this->user = false;
             }
@@ -67,31 +71,30 @@ class HttpDigest extends HttpBasic
      */
     public function enforceLogout() {
         // only enforce authentication if not authenticated before
-        if ($this->user === null) {
-            $this->user = $this->auth_digest_logout();
+        if (!$this->user) {
+            $this->user = $this->authDigestLogout();
         }
 
         return $this->user;
     }
     // }}}
     
-    // {{{ auth_digest()
-    public function auth_digest() {
-        $valid_response = false;
-        $digest_header = $this->get_digest_header();
+    // {{{ authDigest()
+    public function authDigest() {
+        $validResponse = false;
+        $digest_header = $this->getDigestHeader();
 
         if ($this->hasSession()) {
             $this->setSid($_COOKIE[session_name()]);
         } else {
             $this->setSid("");
         }
-
-        if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
+        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) { 
             // get new user object
             $user = User::loadByUsername($this->pdo, $data['username']);
-            $valid_response = $this->check_response($data, isset($user->passwordhash) ? $user->passwordhash : "");
+            $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
-            if ($user && $valid_response) {
+            if ($user && $validResponse) {
                 if (($uid = $this->isValidSid($this->sid)) !== false) {
                     if ($uid == "") {
                         $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
@@ -106,21 +109,21 @@ class HttpDigest extends HttpBasic
             }
         }
 
-        $this->send_auth_header($valid_response);
+        $this->sendAuthHeader($validResponse);
         $this->startSession();
 
-        throw new \Exception("you are not allowed to to this!");
+        return false;
     } 
     // }}}
-    // {{{ auth_digest_logout()
-    public function auth_digest_logout() {
-        $valid_response = false;
-        $digest_header = $this->get_digest_header();
+    // {{{ authDigestLogout()
+    public function authDigestLogout() {
+        $validResponse = false;
+        $digest_header = $this->getDigestHeader();
 
-        if (!empty($digest_header) && $data = $this->http_digest_parse($digest_header)) { 
-            $valid_response = $this->check_response($data, md5("logout" . ':' . $this->realm . ':' . ""));
+        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) { 
+            $validResponse = $this->checkResponse($data, md5("logout" . ':' . $this->realm . ':' . ""));
 
-            if ($valid_response) {
+            if ($validResponse) {
                 if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "") {
                     $this->logout($_COOKIE[session_name()]);
 
@@ -131,18 +134,18 @@ class HttpDigest extends HttpBasic
             }
         }
 
-        $this->send_auth_header($valid_response);
+        $this->sendAuthHeader($validResponse);
     } 
     // }}}
-    // {{{ send_auth_header()
-    protected function send_auth_header($valid_response = false) {
+    // {{{ sendAuthHeader()
+    protected function sendAuthHeader($validResponse = false) {
         $sid = $this->getSid();
         $opaque = md5($sid);
         $realm = $this->realm;
         $domain = $this->domain;
         $nonce = $sid;
 
-        if ($this->hasSession() && $valid_response) {
+        if ($this->hasSession() && $validResponse) {
             //$this->log->log("stale!!! sid: $sid - nonce: {$data['nonce']}");
             $stale = ", stale=true";
         } else {
@@ -153,22 +156,22 @@ class HttpDigest extends HttpBasic
         header("HTTP/1.1 401 Unauthorized");
     } 
     // }}}
-    // {{{ check_response()
-    protected function check_response(&$data, $passwordhash) {
+    // {{{ checkResponse()
+    protected function checkResponse(&$data, $passwordhash) {
         // generate the valid response
         $HA1 = $passwordhash;
         $HA1sess = md5($HA1 . ":{$data['nonce']}:{$data['cnonce']}");
         $HA2 = md5("{$_SERVER['REQUEST_METHOD']}:{$data['uri']}");
-        $valid_response = md5("{$HA1sess}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
+        $validResponse = md5("{$HA1sess}:{$data['nonce']}:{$data['nc']}:{$data['cnonce']}:{$data['qop']}:{$HA2}");
 
         $data['n'] = hexdec($data['nc']);
-        $data['valid_response'] = $valid_response;
+        $data['valid_response'] = $validResponse;
 
-        return $data['response'] == $valid_response;
+        return $data['response'] == $validResponse;
     } 
     // }}}
-    // {{{ http_digest_parse()
-    protected function http_digest_parse($txt) {
+    // {{{ httpDigestParse()
+    protected function httpDigestParse($txt) {
         // protect against missing data
         $needed_parts = array(
             'nonce' => 1,
@@ -192,8 +195,8 @@ class HttpDigest extends HttpBasic
         return $needed_parts ? false : $data;
     } 
     // }}}
-    // {{{ get_digest_header()
-    protected function get_digest_header() {
+    // {{{ getDigestHeader()
+    protected function getDigestHeader() {
         $digest_header = false;
 
         if (function_exists('getallheaders')) {
@@ -214,8 +217,8 @@ class HttpDigest extends HttpBasic
         return $digest_header;
     } 
     // }}}
-    // {{{ get_nonce
-    protected function get_nonce() {
+    // {{{ getNonce
+    protected function getNonce() {
         $time = ceil(time() / $this->sessionLifetime) * $this->sessionLifetime;
         $hash = md5(date('Y-m-d H:i', $time).':'.$_SERVER['REMOTE_ADDR'].':'.$this->privateKey);
 
