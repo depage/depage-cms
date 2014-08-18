@@ -23,12 +23,14 @@ namespace depage\Auth;
  */
 abstract class Auth {
     // {{{ variables
-    public $realm = "depage::cms";
+    protected $realm = "depage::cms";
+    protected $domain = "";
+    protected $digestCompat = false;
     public $sid, $uid;
     public $valid = false;
     public $sessionLifetime = 10800; // in seconds
     public $privateKey = "private Key";
-    public $user = null;
+    protected $user = null;
     public $justLoggedOut = false;
 
     public $loginUrl = "login/";
@@ -47,13 +49,13 @@ abstract class Auth {
      *
      * @return      void
      */
-    public static function factory($pdo, $realm, $domain, $method) {
-        if ($method == "http_digest") {
-            return new Methods\HttpDigest($pdo, $realm, $domain);
+    public static function factory($pdo, $realm, $domain, $method, $digestCompat = false) {
+        if ($method == "http_digest" && $digestCompat) {
+            return new Methods\HttpDigest($pdo, $realm, $domain, $digestCompat);
         } elseif ($method == "http_basic") {
-            return new Methods\HttpBasic($pdo, $realm, $domain);
+            return new Methods\HttpBasic($pdo, $realm, $domain, $digestCompat);
         } else {
-            return new Methods\HttpCookie($pdo, $realm, $domain);
+            return new Methods\HttpCookie($pdo, $realm, $domain, $digestCompat);
         }
     }
     // }}}
@@ -70,10 +72,11 @@ abstract class Auth {
      *
      * @return      void
      */
-    public function __construct($pdo, $realm, $domain) {
+    public function __construct($pdo, $realm, $domain, $digestCompat = false) {
         $this->pdo = $pdo;
         $this->realm = $realm;
         $this->domain = $domain;
+        $this->digestCompat = $digestCompat;
 
         if (class_exists("\\depage\\log\\log")) {
             $this->log = new \depage\log\log();
@@ -256,6 +259,30 @@ abstract class Auth {
         $this->valid = true;
 
         return $sid;
+    }
+    // }}}
+
+    // {{{ updatePasswordHash()
+    /**
+     * @brief updated password hash if a new algorithm is chosen for password hashing
+     *
+     * @param mixed $username
+     * @param mixed $password
+     * @return bool
+     **/
+    protected function updatePasswordHash($user, $password)
+    {
+        $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
+
+        if ($pass->needsRehash($user->passwordhash)) {
+            $user->passwordhash = $pass->hash($user->name, $password);
+
+            $user->save();
+
+            return true;
+        } else {
+            return false;
+        }
     }
     // }}}
     

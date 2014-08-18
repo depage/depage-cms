@@ -16,6 +16,7 @@ $conf = array(
             'realm' => 'depage::cms',
             'method' => 'http_digest',
             //'method' => 'http_cookie',
+            'digestCompat' => true,
         ),
         'timezone' => 'Europe/Berlin',
         //'env' => 'production',

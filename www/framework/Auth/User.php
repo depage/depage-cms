@@ -15,6 +15,21 @@ namespace depage\Auth;
  * and session handling.
  */
 class User {
+    /**
+     * @brief userFields
+     **/
+    static protected $userFields = "
+        user.type,
+        user.type AS type,
+        user.id AS id,
+        user.name as name,
+        user.name_full as fullname,
+        user.pass as passwordhash,
+        user.email as email,
+        user.settings as settings,
+        user.level as level
+    ";
+
     // {{{ constructor()
     /**
      * constructor
@@ -29,6 +44,7 @@ class User {
         $this->pdo = $pdo;
     }
     // }}}
+    
     // {{{ loadByUsername()
     /**
      * gets a user-object by username directly from database
@@ -41,17 +57,9 @@ class User {
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
+        $fields = self::$userFields;
         $uid_query = $pdo->prepare(
-            "SELECT 
-                user.type,
-                user.type AS type,
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level
+            "SELECT $fields
             FROM
                 {$pdo->prefix}_auth_user AS user
             WHERE
@@ -81,17 +89,9 @@ class User {
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
+        $fields = self::$userFields;
         $uid_query = $pdo->prepare(
-            "SELECT
-                user.type,
-                user.type AS type,
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level
+            "SELECT $fields
             FROM
                 {$pdo->prefix}_auth_user AS user, 
                 {$pdo->prefix}_auth_sessions AS sessions
@@ -121,17 +121,9 @@ class User {
      * @return      auth_user
      */
     static public function loadById($pdo, $id) {
+        $fields = self::$userFields;
         $uid_query = $pdo->prepare(
-            "SELECT
-                user.type,
-                user.type AS type,
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level
+            "SELECT $fields
             FROM
     {$pdo->prefix}_auth_user AS user
             WHERE
@@ -147,7 +139,7 @@ class User {
         return $user;
     }
     // }}} 
-    // {{{ getAll()
+    // {{{ loadAll()
     /**
      * gets an array of user-objects
      *
@@ -158,19 +150,11 @@ class User {
      *
      * @return      auth_user
      */
-    static public function getAll($pdo) {
+    static public function loadAll($pdo) {
         $users = array();
+        $fields = self::$userFields;
         $uid_query = $pdo->prepare(
-            "SELECT
-                user.type,
-                user.type AS type,
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level
+            "SELECT $fields
             FROM
                 {$pdo->prefix}_auth_user AS user"
         );
@@ -188,8 +172,21 @@ class User {
         return $users;
     }
     // }}} 
+    // {{{ save()
+    /**
+     * save a user object
+     *
+     * @public
+     *
+     * @return      auth_user
+     *
+     * @todo implement / base user on entity
+     */
+    public function save() {
+    }
+    // }}} 
        
-    // {{{ get_useragent()
+    // {{{ getUseragent()
     /**
      * gets a user-object by sid (session-id) directly from database
      *
@@ -200,7 +197,7 @@ class User {
      *
      * @return      auth_user
      */
-    public function get_useragent() {
+    public function getUseragent() {
         $cachepath = DEPAGE_CACHE_PATH . "browscap/";
         if (!is_dir($cachepath)) {
             mkdir($cachepath, 0777, true);
@@ -220,7 +217,7 @@ class User {
         return "{$info->browser} {$info->version} on {$info->platform}";
     }
     // }}}
-    // logout {{{
+    // {{{ onLogout
     /**
      * Logout
      * 

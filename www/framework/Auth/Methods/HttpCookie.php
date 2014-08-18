@@ -45,8 +45,8 @@ class HttpCookie extends auth
     // }}}
     
     /* {{{ constructor */
-    public function __construct($pdo, $realm, $domain) {
-        parent::__construct($pdo, $realm, $domain);
+    public function __construct($pdo, $realm, $domain, $digestCompat = false) {
+        parent::__construct($pdo, $realm, $domain, $digestCompat);
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
@@ -67,17 +67,11 @@ class HttpCookie extends auth
     }
     /* }}} */
     
-    // {{{ hash_user_pass() 
-    public function hash_user_pass($user, $pass) {
-        return md5($user . ':' . $this->realm . ':' . $pass);
-    }
-    // }}}
-
     /* {{{ enforce */
     public function enforce() {
         // only enforce authentication if not authenticated before
         if ($this->user === null) {
-            $this->user = $this->auth_cookie();
+            $this->user = $this->authCookie();
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
@@ -110,7 +104,7 @@ class HttpCookie extends auth
         if ($this->user === null) {
             if ($this->hasSession()) {
                 if ($this->isValidSid($_COOKIE[session_name()])) {
-                    $this->user = $this->auth_cookie();
+                    $this->user = $this->authCookie();
                 } else {
                     $this->justLoggedOut = true;
                     $this->user = false;
@@ -135,24 +129,24 @@ class HttpCookie extends auth
     /* {{{ login() */
     public function login($username, $password) {
         $user = User::loadByUsername($this->pdo, $username);
-        $hash = $this->hash_user_pass($username, $password);
+        $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-        if ($user && $user->passwordhash === $hash) {
-            // destroy session if logging in directly after registering user
+        if ($user && $pass->verify($user->name, $password, $user->passwordhash)) {
+            $this->updatePasswordHash($user, $password);
+
             $this->destroySession();
             $this->registerSession($user->id);
             $this->startSession();
 
             return true;
+        } else {
+            return false;
         }
-
-        //throw new \Exception("Login failed! Wrong username password combination.");
-        return false;
     }
     /* }}} */
 
-    /* {{{ auth_cookie() */
-    protected function auth_cookie() {
+    /* {{{ authCookie() */
+    protected function authCookie() {
         if ($this->hasSession()) {
             if ($this->isValidSid($_COOKIE[$this->cookieName]) !== false) {
                 $this->setSid($_COOKIE[$this->cookieName]);
@@ -167,7 +161,7 @@ class HttpCookie extends auth
             }
         }
 
-        $this->send_auth_header();
+        $this->sendAuthHeader();
         
         //throw new Exception("you are not allowed to do this!");
         return false;
@@ -200,6 +194,7 @@ class HttpCookie extends auth
             // PHP 5.4
             return true;
         } else {
+            // PHP 5.3
             return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
         }
     } 
@@ -223,8 +218,8 @@ class HttpCookie extends auth
     } 
     // }}}
     
-    // {{{ send_auth_header()
-    protected function send_auth_header($valid_response = false) {
+    // {{{ sendAuthHeader()
+    protected function sendAuthHeader($validResponse = false) {
         // @todo look for a way to suppress password saving dialogs when password is wrong
         //header("HTTP/1.1 403 Unauthorized");
     } 

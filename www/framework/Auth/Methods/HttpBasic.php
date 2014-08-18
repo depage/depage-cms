@@ -33,7 +33,7 @@ class HttpBasic extends HttpCookie
             if (isset($_ENV["HTTP_AUTHORIZATION"])) {
                 list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
             }
-            $this->user = $this->auth_basic();
+            $this->user = $this->authBasic();
         }
 
         return $this->user;
@@ -48,12 +48,16 @@ class HttpBasic extends HttpCookie
      * @return      boolean             true
      */
     public function enforceLogout() {
-        // not implemented
+        if ($this->hasSession()) {
+            $this->justLoggedOut = true;
+            $this->logout($_COOKIE[session_name()]);
+            $this->destroySession();
+        }
     }
     // }}}
 
-    // {{{ auth_basic()
-    public function auth_basic() {
+    // {{{ authBasic()
+    public function authBasic() {
         if ($this->hasSession()) {
             $this->setSid($_COOKIE[session_name()]);
         } else {
@@ -61,37 +65,38 @@ class HttpBasic extends HttpCookie
         }
 
         if (isset($_SERVER['PHP_AUTH_USER'])) { 
+            $username = $_SERVER['PHP_AUTH_USER'];
+            $password = $_SERVER['PHP_AUTH_PW'];
+
             // get new user object
-            $user = User::loadByUsername($this->pdo, $_SERVER['PHP_AUTH_USER']);
+            $user = User::loadByUsername($this->pdo, $username);
+            $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-            if ($user) {
-                // generate the valid response
-                $HA1 = $user->passwordhash;
+            if ($user && $pass->verify($user->name, $password, $user->passwordhash)) {
+                $this->updatePasswordHash($user, $password);
 
-                if ($HA1 == $this->hash_user_pass($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-                    if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
-                        if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                            $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
-                        }
-                        $this->startSession();
-
-                        return $user;
-                    } elseif ($this->hasSession()) {
-                        $this->destroySession();
+                if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
+                    if ($uid == "") {
+                        $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                        $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
                     }
+                    $this->startSession();
+
+                    return $user;
+                } elseif ($this->hasSession()) {
+                    $this->destroySession();
                 }
             }
         }
 
-        $this->send_auth_header();
+        $this->sendAuthHeader();
         $this->startSession();
 
         throw new \Exception("you are not allowed to to this!");
     } 
     // }}}
-    // {{{ send_auth_header()
-    protected function send_auth_header($valid_response = false) {
+    // {{{ sendAuthHeader()
+    protected function sendAuthHeader($validResponse = false) {
         $sid = $this->getSid();
         $realm = $this->realm;
         $domain = $this->domain;

@@ -18,7 +18,7 @@ class LegacyUI extends \depage_ui
 {
     protected $html_options = array();
     protected $basetitle = "";
-    protected $autoEnforceAuth = true;
+    protected $autoEnforceAuth = false;
     protected $projectName = "depage";
     //protected $projectName = "klassehesse";
     protected $user;
@@ -58,7 +58,12 @@ class LegacyUI extends \depage_ui
             );
         }
 
-        // resgister session handler
+        /*
+        ini_set("session.gc_probability", 1);
+        ini_set("session.gc_divisor", 1);
+         */
+
+        // register session handler
         \depage\Session\SessionHandler::register($this->pdo);
 
         // get auth object
@@ -66,7 +71,8 @@ class LegacyUI extends \depage_ui
             $this->pdo, // db_pdo 
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
-            $this->options->auth->method // method
+            $this->options->auth->method, // method
+            $this->options->auth->digestCompat // should we digest compatibility
         );
 
         // set html-options

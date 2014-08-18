@@ -789,7 +789,7 @@ class CmsFuncs {
     // }}}
     // {{{ getUserList()
     function getUserList(){
-        $users = \auth_user::getAll($this->pdo);
+        $users = \depage\Auth\User::getAll($this->pdo);
 
         $xml = "";
         foreach ($users as $user) {

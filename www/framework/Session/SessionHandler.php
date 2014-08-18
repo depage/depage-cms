@@ -200,7 +200,7 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function gc($maxlifetime)
     {
-        // destory every session of loggin users
+        // destroy every session of loggedin users
         $query = $this->pdo->prepare(
             "SELECT
                 sid
