@@ -84,13 +84,13 @@ class SessionHandler implements \SessionHandlerInterface
     /**
      * @brief read
      *
-     * @param string $session_id
+     * @param string $sessionId
      * @return string
      **/
-    public function read($session_id)
+    public function read($sessionId)
     {
         // aquire session lock
-        $this->sessionLock = $this->pdo->quote("session_$session_id");
+        $this->sessionLock = $this->pdo->quote("session_$sessionId");
         $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", 60)");
 
         if (count($result) != 1) {
@@ -100,7 +100,7 @@ class SessionHandler implements \SessionHandlerInterface
         // get session data
         $query = $this->pdo->prepare(
             "SELECT 
-                sid, session_data
+                sid, sessionData
             FROM 
                 {$this->tableName}
             WHERE
@@ -108,14 +108,14 @@ class SessionHandler implements \SessionHandlerInterface
             LIMIT 1"
         );
         $query->execute(array(
-            ':sid' => $session_id,
+            ':sid' => $sessionId,
         ));
         $result = $query->fetchObject();
 
         if ($result) {
-            return $result->session_data;
+            return $result->sessionData;
         } else {
-            // not a valid sid available -> give the user a new session_id
+            // not a valid sid available -> give the user a new sessionId
             session_regenerate_id();
 
             return "";
@@ -126,11 +126,11 @@ class SessionHandler implements \SessionHandlerInterface
     /**
      * @brief write
      *
-     * @param string $session_id
-     * @param string $session_data
+     * @param string $sessionId
+     * @param string $sessionData
      * @return bool
      **/
-    public function write($session_id, $session_data)
+    public function write($sessionId, $sessionData)
     {
         $query = $this->pdo->prepare(
             "INSERT INTO
@@ -138,20 +138,20 @@ class SessionHandler implements \SessionHandlerInterface
             SET
                 sid = :sid,
                 ip = :ip,
-                session_data = :data1,
-                last_update = NOW(),
+                sessionData = :data1,
+                dateLastUpdate = NOW(),
                 useragent = :useragent
             ON DUPLICATE KEY UPDATE
-                session_data = :data2,
-                last_update = NOW()
+                sessionData = :data2,
+                dateLastUpdate = NOW()
                 "
         );
         $query->execute(array(
-            ':sid' => $session_id,
+            ':sid' => $sessionId,
             ':ip' => $_SERVER['REMOTE_ADDR'],
             ':useragent' => $_SERVER['HTTP_USER_AGENT'],
-            ':data1' => $session_data,
-            ':data2' => $session_data,
+            ':data1' => $sessionData,
+            ':data2' => $sessionData,
         ));
 
         return true;
@@ -161,19 +161,19 @@ class SessionHandler implements \SessionHandlerInterface
     /**
      * @brief destroy
      *
-     * @param string $session_id
+     * @param string $sessionId
      * @return bool
      **/
-    public function destroy($session_id)
+    public function destroy($sessionId)
     {
         // logout user -> load user first
-        if (class_exists("\\depage\\Auth\\User")) {
-            $user = \depage\Auth\User::loadBySid($this->pdo, $session_id);
+        if (class_exists("\\Depage\\Auth\\User")) {
+            $user = \Depage\Auth\User::loadBySid($this->pdo, $sessionId);
             if ($user) {
                 $log = new \depage\log\log();
                 $log->log("logging out $user->name ($user->fullname)");
 
-                $user->onLogout($session_id);
+                $user->onLogout($sessionId);
             }
 
         }
@@ -185,7 +185,7 @@ class SessionHandler implements \SessionHandlerInterface
                 sid = :sid"
         );
         $query->execute(array(
-            ':sid' => $session_id,
+            ':sid' => $sessionId,
         ));
         
         return true;
@@ -208,7 +208,7 @@ class SessionHandler implements \SessionHandlerInterface
                 $this->tableName
             WHERE
                 userid IS NOT NULL AND
-                last_update < DATE_SUB(NOW(), INTERVAL :maxlifetime SECOND)"
+                dateLastUpdate < DATE_SUB(NOW(), INTERVAL :maxlifetime SECOND)"
         );
         $query->execute(array(
             ':maxlifetime' => $maxlifetime,
@@ -224,7 +224,7 @@ class SessionHandler implements \SessionHandlerInterface
                 $this->tableName
             WHERE
                 userid IS NULL AND
-                last_update < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
+                dateLastUpdate < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
         );
 
         return true;
