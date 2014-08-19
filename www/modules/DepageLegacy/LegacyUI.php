@@ -36,7 +36,7 @@ class LegacyUI extends \depage_ui
         );
     }
     // }}}
-    
+
     // {{{ _init
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
@@ -68,7 +68,7 @@ class LegacyUI extends \depage_ui
 
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo 
+            $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method, // method
@@ -84,7 +84,7 @@ class LegacyUI extends \depage_ui
         );
 
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
-        
+
         // establish if the user is logged in
         if (empty($this->auth_user)) {
             if ($this->autoEnforceAuth) {
@@ -115,7 +115,7 @@ class LegacyUI extends \depage_ui
         return $output;
     }
     // }}}
-    
+
     // {{{ toolbar
     protected function toolbar() {
         if ($user = $this->auth->enforceLazy()) {
@@ -132,7 +132,7 @@ class LegacyUI extends \depage_ui
         return $h;
     }
     // }}}
-    
+
     // {{{ notfound
     /**
      * function to call if action/function is not defined
@@ -174,16 +174,16 @@ class LegacyUI extends \depage_ui
         return $this->_package($h);
     }
     // }}}
-    
+
     // {{{ login()
     /**
      * Login
-     * 
+     *
      * Displays and handles the user login:
      * - Redirects to HTTPS if required.
      * - Displays login form.
      * - Validates input and redirects authenticated users.
-     * 
+     *
      * @return string HTML - login template
      */
     public function login() {
@@ -210,10 +210,10 @@ class LegacyUI extends \depage_ui
             'redirectTo' => isset($_REQUEST['redirectTo']) ? $_REQUEST['redirectTo'] : '',
             'check' => true,
         ));
-        
+
         $form->process();
         $form->validate(); // calls the onvalidate function
-        
+
         return new html("box.tpl", array(
             'title' => _("Welcome"),
             'content' => $form,
@@ -223,10 +223,10 @@ class LegacyUI extends \depage_ui
     // {{{ logout()
     /**
      * Logout
-     * 
+     *
      * This is the logout end point:
      * - Clears session and redirects user to home page
-     * 
+     *
      * @return void
      */
     public function logout() {
@@ -237,12 +237,12 @@ class LegacyUI extends \depage_ui
     // {{{ _validateLogin
     /**
      * Validate Login
-     * 
+     *
      * This is the validation handler sent to the depage\htmlform validation
      * to enable user authentication.
-     * 
+     *
      * @param array $values - form inputs
-     * 
+     *
      * @return user object or false - authentication state
      */
     public function _validateLogin($form, array $values) {
@@ -268,7 +268,7 @@ class LegacyUI extends \depage_ui
         return false;
     }
     // }}}
-    
+
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -302,7 +302,7 @@ class LegacyUI extends \depage_ui
         return $h;
     }
     // }}}
-    
+
     // {{{ import
     /**
      * function to show error messages
@@ -404,7 +404,7 @@ class LegacyUI extends \depage_ui
     <sec:text name="Headline">
         <edit:text_headline lang=""><p>Headline</p></edit:text_headline>
     </sec:text>
-        
+
     </rpc:param><rpc:param name="new_name" /></rpc:func></rpc:msg>';
             } elseif ($type == "set-page-colorscheme") {
                 $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="set_page_colorscheme"><rpc:param name="sid">9adaf9361a3c631ae3ca9ccf27176bed</rpc:param><rpc:param name="wid">9adaf9361a3c631ae3ca9ccf27176bed</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="id">210</rpc:param><rpc:param name="colorscheme">cyan</rpc:param><rpc:param name="type">page_data</rpc:param></rpc:func></rpc:msg>';

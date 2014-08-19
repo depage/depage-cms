@@ -5,7 +5,7 @@
  * User and Session Handling Library
  *
  * This file contains classes for session
- * handling. 
+ * handling.
  *
  *
  * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
@@ -43,7 +43,7 @@ class HttpCookie extends auth
      **/
     public $cookieHttponly = true;
     // }}}
-    
+
     /* {{{ constructor */
     public function __construct($pdo, $realm, $domain, $digestCompat = false) {
         parent::__construct($pdo, $realm, $domain, $digestCompat);
@@ -62,7 +62,7 @@ class HttpCookie extends auth
         );
     }
     /* }}} */
-    
+
     /* {{{ enforce */
     public function enforce() {
         // only enforce authentication if not authenticated before
@@ -72,7 +72,7 @@ class HttpCookie extends auth
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
                 $loginUrl = \html::link($this->loginUrl, "auto");
-                
+
                 // set protocol
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
                     $protocol = "https://";
@@ -158,12 +158,12 @@ class HttpCookie extends auth
         }
 
         $this->sendAuthHeader();
-        
+
         //throw new Exception("you are not allowed to do this!");
         return false;
     }
     /* }}} */
-    
+
     // {{{ startSession()
     protected function startSession() {
         $sid = $this->getSid();
@@ -186,7 +186,7 @@ class HttpCookie extends auth
                 $params['httponly']
             );
         }
-    } 
+    }
     // }}}
     // {{{ hasSession()
     protected function hasSession() {
@@ -197,7 +197,7 @@ class HttpCookie extends auth
             // PHP 5.3
             return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
         }
-    } 
+    }
     // }}}
     // {{{ destroySession()
     protected function destroySession() {
@@ -206,7 +206,7 @@ class HttpCookie extends auth
             $params = session_get_cookie_params();
             setcookie(
                 $this->cookieName,
-                '', 
+                '',
                 time() - 42000,
                 $params['path'],
                 $params['domain'],
@@ -216,14 +216,14 @@ class HttpCookie extends auth
             unset($_COOKIE[session_name()]);
             session_destroy();
         }
-    } 
+    }
     // }}}
-    
+
     // {{{ sendAuthHeader()
     protected function sendAuthHeader($validResponse = false) {
         // @todo look for a way to suppress password saving dialogs when password is wrong
         //header("HTTP/1.1 403 Unauthorized");
-    } 
+    }
     // }}}
 }
 

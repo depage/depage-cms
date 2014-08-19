@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * @file    auth_http_digest.php
  *
  * User and Session Handling Library
  *
  * This file contains classes for session
- * handling. 
+ * handling.
  *
  *
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
@@ -20,7 +20,7 @@ class HttpDigest extends HttpBasic
 {
     // {{{ enforce()
     /**
-     * enforces authentication 
+     * enforces authentication
      *
      * @public
      *
@@ -41,7 +41,7 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ enforceLazy()
     /**
-     * enforces authentication but lazily with fallback content if someone is not logged in 
+     * enforces authentication but lazily with fallback content if someone is not logged in
      *
      * @public
      *
@@ -63,7 +63,7 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ enforceLogout()
     /**
-     * enforces logout 
+     * enforces logout
      *
      * @public
      *
@@ -78,7 +78,7 @@ class HttpDigest extends HttpBasic
         return $this->user;
     }
     // }}}
-    
+
     // {{{ authDigest()
     public function authDigest() {
         $validResponse = false;
@@ -89,7 +89,7 @@ class HttpDigest extends HttpBasic
         } else {
             $this->setSid("");
         }
-        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) { 
+        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) {
             // get new user object
             $user = User::loadByUsername($this->pdo, $data['username']);
             $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
@@ -113,14 +113,14 @@ class HttpDigest extends HttpBasic
         $this->startSession();
 
         return false;
-    } 
+    }
     // }}}
     // {{{ authDigestLogout()
     public function authDigestLogout() {
         $validResponse = false;
         $digest_header = $this->getDigestHeader();
 
-        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) { 
+        if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) {
             $validResponse = $this->checkResponse($data, md5("logout" . ':' . $this->realm . ':' . "logout"));
 
             if ($validResponse) {
@@ -135,7 +135,7 @@ class HttpDigest extends HttpBasic
         }
 
         $this->sendAuthHeader($validResponse);
-    } 
+    }
     // }}}
     // {{{ sendAuthHeader()
     protected function sendAuthHeader($validResponse = false) {
@@ -154,7 +154,7 @@ class HttpDigest extends HttpBasic
 
         header("WWW-Authenticate: Digest realm=\"{$realm}\", domain=\"{$domain}\", qop=\"auth\", algorithm=MD5-sess, nonce=\"{$nonce}\", opaque=\"{$opaque}\"{$stale}");
         header("HTTP/1.1 401 Unauthorized");
-    } 
+    }
     // }}}
     // {{{ checkResponse()
     protected function checkResponse(&$data, $passwordhash) {
@@ -168,7 +168,7 @@ class HttpDigest extends HttpBasic
         $data['valid_response'] = $validResponse;
 
         return $data['response'] == $validResponse;
-    } 
+    }
     // }}}
     // {{{ httpDigestParse()
     protected function httpDigestParse($txt) {
@@ -193,7 +193,7 @@ class HttpDigest extends HttpBasic
         }
 
         return $needed_parts ? false : $data;
-    } 
+    }
     // }}}
     // {{{ getDigestHeader()
     protected function getDigestHeader() {
@@ -216,7 +216,7 @@ class HttpDigest extends HttpBasic
         }
 
         return $digest_header;
-    } 
+    }
     // }}}
     // {{{ getNonce
     protected function getNonce() {

@@ -23,7 +23,7 @@ $conf = array(
         //'env' => 'production',
     ),
     // }}}
-    
+
     // {{{ */depage-cms/
     '*/depage-cms/' => array(
         'handler' => 'DepageLegacy\LegacyUI',
