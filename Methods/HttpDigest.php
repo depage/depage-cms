@@ -205,9 +205,10 @@ class HttpDigest extends HttpBasic
                 $digest_header = substr($headers['Authorization'], strpos($headers['Authorization'],' ') + 1);
             }
         } else {
+            $header = "";
             if (isset($_ENV["HTTP_AUTHORIZATION"])) {
                 $header = $_ENV["HTTP_AUTHORIZATION"];
-            } else {
+            } else if (isset($_SERVER["HTTP_AUTHORIZATION"])){
                 $header = $_SERVER["HTTP_AUTHORIZATION"];
             }
             $header = str_replace('\"', '"', $header);
