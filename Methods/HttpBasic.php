@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * @file    auth.php
  *
  * User and Session Handling Library
  *
  * This file contains classes for session
- * handling. 
+ * handling.
  *
  *
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
@@ -20,7 +20,7 @@ class HttpBasic extends HttpCookie
 {
     // {{{ enforce()
     /**
-     * enforces authentication 
+     * enforces authentication
      *
      * @public
      *
@@ -41,7 +41,7 @@ class HttpBasic extends HttpCookie
     // }}}
     // {{{ enforceLogout()
     /**
-     * enforces logout 
+     * enforces logout
      *
      * @public
      *
@@ -64,7 +64,7 @@ class HttpBasic extends HttpCookie
             $this->setSid("");
         }
 
-        if (isset($_SERVER['PHP_AUTH_USER'])) { 
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
             $username = $_SERVER['PHP_AUTH_USER'];
             $password = $_SERVER['PHP_AUTH_PW'];
 
@@ -93,7 +93,7 @@ class HttpBasic extends HttpCookie
         $this->startSession();
 
         throw new \Exception("you are not allowed to to this!");
-    } 
+    }
     // }}}
     // {{{ sendAuthHeader()
     protected function sendAuthHeader($validResponse = false) {
@@ -103,7 +103,7 @@ class HttpBasic extends HttpCookie
 
         header("WWW-Authenticate: Basic realm=\"$realm\", domain=\"{$this->domain}\"");
         header("HTTP/1.1 401 Unauthorized");
-    } 
+    }
     // }}}
 }
 

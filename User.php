@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file    auth_user.php
  *
@@ -23,8 +23,8 @@ class User {
         user.type AS type,
         user.id AS id,
         user.name as name,
-        user.name_full as fullname,
-        user.pass as passwordhash,
+        user.fullname as fullname,
+        user.passwordhash as passwordhash,
         user.email as email,
         user.settings as settings,
         user.level as level
@@ -44,7 +44,7 @@ class User {
         $this->pdo = $pdo;
     }
     // }}}
-    
+
     // {{{ loadByUsername()
     /**
      * gets a user-object by username directly from database
@@ -65,13 +65,13 @@ class User {
             WHERE
                 name = :name"
         );
-        
+
         $uid_query->execute(array(
             ':name' => $username,
         ));
-        
+
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\Auth\\User", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
 
         return $user;
@@ -93,7 +93,7 @@ class User {
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
-                {$pdo->prefix}_auth_user AS user, 
+                {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
             WHERE
                 sessions.sid = :sid AND
@@ -102,7 +102,7 @@ class User {
         $uid_query->execute(array(
             ':sid' => $sid,
         ));
-        
+
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
@@ -132,13 +132,13 @@ class User {
         $uid_query->execute(array(
             ':id' => $id,
         ));
-        
+
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
         return $user;
     }
-    // }}} 
+    // }}}
     // {{{ loadAll()
     /**
      * gets an array of user-objects
@@ -159,7 +159,7 @@ class User {
                 {$pdo->prefix}_auth_user AS user"
         );
         $uid_query->execute();
-        
+
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
         do {
@@ -171,7 +171,7 @@ class User {
 
         return $users;
     }
-    // }}} 
+    // }}}
     // {{{ save()
     /**
      * save a user object
@@ -184,8 +184,8 @@ class User {
      */
     public function save() {
     }
-    // }}} 
-       
+    // }}}
+
     // {{{ getUseragent()
     /**
      * gets a user-object by sid (session-id) directly from database
@@ -202,31 +202,31 @@ class User {
         if (!is_dir($cachepath)) {
             mkdir($cachepath, 0777, true);
         }
-        
+
         if (ini_get("browscap")) {
             $info = get_browser($this->useragent);
         } else {
             $browscap = new browscap($cachepath);
             $browscap->silent = true;
             $browscap->doAutoUpdate = false; // don't update now
-            $browscap->lowercase = true; 
+            $browscap->lowercase = true;
             //$browscap->updateMethod = Browscap::UPDATE_CURL;
             $info = $browscap->getBrowser($this->useragent);
         }
-        
+
         return "{$info->browser} {$info->version} on {$info->platform}";
     }
     // }}}
     // {{{ onLogout
     /**
      * Logout
-     * 
+     *
      * Called when the user is logged out.
-     * 
+     *
      * Override in inheriting classes to provide session end functionality.
-     * 
+     *
      * @param $session_id
-     * 
+     *
      * @return void
      */
     public function onLogout($sid) {

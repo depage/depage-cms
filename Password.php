@@ -74,7 +74,7 @@ class Password
         } else {
             return password_verify($password, $hash);
         }
-        
+
     }
     // }}}
 

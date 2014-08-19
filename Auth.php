@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * @file    auth.php
  *
  * User and Session Handling Library
  *
  * This file contains classes for session
- * handling. 
+ * handling.
  *
  *
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
@@ -36,7 +36,7 @@ abstract class Auth {
     public $loginUrl = "login/";
     public $logoutUrl = "logout/";
     // }}}
-    
+
     // {{{ factory()
     /**
      * factory method
@@ -59,7 +59,7 @@ abstract class Auth {
         }
     }
     // }}}
-    
+
     // {{{ constructor()
     /**
      * constructor
@@ -85,7 +85,7 @@ abstract class Auth {
     // }}}
     // {{{ enforce()
     /**
-     * enforces authentication 
+     * enforces authentication
      *
      * @public
      *
@@ -96,7 +96,7 @@ abstract class Auth {
     // }}}
     // {{{ enforceLazy()
     /**
-     * enforces authentication 
+     * enforces authentication
      *
      * @public
      *
@@ -107,7 +107,7 @@ abstract class Auth {
     // }}}
     // {{{ enforceLogout()
     /**
-     * enforces authentication 
+     * enforces authentication
      *
      * @public
      *
@@ -116,14 +116,14 @@ abstract class Auth {
      */
     abstract public function enforceLogout();
     // }}}
-    
+
     // {{{ isValidSid()
     protected function isValidSid($sid) {
         // test for validity
         $session_query = $this->pdo->prepare(
-            "SELECT 
+            "SELECT
                 sid, userid
-            FROM 
+            FROM
                 {$this->pdo->prefix}_auth_sessions
             WHERE
                 sid = :sid AND
@@ -142,7 +142,7 @@ abstract class Auth {
                 "UPDATE
                     {$this->pdo->prefix}_auth_sessions
                 SET
-                    last_update = NOW()
+                    dateLastUpdate = NOW()
                 WHERE
                     sid = :sid AND
                     ip = :ip"
@@ -215,7 +215,7 @@ abstract class Auth {
                     {$this->pdo->prefix}_auth_sessions
                 SET
                     sid = :sid,
-                    last_update = NOW(),
+                    dateLastUpdate = NOW(),
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
@@ -231,8 +231,8 @@ abstract class Auth {
                 SET
                     sid = :sid,
                     userid = :uid,
-                    time_login = NOW(),
-                    last_update = NOW(),
+                    dateLogin = NOW(),
+                    dateLastUpdate = NOW(),
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
@@ -245,10 +245,10 @@ abstract class Auth {
 
             // update time of last login in user-table
             $update_query = $this->pdo->prepare(
-                "UPDATE 
+                "UPDATE
                     {$this->pdo->prefix}_auth_user
                 SET
-                    date_lastlogin = NOW()
+                    dateLastlogin = NOW()
                 WHERE
                     id = :uid"
             )->execute(array(
@@ -285,14 +285,14 @@ abstract class Auth {
         }
     }
     // }}}
-    
+
     // {{{ getActiveUsers()
     function getActiveUsers() {
         $users = array();
 
         // get logged in users
         $user_query = $this->pdo->prepare(
-            "SELECT 
+            "SELECT
                 user.id AS id,
                 user.name as name,
                 user.name_full as fullname,
@@ -300,14 +300,14 @@ abstract class Auth {
                 user.email as email,
                 user.settings as settings,
                 user.level as level,
-                sessions.project AS project, 
-                sessions.ip AS ip, 
-                sessions.last_update AS last_update, 
+                sessions.project AS project,
+                sessions.ip AS ip,
+                sessions.dateLastUpdate AS dateLastUpdate,
                 sessions.useragent AS useragent
-            FROM 
-                {$this->pdo->prefix}_auth_user AS user, 
+            FROM
+                {$this->pdo->prefix}_auth_user AS user,
                 {$this->pdo->prefix}_auth_sessions AS sessions
-            WHERE 
+            WHERE
                 user.id=sessions.userid"
         );
 
@@ -318,7 +318,7 @@ abstract class Auth {
         return $users;
     }
     // }}}
-    
+
     // {{{ logout()
     /**
      * logs user out
@@ -344,9 +344,9 @@ abstract class Auth {
 
         // delete session data for sid
         $delete_query = $this->pdo->prepare(
-            "DELETE FROM 
+            "DELETE FROM
                 {$this->pdo->prefix}_auth_sessions
-            WHERE 
+            WHERE
                 sid = :sid"
         );
         $delete_query->execute(array(
