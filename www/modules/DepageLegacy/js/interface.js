@@ -44,25 +44,25 @@ var depageCms = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
-            
-            // email antispam
-            $("a[href*='mailto:']").depageAntispam();
         },
         // }}}
         // {{{ logout
         logout: function() {
-            var baseurl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "");
-            var logouturl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "logout/";
+            var baseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "");
+            var logoutUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "logout/";
 
             $.ajax({ 
                 type: "GET", 
-                url: logouturl + "=true", 
+                url: logoutUrl,
                 cache: false,
                 async: true,
                 username: "logout",
                 password: "logout",
                 complete: function(XMLHttpRequest, textStatus) {
-                    //window.location = baseurl;
+                    window.location = baseUrl;
+                },
+                error: function() {
+                    window.location = baseUrl;
                 }
             });
         }

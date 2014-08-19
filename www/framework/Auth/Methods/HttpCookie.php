@@ -52,10 +52,6 @@ class HttpCookie extends auth
         $url = parse_url($this->domain);
         $this->cookiePath = $url['path'];
 
-        $this->log->log("-- construct");
-        $this->log->log("cookiePath: " . $this->cookiePath);
-        $this->log->log("cookieDomain: " . $this->cookieDomain);
-
         session_name($this->cookieName);
         session_set_cookie_params(
             $this->sessionLifetime,
@@ -70,12 +66,12 @@ class HttpCookie extends auth
     /* {{{ enforce */
     public function enforce() {
         // only enforce authentication if not authenticated before
-        if ($this->user === null) {
+        if (!$this->user) {
             $this->user = $this->authCookie();
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $login_url = \html::link($this->loginUrl, "auto");
+                $loginUrl = \html::link($this->loginUrl, "auto");
                 
                 // set protocol
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
@@ -84,11 +80,11 @@ class HttpCookie extends auth
                     $protocol = "http://";
                 }
 
-                $request_url = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
-                if (rtrim($login_url, '/') != rtrim($request_url, '/')) {
+                $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
+                if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
                     $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    \depage::redirect("$login_url?redirectTo=$redirectTo");
+                    \depage::redirect("$loginUrl?redirectTo=$redirectTo");
                 }
             }
         }
@@ -101,7 +97,7 @@ class HttpCookie extends auth
      * @return   function returns the authenticated user or false if not logged in
      */
     public function enforceLazy() {
-        if ($this->user === null) {
+        if (!$this->user) {
             if ($this->hasSession()) {
                 if ($this->isValidSid($_COOKIE[session_name()])) {
                     $this->user = $this->authCookie();
@@ -172,20 +168,24 @@ class HttpCookie extends auth
     protected function startSession() {
         $sid = $this->getSid();
 
+        $sessionName = session_name();
+
         session_id($sid);
         session_start();
 
         // Override session cookie and extend the expiration time upon page load
-        $params = session_get_cookie_params();
-        setcookie(
-            $this->cookieName,
-            $sid,
-            time() + $this->sessionLifetime,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
-        );
+        if (isset($_COOKIE[$sessionName])) {
+            $params = session_get_cookie_params();
+            setcookie(
+                $this->cookieName,
+                $sid,
+                time() + $this->sessionLifetime,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
+        }
     } 
     // }}}
     // {{{ hasSession()
@@ -202,6 +202,7 @@ class HttpCookie extends auth
     // {{{ destroySession()
     protected function destroySession() {
         if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
+            // delete cookie
             $params = session_get_cookie_params();
             setcookie(
                 $this->cookieName,

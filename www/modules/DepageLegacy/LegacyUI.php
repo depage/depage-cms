@@ -211,7 +211,6 @@ class LegacyUI extends \depage_ui
             'check' => true,
         ));
         
-        $this->log->log("processing login form, which sets session");
         $form->process();
         $form->validate(); // calls the onvalidate function
         

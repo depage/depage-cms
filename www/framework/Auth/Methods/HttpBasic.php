@@ -29,7 +29,7 @@ class HttpBasic extends HttpCookie
      */
     public function enforce() {
         // only enforce authentication of not authenticated before
-        if ($this->user === null) {
+        if (!$this->user) {
             if (isset($_ENV["HTTP_AUTHORIZATION"])) {
                 list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
             }
