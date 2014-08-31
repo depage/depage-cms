@@ -36,6 +36,8 @@
             base.title = encodeURIComponent(base.title);
             base.url = encodeURIComponent(base.url);
 
+            base.$el.empty();
+
             $.each(base.options.services, function(i, name) {
                 // normalize name
                 name = name.toLowerCase();
