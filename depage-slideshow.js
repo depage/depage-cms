@@ -3,7 +3,7 @@
  *
  * @file    depage-slideshow.js
  *
- * adds a custom slideshow 
+ * adds a custom slideshow
  *
  *
  * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
@@ -24,7 +24,7 @@
  *
  * depage-jquery-slideshow
  *
- * @endsection 
+ * @endsection
  *
  * @subpage developer
  *
@@ -41,16 +41,16 @@
     "use strict";
     /*jslint browser: true*/
     /*global $:false */
-    
+
     if(!$.depage){
         $.depage = {};
     }
-    
+
     $.depage.slideshow = function(el, options){
         /* {{{ variables */
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
@@ -91,7 +91,7 @@
             return false;
         }());
         /* }}} */
-        
+
         /* {{{ init() */
         base.init = function(){
             base.options = $.extend({},$.depage.slideshow.defaultOptions, options);
@@ -106,7 +106,7 @@
                 base.options.pause = base.options.speed + base.options.pause;
                 base.options.speed = 0;
             }
-            
+
             // make parent "not static"
             if (base.$el.css("position") == "static") {
                 base.$el.css({
@@ -138,6 +138,10 @@
             if (divs.length > 1) {
                 base.playing = true;
                 base.waitForNext();
+
+                setTimeout(function() {
+                    base.$el.triggerHandler("depage.slideshow.show", [0, divs.length]);
+                }, 10);
             }
         };
         /* }}} */
@@ -192,14 +196,15 @@
         };
         /* }}} */
         /* {{{ show() */
-        base.show = function(n, waitForImagesToLoad) {
+        base.show = function(n, waitForImagesToLoad, customSpeed) {
             waitForImagesToLoad = (typeof force === "undefined") ? !base.options.waitForImagesToLoad : waitForImagesToLoad;
             if (waitForImagesToLoad && !base.imagesReadyFor(n)) {
                 setTimeout( function() { base.show(n); }, 100);
                 return false;
             }
+            customSpeed = (typeof customSpeed === "undefined") ? base.options.speed : customSpeed;
 
-            base.$el.triggerHandler("depage.slideshow.show", [n]);
+            base.$el.triggerHandler("depage.slideshow.show", [n, divs.length]);
 
             if (n == base.activeSlide) {
                 // slide n is already active
@@ -214,7 +219,7 @@
             });
             if (whichTransitionEvent) {
                 divs.css({
-                    transition: "opacity " + base.options.speed + "ms linear"
+                    transition: "opacity " + customSpeed + "ms linear"
                 });
             }
 
@@ -237,12 +242,12 @@
                         opacity: 1
                     }).animate({
                         opacity: 0
-                    }, base.options.speed, function() {
+                    }, customSpeed, function() {
                         $div.css({visibility: "hidden"});
                     });
                 }
             });
-            
+
             base.activeSlide = n;
 
             // fadein next slide
@@ -291,11 +296,11 @@
             }
         };
         /* }}} */
-        
+
         // Run initializer
         base.init();
     };
-    
+
     /* {{{ defaultOptions() */
     $.depage.slideshow.defaultOptions = {
         elements: "div, span, img",
@@ -304,7 +309,7 @@
         waitForImagesToLoad: true
     };
     /* }}} */
-    
+
     /* {{{ $.fn.depageSlideshow() */
     $.fn.depageSlideshow = function(options){
         return this.each(function(){
