@@ -16,7 +16,7 @@ class Schema
     const VERSION_DELIMITER = 'version ';
     /* }}} */
     /* {{{ variables */
-    private $fileNames  = array();
+    private $tableNames = array();
     private $sql        = array();
     /* }}} */
 
@@ -25,19 +25,18 @@ class Schema
      *
      * @return void
      */
-    public function __construct($pdo, $fileNames)
+    public function __construct($pdo, $tableNames)
     {
-        $this->fileNames    = $fileNames;
+        $this->tableNames   = $tableNames;
         $this->pdo          = $pdo;
-
     }
     /* }}} */
 
     /* {{{ load */
     public function load()
     {
-        foreach($this->fileNames as $fileName) {
-            $handle = @fopen($fileName, "r");
+        foreach($this->tableNames as $tableName) {
+            $handle = @fopen($tableName . '.sql', "r");
             if ($handle) {
                 while (($buffer = fgets($handle, 4096)) !== false) {
                     $this->sql[] = $buffer;
@@ -56,7 +55,7 @@ class Schema
     private function getStartLineByVersion($version)
     {
         foreach($this->sql as $number=>$line) {
-            if (strpos($line, self::VERSION_DELIMITER . $version) !== false) { //TODO search string is hard coded
+            if (strpos($line, self::VERSION_DELIMITER . $version) !== false) {
                 return $number;
             }
         }
