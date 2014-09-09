@@ -15,7 +15,7 @@ namespace depage\DB;
 class PDO
 {
     /* {{{ variables*/
-    public $prefix;
+    public $prefix = "";
     private $pdo = null;
     private $dsn;
     private $username;
@@ -30,11 +30,12 @@ class PDO
      * @param   string  dsn                 dsn for pdo-object
      * @param   string  username            username for database
      * @param   string  password            password for database
-     * @param   array   $driver_options     database-driver options with additional prefix-entry
+     * @param array $driver_options database-driver options with additional prefix-entry
      *
-     * @return  void
+     * @return void
      */
-    public function __construct($dsn, $username = '', $password = '', $driver_options = array()) {
+    public function __construct($dsn, $username = '', $password = '', $driver_options = array())
+    {
         $this->dsn = $dsn . ";charset=utf8";
         $this->username = $username;
         $this->password = $password;
@@ -49,7 +50,8 @@ class PDO
     /* {{{ lateInitialize */
     /**
      */
-    private function lateInitialize() {
+    private function lateInitialize()
+    {
         $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->driver_options);
 
         // set error mode to exception by default
@@ -64,7 +66,8 @@ class PDO
     /* {{{ __set */
     /**
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         if (is_null($this->pdo)) {
             $this->lateInitialize();
         }
@@ -74,27 +77,32 @@ class PDO
     /* {{{ __get */
     /**
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         if (is_null($this->pdo)) {
             $this->lateInitialize();
         }
+
         return $this->$name;
     }
     /* }}} */
     /* {{{ __call */
     /**
      */
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         if (is_null($this->pdo)) {
             $this->lateInitialize();
         }
+
         return call_user_func_array(array($this->pdo, $name), $arguments);
     }
     /* }}} */
     /* {{{ __callStatic */
     /**
      */
-    public static function __callStatic($name, $arguments) {
+    public static function __callStatic($name, $arguments)
+    {
         return call_user_func_array("pdo::$name", $arguments);
     }
     /* }}} */
@@ -103,12 +111,13 @@ class PDO
     /**
      * allows depage\DB\PDO-object to be serialized
      */
-    public function __sleep() {
+    public function __sleep()
+    {
         return array(
-            'dsn', 
-            'username', 
-            'password', 
-            'driver_options', 
+            'dsn',
+            'username',
+            'password',
+            'driver_options',
             'prefix',
         );
     }
@@ -119,19 +128,21 @@ class PDO
      *
      * We don't need to initialize the connection because we are already initializing them late.
      */
-    public function __wakeup() {
+    public function __wakeup()
+    {
     }
     // }}}
-    
+
     /* {{{ dsn_parts */
     /**
      * parses dsn intro its parts
      *
      * @param   string  dsn                 dsn for pdo-object
      *
-     * @return  array of options
+     * @return array of options
      */
-    static function parse_dsn($dsn) {
+    public static function parse_dsn($dsn)
+    {
         $info = array();
 
         list($info['protocol'], $rest) = explode(":", $dsn, 2);
