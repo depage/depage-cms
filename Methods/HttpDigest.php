@@ -94,17 +94,21 @@ class HttpDigest extends HttpBasic
             $user = User::loadByUsername($this->pdo, $data['username']);
             $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
-            if ($user && $validResponse) {
-                if (($uid = $this->isValidSid($this->sid)) !== false) {
-                    if ($uid == "") {
-                        $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                        $sid = $this->registerSession($user->id, $this->sid);
-                    }
-                    $this->startSession();
+            if ($user) {
+                if ($validResponse) {
+                    if (($uid = $this->isValidSid($this->sid)) !== false) {
+                        if ($uid == "") {
+                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $sid = $this->registerSession($user->id, $this->sid);
+                        }
+                        $this->startSession();
 
-                    return $user;
-                } elseif ($this->hasSession()) {
-                    $this->destroySession();
+                        return $user;
+                    } elseif ($this->hasSession()) {
+                        $this->destroySession();
+                    }
+                } else {
+                    $this->prolongLogin($user);
                 }
             }
         }

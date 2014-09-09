@@ -243,13 +243,19 @@ class User extends \depage\entity\Object
      * @return      auth_user
      */
     public function save() {
-        $dirty = array_keys($this->dirty, true);
-        $primary = self::$primary;
         $fields = array();
+        $primary = self::$primary;
         $isNew = $this->data[$primary] === null;
+
+        if ($isNew) {
+            $this->dateRegistered = date("Y-m-d H:i:s");
+        }
+
+        $dirty = array_keys($this->dirty, true);
 
         if (count($dirty) > 0) {
             if ($isNew) {
+                //var_dump($this);
                 $query = "INSERT INTO {$this->pdo->prefix}_auth_user";
             } else {
                 $query = "UPDATE {$this->pdo->prefix}_auth_user";
@@ -267,13 +273,15 @@ class User extends \depage\entity\Object
             $params = array_intersect_key($this->data,  array_flip($dirty));
 
             $cmd = $this->pdo->prepare($query);
-            $cmd->execute($params);
+            $success = $cmd->execute($params);
 
             if ($isNew) {
                 $this->$primary = $this->pdo->lastInsertId();
             }
 
-            $this->dirty = array_fill_keys(array_keys(static::$fields), false);
+            if ($success) {
+                $this->dirty = array_fill_keys(array_keys(static::$fields), false);
+            }
         }
     }
     // }}}
