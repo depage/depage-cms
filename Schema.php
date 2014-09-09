@@ -44,7 +44,7 @@ class Schema
                 }
 
                 if (!feof($handle)) {
-                    //TODO exception
+                    // @todo exception
                 }
 
                 fclose($handle);
@@ -61,7 +61,7 @@ class Schema
             }
         }
 
-        //TODO return st or exception
+        // @todo return st or exception
     }
     /* }}} */
     /* {{{ getCurrentTableVersion */
@@ -81,7 +81,7 @@ class Schema
         $lastVersion = false;
 
         foreach($this->sql[$tableName] as $line) {
-            $version    = $this->readVersionDelimiter($line);
+            $version = $this->readVersionDelimiter($line);
             if ($version) {
                 $lastVersion = $version;
             }
@@ -91,15 +91,16 @@ class Schema
     }
     /* }}} */
     /* {{{ readVersionDelimiter */
-    private function readVersionDelimiter($line) {
+    private function readVersionDelimiter($line)
+    {
         $trimmedLine = trim($line);
 
         if (
-            isset(trim($trimmedLine)[0])
-            && trim($trimmedLine)[0] == '#'
+            isset($trimmedLine[0])
+            && $trimmedLine[0] == '#'
             && strpos($trimmedLine, self::VERSION_DELIMITER) !== false
             && preg_match('/' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $trimmedLine, $matches)
-            && count($matches == 2)
+            && count($matches) == 2
         ) {
             return $matches[1];
         }
@@ -111,7 +112,20 @@ class Schema
     public function update()
     {
         foreach($this->tableNames as $tableName) {
-            
+            if ($this->getCurrentTableVersion($tableName) < $this->getCandidateTableVersion($tableName)) {
+                $this->executeUpdate($tableName);
+            }
+        }
+    }
+    /* }}} */
+    /* {{{ executeUpdate */
+    public function executeUpdate($tableName)
+    {
+        $startLine  = $this->getStartLineByVersion($tableName, $this->getCurrentTableVersion($tableName));
+        $endLine    = count($this->sql[$tableName]);
+
+        for ($i = $startLine; $i < $endLine; $i++) {
+            // @todo execute sql
         }
     }
     /* }}} */
