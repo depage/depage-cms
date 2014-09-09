@@ -14,21 +14,41 @@ namespace depage\Auth;
  * contains functions for handling user authentication
  * and session handling.
  */
-class User {
+class User extends \depage\entity\Object
+{
+    // {{{ variables
     /**
-     * @brief userFields
+     * @brief fields
      **/
-    static protected $userFields = "
-        user.type,
-        user.type AS type,
-        user.id AS id,
-        user.name as name,
-        user.fullname as fullname,
-        user.passwordhash as passwordhash,
-        user.email as email,
-        user.settings as settings,
-        user.level as level
-    ";
+    static protected $fields = array(
+        "type" => __CLASS__,
+        "id" => null,
+        "name" => "",
+        "fullname" => "",
+        "sortname" => "",
+        "passwordhash" => "",
+        "email" => "",
+        "settings" => "",
+        "level" => 4,
+        "dateRegistered" => null,
+        "dateLastlogin" => null,
+        "dateUpdated" => null,
+        "dateResetPassword" => null,
+        "confirmId" => null,
+        "resetPasswordId" => null,
+        "loginTimeout" => null,
+    );
+
+    /**
+     * @brief primary
+     **/
+    static protected $primary = "id";
+
+    /**
+     * @brief pdo object for database access
+     **/
+    protected $pdo = null;
+    // }}}
 
     // {{{ constructor()
     /**
@@ -41,6 +61,8 @@ class User {
      * @return      void
      */
     public function __construct(\depage\DB\PDO $pdo) {
+        parent::__construct($pdo);
+
         $this->pdo = $pdo;
     }
     // }}}
@@ -57,7 +79,8 @@ class User {
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
-        $fields = self::$userFields;
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
@@ -72,7 +95,40 @@ class User {
 
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        return $user;
+    }
+    // }}}
+    // {{{ loadByEmail()
+    /**
+     * gets a user-object by username directly from database
+     *
+     * @public
+     *
+     * @param       PDO     $pdo        pdo object for database access
+     * @param       string  $email      email of the user
+     *
+     * @return      User
+     */
+    static public function loadByEmail($pdo, $email) {
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_auth_user AS user
+            WHERE
+                email = :email"
+        );
+
+        $uid_query->execute(array(
+            ':email' => $email,
+        ));
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
         return $user;
     }
@@ -89,7 +145,8 @@ class User {
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
-        $fields = self::$userFields;
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
@@ -105,7 +162,8 @@ class User {
 
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
         return $user;
     }
     // }}}
@@ -121,11 +179,12 @@ class User {
      * @return      auth_user
      */
     static public function loadById($pdo, $id) {
-        $fields = self::$userFields;
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
-    {$pdo->prefix}_auth_user AS user
+                {$pdo->prefix}_auth_user AS user
             WHERE
                 id = :id"
         );
@@ -135,7 +194,8 @@ class User {
 
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
         return $user;
     }
     // }}}
@@ -152,7 +212,8 @@ class User {
      */
     static public function loadAll($pdo) {
         $users = array();
-        $fields = self::$userFields;
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
@@ -163,7 +224,7 @@ class User {
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
         do {
-            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE | \PDO::FETCH_PROPS_LATE);
+            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
                 array_push($users, $user);
             }
@@ -172,6 +233,7 @@ class User {
         return $users;
     }
     // }}}
+
     // {{{ save()
     /**
      * save a user object
@@ -179,10 +241,40 @@ class User {
      * @public
      *
      * @return      auth_user
-     *
-     * @todo implement / base user on entity
      */
     public function save() {
+        $dirty = array_keys($this->dirty, true);
+        $primary = self::$primary;
+        $fields = array();
+        $isNew = $this->data[$primary] === null;
+
+        if (count($dirty) > 0) {
+            if ($isNew) {
+                $query = "INSERT INTO {$this->pdo->prefix}_auth_user";
+            } else {
+                $query = "UPDATE {$this->pdo->prefix}_auth_user";
+            }
+            foreach ($dirty as $key) {
+                $fields[] = "$key=:$key";
+            }
+            $query .= " SET " . implode(",", $fields);
+
+            if (!$isNew) {
+                $query .= " WHERE $primary=:$primary";
+                $dirty[] = $primary;
+            }
+
+            $params = array_intersect_key($this->data,  array_flip($dirty));
+
+            $cmd = $this->pdo->prepare($query);
+            $cmd->execute($params);
+
+            if ($isNew) {
+                $this->$primary = $this->pdo->lastInsertId();
+            }
+
+            $this->dirty = array_fill_keys(array_keys(static::$fields), false);
+        }
     }
     // }}}
 

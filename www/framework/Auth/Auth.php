@@ -248,7 +248,8 @@ abstract class Auth {
                 "UPDATE
                     {$this->pdo->prefix}_auth_user
                 SET
-                    dateLastlogin = NOW()
+                    dateLastlogin = NOW(),
+                    loginTimeout = 0
                 WHERE
                     id = :uid"
             )->execute(array(
@@ -259,6 +260,18 @@ abstract class Auth {
         $this->valid = true;
 
         return $sid;
+    }
+    // }}}
+    // {{{ prolongLogin()
+    protected function prolongLogin($user) {
+        if ($user->loginTimeout == 0) {
+            $user->loginTimeout = 100;
+        } else {
+            $user->loginTimeout *= 2;
+        }
+        $user->save();
+
+        usleep($user->loginTimeout * 1000);
     }
     // }}}
 

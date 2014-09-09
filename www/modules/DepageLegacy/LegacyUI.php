@@ -248,23 +248,17 @@ class LegacyUI extends \depage_ui
     public function _validateLogin($form, array $values) {
         $username = $values['username'];
         $password = $values['password'];
-        if (strpos($username, "@") !== false) {
-            // email login
-            $user = \depage\Auth\User::loadByEmail($this->pdo, $username);
-            if ($user) {
-                $username = $user->name;
-            }
-        } else {
-            // username login
-            $user = \depage\Auth\User::loadByUsername($this->pdo, $username);
-        }
-        if ($user && $this->auth->login($username, $password)) {
+
+        $user = $this->auth->login($username, $password);
+
+        if ($user) {
             // authenticated
             return (empty($user->confirm_id)) ? $user : false;
         }
         $el = $form->getElement('username');
         $el->valid = false;
         $this->log->log("login: wrong credentials");
+
         return false;
     }
     // }}}
