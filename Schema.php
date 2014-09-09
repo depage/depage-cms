@@ -12,9 +12,12 @@ namespace depage\DB;
 
 class Schema
 {
+    /* {{{ constants */
+    const VERSION_DELIMITER = 'version ';
+    /* }}} */
     /* {{{ variables */
-        private $filenames  = array();
-        private $sql        = array();
+    private $fileNames  = array();
+    private $sql        = array();
     /* }}} */
 
     /* {{{ constructor */
@@ -22,9 +25,10 @@ class Schema
      *
      * @return void
      */
-    public function __construct($filenames)
+    public function __construct($pdo, $fileNames)
     {
-            $this->filenames = $filenames;
+        $this->fileNames    = $fileNames;
+        $this->pdo          = $pdo;
 
     }
     /* }}} */
@@ -32,18 +36,43 @@ class Schema
     /* {{{ load */
     public function load()
     {
-        foreach($this->filenames as $filename) {
-            $handle = @fopen($filename, "r");
+        foreach($this->fileNames as $fileName) {
+            $handle = @fopen($fileName, "r");
             if ($handle) {
                 while (($buffer = fgets($handle, 4096)) !== false) {
-                    $sql[] = trim($buffer);
+                    $this->sql[] = $buffer;
                 }
+
                 if (!feof($handle)) {
-                    #TODO exception
+                    //TODO exception
                 }
+
                 fclose($handle);
             }
         }
+    }
+    /* }}} */
+    /* {{{ getStartLineByVersion */
+    private function getStartLineByVersion($version)
+    {
+        foreach($this->sql as $number=>$line) {
+            if (strpos($line, self::VERSION_DELIMITER . $version) !== false) { //TODO search string is hard coded
+                return $number;
+            }
+        }
+
+        //TODO return st or exception
+    }
+    /* }}} */
+    /* {{{ getCurrentTableVersion */
+    private function getCurrentTableVersion($tableName)
+    {
+        $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+        $statement  = $this->pdo->query($query);
+        $statement->execute();
+        $row        = $statement->fetch();
+
+        return str_replace(self::VERSION_DELIMITER, '', $row['TABLE_COMMENT']);
     }
     /* }}} */
 }
