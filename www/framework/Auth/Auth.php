@@ -242,14 +242,13 @@ abstract class Auth {
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
 
-
             // update time of last login in user-table
             $update_query = $this->pdo->prepare(
                 "UPDATE
                     {$this->pdo->prefix}_auth_user
                 SET
-                    dateLastlogin = NOW(),
-                    loginTimeout = 0
+                    loginTimeout = 0,
+                    dateLastlogin = NOW()
                 WHERE
                     id = :uid"
             )->execute(array(
@@ -266,7 +265,7 @@ abstract class Auth {
     protected function prolongLogin($user) {
         if ($user->loginTimeout == 0) {
             $user->loginTimeout = 100;
-        } else {
+        } else if ($user->loginTimeout < 20000) {
             $user->loginTimeout *= 2;
         }
         $user->save();

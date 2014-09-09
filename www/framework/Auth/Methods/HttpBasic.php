@@ -72,19 +72,23 @@ class HttpBasic extends HttpCookie
             $user = User::loadByUsername($this->pdo, $username);
             $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-            if ($user && $pass->verify($user->name, $password, $user->passwordhash)) {
-                $this->updatePasswordHash($user, $password);
+            if ($user) {
+                if ($pass->verify($user->name, $password, $user->passwordhash)) {
+                    $this->updatePasswordHash($user, $password);
 
-                if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
-                    if ($uid == "") {
-                        $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
-                        $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
+                    if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
+                        if ($uid == "") {
+                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
+                        }
+                        $this->startSession();
+
+                        return $user;
+                    } elseif ($this->hasSession()) {
+                        $this->destroySession();
                     }
-                    $this->startSession();
-
-                    return $user;
-                } elseif ($this->hasSession()) {
-                    $this->destroySession();
+                } else {
+                    $this->prolongLogin($user);
                 }
             }
         }

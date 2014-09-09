@@ -15,7 +15,7 @@ namespace DepageLegacy\RPC;
 class CmsFuncs {
     protected $projectName;
     protected $callbacks = array();
-    
+
     // {{{ __construct
     function __construct($project, $pdo, $xmldb) {
         $this->projectName = $project;
@@ -43,49 +43,49 @@ class CmsFuncs {
      * @public
      *
      * @return     $set_config (xmlfuncobj) configuration
-     */ 
+     */
     function get_config() {
         $conf_array = array();
-        
+
         $conf_array['app_name'] = \depage::getName();
         $conf_array['app_version'] = \depage::getVersion();
-        
+
         $conf_array['thumb_width'] = 85;
         $conf_array['thumb_height'] = 72;
         $conf_array['thumb_load_num'] = 100;
-        
+
         $conf_array['interface_lib'] = "modules/DepageLegacy/lib/lib_interface.swf";
-        
+
         $conf_array['interface_text'] = "";
         $lang = $this->getTexts();
         foreach ($lang as $key => $val) {
             $conf_array['interface_text'] .= "<text name=\"$key\" value=\"" . htmlspecialchars($val) . "\" />";
         }
-        
+
         $conf_array['interface_scheme'] = '';
         $colors = $this->getScheme(__DIR__ . "/../interface.ini");
         foreach ($colors as $key => $val) {
             $conf_array['interface_scheme'] .= "<color name=\"$key\" value=\"" . htmlspecialchars($val) . "\" />";
         }
-        
+
         $conf_array['projects'] = "<project name=\"$this->projectName\" preview=\"true\" />";
-        
+
         $conf_array['namespaces'] = "";
         $namespaces = $this->getGlobalNamespaces();
         foreach($namespaces as $ns_key => $ns) {
             $conf_array['namespaces'] .= "<namespace name=\"$ns_key\" prefix=\"{$ns['ns']}\" uri=\"{$ns['uri']}\"/>";
         }
-        
+
         $conf_array['url_page_scheme_intern'] = "pageref";
         $conf_array['url_lib_scheme_intern'] = "libref";
-        
+
         $conf_array['global_entities'] = '';
         $globalEntities = array_keys($this->getGlobalEntities());
         foreach ($globalEntities as $val) {
             // @todo check entities for right format
             $conf_array['global_entities'] .= "<entity name=\"$val\"/>";
         }
-        
+
         $conf_array['output_file_types'] = '';
         $fileTypes = $this->getGlobalFiletypes();
         foreach ($fileTypes as $key => $val) {
@@ -97,13 +97,13 @@ class CmsFuncs {
         foreach ($outputEncodings as $val) {
             $conf_array['output_encodings'] .= "<output_encoding name=\"$val\" />";
         }
-        
+
         $conf_array['output_methods'] = '';
         $outputMethods = $this->getGlobalOutputMethods();
         foreach ($outputMethods as $val) {
             $conf_array['output_methods'] .= "<output_method name=\"$val\" />";
         }
-        
+
         $conf_array['users'] = $this->getUserList();
 
         return new Func('set_config', $conf_array);
@@ -120,13 +120,13 @@ class CmsFuncs {
         } else {
             $data['error'] = true;
         }
-        
+
         return new Func('set_project_data', $data);
     }
     // }}}
     // {{{ get_tree()
     function get_tree($args) {
-        $callbackFunc = "update_tree_{$args['type']}";    
+        $callbackFunc = "update_tree_{$args['type']}";
 
         $data = array();
         $project_name = $this->projectName;
@@ -148,7 +148,7 @@ class CmsFuncs {
         if (!$data['data']) {
             $data['error'] = true;
         }
-        
+
         return new Func($callbackFunc, $data);
     }
     // }}}
@@ -184,7 +184,7 @@ class CmsFuncs {
     // {{{ get_prop()
     function get_prop($args) {
         $data = array();
-        $callbackFunc = "update_prop_{$args['type']}";    
+        $callbackFunc = "update_prop_{$args['type']}";
 
         if ($args['type'] == 'files' && !empty($args['id'])) {
             $data['data'] = $this->getFilesForPath($args['id']);
@@ -402,7 +402,7 @@ class CmsFuncs {
         return new Func('preview_update', array('error' => 0));
     }
     // }}}
-    
+
     // {{{ getTexts()
     protected function getTexts() {
         return array(
@@ -715,15 +715,15 @@ class CmsFuncs {
     // {{{ getGlobalEntities()
     protected function getGlobalEntities() {
         return array(
-            'nbsp' => '#160', 
-            'auml' => '#228', 
-            'ouml' => '#246', 
+            'nbsp' => '#160',
+            'auml' => '#228',
+            'ouml' => '#246',
             'uuml' => '#252',
-            'Auml' => '#196', 
-            'Ouml' => '#214', 
+            'Auml' => '#196',
+            'Ouml' => '#214',
             'Uuml' => '#220',
-            'mdash' => '#8212', 
-            'ndash' => '#8211', 
+            'mdash' => '#8212',
+            'ndash' => '#8211',
             'copy' => '#169',
             'euro' => '#8364',
         );
@@ -747,23 +747,23 @@ class CmsFuncs {
     protected function getGlobalFiletypes() {
         return array(
             'html' => Array(
-                'dynamic' => false, 
+                'dynamic' => false,
                 'extension' => 'html'
             ),
             'shtml' => Array(
-                'dynamic' => true, 
+                'dynamic' => true,
                 'extension' => 'shtml'
             ),
             'text' => Array(
-                'dynamic' => false, 
+                'dynamic' => false,
                 'extension' => 'txt'
             ),
             'php' => Array(
-                'dynamic' => true, 
+                'dynamic' => true,
                 'extension' => 'php'
             ),
             'php5' => Array(
-                'dynamic' => true, 
+                'dynamic' => true,
                 'extension' => 'php5'
             ),
         );
@@ -789,7 +789,7 @@ class CmsFuncs {
     // }}}
     // {{{ getUserList()
     function getUserList(){
-        $users = \depage\Auth\User::getAll($this->pdo);
+        $users = \depage\Auth\User::loadAll($this->pdo);
 
         $xml = "";
         foreach ($users as $user) {
@@ -945,7 +945,7 @@ class CmsFuncs {
         return $dirXML;
     }
     // }}}
-    
+
     // {{{ addCallback()
     function addCallback($type, $ids = array(), $newActiveId = null) {
         if ($type == 'settings') {

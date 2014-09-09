@@ -246,17 +246,15 @@ class LegacyUI extends \depage_ui
      * @return user object or false - authentication state
      */
     public function _validateLogin($form, array $values) {
-        $username = $values['username'];
-        $password = $values['password'];
-
-        $user = $this->auth->login($username, $password);
+        $user = $this->auth->login($values['username'], $values['password']);
 
         if ($user) {
             // authenticated
             return (empty($user->confirm_id)) ? $user : false;
         }
-        $el = $form->getElement('username');
-        $el->valid = false;
+        $input = $form->getElement('password');
+        $input->valid = false;
+
         $this->log->log("login: wrong credentials");
 
         return false;
