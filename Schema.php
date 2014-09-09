@@ -52,8 +52,8 @@ class Schema
         }
     }
     /* }}} */
-    /* {{{ getStartLineByVersion */
-    private function getStartLineByVersion($tableName, $version)
+    /* {{{ startLineByVersion */
+    private function startLineByVersion($tableName, $version)
     {
         foreach($this->sql[$tableName] as $number=>$line) {
             if (strpos($line, self::VERSION_TAG . ' ' . $version) !== false) {
@@ -64,8 +64,8 @@ class Schema
         // @todo return st or exception
     }
     /* }}} */
-    /* {{{ getCurrentTableVersion */
-    private function getCurrentTableVersion($tableName)
+    /* {{{ currentTableVersion */
+    private function currentTableVersion($tableName)
     {
         $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
         $statement  = $this->pdo->query($query);
@@ -75,8 +75,8 @@ class Schema
         return str_replace(self::VERSION_TAG . ' ', '', $row['TABLE_COMMENT']);
     }
     /* }}} */
-    /* {{{ getCandidateTableVersion */
-    private function getCandidateTableVersion($tableName)
+    /* {{{ candidateTableVersion */
+    private function candidateTableVersion($tableName)
     {
         $lastVersion = false;
 
@@ -112,7 +112,7 @@ class Schema
     public function update()
     {
         foreach($this->tableNames as $tableName) {
-            if ($this->getCurrentTableVersion($tableName) < $this->getCandidateTableVersion($tableName)) {
+            if ($this->currentTableVersion($tableName) < $this->candidateTableVersion($tableName)) {
                 $this->executeUpdate($tableName);
             }
         }
@@ -121,7 +121,7 @@ class Schema
     /* {{{ executeUpdate */
     public function executeUpdate($tableName)
     {
-        $startLine  = $this->getStartLineByVersion($tableName, $this->getCurrentTableVersion($tableName));
+        $startLine  = $this->startLineByVersion($tableName, $this->currentTableVersion($tableName));
         $endLine    = count($this->sql[$tableName]);
 
         for ($i = $startLine; $i < $endLine; $i++) {
