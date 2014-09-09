@@ -124,20 +124,32 @@ class HttpCookie extends auth
     /* }}} */
     /* {{{ login() */
     public function login($username, $password) {
-        $user = User::loadByUsername($this->pdo, $username);
+        if (strpos($username, "@") !== false) {
+            // email login
+            $user = User::loadByEmail($this->pdo, $username);
+            if ($user) {
+                $username = $user->name;
+            }
+        } else {
+            // username login
+            $user = User::loadByUsername($this->pdo, $username);
+        }
         $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-        if ($user && $pass->verify($user->name, $password, $user->passwordhash)) {
-            $this->updatePasswordHash($user, $password);
+        if ($user) {
+            if ($pass->verify($user->name, $password, $user->passwordhash)) {
+                $this->updatePasswordHash($user, $password);
 
-            $this->destroySession();
-            $this->registerSession($user->id);
-            $this->startSession();
+                $this->destroySession();
+                $this->registerSession($user->id);
+                $this->startSession();
 
-            return true;
-        } else {
-            return false;
+                return true;
+            } else {
+                $this->prolongLogin($user);
+            }
         }
+        return false;
     }
     /* }}} */
 
