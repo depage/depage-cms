@@ -124,8 +124,18 @@ class Schema
         $startLine  = $this->startLineByVersion($tableName, $this->currentTableVersion($tableName));
         $endLine    = count($this->sql[$tableName]);
 
+        $sqlString = '';
         for ($i = $startLine; $i < $endLine; $i++) {
-            // @todo execute sql
+            // @todo remove comments # and --
+            $sqlString .= preg_replace('/#.*$/', '', $this->sql[$tableName][$i]);
+        }
+
+        $sqlString  = trim($sqlString);
+        $sqlString  = preg_replace('/\s+/', ' ', $sqlString) . "\n";
+        $sqlArray   = explode(';', $sqlString);
+
+        foreach($sqlArray as $query) {
+            echo trim($query) . "\n";
         }
     }
     /* }}} */
