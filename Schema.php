@@ -39,16 +39,18 @@ class Schema
         foreach($this->tableNames as $tableName) {
             $contents       = file($tableName . '.sql');
             $lastVersion    = false;
+            $number         = 1;
 
             foreach($contents as $line) {
                 $version = ($this->readVersionDelimiter($line));
 
                 if ($version) {
-                    $this->sql[$tableName][$version][] = $line;
+                    $this->sql[$tableName][$version][$number] = $line;
                     $lastVersion = $version;
                 } else {
-                    $this->sql[$tableName][$lastVersion][] = $line;
+                    $this->sql[$tableName][$lastVersion][$number] = $line;
                 }
+                $number++;
             }
         }
     }
@@ -96,7 +98,7 @@ class Schema
             $new = false;
             foreach($this->sql[$tableName] as $version => $sql) {
                 if ($new) {
-                    foreach($sql as $line) {
+                    foreach($sql as $number => $line) {
                         // @todo execute update
                     }
                 } else {
@@ -106,7 +108,7 @@ class Schema
 
             if (!$new) {
                 foreach($this->sql[$tableName] as $sql) {
-                    foreach($sql as $line) {
+                    foreach($sql as $number => $line) {
                         // @todo execute update
                     }
                 }
