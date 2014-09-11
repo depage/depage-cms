@@ -19,6 +19,7 @@ class Schema
     /* {{{ variables */
     private $tableNames = array();
     private $sql        = array();
+    private $statement  = '';
     /* }}} */
 
     /* {{{ constructor */
@@ -99,7 +100,7 @@ class Schema
             foreach($this->sql[$tableName] as $version => $sql) {
                 if ($new) {
                     foreach($sql as $number => $line) {
-                        // @todo execute update
+                        $this->execute($line);
                     }
                 } else {
                     $new = ($version == $this->currentTableVersion($tableName));
@@ -109,33 +110,33 @@ class Schema
             if (!$new) {
                 foreach($this->sql[$tableName] as $sql) {
                     foreach($sql as $number => $line) {
-                        // @todo execute update
+                        $this->execute($line);
                     }
                 }
             }
         }
     }
     /* }}} */
-    /* {{{ executeUpdate */
-    public function executeUpdate($tableName)
+    /* {{{ execute */
+    public function execute($line)
     {
-        $startLine  = $this->startLineByVersion($tableName, $this->currentTableVersion($tableName));
-        $endLine    = count($this->sql[$tableName]);
+        $line   = preg_replace('/#.*$|--.*$/', '', $line); // @todo also handle multi line comments
+        $queue  = preg_split('/(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
 
-        $sqlString = '';
-        for ($i = $startLine; $i < $endLine; $i++) {
-            // @todo remove comments # and --
-            $sqlString .= preg_replace('/#.*$/', '', $this->sql[$tableName][$i]);
-        }
-
-        $sqlString  = trim($sqlString);
-        $sqlString  = preg_replace('/\s+/', ' ', $sqlString) . "\n";
-        $sqlArray   = explode(';', $sqlString);
-
-        foreach($sqlArray as $query) {
-            echo trim($query) . "\n";
+        foreach($queue as $element) {
+            if ($element == ';') {
+                $this->run(preg_replace('/\s+/', ' ', trim($this->statement)));
+                $this->statement = '';
+            } else {
+                $this->statement .= $element . ' ';
+            }
         }
     }
     /* }}} */
+    /* {{{ run */
+    private function run($statement) {
+        echo 'exec: ' . $statement . ";\n";
+        // @todo actually run
+    }
 }
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
