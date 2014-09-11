@@ -37,18 +37,7 @@ class Schema
     public function load()
     {
         foreach($this->tableNames as $tableName) {
-            $handle = @fopen($tableName . '.sql', "r");
-            if ($handle) {
-                while (($buffer = fgets($handle, 4096)) !== false) {
-                    $this->sql[$tableName][] = $buffer;
-                }
-
-                if (!feof($handle)) {
-                    // @todo exception
-                }
-
-                fclose($handle);
-            }
+            $this->sql[$tableName] = file($tableName . '.sql');
         }
     }
     /* }}} */
