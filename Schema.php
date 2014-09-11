@@ -37,7 +37,19 @@ class Schema
     public function load()
     {
         foreach($this->tableNames as $tableName) {
-            $this->sql[$tableName] = file($tableName . '.sql');
+            $contents       = file($tableName . '.sql');
+            $lastVersion    = false;
+
+            foreach($contents as $line) {
+                $version = ($this->readVersionDelimiter($line));
+
+                if ($version) {
+                    $this->sql[$tableName][$version][] = $line;
+                    $lastVersion = $version;
+                } else {
+                    $this->sql[$tableName][$lastVersion][] = $line;
+                }
+            }
         }
     }
     /* }}} */
@@ -64,21 +76,6 @@ class Schema
         return str_replace(self::VERSION_TAG . ' ', '', $row['TABLE_COMMENT']);
     }
     /* }}} */
-    /* {{{ candidateTableVersion */
-    private function candidateTableVersion($tableName)
-    {
-        $lastVersion = false;
-
-        foreach($this->sql[$tableName] as $line) {
-            $version = $this->readVersionDelimiter($line);
-            if ($version) {
-                $lastVersion = $version;
-            }
-        }
-
-        return $lastVersion;
-    }
-    /* }}} */
     /* {{{ readVersionDelimiter */
     private function readVersionDelimiter($line)
     {
@@ -96,8 +93,23 @@ class Schema
     public function update()
     {
         foreach($this->tableNames as $tableName) {
-            if ($this->currentTableVersion($tableName) < $this->candidateTableVersion($tableName)) {
-                $this->executeUpdate($tableName);
+            $new = false;
+            foreach($this->sql[$tableName] as $version => $sql) {
+                if ($new) {
+                    foreach($sql as $line) {
+                        // @todo execute update
+                    }
+                } else {
+                    $new = ($version == $this->currentTableVersion($tableName));
+                }
+            }
+
+            if (!$new) {
+                foreach($this->sql[$tableName] as $sql) {
+                    foreach($sql as $line) {
+                        // @todo execute update
+                    }
+                }
             }
         }
     }
