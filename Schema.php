@@ -82,13 +82,8 @@ class Schema
     /* {{{ readVersionDelimiter */
     private function readVersionDelimiter($line)
     {
-        $trimmedLine = trim($line);
-
         if (
-            isset($trimmedLine[0])
-            && $trimmedLine[0] == '#'
-            && strpos($trimmedLine, self::VERSION_DELIMITER) !== false
-            && preg_match('/' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $trimmedLine, $matches)
+            preg_match('/' . self::VERSION_DELIMITER . '\s+' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $line, $matches)
             && count($matches) == 2
         ) {
             return $matches[1];
