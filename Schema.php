@@ -111,6 +111,7 @@ class Schema
                 foreach($this->sql[$tableName] as $sql) {
                     foreach($sql as $number => $line) {
                         $this->execute($line);
+                        // @todo boilerplate
                     }
                 }
             }
@@ -121,7 +122,7 @@ class Schema
     public function execute($line)
     {
         $line   = preg_replace('/#.*$|--.*$/', '', $line); // @todo also handle multi line comments
-        $queue  = preg_split('/(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
+        $queue  = preg_split("/'[^']*'(*SKIP)(*F)|\"[^\"]*\"(*SKIP)(*F)|(;)/", $line, 0, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach($queue as $element) {
             if ($element == ';') {
