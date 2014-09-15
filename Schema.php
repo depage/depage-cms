@@ -100,7 +100,7 @@ class Schema
             foreach($this->sql[$tableName] as $version => $sql) {
                 if ($new) {
                     foreach($sql as $number => $line) {
-                        $this->execute($line);
+                        $this->execute($line, $number);
                     }
                 } else {
                     $new = ($version == $this->currentTableVersion($tableName));
@@ -110,7 +110,7 @@ class Schema
             if (!$new) {
                 foreach($this->sql[$tableName] as $sql) {
                     foreach($sql as $number => $line) {
-                        $this->execute($line);
+                        $this->execute($line, $number);
                         // @todo boilerplate
                     }
                 }
@@ -119,14 +119,14 @@ class Schema
     }
     /* }}} */
     /* {{{ execute */
-    public function execute($line)
+    public function execute($line, $number)
     {
         $line   = preg_replace('/#.*$|--.*$/', '', $line); // @todo also handle multi line comments
         $queue  = preg_split("/'[^']*'(*SKIP)(*F)|\"[^\"]*\"(*SKIP)(*F)|(;)/", $line, 0, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach($queue as $element) {
             if ($element == ';') {
-                $this->run(preg_replace('/\s+/', ' ', trim($this->statement)));
+                $this->run(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
                 $this->statement = '';
             } else {
                 $this->statement .= $element . ' ';
@@ -135,8 +135,8 @@ class Schema
     }
     /* }}} */
     /* {{{ run */
-    private function run($statement) {
-        echo 'exec: ' . $statement . ";\n";
+    private function run($statement, $lineNumber) {
+        echo 'exec line ' . $lineNumber . ': ' . $statement . ";\n";
         // @todo actually run
     }
 }
