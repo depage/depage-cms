@@ -152,8 +152,8 @@ class Schema
     /* }}} */
     /* {{{ run */
     private function run($statement, $lineNumber) {
-        echo 'exec line ' . $lineNumber . ': ' . $statement . ";\n";
-        // @todo actually run
+        $preparedStatement = $this->pdo->prepare($statement);
+        $preparedStatement->execute();
     }
 }
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
