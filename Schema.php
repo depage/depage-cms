@@ -17,10 +17,10 @@ class Schema
     const VERSION_DELIMITER = 'Version:';
     /* }}} */
     /* {{{ variables */
-    private $tableNames = array();
-    private $sql        = array();
-    private $statement  = '';
-    private $comment    = false;
+    protected $tableNames = array();
+    protected $sql        = array();
+    protected $statement  = '';
+    protected $comment    = false;
     /* }}} */
 
     /* {{{ constructor */
@@ -59,7 +59,7 @@ class Schema
     }
     /* }}} */
     /* {{{ currentTableVersion */
-    private function currentTableVersion($tableName)
+    protected function currentTableVersion($tableName)
     {
         $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
         $statement  = $this->pdo->query($query);
@@ -70,7 +70,7 @@ class Schema
     }
     /* }}} */
     /* {{{ readVersionDelimiter */
-    private function readVersionDelimiter($line)
+    protected function readVersionDelimiter($line)
     {
         if (
             preg_match('/' . self::VERSION_DELIMITER . '\s+' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $line, $matches)
@@ -140,7 +140,7 @@ class Schema
     }
     /* }}} */
     /* {{{ run */
-    private function run($statement, $lineNumber) {
+    protected function run($statement, $lineNumber) {
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
     }
