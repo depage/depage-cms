@@ -2,20 +2,34 @@
 
 use depage\DB\Schema;
 
-class SchemaTestClass extends Schema {
-    public function getSql() {
+class SchemaTestClass extends Schema
+{
+    public $executedStatements  = array();
+    public $currentTableVersion;
+
+    public function getSql()
+    {
         return $this->sql;
+    }
+
+    protected function run($statement, $lineNumber)
+    {
+        $this->executedStatements[$lineNumber] = $statement;
+    }
+
+    protected function currentTableVersion($tableName)
+    {
+        return $this->currentTableVersion;
     }
 }
 
-class SchemaTest extends PHPUnit_Framework_TestCase {
+class SchemaTest extends PHPUnit_Framework_TestCase
+{
     // {{{ setUp
-    public function setUp() {
+    public function setUp()
+    {
         $this->schema = new SchemaTestClass('');
-    }
-    // }}}
-    // {{{ testLoad
-    public function testLoad() {
+
         $testFile = fopen('testFile.sql', 'w');
         $contents = "# Version: version 0.1\n" .
             "\tCREATE TABLE test (\n" .
@@ -29,7 +43,11 @@ class SchemaTest extends PHPUnit_Framework_TestCase {
 
         fwrite($testFile, $contents);
         fclose($testFile);
-
+    }
+    // }}}
+    // {{{ testLoad
+    public function testLoad()
+    {
         $this->schema->load(array('testFile'));
 
         $testArray = array(
@@ -50,7 +68,54 @@ class SchemaTest extends PHPUnit_Framework_TestCase {
             ),
         );
         $this->assertEquals($testArray, $this->schema->getSql());
-        unlink('testFile.sql');
     }
     // }}}
+    // {{{ testPreperation1
+    public function testPreperation1()
+    {
+        $this->schema->currentTableVersion = '0.2';
+        $this->schema->load(array('testFile'));
+        $this->schema->update();
+
+        $testArray = array();
+        $this->assertEquals($testArray, $this->schema->executedStatements);
+    }
+    // }}}
+    // {{{ testPreperation2
+    public function testPreperation2()
+    {
+        $this->schema->currentTableVersion = '0.1';
+        $this->schema->load(array('testFile'));
+        $this->schema->update();
+
+        $testArray = array(
+            7 => "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            9 => "ALTER TABLE test COMMENT 'version 0.2'",
+        );
+        $this->assertEquals($testArray, $this->schema->executedStatements);
+    }
+    // }}}
+    // {{{ testPreperation3
+    public function testPreperation3()
+    {
+        $this->schema->currentTableVersion = false;
+        $this->schema->load(array('testFile'));
+        $this->schema->update();
+
+        $testArray = array(
+            4 => "CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            7 => "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            9 => "ALTER TABLE test COMMENT 'version 0.2'",
+        );
+
+        $this->assertEquals($testArray, $this->schema->executedStatements);
+    }
+    // }}}
+
+
+    // {{{ tearDown
+    public function tearDown()
+    {
+        unlink('testFile.sql');
+    }
 }
