@@ -2,9 +2,10 @@
 
 use depage\DB\Schema;
 
+// {{{ SchemaTestClass
 class SchemaTestClass extends Schema
 {
-    public $executedStatements  = array();
+    public $executedStatements = array();
     public $currentTableVersion;
 
     public function getSql()
@@ -14,14 +15,20 @@ class SchemaTestClass extends Schema
 
     protected function run($statement, $lineNumber)
     {
-        $this->executedStatements[$lineNumber] = $statement;
+        $this->executedStatements[] = $lineNumber . ":" . $statement;
     }
 
     protected function currentTableVersion($tableName)
     {
         return $this->currentTableVersion;
     }
+
+    public function execute($line, $number)
+    {
+        parent::execute($line, $number);
+    }
 }
+// }}}
 
 class SchemaTest extends PHPUnit_Framework_TestCase
 {
@@ -45,6 +52,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         fclose($testFile);
     }
     // }}}
+
     // {{{ testLoad
     public function testLoad()
     {
@@ -89,8 +97,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $testArray = array(
-            7 => "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            9 => "ALTER TABLE test COMMENT 'version 0.2'",
+            "7:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "9:ALTER TABLE test COMMENT 'version 0.2'",
         );
         $this->assertEquals($testArray, $this->schema->executedStatements);
     }
@@ -103,19 +111,65 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $testArray = array(
-            4 => "CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            7 => "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            9 => "ALTER TABLE test COMMENT 'version 0.2'",
+            "4:CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            "7:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "9:ALTER TABLE test COMMENT 'version 0.2'",
         );
 
         $this->assertEquals($testArray, $this->schema->executedStatements);
     }
     // }}}
+    // {{{ testSqlParsing
+    public function testSqlParsing()
+    {
+        // simple incomplete statement
+        $this->schema->execute("ALTER TABLE", 1);
+        $this->assertEquals(array(), $this->schema->executedStatements);
 
+        // completed...
+        $this->schema->execute("test COMMENT 'version 0.2';", 2);
+        $this->assertEquals("2:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // simple complete statement
+        $this->schema->execute("ALTER TABLE test COMMENT 'version 0.2';", 1);
+        $this->assertEquals("1:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // two complete statements in one line
+        $this->schema->execute("ALTER TABLE test COMMENT 'version 0.2'; ALTER TABLE test COMMENT 'version 0.3';", 1);
+        $this->assertEquals("1:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->assertEquals("1:ALTER TABLE test COMMENT 'version 0.3'", $this->schema->executedStatements[1]);
+        $this->schema->executedStatements = array();
+
+        // remove comments
+        // simple incomplete statement with hash comment
+        $this->schema->execute('ALTER TABLE # comment', 1);
+        $this->assertEquals(array(), $this->schema->executedStatements);
+
+        // simple incomplete statement with double dash comment
+        $this->schema->execute('test -- comment', 2);
+        $this->assertEquals(array(), $this->schema->executedStatements);
+
+        // completed with multiline comment in single line
+        $this->schema->execute("COMMENT  /* comment */ 'version 0.2';", 3);
+        $this->assertEquals("3:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        $this->schema->execute("ALTER TABLE", 1);
+        $this->schema->execute("/* comment", 2);
+        $this->schema->execute("comment", 3);
+        $this->schema->execute("comment", 4);
+        $this->schema->execute("comment */ test", 5);
+        $this->schema->execute("COMMENT 'version 0.2\';", 6);
+        $this->assertEquals("6:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+    }
+    // }}}
 
     // {{{ tearDown
     public function tearDown()
     {
         unlink('testFile.sql');
     }
+    // }}}
 }
