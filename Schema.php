@@ -20,6 +20,7 @@ class Schema
     private $tableNames = array();
     private $sql        = array();
     private $statement  = '';
+    private $comment    = false;
     /* }}} */
 
     /* {{{ constructor */
@@ -121,8 +122,8 @@ class Schema
     /* {{{ execute */
     public function execute($line, $number)
     {
-        $line   = preg_replace('/#.*$|--.*$/', '', $line); // @todo also handle multi line comments
-        $queue  = preg_split("/'[^']*'(*SKIP)(*F)|\"[^\"]*\"(*SKIP)(*F)|(;)/", $line, 0, PREG_SPLIT_DELIM_CAPTURE);
+        $line   = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|#.*$|--.*$|\/\*.*\*\//', '', $line);
+        $queue  = preg_split('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach($queue as $element) {
             if ($element == ';') {
