@@ -156,12 +156,13 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("3:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
         $this->schema->executedStatements = array();
 
+        // multiline comment test
         $this->schema->execute("ALTER TABLE", 1);
         $this->schema->execute("/* comment", 2);
         $this->schema->execute("comment", 3);
         $this->schema->execute("comment", 4);
         $this->schema->execute("comment */ test", 5);
-        $this->schema->execute("COMMENT 'version 0.2\';", 6);
+        $this->schema->execute("COMMENT 'version 0.2';", 6);
         $this->assertEquals("6:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
     }
     // }}}

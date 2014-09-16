@@ -117,6 +117,8 @@ class Schema
             if (preg_match('/' . $skipQuotes . '|\*\//', $line)) {
                 $line = preg_replace('/' . $skipQuotes . '|^.*\*\//', '', $line);
                 $this->comment = false;
+
+                $this->execute($line, $number);
             }
         } else {
             $line = preg_replace('/' . $skipQuotes . '|#.*$|--.*$|\/\*.*\*\//', '', $line);
