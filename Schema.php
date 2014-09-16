@@ -58,18 +58,6 @@ class Schema
         }
     }
     /* }}} */
-    /* {{{ startLineByVersion */
-    private function startLineByVersion($tableName, $version)
-    {
-        foreach($this->sql[$tableName] as $number=>$line) {
-            if (strpos($line, self::VERSION_TAG . ' ' . $version) !== false) {
-                return $number;
-            }
-        }
-
-        // @todo return st or exception
-    }
-    /* }}} */
     /* {{{ currentTableVersion */
     private function currentTableVersion($tableName)
     {
