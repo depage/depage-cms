@@ -28,17 +28,18 @@ class Schema
      *
      * @return void
      */
-    public function __construct($pdo, $tableNames)
+    public function __construct($pdo)
     {
-        $this->tableNames   = $tableNames;
-        $this->pdo          = $pdo;
+        $this->pdo = $pdo;
     }
     /* }}} */
 
     /* {{{ load */
-    public function load()
+    public function load($tableNames = array())
     {
-        foreach($this->tableNames as $tableName) {
+        $this->tableNames = $tableNames;
+
+        foreach($tableNames as $tableName) {
             $contents       = file($tableName . '.sql');
             $lastVersion    = false;
             $number         = 1;
