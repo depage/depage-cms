@@ -122,20 +122,22 @@ class Schema
     /* {{{ execute */
     public function execute($line, $number)
     {
+        $skipQuotes = '"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)';
+
         if ($this->comment) {
-            if (preg_match('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\*\//', $line)) {
-                $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|^.*\*\//', '', $line);
+            if (preg_match('/' . $skipQuotes . '|\*\//', $line)) {
+                $line = preg_replace('/' . $skipQuotes . '|^.*\*\//', '', $line);
                 $this->comment = false;
             }
         } else {
-            $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|#.*$|--.*$|\/\*.*\*\//', '', $line);
+            $line = preg_replace('/' . $skipQuotes . '|#.*$|--.*$|\/\*.*\*\//', '', $line);
 
-            if (preg_match('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\/\*/', $line)) {
-                $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\/\*.*$/', '', $line);
+            if (preg_match('/' . $skipQuotes . '|\/\*/', $line)) {
+                $line = preg_replace('/' . $skipQuotes . '|\/\*.*$/', '', $line);
                 $this->comment = true;
             }
 
-            $queue = preg_split('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
+            $queue = preg_split('/' . $skipQuotes . '|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
 
             foreach($queue as $element) {
                 if ($element == ';') {
