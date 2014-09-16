@@ -122,15 +122,28 @@ class Schema
     /* {{{ execute */
     public function execute($line, $number)
     {
-        $line   = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|#.*$|--.*$|\/\*.*\*\//', '', $line);
-        $queue  = preg_split('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
+        if ($this->comment) {
+            if (preg_match('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\*\//', $line)) {
+                $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|^.*\*\//', '', $line);
+                $this->comment = false;
+            }
+        } else {
+            $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|#.*$|--.*$|\/\*.*\*\//', '', $line);
 
-        foreach($queue as $element) {
-            if ($element == ';') {
-                $this->run(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
-                $this->statement = '';
-            } else {
-                $this->statement .= $element . ' ';
+            if (preg_match('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\/\*/', $line)) {
+                $line = preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\/\*.*$/', '', $line);
+                $this->comment = true;
+            }
+
+            $queue = preg_split('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
+
+            foreach($queue as $element) {
+                if ($element == ';') {
+                    $this->run(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
+                    $this->statement = '';
+                } else {
+                    $this->statement .= $element . ' ';
+                }
             }
         }
     }
