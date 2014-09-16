@@ -86,11 +86,11 @@ class LegacyUI extends \depage_ui
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
 
         // establish if the user is logged in
-        if (empty($this->auth_user)) {
+        if (empty($this->authUser)) {
             if ($this->autoEnforceAuth) {
-                $this->auth_user = $this->auth->enforce();
+                $this->authUser = $this->auth->enforce();
             } else {
-                $this->auth_user = $this->auth->enforceLazy();
+                $this->authUser = $this->auth->enforceLazy();
             }
         }
     }
@@ -274,7 +274,7 @@ class LegacyUI extends \depage_ui
                 'content' => array(
                     $this->toolbar(),
                     //$this->projects(),
-                    //$this->users(),
+                    $this->users(),
                 ),
             ));
         } else {
@@ -291,6 +291,25 @@ class LegacyUI extends \depage_ui
             ), $this->html_options);
         }
 
+        return $h;
+    }
+    // }}}
+
+    // {{{ users
+    /**
+     * default function to call if no function is given in handler
+     *
+     * @return  null
+     */
+    public function users() {
+        $h = "";
+        if ($user = $this->auth->enforce()) {
+            $users = \depage\Auth\User::loadActive($this->pdo);
+            foreach ($users as $user) {
+                $h .= $user->fullname . "<br>";
+            }
+
+        }
         return $h;
     }
     // }}}
@@ -541,7 +560,7 @@ class LegacyUI extends \depage_ui
 
         $xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
-            'userId' => $this->auth_user->id,
+            'userId' => $this->authUser>id,
         ));
 
         $funcHandler = new RPC\CmsFuncs($this->projectName, $this->pdo, $xmldb);

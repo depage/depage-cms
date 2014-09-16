@@ -199,6 +199,47 @@ class User extends \depage\entity\Object
         return $user;
     }
     // }}}
+    // {{{ loadActive()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       PDO     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadActive($pdo) {
+        $users = array();
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields,
+                sessions.project AS project,
+                sessions.ip AS ip,
+                sessions.dateLastUpdate AS dateLastUpdate,
+                sessions.useragent AS useragent
+            FROM
+                {$pdo->prefix}_auth_user AS user,
+                {$pdo->prefix}_auth_sessions AS sessions
+            WHERE
+                user.id=sessions.userid"
+        );
+        $uid_query->execute();
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        do {
+            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+            if ($user) {
+                array_push($users, $user);
+            }
+        } while ($user);
+
+        return $users;
+    }
+    // }}}
     // {{{ loadAll()
     /**
      * gets an array of user-objects
@@ -255,7 +296,6 @@ class User extends \depage\entity\Object
 
         if (count($dirty) > 0) {
             if ($isNew) {
-                //var_dump($this);
                 $query = "INSERT INTO {$this->pdo->prefix}_auth_user";
             } else {
                 $query = "UPDATE {$this->pdo->prefix}_auth_user";
