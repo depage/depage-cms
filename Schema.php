@@ -109,7 +109,7 @@ class Schema
     }
     /* }}} */
     /* {{{ execute */
-    public function execute($line, $number)
+    protected function execute($line, $number)
     {
         $skipQuotes = '"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)';
 
