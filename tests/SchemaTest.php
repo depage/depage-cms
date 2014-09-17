@@ -39,11 +39,11 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $testFile = fopen('testFile.sql', 'w');
         $contents = "# @tablename test\n" .
-            "# Version: version 0.1\n" .
+            "# @version version 0.1\n" .
             "\tCREATE TABLE test (\n" .
             "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n" .
             "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n" .
-            "# Version: version 0.2\n" .
+            "# @version version 0.2\n" .
             "\tALTER TABLE test\n" .
             "\tADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n" .
             "\tALTER TABLE test\n" .
@@ -61,12 +61,12 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $testArray = array(
             'test' => array(
-                '0.1' => array(
+                'version 0.1' => array(
                     3   => "\tCREATE TABLE test (\n",
                     4   => "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n",
                     5   => "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
                 ),
-                '0.2' => array(
+                'version 0.2' => array(
                     7   => "\tALTER TABLE test\n",
                     8   => "\tADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
                     9   => "\tALTER TABLE test\n",
@@ -80,7 +80,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testPreperation1
     public function testPreperation1()
     {
-        $this->schema->currentTableVersion = '0.2';
+        $this->schema->currentTableVersion = 'version 0.2';
         $this->schema->load('testFile.sql');
         $this->schema->update();
 
@@ -91,7 +91,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testPreperation2
     public function testPreperation2()
     {
-        $this->schema->currentTableVersion = '0.1';
+        $this->schema->currentTableVersion = 'version 0.1';
         $this->schema->load('testFile.sql');
         $this->schema->update();
 

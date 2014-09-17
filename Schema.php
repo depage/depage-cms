@@ -13,9 +13,8 @@ namespace depage\DB;
 class Schema
 {
     /* {{{ constants */
-    const VERSION_TAG       = 'version';
-    const TABLENAME_TAG     = '@tablename';
-    const VERSION_DELIMITER = 'Version:';
+    const TABLENAME_TAG = '@tablename';
+    const VERSION_TAG   = '@version';
     /* }}} */
     /* {{{ variables */
     protected $tableNames = array();
@@ -45,11 +44,11 @@ class Schema
             $lastVersion        = false;
             $number             = 1;
 
-            $tableName          = $this->extractTableName($contents);
+            $tableName          = $this->extractTag($contents, self::TABLENAME_TAG);
             $this->tableNames[] = $tableName;
 
             foreach($contents as $line) {
-                $version = ($this->readVersionDelimiter($line));
+                $version = ($this->extractTag($line, self::VERSION_TAG));
 
                 if ($version) {
                     $lastVersion = $version;
@@ -61,17 +60,25 @@ class Schema
         }
     }
     /* }}} */
-    /* {{{ extractTableName */
-    protected function extractTableName($contents)
+    /* {{{ extractTag */
+    protected function extractTag($content, $tag)
     {
-        foreach($contents as $line) {
+        if (!is_array($content)) {
+            $contentArray = array($content);
+        } else {
+            $contentArray = $content;
+        }
+
+        foreach($contentArray as $line) {
             if (
-                preg_match('/(#|--|\/\*)\s+' . self::TABLENAME_TAG . '\s+(\S+)/', $line, $matches)
+                // @todo do trimming in regex
+                preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(.+)/', $line, $matches)
                 && count($matches) == 3
             ) {
-                return $matches[2];
+                return trim($matches[2]);
             }
         }
+
         return false;
     }
     /* }}} */
@@ -83,21 +90,7 @@ class Schema
         $statement->execute();
         $row        = $statement->fetch();
 
-        return str_replace(self::VERSION_TAG . ' ', '', $row['TABLE_COMMENT']);
-    }
-    /* }}} */
-    /* {{{ readVersionDelimiter */
-    protected function readVersionDelimiter($line)
-    {
-        if (
-            preg_match('/' . self::VERSION_DELIMITER . '\s+' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $line, $matches)
-            // @todo only look in comments
-            && count($matches) == 2
-        ) {
-            return $matches[1];
-        }
-
-        return false;
+        return $row['TABLE_COMMENT'];
     }
     /* }}} */
     /* {{{ update */
@@ -164,5 +157,6 @@ class Schema
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
     }
+    /* }}} */
 }
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
