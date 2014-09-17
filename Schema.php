@@ -14,6 +14,7 @@ class Schema
 {
     /* {{{ constants */
     const VERSION_TAG       = 'version';
+    const TABLENAME_TAG     = '@tablename';
     const VERSION_DELIMITER = 'Version:';
     /* }}} */
     /* {{{ variables */
@@ -35,27 +36,43 @@ class Schema
     /* }}} */
 
     /* {{{ load */
-    public function load($tableNames = array())
+    public function load($path)
     {
-        $this->tableNames = $tableNames;
+        $fileNames = glob($path);
 
-        foreach($tableNames as $tableName) {
-            $contents       = file($tableName . '.sql');
-            $lastVersion    = false;
-            $number         = 1;
+        foreach($fileNames as $fileName) {
+            $contents           = file($fileName);
+            $lastVersion        = false;
+            $number             = 1;
+
+            $tableName          = $this->extractTableName($contents);
+            $this->tableNames[] = $tableName;
 
             foreach($contents as $line) {
                 $version = ($this->readVersionDelimiter($line));
 
                 if ($version) {
-                    $this->sql[$tableName][$version][$number] = $line;
                     $lastVersion = $version;
-                } else {
+                } elseif ($line[0] != '#') { // @todo ugly hack
                     $this->sql[$tableName][$lastVersion][$number] = $line;
                 }
                 $number++;
             }
         }
+    }
+    /* }}} */
+    /* {{{ extractTableName */
+    protected function extractTableName($contents)
+    {
+        foreach($contents as $line) {
+            if (
+                preg_match('/(#|--|\/\*)\s+' . self::TABLENAME_TAG . '\s+(\S+)/', $line, $matches)
+                && count($matches) == 3
+            ) {
+                return $matches[2];
+            }
+        }
+        return false;
     }
     /* }}} */
     /* {{{ currentTableVersion */
@@ -74,6 +91,7 @@ class Schema
     {
         if (
             preg_match('/' . self::VERSION_DELIMITER . '\s+' . self::VERSION_TAG . ' (.?[0-9]*\.?[0-9]+)/', $line, $matches)
+            // @todo only look in comments
             && count($matches) == 2
         ) {
             return $matches[1];

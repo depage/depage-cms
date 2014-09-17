@@ -38,7 +38,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema = new SchemaTestClass('');
 
         $testFile = fopen('testFile.sql', 'w');
-        $contents = "# Version: version 0.1\n" .
+        $contents = "# @tablename test\n" .
+            "# Version: version 0.1\n" .
             "\tCREATE TABLE test (\n" .
             "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n" .
             "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n" .
@@ -56,22 +57,20 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testLoad
     public function testLoad()
     {
-        $this->schema->load(array('testFile'));
+        $this->schema->load('testFile.sql');
 
         $testArray = array(
-            'testFile' => array(
+            'test' => array(
                 '0.1' => array(
-                    1 => "# Version: version 0.1\n" ,
-                    2 => "\tCREATE TABLE test (\n",
-                    3 => "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    4 => "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    3   => "\tCREATE TABLE test (\n",
+                    4   => "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n",
+                    5   => "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
                 ),
                 '0.2' => array(
-                    5 => "# Version: version 0.2\n",
-                    6 => "\tALTER TABLE test\n",
-                    7 => "\tADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    8 => "\tALTER TABLE test\n",
-                    9 => "\tCOMMENT 'version 0.2';\n",
+                    7   => "\tALTER TABLE test\n",
+                    8   => "\tADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    9   => "\tALTER TABLE test\n",
+                    10  => "\tCOMMENT 'version 0.2';\n",
                 ),
             ),
         );
@@ -82,7 +81,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testPreperation1()
     {
         $this->schema->currentTableVersion = '0.2';
-        $this->schema->load(array('testFile'));
+        $this->schema->load('testFile.sql');
         $this->schema->update();
 
         $testArray = array();
@@ -93,12 +92,12 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testPreperation2()
     {
         $this->schema->currentTableVersion = '0.1';
-        $this->schema->load(array('testFile'));
+        $this->schema->load('testFile.sql');
         $this->schema->update();
 
         $testArray = array(
-            "7:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "9:ALTER TABLE test COMMENT 'version 0.2'",
+            "8:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "10:ALTER TABLE test COMMENT 'version 0.2'",
         );
         $this->assertEquals($testArray, $this->schema->committedStatements);
     }
@@ -107,13 +106,13 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testPreperation3()
     {
         $this->schema->currentTableVersion = false;
-        $this->schema->load(array('testFile'));
+        $this->schema->load('testFile.sql');
         $this->schema->update();
 
         $testArray = array(
-            "4:CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            "7:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "9:ALTER TABLE test COMMENT 'version 0.2'",
+            "5:CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            "8:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "10:ALTER TABLE test COMMENT 'version 0.2'",
         );
 
         $this->assertEquals($testArray, $this->schema->committedStatements);
