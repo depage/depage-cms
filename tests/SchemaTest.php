@@ -122,7 +122,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testSqlParsing
     public function testSqlParsing()
     {
-        // simple incomplete statement
+        // incomplete statement
         $this->schema->execute("ALTER TABLE", 1);
         $this->assertEquals(array(), $this->schema->executedStatements);
 
@@ -131,7 +131,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("2:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
         $this->schema->executedStatements = array();
 
-        // simple complete statement
+        // complete statement
         $this->schema->execute("ALTER TABLE test COMMENT 'version 0.2';", 1);
         $this->assertEquals("1:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
         $this->schema->executedStatements = array();
@@ -143,11 +143,11 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->executedStatements = array();
 
         // remove comments
-        // simple incomplete statement with hash comment
+        // incomplete statement with hash comment
         $this->schema->execute('ALTER TABLE # comment', 1);
         $this->assertEquals(array(), $this->schema->executedStatements);
 
-        // simple incomplete statement with double dash comment
+        // incomplete statement with double dash comment
         $this->schema->execute('test -- comment', 2);
         $this->assertEquals(array(), $this->schema->executedStatements);
 
@@ -156,7 +156,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("3:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
         $this->schema->executedStatements = array();
 
-        // multiline comment test
+        // multiline comment
         $this->schema->execute("ALTER TABLE", 1);
         $this->schema->execute("/* comment", 2);
         $this->schema->execute("comment", 3);
@@ -164,6 +164,44 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->execute("comment */ test", 5);
         $this->schema->execute("COMMENT 'version 0.2';", 6);
         $this->assertEquals("6:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // multiple multiline comments
+        $this->schema->execute("ALTER /* comment", 1);
+        $this->schema->execute("comment", 2);
+        $this->schema->execute("comment */ TABLE /* comment", 3);
+        $this->schema->execute("comment", 4);
+        $this->schema->execute("comment */ test", 5);
+        $this->schema->execute("COMMENT 'version 0.2';", 6);
+        $this->assertEquals("6:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // complete statement with semicolon in single quoted string
+        $this->schema->execute("ALTER TABLE test COMMENT 'vers;ion 0.2';", 1);
+        $this->assertEquals("1:ALTER TABLE test COMMENT 'vers;ion 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // complete statement with semicolon in double quoted string
+        $this->schema->execute('ALTER TABLE test COMMENT "vers;ion 0.2";', 1);
+        $this->assertEquals('1:ALTER TABLE test COMMENT "vers;ion 0.2"', $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
+
+        // incomplete statement with semicolon in hash comment
+        $this->schema->execute('ALTER TABLE # ;', 1);
+        $this->assertEquals(array(), $this->schema->executedStatements);
+
+        // incomplete statement with semicolon in double dash comment
+        $this->schema->execute('test -- ;', 2);
+        $this->assertEquals(array(), $this->schema->executedStatements);
+
+        // incomplete statement with semicolon in multiline comment
+        $this->schema->execute('COMMENT /* ; */', 3);
+        $this->assertEquals(array(), $this->schema->executedStatements);
+
+        // ...completed
+        $this->schema->execute("'version 0.2';", 4);
+        $this->assertEquals("4:ALTER TABLE test COMMENT 'version 0.2'", $this->schema->executedStatements[0]);
+        $this->schema->executedStatements = array();
     }
     // }}}
 
