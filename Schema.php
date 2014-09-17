@@ -90,7 +90,7 @@ class Schema
             foreach($this->sql[$tableName] as $version => $sql) {
                 if ($new) {
                     foreach($sql as $number => $line) {
-                        $this->execute($line, $number);
+                        $this->commit($line, $number);
                     }
                 } else {
                     $new = ($version == $this->currentTableVersion($tableName));
@@ -100,7 +100,7 @@ class Schema
             if (!$new) {
                 foreach($this->sql[$tableName] as $sql) {
                     foreach($sql as $number => $line) {
-                        $this->execute($line, $number);
+                        $this->commit($line, $number);
                         // @todo boilerplate
                     }
                 }
@@ -108,8 +108,8 @@ class Schema
         }
     }
     /* }}} */
-    /* {{{ execute */
-    protected function execute($line, $number)
+    /* {{{ commit */
+    protected function commit($line, $number)
     {
         $skipQuotes = '"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)';
 
@@ -118,7 +118,7 @@ class Schema
                 $line = preg_replace('/' . $skipQuotes . '|^.*\*\//', '', $line);
                 $this->comment = false;
 
-                $this->execute($line, $number);
+                $this->commit($line, $number);
             }
         } else {
             $line = preg_replace('/' . $skipQuotes . '|#.*$|--.*$|\/\*.*\*\//', '', $line);
@@ -132,7 +132,7 @@ class Schema
 
             foreach($queue as $element) {
                 if ($element == ';') {
-                    $this->run(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
+                    $this->execute(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
                     $this->statement = '';
                 } else {
                     $this->statement .= $element . ' ';
@@ -141,8 +141,8 @@ class Schema
         }
     }
     /* }}} */
-    /* {{{ run */
-    protected function run($statement, $lineNumber) {
+    /* {{{ execute */
+    protected function execute($statement, $lineNumber) {
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
     }
