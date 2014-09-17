@@ -24,13 +24,14 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.details", base);
 
+        base.$heads = null;
         base.$activeDetailHead = null;
 
+        // {{{ init()
         base.init = function() {
             base.options = $.extend({},$.depage.details.defaultOptions, options);
 
-            // Put your initialization code here
-            $("dt", base.el).each(function() {
+            base.$heads = $("dt", base.el).each(function() {
                 var $head = $(this).css({
                     cursor: "pointer"
                 });
@@ -47,7 +48,8 @@
                 $head.on("click", base.toggleDetail);
             });
         };
-
+        // }}}
+        // {{{ toggleDetail()
         base.toggleDetail = function() {
             var $head = $(this);
 
@@ -57,11 +59,15 @@
                 base.hideDetail($head);
             }
         };
-
+        // }}}
+        // {{{ showDetail()
         base.showDetail = function($head) {
             if ($head && $head != base.$activeDetailHead) {
                 var $detail = $head.data("$detail");
 
+                if (base.options.correctScroll) {
+                    base.correctScroll(base.$activeDetailHead, $head);
+                }
                 base.hideDetail(base.$activeDetailHead);
 
                 $head.addClass("active");
@@ -71,7 +77,8 @@
                 base.$activeDetailHead = $head;
             }
         };
-
+        // }}}
+        // {{{ hideDetail
         base.hideDetail = function($head) {
             if ($head) {
                 var $detail = $head.data("$detail");
@@ -82,14 +89,43 @@
                 });
             }
         };
+        // }}}
+        // {{{ correctScroll()
+        base.correctScroll = function($oldHead, $newHead) {
+            var oldHeight = 0;
+            var oldIndex = -1;
+            var newIndex = base.$heads.index($newHead);
+            var scrollY = 0;
+
+            if ($(window).height() < base.$el.height()) {
+                if ($oldHead) {
+                    // get height of old detail
+                    oldHeight = $oldHead.data("$detail").height();
+                    oldIndex = base.$heads.index($oldHead);
+                }
+
+                // calculate height to animate scroll
+                if (newIndex > oldIndex) {
+                    scrollY = $newHead.offset().top - oldHeight - base.options.scrollOffset;
+                } else {
+                    scrollY = $newHead.offset().top - base.options.scrollOffset;
+                }
+
+                $('html, body').animate({
+                    scrollTop: scrollY
+                }, base.options.speed);
+            }
+        };
+        // }}}
 
         // Run initializer
         base.init();
     };
 
     $.depage.details.defaultOptions = {
-        speed: "normal",
-        correctScroll: false
+        speed: 400,
+        correctScroll: false,
+        scrollOffset: 0
     };
 
     $.fn.depageDetails = function(options){
