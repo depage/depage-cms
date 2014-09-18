@@ -27,7 +27,7 @@ class SchemaTestClass extends Schema
 
     public function commit($line, $number)
     {
-        parent::commit($line, $number);
+        parent::commit($line . "\n", $number);
     }
 }
 // }}}

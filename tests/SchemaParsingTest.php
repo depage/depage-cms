@@ -190,7 +190,7 @@ class SchemaParsingTest extends PHPUnit_Framework_TestCase
         $this->schema->commit('ALTER TABLE test COMMENT "version 0.2', 1);
         $this->schema->commit(' ... string ; continued ... ', 2);
         $this->schema->commit(' ... end ";', 3);
-        $this->assertEquals('3:ALTER TABLE test COMMENT "version 0.2\n ... string ; continued ... \n ... end "', $this->schema->committedStatements[0]);
+        $this->assertEquals("3:ALTER TABLE test COMMENT \"version 0.2\n ... string ; continued ... \n ... end \"", $this->schema->committedStatements[0]);
     }
     // }}}
 }

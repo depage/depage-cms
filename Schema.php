@@ -119,7 +119,7 @@ class Schema
     /* {{{ isComment */
     protected function isComment()
     {
-        return $this->hash || $this->doubleDash || $this->multiLine;
+        return ($this->hash || $this->doubleDash || $this->multiLine);
     }
     /* }}} */
     /* {{{ isString */
@@ -135,28 +135,54 @@ class Schema
         $this->doubleDash   = false;
 
         for ($i = 0; $i < strlen($line); $i++) {
-            if (!$this->isComment()) {
-                if ($line[$i] == '#' && !$this->isString()) {
+            $char = $line[$i];
+            $next = (isset($line[$i+1])) ? $line[$i+1] : '';
+            $prev = (isset($line[$i-1])) ? $line[$i-1] : '';
+
+            //echo $char . $this->isString() . "\n";
+
+            if (!$this->isComment() && !$this->isString()) {
+                if ($char == '#') {
                     $this->hash = true;
-                } elseif ($line[$i] == '-' && $line[$i+1] == '-' && !$this->isString()) {
+                } elseif ($char == '-' && $next == '-') {
                     $this->doubleDash = true;
-                } elseif ($line[$i] == ';') {
-                    $this->execute(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
+                } elseif ($char == '/' && $next == '*') {
+                    $this->multiLine = true;
+                } elseif ($char == '\'') {
+                    $this->singleQuote = true;
+                    $this->statement .= $char;
+                } elseif ($char == '"') {
+                    $this->doubleQuote = true;
+                    $this->statement .= $char;
+                } elseif ($char == ';') {
+                    $this->execute(preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\s+/', ' ', trim($this->statement)), $number); // @todo don't replace in strings
                     $this->statement = '';
                 } else {
-                    $this->statement .= $line[$i];
+                    $this->statement .= $char;
                 }
+            } elseif (!$this->isComment()) {
+                if ($this->singleQuote && $char == '\'') {
+                    $this->singleQuote = false;
+                } elseif ($this->doubleQuote && $char == '"') {
+                    $this->doubleQuote = false;
+                }
+                $this->statement .= $char;
             }
+
+            if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
+                $this->multiLine = false;
+            }
+        }
+
+        if (!$this->isString()) {
+            $this->statement .= ' ';
         }
     }
     /* }}} */
     /* {{{ execute */
     protected function execute($statement, $lineNumber) {
-        var_dump($statement);
-        /*
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
-        */
     }
     /* }}} */
 }
