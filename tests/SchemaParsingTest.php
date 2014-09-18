@@ -193,4 +193,12 @@ class SchemaParsingTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("3:ALTER TABLE test COMMENT \"version 0.2\n ... string ; continued ... \n ... end \"", $this->schema->committedStatements[0]);
     }
     // }}}
+    // {{{ testMultipleWhitespacesInString
+    public function testMultipleWhitespacesInString()
+    {
+        // Multiple whitespaces in strings
+        $this->schema->commit('"     " \'       \';', 1);
+        $this->assertEquals("1:\"     \" '       '", $this->schema->committedStatements[0]);
+    }
+    // }}}
 }

@@ -155,8 +155,12 @@ class Schema
                     } elseif ($char == '/' && $next == '*') {
                         $this->multiLine = true;
                     } elseif ($char == ';') {
-                        $this->execute(preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\s+/', ' ', trim($this->statement)), $number);
+                        $this->execute(trim($this->statement), $number);
                         $this->statement = '';
+                    } elseif (preg_match('/\s/', $char)) {
+                        if (substr($this->statement, -1) != ' ') {
+                            $this->statement .= ' ';
+                        }
                     } else {
                         $this->statement .= $char;
 
@@ -171,9 +175,6 @@ class Schema
             if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
                 $this->multiLine = false;
             }
-        }
-        if (!$this->isString()) {
-            $this->statement .= ' ';
         }
     }
     /* }}} */
