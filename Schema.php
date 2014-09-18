@@ -17,10 +17,14 @@ class Schema
     const VERSION_TAG   = '@version';
     /* }}} */
     /* {{{ variables */
-    protected $tableNames = array();
-    protected $sql        = array();
-    protected $statement  = '';
-    protected $comment    = false;
+    protected $tableNames   = array();
+    protected $sql          = array();
+    protected $statement    = '';
+    protected $hash         = false;
+    protected $doubleDash   = false;
+    protected $multiLine    = false;
+    protected $singleQuote  = false;
+    protected $doubleQuote  = false;
     /* }}} */
 
     /* {{{ constructor */
@@ -43,6 +47,7 @@ class Schema
             $lastVersion        = 0;
             $number             = 1;
 
+            // @todo complain when tablename tag is missing
             $tableName          = $this->extractTag($contents, self::TABLENAME_TAG);
             $this->tableNames[] = $tableName;
 
@@ -111,34 +116,35 @@ class Schema
         }
     }
     /* }}} */
+    /* {{{ isComment */
+    protected function isComment()
+    {
+        return $this->hash || $this->doubleDash || $this->multiLine;
+    }
+    /* }}} */
+    /* {{{ isString */
+    protected function isString()
+    {
+        return $this->singleQuote || $this->doubleQuote;
+    }
+    /* }}} */
     /* {{{ commit */
     protected function commit($line, $number)
     {
-        $skipQuotes = '"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)';
+        $this->hash         = false;
+        $this->doubleDash   = false;
 
-        if ($this->comment) {
-            if (preg_match('/' . $skipQuotes . '|\*\//', $line)) {
-                $line = preg_replace('/' . $skipQuotes . '|^.*\*\//', '', $line);
-                $this->comment = false;
-
-                $this->commit($line, $number);
-            }
-        } else {
-            $line = preg_replace('/' . $skipQuotes . '|#.*$|--.*$|\/\*.*\*\//', '', $line);
-
-            if (preg_match('/' . $skipQuotes . '|\/\*/', $line)) {
-                $line = preg_replace('/' . $skipQuotes . '|\/\*.*$/', '', $line);
-                $this->comment = true;
-            }
-
-            $queue = preg_split('/' . $skipQuotes . '|(;)/', $line, 0, PREG_SPLIT_DELIM_CAPTURE);
-
-            foreach($queue as $element) {
-                if ($element == ';') {
+        for ($i = 0; $i < strlen($line); $i++) {
+            if (!$this->isComment()) {
+                if ($line[$i] == '#' && !$this->isString()) {
+                    $this->hash = true;
+                } elseif ($line[$i] == '-' && $line[$i+1] == '-' && !$this->isString()) {
+                    $this->doubleDash = true;
+                } elseif ($line[$i] == ';') {
                     $this->execute(preg_replace('/\s+/', ' ', trim($this->statement)), $number);
                     $this->statement = '';
                 } else {
-                    $this->statement .= $element . ' ';
+                    $this->statement .= $line[$i];
                 }
             }
         }
@@ -146,8 +152,11 @@ class Schema
     /* }}} */
     /* {{{ execute */
     protected function execute($statement, $lineNumber) {
+        var_dump($statement);
+        /*
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
+        */
     }
     /* }}} */
 }
