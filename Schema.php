@@ -139,41 +139,39 @@ class Schema
             $next = (isset($line[$i+1])) ? $line[$i+1] : '';
             $prev = (isset($line[$i-1])) ? $line[$i-1] : '';
 
-            //echo $char . $this->isString() . "\n";
-
-            if (!$this->isComment() && !$this->isString()) {
-                if ($char == '#') {
-                    $this->hash = true;
-                } elseif ($char == '-' && $next == '-') {
-                    $this->doubleDash = true;
-                } elseif ($char == '/' && $next == '*') {
-                    $this->multiLine = true;
-                } elseif ($char == '\'') {
-                    $this->singleQuote = true;
+            if (!$this->isComment()) {
+                if ($this->isString()) {
+                    if ($this->singleQuote && $char == '\'') {
+                        $this->singleQuote = false;
+                    } elseif ($this->doubleQuote && $char == '"') {
+                        $this->doubleQuote = false;
+                    }
                     $this->statement .= $char;
-                } elseif ($char == '"') {
-                    $this->doubleQuote = true;
-                    $this->statement .= $char;
-                } elseif ($char == ';') {
-                    $this->execute(preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\s+/', ' ', trim($this->statement)), $number); // @todo don't replace in strings
-                    $this->statement = '';
                 } else {
-                    $this->statement .= $char;
-                }
-            } elseif (!$this->isComment()) {
-                if ($this->singleQuote && $char == '\'') {
-                    $this->singleQuote = false;
-                } elseif ($this->doubleQuote && $char == '"') {
-                    $this->doubleQuote = false;
-                }
-                $this->statement .= $char;
-            }
+                    if ($char == '#') {
+                        $this->hash = true;
+                    } elseif ($char == '-' && $next == '-') {
+                        $this->doubleDash = true;
+                    } elseif ($char == '/' && $next == '*') {
+                        $this->multiLine = true;
+                    } elseif ($char == ';') {
+                        $this->execute(preg_replace('/"[^"]*"(*SKIP)(*F)|\'[^\']*\'(*SKIP)(*F)|\s+/', ' ', trim($this->statement)), $number);
+                        $this->statement = '';
+                    } else {
+                        $this->statement .= $char;
 
+                        if ($char == '\'') {
+                            $this->singleQuote = true;
+                        } elseif ($char == '"') {
+                            $this->doubleQuote = true;
+                        }
+                    }
+                }
+            }
             if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
                 $this->multiLine = false;
             }
         }
-
         if (!$this->isString()) {
             $this->statement .= ' ';
         }
