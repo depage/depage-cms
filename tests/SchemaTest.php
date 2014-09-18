@@ -62,11 +62,13 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $testArray = array(
             'test' => array(
                 'version 0.1' => array(
+                    2   => "# @version version 0.1\n",
                     3   => "\tCREATE TABLE test (\n",
                     4   => "\t\tuid int(10) unsigned NOT NULL DEFAULT '0',\n",
                     5   => "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
                 ),
                 'version 0.2' => array(
+                    6   => "# @version version 0.2\n",
                     7   => "\tALTER TABLE test\n",
                     8   => "\tADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
                     9   => "\tALTER TABLE test\n",
@@ -105,7 +107,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testPreperation3
     public function testPreperation3()
     {
-        $this->schema->currentTableVersion = false;
+        $this->schema->currentTableVersion = '';
         $this->schema->load('testFile.sql');
         $this->schema->update();
 

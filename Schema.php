@@ -25,7 +25,6 @@ class Schema
 
     /* {{{ constructor */
     /**
-     *
      * @return void
      */
     public function __construct($pdo)
@@ -41,7 +40,7 @@ class Schema
 
         foreach($fileNames as $fileName) {
             $contents           = file($fileName);
-            $lastVersion        = false;
+            $lastVersion        = 0;
             $number             = 1;
 
             $tableName          = $this->extractTag($contents, self::TABLENAME_TAG);
@@ -51,8 +50,9 @@ class Schema
                 $version = ($this->extractTag($line, self::VERSION_TAG));
 
                 if ($version) {
+                    $this->sql[$tableName][$version][$number] = $line;
                     $lastVersion = $version;
-                } elseif ($line[0] != '#') { // @todo ugly hack
+                } elseif ($lastVersion) {
                     $this->sql[$tableName][$lastVersion][$number] = $line;
                 }
                 $number++;
@@ -71,11 +71,10 @@ class Schema
 
         foreach($contentArray as $line) {
             if (
-                // @todo do trimming in regex
                 preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(.+)/', $line, $matches)
                 && count($matches) == 3
             ) {
-                return trim($matches[2]);
+                return trim($matches[2]); // @todo do trimming in regex
             }
         }
 
@@ -97,7 +96,9 @@ class Schema
     public function update()
     {
         foreach($this->tableNames as $tableName) {
-            $new = false;
+            $currentVersion = $this->currentTableVersion($tableName);
+            $new            = (!array_key_exists($currentVersion, $this->sql[$tableName]));
+
             foreach($this->sql[$tableName] as $version => $sql) {
                 if ($new) {
                     foreach($sql as $number => $line) {
@@ -105,15 +106,6 @@ class Schema
                     }
                 } else {
                     $new = ($version == $this->currentTableVersion($tableName));
-                }
-            }
-
-            if (!$new) {
-                foreach($this->sql[$tableName] as $sql) {
-                    foreach($sql as $number => $line) {
-                        $this->commit($line, $number);
-                        // @todo boilerplate
-                    }
                 }
             }
         }
