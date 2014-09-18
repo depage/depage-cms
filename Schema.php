@@ -105,7 +105,7 @@ class Schema
                         $this->commit($line, $number);
                     }
                 } else {
-                    $new = ($version == $this->currentTableVersion($tableName));
+                    $new = ($version == $currentVersion);
                 }
             }
         }
