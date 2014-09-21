@@ -141,10 +141,12 @@ class Schema
 
             if (!$this->isComment()) {
                 if ($this->isString()) {
-                    if ($this->singleQuote && $char == '\'') {
-                        $this->singleQuote = false;
-                    } elseif ($this->doubleQuote && $char == '"') {
-                        $this->doubleQuote = false;
+                    if ($prev != '\\') {
+                        if ($this->singleQuote && $char == '\'') {
+                            $this->singleQuote = false;
+                        } elseif ($this->doubleQuote && $char == '"') {
+                            $this->doubleQuote = false;
+                        }
                     }
                     $this->statement .= $char;
                 } else {

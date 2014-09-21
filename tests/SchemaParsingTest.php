@@ -198,7 +198,23 @@ class SchemaParsingTest extends PHPUnit_Framework_TestCase
     {
         // Multiple whitespaces in strings
         $this->schema->commit('"     " \'       \';', 1);
-        $this->assertEquals("1:\"     \" '       '", $this->schema->committedStatements[0]);
+        $this->assertEquals('1:"     " \'       \'', $this->schema->committedStatements[0]);
+    }
+    // }}}
+    // {{{ testEscapedSingleQuotesInString
+    public function testEscapedSingleQuotesInString()
+    {
+        // escaped single quotes in strings
+        $this->schema->commit("'str\'ing';", 1);
+        $this->assertEquals("1:'str\'ing'", $this->schema->committedStatements[0]);
+    }
+    // }}}
+    // {{{ testEscapedDoubleQuotesInString
+    public function testEscapedDoubleQuotesInString()
+    {
+        // escaped double quotes in strings
+        $this->schema->commit('"str\"ing";', 1);
+        $this->assertEquals('1:"str\"ing"', $this->schema->committedStatements[0]);
     }
     // }}}
 }
