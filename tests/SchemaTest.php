@@ -29,7 +29,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->load('testFile.sql');
 
-        $testArray = array(
+        $expected = array(
             'test' => array(
                 'version 0.1' => array(
                     2   => "# @version version 0.1\n",
@@ -46,7 +46,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        $this->assertEquals($testArray, $this->schema->getSql());
+        $this->assertEquals($expected, $this->schema->getSql());
     }
     // }}}
     // {{{ testPreperation1
@@ -56,8 +56,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->load('testFile.sql');
         $this->schema->update();
 
-        $testArray = array();
-        $this->assertEquals($testArray, $this->schema->committedStatements);
+        $expected = array();
+        $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
     // {{{ testPreperation2
@@ -67,11 +67,11 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->load('testFile.sql');
         $this->schema->update();
 
-        $testArray = array(
-            "8:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "10:ALTER TABLE test COMMENT 'version 0.2'",
+        $expected = array(
+            "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "ALTER TABLE test COMMENT 'version 0.2'",
         );
-        $this->assertEquals($testArray, $this->schema->committedStatements);
+        $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
     // {{{ testPreperation3
@@ -81,13 +81,13 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->load('testFile.sql');
         $this->schema->update();
 
-        $testArray = array(
-            "5:CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            "8:ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "10:ALTER TABLE test COMMENT 'version 0.2'",
+        $expected = array(
+            "CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
+            "ALTER TABLE test COMMENT 'version 0.2'",
         );
 
-        $this->assertEquals($testArray, $this->schema->committedStatements);
+        $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
 

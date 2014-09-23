@@ -1,5 +1,6 @@
 <?php
 
+require_once('../SQLParser.php');
 require_once('../Schema.php');
 
 use depage\DB\Schema;
@@ -7,7 +8,7 @@ use depage\DB\Schema;
 // {{{ SchemaTestClass
 class SchemaTestClass extends Schema
 {
-    public $committedStatements = array();
+    public $executedStatements = array();
     public $currentTableVersion;
 
     public function getSql()
@@ -15,19 +16,14 @@ class SchemaTestClass extends Schema
         return $this->sql;
     }
 
-    protected function execute($statement, $lineNumber)
+    protected function execute($statement)
     {
-        $this->committedStatements[] = $lineNumber . ":" . $statement;
+        $this->executedStatements[] = $statement;
     }
 
     protected function currentTableVersion($tableName)
     {
         return $this->currentTableVersion;
-    }
-
-    public function commit($line, $number)
-    {
-        parent::commit($line . "\n", $number);
     }
 }
 // }}}
