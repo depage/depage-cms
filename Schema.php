@@ -18,49 +18,46 @@ class Schema
     /* }}} */
     /* {{{ variables */
     protected $tableNames   = array();
+    protected $fileNames    = array();
     protected $sql          = array();
+    protected $search;
     /* }}} */
 
     /* {{{ constructor */
     public function __construct($pdo)
     {
-        $this->pdo      = $pdo;
-        $this->parser   = new SQLParser;
+        $this->pdo = $pdo;
     }
     /* }}} */
 
     /* {{{ load */
     public function load($path)
     {
-        $fileNames = glob($path);
+        $this->fileNames = glob($path);
         // @todo complain when fileNames is empty
+        // @todo complain when tablename tag is missing
 
-        foreach($fileNames as $fileName) {
+        foreach($this->fileNames as $fileName) {
             $contents           = file($fileName);
             $lastVersion        = 0;
             $number             = 1;
-            $sql                = array();
 
             foreach($contents as $line) {
                 $version = $this->extractTag($line, self::VERSION_TAG);
                 if ($version) {
-                    $sql[$version][$number]     = $line;
-                    $lastVersion                = $version;
+                    $this->sql[$fileName][$version][$number] = $line;
+                    $lastVersion = $version;
                 } elseif ($lastVersion) {
-                    $sql[$lastVersion][$number] = $line;
+                    $this->sql[$fileName][$lastVersion][$number] = $line;
                 }
 
                 $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
                 if ($tableNameTag) {
-                    $tableName = $tableNameTag;
+                    $this->tableNames[$fileName][] = $tableNameTag;
                 }
 
                 $number++;
             }
-
-            // @todo complain when tablename tag is missing
-            $this->tableNames[]     = $tableName;
-            $this->sql[$tableName]  = $sql;
         }
     }
     /* }}} */
@@ -90,24 +87,35 @@ class Schema
         return $row['TABLE_COMMENT'];
     }
     /* }}} */
+    /* {{{ replace */
+    public function replace($search)
+    {
+        $this->search = $search;
+    }
+    /* }}} */
     /* {{{ update */
     public function update()
     {
-        foreach($this->tableNames as $tableName) {
-            $currentVersion = $this->currentTableVersion($tableName);
-            $new            = (!array_key_exists($currentVersion, $this->sql[$tableName]));
+        foreach($this->fileNames as $fileName) {
+            foreach($this->tableNames[$fileName] as $tableName) {
+                $currentVersion = $this->currentTableVersion($tableName);
+                $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
+                $parser         = new SQLParser;
 
-            foreach($this->sql[$tableName] as $version => $sql) {
-                if ($new) {
-                    foreach($sql as $number => $line) {
-                        $this->parser->processLine($line);
+                $parser->replaceSQL($this->search, $tableName);
 
-                        foreach($this->parser->getStatements() as $statement) {
-                            $this->execute($statement);
+                foreach($this->sql[$fileName] as $version => $sql) {
+                    if ($new) {
+                        foreach($sql as $number => $line) {
+                            $parser->processLine($line);
+
+                            foreach($parser->getStatements() as $statement) {
+                                $this->execute($statement);
+                            }
                         }
+                    } else {
+                        $new = ($version == $currentVersion);
                     }
-                } else {
-                    $new = ($version == $currentVersion);
                 }
             }
         }

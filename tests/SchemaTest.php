@@ -30,7 +30,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->load('testFile.sql');
 
         $expected = array(
-            'test' => array(
+            'testFile.sql' => array(
                 'version 0.1' => array(
                     2   => "# @version version 0.1\n",
                     3   => "\tCREATE TABLE test (\n",
