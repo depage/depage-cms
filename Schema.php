@@ -22,9 +22,6 @@ class Schema
     /* }}} */
 
     /* {{{ constructor */
-    /**
-     * @return void
-     */
     public function __construct($pdo)
     {
         $this->pdo      = $pdo;
@@ -36,46 +33,45 @@ class Schema
     public function load($path)
     {
         $fileNames = glob($path);
+        // @todo complain when fileNames is empty
 
         foreach($fileNames as $fileName) {
             $contents           = file($fileName);
             $lastVersion        = 0;
             $number             = 1;
-
-            // @todo complain when tablename tag is missing
-            $tableName          = $this->extractTag($contents, self::TABLENAME_TAG);
-            $this->tableNames[] = $tableName;
+            $sql                = array();
 
             foreach($contents as $line) {
-                $version = ($this->extractTag($line, self::VERSION_TAG));
-
+                $version = $this->extractTag($line, self::VERSION_TAG);
                 if ($version) {
-                    $this->sql[$tableName][$version][$number] = $line;
-                    $lastVersion = $version;
+                    $sql[$version][$number]     = $line;
+                    $lastVersion                = $version;
                 } elseif ($lastVersion) {
-                    $this->sql[$tableName][$lastVersion][$number] = $line;
+                    $sql[$lastVersion][$number] = $line;
                 }
+
+                $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
+                if ($tableNameTag) {
+                    $tableName = $tableNameTag;
+                }
+
                 $number++;
             }
+
+            // @todo complain when tablename tag is missing
+            $this->tableNames[]     = $tableName;
+            $this->sql[$tableName]  = $sql;
         }
     }
     /* }}} */
     /* {{{ extractTag */
-    protected function extractTag($content, $tag)
+    protected function extractTag($line, $tag)
     {
-        if (!is_array($content)) {
-            $contentArray = array($content);
-        } else {
-            $contentArray = $content;
-        }
-
-        foreach($contentArray as $line) {
-            if (
-                preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(.+)/', $line, $matches)
-                && count($matches) == 3
-            ) {
-                return trim($matches[2]); // @todo do trimming in regex
-            }
+        if (
+            preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(.+)/', $line, $matches)
+            && count($matches) == 3
+        ) {
+            return trim($matches[2]); // @todo do trimming in regex
         }
 
         return false;

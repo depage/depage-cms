@@ -67,8 +67,7 @@ class SQLParser
                         }
                     }
                 }
-            }
-            if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
+            } elseif ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
                 $this->multiLine = false;
             }
         }
