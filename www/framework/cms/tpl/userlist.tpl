@@ -3,7 +3,7 @@
         <li>
             <a href="user/<?php html::t($user->name); ?>/">
                 <?php html::t($user->fullname); ?>
-            </a> / <?php html::t($user->get_useragent()); ?>
+            </a> / <?php html::t($user->getUseragent()); ?>
         </li>
     <?php } ?>
 </ul>

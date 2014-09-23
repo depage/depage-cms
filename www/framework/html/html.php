@@ -20,7 +20,7 @@ class html {
 
     public $content_type = "text/html";
     public $charset = "UTF-8";
-    
+
     // {{{ substitutes
     protected static $substitutes = array(
         // Latin
@@ -41,7 +41,7 @@ class html {
 
         // Currency symbols
         '¥' => 'yen', '¢' => 'cent', '€' => 'eur', '$' => 'dollar', '₤' => 'pound',
-        
+
         // Greek
         'Α' => 'A', 'Β' => 'B', 'Γ' => 'G', 'Δ' => 'D', 'Ε' => 'E', 'Ζ' => 'Z', 'Η' => 'H', 'Θ' => '8',
         'Ι' => 'I', 'Κ' => 'K', 'Λ' => 'L', 'Μ' => 'M', 'Ν' => 'N', 'Ξ' => '3', 'Ο' => 'O', 'Π' => 'P',
@@ -53,11 +53,11 @@ class html {
         'ρ' => 'r', 'σ' => 's', 'τ' => 't', 'υ' => 'y', 'φ' => 'f', 'χ' => 'x', 'ψ' => 'ps', 'ω' => 'w',
         'ά' => 'a', 'έ' => 'e', 'ί' => 'i', 'ό' => 'o', 'ύ' => 'y', 'ή' => 'h', 'ώ' => 'w', 'ς' => 's',
         'ϊ' => 'i', 'ΰ' => 'y', 'ϋ' => 'y', 'ΐ' => 'i',
-        
+
         // Turkish
         'Ş' => 'S', 'İ' => 'I', 'Ç' => 'C', 'Ü' => 'UE', 'Ö' => 'OE', 'Ğ' => 'G',
         'ş' => 's', 'ı' => 'i', 'ç' => 'c', 'ü' => 'ue', 'ö' => 'oe', 'ğ' => 'g',
-        
+
         // Russian
         'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D', 'Е' => 'E', 'Ё' => 'Yo', 'Ж' => 'Zh',
         'З' => 'Z', 'И' => 'I', 'Й' => 'J', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O',
@@ -69,23 +69,23 @@ class html {
         'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c',
         'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sh', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu',
         'я' => 'ya',
-        
+
         // Ukrainian
         'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G',
         'є' => 'ye', 'і' => 'i', 'ї' => 'yi', 'ґ' => 'g',
-        
+
         // Czech
         'Č' => 'C', 'Ď' => 'D', 'Ě' => 'E', 'Ň' => 'N', 'Ř' => 'R', 'Š' => 'S', 'Ť' => 'T', 'Ů' => 'U',
         'Ž' => 'Z',
         'č' => 'c', 'ď' => 'd', 'ě' => 'e', 'ň' => 'n', 'ř' => 'r', 'š' => 's', 'ť' => 't', 'ů' => 'u',
         'ž' => 'z',
-        
+
         // Polish
         'Ą' => 'A', 'Ć' => 'C', 'Ę' => 'e', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'o', 'Ś' => 'S', 'Ź' => 'Z',
         'Ż' => 'Z',
         'ą' => 'a', 'ć' => 'c', 'ę' => 'e', 'ł' => 'l', 'ń' => 'n', 'ó' => 'o', 'ś' => 's', 'ź' => 'z',
         'ż' => 'z',
-        
+
         // Latvian
         'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
         'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
@@ -180,7 +180,7 @@ class html {
      *
      * @param $name (string) name of parameter
      *
-     * @return bool 
+     * @return bool
      */
     public function __isset($name) {
         return isset($this->args[$name]);
@@ -188,7 +188,7 @@ class html {
     // }}}
     // {{{ __toString()
     /**
-     * renders template 
+     * renders template
      *
      * @return
      */
@@ -196,18 +196,21 @@ class html {
         $html = "";
 
         ob_start();
-        if ($this->template !== null) {
-            require($this->param["template_path"] . $this->template);
-            /*
-            if(!@include($this->param["template_path"] . $this->template)) {
-                echo("<h1>Template error</h1>");
-                echo("<p>Could not load template '$this->template'<p>");
+        try {
+            if ($this->template !== null) {
+                require($this->param["template_path"] . $this->template);
+                /*
+                if(!@include($this->param["template_path"] . $this->template)) {
+                    echo("<h1>Template error</h1>");
+                    echo("<p>Could not load template '$this->template'<p>");
+                }
+                */
+            } else {
+                html::e($this->content);
             }
-            */
-        } else {
-            html::e($this->content);
+        } catch (Exception $e) {
+            var_dump($e);
         }
-
         $html = ob_get_contents();
         ob_end_clean();
 
@@ -229,7 +232,7 @@ class html {
         return $html;
     }
     // }}}
-    
+
     // {{{ base()
     /**
      * outputs base for refs
@@ -246,13 +249,13 @@ class html {
         // get file-dependencies that are required from javascript header
         $files = $this->include_js_get_dependencies($files);
         $useCached = false;
-        
+
         if ($this->param['env'] === "production") {
             // production environement
             $mtimes = $this->getFileModTimes($files);
             $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".js";
             $useCached = true;
-            
+
             // get cache instance
             $src = false;
             $jsmin = \depage\jsmin\jsmin::factory(array(
@@ -312,7 +315,7 @@ class html {
                     }
                     fclose($fh);
                 }
-                
+
                 // add actual file to uncluded files
                 $all_files[] = $file;
             } else {
@@ -342,7 +345,7 @@ class html {
             // production environement
             $mtimes = $this->getFileModTimes($files);
             $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".css";
-            
+
             // get cache instance
             $cache = depage\cache\cache::factory("css");
 
@@ -406,7 +409,7 @@ class html {
         return $mtimes;
     }
     // }}}
-    
+
     // {{{ t()
     /**
      * outputs escaped text for use in html and html-attributes
@@ -449,9 +452,9 @@ class html {
     /**
      * outputs the url to a localized link
      *
-     * @param   $link (string) page to link to 
+     * @param   $link (string) page to link to
      * @param   $protocol (string) protocol to use for the link
-     * @param   $locale (string) locale to link to 
+     * @param   $locale (string) locale to link to
      *
      * @return  void
      */
@@ -471,14 +474,14 @@ class html {
         return htmlspecialchars(self::getEscapedUrl($text));
     }
     // }}}
-    
+
     // {{{ link()
     /**
      * builds a localized link
      *
-     * @param   $link (string) page to link to 
+     * @param   $link (string) page to link to
      * @param   $protocol (string) protocol to use for the link
-     * @param   $locale (string) locale to link to 
+     * @param   $locale (string) locale to link to
      *
      * @return  url
      */
@@ -508,7 +511,7 @@ class html {
         }
         $leave = $max - strlen ($rep);
         return substr_replace($string, $rep, $leave);
-    } 
+    }
     // }}}
 
     // {{{ format_date()
@@ -524,8 +527,8 @@ class html {
         }
         // there is not getlocale, so use setlocale with null
         $current_locale = setlocale(LC_ALL, null);
-        $fmt = new IntlDateFormatter($current_locale, $date_format, $time_format, null, null, $pattern); 
-        
+        $fmt = new IntlDateFormatter($current_locale, $date_format, $time_format, null, null, $pattern);
+
         if ($date instanceof DateTime) {
             $timestamp = $date->getTimestamp();
         } else {
@@ -540,20 +543,20 @@ class html {
         // there is not getlocale, so use setlocale with null
         $current_locale = setlocale(LC_ALL, null);
         $fmt = new NumberFormatter($current_locale, $format);
-        
+
         return $fmt->format($number);
     }
     // }}}
-    
+
     // {{{ getEscapedUrl()
     public static function getEscapedUrl($text, $limit = 100) {
         $origText = $text;
 
         $text = trim($text);
-        
+
         // transliterate
         $text = str_replace(array_keys(self::$substitutes), array_values(self::$substitutes), $text);
-        
+
         //$text = mb_ereg_replace('[^\d\w]+', '-', $text);
         //$text = preg_replace('/[^0-9a-zA-Z]+/', '-', $text);
         $text = preg_replace('/[^\p{L}\p{Nd}]+/u', "-", $text);

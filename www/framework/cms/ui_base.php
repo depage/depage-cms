@@ -37,7 +37,7 @@ class ui_base extends \depage_ui {
 
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo 
+            $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method
@@ -50,13 +50,13 @@ class ui_base extends \depage_ui {
             'env' => $this->options->env,
         );
         $this->basetitle = \depage::getName() . " " . \depage::getVersion();
-        
+
         // establish if the user is logged in
-        if (empty($this->auth_user)) {
+        if (empty($this->authUser)) {
             if ($this->autoEnforceAuth) {
-                $this->auth_user = $this->auth->enforce();
+                $this->authUser = $this->auth->enforce();
             } else {
-                $this->auth_user = $this->auth->enforce_lazy();
+                $this->authUser = $this->auth->enforceLazy();
             }
         }
     }
@@ -81,10 +81,10 @@ class ui_base extends \depage_ui {
         return $output;
     }
     // }}}
-    
+
     // {{{ toolbar
     protected function toolbar() {
-        if ($user = $this->auth->enforce_lazy()) {
+        if ($user = $this->auth->enforceLazy()) {
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
                 'username' => $user->name,
@@ -98,7 +98,7 @@ class ui_base extends \depage_ui {
         return $h;
     }
     // }}}
-    
+
     // {{{ notfound
     /**
      * function to call if action/function is not defined

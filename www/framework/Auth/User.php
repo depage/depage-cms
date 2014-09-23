@@ -48,6 +48,11 @@ class User extends \depage\entity\Object
      * @brief pdo object for database access
      **/
     protected $pdo = null;
+
+    /**
+     * @brief useragent
+     **/
+    protected $useragent = "";
     // }}}
 
     // {{{ constructor()
@@ -224,7 +229,8 @@ class User extends \depage\entity\Object
                 {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
             WHERE
-                user.id=sessions.userid"
+            user.id=sessions.userid and
+            sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)"
         );
         $uid_query->execute();
 
@@ -233,7 +239,7 @@ class User extends \depage\entity\Object
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
-                array_push($users, $user);
+                $users[] = $user;
             }
         } while ($user);
 
@@ -338,23 +344,10 @@ class User extends \depage\entity\Object
      * @return      auth_user
      */
     public function getUseragent() {
-        $cachepath = DEPAGE_CACHE_PATH . "browscap/";
-        if (!is_dir($cachepath)) {
-            mkdir($cachepath, 0777, true);
-        }
+        $parser = \UAParser\Parser::create();
+        $result = $parser->parse($this->useragent);
 
-        if (ini_get("browscap")) {
-            $info = get_browser($this->useragent);
-        } else {
-            $browscap = new browscap($cachepath);
-            $browscap->silent = true;
-            $browscap->doAutoUpdate = false; // don't update now
-            $browscap->lowercase = true;
-            //$browscap->updateMethod = Browscap::UPDATE_CURL;
-            $info = $browscap->getBrowser($this->useragent);
-        }
-
-        return "{$info->browser} {$info->version} on {$info->platform}";
+        return $result->toString();
     }
     // }}}
     // {{{ onLogout

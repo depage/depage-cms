@@ -27,7 +27,7 @@ class ui_main extends ui_base {
         );
     }
     // }}}
-    
+
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -35,7 +35,7 @@ class ui_main extends ui_base {
      * @return  null
      */
     public function index() {
-        if ($this->auth->enforce_lazy()) {
+        if ($this->auth->enforceLazy()) {
             // logged in
             $h = new html(array(
                 'content' => array(
@@ -61,7 +61,7 @@ class ui_main extends ui_base {
         return $h;
     }
     // }}}
-    
+
     // {{{ login
     public function login() {
         if ($this->auth->enforce()) {
@@ -84,7 +84,7 @@ class ui_main extends ui_base {
                 'label' => 'Passwort',
                 'required' => true,
             ));
-            
+
             $form->process();
 
             if ($form->isValid()) {
@@ -119,7 +119,7 @@ class ui_main extends ui_base {
     // {{{ logout
     public function logout($action = null) {
         //if ($action[0] == "now") {
-            $this->auth->enforce_logout();
+            $this->auth->enforceLogout();
         //}
 
         $h = new html("box.tpl", array(
@@ -137,7 +137,7 @@ class ui_main extends ui_base {
         return $h;
     }
     // }}}
-    
+
     // {{{ projects
     /**
      * gets a list of projects
@@ -165,7 +165,7 @@ class ui_main extends ui_base {
         return $h;
     }
     // }}}
-    
+
     // {{{ users
     /**
      * gets a list of loggedin users
@@ -175,7 +175,7 @@ class ui_main extends ui_base {
     public function users() {
         $this->auth->enforce();
 
-        $users = $this->auth->get_active_users();
+        $users = \depage\Auth\User::loadActive($this->pdo);
 
         $h = new html("box.tpl", array(
             'id' => "users",
@@ -198,7 +198,7 @@ class ui_main extends ui_base {
      */
     public function user($username = "") {
         if ($user = $this->auth->enforce()) {
-            $puser = \auth_user::get_by_username($this->pdo, $username);
+            $puser = \depage\Auth\User::loadByUsername($this->pdo, $username);
 
             if ($puser !== false) {
                 $title = _("User Profile") . ": {$puser->fullname}";
