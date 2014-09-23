@@ -67,14 +67,16 @@ class Schema
     /* {{{ extractTag */
     protected function extractTag($line, $tag)
     {
+        $match = false;
+
         if (
             preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(\S.*\S)\s*$/', $line, $matches)
             && count($matches) == 3
         ) {
-            return $matches[2];
+            $match = $matches[2];
         }
 
-        return false;
+        return $match;
     }
     /* }}} */
     /* {{{ currentTableVersion */

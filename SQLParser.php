@@ -20,6 +20,8 @@ class SQLParser
     protected $multiLine    = false;
     protected $singleQuote  = false;
     protected $doubleQuote  = false;
+    protected $search       = '';
+    protected $replace      = '';
     /* }}} */
 
     /* {{{ processLine */
@@ -44,6 +46,10 @@ class SQLParser
                     }
                     $this->statement .= $char;
                 } else {
+                    if ($this->search != '' && substr($this->statement, -strlen($this->search)) == $this->search) {
+                        $this->statement = substr($this->statement, 0, -strlen($this->search)) . $this->replace;
+                    }
+
                     if ($char == '#') {
                         $this->hash = true;
                     } elseif ($char == '-' && $next == '-') {
@@ -71,6 +77,12 @@ class SQLParser
                 $this->multiLine = false;
             }
         }
+    }
+    /* }}} */
+    /* {{{ */
+    public function replaceSQL($search, $replace) {
+        $this->search   = $search;
+        $this->replace  = $replace;
     }
     /* }}} */
     /* {{{ getStatements */
