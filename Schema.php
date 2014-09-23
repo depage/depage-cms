@@ -68,10 +68,10 @@ class Schema
     protected function extractTag($line, $tag)
     {
         if (
-            preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(.+)/', $line, $matches)
+            preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(\S.*\S)\s*$/', $line, $matches)
             && count($matches) == 3
         ) {
-            return trim($matches[2]); // @todo do trimming in regex
+            return $matches[2];
         }
 
         return false;
