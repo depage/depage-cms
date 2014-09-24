@@ -1,10 +1,10 @@
 <?php
 
-namespace depage\cms\xmldoctypes;
+namespace depage\CMS\xmldoctypes;
 
 // TODO configure
 define('XML_TEMPLATE_DIR', __DIR__ . '/xml_templates/');
-    
+
 class pages extends \depage\xmldb\xmldoctypes\base {
 
     // {{{ constructor
@@ -18,7 +18,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Untitled Page"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\cms\xmldoctypes\page',
+                'doc_type' => 'depage\CMS\xmldoctypes\page',
                 'xml_template' => 'page.xml'
             ),
             'pg:folder' => (object) array(
@@ -26,7 +26,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Untitled Folder"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\cms\xmldoctypes\folder',
+                'doc_type' => 'depage\CMS\xmldoctypes\folder',
                 'xml_template' => 'folder.xml',
             ),
             'pg:redirect' => (object) array(
@@ -34,7 +34,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'new' => _("Redirect"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'depage\cms\xmldoctypes\redirect',
+                'doc_type' => 'depage\CMS\xmldoctypes\redirect',
                 'xml_template' => 'redirect.xml',
             ),
             'pg:separator' => (object) array(
@@ -44,7 +44,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
                 'attributes' => array(),
             ),
         );
-        
+
         // list of valid parents given by nodename
         $this->validParents = array(
             'pg:page' => array(
@@ -117,7 +117,7 @@ class pages extends \depage\xmldb\xmldoctypes\base {
     // }}}
     // {{{ testDocument
     public function testDocument($node) {
-        $xmlnav = new \depage\cms\xmlnav();
+        $xmlnav = new \depage\CMS\xmlnav();
 
         $xmlnav->addUrlAttributes($node);
     }
@@ -136,6 +136,6 @@ class pages extends \depage\xmldb\xmldoctypes\base {
         return $doc;
     }
     // }}}
-}  
+}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

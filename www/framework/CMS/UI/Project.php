@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/ui_main.php
+ * @file    framework/CMS/UI/Project.php
  *
  * depage cms ui module
  *
@@ -10,11 +10,12 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
 use \html;
 
-class ui_project extends ui_base {
+class Project extends Base
+{
     // {{{ _init
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
@@ -22,11 +23,11 @@ class ui_project extends ui_base {
         $this->projectName = $this->urlSubArgs[0];
     }
     // }}}
-    
+
     // {{{ index()
     function index() {
         // cms tree
-        $tree = ui_tree::_factoryAndInit($this->options, array(
+        $tree = Tree::_factoryAndInit($this->options, array(
             'pdo' => $this->pdo,
             'projectName' => $this->projectName,
         ));

@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\Streams;
+namespace depage\CMS\Streams;
 
 class Xmldb extends Base {
     protected static $parameters;
@@ -20,7 +20,7 @@ class Xmldb extends Base {
             // proj:pages_struct
             if ($this->data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {
                 // add status attributes for page tree
-                $xmlnav = new \depage\cms\xmlnav();
+                $xmlnav = new \depage\CMS\xmlnav();
 
                 $xmlnav->addStatusAttributes($this->data, $this->transformer->currentPath);
             }

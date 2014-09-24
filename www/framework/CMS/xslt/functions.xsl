@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet 
+<xsl:stylesheet
     version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:php="http://php.net/xsl"
-    xmlns:dp="http://cms.depagecms.net/ns/depage" 
-    xmlns:db="http://cms.depagecms.net/ns/database" 
-    xmlns:proj="http://cms.depagecms.net/ns/project" 
-    xmlns:pg="http://cms.depagecms.net/ns/page" 
-    xmlns:func="http://exslt.org/functions" 
+    xmlns:dp="http://cms.depagecms.net/ns/depage"
+    xmlns:db="http://cms.depagecms.net/ns/database"
+    xmlns:proj="http://cms.depagecms.net/ns/project"
+    xmlns:pg="http://cms.depagecms.net/ns/page"
+    xmlns:func="http://exslt.org/functions"
     extension-element-prefixes="xsl dp func php ">
 
     <!-- {{{ dp:choose() -->
@@ -72,7 +72,7 @@
     <func:function name="dp:changesrc">
         <xsl:param name="src" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::changesrc', string($src))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::changesrc', string($src))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:urlencode() -->
@@ -84,7 +84,7 @@
     <func:function name="dp:urlencode">
         <xsl:param name="url" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::urlencode', string($url))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::urlencode', string($url))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:replaceEmailChars() -->
@@ -96,7 +96,7 @@
     <func:function name="dp:replaceEmailChars">
         <xsl:param name="email" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::replaceEmailChars', string($email))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::replaceEmailChars', string($email))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:atomizeText() -->
@@ -108,7 +108,7 @@
     <func:function name="dp:atomizeText">
         <xsl:param name="text" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::atomizeText', string($text))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::atomizeText', string($text))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:phpEscape() -->
@@ -120,7 +120,7 @@
     <func:function name="dp:phpEscape">
         <xsl:param name="string" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::phpEscape', string($string))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::phpEscape', string($string))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:formatDate() -->
@@ -133,7 +133,7 @@
         <xsl:param name="date" />
         <xsl:param name="format" select="''" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::formatDate', string($date), string($format))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::formatDate', string($date), string($format))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:fileinfo() -->
@@ -145,7 +145,7 @@
         <xsl:param name="path" />
         <xsl:param name="extended" select="true()" />
 
-        <func:result select="php:function('depage\cms\xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
+        <func:result select="php:function('depage\CMS\xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
 

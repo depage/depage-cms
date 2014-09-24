@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/ui_base.php
+ * @file    framework/CMS/UI/Base.php
  *
  * base class for cms-ui modules
  *
@@ -10,11 +10,12 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
 use \html;
 
-class ui_base extends \depage_ui {
+class Base extends \depage_ui
+{
     protected $html_options = array();
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
@@ -45,7 +46,7 @@ class ui_base extends \depage_ui {
 
         // set html-options
         $this->html_options = array(
-            'template_path' => __DIR__ . "/tpl/",
+            'template_path' => __DIR__ . "/../tpl/",
             'clean' => "space",
             'env' => $this->options->env,
         );

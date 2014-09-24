@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\cms;
+namespace depage\CMS;
 
 class project {
     /* {{{ constructor */
@@ -48,16 +48,16 @@ class project {
         if ($all || $this->user->get_level_by_sid() == 1) {
             // get all projects for admins
             $result = db_query(
-                "SELECT projects.id, projects.name, projects.id_doc 
-                FROM 
+                "SELECT projects.id, projects.name, projects.id_doc
+                FROM
                     $conf->db_table_projects AS projects
                 ORDER BY name"
             );
         } else {
             // get only allowed projects for normal users
             $result = db_query(
-                "SELECT projects.id, projects.name, projects.id_doc 
-                FROM 
+                "SELECT projects.id, projects.name, projects.id_doc
+                FROM
                     $conf->db_table_projects AS projects,
                     $conf->db_table_sessions AS sessions,
                     $conf->db_table_user_projects AS user_projects

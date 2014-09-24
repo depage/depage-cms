@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/ui_edit.php
+ * @file    framework/CMS/UI/Edit.php
  *
  * depage cms edit module
  *
@@ -10,11 +10,11 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
 use \html;
 
-class ui_edit extends ui_base {
+class Edit extends Base {
     // {{{ _init()
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);
@@ -61,7 +61,7 @@ class ui_edit extends ui_base {
         return $output;
     }
     // }}}
-    
+
     // {{{ index
     /**
      * default function to call if no function is given in handler
@@ -137,12 +137,12 @@ class ui_edit extends ui_base {
         $forms = array();
 
         $php = $xslt->transformToXML($doc->getXML());
-        
+
         /*
         echo("<pre>");
         echo(htmlentities($php));
         echo("</pre>");
-         */ 
+         */
 
         // add form elements based on xml
         eval("?>$php");

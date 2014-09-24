@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\xslt;
+namespace depage\CMS\xslt;
 
 class FuncDelegate {
     protected static $functions = array();
@@ -32,7 +32,7 @@ class FuncDelegate {
         }
     }
     // }}}
-    
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

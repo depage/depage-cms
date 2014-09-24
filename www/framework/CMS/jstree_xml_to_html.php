@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms;
+namespace depage\CMS;
 
 class jstree_xml_to_html {
     /**

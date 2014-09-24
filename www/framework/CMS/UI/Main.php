@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/ui_main.php
+ * @file    framework/CMS/UI/Main.php
  *
  * depage cms ui module
  *
@@ -10,20 +10,20 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
 use \html;
 
-class ui_main extends ui_base {
+class Main extends Base {
     protected $autoEnforceAuth = false;
 
     // {{{ _getSubHandler
     static function _getSubHandler() {
         return array(
-            'project/*' => '\depage\cms\ui_project',
-            'project/*/tree/*' => '\depage\cms\ui_tree',
-            'project/*/tree/*/fallback' => '\depage\cms\ui_socketfallback',
-            'project/*/edit/*' => '\depage\cms\ui_edit',
+            'project/*' => '\depage\CMS\UI\Project',
+            'project/*/tree/*' => '\depage\CMS\UI\Tree',
+            'project/*/tree/*/fallback' => '\depage\CMS\UI\SocketFallback',
+            'project/*/edit/*' => '\depage\CMS\UI\Edit',
         );
     }
     // }}}
@@ -148,13 +148,13 @@ class ui_main extends ui_base {
         $this->auth->enforce();
 
         // get data
-        $cp = new project($this->pdo);
+        $cp = new \depage\CMS\Project($this->pdo);
         $projects = $cp->getProjects();
 
         // construct template
         $h = new html("box.tpl", array(
             'id' => "projects",
-            'icon' => "framework/cms/images/icon_projects.gif",
+            'icon' => "framework/CMS/images/icon_projects.gif",
             'class' => "first",
             'title' => "Projects",
             'content' => new html("projectlist.tpl", array(

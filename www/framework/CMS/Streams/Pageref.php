@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\Streams;
+namespace depage\CMS\Streams;
 
 class Pageref extends Base {
     protected static $parameters;
@@ -13,7 +13,7 @@ class Pageref extends Base {
         $url = parse_url($path);
         $path = "";
         $parts = explode("/", $url['path']);
-        
+
         $pageId = $url['host'];
         $lang = isset($parts[1]) ? $parts[1] : $this->transformer->lang;
         $absolute = isset($parts[2]) ? $parts[2] : "";
@@ -25,7 +25,7 @@ class Pageref extends Base {
 
         if ($absolute != "absolute") {
             $path = $this->transformer->getRelativePathTo($path);
-        } 
+        }
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';
 

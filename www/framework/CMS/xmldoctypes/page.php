@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\xmldoctypes;
+namespace depage\CMS\xmldoctypes;
 
 class page extends \depage\xmldb\xmldoctypes\base
 {
@@ -16,7 +16,7 @@ class page extends \depage\xmldb\xmldoctypes\base
         $this->table_nodetypes = $xmldb->table_nodetypes;
     }
     // }}}
-    
+
     // {{{ onAddNode()
     /**
      * On Add Node
@@ -30,7 +30,7 @@ class page extends \depage\xmldb\xmldoctypes\base
         $this->testNodeLanguages($node);
     }
     // }}}
-    
+
     // {{{ addNodeType
     public function addNodeType($nodeName, $options) {
         $name = $options['name'];
@@ -74,7 +74,7 @@ class page extends \depage\xmldb\xmldoctypes\base
     public function getNodeTypes() {
         $nodetypes = array();
         $query = $this->xmldb->pdo->prepare(
-            "SELECT 
+            "SELECT
                 id,
                 nodename as nodeName,
                 name as name,
@@ -88,7 +88,7 @@ class page extends \depage\xmldb\xmldoctypes\base
 
         do {
             $result = $query->fetchObject();
-            
+
             if ($result) {
                 $nodetypes[$result->id] = $result;
                 $templatePath = $this->pathXMLtemplate . $result->xmlTemplate;
@@ -215,6 +215,6 @@ class page extends \depage\xmldb\xmldoctypes\base
         return $changed;
     }
     // }}}
-}  
+}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

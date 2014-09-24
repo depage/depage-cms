@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file    framework/websocket/jstree/jstree_fallback.php
+ * @file    framework/CMS/UI/SocketFallback.php
  *
  * depage cms jstree module
  *
@@ -11,9 +11,9 @@
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
-class ui_socketfallback extends ui_base {
+class SocketFallback extends Base {
     // {{{ _init
     public function _init(array $importVariables = array()) {
         parent::_init($importVariables);

@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\Streams;
+namespace depage\CMS\Streams;
 
 class Xslt extends Base {
     protected static $parameters;

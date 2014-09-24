@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms\Streams;
+namespace depage\CMS\Streams;
 
 abstract class Base {
     protected $position = 0;
@@ -26,15 +26,15 @@ abstract class Base {
         }
     }
     // }}}
-    
+
     // {{{ stream_open()
     public abstract function stream_open($path, $mode, $options, &$opened_path);
     // }}}
     // {{{ stream_read()
     public function stream_read($count)
     {
-        $ret = substr($this->data, $this->position, $count); 
-        $this->position += $count;   
+        $ret = substr($this->data, $this->position, $count);
+        $this->position += $count;
 
         return $ret;
     }
@@ -95,14 +95,14 @@ function stream_seek($offset, $whence)
     // }}}
     // {{{ stream_stat()
     public function stream_stat(){
-        return array();     
-        
+        return array();
+
     }
     // }}}
     // {{{ url_stat()
     public function url_stat(){
-        return array();     
-        
+        return array();
+
     }
     // }}}
 }

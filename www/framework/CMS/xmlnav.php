@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\cms;
+namespace depage\CMS;
 
 class xmlnav {
     const ACTIVE_STATUS = 'active';
@@ -8,13 +8,13 @@ class xmlnav {
 
     private $xslDOM;
     private $xmlDOM;
-    
+
     // {{{ constructor
     /**
      * initializes xmlnav object
      *
-     * @param $xsl  filename to load as xsl template or xsl template as \DOMDocument 
-     * @param $xml  filename to load as navigation xml or navigation as \DOMDocument 
+     * @param $xsl  filename to load as xsl template or xsl template as \DOMDocument
+     * @param $xml  filename to load as navigation xml or navigation as \DOMDocument
      */
     public function __construct($xsl = '', $xml = '') {
         if ($xsl != '' && is_string($xsl)) {
@@ -29,7 +29,7 @@ class xmlnav {
         }
     }
     // }}}
-    
+
     // {{{ loadXslFromFile()
     /**
      * loads xsl template from filename
@@ -38,7 +38,7 @@ class xmlnav {
      */
     public function loadXslFromFile($path) {
         $this->xslDOM = new \DOMDocument();
-        
+
         if (!$this->xslDOM->load($path)) {
             throw new \exception('Could not load the navigation XSL file.');
         }
@@ -52,19 +52,19 @@ class xmlnav {
      */
     public function loadXmlFromFile($path) {
         $this->xmlDOM = new \DOMDocument();
-        
+
         if (!$this->xmlDOM->load($path)) {
             throw new \exception('Could not load the navigation XML file.');
         }
     }
     // }}}
-    
+
     // getAllUrls() {{{
     /**
      * gets urls for all nodes
-     * 
+     *
      * @param \DOMNode $xml
-     * 
+     *
      * @return (array) array of nodes
      */
     public function getAllUrls(\DOMNode $node, $url = "") {
@@ -94,17 +94,17 @@ class xmlnav {
         return array($urlsByPageId, $pageIdByUrl, $pagedataIdByPageId);
     }
     // }}}
-    
+
     // addUrlAttributes() {{{
     /**
      * Add Urls Attributes
-     * 
+     *
      * Adds a url attribute to each page in the XML DOM tree.
      * The url is built from the page name and the names of ancestor folders.
      * e.g. folder1/folder2/page1
-     * 
+     *
      * @param \DOMNode $xml
-     * 
+     *
      * @return (string) last url
      */
     public function addUrlAttributes(\DOMNode $node, $url = "") {
@@ -148,10 +148,10 @@ class xmlnav {
     // addStatusAttributes() {{{
     /**
      * Add Status
-     * 
+     *
      * Checks the request URL and sets the status of the active page
      * in the XML DOM tree.
-     * 
+     *
      * Sets parent folder statuses to 'parent-of-active'.
      *
      * @param \DOMDocument $xml
@@ -160,10 +160,10 @@ class xmlnav {
         list($xml, $node) = \depage\xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXpath($xml);
-        
+
         $page = null;
         $pages = $xpath->query("//pg:page[@url='{$url}']");
-        
+
         if ($pages && $pages->length) {
             // a page has activeUrl
             $page = $pages->item(0);
@@ -190,30 +190,30 @@ class xmlnav {
     // addLocalizedAttributes() {{{
     /**
      * Add localized name
-     * 
+     *
      * @param \DOMDocument $xml
      */
     private function addLocalizedAttributes(\DOMDocument $xml, $lang) {
         $xpath = new \DOMXpath($xml);
-        
+
         $nodes = $xpath->query("//*[@name]");
-        
+
         foreach ($nodes as $node) {
             $node->setAttribute('localized', _($node->getAttribute('name')));
         }
     }
     // }}}
-    
+
     // {{{ transform()
     /**
      * Transform
-     * 
+     *
      * Transforms the XML navigation to an HTML format
      * according to the XSL provided.
-     * 
+     *
      * @param \DOMDocument $xml
      * @param \DOMDocument $xslt
-     *  
+     *
      * @return (string) $html
      */
     public function transform($activeUrl, $lang, $xslParam = array()) {
@@ -237,18 +237,18 @@ class xmlnav {
         $xslt = new \XSLTProcessor();
         $xslt->setParameter("", $xslParam);
         $xslt->importStylesheet($this->xslDOM);
-        
+
         libxml_use_internal_errors(true);
-        
-        if (!$html = $xslt->transformToXml($this->xmlDOM)) {   
+
+        if (!$html = $xslt->transformToXml($this->xmlDOM)) {
             var_dump(libxml_get_errors());
-            
+
             $error = libxml_get_last_error();
             $error = empty($error)? 'Could not transform the navigation XML document.' : $error->message;
-            
+
             throw new \exception($error);
         }
-        
+
         return $html;
     }
     // }}}

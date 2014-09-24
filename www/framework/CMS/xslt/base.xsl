@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet 
+<xsl:stylesheet
     version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:php="http://php.net/xsl"
-    xmlns:dp="http://cms.depagecms.net/ns/depage" 
-    xmlns:db="http://cms.depagecms.net/ns/database" 
-    xmlns:proj="http://cms.depagecms.net/ns/project" 
-    xmlns:pg="http://cms.depagecms.net/ns/page" 
-    xmlns:sec="http://cms.depagecms.net/ns/section" 
-    xmlns:edit="http://cms.depagecms.net/ns/edit" 
+    xmlns:dp="http://cms.depagecms.net/ns/depage"
+    xmlns:db="http://cms.depagecms.net/ns/database"
+    xmlns:proj="http://cms.depagecms.net/ns/project"
+    xmlns:pg="http://cms.depagecms.net/ns/page"
+    xmlns:sec="http://cms.depagecms.net/ns/section"
+    xmlns:edit="http://cms.depagecms.net/ns/edit"
     extension-element-prefixes="xsl db proj pg sec edit ">
 
     <!-- {{{ edit:a -->
@@ -451,7 +451,7 @@
     <xsl:template match="edit:plain_source">
         <!--
         <xsl:value-of select="document(concat('call:/changesrc/', string(.)))/*" disable-output-escaping="yes"/>
-        <xsl:value-of select="php:function('depage\cms\xslt\FuncDelegate::changesrc', string(.))" disable-output-escaping="yes" />
+        <xsl:value-of select="php:function('depage\CMS\xslt\FuncDelegate::changesrc', string(.))" disable-output-escaping="yes" />
         -->
         <xsl:value-of select="dp:changesrc(string(.))" disable-output-escaping="yes"/>
     </xsl:template>

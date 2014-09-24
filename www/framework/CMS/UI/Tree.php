@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/ui_tree.php
+ * @file    framework/CMS/UI/Tree.php
  *
  * depage cms jstree module
  *
@@ -11,11 +11,11 @@
  * @author    Ben Wallis
  */
 
-namespace depage\cms;
+namespace depage\CMS\UI;
 
 use \html;
 
-class ui_tree extends ui_base {
+class Tree extends Base {
     // {{{ _init
     /**
      * Init
@@ -35,7 +35,7 @@ class ui_tree extends ui_base {
         $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory("xmldb"));
     }
     // }}}
-    
+
     // {{{ destructor
     /**
      * Destructor
@@ -416,12 +416,12 @@ class ui_tree extends ui_base {
      */
     protected function get_html_nodes($doc_name) {
         $doc = $this->xmldb->getDocXml($doc_name);
-        $html = \depage\cms\jstree_xml_to_html::toHTML(array($doc));
+        $html = \depage\CMS\jstree_xml_to_html::toHTML(array($doc));
 
         return current($html);
     }
     // }}}
-    
+
     // {{{ get_current_seq_nr
     /**
      * Get Current Sequence Number

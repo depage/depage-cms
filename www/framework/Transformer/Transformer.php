@@ -37,7 +37,7 @@ abstract class Transformer
 
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseurl = "'" . DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/'";
-        
+
         // set basic variables
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
 
@@ -122,7 +122,7 @@ abstract class Transformer
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
-            
+
             // add variables from settings
             $settings = $this->xmlGetter->getDocXml("settings");
 
@@ -146,7 +146,7 @@ abstract class Transformer
                 $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
             }
 
-            
+
             $xslt .= $this->getXsltIncludes($files);
             $xslt .= "\n</xsl:stylesheet>";
 
@@ -168,7 +168,7 @@ abstract class Transformer
     // {{{ getXsltIncludes()
     abstract protected function getXsltIncludes($files);
     // }}}
-    
+
     // {{{ transform()
     public function transform($urlPath, $lang)
     {
@@ -199,18 +199,18 @@ abstract class Transformer
             "depageIsLive" => $this->isLive,
         ));
 
-        if ($pageXml === false) {   
+        if ($pageXml === false) {
             throw new \exception("site does not exist");
-        } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {   
+        } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
                 var_dump($error);
             }
-            
+
             $error = libxml_get_last_error();
             $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
-            
+
             throw new \exception($error);
         }
 
@@ -257,7 +257,7 @@ abstract class Transformer
         }
     }
     // }}}
-    
+
     // {{{ registerStreams
     /**
      * @return  null
@@ -286,21 +286,21 @@ abstract class Transformer
          * call:getversion -> replaced by $depageVersion
          */
         // register stream to get documents from xmldb
-        \depage\cms\Streams\Xmldb::registerStream("xmldb", array(
+        \depage\CMS\Streams\Xmldb::registerStream("xmldb", array(
             "xmldb" => $this->xmlGetter,
             "transformer" => $this,
         ));
-        
+
         // register stream to get global xsl templates
-        \depage\cms\Streams\Xslt::registerStream("xslt");
+        \depage\CMS\Streams\Xslt::registerStream("xslt");
 
         // register stream to get page-links
-        \depage\cms\Streams\Pageref::registerStream("pageref", array(
+        \depage\CMS\Streams\Pageref::registerStream("pageref", array(
             "transformer" => $this,
         ));
 
         // register stream to get links to library
-        \depage\cms\Streams\Libref::registerStream("libref", array(
+        \depage\CMS\Streams\Libref::registerStream("libref", array(
             "transformer" => $this,
         ));
     }
@@ -322,7 +322,7 @@ abstract class Transformer
          * call:fileinfo
          */
 
-        \depage\cms\xslt\FuncDelegate::registerFunctions($proc, array(
+        \depage\CMS\xslt\FuncDelegate::registerFunctions($proc, array(
             "changesrc" => array($this, "xsltCallChangeSrc"),
             "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
             "atomizeText" => array($this, "xsltCallAtomizeText"),
@@ -333,7 +333,7 @@ abstract class Transformer
         ));
     }
     // }}}
-    
+
     // {{{ getAllUrls
     /**
      * @return  null
@@ -345,7 +345,7 @@ abstract class Transformer
         ) {
             $pages = $this->xmlGetter->getDocXml("pages");
 
-            $xmlnav = new \depage\cms\xmlnav();
+            $xmlnav = new \depage\CMS\xmlnav();
             list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
         }
 
@@ -408,7 +408,7 @@ abstract class Transformer
             while ((isset($currentPath[$i]) && $targetPath[$i]) && $currentPath[$i] == $targetPath[$i]) {
                 $i++;
             }
-            
+
             if (count($currentPath) - $i >= 1) {
                 $path = str_repeat('../', count($currentPath) - $i - 1) . implode('/', array_slice($targetPath, $i));
             }
@@ -416,7 +416,7 @@ abstract class Transformer
         return $path;
     }
     // }}}
-    
+
     // {{{ xsltCallFileinfo
     /**
      * gets fileinfo for libref path
