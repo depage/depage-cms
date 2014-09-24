@@ -55,7 +55,7 @@ class Edit extends Base {
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
                 'content' => $output,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $output;
@@ -181,7 +181,7 @@ class Edit extends Base {
         $output = new html(array(
             'title' => "edit",
             'content' => $h,
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $output;
         //return $h;

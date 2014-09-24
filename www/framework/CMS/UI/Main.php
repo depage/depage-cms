@@ -55,7 +55,7 @@ class Main extends Base {
                         'login_link' => "login/",
                     )),
                 )
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $h;
@@ -104,7 +104,7 @@ class Main extends Base {
                         $error,
                         $form,
                     ),
-                ), $this->html_options);
+                ), $this->htmlOptions);
 
                 return $h;
             }
@@ -132,7 +132,7 @@ class Main extends Base {
                 'relogin2' => "here",
                 'relogin_link' => "login/",
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -160,7 +160,7 @@ class Main extends Base {
             'content' => new html("projectlist.tpl", array(
                 'projects' => $projects,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -185,7 +185,7 @@ class Main extends Base {
                 'title' => $this->basetitle,
                 'users' => $users,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -222,7 +222,7 @@ class Main extends Base {
                         'content' => $content,
                     )),
                 )
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $h;

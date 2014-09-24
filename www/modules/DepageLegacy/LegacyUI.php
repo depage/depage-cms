@@ -16,7 +16,7 @@ use \html;
 
 class LegacyUI extends \depage_ui
 {
-    protected $html_options = array();
+    protected $htmlOptions = array();
     protected $basetitle = "";
     protected $autoEnforceAuth = false;
     protected $projectName = "depage";
@@ -76,7 +76,7 @@ class LegacyUI extends \depage_ui
         );
 
         // set html-options
-        $this->html_options = array(
+        $this->htmlOptions = array(
             'template_path' => __DIR__ . "/tpl/",
             //'template_path' => "framework/cms/tpl/",
             'clean' => "space",
@@ -109,7 +109,7 @@ class LegacyUI extends \depage_ui
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
                 'content' => $output,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $output;
@@ -122,11 +122,11 @@ class LegacyUI extends \depage_ui
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
                 'username' => $user->name,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         } else {
             $h = new html("toolbar_plain.tpl", array(
                 'title' => $this->basetitle,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $h;
@@ -149,7 +149,7 @@ class LegacyUI extends \depage_ui
             'content' => new html(array(
                 'content' => 'url not found' . $function,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -169,7 +169,7 @@ class LegacyUI extends \depage_ui
             'content' => new html(array(
                 'content' => $content,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $this->_package($h);
     }
@@ -217,7 +217,7 @@ class LegacyUI extends \depage_ui
         return new html("box.tpl", array(
             'title' => _("Welcome"),
             'content' => $form,
-        ), $this->html_options);
+        ), $this->htmlOptions);
     }
     // }}}
     // {{{ logout()
@@ -288,7 +288,7 @@ class LegacyUI extends \depage_ui
                         'login_link' => "login/",
                     )),
                 )
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $h;
@@ -357,7 +357,7 @@ class LegacyUI extends \depage_ui
                 'page' => $page,
                 'standalone' => $standalone,
                 'sid' => $_COOKIE[session_name()],
-            ), $this->html_options);
+            ), $this->htmlOptions);
 
             return $h;
         }

@@ -16,7 +16,7 @@ use \html;
 
 class Base extends \depage_ui
 {
-    protected $html_options = array();
+    protected $htmlOptions = array();
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
 
@@ -45,7 +45,7 @@ class Base extends \depage_ui
         );
 
         // set html-options
-        $this->html_options = array(
+        $this->htmlOptions = array(
             'template_path' => __DIR__ . "/../tpl/",
             'clean' => "space",
             'env' => $this->options->env,
@@ -76,7 +76,7 @@ class Base extends \depage_ui
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
                 'content' => $output,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $output;
@@ -89,11 +89,11 @@ class Base extends \depage_ui
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
                 'username' => $user->name,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         } else {
             $h = new html("toolbar_plain.tpl", array(
                 'title' => $this->basetitle,
-            ), $this->html_options);
+            ), $this->htmlOptions);
         }
 
         return $h;
@@ -116,7 +116,7 @@ class Base extends \depage_ui
             'content' => new html(array(
                 'content' => 'url not found' . $function,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -136,7 +136,7 @@ class Base extends \depage_ui
             'content' => new html(array(
                 'content' => $content,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $this->_package($h);
     }

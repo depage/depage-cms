@@ -96,7 +96,7 @@ class Tree extends Base {
                 'root_id' => $doc_info->rootid,
                 'seq_nr' => $this->get_current_seq_nr($doc_info->id),
                 'nodes' => $this->get_html_nodes($docName),
-            ), $this->html_options);
+            ), $this->htmlOptions);
 
             return $h;
         }

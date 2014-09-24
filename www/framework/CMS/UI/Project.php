@@ -36,7 +36,7 @@ class Project extends Base
         $hProject = new html("projectmain.tpl", array(
             'tree_pages' => $tree->tree("pages"),
             'tree_document' => $tree->tree("testpage"),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         $h = new html(array(
             'content' => array(

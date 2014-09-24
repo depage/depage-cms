@@ -13,7 +13,7 @@
 namespace depage\cms\UI;
 
 class Preview extends \depage_ui {
-    protected $html_options = array();
+    protected $htmlOptions = array();
     protected $basetitle = "";
     protected $previewType = "dev";
     protected $projectName = "";
@@ -41,14 +41,14 @@ class Preview extends \depage_ui {
 
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo 
+            $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method
         );
 
         // set html-options
-        $this->html_options = array(
+        $this->htmlOptions = array(
             'template_path' => __DIR__ . "/../tpl/",
             'clean' => "space",
             'env' => $this->options->env,
@@ -71,7 +71,7 @@ class Preview extends \depage_ui {
         echo("<!-- $time sec -->");
     }
     // }}}
-    
+
     // {{{ index
     /**
      * function to route all previews through
@@ -82,7 +82,7 @@ class Preview extends \depage_ui {
     {
         $args = func_get_args();
 
-        // get parameters 
+        // get parameters
         $this->projectName = $this->urlSubArgs[0];
         $this->template = array_shift($args);
         $this->previewType = array_shift($args);
@@ -109,12 +109,12 @@ class Preview extends \depage_ui {
             'content' => new \html(array(
                 'content' => $content,
             )),
-        ), $this->html_options);
+        ), $this->htmlOptions);
 
         return $this->_package($h);
     }
     // }}}
-    
+
     // {{{ preview
     /**
      * @return  null
