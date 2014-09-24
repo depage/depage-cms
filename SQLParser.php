@@ -84,27 +84,37 @@ class SQLParser
         $filtered = array();
 
         foreach($this->statements as $statement) {
-            switch ($statement['type']) {
-                case 'code':
-                    $append = preg_replace('/\s+/', ' ', $statement['string']);
-                    if ($this->search != '')
-                        $append = preg_replace('/' . $this->search . '/', $this->replace, $append);
-                    if (substr($this->string, -1) == ' ' && substr($append, 0, 1) == ' ')
-                        $append = ltrim($append);
-                    $this->string .= $append;
-                break;
-                case 'strings':
-                    $this->string .= $statement['string'];
-                break;
-                case 'breaks':
-                    $filtered[]     = trim($this->string);
-                    $this->string   = '';
-                break;
+            $type = $statement['type'];
+
+            if ($type == 'code') {
+                $append = preg_replace('/\s+/', ' ', $statement['string']);
+                $append = $this->replace($append);
+
+                if (substr($this->string, -1) == ' ' && $append[0] == ' ') {
+                    $append = ltrim($append);
+                }
+
+                $this->string .= $append;
+            } elseif ($type == 'strings') {
+                $this->string .= $statement['string'];
+            } elseif ($type == 'breaks') {
+                $filtered[]     = trim($this->string);
+                $this->string   = '';
             }
         }
 
         $this->statements = array();
         return $filtered;
+    }
+    /* }}} */
+    /* {{{ replace */
+    protected function replace($string)
+    {
+        if ($this->search != '') {
+            $string = preg_replace('/' . $this->search . '/', $this->replace, $string);
+        }
+
+        return $string;
     }
     /* }}} */
     /* {{{ addTo */
