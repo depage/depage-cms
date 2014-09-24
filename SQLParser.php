@@ -13,7 +13,6 @@ namespace depage\DB;
 class SQLParser
 {
     /* {{{ variables */
-    protected $statement    = '';
     protected $statements   = array();
     protected $hash         = false;
     protected $doubleDash   = false;
@@ -22,6 +21,7 @@ class SQLParser
     protected $doubleQuote  = false;
     protected $search       = '';
     protected $replace      = '';
+    protected $string       = '';
     /* }}} */
 
     /* {{{ processLine */
@@ -37,6 +37,7 @@ class SQLParser
 
             if (!$this->isComment()) {
                 if ($this->isString()) {
+                    $this->addTo('strings', $char);
                     if ($prev != '\\') {
                         if ($this->singleQuote && $char == '\'') {
                             $this->singleQuote = false;
@@ -44,12 +45,7 @@ class SQLParser
                             $this->doubleQuote = false;
                         }
                     }
-                    $this->statement .= $char;
                 } else {
-                    if ($this->search != '' && substr($this->statement, -strlen($this->search)) == $this->search) {
-                        $this->statement = substr($this->statement, 0, -strlen($this->search)) . $this->replace;
-                    }
-
                     if ($char == '#') {
                         $this->hash = true;
                     } elseif ($char == '-' && $next == '-') {
@@ -57,19 +53,16 @@ class SQLParser
                     } elseif ($char == '/' && $next == '*') {
                         $this->multiLine = true;
                     } elseif ($char == ';') {
-                        $this->statements[] = trim($this->statement);
-                        $this->statement    = '';
-                    } elseif (preg_match('/\s/', $char)) {
-                        if (substr($this->statement, -1) != ' ') {
-                            $this->statement .= ' ';
-                        }
+                        $this->addTo('breaks', $char);
                     } else {
-                        $this->statement .= $char;
-
                         if ($char == '\'') {
                             $this->singleQuote = true;
+                            $this->addTo('strings', $char);
                         } elseif ($char == '"') {
                             $this->doubleQuote = true;
+                            $this->addTo('strings', $char);
+                        } else {
+                            $this->addTo('code', $char);
                         }
                     }
                 }
@@ -79,7 +72,7 @@ class SQLParser
         }
     }
     /* }}} */
-    /* {{{ */
+    /* {{{ replaceSQL */
     public function replaceSQL($search, $replace) {
         $this->search   = $search;
         $this->replace  = $replace;
@@ -88,9 +81,50 @@ class SQLParser
     /* {{{ getStatements */
     public function getStatements()
     {
-        $returnStatements = $this->statements;
+        $filtered = array();
+
+        foreach($this->statements as $statement) {
+            switch ($statement['type']) {
+                case 'code':
+                    $append = preg_replace('/\s+/', ' ', $statement['string']);
+                    if ($this->search != '')
+                        $append = preg_replace('/' . $this->search . '/', $this->replace, $append);
+                    if (substr($this->string, -1) == ' ' && substr($append, 0, 1) == ' ')
+                        $append = ltrim($append);
+                    $this->string .= $append;
+                break;
+                case 'strings':
+                    $this->string .= $statement['string'];
+                break;
+                case 'breaks':
+                    $filtered[]     = trim($this->string);
+                    $this->string   = '';
+                break;
+            }
+        }
+
         $this->statements = array();
-        return $returnStatements;
+        return $filtered;
+    }
+    /* }}} */
+    /* {{{ addTo */
+    protected function addTo($type, $char)
+    {
+        $end = array_pop($this->statements);
+
+        if ($end['type'] == $type) {
+            $this->statements[] = array(
+                'type'      => $type,
+                'string'    => $end['string'] . $char,
+            );
+        } else {
+            $this->statements[] = $end;
+            $this->statements[] = array(
+                'type'      => $type,
+                'string'    => $char,
+            );
+        }
+        reset($this->statements);
     }
     /* }}} */
     /* {{{ isComment */
@@ -104,4 +138,5 @@ class SQLParser
     {
         return $this->singleQuote || $this->doubleQuote;
     }
+    /* }}} */
 }
