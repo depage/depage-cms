@@ -86,8 +86,8 @@ class SQLParser
             $type = $statement['type'];
 
             if ($type == 'code') {
-                $append = preg_replace('/\s+/', ' ', $statement['string']);
-                $append = $this->replace($append);
+                $append = $this->replace($statement['string']);
+                $append = preg_replace('/\s+/', ' ', $append);
 
                 if (substr($this->processedString, -1) == ' ' && $append[0] == ' ') {
                     $append = ltrim($append);
