@@ -146,6 +146,13 @@ class SQLParser
         $this->processedString  = '';
     }
     /* }}} */
+    /* {{{ isEndOfStatment */
+    public function isEndOfStatement()
+    {
+        return trim($this->processedString) == '' && $this->categorised == array();
+    }
+    /* }}} */
+
     /* {{{ isComment */
     protected function isComment()
     {
