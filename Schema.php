@@ -90,7 +90,7 @@ class Schema
     /* }}} */
     /* {{{ setReplacement */
     public function setReplacement($replacementFunction) {
-        $parser->setReplacement($this->replacementFunction);
+        $this->parser->setReplacement($replacementFunction);
     }
     /* }}} */
     /* {{{ update */
