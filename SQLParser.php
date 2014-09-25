@@ -134,6 +134,18 @@ class SQLParser
         }
     }
     /* }}} */
+    /* {{{ reset */
+    public function reset()
+    {
+        $this->categorised      = array();
+        $this->hash             = false;
+        $this->doubleDash       = false;
+        $this->multiLine        = false;
+        $this->singleQuote      = false;
+        $this->doubleQuote      = false;
+        $this->processedString  = '';
+    }
+    /* }}} */
     /* {{{ isComment */
     protected function isComment()
     {
