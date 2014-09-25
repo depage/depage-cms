@@ -73,6 +73,7 @@ class SQLParser
     /* }}} */
     /* {{{ setReplacement */
     public function setReplacement($replacementFunction) {
+        // @todo is_callable & exception
         $this->replacementFunction = $replacementFunction;
     }
     /* }}} */
