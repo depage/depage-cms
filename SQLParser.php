@@ -13,13 +13,13 @@ namespace depage\DB;
 class SQLParser
 {
     /* {{{ variables */
-    protected $statements   = array();
-    protected $hash         = false;
-    protected $doubleDash   = false;
-    protected $multiLine    = false;
-    protected $singleQuote  = false;
-    protected $doubleQuote  = false;
-    protected $string       = '';
+    protected $categorised      = array();
+    protected $hash             = false;
+    protected $doubleDash       = false;
+    protected $multiLine        = false;
+    protected $singleQuote      = false;
+    protected $doubleQuote      = false;
+    protected $processedString  = '';
     protected $replacementFunction;
     /* }}} */
 
@@ -36,7 +36,7 @@ class SQLParser
 
             if (!$this->isComment()) {
                 if ($this->isString()) {
-                    $this->addTo('strings', $char);
+                    $this->append('string', $char);
                     if ($prev != '\\') {
                         if ($this->singleQuote && $char == '\'') {
                             $this->singleQuote = false;
@@ -52,16 +52,16 @@ class SQLParser
                     } elseif ($char == '/' && $next == '*') {
                         $this->multiLine = true;
                     } elseif ($char == ';') {
-                        $this->addTo('breaks', $char);
+                        $this->append('break', $char);
                     } else {
                         if ($char == '\'') {
                             $this->singleQuote = true;
-                            $this->addTo('strings', $char);
+                            $this->append('string', $char);
                         } elseif ($char == '"') {
                             $this->doubleQuote = true;
-                            $this->addTo('strings', $char);
+                            $this->append('string', $char);
                         } else {
-                            $this->addTo('code', $char);
+                            $this->append('code', $char);
                         }
                     }
                 }
@@ -80,30 +80,30 @@ class SQLParser
     /* {{{ getStatements */
     public function getStatements()
     {
-        $filtered = array();
+        $finishedStatements = array();
 
-        foreach($this->statements as $statement) {
+        foreach($this->categorised as $statement) {
             $type = $statement['type'];
 
             if ($type == 'code') {
                 $append = preg_replace('/\s+/', ' ', $statement['string']);
                 $append = $this->replace($append);
 
-                if (substr($this->string, -1) == ' ' && $append[0] == ' ') {
+                if (substr($this->processedString, -1) == ' ' && $append[0] == ' ') {
                     $append = ltrim($append);
                 }
 
-                $this->string .= $append;
-            } elseif ($type == 'strings') {
-                $this->string .= $statement['string'];
-            } elseif ($type == 'breaks') {
-                $filtered[]     = trim($this->string);
-                $this->string   = '';
+                $this->processedString .= $append;
+            } elseif ($type == 'string') {
+                $this->processedString .= $statement['string'];
+            } elseif ($type == 'break') {
+                $finishedStatements[]   = trim($this->processedString);
+                $this->processedString  = '';
             }
         }
 
-        $this->statements = array();
-        return $filtered;
+        $this->categorised = array();
+        return $finishedStatements;
     }
     /* }}} */
     /* {{{ replace */
@@ -116,18 +116,18 @@ class SQLParser
         return $string;
     }
     /* }}} */
-    /* {{{ addTo */
-    protected function addTo($type, $char)
+    /* {{{ append */
+    protected function append($type, $char)
     {
-        end($this->statements);
-        $index = key($this->statements);
+        end($this->categorised);
+        $index = key($this->categorised);
 
         if (
-            $index != null && $this->statements[$index]['type'] == $type
+            $index != null && $this->categorised[$index]['type'] == $type
         ) {
-            $this->statements[$index]['string'] .= $char;
+            $this->categorised[$index]['string'] .= $char;
         } else {
-            $this->statements[] = array(
+            $this->categorised[] = array(
                 'type'      => $type,
                 'string'    => $char,
             );
