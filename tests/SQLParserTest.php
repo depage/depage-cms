@@ -223,4 +223,30 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('"str\"ing"'), $this->parser->getStatements());
     }
     // }}}
+
+    // {{{ testReplacement
+    public function testReplacement()
+    {
+        $this->parser->setReplacement(
+            function($string) {
+                return preg_replace('/comes in/', 'goes out', $string);
+            }
+        );
+        $this->parser->processLine("statement comes in;\n", 1);
+        $this->assertEquals(array('statement goes out'), $this->parser->getStatements());
+    }
+    // }}}
+    // {{{ testReplacementInStrings
+    public function testReplacementInStrings()
+    {
+        $this->parser->setReplacement(
+            function($string) {
+                return preg_replace('/foo/', 'bar', $string);
+            }
+        );
+        $this->parser->processLine("foo  ' foo '\" foo \";\n", 1);
+        $this->assertEquals(array("bar ' foo '\" foo \""), $this->parser->getStatements());
+    }
+    // }}}
+
 }

@@ -109,7 +109,7 @@ class SQLParser
     /* {{{ replace */
     protected function replace($string)
     {
-        if ($this->replacementFunction != null) {
+        if ($this->replacementFunction !== null) {
             $string = call_user_func($this->replacementFunction, $string);
         }
 
@@ -123,7 +123,7 @@ class SQLParser
         $index = key($this->categorised);
 
         if (
-            $index != null && $this->categorised[$index]['type'] == $type
+            $index !== null && $this->categorised[$index]['type'] == $type
         ) {
             $this->categorised[$index]['string'] .= $char;
         } else {
