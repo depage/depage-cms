@@ -219,7 +219,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testEscapedDoubleQuotesInString()
     {
         // escaped double quotes in strings
-        $this->parser->processLine('"str\"ing";' . "\n", 1);
+        $this->parser->processLine('"str\"ing";' . "\n");
         $this->assertEquals(array('"str\"ing"'), $this->parser->getStatements());
     }
     // }}}
@@ -232,7 +232,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
                 return preg_replace('/comes in/', 'goes out', $string);
             }
         );
-        $this->parser->processLine("statement comes in;\n", 1);
+        $this->parser->processLine("statement comes in;\n");
         $this->assertEquals(array('statement goes out'), $this->parser->getStatements());
     }
     // }}}
@@ -244,9 +244,22 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
                 return preg_replace('/foo/', 'bar', $string);
             }
         );
-        $this->parser->processLine("foo  ' foo '\" foo \";\n", 1);
+        $this->parser->processLine("foo  ' foo '\" foo \";\n");
         $this->assertEquals(array("bar ' foo '\" foo \""), $this->parser->getStatements());
     }
     // }}}
-
+    // {{{ testResetandEndOfStatement
+    public function testResetandEndOfStatement()
+    {
+        $this->assertTrue($this->parser->isEndOfStatement());
+        $this->parser->processLine("incomplete statment\n");
+        $this->assertFalse($this->parser->isEndOfStatement());
+        $this->parser->processLine("...completed;\n");
+        $this->assertTrue($this->parser->isEndOfStatement());
+        $this->parser->processLine("incomplete statment\n");
+        $this->assertFalse($this->parser->isEndOfStatement());
+        $this->parser->reset();
+        $this->assertTrue($this->parser->isEndOfStatement());
+    }
+    // }}}
 }

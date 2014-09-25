@@ -14,6 +14,7 @@ class SQLParser
 {
     /* {{{ variables */
     protected $categorised      = array();
+    protected $finished         = array();
     protected $hash             = false;
     protected $doubleDash       = false;
     protected $multiLine        = false;
@@ -25,6 +26,13 @@ class SQLParser
 
     /* {{{ processLine */
     public function processLine($line)
+    {
+        $this->categorise($line);
+        $this->cleanUpStatements();
+    }
+    /* }}} */
+    /* {{{ categorise */
+    protected function categorise($line)
     {
         $this->hash         = false;
         $this->doubleDash   = false;
@@ -80,7 +88,13 @@ class SQLParser
     /* {{{ getStatements */
     public function getStatements()
     {
-        $finishedStatements = array();
+        return $this->finished;
+    }
+    /* }}} */
+    /* {{{ cleanUpStatements */
+    protected function cleanUpStatements()
+    {
+        $this->finished = array();
 
         foreach($this->categorised as $statement) {
             $type = $statement['type'];
@@ -97,13 +111,12 @@ class SQLParser
             } elseif ($type == 'string') {
                 $this->processedString .= $statement['string'];
             } elseif ($type == 'break') {
-                $finishedStatements[]   = trim($this->processedString);
+                $this->finished[]       = trim($this->processedString);
                 $this->processedString  = '';
             }
         }
 
         $this->categorised = array();
-        return $finishedStatements;
     }
     /* }}} */
     /* {{{ replace */
@@ -149,10 +162,9 @@ class SQLParser
     /* {{{ isEndOfStatment */
     public function isEndOfStatement()
     {
-        return trim($this->processedString) == '' && $this->categorised == array();
+        return (trim($this->processedString) == '') && ($this->categorised == array());
     }
     /* }}} */
-
     /* {{{ isComment */
     protected function isComment()
     {
