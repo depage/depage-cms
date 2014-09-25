@@ -20,13 +20,14 @@ class Schema
     protected $tableNames   = array();
     protected $fileNames    = array();
     protected $sql          = array();
-    protected $search;
+    protected $parser;
     /* }}} */
 
     /* {{{ constructor */
     public function __construct($pdo)
     {
-        $this->pdo = $pdo;
+        $this->pdo      = $pdo;
+        $this->parser   = new SQLParser;
     }
     /* }}} */
 
@@ -87,10 +88,9 @@ class Schema
         return $row['TABLE_COMMENT'];
     }
     /* }}} */
-    /* {{{ replace */
-    public function replace($search)
-    {
-        $this->search = $search;
+    /* {{{ setReplacement */
+    public function setReplacement($replacementFunction) {
+        $parser->setReplacement($this->replacementFunction);
     }
     /* }}} */
     /* {{{ update */
@@ -100,16 +100,13 @@ class Schema
             foreach($this->tableNames[$fileName] as $tableName) {
                 $currentVersion = $this->currentTableVersion($tableName);
                 $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
-                $parser         = new SQLParser;
-
-                $parser->replaceSQL($this->search, $tableName);
 
                 foreach($this->sql[$fileName] as $version => $sql) {
                     if ($new) {
                         foreach($sql as $number => $line) {
-                            $parser->processLine($line);
+                            $this->parser->processLine($line);
 
-                            foreach($parser->getStatements() as $statement) {
+                            foreach($this->parser->getStatements() as $statement) {
                                 $this->execute($statement);
                             }
                         }

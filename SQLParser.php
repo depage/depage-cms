@@ -19,9 +19,8 @@ class SQLParser
     protected $multiLine    = false;
     protected $singleQuote  = false;
     protected $doubleQuote  = false;
-    protected $search       = '';
-    protected $replace      = '';
     protected $string       = '';
+    protected $replacementFunction;
     /* }}} */
 
     /* {{{ processLine */
@@ -72,10 +71,9 @@ class SQLParser
         }
     }
     /* }}} */
-    /* {{{ replaceSQL */
-    public function replaceSQL($search, $replace) {
-        $this->search   = $search;
-        $this->replace  = $replace;
+    /* {{{ setReplacement */
+    public function setReplacement($replacementFunction) {
+        $this->replacementFunction = $replacementFunction;
     }
     /* }}} */
     /* {{{ getStatements */
@@ -110,8 +108,8 @@ class SQLParser
     /* {{{ replace */
     protected function replace($string)
     {
-        if ($this->search != '') {
-            $string = preg_replace('/' . $this->search . '/', $this->replace, $string);
+        if ($this->replacementFunction != null) {
+            $string = call_user_func($this->replacementFunction, $string);
         }
 
         return $string;
