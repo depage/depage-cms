@@ -120,21 +120,19 @@ class SQLParser
     /* {{{ addTo */
     protected function addTo($type, $char)
     {
-        $end = array_pop($this->statements);
+        end($this->statements);
+        $index = key($this->statements);
 
-        if ($end['type'] == $type) {
-            $this->statements[] = array(
-                'type'      => $type,
-                'string'    => $end['string'] . $char,
-            );
+        if (
+            $index != null && $this->statements[$index]['type'] == $type
+        ) {
+            $this->statements[$index]['string'] .= $char;
         } else {
-            $this->statements[] = $end;
             $this->statements[] = array(
                 'type'      => $type,
                 'string'    => $char,
             );
         }
-        reset($this->statements);
     }
     /* }}} */
     /* {{{ isComment */
