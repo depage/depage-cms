@@ -21,7 +21,8 @@ class SQLParser
     protected $singleQuote      = false;
     protected $doubleQuote      = false;
     protected $processedString  = '';
-    protected $replacementFunction;
+    protected $search           = '';
+    protected $replace          = '';
     /* }}} */
 
     /* {{{ processLine */
@@ -79,12 +80,6 @@ class SQLParser
         }
     }
     /* }}} */
-    /* {{{ setReplacement */
-    public function setReplacement($replacementFunction) {
-        // @todo is_callable & exception
-        $this->replacementFunction = $replacementFunction;
-    }
-    /* }}} */
     /* {{{ getStatements */
     public function getStatements()
     {
@@ -100,7 +95,7 @@ class SQLParser
             $type = $statement['type'];
 
             if ($type == 'code') {
-                $append = $this->replace($statement['string']);
+                $append = str_replace($this->search, $this->replace, $statement['string']);
                 $append = preg_replace('/\s+/', ' ', $append);
 
                 if (substr($this->processedString, -1) == ' ' && $append[0] == ' ') {
@@ -120,13 +115,10 @@ class SQLParser
     }
     /* }}} */
     /* {{{ replace */
-    protected function replace($string)
+    public function replace($search, $replace)
     {
-        if ($this->replacementFunction !== null) {
-            $string = call_user_func($this->replacementFunction, $string);
-        }
-
-        return $string;
+        $this->search   = $search;
+        $this->replace  = $replace;
     }
     /* }}} */
     /* {{{ append */

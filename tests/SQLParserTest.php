@@ -224,14 +224,10 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testReplacement
-    public function testReplacement()
+    // {{{ testReplace
+    public function testReplace()
     {
-        $this->parser->setReplacement(
-            function($string) {
-                return preg_replace('/comes in/', 'goes out', $string);
-            }
-        );
+        $this->parser->replace('comes in', 'goes out');
         $this->parser->processLine("statement comes in;\n");
         $this->assertEquals(array('statement goes out'), $this->parser->getStatements());
     }
@@ -239,11 +235,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     // {{{ testReplacementInStrings
     public function testReplacementInStrings()
     {
-        $this->parser->setReplacement(
-            function($string) {
-                return preg_replace('/foo/', 'bar', $string);
-            }
-        );
+        $this->parser->replace('foo', 'bar');
         $this->parser->processLine("foo  ' foo '\" foo \";\n");
         $this->assertEquals(array("bar ' foo '\" foo \""), $this->parser->getStatements());
     }

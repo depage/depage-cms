@@ -17,17 +17,16 @@ class Schema
     const VERSION_TAG   = '@version';
     /* }}} */
     /* {{{ variables */
-    protected $tableNames   = array();
-    protected $fileNames    = array();
-    protected $sql          = array();
-    protected $parser;
+    protected $tableNames       = array();
+    protected $fileNames        = array();
+    protected $sql              = array();
+    protected $replaceFunction  = array();
     /* }}} */
 
     /* {{{ constructor */
     public function __construct($pdo)
     {
-        $this->pdo      = $pdo;
-        $this->parser   = new SQLParser;
+        $this->pdo = $pdo;
     }
     /* }}} */
 
@@ -88,31 +87,51 @@ class Schema
         return $row['TABLE_COMMENT'];
     }
     /* }}} */
-    /* {{{ setReplacement */
-    public function setReplacement($replacementFunction) {
-        $this->parser->setReplacement($replacementFunction);
+    /* {{{ setReplace */
+    public function setReplace($replaceFunction) {
+        $this->replaceFunction = $replaceFunction;
+    }
+    /* }}} */
+    /* {{{ replace */
+    protected function replace($tableName) {
+        if (is_callable($this->replaceFunction)) {
+            $tableName = call_user_func($this->replaceFunction, $tableName);
+        }
+        
+        return $tableName;
     }
     /* }}} */
     /* {{{ update */
     public function update()
     {
         foreach($this->fileNames as $fileName) {
+            $currentVersion = $this->currentTableVersion($this->tableNames[$fileName][0]);
+            $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
+            $search         = array();
+            $replace        = array();
+
             foreach($this->tableNames[$fileName] as $tableName) {
-                $currentVersion = $this->currentTableVersion($tableName);
-                $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
+                $newTableName = $this->replace($tableName);
+                if ($newTableName != $tableName) {
+                    $search[]   = $tableName;
+                    $replace[]  = $newTableName;
+                }
+            }
 
-                foreach($this->sql[$fileName] as $version => $sql) {
-                    if ($new) {
-                        foreach($sql as $number => $line) {
-                            $this->parser->processLine($line);
+            $parser = new SQLParser();
+            $parser->replace($search, $replace);
 
-                            foreach($this->parser->getStatements() as $statement) {
-                                $this->execute($statement);
-                            }
+            foreach($this->sql[$fileName] as $version => $sql) {
+                if ($new) {
+                    foreach($sql as $number => $line) {
+                        $parser->processLine($line);
+
+                        foreach($parser->getStatements() as $statement) {
+                            $this->execute($statement);
                         }
-                    } else {
-                        $new = ($version == $currentVersion);
                     }
+                } else {
+                    $new = ($version == $currentVersion);
                 }
             }
         }
