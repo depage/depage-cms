@@ -102,9 +102,12 @@ class Schema
         $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
         $statement  = $this->pdo->query($query);
         $statement->execute();
-        $row        = $statement->fetch();
+        $version    = $statement->fetch()['TABLE_COMMENT'];
 
-        return $row['TABLE_COMMENT'];
+        if ($version == '')
+            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+
+        return $version;
     }
     /* }}} */
     /* {{{ setReplace */
