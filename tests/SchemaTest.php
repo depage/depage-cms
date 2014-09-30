@@ -1,6 +1,7 @@
 <?php
 
 use depage\DB\Schema;
+use depage\DB\Exceptions;
 
 // {{{ SchemaTestClass
 class SchemaTestClass extends Schema
@@ -74,6 +75,18 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->getSql());
     }
     // }}}
+    // {{{ testLoadNoFile
+    public function testLoadNoFile()
+    {
+        try {
+            $this->schema->load('fileDoesntExist.sql');
+        } catch (Exceptions\FileNotFoundException $expeceted) {
+            return;
+        }
+        $this->fail('Expected FileNotFoundException');
+    }
+    // }}}
+
     // {{{ testPreperation1
     public function testPreperation1()
     {

@@ -36,7 +36,9 @@ class Schema
     public function load($path)
     {
         $this->fileNames = glob($path);
-        // @todo complain when fileNames is empty
+
+        if (empty($this->fileNames))
+            throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
         // @todo complain when tablename tag is missing
 
         foreach($this->fileNames as $fileName) {
