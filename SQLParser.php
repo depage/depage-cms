@@ -20,25 +20,25 @@ class SQLParser
     protected $multiLine        = false;
     protected $singleQuote      = false;
     protected $doubleQuote      = false;
-    protected $processedString  = '';
+    protected $parsedString  = '';
     protected $search           = '';
     protected $replace          = '';
     /* }}} */
 
-    /* {{{ processLine */
-    public function processLine($line)
+    /* {{{ parseLine */
+    public function parseLine($line)
     {
         $this->categorise($line);
         $this->cleanUpStatements();
     }
     /* }}} */
-    /* {{{ process */
-    public function process($block = array())
+    /* {{{ parse */
+    public function parse($block = array())
     {
         $parsedBlock = array();
 
         foreach($block as $number => $line) {
-            $this->processLine($line);
+            $this->parseLine($line);
             foreach($this->getStatements() as $statement) {
                 $parsedBlock[$number][] = $statement;
             }
@@ -113,16 +113,16 @@ class SQLParser
                 $append = str_replace($this->search, $this->replace, $statement['string']);
                 $append = preg_replace('/\s+/', ' ', $append);
 
-                if (substr($this->processedString, -1) == ' ' && $append[0] == ' ') {
+                if (substr($this->parsedString, -1) == ' ' && $append[0] == ' ') {
                     $append = ltrim($append);
                 }
 
-                $this->processedString .= $append;
+                $this->parsedString .= $append;
             } elseif ($type == 'string') {
-                $this->processedString .= $statement['string'];
+                $this->parsedString .= $statement['string'];
             } elseif ($type == 'break') {
-                $this->finished[]       = trim($this->processedString);
-                $this->processedString  = '';
+                $this->finished[]       = trim($this->parsedString);
+                $this->parsedString  = '';
             }
         }
 

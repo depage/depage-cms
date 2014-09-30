@@ -145,7 +145,7 @@ class Schema
             }
             $parser->replace(array_keys($dictionary), $dictionary);
 
-            foreach($parser->process($block) as $number => $statements) {
+            foreach($parser->parse($block) as $number => $statements) {
                 $this->execute($number, $statements);
             }
         }

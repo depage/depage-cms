@@ -15,11 +15,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testIncompleteStatement()
     {
         // incomplete statement
-        $this->parser->processLine("ALTER TABLE\n");
+        $this->parser->parseLine("ALTER TABLE\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // completed...
-        $this->parser->processLine("test COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("test COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -27,7 +27,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testCompleteStatement()
     {
         // complete statement
-        $this->parser->processLine("ALTER TABLE test COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -35,7 +35,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testTwoStatementsInALine()
     {
         // two complete statements in a line
-        $this->parser->processLine("ALTER TABLE test COMMENT 'version 0.2'; ALTER TABLE test COMMENT 'version 0.3';\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT 'version 0.2'; ALTER TABLE test COMMENT 'version 0.3';\n");
 
         $expected = array(
             "ALTER TABLE test COMMENT 'version 0.2'",
@@ -48,11 +48,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testHashComment()
     {
         // incomplete statement with hash comment
-        $this->parser->processLine("ALTER TABLE # comment\n");
+        $this->parser->parseLine("ALTER TABLE # comment\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // completed...
-        $this->parser->processLine("test COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("test COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -60,11 +60,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testDoubleDashComment()
     {
         // incomplete statement with double dash comment
-        $this->parser->processLine("ALTER TABLE -- comment\n");
+        $this->parser->parseLine("ALTER TABLE -- comment\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // completed...
-        $this->parser->processLine("test COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("test COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -72,7 +72,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMultilineStyleComment()
     {
         // incomplete statement with multiline style comment
-        $this->parser->processLine("ALTER TABLE /* comment */ test COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("ALTER TABLE /* comment */ test COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -80,12 +80,12 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMultilineComment()
     {
         // multiline comment
-        $this->parser->processLine("ALTER TABLE\n");
-        $this->parser->processLine("/* comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment */ test\n");
-        $this->parser->processLine("COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("ALTER TABLE\n");
+        $this->parser->parseLine("/* comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment */ test\n");
+        $this->parser->parseLine("COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -93,12 +93,12 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMupltipleMultilineComment()
     {
         // multiple multiline comments
-        $this->parser->processLine("ALTER /* comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment */ TABLE /* comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment */ test\n");
-        $this->parser->processLine("COMMENT 'version 0.2';\n");
+        $this->parser->parseLine("ALTER /* comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment */ TABLE /* comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment */ test\n");
+        $this->parser->parseLine("COMMENT 'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -106,12 +106,12 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMupltipleMultilineCommentMulti()
     {
         // multiple multiline comments multi...
-        $this->parser->processLine("ALTER /* comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment */ TABLE /* comment */ test /* comment\n");
-        $this->parser->processLine("comment\n");
-        $this->parser->processLine("comment */ COMMENT\n");
-        $this->parser->processLine("'version 0.2';\n");
+        $this->parser->parseLine("ALTER /* comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment */ TABLE /* comment */ test /* comment\n");
+        $this->parser->parseLine("comment\n");
+        $this->parser->parseLine("comment */ COMMENT\n");
+        $this->parser->parseLine("'version 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -119,7 +119,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testSingleQuotedSemicolon()
     {
         // complete statement with semicolon in single quoted string
-        $this->parser->processLine("ALTER TABLE test COMMENT 'vers;ion 0.2';\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT 'vers;ion 0.2';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'vers;ion 0.2'"), $this->parser->getStatements());
     }
     // }}}
@@ -127,7 +127,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testDoubleQuotedSemicolon()
     {
         // complete statement with semicolon in double quoted string
-        $this->parser->processLine("ALTER TABLE test COMMENT \"vers;ion 0.2\";\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT \"vers;ion 0.2\";\n");
         $this->assertEquals(array('ALTER TABLE test COMMENT "vers;ion 0.2"'), $this->parser->getStatements());
     }
     // }}}
@@ -135,11 +135,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testSemicolonInHashComment()
     {
         // incomplete statement with semicolon in hash comment
-        $this->parser->processLine("ALTER TABLE # ;\n");
+        $this->parser->parseLine("ALTER TABLE # ;\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // ...completed
-        $this->parser->processLine("test COMMENT \"version 0.2\";\n");
+        $this->parser->parseLine("test COMMENT \"version 0.2\";\n");
         $this->assertEquals(array('ALTER TABLE test COMMENT "version 0.2"'), $this->parser->getStatements());
     }
     // }}}
@@ -147,11 +147,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testSemicolonInDoubleDashComment()
     {
         // incomplete statement with semicolon in double dash comment
-        $this->parser->processLine("ALTER TABLE -- ;\n");
+        $this->parser->parseLine("ALTER TABLE -- ;\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // ...completed
-        $this->parser->processLine("test COMMENT \"version 0.2\";\n");
+        $this->parser->parseLine("test COMMENT \"version 0.2\";\n");
         $this->assertEquals(array('ALTER TABLE test COMMENT "version 0.2"'), $this->parser->getStatements());
     }
     // }}}
@@ -159,11 +159,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testSemicolonInMultilineStyleComment()
     {
          // incomplete statement with semicolon in multiline style comment
-        $this->parser->processLine("ALTER TABLE /* ; */\n");
+        $this->parser->parseLine("ALTER TABLE /* ; */\n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // ...completed
-        $this->parser->processLine("test COMMENT \"version 0.2\";\n");
+        $this->parser->parseLine("test COMMENT \"version 0.2\";\n");
         $this->assertEquals(array('ALTER TABLE test COMMENT "version 0.2"'), $this->parser->getStatements());
     }
     // }}}
@@ -171,11 +171,11 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testSemicolonInMultilineComment()
     {
          // incomplete statement with semicolon in multiline style comment
-        $this->parser->processLine("ALTER TABLE /* ; \n");
+        $this->parser->parseLine("ALTER TABLE /* ; \n");
         $this->assertEquals(array(), $this->parser->getStatements());
 
         // ...completed
-        $this->parser->processLine(" */ test COMMENT \"version 0.2\";\n");
+        $this->parser->parseLine(" */ test COMMENT \"version 0.2\";\n");
         $this->assertEquals(array('ALTER TABLE test COMMENT "version 0.2"'), $this->parser->getStatements());
     }
     // }}}
@@ -183,9 +183,9 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMultilineSingleQuotedString()
     {
         // multiline single quoted string
-        $this->parser->processLine("ALTER TABLE test COMMENT 'version 0.2\n");
-        $this->parser->processLine(" ... string ; continued ... \n");
-        $this->parser->processLine(" ... end ';\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT 'version 0.2\n");
+        $this->parser->parseLine(" ... string ; continued ... \n");
+        $this->parser->parseLine(" ... end ';\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT 'version 0.2\n ... string ; continued ... \n ... end '"), $this->parser->getStatements());
     }
     // }}}
@@ -193,9 +193,9 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMultilineDoubleQuotedString()
     {
         // multiline double quoted string
-        $this->parser->processLine("ALTER TABLE test COMMENT \"version 0.2\n");
-        $this->parser->processLine(" ... string ; continued ... \n");
-        $this->parser->processLine(" ... end \";\n");
+        $this->parser->parseLine("ALTER TABLE test COMMENT \"version 0.2\n");
+        $this->parser->parseLine(" ... string ; continued ... \n");
+        $this->parser->parseLine(" ... end \";\n");
         $this->assertEquals(array("ALTER TABLE test COMMENT \"version 0.2\n ... string ; continued ... \n ... end \""), $this->parser->getStatements());
     }
     // }}}
@@ -203,7 +203,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testMultipleWhitespacesInString()
     {
         // Multiple whitespaces in strings
-        $this->parser->processLine("\"     \" '       ';\n");
+        $this->parser->parseLine("\"     \" '       ';\n");
         $this->assertEquals(array("\"     \" '       '"), $this->parser->getStatements());
     }
     // }}}
@@ -211,7 +211,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testEscapedSingleQuotesInString()
     {
         // escaped single quotes in strings
-        $this->parser->processLine("'str\'ing';\n");
+        $this->parser->parseLine("'str\'ing';\n");
         $this->assertEquals(array("'str\'ing'"), $this->parser->getStatements());
     }
     // }}}
@@ -219,7 +219,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testEscapedDoubleQuotesInString()
     {
         // escaped double quotes in strings
-        $this->parser->processLine('"str\"ing";' . "\n");
+        $this->parser->parseLine('"str\"ing";' . "\n");
         $this->assertEquals(array('"str\"ing"'), $this->parser->getStatements());
     }
     // }}}
@@ -228,7 +228,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testReplace()
     {
         $this->parser->replace('comes in', 'goes out');
-        $this->parser->processLine("statement comes in;\n");
+        $this->parser->parseLine("statement comes in;\n");
         $this->assertEquals(array('statement goes out'), $this->parser->getStatements());
     }
     // }}}
@@ -236,7 +236,7 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     public function testReplacementInStrings()
     {
         $this->parser->replace('foo', 'bar');
-        $this->parser->processLine("foo  ' foo '\" foo \";\n");
+        $this->parser->parseLine("foo  ' foo '\" foo \";\n");
         $this->assertEquals(array("bar ' foo '\" foo \""), $this->parser->getStatements());
     }
     // }}}
