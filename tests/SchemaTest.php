@@ -181,4 +181,40 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
+    // {{{ testProcessConnections
+    public function testProcessConnections()
+    {
+        $this->schema->currentTableVersion = '';
+        $this->schema->load('fixtures/TestConnections.sql');
+        $this->schema->update();
+
+        $expected = array(
+            "CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            "CREATE VIEW testView AS SELECT id, name FROM testConnection WHERE someCondition=TRUE",
+        );
+
+        $this->assertEquals($expected, $this->schema->executedStatements);
+    }
+    // }}}
+    // {{{ testProcessPrefixes
+    public function testProcessPrefixes()
+    {
+        $this->schema->currentTableVersion = '';
+        $this->schema->load('fixtures/TestConnections.sql');
+        $this->schema->setReplace(
+            function ($tableName) {
+                return 'testPrefix_' . $tableName;
+            }
+        );
+
+        $this->schema->update();
+
+        $expected = array(
+            "CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
+            "CREATE VIEW testPrefix_testView AS SELECT id, name FROM testPrefix_testConnection WHERE someCondition=TRUE",
+        );
+
+        $this->assertEquals($expected, $this->schema->executedStatements);
+    }
+    // }}}
 }
