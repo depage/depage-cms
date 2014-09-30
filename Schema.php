@@ -13,11 +13,13 @@ namespace depage\DB;
 class Schema
 {
     /* {{{ constants */
-    const TABLENAME_TAG = '@tablename';
-    const VERSION_TAG   = '@version';
+    const TABLENAME_TAG     = '@tablename';
+    const CONNECTION_TAG    = '@connection';
+    const VERSION_TAG       = '@version';
     /* }}} */
     /* {{{ variables */
     protected $tableNames       = array();
+    protected $connections      = array();
     protected $fileNames        = array();
     protected $sql              = array();
     protected $replaceFunction  = array();
@@ -38,9 +40,10 @@ class Schema
         // @todo complain when tablename tag is missing
 
         foreach($this->fileNames as $fileName) {
-            $contents           = file($fileName);
-            $lastVersion        = 0;
-            $number             = 1;
+            $contents       = file($fileName);
+            $lastVersion    = 0;
+            $number         = 1;
+            $this->connections[$fileName] = array();
 
             foreach($contents as $line) {
                 $version = $this->extractTag($line, self::VERSION_TAG);
@@ -53,7 +56,13 @@ class Schema
 
                 $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
                 if ($tableNameTag) {
-                    $this->tableNames[$fileName][] = $tableNameTag;
+                    // @todo exception for multiple tablenames per file
+                    $this->tableNames[$fileName] = $tableNameTag;
+                }
+
+                $connectionTag = $this->extractTag($line, self::CONNECTION_TAG);
+                if ($connectionTag) {
+                    $this->connections[$fileName][] = $connectionTag;
                 }
 
                 $number++;
@@ -97,7 +106,7 @@ class Schema
         if (is_callable($this->replaceFunction)) {
             $tableName = call_user_func($this->replaceFunction, $tableName);
         }
-        
+
         return $tableName;
     }
     /* }}} */
@@ -105,17 +114,24 @@ class Schema
     public function update()
     {
         foreach($this->fileNames as $fileName) {
-            $currentVersion = $this->currentTableVersion($this->tableNames[$fileName][0]);
+            $tableName      = $this->tableNames[$fileName];
+            $currentVersion = $this->currentTableVersion($this->replace($tableName));
             $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
             $search         = array();
             $replace        = array();
 
-            foreach($this->tableNames[$fileName] as $tableName) {
-                $newTableName = $this->replace($tableName);
-                if ($newTableName != $tableName) {
-                    $search[]   = $tableName;
-                    $replace[]  = $newTableName;
+            foreach($this->connections[$fileName] as $connection) {
+                $newConnection = $this->replace($connection);
+                if ($newConnection != $connection) {
+                    $search[]   = $connection;
+                    $replace[]  = $newConnection;
                 }
+            }
+
+            $newTableName = $this->replace($tableName);
+            if ($newTableName != $tableName) {
+                $search[]   = $tableName;
+                $replace[]  = $newTableName;
             }
 
             $parser = new SQLParser();
