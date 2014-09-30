@@ -44,7 +44,6 @@ class Schema
             $contents       = file($fileName);
             $lastVersion    = 0;
             $number         = 1;
-            $this->connections[$fileName] = array();
 
             foreach($contents as $line) {
                 $version = $this->extractTag($line, self::VERSION_TAG);
@@ -127,11 +126,13 @@ class Schema
             $search         = array();
             $replace        = array();
 
-            foreach($this->connections[$fileName] as $connection) {
-                $newConnection = $this->replace($connection);
-                if ($newConnection != $connection) {
-                    $search[]   = $connection;
-                    $replace[]  = $newConnection;
+            if (isset($this->connections[$fileName])) {
+                foreach($this->connections[$fileName] as $connection) {
+                    $newConnection = $this->replace($connection);
+                    if ($newConnection != $connection) {
+                        $search[]   = $connection;
+                        $replace[]  = $newConnection;
+                    }
                 }
             }
 
