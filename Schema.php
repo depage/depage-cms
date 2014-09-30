@@ -123,26 +123,7 @@ class Schema
             $tableName      = $this->tableNames[$fileName];
             $currentVersion = $this->currentTableVersion($this->replace($tableName));
             $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
-            $search         = array();
-            $replace        = array();
             $block          = array();
-
-            // @todo refactor (single sar array)
-            if (isset($this->connections[$fileName])) {
-                foreach($this->connections[$fileName] as $connection) {
-                    $newConnection = $this->replace($connection);
-                    if ($newConnection != $connection) {
-                        $search[]   = $connection;
-                        $replace[]  = $newConnection;
-                    }
-                }
-            }
-
-            $newTableName = $this->replace($tableName);
-            if ($newTableName != $tableName) {
-                $search[]   = $tableName;
-                $replace[]  = $newTableName;
-            }
 
             // @todo refactor -> extractNewCode
             foreach($this->sql[$fileName] as $version => $sql) {
@@ -155,8 +136,14 @@ class Schema
                 }
             }
 
-            $parser = new SQLParser();
-            $parser->replace($search, $replace);
+            $names      = (isset($this->connections[$fileName])) ? $this->connections[$fileName] : array();
+            $names[]    = $tableName;
+            $parser     = new SQLParser();
+
+            foreach($names as $name) {
+                $dictionary[$name] = $this->replace($name);
+            }
+            $parser->replace(array_keys($dictionary), $dictionary);
 
             foreach($parser->process($block) as $number => $statements) {
                 $this->execute($number, $statements);
