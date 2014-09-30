@@ -139,6 +139,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->fail('Expected MultipleTableNamesException');
     }
     // }}}
+    // {{{ testLoadUnversionedCode
+    public function testLoadUnversionedCode()
+    {
+        try {
+            $this->schema->load('fixtures/TestUnversionedCode.sql');
+        } catch (Exceptions\UnversionedCodeException $expeceted) {
+            return;
+        }
+        $this->fail('Expected UnversionedCodeException');
+    }
+    // }}}
 
     // {{{ testProcessNewestVersion
     public function testProcessNewestVersion()

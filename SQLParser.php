@@ -20,7 +20,7 @@ class SQLParser
     protected $multiLine        = false;
     protected $singleQuote      = false;
     protected $doubleQuote      = false;
-    protected $parsedString  = '';
+    protected $parsedString     = '';
     protected $search           = '';
     protected $replace          = '';
     /* }}} */
@@ -164,6 +164,12 @@ class SQLParser
     protected function isString()
     {
         return $this->singleQuote || $this->doubleQuote;
+    }
+    /* }}} */
+    /* {{{ isEndOfStatment */
+    public function isEndOfStatement()
+    {
+        return (trim($this->parsedString) == '') && ($this->categorised == array());
     }
     /* }}} */
 }

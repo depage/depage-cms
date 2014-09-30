@@ -44,6 +44,7 @@ class Schema
             $contents       = file($fileName);
             $lastVersion    = 0;
             $number         = 1;
+            $parser         = new SQLParser();
 
             foreach($contents as $line) {
                 $version = $this->extractTag($line, self::VERSION_TAG);
@@ -52,6 +53,10 @@ class Schema
                     $lastVersion = $version;
                 } elseif ($lastVersion) {
                     $this->sql[$fileName][$lastVersion][$number] = $line;
+                } else {
+                    $parser->parseLine($line);
+                    if (!$parser->isEndOfStatement())
+                        throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\".");
                 }
 
                 $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
