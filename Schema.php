@@ -39,7 +39,6 @@ class Schema
 
         if (empty($this->fileNames))
             throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
-        // @todo complain when tablename tag is missing
 
         foreach($this->fileNames as $fileName) {
             $contents       = file($fileName);
@@ -69,6 +68,9 @@ class Schema
 
                 $number++;
             }
+
+            if (empty($this->tableNames[$fileName]))
+                throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
         }
     }
     /* }}} */
