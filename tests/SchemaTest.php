@@ -84,6 +84,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->fail('Expected TableNameMissingException');
     }
     // }}}
+    // {{{ testMultipleTableNames
+    public function testMultipleTableNames()
+    {
+        try {
+            $this->schema->load('fixtures/TestMultipleTableNames.sql');
+        } catch (Exceptions\MultipleTableNamesException $expeceted) {
+            return;
+        }
+        $this->fail('Expected MultipleTableNamesException');
+    }
+    // }}}
 
     // {{{ testPreperation1
     public function testPreperation1()

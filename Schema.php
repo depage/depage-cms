@@ -57,8 +57,11 @@ class Schema
 
                 $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
                 if ($tableNameTag) {
-                    // @todo exception for multiple tablenames per file
-                    $this->tableNames[$fileName] = $tableNameTag;
+                    if (isset($this->tableNames[$fileName])) {
+                        throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
+                    } else {
+                        $this->tableNames[$fileName] = $tableNameTag;
+                    }
                 }
 
                 $connectionTag = $this->extractTag($line, self::CONNECTION_TAG);
