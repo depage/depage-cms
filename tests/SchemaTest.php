@@ -128,8 +128,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->fail('Expected TableNameMissingException');
     }
     // }}}
-    // {{{ testMultipleTableNames
-    public function testMultipleTableNames()
+    // {{{ testLoadMultipleTableNames
+    public function testLoadMultipleTableNames()
     {
         try {
             $this->schema->load('fixtures/TestMultipleTableNames.sql');
@@ -140,8 +140,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testPreperation1
-    public function testPreperation1()
+    // {{{ testProcessNewestVersion
+    public function testProcessNewestVersion()
     {
         $this->schema->currentTableVersion = 'version 0.2';
         $this->schema->load('fixtures/TestFile.sql');
@@ -151,8 +151,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
-    // {{{ testPreperation2
-    public function testPreperation2()
+    // {{{ testProcessUpdate
+    public function testProcessUpdate()
     {
         $this->schema->currentTableVersion = 'version 0.1';
         $this->schema->load('fixtures/TestFile.sql');
@@ -165,8 +165,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
-    // {{{ testPreperation3
-    public function testPreperation3()
+    // {{{ testProcessEntireFile
+    public function testProcessEntireFile()
     {
         $this->schema->currentTableVersion = '';
         $this->schema->load('fixtures/TestFile.sql');
