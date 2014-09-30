@@ -62,6 +62,50 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->getSql());
     }
     // }}}
+    // {{{ testLoadMultipleFiles
+    public function testLoadMultipleFiles()
+    {
+        $this->schema->load('fixtures/TestFile*.sql');
+
+        $expected = array(
+            'fixtures/TestFile.sql' => array(
+                'version 0.1' => array(
+                    3   => "# @version version 0.1\n",
+                    4   => "    CREATE TABLE test (\n",
+                    5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
+                    6   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    7   => "\n",
+                ),
+                'version 0.2' => array(
+                    8   => "# @version version 0.2\n",
+                    9   => "    ALTER TABLE test\n",
+                    10  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    11  => "\n",
+                    12  => "    ALTER TABLE test\n",
+                    13  => "    COMMENT 'version 0.2';\n",
+                ),
+            ),
+            'fixtures/TestFile2.sql' => array(
+                'version 0.1' => array(
+                    3   => "# @version version 0.1\n",
+                    4   => "    CREATE TABLE test2 (\n",
+                    5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
+                    6   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    7   => "\n",
+                ),
+                'version 0.2' => array(
+                    8   => "# @version version 0.2\n",
+                    9   => "    ALTER TABLE test2\n",
+                    10  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    11  => "\n",
+                    12  => "    ALTER TABLE test2\n",
+                    13  => "    COMMENT 'version 0.2';\n",
+                ),
+            ),
+        );
+        $this->assertEquals($expected, $this->schema->getSql());
+    }
+    // }}}
     // {{{ testLoadNoFile
     public function testLoadNoFile()
     {
