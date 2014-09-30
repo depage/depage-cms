@@ -125,7 +125,9 @@ class Schema
             $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
             $search         = array();
             $replace        = array();
+            $block          = array();
 
+            // @todo refactor (single sar array)
             if (isset($this->connections[$fileName])) {
                 foreach($this->connections[$fileName] as $connection) {
                     $newConnection = $this->replace($connection);
@@ -142,29 +144,32 @@ class Schema
                 $replace[]  = $newTableName;
             }
 
-            $parser = new SQLParser();
-            $parser->replace($search, $replace);
-
+            // @todo refactor -> extractNewCode
             foreach($this->sql[$fileName] as $version => $sql) {
                 if ($new) {
                     foreach($sql as $number => $line) {
-                        $parser->processLine($line);
-
-                        foreach($parser->getStatements() as $statement) {
-                            $this->execute($statement);
-                        }
+                        $block[$number] = $line;
                     }
                 } else {
                     $new = ($version == $currentVersion);
                 }
             }
+
+            $parser = new SQLParser();
+            $parser->replace($search, $replace);
+
+            foreach($parser->process($block) as $number => $statements) {
+                $this->execute($number, $statements);
+            }
         }
     }
     /* }}} */
     /* {{{ execute */
-    protected function execute($statement) {
-        $preparedStatement = $this->pdo->prepare($statement);
-        $preparedStatement->execute();
+    protected function execute($number, $statements) {
+        foreach($statements as $statement) {
+            $preparedStatement = $this->pdo->prepare($statement);
+            $preparedStatement->execute();
+        }
     }
     /* }}} */
 }

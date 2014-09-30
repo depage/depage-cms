@@ -240,16 +240,4 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array("bar ' foo '\" foo \""), $this->parser->getStatements());
     }
     // }}}
-    // {{{ testEndOfStatement
-    public function testEndOfStatement()
-    {
-        $this->assertTrue($this->parser->isEndOfStatement());
-        $this->parser->processLine("incomplete statment\n");
-        $this->assertFalse($this->parser->isEndOfStatement());
-        $this->parser->processLine("...completed;\n");
-        $this->assertTrue($this->parser->isEndOfStatement());
-        $this->parser->processLine("incomplete statment\n");
-        $this->assertFalse($this->parser->isEndOfStatement());
-    }
-    // }}}
 }

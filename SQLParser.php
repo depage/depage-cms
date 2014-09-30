@@ -32,6 +32,21 @@ class SQLParser
         $this->cleanUpStatements();
     }
     /* }}} */
+    /* {{{ process */
+    public function process($block = array())
+    {
+        $parsedBlock = array();
+
+        foreach($block as $number => $line) {
+            $this->processLine($line);
+            foreach($this->getStatements() as $statement) {
+                $parsedBlock[$number][] = $statement;
+            }
+        }
+
+        return $parsedBlock;
+    }
+    /* }}} */
     /* {{{ categorise */
     protected function categorise($line)
     {
@@ -137,12 +152,6 @@ class SQLParser
                 'string'    => $char,
             );
         }
-    }
-    /* }}} */
-    /* {{{ isEndOfStatment */
-    public function isEndOfStatement()
-    {
-        return (trim($this->processedString) == '') && ($this->categorised == array());
     }
     /* }}} */
     /* {{{ isComment */

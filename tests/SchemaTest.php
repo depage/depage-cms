@@ -14,9 +14,9 @@ class SchemaTestClass extends Schema
         return $this->sql;
     }
 
-    protected function execute($statement)
+    protected function execute($number, $statements)
     {
-        $this->executedStatements[] = $statement;
+        $this->executedStatements[$number] = $statements;
     }
 
     protected function currentTableVersion($tableName)
@@ -159,8 +159,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "ALTER TABLE test COMMENT 'version 0.2'",
+            10 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
+            13 => array("ALTER TABLE test COMMENT 'version 0.2'",),
         );
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
@@ -173,9 +173,9 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            "CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            "ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",
-            "ALTER TABLE test COMMENT 'version 0.2'",
+            6   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            10  => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",),
+            13  => array("ALTER TABLE test COMMENT 'version 0.2'",),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -189,8 +189,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            "CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            "CREATE VIEW testView AS SELECT id, name FROM testConnection WHERE someCondition=TRUE",
+            8   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            14  => array("CREATE VIEW testView AS SELECT id, name FROM testConnection WHERE someCondition=TRUE"),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -210,8 +210,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            "CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'",
-            "CREATE VIEW testPrefix_testView AS SELECT id, name FROM testPrefix_testConnection WHERE someCondition=TRUE",
+            8   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            14  => array("CREATE VIEW testPrefix_testView AS SELECT id, name FROM testPrefix_testConnection WHERE someCondition=TRUE"),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
