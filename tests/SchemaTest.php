@@ -46,16 +46,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test (\n",
                     5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    7   => "\n",
+                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
+                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    8   => "\n",
                 ),
                 'version 0.2' => array(
-                    8   => "# @version version 0.2\n",
-                    9   => "    ALTER TABLE test\n",
-                    10  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    11  => "\n",
-                    12  => "    ALTER TABLE test\n",
-                    13  => "    COMMENT 'version 0.2';\n",
+                    9   => "# @version version 0.2\n",
+                    10  => "    ALTER TABLE test\n",
+                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    12  => "\n",
+                    13  => "    ALTER TABLE test\n",
+                    14  => "    COMMENT 'version 0.2';\n",
                 ),
             ),
         );
@@ -73,16 +74,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test (\n",
                     5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    7   => "\n",
+                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
+                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    8   => "\n",
                 ),
                 'version 0.2' => array(
-                    8   => "# @version version 0.2\n",
-                    9   => "    ALTER TABLE test\n",
-                    10  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    11  => "\n",
-                    12  => "    ALTER TABLE test\n",
-                    13  => "    COMMENT 'version 0.2';\n",
+                    9   => "# @version version 0.2\n",
+                    10  => "    ALTER TABLE test\n",
+                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    12  => "\n",
+                    13  => "    ALTER TABLE test\n",
+                    14  => "    COMMENT 'version 0.2';\n",
                 ),
             ),
             'fixtures/TestFile2.sql' => array(
@@ -90,16 +92,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test2 (\n",
                     5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    7   => "\n",
+                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
+                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
+                    8   => "\n",
                 ),
                 'version 0.2' => array(
-                    8   => "# @version version 0.2\n",
-                    9   => "    ALTER TABLE test2\n",
-                    10  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    11  => "\n",
-                    12  => "    ALTER TABLE test2\n",
-                    13  => "    COMMENT 'version 0.2';\n",
+                    9   => "# @version version 0.2\n",
+                    10  => "    ALTER TABLE test2\n",
+                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
+                    12  => "\n",
+                    13  => "    ALTER TABLE test2\n",
+                    14  => "    COMMENT 'version 0.2';\n",
                 ),
             ),
         );
@@ -170,8 +173,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            10 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
-            13 => array("ALTER TABLE test COMMENT 'version 0.2'",),
+            11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
+            14 => array("ALTER TABLE test COMMENT 'version 0.2'",),
         );
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
@@ -184,9 +187,9 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            6   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
-            10  => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",),
-            13  => array("ALTER TABLE test COMMENT 'version 0.2'",),
+            7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            11  => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",),
+            14  => array("ALTER TABLE test COMMENT 'version 0.2'",),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -200,8 +203,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            8   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
-            14  => array("CREATE VIEW testView AS SELECT id, name FROM testConnection WHERE someCondition=TRUE"),
+            9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            15  => array("CREATE VIEW testView AS SELECT id, name FROM testConnection WHERE someCondition=TRUE"),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -221,8 +224,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->update();
 
         $expected = array(
-            8   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
-            14  => array("CREATE VIEW testPrefix_testView AS SELECT id, name FROM testPrefix_testConnection WHERE someCondition=TRUE"),
+            9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
+            15  => array("CREATE VIEW testPrefix_testView AS SELECT id, name FROM testPrefix_testConnection WHERE someCondition=TRUE"),
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
