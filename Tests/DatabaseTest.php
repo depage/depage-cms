@@ -20,8 +20,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->schema->load('Fixtures/TestFile.sql');
         $this->schema->update();
 
-        $query      = 'SHOW CREATE TABLE test';
-        $statement  = $this->pdo->query($query);
+        $statement  = $this->pdo->query('SHOW CREATE TABLE test');
         $statement->execute();
         $row        = $statement->fetch();
 
@@ -32,6 +31,39 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.2'";
 
         $this->assertEquals($expected, $row['Create Table']);
+    }
+    // }}}
+    // {{{ testVersionIdentifierMissingException
+    public function testVersionIdentifierMissingException()
+    {
+        // create table without version comment
+        $preparedStatement = $this->pdo->prepare("CREATE TABLE test (uid int(10) unsigned NOT NULL DEFAULT '0') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $preparedStatement->execute();
+
+        // check if it's really there
+        $statement  = $this->pdo->query('SHOW CREATE TABLE test');
+        $statement->execute();
+        $row        = $statement->fetch();
+
+        $expected   = "CREATE TABLE `test` (\n  `uid` int(10) unsigned NOT NULL DEFAULT '0'\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        $this->assertEquals($expected, $row['Create Table']);
+
+        // trigger exception
+        try {
+            $this->schema->load('Fixtures/TestFile.sql');
+            $this->schema->update();
+        } catch (Exceptions\VersionIdentifierMissingException $expeceted) {
+            return;
+        }
+        $this->fail('Expected VersionIdentifierMissingException');
+    }
+    // }}}
+
+    // {{{ tearDown
+    public function tearDown()
+    {
+        $preparedStatement = $this->pdo->prepare('DROP TABLE test');
+        $preparedStatement->execute();
     }
     // }}}
 }

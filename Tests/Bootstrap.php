@@ -6,6 +6,7 @@ require_once('../Exceptions/FileNotFoundException.php');
 require_once('../Exceptions/TableNameMissingException.php');
 require_once('../Exceptions/UnversionedCodeException.php');
 require_once('../Exceptions/MultipleTableNamesException.php');
+require_once('../Exceptions/VersionIdentifierMissingException.php');
 
 /* {{{ Generic_Tests_DatabaseTestCase */
 abstract class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase

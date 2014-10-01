@@ -109,12 +109,8 @@ class Schema
         $row        = $statement->fetch();
         $version    = '';
 
-        if ($row) {
-            $version = $row['TABLE_COMMENT'];
-
-            if ($version == '') {
-                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
-            }
+        if ($row && $row['TABLE_COMMENT'] == '') {
+            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
         }
 
         return $version;
