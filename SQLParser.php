@@ -37,9 +37,9 @@ class SQLParser
     {
         $parsedBlock = array();
 
-        foreach($block as $number => $line) {
+        foreach ($block as $number => $line) {
             $this->parseLine($line);
-            foreach($this->getStatements() as $statement) {
+            foreach ($this->getStatements() as $statement) {
                 $parsedBlock[$number][] = $statement;
             }
         }
@@ -106,7 +106,7 @@ class SQLParser
     {
         $this->finished = array();
 
-        foreach($this->categorised as $statement) {
+        foreach ($this->categorised as $statement) {
             $type = $statement['type'];
 
             if ($type == 'code') {

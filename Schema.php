@@ -37,16 +37,17 @@ class Schema
     {
         $this->fileNames = glob($path);
 
-        if (empty($this->fileNames))
+        if (empty($this->fileNames)) {
             throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
+        }
 
-        foreach($this->fileNames as $fileName) {
+        foreach ($this->fileNames as $fileName) {
             $contents       = file($fileName);
             $lastVersion    = 0;
             $number         = 1;
             $parser         = new SQLParser();
 
-            foreach($contents as $line) {
+            foreach ($contents as $line) {
                 $version = $this->extractTag($line, self::VERSION_TAG);
                 if ($version) {
                     $this->sql[$fileName][$version][$number] = $line;
@@ -55,8 +56,10 @@ class Schema
                     $this->sql[$fileName][$lastVersion][$number] = $line;
                 } else {
                     $parser->parseLine($line);
-                    if (!$parser->isEndOfStatement())
+
+                    if (!$parser->isEndOfStatement()) {
                         throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\".");
+                    }
                 }
 
                 $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
@@ -76,8 +79,9 @@ class Schema
                 $number++;
             }
 
-            if (empty($this->tableNames[$fileName]))
+            if (empty($this->tableNames[$fileName])) {
                 throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+            }
         }
     }
     /* }}} */
@@ -108,8 +112,9 @@ class Schema
         if ($row) {
             $version = $row['TABLE_COMMENT'];
 
-            if ($version == '')
+            if ($version == '') {
                 throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+            }
         }
 
         return $version;
@@ -132,16 +137,16 @@ class Schema
     /* {{{ update */
     public function update()
     {
-        foreach($this->fileNames as $fileName) {
+        foreach ($this->fileNames as $fileName) {
             $tableName      = $this->tableNames[$fileName];
             $currentVersion = $this->currentTableVersion($this->replace($tableName));
             $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
             $block          = array();
 
             // @todo refactor -> extractNewCode
-            foreach($this->sql[$fileName] as $version => $sql) {
+            foreach ($this->sql[$fileName] as $version => $sql) {
                 if ($new) {
-                    foreach($sql as $number => $line) {
+                    foreach ($sql as $number => $line) {
                         $block[$number] = $line;
                     }
                 } else {
@@ -153,12 +158,12 @@ class Schema
             $names[]    = $tableName;
             $parser     = new SQLParser();
 
-            foreach($names as $name) {
+            foreach ($names as $name) {
                 $dictionary[$name] = $this->replace($name);
             }
             $parser->replace(array_keys($dictionary), $dictionary);
 
-            foreach($parser->parse($block) as $number => $statements) {
+            foreach ($parser->parse($block) as $number => $statements) {
                 $this->execute($number, $statements);
             }
         }
@@ -166,7 +171,7 @@ class Schema
     /* }}} */
     /* {{{ execute */
     protected function execute($number, $statements) {
-        foreach($statements as $statement) {
+        foreach ($statements as $statement) {
             try {
                 $preparedStatement = $this->pdo->prepare($statement);
                 $preparedStatement->execute();
