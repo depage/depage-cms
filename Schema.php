@@ -102,10 +102,15 @@ class Schema
         $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
         $statement  = $this->pdo->query($query);
         $statement->execute();
-        $version    = $statement->fetch()['TABLE_COMMENT'];
+        $row        = $statement->fetch();
+        $version    = '';
 
-        if ($version == '')
-            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+        if ($row) {
+            $version = $row['TABLE_COMMENT'];
+
+            if ($version == '')
+                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+        }
 
         return $version;
     }
@@ -162,8 +167,12 @@ class Schema
     /* {{{ execute */
     protected function execute($number, $statements) {
         foreach($statements as $statement) {
-            $preparedStatement = $this->pdo->prepare($statement);
-            $preparedStatement->execute();
+            try {
+                $preparedStatement = $this->pdo->prepare($statement);
+                $preparedStatement->execute();
+            } catch (\PDOException $e) {
+                throw new Exceptions\SQLExecutionException($e, $number, $statement);
+            }
         }
     }
     /* }}} */
