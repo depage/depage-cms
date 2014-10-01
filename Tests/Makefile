@@ -1,7 +1,7 @@
 RM = rm -rf
 
 test:
-	phpunit --bootstrap bootstrap.php --coverage-html phpunit/ .
+	phpunit --bootstrap Bootstrap.php --coverage-html PHPUnit/ .
 
 clean:
-	${RM} phpunit
+	${RM} PHPUnit

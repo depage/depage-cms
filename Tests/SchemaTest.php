@@ -38,10 +38,10 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testLoad
     public function testLoad()
     {
-        $this->schema->load('fixtures/TestFile.sql');
+        $this->schema->load('Fixtures/TestFile.sql');
 
         $expected = array(
-            'fixtures/TestFile.sql' => array(
+            'Fixtures/TestFile.sql' => array(
                 'version 0.1' => array(
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test (\n",
@@ -66,10 +66,10 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // {{{ testLoadMultipleFiles
     public function testLoadMultipleFiles()
     {
-        $this->schema->load('fixtures/TestFile*.sql');
+        $this->schema->load('Fixtures/TestFile*.sql');
 
         $expected = array(
-            'fixtures/TestFile.sql' => array(
+            'Fixtures/TestFile.sql' => array(
                 'version 0.1' => array(
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test (\n",
@@ -87,7 +87,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                     14  => "    COMMENT 'version 0.2';\n",
                 ),
             ),
-            'fixtures/TestFile2.sql' => array(
+            'Fixtures/TestFile2.sql' => array(
                 'version 0.1' => array(
                     3   => "# @version version 0.1\n",
                     4   => "    CREATE TABLE test2 (\n",
@@ -124,7 +124,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testLoadNoTableName()
     {
         try {
-            $this->schema->load('fixtures/TestNoTableName.sql');
+            $this->schema->load('Fixtures/TestNoTableName.sql');
         } catch (Exceptions\TableNameMissingException $expeceted) {
             return;
         }
@@ -135,7 +135,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testLoadMultipleTableNames()
     {
         try {
-            $this->schema->load('fixtures/TestMultipleTableNames.sql');
+            $this->schema->load('Fixtures/TestMultipleTableNames.sql');
         } catch (Exceptions\MultipleTableNamesException $expeceted) {
             return;
         }
@@ -146,7 +146,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testLoadUnversionedCode()
     {
         try {
-            $this->schema->load('fixtures/TestUnversionedCode.sql');
+            $this->schema->load('Fixtures/TestUnversionedCode.sql');
         } catch (Exceptions\UnversionedCodeException $expeceted) {
             return;
         }
@@ -158,7 +158,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessNewestVersion()
     {
         $this->schema->currentTableVersion = 'version 0.2';
-        $this->schema->load('fixtures/TestFile.sql');
+        $this->schema->load('Fixtures/TestFile.sql');
         $this->schema->update();
 
         $expected = array();
@@ -169,7 +169,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessUpdate()
     {
         $this->schema->currentTableVersion = 'version 0.1';
-        $this->schema->load('fixtures/TestFile.sql');
+        $this->schema->load('Fixtures/TestFile.sql');
         $this->schema->update();
 
         $expected = array(
@@ -183,7 +183,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessEntireFile()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->load('fixtures/TestFile.sql');
+        $this->schema->load('Fixtures/TestFile.sql');
         $this->schema->update();
 
         $expected = array(
@@ -199,7 +199,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessConnections()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->load('fixtures/TestConnections.sql');
+        $this->schema->load('Fixtures/TestConnections.sql');
         $this->schema->update();
 
         $expected = array(
@@ -214,7 +214,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessPrefixes()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->load('fixtures/TestConnections.sql');
+        $this->schema->load('Fixtures/TestConnections.sql');
         $this->schema->setReplace(
             function ($tableName) {
                 return 'testPrefix_' . $tableName;
