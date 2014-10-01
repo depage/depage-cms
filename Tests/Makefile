@@ -1,7 +1,7 @@
 RM = rm -rf
 
 test:
-	phpunit --bootstrap Bootstrap.php --coverage-html PHPUnit/ .
+	phpunit --configuration PHPUnit.xml --bootstrap Bootstrap.php --coverage-html PHPUnit/ .
 
 clean:
 	${RM} PHPUnit
