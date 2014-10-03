@@ -5,6 +5,13 @@ use depage\DB\Exceptions;
 
 class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 {
+    // {{{ dropTestTable
+    public function dropTestTable()
+    {
+        $preparedStatement = $this->pdo->prepare('DROP TABLE test');
+        $preparedStatement->execute();
+    }
+    // }}}
     // {{{ setUp
     public function setUp()
     {
@@ -13,12 +20,17 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->schema   = new Schema($this->pdo);
     }
     // }}}
+    // {{{ tearDown
+    public function tearDown()
+    {
+        $this->dropTestTable();
+    }
+    // }}}
 
     // {{{ testUpdateAndExecute
     public function testUpdateAndExecute()
     {
         $this->schema->load('Fixtures/TestFile.sql');
-        $this->schema->update();
 
         $statement  = $this->pdo->query('SHOW CREATE TABLE test');
         $statement->execute();
@@ -51,19 +63,10 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         // trigger exception
         try {
             $this->schema->load('Fixtures/TestFile.sql');
-            $this->schema->update();
         } catch (Exceptions\VersionIdentifierMissingException $expeceted) {
             return;
         }
         $this->fail('Expected VersionIdentifierMissingException');
-    }
-    // }}}
-
-    // {{{ tearDown
-    public function tearDown()
-    {
-        $preparedStatement = $this->pdo->prepare('DROP TABLE test');
-        $preparedStatement->execute();
     }
     // }}}
 }

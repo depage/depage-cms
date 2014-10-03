@@ -18,10 +18,6 @@ class Schema
     const VERSION_TAG       = '@version';
     /* }}} */
     /* {{{ variables */
-    protected $tableNames       = array();
-    protected $connections      = array();
-    protected $fileNames        = array();
-    protected $sql              = array();
     protected $replaceFunction  = array();
     /* }}} */
 
@@ -43,44 +39,74 @@ class Schema
 
         foreach ($this->fileNames as $fileName) {
             $contents       = file($fileName);
-            $lastVersion    = 0;
             $number         = 1;
             $parser         = new SQLParser();
+            $header         = true;
+            $versions       = array();
+            $tableName;
 
             foreach ($contents as $line) {
-                $version = $this->extractTag($line, self::VERSION_TAG);
-                if ($version) {
-                    $this->sql[$fileName][$version][$number] = $line;
-                    $lastVersion = $version;
-                } elseif ($lastVersion) {
-                    $this->sql[$fileName][$lastVersion][$number] = $line;
-                } else {
-                    $parser->parseLine($line);
+                // @todo refactor extract tags method
+                $versionTag = $this->extractTag($line, self::VERSION_TAG);
+                if ($versionTag) {
+                    $versions[$versionTag] = $number;
+                }
+                $parser->parseLine($line);
+
+                if ($header) {
+                    $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
+                    if ($tableNameTag) {
+                        if (isset($tableName)) {
+                            throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
+                        } else {
+                            $tableName = $tableNameTag;
+                            $parser->replace($tableName, $this->replace($tableName));
+                        }
+                    }
+                    $connectionTag = $this->extractTag($line, self::CONNECTION_TAG);
+                    if ($connectionTag) {
+                        $parser->replace($connectionTag, $this->replace($connectionTag));
+                    }
 
                     if (!$parser->isEndOfStatement()) {
-                        throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\".");
+                        $header = false;
+                        if (!isset($tableName)) {
+                            throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+                        }
+                        if (empty($versions)) {
+                            throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                        }
                     }
                 }
 
-                $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
-                if ($tableNameTag) {
-                    if (isset($this->tableNames[$fileName])) {
-                        throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
-                    } else {
-                        $this->tableNames[$fileName] = $tableNameTag;
-                    }
-                }
-
-                $connectionTag = $this->extractTag($line, self::CONNECTION_TAG);
-                if ($connectionTag) {
-                    $this->connections[$fileName][] = $connectionTag;
+                $statements = $parser->getStatements();
+                if ($statements) {
+                    $statementBlock[$number] = $statements;
                 }
 
                 $number++;
             }
 
-            if (empty($this->tableNames[$fileName])) {
-                throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+            $currentVersion = $this->currentTableVersion($this->replace($tableName));
+            $keys           = array_keys($versions);
+            $search         = array_search($currentVersion, $keys);
+
+            if ($search === false) {
+                $startKey = $keys[0];
+            } elseif ($search == count($keys) - 1) {
+                $startKey = false;
+            } else {
+                $startKey = $keys[$search + 1];
+            }
+
+            if ($startKey !== false) {
+                $startLine = $versions[$startKey];
+
+                foreach ($statementBlock as $lineNumber => $statements) {
+                    if ($lineNumber >= $startLine) {
+                        $this->execute($lineNumber, $statements);
+                    }
+                }
             }
         }
     }
@@ -107,7 +133,7 @@ class Schema
         $statement  = $this->pdo->query($query);
         $statement->execute();
         $row        = $statement->fetch();
-        $version    = '';
+        $version    = $row['TABLE_COMMENT'];
 
         if ($row && $row['TABLE_COMMENT'] == '') {
             throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
@@ -128,41 +154,6 @@ class Schema
         }
 
         return $tableName;
-    }
-    /* }}} */
-    /* {{{ update */
-    public function update()
-    {
-        foreach ($this->fileNames as $fileName) {
-            $tableName      = $this->tableNames[$fileName];
-            $currentVersion = $this->currentTableVersion($this->replace($tableName));
-            $new            = (!array_key_exists($currentVersion, $this->sql[$fileName]));
-            $block          = array();
-
-            // @todo refactor -> extractNewCode
-            foreach ($this->sql[$fileName] as $version => $sql) {
-                if ($new) {
-                    foreach ($sql as $number => $line) {
-                        $block[$number] = $line;
-                    }
-                } else {
-                    $new = ($version == $currentVersion);
-                }
-            }
-
-            $names      = (isset($this->connections[$fileName])) ? $this->connections[$fileName] : array();
-            $names[]    = $tableName;
-            $parser     = new SQLParser();
-
-            foreach ($names as $name) {
-                $dictionary[$name] = $this->replace($name);
-            }
-            $parser->replace(array_keys($dictionary), $dictionary);
-
-            foreach ($parser->parse($block) as $number => $statements) {
-                $this->execute($number, $statements);
-            }
-        }
     }
     /* }}} */
     /* {{{ execute */

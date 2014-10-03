@@ -132,8 +132,8 @@ class SQLParser
     /* {{{ replace */
     public function replace($search, $replace)
     {
-        $this->search   = $search;
-        $this->replace  = $replace;
+        $this->search[]     = $search;
+        $this->replace[]    = $replace;
     }
     /* }}} */
     /* {{{ append */

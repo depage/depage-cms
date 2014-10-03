@@ -9,11 +9,6 @@ class SchemaTestClass extends Schema
     public $executedStatements = array();
     public $currentTableVersion;
 
-    public function getSql()
-    {
-        return $this->sql;
-    }
-
     protected function execute($number, $statements)
     {
         $this->executedStatements[$number] = $statements;
@@ -35,80 +30,6 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testLoad
-    public function testLoad()
-    {
-        $this->schema->load('Fixtures/TestFile.sql');
-
-        $expected = array(
-            'Fixtures/TestFile.sql' => array(
-                'version 0.1' => array(
-                    3   => "# @version version 0.1\n",
-                    4   => "    CREATE TABLE test (\n",
-                    5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
-                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    8   => "\n",
-                ),
-                'version 0.2' => array(
-                    9   => "# @version version 0.2\n",
-                    10  => "    ALTER TABLE test\n",
-                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    12  => "\n",
-                    13  => "    ALTER TABLE test\n",
-                    14  => "    COMMENT 'version 0.2';\n",
-                ),
-            ),
-        );
-        $this->assertEquals($expected, $this->schema->getSql());
-    }
-    // }}}
-    // {{{ testLoadMultipleFiles
-    public function testLoadMultipleFiles()
-    {
-        $this->schema->load('Fixtures/TestFile*.sql');
-
-        $expected = array(
-            'Fixtures/TestFile.sql' => array(
-                'version 0.1' => array(
-                    3   => "# @version version 0.1\n",
-                    4   => "    CREATE TABLE test (\n",
-                    5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
-                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    8   => "\n",
-                ),
-                'version 0.2' => array(
-                    9   => "# @version version 0.2\n",
-                    10  => "    ALTER TABLE test\n",
-                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    12  => "\n",
-                    13  => "    ALTER TABLE test\n",
-                    14  => "    COMMENT 'version 0.2';\n",
-                ),
-            ),
-            'Fixtures/TestFile2.sql' => array(
-                'version 0.1' => array(
-                    3   => "# @version version 0.1\n",
-                    4   => "    CREATE TABLE test2 (\n",
-                    5   => "        uid int(10) unsigned NOT NULL DEFAULT '0',\n",
-                    6   => "        pid int(10) unsigned NOT NULL DEFAULT '0'\n",
-                    7   => "    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1';\n",
-                    8   => "\n",
-                ),
-                'version 0.2' => array(
-                    9   => "# @version version 0.2\n",
-                    10  => "    ALTER TABLE test2\n",
-                    11  => "    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;\n",
-                    12  => "\n",
-                    13  => "    ALTER TABLE test2\n",
-                    14  => "    COMMENT 'version 0.2';\n",
-                ),
-            ),
-        );
-        $this->assertEquals($expected, $this->schema->getSql());
-    }
-    // }}}
     // {{{ testLoadNoFile
     public function testLoadNoFile()
     {
@@ -159,7 +80,6 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = 'version 0.2';
         $this->schema->load('Fixtures/TestFile.sql');
-        $this->schema->update();
 
         $expected = array();
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -170,7 +90,6 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = 'version 0.1';
         $this->schema->load('Fixtures/TestFile.sql');
-        $this->schema->update();
 
         $expected = array(
             11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
@@ -184,7 +103,6 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->load('Fixtures/TestFile.sql');
-        $this->schema->update();
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
@@ -200,7 +118,6 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->load('Fixtures/TestConnections.sql');
-        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
@@ -214,14 +131,12 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessPrefixes()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->load('Fixtures/TestConnections.sql');
         $this->schema->setReplace(
             function ($tableName) {
                 return 'testPrefix_' . $tableName;
             }
         );
-
-        $this->schema->update();
+        $this->schema->load('Fixtures/TestConnections.sql');
 
         $expected = array(
             9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'"),
