@@ -28,34 +28,37 @@ class Schema
     }
     /* }}} */
 
-    /* {{{ load */
-    public function load($path)
+    /* {{{ getFileNames */
+    protected function getFileNames($path)
     {
-        $this->fileNames = glob($path);
+        $fileNames = glob($path);
 
-        if (empty($this->fileNames)) {
+        if (empty($fileNames)) {
             throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
         }
 
-        foreach ($this->fileNames as $fileName) {
-            $contents       = file($fileName);
+        return $fileNames;
+    }
+    /* }}} */
+    /* {{{ load */
+    public function load($path)
+    {
+        foreach ($this->getFileNames($path) as $fileName) {
             $parser         = new SQLParser();
             $header         = true;
             $versions       = array();
             $tableName;
 
-            foreach ($contents as $key => $line) {
+            foreach (file($fileName) as $key => $line) {
                 $number = $key + 1;
-
-                $versionTag = $this->extractTag($line, self::VERSION_TAG);
-                if ($versionTag) {
-                    $versions[$versionTag] = $number;
-                }
                 $parser->parseLine($line);
 
+                if ($versionTag = $this->extractTag($line, self::VERSION_TAG)) {
+                    $versions[$versionTag] = $number;
+                }
+
                 if ($header) {
-                    $tableNameTag = $this->extractTag($line, self::TABLENAME_TAG);
-                    if ($tableNameTag) {
+                    if ($tableNameTag = $this->extractTag($line, self::TABLENAME_TAG)) {
                         if (isset($tableName)) {
                             throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
                         } else {
@@ -63,8 +66,8 @@ class Schema
                             $parser->replace($tableName, $this->replace($tableName));
                         }
                     }
-                    $connectionTag = $this->extractTag($line, self::CONNECTION_TAG);
-                    if ($connectionTag) {
+
+                    if ($connectionTag = $this->extractTag($line, self::CONNECTION_TAG)) {
                         $parser->replace($connectionTag, $this->replace($connectionTag));
                     }
 
@@ -79,8 +82,7 @@ class Schema
                     }
                 }
 
-                $statements = $parser->getStatements();
-                if ($statements) {
+                if ($statements = $parser->getStatements()) {
                     $statementBlock[$number] = $statements;
                 }
             }
