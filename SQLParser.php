@@ -32,21 +32,6 @@ class SQLParser
         $this->cleanUpStatements();
     }
     /* }}} */
-    /* {{{ parse */
-    public function parse($block = array())
-    {
-        $parsedBlock = array();
-
-        foreach ($block as $number => $line) {
-            $this->parseLine($line);
-            foreach ($this->getStatements() as $statement) {
-                $parsedBlock[$number][] = $statement;
-            }
-        }
-
-        return $parsedBlock;
-    }
-    /* }}} */
     /* {{{ categorise */
     protected function categorise($line)
     {

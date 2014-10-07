@@ -39,14 +39,14 @@ class Schema
 
         foreach ($this->fileNames as $fileName) {
             $contents       = file($fileName);
-            $number         = 1;
             $parser         = new SQLParser();
             $header         = true;
             $versions       = array();
             $tableName;
 
-            foreach ($contents as $line) {
-                // @todo refactor extract tags method
+            foreach ($contents as $key => $line) {
+                $number = $key + 1;
+
                 $versionTag = $this->extractTag($line, self::VERSION_TAG);
                 if ($versionTag) {
                     $versions[$versionTag] = $number;
@@ -83,8 +83,6 @@ class Schema
                 if ($statements) {
                     $statementBlock[$number] = $statements;
                 }
-
-                $number++;
             }
 
             $currentVersion = $this->currentTableVersion($this->replace($tableName));
