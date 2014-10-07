@@ -15,20 +15,21 @@ class SQLParser
     /* {{{ variables */
     protected $categorised      = array();
     protected $finished         = array();
+    protected $replace          = array();
     protected $hash             = false;
     protected $doubleDash       = false;
     protected $multiLine        = false;
     protected $singleQuote      = false;
     protected $doubleQuote      = false;
     protected $parsedString     = '';
-    protected $search           = '';
-    protected $replace          = '';
     /* }}} */
 
     /* {{{ parseLine */
     public function parseLine($line)
     {
+        $this->categorised = array();
         $this->categorise($line);
+
         $this->cleanUpStatements();
     }
     /* }}} */
@@ -95,7 +96,7 @@ class SQLParser
             $type = $statement['type'];
 
             if ($type == 'code') {
-                $append = str_replace($this->search, $this->replace, $statement['string']);
+                $append = str_replace(array_keys($this->replace), $this->replace, $statement['string']);
                 $append = preg_replace('/\s+/', ' ', $append);
 
                 if (substr($this->parsedString, -1) == ' ' && $append[0] == ' ') {
@@ -111,14 +112,12 @@ class SQLParser
             }
         }
 
-        $this->categorised = array();
     }
     /* }}} */
     /* {{{ replace */
     public function replace($search, $replace)
     {
-        $this->search[]     = $search;
-        $this->replace[]    = $replace;
+        $this->replace[$search] = $replace;
     }
     /* }}} */
     /* {{{ append */
@@ -154,7 +153,7 @@ class SQLParser
     /* {{{ isEndOfStatment */
     public function isEndOfStatement()
     {
-        return (trim($this->parsedString) == '') && ($this->categorised == array());
+        return (trim($this->parsedString) == '');
     }
     /* }}} */
 }
