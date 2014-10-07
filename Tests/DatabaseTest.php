@@ -8,8 +8,11 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ dropTestTable
     public function dropTestTable()
     {
-        $preparedStatement = $this->pdo->prepare('DROP TABLE test');
-        $preparedStatement->execute();
+        // table might not exist. so we catch the exception
+        try {
+            $preparedStatement = $this->pdo->prepare('DROP TABLE test');
+            $preparedStatement->execute();
+        } catch (\PDOException $expeceted) {}
     }
     // }}}
     // {{{ setUp
@@ -18,6 +21,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         parent::setUp();
         $this->pdo      = self::$pdo;
         $this->schema   = new Schema($this->pdo);
+        $this->dropTestTable();
     }
     // }}}
     // {{{ tearDown
@@ -67,6 +71,18 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
             return;
         }
         $this->fail('Expected VersionIdentifierMissingException');
+    }
+    // }}}
+    // {{{ testSQLExecutionException
+    public function testSQLExecutionException()
+    {
+        // trigger exception
+        try {
+            $this->schema->load('Fixtures/TestSyntaxErrorFile.sql');
+        } catch (Exceptions\SQLExecutionException $expeceted) {
+            return;
+        }
+        $this->fail('Expected SQLExecutionException');
     }
     // }}}
 }
