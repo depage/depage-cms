@@ -19,7 +19,6 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->pdo      = self::$pdo;
         $this->schema   = new Schema($this->pdo);
         $this->dropTestTable();
     }

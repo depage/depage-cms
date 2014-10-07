@@ -107,6 +107,9 @@ class Schema
                         $this->execute($lineNumber, $statements);
                     }
                 }
+
+                $lastVersion = $keys[count($keys) - 1];
+                $this->updateTableVersion($this->replace($tableName), $lastVersion);
             }
         }
     }
@@ -165,7 +168,17 @@ class Schema
             } catch (\PDOException $e) {
                 throw new Exceptions\SQLExecutionException($e, $number, $statement);
             }
+
         }
+    }
+    /* }}} */
+    /* {{{ updateTableVersion */
+    protected function updateTableVersion($tableName, $version)
+    {
+        $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
+
+        $preparedStatement = $this->pdo->prepare($statement);
+        $preparedStatement->execute();
     }
     /* }}} */
 }
