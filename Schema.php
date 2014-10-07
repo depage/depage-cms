@@ -86,31 +86,36 @@ class Schema
                     $statementBlock[$number] = $statements;
                 }
             }
+            $this->update($this->replace($tableName), $statementBlock, $versions);
+        }
+    }
+    /* }}} */
+    /* {{{ update */
+    protected function update($tableName, $statementBlock, $versions)
+    {
+        $currentVersion = $this->currentTableVersion($tableName);
+        $keys           = array_keys($versions);
+        $search         = array_search($currentVersion, $keys);
 
-            $currentVersion = $this->currentTableVersion($this->replace($tableName));
-            $keys           = array_keys($versions);
-            $search         = array_search($currentVersion, $keys);
+        if ($search === false) {
+            $startKey = $keys[0];
+        } elseif ($search == count($keys) - 1) {
+            $startKey = false;
+        } else {
+            $startKey = $keys[$search + 1];
+        }
 
-            if ($search === false) {
-                $startKey = $keys[0];
-            } elseif ($search == count($keys) - 1) {
-                $startKey = false;
-            } else {
-                $startKey = $keys[$search + 1];
-            }
+        if ($startKey !== false) {
+            $startLine = $versions[$startKey];
 
-            if ($startKey !== false) {
-                $startLine = $versions[$startKey];
-
-                foreach ($statementBlock as $lineNumber => $statements) {
-                    if ($lineNumber >= $startLine) {
-                        $this->execute($lineNumber, $statements);
-                    }
+            foreach ($statementBlock as $lineNumber => $statements) {
+                if ($lineNumber >= $startLine) {
+                    $this->execute($lineNumber, $statements);
                 }
-
-                $lastVersion = $keys[count($keys) - 1];
-                $this->updateTableVersion($this->replace($tableName), $lastVersion);
             }
+
+            $lastVersion = $keys[count($keys) - 1];
+            $this->updateTableVersion($tableName, $lastVersion);
         }
     }
     /* }}} */

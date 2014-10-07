@@ -106,8 +106,8 @@ class SQLParser
             } elseif ($type == 'string') {
                 $this->parsedString .= $statement['string'];
             } elseif ($type == 'break') {
-                $this->finished[]       = trim($this->parsedString);
-                $this->parsedString  = '';
+                $this->finished[]   = trim($this->parsedString);
+                $this->parsedString = '';
             }
         }
 
