@@ -12,23 +12,23 @@ namespace depage\DB;
 
 class Schema
 {
-    /* {{{ constants */
+    // {{{ constants
     const TABLENAME_TAG     = '@tablename';
     const CONNECTION_TAG    = '@connection';
     const VERSION_TAG       = '@version';
-    /* }}} */
-    /* {{{ variables */
+    // }}}
+    // {{{ variables
     protected $replaceFunction  = array();
-    /* }}} */
+    // }}}
 
-    /* {{{ constructor */
+    // {{{ constructor
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
     }
-    /* }}} */
+    // }}}
 
-    /* {{{ getFileNames */
+    // {{{ getFileNames
     protected function getFileNames($path)
     {
         $fileNames = glob($path);
@@ -39,8 +39,8 @@ class Schema
 
         return $fileNames;
     }
-    /* }}} */
-    /* {{{ load */
+    // }}}
+    // {{{ load
     public function load($path)
     {
         foreach ($this->getFileNames($path) as $fileName) {
@@ -94,8 +94,8 @@ class Schema
             $this->update($this->replace($tableName), $statementBlock, $versions);
         }
     }
-    /* }}} */
-    /* {{{ update */
+    // }}}
+    // {{{ update
     protected function update($tableName, $statementBlock, $versions)
     {
         $currentVersion = $this->currentTableVersion($tableName);
@@ -123,8 +123,8 @@ class Schema
             $this->updateTableVersion($tableName, $lastVersion);
         }
     }
-    /* }}} */
-    /* {{{ extractTag */
+    // }}}
+    // {{{ extractTag
     protected function extractTag($categorised = array())
     {
         $tags = array(
@@ -150,8 +150,8 @@ class Schema
 
         return $matchedTags;
     }
-    /* }}} */
-    /* {{{ currentTableVersion */
+    // }}}
+    // {{{ currentTableVersion
     protected function currentTableVersion($tableName)
     {
         $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
@@ -166,13 +166,13 @@ class Schema
 
         return $version;
     }
-    /* }}} */
-    /* {{{ setReplace */
+    // }}}
+    // {{{ setReplace
     public function setReplace($replaceFunction) {
         $this->replaceFunction = $replaceFunction;
     }
-    /* }}} */
-    /* {{{ replace */
+    // }}}
+    // {{{ replace
     protected function replace($tableName) {
         if (is_callable($this->replaceFunction)) {
             $tableName = call_user_func($this->replaceFunction, $tableName);
@@ -180,8 +180,8 @@ class Schema
 
         return $tableName;
     }
-    /* }}} */
-    /* {{{ execute */
+    // }}}
+    // {{{ execute
     protected function execute($number, $statements) {
         foreach ($statements as $statement) {
             try {
@@ -193,8 +193,8 @@ class Schema
 
         }
     }
-    /* }}} */
-    /* {{{ updateTableVersion */
+    // }}}
+    // {{{ updateTableVersion
     protected function updateTableVersion($tableName, $version)
     {
         $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
@@ -202,6 +202,7 @@ class Schema
         $preparedStatement = $this->pdo->prepare($statement);
         $preparedStatement->execute();
     }
-    /* }}} */
+    // }}}
 }
+
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

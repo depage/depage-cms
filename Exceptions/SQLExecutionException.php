@@ -10,3 +10,5 @@ class SQLExecutionException extends \Exception
         parent::__construct($message);
     }
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

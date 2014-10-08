@@ -85,3 +85,5 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

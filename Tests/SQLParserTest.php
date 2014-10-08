@@ -232,8 +232,8 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('statement goes out'), $this->parser->getStatements());
     }
     // }}}
-    // {{{ testReplacementInStrings
-    public function testReplacementInStrings()
+    // {{{ testReplacingInStrings
+    public function testReplacingInStrings()
     {
         $this->parser->replace('foo', 'bar');
         $this->parser->parseLine("foo  ' foo '\" foo \";\n");
@@ -241,3 +241,5 @@ class SQLParserTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

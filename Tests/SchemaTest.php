@@ -3,7 +3,7 @@
 use depage\DB\Schema;
 use depage\DB\Exceptions;
 
-// {{{ SchemaTestClass
+/* {{{ SchemaTestClass */
 class SchemaTestClass extends Schema
 {
     public $executedStatements = array();
@@ -26,18 +26,18 @@ class SchemaTestClass extends Schema
         return $this->currentTableVersion;
     }
 }
-// }}}
+/* }}} */
 
 class SchemaTest extends PHPUnit_Framework_TestCase
 {
-    // {{{ setUp
+    /* {{{ setUp */
     public function setUp()
     {
         $this->schema = new SchemaTestClass('');
     }
-    // }}}
+    /* }}} */
 
-    // {{{ testLoadNoFile
+    /* {{{ testLoadNoFile */
     public function testLoadNoFile()
     {
         try {
@@ -47,8 +47,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         }
         $this->fail('Expected FileNotFoundException');
     }
-    // }}}
-    // {{{ testLoadNoTableName
+    /* }}} */
+    /* {{{ testLoadNoTableName */
     public function testLoadNoTableName()
     {
         try {
@@ -58,8 +58,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         }
         $this->fail('Expected TableNameMissingException');
     }
-    // }}}
-    // {{{ testLoadMultipleTableNames
+    /* }}} */
+    /* {{{ testLoadMultipleTableNames */
     public function testLoadMultipleTableNames()
     {
         try {
@@ -69,8 +69,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         }
         $this->fail('Expected MultipleTableNamesException');
     }
-    // }}}
-    // {{{ testLoadUnversionedCode
+    /* }}} */
+    /* {{{ testLoadUnversionedCode */
     public function testLoadUnversionedCode()
     {
         try {
@@ -80,8 +80,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         }
         $this->fail('Expected UnversionedCodeException');
     }
-    // }}}
-    // {{{ testLoadIncompleteFile
+    /* }}} */
+    /* {{{ testLoadIncompleteFile */
     public function testLoadIncompleteFile()
     {
         try {
@@ -91,9 +91,9 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         }
         $this->fail('Expected SyntaxErrorException');
     }
-    // }}}
+    /* }}} */
 
-    // {{{ testProcessNewestVersion
+    /* {{{ testProcessNewestVersion */
     public function testProcessNewestVersion()
     {
         $this->schema->currentTableVersion = 'version 0.2';
@@ -102,8 +102,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $expected = array();
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    // }}}
-    // {{{ testProcessUpdate
+    /* }}} */
+    /* {{{ testProcessUpdate */
     public function testProcessUpdate()
     {
         $this->schema->currentTableVersion = 'version 0.1';
@@ -114,8 +114,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    // }}}
-    // {{{ testProcessEntireFile
+    /* }}} */
+    /* {{{ testProcessEntireFile */
     public function testProcessEntireFile()
     {
         $this->schema->currentTableVersion = '';
@@ -128,8 +128,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    // }}}
-    // {{{ testProcessConnections
+    /* }}} */
+    /* {{{ testProcessConnections */
     public function testProcessConnections()
     {
         $this->schema->currentTableVersion = '';
@@ -142,8 +142,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    // }}}
-    // {{{ testProcessPrefixes
+    /* }}} */
+    /* {{{ testProcessPrefixes */
     public function testProcessPrefixes()
     {
         $this->schema->currentTableVersion = '';
@@ -161,5 +161,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    // }}}
+    /* }}} */
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
