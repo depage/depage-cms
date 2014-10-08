@@ -52,23 +52,24 @@ class Schema
             foreach (file($fileName) as $key => $line) {
                 $number = $key + 1;
                 $parser->parseLine($line);
+                $tag = $this->extractTag($parser->getCategorised());
 
-                if ($versionTag = $this->extractTag($line, self::VERSION_TAG)) {
-                    $versions[$versionTag] = $number;
+                if ($tag[self::VERSION_TAG]) {
+                    $versions[$tag[self::VERSION_TAG]] = $number;
                 }
 
                 if ($header) {
-                    if ($tableNameTag = $this->extractTag($line, self::TABLENAME_TAG)) {
+                    if ($tag[self::TABLENAME_TAG]) {
                         if (isset($tableName)) {
                             throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
                         } else {
-                            $tableName = $tableNameTag;
+                            $tableName = $tag[self::TABLENAME_TAG];
                             $parser->replace($tableName, $this->replace($tableName));
                         }
                     }
 
-                    if ($connectionTag = $this->extractTag($line, self::CONNECTION_TAG)) {
-                        $parser->replace($connectionTag, $this->replace($connectionTag));
+                    if ($tag[self::CONNECTION_TAG]) {
+                        $parser->replace($tag[self::CONNECTION_TAG], $this->replace($tag[self::CONNECTION_TAG]));
                     }
 
                     if (!$parser->isEndOfStatement()) {
@@ -120,18 +121,30 @@ class Schema
     }
     /* }}} */
     /* {{{ extractTag */
-    protected function extractTag($line, $tag)
+    protected function extractTag($categorised = array())
     {
-        $match = false;
+        $tags = array(
+            self::VERSION_TAG,
+            self::TABLENAME_TAG,
+            self::CONNECTION_TAG,
+        );
 
-        if (
-            preg_match('/(#|--|\/\*)\s+' . $tag . '\s+(\S.*\S)\s*$/', $line, $matches)
-            && count($matches) == 3
-        ) {
-            $match = $matches[2];
+        $comments       = array_filter($categorised, function ($v) { return $v['type'] == 'comment'; });
+        $matchedTags    = array();
+
+        foreach ($tags as $tag) {
+            if (
+                count($comments) == 1
+                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comments[0]['string'], $matches)
+                && count($matches) == 2
+            ) {
+                $matchedTags[$tag] = $matches[1];
+            } else {
+                $matchedTags[$tag] = false;
+            }
         }
 
-        return $match;
+        return $matchedTags;
     }
     /* }}} */
     /* {{{ currentTableVersion */

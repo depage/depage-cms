@@ -75,10 +75,20 @@ class SQLParser
                         }
                     }
                 }
-            } elseif ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
-                $this->multiLine = false;
+            } else {
+                $this->append('comment', $char);
+
+                if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
+                    $this->multiLine = false;
+                }
             }
         }
+    }
+    /* }}} */
+    /* {{{ getCategorised */
+    public function getCategorised()
+    {
+        return $this->categorised;
     }
     /* }}} */
     /* {{{ getStatements */
