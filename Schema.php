@@ -87,6 +87,10 @@ class Schema
                     $statementBlock[$number] = $statements;
                 }
             }
+
+            if(!$parser->isEndOfStatement()) {
+                throw new Exceptions\SyntaxErrorException("Incomplete statement at the end of \"{$fileName}\".");
+            }
             $this->update($this->replace($tableName), $statementBlock, $versions);
         }
     }

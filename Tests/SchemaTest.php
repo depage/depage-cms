@@ -81,6 +81,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->fail('Expected UnversionedCodeException');
     }
     // }}}
+    // {{{ testLoadIncompleteFile
+    public function testLoadIncompleteFile()
+    {
+        try {
+            $this->schema->load('Fixtures/TestIncompleteFile.sql');
+        } catch (Exceptions\SyntaxErrorException $expeceted) {
+            return;
+        }
+        $this->fail('Expected SyntaxErrorException');
+    }
+    // }}}
 
     // {{{ testProcessNewestVersion
     public function testProcessNewestVersion()

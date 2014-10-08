@@ -8,6 +8,7 @@ require_once('../Exceptions/UnversionedCodeException.php');
 require_once('../Exceptions/MultipleTableNamesException.php');
 require_once('../Exceptions/VersionIdentifierMissingException.php');
 require_once('../Exceptions/SQLExecutionException.php');
+require_once('../Exceptions/SyntaxErrorException.php');
 
 /* {{{ Generic_Tests_DatabaseTestCase */
 class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
