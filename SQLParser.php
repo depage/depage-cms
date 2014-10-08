@@ -12,7 +12,7 @@ namespace depage\DB;
 
 class SQLParser
 {
-    /* {{{ variables */
+    // {{{ variables
     protected $categorised      = array();
     protected $finished         = array();
     protected $replace          = array();
@@ -22,9 +22,9 @@ class SQLParser
     protected $singleQuote      = false;
     protected $doubleQuote      = false;
     protected $parsedString     = '';
-    /* }}} */
+    // }}}
 
-    /* {{{ parseLine */
+    // {{{ parseLine
     public function parseLine($line)
     {
         $this->categorised = array();
@@ -32,8 +32,8 @@ class SQLParser
 
         $this->cleanUpStatements();
     }
-    /* }}} */
-    /* {{{ categorise */
+    // }}}
+    // {{{ categorise
     protected function categorise($line)
     {
         $this->hash         = false;
@@ -84,20 +84,20 @@ class SQLParser
             }
         }
     }
-    /* }}} */
-    /* {{{ getCategorised */
+    // }}}
+    // {{{ getCategorised
     public function getCategorised()
     {
         return $this->categorised;
     }
-    /* }}} */
-    /* {{{ getStatements */
+    // }}}
+    // {{{ getStatements
     public function getStatements()
     {
         return $this->finished;
     }
-    /* }}} */
-    /* {{{ cleanUpStatements */
+    // }}}
+    // {{{ cleanUpStatements
     protected function cleanUpStatements()
     {
         $this->finished = array();
@@ -123,14 +123,14 @@ class SQLParser
         }
 
     }
-    /* }}} */
-    /* {{{ replace */
+    // }}}
+    // {{{ replace
     public function replace($search, $replace)
     {
         $this->replace[$search] = $replace;
     }
-    /* }}} */
-    /* {{{ append */
+    // }}}
+    // {{{ append
     protected function append($type, $char)
     {
         end($this->categorised);
@@ -147,25 +147,25 @@ class SQLParser
             );
         }
     }
-    /* }}} */
-    /* {{{ isComment */
+    // }}}
+    // {{{ isComment
     protected function isComment()
     {
         return ($this->hash || $this->doubleDash || $this->multiLine);
     }
-    /* }}} */
-    /* {{{ isString */
+    // }}}
+    // {{{ isString
     protected function isString()
     {
         return $this->singleQuote || $this->doubleQuote;
     }
-    /* }}} */
-    /* {{{ isEndOfStatment */
+    // }}}
+    // {{{ isEndOfStatment
     public function isEndOfStatement()
     {
         return (trim($this->parsedString) == '');
     }
-    /* }}} */
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
