@@ -36,6 +36,7 @@ class Schema
         if (empty($fileNames)) {
             throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
         }
+        sort($fileNames);
 
         return $fileNames;
     }
@@ -187,7 +188,7 @@ class Schema
         return $tableName;
     }
     // }}}
-    // {{{ replaceInCode
+    // {{{ replaceIdentifiers
     protected function replaceIdentifiers($dictionary, $split = array())
     {
         $replaced = array_map(

@@ -13,13 +13,13 @@ namespace depage\DB;
 class SQLParser
 {
     // {{{ variables
-    protected $split      = array();
-    protected $hash             = false;
-    protected $doubleDash       = false;
-    protected $multiLine        = false;
-    protected $singleQuote      = false;
-    protected $doubleQuote      = false;
-    protected $parsedString     = '';
+    protected $split        = array();
+    protected $hash         = false;
+    protected $doubleDash   = false;
+    protected $multiLine    = false;
+    protected $singleQuote  = false;
+    protected $doubleQuote  = false;
+    protected $parsedString = '';
     // }}}
 
     // {{{ parse
