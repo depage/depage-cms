@@ -1,7 +1,6 @@
 <?php
 
 use depage\DB\Schema;
-use depage\DB\Exceptions;
 
 class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 {
@@ -12,7 +11,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         try {
             $preparedStatement = $this->pdo->prepare('DROP TABLE test');
             $preparedStatement->execute();
-        } catch (\PDOException $expeceted) {}
+        } catch (\PDOException $expected) {}
     }
     // }}}
     // {{{ setUp
@@ -64,24 +63,16 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->assertEquals($expected, $row['Create Table']);
 
         // trigger exception
-        try {
-            $this->schema->load('Fixtures/TestFile.sql');
-        } catch (Exceptions\VersionIdentifierMissingException $expeceted) {
-            return;
-        }
-        $this->fail('Expected VersionIdentifierMissingException');
+        $this->setExpectedException('depage\DB\Exceptions\VersionIdentifierMissingException');
+        $this->schema->load('Fixtures/TestFile.sql');
     }
     // }}}
     // {{{ testSQLExecutionException
     public function testSQLExecutionException()
     {
         // trigger exception
-        try {
-            $this->schema->load('Fixtures/TestSyntaxErrorFile.sql');
-        } catch (Exceptions\SQLExecutionException $expeceted) {
-            return;
-        }
-        $this->fail('Expected SQLExecutionException');
+        $this->setExpectedException('depage\DB\Exceptions\SQLExecutionException');
+        $this->schema->load('Fixtures/TestSyntaxErrorFile.sql');
     }
     // }}}
 }

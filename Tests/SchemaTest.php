@@ -1,7 +1,6 @@
 <?php
 
 use depage\DB\Schema;
-use depage\DB\Exceptions;
 
 /* {{{ SchemaTestClass */
 class SchemaTestClass extends Schema
@@ -40,12 +39,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     /* {{{ testLoadSpecificFileFail */
     public function testLoadSpecificFileFail()
     {
-        try {
-            $this->schema->loadFile('fileDoesntExist.sql');
-        } catch (Exceptions\FileNotFoundException $expeceted) {
-            return;
-        }
-        $this->fail('Expected FileNotFoundException');
+        $this->setExpectedException('depage\DB\Exceptions\FileNotFoundException');
+        $this->schema->loadFile('fileDoesntExist.sql');
     }
     /* }}} */
     /* {{{ testLoadBatchFail */
@@ -58,45 +53,29 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     /* {{{ testLoadNoTableName */
     public function testLoadNoTableName()
     {
-        try {
-            $this->schema->load('Fixtures/TestNoTableName.sql');
-        } catch (Exceptions\TableNameMissingException $expeceted) {
-            return;
-        }
-        $this->fail('Expected TableNameMissingException');
+        $this->setExpectedException('depage\DB\Exceptions\TableNameMissingException');
+        $this->schema->load('Fixtures/TestNoTableName.sql');
     }
     /* }}} */
     /* {{{ testLoadMultipleTableNames */
     public function testLoadMultipleTableNames()
     {
-        try {
-            $this->schema->load('Fixtures/TestMultipleTableNames.sql');
-        } catch (Exceptions\MultipleTableNamesException $expeceted) {
-            return;
-        }
-        $this->fail('Expected MultipleTableNamesException');
+        $this->setExpectedException('depage\DB\Exceptions\MultipleTableNamesException');
+        $this->schema->load('Fixtures/TestMultipleTableNames.sql');
     }
     /* }}} */
     /* {{{ testLoadUnversionedCode */
     public function testLoadUnversionedCode()
     {
-        try {
-            $this->schema->load('Fixtures/TestUnversionedCode.sql');
-        } catch (Exceptions\UnversionedCodeException $expeceted) {
-            return;
-        }
-        $this->fail('Expected UnversionedCodeException');
+        $this->setExpectedException('depage\DB\Exceptions\UnversionedCodeException');
+        $this->schema->load('Fixtures/TestUnversionedCode.sql');
     }
     /* }}} */
     /* {{{ testLoadIncompleteFile */
     public function testLoadIncompleteFile()
     {
-        try {
-            $this->schema->load('Fixtures/TestIncompleteFile.sql');
-        } catch (Exceptions\SyntaxErrorException $expeceted) {
-            return;
-        }
-        $this->fail('Expected SyntaxErrorException');
+        $this->setExpectedException('depage\DB\Exceptions\SyntaxErrorException');
+        $this->schema->load('Fixtures/TestIncompleteFile.sql');
     }
     /* }}} */
 
