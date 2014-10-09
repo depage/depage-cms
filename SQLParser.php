@@ -43,7 +43,12 @@ class SQLParser
             $next = (isset($line[$i+1])) ? $line[$i+1] : '';
             $prev = (isset($line[$i-1])) ? $line[$i-1] : '';
 
-            if (!$this->isComment()) {
+            if ($this->isComment()) {
+                $this->append('comment', $char);
+                if ($this->multiLine && $char == '/' && $prev == '*') {
+                    $this->multiLine = false;
+                }
+            } else {
                 if ($this->isString()) {
                     $this->append('string', $char);
                     if ($prev != '\\') {
@@ -62,23 +67,15 @@ class SQLParser
                         $this->multiLine = true;
                     } elseif ($char == ';') {
                         $this->append('break', $char);
+                    } elseif ($char == '\'') {
+                        $this->singleQuote = true;
+                        $this->append('string', $char);
+                    } elseif ($char == '"') {
+                        $this->doubleQuote = true;
+                        $this->append('string', $char);
                     } else {
-                        if ($char == '\'') {
-                            $this->singleQuote = true;
-                            $this->append('string', $char);
-                        } elseif ($char == '"') {
-                            $this->doubleQuote = true;
-                            $this->append('string', $char);
-                        } else {
-                            $this->append('code', $char);
-                        }
+                        $this->append('code', $char);
                     }
-                }
-            } else {
-                $this->append('comment', $char);
-
-                if ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
-                    $this->multiLine = false;
                 }
             }
         }

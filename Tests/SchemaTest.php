@@ -11,10 +11,6 @@ class SchemaTestClass extends Schema
     public $updateTableName;
     public $updateVersion;
 
-    public function loadFile($fileName) {
-        parent::loadFile($fileName);
-    }
-
     protected function execute($number, $statements)
     {
         $this->executedStatements[$number] = $statements;
