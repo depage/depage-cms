@@ -11,6 +11,10 @@ class SchemaTestClass extends Schema
     public $updateTableName;
     public $updateVersion;
 
+    public function loadFile($fileName) {
+        parent::loadFile($fileName);
+    }
+
     protected function execute($number, $statements)
     {
         $this->executedStatements[$number] = $statements;
@@ -41,7 +45,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testLoadNoFile()
     {
         try {
-            $this->schema->load('fileDoesntExist.sql');
+            $this->schema->loadFile('fileDoesntExist.sql');
         } catch (Exceptions\FileNotFoundException $expeceted) {
             return;
         }

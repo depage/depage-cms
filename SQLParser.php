@@ -113,6 +113,7 @@ class SQLParser
         return $finished;
     }
     // }}}
+
     // {{{ append
     protected function append($type, $char)
     {
@@ -131,6 +132,13 @@ class SQLParser
         }
     }
     // }}}
+    // {{{ isEndOfStatment
+    public function isEndOfStatement()
+    {
+        return (trim($this->parsedString) == '');
+    }
+    // }}}
+
     // {{{ isComment
     protected function isComment()
     {
@@ -141,12 +149,6 @@ class SQLParser
     protected function isString()
     {
         return $this->singleQuote || $this->doubleQuote;
-    }
-    // }}}
-    // {{{ isEndOfStatment
-    public function isEndOfStatement()
-    {
-        return (trim($this->parsedString) == '');
     }
     // }}}
 }

@@ -28,76 +28,76 @@ class Schema
     }
     // }}}
 
-    // {{{ getFileNames
-    protected function getFileNames($path)
-    {
-        $fileNames = glob($path);
-
-        if (empty($fileNames)) {
-            throw new Exceptions\FileNotFoundException("No file found matching \"{$path}\"."); 
-        }
-        sort($fileNames);
-
-        return $fileNames;
-    }
-    // }}}
     // {{{ load
     public function load($path)
     {
-        foreach ($this->getFileNames($path) as $fileName) {
-            $parser         = new SQLParser();
-            $header         = true;
-            $versions       = array();
-            $dictionary     = array();
-            $tableName;
+        $fileNames = glob($path);
+        sort($fileNames);
 
-            foreach (file($fileName) as $key => $line) {
-                $number = $key + 1;
-                $split  = $parser->split($line);
-                $tag    = $this->extractTag($split);
-
-                if ($tag[self::VERSION_TAG]) {
-                    $versions[$tag[self::VERSION_TAG]] = $number;
-                }
-
-                if ($header) {
-                    if ($tag[self::TABLENAME_TAG]) {
-                        if (isset($tableName)) {
-                            throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
-                        } else {
-                            $tableName              = $tag[self::TABLENAME_TAG];
-                            $dictionary[$tableName] = $this->replace($tableName);
-                        }
-                    }
-
-                    if ($tag[self::CONNECTION_TAG]) {
-                        $dictionary[$tag[self::CONNECTION_TAG]] = $this->replace($tag[self::CONNECTION_TAG]);
-                    }
-
-                    if (!$parser->isEndOfStatement()) {
-                        $header = false;
-                        if (!isset($tableName)) {
-                            throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
-                        }
-                        if (empty($versions)) {
-                            throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\" at line {$number}.");
-                        }
-                    }
-                }
-
-                $replaced   = $this->replaceIdentifiers($dictionary, $split);
-                $statements = $parser->tidy($replaced);
-
-                if ($statements) {
-                    $statementBlock[$number] = $statements;
-                }
-            }
-
-            if(!$parser->isEndOfStatement()) {
-                throw new Exceptions\SyntaxErrorException("Incomplete statement at the end of \"{$fileName}\".");
-            }
-            $this->update($this->replace($tableName), $statementBlock, $versions);
+        foreach ($fileNames as $fileName) {
+            $this->loadFile($fileName);
         }
+    }
+    // }}}
+    // {{{ loadFile
+    public function loadFile($fileName)
+    {
+        if (!file_exists($fileName)) {
+            throw new Exceptions\FileNotFoundException("File \"{$fileName}\" doesn't exist."); 
+        }
+
+        $parser         = new SQLParser();
+        $header         = true;
+        $versions       = array();
+        $dictionary     = array();
+        $tableName;
+
+        foreach (file($fileName) as $key => $line) {
+            $number = $key + 1;
+            $split  = $parser->split($line);
+            $tag    = $this->extractTag($split);
+
+            if ($tag[self::VERSION_TAG]) {
+                $versions[$tag[self::VERSION_TAG]] = $number;
+            }
+
+            if ($header) {
+                if ($tag[self::TABLENAME_TAG]) {
+                    if (isset($tableName)) {
+                        throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
+                    } else {
+                        $tableName              = $tag[self::TABLENAME_TAG];
+                        $dictionary[$tableName] = $this->replace($tableName);
+                    }
+                }
+
+                if ($tag[self::CONNECTION_TAG]) {
+                    $dictionary[$tag[self::CONNECTION_TAG]] = $this->replace($tag[self::CONNECTION_TAG]);
+                }
+
+                if (!$parser->isEndOfStatement()) {
+                    $header = false;
+                    if (!isset($tableName)) {
+                        throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+                    }
+                    if (empty($versions)) {
+                        throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                    }
+                }
+            }
+
+            $replaced   = $this->replaceIdentifiers($dictionary, $split);
+            $statements = $parser->tidy($replaced);
+
+            if ($statements) {
+                $statementBlock[$number] = $statements;
+            }
+        }
+
+        if(!$parser->isEndOfStatement()) {
+            throw new Exceptions\SyntaxErrorException("Incomplete statement at the end of \"{$fileName}\".");
+        }
+        $this->update($this->replace($tableName), $statementBlock, $versions);
     }
     // }}}
     // {{{ update
@@ -129,6 +129,47 @@ class Schema
         }
     }
     // }}}
+    // {{{ execute
+    protected function execute($number, $statements)
+    {
+        foreach ($statements as $statement) {
+            try {
+                $preparedStatement = $this->pdo->prepare($statement);
+                $preparedStatement->execute();
+            } catch (\PDOException $e) {
+                throw new Exceptions\SQLExecutionException($e, $number, $statement);
+            }
+
+        }
+    }
+    // }}}
+
+    // {{{ currentTableVersion
+    protected function currentTableVersion($tableName)
+    {
+        $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+        $statement  = $this->pdo->query($query);
+        $statement->execute();
+        $row        = $statement->fetch();
+        $version    = $row['TABLE_COMMENT'];
+
+        if ($row && $row['TABLE_COMMENT'] == '') {
+            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+        }
+
+        return $version;
+    }
+    // }}}
+    // {{{ updateTableVersion
+    protected function updateTableVersion($tableName, $version)
+    {
+        $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
+
+        $preparedStatement = $this->pdo->prepare($statement);
+        $preparedStatement->execute();
+    }
+    // }}}
+
     // {{{ extractTag
     protected function extractTag($split = array())
     {
@@ -154,22 +195,6 @@ class Schema
         }
 
         return $matchedTags;
-    }
-    // }}}
-    // {{{ currentTableVersion
-    protected function currentTableVersion($tableName)
-    {
-        $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
-        $statement  = $this->pdo->query($query);
-        $statement->execute();
-        $row        = $statement->fetch();
-        $version    = $row['TABLE_COMMENT'];
-
-        if ($row && $row['TABLE_COMMENT'] == '') {
-            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
-        }
-
-        return $version;
     }
     // }}}
     // {{{ setReplace
@@ -209,29 +234,6 @@ class Schema
         );
 
         return $replaced;
-    }
-    // }}}
-    // {{{ execute
-    protected function execute($number, $statements)
-    {
-        foreach ($statements as $statement) {
-            try {
-                $preparedStatement = $this->pdo->prepare($statement);
-                $preparedStatement->execute();
-            } catch (\PDOException $e) {
-                throw new Exceptions\SQLExecutionException($e, $number, $statement);
-            }
-
-        }
-    }
-    // }}}
-    // {{{ updateTableVersion
-    protected function updateTableVersion($tableName, $version)
-    {
-        $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
-
-        $preparedStatement = $this->pdo->prepare($statement);
-        $preparedStatement->execute();
     }
     // }}}
 }
