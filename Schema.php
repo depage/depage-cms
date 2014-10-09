@@ -47,12 +47,13 @@ class Schema
             $parser         = new SQLParser();
             $header         = true;
             $versions       = array();
+            $dictionary     = array();
             $tableName;
 
             foreach (file($fileName) as $key => $line) {
-                $number = $key + 1;
-                $parser->parseLine($line);
-                $tag = $this->extractTag($parser->getCategorised());
+                $number         = $key + 1;
+                $categorised    = $parser->categorise($line);
+                $tag            = $this->extractTag($categorised);
 
                 if ($tag[self::VERSION_TAG]) {
                     $versions[$tag[self::VERSION_TAG]] = $number;
@@ -63,13 +64,13 @@ class Schema
                         if (isset($tableName)) {
                             throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
                         } else {
-                            $tableName = $tag[self::TABLENAME_TAG];
-                            $parser->replace($tableName, $this->replace($tableName));
+                            $tableName              = $tag[self::TABLENAME_TAG];
+                            $dictionary[$tableName] = $this->replace($tableName);
                         }
                     }
 
                     if ($tag[self::CONNECTION_TAG]) {
-                        $parser->replace($tag[self::CONNECTION_TAG], $this->replace($tag[self::CONNECTION_TAG]));
+                        $dictionary[$tag[self::CONNECTION_TAG]] = $this->replace($tag[self::CONNECTION_TAG]);
                     }
 
                     if (!$parser->isEndOfStatement()) {
@@ -83,7 +84,10 @@ class Schema
                     }
                 }
 
-                if ($statements = $parser->getStatements()) {
+                $replaced   = $this->replaceIdentifiers($dictionary, $categorised);
+                $statements = $parser->tidy($replaced);
+
+                if ($statements) {
                     $statementBlock[$number] = $statements;
                 }
             }
@@ -168,12 +172,14 @@ class Schema
     }
     // }}}
     // {{{ setReplace
-    public function setReplace($replaceFunction) {
+    public function setReplace($replaceFunction)
+    {
         $this->replaceFunction = $replaceFunction;
     }
     // }}}
     // {{{ replace
-    protected function replace($tableName) {
+    protected function replace($tableName)
+    {
         if (is_callable($this->replaceFunction)) {
             $tableName = call_user_func($this->replaceFunction, $tableName);
         }
@@ -181,8 +187,32 @@ class Schema
         return $tableName;
     }
     // }}}
+    // {{{ replaceInCode
+    protected function replaceIdentifiers($dictionary, $categorised = array())
+    {
+        $replaced = array_map(
+            function ($v) use ($dictionary)
+            {
+                if ($v['type'] == 'code') {
+                    $element = array(
+                        'type'      => 'code',
+                        'string'    => str_replace(array_keys($dictionary), $dictionary, $v['string']),
+                    );
+                } else {
+                    $element = $v;
+                }
+
+                return $element;
+            },
+            $categorised
+        );
+
+        return $replaced;
+    }
+    // }}}
     // {{{ execute
-    protected function execute($number, $statements) {
+    protected function execute($number, $statements)
+    {
         foreach ($statements as $statement) {
             try {
                 $preparedStatement = $this->pdo->prepare($statement);

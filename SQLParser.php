@@ -14,8 +14,6 @@ class SQLParser
 {
     // {{{ variables
     protected $categorised      = array();
-    protected $finished         = array();
-    protected $replace          = array();
     protected $hash             = false;
     protected $doubleDash       = false;
     protected $multiLine        = false;
@@ -27,15 +25,16 @@ class SQLParser
     // {{{ parseLine
     public function parseLine($line)
     {
-        $this->categorised = array();
-        $this->categorise($line);
+        $categorised    = $this->categorise($line);
+        $tidied         = $this->tidy($categorised);
 
-        $this->cleanUpStatements();
+        return $tidied;
     }
     // }}}
     // {{{ categorise
-    protected function categorise($line)
+    public function categorise($line)
     {
+        $this->categorised  = array();
         $this->hash         = false;
         $this->doubleDash   = false;
 
@@ -83,31 +82,20 @@ class SQLParser
                 }
             }
         }
-    }
-    // }}}
-    // {{{ getCategorised
-    public function getCategorised()
-    {
+
         return $this->categorised;
     }
     // }}}
-    // {{{ getStatements
-    public function getStatements()
+    // {{{ tidy
+    public function tidy($categorised = array())
     {
-        return $this->finished;
-    }
-    // }}}
-    // {{{ cleanUpStatements
-    protected function cleanUpStatements()
-    {
-        $this->finished = array();
+        $finished = array();
 
-        foreach ($this->categorised as $statement) {
+        foreach ($categorised as $statement) {
             $type = $statement['type'];
 
             if ($type == 'code') {
-                $append = str_replace(array_keys($this->replace), $this->replace, $statement['string']);
-                $append = preg_replace('/\s+/', ' ', $append);
+                $append = preg_replace('/\s+/', ' ', $statement['string']);
 
                 if (substr($this->parsedString, -1) == ' ' && $append[0] == ' ') {
                     $append = ltrim($append);
@@ -117,17 +105,12 @@ class SQLParser
             } elseif ($type == 'string') {
                 $this->parsedString .= $statement['string'];
             } elseif ($type == 'break') {
-                $this->finished[]   = trim($this->parsedString);
+                $finished[]         = trim($this->parsedString);
                 $this->parsedString = '';
             }
         }
 
-    }
-    // }}}
-    // {{{ replace
-    public function replace($search, $replace)
-    {
-        $this->replace[$search] = $replace;
+        return $finished;
     }
     // }}}
     // {{{ append
