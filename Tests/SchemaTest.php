@@ -37,8 +37,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     }
     /* }}} */
 
-    /* {{{ testLoadNoFile */
-    public function testLoadNoFile()
+    /* {{{ testLoadSpecificFileFail */
+    public function testLoadSpecificFileFail()
     {
         try {
             $this->schema->loadFile('fileDoesntExist.sql');
@@ -46,6 +46,13 @@ class SchemaTest extends PHPUnit_Framework_TestCase
             return;
         }
         $this->fail('Expected FileNotFoundException');
+    }
+    /* }}} */
+    /* {{{ testLoadBatchFail */
+    public function testLoadBatchFail()
+    {
+        $this->setExpectedException('PHPUnit_Framework_Error_Warning');
+        $this->schema->load('fileDoesntExist.sql');
     }
     /* }}} */
     /* {{{ testLoadNoTableName */

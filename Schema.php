@@ -32,6 +32,9 @@ class Schema
     public function load($path)
     {
         $fileNames = glob($path);
+        if (empty($fileNames)) {
+            trigger_error("No file found matching \"{$path}\".", E_USER_WARNING);
+        }
         sort($fileNames);
 
         foreach ($fileNames as $fileName) {
