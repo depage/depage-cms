@@ -13,7 +13,7 @@ namespace depage\DB;
 class SQLParser
 {
     // {{{ variables
-    protected $categorised      = array();
+    protected $split      = array();
     protected $hash             = false;
     protected $doubleDash       = false;
     protected $multiLine        = false;
@@ -22,19 +22,19 @@ class SQLParser
     protected $parsedString     = '';
     // }}}
 
-    // {{{ parseLine
-    public function parseLine($line)
+    // {{{ parse
+    public function parse($line)
     {
-        $categorised    = $this->categorise($line);
-        $tidied         = $this->tidy($categorised);
+        $split  = $this->split($line);
+        $tidied = $this->tidy($split);
 
         return $tidied;
     }
     // }}}
-    // {{{ categorise
-    public function categorise($line)
+    // {{{ split
+    public function split($line)
     {
-        $this->categorised  = array();
+        $this->split        = array();
         $this->hash         = false;
         $this->doubleDash   = false;
 
@@ -83,15 +83,15 @@ class SQLParser
             }
         }
 
-        return $this->categorised;
+        return $this->split;
     }
     // }}}
     // {{{ tidy
-    public function tidy($categorised = array())
+    public function tidy($split = array())
     {
         $finished = array();
 
-        foreach ($categorised as $statement) {
+        foreach ($split as $statement) {
             $type = $statement['type'];
 
             if ($type == 'code') {
@@ -116,15 +116,15 @@ class SQLParser
     // {{{ append
     protected function append($type, $char)
     {
-        end($this->categorised);
-        $index = key($this->categorised);
+        end($this->split);
+        $index = key($this->split);
 
         if (
-            $index !== null && $this->categorised[$index]['type'] == $type
+            $index !== null && $this->split[$index]['type'] == $type
         ) {
-            $this->categorised[$index]['string'] .= $char;
+            $this->split[$index]['string'] .= $char;
         } else {
-            $this->categorised[] = array(
+            $this->split[] = array(
                 'type'      => $type,
                 'string'    => $char,
             );

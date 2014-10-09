@@ -51,9 +51,9 @@ class Schema
             $tableName;
 
             foreach (file($fileName) as $key => $line) {
-                $number         = $key + 1;
-                $categorised    = $parser->categorise($line);
-                $tag            = $this->extractTag($categorised);
+                $number = $key + 1;
+                $split  = $parser->split($line);
+                $tag    = $this->extractTag($split);
 
                 if ($tag[self::VERSION_TAG]) {
                     $versions[$tag[self::VERSION_TAG]] = $number;
@@ -84,7 +84,7 @@ class Schema
                     }
                 }
 
-                $replaced   = $this->replaceIdentifiers($dictionary, $categorised);
+                $replaced   = $this->replaceIdentifiers($dictionary, $split);
                 $statements = $parser->tidy($replaced);
 
                 if ($statements) {
@@ -129,7 +129,7 @@ class Schema
     }
     // }}}
     // {{{ extractTag
-    protected function extractTag($categorised = array())
+    protected function extractTag($split = array())
     {
         $tags = array(
             self::VERSION_TAG,
@@ -137,7 +137,7 @@ class Schema
             self::CONNECTION_TAG,
         );
 
-        $comments       = array_filter($categorised, function ($v) { return $v['type'] == 'comment'; });
+        $comments       = array_filter($split, function ($v) { return $v['type'] == 'comment'; });
         $matchedTags    = array();
 
         foreach ($tags as $tag) {
@@ -188,7 +188,7 @@ class Schema
     }
     // }}}
     // {{{ replaceInCode
-    protected function replaceIdentifiers($dictionary, $categorised = array())
+    protected function replaceIdentifiers($dictionary, $split = array())
     {
         $replaced = array_map(
             function ($v) use ($dictionary)
@@ -204,7 +204,7 @@ class Schema
 
                 return $element;
             },
-            $categorised
+            $split
         );
 
         return $replaced;
