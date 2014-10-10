@@ -32,7 +32,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testUpdateAndExecute
     public function testUpdateAndExecute()
     {
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
 
         $statement  = $this->pdo->query('SHOW CREATE TABLE test');
         $statement->execute();
@@ -64,7 +64,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 
         // trigger exception
         $this->setExpectedException('depage\DB\Exceptions\VersionIdentifierMissingException');
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
     }
     // }}}
     // {{{ testSQLExecutionException
@@ -72,7 +72,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     {
         // trigger exception
         $this->setExpectedException('depage\DB\Exceptions\SQLExecutionException');
-        $this->schema->load('Fixtures/TestSyntaxErrorFile.sql');
+        $this->schema->loadGlob('Fixtures/TestSyntaxErrorFile.sql');
     }
     // }}}
 }

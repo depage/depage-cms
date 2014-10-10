@@ -28,8 +28,8 @@ class Schema
     }
     // }}}
 
-    // {{{ load
-    public function load($path)
+    // {{{ loadGlob
+    public function loadGlob($path)
     {
         $fileNames = glob($path);
         if (empty($fileNames)) {

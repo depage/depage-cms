@@ -53,35 +53,35 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testLoadBatchFail()
     {
         $this->setExpectedException('PHPUnit_Framework_Error_Warning');
-        $this->schema->load('fileDoesntExist.sql');
+        $this->schema->loadGlob('fileDoesntExist.sql');
     }
     /* }}} */
     /* {{{ testLoadNoTableName */
     public function testLoadNoTableName()
     {
         $this->setExpectedException('depage\DB\Exceptions\TableNameMissingException');
-        $this->schema->load('Fixtures/TestNoTableName.sql');
+        $this->schema->loadGlob('Fixtures/TestNoTableName.sql');
     }
     /* }}} */
     /* {{{ testLoadMultipleTableNames */
     public function testLoadMultipleTableNames()
     {
         $this->setExpectedException('depage\DB\Exceptions\MultipleTableNamesException');
-        $this->schema->load('Fixtures/TestMultipleTableNames.sql');
+        $this->schema->loadGlob('Fixtures/TestMultipleTableNames.sql');
     }
     /* }}} */
     /* {{{ testLoadUnversionedCode */
     public function testLoadUnversionedCode()
     {
         $this->setExpectedException('depage\DB\Exceptions\UnversionedCodeException');
-        $this->schema->load('Fixtures/TestUnversionedCode.sql');
+        $this->schema->loadGlob('Fixtures/TestUnversionedCode.sql');
     }
     /* }}} */
     /* {{{ testLoadIncompleteFile */
     public function testLoadIncompleteFile()
     {
         $this->setExpectedException('depage\DB\Exceptions\SyntaxErrorException');
-        $this->schema->load('Fixtures/TestIncompleteFile.sql');
+        $this->schema->loadGlob('Fixtures/TestIncompleteFile.sql');
     }
     /* }}} */
 
@@ -90,7 +90,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.2';
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
 
         $expected = array();
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -101,7 +101,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.1';
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
 
         $expected = array(
             11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
@@ -113,7 +113,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessEntireFile()
     {
         $this->schema->tableExists = false;
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -128,7 +128,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'bogus version';
-        $this->schema->load('Fixtures/TestFile.sql');
+        $this->schema->loadGlob('Fixtures/TestFile.sql');
 
         $expected = array();
 
@@ -139,7 +139,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessConnections()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->load('Fixtures/TestConnections.sql');
+        $this->schema->loadGlob('Fixtures/TestConnections.sql');
 
         $expected = array(
             9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -158,7 +158,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                 return 'testPrefix_' . $tableName;
             }
         );
-        $this->schema->load('Fixtures/TestConnections.sql');
+        $this->schema->loadGlob('Fixtures/TestConnections.sql');
 
         $expected = array(
             9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
