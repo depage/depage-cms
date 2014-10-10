@@ -106,16 +106,22 @@ class Schema
     // {{{ update
     protected function update($tableName, $statementBlock, $versions)
     {
-        $currentVersion = $this->currentTableVersion($tableName);
-        $keys           = array_keys($versions);
-        $search         = array_search($currentVersion, $keys);
+        $keys = array_keys($versions);
 
-        if ($search === false) {
-            $startKey = $keys[0];
-        } elseif ($search == count($keys) - 1) {
-            $startKey = false;
+        if ($this->tableExists($tableName)) {
+            $currentVersion = $this->currentTableVersion($tableName);
+            $search         = array_search($currentVersion, $keys);
+
+            if (
+                $search === false
+                || $search == count($keys) - 1
+            ) {
+                $startKey = false;
+            } else {
+                $startKey = $keys[$search + 1];
+            }
         } else {
-            $startKey = $keys[$search + 1];
+            $startKey = $keys[0];
         }
 
         if ($startKey !== false) {
@@ -142,22 +148,54 @@ class Schema
             } catch (\PDOException $e) {
                 throw new Exceptions\SQLExecutionException($e, $number, $statement);
             }
-
         }
     }
     // }}}
 
+    // {{{ tableExists
+    protected function tableExists($tableName)
+    {
+        $exists = false;
+
+        try {
+            $preparedStatement  = $this->pdo->prepare('SELECT 1 FROM ' . $tableName);
+            $preparedStatement->execute();
+            $exists             = true;
+        } catch (\PDOException $expected) {
+            // only catch "table doesn't exist" exception
+            if ($expected->getCode() != '42S02') {
+                throw new \PDOEXception($expected);
+            }
+        }
+
+        return $exists;
+    }
+    // }}}
     // {{{ currentTableVersion
     protected function currentTableVersion($tableName)
     {
-        $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
-        $statement  = $this->pdo->query($query);
-        $statement->execute();
-        $row        = $statement->fetch();
-        $version    = $row['TABLE_COMMENT'];
+        try {
+            $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+            $statement  = $this->pdo->query($query);
+            $statement->execute();
+            $row        = $statement->fetch();
 
-        if ($row && $row['TABLE_COMMENT'] == '') {
-            throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+            if ($row['TABLE_COMMENT'] == '') {
+                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+            }
+
+            $version = $row['TABLE_COMMENT'];
+        } catch (\PDOException $e) {
+            $query      = 'SHOW CREATE TABLE ' . $tableName;
+            $statement  = $this->pdo->query($query);
+            $statement->execute();
+            $row        = $statement->fetch();
+
+            if (!preg_match('/COMMENT=\'(.*)\'/', $row[1], $matches)) {
+                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+            }
+
+            $version = array_pop($matches);
         }
 
         return $version;

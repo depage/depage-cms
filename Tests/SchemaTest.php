@@ -9,6 +9,7 @@ class SchemaTestClass extends Schema
     public $currentTableVersion;
     public $updateTableName;
     public $updateVersion;
+    public $tableExists;
 
     protected function execute($number, $statements)
     {
@@ -23,6 +24,11 @@ class SchemaTestClass extends Schema
     protected function currentTableVersion($tableName)
     {
         return $this->currentTableVersion;
+    }
+
+    protected function tableExists($tableName)
+    {
+        return $this->tableExists;
     }
 }
 /* }}} */
@@ -82,7 +88,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     /* {{{ testProcessNewestVersion */
     public function testProcessNewestVersion()
     {
-        $this->schema->currentTableVersion = 'version 0.2';
+        $this->schema->tableExists          = true;
+        $this->schema->currentTableVersion  = 'version 0.2';
         $this->schema->load('Fixtures/TestFile.sql');
 
         $expected = array();
@@ -92,7 +99,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     /* {{{ testProcessUpdate */
     public function testProcessUpdate()
     {
-        $this->schema->currentTableVersion = 'version 0.1';
+        $this->schema->tableExists          = true;
+        $this->schema->currentTableVersion  = 'version 0.1';
         $this->schema->load('Fixtures/TestFile.sql');
 
         $expected = array(
@@ -104,13 +112,25 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     /* {{{ testProcessEntireFile */
     public function testProcessEntireFile()
     {
-        $this->schema->currentTableVersion = '';
+        $this->schema->tableExists = false;
         $this->schema->load('Fixtures/TestFile.sql');
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
             11  => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid",),
         );
+
+        $this->assertEquals($expected, $this->schema->executedStatements);
+    }
+    /* }}} */
+    /* {{{ testProcessUnknownVersion */
+    public function testProcessUnknownVersion()
+    {
+        $this->schema->tableExists          = true;
+        $this->schema->currentTableVersion  = 'bogus version';
+        $this->schema->load('Fixtures/TestFile.sql');
+
+        $expected = array();
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
