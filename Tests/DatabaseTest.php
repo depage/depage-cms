@@ -20,6 +20,13 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         parent::setUp();
         $this->schema = new Schema($this->pdo);
         $this->dropTestTable();
+
+        $this->finalShowCreate = "CREATE TABLE `test` (\n" .
+        "  `uid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
+        "  `pid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
+        "  `did` int(10) unsigned NOT NULL DEFAULT '0'\n" .
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.2'";
+
     }
     // }}}
     // {{{ tearDown
@@ -28,25 +35,35 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->dropTestTable();
     }
     // }}}
-
-    // {{{ testUpdateAndExecute
-    public function testUpdateAndExecute()
+    // {{{ showCreateTestTable
+    public function showCreateTestTable()
     {
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
-
         $statement  = $this->pdo->query('SHOW CREATE TABLE test');
         $statement->execute();
         $row        = $statement->fetch();
 
-        $expected   = "CREATE TABLE `test` (\n" .
-        "  `uid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
-        "  `pid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
-        "  `did` int(10) unsigned NOT NULL DEFAULT '0'\n" .
-        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.2'";
-
-        $this->assertEquals($expected, $row['Create Table']);
+        return $row['Create Table'];
     }
     // }}}
+
+    // {{{ testCompleteUpdate
+    public function testCompleteUpdate()
+    {
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
+    }
+    // }}}
+    // {{{ testUpToDate
+    public function testUpToDate()
+    {
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
+
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
+    }
+    // }}}
+
     // {{{ testVersionIdentifierMissingException
     public function testVersionIdentifierMissingException()
     {
@@ -55,16 +72,12 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $preparedStatement->execute();
 
         // check if it's really there
-        $statement  = $this->pdo->query('SHOW CREATE TABLE test');
-        $statement->execute();
-        $row        = $statement->fetch();
-
         $expected   = "CREATE TABLE `test` (\n  `uid` int(10) unsigned NOT NULL DEFAULT '0'\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        $this->assertEquals($expected, $row['Create Table']);
+        $this->assertEquals($expected, $this->showCreateTestTable());
 
         // trigger exception
         $this->setExpectedException('depage\DB\Exceptions\VersionIdentifierMissingException');
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->loadFile('Fixtures/TestFile.sql');
     }
     // }}}
     // {{{ testSQLExecutionException
@@ -72,7 +85,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     {
         // trigger exception
         $this->setExpectedException('depage\DB\Exceptions\SQLExecutionException');
-        $this->schema->loadGlob('Fixtures/TestSyntaxErrorFile.sql');
+        $this->schema->loadFile('Fixtures/TestSyntaxErrorFile.sql');
     }
     // }}}
 }
