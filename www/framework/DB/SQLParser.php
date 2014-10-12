@@ -12,44 +12,29 @@ namespace depage\DB;
 
 class SQLParser
 {
-    /* {{{ variables */
-    protected $categorised      = array();
-    protected $finished         = array();
-    protected $hash             = false;
-    protected $doubleDash       = false;
-    protected $multiLine        = false;
-    protected $singleQuote      = false;
-    protected $doubleQuote      = false;
-    protected $parsedString     = '';
-    protected $search           = '';
-    protected $replace          = '';
-    /* }}} */
+    // {{{ variables
+    protected $split        = array();
+    protected $hash         = false;
+    protected $doubleDash   = false;
+    protected $multiLine    = false;
+    protected $singleQuote  = false;
+    protected $doubleQuote  = false;
+    protected $parsedString = '';
+    // }}}
 
-    /* {{{ parseLine */
-    public function parseLine($line)
+    // {{{ parse
+    public function parse($line)
     {
-        $this->categorise($line);
-        $this->cleanUpStatements();
+        $split  = $this->split($line);
+        $tidied = $this->tidy($split);
+
+        return $tidied;
     }
-    /* }}} */
-    /* {{{ parse */
-    public function parse($block = array())
+    // }}}
+    // {{{ split
+    public function split($line)
     {
-        $parsedBlock = array();
-
-        foreach ($block as $number => $line) {
-            $this->parseLine($line);
-            foreach ($this->getStatements() as $statement) {
-                $parsedBlock[$number][] = $statement;
-            }
-        }
-
-        return $parsedBlock;
-    }
-    /* }}} */
-    /* {{{ categorise */
-    protected function categorise($line)
-    {
+        $this->split        = array();
         $this->hash         = false;
         $this->doubleDash   = false;
 
@@ -58,7 +43,12 @@ class SQLParser
             $next = (isset($line[$i+1])) ? $line[$i+1] : '';
             $prev = (isset($line[$i-1])) ? $line[$i-1] : '';
 
-            if (!$this->isComment()) {
+            if ($this->isComment()) {
+                $this->append('comment', $char);
+                if ($this->multiLine && $char == '/' && $prev == '*') {
+                    $this->multiLine = false;
+                }
+            } else {
                 if ($this->isString()) {
                     $this->append('string', $char);
                     if ($prev != '\\') {
@@ -77,41 +67,32 @@ class SQLParser
                         $this->multiLine = true;
                     } elseif ($char == ';') {
                         $this->append('break', $char);
+                    } elseif ($char == '\'') {
+                        $this->singleQuote = true;
+                        $this->append('string', $char);
+                    } elseif ($char == '"') {
+                        $this->doubleQuote = true;
+                        $this->append('string', $char);
                     } else {
-                        if ($char == '\'') {
-                            $this->singleQuote = true;
-                            $this->append('string', $char);
-                        } elseif ($char == '"') {
-                            $this->doubleQuote = true;
-                            $this->append('string', $char);
-                        } else {
-                            $this->append('code', $char);
-                        }
+                        $this->append('code', $char);
                     }
                 }
-            } elseif ($this->multiLine && !$this->isString() && $char == '/' && $prev == '*') {
-                $this->multiLine = false;
             }
         }
-    }
-    /* }}} */
-    /* {{{ getStatements */
-    public function getStatements()
-    {
-        return $this->finished;
-    }
-    /* }}} */
-    /* {{{ cleanUpStatements */
-    protected function cleanUpStatements()
-    {
-        $this->finished = array();
 
-        foreach ($this->categorised as $statement) {
+        return $this->split;
+    }
+    // }}}
+    // {{{ tidy
+    public function tidy($split = array())
+    {
+        $finished = array();
+
+        foreach ($split as $statement) {
             $type = $statement['type'];
 
             if ($type == 'code') {
-                $append = str_replace($this->search, $this->replace, $statement['string']);
-                $append = preg_replace('/\s+/', ' ', $append);
+                $append = preg_replace('/\s+/', ' ', $statement['string']);
 
                 if (substr($this->parsedString, -1) == ' ' && $append[0] == ' ') {
                     $append = ltrim($append);
@@ -121,55 +102,52 @@ class SQLParser
             } elseif ($type == 'string') {
                 $this->parsedString .= $statement['string'];
             } elseif ($type == 'break') {
-                $this->finished[]       = trim($this->parsedString);
-                $this->parsedString  = '';
+                $finished[]         = trim($this->parsedString);
+                $this->parsedString = '';
             }
         }
 
-        $this->categorised = array();
+        return $finished;
     }
-    /* }}} */
-    /* {{{ replace */
-    public function replace($search, $replace)
-    {
-        $this->search   = $search;
-        $this->replace  = $replace;
-    }
-    /* }}} */
-    /* {{{ append */
+    // }}}
+
+    // {{{ append
     protected function append($type, $char)
     {
-        end($this->categorised);
-        $index = key($this->categorised);
+        end($this->split);
+        $index = key($this->split);
 
         if (
-            $index !== null && $this->categorised[$index]['type'] == $type
+            $index !== null && $this->split[$index]['type'] == $type
         ) {
-            $this->categorised[$index]['string'] .= $char;
+            $this->split[$index]['string'] .= $char;
         } else {
-            $this->categorised[] = array(
+            $this->split[] = array(
                 'type'      => $type,
                 'string'    => $char,
             );
         }
     }
-    /* }}} */
-    /* {{{ isComment */
+    // }}}
+    // {{{ isEndOfStatment
+    public function isEndOfStatement()
+    {
+        return (trim($this->parsedString) == '');
+    }
+    // }}}
+
+    // {{{ isComment
     protected function isComment()
     {
         return ($this->hash || $this->doubleDash || $this->multiLine);
     }
-    /* }}} */
-    /* {{{ isString */
+    // }}}
+    // {{{ isString
     protected function isString()
     {
         return $this->singleQuote || $this->doubleQuote;
     }
-    /* }}} */
-    /* {{{ isEndOfStatment */
-    public function isEndOfStatement()
-    {
-        return (trim($this->parsedString) == '') && ($this->categorised == array());
-    }
-    /* }}} */
+    // }}}
 }
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -7,25 +7,23 @@ require_once('../Exceptions/TableNameMissingException.php');
 require_once('../Exceptions/UnversionedCodeException.php');
 require_once('../Exceptions/MultipleTableNamesException.php');
 require_once('../Exceptions/VersionIdentifierMissingException.php');
+require_once('../Exceptions/SQLExecutionException.php');
+require_once('../Exceptions/SyntaxErrorException.php');
 
 /* {{{ Generic_Tests_DatabaseTestCase */
-abstract class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
+class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 {
-    static  protected $pdo  = null;
-            protected $conn = null;
+    protected $pdo  = null;
+    protected $conn = null;
 
     final public function getConnection()
     {
-        if ($this->conn === null) {
-            if (self::$pdo == null) {
-                self::$pdo = new PDO(
-                    $GLOBALS['DB_DSN'],
-                    $GLOBALS['DB_USER'],
-                    $GLOBALS['DB_PASSWD']
-                );
-            }
-            $this->conn = $this->createDefaultDBConnection(self::$pdo, $GLOBALS['DB_DBNAME']);
-        }
+        $this->pdo = new PDO(
+            $GLOBALS['DB_DSN'],
+            $GLOBALS['DB_USER'],
+            $GLOBALS['DB_PASSWD']
+        );
+        $this->conn = $this->createDefaultDBConnection($this->pdo, $GLOBALS['DB_DBNAME']);
 
         return $this->conn;
     }
@@ -40,3 +38,5 @@ abstract class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Databas
     }
 }
 /* }}} */
+
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */

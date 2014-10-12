@@ -1,7 +1,7 @@
 <?php
 namespace depage\DB\Exceptions;
 
-class TableNameMissingException extends \Exception
+class SyntaxErrorException extends \Exception
 {
 }
 
