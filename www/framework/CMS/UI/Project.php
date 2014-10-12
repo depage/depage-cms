@@ -26,6 +26,29 @@ class Project extends Base
 
     // {{{ index()
     function index() {
+        return $this->edit();
+    }
+    // }}}
+    // {{{ edit()
+    function edit() {
+        // construct template
+        $hProject = new html("flashedit.tpl", array(
+            'flashUrl' => "project/{$this->projectName}/flash/flash/false",
+            'previewUrl' => "project/{$this->projectName}/preview/html/noncached/",
+        ), $this->htmlOptions);
+
+        $h = new html(array(
+            'content' => array(
+                $this->toolbar(),
+                $hProject,
+            ),
+        ));
+
+        return $h;
+    }
+    // }}}
+    // {{{ jsedit()
+    function jsedit() {
         // cms tree
         $tree = Tree::_factoryAndInit($this->options, array(
             'pdo' => $this->pdo,

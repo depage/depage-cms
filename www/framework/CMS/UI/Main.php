@@ -23,9 +23,9 @@ class Main extends Base {
             'project/*' => '\depage\CMS\UI\Project',
             'project/*/preview' => '\depage\CMS\UI\Preview',
             'project/*/flash' => '\depage\CMS\UI\Flash',
-            'project/*/tree/*' => '\depage\CMS\UI\Tree',
-            'project/*/tree/*/fallback' => '\depage\CMS\UI\SocketFallback',
-            'project/*/edit/*' => '\depage\CMS\UI\Edit',
+            //'project/*/tree/*' => '\depage\CMS\UI\Tree',
+            //'project/*/tree/*/fallback' => '\depage\CMS\UI\SocketFallback',
+            //'project/*/edit/*' => '\depage\CMS\UI\Edit',
         );
     }
     // }}}

@@ -25,22 +25,22 @@ class_interface.prototype.generateGlobalComponents = function() {
 			_y	: 0
 		});
 		this.movClip.back_left.setRGB(conf.interface.color_face);
-		
+
 		this.movClip.attachMovie("rectangle_back", "back_right", 2, {
 			_x	: 35,
 			_y	: 0
 		});
 		this.movClip.back_right.setRGB(conf.interface.color_face);
-			
+
 		this.movClip.attachMovie("registerBar", "register", 3, {
 			_x	: 35,
 			_y	: 15
 		});
-		
+
 		this.movClip.attachMovie("buttonBar", "buttonBar", 4, {
 			_x	: 35
 		});
-		
+
 		this.movClip.attachMovie("divider", "divider_vertical", 5, {
 			_x			: 144,
 			_y 			: -1,
@@ -77,7 +77,7 @@ class_interface.prototype.initSettings = function() {
 		this.layouts.templates.init();
 		this.layouts.settings = new class_interfaceLayout_settings(this, conf.lang.register_name_settings);
 		this.layouts.settings.init();
-		
+
 		// DialogLayouts
 		this.layouts.dlgChoose_page = new class_interfaceLayout_dlgChoose_page(this, conf.lang.register_name_edit_pages);
 		this.layouts.dlgChoose_page.init();
@@ -85,62 +85,62 @@ class_interface.prototype.initSettings = function() {
 		this.layouts.dlgChoose_file_link.init();
 		this.layouts.dlgChoose_files = new class_interfaceLayout_dlgChoose_files(this, conf.lang.register_name_files);
 		this.layouts.dlgChoose_files.init();
-		
+
 		//register
 		this.movClip.register.register = new Array();
 
 		this.movClip.register.register.push({
-			title	: this.layouts.editPages.title, 
-			icon	: "mainbar_page", 
-			func	: this.register_editPages, 
-			funcObj	: this, 
+			title	: this.layouts.editPages.title,
+			icon	: "mainbar_page",
+			func	: this.register_editPages,
+			funcObj	: this,
 			tooltip	: conf.lang.register_tip_edit_pages
 		});
 		this.movClip.register.register.push({
-			title	: this.layouts.files.title, 
-			icon	: "mainbar_files", 
-			func	: this.register_files, 
-			funcObj	: this, 
+			title	: this.layouts.files.title,
+			icon	: "mainbar_files",
+			func	: this.register_files,
+			funcObj	: this,
 			tooltip	: conf.lang.register_tip_files
 		});
 		if (conf.user.mayEditColors()) {
 			this.movClip.register.register.push({
-				title	: this.layouts.colors.title, 
-				icon	: "mainbar_colors", 
+				title	: this.layouts.colors.title,
+				icon	: "mainbar_colors",
 				func	: this.register_colors,
-				funcObj	: this, 
+				funcObj	: this,
 				tooltip	: conf.lang.register_tip_colors
 			});
 		}
 		if (conf.user.mayEditTemplates()) {
 			this.movClip.register.register.push({
-				title	: this.layouts.templates.title, 
-				icon	: "mainbar_templates", 
-				func	: this.register_templates, 
-				funcObj	: this, 
+				title	: this.layouts.templates.title,
+				icon	: "mainbar_templates",
+				func	: this.register_templates,
+				funcObj	: this,
 				tooltip	: conf.lang.register_tip_templates
 			});
 		}
 		if (conf.user.mayEditSettings()) {
 			this.movClip.register.register.push({
-				title	: this.layouts.settings.title, 
-				icon	: "mainbar_settings", 
-				func	: this.register_settings, 
-				funcObj	: this, 
+				title	: this.layouts.settings.title,
+				icon	: "mainbar_settings",
+				func	: this.register_settings,
+				funcObj	: this,
 				tooltip	: conf.lang.register_tip_settings
 			});
 		}
-		
+
 		//buttonBar
 		this.movClip.buttonBar.buttons = new Array();
-		
+
 		if (conf.project.preview_available && conf.standalone != "true") {
 			this.movClip.buttonBar.buttons.push({
-				icon			: "mainbar_preview", 
-				onClickFunc		: conf.project.previewManual, 
-				onClickFuncObj	: conf.project, 
-				menuFunc		: this.showPreviewSettings, 
-				menuFuncObj		: this, 
+				icon			: "mainbar_preview",
+				onClickFunc		: conf.project.previewManual,
+				onClickFuncObj	: conf.project,
+				menuFunc		: this.showPreviewSettings,
+				menuFuncObj		: this,
 				tooltip			: conf.lang.register_tip_preview
 			});
 		}
@@ -183,17 +183,17 @@ class_interface.prototype.register_settings = function() {
 // {{{ showPreviewSettings()
 class_interface.prototype.showPreviewSettings = function() {
 	var menu = new menuClass.menuObj(true);
-	
+
 	//preview behaviour
 	menu.addHead(conf.lang.register_preview_menu_headline);
-	menu.addSeparator();	
+	menu.addSeparator();
 	menu.addEntry(conf.lang.register_preview_menu_man, this.toggle_preview_automatic, this, [0], (conf.user.settings.preview_automatic == 0 ? "checked" : null), true);
 	menu.addEntry(conf.lang.register_preview_menu_auto_choose, this.toggle_preview_automatic, this, [1], (conf.user.settings.preview_automatic == 1 ? "checked" : null), true);
 	menu.addEntry(conf.lang.register_preview_menu_auto_choose_save, this.toggle_preview_automatic, this, [2], (conf.user.settings.preview_automatic == 2 ? "checked" : null), true);
 	menu.addSeparator();
 	menu.addEntry(conf.lang.register_preview_menu_feedback, this.toggle_preview_feedback, this, [], (conf.user.settings.preview_feedback ? "checked" : null), true);
-	menu.addSeparator();	
-	
+	menu.addSeparator();
+
 	//preview type
 	var templateSets = conf.project.tree.settings.getTemplateSets();
 	var subMenu = new menuClass.menuObj(true);
@@ -201,7 +201,7 @@ class_interface.prototype.showPreviewSettings = function() {
 		subMenu.addEntry(templateSets[i], this.choose_preview_type, this, [], (templateSets[i] == conf.project.preview_type ? "checked" : null), true);
 	}
 	menu.addSubmenu(conf.lang.register_preview_menu_type, subMenu, true);
-	
+
 	menu.valign = "bottom";
 	menu.show(null, null);
 };
@@ -226,11 +226,11 @@ class_interface.prototype.choose_preview_type = function(index, previewType) {
 class_interface.prototype.onResize = function() {
 	if (this.projectType == "webProject") {
 		if ((Stage.width - this.movClip.register._x) / 2 < this.movClip.divider_vertical._x - this.movClip.register._x || Stage.width < 475) {
-			this.divider_vertical._x = int(this.register._x + (Stage.width - this.register._x) / 2);	
+			this.divider_vertical._x = int(this.register._x + (Stage.width - this.register._x) / 2);
  		} else if (this.movClip.divider_vertical._x < int(this.movClip.register._x + 220)) {
 			this.movClip.divider_vertical._x = int(this.movClip.register._x + 220);
 		}
-		
+
 		for (i = 1; i < this.activeLayout.treeNum; i++) {
 			if (this.activeLayout.dividerPos[i] != undefined) {
 				this.movClip["treeDivider" + i]._y = int(Stage.height * this.activeLayout.dividerPos[i]);
@@ -238,9 +238,9 @@ class_interface.prototype.onResize = function() {
 				this.activeLayout.dividerPos[i] = this.movClip["treeDivider" + i]._y / Stage.height;
 			}
 		}
-		
+
 		this.movClip.buttonBar._y = Stage.height - 24;
-		
+
 		this.setDivider();
 	}
 };
@@ -248,7 +248,7 @@ class_interface.prototype.onResize = function() {
 // {{{ setDivider()
 class_interface.prototype.setDivider = function() {
 	var i;
-	
+
 	if (this.projectType == "webProject") {
 		this.movClip.divider_vertical._x = int(this.movClip.divider_vertical._x);
 
@@ -266,7 +266,7 @@ class_interface.prototype.hideNonMoving = function() {
 
 	this.movClip.back_right._wasVisible = back_right._visible;
 	this.movClip.back_right._visible = true;
-		
+
 	this.activeLayout.hide();
 };
 // }}}
@@ -278,7 +278,7 @@ class_interface.prototype.showNonMoving = function() {
 		this.activeLayout.dividerPos[i] = this.movClip["treeDivider" + i]._y / Stage.height;
 	}
 	Stage.broadcastMessage("onResize");
-	
+
 	this.movClip.back_right._visible = this.movClip.back_right._wasVisible;
 	this.activeLayout.show();
 };
@@ -286,19 +286,19 @@ class_interface.prototype.showNonMoving = function() {
 // {{{ setActiveLayout()
 class_interface.prototype.setActiveLayout = function(newLayout, returnFunc, returnFuncObj, dlgArgs) {
 	var i, j;
-	
+
 	this.activeLayout.remove();
 	if (newLayout.isDialog == true && this.activeLayout.isDialog == false) {
 		this.returnFunc = returnFunc;
 		this.returnFuncObj = returnFuncObj;
 		this.dlgArgs = dlgArgs;
-		
+
 		this.oldLayout = this.activeLayout;
 	} else if (this.activeLayout.isDialog == false) {
 		this.oldLayout = null;
 	}
 	this.activeLayout = newLayout;
-	
+
 	for (i = 0; i < this.movClip.register.register.length; i++) {
 		if (this.movClip.register.register[i].title == this.activeLayout.title) {
 			if (i != this.movClip.register.active) {
@@ -316,7 +316,7 @@ class_interface.prototype.setActiveLayout = function(newLayout, returnFunc, retu
 		}
 	}
 	this.movClip.register.show();
-	
+
 	setTimeout(this.activeLayout.generate, this.activeLayout, 20, [this.dlgArgs], false);
 };
 // }}}
@@ -345,7 +345,7 @@ class_treeDisplayData = function(treeObj, interfaceObj) {
 	this.showChildren = new Object();	//this is the object with informations about children being open or not
 	this.isOpen = true;					//is this tree actually open?
 	this.isShown = false;				//is this tree actually displayed?
-	this.interfaceObj = interfaceObj	//reference to interfaceObj	
+	this.interfaceObj = interfaceObj	//reference to interfaceObj
 };
 // }}}
 // {{{ init()
@@ -361,7 +361,7 @@ class_treeDisplayData.prototype.showChildrenInitLevel = 3;	//to what level child
 class_treeDisplayData.prototype.defineButtons = function() {
 	this.buttons = [];
 	this.buttons[0] = [];
-	
+
 	//new button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_new";
@@ -379,7 +379,7 @@ class_treeDisplayData.prototype.defineButtons = function() {
 	};
 	// }}}
 	this.buttons[0].push(tbutton);
-	
+
 	//duplicate tbutton
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_duplicate";
@@ -397,7 +397,7 @@ class_treeDisplayData.prototype.defineButtons = function() {
 	};
 	// }}}
 	this.buttons[0].push(tbutton);
-	
+
 	//delete button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_delete";
@@ -427,7 +427,7 @@ class_treeDisplayData.prototype.setActiveNode = function(node, scrollToActiveNod
 			this.activeNodeIdPrev = null;
 			this.activeNodeIdNext = null;
 			this.activeNodeIdParent = null;
-			
+
 			tempNode = node.previousSibling;
 			while (this.activeNodeIdPrev == null && tempNode != null) {
 				if (this.treeObj.isTreeNode(tempNode)) {
@@ -435,7 +435,7 @@ class_treeDisplayData.prototype.setActiveNode = function(node, scrollToActiveNod
 				}
 				tempNode = tempNode.previousSibling;
 			}
-			
+
 			tempNode = node.nextSibling;
 			while (this.activeNodeIdNext == null && tempNode != null) {
 				if (this.treeObj.isTreeNode(tempNode)) {
@@ -443,7 +443,7 @@ class_treeDisplayData.prototype.setActiveNode = function(node, scrollToActiveNod
 				}
 				tempNode = tempNode.nextSibling;
 			}
-			
+
 			if (node.parentNode.nid != undefined) {
 				this.activeNodeIdParent = node.parentNode.nid;
 			}
@@ -461,13 +461,13 @@ class_treeDisplayData.prototype.setActiveNode = function(node, scrollToActiveNod
 // {{{ setActiveNodeById()
 class_treeDisplayData.prototype.setActiveNodeById = function(id, scrollToActiveNode, actualNode) {
 	var i, found;
-	
+
 	if (id == null || id == undefined || id == "") {
 		return false;
 	}
 	if (actualNode == undefined) {
 		found = this.setActiveNodeById(id, scrollToActiveNode, this.treeObj.data.getRootNode());
-		
+
 		if (found) {
 			this.setActiveNode(found, scrollToActiveNode);
 			return true;
@@ -482,7 +482,7 @@ class_treeDisplayData.prototype.setActiveNodeById = function(id, scrollToActiveN
 				if (this.treeObj.isTreeNode(actualNode.childNodes[i])) {
 					found = this.setActiveNodeById(id, scrollToActiveNode, actualNode.childNodes[i]);
 					if (found) {
-						this.showChildren[actualNode.nid] = true;	
+						this.showChildren[actualNode.nid] = true;
 						return found;
 					}
 				}
@@ -542,7 +542,7 @@ class_treeDisplayData.prototype.onChange = function(node) {
 		this.setActiveNode(null);
 		this.interfaceObj.removeProps();
 		setActiveBy = "set to null because tree is empty";
-	} 
+	}
         if (this.treeObj.type == "page_data") {
             //alert(setActiveBy);
         }
@@ -553,7 +553,7 @@ class_treeDisplayData.prototype.onChange = function(node) {
 class_treeDisplayData.prototype.redraw = function(scrollToActiveNode) {
 	if (this.onChangeObj != null && this.isShown) {
 		this.lineNum = this.getLineNum();
-		this.onChangeObj.onChange(scrollToActiveNode);	
+		this.onChangeObj.onChange(scrollToActiveNode);
 	}
 };
 // }}}
@@ -577,7 +577,7 @@ class_treeDisplayData.prototype.getTreeRootNode = function() {
 class_treeDisplayData.prototype.getLineNum = function(actualNode) {
 	var i;
 	var tempNum = 1;
-	
+
 	if (!this.isOpen) {
 		return 0;
 	} else if (actualNode === undefined) {
@@ -586,14 +586,14 @@ class_treeDisplayData.prototype.getLineNum = function(actualNode) {
 		if (!this.treeObj.isTreeNode(actualNode)) {
 			return 0;
 		} else if (!this.showChildren[actualNode.nid] || !actualNode.hasChildNodes()) {
-			return 1;	
+			return 1;
 		} else {
 			for (i = 0; i < actualNode.childNodes.length; i++) {
 				tempNum += this.getLineNum(actualNode.childNodes[i]);
 			}
 			return tempNum;
 		}
-	}	
+	}
 };
 // }}}
 // {{{ getTreeLines()
@@ -619,7 +619,7 @@ class_treeDisplayData.prototype.getTreeLines = function(treeLinesArray, actualCh
 					level	: level
 				});
 			}
-			
+
 			if (this.showChildren[actualChild.nid] || actualChild == this.treeObj.data) {
                                 for (i = 0; i < actualChild.childNodes.length; i++) {
 					treeLinesArray = this.getTreeLines(treeLinesArray, actualChild.childNodes[i], level + 1);
@@ -647,7 +647,7 @@ class_treeDisplayData.prototype.setShowChildrenInitLevel = function(actualNode, 
 		actualNode = actualNode.firstChild;
 		while (actualNode != null) {
 			this.setShowChildrenInitLevel(actualNode, actualLevel + 1);
-			actualNode = actualNode.nextSibling;	
+			actualNode = actualNode.nextSibling;
 		}
 	}
 };
@@ -655,7 +655,7 @@ class_treeDisplayData.prototype.setShowChildrenInitLevel = function(actualNode, 
 // {{{ setShowChildren()
 class_treeDisplayData.prototype.setShowChildren = function(node, status) {
 	this.showChildren[node.nid] = status;
-	this.redraw();	
+	this.redraw();
 };
 // }}}
 
@@ -677,11 +677,11 @@ class_treeDisplayData_pages.prototype.showChildrenInitLevel = 2;
 // {{{ setActiveNode()
 class_treeDisplayData_pages.prototype.setActiveNode = function(node, scrollToActiveNode) {
 	super.setActiveNode(node, scrollToActiveNode);
-	
+
 	if (!this.interfaceObj.isDialog) {
 		this.timeoutObj.clear();
                 this.timeoutObj = setTimeout(conf.project.tree.page_data.load, conf.project.tree.page_data, 200, [node.attributes[conf.ns.database + ":docref"], node]);
-	
+
 		conf.project.setPreviewNode(this.activeNode);
 		conf.project.preview();
 	}
@@ -694,7 +694,7 @@ class_treeDisplayData_pages.prototype.onShow = function() {
     if (conf.startpage != "") {
         var pageid = conf.project.tree.pages.getIdByURL(conf.startpage);
         this.setActiveNodeById(pageid);
-        
+
         conf.startpage = "";
     }
 };
@@ -783,7 +783,7 @@ class_treeDisplayData_files.prototype.setActiveNodeById = function(id) {
 	var ids = id.split("/");
 	var targetNode;
 	var tempNode;
-	
+
 	if (id == null) {
 		targetNode = null;
 		return false
@@ -800,13 +800,13 @@ class_treeDisplayData_files.prototype.setActiveNodeById = function(id) {
 				break;
 			} else {
 				this.showChildren[tempNode.nid] = true;
-				targetNode = tempNode;	
+				targetNode = tempNode;
 			}
 		}
 	}
-	
+
 	this.setActiveNode(targetNode);
-	
+
 	return true;
 };
 // }}}
@@ -814,7 +814,7 @@ class_treeDisplayData_files.prototype.setActiveNodeById = function(id) {
 class_treeDisplayData_files.prototype.defineButtons = function() {
 	this.buttons = [];
 	this.buttons[0] = [];
-	
+
 	//new folder button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_new_folder";
@@ -832,7 +832,7 @@ class_treeDisplayData_files.prototype.defineButtons = function() {
 	};
 	// }}}
 	this.buttons[0].push(tbutton);
-	
+
 	//delete button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_delete";
@@ -850,7 +850,7 @@ class_treeDisplayData_files.prototype.defineButtons = function() {
 	};
 	// }}}
 	this.buttons[0].push(tbutton);
-	
+
 	//upload new file button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_upload";
@@ -860,7 +860,7 @@ class_treeDisplayData_files.prototype.defineButtons = function() {
 	tbutton.height = 17;
 	// {{{ tbutton.onClick()
 	tbutton.onClick = function() {
-		call_jsfunc("open_upload('" + conf.user.sid + "', '" + conf.user.wid + "', '" + escape(this._parent.treeObj.activeNodeId) + "')");
+		call_jsfunc("depageCMS.openUpload('" + conf.user.sid + "', '" + conf.user.wid + "', '" + escape(this._parent.treeObj.activeNodeId) + "')");
 	};
 	// }}}
 	// {{{ tbutton.getEnabledState()
@@ -893,7 +893,7 @@ class_treeDisplayData_colors.prototype.setActiveNode = function(node, scrollToAc
 	this.treeObj.load_prop(this.activeNode.nid, this.activeNode);
 };
 // }}}
-	
+
 /*
  *	Class treeDisplayData_settings
  *
@@ -916,7 +916,7 @@ class_treeDisplayData_settings.prototype.setActiveNode = function(node, scrollTo
 	this.treeObj.load_prop(this.activeNode.nid, this.activeNode);
 };
 // }}}
-	
+
 /*
  *	Class treeDisplayData_templates
  *
@@ -935,7 +935,7 @@ class_treeDisplayData_templates.prototype.showChildrenInitLevel = 2;
 // {{{ defineButtons
 class_treeDisplayData_templates.prototype.defineButtons = function() {
 	super.defineButtons();
-	
+
 	//release templates button
 	var tbutton = Object();
 	tbutton.symbol = "icon_tree_button_release_templates";
@@ -963,7 +963,7 @@ class_treeDisplayData_templates.prototype.setActiveNode = function(node, scrollT
 	this.treeObj.load_prop(this.activeNode.attributes[conf.ns.database + ":docref"], this.activeNode);
 };
 // }}}
-	
+
 /*
  *	Class treeDisplayData_newnodes
  *
@@ -986,7 +986,7 @@ class_treeDisplayData_newnodes.prototype.setActiveNode = function(node, scrollTo
 	this.treeObj.load_prop(this.activeNode.nid, this.activeNode);
 };
 // }}}
-	
+
 /*
  *	Class interfaceLayout
  *
@@ -1030,14 +1030,14 @@ class_interfaceLayout.prototype.generate = function(dlgArgs) {
 // {{{ generateTrees()
 class_interfaceLayout.prototype.generateTrees = function() {
 	var i;
-	
+
 	for (i = 1; i <= this.treeNum; i++) {
 		//tree
 		this.movClip.attachMovie("tree_box", "treeBox" + i, 200 + i*2 - 1, {
 			treeId		: i,
 			_visible	: false
 		});
-		
+
 		if (i > 1) {
 			//divider
 			this.movClip.attachMovie("divider", "treeDivider" + (i - 1), 200 + i*2, {
@@ -1087,7 +1087,7 @@ class_interfaceLayout.prototype.remove = function() {
 // {{{ removeTrees()
 class_interfaceLayout.prototype.removeTrees = function() {
 	var i;
-	
+
 	for (i = 1; i <= this.treeNum; i++) {
 		this.movClip["treeBox" + i].removeMovieClip();
 		if (i > 1) {
@@ -1119,7 +1119,7 @@ class_interfaceLayout.prototype.show = function() {
 class_interfaceLayout.prototype.hide = function() {
 	for (i = 1; i <= this.treeNum; i++) {
 		this.movClip["treeBox" + i]._visible = false;
-		
+
 		if (i > 1) {
 			this.movClip["treeDivider" + i]._visible = false;
 		}
@@ -1146,7 +1146,7 @@ class_interfaceLayout_editPages.prototype.init = function() {
 	this.treeObj2 = new class_treeDisplayData_page_data(conf.project.tree.page_data, this);
 	this.treeObj1.init();
 	this.treeObj2.init();
-	
+
 	//set reference to allow propObj to change active node attributes
 	this.treeObj1.treeObj.propObj.tree_displayObj = this.treeObj1;
 };
@@ -1156,19 +1156,19 @@ class_interfaceLayout_editPages.prototype.generate = function(dlgArgs) {
 	this.treeNum = 2;
 
 	super.generate(dlgArgs);
-	
+
 	if (conf.project.previewDisableCache) {
 		conf.project.previewDisableCache = false;
 		conf.project.preview();
 	}
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
 	this.movClip.treeBox2.treeObj = this.treeObj2;
-	
+
 	setTimeout(this.treeSetActive, this, 10, [true]);
 };
 // }}}
-	
+
 /*
  *	Class interfaceLayout_dlgChoose_page
  *
@@ -1196,18 +1196,18 @@ class_interfaceLayout_dlgChoose_page.prototype.generate = function(dlgArgs) {
 	this.treeNum = 1;
 
 	super.generate(dlgArgs);
-	
+
 	conf.project.previewDisableCache = false;
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
-	
+
 	if (dlgArgs[0] != "") {
 		this.movClip.treeBox1.treeObj.setActiveNodeById(dlgArgs[0]);
 		this.movClip.treeBox1.treeObj.setActiveNodeByIdWaiting(dlgArgs[0]);
 	}
 	this.dataNodeId = dlgArgs[1];
 	setTimeout(this.treeSetActive, this, 10, [true]);
-	
+
 	this.movClip.attachMovie("tree_box_dlg", "dlgBox", 50, {
 		text	: conf.lang.msg_choose_page,
 		type	: "OkCancel"
@@ -1240,21 +1240,21 @@ class_interfaceLayout_dlgChoose_page.prototype.generateProps = function() {
 // {{{ remove()
 class_interfaceLayout_dlgChoose_page.prototype.remove = function() {
 	super.remove();
-	
+
 	this.movClip.dlgBox.removeMovieClip();
 };
 // }}}
 // {{{ show()
 class_interfaceLayout_dlgChoose_page.prototype.show = function() {
 	super.show();
-	
+
 	this.movClip.dlgBox._visible = true;
 };
 // }}}
 // {{{ hide()
 class_interfaceLayout_dlgChoose_page.prototype.hide = function() {
 	super.hide();
-	
+
 	this.movClip.dlgBox._visible = false;
 };
 // }}}
@@ -1282,12 +1282,12 @@ class_interfaceLayout_files.prototype.generate = function(dlgArgs) {
 	this.treeNum = 1;
 
 	super.generate(dlgArgs);
-	
+
 	conf.project.previewDisableCache = false;
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
 	this.movClip.treeBox1.treeObj.setFileFilter();
-	
+
 	setTimeout(this.treeSetActive, this, 10, [true]);
 };
 // }}}
@@ -1310,9 +1310,9 @@ class_interfaceLayout_dlgChoose_files.prototype.treeTopOffset = 90;
 // {{{ generate()
 class_interfaceLayout_dlgChoose_files.prototype.generate = function(dlgArgs) {
 	super.generate(dlgArgs);
-	
+
 	conf.project.previewDisableCache = false;
-	
+
 	if (dlgArgs[0] != "") {
 		this.movClip.treeBox1.treeObj.activeNodeIdWaiting = dlgArgs[0];
 		this.movClip.treeBox1.treeObj.setActiveNodeById(dlgArgs[0]);
@@ -1362,23 +1362,23 @@ class_interfaceLayout_dlgChoose_files.prototype.generate = function(dlgArgs) {
 // {{{ remove()
 class_interfaceLayout_dlgChoose_files.prototype.remove = function() {
 	super.remove();
-	
+
 	this.movClip.treeBox1.treeObj.treeObj.setFileFilter();
-	
+
 	this.movClip.dlgBox.removeMovieClip();
 };
 // }}}
 // {{{ show()
 class_interfaceLayout_dlgChoose_files.prototype.show = function() {
 	super.show();
-	
+
 	this.movClip.dlgBox._visible = true;
 };
 // }}}
 // {{{ hide()
 class_interfaceLayout_dlgChoose_files.prototype.hide = function() {
 	super.hide();
-	
+
 	this.movClip.dlgBox._visible = false;
 };
 // }}}
@@ -1428,13 +1428,13 @@ class_interfaceLayout_colors.prototype.generate = function(dlgArgs) {
 	super.generate(dlgArgs);
 
 	conf.project.previewDisableCache = false;
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
-			
+
 	setTimeout(this.treeSetActive, this, 10, [true]);
 };
 // }}}
-	
+
 /*
  *	Class interfaceLayout_settings
  *
@@ -1458,15 +1458,15 @@ class_interfaceLayout_settings.prototype.generate = function(dlgArgs) {
 	this.treeNum = 1;
 
 	super.generate(dlgArgs);
-	
+
 	conf.project.previewDisableCache = false;
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
-			
+
 	setTimeout(this.treeSetActive, this, 10, [true]);
 };
 // }}}
-	
+
 /*
  *	Class interfaceLayout_editTemplates
  *
@@ -1492,15 +1492,15 @@ class_interfaceLayout_templates.prototype.generate = function(dlgArgs) {
 	this.treeNum = 2;
 
 	super.generate(dlgArgs);
-	
+
 	if (!conf.project.previewDisableCache) {
 		conf.project.previewDisableCache = true;
 		conf.project.preview();
 	}
-	
+
 	this.movClip.treeBox1.treeObj = this.treeObj1;
 	this.movClip.treeBox2.treeObj = this.treeObj2;
-	
+
 	setTimeout(this.treeSetActive, this, 10, [true]);
 };
 // }}}

@@ -1,5 +1,5 @@
 ﻿/**
- * F U N C T I O N S 
+ * F U N C T I O N S
  * Flash-extending functions
  *
  * actionScript-library:
@@ -31,15 +31,15 @@ ASSetPropFlags(Object.prototype,["copy"],1);
 // {{{ MovieClip.setRGB()
 MovieClip.prototype.setRGB = function(value, alpha) {
 	var newColor, temp;
-	
+
 	if (typeof value == "string") {
-		value = value.toColor();	
+		value = value.toColor();
 	}
 	newColor = new Color(this);
-	
+
 	if (alpha != undefined) {
 		temp = value.toColorString();
-		
+
 		newColor.setTransform({
 			ra	: 0,
 			rb	: Number("0x" + temp.substr(1, 2)),
@@ -53,7 +53,7 @@ MovieClip.prototype.setRGB = function(value, alpha) {
 	} else {
 		newColor.setRGB(value);
 	}
-}; 
+};
 // }}}
 // {{{ MovieClip.getGlobalX()
 MovieClip.prototype.getGlobalX = function() {
@@ -62,7 +62,7 @@ MovieClip.prototype.getGlobalX = function() {
 		y	: 0
 	};
 	this.localToGlobal(tempPoint);
-	
+
 	return tempPoint.x;
 };
 // }}}
@@ -73,35 +73,35 @@ MovieClip.prototype.getGlobalY = function() {
 		y	: 0
 	};
 	this.localToGlobal(tempPoint);
-	
+
 	return tempPoint.y;
 };
 // }}}
 // {{{ Number.toColorString()
 Number.prototype.toColorString = function() {
 	var i, value;
-	
+
 	value = this.toString(16);
-	
+
 	while (value.length < 6) {
-		value = "0" + value.toString();	
+		value = "0" + value.toString();
 	}
 	value = value.toUpperCase();
 
-	return "#" + value;	
+	return "#" + value;
 };
 // }}}
 // {{{ String.toColor()
 String.prototype.toColor = function() {
 	var newValue;
-		
+
 	if (this.charAt(0) == "#") {
 		newValue = this.substring(1);
 		while (newValue.length < 6) {
 			newValue += "0";
 		}
 	}
-	
+
 	if (!isNan(Number("0x" + newValue))) {
 		newValue = Number("0x" + newValue);
 	} else if (!isNan(Number(newValue))) {
@@ -109,7 +109,7 @@ String.prototype.toColor = function() {
 	} else {
 		newValue = 0x000000;
 	}
-	
+
 	return newValue
 };
 // }}}
@@ -124,9 +124,9 @@ String.prototype.glpEncode = function() {
 	var charCode;
         var oldChar = "-";
         var newChar = "";
-        
+
         //@todo fix bug with "()" in folder and page names
-	
+
 	for (i = 0; i < this.length; i++) {
 		charCode = this.charCodeAt(i);
 		if (this.charAt(i) == "ä" || this.charAt(i) == "Ä") {
@@ -157,10 +157,10 @@ String.prototype.glpEncode = function() {
                     newValue += newChar;
                 }
                 oldChar = newChar;
-	}	
-	
+	}
+
 	newValue = newValue.toLowerCase();
-	
+
 	return newValue;
 };
 // }}}
@@ -169,9 +169,9 @@ String.prototype.splitPath = function() {
 	var tempArray;
 	var tempPos;
 	var returnVal = new Object();
-	
+
 	tempArray = this.split("/");
-	
+
 	returnVal.name = tempArray.pop();
 	if (tempArray.length > 0) {
 		tempPos = tempArray[0].indexOf(":");
@@ -185,7 +185,7 @@ String.prototype.splitPath = function() {
 	} else {
 		returnVal.path= "";
 	}
-	
+
 	return returnVal;
 };
 // }}}
@@ -214,7 +214,7 @@ String.prototype.replace = function(searchStr, replaceStr) {
 String.prototype.replaceInterfaceTexts = function() {
 	var i, startPos, endPos, lastPos;
 	var strArray = [];
-	
+
 	startPos = this.indexOf("%", 0);
 	lastPos = 0;
 	while (startPos != -1) {
@@ -225,7 +225,7 @@ String.prototype.replaceInterfaceTexts = function() {
 		strArray.push(this.substring(lastPos, StartPos));
 		strArray.push(this.substring(startPos, endPos));
 		lastPos = endPos;
-		startPos = this.indexOf("%", lastPos);		
+		startPos = this.indexOf("%", lastPos);
 	}
 	for (i = 0; i < strArray.length; i++) {
 		if (strArray[i] == "%%") {
@@ -235,7 +235,7 @@ String.prototype.replaceInterfaceTexts = function() {
 		}
 	}
 	strArray.push(this.substring(lastPos, this.length));
-	
+
 	return strArray.join("");
 };
 // }}}
@@ -247,7 +247,7 @@ String.prototype.removeUnwantedTags = function(allowedTagsVar) {
 	var foundStartAt, foundEndAt, foundSpaceAt;
 	var isAllowedTag;
 	var allowedTags = [];
-	
+
 	for (i=0; i<allowedTagsVar.length; i++) {
 		allowedTags.push(allowedTagsVar[i].toLowerCase());
 		allowedTags.push("/" + allowedTagsVar[i].toLowerCase());
@@ -271,14 +271,14 @@ String.prototype.removeUnwantedTags = function(allowedTagsVar) {
 				newStr += this.substring(startIndex, foundSpaceAt).toLowerCase() + ">";
 			}
 		} else {
-			newStr += this.substring(startIndex, foundStartAt);			
+			newStr += this.substring(startIndex, foundStartAt);
 		}
 		startIndex = foundEndAt + 1;
 		foundStartAt = this.indexOf("<", startIndex);
 		foundEndAt = this.indexOf(">", foundStartAt + 1);
 	}
 	newStr += this.substring(startIndex, this.length);
-	
+
 	return newStr;
 };
 // }}}
@@ -297,8 +297,8 @@ String.prototype.convEntityToUnicode = function() {
 		foundEndAt = this.indexOf(";", foundStartAt + 2);
 	}
 	newStr += this.substring(startIndex, this.length);
-	
-	return newStr;	
+
+	return newStr;
 };
 // }}}
 // {{{ String.toXMLString()
@@ -319,21 +319,21 @@ String.prototype.toXMLString = function() {
             newStr += s;
         }
     }
-	
-    return newStr;	
+
+    return newStr;
 };
 // }}}
 // {{{ String.trim()
 String.prototype.trim = function() {
 	var tempStr = this;
-	
+
 	while (tempStr.charAt(0) == " ") {
-		tempStr = tempStr.substring(1);	
+		tempStr = tempStr.substring(1);
 	}
 	while (tempStr.charAt(tempStr.length - 1) == " ") {
-		tempStr = tempStr.substring(0, tempStr.length - 2);	
+		tempStr = tempStr.substring(0, tempStr.length - 2);
 	}
-	
+
 	return tempStr;
 };
 // }}}
@@ -342,25 +342,25 @@ String.prototype.toBoolean = function() {
 	if (this.toLowerCase() == "true") {
 		return true;
 	} else if (this.toLowerCase() == "false") {
-		return false;	
+		return false;
 	} else {
-		return false;	
+		return false;
 	}
 };
 // }}}
 
 /*
  *	ArrayExtensions
- */  
+ */
 // {{{ Array.searchFor()
 Array.prototype.searchFor = function(element) {
 	var i;
-	
+
 	for (i = 0; i < this.length; i++) {
 		if (this[i] == element) {
 			return i;
 		}
-	}	
+	}
 	return -1;
 };
 // }}}
@@ -389,10 +389,10 @@ _global.setTimeout = function(func, obj, msec, param, update) {
 			this.clear();
 		};
 		TimeoutObj.clear = function() {
-			clearInterval(this.IntervalID);			
+			clearInterval(this.IntervalID);
 		};
 		TimeoutObj.IntervalID = setInterval( TimeoutObj, "exec", msec);
-		
+
 		return TimeoutObj;
 	}
 };
@@ -404,7 +404,7 @@ _global.setTimeout = function(func, obj, msec, param, update) {
 // {{{ updateDisplay()
 _global.updateDisplay = function(timeout) {
 	var nullFunc = function() {};
-	
+
 	if (timeout == undefined || timeout < 1) {
 		timeout = 1
 	}
@@ -418,9 +418,9 @@ _global.updateDisplay = function(timeout) {
 // {{{ alertObjInfo()
 _global.alertObjInfo = function(Obj) {
 	if (Obj === undefined) {
-		alert("undefined");	
+		alert("undefined");
 	} else if (Obj === null) {
-		alert("null");	
+		alert("null");
 	} else if (typeof Obj == "object" || typeof Obj == "movieclip") {
 		var p, i;
 		var infoString = "";
@@ -428,15 +428,15 @@ _global.alertObjInfo = function(Obj) {
 		var objArray = [];
 		var funcArray = [];
 		var clipArray = [];
-	
+
 		ASSetPropFlags(Obj,null,8,1);
 
 		for(p in Obj) {
 			infoString = Obj[p].toString();
 			if (infoString.length > 100) {
-				infoString = infoString.substring(0, 100) + "...";	
+				infoString = infoString.substring(0, 100) + "...";
 			}
-			
+
 			if (typeof Obj[p] == "function") {
 				funcArray.push(p + "()");
 			} else if (typeof Obj[p] == "object") {
@@ -464,9 +464,9 @@ _global.alertObjInfo = function(Obj) {
 		}
 		alert("FUNCTIONS:\n" + funcArray.join("") + "\nOBJECTS:\n" + objArray.join("\n") + "\n\nMOVIECLIPS:\n" + clipArray.join("\n") + "\n\nVARIABLES:\n" + varArray.join("\n"));
 	} else if (typeof Obj == "string") {
-		alert("(" + typeof Obj + ")\n\"" + Obj.toString().substring(0, 1000) + "\"");	
+		alert("(" + typeof Obj + ")\n\"" + Obj.toString().substring(0, 1000) + "\"");
 	} else {
-		alert("(" + typeof Obj + ")\n" + Obj.toString().substring(0, 1000));	
+		alert("(" + typeof Obj + ")\n" + Obj.toString().substring(0, 1000));
 	}
 };
 // }}}
@@ -488,14 +488,14 @@ _global.alert = function(message) {
 			["Ü"	, "&Uuml;"],
 			["ß"	, "&szlig;"]
 		]);
-		call_jsfunc("msg('" + escape(message) + "')");
+		call_jsfunc("depageCMS.msg('" + escape(message) + "')");
 	}
 };
 // }}}
 // {{{ status()
 _global.status = function(message) {
 	trace(message);
-	call_jsfunc("set_status('" + escape(message) + "')");
+	call_jsfunc("depageCMS.setStatus('" + escape(message) + "')");
 };
 // }}}
 
@@ -510,7 +510,7 @@ _global.call_jsfunc = function(func) {
 		jsfunctions.push(func);
 	}
 	if (jsfunctions.length == 1) {
-		setTimeout(call_jsfunctions, null, 30, [], false);	
+		setTimeout(call_jsfunctions, null, 30, [], false);
 	}
 }
 // }}}
@@ -518,7 +518,7 @@ _global.call_jsfunc = function(func) {
 function call_jsfunctions() {
 	getURL ("javascript:" + jsfunctions.shift() + ";");
 	if (jsfunctions.length > 0) {
-		setTimeout(call_jsfunctions, null, 30, [], false);	
+		setTimeout(call_jsfunctions, null, 30, [], false);
 	}
 }
 // }}}
@@ -536,7 +536,7 @@ _global.parseExpr = function(expr) {
 		var parentClosePos;
 		var operatorPos = new Array;
 		var isOperator, operator;
-	
+
 		if (isNaN(expr)) {
 			if (expr == "" && expr == null && expr == undefined) {
 				value = "0";
@@ -573,11 +573,11 @@ _global.parseExpr = function(expr) {
 						}
 					}
 				}
-				
+
 				value1 = expr.substring(operatorPos[0], operatorPos[1]);
 				operator = expr.substr(operatorPos[1], 1);
 				value2 = expr.substring(operatorPos[1]+1, expr.length);
-				
+
 				if (operator == "+") {
 					value = evaluate(value1) + evaluate(value2);
 				} else if (operator == "-") {
@@ -593,7 +593,7 @@ _global.parseExpr = function(expr) {
 		} else {
 			value = expr;
 		}
-		
+
 		return Number(value);
 	}
 };
@@ -603,12 +603,12 @@ _global.evaluate = function(expr) {
 	if (expr != undefined) {
 		var pos;
 		var value;
-		
+
 		if (isNaN(expr)) {
 			if (expr == "" && expr == null && expr == undefined) {
 				expr = "0";
 			}
-			
+
 			while (expr.indexOf(" ") > -1) {
 				pos = expr.indexOf(" ");
 				expr = expr.substring(0, pos) + expr.substring(pos + 1, expr.length);
@@ -617,7 +617,7 @@ _global.evaluate = function(expr) {
 		} else {
 			value = Number(expr);
 		}
-	
+
 		return value;
 	}
 };
@@ -625,9 +625,9 @@ _global.evaluate = function(expr) {
 // {{{ backupListeners
 _global.backupListeners = function(backupArray, Obj) {
 	var i;
-	
+
 	backupArray.splice(0, backupArray.length - 1);
-	
+
 	for (i = 0; i < Obj._listeners.length; i++) {
 		backupArray[i] = Obj._listeners[i];
 	}
@@ -638,8 +638,8 @@ _global.backupListeners = function(backupArray, Obj) {
 // }}}
 // {{{ restoreListeners()
 _global.restoreListeners = function(backupArray, Obj) {
-	var i;	
-	
+	var i;
+
 	for (i = 0; i < backupArray.length; i++) {
 		Obj.addListener(backupArray[i]);
 	}
@@ -648,18 +648,18 @@ _global.restoreListeners = function(backupArray, Obj) {
 // {{{ backupEnabled()
 _global.backupEnabled = function(backupArray, Obj) {
 	var i;
-	
+
 	if (Obj.enabled == true) {
-		backupArray.push(Obj);	
+		backupArray.push(Obj);
 		Obj.enabled = false;
 	}
-	
+
 	for (p in Obj) {
 		if (typeof p != "string") {
 			alert("type" + (typeof p));
 		}
 		if ((typeof(Obj[p]) == "movieclip" || typeof(Obj[p]) == "button") && Obj == Obj[p]._parent) {
-			backupEnabled(backupArray, Obj[p]);	
+			backupEnabled(backupArray, Obj[p]);
 		}
 	}
 };
@@ -667,9 +667,9 @@ _global.backupEnabled = function(backupArray, Obj) {
 // {{{ restoreEnabled()
 _global.restoreEnabled = function(backupArray) {
 	var i;
-	
+
 	for (i = 0; i < backupArray.length; i++) {
-		backupArray[i].enabled = true;	
+		backupArray[i].enabled = true;
 	}
 };
 // }}}
@@ -682,9 +682,9 @@ function getMovieParam(obj) {
 	var url = obj._url;
 	var params = [];
 	var paramsTemp, paramTemp, i;
-	
+
 	if (url.indexOf("?") == -1) {
-		url = "";	
+		url = "";
 	} else {
 		url = url.substring(url.indexOf("?") + 1, url.length);
 	}
@@ -705,15 +705,15 @@ function getMovieParam(obj) {
 _global.getLocalDate = function(dateStr) {
 	var formattedDate = conf.lang.date_format;
 	var localDate = new Date();
-	
+
 	localDate.setUTCFullYear(dateStr.substr(0, 4));
 	localDate.setUTCMonth((dateStr.substr(5, 2) - 1));
 	localDate.setUTCDate(dateStr.substr(8, 2));
 	localDate.setUTCHours(dateStr.substr(11, 2));
 	localDate.setUTCMinutes(dateStr.substr(14, 2));
 	localDate.setUTCSeconds(dateStr.substr(17, 2));
-	
-	
+
+
 	if (dateStr.substr(0, 4) == undefined) {
 		formattedDate = "";
 	} else {
@@ -736,7 +736,7 @@ _global.setLeadingZero = function(value, num) {
 	while (value.toString().length < num) {
 		value = "0" + value;
 	}
-	
+
 	return value;
 };
 // }}}
@@ -812,7 +812,7 @@ Date.prototype.parseDate = function(dateStr) {
 		month = Number(mdy[0]) - 1;
 		monthDate = Number(mdy[1]);
 
-		// If the year value is two characters, then we must add the century to it. 
+		// If the year value is two characters, then we must add the century to it.
 		if (mdy[2].length == 2) {
 			twoDigitYear = Number(mdy[2]);
 			// Assumes that years less than 50 are in the 21st century
@@ -839,7 +839,7 @@ Date.prototype.parseDate = function(dateStr) {
 		monthDate = Number(mdy[0]);
 		month = Number(mdy[1]) - 1;
 
-		// If the year value is two characters, then we must add the century to it. 
+		// If the year value is two characters, then we must add the century to it.
 		if (mdy[2].length == 2) {
 			twoDigitYear = Number(mdy[2]);
 			// Assumes that years less than 50 are in the 21st century
@@ -884,7 +884,7 @@ Date.prototype.parseDate = function(dateStr) {
  *	call like: MovieClip.attachLibrary("lib_icons.swf", "mylib", 1, "login");
  */
 MovieClip.prototype.tabEnabled = false;
-    
+
 // {{{ MovieClip.attachLibrary()
 MovieClip.prototype.attachLibrary = function(libName, newName, depth, param, onLoadFunc) {
 	status("loading " + libName + " - " + newName);
@@ -894,7 +894,7 @@ MovieClip.prototype.attachLibrary = function(libName, newName, depth, param, onL
 		onLoadFunc	: onLoadFunc,
 		preload		: false
 	};
-	
+
 	this.attachMovie("loadLib", newName, depth, initObj);
 };
 // }}}
@@ -905,7 +905,7 @@ MovieClip.prototype.preloadLibrary = function(libName, newName, depth, onLoadFun
 		onLoadFunc	: onLoadFunc,
 		preload		: true
 	};
-	
+
 	this.attachMovie("loadLib", newName, depth, initObj);
 };
 // }}}
@@ -916,7 +916,7 @@ MovieClip.prototype.preloadLibrary = function(libName, newName, depth, onLoadFun
 // {{{ XML.getRootNode()
 XML.prototype.getRootNode = function() {
 	tempNode = this.firstChild;
-	
+
 	while (tempNode != null && tempNode.nodeType != 1) {
 		tempNode = tempNode.nextSibling;
 	}
@@ -931,12 +931,12 @@ XMLNode.prototype.isRootNode = function() {
 
 // {{{ XMLNode.replaceChildren()
 XMLNode.prototype.replaceChildren = function(newXML) {
-	while (this.firstChild != null) {	
+	while (this.firstChild != null) {
 		this.firstChild.removeNode();
 	}
-	
+
 	while (newXML.firstChild != null) {
-		this.appendChild(newXML.firstChild);	
+		this.appendChild(newXML.firstChild);
 	}
 };
 // }}}
@@ -948,7 +948,7 @@ XMLNode.prototype.isParentNodeOf = function(node) {
 	} else if (node.parentNode == undefined) {
 		return false;
 	} else {
-		return this.isParentNodeOf(node.parentNode);	
+		return this.isParentNodeOf(node.parentNode);
 	}
 };
 // }}}
@@ -973,40 +973,40 @@ XMLNode.prototype.getNameSpace = function() {
 // {{{ XMLNode.stripXMLDbIds()
 XMLNode.prototype.stripXMLDbIds = function() {
 	var i;
-	
+
 	if (this.attributes[conf.ns.database + ':id'] != undefined) {
-		delete this.attributes[conf.ns.database + ':id'];	
+		delete this.attributes[conf.ns.database + ':id'];
 	}
 	for (i = 0; i < this.childNodes.length; i++) {
-		this.childNodes[i].stripXMLDbIds();	
+		this.childNodes[i].stripXMLDbIds();
 	}
 };
 // }}}
 // {{{  XMLNode.setNodeIdByDBId()
 XMLNode.prototype.setNodeIdByDBId = function() {
 	var i;
-	
+
 	if (this.nodeType == 1) {
 		this.nid = this.getNodeDBId();
 		for (i = 0; i < this.childNodes.length; i++) {
-			this.childNodes[i].setNodeIdByDBId();	
+			this.childNodes[i].setNodeIdByDBId();
 		}
 	}
 };
 // }}}
 // {{{ XMLNode.getNodeDBId()
 XMLNode.prototype.getNodeDBId = function() {
-	return this.attributes[conf.ns.database + ":id"];	
+	return this.attributes[conf.ns.database + ":id"];
 };
 // }}}
 // {{{ XMLNode.removeIds();
 XMLNode.prototype.removeIds = function() {
 	var i;
-	
+
 	if (this.nodeType == 1) {
 		delete this.nid
 		for (i = 0; i < this.childNodes.length; i++) {
-			this.childNodes[i].removeIds();	
+			this.childNodes[i].removeIds();
 		}
 	}
 };
@@ -1014,12 +1014,12 @@ XMLNode.prototype.removeIds = function() {
 // {{{ XMLNode.removeIdAttribute();
 XMLNode.prototype.removeIdAttribute = function() {
 	var i;
-	
+
 	if (this.nodeType == 1) {
-                delete this.attributes[conf.ns.database + ":id"];	
+                delete this.attributes[conf.ns.database + ":id"];
 		delete this.nid
 		for (i = 0; i < this.childNodes.length; i++) {
-			this.childNodes[i].removeIdAttribute();	
+			this.childNodes[i].removeIdAttribute();
 		}
 	}
 };
@@ -1033,7 +1033,7 @@ XMLNode.prototype.searchForId = function(id) {
 	} else {
 		if (this.nodeType == 1) {
 			for (i = 0; i < this.childNodes.length; i++) {
-				val = this.childNodes[i].searchForId(id);	
+				val = this.childNodes[i].searchForId(id);
 				if (val != null) {
 					return val;
 				}
@@ -1050,7 +1050,7 @@ XMLNode.prototype.nnid = null;
 // {{{ XMLNode.getID()
 XMLNode.prototype.getID = function() {
         if (this.nnid == null) {
-            this.nnid = this.attributes[conf.ns.database + ":id"];	
+            this.nnid = this.attributes[conf.ns.database + ":id"];
         }
         return this.nnid;
 };
@@ -1115,7 +1115,7 @@ TextField.prototype.prepareHtmlText = function(htmlString) {
 			diffLength = this._parent.textLinks[this._parent.textLinks.length - 1].length - newurl.length;
 			linkStartIndex = linkStartIndex - diffLength;
 			linkEndIndex = linkEndIndex - diffLength;
-		} 
+		}
 	} while (linkStartIndex != -1)
 
     return htmlString;
@@ -1132,7 +1132,7 @@ TextField.prototype.reducedHtmlText = function() {
         ["<small></small>", ""],
         ["</ul><ul>", ""]
     ]);
-    
+
     return newStr;
 };
 // }}}

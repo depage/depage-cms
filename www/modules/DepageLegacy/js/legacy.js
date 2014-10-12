@@ -128,7 +128,7 @@ function dlg_publish(project, x, y) {
     $(".no", dlg).click(function() {
         dlg.remove();
     });
-    
+
 }
 /* }}} */
 /* {{{ dlg_backup_restore */
@@ -181,7 +181,7 @@ function dlg_backup_restore(project, x, y) {
     $(".no", dlg).click(function() {
         dlg.remove();
     });
-    
+
 }
 /* }}} */
 
@@ -205,7 +205,7 @@ function msg(newmsg) {
 function load_flasherror() {
     if (flashloaded == false) {
         //window.location="msg.php?msg=inhtml_needed_flash&title=inhtml_require_title";
-    }	
+    }
 }
 /* }}} */
 /* {{{ set_flashloaded */
@@ -279,9 +279,9 @@ function edit_page(page) {
 function logout() {
     var logouturl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "?logout";
 
-    $.ajax({ 
-        type: "GET", 
-        url: logouturl + "=true", 
+    $.ajax({
+        type: "GET",
+        url: logouturl + "=true",
         cache: false,
         async: true,
         username: "logout",
@@ -328,7 +328,7 @@ function projectlisting_add_events() {
     $(".projectlisting > li").each(function() {
         var pl = $(this);
         var project = pl.attr("data-project");
-        
+
         // {{{ edit
         $(".edit", pl).click(function() {
             top.open_edit(project, '');
@@ -361,9 +361,9 @@ function projectlisting_add_events() {
         $(".details_control", pl).click(function() {
             if ($(this).parents("li").hasClass("open")) {
                 $(this).parents("li").removeClass("open");
-                    $.cookie("depage-details-open", "", { 
-                        path: '/', 
-                        expires: 30 
+                    $.cookie("depage-details-open", "", {
+                        path: '/',
+                        expires: 30
                     });
             } else {
                 $(".projectlisting > li").removeClass("open");
@@ -371,21 +371,21 @@ function projectlisting_add_events() {
                 $(this).parents("li").find(".lastchanged_pages").each(function() {
                     var lastchanged_list = this;
 
-                    $.cookie("depage-details-open", project, { 
-                        path: '/', 
-                        expires: 30 
+                    $.cookie("depage-details-open", project, {
+                        path: '/',
+                        expires: 30
                     });
 
                     setTimeout(function() {
                         $(lastchanged_list).load("status.php", {
                             type: "lastchanged_pages",
                             project: project
-                        });  
+                        });
                     }, 200);
                 })
             }
         });
-        
+
         if (open_project == project) {
             $(".details_control:first", pl).click();
         }
@@ -473,7 +473,7 @@ function attach_events() {
 
                 return false;
             });
- 
+
         });
     });
     // }}}

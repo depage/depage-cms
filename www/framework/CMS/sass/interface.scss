@@ -256,13 +256,40 @@ a img {
 }
 /* }}} */
 
+/* {{{ flash */
+.flash {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    width: 820px;
+    bottom: 0;
+    border-left: 4px solid #ffffff;
+
+    iframe {
+        display: block;
+        border: none;
+        width: 100%;
+        height: 100%;
+    }
+}
+/* }}} */
 /* {{{ preview */
 .preview {
     position: absolute;
     top: 30px;
-    right: 0;
+    right: 820px;
+    left: 0;
     bottom: 0;
+    border-right: 1px solid #000000;
+
+    iframe {
+        display: block;
+        border: none;
+        width: 100%;
+        height: 100%;
+    }
 }
+/*
 .layout-narrow .preview,
 .layout-wide.trees-hidden .preview {
     left: 0px;
@@ -272,18 +299,13 @@ a img {
     left: 310px;
     border-left: 1px solid #000000;
 }
+*/
 .preview .zoomwrapper {
     width: 100%;
     height: 100%;
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-}
-.preview iframe {
-    display: block;
-    border: none;
-    width: 100%;
-    height: 100%;
 }
 .preview.zoom50 .zoomwrapper {
     zoom: 0.5;
@@ -434,15 +456,15 @@ a img {
 .tasks h3 {
 }
 .progress {
-    float: left; 
-    border: 1px solid #000000; 
+    float: left;
+    border: 1px solid #000000;
     background: #ffffff;
-    width: 202px; 
-    height: 15px; 
+    width: 202px;
+    height: 15px;
     margin: 10px;
 }
 .progress div {
-    background: #ff9900; 
+    background: #ff9900;
     height: 15px;
 }
 .tasks .desc {

@@ -13,7 +13,7 @@ class_project = function(name, type) {
 	this.preview_type = "html";
 	this.preview_lang = "de";
 	this.preview_setIdFromOutside = false;
-	
+
 	this.taskHandlers = [];
 	this.activeTasks = [];
 };
@@ -21,7 +21,7 @@ class_project = function(name, type) {
 // {{{ init()
 class_project.prototype.init = function(xml_data) {
 	this.parseProjectData(xml_data);
-	
+
 	_root.phpConnect.msgHandler.register_func("preview_update", this.previewUpdate, this);
 	_root.pocketConnect.msgHandler.register_func("preview_loaded", this.previewLoaded, this);
 	_root.phpConnect.msgHandler.register_func("preview_loaded", this.previewLoaded, this);
@@ -54,7 +54,7 @@ class_project.prototype.sendKeepAlive = function() {
 // {{{ parseProjectData
 class_project.prototype.parseProjectData = function(xml_data) {
 	var i, tempType;
-	
+
 	var xml_doc = new XML(xml_data);
 	if (xml_doc.status == 0) {
 		xml_doc = xml_doc.getRootNode();
@@ -74,7 +74,7 @@ class_project.prototype.parseProjectData = function(xml_data) {
 			this.datatypes = [];
 		}
 		for (i = 0; i < this.datatypes.length; i++) {
-			tempType = this.datatypes[i]; 
+			tempType = this.datatypes[i];
 			this.tree[tempType] = getNewTreeObj(tempType, this);
 			this.prop[tempType] = getNewPropObj(tempType, this);
 			if (tempType == "pages") {
@@ -88,13 +88,13 @@ class_project.prototype.parseProjectData = function(xml_data) {
             alert("error while loading projectData");
         }
 	this.waitForLoaded();
-};	
+};
 // }}}
 // {{{ waitForLoaded()
 class_project.prototype.waitForLoaded = function(i) {
 	var j;
 	if (i == undefined) var i = 0;
-	
+
 	if (this.type == "webProject") {
             if (conf.user.mayEditTemplates()) {
                 var toLoad = [["settings", "colors", "tpl_templates", "tpl_newnodes"], ["pages"]];
@@ -102,7 +102,7 @@ class_project.prototype.waitForLoaded = function(i) {
                 var toLoad = [["settings", "colors", "tpl_newnodes"], ["pages"]];
             }
 	}
-	
+
 	if (i <= toLoad.length) {
 		if (this.tree[toLoad[i][0]].isEmpty() && !this.tree[toLoad[i][0]].loading) {
 			for (j = 0; j < toLoad[i].length; j++) {
@@ -127,11 +127,11 @@ class_project.prototype.setPreviewNode = function(node) {
 class_project.prototype.preview = function(forcePreview) {
 	if (conf.standalone != "true") {
 		var tempNode = this.previewNode;
-		
+
 		while (this.tree.pages.isFolder(tempNode) && tempNode.firstChild != null) {
 			tempNode = tempNode.firstChild;
 		}
-		
+
 		if (conf.user.settings.preview_automatic < 2) {
 			var previewTimeout = 1000;
 		} else {
@@ -142,13 +142,13 @@ class_project.prototype.preview = function(forcePreview) {
 				this.preview_setIdFromOutside = false;
 				if (this.previewId != tempNode.nid) {
 					this.previewId = tempNode.nid;
-					
+
 					this.timeoutObj.clear();
 					this.timeoutObj = setTimeout(this.previewNow, this, previewTimeout);
 				}
 			} else {
 				this.previewId = tempNode.nid;
-				
+
 				this.timeoutObj.clear();
 				this.timeoutObj = setTimeout(this.previewNow, this, previewTimeout);
 			}
@@ -164,10 +164,10 @@ class_project.prototype.previewManual = function() {
 // {{{ previewNow()
 class_project.prototype.previewNow = function() {
 	var url;
-	
+
         urlId = conf.project.tree.pages.getPathById(this.previewId, this.preview_lang, this.preview_type);
         if (urlID != "") {
-            url = "../../projects/";
+            url = "project/";
             url += conf.project.pathname;
             url += "/preview/";
             url += this.preview_type + "/";
@@ -179,7 +179,7 @@ class_project.prototype.previewNow = function() {
             }
             url += urlId;
 
-            call_jsfunc("preview('" + escape(url) + "')");
+            call_jsfunc("depageCMS.preview('" + escape(url) + "')");
         }
 };
 // }}}
@@ -226,39 +226,39 @@ class_project.prototype.getBackupFiles = function(callBackObj, callBackFunc) {
 // }}}
 // {{{ parseBackupFiles()
 class_project.prototype.parseBackupFiles = function(args) {
-	
+
 	var DBFiles = [];
 	var LibFiles = [];
 	var tempNode;
-	
+
 	var tempXML = new XML(args["listDB"]);
 	tempNode = tempXML.getRootNode();
 	tempNode = tempNode.firstChild;
 	while (tempNode != null) {
 		DBFiles.push({
 			name	: tempNode.attributes.name,
-			date	: tempNode.attributes.date, 
-			comment	: tempNode.firstChild.attributes.comment
-		});
-		tempNode = tempNode.nextSibling;
-	}
-	
-	var tempXML = new XML(args["listLib"]);
-	tempNode = tempXML.getRootNode();
-	tempNode = tempNode.firstChild;
-	while (tempNode != null) {
-		LibFiles.push({
-			name	: tempNode.attributes.name, 
 			date	: tempNode.attributes.date,
 			comment	: tempNode.firstChild.attributes.comment
 		});
 		tempNode = tempNode.nextSibling;
 	}
-	
+
+	var tempXML = new XML(args["listLib"]);
+	tempNode = tempXML.getRootNode();
+	tempNode = tempNode.firstChild;
+	while (tempNode != null) {
+		LibFiles.push({
+			name	: tempNode.attributes.name,
+			date	: tempNode.attributes.date,
+			comment	: tempNode.firstChild.attributes.comment
+		});
+		tempNode = tempNode.nextSibling;
+	}
+
 	_root.phpConnect.msgHandler.unregister_func("set_backup_files");
-	
+
 	this.backupCallBackFunc.apply(this.backupCallBackObj, [DBFiles, LibFiles]);
-	
+
 	delete this.backupCallBackObj;
 	delete this.backupCallBackFunc;
 };
@@ -285,7 +285,7 @@ class_project.prototype.addTaskHandler = function(obj, func, type) {
 // {{{ removeTaskHandler()
 class_project.prototype.removeTaskHandler = function(obj, func) {
 	var i;
-	
+
 	for (i = 0; i < this.taskHandlers.length; i++) {
 		if (this.taskHandlers[i].obj == obj && this.taskHandlers[i].func == func) {
 			this.taskHandlers.splice(i, 1);
@@ -300,9 +300,9 @@ class_project.prototype.setActiveTasksStatus = function(args) {
 	var taskObj;
 	var found = false;
 	var i;
-	
+
 	taskXML = taskXML.getRootNode();
-	
+
 	taskObj = {
 		name				: taskXML.attributes.name,
 		id					: taskXML.attributes.id,
@@ -312,24 +312,24 @@ class_project.prototype.setActiveTasksStatus = function(args) {
 		time_until_end		: taskXML.attributes.time_until_end,
 		description			: taskXML.attributes.description
 	}
-	
+
 	for (i = 0; i < this.activeTasks.length; i++) {
 		if (this.activeTasks[i].id == taskObj.id) {
 			this.activeTasks[i] = taskObj;
 			found = true;
 		}
 	}
-	
+
 	if (!found) {
 		this.activeTasks.push(taskObj);
 	}
-	
+
 	for (i = 0; i < this.taskHandlers.length; i++) {
 		if (this.taskHandlers[i].type == taskObj.name) {
 			this.taskHandlers[i].func.apply(this.taskHandlers[i].obj, [taskObj]);
 		}
 	}
-	
+
 	for (i = 0; i < this.activeTasks.length; i++) {
 		if (this.activeTasks[i].progress_percent == 100) {
 			this.activeTasks.splice(i, 1);
@@ -347,7 +347,7 @@ class_project.prototype.getActiveTasks = function(type) {
 			thisActiveTasks.push(this.activeTasks[i]);
 		}
 	}
-	
+
 	return thisActiveTasks;
 };
 // }}}
@@ -358,52 +358,52 @@ class_project.prototype.getActiveTasks = function(type) {
 // {{{ getNewTreeObj()
 function getNewTreeObj(type, projectObj) {
 	var newObj;
-	
+
 	if (type == "pages") {
-		newObj = new class_tree_pages();	
+		newObj = new class_tree_pages();
 	} else if (type == "page_data") {
-		newObj = new class_tree_page_data();	
+		newObj = new class_tree_page_data();
 	} else if (type == "files") {
-		newObj = new class_tree_files();	
+		newObj = new class_tree_files();
 	} else if (type == "tpl_templates") {
-		newObj = new class_tree_tpl_templates();	
+		newObj = new class_tree_tpl_templates();
 	} else if (type == "tpl_newnodes") {
-		newObj = new class_tree_tpl_newnodes();	
+		newObj = new class_tree_tpl_newnodes();
 	} else if (type == "colors") {
-		newObj = new class_tree_colors();	
+		newObj = new class_tree_colors();
 	} else if (type == "settings") {
-		newObj = new class_tree_settings();	
+		newObj = new class_tree_settings();
 	} else {
 		alert("treetype not yet defined: " + type);
 	}
 	newObj.init(type, projectObj);
-	
+
 	return newObj;
 }
 // }}}
 // {{{ getNewPropObj()
 function getNewPropObj(type, projectObj) {
 	var newObj;
-	
+
 	if (type == "pages") {
-		newObj = new class_prop_pages();	
+		newObj = new class_prop_pages();
 	} else if (type == "page_data") {
-		newObj = new class_prop_page_data();	
+		newObj = new class_prop_page_data();
 	} else if (type == "files") {
-		newObj = new class_prop_files();	
+		newObj = new class_prop_files();
 	} else if (type == "tpl_templates") {
-		newObj = new class_prop_tpl_templates();	
+		newObj = new class_prop_tpl_templates();
 	} else if (type == "tpl_newnodes") {
-		newObj = new class_prop_tpl_newnodes();	
+		newObj = new class_prop_tpl_newnodes();
 	} else if (type == "colors") {
-		newObj = new class_prop_colors();	
+		newObj = new class_prop_colors();
 	} else if (type == "settings") {
-		newObj = new class_prop_settings();	
+		newObj = new class_prop_settings();
 	} else {
 		alert("proptype not yet defined: " + type);
 	}
 	newObj.init(type, projectObj);
-	
+
 	return newObj;
 }
 // }}}
