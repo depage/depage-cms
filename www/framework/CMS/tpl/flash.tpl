@@ -15,8 +15,8 @@
     );
 
     $params = http_build_query($params);
-    
-    $flashfile = "modules/DepageLegacy/lib/main.swf?" . $params;
+
+    $flashfile = "framework/CMS/lib/main.swf?" . $params;
 
     /*
 ?>
@@ -33,7 +33,7 @@
     <script language="JavaScript" type="text/javascript">
     <!--
         document.write('<object type="application/x-shockwave-flash" width="100%" height="100%" id="flash" data="<?php html::t($flashfile) ?>" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; right: 0; bottom: 0;"><param name="movie" value="<?php html::t($flashfile) ?>" /><param name="AllowScriptAccess" value="always" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /></object>');
-    //-->	
+    //-->
     </script>
     <noscript>
         Javascript must be active.

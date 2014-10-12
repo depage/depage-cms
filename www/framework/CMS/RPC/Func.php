@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace DepageLegacy\RPC;
+namespace depage\CMS\RPC;
 
 class Func {
     // {{{ variables
@@ -24,7 +24,7 @@ class Func {
         'keepAlive',
     );
     // }}}
-    
+
     // {{{ constructor
     /**
      * constructor, creates new rpc-func-object
@@ -104,7 +104,7 @@ class Func {
                 }
             }
         }
-        
+
         return $val;
     }
     // }}}

@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace DepageLegacy\RPC;
+namespace depage\CMS\RPC;
 
 class Message{
     // {{{ variables
@@ -65,7 +65,7 @@ class Message{
 
         $data = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
         $data .= "<rpc:msg";
-        
+
         $data .= " xmlns:rpc=\"http://cms.depagecms.net/ns/rpc\"";
 
         $data .= ">";
@@ -77,7 +77,7 @@ class Message{
             $data .= $funcs;
         }
         $data .= "</rpc:msg>";
-        
+
         return $data;
     }
     // }}}
@@ -123,7 +123,7 @@ class Message{
                                     if ($argnode->nodeType == \XML_ELEMENT_NODE) {
                                         $args[$paramNode->getAttribute('name')][] = $argnode;
                                     }
-                                    
+
                                     $argnode = $argnode->nextSibling;
                                 }
                             } else {
@@ -141,7 +141,7 @@ class Message{
                     $log->log($xmldata);
                 }
             }
-                
+
             return $funcs;
         }
     }

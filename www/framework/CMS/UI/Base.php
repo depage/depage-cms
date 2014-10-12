@@ -19,6 +19,8 @@ class Base extends \depage_ui
     protected $htmlOptions = array();
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
+    protected $authUser;
+    protected $pdo;
 
     // {{{ _init
     public function _init(array $importVariables = array()) {
@@ -36,12 +38,16 @@ class Base extends \depage_ui
             );
         }
 
+        // register session handler
+        \depage\Session\SessionHandler::register($this->pdo);
+
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
             $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
-            $this->options->auth->method // method
+            $this->options->auth->method, // method
+            $this->options->auth->digestCompat // should we digest compatibility
         );
 
         // set html-options
@@ -85,10 +91,10 @@ class Base extends \depage_ui
 
     // {{{ toolbar
     protected function toolbar() {
-        if ($user = $this->auth->enforceLazy()) {
+        if ($this->user = $this->auth->enforceLazy()) {
             $h = new html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
-                'username' => $user->name,
+                'username' => $this->user->name,
             ), $this->htmlOptions);
         } else {
             $h = new html("toolbar_plain.tpl", array(

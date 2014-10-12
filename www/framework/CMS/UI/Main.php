@@ -21,6 +21,8 @@ class Main extends Base {
     static function _getSubHandler() {
         return array(
             'project/*' => '\depage\CMS\UI\Project',
+            'project/*/preview' => '\depage\CMS\UI\Preview',
+            'project/*/flash' => '\depage\CMS\UI\Flash',
             'project/*/tree/*' => '\depage\CMS\UI\Tree',
             'project/*/tree/*/fallback' => '\depage\CMS\UI\SocketFallback',
             'project/*/edit/*' => '\depage\CMS\UI\Edit',
@@ -70,8 +72,10 @@ class Main extends Base {
         } else {
             // not logged in
             $form = new \depage\htmlform\htmlform("login", array(
-                'submitLabel' => "Anmelden",
-                'validator' => array($this, 'validate_login'),
+                'label' => _("Login"),
+                'validator' => function($form, $values) {
+                    return (bool) $this->auth->login($values['name'], $values['pass']);
+                },
             ));
 
             // define formdata
@@ -109,11 +113,6 @@ class Main extends Base {
                 return $h;
             }
         }
-    }
-    // }}}
-    // {{{ validate_login
-    public function validate_login($form, $values) {
-        return (bool) $this->auth->login($values['name'], $values['pass']);
     }
     // }}}
     // {{{ logout
@@ -190,39 +189,19 @@ class Main extends Base {
         return $h;
     }
     // }}}
-    // {{{ user
-    /**
-     * gets profile of user
-     *
-     * @return  null
-     */
-    public function user($username = "") {
-        if ($user = $this->auth->enforce()) {
-            $puser = \depage\Auth\User::loadByUsername($this->pdo, $username);
 
-            if ($puser !== false) {
-                $title = _("User Profile") . ": {$puser->fullname}";
-                $content = new html("userprofile_edit.tpl", array(
-                    'title' => $this->basetitle,
-                    'user' => $puser,
-                ));
-            } else {
-                $title = _("User Profile");
-                $content = _("unknown user profile");
-            }
+    // {{{ add tables
+    public function add_tables()
+    {
+        if ($this->authUser = $this->auth->enforce()) {
+            $schema = new \depage\DB\Schema($this->pdo);
 
-            $h = new html(array(
-                'content' => array(
-                    $this->toolbar(),
-                    new html("box.tpl", array(
-                        'id' => "userprofile",
-                        'class' => "first",
-                        'icon' => "framework/cms/images/icon_users.gif",
-                        'title' => $title,
-                        'content' => $content,
-                    )),
-                )
-            ), $this->htmlOptions);
+            $schema->load("framework/Auth/Sql/*.sql");
+            $schema->setReplace(function ($tableName) {
+                return "test_" . $tableName;
+            });
+
+            $schema->update();
         }
 
         return $h;

@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace DepageLegacy\RPC;
+namespace depage\CMS\RPC;
 
 class CmsFuncs {
     protected $projectName;
@@ -54,7 +54,7 @@ class CmsFuncs {
         $conf_array['thumb_height'] = 72;
         $conf_array['thumb_load_num'] = 100;
 
-        $conf_array['interface_lib'] = "modules/DepageLegacy/lib/lib_interface.swf";
+        $conf_array['interface_lib'] = "framework/CMS/lib/lib_interface.swf";
 
         $conf_array['interface_text'] = "";
         $lang = $this->getTexts();

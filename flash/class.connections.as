@@ -1,5 +1,5 @@
 ﻿/**
- * C L A S S 
+ * C L A S S
  * Class pocketConnect
  *
  * actionScript-library:
@@ -39,7 +39,7 @@ class_pocketConnect.prototype.connect = function() {
 // {{{ close()
 class_pocketConnect.prototype.close = function() {
 	this.connected = false;
-	this.connection.close();	
+	this.connection.close();
 }
 // }}}
 // {{{ onConnect()
@@ -49,7 +49,7 @@ class_pocketConnect.prototype.onConnect = function(success) {
 		this.connObj.onSuccessHandler();
 	} else {
 		this.connObj.connectFaults++;
-		this.connObj.onFaultHandler();	
+		this.connObj.onFaultHandler();
 	}
 	updateAfterEvent();
 }
@@ -58,7 +58,7 @@ class_pocketConnect.prototype.onConnect = function(success) {
 class_pocketConnect.prototype.send = function(name, args) {
 	var func = this.msgHandler.create_func(name, args)
 	var msg = this.msgHandler.create_msg([func]);
-	
+
 	if (this.connected) {
 		if (name != "sendKeepAlive") {
 			_root.interface.connection_indicate_plus();
@@ -100,12 +100,12 @@ class_phpConnect = function(ns_rpc, ns_rpc_uri) {
 // {{{ send()
 class_phpConnect.prototype.send = function(name, args, debug) {
 	var func = this.msgHandler.create_func(name, args)
-		
+
 	this.debug = debug;
 	if (this.toSend.length == 0) {
-		setTimeout(this.sendNow, this, 1000);	
+		setTimeout(this.sendNow, this, 1000);
 	}
-	
+
 	this.toSend.push(func);
 }
 // }}}
@@ -113,14 +113,14 @@ class_phpConnect.prototype.send = function(name, args, debug) {
 class_phpConnect.prototype.sendNow = function() {
 	var msg = this.msgHandler.create_msg(this.toSend);
 	this.toSend = [];
-	
+
 	this.requestXML = new XML(msg);
-	
+
 	if (this.debug) {
-		this.requestXML.send("rpc/", "_blank");
+		this.requestXML.send("project/" + conf.project_name + "/flash/rpc/", "_blank");
 	} else {
 		_root.interface.connection_indicate_plus();
-		this.requestXML.sendAndLoad("rpc/", this.answer);
+		this.requestXML.sendAndLoad("project/" + conf.project_name + "/flash/rpc/", this.answer);
 	}
 };
 // }}}
