@@ -42,7 +42,7 @@ class User extends \depage\entity\Object
     /**
      * @brief primary
      **/
-    static protected $primary = "id";
+    static protected $primary = array("id");
 
     /**
      * @brief pdo object for database access
@@ -166,7 +166,7 @@ class User extends \depage\entity\Object
         ));
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
         return $user;
@@ -235,7 +235,7 @@ class User extends \depage\entity\Object
         $uid_query->execute();
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\Auth\\User", array($pdo));
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
@@ -269,7 +269,7 @@ class User extends \depage\entity\Object
         $uid_query->execute();
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "auth_user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
@@ -291,7 +291,7 @@ class User extends \depage\entity\Object
      */
     public function save() {
         $fields = array();
-        $primary = self::$primary;
+        $primary = self::$primary[0];
         $isNew = $this->data[$primary] === null;
 
         if ($isNew) {
