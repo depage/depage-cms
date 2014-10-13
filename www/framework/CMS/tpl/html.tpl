@@ -13,12 +13,12 @@
         <?php $this->include_js("interface", array(
             "framework/CMS/js/interface.js",
             "framework/shared/jquery.cookie.js",
-            "framework/shared/jquery.hotkeys.js",
-            "framework/CMS/js/jstree.js",
+            //"framework/shared/jquery.hotkeys.js",
+            //"framework/CMS/js/jstree.js",
         )); ?>
         <?php $this->include_css("interface", array(
             "framework/htmlform/lib/css/depage-forms.css",
-            "framework/CMS/css/jstree.css",
+            //"framework/CMS/css/jstree.css",
             "framework/CMS/css/interface.css",
         )); ?>
     </head>

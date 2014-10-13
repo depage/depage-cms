@@ -76,6 +76,11 @@
 
 @import "icons";
 
+$toolbarHeight: 30px;
+$infoHeight: 15px;
+$editWidth: 820px;
+//$editWidth: 610px;
+
 /* {{{ global */
 * {
     font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
@@ -257,13 +262,35 @@ a img {
 /* }}} */
 
 /* {{{ flash */
+header.info {
+    position: absolute;
+    left: 0;
+    top: - $infoHeight;
+    height: $infoHeight;
+    width: 101%;
+    border-bottom: 1px solid #000000;
+    background: #CCC8C4;
+    z-index: 10001;
+
+    h1 {
+        padding: 0;
+        margin: 0;
+        font-size: 10px;
+        padding-left: 15px;
+        font-weight: normal;
+        color: #000000;
+    }
+}
+/* }}} */
+/* {{{ flash */
 .flash {
     position: absolute;
-    right: 0;
-    top: 30px;
-    width: 820px;
+    left: 0;
+    top: $toolbarHeight + $infoHeight;
+    width: $editWidth;
+    max-width: 100%;
     bottom: 0;
-    border-left: 4px solid #ffffff;
+    border-right: 8px solid #ffffff;
 
     iframe {
         display: block;
@@ -276,11 +303,11 @@ a img {
 /* {{{ preview */
 .preview {
     position: absolute;
-    top: 30px;
-    right: 820px;
-    left: 0;
+    top: $toolbarHeight + $infoHeight;
+    left: $editWidth;
+    right: 0;
     bottom: 0;
-    border-right: 1px solid #000000;
+    border-left: 1px solid #000000;
 
     iframe {
         display: block;

@@ -2,11 +2,11 @@
     <?php foreach($this->projects as $pname => $pid) { ?>
         <li>
             <h2><?php html::t($pname); ?></h2>
-            <a href="project/<?php html::t($pname); ?>/flash/" class="button">
-                <?php echo(_('edit')) ?>
+            <a href="project/<?php html::t($pname); ?>/edit/" class="button">
+                <?php html::t(_('edit')) ?>
             </a>
             <a href="project/<?php html::t($pname); ?>/preview/" class="button">
-                <?php echo(_('preview')) ?>
+                <?php html::t(_('preview')) ?>
             </a>
         </li>
     <?php } ?>
