@@ -175,12 +175,19 @@ abstract class Transformer
         $this->currentPath = $urlPath;
         $this->lang = $lang;
 
-        $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
-        list($pageId, $pagedataId) = $this->getPageIdFor($urlPath);
+        list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
 
         if ($pageId === false || $pagedataId === false) {
-            throw new \exception("site does not exist");
+            // php fallback for transparent php links
+            $this->currentPath = preg_replace("/\.html$/", ".php", $this->currentPath);
+
+            list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
         }
+        if ($pageId === false || $pagedataId === false) {
+            throw new \exception("page '{$urlPath}' does not exist");
+        }
+
+        $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
         return $this->transformXml($pageId, $pagedataId);
     }
@@ -200,7 +207,7 @@ abstract class Transformer
         ));
 
         if ($pageXml === false) {
-            throw new \exception("site does not exist");
+            throw new \exception("page does not exist");
         } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {
             $errors = libxml_get_errors();
             foreach($errors as $error) {
