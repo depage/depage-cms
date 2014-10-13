@@ -26,7 +26,6 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         "  `pid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
         "  `did` int(10) unsigned NOT NULL DEFAULT '0'\n" .
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.2'";
-
     }
     // }}}
     // {{{ tearDown
@@ -49,6 +48,22 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testCompleteUpdate
     public function testCompleteUpdate()
     {
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
+    }
+    // }}}
+    // {{{ testIncrementalUpdates
+    public function testIncrementalUpdates()
+    {
+        $this->schema->loadFile('Fixtures/TestFilePart.sql');
+
+        $firstVersion = "CREATE TABLE `test` (\n" .
+        "  `uid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
+        "  `pid` int(10) unsigned NOT NULL DEFAULT '0'\n" .
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='version 0.1'";
+
+        $this->assertEquals($firstVersion, $this->showCreateTestTable());
+
         $this->schema->loadFile('Fixtures/TestFile.sql');
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
