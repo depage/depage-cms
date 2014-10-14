@@ -67,7 +67,7 @@ class Schema
             if ($header) {
                 if ($tag[self::TABLENAME_TAG]) {
                     if (isset($tableName)) {
-                        throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException("More than one tablename tags in \"{$fileName}\".");
                     } else {
                         $tableName              = $tag[self::TABLENAME_TAG];
                         $dictionary[$tableName] = $this->replace($tableName);
@@ -81,10 +81,10 @@ class Schema
                 if (!$parser->isEndOfStatement()) {
                     $header = false;
                     if (!isset($tableName)) {
-                        throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException("Tablename tag missing in \"{$fileName}\".");
                     }
                     if (empty($versions)) {
-                        throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                        throw new Exceptions\SchemaException("There is code without version tags in \"{$fileName}\" at line {$number}.");
                     }
                 }
             }
@@ -98,7 +98,7 @@ class Schema
         }
 
         if(!$parser->isEndOfStatement()) {
-            throw new Exceptions\SyntaxErrorException("Incomplete statement at the end of \"{$fileName}\".");
+            throw new Exceptions\SchemaException("Incomplete statement at the end of \"{$fileName}\".");
         }
         $this->update($this->replace($tableName), $statementBlock, $versions);
     }
@@ -181,7 +181,7 @@ class Schema
             $row        = $statement->fetch();
 
             if ($row['TABLE_COMMENT'] == '') {
-                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
             }
 
             $version = $row['TABLE_COMMENT'];
@@ -192,7 +192,7 @@ class Schema
             $row        = $statement->fetch();
 
             if (!preg_match('/COMMENT=\'(.*)\'/', $row[1], $matches)) {
-                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
             }
 
             $version = array_pop($matches);

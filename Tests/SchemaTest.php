@@ -57,30 +57,42 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     }
     /* }}} */
     /* {{{ testLoadNoTableName */
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage 'Tablename tag missing in "Fixtures/TestNoTableName.sql".'
+     */
     public function testLoadNoTableName()
     {
-        $this->setExpectedException('depage\DB\Exceptions\TableNameMissingException');
         $this->schema->loadGlob('Fixtures/TestNoTableName.sql');
     }
     /* }}} */
     /* {{{ testLoadMultipleTableNames */
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage 'More than one tablename tags in "Fixtures/TestMultipleTableNames.sql".'
+     */
     public function testLoadMultipleTableNames()
     {
-        $this->setExpectedException('depage\DB\Exceptions\MultipleTableNamesException');
         $this->schema->loadGlob('Fixtures/TestMultipleTableNames.sql');
     }
     /* }}} */
     /* {{{ testLoadUnversionedCode */
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage 'There is code without version tags in "Fixtures/TestUnversionedCode.sql" at line 4.'
+     */
     public function testLoadUnversionedCode()
     {
-        $this->setExpectedException('depage\DB\Exceptions\UnversionedCodeException');
         $this->schema->loadGlob('Fixtures/TestUnversionedCode.sql');
     }
     /* }}} */
     /* {{{ testLoadIncompleteFile */
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage 'Incomplete statement at the end of "Fixtures/TestIncompleteFile.sql".'
+     */
     public function testLoadIncompleteFile()
     {
-        $this->setExpectedException('depage\DB\Exceptions\SyntaxErrorException');
         $this->schema->loadGlob('Fixtures/TestIncompleteFile.sql');
     }
     /* }}} */

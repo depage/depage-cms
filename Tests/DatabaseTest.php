@@ -80,6 +80,10 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // }}}
 
     // {{{ testVersionIdentifierMissingException
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage 'Missing version identifier in table "test".'
+     */
     public function testVersionIdentifierMissingException()
     {
         // create table without version comment
@@ -91,7 +95,6 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->assertEquals($expected, $this->showCreateTestTable());
 
         // trigger exception
-        $this->setExpectedException('depage\DB\Exceptions\VersionIdentifierMissingException');
         $this->schema->loadFile('Fixtures/TestFile.sql');
     }
     // }}}
