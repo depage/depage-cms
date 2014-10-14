@@ -2,7 +2,6 @@
 
 require_once('../SQLParser.php');
 require_once('../Schema.php');
-require_once('../Exceptions/SQLExecutionException.php');
 require_once('../Exceptions/SchemaException.php');
 
 /* {{{ Generic_Tests_DatabaseTestCase */

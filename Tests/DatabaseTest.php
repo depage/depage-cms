@@ -82,7 +82,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testVersionIdentifierMissingException
     /**
      * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage 'Missing version identifier in table "test".'
+     * @expectedExceptionMessage Missing version identifier in table "test".
      */
     public function testVersionIdentifierMissingException()
     {
@@ -99,10 +99,15 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
     // {{{ testSQLExecutionException
-    public function testSQLExecutionException()
+    /**
+     * @expectedException           PDOException
+     * @expectedExceptionMessage    SQLSTATE[42000]: Syntax error or access violation:
+     *                              1064 You have an error in your SQL syntax;
+     *                              check the manual that corresponds to your MySQL server version
+     *                              for the right syntax to use near '=InnoDB DEFAULT CHARSET=utf8mb4' at line 7
+     */
+    public function testPDOException()
     {
-        // trigger exception
-        $this->setExpectedException('depage\DB\Exceptions\SQLExecutionException');
         $this->schema->loadFile('Fixtures/TestSyntaxErrorFile.sql');
     }
     // }}}

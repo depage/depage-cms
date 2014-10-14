@@ -146,7 +146,18 @@ class Schema
                 $preparedStatement = $this->pdo->prepare($statement);
                 $preparedStatement->execute();
             } catch (\PDOException $e) {
-                throw new Exceptions\SQLExecutionException($e, $number, $statement);
+                $PDOExceptionReflection = new \ReflectionClass('PDOException');
+                $line                   = $PDOExceptionReflection->getProperty('line');
+                $message                = $PDOExceptionReflection->getProperty('message');
+
+                $line->setAccessible(true);
+                $message->setAccessible(true);
+                $line->setValue($e, $number);
+                $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
+                $line->setAccessible(false);
+                $message->setAccessible(false);
+
+                throw $e;
             }
         }
     }
