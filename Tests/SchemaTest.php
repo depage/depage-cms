@@ -2,7 +2,7 @@
 
 use depage\DB\Schema;
 
-/* {{{ SchemaTestClass */
+// {{{ SchemaTestClass
 class SchemaTestClass extends Schema
 {
     public $executedStatements = array();
@@ -31,73 +31,79 @@ class SchemaTestClass extends Schema
         return $this->tableExists;
     }
 }
-/* }}} */
+// }}}
 
 class SchemaTest extends PHPUnit_Framework_TestCase
 {
-    /* {{{ setUp */
+    // {{{ setUp
     public function setUp()
     {
         $this->schema = new SchemaTestClass('');
     }
-    /* }}} */
+    // }}}
 
-    /* {{{ testLoadSpecificFileFail */
+    // {{{ testLoadSpecificFileFail
+    /**
+     * @expectedException        depage\DB\Exceptions\FileNotFoundException
+     * @expectedExceptionMessage File "fileDoesntExist.sql" doesn't exist.
+     */
     public function testLoadSpecificFileFail()
     {
-        $this->setExpectedException('depage\DB\Exceptions\FileNotFoundException');
         $this->schema->loadFile('fileDoesntExist.sql');
     }
-    /* }}} */
-    /* {{{ testLoadBatchFail */
+    // }}}
+    // {{{ testLoadBatchFail
+    /**
+     * @expectedException        PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessage No file found matching "fileDoesntExist.sql".
+     */
     public function testLoadBatchFail()
     {
-        $this->setExpectedException('PHPUnit_Framework_Error_Warning');
         $this->schema->loadGlob('fileDoesntExist.sql');
     }
-    /* }}} */
-    /* {{{ testLoadNoTableName */
+    // }}}
+    // {{{ testLoadNoTableName
     /**
      * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage 'Tablename tag missing in "Fixtures/TestNoTableName.sql".'
+     * @expectedExceptionMessage Tablename tag missing in "Fixtures/TestNoTableName.sql".
      */
     public function testLoadNoTableName()
     {
         $this->schema->loadGlob('Fixtures/TestNoTableName.sql');
     }
-    /* }}} */
-    /* {{{ testLoadMultipleTableNames */
+    // }}}
+    // {{{ testLoadMultipleTableNames
     /**
      * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage 'More than one tablename tags in "Fixtures/TestMultipleTableNames.sql".'
+     * @expectedExceptionMessage More than one tablename tags in "Fixtures/TestMultipleTableNames.sql".
      */
     public function testLoadMultipleTableNames()
     {
         $this->schema->loadGlob('Fixtures/TestMultipleTableNames.sql');
     }
-    /* }}} */
-    /* {{{ testLoadUnversionedCode */
+    // }}}
+    // {{{ testLoadUnversionedCode
     /**
      * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage 'There is code without version tags in "Fixtures/TestUnversionedCode.sql" at line 4.'
+     * @expectedExceptionMessage There is code without version tags in "Fixtures/TestUnversionedCode.sql" at line 4.
      */
     public function testLoadUnversionedCode()
     {
         $this->schema->loadGlob('Fixtures/TestUnversionedCode.sql');
     }
-    /* }}} */
-    /* {{{ testLoadIncompleteFile */
+    // }}}
+    // {{{ testLoadIncompleteFile
     /**
      * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage 'Incomplete statement at the end of "Fixtures/TestIncompleteFile.sql".'
+     * @expectedExceptionMessage Incomplete statement at the end of "Fixtures/TestIncompleteFile.sql".
      */
     public function testLoadIncompleteFile()
     {
         $this->schema->loadGlob('Fixtures/TestIncompleteFile.sql');
     }
-    /* }}} */
+    // }}}
 
-    /* {{{ testProcessNewestVersion */
+    // {{{ testProcessNewestVersion
     public function testProcessNewestVersion()
     {
         $this->schema->tableExists          = true;
@@ -107,8 +113,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $expected = array();
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
-    /* {{{ testProcessUpdate */
+    // }}}
+    // {{{ testProcessUpdate
     public function testProcessUpdate()
     {
         $this->schema->tableExists          = true;
@@ -120,8 +126,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
-    /* {{{ testProcessEntireFile */
+    // }}}
+    // {{{ testProcessEntireFile
     public function testProcessEntireFile()
     {
         $this->schema->tableExists = false;
@@ -134,8 +140,12 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
-    /* {{{ testProcessUnknownVersion */
+    // }}}
+    // {{{ testProcessUnknownVersion
+    /**
+     * @expectedException        PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessage Current table version (bogus version) not in schema file.
+     */
     public function testProcessUnknownVersion()
     {
         $this->schema->tableExists          = true;
@@ -146,8 +156,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
-    /* {{{ testProcessConnections */
+    // }}}
+    // {{{ testProcessConnections
     public function testProcessConnections()
     {
         $this->schema->currentTableVersion = '';
@@ -160,8 +170,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
-    /* {{{ testProcessPrefixes */
+    // }}}
+    // {{{ testProcessPrefixes
     public function testProcessPrefixes()
     {
         $this->schema->currentTableVersion = '';
@@ -179,7 +189,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
-    /* }}} */
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

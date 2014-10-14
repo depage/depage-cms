@@ -112,10 +112,10 @@ class Schema
             $currentVersion = $this->currentTableVersion($tableName);
             $search         = array_search($currentVersion, $keys);
 
-            if (
-                $search === false
-                || $search == count($keys) - 1
-            ) {
+            if ($search == count($keys) - 1) {
+                $startKey = false;
+            } elseif ($search === false) {
+                trigger_error('Current table version (' . $currentVersion .') not in schema file.', E_USER_WARNING);
                 $startKey = false;
             } else {
                 $startKey = $keys[$search + 1];
