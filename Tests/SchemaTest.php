@@ -190,6 +190,20 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
+    // {{{ testProcessBackticks
+    public function testProcessBackticks()
+    {
+        $this->schema->currentTableVersion = '';
+        $this->schema->loadGlob('Fixtures/TestBackticks.sql');
+
+        $expected = array(
+            9   => array("CREATE TABLE `table backticks` ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
+            15  => array("CREATE VIEW `view backticks` AS SELECT id, name FROM `connection backticks` WHERE someCondition=TRUE"),
+        );
+
+        $this->assertEquals($expected, $this->schema->executedStatements);
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

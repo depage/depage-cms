@@ -98,7 +98,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->schema->loadFile('Fixtures/TestFile.sql');
     }
     // }}}
-    // {{{ testSQLExecutionException
+    // {{{ testPDOException
     /**
      * @expectedException           PDOException
      * @expectedExceptionMessage    SQLSTATE[42000]: Syntax error or access violation:
@@ -108,7 +108,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
      */
     public function testPDOException()
     {
-        $this->schema->loadFile('Fixtures/TestSyntaxErrorFile.sql');
+        $this->schema->loadFile('Fixtures/TestSyntaxError.sql');
     }
     // }}}
 }
