@@ -169,13 +169,12 @@ class Schema
         $exists = false;
 
         try {
-            $preparedStatement  = $this->pdo->prepare('SELECT 1 FROM ' . $tableName);
-            $preparedStatement->execute();
-            $exists             = true;
+            $this->pdo->query('SELECT 1 FROM ' . $tableName);
+            $exists = true;
         } catch (\PDOException $expected) {
             // only catch "table doesn't exist" exception
             if ($expected->getCode() != '42S02') {
-                throw new \PDOEXception($expected);
+                throw $expected;
             }
         }
 

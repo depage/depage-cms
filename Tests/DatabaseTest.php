@@ -158,6 +158,19 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->schema->loadFile('Fixtures/TestFile.sql');
     }
     // }}}
+    // {{{ testTableExistsPDOException
+    /**
+     * @expectedException        PDOException
+     */
+    public function testTableExistsPDOException()
+    {
+        // make select statement fail
+        $this->pdo->queryFail = 'SELECT 1 FROM test';
+
+        // trigger exception
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
