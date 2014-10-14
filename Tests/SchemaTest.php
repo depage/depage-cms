@@ -141,20 +141,26 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->schema->executedStatements);
     }
     // }}}
-    // {{{ testProcessUnknownVersion
+    // {{{ testProcessUnknownVersionWarning
     /**
      * @expectedException        PHPUnit_Framework_Error_Warning
      * @expectedExceptionMessage Current table version (bogus version) not in schema file.
      */
-    public function testProcessUnknownVersion()
+    public function testProcessUnknownVersionWarning()
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'bogus version';
         $this->schema->loadGlob('Fixtures/TestFile.sql');
+    }
+    // }}}
+    // {{{ testProcessUnknownVersionExecution
+    public function testProcessUnknownVersionExecution()
+    {
+        $this->schema->tableExists          = true;
+        $this->schema->currentTableVersion  = 'bogus version';
+        @$this->schema->loadGlob('Fixtures/TestFile.sql');
 
-        $expected = array();
-
-        $this->assertEquals($expected, $this->schema->executedStatements);
+        $this->assertEquals(array(), $this->schema->executedStatements);
     }
     // }}}
     // {{{ testProcessConnections
