@@ -52,14 +52,22 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->loadFile('fileDoesntExist.sql');
     }
     // }}}
-    // {{{ testLoadBatchFail
+    // {{{ testLoadGlobFailWarning
     /**
      * @expectedException        PHPUnit_Framework_Error_Warning
      * @expectedExceptionMessage No file found matching "fileDoesntExist.sql".
      */
-    public function testLoadBatchFail()
+    public function testLoadGlobFailWarning()
     {
         $this->schema->loadGlob('fileDoesntExist.sql');
+    }
+    // }}}
+    // {{{ testLoadGlobFailExecution
+    public function testLoadGlobFailExecution()
+    {
+        @$this->schema->loadGlob('fileDoesntExist.sql');
+
+        $this->assertEquals(array(), $this->schema->executedStatements);
     }
     // }}}
     // {{{ testLoadNoTableName
