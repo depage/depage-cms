@@ -45,8 +45,8 @@ class Schema
     // {{{ loadFile
     public function loadFile($fileName)
     {
-        if (!file_exists($fileName)) {
-            throw new Exceptions\FileNotFoundException("File \"{$fileName}\" doesn't exist."); 
+        if (!is_readable($fileName)) {
+            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable."); 
         }
 
         $parser         = new SQLParser();

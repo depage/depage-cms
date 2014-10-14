@@ -44,8 +44,8 @@ class SchemaTest extends PHPUnit_Framework_TestCase
 
     // {{{ testLoadSpecificFileFail
     /**
-     * @expectedException        depage\DB\Exceptions\FileNotFoundException
-     * @expectedExceptionMessage File "fileDoesntExist.sql" doesn't exist.
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage File "fileDoesntExist.sql" doesn't exist or isn't readable.
      */
     public function testLoadSpecificFileFail()
     {
