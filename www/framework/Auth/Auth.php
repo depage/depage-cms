@@ -8,7 +8,7 @@
  * handling.
  *
  *
- * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  *
@@ -50,6 +50,7 @@ abstract class Auth {
      * @return      void
      */
     public static function factory($pdo, $realm, $domain, $method, $digestCompat = false) {
+        // @TODO add https option to enforce https with login attempts
         if ($method == "http_digest" && $digestCompat) {
             return new Methods\HttpDigest($pdo, $realm, $domain, $digestCompat);
         } elseif ($method == "http_basic") {
