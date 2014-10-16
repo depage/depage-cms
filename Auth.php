@@ -43,17 +43,19 @@ abstract class Auth {
      *
      * @public
      *
-     * @param       depage\DB\PDO  $pdo        depage\DB\PDO object for database access
+     * @param       Depage\DB\PDO  $pdo        depage\DB\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
      * @return      void
      */
     public static function factory($pdo, $realm, $domain, $method, $digestCompat = false) {
+        $method = str_replace("_", "-", $method);
+
         // @TODO add https option to enforce https with login attempts
-        if ($method == "http_digest" && $digestCompat) {
+        if ($method == "http-digest" && $digestCompat) {
             return new Methods\HttpDigest($pdo, $realm, $domain, $digestCompat);
-        } elseif ($method == "http_basic") {
+        } elseif ($method == "http-basic") {
             return new Methods\HttpBasic($pdo, $realm, $domain, $digestCompat);
         } else {
             return new Methods\HttpCookie($pdo, $realm, $domain, $digestCompat);
