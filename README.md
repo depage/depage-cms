@@ -5,6 +5,9 @@ depage-mail is a small simple mail generator and sender and a more convenient
 wrapper for the mail() function, when something bigger is unnecessary or not
 required.
 
+![Latest Stable Version](https://poser.pugx.org/depage/mail/v/stable.png)](https://packagist.org/packages/depage/mail) [![Build Status](https://travis-ci.org/depage/depage-mail.png?branch=master)](https://travis-ci.org/depage/depage-mail)
+
+
 Features
 --------
 
@@ -13,8 +16,6 @@ Features
 - generates plain-text based on html-text
 - simplifies attaching files
 - unit tested 
-
-[![Build Status](https://travis-ci.org/depage/depage-mail.png?branch=master)](https://travis-ci.org/depage/depage-mail)
 
 
 Prerequisites
