@@ -15,7 +15,7 @@
  * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
 
-namespace depage\Auth;
+namespace Depage\Auth;
 
 /**
  * contains functions for handling user authentication
