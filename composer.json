@@ -11,7 +11,8 @@
     "require": {
         "php": " >= 5.3",
         "depage/db": "dev-master",
-        "depage/entity": "dev-master"
+        "depage/entity": "dev-master",
+        "depage/session": "dev-master"
     },
     "suggest": {
         "depage/htmlform": "Needed when using the supplied forms"
