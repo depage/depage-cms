@@ -10,7 +10,11 @@
     ],
     "require": {
         "php": " >= 5.3",
-        "Depage/Entity": "dev-master"
+        "depage/db": "dev-master",
+        "depage/entity": "dev-master"
+    },
+    "suggest": {
+        "depage/htmlform": "Needed when using the supplied forms"
     },
     "autoload": {
         "psr-4": { "Depage\\Auth\\": "" }
