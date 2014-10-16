@@ -21,9 +21,9 @@ class PDO
     private $username;
     private $password;
     private $driver_options;
-    /* }}} */
+    // }}}
 
-    /* {{{ constructor */
+    // {{{ constructor
     /**
      * constructor for PDO object with an additional prefix-parameter in driver-options
      *
@@ -46,8 +46,8 @@ class PDO
         }
         $this->driver_options = $driver_options;
     }
-    /* }}} */
-    /* {{{ lateInitialize */
+    // }}}
+    // {{{ lateInitialize
     /**
      */
     private function lateInitialize()
@@ -61,9 +61,9 @@ class PDO
         // @todo check why this does not work with some queries
         $this->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
     }
-    /* }}} */
+    // }}}
 
-    /* {{{ __set */
+    // {{{ __set
     /**
      */
     public function __set($name, $value)
@@ -73,8 +73,8 @@ class PDO
         }
         $this->$name = $value;
     }
-    /* }}} */
-    /* {{{ __get */
+    // }}}
+    // {{{ __get
     /**
      */
     public function __get($name)
@@ -85,8 +85,8 @@ class PDO
 
         return $this->$name;
     }
-    /* }}} */
-    /* {{{ __call */
+    // }}}
+    // {{{ __call
     /**
      */
     public function __call($name, $arguments)
@@ -97,15 +97,15 @@ class PDO
 
         return call_user_func_array(array($this->pdo, $name), $arguments);
     }
-    /* }}} */
-    /* {{{ __callStatic */
+    // }}}
+    // {{{ __callStatic
     /**
      */
     public static function __callStatic($name, $arguments)
     {
         return call_user_func_array("pdo::$name", $arguments);
     }
-    /* }}} */
+    // }}}
 
     // {{{ __sleep()
     /**
@@ -133,7 +133,7 @@ class PDO
     }
     // }}}
 
-    /* {{{ dsn_parts */
+    // {{{ dsn_parts
     /**
      * parses dsn intro its parts
      *
@@ -156,7 +156,7 @@ class PDO
 
         return $info;
     }
-    /* }}} */
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
