@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../mail.php');
+require_once(__DIR__ . '/../Mail.php');
 
 use Depage\Mail\Mail;
 
