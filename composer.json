@@ -1,5 +1,5 @@
 {
-    "name": "depage/mail",
+    "name": "Depage/Mail",
     "description": "depage-mail is a small simple mail generator and sender and a more convinient wrapper for the mail() function, when something bigger is unnecessary or not required.",
     "version": "1.4.2",
     "type": "library",
@@ -15,7 +15,7 @@
         "ext-mailparse": "*"
     },
     "autoload": {
-        "psr-0": { "depage\\mail\\": "../../" }
+        "psr-0": { "Depage\\Mail\\": "../../" }
     },
     "support": {
         "email": "info@depage.net",
