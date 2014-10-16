@@ -1,0 +1,33 @@
+{
+    "name": "depage/session",
+    "description": "depage-session.",
+    "version": "1.5.0-beta.1",
+    "type": "library",
+    "keywords": [
+        "session"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Session\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-session",
+        "issues": "https://github.com/depage/depage-session/issues"
+
+    },
+    "time": "2014-10-16",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
