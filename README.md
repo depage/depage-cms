@@ -9,7 +9,7 @@ The Schema class imports or updates SQL database schemata. Schemata are
 described by common SQL files with update instructions in comments. SQL files
 can also be templates to allow for prefixing/replacement of table identifiers.
 
-###Instruction tags
+####Instruction tags
 
 - @version
     - mandatory, labels the following code with a version identifier
@@ -19,7 +19,7 @@ can also be templates to allow for prefixing/replacement of table identifiers.
 - @connection
     - marks table identifiers for replacement function
 
-###Example
+####Example
 
 ######SQL schema file (schema.sql)
 
@@ -29,11 +29,11 @@ can also be templates to allow for prefixing/replacement of table identifiers.
 CREATE TABLE example (
     uid int(10) unsigned NOT NULL DEFAULT '0',
     pid int(10) unsigned NOT NULL DEFAULT '0'
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 # @version 0.2
 ALTER TABLE example
-    ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;
+ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid;
 ```
 
 ######Import/update in PHP
@@ -47,7 +47,7 @@ $schema->setReplace(
 $schema->loadFile('schema.sql');
 ```
 
-###License (dual)
+##License (dual)
 
 - GPL2: <http://www.gnu.org/licenses/gpl-2.0.html>
 - MIT: <http://www.opensource.org/licenses/mit-license.php>
