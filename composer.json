@@ -15,7 +15,7 @@
         "ext-mailparse": "*"
     },
     "autoload": {
-        "psr-0": { "Depage\\Mail\\": "../../" }
+        "psr-4": { "Depage\\Mail\\": "" }
     },
     "support": {
         "email": "info@depage.net",
