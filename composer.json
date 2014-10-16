@@ -1,7 +1,7 @@
 {
     "name": "Depage/Mail",
     "description": "depage-mail is a small simple mail generator and sender and a more convinient wrapper for the mail() function, when something bigger is unnecessary or not required.",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "type": "library",
     "keywords": [
         "mail",
@@ -23,7 +23,7 @@
         "issues": "https://github.com/depage/depage-mail/issues"
 
     },
-    "time": "2013-10-01",
+    "time": "2014-10-16",
     "license": [
         "MIT",
         "GPL-2.0"

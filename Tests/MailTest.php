@@ -47,7 +47,7 @@ class MailTestClass extends Mail
 /**
  * General tests for the input class.
  **/
-class mailTest extends PHPUnit_Framework_TestCase
+class MailTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp()
     public function setUp()

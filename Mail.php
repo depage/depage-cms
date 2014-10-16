@@ -1,11 +1,11 @@
 <?php
 /**
- * @file    mail.php
+ * @file    Mail.php
  * @brief   simple mail generator and sender
  *
- * copyright (c) 2006-2013 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 // {{{ documentation
@@ -25,7 +25,7 @@
  **/
 // }}}
 //
-namespace depage\mail;
+namespace Depage\Mail;
 
 /**
  * @brief A simple mail generator and sender
@@ -40,7 +40,7 @@ namespace depage\mail;
  *
  * @code
  * <?php
- *      $mail = new depage\mail\mail("sender@domain.com");
+ *      $mail = new Depage\Mail\Mail("sender@domain.com");
  *
  *      $mail->setSubject("new mail subject")
  *           ->setText("This will be the text inside of the mail")
