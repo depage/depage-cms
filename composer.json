@@ -1,5 +1,5 @@
 {
-    "name": "depage/graphics",
+    "name": "Depage/Graphics",
     "description": "",
     "version": "1.4.0",
     "type": "library",
@@ -22,7 +22,7 @@
         "phpunit": "*"
     },
     "autoload": {
-        "psr-0": { "depage\\graphics\\": "../../" }
+        "psr-0": { "Depage\\Graphics\\": "../../" }
     },
     "homepage": "http://docs.depage.net/depage-forms/",
     "support": {
