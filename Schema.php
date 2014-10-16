@@ -8,7 +8,7 @@
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
-namespace depage\DB;
+namespace Depage\DB;
 
 class Schema
 {
@@ -46,7 +46,7 @@ class Schema
     public function loadFile($fileName)
     {
         if (!is_readable($fileName)) {
-            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable."); 
+            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable.");
         }
 
         $parser         = new SQLParser();
@@ -235,10 +235,13 @@ class Schema
         $comments       = array_filter($split, function ($v) { return $v['type'] == 'comment'; });
         $matchedTags    = array();
 
+        $values = array_values($comments);
+        $comment = array_shift($values)['string'];
+
         foreach ($tags as $tag) {
             if (
                 count($comments) == 1
-                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', array_shift(array_values($comments))['string'], $matches)
+                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comment, $matches)
                 && count($matches) == 2
             ) {
                 // @todo get rid of '*/' in preg_match
