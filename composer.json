@@ -22,7 +22,7 @@
         "phpunit": "*"
     },
     "autoload": {
-        "psr-0": { "Depage\\Graphics\\": "../../" }
+        "psr-4": { "Depage\\Graphics\\": "" }
     },
     "homepage": "http://docs.depage.net/depage-forms/",
     "support": {
