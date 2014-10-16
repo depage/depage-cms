@@ -30,6 +30,10 @@ class SchemaTestClass extends Schema
     {
         return $this->tableExists;
     }
+
+    public function extractTag($split) {
+        return parent::extractTag($split);
+    }
 }
 // }}}
 
@@ -216,6 +220,135 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($expected, $this->schema->executedStatements);
+    }
+    // }}}
+
+    // {{{ testExtractTagNoTag
+    public function testExtractTagNoTag()
+    {
+        $noTag = array(
+            '@version'      => false,
+            '@tablename'    => false,
+            '@connection'   => false,
+        );
+
+        // empty
+        $this->assertEquals($noTag, $this->schema->extractTag(array()));
+
+        // unknown tag
+        $testUnknown = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '# @bogusTag imakenosense',
+            ),
+        );
+        $this->assertEquals($noTag, $this->schema->extractTag($testUnknown));
+
+        // tag outside comments
+        $testOutsideComments = array(
+            array(
+                'type'      => 'code',
+                'string'    => '# @connection testConnection',
+            ),
+        );
+        $this->assertEquals($noTag, $this->schema->extractTag($testOutsideComments));
+
+        // empty tag
+        $testEmpty = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '# @version ',
+            ),
+        );
+        $this->assertEquals($noTag, $this->schema->extractTag($testEmpty));
+
+        // empty tag
+        $testEmpty = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '/* @version */',
+            ),
+        );
+        $this->assertEquals($noTag, $this->schema->extractTag($testEmpty));
+    }
+    // }}}
+    // {{{ testExtractTagSimple
+    public function testExtractTagSimple()
+    {
+        // simple version tag
+        $testVersion = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '# @version 42',
+            ),
+        );
+        $expectedVersion = array(
+            '@version'      => '42',
+            '@tablename'    => false,
+            '@connection'   => false,
+        );
+        $this->assertEquals($expectedVersion, $this->schema->extractTag($testVersion));
+
+        // simple tablename tag
+        $testTablename = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '# @tablename testTable',
+            ),
+        );
+        $expectedTablename = array(
+            '@version'      => false,
+            '@tablename'    => 'testTable',
+            '@connection'   => false,
+        );
+        $this->assertEquals($expectedTablename, $this->schema->extractTag($testTablename));
+
+        // simple connection tag
+        $testConnection = array(
+            array(
+                'type'      => 'comment',
+                'string'    => '# @connection testConnection',
+            ),
+        );
+        $expectedConnection = array(
+            '@version'      => false,
+            '@tablename'    => false,
+            '@connection'   => 'testConnection',
+        );
+        $this->assertEquals($expectedConnection, $this->schema->extractTag($testConnection));
+    }
+    // }}}
+    // {{{ testExtractTagFilter
+    public function testExtractTagFilter()
+    {
+        $testFilter = array(
+            array(
+                'type'      => 'string',
+                'string'    => '"# @version 1"',
+            ),
+            array(
+                'type'      => 'break',
+                'string'    => ';',
+            ),
+            array(
+                'type'      => 'code',
+                'string'    => '\n',
+            ),
+            array(
+                'type'      => 'comment',
+                'string'    => '/* @version 42 */',
+            ),
+            array(
+                'type'      => 'code',
+                'string'    => ' @version 2',
+            ),
+        );
+        $expectedFilter = array(
+            '@version'      => '42',
+            '@tablename'    => false,
+            '@connection'   => false,
+        );
+        $this->assertEquals($expectedFilter, $this->schema->extractTag($testFilter));
     }
     // }}}
 }

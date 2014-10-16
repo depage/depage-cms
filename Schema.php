@@ -146,16 +146,18 @@ class Schema
                 $preparedStatement = $this->pdo->prepare($statement);
                 $preparedStatement->execute();
             } catch (\PDOException $e) {
-                $PDOExceptionReflection = new \ReflectionClass('PDOException');
-                $line                   = $PDOExceptionReflection->getProperty('line');
-                $message                = $PDOExceptionReflection->getProperty('message');
+                if (class_exists('\ReflectionClass', false)) {
+                    $PDOExceptionReflection = new \ReflectionClass('PDOException');
+                    $line                   = $PDOExceptionReflection->getProperty('line');
+                    $message                = $PDOExceptionReflection->getProperty('message');
 
-                $line->setAccessible(true);
-                $message->setAccessible(true);
-                $line->setValue($e, $number);
-                $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
-                $line->setAccessible(false);
-                $message->setAccessible(false);
+                    $line->setAccessible(true);
+                    $line->setValue($e, $number);
+                    $line->setAccessible(false);
+                    $message->setAccessible(true);
+                    $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
+                    $message->setAccessible(false);
+                }
 
                 throw $e;
             }
@@ -236,10 +238,11 @@ class Schema
         foreach ($tags as $tag) {
             if (
                 count($comments) == 1
-                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comments[0]['string'], $matches)
+                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', array_shift(array_values($comments))['string'], $matches)
                 && count($matches) == 2
             ) {
-                $matchedTags[$tag] = $matches[1];
+                // @todo get rid of '*/' in preg_match
+                $matchedTags[$tag] = preg_replace('/\s*\*\/\s*$/', '', $matches[1]);
             } else {
                 $matchedTags[$tag] = false;
             }
