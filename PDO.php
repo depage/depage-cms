@@ -47,6 +47,17 @@ class PDO
         $this->driver_options = $driver_options;
     }
     // }}}
+    // {{{ destructor
+    /**
+     * removes the pdo object which closes the connection to the database
+     *
+     * @return  void
+     */
+    public function __destruct()
+    {
+        $this->pdo = null;
+    }
+    // }}}
     // {{{ lateInitialize
     /**
      */
