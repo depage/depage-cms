@@ -31,7 +31,7 @@ class SchemaTestClass extends Schema
         return $this->tableExists;
     }
 
-    public function extractTag($split) {
+    public function extractTag($split = Array()) {
         return parent::extractTag($split);
     }
 }
