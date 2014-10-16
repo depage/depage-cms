@@ -1,103 +1,101 @@
 <?php
 /**
- * @file    entity.php
+ * @file    Entity.php
  *
  * Entity
- * 
+ *
  * Abstract class provides a base for building model objects.
- * 
+ *
  * Inheriting classes provide table name and column information and override getters and setters.
- * 
+ *
  * Provides generic CRUD functions for models.
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author Ben Wallis [benedict_wallis@yahoo.co.uk]
  */
-namespace depage\entity;
+namespace Depage\Entity;
 
-// entity {{{
-abstract class entity {
-    
+abstract class Entity {
     // {{{ variables
     /**
      * PDO
-     * 
-     * @var \depage\DB\PDO
+     *
+     * @var \Depage\DB\PDO
      */
     protected $pdo = null;
-    
+
     /**
      * Table Name
      *
      * @var string
      */
     protected static $table_name = null;
-    
+
     /**
      * Cols
-     * 
+     *
      * Array of table cols indexed on the column name.
      * Values provide the PDO data type for binding to markers.
      *
      * @var array
      */
     protected static $cols = array();
-    
+
     /**
      * Primary Keys
-     * 
+     *
      * Primary keys for the table used to build UPDATE and INSERT statements.
      *
      * @var array
      */
     protected static $primary = array();
-    
+
     /**
      * Data Array
-     * 
+     *
      * The data array accessed via the magic get / set functions.
      *
      * @var array
      */
     protected $data = array();
-    
+
     /**
      * Dirty Data
-     * 
+     *
      * This array tracks which properties are dirty for saving.
      * Bool array value indicates column state.
-     * 
+     *
      * @var array
      */
     protected $dirty = array();
-    
+
     /**
      * Insert Ignore
-     * 
+     *
      * Flag sets ignore duplicates on INSERT
-     * 
+     *
      * @var bool
      */
     protected $insert_ignore = false;
     // }}}
-    
+
     // {{{ __constructor()
     /**
      * Constructor
-     * 
+     *
      * @param \depage\DB\PDO $pdo
      * @param array $data  - data to build the object from
      * @param bool $clean - set as clean or dirty
      * @param bool $insert_ignore
-     * 
+     *
      * @return void
      */
     public function __construct(\depage\DB\PDO $pdo = null, array $data = array(), $clean = true, $insert_ignore = null){
         $this->pdo = $pdo;
-        
+
         foreach ($data AS $key => $value) {
-            if (!in_array($key, static::$primary)) { 
+            if (!in_array($key, static::$primary)) {
                 // call through getter/setter for normal data keys
                 $this->$key = $value;
             } else {
@@ -109,15 +107,15 @@ abstract class entity {
         $this->insert_ignore = $insert_ignore === null ? $this->insert_ignore : $insert_ignore;
     }
     // }}}
-    
+
     // {{{ __get()
     /**
      * Get
-     * 
+     *
      * Gets the propery from the data array if it exists.
-     * 
+     *
      * @param string $property
-     * 
+     *
      * @return mixed
      */
     public function __get($key) {
@@ -130,16 +128,16 @@ abstract class entity {
         }
     }
     // }}}
-    
+
     // {{{ __set()
     /**
      * Set
-     * 
+     *
      * Sets the data and dirty arrays if the data property exists and the data has changed.
-     * 
+     *
      * @param string $key
      * @param mixed $value
-     * 
+     *
      * @return void
      */
     public function __set($key, $val) {
@@ -149,20 +147,20 @@ abstract class entity {
         }
         if (array_key_exists($key, static::$cols)) {
             // add value if property exists and is not primary
-            if (!in_array($key, static::$primary)) { 
+            if (!in_array($key, static::$primary)) {
                 // TODO set false on PDO  class fetch instance
                 $this->dirty[$key] = (isset($this->dirty[$key]) && $this->dirty[$key] == true) || (
                     (isset($this->data[$key]) && $this->data[$key] != $val)
                     || !isset($this->data[$key])
                 );
                 $this->data[$key] = $val;
-            } 
+            }
             return true;
         }
         return false;
     }
     // }}}
-    
+
     // {{{ __isset()
     /**
      * IsSet
@@ -177,47 +175,47 @@ abstract class entity {
         return (isset($this->data[$key]));
     }
     // }}}
-    
+
     // {{{ load()
     /**
      * Load
-     * 
+     *
      * Static factory to load the database entities.
-     * 
+     *
      * @param depage\DB\PDO $pdo - depage pdo class
      * @param array $params - array(key=>value) to build the WHERE clause on.
-     * 
+     *
      * @return object
      */
     protected static function load(\depage\DB\PDO $pdo, $params, $orderBy = ""){
         $query = "SELECT * FROM {$pdo->prefix}_" . static::$table_name;
-        
+
         $where = array();
         foreach($params as $key=>&$val) {
             $where[] = "{$key}=:{$key}";
         }
-        
+
         if (count($where)) {
             $query .= " WHERE " . join(' AND ', $where);
         }
         if (!empty($orderBy)) {
             $query .= " ORDER BY $orderBy";
         }
-        
+
         return self::fetchEntities($pdo, $query, $params);
     }
     // }}}
-    
+
     // {{{ fetchArray()
     /**
      * Fetch Array
-     * 
+     *
      * Prepares the query, binds the params, executes and fetches assoc array.
-     * 
+     *
      * @param \depage\DB\PDO $pdo
      * @param string $query
      * @param array $params
-     * 
+     *
      * @return array $results
      */
     protected static function fetchArray(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array()){
@@ -236,16 +234,16 @@ abstract class entity {
         return $results;
     }
     // }}}
-    
+
     // {{{ fetchEntities()
     /**
      * Fetch Entities
-     * 
+     *
      * Wraps fetchArray returning results as instantiations of the called class.
-     * 
+     *
      * @param array $results
-     * 
-     * @return array 
+     *
+     * @return array
      */
     protected static function fetchEntities(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array(), $class = null) {
         $results = self::fetchArray($pdo, $query, $params, $types);
@@ -256,17 +254,17 @@ abstract class entity {
         return $results;
     }
     // }}}
-    
+
     // {{{ fetchEntity()
     /**
      * Fetch Entity
-     * 
-     * Used for queries returning a single entity 
-     *  
+     *
+     * Used for queries returning a single entity
+     *
      * @param \depage\DB\PDO $pdo
      * @param string $query
      * @param array $params
-     * 
+     *
      * @return entity
      */
     protected static function fetchEntity(\depage\DB\PDO $pdo, $query, array $params = array(), array $types = array(), $class = null) {
@@ -277,15 +275,15 @@ abstract class entity {
         return false;
     }
     // }}}
-    
+
     // {{{ fetchCount()
     /**
      * Fetch Count
-     * 
+     *
      * Wraps count fetches for pagination.
-     * 
+     *
      * NB SELECT must contain count column alias.
-     * 
+     *
      * @param string $query SELECT COUNT(*) AS count
      * @param array $params
      * @param array $types
@@ -298,7 +296,7 @@ abstract class entity {
         return $result['count'];
     }
     // }}}
-    
+
     // {{{ bindParams()
     /**
      * Bind Params
@@ -322,18 +320,18 @@ abstract class entity {
         }
     }
     // }}}
-    
+
     // {{{ save()
     /**
      * Save
-     * 
+     *
      * Saves the dirty array to the database.
-     * 
+     *
      * Optionally takes an array to add to the object properties before saving.
-     * 
+     *
      * INSERT if primary key is dirty
      * UPDATE otherwise
-     * 
+     *
      * @param array $data - optional data values to save
      *
      * @return object
@@ -347,7 +345,7 @@ abstract class entity {
         }
         list($primary) = static::$primary;
         $results = array();
-        
+
         if(isset($this->dirty[$primary]) && $this->dirty[$primary] !== true) {
             $results = $this->update();
         } else {
@@ -358,13 +356,13 @@ abstract class entity {
         return $results;
     }
     // }}}
-    
+
     // {{{ insert
     /**
      * Insert
-     * 
+     *
      * Builds an INSERT statement from the dirty array.
-     * 
+     *
      * @return int  - last insert ID
      */
     protected function insert() {
@@ -386,14 +384,14 @@ abstract class entity {
         return $result;
     }
     // }}}
-    
+
     // {{{ update
     /**
      * Update
-     * 
+     *
      * Builds an UPDATE statement from the dirty array
      * using the primary key columns for the WHERE.
-     * 
+     *
      * @return bool
      */
     protected function update() {
@@ -408,7 +406,7 @@ abstract class entity {
             $where[] = "{$key}=:{$key}";
             $params[$key] = $this->$key;
         }
-        
+
         $query = "UPDATE {$this->pdo->prefix}_" . static::$table_name . " SET " . join(',', $update_keys);
         if (count($where)) {
             $query .= " WHERE " . join(' AND ', $where);
@@ -418,11 +416,11 @@ abstract class entity {
         return $cmd->execute();
     }
     // }}}
-    
+
     // {{{ delete
     /**
      * Delete
-     * 
+     *
      * @return bool
      */
     protected function delete() {
@@ -431,7 +429,7 @@ abstract class entity {
             $where[] = "{$key}=:{$key}";
             $params[$key] = $this->$key;
         }
-        
+
         $query = "DELETE FROM {$this->pdo->prefix}_" . static::$table_name;
         if (count($where)) {
             $query .= " WHERE " . join(' AND ', $where);
@@ -443,13 +441,13 @@ abstract class entity {
         }
     }
     // }}}
-    
+
     // {{{ addLimit
     /**
      * addLimit
-     * 
+     *
      * Appends and binds a SQL LIMIT clause
-     * 
+     *
      * @param string $query
      * @param array $params
      * @param array $types
@@ -459,7 +457,7 @@ abstract class entity {
     protected static function addLimit(&$query, &$params, &$types, $page, $size) {
         $page = (int)$page - 1; // LIMIT is zero indexed
         $size = (int)$size;
-        
+
         $query .= "
             LIMIT :page, :size";
         $params['page'] = $page * $size;
@@ -468,7 +466,7 @@ abstract class entity {
         $types['size'] = \PDO::PARAM_INT;
     }
     // }}}
-    
+
     // Escape Like {{{
     /**
      * Escape Like
@@ -486,7 +484,7 @@ abstract class entity {
         return str_replace(array($e, '_', '%'), array("{$e}{$e}", "{$e}_", "{$e}%"), $s);
     }
     // }}}
-    
+
     // {{{ mapAssoc
     /**
      * Map Assoc
@@ -509,6 +507,5 @@ abstract class entity {
     }
     // }}}
 }
-// }}}
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :

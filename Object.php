@@ -8,7 +8,7 @@
  *
  * Inheriting classes provide table name and column information and override getters and setters.
  *
- * copyright (c) 2003-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2003-2014 Frank Hellenkamp [jonas@depage.net]
  */
 namespace Depage\Entity;
 
