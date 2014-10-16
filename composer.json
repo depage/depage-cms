@@ -1,7 +1,7 @@
 {
     "name": "depage/db",
     "description": "depage-pdo is a small wrapper around the pdo object which allows late/on demand initializition of the database connection.",
-    "version": "1.4.0",
+    "version": "1.5.0-beta.1",
     "type": "library",
     "keywords": [
         "database",
@@ -12,7 +12,7 @@
         "php": " >= 5.3"
     },
     "autoload": {
-        "psr-0": { "depage\\db\\": "../../" }
+        "psr-4": { "Depage\\DB\\": "" }
     },
     "support": {
         "email": "info@depage.net",
@@ -20,7 +20,7 @@
         "issues": "https://github.com/depage/depage-db/issues"
 
     },
-    "time": "2014-02-24",
+    "time": "2014-10-16",
     "license": [
         "MIT",
         "GPL-2.0"
@@ -29,6 +29,9 @@
         {
             "name": "Frank Hellenkamp",
             "homepage": "http://depage.net",
+            "role": "Developer"
+        },{
+            "name": "Sebastian Reinhold",
             "role": "Developer"
         }
     ]
