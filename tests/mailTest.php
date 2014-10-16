@@ -2,36 +2,43 @@
 
 require_once(__DIR__ . '/../mail.php');
 
-use depage\mail\mail;
+use Depage\Mail\Mail;
 
-// {{{ mailTestClass
+// {{{ MailTestClass
 /**
  * Input is abstract, so we need this test class to instantiate it.
  **/
-class mailTestClass extends mail {
-    public function __construct($sender) {
+class MailTestClass extends Mail
+{
+    public function __construct($sender)
+    {
         parent::__construct($sender);
 
         $this->mailFunction = array($this, "mailStub");
     }
 
-    public function mailStub() {
+    public function mailStub()
+    {
         return func_get_args();
     }
 
-    public function wordwrapTest($string, $width = 75, $forceCut = false) {
+    public function wordwrapTest($string, $width = 75, $forceCut = false)
+    {
         return $this->wordwrap($string, $width, $forceCut);
     }
 
-    public function stripTagsTest($string) {
+    public function stripTagsTest($string)
+    {
         return $this->stripTags($string);
     }
 
-    public function normalizeLineEndingsTest($string) {
+    public function normalizeLineEndingsTest($string)
+    {
         return $this->normalizeLineEndings($string);
     }
 
-    public function setEol($eol) {
+    public function setEol($eol)
+    {
         $this->eol = $eol;
     }
 }
@@ -40,15 +47,18 @@ class mailTestClass extends mail {
 /**
  * General tests for the input class.
  **/
-class mailTest extends PHPUnit_Framework_TestCase {
+class mailTest extends PHPUnit_Framework_TestCase
+{
     // {{{ setUp()
-    public function setUp() {
-        $this->mail     = new mailTestClass("sender@domain.com");
+    public function setUp()
+    {
+        $this->mail     = new MailTestClass("sender@domain.com");
     }
     // }}}
-    
+
     // {{{ parseMailParts()
-    public function parseMailParts($eml) {
+    public function parseMailParts($eml)
+    {
         $mailparse = mailparse_msg_create();
         mailparse_msg_parse($mailparse, $eml);
 
@@ -64,7 +74,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ getBodyForPart()
-    public function getBodyForPart($eml, $part) {
+    public function getBodyForPart($eml, $part)
+    {
         $parts = $this->parseMailParts($eml);
 
         $start = $parts[$part]['starting-pos-body'];
@@ -74,7 +85,7 @@ class mailTest extends PHPUnit_Framework_TestCase {
 
         if (strtolower($encodingType) == 'base64') {
             return base64_decode($body);
-        } else if (strtolower($encodingType) == 'quoted-printable') {
+        } elseif (strtolower($encodingType) == 'quoted-printable') {
             return quoted_printable_decode($body);
         } else {
             return $body;
@@ -83,21 +94,24 @@ class mailTest extends PHPUnit_Framework_TestCase {
     // }}}
 
     // {{{ testSubject()
-    public function testSubject() {
+    public function testSubject()
+    {
         $this->mail->setSubject("my new subject: äöüß");
 
         $this->assertEquals("=?UTF-8?B?bXkgbmV3IHN1YmplY3Q6IMOkw7bDvMOf?=", $this->mail->getSubject());
     }
     // }}}
     // {{{ testRecients()
-    public function testRecients() {
+    public function testRecients()
+    {
         $this->mail->setRecipients("recipient1@domain.com");
 
         $this->assertEquals("recipient1@domain.com", $this->mail->getRecipients());
     }
     // }}}
     // {{{ testRecientsArray()
-    public function testRecientsArray() {
+    public function testRecientsArray()
+    {
         $this->mail->setRecipients(array(
             "recipient1@domain.com",
             "recipient2@domain.com",
@@ -107,7 +121,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testCC()
-    public function testCC() {
+    public function testCC()
+    {
         $this->mail->setCC("cc@domain.com");
 
         $parts = $this->parseMailParts($this->mail->getEml());
@@ -117,7 +132,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testBCC()
-    public function testBCC() {
+    public function testBCC()
+    {
         $this->mail->setBCC("bcc@domain.com");
 
         $parts = $this->parseMailParts($this->mail->getEml());
@@ -127,7 +143,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testReplyTo()
-    public function testReplyTo() {
+    public function testReplyTo()
+    {
         $this->mail->setReplyTo("reply@domain.com");
 
         $parts = $this->parseMailParts($this->mail->getEml());
@@ -137,7 +154,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testPlainText()
-    public function testPlainText() {
+    public function testPlainText()
+    {
         $this->mail->setText("This is the text with a text line longer than the maximum text width of 75 characters\nSpecial Chars: äöüß");
 
         $body = $this->getBodyForPart($this->mail->getEml(), '1');
@@ -146,7 +164,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testHtmlText
-    public function testHtmlText() {
+    public function testHtmlText()
+    {
         $this->mail->setHtmlText("<p>This is the text with a text line longer than the maximum text width of 75 characters</p>\n<p>Special Chars: äöüß</p>");
 
         $eml = $this->mail->getEml();
@@ -163,7 +182,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testAttachString
-    public function testAttachString() {
+    public function testAttachString()
+    {
         $this->mail->attachStr("Special Chars: äöüß", "text/plain");
 
         $eml = $this->mail->getEml();
@@ -176,7 +196,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testAttachFile
-    public function testAttachFile() {
+    public function testAttachFile()
+    {
         $filename = __FILE__;
 
         $this->mail->attachFile($filename);
@@ -192,7 +213,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testWorwrap
-    public function testWordwrap() {
+    public function testWordwrap()
+    {
         $wrapped1 = $this->mail->wordwrapTest("This is a text", 7);
         $wrapped2 = $this->mail->wordwrapTest("ThisIsALongWord", 8);
         $wrapped3 = $this->mail->wordwrapTest("ThisIsALongWord", 8, true);
@@ -209,7 +231,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testStripTags
-    public function testStripTags() {
+    public function testStripTags()
+    {
         $stripped1 = $this->mail->stripTagsTest("Te<p>Text</p>st");
         $stripped2 = $this->mail->stripTagsTest("Te<style>Text</style>st");
         $stripped3 = $this->mail->stripTagsTest("Te<object>Text</object>st");
@@ -231,7 +254,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testNormalizeLineEndings
-    public function testNormalizeLineEndings() {
+    public function testNormalizeLineEndings()
+    {
         $this->mail->setEol("\n");
         $normalized1 = $this->mail->normalizeLineEndingsTest("This\r\nis\ra\ntext");
 
@@ -247,7 +271,8 @@ class mailTest extends PHPUnit_Framework_TestCase {
     }
     // }}}
     // {{{ testSend
-    public function testSend() {
+    public function testSend()
+    {
         $this->mail
             ->setSubject("Subject")
             ->setText("Text");

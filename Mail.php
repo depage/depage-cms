@@ -19,7 +19,7 @@
  *
  * @section Usage
  *
- * @endsection 
+ * @endsection
  *
  * @htmlinclude main-extended.html
  **/
@@ -30,12 +30,12 @@ namespace depage\mail;
 /**
  * @brief A simple mail generator and sender
  *
- * depage::mail::mail is a simple class to generate emails with text- and/or 
- * html-content with the simple ability to add various attachments. It takes 
- * care of mail-boundaries automatically and sends the mail through the native 
+ * depage::mail::mail is a simple class to generate emails with text- and/or
+ * html-content with the simple ability to add various attachments. It takes
+ * care of mail-boundaries automatically and sends the mail through the native
  * mail() function.
  *
- * It also wordwraps text automatically, and tries to generate a plain-text 
+ * It also wordwraps text automatically, and tries to generate a plain-text
  * version of an html-text when no plain-text is provided.
  *
  * @code
@@ -49,7 +49,8 @@ namespace depage\mail;
  *      $mail->send("recipient@domain.com");
  * @endcode
  */
-class mail {
+class Mail
+{
     protected $version = "1.4.2";
     protected $sender;
     protected $recipients;
@@ -69,22 +70,24 @@ class mail {
     /**
      * @brief construct a new mail object
      *
-     * @param string    $sender email of the sender
+     * @param string $sender email of the sender
      */
-    public function __construct($sender) {
+    public function __construct($sender)
+    {
         $this->sender = $sender;
         $this->boundary = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
     }
     // }}}
-    
+
     // {{{ setSubject()
     /**
      * @brief Sets the mails subject.
      *
-     * @param  string   $subject new subject
-     * @return object   returns the mail object (for chaining)
+     * @param  string $subject new subject
+     * @return object returns the mail object (for chaining)
      */
-    public function setSubject($subject) {
+    public function setSubject($subject)
+    {
         $this->subject = $subject;
 
         return $this;
@@ -94,7 +97,7 @@ class mail {
     /**
      * @brief Sets the recipients of the mail.
      *
-     * Recipients can either be set as a string or as an array of strings. All 
+     * Recipients can either be set as a string or as an array of strings. All
      * strings can also be comma separated emails.
      *
      * You also can use all valid email notations:
@@ -103,10 +106,11 @@ class mail {
      * - recipient1@domain.com, recipient2@domain.com
      * - Displayname <recipient@domain.com>
      *
-     * @param  string|array     $recipients new recipients 
-     * @return object           returns the mail object (for chaining)
+     * @param  string|array $recipients new recipients
+     * @return object       returns the mail object (for chaining)
      */
-    public function setRecipients($recipients) {
+    public function setRecipients($recipients)
+    {
         $this->recipients = $recipients;
 
         return $this;
@@ -116,10 +120,11 @@ class mail {
     /**
      * @brief Sets the CC recipients of the mail.
      *
-     * @param  string|array     $recipients new recipients 
-     * @return object           returns the mail object (for chaining)
+     * @param  string|array $recipients new recipients
+     * @return object       returns the mail object (for chaining)
      */
-    public function setCC($recipients) {
+    public function setCC($recipients)
+    {
         $this->cc = $recipients;
 
         return $this;
@@ -129,10 +134,11 @@ class mail {
     /**
      * @brief Sets the BCC recipients of the mail.
      *
-     * @param  string|array     $recipients new recipients 
-     * @return object           returns the mail object (for chaining)
+     * @param  string|array $recipients new recipients
+     * @return object       returns the mail object (for chaining)
      */
-    public function setBCC($recipients) {
+    public function setBCC($recipients)
+    {
         $this->bcc = $recipients;
 
         return $this;
@@ -142,10 +148,11 @@ class mail {
     /**
      * @brief Sets the reply-to header
      *
-     * @param  string   $subject new reply-to address
-     * @return object   returns the mail object (for chaining)
+     * @param  string $subject new reply-to address
+     * @return object returns the mail object (for chaining)
      */
-    public function setReplyTo($email) {
+    public function setReplyTo($email)
+    {
         $this->replyto = $email;
 
         return $this;
@@ -155,10 +162,11 @@ class mail {
     /**
      * @brief Sets the content of the mail as plain text.
      *
-     * @param  string   $mailtext new mail content
-     * @return object   returns the mail object (for chaining)
+     * @param  string $mailtext new mail content
+     * @return object returns the mail object (for chaining)
      */
-    public function setText($mailtext) {
+    public function setText($mailtext)
+    {
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->text = $mailtext;
@@ -170,13 +178,14 @@ class mail {
     /**
      * @brief Sets the content of the mail as html text.
      *
-     * It also sets the plaintext-content of the message by stripping out any 
+     * It also sets the plaintext-content of the message by stripping out any
      * tags but leaving the whitespace.
      *
-     * @param  string   $mailtext new mail html-content
-     * @return object   returns the mail object (for chaining)
+     * @param  string $mailtext new mail html-content
+     * @return object returns the mail object (for chaining)
      */
-    public function setHtmlText($mailtext) {
+    public function setHtmlText($mailtext)
+    {
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
@@ -185,16 +194,17 @@ class mail {
         return $this;
     }
     // }}}
-    
+
     // {{{ attachFile()
     /**
      * @brief Attaches a file to a message.
      *
-     * @param  string   $filename path to filename to attach
-     * @param  string   $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream" 
-     * @return object   returns the mail object (for chaining)
+     * @param  string $filename path to filename to attach
+     * @param  string $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream"
+     * @return object returns the mail object (for chaining)
      */
-    public function attachFile($filename, $mimetype = "application/octet_stream") {
+    public function attachFile($filename, $mimetype = "application/octet_stream")
+    {
         $fstring = file_get_contents($filename);
 
         $this->attachStr($fstring, $mimetype, basename($filename));
@@ -204,13 +214,14 @@ class mail {
     /**
      * @brief Attaches a string as a file to a message.
      *
-     * @param  string   $filename path to filename to attach
-     * @param  string   $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream" 
-     * @param  string   $filename filename to use as a name for the attachment
-     * @return object   returns the mail object (for chaining)
+     * @param  string $filename path to filename to attach
+     * @param  string $mimetype optional mimetype of the attachment. Defaults to "application/octet_stream"
+     * @param  string $filename filename to use as a name for the attachment
+     * @return object returns the mail object (for chaining)
      */
-    public function attachStr($string, $mimetype, $filename = "") {
-        $astring = "--{$this->boundary}{$this->eol}" . 
+    public function attachStr($string, $mimetype, $filename = "")
+    {
+        $astring = "--{$this->boundary}{$this->eol}" .
             "Content-type: $mimetype{$this->eol}" .
             "Content-transfer-encoding: base64{$this->eol}" .
             "Content-disposition: attachement;{$this->eol} filename=\"$filename\"{$this->eol}{$this->eol}";
@@ -221,14 +232,15 @@ class mail {
         return $this;
     }
     // }}}
-    
+
     // {{{ getSubject()
     /**
      * @brief Gets the mail subject as an encoded string.
      *
-     * @return string   $subject encoded subject
+     * @return string $subject encoded subject
      */
-    public function getSubject() {
+    public function getSubject()
+    {
         $subject = "=?{$this->encoding}?B?" . base64_encode($this->subject) . "?=";
 
         return $subject;
@@ -238,9 +250,10 @@ class mail {
     /**
      * @brief Gets the mail recipients as a comma separated list.
      *
-     * @return string   $recipients all recipients (comma separated)
+     * @return string $recipients all recipients (comma separated)
      */
-    public function getRecipients() {
+    public function getRecipients()
+    {
         return $this->normalizeRecipients($this->recipients);
     }
     // }}}
@@ -248,9 +261,10 @@ class mail {
     /**
      * @brief Gets the mail headers.
      *
-     * @return string   $headers the mail headers
+     * @return string $headers the mail headers
      */
-    public function getHeaders() {
+    public function getHeaders()
+    {
         $headers = "";
 
         $headers .= "From: {$this->sender}{$this->eol}";
@@ -267,8 +281,8 @@ class mail {
         $headers .= "X-Mailer: depage-mail ({$this->getVersion()}){$this->eol}";
 
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
-            $headers .= 
-                "Content-type: text/plain; charset={$this->encoding}{$this->eol}" . 
+            $headers .=
+                "Content-type: text/plain; charset={$this->encoding}{$this->eol}" .
                 "Content-transfer-encoding: quoted-printable";
         } else {
             $headers .=
@@ -285,28 +299,29 @@ class mail {
     /**
      * @brief Gets the message mail body including all attachments.
      *
-     * @return string   $message the mail body
+     * @return string $message the mail body
      */
-    public function getBody() {
+    public function getBody()
+    {
         $message = "";
 
         if (count($this->attachements) == 0 && empty($this->htmlText)) {
             $message .= $this->quotedPrintableEncode($this->wordwrap($this->text)) . $this->eol;
         } else {
-            $message .= 
+            $message .=
                 _("This is a MIME encapsulated multipart message.") . $this->eol .
                 _("Please use a MIME-compliant e-mail program to open it.") . $this->eol . $this->eol;
-            $message .= 
+            $message .=
                 "--{$this->boundary}{$this->eol}" .
-                "Content-type: text/plain; charset=\"{$this->encoding}\"{$this->eol}" . 
-                "Content-transfer-encoding: quoted-printable{$this->eol}{$this->eol}"; 
+                "Content-type: text/plain; charset=\"{$this->encoding}\"{$this->eol}" .
+                "Content-transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
             $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
 
             if (!empty($this->htmlText)) {
                 $htmlText = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $this->htmlText);
 
                 $message .= "{$this->eol}{$this->eol}";
-                $message .= "--{$this->boundary}{$this->eol}" . 
+                $message .= "--{$this->boundary}{$this->eol}" .
                     "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
                     "Content-Transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
                 $message .= $this->quotedPrintableEncode($this->wordwrap($htmlText)) . $this->eol;
@@ -325,9 +340,10 @@ class mail {
     /**
      * @brief Gets the whole message in EML format
      *
-     * @return string   $message whole message
+     * @return string $message whole message
      */
-    public function getEml() {
+    public function getEml()
+    {
         $message = "";
 
         $message .= "To: " . $this->getRecipients() . $this->eol;
@@ -342,21 +358,23 @@ class mail {
     /**
      * @brief Gets the Version number of depage-mail
      *
-     * @return string   $version version number
+     * @return string $version version number
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
     // }}}
-    
+
     // {{{ send()
     /**
      * @brief Sends the mail out to all recipients.
      *
-     * @param  string|array     $recipients new recipients
-     * @return bool             true on success, false on error
+     * @param  string|array $recipients new recipients
+     * @return bool         true on success, false on error
      */
-    public function send($recipients = null) {
+    public function send($recipients = null)
+    {
         if (!is_null($recipients)) {
             $this->setRecipients($recipients);
         }
@@ -366,17 +384,18 @@ class mail {
         return $success;
     }
     // }}}
-    
+
     // {{{ wordwrap()
     /**
      * @brief Word wraps the text content
      *
-     * @param  string   $string     text to wrao
-     * @param  integer  $width      text width to wrap after, defaults to 75
-     * @param  boolean  $forceCut   force the textbreak, even whan a word is longer the the text-width
-     * @return string   wordwrapped text
+     * @param  string  $string   text to wrao
+     * @param  integer $width    text width to wrap after, defaults to 75
+     * @param  boolean $forceCut force the textbreak, even whan a word is longer the the text-width
+     * @return string  wordwrapped text
      */
-    protected function wordwrap($string, $width = 75, $forceCut = false) {
+    protected function wordwrap($string, $width = 75, $forceCut = false)
+    {
         $stringWidth = mb_strlen($string, $this->encoding);
         $breakWidth  = mb_strlen($this->eol, $this->encoding);
 
@@ -430,10 +449,11 @@ class mail {
     /**
      * @brief Strips tags from the html content.
      *
-     * @param  string   $string html-markup
-     * @return string   text with tags removed
+     * @param  string $string html-markup
+     * @return string text with tags removed
      */
-    protected function stripTags($string) {
+    protected function stripTags($string)
+    {
         $stripped = preg_replace(array(
             // Remove invisible/unwanted content
             '@<style[^>]*?>.*?</style>@siu',
@@ -442,10 +462,11 @@ class mail {
             '@<embed[^>]*?.*?</embed>@siu',
             '@<applet[^>]*?.*?</applet>@siu',
             '@<noframes[^>]*?.*?</noframes>@siu',
-            '@<noembed[^>]*?.*?</noembed>@siu', 
+            '@<noembed[^>]*?.*?</noembed>@siu',
         ), '', $string);
 
         $stripped = strip_tags($stripped);
+
         return $stripped;
     }
     // }}}
@@ -453,10 +474,11 @@ class mail {
     /**
      * @brief encodes text a quoted-printable and normalizes line endings.
      *
-     * @param  string   $string text to be encoded
-     * @return string   encoded string
+     * @param  string $string text to be encoded
+     * @return string encoded string
      */
-    protected function quotedPrintableEncode($string) {
+    protected function quotedPrintableEncode($string)
+    {
         $string = $this->normalizeLineEndings(quoted_printable_encode($string));
 
         return $string;
@@ -466,10 +488,11 @@ class mail {
     /**
      * @brief Normalizes line endings to current eol.
      *
-     * @param  string   $string text to be normalized
-     * @return string   normalized string
+     * @param  string $string text to be normalized
+     * @return string normalized string
      */
-    protected function normalizeLineEndings($string) {
+    protected function normalizeLineEndings($string)
+    {
         // replace with \n first
         $string = str_replace(array("\r\n", "\r", "\n"), "\n", $string);
 
@@ -487,10 +510,11 @@ class mail {
      *
      * @todo validate emails
      *
-     * @param  string|array     $recipients new recipients 
-     * @return string           $recipients all recipients (comma separated)
+     * @param  string|array $recipients new recipients
+     * @return string       $recipients all recipients (comma separated)
      */
-    protected function normalizeRecipients($recipients) {
+    protected function normalizeRecipients($recipients)
+    {
         if (is_array($recipients)) {
             $recipients = implode(",", $recipients);
         }
