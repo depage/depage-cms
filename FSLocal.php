@@ -10,7 +10,7 @@ class FSLocal extends FS implements FSInterface {
     /**
      * Constructor, sets umask to default value on unix-system
      */
-    function __construct($param = array()) {
+    public function __construct($param = array()) {
         if (isset($param['chmod'])) {
             $this->chmod = $param['chmod'];
         }
@@ -30,7 +30,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
      */
-    function ls($path) {
+    public function ls($path) {
         $flist = array(
             'dirs'  => array(),
             'files' => array(),
@@ -69,7 +69,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return $success (bool) true on success, false on error
      */
-    function cd($path) {
+    public function cd($path) {
         global $log;
         if (!@chdir($path)) {
             $log->add_entry("could not change directory to '$path'");
@@ -86,7 +86,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @param $path (string) path of new directory
      */
-    function mkdir($path) {
+    public function mkdir($path) {
         global $log;
 
         $paths = explode('/', $path);
@@ -104,7 +104,7 @@ class FSLocal extends FS implements FSInterface {
     /**
      * changes the chmodding of a file or a directory
      */
-    function chmod($path, $mod = null) {
+    public function chmod($path, $mod = null) {
         if ($mod == null) {
             if (is_dir($path)) {
                 $mod = $this->dirChmod;
@@ -125,7 +125,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return  $success (bool) true on success, false on error
      */
-    function rm($path) {
+    public function rm($path) {
         if (file_exists($path) && @is_dir($path)) {
             $currentDir = opendir($path);
             while ($entryName = readdir($currentDir)) {
@@ -152,7 +152,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return  $success (bool) true on success, false on error
      */
-    function mv($source, $target) {
+    public function mv($source, $target) {
         if (file_exists($source)) {
             if (!($value = rename($source, $target))) {
                 trigger_error("could not rename '$source' to '$target'");
@@ -175,7 +175,7 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return  $success (bool) true on success, false on error
      */
-    function cp($source, $target) {
+    public function cp($source, $target) {
         if (!file_exists($target)) {
             if (is_dir($source)) {
                 if (substr($source, -1) != '/') {
@@ -212,23 +212,23 @@ class FSLocal extends FS implements FSInterface {
      *
      * @return $exist (bool) true if file exists, false otherwise
      */
-    function exists($path) {
+    public function exists($path) {
         return file_exists($path);
     }
     // }}}
     // {{{ fileInfo
-    function fileInfo($path) {
+    public function fileInfo($path) {
         return new \SplFileInfo($path);
     }
     // }}}
 
     // {{{ readString
-    function readString($path) {
+    public function readString($path) {
         // @todo stub
     }
     // }}}
     // {{{ writeString
-    function writeString($path, $string) {
+    public function writeString($path, $string) {
         // @todo stub
     }
     // }}}

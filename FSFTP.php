@@ -7,12 +7,11 @@ namespace Depage\FS;
  */
 class FSFTP extends FS implements FSInterface {
     // {{{ variables
-    var $chmod          = 0644;
-    var $num_errors_max = 3; 
-    var $login_errors   = 0;
-    var $connected      = false;
+    protected $chmod            = 0644;
+    protected $num_errors_max   = 3;
+    protected $login_errors     = 0;
+    protected $connected        = false;
     // }}}
-
     // {{{ constructor
     /**
      * Constructor, sets parameter needed for connection
@@ -22,7 +21,7 @@ class FSFTP extends FS implements FSInterface {
      * @param    $user (string) authentication user
      * @param    $pass (string) authenticaion
      */
-    function constructor($param) {
+    public function constructor($param) {
         $this->server   = $param['host'];
         $this->port     = $param['port'];
         $this->user     = $param['user'];
@@ -46,7 +45,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return    $flist (array) contains 2 subarrays 'dirs' and 'files'
      */
-    function ls($path) {
+    public function ls($path) {
         $flist = array(
                 'dirs' => array(),
                 'files' => array(),
@@ -78,7 +77,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return $success (bool) true on success, false on error
      */
-    function cdr($path) {
+    public function cd($path) {
         if ($this->_connect()) {
             if (!($value = @ftp_chdir($this->ftpp, $path))) {
                 trigger_error("ftp: could not change dir to '$path'");
@@ -97,7 +96,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @param $path (string) path of new directory
      */
-    function mkdir($path) {
+    public function mkdir($path) {
         if ($this->_connect()) {
             $paths = explode('/', $path);
             $actual_path = $paths[0];
@@ -114,7 +113,7 @@ class FSFTP extends FS implements FSInterface {
     /**
      * changes the chmodding of a file or a directory
      */
-    function chmod($path, $mod) {
+    public function chmod($path, $mod) {
         if ($this->_connect()) {
             $mod = sprintf("%04o", $mod);
             return ftp_site($this->ftpp, "CHMOD $mod $path");
@@ -131,7 +130,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return $success (bool) true on success, false on error
      */
-    function rm($path) {
+    public function rm($path) {
         global $conf, $log;
 
         if ($this->_connect()) {
@@ -172,12 +171,55 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return    $success (bool) true on success, false on error
      */
-    function mv($oldname, $newname) {
+    public function mv($oldname, $newname) {
         if ($this->_connect()) {
             if (!($value = @ftp_rename($this->ftpp, $oldname, $newname))) {
                 trigger_error("ftp: could not rename '$oldname' to '$newname'");
             }
             return $value;
+        } else {
+            return false;
+        }
+    }
+    // }}}
+    // {{{ cp
+    /**
+     * Writes content of a local file to targetfile
+     *
+     * @public
+     *
+     * @param    $filepath (string) name of targetfile
+     * @param    $sourcefile (string) path to sourcefile
+     *
+     * @return    $success (bool) true on success, false on error
+     */
+    public function cp($filepath, $sourcefile) {
+        // @todo implement both ways
+        $errors = 0;
+
+        if ($this->_connect()) {
+            $path = pathinfo($filepath);
+
+            $this->mkdir($path['dirname']);
+
+            while ($errors <= $this->num_errors_max) {
+                if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
+                    $errors++;
+                    if ($errors > $this->num_errors_max) {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
+
+                        return false;
+                    } else {
+                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying $errors", E_USER_NOTICE);
+
+                        $this->_reconnect();
+                    }
+                } else {
+                    $this->chmod($filepath, $this->chmod);
+
+                    return true;
+                }
+            }
         } else {
             return false;
         }
@@ -194,7 +236,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return $exist (bool) true if file exists, false otherwise
      */
-    function exists($path) {
+    public function exists($path) {
         if ($this->_connect()) {
             return (ftp_size($this->ftpp, $path) > -1);
         } else {
@@ -202,44 +244,18 @@ class FSFTP extends FS implements FSInterface {
         }
     }
     // }}}
-    // {{{ f_size
-    /**
-     * Gets size of a file
-     *
-     * @public
-     *
-     * @param    $path (string) path to file
-     *
-     * @return    $size (int) size in bytes
-     */
-    function f_size($path) {
-        if ($this->_connect()) {
-            return ftp_size($this->ftpp, $path);
-        } else {
-            return -1;
-        }
-    }
-    // }}}
-    // {{{ f_mtime
-    /**
-     * Gets last modification date of file
-     *
-     * @public
-     *
-     * @param    $path (string) path to file
-     *
-     * @return    $date (int) unix timestamp of file modification date
-     */
-    function f_mtime($path) {
-        if ($this->_connect()) {
-            return ftp_mdtm($this->ftpp, $path);
-        } else {
-            return false;
-        }
+    // {{{ fileInfo
+    public function fileInfo($path) {
+        // @todo stub
     }
     // }}}
 
-    // {{{ append
+    // {{{ readString
+    public function readString($path) {
+        // @todo stub
+    }
+    // }}}
+    // {{{ writeString
     /**
      * Writes a String directly to a file
      *
@@ -250,7 +266,7 @@ class FSFTP extends FS implements FSInterface {
      *
      * @return    $success (bool) true on success, false on error
      */
-    function append($filepath, $str) {
+    public function writeString($filepath, $str) {
         $errors = 0;
 
         if ($this->_connect()) {
@@ -288,58 +304,16 @@ class FSFTP extends FS implements FSInterface {
         }
     }
     // }}}
-    // {{{ write
-    /**
-     * Writes content of a local file to targetfile
-     * 
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $sourcefile (string) path to sourcefile
-     *
-     * @return    $success (bool) true on success, false on error
-     */
-    function write($filepath, $sourcefile) {
-        $errors = 0;
-
-        if ($this->_connect()) {
-            $path = pathinfo($filepath);
-
-            $this->mkdir($path['dirname']);
-
-            while ($errors <= $this->num_errors_max) {
-                if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
-                    $errors++;
-                    if ($errors > $this->num_errors_max) {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
-
-                        return false;
-                    } else {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying $errors", E_USER_NOTICE);
-
-                        $this->_reconnect();
-                    }
-                } else {
-                    $this->chmod($filepath, $this->chmod);
-
-                    return true;
-                }
-            }
-        } else {
-            return false;
-        }
-    }
-    // }}}
 
     // {{{ _connect
     /**
      * connects to ftp server if connection isnt established
      *
-     * @private
+     * @protected
      *
      * @return    $success (bool) true on success, false on error.
      */
-    function _connect() {
+    protected function _connect() {
         if (!$this->connected) {
             while (!$this->connected && $this->login_errors <= $this->num_errors_max) {
                 $this->ftpp = @ftp_connect($this->server);
@@ -378,9 +352,9 @@ class FSFTP extends FS implements FSInterface {
      * disconnects from ftp server, if is connected
      * registered for shutdown by function _connect
      *
-     * @private
+     * @protected
      */
-    function _disconnect() {
+    protected function _disconnect() {
         if ($this->connected) {
             ftp_close($this->ftpp);
             $this->connected = false;
@@ -391,9 +365,9 @@ class FSFTP extends FS implements FSInterface {
     /**
      * reconnects to ftp-server after 3 second sleep
      *
-     * @private
+     * @protected
      */
-    function _reconnect() {
+    protected function _reconnect() {
         $this->_disconnect();
         sleep(3);
         $this->_connect();
@@ -403,13 +377,13 @@ class FSFTP extends FS implements FSInterface {
     /**
      * get type of transfer (ascii | binary) by extension of file
      *
-     * @private
+     * @protected
      *
      * @param    $filename (string) name of file
      *
      * @return    $type (int) FTP_ASCII for ascii and FTP_BINARY for binary
      */
-    function _getTransferType($filename) {
+    public function _getTransferType($filename) {
         $textTypes = array(
                 'txt',
                 'htm', 'html',
@@ -441,13 +415,13 @@ class FSFTP extends FS implements FSInterface {
     /**
      * gets files in a directory
      *
-     * @private
+     * @protected
      *
      * @param    $path (string) path to file
      *
      * @return    $filelist (array) which contains to other array 'dirs' and 'files'
      */
-    function _get_filelist($path) {
+    public function _get_filelist($path) {
         global $log;
 
         $dirs_list = array();
@@ -501,7 +475,7 @@ class FSFTP extends FS implements FSInterface {
     }
     // }}}
     // {{{ compare_ftp_listing
-    function compare_ftp_listing($a, $b) {
+    protected function compare_ftp_listing($a, $b) {
         return strcmp($a["name"], $b["name"]);
     }
     // }}}
@@ -509,21 +483,21 @@ class FSFTP extends FS implements FSInterface {
     /**
      * parses a date out of a filelisting by a unixlike ftp server
      *
-     * @private
+     * @protected
      *
      * @param    $date (string) datestring
      *
      * @return    $date (int) date in a unix timestamp
      */
-    function _parse_date($date) {
+    protected function _parse_date($date) {
         // Sep 10 22:06 => Sep 10, <year> 22:06
         if (preg_match("/([A-Za-z]+)[ ]+([0-9]+)[ ]+([0-9]+):([0-9]+)/", $date, $res)) {
-            $year = date("Y");
-            $month = $res[1];
-            $day = $res[2];
-            $hour = $res[3];
+            $year   = date("Y");
+            $month  = $res[1];
+            $day    = $res[2];
+            $hour   = $res[3];
             $minute = $res[4];
-            $date = "$month $day, $year $hour:$minute";
+            $date   = "$month $day, $year $hour:$minute";
         }
         $res = strtotime($date);
         if (!$res) {

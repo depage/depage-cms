@@ -22,7 +22,7 @@ namespace Depage\FS;
  * Parent class for all other fs_classes
  */
 abstract class FS {
-    var $chmod = 0664;
+    protected $chmod = 0664;
 
     // {{{ factory
     /**
@@ -33,7 +33,7 @@ abstract class FS {
      * @param    $driver (string) type of fs object (local or ftp)
      * @param    $param (array) array of parameter
      */
-    function factory($driver, $param = array()) {
+    public function factory($driver, $param = array()) {
         $class = "Depage\FS\FS{$driver}";
 
         return new $class($param);
@@ -50,7 +50,7 @@ abstract class FS {
      *
      * @return    $size (string) formatted size string
      */
-    function formatFilesize($size) {
+    public function formatFilesize($size) {
         $kb = 1024;         // Kilobyte
         $mb = 1024 * $kb;   // Megabyte
         $gb = 1024 * $mb;   // Gigabyte
@@ -71,6 +71,7 @@ abstract class FS {
     // }}}
     // {{{ getSizeInBytes
     function getSizeInBytes($val) {
+        // @todo visibility
         $val = trim($val);
         $last = strtolower($val[strlen($val)-1]);
         switch($last) {
@@ -88,6 +89,7 @@ abstract class FS {
     // }}}
     // {{{ getMaxUploadFileSize
     function getMaxUploadFileSize() {
+        // @todo visibility
         $post_max = fs::getSizeInBytes(ini_get('post_max_size'));
         $file_max = fs::getSizeInBytes(ini_get('upload_max_filesize'));
 
@@ -104,7 +106,7 @@ abstract class FS {
      *
      * @return    $size (string) filesize string
      */
-    function f_size_format($path) {
+    public function f_size_format($path) {
         return $this->formatFilesize($this->f_size($path));
     }
     // }}}
