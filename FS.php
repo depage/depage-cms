@@ -108,19 +108,19 @@ abstract class FS {
         return $this->formatFilesize($this->f_size($path));
     }
     // }}}
-    // {{{ set_dirchmod
-    function set_dirchmod() {
+    // {{{ setDirChmod
+    function setDirChmod() {
         global $log;
 
-        $this->dirchmod = $this->chmod;
+        $this->dirChmod = $this->chmod;
         if (($this->chmod & 0400) == 0400) {
-            $this->dirchmod = 0100 | $this->dirchmod;
+            $this->dirChmod = 0100 | $this->dirChmod;
         } 
            if (($this->chmod & 0040) == 0040) {
-            $this->dirchmod = 0010 | $this->dirchmod;
+            $this->dirChmod = 0010 | $this->dirChmod;
         } 
            if (($this->chmod & 0004) == 0004) {
-            $this->dirchmod = 0001 | $this->dirchmod;
+            $this->dirChmod = 0001 | $this->dirChmod;
         }
     }
     // }}}

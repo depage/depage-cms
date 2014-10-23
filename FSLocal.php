@@ -15,7 +15,7 @@ class FSLocal extends FS implements FSInterface {
             $this->chmod = $param['chmod'];
         }
         //umask($this->chmod ^ 0777);
-        $this->set_dirchmod();
+        $this->setDirChmod();
     }
     // }}}
 
@@ -32,7 +32,7 @@ class FSLocal extends FS implements FSInterface {
      */
     function ls($path) {
         $flist = array(
-            'dirs' => array(),
+            'dirs'  => array(),
             'files' => array(),
         );
 
@@ -40,18 +40,18 @@ class FSLocal extends FS implements FSInterface {
             $path = '.';
         }
 
-        if (file_exists($path) && @is_dir($path)) {
-            $current_dir = opendir($path);
-            while ($entryname = readdir($current_dir)) {
-                if ($entryname != '.' && $entryname!='..') {
-                    if (@is_dir($path . '/' . $entryname)) {
-                        $flist['dirs'][] = $entryname;
-                    } elseif (is_file($path . '/' . $entryname)) {
-                        $flist['files'][] = $entryname;
+        if ($this->exists($path) && @is_dir($path)) {
+            $currentDir = opendir($path);
+            while ($entryName = readdir($currentDir)) {
+                if ($entryName != '.' && $entryName != '..') {
+                    if (@is_dir($path . '/' . $entryName)) {
+                        $flist['dirs'][] = $entryName;
+                    } elseif (is_file($path . '/' . $entryName)) {
+                        $flist['files'][] = $entryName;
                     }
                 }
             }
-            closedir($current_dir);
+            closedir($currentDir);
         }
         natcasesort($flist['dirs']);
         natcasesort($flist['files']);
@@ -94,7 +94,7 @@ class FSLocal extends FS implements FSInterface {
         foreach ($paths as $dir) {
             $actual_path .= '/' . $dir;
             if (!file_exists($actual_path)) {
-                mkdir($actual_path, $this->dirchmod);
+                mkdir($actual_path, $this->dirChmod);
                 $this->chmod($actual_path);
             }
         }
@@ -107,7 +107,7 @@ class FSLocal extends FS implements FSInterface {
     function chmod($path, $mod = null) {
         if ($mod == null) {
             if (is_dir($path)) {
-                $mod = $this->dirchmod;
+                $mod = $this->dirChmod;
             } else if (is_file($path)) {
                 $mod = $this->chmod;
             }
@@ -121,19 +121,19 @@ class FSLocal extends FS implements FSInterface {
      *
      * @public
      *
-     * @param $path (string) path to file or directory
+     * @param   $path (string) path to file or directory
      *
-     * @return $success (bool) true on success, false on error
+     * @return  $success (bool) true on success, false on error
      */
     function rm($path) {
         if (file_exists($path) && @is_dir($path)) {
-            $current_dir = opendir($path);
-            while ($entryname = readdir($current_dir)) {
-                if ($entryname != '.' && $entryname!='..') {
-                    $this->rm($path . '/' . $entryname);
+            $currentDir = opendir($path);
+            while ($entryName = readdir($currentDir)) {
+                if ($entryName != '.' && $entryName!='..') {
+                    $this->rm($path . '/' . $entryName);
                 }
             }
-            closedir($current_dir);
+            closedir($currentDir);
             return rmdir($path);
         } else if (file_exists($path)) {
             return unlink($path);
@@ -147,19 +147,19 @@ class FSLocal extends FS implements FSInterface {
      *
      * @public
      *
-     * @param    $oldname (string) name of source file or directory
-     * @param    $newname (string) target
+     * @param   $source (string) name of source file or directory
+     * @param   $target (string) target
      *
-     * @return    $success (bool) true on success, false on error
+     * @return  $success (bool) true on success, false on error
      */
-    function mv($oldname, $newname) {
-        if (file_exists($oldname)) {
-            if (!($value = rename($oldname, $newname))) {
-                trigger_error("could not rename '$oldname' to '$newname'");
+    function mv($source, $target) {
+        if (file_exists($source)) {
+            if (!($value = rename($source, $target))) {
+                trigger_error("could not rename '$source' to '$target'");
             }
             return $value;
         } else {
-            trigger_error("could not rename '$oldname' to '$newname' - source don't exist");
+            trigger_error("could not rename '$source' to '$target' - source doesn't exist");
             return false;
         }
     }
@@ -170,33 +170,33 @@ class FSLocal extends FS implements FSInterface {
      *
      * @public
      *
-     * @param    $sourcename (string) name of sourcefile or -directory
-     * @param    $targetname (string) name of targetfile or -directory
+     * @param   $source (string) name of sourcefile or -directory
+     * @param   $target (string) name of targetfile or -directory
      *
-     * @return    $success (bool) true on success, false on error
+     * @return  $success (bool) true on success, false on error
      */
-    function cp($sourcename, $targetname) {
-        if (!file_exists($targetname)) {
-            if (is_dir($sourcename)) {
-                if (substr($sourcename, -1) != '/') {
-                    $sourcename .= '/';
+    function cp($source, $target) {
+        if (!file_exists($target)) {
+            if (is_dir($source)) {
+                if (substr($source, -1) != '/') {
+                    $source .= '/';
                 }
-                if (substr($targetname, -1) != '/') {
-                    $targetname .= '/';
+                if (substr($target, -1) != '/') {
+                    $target .= '/';
                 }
-                $this->mkdir($targetname);
-                $flist = $this->ls($sourcename);
+                $this->mkdir($target);
+                $flist = $this->ls($source);
                 foreach ($flist['dirs'] as $dir) {
-                    $this->cp($sourcename . $dir, $targetname . $dir);
+                    $this->cp($source . $dir, $target . $dir);
                 }
                 foreach ($flist['files'] as $file) {
-                    $this->cp($sourcename . $file, $targetname . $file);
+                    $this->cp($source . $file, $target . $file);
                 }
-            } else if (is_file($sourcename)) {
-                copy($sourcename, $targetname);
+            } else if (is_file($source)) {
+                copy($source, $target);
             }
         } else {
-            trigger_error("could not copy. target exists:\n$targetname");
+            trigger_error("could not copy. target exists:\n$target");
             return false;
         }
     }
