@@ -216,79 +216,20 @@ class FSLocal extends FS implements FSInterface {
         return file_exists($path);
     }
     // }}}
-    // {{{ f_size
-    /**
-     * Gets size of a file
-     *
-     * @public
-     *
-     * @param    $path (string) path to file
-     *
-     * @return    $size (int) size in bytes
-     */
-    function f_size($path) {
-        return filesize($path);
-    }
-    // }}}
-    // {{{ f_mtime
-    /**
-     * Gets last modification date of file
-     *
-     * @public
-     *
-     * @param    $path (string) path to file
-     *
-     * @return    $date (int) unix timestamp of file modification date
-     */
-    function f_mtime($path) {
-        return filemtime($path);
+    // {{{ fileInfo
+    function fileInfo($path) {
+        return new \SplFileInfo($path);
     }
     // }}}
 
-    // {{{ append
-    /**
-     * Writes a String directly to a file
-     *
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $str (string) content to write to file
-     *
-     * @return    $success (bool) true on success, false on error
-     */
-    function append($filepath, $str) {
-        $path = pathinfo($filepath);
-
-        $this->mkdir($path['dirname']);
-        $fp = fopen($filepath, 'w');
-        if ($fp) {
-            fwrite($fp, $str);
-            fclose($fp);
-
-            return true;
-        } else {
-            return false;
-        }
+    // {{{ readString
+    function readString($path) {
+        // @todo stub
     }
     // }}}
-    // {{{ write
-    /**
-     * Writes content of a local file to targetfile
-     * 
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $sourcefile (string) path to sourcefile
-     *
-     * @return    $success (bool) true on success, false on error
-     */
-    function write($filepath, $sourcefile) {
-        if (file_exists($sourcefile)) {
-            $path = pathinfo($filepath);
-
-            $this->mkdir($path['dirname']);
-            return copy($sourcefile, $filepath);
-        }
+    // {{{ writeString
+    function writeString($path, $string) {
+        // @todo stub
     }
     // }}}
 }

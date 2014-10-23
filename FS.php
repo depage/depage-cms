@@ -18,8 +18,6 @@ namespace Depage\FS;
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
-if (!function_exists('die_error')) require_once('lib_global.php');
-
 /**
  * Parent class for all other fs_classes
  */
@@ -35,8 +33,8 @@ abstract class FS {
      * @param    $driver (string) type of fs object (local or ftp)
      * @param    $param (array) array of parameter
      */
-    function &factory($driver, $param = array()) {
-        $class = "FS{$driver}";
+    function factory($driver, $param = array()) {
+        $class = "Depage\FS\FS{$driver}";
 
         return new $class($param);
     }

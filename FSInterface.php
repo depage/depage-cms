@@ -15,10 +15,10 @@ interface FSInterface {
     public function cp($source, $target);
 
     public function exists($path);
-    public function stat($path);
+    public function fileInfo($path);
 
-    public function append($path, $string);
-    public function write($path, $file);
+    public function readString($path);
+    public function writeString($path, $string);
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
