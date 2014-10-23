@@ -1,4 +1,7 @@
 <?php
+
+namespace depage\FS;
+
 /**
  * @file    lib_files.php
  *

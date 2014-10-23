@@ -1,5 +1,7 @@
 <?php
 
+namespace depage\FS;
+
 /**
  * Implements file system functions on remote ftp filesystem
  */
@@ -61,13 +63,13 @@ class fs_ftp extends fs {
                 }
                 @ftp_pasv($this->ftpp, true);
                 register_shutdown_function(array(&$this, '_disconnect'));
-                
+
                 $this->connected = true;
             }
             if (!$this->connected) {
                 trigger_error("%error_ftp%%error_ftp_connect% '$this->server'.", E_USER_ERROR);
             }
-            
+
             return $this->connected;
         } else {
             return true;
@@ -112,24 +114,24 @@ class fs_ftp extends fs {
      */
     function _getTransferType($filename) {
         $textTypes = array(
-            'txt',
-            'htm', 'html',
-            'css',
-            'js',
-            
-            'cgi', 'shtml', 
-            'php', 'php3', 'php4', 'phtm', 'phtml', 'phps', 'inc',
-            'pl', 'pm', 
-            
-            'xml', 'xsl', 'dtd',
-            'c', 'h',
-            'conf', 'ini',
-            'sql', 'csv', 
-            'htaccess', 'htpasswd',
-            'log',
-            'nfo',
-        );
-        
+                'txt',
+                'htm', 'html',
+                'css',
+                'js',
+
+                'cgi', 'shtml', 
+                'php', 'php3', 'php4', 'phtm', 'phtml', 'phps', 'inc',
+                'pl', 'pm', 
+
+                'xml', 'xsl', 'dtd',
+                'c', 'h',
+                'conf', 'ini',
+                'sql', 'csv', 
+                'htaccess', 'htpasswd',
+                'log',
+                'nfo',
+                );
+
         if (in_array(strtolower(substr($filename, strrpos($filename, '.') + 1)), $textTypes)) {
             return FTP_ASCII;
         } else {
@@ -167,7 +169,7 @@ class fs_ftp extends fs {
                 preg_match("/(.*) -> (.*)/", $eregs[8], $matches);
                 $eregs[8] = $matches[1];
             }
-            
+
             $date = $this->_parse_date($eregs[7]);
             // $date = $eregs[7];
             if (!$date) {
@@ -176,20 +178,20 @@ class fs_ftp extends fs {
             if ($eregs[8] != '.' && $eregs[8] != '..') {
                 if ($is_dir) {
                     $dirs_list[] = array("name"         =>  $eregs[8],
-                                        "rights"        =>  $eregs[2],
-                                        "user"          =>  $eregs[4],
-                                        "group"         =>  $eregs[5],
-                                        "files_inside"  =>  $eregs[3],
-                                        "date"          =>  $date,
-                                        "is_dir"        =>  $is_dir);
+                            "rights"        =>  $eregs[2],
+                            "user"          =>  $eregs[4],
+                            "group"         =>  $eregs[5],
+                            "files_inside"  =>  $eregs[3],
+                            "date"          =>  $date,
+                            "is_dir"        =>  $is_dir);
                 } else if ($eregs[8] != null) {
                     $files_list[] = array("name"        =>  $eregs[8],
-                                         "size"         =>  (int)$eregs[6],
-                                         "rights"       =>  $eregs[2],
-                                         "user"         =>  $eregs[4],
-                                         "group"        =>  $eregs[5],
-                                         "date"         =>  $date,
-                                         "is_dir"       =>  $is_dir);
+                            "size"         =>  (int)$eregs[6],
+                            "rights"       =>  $eregs[2],
+                            "user"         =>  $eregs[4],
+                            "group"        =>  $eregs[5],
+                            "date"         =>  $date,
+                            "is_dir"       =>  $is_dir);
                 }
             }
         }
@@ -197,7 +199,7 @@ class fs_ftp extends fs {
         usort($files_list, array($this, "compare_ftp_listing"));
         $res["dirs"] = $dirs_list;
         $res["files"] = $files_list;
-        
+
         return $res;
     }
     // }}}
@@ -247,9 +249,9 @@ class fs_ftp extends fs {
      */
     function list_dir($path) {
         $flist = array(
-            'dirs' => array(),
-            'files' => array(),
-        );
+                'dirs' => array(),
+                'files' => array(),
+                );
 
         $temp_flist = $this->_get_filelist($path);
         foreach ($temp_flist['dirs'] as $dir) {
@@ -260,10 +262,10 @@ class fs_ftp extends fs {
         foreach ($temp_flist['files'] as $file) {
             $flist['files'][] = $file['name'];
         }
-        
+
         natcasesort($flist['dirs']);
         natcasesort($flist['files']);
-        
+
         return $flist;
     }
     // }}}
@@ -311,7 +313,7 @@ class fs_ftp extends fs {
      */
     function rm($path) {
         global $conf, $log;
-        
+
         if ($this->_connect()) {
             if (ftp_size($this->ftpp, $path) == -1) {
                 $flist = $this->_get_filelist($path);
@@ -451,14 +453,14 @@ class fs_ftp extends fs {
 
         if ($this->_connect()) {
             $path = pathinfo($filepath);
-            
+
             $this->mk_dir($path['dirname']);
-            
+
             $tempfile = tempnam("", "publ");
             $fp = fopen($tempfile, 'w');
             fwrite($fp, $str);
             fclose($fp);
-            
+
             while ($errors <= $this->num_errors_max) {
                 if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
                     $errors++;
@@ -500,9 +502,9 @@ class fs_ftp extends fs {
 
         if ($this->_connect()) {
             $path = pathinfo($filepath);
-            
+
             $this->mk_dir($path['dirname']);
-            
+
             while ($errors <= $this->num_errors_max) {
                 if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
                     $errors++;

@@ -1,4 +1,7 @@
 <?php
+
+namespace depage\FS;
+
 /**
  * Implements file system functions on local file system
  */
@@ -22,21 +25,21 @@ class fs_local extends fs {
      *
      * @public
      *
-     * @param    $path (string) path of directory. if not given, the function
-     *            lists the content of the actual directory '.'.    
+     * @param   $path (string) path of directory. if not given, the function
+     *          lists the content of the actual directory '.'.
      *
-     * @return    $flist (array) contains 2 subarrays 'dirs' and 'files'
+     * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
      */
     function list_dir($path) {
         $flist = array(
-            'dirs' => array(),
-            'files' => array(),
-        );
+                'dirs' => array(),
+                'files' => array(),
+                );
 
         if ($path == '') {
             $path = '.';
         }
-        
+
         if (file_exists($path) && @is_dir($path)) {
             $current_dir = opendir($path);
             while ($entryname = readdir($current_dir)) {
@@ -52,7 +55,7 @@ class fs_local extends fs {
         }
         natcasesort($flist['dirs']);
         natcasesort($flist['files']);
-        
+
         return $flist;
     }
     // }}}
@@ -132,7 +135,7 @@ class fs_local extends fs {
         global $log;
         if (!@chdir($path)) {
             $log->add_entry("could not change directory to '$path'");
-        } 
+        }
 
         return true;
     }
@@ -252,13 +255,13 @@ class fs_local extends fs {
      */
     function f_write_string($filepath, $str) {
         $path = pathinfo($filepath);
-        
+
         $this->mk_dir($path['dirname']);
         $fp = fopen($filepath, 'w');
         if ($fp) {
             fwrite($fp, $str);
             fclose($fp);
-            
+
             return true;
         } else {
             return false;
@@ -279,7 +282,7 @@ class fs_local extends fs {
     function f_write_file($filepath, $sourcefile) {
         if (file_exists($sourcefile)) {
             $path = pathinfo($filepath);
-            
+
             $this->mk_dir($path['dirname']);
             return copy($sourcefile, $filepath);
         }
@@ -287,3 +290,4 @@ class fs_local extends fs {
     // }}}
 }
 
+/* vim:set ft=php sw=4 sts=4 fdm=marker : */
