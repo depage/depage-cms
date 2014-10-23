@@ -1,16 +1,16 @@
 <?php
 
-namespace depage\FS;
+namespace Depage\FS;
 
 /**
  * Implements file system functions on local file system
  */
-class fs_local extends fs {
-    // {{{ fs_local
+class FSLocal extends FS implements FSInterface {
+    // {{{ constructor
     /**
      * Constructor, sets umask to default value on unix-system
      */
-    function fs_local($param = array()) {
+    function __construct($param = array()) {
         if (isset($param['chmod'])) {
             $this->chmod = $param['chmod'];
         }
@@ -19,7 +19,7 @@ class fs_local extends fs {
     }
     // }}}
 
-    // {{{ list_dir
+    // {{{ ls
     /**
      * Gets directroy listing
      *
@@ -30,11 +30,11 @@ class fs_local extends fs {
      *
      * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
      */
-    function list_dir($path) {
+    function ls($path) {
         $flist = array(
-                'dirs' => array(),
-                'files' => array(),
-                );
+            'dirs' => array(),
+            'files' => array(),
+        );
 
         if ($path == '') {
             $path = '.';
@@ -59,7 +59,26 @@ class fs_local extends fs {
         return $flist;
     }
     // }}}
-    // {{{ mk_dir
+    // {{{ cd
+    /**
+     * Changes current directory
+     *
+     * @public
+     *
+     * @param $path (string) path of directory to change to
+     *
+     * @return $success (bool) true on success, false on error
+     */
+    function cd($path) {
+        global $log;
+        if (!@chdir($path)) {
+            $log->add_entry("could not change directory to '$path'");
+        }
+
+        return true;
+    }
+    // }}}
+    // {{{ mkdir
     /**
      * Creates new directory recursive if it doesn't exist
      *
@@ -67,7 +86,7 @@ class fs_local extends fs {
      *
      * @param $path (string) path of new directory
      */
-    function mk_dir($path) {
+    function mkdir($path) {
         global $log;
 
         $paths = explode('/', $path);
@@ -76,16 +95,16 @@ class fs_local extends fs {
             $actual_path .= '/' . $dir;
             if (!file_exists($actual_path)) {
                 mkdir($actual_path, $this->dirchmod);
-                $this->ch_mod($actual_path);
+                $this->chmod($actual_path);
             }
         }
     }
     // }}}
-    // {{{ ch_mod
+    // {{{ chmod
     /**
      * changes the chmodding of a file or a directory
      */
-    function ch_mod($path, $mod = null) {
+    function chmod($path, $mod = null) {
         if ($mod == null) {
             if (is_dir($path)) {
                 $mod = $this->dirchmod;
@@ -93,7 +112,7 @@ class fs_local extends fs {
                 $mod = $this->chmod;
             }
         }
-        return chmod($path, $mod);
+        return \chmod($path, $mod);
     }
     // }}}
     // {{{ rm
@@ -121,26 +140,69 @@ class fs_local extends fs {
         }
     }
     // }}}
-    // {{{ ch_dir
+
+    // {{{ mv
     /**
-     * Changes current directory
+     * Renames or moves file or directory
      *
      * @public
      *
-     * @param $path (string) path of directory to change to
+     * @param    $oldname (string) name of source file or directory
+     * @param    $newname (string) target
      *
-     * @return $success (bool) true on success, false on error
+     * @return    $success (bool) true on success, false on error
      */
-    function ch_dir($path) {
-        global $log;
-        if (!@chdir($path)) {
-            $log->add_entry("could not change directory to '$path'");
+    function mv($oldname, $newname) {
+        if (file_exists($oldname)) {
+            if (!($value = rename($oldname, $newname))) {
+                trigger_error("could not rename '$oldname' to '$newname'");
+            }
+            return $value;
+        } else {
+            trigger_error("could not rename '$oldname' to '$newname' - source don't exist");
+            return false;
         }
-
-        return true;
     }
     // }}}
-    // {{{ f_exists
+    // {{{ cp
+    /**
+     * Copies file or directory
+     *
+     * @public
+     *
+     * @param    $sourcename (string) name of sourcefile or -directory
+     * @param    $targetname (string) name of targetfile or -directory
+     *
+     * @return    $success (bool) true on success, false on error
+     */
+    function cp($sourcename, $targetname) {
+        if (!file_exists($targetname)) {
+            if (is_dir($sourcename)) {
+                if (substr($sourcename, -1) != '/') {
+                    $sourcename .= '/';
+                }
+                if (substr($targetname, -1) != '/') {
+                    $targetname .= '/';
+                }
+                $this->mkdir($targetname);
+                $flist = $this->ls($sourcename);
+                foreach ($flist['dirs'] as $dir) {
+                    $this->cp($sourcename . $dir, $targetname . $dir);
+                }
+                foreach ($flist['files'] as $file) {
+                    $this->cp($sourcename . $file, $targetname . $file);
+                }
+            } else if (is_file($sourcename)) {
+                copy($sourcename, $targetname);
+            }
+        } else {
+            trigger_error("could not copy. target exists:\n$targetname");
+            return false;
+        }
+    }
+    // }}}
+
+    // {{{ exists
     /**
      * Checks if file exists
      *
@@ -150,7 +212,7 @@ class fs_local extends fs {
      *
      * @return $exist (bool) true if file exists, false otherwise
      */
-    function f_exists($path) {
+    function exists($path) {
         return file_exists($path);
     }
     // }}}
@@ -182,67 +244,8 @@ class fs_local extends fs {
         return filemtime($path);
     }
     // }}}
-    // {{{ f_rename
-    /**
-     * Renames or moves file or directory
-     *
-     * @public
-     *
-     * @param    $oldname (string) name of source file or directory
-     * @param    $newname (string) target
-     *
-     * @return    $success (bool) true on success, false on error
-     */
-    function f_rename($oldname, $newname) {
-        if (file_exists($oldname)) {
-            if (!($value = rename($oldname, $newname))) {
-                trigger_error("could not rename '$oldname' to '$newname'");
-            }
-            return $value;
-        } else {
-            trigger_error("could not rename '$oldname' to '$newname' - source don't exist");
-            return false;
-        }
-    }
-    // }}}
-    // {{{ f_copy
-    /**
-     * Copies file or directory
-     *
-     * @public
-     *
-     * @param    $sourcename (string) name of sourcefile or -directory
-     * @param    $targetname (string) name of targetfile or -directory
-     *
-     * @return    $success (bool) true on success, false on error
-     */
-    function f_copy($sourcename, $targetname) {
-        if (!file_exists($targetname)) {
-            if (is_dir($sourcename)) {
-                if (substr($sourcename, -1) != '/') {
-                    $sourcename .= '/';
-                }
-                if (substr($targetname, -1) != '/') {
-                    $targetname .= '/';
-                }
-                $this->mk_dir($targetname);
-                $flist = $this->list_dir($sourcename);
-                foreach ($flist['dirs'] as $dir) {
-                    $this->f_copy($sourcename . $dir, $targetname . $dir);
-                }
-                foreach ($flist['files'] as $file) {
-                    $this->f_copy($sourcename . $file, $targetname . $file);
-                }
-            } else if (is_file($sourcename)) {
-                copy($sourcename, $targetname);
-            }
-        } else {
-            trigger_error("could not copy. target exists:\n$targetname");
-            return false;
-        }
-    }
-    // }}}
-    // {{{ f_write_string
+
+    // {{{ append
     /**
      * Writes a String directly to a file
      *
@@ -253,10 +256,10 @@ class fs_local extends fs {
      *
      * @return    $success (bool) true on success, false on error
      */
-    function f_write_string($filepath, $str) {
+    function append($filepath, $str) {
         $path = pathinfo($filepath);
 
-        $this->mk_dir($path['dirname']);
+        $this->mkdir($path['dirname']);
         $fp = fopen($filepath, 'w');
         if ($fp) {
             fwrite($fp, $str);
@@ -268,7 +271,7 @@ class fs_local extends fs {
         }
     }
     // }}}
-    // {{{ f_write_file
+    // {{{ write
     /**
      * Writes content of a local file to targetfile
      * 
@@ -279,11 +282,11 @@ class fs_local extends fs {
      *
      * @return    $success (bool) true on success, false on error
      */
-    function f_write_file($filepath, $sourcefile) {
+    function write($filepath, $sourcefile) {
         if (file_exists($sourcefile)) {
             $path = pathinfo($filepath);
 
-            $this->mk_dir($path['dirname']);
+            $this->mkdir($path['dirname']);
             return copy($sourcefile, $filepath);
         }
     }

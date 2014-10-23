@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\FS;
+namespace Depage\FS;
 
 interface FSInterface {
     public function __construct($params);

@@ -1,14 +1,14 @@
 <?php
 
-namespace depage\FS;
+namespace Depage\FS;
 
 /**
- * @file    lib_files.php
+ * @file    FS.php
  *
  * File System Library
  *
  * This file defines Classes for accessing different file
- * system like the lokal file system or an ftp filesystem
+ * systems like the local file system or an ftp filesystem
  * with same function calls.
  *
  *
@@ -23,7 +23,7 @@ if (!function_exists('die_error')) require_once('lib_global.php');
 /**
  * Parent class for all other fs_classes
  */
-class fs {
+abstract class FS {
     var $chmod = 0664;
 
     // {{{ factory
@@ -36,8 +36,7 @@ class fs {
      * @param    $param (array) array of parameter
      */
     function &factory($driver, $param = array()) {
-        $driver = strtolower($driver);
-        $class = "fs_{$driver}";
+        $class = "FS{$driver}";
 
         return new $class($param);
     }
