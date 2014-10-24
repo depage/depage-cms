@@ -51,7 +51,6 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-
     // {{{ testLs
     public function testLs()
     {
@@ -135,6 +134,7 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists('testDir'));
     }
     // }}}
+
     // {{{ testMv
     public function testMv()
     {
@@ -163,6 +163,16 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->fs->cp('testDir/testFile', 'testDir/testSubDir/testFile');
         $this->assertTrue($this->confirmTestFile('testDir/testFile'));
         $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+    }
+    // }}}
+
+    // {{{ testExists
+    public function testExists()
+    {
+        mkdir('testDir');
+
+        $this->assertTrue($this->fs->exists('testDir'));
+        $this->assertFalse($this->fs->exists('i_dont_exist'));
     }
     // }}}
 }
