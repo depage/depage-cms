@@ -76,42 +76,44 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testLoadNoTableName
     /**
-     * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage Tablename tag missing in "Fixtures/TestNoTableName.sql".
+     * @expectedException               depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessageRegExp  /Tablename tag missing in ".*Fixtures\/TestNoTableName\.sql"/
      */
     public function testLoadNoTableName()
     {
-        $this->schema->loadGlob('Fixtures/TestNoTableName.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestNoTableName.sql');
+        var_dump($this->schema);
+        die();
     }
     // }}}
     // {{{ testLoadMultipleTableNames
     /**
-     * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage More than one tablename tags in "Fixtures/TestMultipleTableNames.sql".
+     * @expectedException               depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessageRegExp  /More than one tablename tags in ".*Fixtures\/TestMultipleTableNames\.sql"/
      */
     public function testLoadMultipleTableNames()
     {
-        $this->schema->loadGlob('Fixtures/TestMultipleTableNames.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestMultipleTableNames.sql');
     }
     // }}}
     // {{{ testLoadUnversionedCode
     /**
-     * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage There is code without version tags in "Fixtures/TestUnversionedCode.sql" at line 4.
+     * @expectedException               depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessageRegExp  /There is code without version tags in ".*Fixtures\/TestUnversionedCode\.sql" at line 4/
      */
     public function testLoadUnversionedCode()
     {
-        $this->schema->loadGlob('Fixtures/TestUnversionedCode.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestUnversionedCode.sql');
     }
     // }}}
     // {{{ testLoadIncompleteFile
     /**
-     * @expectedException        depage\DB\Exceptions\SchemaException
-     * @expectedExceptionMessage Incomplete statement at the end of "Fixtures/TestIncompleteFile.sql".
+     * @expectedException               depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessageRegExp  /Incomplete statement at the end of ".*Fixtures\/TestIncompleteFile\.sql"/
      */
     public function testLoadIncompleteFile()
     {
-        $this->schema->loadGlob('Fixtures/TestIncompleteFile.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestIncompleteFile.sql');
     }
     // }}}
 
@@ -120,7 +122,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.2';
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
 
         $expected = array();
         $this->assertEquals($expected, $this->schema->executedStatements);
@@ -131,7 +133,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.1';
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
 
         $expected = array(
             11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
@@ -143,7 +145,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessEntireFile()
     {
         $this->schema->tableExists = false;
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -162,7 +164,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'bogus version';
-        $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
     }
     // }}}
     // {{{ testProcessUnknownVersionExecution
@@ -170,7 +172,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'bogus version';
-        @$this->schema->loadGlob('Fixtures/TestFile.sql');
+        @$this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
 
         $this->assertEquals(array(), $this->schema->executedStatements);
     }
@@ -179,7 +181,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessConnections()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->loadGlob('Fixtures/TestConnections.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestConnections.sql');
 
         $expected = array(
             9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -198,7 +200,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
                 return 'testPrefix_' . $tableName;
             }
         );
-        $this->schema->loadGlob('Fixtures/TestConnections.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestConnections.sql');
 
         $expected = array(
             9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -212,7 +214,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     public function testProcessBackticks()
     {
         $this->schema->currentTableVersion = '';
-        $this->schema->loadGlob('Fixtures/TestBackticks.sql');
+        $this->schema->loadGlob(__DIR__ . '/Fixtures/TestBackticks.sql');
 
         $expected = array(
             9   => array("CREATE TABLE `table backticks` ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
