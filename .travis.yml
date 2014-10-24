@@ -4,6 +4,10 @@ php:
     - 5.4
     - 5.3
 
+services:
+    - redis-server
+    - memcached
+
 before_script:
     - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
     - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
