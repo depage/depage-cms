@@ -175,6 +175,15 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->fs->exists('i_dont_exist'));
     }
     // }}}
+    // {{{ testFileInfo
+    public function testFileInfo()
+    {
+        $this->createTestFile('testFile');
+        $fileInfo = $this->fs->fileInfo('testFile');
+
+        $this->assertTrue($fileInfo->isFile());
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
