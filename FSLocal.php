@@ -203,12 +203,12 @@ class FSLocal extends FS implements FSInterface {
 
     // {{{ readString
     public function readString($path) {
-        // @todo stub
+        return file_get_contents($path);
     }
     // }}}
     // {{{ writeString
     public function writeString($path, $string) {
-        // @todo stub
+        return file_put_contents($path, $string);
     }
     // }}}
 }

@@ -181,7 +181,25 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->createTestFile('testFile');
         $fileInfo = $this->fs->fileInfo('testFile');
 
+        $this->assertTrue(is_a($fileInfo, 'SplFileInfo'));
         $this->assertTrue($fileInfo->isFile());
+    }
+    // }}}
+
+    // {{{ testReadString
+    public function testReadString()
+    {
+        $this->createTestFile('testFile');
+
+        $this->assertEquals('testString', $this->fs->readString('testFile'));
+    }
+    // }}}
+    // {{{ testWriteString
+    public function testWriteString()
+    {
+        $this->fs->writeString('testFile', 'testString');
+
+        $this->assertTrue($this->confirmTestFile('testFile'));
     }
     // }}}
 }
