@@ -56,6 +56,9 @@ class FSLocal extends FS implements FSInterface {
         natcasesort($flist['dirs']);
         natcasesort($flist['files']);
 
+        $flist['dirs']  = array_values($flist['dirs']);
+        $flist['files'] = array_values($flist['files']);
+
         return $flist;
     }
     // }}}
@@ -80,24 +83,14 @@ class FSLocal extends FS implements FSInterface {
     // }}}
     // {{{ mkdir
     /**
-     * Creates new directory recursive if it doesn't exist
+     * Creates new directory recursively if it doesn't exist
      *
      * @public
      *
      * @param $path (string) path of new directory
      */
     public function mkdir($path) {
-        global $log;
-
-        $paths = explode('/', $path);
-        $actual_path = $paths[0];
-        foreach ($paths as $dir) {
-            $actual_path .= '/' . $dir;
-            if (!file_exists($actual_path)) {
-                mkdir($actual_path, $this->dirChmod);
-                $this->chmod($actual_path);
-            }
-        }
+        return mkdir($path, $this->dirChmod, true);
     }
     // }}}
     // {{{ chmod
