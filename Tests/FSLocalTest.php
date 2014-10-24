@@ -150,6 +150,21 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
     }
     // }}}
+    // {{{ testCp
+    public function testCp()
+    {
+        // create test nodes
+        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
+        $this->createTestFile('testDir/testFile');
+        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
+        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
+        $this->assertFalse(file_exists('testDir/testSubDir/testFile'));
+
+        $this->fs->cp('testDir/testFile', 'testDir/testSubDir/testFile');
+        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
+        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
