@@ -52,74 +52,12 @@ abstract class FS {
     }
     // }}}
 
-    // {{{ formatFilesize
-    /**
-     * Formats the size of a file in B/KB/MB/GB
-     *
-     * @public
-     *
-     * @param    $size (int) size of file to format
-     *
-     * @return    $size (string) formatted size string
-     */
-    public function formatFilesize($size) {
-        $kb = 1024;         // Kilobyte
-        $mb = 1024 * $kb;   // Megabyte
-        $gb = 1024 * $mb;   // Gigabyte
-        $tb = 1024 * $gb;   // Terabyte
-           
-        if($size < $kb) {
-            return $size . ' B';
-        } else if($size < $mb) {
-            return round($size/$kb, 0) . ' KB';
-        } else if($size < $gb) {
-            return round($size/$mb, 1) . ' MB';
-        } else if($size < $tb) {
-            return round($size/$gb, 1) . ' GB';
-        } else {
-            return round($size/$tb, 1) . ' TB';
-        }
-    }
-    // }}}
-    // {{{ getSizeInBytes
-    function getSizeInBytes($val) {
-        // @todo visibility
-        $val = trim($val);
-        $last = strtolower($val[strlen($val)-1]);
-        switch($last) {
-            // The 'G' modifier is available since PHP 5.1.0
-            case 'g':
-                $val *= 1024;
-            case 'm':
-                $val *= 1024;
-            case 'k':
-                $val *= 1024;
-        }
-
-        return $val;
-    }
-    // }}}
     // {{{ getMaxUploadFileSize
-    function getMaxUploadFileSize() {
-        // @todo visibility
+    public function getMaxUploadFileSize() {
         $post_max = fs::getSizeInBytes(ini_get('post_max_size'));
         $file_max = fs::getSizeInBytes(ini_get('upload_max_filesize'));
 
         return fs::formatFilesize($post_max < $file_max ? $post_max : $filemax);
-    }
-    // }}}
-    // {{{ f_size_format
-    /**
-     * Gets size of a file in B/KB/MB/GB
-     *
-     * @public
-     *
-     * @param    $path (string) path to file
-     *
-     * @return    $size (string) filesize string
-     */
-    public function f_size_format($path) {
-        return $this->formatFilesize($this->f_size($path));
     }
     // }}}
     // {{{ setDirChmod
