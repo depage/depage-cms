@@ -60,12 +60,7 @@ class FSLocal extends FS implements FSInterface {
      * @return $success (bool) true on success, false on error
      */
     public function cd($path) {
-        global $log;
-        if (!@chdir($path)) {
-            $log->add_entry("could not change directory to '$path'");
-        }
-
-        return true;
+        return @chdir($path);
     }
     // }}}
     // {{{ mkdir

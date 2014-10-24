@@ -128,8 +128,6 @@ class FSFTP extends FS implements FSInterface {
      * @return $success (bool) true on success, false on error
      */
     public function rm($path) {
-        global $conf, $log;
-
         if ($this->_connect()) {
             if (ftp_size($this->ftpp, $path) == -1) {
                 $flist = $this->_get_filelist($path);
@@ -419,8 +417,6 @@ class FSFTP extends FS implements FSInterface {
      * @return    $filelist (array) which contains to other array 'dirs' and 'files'
      */
     public function _get_filelist($path) {
-        global $log;
-
         $dirs_list = array();
         $files_list = array();
         $dir_list = ftp_rawlist($this->ftpp, $path . "/");
