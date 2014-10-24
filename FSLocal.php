@@ -97,7 +97,7 @@ class FSLocal extends FS implements FSInterface {
     // }}}
     // {{{ rm
     /**
-     * Removes files and directories recursive
+     * Recursively removes files and directories
      *
      * @public
      *
@@ -106,18 +106,17 @@ class FSLocal extends FS implements FSInterface {
      * @return  $success (bool) true on success, false on error
      */
     public function rm($path) {
-        if (file_exists($path) && @is_dir($path)) {
-            $currentDir = opendir($path);
-            while ($entryName = readdir($currentDir)) {
-                if ($entryName != '.' && $entryName!='..') {
-                    $this->rm($path . '/' . $entryName);
+        if (file_exists($path)) {
+            if (is_dir($path)) {
+                foreach (glob($path . '/*') as $nested) {
+                    $this->rm($nested);
                 }
+                return rmdir($path);
+            } else if (is_file($path)) {
+                return unlink($path);
             }
-            closedir($currentDir);
-            return rmdir($path);
-        } else if (file_exists($path)) {
-            return unlink($path);
         }
+        return false;
     }
     // }}}
 

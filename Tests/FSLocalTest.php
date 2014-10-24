@@ -35,6 +35,22 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         }
     }
     // }}}
+    // {{{ createTestFile
+    protected function createTestFile($path)
+    {
+        $testFile = fopen($path, 'w');
+        fwrite($testFile, 'testString');
+        fclose($testFile);
+    }
+    // }}}
+    // {{{ confirmTestFile
+    protected function confirmTestFile($path)
+    {
+        $contents = file($path);
+        return $contents == array('testString');
+    }
+    // }}}
+
 
     // {{{ testLs
     public function testLs()
@@ -102,6 +118,36 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->fs->chmod('testFile', 0600);
         $this->assertEquals('0600', getMode('testDir'));
         $this->assertEquals('0600', getMode('testFile'));
+    }
+    // }}}
+    // {{{ testRm
+    public function testRm()
+    {
+        // create test nodes
+        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
+        touch('testDir/testFile');
+        touch('testDir/testSubDir/testFile');
+        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
+        $this->assertTrue(file_exists('testDir/testSubDir/testFile'));
+        $this->assertTrue(file_exists('testDir/testFile'));
+
+        $this->fs->rm('testDir');
+        $this->assertFalse(file_exists('testDir'));
+    }
+    // }}}
+    // {{{ testMv
+    public function testMv()
+    {
+        // create test nodes
+        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
+        $this->createTestFile('testDir/testFile');
+        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
+        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
+        $this->assertFalse(file_exists('testDir/testSubDir/testFile'));
+
+        $this->fs->mv('testDir/testFile', 'testDir/testSubDir/testFile');
+        $this->assertFalse(file_exists('testDir/testFile'));
+        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
     }
     // }}}
 }

@@ -4,4 +4,4 @@ test:
 	phpunit --configuration PHPUnit.xml .
 
 clean:
-	${RM} Report
+	${RM} Report Temp
