@@ -236,7 +236,8 @@ class Schema
         $matchedTags    = array();
 
         $values = array_values($comments);
-        $comment = array_shift($values)['string'];
+        $values = array_shift($values);
+        $comment = $values['string'];
 
         foreach ($tags as $tag) {
             if (
