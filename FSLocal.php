@@ -6,19 +6,6 @@ namespace Depage\FS;
  * Implements file system functions on local file system
  */
 class FSLocal extends FS implements FSInterface {
-    // {{{ constructor
-    /**
-     * Constructor, sets umask to default value on unix-system
-     */
-    public function __construct($param = array()) {
-        if (isset($param['chmod'])) {
-            $this->chmod = $param['chmod'];
-        }
-        //umask($this->chmod ^ 0777);
-        $this->setDirChmod();
-    }
-    // }}}
-
     // {{{ ls
     /**
      * Gets directroy listing

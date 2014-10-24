@@ -21,16 +21,13 @@ class FSFTP extends FS implements FSInterface {
      * @param    $user (string) authentication user
      * @param    $pass (string) authenticaion
      */
-    public function constructor($param) {
+    public function __construct($param) {
+        parent::__construct($param);
+
         $this->server   = $param['host'];
         $this->port     = $param['port'];
         $this->user     = $param['user'];
         $this->pass     = $param['pass'];
-
-        if (isset($param['chmod'])) {
-            $this->chmod = $param['chmod'];
-        }
-        $this->set_dirchmod();
     }
     // }}}
 

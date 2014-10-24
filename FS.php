@@ -24,6 +24,18 @@ namespace Depage\FS;
 abstract class FS {
     protected $chmod = 0664;
 
+    // {{{ constructor
+    /**
+     * Constructor, sets umask to default value on unix-system
+     */
+    public function __construct($param = array()) {
+        if (isset($param['chmod'])) {
+            $this->chmod = $param['chmod'];
+        }
+
+        $this->setDirChmod();
+    }
+    // }}}
     // {{{ factory
     /**
      * creates new filesystem object
@@ -111,9 +123,7 @@ abstract class FS {
     }
     // }}}
     // {{{ setDirChmod
-    function setDirChmod() {
-        global $log;
-
+    protected function setDirChmod() {
         $this->dirChmod = $this->chmod;
         if (($this->chmod & 0400) == 0400) {
             $this->dirChmod = 0100 | $this->dirChmod;
