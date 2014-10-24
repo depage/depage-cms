@@ -1,0 +1,15 @@
+language: php
+php:
+    - 5.5
+    - 5.4
+    - 5.3
+
+services:
+    - mysql
+
+before_script:
+    - mysql -e 'create database test_db;'
+    - echo "GRANT ALL PRIVILEGES ON *.* TO 'test_db_user'@'localhost' IDENTIFIED BY 'test_db_password' WITH GRANT OPTION;" | mysql -u root
+
+script: phpunit --configuration Tests/PHPUnit.xml Tests/
+
