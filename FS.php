@@ -127,11 +127,11 @@ abstract class FS {
         $this->dirChmod = $this->chmod;
         if (($this->chmod & 0400) == 0400) {
             $this->dirChmod = 0100 | $this->dirChmod;
-        } 
-           if (($this->chmod & 0040) == 0040) {
+        }
+        if (($this->chmod & 0040) == 0040) {
             $this->dirChmod = 0010 | $this->dirChmod;
-        } 
-           if (($this->chmod & 0004) == 0004) {
+        }
+        if (($this->chmod & 0004) == 0004) {
             $this->dirChmod = 0001 | $this->dirChmod;
         }
     }
