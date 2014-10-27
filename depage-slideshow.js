@@ -71,7 +71,7 @@
         base.playing = false;
         base.num = 0;
 
-        // test for css transition ability
+        // {{{ whichTransitionEvent - test for css transition ability
         var whichTransitionEvent = (function (){
             var t;
             var el = document.createElement('fakeelement');
@@ -90,6 +90,7 @@
             }
             return false;
         }());
+        // }}}
         /* }}} */
 
         /* {{{ init() */
@@ -156,11 +157,13 @@
         base.waitForNext = function(){
             base.clearQueue();
 
-            timer = setTimeout( function() {
-                if (base.playing) {
-                    base.next();
-                }
-            }, base.options.pause);
+            if (base.options.pause != -1) {
+                timer = setTimeout( function() {
+                    if (base.playing) {
+                        base.next();
+                    }
+                }, base.options.pause);
+            }
         };
         /* }}} */
         /* {{{ play() */
