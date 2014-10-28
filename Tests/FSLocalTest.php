@@ -54,10 +54,21 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
     // {{{ testLs
     public function testLs()
     {
-        $lsReturn = $this->fs->ls('Fixtures');
+        $lsReturn = $this->fs->ls('testDir');
+
+        $this->assertEquals(array(), $lsReturn);
+
+        mkdir('testDir/testSubDir', 0777, true);
+        mkdir('testDir/testAnotherSubDir', 0777, true);
+        touch('testDir/testFile', 0777, true);
+        touch('testDir/testAnotherFile', 0777, true);
+
+        $lsReturn = $this->fs->ls('testDir');
         $expected = array(
-            'dirs'  => array(),
-            'files' => array(),
+            'testAnotherFile',
+            'testAnotherSubDir',
+            'testFile',
+            'testSubDir',
         );
 
         $this->assertEquals($expected, $lsReturn);
@@ -66,17 +77,41 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
     // {{{ testLsDir
     public function testDir()
     {
-        $lsDirReturn    = $this->fs->lsDir('Fixtures');
-        $expected       = array();
+        $lsDirReturn = $this->fs->lsDir('testDir');
+
+        $this->assertEquals(array(), $lsDirReturn);
+
+        mkdir('testDir/testSubDir', 0777, true);
+        mkdir('testDir/testAnotherSubDir', 0777, true);
+        touch('testDir/testFile', 0777, true);
+        touch('testDir/testAnotherFile', 0777, true);
+
+        $lsDirReturn    = $this->fs->lsDir('testDir');
+        $expected       = array(
+            'testAnotherSubDir',
+            'testSubDir',
+        );
 
         $this->assertEquals($expected, $lsDirReturn);
     }
     // }}}
-    // {{{ testLsiFiles
+    // {{{ testLsFiles
     public function testLsFiles()
     {
-        $lsFilesReturn  = $this->fs->lsFiles('Fixtures');
-        $expected       = array();
+        $lsFilesReturn = $this->fs->lsFiles('testDir');
+
+        $this->assertEquals(array(), $lsFilesReturn);
+
+        mkdir('testDir/testSubDir', 0777, true);
+        mkdir('testDir/testAnotherSubDir', 0777, true);
+        touch('testDir/testFile', 0777, true);
+        touch('testDir/testAnotherFile', 0777, true);
+
+        $lsFilesReturn  = $this->fs->lsFiles('testDir');
+        $expected       = array(
+            'testAnotherFile',
+            'testFile',
+        );
 
         $this->assertEquals($expected, $lsFilesReturn);
     }

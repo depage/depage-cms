@@ -18,10 +18,7 @@ class FSLocal extends FS implements FSInterface {
      * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
      */
     public function ls($path) {
-        $flist = array(
-            'dirs'  => array(),
-            'files' => array(),
-        );
+        $flist = array();
 
         if ($path == '') {
             $path = '.';
@@ -31,20 +28,14 @@ class FSLocal extends FS implements FSInterface {
             $currentDir = opendir($path);
             while ($entryName = readdir($currentDir)) {
                 if ($entryName != '.' && $entryName != '..') {
-                    if (@is_dir($path . '/' . $entryName)) {
-                        $flist['dirs'][] = $entryName;
-                    } elseif (is_file($path . '/' . $entryName)) {
-                        $flist['files'][] = $entryName;
-                    }
+                    $flist[] = $entryName;
                 }
             }
             closedir($currentDir);
         }
-        natcasesort($flist['dirs']);
-        natcasesort($flist['files']);
+        natcasesort($flist);
 
-        $flist['dirs']  = array_values($flist['dirs']);
-        $flist['files'] = array_values($flist['files']);
+        $flist = array_values($flist);
 
         return $flist;
     }
