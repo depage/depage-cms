@@ -199,7 +199,7 @@ class FSWrapper extends FS implements FSInterface {
     // }}}
     // {{{ fileInfo
     public function fileInfo($path) {
-        // @todo stub
+        return new \SplFileInfo($this->url . $path);
     }
     // }}}
 
