@@ -49,6 +49,78 @@ class FSLocal extends FS implements FSInterface {
         return $flist;
     }
     // }}}
+    // {{{ lsDir
+    /**
+     * Gets directroy listing
+     *
+     * @public
+     *
+     * @param   $path (string) path of directory. if not given, the function
+     *          lists the content of the actual directory '.'.
+     *
+     * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
+     */
+    public function lsDir($path) {
+        $flist = array();
+
+        if ($path == '') {
+            $path = '.';
+        }
+
+        if ($this->exists($path) && @is_dir($path)) {
+            $currentDir = opendir($path);
+            while ($entryName = readdir($currentDir)) {
+                if ($entryName != '.' && $entryName != '..') {
+                    if (@is_dir($path . '/' . $entryName)) {
+                        $flist[] = $entryName;
+                    }
+                }
+            }
+            closedir($currentDir);
+        }
+        natcasesort($flist);
+
+        $flist = array_values($flist);
+
+        return $flist;
+    }
+    // }}}
+    // {{{ lsFiles
+    /**
+     * Gets directroy listing
+     *
+     * @public
+     *
+     * @param   $path (string) path of directory. if not given, the function
+     *          lists the content of the actual directory '.'.
+     *
+     * @return  $flist (array) contains 2 subarrays 'dirs' and 'files'
+     */
+    public function lsFiles($path) {
+        $flist = array();
+
+        if ($path == '') {
+            $path = '.';
+        }
+
+        if ($this->exists($path) && @is_dir($path)) {
+            $currentDir = opendir($path);
+            while ($entryName = readdir($currentDir)) {
+                if ($entryName != '.' && $entryName != '..') {
+                    if (is_file($path . '/' . $entryName)) {
+                        $flist[] = $entryName;
+                    }
+                }
+            }
+            closedir($currentDir);
+        }
+        natcasesort($flist);
+
+        $flist = array_values($flist);
+
+        return $flist;
+    }
+    // }}}
     // {{{ cd
     /**
      * Changes current directory
@@ -138,39 +210,76 @@ class FSLocal extends FS implements FSInterface {
         }
     }
     // }}}
-    // {{{ cp
+    // {{{ get
     /**
      * Copies file or directory
      *
      * @public
      *
-     * @param   $source (string) name of sourcefile or -directory
-     * @param   $target (string) name of targetfile or -directory
+     * @param   $remote (string) name of sourcefile or -directory
+     * @param   $local (string) name of targetfile or -directory
      *
      * @return  $success (bool) true on success, false on error
      */
-    public function cp($source, $target) {
-        if (!file_exists($target)) {
-            if (is_dir($source)) {
-                if (substr($source, -1) != '/') {
-                    $source .= '/';
+    public function get($remote, $local) {
+        if (!file_exists($local)) {
+            if (is_dir($remote)) {
+                if (substr($remote, -1) != '/') {
+                    $remote .= '/';
                 }
-                if (substr($target, -1) != '/') {
-                    $target .= '/';
+                if (substr($local, -1) != '/') {
+                    $local .= '/';
                 }
-                $this->mkdir($target);
-                $flist = $this->ls($source);
+                $this->mkdir($local);
+                $flist = $this->ls($remote);
                 foreach ($flist['dirs'] as $dir) {
-                    $this->cp($source . $dir, $target . $dir);
+                    $this->cp($remote . $dir, $local . $dir);
                 }
                 foreach ($flist['files'] as $file) {
-                    $this->cp($source . $file, $target . $file);
+                    $this->cp($remote . $file, $local . $file);
                 }
-            } else if (is_file($source)) {
-                copy($source, $target);
+            } else if (is_file($remote)) {
+                copy($remote, $local);
             }
         } else {
-            trigger_error("could not copy. target exists:\n$target");
+            trigger_error("could not copy. target exists:\n$local");
+            return false;
+        }
+    }
+    // }}}
+    // {{{ put
+    /**
+     * Copies file or directory
+     *
+     * @public
+     *
+     * @param   $local (string) name of sourcefile or -directory
+     * @param   $remote (string) name of targetfile or -directory
+     *
+     * @return  $success (bool) true on success, false on error
+     */
+    public function put($local, $remote) {
+        if (!file_exists($remote)) {
+            if (is_dir($local)) {
+                if (substr($local, -1) != '/') {
+                    $local .= '/';
+                }
+                if (substr($remote, -1) != '/') {
+                    $remote .= '/';
+                }
+                $this->mkdir($remote);
+                $flist = $this->ls($local);
+                foreach ($flist['dirs'] as $dir) {
+                    $this->cp($local . $dir, $remote . $dir);
+                }
+                foreach ($flist['files'] as $file) {
+                    $this->cp($local . $file, $remote . $file);
+                }
+            } else if (is_file($local)) {
+                copy($local, $remote);
+            }
+        } else {
+            trigger_error("could not copy. target exists:\n$remote");
             return false;
         }
     }
@@ -196,13 +305,13 @@ class FSLocal extends FS implements FSInterface {
     }
     // }}}
 
-    // {{{ readString
-    public function readString($path) {
+    // {{{ getString
+    public function getString($path) {
         return file_get_contents($path);
     }
     // }}}
-    // {{{ writeString
-    public function writeString($path, $string) {
+    // {{{ putString
+    public function putString($path, $string) {
         return file_put_contents($path, $string);
     }
     // }}}
