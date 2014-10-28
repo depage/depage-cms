@@ -194,11 +194,7 @@ class FSWrapper extends FS implements FSInterface {
      * @return $exist (bool) true if file exists, false otherwise
      */
     public function exists($path) {
-        if ($this->_connect()) {
-            return (ftp_size($this->ftpp, $path) > -1);
-        } else {
-            return false;
-        }
+        return file_exists($this->url . $path);
     }
     // }}}
     // {{{ fileInfo
