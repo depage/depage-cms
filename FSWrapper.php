@@ -178,7 +178,8 @@ class FSWrapper extends FS implements FSInterface {
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function put($filepath, $sourcefile) {
+    public function put($local, $remote) {
+        return copy($local, $this->url . $remote);
     }
     // }}}
 
