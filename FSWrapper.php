@@ -80,11 +80,16 @@ class FSWrapper extends FS implements FSInterface {
     /**
      * changes the chmodding of a file or a directory
      */
-    public function chmod($path, $mod) {
-        if ($this->_connect()) {
-            $mod = sprintf("%04o", $mod);
-            return ftp_site($this->ftpp, "CHMOD $mod $path");
+    public function chmod($path, $mod = null) {
+        // won't work on remote files
+        if ($mod == null) {
+            if (is_dir($this->url . $path)) {
+                $mod = $this->dirChmod;
+            } else if (is_file($this->url . $path)) {
+                $mod = $this->chmod;
+            }
         }
+        return chmod($this->url . $path, $mod);
     }
     // }}}
     // {{{ rm
@@ -98,30 +103,19 @@ class FSWrapper extends FS implements FSInterface {
      * @return $success (bool) true on success, false on error
      */
     public function rm($path) {
-        if ($this->_connect()) {
-            if (ftp_size($this->ftpp, $path) == -1) {
-                $flist = $this->_get_filelist($path);
-                if ($path != '' && $path != '/') {
-                    foreach ($flist['dirs'] as $dir) {
-                        $this->rm($path . '/' . $dir['name']);
-                    }
-                    foreach ($flist['files'] as $file) {
-                        $this->rm($path . '/' . $file['name']);
-                    }
-                    if (!($value = @ftp_rmdir($this->ftpp, $path))) {
-                        trigger_error("ftp: could not remove '$path'");
-                    }
+        $remote = $this->url . $path;
+
+        if (file_exists($remote)) {
+            if (is_dir($remote)) {
+                foreach (scandir($remote) as $nested) {
+                    $this->rm($path . '/' .  $nested);
                 }
-                return $value;
-            } else {
-                if (!($value = @ftp_delete($this->ftpp, $path))) {
-                    trigger_error("ftp: could not remove '$path'");
-                }
-                return $value;
+                return rmdir($remote);
+            } else if (is_file($remote)) {
+                return unlink($remote);
             }
-        } else {
-            return false;
         }
+        return false;
     }
     // }}}
 

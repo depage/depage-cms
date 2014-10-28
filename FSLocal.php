@@ -150,7 +150,7 @@ class FSLocal extends FS implements FSInterface {
                 $mod = $this->chmod;
             }
         }
-        return \chmod($path, $mod);
+        return chmod($path, $mod);
     }
     // }}}
     // {{{ rm
