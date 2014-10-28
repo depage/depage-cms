@@ -63,6 +63,24 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $lsReturn);
     }
     // }}}
+    // {{{ testLsDir
+    public function testDir()
+    {
+        $lsDirReturn    = $this->fs->lsDir('Fixtures');
+        $expected       = array();
+
+        $this->assertEquals($expected, $lsDirReturn);
+    }
+    // }}}
+    // {{{ testLsiFiles
+    public function testLsFiles()
+    {
+        $lsFilesReturn  = $this->fs->lsFiles('Fixtures');
+        $expected       = array();
+
+        $this->assertEquals($expected, $lsFilesReturn);
+    }
+    // }}}
     // {{{ testCd
     public function testCd()
     {
@@ -150,8 +168,8 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
     }
     // }}}
-    // {{{ testCp
-    public function testCp()
+    // {{{ testGet
+    public function testGet()
     {
         // create test nodes
         mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
@@ -160,7 +178,22 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
         $this->assertFalse(file_exists('testDir/testSubDir/testFile'));
 
-        $this->fs->cp('testDir/testFile', 'testDir/testSubDir/testFile');
+        $this->fs->get('testDir/testFile', 'testDir/testSubDir/testFile');
+        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
+        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+    }
+    // }}}
+    // {{{ testPut
+    public function testPut()
+    {
+        // create test nodes
+        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
+        $this->createTestFile('testDir/testSubDir/testFile');
+        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
+        $this->assertFalse(file_exists('testDir/testFile'));
+
+        $this->fs->put('testDir/testSubDir/testFile', 'testDir/testFile');
         $this->assertTrue($this->confirmTestFile('testDir/testFile'));
         $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
     }
@@ -186,18 +219,18 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testReadString
-    public function testReadString()
+    // {{{ testGetString
+    public function testGetString()
     {
         $this->createTestFile('testFile');
 
-        $this->assertEquals('testString', $this->fs->readString('testFile'));
+        $this->assertEquals('testString', $this->fs->getString('testFile'));
     }
     // }}}
-    // {{{ testWriteString
-    public function testWriteString()
+    // {{{ testPutString
+    public function testPutString()
     {
-        $this->fs->writeString('testFile', 'testString');
+        $this->fs->putString('testFile', 'testString');
 
         $this->assertTrue($this->confirmTestFile('testFile'));
     }
