@@ -125,18 +125,22 @@ class FSWrapper extends FS implements FSInterface {
      *
      * @public
      *
-     * @param    $oldname (string) name of source file or directory
-     * @param    $newname (string) target
+     * @param    $source (string) name of source file or directory
+     * @param    $target (string) target
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function mv($oldname, $newname) {
-        if ($this->_connect()) {
-            if (!($value = @ftp_rename($this->ftpp, $oldname, $newname))) {
-                trigger_error("ftp: could not rename '$oldname' to '$newname'");
+    public function mv($source, $target) {
+        $source = $this->url . $source;
+        $target = $this->url . $target;
+
+        if (file_exists($source)) {
+            if (!($value = rename($source, $target))) {
+                trigger_error("could not rename '$source' to '$target'");
             }
             return $value;
         } else {
+            trigger_error("could not rename '$source' to '$target' - source doesn't exist");
             return false;
         }
     }
@@ -152,36 +156,15 @@ class FSWrapper extends FS implements FSInterface {
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function get($filepath, $sourcefile) {
-        // @todo implement both ways
-        $errors = 0;
+    public function get($remote, $local = null) {
+        $pathInfo = pathinfo($remote);
+        $fileName = $pathInfo['filename'];
 
-        if ($this->_connect()) {
-            $path = pathinfo($filepath);
-
-            $this->mkdir($path['dirname']);
-
-            while ($errors <= $this->num_errors_max) {
-                if (!ftp_put($this->ftpp, $filepath, $sourcefile, $this->_getTransferType($filepath))) {
-                    $errors++;
-                    if ($errors > $this->num_errors_max) {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
-
-                        return false;
-                    } else {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying $errors", E_USER_NOTICE);
-
-                        $this->_reconnect();
-                    }
-                } else {
-                    $this->chmod($filepath, $this->chmod);
-
-                    return true;
-                }
-            }
-        } else {
-            return false;
+        if ($local === null) {
+            $local = $fileName;
         }
+
+        return copy($this->url . $remote, $local);
     }
     // }}}
     // {{{ put
