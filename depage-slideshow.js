@@ -98,6 +98,7 @@
             base.options = $.extend({},$.depage.slideshow.defaultOptions, options);
             base.options.speed = Number(base.$el.attr("data-slideshow-speed")) || base.options.speed;
             base.options.pause = Number(base.$el.attr("data-slideshow-pause")) || base.options.pause;
+            base.options.startPos = Number(base.options.startPos) || 0;
 
             divs = base.$el.children(base.options.elements);
             base.num = divs.length;
@@ -129,19 +130,22 @@
                     position: "static"
                 });
             }
-            for (var i = 1; i < divs.length; i++) {
-                $(divs[i]).css({
-                    visibility: "hidden",
-                    opacity: 0
-                });
+            for (var i = 0; i < divs.length; i++) {
+                if (i != base.options.startPos) {
+                    $(divs[i]).css({
+                        visibility: "hidden",
+                        opacity: 0
+                    });
+                }
             }
 
             if (divs.length > 1) {
+                base.activeSlide = base.options.startPos;
                 base.playing = true;
                 base.waitForNext();
 
                 setTimeout(function() {
-                    base.$el.triggerHandler("depage.slideshow.show", [0, divs.length]);
+                    base.$el.triggerHandler("depage.slideshow.show", [base.options.startPos, divs.length]);
                 }, 10);
             }
         };
@@ -309,6 +313,7 @@
         elements: "div, span, img",
         speed: 3000,
         pause: 3000,
+        startPos: 0,
         waitForImagesToLoad: true
     };
     /* }}} */
