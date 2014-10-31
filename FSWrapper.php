@@ -2,12 +2,19 @@
 
 namespace Depage\FS;
 
-class FSWrapper extends FS implements FSInterface {
+class FSWrapper extends FS implements FSInterface
+{
     // {{{ constructor
     public function __construct($url, $params = array()) {
         parent::__construct($params);
 
-        $this->url = (substr($url, -1) == '/') ? $url : $url . '/';
+        if (preg_match(';^[a-z0-9]*://;', $url)) {
+            $this->root = $url;
+        } else {
+            $this->root = 'file://' . realpath($url);
+        }
+
+        $this->url = (substr($url, -1) == '/') ? $this->root : $this->root . '/';
     }
     // }}}
 
@@ -205,6 +212,7 @@ class FSWrapper extends FS implements FSInterface {
 
     // {{{ getString
     public function getString($path) {
+        return file_get_contents($this->url . $path);
         // @todo stub
     }
     // }}}
@@ -219,42 +227,8 @@ class FSWrapper extends FS implements FSInterface {
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function putString($filepath, $str) {
-        $errors = 0;
-
-        if ($this->_connect()) {
-            $path = pathinfo($filepath);
-
-            $this->mkdir($path['dirname']);
-
-            $tempfile = tempnam("", "publ");
-            $fp = fopen($tempfile, 'w');
-            fwrite($fp, $str);
-            fclose($fp);
-
-            while ($errors <= $this->num_errors_max) {
-                if (!ftp_put($this->ftpp, $filepath, $tempfile, $this->_getTransferType($filepath))) {
-                    $errors++;
-                    if ($errors > $this->num_errors_max) {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath'", E_USER_ERROR);
-                        unlink($tempfile);
-
-                        return false;
-                    } else {
-                        trigger_error("%error_ftp%%error_ftp_write% '$filepath' - retrying", E_USER_NOTICE);
-
-                        $this->_reconnect();
-                    }
-                } else {
-                    $this->chmod($filepath, $this->chmod);
-                    unlink($tempfile);
-
-                    return true;
-                }
-            }
-        } else {
-            return false;
-        }
+    public function putString($path, $string) {
+        return file_put_contents($this->url . $path, $string);
     }
     // }}}
 }
