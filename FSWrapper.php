@@ -19,41 +19,46 @@ class FSWrapper extends FS implements FSInterface
     // }}}
 
     // {{{ ls
-    public function ls($path) {
-        $ls = scandir($this->url . $path);
-        natcasesort($ls);
+    public function ls($path = '') {
+        $scanDir    = scandir($this->url . $path);
+        $ls         = array_diff($scanDir, array('.', '..'));
 
-        return $ls;
+        natcasesort($ls);
+        $sorted = array_values($ls);
+
+        return $sorted;
     }
     // }}}
     // {{{ lsDir
-    public function lsDir($path) {
+    public function lsDir($path = '') {
         // @todo slow
-        $ls     = scandir($this->url . $path);
+        $ls     = $this->ls($path);
         $lsDir  = array_filter(
             $ls,
-            function ($element) {
-                return is_dir($this->url . $element);
+            function ($element) use ($path) {
+                return is_dir($this->url . $path . '/' . $element);
             }
         );
         natcasesort($lsDir);
+        $sorted = array_values($lsDir);
 
-        return $lsDir;
+        return $sorted;
     }
     // }}}
     // {{{ lsFiles
-    public function lsFiles($path) {
+    public function lsFiles($path = '') {
         // @todo slow
-        $ls         = scandir($this->url . $path);
+        $ls         = $this->ls($path);
         $lsFiles    = array_filter(
             $ls,
-            function ($element) {
-                return is_file($this->url . $element);
+            function ($element) use ($path) {
+                return is_file($this->url . $path . '/' . $element);
             }
         );
         natcasesort($lsFiles);
+        $sorted = array_values($lsFiles);
 
-        return $lsFiles;
+        return $sorted;
     }
     // }}}
     // {{{ cd
