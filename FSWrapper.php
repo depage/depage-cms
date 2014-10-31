@@ -8,10 +8,12 @@ class FSWrapper extends FS implements FSInterface
     public function __construct($url, $params = array()) {
         parent::__construct($params);
 
-        if (preg_match(';^[a-z0-9]*://;', $url)) {
-            $this->root = $url;
+        if (preg_match(';^([a-z0-9]*)://;', $url, $matches)) {
+            $this->root     = $url;
+            $this->scheme   = $matches[1];
         } else {
-            $this->root = 'file://' . realpath($url);
+            $this->root     = 'file://' . realpath($url);
+            $this->scheme   = 'file';
         }
 
         $this->url = (substr($url, -1) == '/') ? $this->root : $this->root . '/';
@@ -117,16 +119,21 @@ class FSWrapper extends FS implements FSInterface
     public function rm($path) {
         $remote = $this->url . $path;
 
-        if (file_exists($remote)) {
-            if (is_dir($remote)) {
-                foreach (scandir($remote) as $nested) {
-                    $this->rm($path . '/' .  $nested);
-                }
-                return rmdir($remote);
-            } else if (is_file($remote)) {
-                return unlink($remote);
+        if (is_dir($remote)) {
+            foreach ($this->ls($path) as $nested) {
+                $this->rm($path . '/' .  $nested);
             }
+
+            if ($this->scheme == 'file') {
+                // php bug hack
+                $remote = preg_replace(';^file://;', '', $remote);
+            }
+
+            return rmdir($remote);
+        } else if (is_file($remote)) {
+            return unlink($remote);
         }
+
         return false;
     }
     // }}}

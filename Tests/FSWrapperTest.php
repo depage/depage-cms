@@ -161,7 +161,6 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
     // {{{ testRm
     public function testRm()
     {
-        /*
         // create test nodes
         mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
         touch('testDir/testFile');
@@ -172,7 +171,6 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists('testDir'));
-        */
     }
     // }}}
 
