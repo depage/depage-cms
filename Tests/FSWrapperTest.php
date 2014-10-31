@@ -1,13 +1,13 @@
 <?php
 
-use Depage\FS\FSLocal;
+use Depage\FS\FSWrapper;
 
-class FSLocalTest extends PHPUnit_Framework_TestCase
+class FSWrapperTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
     {
-        $this->fs               = new FSLocal();
+        $this->fs               = new FSWrapper('');
         $this->testDirectory    = getcwd();
 
         $this->rmr('Temp');
@@ -141,7 +141,7 @@ class FSLocalTest extends PHPUnit_Framework_TestCase
     // {{{ testChmod
     public function testChmod()
     {
-        $this->fs = new FSLocal(array('chmod' => 0640));
+        $this->fs = new FSWrapper('file://', array('chmod' => 0640));
 
         // create test nodes
         mkdir('testDir');
