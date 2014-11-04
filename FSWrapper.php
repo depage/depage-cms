@@ -6,42 +6,36 @@ class FSWrapper extends FS implements FSInterface
 {
     // {{{ variables
         protected $current;
+        protected $base;
+        protected $url;
     // }}}
     // {{{ constructor
     public function __construct($url, $params = array())
     {
         parent::__construct($params);
 
-        if ($parsed = parse_url($url)) {
-            if (isset($parsed['scheme'])) {
-                $this->scheme   = $parsed['scheme'];
-                $this->base     = isset($parsed['path']) ? $parsed['path'] : null;
-            } else {
-                $this->scheme   = 'file';
-                $this->base     = realpath($url);
-            }
+        $parsed = parse_url($url);
 
-            $this->user = isset($parsed['user']) ? $parsed['user'] : null;
-            $this->pass = isset($parsed['pass']) ? $parsed['pass'] : null;
-            $this->host = isset($parsed['host']) ? $parsed['host'] : null;
-            $this->port = isset($parsed['port']) ? $parsed['port'] : null;
+        $this->url = $parsed;
+        unset($this->url['path']);
 
-            // @todo clean up
-            $this->base = (substr($url, -1) == '/') ? $this->base : $this->base . '/';
+        if (isset($this->url['scheme'])) {
+            $newBase = isset($parsed['path']) ? $parsed['path'] : '';
+        } else {
+            $this->url['scheme'] = 'file';
+            $newBase = realpath($parsed['path']);
         }
+
+        $this->base = $this->cleanPath($newBase);
+        $this->base .= (substr($this->base, -1) == '/') ? '' : '/';
     }
     // }}}
 
     // {{{ pwd
     public function pwd()
     {
-        $url = array(
-            'scheme'    => $this->scheme,
-            'user'      => $this->user,
-            'pass'      => $this->pass,
-            'host'      => $this->host,
-            'path'      => $this->base . $this->current,
-        );
+        $url = $this->url;
+        $url['path'] = $this->base . $this->current;
 
         return $this->buildUrl($url);
     }
@@ -106,26 +100,14 @@ class FSWrapper extends FS implements FSInterface
     {
         $parsed = parse_url($url);
 
-        $scheme = isset($parsed['scheme'])  ? $parsed['scheme'] : null;
-        $path   = isset($parsed['path'])    ? $parsed['path']   : null;
-
-        if ($scheme) {
-            $newUrl = $url;
+        if (isset($parsed['scheme'])) {
+            $newUrl = $parsed;
         } else {
-            $newUrl = array(
-                'scheme'    => $this->scheme,
-                'user'      => $this->user,
-                'pass'      => $this->pass,
-                'host'      => $this->host,
-            );
+            $newUrl = $this->url;
 
-            if ($path) {
-                if ($path[0] == '/') {
-                    $newUrl['path'] = $path;
-                } else {
-                    $newUrl['path'] = $this->base . $this->current . '/' . $path;
-                }
-            }
+            $newUrl['path'] = $this->base;
+            $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->current . '/' : '';
+            $newUrl['path'] .= $parsed['path'];
         }
 
         $newUrl['path'] = $this->cleanPath($newUrl['path']);
@@ -134,7 +116,12 @@ class FSWrapper extends FS implements FSInterface
             if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $newUrl['path'], $matches)) {
                 $this->current = $matches[1];
                 return true;
+            } else {
+                // @todo exception cannot leave base dir
             }
+        } else {
+            // @todo exception?
+            return false;
         }
     }
     // }}}
@@ -187,7 +174,7 @@ class FSWrapper extends FS implements FSInterface
                 $this->rm($path . '/' .  $nested);
             }
 
-            if ($this->scheme == 'file') {
+            if ($this->url['scheme'] == 'file') {
                 // php bug hack
                 $remote = preg_replace(';^file://;', '', $remote);
             }
@@ -314,7 +301,7 @@ class FSWrapper extends FS implements FSInterface
     // }}}
 
     // {{{ cleanPath
-    public function cleanPath($path)
+    protected function cleanPath($path)
     {
         // @todo handle backslashes
         $dirs       = explode('/', $path);
@@ -334,19 +321,20 @@ class FSWrapper extends FS implements FSInterface
         return $newPath;
     }
     // }}}
-    // {{{ pwd
-    public function buildUrl($parsed)
+    // {{{ buildUrl
+    protected function buildUrl($parsed)
     {
         $path = $parsed['scheme'] . '://';
         $path .= isset($parsed['user']) ? $parsed['user']       : '';
         $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
         $path .= isset($parsed['user']) ? '@'                   : '';
         $path .= isset($parsed['host']) ? $parsed['host']       : '';
-        $path .= isset($parsed['port']) ? ':' . $this->port     : '';
+        $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
         $path .= isset($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
     }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
