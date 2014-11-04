@@ -107,12 +107,13 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
     // {{{ testCd
     public function testCd()
     {
-        $pwd        = getcwd();
-        $cdReturn   = $this->fs->cd('..');
-        $newPwd     = getcwd();
+        $pwd        = $this->fs->pwd();
+        mkdir('testDir');
+        $cdReturn   = $this->fs->cd('testDir');
+        $newPwd     = $this->fs->pwd();
 
         $this->assertEquals(true, $cdReturn);
-        $this->assertEquals($pwd, $newPwd . DIRECTORY_SEPARATOR . 'Temp');
+        $this->assertEquals($pwd . 'testDir', $newPwd);
     }
     // }}}
     // {{{ testMkdir

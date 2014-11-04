@@ -4,25 +4,52 @@ namespace Depage\FS;
 
 class FSWrapper extends FS implements FSInterface
 {
+    // {{{ variables
+        protected $current;
+    // }}}
     // {{{ constructor
-    public function __construct($url, $params = array()) {
+    public function __construct($url, $params = array())
+    {
         parent::__construct($params);
 
-        if (preg_match(';^([a-z0-9]*)://;', $url, $matches)) {
-            $this->root     = $url;
-            $this->scheme   = $matches[1];
-        } else {
-            $this->root     = 'file://' . realpath($url);
-            $this->scheme   = 'file';
-        }
+        if ($parsed = parse_url($url)) {
+            if (isset($parsed['scheme'])) {
+                $this->scheme   = $parsed['scheme'];
+                $this->base     = isset($parsed['path']) ? $parsed['path'] : null;
+            } else {
+                $this->scheme   = 'file';
+                $this->base     = realpath($url);
+            }
 
-        $this->url = (substr($url, -1) == '/') ? $this->root : $this->root . '/';
+            $this->user = isset($parsed['user']) ? $parsed['user'] : null;
+            $this->pass = isset($parsed['pass']) ? $parsed['pass'] : null;
+            $this->host = isset($parsed['host']) ? $parsed['host'] : null;
+            $this->port = isset($parsed['port']) ? $parsed['port'] : null;
+
+            // @todo clean up
+            $this->base = (substr($url, -1) == '/') ? $this->base : $this->base . '/';
+        }
     }
     // }}}
 
+    // {{{ pwd
+    public function pwd()
+    {
+        $url = array(
+            'scheme'    => $this->scheme,
+            'user'      => $this->user,
+            'pass'      => $this->pass,
+            'host'      => $this->host,
+            'path'      => $this->base . $this->current,
+        );
+
+        return $this->buildUrl($url);
+    }
+    // }}}
     // {{{ ls
-    public function ls($path = '') {
-        $scanDir    = scandir($this->url . $path);
+    public function ls($path = '')
+    {
+        $scanDir    = scandir($this->pwd() . $path);
         $ls         = array_diff($scanDir, array('.', '..'));
 
         natcasesort($ls);
@@ -32,13 +59,14 @@ class FSWrapper extends FS implements FSInterface
     }
     // }}}
     // {{{ lsDir
-    public function lsDir($path = '') {
+    public function lsDir($path = '')
+    {
         // @todo slow
         $ls     = $this->ls($path);
         $lsDir  = array_filter(
             $ls,
             function ($element) use ($path) {
-                return is_dir($this->url . $path . '/' . $element);
+                return is_dir($this->pwd() . $path . '/' . $element);
             }
         );
         natcasesort($lsDir);
@@ -48,13 +76,14 @@ class FSWrapper extends FS implements FSInterface
     }
     // }}}
     // {{{ lsFiles
-    public function lsFiles($path = '') {
+    public function lsFiles($path = '')
+    {
         // @todo slow
         $ls         = $this->ls($path);
         $lsFiles    = array_filter(
             $ls,
             function ($element) use ($path) {
-                return is_file($this->url . $path . '/' . $element);
+                return is_file($this->pwd() . $path . '/' . $element);
             }
         );
         natcasesort($lsFiles);
@@ -73,9 +102,40 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return $success (bool) true on success, false on error
      */
-    public function cd($path) {
-        // @todo fix
-        return chdir($this->url . $path);
+    public function cd($url)
+    {
+        $parsed = parse_url($url);
+
+        $scheme = isset($parsed['scheme'])  ? $parsed['scheme'] : null;
+        $path   = isset($parsed['path'])    ? $parsed['path']   : null;
+
+        if ($scheme) {
+            $newUrl = $url;
+        } else {
+            $newUrl = array(
+                'scheme'    => $this->scheme,
+                'user'      => $this->user,
+                'pass'      => $this->pass,
+                'host'      => $this->host,
+            );
+
+            if ($path) {
+                if ($path[0] == '/') {
+                    $newUrl['path'] = $path;
+                } else {
+                    $newUrl['path'] = $this->base . $this->current . '/' . $path;
+                }
+            }
+        }
+
+        $newUrl['path'] = $this->cleanPath($newUrl['path']);
+
+        if (is_dir($this->buildUrl($newUrl))) {
+            if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $newUrl['path'], $matches)) {
+                $this->current = $matches[1];
+                return true;
+            }
+        }
     }
     // }}}
     // {{{ mkdir
@@ -86,24 +146,26 @@ class FSWrapper extends FS implements FSInterface
      *
      * @param $path (string) path of new directory
      */
-    public function mkdir($path) {
-        return mkdir($this->url . $path, $this->dirChmod, true);
+    public function mkdir($path)
+    {
+        return mkdir($this->pwd() . $path, $this->dirChmod, true);
     }
     // }}}
     // {{{ chmod
     /**
      * changes the chmodding of a file or a directory
      */
-    public function chmod($path, $mod = null) {
+    public function chmod($path, $mod = null)
+    {
         // won't work on remote files
         if ($mod == null) {
-            if (is_dir($this->url . $path)) {
+            if (is_dir($this->pwd() . $path)) {
                 $mod = $this->dirChmod;
-            } else if (is_file($this->url . $path)) {
+            } else if (is_file($this->pwd() . $path)) {
                 $mod = $this->chmod;
             }
         }
-        return chmod($this->url . $path, $mod);
+        return chmod($this->pwd() . $path, $mod);
     }
     // }}}
     // {{{ rm
@@ -116,8 +178,9 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return $success (bool) true on success, false on error
      */
-    public function rm($path) {
-        $remote = $this->url . $path;
+    public function rm($path)
+    {
+        $remote = $this->pwd() . $path;
 
         if (is_dir($remote)) {
             foreach ($this->ls($path) as $nested) {
@@ -149,9 +212,10 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function mv($source, $target) {
-        $source = $this->url . $source;
-        $target = $this->url . $target;
+    public function mv($source, $target)
+    {
+        $source = $this->pwd() . $source;
+        $target = $this->pwd() . $target;
 
         if (file_exists($source)) {
             if (!($value = rename($source, $target))) {
@@ -175,7 +239,8 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function get($remote, $local = null) {
+    public function get($remote, $local = null)
+    {
         $pathInfo = pathinfo($remote);
         $fileName = $pathInfo['filename'];
 
@@ -183,7 +248,7 @@ class FSWrapper extends FS implements FSInterface
             $local = $fileName;
         }
 
-        return copy($this->url . $remote, $local);
+        return copy($this->pwd() . $remote, $local);
     }
     // }}}
     // {{{ put
@@ -197,8 +262,9 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function put($local, $remote) {
-        return copy($local, $this->url . $remote);
+    public function put($local, $remote)
+    {
+        return copy($local, $this->pwd() . $remote);
     }
     // }}}
 
@@ -212,20 +278,22 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return $exist (bool) true if file exists, false otherwise
      */
-    public function exists($path) {
-        return file_exists($this->url . $path);
+    public function exists($path)
+    {
+        return file_exists($this->pwd() . $path);
     }
     // }}}
     // {{{ fileInfo
-    public function fileInfo($path) {
-        return new \SplFileInfo($this->url . $path);
+    public function fileInfo($path)
+    {
+        return new \SplFileInfo($this->pwd() . $path);
     }
     // }}}
 
     // {{{ getString
-    public function getString($path) {
-        return file_get_contents($this->url . $path);
-        // @todo stub
+    public function getString($path)
+    {
+        return file_get_contents($this->pwd() . $path);
     }
     // }}}
     // {{{ putString
@@ -239,10 +307,46 @@ class FSWrapper extends FS implements FSInterface
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function putString($path, $string) {
-        return file_put_contents($this->url . $path, $string);
+    public function putString($path, $string)
+    {
+        return file_put_contents($this->pwd() . $path, $string);
     }
     // }}}
+
+    // {{{ cleanPath
+    public function cleanPath($path)
+    {
+        // @todo handle backslashes
+        $dirs       = explode('/', $path);
+        $newDirs    = array();
+
+        foreach ($dirs as $dir) {
+            if ($dir == '..') {
+                array_pop($newDirs);
+            } else if ($dir != '.' && $dir != '') {
+                $newDirs[] = $dir;
+            }
+        }
+
+        $newPath = ($path[0] == '/') ? '/' : '';
+        $newPath .= implode('/', $newDirs);
+
+        return $newPath;
+    }
+    // }}}
+    // {{{ pwd
+    public function buildUrl($parsed)
+    {
+        $path = $parsed['scheme'] . '://';
+        $path .= isset($parsed['user']) ? $parsed['user']       : '';
+        $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+        $path .= isset($parsed['user']) ? '@'                   : '';
+        $path .= isset($parsed['host']) ? $parsed['host']       : '';
+        $path .= isset($parsed['port']) ? ':' . $this->port     : '';
+        $path .= isset($parsed['path']) ? $parsed['path']       : '/';
+
+        return $path;
+    }
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
