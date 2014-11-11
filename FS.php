@@ -39,10 +39,14 @@ class FS
     }
     // }}}
     // {{{ ls
-    public function ls($path = '')
+    public function ls($path = '', $glob = false)
     {
-        $scanDir    = scandir($this->pwd() . $path);
-        $ls         = array_diff($scanDir, array('.', '..'));
+        if ($glob) {
+            $ls = glob($this->pwd() . $path);
+        } else {
+            $scanDir = scandir($this->pwd() . $path);
+            $ls = array_diff($scanDir, array('.', '..'));
+        }
 
         natcasesort($ls);
         $sorted = array_values($ls);
@@ -187,12 +191,11 @@ class FS
 
         if (file_exists($source)) {
             if (!($value = rename($source, $target))) {
-                trigger_error("could not rename '$source' to '$target'");
+                throw new Exceptions\FSException("could not move '$source' to '$target'");
             }
             return $value;
         } else {
-            trigger_error("could not rename '$source' to '$target' - source doesn't exist");
-            return false;
+            throw new Exceptions\FSException("could not move '$source' to '$target' - source doesn't exist");
         }
     }
     // }}}
