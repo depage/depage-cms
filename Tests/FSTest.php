@@ -171,22 +171,6 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
         $this->fs->mv('testDir/testFile', 'testDir/testSubDir/testFile');
     }
     // }}}
-    // {{{ testMvTargetExists
-    /**
-     * @expectedException Depage\FS\Exceptions\FSException
-     */
-    public function testMvTargetExists()
-    {
-        // create test nodes
-        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
-        $this->createTestFile('testDir/testFile');
-        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
-        touch('testDir/testSubDir/testFile');
-        $this->assertTrue(file_exists('testDir/testSubDir/testFile'));
-
-        $this->fs->mv('testDir/testFile', 'testDir/testSubDir/testFile');
-    }
-    // }}}
 
     // {{{ testGet
     public function testGet()

@@ -21,6 +21,7 @@ class FS
             $newBase = isset($parsed['path']) ? $parsed['path'] : '';
         } else {
             $this->url['scheme'] = 'file';
+            // @todo handle failed realpath
             $newBase = realpath($parsed['path']);
         }
 
@@ -39,14 +40,10 @@ class FS
     }
     // }}}
     // {{{ ls
-    public function ls($path = '', $glob = false)
+    public function ls($path = '')
     {
-        if ($glob) {
-            $ls = glob($this->pwd() . $path);
-        } else {
-            $scanDir = scandir($this->pwd() . $path);
-            $ls = array_diff($scanDir, array('.', '..'));
-        }
+        $scanDir = scandir($this->pwd() . $path);
+        $ls = array_diff($scanDir, array('.', '..'));
 
         natcasesort($ls);
         $sorted = array_values($ls);
