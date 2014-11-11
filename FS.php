@@ -234,11 +234,13 @@ class FS
      */
     public function get($remote, $local = null)
     {
-        $pathInfo = pathinfo($remote);
-        $fileName = $pathInfo['filename'];
 
         if ($local === null) {
-            $local = $fileName;
+            $pathInfo   = pathinfo($remote);
+            $fileName   = $pathInfo['filename'];
+            $extension  = $pathInfo['extension'];
+
+            $local = $fileName . '.' . $extension;
         }
 
         return copy($this->pwd() . $remote, $local);
