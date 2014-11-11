@@ -8,18 +8,10 @@ class FS
         protected $current;
         protected $base;
         protected $url;
-        protected $chmod;
     // }}}
     // {{{ constructor
     public function __construct($url, $params = array())
     {
-        if (isset($param['chmod'])) {
-            $this->chmod = $param['chmod'];
-        } else {
-            $this->chmod = 0664;
-        }
-        $this->setDirChmod();
-
         $parsed = parse_url($url);
 
         $this->url = $parsed;
@@ -141,24 +133,7 @@ class FS
      */
     public function mkdir($path)
     {
-        return mkdir($this->pwd() . $path, $this->dirChmod, true);
-    }
-    // }}}
-    // {{{ chmod
-    /**
-     * changes the chmodding of a file or a directory
-     */
-    public function chmod($path, $mod = null)
-    {
-        // won't work on remote files
-        if ($mod == null) {
-            if (is_dir($this->pwd() . $path)) {
-                $mod = $this->dirChmod;
-            } else if (is_file($this->pwd() . $path)) {
-                $mod = $this->chmod;
-            }
-        }
-        return chmod($this->pwd() . $path, $mod);
+        return mkdir($this->pwd() . $path, 0777, true);
     }
     // }}}
     // {{{ rm
@@ -340,22 +315,6 @@ class FS
         $path .= isset($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
-    }
-    // }}}
-
-    // {{{ setDirChmod
-    protected function setDirChmod()
-    {
-        $this->dirChmod = $this->chmod;
-        if (($this->chmod & 0400) == 0400) {
-            $this->dirChmod = 0100 | $this->dirChmod;
-        }
-        if (($this->chmod & 0040) == 0040) {
-            $this->dirChmod = 0010 | $this->dirChmod;
-        }
-        if (($this->chmod & 0004) == 0004) {
-            $this->dirChmod = 0001 | $this->dirChmod;
-        }
     }
     // }}}
 }

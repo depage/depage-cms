@@ -127,39 +127,6 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists('testDir/testDir'));
     }
     // }}}
-    // {{{ testChmod
-    public function testChmod()
-    {
-        //@todo implement
-        /*
-        $this->fs = new FSWrapper('', array('chmod' => 0640));
-
-        // create test nodes
-        mkdir('testDir');
-        touch('testFile');
-        $this->assertTrue(file_exists('testDir'));
-        $this->assertTrue(file_exists('testFile'));
-
-        // set mode (~fixture)
-        chmod('testDir', 0660);
-        chmod('testFile', 0660);
-        $this->assertEquals('0660', getMode('testDir'));
-        $this->assertEquals('0660', getMode('testFile'));
-
-        // test mode set in constructor parameters
-        $this->fs->chmod('testDir');
-        $this->fs->chmod('testFile');
-        $this->assertEquals('0750', getMode('testDir'));
-        $this->assertEquals('0640', getMode('testFile'));
-
-        // test custom mode
-        $this->fs->chmod('testDir', 0600);
-        $this->fs->chmod('testFile', 0600);
-        $this->assertEquals('0600', getMode('testDir'));
-        $this->assertEquals('0600', getMode('testFile'));
-        */
-    }
-    // }}}
     // {{{ testRm
     public function testRm()
     {
