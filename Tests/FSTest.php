@@ -1,6 +1,6 @@
 <?php
 
-use Depage\FS\FSWrapper;
+use Depage\FS\FS;
 
 class FSWrapperTest extends PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
         mkdir('Temp');
         chdir('Temp');
 
-        $this->fs = new FSWrapper('');
+        $this->fs = new FS('');
     }
     // }}}
     // {{{ tearDown
