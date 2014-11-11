@@ -130,6 +130,7 @@ class FSWrapperTest extends PHPUnit_Framework_TestCase
     // {{{ testChmod
     public function testChmod()
     {
+        //@todo implement
         /*
         $this->fs = new FSWrapper('', array('chmod' => 0640));
 

@@ -234,7 +234,6 @@ class FS
      */
     public function get($remote, $local = null)
     {
-
         if ($local === null) {
             $pathInfo   = pathinfo($remote);
             $fileName   = $pathInfo['filename'];
@@ -345,7 +344,8 @@ class FS
     // }}}
 
     // {{{ setDirChmod
-    protected function setDirChmod() {
+    protected function setDirChmod()
+    {
         $this->dirChmod = $this->chmod;
         if (($this->chmod & 0400) == 0400) {
             $this->dirChmod = 0100 | $this->dirChmod;
