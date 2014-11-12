@@ -54,28 +54,31 @@ class FS
     // {{{ lsGlob
     public function lsGlob($path, $current = '')
     {
+        $result = array();
         $patterns = explode('/', $path);
+        $count = count($patterns);
 
-        $matches = array();
-        if (count($patterns) > 0) {
+        if ($count) {
             $pattern = array_shift($patterns);
             $matches = array_filter(
                 $this->ls($current),
                 function ($node) use ($pattern) { return fnmatch($pattern, $node); }
             );
-        }
 
-        $return = array();
-        foreach ($matches as $match) {
-            $newPath = $current . '/' . $match;
-            if (count($patterns) == 0) {
-                $return[] = $newPath;
-            } elseif (is_dir($this->pwd() . $newPath)) {
-                $return = array_merge($return, $this->lsGlob(implode('/', $patterns), $newPath));
+            foreach ($matches as $match) {
+                $next = $current . '/' . $match;
+                if ($count == 1) {
+                    $result[] = $next;
+                } elseif (is_dir($this->pwd() . $next)) {
+                    $result = array_merge(
+                        $result,
+                        $this->lsGlob(implode('/', $patterns), $next)
+                    );
+                }
             }
         }
 
-        return $return;
+        return $result;
     }
     // }}}
     // {{{ lsDir
