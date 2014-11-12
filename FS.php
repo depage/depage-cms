@@ -51,6 +51,33 @@ class FS
         return $sorted;
     }
     // }}}
+    // {{{ lsGlob
+    public function lsGlob($path, $current = '')
+    {
+        $patterns = explode('/', $path);
+
+        $matches = array();
+        if (count($patterns) > 0) {
+            $pattern = array_shift($patterns);
+            $matches = array_filter(
+                $this->ls($current),
+                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
+            );
+        }
+
+        $return = array();
+        foreach ($matches as $match) {
+            $newPath = $current . '/' . $match;
+            if (count($patterns) == 0) {
+                $return[] = $newPath;
+            } elseif (is_dir($this->pwd() . $newPath)) {
+                $return = array_merge($return, $this->lsGlob(implode('/', $patterns), $newPath));
+            }
+        }
+
+        return $return;
+    }
+    // }}}
     // {{{ lsDir
     public function lsDir($path = '')
     {
