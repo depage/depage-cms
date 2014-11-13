@@ -84,29 +84,24 @@ class FS
     // {{{ lsDir
     public function lsDir($path = '')
     {
-        // @todo slow
-        $ls     = $this->ls($path);
-        $lsDir  = array_filter(
-            $ls,
-            function ($element) use ($path) {
-                return is_dir($this->pwd() . $path . '/' . $element);
-            }
-        );
-        natcasesort($lsDir);
-        $sorted = array_values($lsDir);
-
-        return $sorted;
+        return $this->lsFilter($path, 'is_dir');
     }
     // }}}
     // {{{ lsFiles
     public function lsFiles($path = '')
     {
+        return $this->lsFilter($path, 'is_file');
+    }
+    // }}}
+    // {{{ lsFilter
+    protected function lsFilter($path = '', $function)
+    {
         // @todo slow
         $ls         = $this->ls($path);
         $lsFiles    = array_filter(
             $ls,
-            function ($element) use ($path) {
-                return is_file($this->pwd() . $path . '/' . $element);
+            function ($element) use ($path, $function) {
+                return $function($this->pwd() . $path . '/' . $element);
             }
         );
         natcasesort($lsFiles);
@@ -115,6 +110,7 @@ class FS
         return $sorted;
     }
     // }}}
+
     // {{{ cd
     /**
      * Changes current directory
