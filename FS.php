@@ -5,7 +5,7 @@ namespace Depage\FS;
 class FS
 {
     // {{{ variables
-        protected $current;
+        protected $currentPath;
         protected $base;
         protected $url;
     // }}}
@@ -13,7 +13,6 @@ class FS
     public function __construct($url, $params = array())
     {
         $parsed = parse_url($url);
-
         $this->url = $parsed;
         unset($this->url['path']);
 
@@ -34,7 +33,7 @@ class FS
     public function pwd()
     {
         $url = $this->url;
-        $url['path'] = $this->base . $this->current;
+        $url['path'] = $this->base . $this->currentPath;
 
         return $this->buildUrl($url);
     }
@@ -131,7 +130,8 @@ class FS
             $newUrl = $this->url;
 
             $newUrl['path'] = $this->base;
-            $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->current . '/' : '';
+            $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
+
             $newUrl['path'] .= $parsed['path'];
         }
 
@@ -139,7 +139,7 @@ class FS
 
         if (is_dir($this->buildUrl($newUrl))) {
             if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $newUrl['path'], $matches)) {
-                $this->current = $matches[1];
+                $this->currentPath = $matches[1];
                 return true;
             } else {
                 // @todo exception cannot leave base dir
