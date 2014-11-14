@@ -50,36 +50,6 @@ class FS
         return $sorted;
     }
     // }}}
-    // {{{ lsGlob
-    public function lsGlob($path, $current = '')
-    {
-        $result = array();
-        $patterns = explode('/', $path);
-        $count = count($patterns);
-
-        if ($count) {
-            $pattern = array_shift($patterns);
-            $matches = array_filter(
-                $this->ls($current),
-                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
-            );
-
-            foreach ($matches as $match) {
-                $next = $current . '/' . $match;
-                if ($count == 1) {
-                    $result[] = $next;
-                } elseif (is_dir($this->pwd() . $next)) {
-                    $result = array_merge(
-                        $result,
-                        $this->lsGlob(implode('/', $patterns), $next)
-                    );
-                }
-            }
-        }
-
-        return $result;
-    }
-    // }}}
     // {{{ lsDir
     public function lsDir($path = '')
     {
@@ -107,6 +77,42 @@ class FS
         $sorted = array_values($lsFiles);
 
         return $sorted;
+    }
+    // }}}
+    // {{{ glob
+    public function glob($path)
+    {
+        return $this->globRecursive($path, '');
+    }
+    // }}}
+    // {{{ globRecursive
+    protected function globRecursive($path, $current)
+    {
+        $result = array();
+        $patterns = explode('/', $path);
+        $count = count($patterns);
+
+        if ($count) {
+            $pattern = array_shift($patterns);
+            $matches = array_filter(
+                $this->ls($current),
+                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
+            );
+
+            foreach ($matches as $match) {
+                $next = $current . '/' . $match;
+                if ($count == 1) {
+                    $result[] = $next;
+                } elseif (is_dir($this->pwd() . $next)) {
+                    $result = array_merge(
+                        $result,
+                        $this->glob(implode('/', $patterns), $next)
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
     // }}}
 
