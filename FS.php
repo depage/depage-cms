@@ -332,13 +332,14 @@ class FS
             );
 
             foreach ($matches as $match) {
-                $next = $current . '/' . $match;
+                $next = ($current) ? $current . '/' . $match : $match;
+
                 if ($count == 1) {
                     $result[] = $next;
                 } elseif (is_dir($this->pwd() . $next)) {
                     $result = array_merge(
                         $result,
-                        $this->glob(implode('/', $patterns), $next)
+                        $this->globRecursive(implode('/', $patterns), $next)
                     );
                 }
             }
