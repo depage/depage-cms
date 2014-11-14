@@ -13,19 +13,23 @@ class FS
     public function __construct($url, $params = array())
     {
         $parsed = parse_url($url);
-        $this->url = $parsed;
-        unset($this->url['path']);
+        $path = isset($parsed['path']) ? $parsed['path'] : '';
+        unset($this->parsed['path']);
 
-        if (isset($this->url['scheme'])) {
-            $newBase = isset($parsed['path']) ? $parsed['path'] : '';
-        } else {
+        $this->url = $parsed;
+        if (isset($params['scheme']))   $this->url['scheme']    = $params['scheme'];
+        if (isset($params['user']))     $this->url['user']      = $params['user'];
+        if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
+        if (isset($params['host']))     $this->url['host']      = $params['host'];
+        if (isset($params['port']))     $this->url['port']      = $params['port'];
+
+        if (!isset($this->url['scheme'])) {
             $this->url['scheme'] = 'file';
             // @todo handle failed realpath
-            $newBase = realpath($parsed['path']);
+            $path = realpath($path);
         }
 
-        $this->base = $this->cleanPath($newBase);
-        $this->base .= (substr($this->base, -1) == '/') ? '' : '/';
+        $this->base = $this->cleanPath($path);
     }
     // }}}
 
@@ -62,60 +66,12 @@ class FS
         return $this->lsFilter($path, 'is_file');
     }
     // }}}
-    // {{{ lsFilter
-    protected function lsFilter($path = '', $function)
-    {
-        // @todo slow
-        $ls         = $this->ls($path);
-        $lsFiles    = array_filter(
-            $ls,
-            function ($element) use ($path, $function) {
-                return $function($this->pwd() . $path . '/' . $element);
-            }
-        );
-        natcasesort($lsFiles);
-        $sorted = array_values($lsFiles);
-
-        return $sorted;
-    }
-    // }}}
     // {{{ glob
     public function glob($path)
     {
         return $this->globRecursive($path, '');
     }
     // }}}
-    // {{{ globRecursive
-    protected function globRecursive($path, $current)
-    {
-        $result = array();
-        $patterns = explode('/', $path);
-        $count = count($patterns);
-
-        if ($count) {
-            $pattern = array_shift($patterns);
-            $matches = array_filter(
-                $this->ls($current),
-                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
-            );
-
-            foreach ($matches as $match) {
-                $next = $current . '/' . $match;
-                if ($count == 1) {
-                    $result[] = $next;
-                } elseif (is_dir($this->pwd() . $next)) {
-                    $result = array_merge(
-                        $result,
-                        $this->glob(implode('/', $patterns), $next)
-                    );
-                }
-            }
-        }
-
-        return $result;
-    }
-    // }}}
-
     // {{{ cd
     /**
      * Changes current directory
@@ -134,10 +90,8 @@ class FS
             $newUrl = $parsed;
         } else {
             $newUrl = $this->url;
-
             $newUrl['path'] = $this->base;
             $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
-
             $newUrl['path'] .= $parsed['path'];
         }
 
@@ -201,7 +155,6 @@ class FS
         return false;
     }
     // }}}
-
     // {{{ mv
     /**
      * Renames or moves file or directory
@@ -268,7 +221,6 @@ class FS
         return copy($local, $this->pwd() . $remote);
     }
     // }}}
-
     // {{{ exists
     /**
      * Checks if file exists
@@ -290,7 +242,6 @@ class FS
         return new \SplFileInfo($this->pwd() . $path);
     }
     // }}}
-
     // {{{ getString
     public function getString($path)
     {
@@ -330,7 +281,7 @@ class FS
         }
 
         $newPath = ($path[0] == '/') ? '/' : '';
-        $newPath .= implode('/', $newDirs);
+        $newPath .= implode('/', $newDirs) . '/';
 
         return $newPath;
     }
@@ -347,6 +298,53 @@ class FS
         $path .= isset($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
+    }
+    // }}}
+    // {{{ lsFilter
+    protected function lsFilter($path = '', $function)
+    {
+        // @todo slow
+        $ls         = $this->ls($path);
+        $lsFiles    = array_filter(
+            $ls,
+            function ($element) use ($path, $function) {
+                return $function($this->pwd() . $path . '/' . $element);
+            }
+        );
+        natcasesort($lsFiles);
+        $sorted = array_values($lsFiles);
+
+        return $sorted;
+    }
+    // }}}
+    // {{{ globRecursive
+    protected function globRecursive($path, $current)
+    {
+        $result = array();
+        $patterns = explode('/', $path);
+        $count = count($patterns);
+
+        if ($count) {
+            $pattern = array_shift($patterns);
+            $matches = array_filter(
+                $this->ls($current),
+                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
+            );
+
+            foreach ($matches as $match) {
+                $next = $current . '/' . $match;
+                if ($count == 1) {
+                    $result[] = $next;
+                } elseif (is_dir($this->pwd() . $next)) {
+                    $result = array_merge(
+                        $result,
+                        $this->glob(implode('/', $patterns), $next)
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
     // }}}
 }
