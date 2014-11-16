@@ -21,7 +21,8 @@ namespace Depage\Auth;
  * contains functions for handling user authentication
  * and session handling.
  */
-abstract class Auth {
+abstract class Auth
+{
     // {{{ variables
     protected $realm = "depage::cms";
     protected $domain = "";
@@ -367,6 +368,25 @@ abstract class Auth {
         $delete_query->execute(array(
             ':sid' => $sid,
         ));
+    }
+    // }}}
+
+    // {{{ updateSchema()
+    /**
+     * @brief updateSchema
+     *
+     * @return void
+     **/
+    public function updateSchema()
+    {
+        $schema = new \Depage\DB\Schema($this->pdo);
+
+        $schema->setReplace(
+            function ($tableName) {
+                return $this->pdo->prefix . $tableName;
+            }
+        );
+        $schema->loadGlob(__DIR__ . "/SQL/*.sql");
     }
     // }}}
 }
