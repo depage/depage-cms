@@ -15,12 +15,12 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\Auth\Methods;
+namespace Depage\Auth\Methods;
 
-use depage\Auth\Auth;
-use depage\Auth\User;
+use Depage\Auth\Auth;
+use Depage\Auth\User;
 
-class HttpCookie extends auth
+class HttpCookie extends Auth
 {
     // {{{ variables
     protected $cookiePath = "";

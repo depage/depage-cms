@@ -1,0 +1,42 @@
+{
+    "name": "depage/auth",
+    "description": "depage-auth.",
+    "version": "1.5.0-beta.1",
+    "type": "library",
+    "keywords": [
+        "auth",
+        "authentication",
+        "password"
+    ],
+    "require": {
+        "php": " >= 5.3",
+        "depage/db": "dev-master",
+        "depage/entity": "dev-master",
+        "depage/session": "dev-master"
+    },
+    "suggest": {
+        "depage/htmlform": "Needed when using the supplied forms"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Auth\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-auth",
+        "issues": "https://github.com/depage/depage-auth/issues"
+
+    },
+    "time": "2014-10-16",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
+
