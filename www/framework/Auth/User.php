@@ -8,13 +8,13 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\Auth;
+namespace Depage\Auth;
 
 /**
  * contains functions for handling user authentication
  * and session handling.
  */
-class User extends \depage\entity\Object
+class User extends \Depage\Entity\Object
 {
     // {{{ variables
     /**

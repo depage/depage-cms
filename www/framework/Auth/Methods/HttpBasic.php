@@ -12,9 +12,9 @@
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
-namespace depage\Auth\Methods;
+namespace Depage\Auth\Methods;
 
-use depage\Auth\User;
+use Depage\Auth\User;
 
 class HttpBasic extends HttpCookie
 {
