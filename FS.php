@@ -14,7 +14,7 @@ class FS
     {
         $parsed = parse_url($url);
         $path = isset($parsed['path']) ? $parsed['path'] : '';
-        unset($this->parsed['path']);
+        unset($parsed['path']);
 
         $this->url = $parsed;
         if (isset($params['scheme']))   $this->url['scheme']    = $params['scheme'];
@@ -280,7 +280,7 @@ class FS
             }
         }
 
-        $newPath = ($path[0] == '/') ? '/' : '';
+        $newPath = (isset($path[0]) && $path[0] == '/') ? '/' : '';
         $newPath .= implode('/', $newDirs) . '/';
 
         return $newPath;

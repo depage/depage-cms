@@ -2,7 +2,7 @@
 
 use Depage\FS\FS;
 
-class FSWrapperTest extends PHPUnit_Framework_TestCase
+class FSTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
