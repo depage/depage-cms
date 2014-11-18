@@ -319,10 +319,14 @@ class FS
 
         if ($count) {
             $pattern = array_shift($patterns);
-            $matches = array_filter(
-                $this->scanDir($current),
-                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
-            );
+            if (preg_match('/[' . preg_quote('*?[]') . ']/', $pattern)) {
+                $matches = array_filter(
+                    $this->scanDir($current),
+                    function ($node) use ($pattern) { return fnmatch($pattern, $node); }
+                );
+            } else {
+                $matches = array($pattern);
+            }
 
             foreach ($matches as $match) {
                 $next = ($current) ? $current . '/' . $match : $match;
