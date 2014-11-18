@@ -140,23 +140,24 @@ class FS
     public function rm($path)
     {
         $remote = $this->pwd() . $path;
+        $success = false;
 
         if (is_dir($remote)) {
             foreach ($this->ls($path) as $nested) {
                 $this->rm($path . '/' .  $nested);
             }
 
+            // workaround, rmdir dows not support file stream wrappers
             if ($this->url['scheme'] == 'file') {
-                // php bug hack
                 $remote = preg_replace(';^file://;', '', $remote);
             }
 
-            return rmdir($remote);
+            $success = rmdir($remote);
         } else if (is_file($remote)) {
-            return unlink($remote);
+            $success = unlink($remote);
         }
 
-        return false;
+        return $success;
     }
     // }}}
     // {{{ mv
