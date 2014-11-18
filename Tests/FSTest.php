@@ -165,6 +165,18 @@ class FSTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($pwd . 'testDir/', $newPwd);
     }
     // }}}
+    // {{{ testCdIntoWrapperUrl
+    public function testCdIntoWrapperUrl()
+    {
+        $pwd        = $this->fs->pwd();
+        mkdir('testDir');
+        $cdReturn   = $this->fs->cd('file://' . getcwd() . '/testDir');
+        $newPwd     = $this->fs->pwd();
+
+        $this->assertEquals(true, $cdReturn);
+        $this->assertEquals($pwd . 'testDir/', $newPwd);
+    }
+    // }}}
     // {{{ testMkdir
     public function testMkdir()
     {
