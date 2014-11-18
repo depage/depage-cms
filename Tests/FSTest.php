@@ -161,7 +161,7 @@ class FSTest extends PHPUnit_Framework_TestCase
         $cdReturn   = $this->fs->cd('testDir');
         $newPwd     = $this->fs->pwd();
 
-        $this->assertEquals(true, $cdReturn);
+        $this->assertTrue($cdReturn);
         $this->assertEquals($pwd . 'testDir/', $newPwd);
     }
     // }}}
@@ -173,8 +173,32 @@ class FSTest extends PHPUnit_Framework_TestCase
         $cdReturn   = $this->fs->cd('file://' . getcwd() . '/testDir');
         $newPwd     = $this->fs->pwd();
 
-        $this->assertEquals(true, $cdReturn);
+        $this->assertTrue($cdReturn);
         $this->assertEquals($pwd . 'testDir/', $newPwd);
+    }
+    // }}}
+    // {{{ testCdOutOfBaseDir
+    /**
+     * @expectedException Depage\FS\Exceptions\FSException
+     * @expectedExceptionMessage Cannot leave base directory
+     */
+    public function testCdOutOfBaseDir()
+    {
+        $basePwd = getcwd();
+        $pwd = preg_replace(';Temp$;', '', $basePwd);
+        $this->assertEquals($pwd . 'Temp', $basePwd);
+
+        $cdReturn = $this->fs->cd($pwd);
+    }
+    // }}}
+    // {{{ testCdOutOfBaseDirRelative
+    /**
+     * @expectedException Depage\FS\Exceptions\FSException
+     * @expectedExceptionMessage Cannot leave base directory
+     */
+    public function testCdOutOfBaseDirRelative()
+    {
+        $cdReturn = $this->fs->cd('..');
     }
     // }}}
     // {{{ testMkdir

@@ -90,9 +90,13 @@ class FS
             $newUrl = $parsed;
         } else {
             $newUrl = $this->url;
-            $newUrl['path'] = $this->base;
-            $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
-            $newUrl['path'] .= $parsed['path'];
+            if ($url[0] == '/') {
+                $newUrl['path'] = $url;
+            } else {
+                $newUrl['path'] = $this->base;
+                $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
+                $newUrl['path'] .= $parsed['path'];
+            }
         }
 
         $newUrl['path'] = $this->cleanPath($newUrl['path']);
@@ -102,7 +106,7 @@ class FS
                 $this->currentPath = $matches[1];
                 return true;
             } else {
-                // @todo exception cannot leave base dir
+                throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
             }
         } else {
             // @todo exception?
