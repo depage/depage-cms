@@ -100,8 +100,9 @@ class FS
         }
 
         $newUrl['path'] = $this->cleanPath($newUrl['path']);
+        $urlString = $this->buildUrl($newUrl);
 
-        if (is_dir($this->buildUrl($newUrl))) {
+        if (is_dir($urlString) && is_readable($urlString . '.')) {
             if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $newUrl['path'], $matches)) {
                 $this->currentPath = $matches[1];
                 return true;
@@ -109,8 +110,7 @@ class FS
                 throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
             }
         } else {
-            // @todo exception?
-            return false;
+            throw new Exceptions\FSException('Directory not accessible ' . $newUrl['path']);
         }
     }
     // }}}

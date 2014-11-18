@@ -193,12 +193,24 @@ class FSTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testCdOutOfBaseDirRelative
     /**
-     * @expectedException Depage\FS\Exceptions\FSException
-     * @expectedExceptionMessage Cannot leave base directory
+     * @expectedException           Depage\FS\Exceptions\FSException
+     * @expectedExceptionMessage    Cannot leave base directory
      */
     public function testCdOutOfBaseDirRelative()
     {
         $cdReturn = $this->fs->cd('..');
+    }
+    // }}}
+    // {{{ testCdFail
+    /**
+     * @expectedException           Depage\FS\Exceptions\FSException
+     * @expectedExceptionMessage    Directory not accessible
+     */
+    public function testCdFail()
+    {
+        $pwd        = $this->fs->pwd();
+        mkdir('testDir', 400);
+        $cdReturn   = $this->fs->cd('testDir');
     }
     // }}}
     // {{{ testMkdir
