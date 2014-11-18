@@ -26,8 +26,10 @@ class FSTest extends PHPUnit_Framework_TestCase
     protected function rmr($path)
     {
         if (is_dir($path)) {
-            foreach (glob($path . '/*') as $nested) {
-                $this->rmr($nested);
+            $scanDir = array_diff(scandir($path), array('.', '..'));
+
+            foreach ($scanDir as $nested) {
+                $this->rmr($path . '/' . $nested);
             }
             rmdir($path);
         } else if (is_file($path)) {
@@ -104,8 +106,36 @@ class FSTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $lsFilesReturn);
     }
     // }}}
-    // {{{ testLsGlob
-    public function testLsGlob()
+    // {{{ testLsHidden
+    public function testLsHidden()
+    {
+        mkdir('testDir/testSubDir', 0777, true);
+        mkdir('testDir/.testSubDirHidden', 0777, true);
+        touch('testDir/testFile');
+        touch('testDir/.testFileHidden');
+
+        $lsReturn = $this->fs->ls('testDir/*');
+        $expected = array(
+            'testDir/testFile',
+            'testDir/testSubDir',
+        );
+
+        $this->assertEquals($expected, $lsReturn);
+
+        $hiddenFs = new FS('', array('hidden' => true));
+        $lsReturn = $hiddenFs->ls('testDir/*');
+        $expected = array(
+            'testDir/.testFileHidden',
+            'testDir/.testSubDirHidden',
+            'testDir/testFile',
+            'testDir/testSubDir',
+        );
+
+        $this->assertEquals($expected, $lsReturn);
+    }
+    // }}}
+    // {{{ testLsRecursive
+    public function testLsRecursive()
     {
         mkdir('testDir/abc/abc/abc', 0777, true);
         mkdir('testDir/abc/abcd/abcd', 0777, true);

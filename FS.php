@@ -8,6 +8,7 @@ class FS
         protected $currentPath;
         protected $base;
         protected $url;
+        protected $hidden = false;
     // }}}
     // {{{ constructor
     public function __construct($url, $params = array())
@@ -22,6 +23,7 @@ class FS
         if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
         if (isset($params['host']))     $this->url['host']      = $params['host'];
         if (isset($params['port']))     $this->url['port']      = $params['port'];
+        if (isset($params['hidden']))   $this->hidden           = $params['hidden'];
 
         if (!isset($this->url['scheme'])) {
             $this->url['scheme'] = 'file';
@@ -131,7 +133,7 @@ class FS
         $success = false;
 
         if (is_dir($remote)) {
-            foreach ($this->scanDir($path) as $nested) {
+            foreach ($this->scanDir($path, true) as $nested) {
                 $this->rm($path . '/' .  $nested);
             }
 
@@ -346,10 +348,21 @@ class FS
     }
     // }}}
     // {{{ scanDir
-    protected function scanDir($path = '')
+    protected function scanDir($path = '', $hidden = null)
     {
+        if ($hidden === null) {
+            $hidden = $this->hidden;
+        }
+
         $scanDir = scandir($this->pwd() . $path);
         $filtered = array_diff($scanDir, array('.', '..'));
+
+        if (!$hidden) {
+            $filtered = array_filter(
+                $filtered,
+                function ($node) { return ($node[0] != '.'); }
+            );
+        }
 
         natcasesort($filtered);
         $sorted = array_values($filtered);
