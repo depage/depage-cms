@@ -43,15 +43,9 @@ class FS
     }
     // }}}
     // {{{ ls
-    public function ls($path = '')
+    public function ls($path)
     {
-        $scanDir = scandir($this->pwd() . $path);
-        $ls = array_diff($scanDir, array('.', '..'));
-
-        natcasesort($ls);
-        $sorted = array_values($ls);
-
-        return $sorted;
+        return $this->lsRecursive($path, '');
     }
     // }}}
     // {{{ lsDir
@@ -64,12 +58,6 @@ class FS
     public function lsFiles($path = '')
     {
         return $this->lsFilter($path, 'is_file');
-    }
-    // }}}
-    // {{{ glob
-    public function glob($path)
-    {
-        return $this->globRecursive($path, '');
     }
     // }}}
     // {{{ cd
@@ -143,11 +131,11 @@ class FS
         $success = false;
 
         if (is_dir($remote)) {
-            foreach ($this->ls($path) as $nested) {
+            foreach ($this->scanDir($path) as $nested) {
                 $this->rm($path . '/' .  $nested);
             }
 
-            // workaround, rmdir dows not support file stream wrappers
+            // workaround, rmdir does not support file stream wrappers
             if ($this->url['scheme'] == 'file') {
                 $remote = preg_replace(';^file://;', '', $remote);
             }
@@ -312,8 +300,8 @@ class FS
         $ls         = $this->ls($path);
         $lsFiles    = array_filter(
             $ls,
-            function ($element) use ($path, $function) {
-                return $function($this->pwd() . $path . '/' . $element);
+            function ($element) use ($function) {
+                return $function($element);
             }
         );
         natcasesort($lsFiles);
@@ -322,8 +310,8 @@ class FS
         return $sorted;
     }
     // }}}
-    // {{{ globRecursive
-    protected function globRecursive($path, $current)
+    // {{{ lsRecursive
+    protected function lsRecursive($path, $current)
     {
         $result = array();
         $patterns = explode('/', $path);
@@ -332,7 +320,7 @@ class FS
         if ($count) {
             $pattern = array_shift($patterns);
             $matches = array_filter(
-                $this->ls($current),
+                $this->scanDir($current),
                 function ($node) use ($pattern) { return fnmatch($pattern, $node); }
             );
 
@@ -344,13 +332,25 @@ class FS
                 } elseif (is_dir($this->pwd() . $next)) {
                     $result = array_merge(
                         $result,
-                        $this->globRecursive(implode('/', $patterns), $next)
+                        $this->lsRecursive(implode('/', $patterns), $next)
                     );
                 }
             }
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ scanDir
+    protected function scanDir($path = '')
+    {
+        $scanDir = scandir($this->pwd() . $path);
+        $filtered = array_diff($scanDir, array('.', '..'));
+
+        natcasesort($filtered);
+        $sorted = array_values($filtered);
+
+        return $sorted;
     }
     // }}}
 }

@@ -59,12 +59,12 @@ class FSTest extends PHPUnit_Framework_TestCase
         touch('testDir/testFile');
         touch('testDir/testAnotherFile');
 
-        $lsReturn = $this->fs->ls('testDir');
+        $lsReturn = $this->fs->ls('testDir/*');
         $expected = array(
-            'testAnotherFile',
-            'testAnotherSubDir',
-            'testFile',
-            'testSubDir',
+            'testDir/testAnotherFile',
+            'testDir/testAnotherSubDir',
+            'testDir/testFile',
+            'testDir/testSubDir',
         );
 
         $this->assertEquals($expected, $lsReturn);
@@ -78,10 +78,10 @@ class FSTest extends PHPUnit_Framework_TestCase
         touch('testDir/testFile');
         touch('testDir/testAnotherFile');
 
-        $lsDirReturn    = $this->fs->lsDir('testDir');
+        $lsDirReturn    = $this->fs->lsDir('testDir/*');
         $expected       = array(
-            'testAnotherSubDir',
-            'testSubDir',
+            'testDir/testAnotherSubDir',
+            'testDir/testSubDir',
         );
 
         $this->assertEquals($expected, $lsDirReturn);
@@ -95,17 +95,17 @@ class FSTest extends PHPUnit_Framework_TestCase
         touch('testDir/testFile');
         touch('testDir/testAnotherFile');
 
-        $lsFilesReturn  = $this->fs->lsFiles('testDir');
+        $lsFilesReturn  = $this->fs->lsFiles('testDir/*');
         $expected       = array(
-            'testAnotherFile',
-            'testFile',
+            'testDir/testAnotherFile',
+            'testDir/testFile',
         );
 
         $this->assertEquals($expected, $lsFilesReturn);
     }
     // }}}
-    // {{{ testGlob
-    public function testGlob()
+    // {{{ testLsGlob
+    public function testLsGlob()
     {
         mkdir('testDir/abc/abc/abc', 0777, true);
         mkdir('testDir/abc/abcd/abcd', 0777, true);
@@ -116,13 +116,13 @@ class FSTest extends PHPUnit_Framework_TestCase
         touch('testDir/abc/abcd/abcFile');
         touch('testDir/abcd/abcde/abcde/abcFile');
 
-        $globReturn = $this->fs->glob('testDir');
+        $globReturn = $this->fs->ls('testDir');
         $this->assertEquals(array('testDir'), $globReturn);
 
-        $globReturn = $this->fs->glob('*');
+        $globReturn = $this->fs->ls('*');
         $this->assertEquals(array('testDir'), $globReturn);
 
-        $globReturn = $this->fs->glob('testDir/ab*');
+        $globReturn = $this->fs->ls('testDir/ab*');
         $expected = array(
             'testDir/abc',
             'testDir/abcd',
@@ -130,19 +130,19 @@ class FSTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $globReturn);
 
-        $globReturn = $this->fs->glob('testDir/ab*d/*');
+        $globReturn = $this->fs->ls('testDir/ab*d/*');
         $expected = array(
             'testDir/abcd/abcde',
         );
         $this->assertEquals($expected, $globReturn);
 
-        $globReturn = $this->fs->glob('testDir/ab?');
+        $globReturn = $this->fs->ls('testDir/ab?');
         $expected = array(
             'testDir/abc',
         );
         $this->assertEquals($expected, $globReturn);
 
-        $globReturn = $this->fs->glob('*/*/*/*');
+        $globReturn = $this->fs->ls('*/*/*/*');
         $expected = array(
             'testDir/abc/abc/abc',
             'testDir/abc/abcd/abcd',
