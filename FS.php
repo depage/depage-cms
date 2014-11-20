@@ -31,7 +31,7 @@ class FS
             $path = realpath($path);
         }
 
-        $this->base = $this->cleanPath($path);
+        $this->base = $this->cleanPath($path) . '/';
     }
     // }}}
 
@@ -74,33 +74,18 @@ class FS
      */
     public function cd($url)
     {
-        $parsed = parse_url($url);
+        $cleanUrl = $this->cleanUrl($url);
+        $path = parse_url($cleanUrl)['path'];
 
-        if (isset($parsed['scheme'])) {
-            $newUrl = $parsed;
-        } else {
-            $newUrl = $this->url;
-            if ($url[0] == '/') {
-                $newUrl['path'] = $url;
-            } else {
-                $newUrl['path'] = $this->base;
-                $newUrl['path'] .= ($parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
-                $newUrl['path'] .= $parsed['path'];
-            }
-        }
-
-        $newUrl['path'] = $this->cleanPath($newUrl['path']);
-        $urlString = $this->buildUrl($newUrl);
-
-        if (is_dir($urlString) && is_readable($urlString . '.')) {
-            if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $newUrl['path'], $matches)) {
-                $this->currentPath = $matches[1];
+        if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
+            if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $path, $matches)) {
+                $this->currentPath = $matches[1] . '/';
                 return true;
             } else {
                 throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
             }
         } else {
-            throw new Exceptions\FSException('Directory not accessible ' . $newUrl['path']);
+            throw new Exceptions\FSException('Directory not accessible ' . $path);
         }
     }
     // }}}
@@ -129,7 +114,15 @@ class FS
      */
     public function rm($path)
     {
-        $remote = $this->pwd() . $path;
+        $remote = $this->cleanUrl($path);
+
+        if (
+            $remote == $this->pwd()
+            || $remote . '/' == $this->pwd()
+        ) {
+            throw new Exceptions\FSException('Cannot delete current directory ' . $this->pwd());
+        }
+
         $success = false;
 
         if (is_dir($remote)) {
@@ -260,6 +253,28 @@ class FS
     }
     // }}}
 
+    // {{{ cleanUrl
+    protected function cleanUrl($url)
+    {
+        $parsed = parse_url($url);
+
+        if (isset($parsed['scheme'])) {
+            $newUrl = $parsed;
+        } else {
+            $newUrl = $this->url;
+            if (isset($url[0]) && $url[0] == '/') {
+                $newUrl['path'] = $url;
+            } else {
+                $newUrl['path'] = $this->base;
+                $newUrl['path'] .= (isset($parsed['path'][0]) && $parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
+                $newUrl['path'] .= $parsed['path'];
+            }
+        }
+        $newUrl['path'] = $this->cleanPath($newUrl['path']);
+
+        return $this->buildUrl($newUrl);
+    }
+    // }}}
     // {{{ cleanPath
     protected function cleanPath($path)
     {
@@ -276,7 +291,7 @@ class FS
         }
 
         $newPath = (isset($path[0]) && $path[0] == '/') ? '/' : '';
-        $newPath .= implode('/', $newDirs) . '/';
+        $newPath .= implode('/', $newDirs);
 
         return $newPath;
     }
