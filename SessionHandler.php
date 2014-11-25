@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace depage\Session;
 
@@ -20,10 +20,10 @@ class SessionHandler implements \SessionHandlerInterface
         $class = __CLASS__;
 
         $handler = new $class($pdo);
-        
+
         // PHP 5.4 only
         //session_set_save_handler($handler, true);
-        
+
         // PHP 5.3 save
         session_set_save_handler(
             array(&$handler, 'open'),
@@ -99,9 +99,9 @@ class SessionHandler implements \SessionHandlerInterface
 
         // get session data
         $query = $this->pdo->prepare(
-            "SELECT 
+            "SELECT
                 sid, sessionData
-            FROM 
+            FROM
                 {$this->tableName}
             WHERE
                 sid = :sid
@@ -170,7 +170,7 @@ class SessionHandler implements \SessionHandlerInterface
         if (class_exists("\\Depage\\Auth\\User")) {
             $user = \Depage\Auth\User::loadBySid($this->pdo, $sessionId);
             if ($user) {
-                $log = new \depage\log\log();
+                $log = new \Depage\Log\Log();
                 $log->log("logging out $user->name ($user->fullname)");
 
                 $user->onLogout($sessionId);
@@ -187,7 +187,7 @@ class SessionHandler implements \SessionHandlerInterface
         $query->execute(array(
             ':sid' => $sessionId,
         ));
-        
+
         return true;
     }
     // }}}
