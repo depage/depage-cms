@@ -13,7 +13,7 @@ class FS
     // {{{ constructor
     public function __construct($url, $params = array())
     {
-        $parsed = parse_url($url);
+        $parsed = $this->parseUrl($url);
         $path = isset($parsed['path']) ? $parsed['path'] : '';
         unset($parsed['path']);
 
@@ -76,11 +76,11 @@ class FS
     public function cd($url)
     {
         $cleanUrl = $this->cleanUrl($url);
-        $path = parse_url($cleanUrl)['path'];
 
         if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
             $this->currentPath = str_replace($this->pwd(), '', $cleanUrl) . '/';
         } else {
+            $path = $this->parseUrl($cleanUrl)['path'];
             throw new Exceptions\FSException('Directory not accessible ' . $path);
         }
     }
@@ -250,10 +250,32 @@ class FS
     }
     // }}}
 
+    // {{{ parseUrl
+    protected function parseUrl($url)
+    {
+        $parsed = parse_url($url);
+
+        // hack, parse_url matches anything after the first question mark as "query"
+        if (
+            preg_match('/\?$/', $url)
+            && isset($parsed['path'])
+            && !isset($parsed['query'])
+        ) {
+            $parsed['path'] .= '?';
+        } elseif (
+            isset($parsed['path'])
+            && isset($parsed['query'])
+        ) {
+            $parsed['path'] .= '?' . $parsed['query'];
+        }
+
+        return $parsed;
+    }
+    // }}}
     // {{{ cleanUrl
     protected function cleanUrl($url)
     {
-        $parsed = parse_url($url);
+        $parsed = $this->parseUrl($url);
 
         if (isset($parsed['scheme'])) {
             $newUrl = $parsed;
