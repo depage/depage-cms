@@ -14,7 +14,7 @@ namespace Depage\Auth;
  * contains functions for handling user authentication
  * and session handling.
  */
-class User extends \Depage\Entity\Object
+class User extends \Depage\Entity\Entity
 {
     // {{{ variables
     /**
@@ -61,11 +61,11 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      *
      * @return      void
      */
-    public function __construct(\depage\DB\PDO $pdo) {
+    public function __construct(\Depage\Db\Pdo $pdo) {
         parent::__construct($pdo);
 
         $this->pdo = $pdo;
@@ -78,7 +78,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       \Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       string  $username   username of the user
      *
      * @return      User
@@ -111,7 +111,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       string  $email      email of the user
      *
      * @return      User
@@ -144,7 +144,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       string  $sid        session id
      *
      * @return      auth_user
@@ -178,7 +178,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       int     $id         id of the user
      *
      * @return      auth_user
@@ -210,7 +210,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       int     $id         id of the user
      *
      * @return      auth_user
@@ -252,7 +252,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       int     $id         id of the user
      *
      * @return      auth_user
@@ -338,7 +338,7 @@ class User extends \Depage\Entity\Object
      *
      * @public
      *
-     * @param       PDO     $pdo        pdo object for database access
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
      * @param       string  $sid        session id
      *
      * @return      auth_user
