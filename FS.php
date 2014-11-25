@@ -45,8 +45,11 @@ class FS
     }
     // }}}
     // {{{ ls
-    public function ls($path)
+    public function ls($url)
     {
+        $cleanUrl = $this->cleanUrl($url);
+        $path = str_replace($this->pwd(), '', $cleanUrl);
+
         return $this->lsRecursive($path, '');
     }
     // }}}
@@ -69,8 +72,6 @@ class FS
      * @public
      *
      * @param $path (string) path of directory to change to
-     *
-     * @return $success (bool) true on success, false on error
      */
     public function cd($url)
     {
@@ -78,12 +79,7 @@ class FS
         $path = parse_url($cleanUrl)['path'];
 
         if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
-            if (preg_match(';^' . preg_quote($this->base) . '(.*)$;', $path, $matches)) {
-                $this->currentPath = $matches[1] . '/';
-                return true;
-            } else {
-                throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
-            }
+            $this->currentPath = str_replace($this->pwd(), '', $cleanUrl) . '/';
         } else {
             throw new Exceptions\FSException('Directory not accessible ' . $path);
         }
@@ -97,9 +93,10 @@ class FS
      *
      * @param $path (string) path of new directory
      */
-    public function mkdir($path)
+    public function mkdir($url)
     {
-        return mkdir($this->pwd() . $path, 0777, true);
+        $cleanUrl = $this->cleanUrl($url);
+        return mkdir($cleanUrl, 0777, true);
     }
     // }}}
     // {{{ rm
@@ -112,32 +109,32 @@ class FS
      *
      * @return $success (bool) true on success, false on error
      */
-    public function rm($path)
+    public function rm($url)
     {
-        $remote = $this->cleanUrl($path);
+        $cleanUrl = $this->cleanUrl($url);
 
         if (
-            $remote == $this->pwd()
-            || $remote . '/' == $this->pwd()
+            $cleanUrl == $this->pwd()
+            || $cleanUrl . '/' == $this->pwd()
         ) {
             throw new Exceptions\FSException('Cannot delete current directory ' . $this->pwd());
         }
 
         $success = false;
 
-        if (is_dir($remote)) {
-            foreach ($this->scanDir($path, true) as $nested) {
-                $this->rm($path . '/' .  $nested);
+        if (is_dir($cleanUrl)) {
+            foreach ($this->scanDir($cleanUrl, true) as $nested) {
+                $this->rm($cleanUrl . '/' .  $nested);
             }
 
             // workaround, rmdir does not support file stream wrappers
             if ($this->url['scheme'] == 'file') {
-                $remote = preg_replace(';^file://;', '', $remote);
+                $cleanUrl = preg_replace(';^file://;', '', $cleanUrl);
             }
 
-            $success = rmdir($remote);
-        } else if (is_file($remote)) {
-            $success = unlink($remote);
+            $success = rmdir($cleanUrl);
+        } else if (is_file($cleanUrl)) {
+            $success = unlink($cleanUrl);
         }
 
         return $success;
@@ -271,6 +268,9 @@ class FS
             }
         }
         $newUrl['path'] = $this->cleanPath($newUrl['path']);
+        if (!preg_match(';^' . preg_quote($this->cleanPath($this->base)) . '(.*)$;',  $newUrl['path'])) {
+            throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
+        }
 
         return $this->buildUrl($newUrl);
     }
@@ -336,7 +336,7 @@ class FS
 
         if ($count) {
             $pattern = array_shift($patterns);
-            if (preg_match('/[' . preg_quote('*?[]') . ']/', $pattern)) {
+            if (preg_match('/[\*\?\[\]]/', $pattern)) {
                 $matches = array_filter(
                     $this->scanDir($current),
                     function ($node) use ($pattern) { return fnmatch($pattern, $node); }
@@ -363,13 +363,15 @@ class FS
     }
     // }}}
     // {{{ scanDir
-    protected function scanDir($path = '', $hidden = null)
+    protected function scanDir($url = '', $hidden = null)
     {
+        $cleanUrl = $this->cleanUrl($url);
+
         if ($hidden === null) {
             $hidden = $this->hidden;
         }
 
-        $scanDir = scandir($this->pwd() . $path);
+        $scanDir = scandir($cleanUrl);
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {

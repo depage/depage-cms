@@ -186,24 +186,22 @@ class FSTest extends PHPUnit_Framework_TestCase
     // {{{ testCd
     public function testCd()
     {
-        $pwd        = $this->fs->pwd();
+        $pwd = $this->fs->pwd();
         mkdir('testDir');
-        $cdReturn   = $this->fs->cd('testDir');
-        $newPwd     = $this->fs->pwd();
+        $this->fs->cd('testDir');
+        $newPwd = $this->fs->pwd();
 
-        $this->assertTrue($cdReturn);
         $this->assertEquals($pwd . 'testDir/', $newPwd);
     }
     // }}}
     // {{{ testCdIntoWrapperUrl
     public function testCdIntoWrapperUrl()
     {
-        $pwd        = $this->fs->pwd();
+        $pwd = $this->fs->pwd();
         mkdir('testDir');
-        $cdReturn   = $this->fs->cd('file://' . getcwd() . '/testDir');
-        $newPwd     = $this->fs->pwd();
+        $this->fs->cd('file://' . getcwd() . '/testDir');
+        $newPwd = $this->fs->pwd();
 
-        $this->assertTrue($cdReturn);
         $this->assertEquals($pwd . 'testDir/', $newPwd);
     }
     // }}}
@@ -218,7 +216,7 @@ class FSTest extends PHPUnit_Framework_TestCase
         $pwd = preg_replace(';Temp$;', '', $basePwd);
         $this->assertEquals($pwd . 'Temp', $basePwd);
 
-        $cdReturn = $this->fs->cd($pwd);
+        $this->fs->cd($pwd);
     }
     // }}}
     // {{{ testCdOutOfBaseDirRelative
@@ -228,7 +226,7 @@ class FSTest extends PHPUnit_Framework_TestCase
      */
     public function testCdOutOfBaseDirRelative()
     {
-        $cdReturn = $this->fs->cd('..');
+        $this->fs->cd('..');
     }
     // }}}
     // {{{ testCdFail
@@ -238,9 +236,9 @@ class FSTest extends PHPUnit_Framework_TestCase
      */
     public function testCdFail()
     {
-        $pwd        = $this->fs->pwd();
+        $pwd = $this->fs->pwd();
         mkdir('testDir', 400);
-        $cdReturn   = $this->fs->cd('testDir');
+        $this->fs->cd('testDir');
     }
     // }}}
     // {{{ testMkdir
