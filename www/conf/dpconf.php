@@ -27,16 +27,16 @@ $conf = array(
     // {{{ */depage-cms/
     '*/depage-cms/' => array(
         //'handler' => 'DepageLegacy\LegacyUI',
-        'handler' => 'depage\CMS\UI\Main',
+        'handler' => 'depage\Cms\Ui\Main',
         //'env' => 'production',
     ),
     '*/depage-cms-dev/' => array(
-        'handler' => 'depage\CMS\UI\Main',
+        'handler' => 'Depage\Cms\Ui\Main',
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/
     'localhost/depage_1.5/live/' => array(
-        'handler' => 'depage\cms\live',
+        'handler' => 'Depage\Cms\Live',
         'env' => 'production',
         'cms' => array(
             'project' => 'depagecms',

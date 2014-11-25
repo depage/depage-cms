@@ -17,7 +17,7 @@ class Preview extends Transformer
     {
         $xslt = "";
         foreach ($files as $file) {
-            $tpl = new \depage\xml\Document();
+            $tpl = new \Depage\Xml\Document();
             $tpl->load($file);
 
             foreach ($tpl->documentElement->childNodes as $node) {

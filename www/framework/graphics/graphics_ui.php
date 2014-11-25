@@ -12,7 +12,8 @@ namespace depage\graphics;
  *
  * Translates request to graphics actions.
  **/
-class graphics_ui extends \depage_ui {
+class graphics_ui extends \Depage\Depage\Ui\Base
+{
     /**
      * @brief Default options array for graphics factory
      **/
@@ -40,7 +41,7 @@ class graphics_ui extends \depage_ui {
     private function convert($request) {
         $request = rawurldecode($request);
         preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
-        
+
         // escape everything
         $file       = escapeshellcmd($command[1]);
         $action     = $this->letters($command[3]);
@@ -50,9 +51,9 @@ class graphics_ui extends \depage_ui {
 
         if ($width == 0) $width = "X";
         if ($height == 0) $height = "X";
-        
+
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
-        
+
         $img = graphics::factory(
             array(
                 'extension'     => $this->options->extension,
@@ -60,11 +61,11 @@ class graphics_ui extends \depage_ui {
                 'background'    => $this->options->background,
             )
         );
-        
+
         if (!$this->mkPathToFile($request)) {
             throw new graphics_exception("Could not create cache directory");
         }
-        
+
         try {
             if (is_callable(array($img, "add$action"))) {
                 $img->{"add$action"}($width, $height)->render($file, $cachedFile);

@@ -78,7 +78,7 @@ class Import
     // {{{ addImportTask()
     public function addImportTask($taskName, $xmlFile)
     {
-        $task = \depage\task\task::loadOrCreate($taskName, "dp", $this->pdo);
+        $task = \Depage\Tasks\Task::loadOrCreate($taskName, "dp", $this->pdo);
 
         $this->loadBackup($xmlFile);
 
@@ -86,12 +86,12 @@ class Import
 
         $this->extractNavigation();
 
-        $initId = $task->addSubtask("init", 
-            "\$pdo = " . \depage\task\task::escapeParam($this->pdo) . ";" .
-            "\$cache = " . \depage\task\task::escapeParam($this->cache) . ";" .
+        $initId = $task->addSubtask("init",
+            "\$pdo = " . \Depage\Tasks\Task::escapeParam($this->pdo) . ";" .
+            "\$cache = " . \Depage\Task\Task::escapeParam($this->cache) . ";" .
             "\$import = new \DepageLegacy\Import(\"$this->projectName\", \$pdo, \$cache);"
         );
-        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \depage\task\task::escapeParam($xmlFile) . ");", $initId);
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \Depage\Task\Task::escapeParam($xmlFile) . ");", $initId);
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", $loadId);
 
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", $getDocsId);
@@ -107,7 +107,7 @@ class Import
         return $task;
     }
     // }}}
-    
+
     // {{{ loadBackup()
     public function loadBackup($xmlFile)
     {
@@ -115,7 +115,7 @@ class Import
         $this->xmlImport->load($xmlFile);
     }
     // }}}
-    
+
     // {{{ cleanDocs()
     public function cleanDocs()
     {
@@ -136,7 +136,7 @@ class Import
             // @todo update doctype
             $this->docSettings = $this->xmldb->createDoc("settings", "depage\\xmldb\\xmldoctypes\\base");
         }
-        
+
         $this->docColors = $this->xmldb->getDoc("colors");
         if (!$this->docColors) {
             // @todo update doctype
@@ -161,7 +161,7 @@ class Import
         }
     }
     // }}}
-    
+
     // {{{ extractNavigation()
     public function extractNavigation()
     {
@@ -203,7 +203,7 @@ class Import
 
         $xpathImport = new \DOMXPath($this->xmlImport);
         $pagelist = $xpathImport->query("//*[@db:id = $dbref]");
-        
+
         // save pagedata
         if ($pagelist->length === 1) {
             $xmlData = new \depage\xml\Document();
@@ -318,7 +318,7 @@ class Import
             }
             if ($child->nodeName == "pg:folder" || $child->nodeName == "pg:template") {
                 $this->extractTemplateData($child, $namePrefix . $child->getAttribute("name"));
-            } 
+            }
         }
     }
     // }}}
@@ -390,7 +390,7 @@ class Import
         $this->docSettings->save($this->xmlSettings);
     }
     // }}}
-    
+
     // {{{ updatePageData()
     protected function updatePageData($xmlData)
     {
@@ -419,7 +419,7 @@ class Import
                 $node->setAttribute("href", "");
             }
         }
-        
+
     }
     // }}}
     // {{{ updateLibRefs()
@@ -448,7 +448,7 @@ class Import
 
             $node->setAttribute("src", $href);
         }
-        
+
     }
     // }}}
     // {{{ updateImageSizes()
@@ -479,7 +479,7 @@ class Import
             $node->removeAttribute("force_width");
             $node->removeAttribute("force_height");
         }
-        
+
     }
     // }}}
 }

@@ -1,6 +1,8 @@
 <?php
 
-namespace depage\Transformer;
+namespace Depage\Transformer;
+
+use \Depage\Html\Html;
 
 abstract class Transformer
 {
@@ -45,10 +47,10 @@ abstract class Transformer
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
         // get cache instance for templates
-        $this->xsltCache = \depage\cache\cache::factory("xslt", $cacheOptions);
+        $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $cacheOptions);
 
         // get cache instance for xmldb
-        $this->xmldbCache = \depage\cache\cache::factory("xmldb", $cacheOptions);
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", $cacheOptions);
 
         $this->initXmlGetter();
         $this->initXsltProc();
@@ -58,7 +60,7 @@ abstract class Transformer
     public function initXmlGetter()
     {
         // create xmldb-project
-        $this->xmlGetter = new \depage\xmldb\xmldb($this->prefix, $this->pdo, $this->xmldbCache);
+        $this->xmlGetter = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache);
     }
     // }}}
     // {{{ initXsltProc()
@@ -150,13 +152,13 @@ abstract class Transformer
             $xslt .= $this->getXsltIncludes($files);
             $xslt .= "\n</xsl:stylesheet>";
 
-            $doc = new \depage\xml\Document();
+            $doc = new \Depage\Xml\Document();
             $doc->loadXML($xslt);
 
             $this->xsltCache->set($xslFile, $doc);
         }
 
-        $doc = new \depage\xml\Document();
+        $doc = new \Depage\Xml\Document();
         $doc->load($this->xsltCache->getPath($xslFile));
 
         return $doc;
@@ -202,7 +204,7 @@ abstract class Transformer
             "currentPageId" => $pageId,
             "currentContentType" => "text/html",
             "currentEncoding" => "UTF-8",
-            "depageVersion" => \depage::getVersion(),
+            "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => $this->isLive,
         ));
 
@@ -221,7 +223,7 @@ abstract class Transformer
             throw new \exception($error);
         }
 
-        $cleaner = new \depage\html\Cleaner();
+        $cleaner = new \Depage\Html\Cleaner();
         $html = $cleaner->clean($html);
 
         return $html;
@@ -260,7 +262,7 @@ abstract class Transformer
             return file_get_contents(DEPAGE_BASE . $this->savePath);
         } else {
             return $html;
-            //return new \html(null, array("content" => $html), $this->html_options);
+            //return new Html(null, array("content" => $html), $this->htmlOptions);
         }
     }
     // }}}
@@ -293,21 +295,21 @@ abstract class Transformer
          * call:getversion -> replaced by $depageVersion
          */
         // register stream to get documents from xmldb
-        \depage\CMS\Streams\Xmldb::registerStream("xmldb", array(
+        \Depage\Cms\Streams\XmlDb::registerStream("xmldb", array(
             "xmldb" => $this->xmlGetter,
             "transformer" => $this,
         ));
 
         // register stream to get global xsl templates
-        \depage\CMS\Streams\Xslt::registerStream("xslt");
+        \Depage\Cms\Streams\Xslt::registerStream("xslt");
 
         // register stream to get page-links
-        \depage\CMS\Streams\Pageref::registerStream("pageref", array(
+        \Depage\Cms\Streams\Pageref::registerStream("pageref", array(
             "transformer" => $this,
         ));
 
         // register stream to get links to library
-        \depage\CMS\Streams\Libref::registerStream("libref", array(
+        \Depage\Cms\Streams\Libref::registerStream("libref", array(
             "transformer" => $this,
         ));
     }
@@ -329,7 +331,7 @@ abstract class Transformer
          * call:fileinfo
          */
 
-        \depage\CMS\xslt\FuncDelegate::registerFunctions($proc, array(
+        \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, array(
             "changesrc" => array($this, "xsltCallChangeSrc"),
             "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
             "atomizeText" => array($this, "xsltCallAtomizeText"),
@@ -352,7 +354,7 @@ abstract class Transformer
         ) {
             $pages = $this->xmlGetter->getDocXml("pages");
 
-            $xmlnav = new \depage\CMS\xmlnav();
+            $xmlnav = new \Depage\Cms\XmlNav();
             list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
         }
 
@@ -438,7 +440,7 @@ abstract class Transformer
         $xml = "";
         $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
 
-        $fileinfo = new \depage\media\mediainfo();
+        $fileinfo = new \Depage\Media\MediaInfo();
 
         if ($extended === "false") {
             $info = $fileinfo->getBasicInfo($path);

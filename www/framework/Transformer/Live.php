@@ -11,16 +11,16 @@ class Live extends Preview
     public function __construct($pdo, $projectName, $template, $cacheOptions = array())
     {
         parent::__construct($pdo, $projectName, $template, $cacheOptions);
-        
+
         // get cache instance for transforms
         $this->transformCache = \depage\cache\cache::factory("transform", $cacheOptions);
     }
     // }}}
-    
+
     // {{{ initXmlGetter()
     public function initXmlGetter()
     {
-        $this->xmlGetter = new \depage\xmldb\XmldbHistory($this->prefix, $this->pdo);
+        $this->xmlGetter = new \Depage\XmlDb\XmlDbHistory($this->prefix, $this->pdo);
     }
     // }}}
     // {{{ transformXml()

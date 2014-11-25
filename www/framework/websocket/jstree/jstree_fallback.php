@@ -13,13 +13,14 @@
 
 namespace depage\websocket\jstree;
 
-class jstree_fallback extends \depage_ui {
+class jstree_fallback extends \Depage\Depage\Ui\Base
+{
     // {{{ constructor
     public function __construct($options = NULL) {
         parent::__construct($options);
 
         // get database instance
-        $this->pdo = new \depage\DB\PDO (
+        $this->pdo = new \Depage\Db\Pdo (
             $this->options->db->dsn, // dsn
             $this->options->db->user, // user
             $this->options->db->password, // password
@@ -32,11 +33,11 @@ class jstree_fallback extends \depage_ui {
         $proj = "proj";
         $proj = "depage";
         $this->prefix = "{$this->pdo->prefix}_{$proj}";
-        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
+        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, \Depage\Cache\Cache::factory($this->prefix));
 
         // get auth object
-        $this->auth = \depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo 
+        $this->auth = \Depage\Auth\Auth::factory(
+            $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method

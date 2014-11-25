@@ -13,5 +13,3 @@ $classLoader->register();
 $server = new \WebSocket\Server('localhost', 8000);
 $server->registerApplication('jstree', JsTreeApplication::getInstance());
 $server->run();
-
-?>

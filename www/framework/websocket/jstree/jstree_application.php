@@ -17,12 +17,12 @@ class JsTreeApplication extends \Websocket\Application\Application {
     function __construct() {
         parent::__construct();
 
-        $conf = new config();
+        $conf = new \Depage\Config\Config();
         $conf->readConfig(__DIR__ . "/../../../conf/dpconf.php");
         $this->options = $conf->getFromDefaults($this->defaults);
 
         // get database instance
-        $this->pdo = new \depage\DB\PDO (
+        $this->pdo = new \Depage\Db\Pdo (
             $this->options->db->dsn, // dsn
             $this->options->db->user, // user
             $this->options->db->password, // password
@@ -34,11 +34,11 @@ class JsTreeApplication extends \Websocket\Application\Application {
         // TODO: set project correctly
         $proj = "proj";
         $this->prefix = "{$this->pdo->prefix}_{$proj}";
-        $this->xmldb = new \depage\xmldb\xmldb ($this->prefix, $this->pdo, \depage\cache\cache::factory($this->prefix));
+        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, \Depage\Cache\Cache::factory($this->prefix));
 
         /* get auth object
-        $this->auth = \depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo 
+        $this->auth = \Depage\Auth\Auth::factory(
+            $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
             $this->options->auth->method // method

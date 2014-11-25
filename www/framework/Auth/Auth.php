@@ -44,7 +44,7 @@ abstract class Auth
      *
      * @public
      *
-     * @param       Depage\DB\PDO  $pdo        depage\DB\PDO object for database access
+     * @param       Depage\Db\Pdo  $pdo        depage\DB\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -70,7 +70,7 @@ abstract class Auth
      *
      * @public
      *
-     * @param       depage\DB\PDO  $pdo        depage\DB\PDO object for database access
+     * @param       Depage\Db\Pdo  $pdo        depage\Db\Pdo object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -82,8 +82,8 @@ abstract class Auth
         $this->domain = $domain;
         $this->digestCompat = $digestCompat;
 
-        if (class_exists("\\depage\\log\\log")) {
-            $this->log = new \depage\log\log();
+        if (class_exists("\\Depage\\Log\\Log")) {
+            $this->log = new \Depage\Log\Log();
         }
     }
     // }}}

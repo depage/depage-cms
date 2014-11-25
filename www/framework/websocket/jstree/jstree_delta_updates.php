@@ -93,7 +93,7 @@ class jstree_delta_updates {
             return "";
 
         $result = array(
-            'nodes' => \depage\CMS\jstree_xml_to_html::toHTML($changed_nodes),
+            'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes),
             'seq_nr' => $this->seq_nr,
         );
 
