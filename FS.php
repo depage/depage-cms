@@ -151,10 +151,10 @@ class FS
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function mv($source, $target)
+    public function mv($sourcePath, $targetPath)
     {
-        $source = $this->pwd() . $source;
-        $target = $this->pwd() . $target;
+        $source = $this->cleanUrl($sourcePath);
+        $target = $this->cleanUrl($targetPath);
 
         if (file_exists($source)) {
             if (!($value = rename($source, $target))) {
@@ -177,17 +177,18 @@ class FS
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function get($remote, $local = null)
+    public function get($remotePath, $local = null)
     {
         if ($local === null) {
-            $pathInfo   = pathinfo($remote);
+            $pathInfo   = pathinfo($remotePath);
             $fileName   = $pathInfo['filename'];
             $extension  = $pathInfo['extension'];
 
             $local = $fileName . '.' . $extension;
         }
 
-        return copy($this->pwd() . $remote, $local);
+        $remote = $this->cleanUrl($remotePath);
+        return copy($remote, $local);
     }
     // }}}
     // {{{ put
@@ -201,9 +202,10 @@ class FS
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function put($local, $remote)
+    public function put($local, $remotePath)
     {
-        return copy($local, $this->pwd() . $remote);
+        $remote = $this->cleanUrl($remotePath);
+        return copy($local, $remote);
     }
     // }}}
     // {{{ exists
@@ -216,21 +218,24 @@ class FS
      *
      * @return $exist (bool) true if file exists, false otherwise
      */
-    public function exists($path)
+    public function exists($remotePath)
     {
-        return file_exists($this->pwd() . $path);
+        $remote = $this->cleanUrl($remotePath);
+        return file_exists($remote);
     }
     // }}}
     // {{{ fileInfo
-    public function fileInfo($path)
+    public function fileInfo($remotePath)
     {
-        return new \SplFileInfo($this->pwd() . $path);
+        $remote = $this->cleanUrl($remotePath);
+        return new \SplFileInfo($remote);
     }
     // }}}
     // {{{ getString
-    public function getString($path)
+    public function getString($remotePath)
     {
-        return file_get_contents($this->pwd() . $path);
+        $remote = $this->cleanUrl($remotePath);
+        return file_get_contents($remote);
     }
     // }}}
     // {{{ putString
@@ -244,9 +249,10 @@ class FS
      *
      * @return    $success (bool) true on success, false on error
      */
-    public function putString($path, $string)
+    public function putString($remotePath, $string)
     {
-        return file_put_contents($this->pwd() . $path, $string);
+        $remote = $this->cleanUrl($remotePath);
+        return file_put_contents($remote, $string);
     }
     // }}}
 
