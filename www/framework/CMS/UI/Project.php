@@ -21,6 +21,11 @@ class Project extends Base
         parent::_init($importVariables);
 
         $this->projectName = $this->urlSubArgs[0];
+
+        if (empty($this->projectName)) {
+            // @todo test with Project class
+            throw new \Exception("no project");
+        }
     }
     // }}}
 
