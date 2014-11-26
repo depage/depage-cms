@@ -173,9 +173,9 @@ class_project.prototype.previewNow = function() {
             url += this.preview_type + "/";
 
             if (this.previewDisableCache) {
-                    url += "noncached"
+                url += "noncached";
             } else {
-                    url += "cached"
+                url += "cached";
             }
             url += urlId;
 
@@ -408,4 +408,4 @@ function getNewPropObj(type, projectObj) {
 }
 // }}}
 
-/* vim:set ft=javascript sw=4 sts=4 fdm=marker : */
+/* vim:set ft=actionscript sw=4 sts=4 fdm=marker : */

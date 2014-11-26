@@ -214,6 +214,7 @@ class CmsFuncs {
     function add_node($args) {
         $targetId = $args['target_id'];
         $newNodes = $args['node_type'];
+        $newName = $args['new_name'];
         $changedIds = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
@@ -953,6 +954,7 @@ class CmsFuncs {
     // {{{ addCallback()
     function addCallback($type, $ids = array(), $newActiveId = null) {
         if ($type == 'settings') {
+            $this->callbacks[] = $this->getCallbackForSettings($ids);
         } elseif ($type == 'colors') {
         } elseif ($type == 'tpl_newnodes') {
         } elseif ($type == 'pages') {
@@ -977,6 +979,15 @@ class CmsFuncs {
         $data['data'] = $this->getTreePages();
 
         return new Func("update_tree_pages", $data);
+    }
+    // }}}
+    // {{{ getCallbackForSettings()
+    function getCallbackForSettings($ids = array()) {
+        $data = array();
+
+        $data['data'] = $this->getTreeSettings();
+
+        return new Func("update_tree_settings", $data);
     }
     // }}}
     // {{{ getCallbackForPagedata()
