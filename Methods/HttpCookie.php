@@ -19,6 +19,7 @@ namespace Depage\Auth\Methods;
 
 use Depage\Auth\Auth;
 use Depage\Auth\User;
+use Depage\Html\Html;
 
 class HttpCookie extends Auth
 {
@@ -71,7 +72,7 @@ class HttpCookie extends Auth
 
             if (!$this->user) {
                 // remove trailing slashes when comparing urls, disregard query string
-                $loginUrl = \html::link($this->loginUrl, "auto");
+                $loginUrl = Html::link($this->loginUrl, "auto");
 
                 // set protocol
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
@@ -84,7 +85,7 @@ class HttpCookie extends Auth
                 if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
                     $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    \depage::redirect("$loginUrl?redirectTo=$redirectTo");
+                    \Depage\Depage\Runner::redirect("$loginUrl?redirectTo=$redirectTo");
                 }
             }
         }
