@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/DB/SqlParser.php
+ * @file    framework/Db/SqlParser.php
  *
  * depage database module
  *
