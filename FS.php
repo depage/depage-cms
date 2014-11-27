@@ -31,7 +31,8 @@ class FS
             $path = realpath($path);
         }
 
-        $this->base = $this->cleanPath($path) . '/';
+        $cleanPath = $this->cleanPath($path);
+        $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
     }
     // }}}
 
@@ -378,7 +379,7 @@ class FS
 
                 if ($count == 1) {
                     $result[] = $next;
-                } elseif (is_dir($this->pwd() . $next)) {
+                } elseif (is_dir($this->cleanUrl($next))) {
                     $result = array_merge(
                         $result,
                         $this->lsRecursive(implode('/', $patterns), $next)
