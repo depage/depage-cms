@@ -400,7 +400,10 @@ class FS
             $hidden = $this->hidden;
         }
 
+        $this->errorHandler(true);
         $scanDir = scandir($cleanUrl);
+        $this->errorHandler(false);
+
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {
@@ -414,6 +417,20 @@ class FS
         $sorted = array_values($filtered);
 
         return $sorted;
+    }
+    // }}}
+    // {{{ errorHandler
+    protected function errorHandler($start)
+    {
+        if ($start) {
+            set_error_handler(
+                function($errno, $errstr, $errfile, $errline, array $errcontext) {
+                    throw new Exceptions\FSException($errstr);
+                }
+            );
+        } else {
+            restore_error_handler();
+        }
     }
     // }}}
 }
