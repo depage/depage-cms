@@ -45,8 +45,8 @@ class Schema
     // {{{ loadFile
     public function loadFile($fileName)
     {
-        if (!file_exists($fileName)) {
-            throw new Exceptions\FileNotFoundException("File \"{$fileName}\" doesn't exist.");
+        if (!is_readable($fileName)) {
+            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable.");
         }
 
         $parser         = new SqlParser();
@@ -67,7 +67,7 @@ class Schema
             if ($header) {
                 if ($tag[self::TABLENAME_TAG]) {
                     if (isset($tableName)) {
-                        throw new Exceptions\MultipleTableNamesException("More than one tablename tags in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException("More than one tablename tags in \"{$fileName}\".");
                     } else {
                         $tableName              = $tag[self::TABLENAME_TAG];
                         $dictionary[$tableName] = $this->replace($tableName);
@@ -81,10 +81,10 @@ class Schema
                 if (!$parser->isEndOfStatement()) {
                     $header = false;
                     if (!isset($tableName)) {
-                        throw new Exceptions\TableNameMissingException("Tablename tag missing in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException("Tablename tag missing in \"{$fileName}\".");
                     }
                     if (empty($versions)) {
-                        throw new Exceptions\UnversionedCodeException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                        throw new Exceptions\SchemaException("There is code without version tags in \"{$fileName}\" at line {$number}.");
                     }
                 }
             }
@@ -98,7 +98,7 @@ class Schema
         }
 
         if(!$parser->isEndOfStatement()) {
-            throw new Exceptions\SyntaxErrorException("Incomplete statement at the end of \"{$fileName}\".");
+            throw new Exceptions\SchemaException("Incomplete statement at the end of \"{$fileName}\".");
         }
         $this->update($this->replace($tableName), $statementBlock, $versions);
     }
@@ -112,10 +112,10 @@ class Schema
             $currentVersion = $this->currentTableVersion($tableName);
             $search         = array_search($currentVersion, $keys);
 
-            if (
-                $search === false
-                || $search == count($keys) - 1
-            ) {
+            if ($search == count($keys) - 1) {
+                $startKey = false;
+            } elseif ($search === false) {
+                trigger_error('Current table version (' . $currentVersion .') not in schema file.', E_USER_WARNING);
                 $startKey = false;
             } else {
                 $startKey = $keys[$search + 1];
@@ -146,7 +146,20 @@ class Schema
                 $preparedStatement = $this->pdo->prepare($statement);
                 $preparedStatement->execute();
             } catch (\PDOException $e) {
-                throw new Exceptions\SQLExecutionException($e, $number, $statement);
+                if (class_exists('\ReflectionClass', false)) {
+                    $PDOExceptionReflection = new \ReflectionClass('PDOException');
+                    $line                   = $PDOExceptionReflection->getProperty('line');
+                    $message                = $PDOExceptionReflection->getProperty('message');
+
+                    $line->setAccessible(true);
+                    $line->setValue($e, $number);
+                    $line->setAccessible(false);
+                    $message->setAccessible(true);
+                    $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
+                    $message->setAccessible(false);
+                }
+
+                throw $e;
             }
         }
     }
@@ -158,13 +171,12 @@ class Schema
         $exists = false;
 
         try {
-            $preparedStatement  = $this->pdo->prepare('SELECT 1 FROM ' . $tableName);
-            $preparedStatement->execute();
-            $exists             = true;
+            $this->pdo->query('SELECT 1 FROM ' . $tableName);
+            $exists = true;
         } catch (\PDOException $expected) {
             // only catch "table doesn't exist" exception
             if ($expected->getCode() != '42S02') {
-                throw new \PDOEXception($expected);
+                throw $expected;
             }
         }
 
@@ -181,7 +193,7 @@ class Schema
             $row        = $statement->fetch();
 
             if ($row['TABLE_COMMENT'] == '') {
-                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
             }
 
             $version = $row['TABLE_COMMENT'];
@@ -192,7 +204,7 @@ class Schema
             $row        = $statement->fetch();
 
             if (!preg_match('/COMMENT=\'(.*)\'/', $row[1], $matches)) {
-                throw new Exceptions\VersionIdentifierMissingException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
             }
 
             $version = array_pop($matches);
@@ -223,13 +235,18 @@ class Schema
         $comments       = array_filter($split, function ($v) { return $v['type'] == 'comment'; });
         $matchedTags    = array();
 
+        $values = array_values($comments);
+        $values = array_shift($values);
+        $comment = $values['string'];
+
         foreach ($tags as $tag) {
             if (
                 count($comments) == 1
-                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comments[0]['string'], $matches)
+                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comment, $matches)
                 && count($matches) == 2
             ) {
-                $matchedTags[$tag] = $matches[1];
+                // @todo get rid of '*/' in preg_match
+                $matchedTags[$tag] = preg_replace('/\s*\*\/\s*$/', '', $matches[1]);
             } else {
                 $matchedTags[$tag] = false;
             }

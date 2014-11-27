@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/Db/Pdo.php
+ * @file    framework/DB/Pdo.php
  *
  * depage database module
  *
@@ -47,7 +47,7 @@ class Pdo
         $this->driver_options = $driver_options;
     }
     // }}}
-    // {{{ destructor()
+    // {{{ destructor
     /**
      * removes the pdo object which closes the connection to the database
      *

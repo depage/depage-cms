@@ -1,16 +1,25 @@
 <?php
 
-require_once('../SqlParser.php');
-require_once('../Schema.php');
-require_once('../Exceptions/FileNotFoundException.php');
-require_once('../Exceptions/TableNameMissingException.php');
-require_once('../Exceptions/UnversionedCodeException.php');
-require_once('../Exceptions/MultipleTableNamesException.php');
-require_once('../Exceptions/VersionIdentifierMissingException.php');
-require_once('../Exceptions/SQLExecutionException.php');
-require_once('../Exceptions/SyntaxErrorException.php');
+require_once(__DIR__ . '/../SqlParser.php');
+require_once(__DIR__ . '/../Schema.php');
+require_once(__DIR__ . '/../Exceptions/SchemaException.php');
 
-/* {{{ Generic_Tests_DatabaseTestCase */
+
+// {{{ PDOTestClass
+class PDOTestClass extends PDO
+{
+    public $queryFail = '';
+
+    public function query($query) {
+        if ($query == $this->queryFail) {
+            throw new PDOException();
+        } else {
+            return parent::query($query);
+        }
+    }
+}
+// }}}
+// {{{ Generic_Tests_DatabaseTestCase
 class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 {
     protected $pdo  = null;
@@ -18,7 +27,7 @@ class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCas
 
     final public function getConnection()
     {
-        $this->pdo = new PDO(
+        $this->pdo = new PDOTestClass(
             $GLOBALS['DB_DSN'],
             $GLOBALS['DB_USER'],
             $GLOBALS['DB_PASSWD']
@@ -37,6 +46,6 @@ class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCas
         $this->getConnection();
     }
 }
-/* }}} */
+// }}}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
