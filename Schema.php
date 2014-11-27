@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/DB/Schema.php
+ * @file    framework/Db/Schema.php
  *
  * depage database module
  *
@@ -8,7 +8,7 @@
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
-namespace Depage\DB;
+namespace Depage\Db;
 
 class Schema
 {
@@ -49,7 +49,7 @@ class Schema
             throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable.");
         }
 
-        $parser         = new SQLParser();
+        $parser         = new SqlParser();
         $header         = true;
         $versions       = array();
         $dictionary     = array();
