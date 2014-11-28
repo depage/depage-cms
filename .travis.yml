@@ -7,5 +7,5 @@ php:
 before_script:
     pecl install mailparse
 
-script: phpunit tests
+script: phpunit Tests
 
