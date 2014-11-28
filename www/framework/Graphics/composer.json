@@ -1,0 +1,49 @@
+{
+    "name": "Depage/Graphics",
+    "description": "",
+    "version": "1.4.0",
+    "type": "library",
+    "keywords": [
+        "graphics",
+        "images",
+        "image",
+        "picture",
+        "jpg",
+        "png",
+        "gif",
+        "gd",
+        "imagemagick",
+        "graphicsmagick"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "require-dev": {
+        "phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Graphics\\": "" }
+    },
+    "homepage": "http://docs.depage.net/depage-forms/",
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-graphics",
+        "issues": "https://github.com/depage/depage-graphics/issues"
+
+    },
+    "time": "2013-10-15",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        },{
+            "name": "Sebastian Reinhold",
+            "role": "Developer"
+        }
+    ]
+}
