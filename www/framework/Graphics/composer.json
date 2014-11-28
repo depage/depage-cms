@@ -1,6 +1,6 @@
 {
     "name": "Depage/Graphics",
-    "description": "",
+    "description": "depage-graphics is a helper class to get resized and optimized images and thumbnails.",
     "version": "1.4.0",
     "type": "library",
     "keywords": [
@@ -31,7 +31,7 @@
         "issues": "https://github.com/depage/depage-graphics/issues"
 
     },
-    "time": "2013-10-15",
+    "time": "2014-10-16",
     "license": [
         "MIT",
         "GPL-2.0"
