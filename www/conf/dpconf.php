@@ -50,7 +50,7 @@ $conf = array(
     // }}}
     // {{{ graphics
     '*/depage-cms/**.(gif|jpg|jpeg|png).*.(gif|jpg|jpeg|png)$' => array(
-        'handler' => 'depage\graphics\graphics_ui',
+        'handler' => 'Depage\Graphics\Ui\Graphics',
         //'env' => 'production',
         'extension' => "gm",
         'executable' => "/opt/local/bin/gm",
