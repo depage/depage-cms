@@ -391,6 +391,7 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ testParseUrlPath
     public function testParseUrlPath()
     {
+        $this->assertEquals(array('path'=>''),          $this->fs->parseUrl(''));
         $this->assertEquals(array('path'=>'abc'),       $this->fs->parseUrl('abc'));
         $this->assertEquals(array('path'=>'a[bd]c'),    $this->fs->parseUrl('a[bd]c'));
         $this->assertEquals(array('path'=>'abc*'),      $this->fs->parseUrl('abc*'));
