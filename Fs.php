@@ -113,16 +113,11 @@ class Fs
     public function rm($url)
     {
         $cleanUrl = $this->cleanUrl($url);
-
-        if (
-            $cleanUrl == $this->pwd()
-            || $cleanUrl . '/' == $this->pwd()
-        ) {
+        if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
             throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
         }
 
         $success = false;
-
         if (is_dir($cleanUrl)) {
             foreach ($this->scanDir($cleanUrl, true) as $nested) {
                 $this->rm($cleanUrl . '/' .  $nested);
@@ -277,20 +272,25 @@ class Fs
     protected function cleanUrl($url)
     {
         $parsed = $this->parseUrl($url);
+        $scheme = (isset($parsed['scheme'])) ? $parsed['scheme'] : null;
+        $path = (isset($parsed['path'])) ? $parsed['path'] : null;
 
-        if (isset($parsed['scheme'])) {
+        if ($scheme) {
             $newUrl = $parsed;
+            $newPath = $path;
         } else {
             $newUrl = $this->url;
-            if (isset($url[0]) && $url[0] == '/') {
-                $newUrl['path'] = $url;
+            if (substr($url, 0, 1) == '/') {
+                $newPath = $url;
             } else {
-                $newUrl['path'] = $this->base;
-                $newUrl['path'] .= (isset($parsed['path'][0]) && $parsed['path'][0] == '/') ? $this->currentPath . '/' : '';
-                $newUrl['path'] .= $parsed['path'];
+                $newPath = $this->base;
+                $newPath .= (substr($path, 0, 1) == '/') ? $this->currentPath . '/' : '';
+                $newPath .= $path;
             }
         }
-        $newUrl['path'] = $this->cleanPath($newUrl['path']);
+
+        $newUrl['path'] = $this->cleanPath($newPath);
+
         if (!preg_match(';^' . preg_quote($this->cleanPath($this->base)) . '(.*)$;',  $newUrl['path'])) {
             throw new Exceptions\FsException('Cannot leave base directory ' . $this->base);
         }
@@ -302,8 +302,8 @@ class Fs
     protected function cleanPath($path)
     {
         // @todo handle backslashes
-        $dirs       = explode('/', $path);
-        $newDirs    = array();
+        $dirs = explode('/', $path);
+        $newDirs = array();
 
         foreach ($dirs as $dir) {
             if ($dir == '..') {
@@ -313,7 +313,7 @@ class Fs
             }
         }
 
-        $newPath = (isset($path[0]) && $path[0] == '/') ? '/' : '';
+        $newPath = (substr($path, 0, 1) == '/') ? '/' : '';
         $newPath .= implode('/', $newDirs);
 
         return $newPath;
