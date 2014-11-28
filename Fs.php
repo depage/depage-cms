@@ -27,8 +27,11 @@ class Fs
 
         if (!isset($this->url['scheme'])) {
             $this->url['scheme'] = 'file';
-            // @todo handle failed realpath
+
             $path = realpath($path);
+            if ($path === false) {
+                throw new Exceptions\FsException('Invalid path: ' . $path);
+            }
         }
 
         $cleanPath = $this->cleanPath($path);
