@@ -385,7 +385,6 @@ class FsTest extends PHPUnit_Framework_TestCase
             'port'      => '42',
         );
         $this->assertEquals($expected, $this->fs->parseUrl('ftp://testUser:testPass@testHost:42/path/to/file'));
-
     }
     // }}}
     // {{{ testParseUrlPath
@@ -408,6 +407,26 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('path'=>'a&b'),       $this->fs->parseUrl('a&b'));
         $this->assertEquals(array('path'=>'&'),         $this->fs->parseUrl('&'));
         $this->assertEquals(array('path'=>'&&'),        $this->fs->parseUrl('&&'));
+    }
+    // }}}
+    // {{{ testCleanUrlFile
+    public function testCleanUrlFile()
+    {
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl('path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl(getcwd() . '/path/to/file'));
+    }
+    // }}}
+    // {{{ testCleanUrlFtp
+    public function testCleanUrlFtp()
+    {
+        $ftpFs = new FsTestClass('ftp://testUser:testPass@testHost:42');
+        $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('path/to/file'));
+        $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('/path/to/file'));
+
+        $ftpFsSubDir = new FsTestClass('ftp://testUser:testPass@testHost:42/testSubDir');
+        $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('path/to/file'));
+        $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('/testSubDir/path/to/file'));
     }
     // }}}
 }
