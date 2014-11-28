@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    entity.php
+ * @file    PdoEntity.php
  *
  * Entity
  *
@@ -10,7 +10,7 @@
  *
  * Provides generic CRUD functions for models.
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author Ben Wallis [benedict_wallis@yahoo.co.uk]
  */
@@ -22,7 +22,7 @@ abstract class Entity {
     /**
      * PDO
      *
-     * @var \depage\DB\PDO
+     * @var \Depage\Db\Pdo
      */
     protected $pdo = null;
 
@@ -85,7 +85,7 @@ abstract class Entity {
     /**
      * Constructor
      *
-     * @param \depage\DB\PDO $pdo
+     * @param \Depage\Db\Pdo $pdo
      * @param array $data  - data to build the object from
      * @param bool $clean - set as clean or dirty
      * @param bool $insert_ignore
