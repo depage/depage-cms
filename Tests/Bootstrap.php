@@ -1,10 +1,10 @@
 <?php
 
-require_once('../FS.php');
-require_once('../Exceptions/FSException.php');
+require_once('../Fs.php');
+require_once('../Exceptions/FsException.php');
 
-// {{{ FSTestClass
-class FSTestClass extends depage\FS\FS
+// {{{ FsTestClass
+class FsTestClass extends depage\Fs\Fs
 {
     public function parseUrl($url) {
         return parent::parseUrl($url);

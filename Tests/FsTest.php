@@ -1,8 +1,8 @@
 <?php
 
-use Depage\FS\FS;
+use Depage\Fs\Fs;
 
-class FSTest extends PHPUnit_Framework_TestCase
+class FsTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
@@ -12,7 +12,7 @@ class FSTest extends PHPUnit_Framework_TestCase
         mkdir('Temp');
         chdir('Temp');
 
-        $this->fs = new FSTestClass('');
+        $this->fs = new FsTestClass('');
     }
     // }}}
     // {{{ tearDown
@@ -122,7 +122,7 @@ class FSTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $lsReturn);
 
-        $hiddenFs = new FS('', array('hidden' => true));
+        $hiddenFs = new Fs('', array('hidden' => true));
         $lsReturn = $hiddenFs->ls('testDir/*');
         $expected = array(
             'testDir/.testFileHidden',
@@ -207,7 +207,7 @@ class FSTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testCdOutOfBaseDir
     /**
-     * @expectedException Depage\FS\Exceptions\FSException
+     * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage Cannot leave base directory
      */
     public function testCdOutOfBaseDir()
@@ -221,7 +221,7 @@ class FSTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testCdOutOfBaseDirRelative
     /**
-     * @expectedException           Depage\FS\Exceptions\FSException
+     * @expectedException           Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage    Cannot leave base directory
      */
     public function testCdOutOfBaseDirRelative()
@@ -231,7 +231,7 @@ class FSTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testCdFail
     /**
-     * @expectedException           Depage\FS\Exceptions\FSException
+     * @expectedException           Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage    Directory not accessible
      */
     public function testCdFail()
@@ -285,7 +285,7 @@ class FSTest extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testMvSourceDoesntExist
     /**
-     * @expectedException Depage\FS\Exceptions\FSException
+     * @expectedException Depage\Fs\Exceptions\FsException
      */
     public function testMvSourceDoesntExist()
     {

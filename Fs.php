@@ -1,8 +1,8 @@
 <?php
 
-namespace Depage\FS;
+namespace Depage\Fs;
 
-class FS
+class Fs
 {
     // {{{ variables
         protected $currentPath;
@@ -82,7 +82,7 @@ class FS
             $this->currentPath = str_replace($this->pwd(), '', $cleanUrl) . '/';
         } else {
             $path = $this->parseUrl($cleanUrl)['path'];
-            throw new Exceptions\FSException('Directory not accessible ' . $path);
+            throw new Exceptions\FsException('Directory not accessible ' . $path);
         }
     }
     // }}}
@@ -118,7 +118,7 @@ class FS
             $cleanUrl == $this->pwd()
             || $cleanUrl . '/' == $this->pwd()
         ) {
-            throw new Exceptions\FSException('Cannot delete current directory ' . $this->pwd());
+            throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
         }
 
         $success = false;
@@ -159,11 +159,11 @@ class FS
 
         if (file_exists($source)) {
             if (!($value = rename($source, $target))) {
-                throw new Exceptions\FSException("could not move '$source' to '$target'");
+                throw new Exceptions\FsException("could not move '$source' to '$target'");
             }
             return $value;
         } else {
-            throw new Exceptions\FSException("could not move '$source' to '$target' - source doesn't exist");
+            throw new Exceptions\FsException("could not move '$source' to '$target' - source doesn't exist");
         }
     }
     // }}}
@@ -292,7 +292,7 @@ class FS
         }
         $newUrl['path'] = $this->cleanPath($newUrl['path']);
         if (!preg_match(';^' . preg_quote($this->cleanPath($this->base)) . '(.*)$;',  $newUrl['path'])) {
-            throw new Exceptions\FSException('Cannot leave base directory ' . $this->base);
+            throw new Exceptions\FsException('Cannot leave base directory ' . $this->base);
         }
 
         return $this->buildUrl($newUrl);
@@ -419,7 +419,7 @@ class FS
         if ($start) {
             set_error_handler(
                 function($errno, $errstr, $errfile, $errline, array $errcontext) {
-                    throw new Exceptions\FSException($errstr);
+                    throw new Exceptions\FsException($errstr);
                 }
             );
         } else {
