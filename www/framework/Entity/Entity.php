@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    Object.php
+ * @file    Entity.php
  *
  * Entity
  *
