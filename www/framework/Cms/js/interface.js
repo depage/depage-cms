@@ -94,8 +94,8 @@ var depageCMS = (function() {
 
         // {{{ logout
         logout: function() {
-            var baseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "");
-            var logoutUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.replace(/index\.php/, "") + "logout/";
+            var baseUrl = $("base").attr("href");
+            var logoutUrl = baseUrl + "logout/";
 
             $.ajax({
                 type: "GET",
