@@ -17,7 +17,7 @@
             //"framework/Cms/js/jstree.js",
         )); ?>
         <?php $this->include_css("interface", array(
-            "framework/htmlform/lib/css/depage-forms.css",
+            "framework/HtmlForm/lib/css/depage-forms.css",
             //"framework/Cms/css/jstree.css",
             "framework/Cms/css/interface.css",
         )); ?>

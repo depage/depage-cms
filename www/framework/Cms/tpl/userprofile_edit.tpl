@@ -1,5 +1,5 @@
-<?php 
-    $form = new depage\htmlform\htmlform("userprofile_edit", array(
+<?php
+    $form = new Depage\HtmlForm\HtmlForm("userprofile_edit", array(
         'jsautosave' => "true",
     ));
 

@@ -2,7 +2,7 @@
 
 namespace Depage\Comments\Forms;
 
-class CommentForm extends \depage\htmlform\htmlform {
+class CommentForm extends \Depage\HtmlForm\HtmlForm {
     protected $mustbeempty;
 
     // {{{ constructor()

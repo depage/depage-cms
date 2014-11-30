@@ -25,7 +25,7 @@ class Document extends \DOMDocument implements \Serializable
      * @param   $version (string)
      * @param   $encoding (string)
      *
-     * @return  (depage::htmlform::abstracts::htmldom) htmlDOM
+     * @return  (Depage::HtmlForm::Abstracts::HtmlDom) htmlDOM
      **/
     public function __construct($version = null, $encoding = null) {
         if (is_null($version)) {

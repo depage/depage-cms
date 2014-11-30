@@ -71,7 +71,7 @@ class Main extends Base {
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         } else {
             // not logged in
-            $form = new \depage\htmlform\htmlform("login", array(
+            $form = new \Depage\HtmlForm\HtmlForm("login", array(
                 'label' => _("Login"),
                 'validator' => function($form, $values) {
                     return (bool) $this->auth->login($values['name'], $values['pass']);

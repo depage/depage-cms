@@ -13,11 +13,11 @@
 
         <?php
             $this->include_css("global", array(
-                "framework/htmlform/lib/css/depage-forms.css",
+                "framework/HtmlForm/lib/css/depage-forms.css",
             ));
 
             $this->include_js("global", array(
-                "framework/htmlform/lib/js/effect.js",
+                "framework/HtmlForm/lib/js/effect.js",
                 //"modules/screenpitch/lib/global/js/global.js",
             ), "defer");
         ?>

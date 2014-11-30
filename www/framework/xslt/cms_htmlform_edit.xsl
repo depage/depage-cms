@@ -24,7 +24,7 @@
     <xsl:variable name="value"><xsl:apply-templates select="*" /></xsl:variable>
 
     <xsl:processing-instruction name="php">
-        $form = new \depage\htmlform\htmlform("xmledit_<xsl:value-of select="@db:id" />", array(
+        $form = new \Depage\HtmlForm\HtmlForm("xmledit_<xsl:value-of select="@db:id" />", array(
             'label' => "save",
             'jsAutosave' => true,
         ));
@@ -32,14 +32,14 @@
         $form->addHtml("&lt;h1&gt;Textarea&lt;/h1&gt;");
         $form->addHidden("dbid", array(
             'defaultValue' => "<xsl:value-of select="@db:id" />",
-        )); 
+        ));
         $form->addRichtext("value", array(
             'defaultValue' => <xsl:value-of select="php:function('var_export', $value, true())" />,
             'cols' => 80,
             'rows' => 10,
             'label' => "<xsl:value-of select="@lang" />",
-            'stylesheet' => "framework/htmlform/lib/css/depage-richtext.css",
-        )); 
+            'stylesheet' => "framework/HtmlForm/lib/css/depage-richtext.css",
+        ));
 
         $forms[] = $form;
     ?</xsl:processing-instruction>
