@@ -1,0 +1,267 @@
+.depage-form {
+    max-width: 40em;
+
+    /* {{{ input and label sizes */
+    .depage-label {
+        display: block;
+        float: left;
+        width: 33%;
+        height: 1em;
+        min-height: 1em;
+        height: auto !important;
+        padding-bottom: 0.3em;
+        padding-right: 0.3em;
+    }
+    .input-boolean {
+        input {
+            float: left;
+            margin-top: 0.5em;
+        }
+        .depage-label {
+            display: block;
+            float: none;
+            width: auto;
+            margin-left: 1.7em;
+        }
+    }
+    p {
+        clear: left;
+    }
+    p,
+    .depage-label {
+        position: relative;
+        line-height: 1.8em;
+    }
+    input,
+    select,
+    textarea {
+        width: 63%;
+        font-family: inherit;
+        font-size: 1em;
+    }
+    .input-boolean,
+    .input-single,
+    .input-multiple,
+    .back,
+    .cancel,
+    .submit {
+        input {
+            width: auto;
+        }
+    }
+    .input-single,
+    .input-multiple {
+        span label {
+            display: inline-block;
+            white-space: nowrap;
+
+            span {
+                padding-left: 0.5em;
+                padding-right: 1em;
+                font-size: 1.1em;
+            }
+        }
+    }
+    /* }}} */
+    /* {{{ input states */
+    input,
+    select,
+    textarea {
+        border: 1px solid #999999;
+        padding: 0.2em;
+
+        &:focus {
+            border: 1px solid #000000;
+        }
+        &:required,
+        &:invalid {
+            box-shadow: none;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+        }
+        .error & {
+            border: 1px solid #ff0000;
+        }
+    }
+    .input-boolean,
+    .input-single,
+    .input-multiple, {
+        input,
+        input:focus,
+        &.error input {
+            border: none;
+        }
+    }
+    .error .depage-label {
+        color: #ff0000;
+    }
+    .submit input {
+        background: #cccccc;
+    }
+    .submit.error input {
+        border: 1px solid #dddddd;
+        color: #999999;
+        background: #dddddd;
+    }
+    .errorMessage {
+        display: block;
+        position: absolute;
+        top: 0.2em;
+        right: 3%;
+        max-width: 70%;
+        font-size: 0.8em;
+        text-align: right;
+    }
+    /* }}} */
+    /* {{{ fieldsets */
+    fieldset {
+        /*
+        border: none;
+        border-top: 1px solid;
+        padding: 0;
+        position: relative;
+        background: #eeeeee;
+        */
+    }
+    fieldset legend {
+        /*
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 0.2em;
+        font-weight: bold;
+        background: #dddddd;
+        margin-bottom: 1em;
+        */
+    }
+    /* }}} */
+    /* {{{ stepnav */
+    ol.stepnav {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: table-cell;
+            list-style: none;
+            background: #eeeeee;
+            border-right: 0.3em solid #ffffff;
+
+            a {
+                display: block;
+                height: 100%;
+                padding: 0.4em;
+                color: #000000;
+                text-decoration: none;
+            }
+            &.invalid a::after {
+                content: " !";
+                color: #ff0000;
+                font-weight: bold;
+            }
+            &.current-step {
+                background: #dddddd;
+            }
+        }
+        li {
+            *display: block; /* IE6/7 hack */
+            *float: left;
+        }
+    }
+    /* }}} */
+
+    /* {{{ richtext */
+    .depageEditor {
+        clear: left;
+        position: relative;
+        margin-left: 25px;
+    }
+    ul.depageEditorToolbar {
+        position: absolute;
+        left: -25px;
+        top: 0;
+        line-height: auto;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 25px;
+
+        li {
+            padding: 0;
+
+            a {
+                display: block;
+                width: 25px;
+                height: 25px;
+                text-indent: -10000px;
+                background-image: url(../richtext-toolbar.png);
+                background-repeat: none;
+                background-position: 25px 0;
+
+                &.depageEditorButtonBold {
+                    background-position: 0 0;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px 0;
+                    }
+                }
+                &.depageEditorButtonItalic {
+                    background-position: 0 -25px;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px -25px;
+                    }
+                }
+                &.depageEditorButtonHyperlink {
+                    background-position: 0 -50px;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px -50px;
+                    }
+                }
+                &.depageEditorButtonOrderedList {
+                    background-position: 0 -75px;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px -75px;
+                    }
+                }
+                &.depageEditorButtonUnorderedList {
+                    background-position: 0 -100px;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px -100px;
+                    }
+                }
+                &.depageEditorButtonHTML {
+                    background-position: 0 -125px;
+
+                    &:hover, 
+                    &.on {
+                        background-position: -25px -125px;
+                    }
+                }
+            }
+        }
+    }
+    .input-richtext {
+        textarea,
+        iframe {
+            width: 100%;
+            border: 1px solid;
+            min-height: 10em;
+        }
+    }
+    /* }}} */
+}
+
+/* vim:set ft=css sw=4 sts=4 fdm=marker : */
