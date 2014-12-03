@@ -1,11 +1,11 @@
 <ul id="projectlist">
-    <?php foreach($this->projects as $pname => $pid) { ?>
+    <?php foreach($this->projects as $project) { ?>
         <li>
-            <h2><?php self::t($pname); ?></h2>
-            <a href="project/<?php self::t($pname); ?>/edit/" class="button">
+            <h2><?php self::t($project->fullname); ?></h2>
+            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
                 <?php self::t(_('edit')) ?>
             </a>
-            <a href="project/<?php self::t($pname); ?>/preview/" class="button">
+            <a href="project/<?php self::t($project->name); ?>/preview/" class="button">
                 <?php self::t(_('preview')) ?>
             </a>
         </li>

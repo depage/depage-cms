@@ -147,8 +147,7 @@ class Main extends Base {
         $this->auth->enforce();
 
         // get data
-        $cp = new \Depage\Cms\Project($this->pdo);
-        $projects = $cp->getProjects();
+        $projects = \Depage\Cms\Project::loadAll($this->pdo);
 
         // construct template
         $h = new Html("box.tpl", array(

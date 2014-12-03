@@ -12,8 +12,30 @@
 
 namespace Depage\Cms;
 
-class Project
+class Project extends \Depage\Entity\Entity
 {
+    // {{{ variables
+    /**
+     * @brief fields
+     **/
+    static protected $fields = array(
+        "id" => null,
+        "name" => "",
+        "fullname" => "",
+        "preview" => 1,
+    );
+
+    /**
+     * @brief primary
+     **/
+    static protected $primary = array("id");
+
+    /**
+     * @brief pdo object for database access
+     **/
+    protected $pdo = null;
+    // }}}
+
     /* {{{ constructor */
     /**
      * constructor
@@ -40,28 +62,26 @@ class Project
     function getProjects($all = true) {
         $projects = array();
 
-        return array(
-            "depage" => 1,
-        );
+        //return array( "depage" => 1, );
 
         //@todo implement this correctly
         $sid = $this->user->sid;
         if ($all || $this->user->get_level_by_sid() == 1) {
             // get all projects for admins
-            $result = db_query(
-                "SELECT projects.id, projects.name, projects.id_doc
+            $query = $this->pdo->prepare(
+                "SELECT projects.*
                 FROM
-                    $conf->db_table_projects AS projects
+                    $this->table_projects AS projects
                 ORDER BY name"
             );
         } else {
             // get only allowed projects for normal users
-            $result = db_query(
-                "SELECT projects.id, projects.name, projects.id_doc
+            $query = $this->pdo->prepare(
+                "SELECT projects.*
                 FROM
-                    $conf->db_table_projects AS projects,
-                    $conf->db_table_sessions AS sessions,
-                    $conf->db_table_user_projects AS user_projects
+                    $this->table_projects AS projects,
+                    $this->table_sessions AS sessions,
+                    $this->table_user_projects AS user_projects
                 WHERE
                     sessions.sid = '$sid' AND
                     sessions.userid = user_projects.uid AND
@@ -69,11 +89,50 @@ class Project
                 ORDER BY name"
             );
         }
-        if ($result) {
+        $success = $query->execute();
+        if ($success) {
+
+            var_dump($query->fetchAll());
+            die();
             while ($row = mysql_fetch_assoc($result)) {
                 $projects[$row['name']] = $row['id_doc'];
             }
         }
+
+        return $projects;
+    }
+    // }}}
+
+    // {{{ loadAll()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadAll($pdo) {
+        $projects = array();
+        $fields = implode(", ", array_keys(self::$fields));
+
+        $query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_projects AS projects"
+        );
+        $query->execute();
+
+        // pass pdo-instance to constructor
+        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", array($pdo));
+        do {
+            $project = $query->fetch(\PDO::FETCH_CLASS);
+            if ($project) {
+                array_push($projects, $project);
+            }
+        } while ($project);
 
         return $projects;
     }
