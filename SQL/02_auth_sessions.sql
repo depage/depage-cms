@@ -2,12 +2,12 @@
     Session Table
     -----------------------------------
 
-    @tablename auth_sessions
-    @connection auth_user
+    @tablename _auth_sessions
+    @connection _auth_user
     @version 1.5.0-beta.1
 */
 
-CREATE TABLE `auth_sessions` (
+CREATE TABLE `_auth_sessions` (
     `sid` varchar(32) NOT NULL DEFAULT '',
     `userid` int(11) unsigned DEFAULT NULL,
     `project` varchar(50) DEFAULT NULL,
@@ -18,6 +18,6 @@ CREATE TABLE `auth_sessions` (
     `sessionData` longblob,
     PRIMARY KEY (`sid`),
     KEY `userId` (`userid`),
-    CONSTRAINT `userId` FOREIGN KEY (`userid`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `userId` FOREIGN KEY (`userid`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
