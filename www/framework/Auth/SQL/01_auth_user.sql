@@ -2,11 +2,11 @@
     User Table
     -----------------------------------
 
-    @tablename auth_user
+    @tablename _auth_user
     @version 1.5.0-beta.1
 */
 
-CREATE TABLE `auth_user` (
+CREATE TABLE `_auth_user` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `type` enum('Depage\\Auth\\User') DEFAULT NULL,
     `name` varchar(32) NOT NULL DEFAULT '',
@@ -23,7 +23,6 @@ CREATE TABLE `auth_user` (
     `confirmId` varchar(255) DEFAULT NULL,
     `resetPasswordId` varchar(255) DEFAULT NULL,
     `loginTimeout` int(11) NOT NULL DEFAULT '0',
-    PRIMARY KEY (`id`),
-    KEY `id` (`id`)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

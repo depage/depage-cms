@@ -22,7 +22,6 @@ class Project extends \Depage\Entity\Entity
         "id" => null,
         "name" => "",
         "fullname" => "",
-        "preview" => 1,
     );
 
     /**
@@ -110,9 +109,8 @@ class Project extends \Depage\Entity\Entity
      * @public
      *
      * @param       Depage\Db\Pdo     $pdo        pdo object for database access
-     * @param       int     $id         id of the user
      *
-     * @return      auth_user
+     * @return      Array array of projects
      */
     static public function loadAll($pdo) {
         $projects = array();
@@ -135,6 +133,25 @@ class Project extends \Depage\Entity\Entity
         } while ($project);
 
         return $projects;
+    }
+    // }}}
+
+    // {{{ updateSchema()
+    /**
+     * @brief updateSchema
+     *
+     * @return void
+     **/
+    public function updateSchema()
+    {
+        $schema = new \Depage\DB\Schema($this->pdo);
+
+        $schema->setReplace(
+            function ($tableName) {
+                return $this->pdo->prefix . $tableName;
+            }
+        );
+        $schema->loadGlob(__DIR__ . "/Sql/*.sql");
     }
     // }}}
 }
