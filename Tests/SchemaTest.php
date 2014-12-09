@@ -357,6 +357,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFilter, $this->schema->extractTag($testFilter));
     }
     // }}}
+    // {{{ testTagSubstringException
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage Tags cannot be substrings of each other
+     */
+    public function testTagSubstringException()
+    {
+        $this->schema->loadFile('Fixtures/TestTagSubstring.sql');
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

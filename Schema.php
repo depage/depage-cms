@@ -71,7 +71,7 @@ class Schema
                     if (isset($tableName)) {
                         throw new Exceptions\SchemaException('More than one tablename tags in "' . $fileName . '".');
                     } else {
-                        $tableName              = $tag[self::TABLENAME_TAG];
+                        $tableName = $tag[self::TABLENAME_TAG];
                         $dictionary[$tableName] = $this->replace($tableName);
                     }
                 }
@@ -91,7 +91,8 @@ class Schema
                 }
             }
 
-            $replaced   = $this->replaceIdentifiers($dictionary, $split);
+            $this->checkDictionary($dictionary);
+            $replaced = $this->replaceIdentifiers($dictionary, $split);
             $statements = $parser->tidy($replaced);
 
             if ($statements) {
@@ -274,6 +275,24 @@ class Schema
         }
 
         return $matchedTags;
+    }
+    // }}}
+    // {{{ checkDictionary
+    protected function checkDictionary($dictionary)
+    {
+        $tags = array_keys($dictionary);
+        while ($tags) {
+            $current = array_pop($tags);
+
+            foreach ($tags as $test) {
+                if (
+                    strpos($current, $test) !== false ||
+                    strpos($test, $current) !== false
+                ) {
+                    throw new Exceptions\SchemaException('Tags cannot be substrings of each other ("' . $current . '", "' . $test . '").');
+                }
+            }
+        }
     }
     // }}}
     // {{{ setReplace
