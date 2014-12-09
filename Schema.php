@@ -34,7 +34,7 @@ class Schema
     {
         $fileNames = glob($path);
         if (empty($fileNames)) {
-            trigger_error("No file found matching \"{$path}\".", E_USER_WARNING);
+            trigger_error('No file found matching "' . $path . '".', E_USER_WARNING);
         }
         sort($fileNames);
 
@@ -47,7 +47,7 @@ class Schema
     public function loadFile($fileName)
     {
         if (!is_readable($fileName)) {
-            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable."); 
+            throw new Exceptions\SchemaException('File "' . $fileName . '" doesn\'t exist or isn\'t readable.'); 
         }
 
         $parser         = new SQLParser();
@@ -68,7 +68,7 @@ class Schema
             if ($header) {
                 if ($tag[self::TABLENAME_TAG]) {
                     if (isset($tableName)) {
-                        throw new Exceptions\SchemaException("More than one tablename tags in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException('More than one tablename tags in "' . $fileName . '".');
                     } else {
                         $tableName              = $tag[self::TABLENAME_TAG];
                         $dictionary[$tableName] = $this->replace($tableName);
@@ -82,10 +82,10 @@ class Schema
                 if (!$parser->isEndOfStatement()) {
                     $header = false;
                     if (!isset($tableName)) {
-                        throw new Exceptions\SchemaException("Tablename tag missing in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException('Tablename tag missing in "' . $fileName . '".');
                     }
                     if (empty($versions)) {
-                        throw new Exceptions\SchemaException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                        throw new Exceptions\SchemaException('There is code without version tags in "' . $fileName . '" at line ' . $number . '.');
                     }
                 }
             }
@@ -99,7 +99,7 @@ class Schema
         }
 
         if(!$parser->isEndOfStatement()) {
-            throw new Exceptions\SchemaException("Incomplete statement at the end of \"{$fileName}\".");
+            throw new Exceptions\SchemaException('Incomplete statement at the end of "' . $fileName . '".');
         }
 
         $this->updateData = array(
@@ -194,24 +194,24 @@ class Schema
     protected function currentTableVersion($tableName)
     {
         try {
-            $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
-            $statement  = $this->pdo->query($query);
+            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+            $statement = $this->pdo->query($query);
             $statement->execute();
-            $row        = $statement->fetch();
+            $row = $statement->fetch();
 
             if ($row['TABLE_COMMENT'] == '') {
-                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException('Missing version identifier in table "' . $tableName . '".');
             }
 
             $version = $row['TABLE_COMMENT'];
         } catch (\PDOException $e) {
-            $query      = 'SHOW CREATE TABLE ' . $tableName;
-            $statement  = $this->pdo->query($query);
+            $query = 'SHOW CREATE TABLE ' . $tableName;
+            $statement = $this->pdo->query($query);
             $statement->execute();
-            $row        = $statement->fetch();
+            $row = $statement->fetch();
 
             if (!preg_match('/COMMENT=\'(.*)\'/', $row[1], $matches)) {
-                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException('Missing version identifier in table "' . $tableName . '".');
             }
 
             $version = array_pop($matches);
