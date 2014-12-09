@@ -20,6 +20,7 @@ class Schema
     // {{{ variables
     protected $replaceFunction = array();
     protected $updateData = array();
+    protected $dryRun;
     // }}}
 
     // {{{ constructor
@@ -109,15 +110,31 @@ class Schema
         );
     }
     // }}}
+    // {{{ dryRun
+    public function dryRun()
+    {
+        $this->dryRun = true;
+        $this->history = array();
+        $this->run();
+        return $this->history;
+    }
+    // }}}
     // {{{ update
     public function update()
+    {
+        $this->dryRun = false;
+        $this->run();
+    }
+    // }}}
+    // {{{ run
+    protected function run()
     {
         extract($this->updateData);
         $keys = array_keys($versions);
 
         if ($this->tableExists($tableName)) {
             $currentVersion = $this->currentTableVersion($tableName);
-            $search         = array_search($currentVersion, $keys);
+            $search = array_search($currentVersion, $keys);
 
             if ($search == count($keys) - 1) {
                 $startKey = false;
@@ -149,24 +166,27 @@ class Schema
     protected function execute($number, $statements)
     {
         foreach ($statements as $statement) {
-            try {
-                $preparedStatement = $this->pdo->prepare($statement);
-                $preparedStatement->execute();
-            } catch (\PDOException $e) {
-                if (class_exists('\ReflectionClass', false)) {
-                    $PDOExceptionReflection = new \ReflectionClass('PDOException');
-                    $line                   = $PDOExceptionReflection->getProperty('line');
-                    $message                = $PDOExceptionReflection->getProperty('message');
+            if ($this->dryRun) {
+                $this->history[] = $statement;
+            } else {
+                try {
+                    $preparedStatement = $this->pdo->prepare($statement);
+                    $preparedStatement->execute();
+                } catch (\PDOException $e) {
+                    if (class_exists('\ReflectionClass', false)) {
+                        $PDOExceptionReflection = new \ReflectionClass('PDOException');
+                        $line = $PDOExceptionReflection->getProperty('line');
+                        $message = $PDOExceptionReflection->getProperty('message');
 
-                    $line->setAccessible(true);
-                    $line->setValue($e, $number);
-                    $line->setAccessible(false);
-                    $message->setAccessible(true);
-                    $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
-                    $message->setAccessible(false);
+                        $line->setAccessible(true);
+                        $line->setValue($e, $number);
+                        $line->setAccessible(false);
+                        $message->setAccessible(true);
+                        $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
+                        $message->setAccessible(false);
+                    }
+                    throw $e;
                 }
-
-                throw $e;
             }
         }
     }
@@ -224,9 +244,7 @@ class Schema
     protected function updateTableVersion($tableName, $version)
     {
         $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
-
-        $preparedStatement = $this->pdo->prepare($statement);
-        $preparedStatement->execute();
+        $this->execute(null, array($statement));
     }
     // }}}
 

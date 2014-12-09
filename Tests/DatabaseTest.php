@@ -93,6 +93,26 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
     // }}}
+    // {{{ testDryRun
+    public function testDryRun()
+    {
+        $this->schema->loadFile('Fixtures/TestFile.sql');
+
+        $expected = array(
+            'CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT \'0\', pid int(10) unsigned NOT NULL DEFAULT \'0\' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+            'ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT \'0\' AFTER pid',
+            'ALTER TABLE test COMMENT \'version 0.2\''
+        );
+
+        $this->assertEquals($expected, $this->schema->dryRun());
+
+        $statement = $this->pdo->query('SHOW TABLES LIKE \'test\'');
+        $statement->execute();
+        $row = $statement->fetch();
+
+        $this->assertFalse($row);
+    }
+    // }}}
 
     // {{{ testPDOException
     public function testPDOException()
