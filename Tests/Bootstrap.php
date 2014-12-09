@@ -4,7 +4,6 @@ require_once('../SQLParser.php');
 require_once('../Schema.php');
 require_once('../Exceptions/SchemaException.php');
 
-
 // {{{ PDOTestClass
 class PDOTestClass extends PDO
 {

@@ -132,6 +132,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.1';
         $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->update();
 
         $expected = array(
             11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
@@ -144,6 +145,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists = false;
         $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->update();
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -160,9 +162,10 @@ class SchemaTest extends PHPUnit_Framework_TestCase
      */
     public function testProcessUnknownVersionWarning()
     {
-        $this->schema->tableExists          = true;
-        $this->schema->currentTableVersion  = 'bogus version';
+        $this->schema->tableExists = true;
+        $this->schema->currentTableVersion = 'bogus version';
         $this->schema->loadGlob('Fixtures/TestFile.sql');
+        $this->schema->update();
     }
     // }}}
     // {{{ testProcessUnknownVersionExecution
@@ -180,6 +183,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->loadGlob('Fixtures/TestConnections.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -199,6 +203,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
             }
         );
         $this->schema->loadGlob('Fixtures/TestConnections.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -213,6 +218,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->loadGlob('Fixtures/TestBackticks.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE `table backticks` ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),

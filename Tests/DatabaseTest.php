@@ -47,9 +47,9 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ showCreateTestTable
     public function showCreateTestTable()
     {
-        $statement  = $this->pdo->query('SHOW CREATE TABLE test');
+        $statement = $this->pdo->query('SHOW CREATE TABLE test');
         $statement->execute();
-        $row        = $statement->fetch();
+        $row = $statement->fetch();
 
         return $row['Create Table'];
     }
@@ -59,6 +59,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     public function testCompleteUpdate()
     {
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
     // }}}
@@ -66,6 +67,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     public function testIncrementalUpdates()
     {
         $this->schema->loadFile('Fixtures/TestFilePart.sql');
+        $this->schema->update();
 
         $firstVersion = "CREATE TABLE `test` (\n" .
         "  `uid` int(10) unsigned NOT NULL DEFAULT '0',\n" .
@@ -75,6 +77,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->assertEquals($firstVersion, $this->showCreateTestTable());
 
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
     // }}}
@@ -82,9 +85,11 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     public function testUpToDate()
     {
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
 
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
     // }}}
@@ -97,8 +102,10 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
                             'check the manual that corresponds to your MySQL server version ' .
                             'for the right syntax to use near \'=InnoDB DEFAULT CHARSET=utf8mb4\' at line 7';
 
+        $this->schema->loadFile('Fixtures/TestSyntaxError.sql');
+
         try {
-            $this->schema->loadFile('Fixtures/TestSyntaxError.sql');
+            $this->schema->update();
         } catch (PDOException $e) {
             $this->assertEquals($expectedMessage, $e->getMessage());
             $this->assertEquals(7, $e->getLine());
@@ -126,12 +133,14 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 
         // trigger exception
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
     }
     // }}}
     // {{{ testCurrentTableVersion
     public function testCurrentTableVersion()
     {
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals('version 0.2', $this->schema->currentTableVersion('test'));
     }
     // }}}
@@ -140,6 +149,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     {
         $this->pdo->queryFail = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "test" LIMIT 1';
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
         $this->assertEquals('version 0.2', $this->schema->currentTableVersion('test'));
     }
     // }}}
@@ -163,6 +173,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 
         // trigger exception
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
     }
     // }}}
     // {{{ testTableExistsPDOException
@@ -176,6 +187,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 
         // trigger exception
         $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->update();
     }
     // }}}
 }

@@ -18,7 +18,8 @@ class Schema
     const VERSION_TAG       = '@version';
     // }}}
     // {{{ variables
-    protected $replaceFunction  = array();
+    protected $replaceFunction = array();
+    protected $updateData = array();
     // }}}
 
     // {{{ constructor
@@ -100,12 +101,18 @@ class Schema
         if(!$parser->isEndOfStatement()) {
             throw new Exceptions\SchemaException("Incomplete statement at the end of \"{$fileName}\".");
         }
-        $this->update($this->replace($tableName), $statementBlock, $versions);
+
+        $this->updateData = array(
+            'tableName' => $this->replace($tableName),
+            'statementBlock' => $statementBlock,
+            'versions' => $versions
+        );
     }
     // }}}
     // {{{ update
-    protected function update($tableName, $statementBlock, $versions)
+    public function update()
     {
+        extract($this->updateData);
         $keys = array_keys($versions);
 
         if ($this->tableExists($tableName)) {
@@ -115,7 +122,7 @@ class Schema
             if ($search == count($keys) - 1) {
                 $startKey = false;
             } elseif ($search === false) {
-                trigger_error('Current table version (' . $currentVersion .') not in schema file.', E_USER_WARNING);
+                trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
                 $startKey = false;
             } else {
                 $startKey = $keys[$search + 1];
