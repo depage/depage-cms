@@ -1,6 +1,6 @@
 <?php
 
-use depage\DB\Schema;
+use Depage\Db\Schema;
 
 // {{{ SchemaTestClass
 class SchemaTestClass extends Schema
@@ -134,6 +134,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->schema->tableExists          = true;
         $this->schema->currentTableVersion  = 'version 0.1';
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
+        $this->schema->update();
 
         $expected = array(
             11 => array("ALTER TABLE test ADD COLUMN did int(10) unsigned NOT NULL DEFAULT '0' AFTER pid"),
@@ -146,6 +147,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->tableExists = false;
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
+        $this->schema->update();
 
         $expected = array(
             7   => array("CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -162,9 +164,10 @@ class SchemaTest extends PHPUnit_Framework_TestCase
      */
     public function testProcessUnknownVersionWarning()
     {
-        $this->schema->tableExists          = true;
-        $this->schema->currentTableVersion  = 'bogus version';
+        $this->schema->tableExists = true;
+        $this->schema->currentTableVersion = 'bogus version';
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestFile.sql');
+        $this->schema->update();
     }
     // }}}
     // {{{ testProcessUnknownVersionExecution
@@ -182,6 +185,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestConnections.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -201,6 +205,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
             }
         );
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestConnections.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE testPrefix_testTable ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -215,6 +220,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
     {
         $this->schema->currentTableVersion = '';
         $this->schema->loadGlob(__DIR__ . '/Fixtures/TestBackticks.sql');
+        $this->schema->update();
 
         $expected = array(
             9   => array("CREATE TABLE `table backticks` ( uid int(10) unsigned NOT NULL DEFAULT '0', pid int(10) unsigned NOT NULL DEFAULT '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"),
@@ -353,6 +359,17 @@ class SchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFilter, $this->schema->extractTag($testFilter));
     }
     // }}}
+    // {{{ testTagSubstringException
+    /**
+     * @expectedException        depage\DB\Exceptions\SchemaException
+     * @expectedExceptionMessage Tags cannot be substrings of each other
+     */
+    public function testTagSubstringException()
+    {
+        $this->schema->loadFile('Fixtures/TestTagSubstring.sql');
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
