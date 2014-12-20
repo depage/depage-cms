@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpunit
-    bootstrap="Bootstrap.php"
-    colors="true"
-    >
+<phpunit bootstrap="Bootstrap.php">
     <php>
         <var name="DB_DSN" value="mysql:host=localhost;dbname=test_db" />
         <var name="DB_USER" value="test_db_user" />
