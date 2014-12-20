@@ -18,7 +18,9 @@ class Schema
     const VERSION_TAG       = '@version';
     // }}}
     // {{{ variables
-    protected $replaceFunction  = array();
+    protected $replaceFunction = array();
+    protected $updateData = array();
+    protected $dryRun;
     // }}}
 
     // {{{ constructor
@@ -33,7 +35,7 @@ class Schema
     {
         $fileNames = glob($path);
         if (empty($fileNames)) {
-            trigger_error("No file found matching \"{$path}\".", E_USER_WARNING);
+            trigger_error('No file found matching "' . $path . '".', E_USER_WARNING);
         }
         sort($fileNames);
 
@@ -46,7 +48,7 @@ class Schema
     public function loadFile($fileName)
     {
         if (!is_readable($fileName)) {
-            throw new Exceptions\SchemaException("File \"{$fileName}\" doesn't exist or isn't readable.");
+            throw new Exceptions\SchemaException('File "' . $fileName . '" doesn\'t exist or isn\'t readable.');
         }
 
         $parser         = new SqlParser();
@@ -67,9 +69,9 @@ class Schema
             if ($header) {
                 if ($tag[self::TABLENAME_TAG]) {
                     if (isset($tableName)) {
-                        throw new Exceptions\SchemaException("More than one tablename tags in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException('More than one tablename tags in "' . $fileName . '".');
                     } else {
-                        $tableName              = $tag[self::TABLENAME_TAG];
+                        $tableName = $tag[self::TABLENAME_TAG];
                         $dictionary[$tableName] = $this->replace($tableName);
                     }
                 }
@@ -81,15 +83,16 @@ class Schema
                 if (!$parser->isEndOfStatement()) {
                     $header = false;
                     if (!isset($tableName)) {
-                        throw new Exceptions\SchemaException("Tablename tag missing in \"{$fileName}\".");
+                        throw new Exceptions\SchemaException('Tablename tag missing in "' . $fileName . '".');
                     }
                     if (empty($versions)) {
-                        throw new Exceptions\SchemaException("There is code without version tags in \"{$fileName}\" at line {$number}.");
+                        throw new Exceptions\SchemaException('There is code without version tags in "' . $fileName . '" at line ' . $number . '.');
                     }
                 }
             }
 
-            $replaced   = $this->replaceIdentifiers($dictionary, $split);
+            $this->checkDictionary($dictionary);
+            $replaced = $this->replaceIdentifiers($dictionary, $split);
             $statements = $parser->tidy($replaced);
 
             if ($statements) {
@@ -98,24 +101,46 @@ class Schema
         }
 
         if(!$parser->isEndOfStatement()) {
-            throw new Exceptions\SchemaException("Incomplete statement at the end of \"{$fileName}\".");
+            throw new Exceptions\SchemaException('Incomplete statement at the end of "' . $fileName . '".');
         }
-        $this->update($this->replace($tableName), $statementBlock, $versions);
+
+        $this->updateData = array(
+            'tableName' => $this->replace($tableName),
+            'statementBlock' => $statementBlock,
+            'versions' => $versions
+        );
+    }
+    // }}}
+    // {{{ dryRun
+    public function dryRun()
+    {
+        $this->dryRun = true;
+        $this->history = array();
+        $this->run();
+        return $this->history;
     }
     // }}}
     // {{{ update
-    protected function update($tableName, $statementBlock, $versions)
+    public function update()
     {
+        $this->dryRun = false;
+        $this->run();
+    }
+    // }}}
+    // {{{ run
+    protected function run()
+    {
+        extract($this->updateData);
         $keys = array_keys($versions);
 
         if ($this->tableExists($tableName)) {
             $currentVersion = $this->currentTableVersion($tableName);
-            $search         = array_search($currentVersion, $keys);
+            $search = array_search($currentVersion, $keys);
 
             if ($search == count($keys) - 1) {
                 $startKey = false;
             } elseif ($search === false) {
-                trigger_error('Current table version (' . $currentVersion .') not in schema file.', E_USER_WARNING);
+                trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
                 $startKey = false;
             } else {
                 $startKey = $keys[$search + 1];
@@ -142,24 +167,27 @@ class Schema
     protected function execute($number, $statements)
     {
         foreach ($statements as $statement) {
-            try {
-                $preparedStatement = $this->pdo->prepare($statement);
-                $preparedStatement->execute();
-            } catch (\PDOException $e) {
-                if (class_exists('\ReflectionClass', false)) {
-                    $PDOExceptionReflection = new \ReflectionClass('PDOException');
-                    $line                   = $PDOExceptionReflection->getProperty('line');
-                    $message                = $PDOExceptionReflection->getProperty('message');
+            if ($this->dryRun) {
+                $this->history[] = $statement;
+            } else {
+                try {
+                    $preparedStatement = $this->pdo->prepare($statement);
+                    $preparedStatement->execute();
+                } catch (\PDOException $e) {
+                    if (class_exists('\ReflectionClass', false)) {
+                        $PDOExceptionReflection = new \ReflectionClass('PDOException');
+                        $line = $PDOExceptionReflection->getProperty('line');
+                        $message = $PDOExceptionReflection->getProperty('message');
 
-                    $line->setAccessible(true);
-                    $line->setValue($e, $number);
-                    $line->setAccessible(false);
-                    $message->setAccessible(true);
-                    $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
-                    $message->setAccessible(false);
+                        $line->setAccessible(true);
+                        $line->setValue($e, $number);
+                        $line->setAccessible(false);
+                        $message->setAccessible(true);
+                        $message->setValue($e, preg_replace('/ at line [0-9]+$/', ' at line ' . $number, $message->getValue($e)));
+                        $message->setAccessible(false);
+                    }
+                    throw $e;
                 }
-
-                throw $e;
             }
         }
     }
@@ -187,24 +215,24 @@ class Schema
     protected function currentTableVersion($tableName)
     {
         try {
-            $query      = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
-            $statement  = $this->pdo->query($query);
+            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+            $statement = $this->pdo->query($query);
             $statement->execute();
-            $row        = $statement->fetch();
+            $row = $statement->fetch();
 
             if ($row['TABLE_COMMENT'] == '') {
-                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException('Missing version identifier in table "' . $tableName . '".');
             }
 
             $version = $row['TABLE_COMMENT'];
         } catch (\PDOException $e) {
-            $query      = 'SHOW CREATE TABLE ' . $tableName;
-            $statement  = $this->pdo->query($query);
+            $query = 'SHOW CREATE TABLE ' . $tableName;
+            $statement = $this->pdo->query($query);
             $statement->execute();
-            $row        = $statement->fetch();
+            $row = $statement->fetch();
 
             if (!preg_match('/COMMENT=\'(.*)\'/', $row[1], $matches)) {
-                throw new Exceptions\SchemaException("Missing version identifier in table \"{$tableName}\".");
+                throw new Exceptions\SchemaException('Missing version identifier in table "' . $tableName . '".');
             }
 
             $version = array_pop($matches);
@@ -217,9 +245,7 @@ class Schema
     protected function updateTableVersion($tableName, $version)
     {
         $statement = 'ALTER TABLE ' . $tableName . ' COMMENT \'' . $version . '\'';
-
-        $preparedStatement = $this->pdo->prepare($statement);
-        $preparedStatement->execute();
+        $this->execute(null, array($statement));
     }
     // }}}
 
@@ -253,6 +279,24 @@ class Schema
         }
 
         return $matchedTags;
+    }
+    // }}}
+    // {{{ checkDictionary
+    protected function checkDictionary($dictionary)
+    {
+        $tags = array_keys($dictionary);
+        while ($tags) {
+            $current = array_pop($tags);
+
+            foreach ($tags as $test) {
+                if (
+                    strpos($current, $test) !== false ||
+                    strpos($test, $current) !== false
+                ) {
+                    throw new Exceptions\SchemaException('Tags cannot be substrings of each other ("' . $current . '", "' . $test . '").');
+                }
+            }
+        }
     }
     // }}}
     // {{{ setReplace
