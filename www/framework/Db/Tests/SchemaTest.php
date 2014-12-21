@@ -366,7 +366,7 @@ class SchemaTest extends PHPUnit_Framework_TestCase
      */
     public function testTagSubstringException()
     {
-        $this->schema->loadFile('Fixtures/TestTagSubstring.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestTagSubstring.sql');
     }
     // }}}
 
