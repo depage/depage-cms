@@ -19,9 +19,10 @@ class Project extends \Depage\Entity\Entity
      * @brief fields
      **/
     static protected $fields = array(
-        "projectId" => null,
+        "id" => null,
         "name" => "",
         "fullname" => "",
+        "groupId" => 1,
     );
 
     /**
@@ -46,6 +47,8 @@ class Project extends \Depage\Entity\Entity
      * @return      void
      */
     public function __construct($pdo) {
+        parent::__construct($pdo);
+
         $this->pdo = $pdo;
     }
     /* }}} */
@@ -113,20 +116,72 @@ class Project extends \Depage\Entity\Entity
      * @return      Array array of projects
      */
     static public function loadAll($pdo) {
-        $projects = array();
         $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
-            "SELECT $fields, projectgroup.name
+            "SELECT $fields, projectgroup.name as groupName
             FROM
                 {$pdo->prefix}_projects AS projects,
                 {$pdo->prefix}_project_groups AS projectgroup
+            WHERE
+                projects.groupId = projectgroup.id
             ORDER BY
                 projectgroup.pos DESC, fullname DESC
 
             "
         );
-        $query->execute();
+
+        $projects = self::fetch($pdo, $query);
+
+        return $projects;
+    }
+    // }}}
+    // {{{ loadByName()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     *
+     * @return      Array array of projects
+     */
+    static public function loadByName($pdo, $name) {
+        $fields = implode(", ", self::getFields("projects"));
+
+        $query = $pdo->prepare(
+            "SELECT $fields, projectgroup.name as groupName
+            FROM
+                {$pdo->prefix}_projects AS projects,
+                {$pdo->prefix}_project_groups AS projectgroup
+            WHERE
+                projects.name = :name AND projects.groupId = projectgroup.id
+            ORDER BY
+                projectgroup.pos DESC, fullname DESC
+            "
+        );
+        $projects = self::fetch($pdo, $query, array(
+            ":name" => $name,
+        ));
+
+        if (count($projects) == 0) {
+            throw new Exceptions\Project("project '$name' does not exist.");
+        }
+
+        return $projects[0];
+    }
+    // }}}
+    // {{{ fetch()
+    /**
+     * @brief fetch
+     *
+     * @param mixed $query
+     * @return void
+     **/
+    static protected function fetch($pdo, $query, $params = array())
+    {
+        $projects = array();
+        $query->execute($params);
 
         // pass pdo-instance to constructor
         $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", array($pdo));
@@ -138,6 +193,52 @@ class Project extends \Depage\Entity\Entity
         } while ($project);
 
         return $projects;
+    }
+    // }}}
+    // {{{ save()
+    /**
+     * save a project object
+     *
+     * @public
+     *
+     * @return
+     */
+    public function save() {
+        $fields = array();
+        $primary = self::$primary[0];
+        $isNew = $this->data[$primary] === null;
+
+        $dirty = array_keys($this->dirty, true);
+
+        if (count($dirty) > 0) {
+            if ($isNew) {
+                $query = "INSERT INTO {$this->pdo->prefix}_projects";
+            } else {
+                $query = "UPDATE {$this->pdo->prefix}_projects";
+            }
+            foreach ($dirty as $key) {
+                $fields[] = "$key=:$key";
+            }
+            $query .= " SET " . implode(",", $fields);
+
+            if (!$isNew) {
+                $query .= " WHERE $primary=:$primary";
+                $dirty[] = $primary;
+            }
+
+            $params = array_intersect_key($this->data,  array_flip($dirty));
+
+            $cmd = $this->pdo->prepare($query);
+            $success = $cmd->execute($params);
+
+            if ($isNew) {
+                $this->$primary = $this->pdo->lastInsertId();
+            }
+
+            if ($success) {
+                $this->dirty = array_fill_keys(array_keys(static::$fields), false);
+            }
+        }
     }
     // }}}
 

@@ -23,19 +23,66 @@ class Project extends Base
         $this->projectName = $this->urlSubArgs[0];
 
         if (empty($this->projectName)) {
-            // @todo test with Project class
-            throw new \Exception("no project");
+            throw new \Depage\Cms\Exceptions\Project("no project given");
+        } else if ($this->projectName == "+") {
+            $this->project = new \Depage\Cms\Project($this->pdo);
+        } else {
+            $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
         }
     }
     // }}}
 
     // {{{ index()
     function index() {
-        return $this->edit();
+        if ($this->projectName == "+") {
+            return $this->edit();
+        } else {
+            return $this->flashEdit();
+        }
     }
     // }}}
     // {{{ edit()
-    function edit() {
+    /**
+     * @brief edit
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function edit()
+    {
+        $form = new \Depage\Cms\Forms\Project("edit-project-" . $this->project->id, array(
+            "projectGroups" => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
+        ));
+        $form->populate(array(
+            "name" => $this->project->name,
+            "fullname" => $this->project->fullname,
+            "groupId" => $this->project->groupId,
+        ));
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            foreach ($values as $key => $val) {
+                $this->project->$key = $val;
+            }
+
+            $this->project->save();
+
+            $form->clearSession();
+
+        }
+
+        $h = new Html(array(
+            "content" => $form,
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+
+    // {{{ flashEdit()
+    function flashEdit() {
         // construct template
         $hProject = new Html("flashedit.tpl", array(
             'flashUrl' => "project/{$this->projectName}/flash/flash/false",
