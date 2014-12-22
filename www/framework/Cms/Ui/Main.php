@@ -146,6 +146,10 @@ class Main extends Base {
     public function projects() {
         $this->auth->enforce();
 
+
+        $project = new \Depage\Cms\Project($this->pdo);
+        $project->updateSchema();
+
         // get data
         $projects = \Depage\Cms\Project::loadAll($this->pdo);
 

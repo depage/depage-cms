@@ -8,9 +8,9 @@
     @version 1.5.0-beta.1
 */
 CREATE TABLE `_project_auth` (
-  `userid` int(11) unsigned DEFAULT NULL,
-  `projectid` int(11) unsigned DEFAULT NULL,
-  KEY `ids` (`userid`, `projectid`),
-  CONSTRAINT `projectid` FOREIGN KEY (`projectid`) REFERENCES `_projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `projectuserid` FOREIGN KEY (`userid`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `userId` int(11) unsigned DEFAULT NULL,
+  `projectId` int(11) unsigned DEFAULT NULL,
+  KEY `ids` (`userId`, `projectId`),
+  CONSTRAINT `_project_auth_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `_projects` (`projectId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `_project_auth_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

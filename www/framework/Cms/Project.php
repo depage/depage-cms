@@ -19,7 +19,7 @@ class Project extends \Depage\Entity\Entity
      * @brief fields
      **/
     static protected $fields = array(
-        "id" => null,
+        "projectId" => null,
         "name" => "",
         "fullname" => "",
     );
@@ -114,12 +114,17 @@ class Project extends \Depage\Entity\Entity
      */
     static public function loadAll($pdo) {
         $projects = array();
-        $fields = implode(", ", array_keys(self::$fields));
+        $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
-            "SELECT $fields
+            "SELECT $fields, projectgroup.name
             FROM
-                {$pdo->prefix}_projects AS projects"
+                {$pdo->prefix}_projects AS projects,
+                {$pdo->prefix}_project_groups AS projectgroup
+            ORDER BY
+                projectgroup.pos DESC, fullname DESC
+
+            "
         );
         $query->execute();
 
@@ -151,7 +156,13 @@ class Project extends \Depage\Entity\Entity
                 return $this->pdo->prefix . $tableName;
             }
         );
-        $schema->loadGlob(__DIR__ . "/Sql/*.sql");
+
+        $files = glob(__DIR__ . "/Sql/*.sql");
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
+        }
     }
     // }}}
 }
