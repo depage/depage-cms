@@ -9,7 +9,7 @@
 
 CREATE TABLE `_auth_sessions` (
     `sid` varchar(32) NOT NULL DEFAULT '',
-    `userid` int(11) unsigned DEFAULT NULL,
+    `userId` int(11) unsigned DEFAULT NULL,
     `project` varchar(50) DEFAULT NULL,
     `ip` varchar(29) DEFAULT NULL,
     `dateLastUpdate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -17,7 +17,7 @@ CREATE TABLE `_auth_sessions` (
     `useragent` varchar(255) NOT NULL DEFAULT '',
     `sessionData` longblob,
     PRIMARY KEY (`sid`),
-    KEY `userId` (`userid`),
-    CONSTRAINT `userId` FOREIGN KEY (`userid`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    KEY `userId` (`userId`),
+    CONSTRAINT `_auth_sessions_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

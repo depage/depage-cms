@@ -386,7 +386,13 @@ abstract class Auth
                 return $this->pdo->prefix . $tableName;
             }
         );
-        $schema->loadGlob(__DIR__ . "/SQL/*.sql");
+
+        $files = glob(__DIR__ . "/SQL/*.sql");
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
+        }
     }
     // }}}
 }
