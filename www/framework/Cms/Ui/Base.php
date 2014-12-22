@@ -42,7 +42,7 @@ class Base extends \Depage\Depage\Ui\Base
         \depage\Session\SessionHandler::register($this->pdo);
 
         // get auth object
-        $this->auth = \depage\Auth\Auth::factory(
+        $this->auth = \Depage\Auth\Auth::factory(
             $this->pdo, // db_pdo
             $this->options->auth->realm, // auth realm
             DEPAGE_BASE, // domain
@@ -57,6 +57,8 @@ class Base extends \Depage\Depage\Ui\Base
             'env' => $this->options->env,
         );
         $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
+
+        $this->auth->updateSchema();
 
         // establish if the user is logged in
         if (empty($this->authUser)) {

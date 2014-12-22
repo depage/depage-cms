@@ -24,5 +24,5 @@ CREATE TABLE `_auth_user` (
     `resetPasswordId` varchar(255) DEFAULT NULL,
     `loginTimeout` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 

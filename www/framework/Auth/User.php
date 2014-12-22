@@ -84,7 +84,7 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -117,7 +117,7 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByEmail($pdo, $email) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -150,7 +150,7 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -184,7 +184,7 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadById($pdo, $id) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -217,7 +217,7 @@ class User extends \Depage\Entity\Entity
      */
     static public function loadActive($pdo) {
         $users = array();
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields,
@@ -259,7 +259,7 @@ class User extends \Depage\Entity\Entity
      */
     static public function loadAll($pdo) {
         $users = array();
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields

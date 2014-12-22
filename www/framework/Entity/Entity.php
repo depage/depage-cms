@@ -155,6 +155,27 @@ abstract class Entity
         return (isset($this->data[$key]));
     }
     // }}}
+
+    // {{{ getFields()
+    /**
+     * @brief get field names that are defined in schema
+     *
+     * @param string $prefix = ""
+     * @return array of field names
+     **/
+    protected static function getFields($prefix = "")
+    {
+        $fields = array_keys(static::$fields);
+
+        if ($prefix !== "") {
+            $fields = array_map(function($val) use ($prefix) {
+                return $prefix . "." . $val;
+            }, $fields);
+        }
+
+        return $fields;
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
