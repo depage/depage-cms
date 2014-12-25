@@ -5,12 +5,12 @@
  * base class for cms-ui modules
  *
  *
- * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2011-2014 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace DepageLegacy;
+namespace Depage\Cms;
 
 class Import
 {
@@ -48,7 +48,7 @@ class Import
 
         $this->pdo = $pdo;
         $this->cache = $cache;
-        $this->xmldb = new \depage\xmldb\xmldb("{$this->pdo->prefix}_proj_{$this->projectName}", $this->pdo, $this->cache, array(
+        $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->projectName}", $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
         ));
     }
@@ -111,7 +111,7 @@ class Import
     // {{{ loadBackup()
     public function loadBackup($xmlFile)
     {
-        $this->xmlImport = new \depage\xml\Document();
+        $this->xmlImport = new \Depage\Xml\Document();
         $this->xmlImport->load($xmlFile);
     }
     // }}}
@@ -170,7 +170,7 @@ class Import
 
         // extract navigation tree
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-            $this->xmlNavigation = new \depage\xml\Document();
+            $this->xmlNavigation = new \Depage\Xml\Document();
             $node = $this->xmlNavigation->importNode($nodelist->item($i), true);
             $this->xmlNavigation->appendChild($node);
         }
@@ -206,7 +206,7 @@ class Import
 
         // save pagedata
         if ($pagelist->length === 1) {
-            $xmlData = new \depage\xml\Document();
+            $xmlData = new \Depage\Xml\Document();
 
             $dataNode = $xmlData->importNode($pagelist->item(0), true);
             $xmlData->appendChild($dataNode);
@@ -234,7 +234,7 @@ class Import
 
         // extract template tree
         if ($nodelist->length === 1) {
-            $xmlTemplates = new \depage\xml\Document();
+            $xmlTemplates = new \Depage\Xml\Document();
             $node = $xmlTemplates->importNode($nodelist->item(0), true);
             $xmlTemplates->appendChild($node);
         }
@@ -341,12 +341,12 @@ class Import
             $validParents = explode(",", $validParentsNode->nodeValue);
 
             $contentNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode")->item(0);
-            $contentDoc = new \depage\xml\Document();
+            $contentDoc = new \Depage\Xml\Document();
             //$contentDoc->preserveWhiteSpace = false;
             //$contentDoc->formatOutput = true;
             $contentDoc->loadXML($this->xmlHeader . trim($contentNode->nodeValue) . $this->xmlFooter);
 
-            $nodeTypes = new \depage\cms\xmldoctypes\page($this->xmldb, $this->docNavigation->getDocId());
+            $nodeTypes = new \Depage\Xms\XmlDocTypes\Page($this->xmldb, $this->docNavigation->getDocId());
 
             $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, array(
                 'pos' => $pos,
@@ -367,7 +367,7 @@ class Import
         $nodelist = $xpath->query("//proj:colorschemes");
 
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-            $this->xmlColors = new \depage\xml\Document();
+            $this->xmlColors = new \Depage\Xml\Document();
             $node = $this->xmlColors->importNode($nodelist->item($i), true);
             $this->xmlColors->appendChild($node);
         }
@@ -382,7 +382,7 @@ class Import
         $nodelist = $xpath->query("//proj:settings");
 
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-            $this->xmlSettings = new \depage\xml\Document();
+            $this->xmlSettings = new \Depage\Xml\Document();
             $node = $this->xmlSettings->importNode($nodelist->item($i), true);
             $this->xmlSettings->appendChild($node);
         }
