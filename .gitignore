@@ -1,5 +1,7 @@
 www/cache/
 www/projects/
+**/Tests/phpunit/
+**/Tests/Report/
 
 *.vis
 
