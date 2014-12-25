@@ -6,27 +6,27 @@
  * adds details handler to definition-lists
  *
  *
- * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depage.net]
  */
 ;(function($){
     if(!$.depage){
         $.depage = {};
     };
-    
+
     $.depage.details = function(el, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.details", base);
-        
+
         base.init = function(){
             base.options = $.extend({},$.depage.details.defaultOptions, options);
-            
+
             // Put your initialization code here
             $("dt", base.el).each(function() {
                 var $head = $(this).css({
@@ -53,20 +53,20 @@
                 });
             });
         };
-        
+
         // Run initializer
         base.init();
     };
-    
+
     $.depage.details.defaultOptions = {
         option1: "default"
     };
-    
+
     $.fn.depageDetails = function(options){
         return this.each(function(){
             (new $.depage.details(this, options));
         });
     };
-    
+
 })(jQuery);
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

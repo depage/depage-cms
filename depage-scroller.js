@@ -4,26 +4,26 @@
  *
  * @file    depage-scroller.js
  *
- * custom scroller to replace default scrollbars for scrolling elements 
+ * custom scroller to replace default scrollbars for scrolling elements
  *
  *
- * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 ;(function($){
     if(!$.depage){
         $.depage = {};
     };
-    
+
     $.depage.scroller = function(el, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.scroller", base);
 
@@ -37,7 +37,7 @@
         // {{{ references to new elements
         // new layout wrapper (styled like original)
         var $scrollOrigin = null;
-        
+
         // new wrapper for scrolling content
         var $scrollFrame = null;
 
@@ -50,11 +50,11 @@
         // scroll handle
         var $scrollHandle = null;
         // }}}
-        
+
         // {{{ init()
         base.init = function() {
             base.options = $.extend({},$.depage.scroller.defaultOptions, options);
-            
+
             $scrollContent = base.$el;
 
             var className = $scrollContent[0].className;
@@ -88,18 +88,18 @@
 
             // add scroll events
             $scrollFrame.scroll( base.onScroll );
-            
+
             // call scroll event also when window resizes
             $(window).resize( base.onScroll );
-            
+
             // call scroll event for initialization
             base.onScroll();
-            
+
             // add mousewheel events
             $scrollFrame.mousewheel( base.onMousewheel );
         };
         // }}}
-        
+
         // {{{ onScroll()
         base.onScroll = function() {
             if (!dragging) {
@@ -133,7 +133,7 @@
             }
         };
         // }}}
-        
+
         // {{{ startDrag()
         base.startDrag = function(e) {
             dragHandleY = e.offsetY || e.pageY - $(e.target).offset().top;
@@ -149,7 +149,7 @@
             return false;
         };
         // }}}
-        
+
         // {{{ onDrag()
         base.onDrag = function(e) {
             if (dragging) {
@@ -172,7 +172,7 @@
             }
         };
         // }}}
-        
+
         // {{{ stopDrag()
         base.stopDrag = function() {
             $scrollOrigin.removeClass("dragging");
@@ -185,7 +185,7 @@
             return false;
         };
         // }}}
-        
+
         // {{{ disableIframes()
         base.disableIframes = function() {
             $("iframe").each( function() {
@@ -202,28 +202,28 @@
                     height: $iframe.height()
                 });
             });
-        } 
+        }
         // }}}
-        
+
         // {{{ enableIframes()
         base.enableIframes = function() {
             $(".disable-iframe-events").remove();
-        } 
+        }
         // }}}
-        
+
         // Run initializer
         base.init();
     };
-    
+
     $.depage.scroller.defaultOptions = {
         distance: 25 // number of pixels to scroll on mouse wheel events
     };
-    
+
     $.fn.depageScroller = function(options){
         return this.each(function(){
             (new $.depage.scroller(this, options));
         });
     };
-    
+
 })(jQuery);
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

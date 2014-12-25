@@ -1,15 +1,15 @@
 /**
  * @require framework/shared/jquery-1.8.3.js
- * 
+ *
  * @file    depage-autocomplete
  *
  * Depage AutoComplete plugin to supply user with hints or data while filling forms.
- * 
+ *
  * Provide a url in the options to dynamically load via AJAX into the corresponding unordered list.
- * 
+ *
  * Fires a "selected" event when the item is picked
- * 
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Ben Wallis
  */
@@ -18,14 +18,14 @@
     $.expr[':'].focus = function( elem ) {
         return elem === document.activeElement && ( elem.type || elem.href );
     };
-    
+
     if(!$.depage){
         $.depage = {};
     }
-    
+
     /**
      * autocomplete
-     * 
+     *
      * @param el - file input
      * @param index
      * @param options
@@ -33,38 +33,38 @@
     $.depage.autocomplete = function(el, index, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.autocomplete", base);
-        
+
         // List element associated with input
         base.$list = null;
         base.$form = null;
         base.$items = null;
-        
+
         var $body = $('body');
         base.visible = false;
-        
+
         // {{{ init
         /**
          * Init
-         * 
+         *
          * Get the plugin options.
-         * 
+         *
          * @return void
          */
         base.init = function(){
             base.options = $.extend({}, $.depage.autocomplete.defaultOptions, options);
-            
+
             base.options.list_id = base.options.list_id || (base.$el.parents("p.input-text").attr("id") + "-list");
-            
+
             // disable browser autocomplete
             base.$el.attr("autocomplete", "off");
-            
+
             base.setup();
             base.autocomplete();
         };
@@ -73,10 +73,10 @@
         // {{{ select
         /*
             * Select
-            * 
+            *
             * Set the list-item as selected, and hide the autocompelete list.
-            * 
-            * @param $item - $('li') 
+            *
+            * @param $item - $('li')
             */
         var select = function(e, $content) {
             $content.removeClass("hover");
@@ -85,13 +85,13 @@
             base.$el.trigger("selected", [$content]);
         };
         // }}}
-        
+
         // {{{ autocomplete()
         /**
          * autocomplete
-         * 
+         *
          * Binds to keypress and loads list element with options.
-         * 
+         *
          * @return void
          */
         base.autocomplete = function(){
@@ -112,13 +112,13 @@
             }
         };
         /// }}}
-        
+
         // {{{ setup()
         /**
          * Setup UL
-         * 
+         *
          * Clicking <li> adds contents to the input element.
-         * 
+         *
          */
         base.setup =  function(){
             base.$list = $("#" + base.options.list_id);
@@ -138,13 +138,13 @@
                         "width" : base.$el.width()
                     })
                     .hide();
-                
+
                 $body.prepend(base.$list);
             }
-            
+
             /*
              * Load
-             * 
+             *
              * Bind to the autocomplete load event and setup the dynamic functionality.
              */
             base.$el.bind("load.autocomplete", function(e, $newItems) {
@@ -154,7 +154,7 @@
                     return;
                 }
                 $newItems = $newItems.children("li");
-                
+
                 // truncate the list
                 if(base.options.max_items){
                     $newItems = $newItems.slice(0,base.options.max_items -1);
@@ -168,7 +168,7 @@
                     select(e, $(this));
                     return false;
                 });
-                
+
                 if(base.$items.length) {
                     if (base.$items.filter(".hover").length === 0) {
                         $(base.$items[0]).addClass("hover");
@@ -183,7 +183,7 @@
                     base.hide();
                 }
             });
-            
+
             // Bind to keyup events on the input
             base.$el.bind("keyup.autocomplete", function(e) {
                 var code = e.keyCode ? e.keyCode : e.which;
@@ -192,7 +192,7 @@
                     // escape key
                     base.hide();
                     base.$el.val("");
-                } 
+                }
                 if (base.$items) {
                     // find the selected list item
                     var $item = base.$items.filter(".hover").removeClass("hover");
@@ -210,7 +210,7 @@
                                 select(e, $item);
                                 base.$el.val("");
                                 break;
-                        } 
+                        }
                     } else {
                         // default to the first item
                         $item = $(base.$items[0]);
@@ -231,16 +231,16 @@
             });
         };
         // }}}
-        
+
         // {{{ base.show()
         /**
-         * Base Show 
+         * Base Show
          */
         base.show = function() {
             if (base.visible) {
                 return;
             }
-                    
+
             // we have items so position and show the list
             base.$list
                 .css({
@@ -250,7 +250,7 @@
                 .show();
 
             /**
-             * Remove menu on click out 
+             * Remove menu on click out
              */
             $body.bind('click.autocomplete', function(e) {
                 if (e.target.type !== 'submit') {
@@ -263,10 +263,10 @@
             return false;
         };
         // }}}
-        
+
         // {{{ base.hide()
         /**
-         * Base Hide 
+         * Base Hide
          */
         base.hide = function() {
             if (!base.visible) {
@@ -281,14 +281,14 @@
             return false;
         };
         // }}}
-        
+
         base.init();
     };
     // }}}
-    
+
     /**
      * Default Options
-     * 
+     *
      * url - the ajax lander url
      * html5 - if false this will force the autoloader to work via ajax
      */
@@ -297,13 +297,13 @@
         list_id : false,
         max_items : 8
     };
-    
+
     $.fn.depageAutoComplete = function(options){
         return this.each(function(index){
             (new $.depage.autocomplete(this, index, options));
         });
     };
-    
+
 })(jQuery);
 
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

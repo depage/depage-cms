@@ -3,23 +3,23 @@
  *
  * @file    depage-carrousel.js
  *
- * adds a custom carrousel 
+ * adds a custom carrousel
  *
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 ;(function($){
     if(!$.depage){
         $.depage = {};
     }
-    
+
     $.depage.carrousel = function(el, options){
         /* {{{ variables */
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
@@ -35,7 +35,7 @@
         base.playing = false;
         base.num = divs.length;
         /* }}} */
-        
+
         /* {{{ init() */
         base.init = function(){
             base.options = $.extend({},$.depage.carrousel.defaultOptions, options);
@@ -163,7 +163,7 @@
                 var newMarginTop = -n * base.height;
                 if (n === 0 && base.activeSlide != 1 ) {
                     // animate to duplicate
-                    newMarginTop = -divs.length * base.height; 
+                    newMarginTop = -divs.length * base.height;
                 } else if (n === 1 && base.activeSlide === 0) {
                     // reset to first position
                     base.$passepartout.css({
@@ -175,7 +175,7 @@
                         marginTop: -divs.length * base.height
                     });
                 }
-                
+
                 // scroll to active slide
                 base.$passepartout.animate({
                     marginTop: newMarginTop
@@ -186,7 +186,7 @@
                 var newMarginLeft = -n * base.width;
                 if (n === 0 && base.activeSlide !== 1 ) {
                     // animate to duplicate
-                    newMarginLeft = -divs.length * base.width; 
+                    newMarginLeft = -divs.length * base.width;
                 } else if (n === 1 && base.activeSlide === 0) {
                     // reset to first position
                     base.$passepartout.css({
@@ -198,7 +198,7 @@
                         marginLeft: -divs.length * base.width
                     });
                 }
-                
+
                 // scroll to active slide
                 base.$passepartout.animate({
                     marginLeft: newMarginLeft
@@ -232,11 +232,11 @@
             }
         };
         /* }}} */
-        
+
         // Run initializer
         base.init();
     };
-    
+
     /* {{{ defaultOptions() */
     $.depage.carrousel.defaultOptions = {
         speed: 3000,
@@ -245,7 +245,7 @@
         direction: "horizontal"
     };
     /* }}} */
-    
+
     /* {{{ $.fn.depageCarrousel() */
     $.fn.depageCarrousel = function(options){
         return this.each(function(){

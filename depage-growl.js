@@ -4,9 +4,9 @@
  * depage growl notification jquery-plugin
  *
  *
- * copyright (c) 2009-2011 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2009-2011 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 ;(function( $ ){
     $.extend($.depage, {
@@ -14,7 +14,7 @@
         /**
          * @function growl()
          *
-         * shows a growl-like notification 
+         * shows a growl-like notification
          *
          * @param title     title of the notification
          * @param message   bodytext of the notification (optional)
@@ -40,7 +40,7 @@
                 .hide()
                 .fadeIn(400)
                 .animate( { opacity: 1 }, 3500)
-                .fadeOut(800, function() { 
+                .fadeOut(800, function() {
                     $(this).remove();
                 });
         }
