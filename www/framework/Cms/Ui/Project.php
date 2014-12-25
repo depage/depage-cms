@@ -35,7 +35,7 @@ class Project extends Base
     // {{{ index()
     function index() {
         if ($this->projectName == "+") {
-            return $this->edit();
+            return $this->settings();
         } else {
             return $this->flashEdit();
         }
@@ -48,15 +48,11 @@ class Project extends Base
      * @param mixed
      * @return void
      **/
-    protected function edit()
+    protected function settings()
     {
         $form = new \Depage\Cms\Forms\Project("edit-project-" . $this->project->id, array(
+            "project" => $this->project,
             "projectGroups" => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
-        ));
-        $form->populate(array(
-            "name" => $this->project->name,
-            "fullname" => $this->project->fullname,
-            "groupId" => $this->project->groupId,
         ));
         $form->process();
 
@@ -68,9 +64,9 @@ class Project extends Base
             }
 
             $this->project->save();
-
             $form->clearSession();
 
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         $h = new Html(array(
@@ -81,8 +77,8 @@ class Project extends Base
     }
     // }}}
 
-    // {{{ flashEdit()
-    function flashEdit() {
+    // {{{ edit()
+    function edit() {
         // construct template
         $hProject = new Html("flashedit.tpl", array(
             'flashUrl' => "project/{$this->projectName}/flash/flash/false",

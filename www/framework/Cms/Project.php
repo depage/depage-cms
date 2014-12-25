@@ -126,7 +126,7 @@ class Project extends \Depage\Entity\Entity
             WHERE
                 projects.groupId = projectgroup.id
             ORDER BY
-                projectgroup.pos DESC, fullname DESC
+                projectgroup.pos ASC, fullname ASC
 
             "
         );
@@ -157,7 +157,7 @@ class Project extends \Depage\Entity\Entity
             WHERE
                 projects.name = :name AND projects.groupId = projectgroup.id
             ORDER BY
-                projectgroup.pos DESC, fullname DESC
+                projectgroup.pos ASC, fullname ASC
             "
         );
         $projects = self::fetch($pdo, $query, array(
@@ -211,6 +211,8 @@ class Project extends \Depage\Entity\Entity
         $dirty = array_keys($this->dirty, true);
 
         if (count($dirty) > 0) {
+            $this->initProject();
+
             if ($isNew) {
                 $query = "INSERT INTO {$this->pdo->prefix}_projects";
             } else {
@@ -238,6 +240,8 @@ class Project extends \Depage\Entity\Entity
             if ($success) {
                 $this->dirty = array_fill_keys(array_keys(static::$fields), false);
             }
+
+            $this->initProject();
         }
     }
     // }}}
@@ -259,6 +263,65 @@ class Project extends \Depage\Entity\Entity
         );
 
         $files = glob(__DIR__ . "/Sql/*.sql");
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
+        }
+    }
+    // }}}
+    // {{{ initProject()
+    /**
+     * @brief initProject
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function initProject()
+    {
+        $this->updateProjectSchema();
+
+        $projectPath = DEPAGE_PATH . "projects/{$this->name}/";
+
+        $success = mkdir($projectPath, 0777, true) || is_writable($projectPath);
+        mkdir($projectPath . "lib/", 0777, true);
+        mkdir($projectPath . "import/", 0777, true);
+        mkdir($projectPath . "xml/", 0777, true);
+        mkdir($projectPath . "xslt/", 0777, true);
+
+        if (!$success) {
+            throw new Exceptions\Project("Could not create project directory '$projectPath'.");
+        }
+    }
+    // }}}
+    // {{{ updateProjectSchema()
+    /**
+     * @brief updateProjectSchema
+     *
+     * @return void
+     **/
+    public function updateProjectSchema()
+    {
+        $schema = new \Depage\DB\Schema($this->pdo);
+
+        $projectName = $this->name;
+
+        $schema->setReplace(
+            function ($tableName) use ($projectName) {
+                return $this->pdo->prefix . str_replace("PROJECTNAME", $projectName, $tableName);
+            }
+        );
+
+        // schema for xmldb
+        $files = glob(__DIR__ . "/../XmlDb/Sql/*.sql");
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
+        }
+
+        // schema for comments
+        $files = glob(__DIR__ . "/../Comments/Sql/*.sql");
         sort($files);
         foreach ($files as $file) {
             $schema->loadFile($file);

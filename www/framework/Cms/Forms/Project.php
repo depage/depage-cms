@@ -21,6 +21,8 @@ class Project extends \Depage\Htmlform\Htmlform
         foreach($params['projectGroups'] as $g) {
             $groups[$g->id] = $g->name;
         }
+        $project = $params['project'];
+
         parent::__construct($name, $params);
 
         $this->addText("fullname", array(
@@ -30,13 +32,16 @@ class Project extends \Depage\Htmlform\Htmlform
         $this->addText("name", array(
             "label" => _("Identifier"),
             "required" => "true",
-            "validator" => "/[-a-zA-Z0-9_]+/"
+            "validator" => "/[-a-zA-Z0-9_]+/",
+            "disabled" => $project->id !== null,
         ));
         $this->addSingle("groupId", array(
             "label" => _("Project Group"),
             "list" => $groups,
             "skin" => "select",
         ));
+
+        $this->populate($project);
     }
     // }}}
 }
