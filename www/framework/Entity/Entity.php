@@ -69,7 +69,7 @@ abstract class Entity
     public function __construct()
     {
         if (count($this->data) === 0) {
-            // new empty object with no data
+            // new empty object with no data -> set defaults
             foreach (static::$fields as $key => $value) {
                 $this->data[$key] = $value;
             }
@@ -126,7 +126,6 @@ abstract class Entity
         if (array_key_exists($key, static::$fields)) {
             // add value if property exists and is not primary
             if (!in_array($key, static::$primary) || !$this->initialized) {
-                // TODO set false on PDO  class fetch instance
                 $this->dirty[$key] = (isset($this->dirty[$key]) && $this->dirty[$key] == true) || (
                     (isset($this->data[$key]) && $this->data[$key] != $val)
                     || !isset($this->data[$key])
