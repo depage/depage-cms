@@ -5,9 +5,9 @@
  * depage html module
  *
  *
- * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  *
  * thanks for ideas from:
  * http://stackoverflow.com/questions/62617/whats-the-best-way-to-separate-php-code-and-html

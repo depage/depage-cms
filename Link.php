@@ -5,9 +5,9 @@
  * depage html module
  *
  *
- * copyright (c) 2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2012 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 namespace depage\html;
 
@@ -20,9 +20,9 @@ class link {
     /**
      * builds a localized link
      *
-     * @param   $link (string) page to link to 
+     * @param   $link (string) page to link to
      * @param   $protocol (string) protocol to use for the link
-     * @param   $locale (string) locale to link to 
+     * @param   $locale (string) locale to link to
      */
     public function __construct($link, $protocol = null, $locale = null) {
         $this->link = $link;
@@ -34,9 +34,9 @@ class link {
     /**
      * builds a localized link
      *
-     * @param   $link (string) page to link to 
+     * @param   $link (string) page to link to
      * @param   $protocol (string) protocol to use for the link
-     * @param   $locale (string) locale to link to 
+     * @param   $locale (string) locale to link to
      */
     public function __toString() {
         if (is_null($this->locale)) {
