@@ -7,8 +7,8 @@
  * Builds the dialogue around an element, when clicked the dialgoue appears.
  *
  * Plugin takes a 'buttons' argument which is defines the buttons to display.
- * 
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Ben Wallis
  */
@@ -16,10 +16,10 @@
     if(!$.depage){
         $.depage = {};
     };
-    
+
     /**
      * shyDialogue
-     * 
+     *
      * @param el - file input
      * @param index
      * @param options
@@ -27,23 +27,23 @@
     $.depage.shyDialogue = function(el, index, buttons, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.shyDialogue", base);
-        
+
         // enable buttons in the dialogue
         var $buttonWrapper = null;
-        
+
         // {{{ init
         /**
          * Init
-         * 
+         *
          * Get the plugin options.
-         * 
+         *
          * @return void
          */
         base.init = function(){
@@ -63,11 +63,11 @@
 
         };
         // }}}
-        
+
         // {{{ bind()
         /**
          * Dialogue
-         * 
+         *
          * @return void
          */
         base.bind = function(){
@@ -99,7 +99,7 @@
         // {{{ showButtons()
         /**
          * Show Buttons
-         * 
+         *
          * @return void
          */
         base.showButtons = function() {
@@ -109,18 +109,18 @@
             $wrapper.find('a:first').focus();
         };
         // }}}
-        
+
         // {{{ setButtons()
         /**
          * setButtons
-         * 
+         *
          * @param buttons
-         * 
+         *
          * @return void
          */
         base.setButtons = function(buttons) {
             $buttonWrapper.empty();
-            
+
             for(var i in buttons){
                 (function() {
                     var button = base.buttons[i];
@@ -132,31 +132,31 @@
                     var $btn = $('<a href="#" class="' + className + '" />')
                         .attr('id', base.options.id + '-' + i)
                         .text(title)
-                        .data('depage.shyDialogue', base) 
+                        .data('depage.shyDialogue', base)
                         .click(function(e){
                             if (typeof(button.click) !== 'function' || button.click(e) !== false) {
                                 base.hide();
                             }
                             return false;
                         });
-                    
+
                     $buttonWrapper.append($btn);
                 })();
             }
-            
+
             // allow chaining
             return this;
         };
         // }}}
-        
+
         base.init();
         return base;
     };
     // }}}
-    
+
     /**
      * Default Options
-     * 
+     *
      * id - the id of the dialogue element wrapper to display
      * message - message the dialouge will display
      * buttons - buttons to supply (with corresponding event triggered) { button_text: {click: function() {}}, ...}
@@ -176,13 +176,13 @@
         buttons: {},
         bind_el: null
     };
-    
+
     $.fn.depageShyDialogue = function(buttons, options){
         return this.each(function(index){
             (new $.depage.shyDialogue(this, index, buttons, options));
         });
     };
-    
+
 })(jQuery);
 
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

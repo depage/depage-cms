@@ -5,9 +5,9 @@
  * comment class
  *
  *
- * copyright (c) 2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2012 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Comments\Models;

@@ -7,7 +7,7 @@
  * adds a magazine like navigation to a website
  *
  *
- * copyright (c) 2013 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2013 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  **/
@@ -15,17 +15,17 @@
     "use strict";
     /*jslint browser: true*/
     /*global $:false History:false reinvigorate:false */
-    
+
     if(!$.depage){
         $.depage = {};
     }
 
     var rootUrl = History.getRootUrl();
-    
+
     // {{{ jquery.internal expression helper
     $.expr[':'].internal = function(obj, index, meta, stack){
         var url = $(obj).attr('href') || $(obj).attr('src') || '';
-        
+
         // Check link
         return url.substring(0, rootUrl.length) === rootUrl || url.indexOf(':') === -1;
     };
@@ -39,14 +39,14 @@
             .replace(/<(html|head|body|title|meta|script)([\s\>])/gi,'<div class="document-$1"$2')
             .replace(/<\/(html|head|body|title|meta|script)\>/gi,'</div>')
         ;
-        
+
         return result;
     };
     // }}}
     // {{{ jquery.ajaxify Helper
     $.fn.ajaxify = function() {
         var $this = $(this);
-        
+
         // Ajaxify
         $this.find('a:internal:not(.no-ajaxy)').each(function(){
             // Prepare
@@ -68,7 +68,7 @@
                 return false;
             });
         });
-        
+
         // Chain
         return $this;
     };
@@ -90,7 +90,7 @@
         return stack.join("/");
     }
     // }}}
-    
+
     $.depage.magaziner = function(el, pagelinkSelector, options){
         if (!History.enabled) {
             return;
@@ -99,11 +99,11 @@
         // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.magaziner", base);
 
@@ -192,7 +192,7 @@
                 e.preventDefault();
             });
             // }}}
-            
+
             // {{{ horizontal scrolling between pages
             base.$el.hammer(hammerOptions).on("dragleft", function(e) {
                 $pages.each( function(i) {
@@ -292,7 +292,7 @@
                 }
             });
             // }}}
-            
+
             // {{{ scroll event
             $window.scroll( function() {
                 $pages.not(".current-page").css({
@@ -310,7 +310,7 @@
                 setTimeout( onResize, 200 );
             });
             // }}}
-            
+
             // {{{ statechange event
             $window.bind("statechange", function() {
                 var
@@ -328,7 +328,7 @@
                 var
                     State = History.getState(),
                     url = State.url,
-                    title = $currentPage.data("title"); 
+                    title = $currentPage.data("title");
 
                 if (title) {
                     // Update the title
@@ -358,7 +358,7 @@
             // }}}
         };
         // }}}
-        
+
         // {{{ showPagesAround(n)
         base.showPagesAround = function(n) {
             $pages.eq(n - 1).show();
@@ -393,7 +393,7 @@
             }
 
             $page.addClass("loading");
-            
+
             // Ajax Request the Traditional Page
             $.ajax({
                 url: url,
@@ -403,9 +403,9 @@
                         $data = $(documentHtml(data)),
                         $dataBody = $data.find('.document-body:first'),
                         $dataContent = $dataBody.find(".page").filter(':first'),
-                        contentHtml, 
+                        contentHtml,
                         $scripts;
-                    
+
                     // Fetch the scripts
                     $scripts = $dataContent.find('.document-script');
                     if ( $scripts.length ) {
@@ -528,20 +528,20 @@
             }
         };
         // }}}
-        
+
         // Run initializer
         setTimeout(base.init, 50);
     };
-    
+
     $.depage.magaziner.defaultOptions = {
         option1: "default"
     };
-    
+
     $.fn.depageMagaziner = function(pagelinkSelector, options){
         return this.each(function(){
             (new $.depage.magaziner(this, pagelinkSelector, options));
         });
     };
-    
+
 })(jQuery);
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

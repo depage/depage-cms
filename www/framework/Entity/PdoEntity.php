@@ -10,7 +10,7 @@
  *
  * Provides generic CRUD functions for models.
  *
- * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author Ben Wallis [benedict_wallis@yahoo.co.uk]
  */

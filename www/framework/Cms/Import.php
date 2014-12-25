@@ -5,9 +5,9 @@
  * base class for cms-ui modules
  *
  *
- * copyright (c) 2011-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2011-2014 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Cms;

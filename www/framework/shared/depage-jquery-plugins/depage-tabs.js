@@ -1,11 +1,11 @@
 /**
  * @require framework/shared/jquery-1.8.3.js
- * 
+ *
  * @file    depage-tabs
  *
  * Depage Tabs Plugin.
- * 
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ *
+ * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Ben Wallis
  */
@@ -13,10 +13,10 @@
     if(!$.depage){
         $.depage = {};
     };
-    
+
     /**
      * tabs
-     * 
+     *
      * @param el - file input
      * @param index
      * @param options
@@ -24,23 +24,23 @@
     $.depage.tabs = function(el, index, options){
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.tabs", base);
-        
+
         // store the tabs
         var $tabs = [];
-        
+
         // {{{ init
         /**
          * Init
-         * 
+         *
          * Get the plugin options.
-         * 
+         *
          * @return void
          */
         base.init = function(){
@@ -50,11 +50,11 @@
             base.tabs();
         };
         // }}}
-        
+
         // {{{ tabs()
         /**
          * Tabs
-         * 
+         *
          * @return void
          */
         base.tabs = function(){
@@ -70,18 +70,18 @@
             });
         };
         // }}}
-        
+
         // {{{ isAjaxTab()
         /**
          * isAjaxTab
-         * 
+         *
          * Determines if this tab is in ajax or js mode:
-         * 
+         *
          * If the href is different to the page base url use ajax.
-         * 
+         *
          * If the href contains a hash which matches an id on the page we
-         * are loading content dynamically with javascript. 
-         * 
+         * are loading content dynamically with javascript.
+         *
          * @return bool
          */
         base.isAjaxTab = function(href) {
@@ -92,16 +92,16 @@
             return true;
         };
         // }}}
-        
+
         // {{{ jsTabs()
         /**
          * jsTabs
-         * 
-         * In this mode the plugin is operating by showing / hiding .content divs. 
-         * 
+         *
+         * In this mode the plugin is operating by showing / hiding .content divs.
+         *
          */
         base.jsTabs = {
-                
+
             /**
              * Init
              */
@@ -123,10 +123,10 @@
                     return false;
                 });
             },
-            
+
             /**
              * Load
-             * 
+             *
              * @param href - the anchor name to show
              */
             load : function(e, href) {
@@ -137,13 +137,13 @@
             }
         };
         // }}}
-        
+
         // {{{ axTabs
         /**
          * axTabs
-         * 
+         *
          * In this mode the plugin is loading new contact into the main .content div via AJAX.
-         * 
+         *
          */
         base.axTabs = {
             /**
@@ -154,7 +154,7 @@
                  * Show the active tab
                  */
                 $('div.' + base.options.classes.content + ':first').show();
-                
+
                 /*
                  * Add Tab click handlers
                  */
@@ -166,12 +166,12 @@
                     return false;
                 });
             },
-            
+
             /**
              * Load
-             * 
+             *
              * @TODO loading gif?
-             * 
+             *
              * @param href -  the ajax url to fetch content from
              */
             load : function(e, href) {
@@ -194,13 +194,13 @@
             }
         };
         // }}}
-        
+
         // {{{ setActive()
         /**
          * Set Active
-         * 
+         *
          * Set the tab Active class
-         * 
+         *
          * @param $tab - the active tab
          */
         base.setActive = function($tab){
@@ -208,26 +208,26 @@
             $tab.parent('li').addClass(base.options.classes.active);
         };
         // }}}
-        
+
         // {{{ hide()
         /**
          * Hide
-         * 
+         *
          * Hide inactive containers
          */
         base.hide = function() {
             $('div.' + base.options.classes.content).hide();
         };
         // }}}
-        
+
         base.init();
     };
-    
+
     /**
      * Options
-     * 
-     * @param classes styles to apply to tabs, active tab, and content containers 
-     * 
+     *
+     * @param classes styles to apply to tabs, active tab, and content containers
+     *
      */
     $.depage.tabs.defaultOptions = {
         classes : {
@@ -237,13 +237,13 @@
         },
         force_ajax : false
     };
-    
+
     $.fn.depageTabs = function(options){
         return this.each(function(index){
             (new $.depage.tabs(this, index, options));
         });
     };
-    
+
 })(jQuery);
 
 /* vim:set ft=javascript sw=4 sts=4 fdm=marker : */

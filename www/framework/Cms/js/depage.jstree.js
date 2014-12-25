@@ -23,7 +23,7 @@
  *
  * Depage jstree - wraps the jstree in the depage namespace adding custom configuration and functionality.
  *
- * @copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * @copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author Frank Hellenkamp
  * @author Ben Wallis

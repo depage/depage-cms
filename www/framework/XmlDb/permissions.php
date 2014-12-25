@@ -7,10 +7,10 @@
  *
  *
  * copyright (c) 2011 Lion Vollnhals [lion.vollnhals@googlemail.com]
- * copyright (c) 2011 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2011 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\XmlDb;

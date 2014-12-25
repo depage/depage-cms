@@ -6,7 +6,7 @@
  *
  *
  * copyright (c) 2011 Lion Vollnhals [lion.vollnhals@googlemail.com]
- * copyright (c) 2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]

@@ -2,7 +2,7 @@
 /**
  * @file    document.php
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Xml;

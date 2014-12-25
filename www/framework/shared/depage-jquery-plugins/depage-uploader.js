@@ -16,7 +16,7 @@
  *  - Multiple file uploads
  *  - Drag and Drop Upload via options.$drag_area (defaults to file input)
  *
- * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Ben Wallis
  */
@@ -24,7 +24,7 @@
     if(!$.depage){
         $.depage = {};
     }
-    
+
     /**
      * Uploader
      *
@@ -60,7 +60,7 @@
         // plugin mode according to browser support - iframe / apc / xhr
         base.mode = 'iframe';
 
-        // Cache the XHR object 
+        // Cache the XHR object
         base.xhrHttpRequest = new XMLHttpRequest();
 
         // {{{ init
@@ -82,7 +82,7 @@
                 base.options.iframe = base.el.name.replace(/\[\]/g, '') + '_' + index + '_' + base.options.iframe;
                 base.iframe.build();
             }
-            
+
 
             // for multiple files input name should be an array
             /*
@@ -304,7 +304,7 @@
             $iframe : null,
 
             /*
-             * id for the ajax progress call  
+             * id for the ajax progress call
              */
             timeout_id : null,
 
@@ -461,7 +461,7 @@
                                     base.iframe.timeout_id = setTimeout(base.iframe.getProgress, 250);
                                 }
                             } else {
-                                // 1st call in IE is not returning a percentage ? 
+                                // 1st call in IE is not returning a percentage ?
                                 base.iframe.timeout_id = setTimeout(base.iframe.getProgress, 250);
                                 //base.fallback();
                             }
@@ -516,7 +516,7 @@
                 }
                 base.xhrHttpRequest.open('POST', base.options.src, true);
                 base.xhrHttpRequest.upload.onprogress = function(e) {
-                    // TODO x-browser test and fallback 
+                    // TODO x-browser test and fallback
                     if (e.lengthComputable) {
                         base.setProgress( e.loaded * 100 / e.total, e.loaded, e.total);
                         // base.setProgress( e.position * 100 / e.totalSize );
@@ -548,7 +548,7 @@
         };
         // }}}
 
-        // {{{ cancel() 
+        // {{{ cancel()
         /**
          * Cancel
          *
@@ -609,7 +609,7 @@
         };
         // }}}
 
-        // {{{ complete() 
+        // {{{ complete()
         /**
          * Complete
          *
@@ -678,7 +678,7 @@
             var text = "";
 
             base.controls.percent.width(percent + '%');
-            
+
             if (loaded !== undefined && total !== undefined) {
                 text += Math.floor(percent * 10) / 10;
                 text += " % uploaded (";
