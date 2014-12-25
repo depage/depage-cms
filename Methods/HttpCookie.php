@@ -8,11 +8,11 @@
  * handling.
  *
  *
- * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2010 Frank Hellenkamp [jonas@depage.net]
  * copyright (c) 2010 Lion Vollnhals
  *
  * @author    Lion Vollnhals
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Auth\Methods;

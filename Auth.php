@@ -8,9 +8,9 @@
  * handling.
  *
  *
- * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  *
  * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
