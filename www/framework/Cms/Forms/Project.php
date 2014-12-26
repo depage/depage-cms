@@ -21,7 +21,10 @@ class Project extends \Depage\Htmlform\Htmlform
         foreach($params['projectGroups'] as $g) {
             $groups[$g->id] = $g->name;
         }
-        $project = $params['project'];
+        $this->project = $params['project'];
+
+        $params['cancelUrl'] = DEPAGE_BASE;
+        $params['cancelLabel'] = _("Cancel");
 
         parent::__construct($name, $params);
 
@@ -41,7 +44,25 @@ class Project extends \Depage\Htmlform\Htmlform
             "skin" => "select",
         ));
 
-        $this->populate($project);
+        $this->populate($this->project);
+    }
+    // }}}
+    // {{{ __toString()
+    /**
+     * @brief __toString
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function __toString()
+    {
+        $html = parent::__toString();
+
+        if ($this->project->id !== null) {
+            $html .= "<div class=\"bottom\"><a href=\"project/{$this->project->name}/import/\" class=\"button\">" . _("Import Project") . "</a></div>";
+        }
+
+        return $html;
     }
     // }}}
 }

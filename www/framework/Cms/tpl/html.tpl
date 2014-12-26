@@ -2,10 +2,10 @@
 <html>
     <head>
         <title><?php
-            self::t($this->title);
             if ($this->subtitle != null) {
-                self::t(" // " . $this->subtitle);
+                self::t($this->subtitle . " / ");
             }
+            self::t($this->title);
         ?></title>
 
         <base href="<?php self::base(); ?>">

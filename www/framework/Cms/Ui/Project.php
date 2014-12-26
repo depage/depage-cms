@@ -29,6 +29,11 @@ class Project extends Base
         } else {
             $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
         }
+
+        // get cache instance
+        $this->cache = \Depage\Cache\Cache::factory("xmldb", array(
+            'host' => "localhost",
+        ));
     }
     // }}}
 
@@ -41,9 +46,9 @@ class Project extends Base
         }
     }
     // }}}
-    // {{{ edit()
+    // {{{ settings()
     /**
-     * @brief edit
+     * @brief settings
      *
      * @param mixed
      * @return void
@@ -69,8 +74,50 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        $h = new Html(array(
-            "content" => $form,
+        $h = new Html("box.tpl", array(
+            'id' => "projects",
+            'icon' => "framework/Cms/images/icon_projects.gif",
+            'class' => "first",
+            'title' => sprintf(_("Project '%s' Settings"), $this->project->name),
+            'content' => array(
+                $this->toolbar(),
+                $form,
+            ),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ import()
+    /**
+     * @brief import
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function import()
+    {
+        $form = new \Depage\Cms\Forms\Import("import-project-" . $this->project->id);
+        $form->process();
+
+        if ($form->validate()) {
+            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $this->cache);
+            $value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        $h = new Html("box.tpl", array(
+            'id' => "projects",
+            'icon' => "framework/Cms/images/icon_projects.gif",
+            'class' => "first",
+            'title' => sprintf(_("Import Project '%s'"), $this->project->name),
+            'content' => array(
+                $this->toolbar(),
+                $form,
+            ),
         ), $this->htmlOptions);
 
         return $h;

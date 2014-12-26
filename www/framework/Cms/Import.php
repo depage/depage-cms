@@ -12,6 +12,8 @@
 
 namespace Depage\Cms;
 
+use \Depage\Html\Html;
+
 class Import
 {
     protected $pdo;
@@ -263,7 +265,7 @@ class Import
                     // make path for temlate group
                     $path = $this->xsltPath . $dataNode->getAttribute("type") . "/";
                     if (!is_dir($path)) mkdir($path);
-                    $filename = $path . \html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
+                    $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
 
                     // string replacement map
                     $replacements = array(
@@ -330,7 +332,6 @@ class Import
 
         if (!is_dir($this->xmlPath)) mkdir($this->xmlPath);
 
-        //for ($i = $nodelist->length - 1; $i >= 0; $i--) {
         for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
 
@@ -346,7 +347,7 @@ class Import
             //$contentDoc->formatOutput = true;
             $contentDoc->loadXML($this->xmlHeader . trim($contentNode->nodeValue) . $this->xmlFooter);
 
-            $nodeTypes = new \Depage\Xms\XmlDocTypes\Page($this->xmldb, $this->docNavigation->getDocId());
+            $nodeTypes = new \Depage\Cms\XmlDocTypes\Page($this->xmldb, $this->docNavigation->getDocId());
 
             $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, array(
                 'pos' => $pos,
@@ -354,7 +355,7 @@ class Import
                 'newName' => $contentDoc->documentElement->getAttribute("name"),
                 'icon' => $contentDoc->documentElement->getAttribute("icon"),
                 'validParents' => $validParents,
-                'xmlTemplate' => \html::getEscapedUrl($name) . ".xml",
+                'xmlTemplate' => Html::getEscapedUrl($name) . ".xml",
                 'xmlTemplateData' => $contentDoc->saveXML(),
             ));
         }
