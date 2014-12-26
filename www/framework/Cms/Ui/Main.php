@@ -21,6 +21,7 @@ class Main extends Base {
     static function _getSubHandler() {
         return array(
             'project/*' => '\Depage\Cms\Ui\Project',
+            'user/*' => '\Depage\Cms\Ui\User',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/flash' => '\Depage\Cms\Ui\Flash',
             //'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
@@ -43,7 +44,7 @@ class Main extends Base {
                 'content' => array(
                     $this->toolbar(),
                     $this->projects(),
-                    $this->users(),
+                    $this->users("current"),
                 ),
             ));
         } else {
@@ -174,10 +175,16 @@ class Main extends Base {
      *
      * @return  null
      */
-    public function users() {
+    public function users($current = null) {
         $this->auth->enforce();
 
-        $users = \depage\Auth\User::loadActive($this->pdo);
+        $current = $current === "current";
+
+        if ($current) {
+            $users = \Depage\Auth\User::loadActive($this->pdo);
+        } else {
+            $users = \Depage\Auth\User::loadAll($this->pdo);
+        }
 
         $h = new Html("box.tpl", array(
             'id' => "users",
@@ -188,24 +195,6 @@ class Main extends Base {
                 'users' => $users,
             )),
         ), $this->htmlOptions);
-
-        return $h;
-    }
-    // }}}
-
-    // {{{ add tables
-    public function add_tables()
-    {
-        if ($this->authUser = $this->auth->enforce()) {
-            $schema = new \depage\DB\Schema($this->pdo);
-
-            $schema->load("framework/Auth/Sql/*.sql");
-            $schema->setReplace(function ($tableName) {
-                return "test_" . $tableName;
-            });
-
-            $schema->update();
-        }
 
         return $h;
     }

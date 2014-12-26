@@ -1,9 +1,18 @@
 <ul id="userlist">
     <?php foreach($this->users as $user) { ?>
+        <?php
+            $userAgent = $user->getUseragent();
+
+            if ($userAgent == "Other/Other") {
+                $userAgent = "";
+            } else {
+                $userAgent = " / " . $userAgent;
+            }
+        ?>
         <li>
             <a href="user/<?php self::t($user->name); ?>/">
                 <?php self::t($user->fullname); ?>
-            </a> / <?php self::t($user->getUseragent()); ?>
+            </a><?php self::t($userAgent); ?>
         </li>
     <?php } ?>
 </ul>
