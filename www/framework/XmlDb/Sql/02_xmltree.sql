@@ -2,11 +2,11 @@
     XmlDb Tree Table
     -----------------------------------
 
-    @tablename _proj_PROJECTNAME_xmltree
-    @connection _proj_PROJECTNAME_xmldocs
+    @tablename _xmltree
+    @connection _xmldocs
     @version 1.5.0-beta.1
 */
-CREATE TABLE `_proj_PROJECTNAME_xmltree` (
+CREATE TABLE `_xmltree` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_doc` int(10) unsigned DEFAULT '0',
   `id_parent` int(10) unsigned DEFAULT NULL,
@@ -18,6 +18,6 @@ CREATE TABLE `_proj_PROJECTNAME_xmltree` (
   KEY `SECONDARY` (`id_parent`,`id_doc`,`type`),
   KEY `THIRD` (`name`),
   KEY `id_doc` (`id_doc`),
-  CONSTRAINT `_proj_PROJECTNAME_xmltree_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `_proj_PROJECTNAME_xmltree` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `_proj_PROJECTNAME_xmltree_ibfk_2` FOREIGN KEY (`id_doc`) REFERENCES `_proj_PROJECTNAME_xmldocs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `_xmltree_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `_xmltree` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_xmltree_ibfk_2` FOREIGN KEY (`id_doc`) REFERENCES `_xmldocs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

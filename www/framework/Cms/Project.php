@@ -302,23 +302,20 @@ class Project extends \Depage\Entity\Entity
      **/
     public function updateProjectSchema()
     {
-        $schema = new \Depage\DB\Schema($this->pdo);
-
         $projectName = $this->name;
+
+        $xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$projectName}", $this->pdo, $this->cache, array(
+            'pathXMLtemplate' => $this->xmlPath,
+        ));
+        $xmldb->updateSchema();
+
+        $schema = new \Depage\DB\Schema($this->pdo);
 
         $schema->setReplace(
             function ($tableName) use ($projectName) {
                 return $this->pdo->prefix . str_replace("PROJECTNAME", $projectName, $tableName);
             }
         );
-
-        // schema for xmldb
-        $files = glob(__DIR__ . "/../XmlDb/Sql/*.sql");
-        sort($files);
-        foreach ($files as $file) {
-            $schema->loadFile($file);
-            $schema->update();
-        }
 
         // schema for comments
         $files = glob(__DIR__ . "/../Comments/Sql/*.sql");

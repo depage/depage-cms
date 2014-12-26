@@ -2,10 +2,10 @@
     XmlDb Nodetypes Table
     -----------------------------------
 
-    @tablename _proj_PROJECTNAME_xmlnodetypes
+    @tablename _xmlnodetypes
     @version 1.5.0-beta.1
 */
-CREATE TABLE `_proj_PROJECTNAME_xmlnodetypes` (
+CREATE TABLE `_xmlnodetypes` (
   `nodetypeId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `pos` int(10) unsigned NOT NULL,
   `nodename` varchar(255) NOT NULL DEFAULT '',
