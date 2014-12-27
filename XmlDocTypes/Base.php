@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\xmldb\xmldoctypes;
+namespace Depage\XmlDb\XmlDocTypes;
 
 class Base
 {
