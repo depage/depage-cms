@@ -145,12 +145,6 @@ class Main extends Base {
      * @return  null
      */
     public function projects() {
-        $this->auth->enforce();
-
-
-        $project = new \Depage\Cms\Project($this->pdo);
-        $project->updateSchema();
-
         // get data
         $projects = \Depage\Cms\Project::loadAll($this->pdo);
 
@@ -197,6 +191,31 @@ class Main extends Base {
         ), $this->htmlOptions);
 
         return $h;
+    }
+    // }}}
+
+    // {{{ setup()
+    /**
+     * @brief adds base schemata
+     *
+     * @return void
+     **/
+    public function setup()
+    {
+        // add/update schema for authentication
+        $this->auth->updateSchema();
+
+        $this->auth->enforce();
+
+        // add/update schema for project structures
+        $project = new \Depage\Cms\Project($this->pdo);
+        $project->updateSchema();
+
+        $projects = \Depage\Cms\Project::loadAll($this->pdo);
+
+        foreach ($projects as $project) {
+            $project->updateProjectSchema();
+        }
     }
     // }}}
 }

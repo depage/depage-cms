@@ -58,8 +58,6 @@ class Base extends \Depage\Depage\Ui\Base
         );
         $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
 
-        $this->auth->updateSchema();
-
         // establish if the user is logged in
         if (empty($this->authUser)) {
             if ($this->autoEnforceAuth) {
