@@ -270,6 +270,7 @@ class Project extends \Depage\Entity\Entity
         }
     }
     // }}}
+
     // {{{ initProject()
     /**
      * @brief initProject

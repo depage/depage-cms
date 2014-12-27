@@ -29,11 +29,6 @@ class Project extends Base
         } else {
             $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
         }
-
-        // get cache instance
-        $this->cache = \Depage\Cache\Cache::factory("xmldb", array(
-            'host' => "localhost",
-        ));
     }
     // }}}
 
@@ -101,7 +96,12 @@ class Project extends Base
         $form->process();
 
         if ($form->validate()) {
-            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $this->cache);
+            // get cache instance
+            $cache = \Depage\Cache\Cache::factory("xmldb", array(
+                'host' => "localhost",
+            ));
+
+            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $cache);
             $value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
 
             $form->clearSession();
