@@ -5,7 +5,7 @@
  * depage cms ui module
  *
  *
- * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -22,7 +22,13 @@ class User extends Base
 
         $this->userName = $this->urlSubArgs[0];
 
-        $this->user = \Depage\Auth\User::loadByUsername($this->pdo, $this->userName);
+        if (empty($this->userName)) {
+            throw new \Depage\Auth\Exceptions\User("no user given");
+        } else if ($this->userName == "+") {
+            $this->user = new \Depage\Auth\User($this->pdo);
+        } else {
+            $this->user = \Depage\Auth\User::loadByUsername($this->pdo, $this->userName);
+        }
 
     }
     // }}}
