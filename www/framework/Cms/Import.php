@@ -130,19 +130,19 @@ class Import
     {
         $this->docNavigation = $this->xmldb->getDoc("pages");
         if (!$this->docNavigation) {
-            $this->docNavigation = $this->xmldb->createDoc("pages", "depage\\cms\\xmldoctypes\\pages");
+            $this->docNavigation = $this->xmldb->createDoc("pages", "Depage\\Cms\\XmlDocTypes\\Pages");
         }
 
         $this->docSettings = $this->xmldb->getDoc("settings");
         if (!$this->docSettings) {
             // @todo update doctype
-            $this->docSettings = $this->xmldb->createDoc("settings", "depage\\xmldb\\xmldoctypes\\base");
+            $this->docSettings = $this->xmldb->createDoc("settings", "Depage\XmlDb\XmlDocTypes\\Base");
         }
 
         $this->docColors = $this->xmldb->getDoc("colors");
         if (!$this->docColors) {
             // @todo update doctype
-            $this->docColors = $this->xmldb->createDoc("colors", "depage\\xmldb\\xmldoctypes\\base");
+            $this->docColors = $this->xmldb->createDoc("colors", "Depage\XmlDb\XmlDocTypes\\Base");
         }
     }
     // }}}
@@ -213,11 +213,13 @@ class Import
             $dataNode = $xmlData->importNode($pagelist->item(0), true);
             $xmlData->appendChild($dataNode);
             list($ns, $docType) = explode(":", $this->docNavigation->getNodeNameById($pageId));
+            $docType = ucfirst(strtolower($docType));
+
             $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
 
             $this->updatePageData($xmlData);
 
-            $doc = $this->xmldb->createDoc($docName, "depage\\cms\\xmldoctypes\\$docType");
+            $doc = $this->xmldb->createDoc($docName, "Depage\\Cms\\XmlDocTypes\\$docType");
             $newId = $doc->save($xmlData);
 
             // updated reference attributes
