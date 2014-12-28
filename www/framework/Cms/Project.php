@@ -252,13 +252,13 @@ class Project extends \Depage\Entity\Entity
      *
      * @return void
      **/
-    public function updateSchema()
+    public static function updateSchema($pdo)
     {
-        $schema = new \Depage\DB\Schema($this->pdo);
+        $schema = new \Depage\DB\Schema($pdo);
 
         $schema->setReplace(
-            function ($tableName) {
-                return $this->pdo->prefix . $tableName;
+            function ($tableName) use ($pdo) {
+                return $pdo->prefix . $tableName;
             }
         );
 
