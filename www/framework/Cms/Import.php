@@ -94,6 +94,8 @@ class Import
             "\$import = new \Depage\Cms\Import(\"$this->projectName\", \$pdo, \$cache);"
         );
         $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \Depage\Tasks\Task::escapeParam($xmlFile) . ");", $initId);
+        $task->addSubtask("clean docs", "\$import->cleanDocs();", $loadId);
+
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", $loadId);
 
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", $getDocsId);
@@ -121,8 +123,8 @@ class Import
     // {{{ cleanDocs()
     public function cleanDocs()
     {
-        $this->xmldb->removeTables();
-        $this->xmldb->createTables();
+        $this->xmldb->clearTables();
+        $this->xmldb->updateSchema();
     }
     // }}}
     // {{{ getDocs()

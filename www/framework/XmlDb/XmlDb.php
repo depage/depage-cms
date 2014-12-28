@@ -309,27 +309,16 @@ class XmlDb implements XmlGetter
         }
     }
     // }}}
-    // {{{ createTables()
-    /**
-     * Creates SQL tables for current settings
-     */
-    public function createTables() {
-        $this->updateSchema();
-    }
-    // }}}
 
-    // {{{ removeTables()
+    // {{{ clearTables()
     /**
      * Removes SQL tables
      */
-    public function removeTables() {
-        $this->pdo->query("SET foreign_key_checks=0;");
-
-        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_xml}`;");
-        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_docs}`;");
-        $this->pdo->query("DROP TABLE IF EXISTS `{$this->table_nodetypes}`;");
-
-        $this->pdo->query("SET foreign_key_checks=1;");
+    public function clearTables() {
+        $this->pdo->query("DELETE FROM `{$this->table_docs}`;");
+        $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
+        $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
+        $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
     }
     // }}}
 }
