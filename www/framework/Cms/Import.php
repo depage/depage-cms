@@ -80,7 +80,7 @@ class Import
     // {{{ addImportTask()
     public function addImportTask($taskName, $xmlFile)
     {
-        $task = \Depage\Tasks\Task::loadOrCreate($taskName, "dp", $this->pdo);
+        $task = \Depage\Tasks\Task::loadOrCreate($taskName, $this->pdo);
 
         $this->loadBackup($xmlFile);
 
@@ -90,10 +90,10 @@ class Import
 
         $initId = $task->addSubtask("init",
             "\$pdo = " . \Depage\Tasks\Task::escapeParam($this->pdo) . ";" .
-            "\$cache = " . \Depage\Task\Task::escapeParam($this->cache) . ";" .
-            "\$import = new \DepageLegacy\Import(\"$this->projectName\", \$pdo, \$cache);"
+            "\$cache = " . \Depage\Tasks\Task::escapeParam($this->cache) . ";" .
+            "\$import = new \Depage\Cms\Import(\"$this->projectName\", \$pdo, \$cache);"
         );
-        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \Depage\Task\Task::escapeParam($xmlFile) . ");", $initId);
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \Depage\Tasks\Task::escapeParam($xmlFile) . ");", $initId);
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", $loadId);
 
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", $getDocsId);

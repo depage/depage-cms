@@ -102,7 +102,7 @@ class Project extends Base
             ));
 
             $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $cache);
-            $value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
+            $value = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
 
             $form->clearSession();
 

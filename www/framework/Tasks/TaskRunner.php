@@ -10,7 +10,7 @@
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  */
 
-namespace Depage\Task;
+namespace Depage\Tasks;
 
 require_once(__DIR__ . "/../Depage/Runner.php");
 
@@ -53,6 +53,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         'phpcli' => "",
     );
     protected $options = array();
+    protected $lowPriority = true;
     // }}}
 
     // {{{ constructor
@@ -68,8 +69,6 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 'prefix' => $this->options->db->prefix, // database prefix
             )
         );
-
-        $this->table_prefix = $this->pdo->prefix;
 
         $this->force_login = false; // TODO: !$cli;
         if ($this->force_login) {
@@ -89,7 +88,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         if ($this->force_login)
             $this->auth->enforce();
 
-        $this->task = Task::load((int)$task_id, $this->table_prefix, $this->pdo);
+        $this->task = Task::load((int)$task_id, $this->pdo);
         $this->abnormal_exit = true;
         register_shutdown_function(array($this, "_atShutdown"));
 
@@ -129,9 +128,9 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     }
     // }}}
     // {{{ run
-    public function run($task_id, $lowPriority = false) {
+    public function run($task_id, $lowPriority = true) {
         $this->lowPriority = $lowPriority;
-        $this->task = Task::load((int)$task_id, $this->table_prefix, $this->pdo);
+        $this->task = Task::load((int)$task_id, $this->pdo);
         $this->abnormal_exit = true;
 
         register_shutdown_function(array($this, "_atShutdown"));
@@ -150,7 +149,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 "task-id" => $this->task->task_id,
             );
 
-            $this->executeInBackground(__DIR__ . "/../../", "framework/task/" . basename(__FILE__), $args, $this->lowPriority);
+            $this->executeInBackground(__DIR__ . "/../../", "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
         } else {
             $this->log->log("normal exit");
         }

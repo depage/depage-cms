@@ -18,22 +18,22 @@ class Task {
     private $tmpvars = array();
 
     // {{{ constructor
-    private function __construct($table_prefix, $pdo) {
-        $this->task_table = $table_prefix . "_tasks";
-        $this->subtask_table = $table_prefix . "_subtasks";
+    private function __construct($pdo) {
         $this->pdo = $pdo;
+        $this->task_table = $this->pdo->prefix . "_tasks";
+        $this->subtask_table = $this->pdo->prefix . "_subtasks";
 
     }
     // }}}
 
     // static functions
     // {{{ load()
-    static public function load($task_id, $table_prefix, $pdo) {
-        $task = new Task($table_prefix, $pdo);
+    static public function load($task_id, $pdo) {
+        $task = new Task($pdo);
 
         $task->task_id = $task_id;
 
-        $task->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task->task_id . '.lock';
+        $task->lock_name = sys_get_temp_dir() . '/' . $pdo->prefix . "." . $task->task_id . '.lock';
 
         if ($task->loadTask()) {
             $task->loadSubtasks();
@@ -45,8 +45,8 @@ class Task {
     }
     // }}}
     // {{{ loadByName()
-    static public function loadByName($task_name, $table_prefix, $pdo, $condition = "") {
-        $task = new Task($table_prefix, $pdo);
+    static public function loadByName($task_name, $pdo, $condition = "") {
+        $task = new Task($pdo);
 
         if ($condition != "") {
             $condition = " AND ($condition)";
@@ -65,7 +65,7 @@ class Task {
         $tasks = array();
 
         while ($result = $query->fetchObject()) {
-            $tasks[] = Task::load($result->id, $table_prefix, $pdo);
+            $tasks[] = Task::load($result->id, $pdo);
         }
 
         if (count($tasks) == 0) {
@@ -76,8 +76,8 @@ class Task {
     }
     // }}}
     // {{{ loadAll()
-    static public function loadAll($table_prefix, $pdo) {
-        $task = new Task($table_prefix, $pdo);
+    static public function loadAll($pdo) {
+        $task = new Task($pdo);
 
         $query = $pdo->prepare(
             "SELECT id
@@ -88,33 +88,29 @@ class Task {
         $tasks = array();
 
         while ($result = $query->fetchObject()) {
-            $tasks[] = Task::load($result->id, $table_prefix, $pdo);
+            $tasks[] = Task::load($result->id, $pdo);
         }
 
-        if (count($tasks) == 0) {
-            return false;
-        } else {
-            return $tasks;
-        }
+        return $tasks;
     }
     // }}}
     // {{{ loadOrCreate()
-    static public function loadOrCreate($task_name, $table_prefix, $pdo) {
-        list($task) = self::loadByName($task_name, $table_prefix, $pdo, "status IS NULL OR status != 'failed'");
+    static public function loadOrCreate($task_name, $pdo) {
+        list($task) = self::loadByName($task_name, $pdo, "status IS NULL OR status != 'failed'");
 
         if (!$task) {
-            $task = self::create($task_name, $table_prefix, $pdo);
+            $task = self::create($task_name, $pdo);
         }
 
         return $task;
     }
     // }}}
     // {{{ create()
-    static public function create($task_name, $table_prefix, $pdo) {
-        $task = new Task($table_prefix, $pdo);
+    static public function create($task_name, $pdo) {
+        $task = new Task($pdo);
 
         $task->task_id = $task->createTask($task_name);
-        $task->lock_name = sys_get_temp_dir() . '/' . $table_prefix . "." . $task->task_id . '.lock';
+        $task->lock_name = sys_get_temp_dir() . '/' . $pdo->prefix . "." . $task->task_id . '.lock';
 
         $task->loadTask();
 
@@ -133,6 +129,31 @@ class Task {
                 return var_export($param, true);
         }
 
+    }
+    // }}}
+
+    // {{{ updateSchema()
+    /**
+     * @brief updateSchema
+     *
+     * @return void
+     **/
+    public static function updateSchema($pdo)
+    {
+        $schema = new \Depage\DB\Schema($pdo);
+
+        $schema->setReplace(
+            function ($tableName) use ($pdo) {
+                return $pdo->prefix . $tableName;
+            }
+        );
+
+        $files = glob(__DIR__ . "/Sql/*.sql");
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
+        }
     }
     // }}}
 
@@ -308,7 +329,7 @@ class Task {
         $result = $query->fetchALL(\PDO::FETCH_COLUMN);
 
         $tasksPlanned = $result[0];
-        $tasksDone = $result[1];
+        $tasksDone = isset($result[1]) ? $result[1] : 0.01;
         $tasksSum = $tasksPlanned + $tasksDone;
 
         $progress['percent'] = (int) ($tasksDone / $tasksSum * 100);

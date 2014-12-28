@@ -27,7 +27,8 @@ abstract class Base
         'lang' => array(
             'domain' => 'messages',
         ),
-        'urlHasLocale' => false
+        'urlHasLocale' => false,
+        'phpcli' => "",
     );
     protected $options = array();
     // }}}

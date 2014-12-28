@@ -45,6 +45,7 @@ class Main extends Base {
                     $this->toolbar(),
                     $this->projects(),
                     $this->users("current"),
+                    $this->tasks(),
                 ),
             ));
         } else {
@@ -162,6 +163,36 @@ class Main extends Base {
         return $h;
     }
     // }}}
+    // {{{ tasks
+    /**
+     * gets a list of projects
+     *
+     * @return  null
+     */
+    public function tasks() {
+        // get data
+        $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
+
+        foreach ($tasks as $task) {
+            if ($task) {
+                $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
+                $taskrunner->run($task->task_id);
+            }
+        }
+
+        // construct template
+        $h = new Html("box.tpl", array(
+            'id' => "tasks",
+            'icon' => "framework/Cms/images/icon_tasks.gif",
+            'title' => "Tasks",
+            'content' => new Html("taskProgress.tpl", array(
+                'tasks' => $tasks,
+            )),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
 
     // {{{ users
     /**
@@ -203,13 +234,15 @@ class Main extends Base {
     public function setup()
     {
         // add/update schema for authentication
-        $this->auth->updateSchema();
+        \Depage\Auth\Auth::updateSchema($this->pdo);
 
         $this->auth->enforce();
 
+        // add/update schema for tasks
+        \Depage\Tasks\Task::updateSchema($this->pdo);
+
         // add/update schema for project structures
-        $project = new \Depage\Cms\Project($this->pdo);
-        $project->updateSchema();
+        \Depage\Cms\Project::updateSchema($this->pdo);
 
         $projects = \Depage\Cms\Project::loadAll($this->pdo);
 

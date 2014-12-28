@@ -15,14 +15,8 @@ class Import extends \Depage\Htmlform\Htmlform
      * @param mixed $name, $params
      * @return void
      **/
-    public function __construct($name, $params)
+    public function __construct($name, $params = array())
     {
-        $groups = array();
-        foreach($params['projectGroups'] as $g) {
-            $groups[$g->id] = $g->name;
-        }
-        $this->project = $params['project'];
-
         $params['submitLabel'] = _("Import Now");
 
         $params['cancelUrl'] = DEPAGE_BASE;

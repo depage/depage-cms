@@ -21,6 +21,7 @@ $conf = array(
         ),
         'timezone' => 'Europe/Berlin',
         //'env' => 'production',
+        'phpcli' => "/usr/bin/php",
     ),
     // }}}
 
@@ -29,9 +30,11 @@ $conf = array(
         //'handler' => 'DepageLegacy\LegacyUI',
         'handler' => 'depage\Cms\Ui\Main',
         //'env' => 'production',
+        'phpcli' => "/opt/local/bin/php",
     ),
     '*/depage-cms-dev/' => array(
         'handler' => 'Depage\Cms\Ui\Main',
+        'phpcli' => "/opt/local/bin/php",
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/

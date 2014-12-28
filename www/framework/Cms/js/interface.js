@@ -16,6 +16,7 @@ var depageCMS = (function() {
     /*global $:false */
 
     var lang = $('html').attr('lang');
+    var baseUrl = $("base").attr("href");
     var $previewFrame;
     var $flashFrame;
 
@@ -37,6 +38,7 @@ var depageCMS = (function() {
         // {{{ setup
         setup: function() {
             localJS.setupVarious();
+            localJS.updateTasks();
         },
         // }}}
         // {{{ setupVarious
@@ -49,6 +51,19 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+        },
+        // }}}
+        // {{{ loadTasks
+        updateTasks: function() {
+            var $tasks = $("#box_tasks");
+
+            if ($tasks.length > 0) {
+                var taskUrl = baseUrl + "tasks/ #box_tasks .content";
+
+                $tasks.load(taskUrl, function() {
+                    setTimeout(localJS.updateTasks, 2000);
+                });
+            }
         },
         // }}}
 
@@ -94,7 +109,6 @@ var depageCMS = (function() {
 
         // {{{ logout
         logout: function() {
-            var baseUrl = $("base").attr("href");
             var logoutUrl = baseUrl + "logout/";
 
             $.ajax({

@@ -87,12 +87,14 @@ class Config implements \Iterator, \ArrayAccess
         }
 
         // set base-url
-        if (!isset($depage_base[0])) {
-            define("DEPAGE_BASE", "");
-        } else if ($depage_base[0] != "*") {
-            define("DEPAGE_BASE", $protocol . $depage_base);
-        } else {
-            define("DEPAGE_BASE", $protocol . $_SERVER['HTTP_HOST']);
+        if (!defined("DEPAGE_BASE")) {
+            if (!isset($depage_base[0])) {
+                define("DEPAGE_BASE", "");
+            } else if ($depage_base[0] != "*") {
+                define("DEPAGE_BASE", $protocol . $depage_base);
+            } else {
+                define("DEPAGE_BASE", $protocol . $_SERVER['HTTP_HOST']);
+            }
         }
     }
     // }}}
