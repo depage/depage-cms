@@ -5,8 +5,10 @@
  * depage cms task runner module
  *
  *
+ * copyright (c) 2011-2014 Frank Hellenkamp [jonas@depage.net]
  * copyright (c) 2011 Lion Vollnhals [lion.vollnhals@googlemail.com]
  *
+ * @author    Frank Hellenkamp [jonas@depage.net]
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  */
 
@@ -84,17 +86,17 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     // }}}
 
     // {{{ runNow
-    public function runNow($task_id) {
+    public function runNow($taskId) {
         if ($this->force_login)
             $this->auth->enforce();
 
-        $this->task = Task::load((int)$task_id, $this->pdo);
+        $this->task = Task::load($this->pdo, (int)$taskId);
         $this->abnormal_exit = true;
         register_shutdown_function(array($this, "_atShutdown"));
 
         if ($this->task->lock()) {
             try {
-                $this->log->log("starting task {$task_id} ({$this->task->task_name})");
+                $this->log->log("starting task {$taskId} ({$this->task->taskName})");
 
                 while ($subtask = $this->task->getNextSubtask()) {
                     // @todo change logging to log output of a task to one file per task
@@ -110,7 +112,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                     $this->task->setSubtaskStatus($subtask, "done");
                 }
 
-                $this->log->log("finished task {$task_id} ({$this->task->task_name})");
+                $this->log->log("finished task {$taskId} ({$this->task->taskName})");
                 $this->task->setTaskStatus("done");
                 $this->task->remove();
             } catch (\Exception $e) {
@@ -121,16 +123,16 @@ class TaskRunner extends \Depage\Depage\Ui\Base
 
             $this->task->unlock();
         } else {
-            $this->log->log("task {$this->task->task_name} is already running");
+            $this->log->log("task {$this->task->taskName} is already running");
         }
 
         $this->abnormal_exit = false;
     }
     // }}}
     // {{{ run
-    public function run($task_id, $lowPriority = true) {
+    public function run($taskId, $lowPriority = true) {
         $this->lowPriority = $lowPriority;
-        $this->task = Task::load((int)$task_id, $this->pdo);
+        $this->task = Task::load($this->pdo, (int)$taskId);
         $this->abnormal_exit = true;
 
         register_shutdown_function(array($this, "_atShutdown"));
@@ -146,7 +148,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
             $args = array(
                 "dp-path" => DEPAGE_PATH,
                 "conf-url" => DEPAGE_BASE,
-                "task-id" => $this->task->task_id,
+                "task-id" => $this->task->taskId,
             );
 
             $this->executeInBackground(__DIR__ . "/../../", "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);

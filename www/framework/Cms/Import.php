@@ -80,7 +80,7 @@ class Import
     // {{{ addImportTask()
     public function addImportTask($taskName, $xmlFile)
     {
-        $task = \Depage\Tasks\Task::loadOrCreate($taskName, $this->pdo);
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
 
         $this->loadBackup($xmlFile);
 
