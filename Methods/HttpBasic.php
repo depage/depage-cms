@@ -82,6 +82,7 @@ class HttpBasic extends HttpCookie
                             $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
                         }
                         $this->startSession();
+                        $user->sid = $this->sid;
 
                         return $user;
                     } elseif ($this->hasSession()) {

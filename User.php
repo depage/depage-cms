@@ -52,7 +52,12 @@ class User extends \Depage\Entity\Entity
     /**
      * @brief useragent
      **/
-    protected $useragent = "";
+     protected $useragent = "";
+
+    /**
+     * @brief string sid of user when load from loadActive()
+     **/
+    public $sid = null;
     // }}}
 
     // {{{ constructor()
@@ -157,7 +162,7 @@ class User extends \Depage\Entity\Entity
         $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
-            "SELECT $fields
+            "SELECT $fields, sessions.sid as sid
             FROM
                 {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
@@ -227,6 +232,7 @@ class User extends \Depage\Entity\Entity
             "SELECT $fields,
                 sessions.project AS project,
                 sessions.ip AS ip,
+                sessions.sid AS sid,
                 sessions.dateLastUpdate AS dateLastUpdate,
                 sessions.useragent AS useragent
             FROM

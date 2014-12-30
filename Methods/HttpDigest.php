@@ -102,6 +102,7 @@ class HttpDigest extends HttpBasic
                             $sid = $this->registerSession($user->id, $this->sid);
                         }
                         $this->startSession();
+                        $user->sid = $sid;
 
                         return $user;
                     } elseif ($this->hasSession()) {
