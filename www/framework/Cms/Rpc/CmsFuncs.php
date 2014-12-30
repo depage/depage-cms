@@ -17,10 +17,11 @@ class CmsFuncs {
     protected $callbacks = array();
 
     // {{{ __construct
-    function __construct($project, $pdo, $xmldb) {
+    function __construct($project, $pdo, $xmldb, $user) {
         $this->projectName = $project;
         $this->pdo = $pdo;
         $this->xmldb = $xmldb;
+        $this->user = $user;
 
         $this->log = new \Depage\Log\Log();
     }
@@ -953,6 +954,7 @@ class CmsFuncs {
 
     // {{{ addCallback()
     function addCallback($type, $ids = array(), $newActiveId = null) {
+        // adding callbacks that are for all logged in users
         if ($type == 'settings') {
             $this->callbacks[] = $this->getCallbackForSettings($ids);
         } elseif ($type == 'colors') {
@@ -962,6 +964,26 @@ class CmsFuncs {
         } elseif ($type == 'page_data') {
             $this->callbacks[] = $this->getCallbackForPagedata($ids);
         }
+
+        // add updates to rcp-updates table
+        $query = $this->pdo->prepare(
+            "INSERT INTO {$this->pdo->prefix}_rpc_updates
+                (sid, projectname, message) VALUES (:sid, :projectname, :message)"
+        );
+        $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
+        foreach ($this->callbacks as $callback) {
+            foreach ($activeUsers as $user) {
+                if ($user->sid != $this->user->sid) {
+                    $query->execute(array(
+                        'sid' => $user->sid,
+                        'projectname' => $this->projectName,
+                        'message' => $callback,
+                    ));
+                }
+            }
+        }
+
+        // add callback for setting active id
         if (!is_null($newActiveId)) {
             $this->callbacks[] = new Func("set_activeId_{$type}", array('id' => $newActiveId));
         }
@@ -969,6 +991,39 @@ class CmsFuncs {
     // }}}
     // {{{ getCallbacks()
     function getCallbacks() {
+        $this->pdo->beginTransaction();
+
+        // get callbacks
+        $query = $this->pdo->prepare(
+            "SELECT
+                message
+            FROM {$this->pdo->prefix}_rpc_updates
+            WHERE
+                projectname = :projectName AND
+                sid = :sid"
+        );
+        $query->execute(array(
+            'projectName' => $this->projectName,
+            'sid' => $this->user->sid,
+        ));
+        while ($result = $query->fetchObject()) {
+            $this->callbacks[] = $result->message;
+        }
+
+        // delete used callbacks
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->pdo->prefix}_rpc_updates
+            WHERE
+                projectname = :projectName AND
+                sid = :sid"
+        );
+        $query->execute(array(
+            'projectName' => $this->projectName,
+            'sid' => $this->user->sid,
+        ));
+
+        $this->pdo->commit();
+
         return $this->callbacks;
     }
     // }}}
