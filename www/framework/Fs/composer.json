@@ -1,0 +1,40 @@
+{
+    "name": "depage/fs",
+    "description": "fs",
+    "version": "1.5.0-beta.1",
+    "type": "library",
+    "keywords": [
+        "filesystem",
+        "files",
+        "ftp"
+    ],
+    "require": {
+        "php": " >= 5.3",
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Fs\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-fs",
+        "issues": "https://github.com/depage/depage-fs/issues"
+
+    },
+    "time": "2014-10-16",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        },{
+            "name": "Sebastian Reinhold",
+            "role": "Developer"
+        }
+    ]
+}
+
+
