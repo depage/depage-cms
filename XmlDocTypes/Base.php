@@ -31,19 +31,16 @@ class Base
         );
     }
     // }}}
-
     // {{{ getValidParents
     public function getValidParents() {
         return $this->validParents;
     }
     // }}}
-
     // {{{ getAvailableNodes
     public function getAvailableNodes() {
         return $this->availableNodes;
     }
     // }}}
-
     // {{{ getNewNodeFor
     public function getNewNodeFor($name) {
         $doc = $this->xmldb->getDoc($this->docId);
@@ -82,7 +79,6 @@ class Base
         return false;
     }
     // }}}
-
     // {{{ isAllowedMove
     public function isAllowedMove($nodeId, $targetId) {
         if($doc = $this->xmldb->getDoc($this->docId)) {
@@ -95,13 +91,11 @@ class Base
         return false;
     }
     // }}}
-
     // {{{ isAllowedUnlink
     public function isAllowedUnlink($nodeId) {
         return true;
     }
     // }}}
-
     // {{{ isAllowedAdd
     public function isAllowedAdd($node, $targetId) {
         if($doc = $this->xmldb->getDoc($this->docId)) {
@@ -128,7 +122,19 @@ class Base
         return null;
     }
     // }}}
-
+    // {{{ onCopyNode
+    /**
+     * On Copy Node
+     *
+     * @param \DomElement $node
+     * @param $target_id
+     * @param $target_pos
+     * @return null
+     */
+    public function onCopyNode($node_id, $copy_id) {
+        return true;
+    }
+    // }}}
     // {{{ onDeleteNode()
     /**
      * On Delete Node
