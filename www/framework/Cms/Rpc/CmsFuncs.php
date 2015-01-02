@@ -220,18 +220,32 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
+            // {{{ tree-type specific actions
             if ($args['type'] == "pages") {
                 // create node for page-types
+                $newNodes = array();
                 $tempdoc = new \DOMDocument();
                 $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $newNodes . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
-                $newNodes = array();
                 $newNodes[] = $tempdoc->documentElement;
+            } else if ($args['type'] == "colors") {
+                // init newNodes for colors
+                $newNodes = array();
+                $tempdoc = new \DOMDocument();
+                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><proj:colorscheme xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" name="' . htmlentities($newName) . '" />');
+                $newNodes[] = $tempdoc->documentElement;
+
+                // adjust target id -> colorscheme are always added to root
+                $xmldoc = $this->xmldb->getDoc("colors");
+                $targetId = $xmldoc->getDocInfo()->rootid;
             }
+            // }}}
             foreach($newNodes as $i => $node) {
                 $savedId = $xmldoc->addNode($node, $targetId);
                 if (!empty($newName)) {
                     //$xmldoc->setAttribute($savedId, "name", $newName);
                 }
+
+                // {{{ tree-type specific actions
                 if ($args['type'] == "pages") {
                     // add document data to page data document
                     $dbRef = (int) $node->getAttribute("db:docref");
@@ -242,6 +256,7 @@ class CmsFuncs {
                         $pagedataDoc->addNode($args["xmldata"][$i], $rootId);
                     }
                 }
+                // }}}
                 $changedIds[] = $savedId;
             }
         }
@@ -351,7 +366,7 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $savedId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data");
+            $savedId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data" ||  $args['type'] == "colors");
             if (!empty($newName)) {
                 $xmldoc->setAttribute($savedId, "name", $newName);
             }
@@ -814,7 +829,7 @@ class CmsFuncs {
 
         $xml = "";
         foreach ($users as $user) {
-            $xml .= "<user name=\"" . htmlspecialchars($user->name) . "\" fullname=\"" . htmlspecialchars($user->fullname) . "\" uid=\"" . htmlspecialchars($user->id) . "\" />";
+            $xml .= "<user name=\"" . htmlspecialchars($user->name) . "\" fullname=\"" . htmlspecialchars($user->fullname) . "\" uid=\"" . htmlspecialchars($user->id) . "\" level=\"" . htmlspecialchars($user->level) . "\" />";
         }
 
         return $xml;
@@ -975,6 +990,7 @@ class CmsFuncs {
         if ($type == 'settings') {
             $this->callbacks[] = $this->getCallbackForSettings($ids);
         } elseif ($type == 'colors') {
+            $this->callbacks[] = $this->getCallbackForColors($ids);
         } elseif ($type == 'tpl_newnodes') {
         } elseif ($type == 'pages') {
             $this->callbacks[] = $this->getCallbackForPages($ids);
@@ -1060,6 +1076,15 @@ class CmsFuncs {
         $data['data'] = $this->getTreeSettings();
 
         return new Func("update_tree_settings", $data);
+    }
+    // }}}
+    // {{{ getCallbackForColors()
+    function getCallbackForColors($ids = array()) {
+        $data = array();
+
+        $data['data'] = $this->getTreeColors();
+
+        return new Func("update_tree_colors", $data);
     }
     // }}}
     // {{{ getCallbackForPagedata()
