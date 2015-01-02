@@ -3,7 +3,7 @@
 namespace Depage\Cms\XmlDocTypes;
 
 // TODO configure
-define('XML_TEMPLATE_DIR', __DIR__ . '/xml_templates/');
+define('XML_TEMPLATE_DIR', __DIR__ . '/XmlTemplates/');
 
 class Pages extends \Depage\xmldb\XmlDocTypes\Base {
 
