@@ -1,10 +1,11 @@
-<pg:page_data>
-    <pg:meta db:invalid="del,move,name,dupl" db:name="tree_name_metatags" colorscheme="%insert_default_colorscheme%">
+<?xml version="1.0"?>
+<pg:page_data xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit">
+    <pg:meta db:invalid="del,move,name,dupl" db:name="tree_name_metatags" colorscheme="">
         <pg:title lang="" value="" />
         <pg:linkdesc lang="" value="" />
         <pg:desc lang="" />
     </pg:meta>
     <sec:redirect name="Redirect" icon="edit_a">
-            <edit:a href="" target="" lang=""></edit:a>
+        <edit:a href="" target="" lang=""></edit:a>
     </sec:redirect>
 </pg:page_data>

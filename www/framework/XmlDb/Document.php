@@ -689,13 +689,18 @@ class Document {
      * @param    $target_pos (int) pos to copy to
      */
     public function copyNode($node_id, $target_id, $target_pos) {
-        if ($this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+        $docHandler = $this->getDoctypeHandler();
+        if ($docHandler->isAllowedMove($node_id, $target_id)) {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
             $this->clearCache();
 
-            return $this->saveNode($root_node, $target_id, $target_pos, false);
+            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, false);
+
+            $docHandler->onCopyNode($node_id, $copy_id);
+
+            return $copy_id;
         }
 
         return false;
@@ -716,14 +721,19 @@ class Document {
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
+        $docHandler = $this->getDoctypeHandler();
 
-        if ($this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+        if ($docHandler->isAllowedMove($node_id, $target_id)) {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
             $this->clearCache();
 
-            return $this->saveNode($root_node, $target_id, $target_pos, $recursive);
+            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
+
+            $docHandler->onCopyNode($node_id, $copy_id);
+
+            return $copy_id;
         }
 
         return false;

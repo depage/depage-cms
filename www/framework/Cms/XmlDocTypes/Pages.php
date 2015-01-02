@@ -15,7 +15,7 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
         $this->availableNodes = array(
             'pg:page' => (object) array(
                 'name' => _("Page"),
-                'new' => _("Untitled Page"),
+                'new' => _("(Untitled Page)"),
                 'icon' => "",
                 'attributes' => array(),
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
@@ -23,7 +23,7 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
             ),
             'pg:folder' => (object) array(
                 'name' => _("Folder"),
-                'new' => _("Untitled Folder"),
+                'new' => _("(Untitled Folder)"),
                 'icon' => "",
                 'attributes' => array(),
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Folder',
@@ -34,7 +34,7 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
                 'new' => _("Redirect"),
                 'icon' => "",
                 'attributes' => array(),
-                'doc_type' => 'Depage\Cms\XmlDocTypes\Redirect',
+                'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
                 'xml_template' => 'redirect.xml',
             ),
             'pg:separator' => (object) array(
@@ -79,19 +79,16 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
      * @return \depage\xmldb\document
      */
     public function onAddNode(\DomElement $node, $target_id, $target_pos) {
-
         if (isset($this->availableNodes[$node->nodeName])) {
-
             $properties = $this->availableNodes[$node->nodeName];
 
+            if (isset($properties->new)) {
+                $node->setAttribute("name", $properties->new);
+            }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
-
                 $doc_name = '_' . strtolower($properties->name) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
-
                 $document = $this->xmldb->createDoc($doc_name, $properties->doc_type);
-
-                $node->setAttribute('db:ref', $document->getDocId());
-
+                $node->setAttribute('db:docref', $document->getDocId());
                 $xml = $this->loadXmlTemplate($properties->xml_template);
 
                 return $document->save($xml);
@@ -99,6 +96,19 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
         }
 
         return false;
+    }
+    // }}}
+    // {{{ onCopyNode
+    /**
+     * On Copy Node
+     *
+     * @param \DomElement $node
+     * @param $target_id
+     * @param $target_pos
+     * @return null
+     */
+    public function onCopyNode($node_id, $copy_id) {
+        return true;
     }
     // }}}
     // {{{ onDeleteNode()
@@ -110,11 +120,13 @@ class Pages extends \Depage\xmldb\XmlDocTypes\Base {
      * @param $doc_id
      * @return boolean
      */
-    public function onDeleteNode($doc_id) {
-        $this->xmldb->removeDoc($doc_id);
+    public function onDeleteNode($nodeId) {
+        // @todo check functionality
+        //$this->xmldb->removeDoc($doc_id);
         return true;
     }
     // }}}
+
     // {{{ testDocument
     public function testDocument($node) {
         $xmlnav = new \Depage\Cms\XmlNav();

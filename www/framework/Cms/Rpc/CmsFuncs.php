@@ -220,10 +220,27 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
-            foreach($newNodes as $node) {
+            if ($args['type'] == "pages") {
+                // create node for page-types
+                $tempdoc = new \DOMDocument();
+                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $newNodes . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
+                $newNodes = array();
+                $newNodes[] = $tempdoc->documentElement;
+            }
+            foreach($newNodes as $i => $node) {
                 $savedId = $xmldoc->addNode($node, $targetId);
                 if (!empty($newName)) {
-                    $xmldoc->setAttribute($savedId, "name", $newName);
+                    //$xmldoc->setAttribute($savedId, "name", $newName);
+                }
+                if ($args['type'] == "pages") {
+                    // add document data to page data document
+                    $dbRef = (int) $node->getAttribute("db:docref");
+                    if (isset($args["xmldata"][$i]) && $dbRef > 0) {
+                        $pagedataDoc = $this->xmldb->getDoc($dbRef);
+                        $rootId = $pagedataDoc->getDocInfo()->rootid;
+
+                        $pagedataDoc->addNode($args["xmldata"][$i], $rootId);
+                    }
                 }
                 $changedIds[] = $savedId;
             }

@@ -115,9 +115,13 @@ class Flash extends Base {
         } elseif ($type == "delete-node") {
             $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="delete_node"><rpc:param name="sid">cec525be1504a84bc86503de0d690780</rpc:param><rpc:param name="wid">cec525be1504a84bc86503de0d690780</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="id">6981</rpc:param><rpc:param name="type">page_data</rpc:param></rpc:func>,<rpc:func name="keepAlive"><rpc:param name="sid">cec525be1504a84bc86503de0d690780</rpc:param><rpc:param name="wid">cec525be1504a84bc86503de0d690780</rpc:param><rpc:param name="project_name">depage</rpc:param></rpc:func></rpc:msg>';
         // }}}
-        // {{{ duplicate-node
+        // {{{ duplicate-node (content)
         } elseif ($type == "duplicate-node") {
             $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="duplicate_node"><rpc:param name="sid">eb3a565e6006cbd4a8ed677b6dd26452</rpc:param><rpc:param name="wid">eb3a565e6006cbd4a8ed677b6dd26452</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="id">14235</rpc:param><rpc:param name="new_name">Textblock (copy)</rpc:param><rpc:param name="type">page_data</rpc:param></rpc:func></rpc:msg>';
+        // }}}
+        // {{{ duplicate-page
+        } elseif ($type == "duplicate-page") {
+            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="get_tree"><rpc:param name="sid">179mvr3930lhp431quinqrvh93</rpc:param><rpc:param name="wid">179mvr3930lhp431quinqrvh93</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="type">page_data</rpc:param><rpc:param name="id">12</rpc:param></rpc:func></rpc:msg>';
         // }}}
         // {{{ add-node
         } elseif ($type == "add-node") {
@@ -127,6 +131,15 @@ class Flash extends Base {
 </sec:text>
 
 </rpc:param><rpc:param name="new_name" /></rpc:func></rpc:msg>';
+        // }}}
+        // {{{ add-page
+        } elseif ($type == "add-page") {
+            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="add_node"><rpc:param name="sid">oclkkke0m04fvp3am14d9mt974</rpc:param><rpc:param name="wid">oclkkke0m04fvp3am14d9mt974</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="target_id">55</rpc:param><rpc:param name="type">pages</rpc:param><rpc:param name="node_type">page</rpc:param><rpc:param name="xmldata">
+    <sec:section name="Abschnitt">
+        <edit:text_headline lang=""><p>Headline</p></edit:text_headline>
+    </sec:section>
+
+    </rpc:param><rpc:param name="new_name">(untitled)</rpc:param></rpc:func></rpc:msg>';
         // }}}
         // {{{ set-page-colorscheme
         } elseif ($type == "set-page-colorscheme") {
@@ -193,12 +206,6 @@ class Flash extends Base {
                 $results[] = $tempval;
             }
         }
-        /*
-        if (count($pocket_updates) > 0) {
-            send_updates();
-        }
-         */
-        //$results = array_merge($results, $project->user->get_updates($project->user->sid));
         $results = array_merge($results, $funcHandler->getCallbacks());
 
         if (count($results) == 0) {
