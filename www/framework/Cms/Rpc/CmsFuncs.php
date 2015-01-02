@@ -34,7 +34,7 @@ class CmsFuncs {
     // }}}
     // {{{ register_window()
     function register_window($args) {
-        return new Func('registered_window', array('wid' => $args['sid'], 'user_level' => 3, 'error' => false));
+        return new Func('registered_window', array('wid' => $args['sid'], 'user_level' => $this->user->level, 'error' => false));
     }
     // }}}
     // {{{ get_config()

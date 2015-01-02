@@ -112,6 +112,7 @@ class_interface.prototype.initSettings = function() {
 				tooltip	: conf.lang.register_tip_colors
 			});
 		}
+                /*
 		if (conf.user.mayEditTemplates()) {
 			this.movClip.register.register.push({
 				title	: this.layouts.templates.title,
@@ -121,6 +122,7 @@ class_interface.prototype.initSettings = function() {
 				tooltip	: conf.lang.register_tip_templates
 			});
 		}
+                */
 		if (conf.user.mayEditSettings()) {
 			this.movClip.register.register.push({
 				title	: this.layouts.settings.title,
