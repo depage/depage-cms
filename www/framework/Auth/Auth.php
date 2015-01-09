@@ -44,7 +44,7 @@ abstract class Auth
      *
      * @public
      *
-     * @param       Depage\Db\Pdo  $pdo        depage\DB\PDO object for database access
+     * @param       Depage\Db\Pdo  $pdo        depage\Db\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -379,7 +379,7 @@ abstract class Auth
      **/
     public static function updateSchema($pdo)
     {
-        $schema = new \Depage\DB\Schema($pdo);
+        $schema = new \Depage\Db\Schema($pdo);
 
         $schema->setReplace(
             function ($tableName) use ($pdo) {
