@@ -151,7 +151,7 @@ class XmlDb implements XmlGetter
         $query->execute($query_param);
 
         while ($doc = $query->fetchObject()) {
-            $docs[$doc->name] = new document($this, $doc->id);
+            $docs[$doc->name] = new Document($this, $doc->id);
         }
 
         return $docs;
@@ -195,7 +195,7 @@ class XmlDb implements XmlGetter
         $result = $query->fetchObject();
 
         if ($result && $doc_id = $this->docExists($result->id_doc)) {
-            return new document($this, $doc_id);
+            return new Document($this, $doc_id);
         }
 
         return false;
@@ -212,7 +212,7 @@ class XmlDb implements XmlGetter
         $xml = false;
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
-            $doc = new document($this, $doc_id);
+            $doc = new Document($this, $doc_id);
             $xml = $doc->getXml($add_id_attribute);
         }
 

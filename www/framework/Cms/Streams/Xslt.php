@@ -17,7 +17,7 @@ class Xslt extends Base {
         } else {
             $path = $url['host'];
         }
-        $path = realpath(DEPAGE_FM_PATH . "/cms/xslt/" . $path);
+        $path = realpath(DEPAGE_FM_PATH . "/Cms/Xslt/" . $path);
 
         if (file_exists($path)) {
             $this->data = file_get_contents("file://$path");

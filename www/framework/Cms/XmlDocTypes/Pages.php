@@ -5,7 +5,7 @@ namespace Depage\Cms\XmlDocTypes;
 // TODO configure
 define('XML_TEMPLATE_DIR', __DIR__ . '/XmlTemplates/');
 
-class Pages extends \Depage\xmldb\XmlDocTypes\Base {
+class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
 
     // {{{ constructor
     public function __construct($xmldb, $docId) {

@@ -36,7 +36,7 @@ class Project extends \Depage\HtmlForm\HtmlForm
             "label" => _("Identifier"),
             "required" => "true",
             "validator" => "/[-a-zA-Z0-9_]+/",
-            "disabled" => $project->id !== null,
+            "disabled" => $this->project->id !== null,
         ));
         $this->addSingle("groupId", array(
             "label" => _("Project Group"),

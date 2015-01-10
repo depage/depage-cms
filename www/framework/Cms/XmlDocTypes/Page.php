@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Page extends \Depage\Xmldb\XmlDocTypes\Base
+class Page extends \Depage\XmlDb\XmlDocTypes\Base
 {
     private $table_nodetypes;
     private $pathXMLtemplate;

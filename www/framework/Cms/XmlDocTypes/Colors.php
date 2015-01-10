@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Colors extends \Depage\xmldb\XmlDocTypes\Base {
+class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
 
     // {{{ constructor
     public function __construct($xmldb, $docId) {

@@ -867,7 +867,7 @@ class CmsFuncs {
     // }}}
     // {{{ getTreeTplNewnodes()
     function getTreeTplNewnodes() {
-        $doctypes = new \depage\cms\xmldoctypes\page($this->xmldb, 0);
+        $doctypes = new \Depage\Cms\XmlDocTypes\Page($this->xmldb, 0);
         $nodetypes = $doctypes->getNodeTypes();
 
         $xml = "<proj:tpl_newnodes db:name=\"tree_nodename_newnodes_root\"";

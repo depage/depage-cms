@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    modules/xmldb/XmldbHistory.php
+ * @file    modules/XmlDb/XmldbHistory.php
  *
  * cms xmldb module
  *
