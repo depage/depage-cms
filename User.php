@@ -108,7 +108,7 @@ class User extends \Depage\Entity\Entity
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
         if (!$user) {
-            throw new Exceptions\User("user '$name' does not exist.");
+            throw new Exceptions\User("user '$username' does not exist.");
         }
 
         return $user;
@@ -143,6 +143,10 @@ class User extends \Depage\Entity\Entity
         // pass pdo-instance to constructor
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        if (!$user) {
+            throw new Exceptions\User("user with email '$email' does not exist.");
+        }
 
         return $user;
     }

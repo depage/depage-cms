@@ -90,11 +90,11 @@ class HttpDigest extends HttpBasic
             $this->setSid("");
         }
         if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) {
-            // get new user object
-            $user = User::loadByUsername($this->pdo, $data['username']);
-            $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
+            try {
+                // get new user object
+                $user = User::loadByUsername($this->pdo, $data['username']);
+                $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
-            if ($user) {
                 if ($validResponse) {
                     if (($uid = $this->isValidSid($this->sid)) !== false) {
                         if ($uid == "") {
@@ -111,6 +111,7 @@ class HttpDigest extends HttpBasic
                 } else {
                     $this->prolongLogin($user);
                 }
+            } catch (\Depage\Auth\Exceptions\User $e) {
             }
         }
 
