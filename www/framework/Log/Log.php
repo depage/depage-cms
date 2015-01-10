@@ -35,7 +35,13 @@ class Log
         $this->options = $conf->getFromDefaults($this->defaults);
 
         if (!$this->options->file) {
-            $this->options->file = DEPAGE_PATH . "/logs/depage.log";
+            $this->options->file = DEPAGE_PATH . "logs/depage.log";
+        }
+        $dir = dirname($this->options->file);
+
+        if (!is_writable($dir) && !mkdir($dir, 0777, true)) {
+            $this->options->file = "";
+            $this->log("Could not create/write log to '$dir'");
         }
     }
     // }}}

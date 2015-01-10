@@ -54,7 +54,7 @@ abstract class Base
         }
 
         $this->log = new \Depage\Log\Log(array(
-            'file' => DEPAGE_PATH . "/logs/" . str_replace("\\", "_", get_class($this)) . ".log",
+            'file' => DEPAGE_PATH . "logs/" . str_replace("\\", "_", get_class($this)) . ".log",
         ));
     }
     // }}}

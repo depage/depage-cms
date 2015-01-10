@@ -284,7 +284,7 @@ class Project extends \Depage\Entity\Entity
 
         $projectPath = DEPAGE_PATH . "projects/{$this->name}/";
 
-        $success = mkdir($projectPath, 0777, true) || is_writable($projectPath);
+        $success = is_writable($projectPath) || mkdir($projectPath, 0777, true);
         mkdir($projectPath . "lib/", 0777, true);
         mkdir($projectPath . "import/", 0777, true);
         mkdir($projectPath . "xml/", 0777, true);
