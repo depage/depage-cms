@@ -54,7 +54,7 @@ class XmlDb implements XmlGetter
 
         $this->options = $options;
 
-        $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
+        $this->db_ns = new XmlNs("db", "http://cms.depagecms.net/ns/database");
 
         $this->table_prefix = $table_prefix;
         $this->table_docs = $table_prefix . "_xmldocs";
@@ -286,7 +286,7 @@ class XmlDb implements XmlGetter
      **/
     public function updateSchema()
     {
-        $schema = new \Depage\DB\Schema($this->pdo);
+        $schema = new \Depage\Db\Schema($this->pdo);
 
         $projectName = $this->name;
 
