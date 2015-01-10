@@ -69,10 +69,10 @@ class HttpBasic extends HttpCookie
             $password = $_SERVER['PHP_AUTH_PW'];
 
             // get new user object
-            $user = User::loadByUsername($this->pdo, $username);
-            $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
+            try {
+                $user = User::loadByUsername($this->pdo, $username);
+                $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-            if ($user) {
                 if ($pass->verify($user->name, $password, $user->passwordhash)) {
                     $this->updatePasswordHash($user, $password);
 
@@ -91,7 +91,9 @@ class HttpBasic extends HttpCookie
                 } else {
                     $this->prolongLogin($user);
                 }
+            } catch (\Depage\Auth\Exceptions\User $e) {
             }
+
         }
 
         $this->sendAuthHeader();
