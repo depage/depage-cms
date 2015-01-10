@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms;
  * brief Project
  * Class Project
  */
-class Import extends \Depage\Htmlform\Htmlform
+class Import extends \Depage\HtmlForm\HtmlForm
 {
     // {{{ __construct()
     /**
