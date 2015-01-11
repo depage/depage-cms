@@ -36,7 +36,7 @@ class User extends \Depage\Entity\Entity
         "dateResetPassword" => null,
         "confirmId" => null,
         "resetPasswordId" => null,
-        "loginTimeout" => null,
+        "loginTimeout" => 0,
     );
 
     /**
@@ -243,8 +243,9 @@ class User extends \Depage\Entity\Entity
                 {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
             WHERE
-            user.id=sessions.userid and
-            sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)"
+                user.id=sessions.userid and
+                sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+            ORDER BY user.sortname"
         );
         $uid_query->execute();
 
@@ -278,7 +279,8 @@ class User extends \Depage\Entity\Entity
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
-                {$pdo->prefix}_auth_user AS user"
+                {$pdo->prefix}_auth_user AS user
+            ORDER BY user.sortname"
         );
         $uid_query->execute();
 
@@ -292,6 +294,35 @@ class User extends \Depage\Entity\Entity
         } while ($user);
 
         return $users;
+    }
+    // }}}
+
+    // {{{ setFullname()
+    /**
+     * @brief setFullname
+     *
+     * @param mixed $value
+     * @return void
+     **/
+    protected function setFullname($value)
+    {
+        $this->data['fullname'] = $value;
+        $this->dirty['fullname'] = true;
+
+        $this->data['sortname'] = end(explode(" ", trim($value)));
+        $this->dirty['sortname'] = true;
+    }
+    // }}}
+    // {{{ setSortname()
+    /**
+     * @brief setSortname
+     *
+     * @param mixed $value
+     * @return void
+     **/
+    protected function setSortname($value)
+    {
+
     }
     // }}}
 

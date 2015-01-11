@@ -8,14 +8,13 @@
 
 CREATE TABLE `_auth_user` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `type` enum('Depage\\Auth\\User') DEFAULT NULL,
+    `type` varchar(100) NOT NULL DEFAULT '',
     `name` varchar(32) NOT NULL DEFAULT '',
     `fullname` varchar(100) NOT NULL DEFAULT '',
     `sortname` varchar(25) NOT NULL DEFAULT '',
     `passwordhash` varchar(255) NOT NULL DEFAULT '',
     `email` varchar(100) NOT NULL DEFAULT '',
     `settings` mediumtext NOT NULL,
-    `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
     `dateRegistered` datetime DEFAULT NULL,
     `dateLastlogin` datetime DEFAULT NULL,
     `dateUpdated` datetime DEFAULT NULL,
