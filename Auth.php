@@ -24,9 +24,9 @@ namespace Depage\Auth;
 abstract class Auth
 {
     // {{{ variables
-    protected $realm = "depage::cms";
+    public $realm = "depage::cms";
     protected $domain = "";
-    protected $digestCompat = false;
+    public $digestCompat = false;
     public $sid, $uid;
     public $valid = false;
     public $sessionLifetime = 10800; // in seconds
