@@ -152,7 +152,6 @@ class Main extends Base {
         // construct template
         $h = new Html("box.tpl", array(
             'id' => "projects",
-            'icon' => "framework/Cms/images/icon_projects.gif",
             'class' => "first",
             'title' => "Projects",
             'content' => new Html("projectlist.tpl", array(
@@ -183,7 +182,6 @@ class Main extends Base {
         // construct template
         $h = new Html("box.tpl", array(
             'id' => "tasks",
-            'icon' => "framework/Cms/images/icon_tasks.gif",
             'title' => "Tasks",
             'content' => new Html("taskProgress.tpl", array(
                 'tasks' => $tasks,
@@ -213,7 +211,6 @@ class Main extends Base {
 
         $h = new Html("box.tpl", array(
             'id' => "users",
-            'icon' => "framework/cms/images/icon_users.gif",
             'title' => "Users",
             'content' => new Html("userlist.tpl", array(
                 'title' => $this->basetitle,
