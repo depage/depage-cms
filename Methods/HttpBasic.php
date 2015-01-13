@@ -70,7 +70,14 @@ class HttpBasic extends HttpCookie
 
             // get new user object
             try {
-                $user = User::loadByUsername($this->pdo, $username);
+                if (strpos($username, "@") !== false) {
+                    // email login
+                    $user = User::loadByEmail($this->pdo, $username);
+                    $username = $user->name;
+                } else {
+                    // username login
+                    $user = User::loadByUsername($this->pdo, $username);
+                }
                 $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
                 if ($pass->verify($user->name, $password, $user->passwordhash)) {
