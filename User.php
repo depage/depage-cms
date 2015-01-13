@@ -74,6 +74,9 @@ class User extends \Depage\Entity\Entity
         parent::__construct($pdo);
 
         $this->pdo = $pdo;
+
+        // set class to called class (for subclasses of Depage\Auth\User)
+        $this->data["type"] = get_class($this);
     }
     // }}}
 
