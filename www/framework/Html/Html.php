@@ -465,6 +465,23 @@ class Html {
         self::t(self::link($link, $protocol, $locale));
     }
     // }}}
+    // {{{ attr()
+    /**
+     * @brief attr
+     *
+     * @param mixed $name, $value
+     * @return void
+     **/
+    protected function attr($name, $value = "")
+    {
+        if (!empty($value)) {
+            echo(" $name=\"");
+            echo(htmlspecialchars($value));
+            echo("\"");
+        }
+
+    }
+    // }}}
     // {{{ hash()
     /**
      * creates hash tag for locations from text
