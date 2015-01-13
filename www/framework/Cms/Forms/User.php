@@ -48,17 +48,23 @@ class User extends \Depage\HtmlForm\HtmlForm
             ));
             $f->addPassword("password1", array(
                 "label" => _("Password"),
+                "autocomplete" => false,
             ));
             $f->addPassword("password2", array(
                 "label" => _("Repeat Password"),
+                "autocomplete" => false,
                 "errorMessage" => _("Both passwords have to be equal"),
             ));
         }
 
         if ($this->authUser->canEditAllUsers()) {
-            $this->addSingle("type", array(
+            $f = $this->addFieldSet("Permission", array(
+                'label' => _("Permissions"),
+            ));
+            $f->addSingle("type", array(
                 'label' => _("User type"),
                 'skin' => "select",
+                'defaultValue' => 'Depage\Cms\Auth\DefaultUser',
                 'list' => array(
                     'Depage\Cms\Auth\Admin' => _("Administrator"),
                     'Depage\Cms\Auth\Developer' => _("Developer"),

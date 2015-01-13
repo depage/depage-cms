@@ -25,7 +25,7 @@ class User extends Base
         if (empty($this->userName)) {
             throw new \Depage\Auth\Exceptions\User("no user given");
         } else if ($this->userName == "+") {
-            $this->user = new \Depage\Auth\User($this->pdo);
+            $this->user = new \Depage\Cms\Auth\DefaultUser($this->pdo);
         } else {
             $this->user = \Depage\Auth\User::loadByUsername($this->pdo, $this->userName);
         }
@@ -63,7 +63,7 @@ class User extends Base
             foreach ($values as $key => $val) {
                 $this->user->$key = $val;
             }
-            if ($values['password1'] == $values['password2']) {
+            if ($values['password1'] !== "" && $values['password1'] == $values['password2']) {
                 $pass = new \Depage\Auth\Password($this->auth->realm, $this->auth->digestCompat);
                 $this->user->passwordhash = $pass->hash($user->name, $values['password1']);
             };

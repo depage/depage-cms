@@ -84,10 +84,20 @@ $editWidth: 820px;
 /* {{{ global */
 * {
     font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
-    font-size : 12px;
+    margin: 0;
+    padding: 0;
+}
+a {
     text-decoration : none;
-    margin-top : 0px;
-    margin-bottom : 0px;
+}
+div,
+h1,
+h2,
+ul,
+ol,
+li,
+p {
+    font-size : 12px;
 }
 html,
 body {
@@ -477,6 +487,8 @@ header.info {
 }
 /* }}} */
 /* {{{ depage-forms */
+@import "../../HtmlForm/lib/sass/depage-forms.scss";
+
 .depage-form {
     position: relative;
     width: 100%;
@@ -487,6 +499,24 @@ header.info {
         position: absolute;
         top: 0;
         right: 0;
+    }
+    fieldset {
+        position: relative;
+        border: none;
+        & + fieldset {
+            border-top: 1px solid #eeeeee;
+        }
+        margin-top: 12px;
+        margin-bottom: 12px;
+
+        legend {
+            font-weight: bold;
+            float: left;
+            width: 100%;
+            line-height: 15px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+        }
     }
 }
 /* }}} */
