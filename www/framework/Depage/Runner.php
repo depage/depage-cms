@@ -141,7 +141,7 @@ class Runner {
             $php_file = DEPAGE_PATH . "modules/" . strtolower($file);
         }
 
-        //echo("class: $class - file: $file - php_file: $php_file<br>\n");
+        //error_log("class: $class - file: $file - php_file: $php_file<br>\n");
 
         if ($php_file != "") {
             require_once($php_file);
