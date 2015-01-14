@@ -21,6 +21,7 @@ class Graphics extends \Depage\Depage\Ui\Base
         'extension'     => 'gd',
         'executable'    => '',
         'background'    => 'transparent',
+        'optimize'      => false,
     );
 
     // }}}
