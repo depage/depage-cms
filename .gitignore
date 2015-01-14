@@ -3,6 +3,7 @@ www/projects/
 **/Tests/phpunit/
 **/Tests/Report/
 
+.sass-cache/
 *.vis
 
 *.vim
