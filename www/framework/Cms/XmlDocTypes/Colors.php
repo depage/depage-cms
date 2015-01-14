@@ -79,20 +79,20 @@ class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
         return $changed;
     }
     // }}}
-    // {{{ fixColors()
+    // {{{ fixColorscheme()
     /**
-     * @brief fixColors
+     * @brief fixColorscheme
      *
      * @param mixed $node, $colorNames
      * @return void
      **/
     protected function fixColorscheme($xml, $node, $colorNames)
     {
+        $xpath = new \DOMXPath($xml);
         $tempNode = $xml->createElement('temp_node');
         $node->insertBefore($tempNode, $node->firstChild);
 
         foreach($colorNames as $color) {
-            $xpath = new \DOMXPath($xml);
             $nodelist = $xpath->query("/color[@name = '$color']", $node);
 
             if ($nodelist->length > 0) {
