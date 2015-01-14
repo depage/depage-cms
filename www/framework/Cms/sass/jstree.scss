@@ -6,186 +6,186 @@
  */
 
 // {{{ vakata-context
-.vakata-context { 
-    display:none; 
-    _width:1px; 
+.vakata-context {
+    display:none;
+    _width:1px;
 
     &,
-    ul { 
-        margin:0; 
-        padding:2px; 
-        position:absolute; 
-        background:#f5f5f5; 
+    ul {
+        margin:0;
+        padding:2px;
+        position:absolute;
+        background:#f5f5f5;
         border:1px solid #979797;
-        -moz-box-shadow:5px 5px 4px -4px #666666; 
-        -webkit-box-shadow:2px 2px 2px #999999; 
-        box-shadow:2px 2px 2px #999999; 
+        -moz-box-shadow:5px 5px 4px -4px #666666;
+        -webkit-box-shadow:2px 2px 2px #999999;
+        box-shadow:2px 2px 2px #999999;
     }
-    ul { 
-        list-style:none; 
-        left:100%; 
-        margin-top:-2.7em; 
-        margin-left:-4px; 
+    ul {
+        list-style:none;
+        left:100%;
+        margin-top:-2.7em;
+        margin-left:-4px;
     }
-    li.vakata-context-right ul { 
-        left:auto; 
-        right:100%; 
-        margin-left:auto; 
-        margin-right:-4px; 
+    li.vakata-context-right ul {
+        left:auto;
+        right:100%;
+        margin-left:auto;
+        margin-right:-4px;
     }
-    li { 
-        list-style:none; 
-        display:inline; 
+    li {
+        list-style:none;
+        display:inline;
 
-        a { 
-            display:block; 
-            padding:0 2em 0 2em; 
-            text-decoration:none; 
-            width:auto; 
-            color:black; 
-            white-space:nowrap; 
+        a {
+            display:block;
+            padding:0 2em 0 2em;
+            text-decoration:none;
+            width:auto;
+            color:black;
+            white-space:nowrap;
             line-height:2.4em;
-            -moz-text-shadow:1px 1px 0px white; 
-            -webkit-text-shadow:1px 1px 0px white; 
+            -moz-text-shadow:1px 1px 0px white;
+            -webkit-text-shadow:1px 1px 0px white;
             text-shadow:1px 1px 0px white;
-            -moz-border-radius:1px; 
-            -webkit-border-radius:1px; 
-            border-radius:1px; 
+            -moz-border-radius:1px;
+            -webkit-border-radius:1px;
+            border-radius:1px;
 
-            &:hover { 
-                position:relative; 
+            &:hover {
+                position:relative;
                 background-color:#e8eff7;
-                -moz-box-shadow:0px 0px 2px #0a6aa1; 
-                -webkit-box-shadow:0px 0px 2px #0a6aa1; 
-                box-shadow:0px 0px 2px #0a6aa1; 
+                -moz-box-shadow:0px 0px 2px #0a6aa1;
+                -webkit-box-shadow:0px 0px 2px #0a6aa1;
+                box-shadow:0px 0px 2px #0a6aa1;
             }
 
-            ins { 
-                text-decoration:none; 
-                display:inline-block; 
-                width:2.4em; 
-                height:2.4em; 
-                background:transparent; 
-                margin:0 0 0 -2em; 
+            ins {
+                text-decoration:none;
+                display:inline-block;
+                width:2.4em;
+                height:2.4em;
+                background:transparent;
+                margin:0 0 0 -2em;
             }
-            span { 
-                display:inline-block; 
-                width:1px; 
-                height:2.4em; 
-                background:white; 
-                margin:0 0.5em 0 0; 
-                border-left:1px solid #e2e3e3; 
-                _overflow:hidden; 
+            span {
+                display:inline-block;
+                width:1px;
+                height:2.4em;
+                background:white;
+                margin:0 0.5em 0 0;
+                border-left:1px solid #e2e3e3;
+                _overflow:hidden;
             }
         }
-        &.vakata-context-hover > a { 
-            position:relative; 
+        &.vakata-context-hover > a {
+            position:relative;
             background-color:#e8eff7;
-            -moz-box-shadow:0px 0px 2px #0a6aa1; 
-            -webkit-box-shadow:0px 0px 2px #0a6aa1; 
-            box-shadow:0px 0px 2px #0a6aa1; 
+            -moz-box-shadow:0px 0px 2px #0a6aa1;
+            -webkit-box-shadow:0px 0px 2px #0a6aa1;
+            box-shadow:0px 0px 2px #0a6aa1;
         }
-        a.vakata-context-parent { 
-            background-image:url("data:image/gif;base64,R0lGODlhCwAHAIAAACgoKP///yH5BAEAAAEALAAAAAALAAcAAAIORI4JlrqN1oMSnmmZDQUAOw=="); 
-            background-position:right center; 
-            background-repeat:no-repeat; 
+        a.vakata-context-parent {
+            background-image:url("data:image/gif;base64,R0lGODlhCwAHAIAAACgoKP///yH5BAEAAAEALAAAAAALAAcAAAIORI4JlrqN1oMSnmmZDQUAOw==");
+            background-position:right center;
+            background-repeat:no-repeat;
         }
 
         &.vakata-context-separator {
             a,
-            a:hover { 
-                background:white; 
-                border:0; 
-                border-top:1px solid #e2e3e3; 
-                height:1px; 
-                min-height:1px; 
-                max-height:1px; 
-                padding:0; 
-                margin:0 0 0 2.4em; 
-                border-left:1px solid #e0e0e0; 
+            a:hover {
+                background:white;
+                border:0;
+                border-top:1px solid #e2e3e3;
+                height:1px;
+                min-height:1px;
+                max-height:1px;
+                padding:0;
+                margin:0 0 0 2.4em;
+                border-left:1px solid #e0e0e0;
                 _overflow:hidden;
-                -moz-text-shadow:0 0 0 transparent; 
-                -webkit-text-shadow:0 0 0 transparent; 
+                -moz-text-shadow:0 0 0 transparent;
+                -webkit-text-shadow:0 0 0 transparent;
                 text-shadow:0 0 0 transparent;
-                -moz-box-shadow:0 0 0 transparent; 
-                -webkit-box-shadow:0 0 0 transparent; 
+                -moz-box-shadow:0 0 0 transparent;
+                -webkit-box-shadow:0 0 0 transparent;
                 box-shadow:0 0 0 transparent;
-                -moz-border-radius:0; 
-                -webkit-border-radius:0; 
-                border-radius:0; 
+                -moz-border-radius:0;
+                -webkit-border-radius:0;
+                border-radius:0;
             }
         }
     }
-    li.vakata-contextmenu-disabled a, 
-    .vakata-context li.vakata-contextmenu-disabled a:hover { 
-        color:silver; 
-        background-color:transparent; 
-        border:0; 
-        box-shadow:0 0 0; 
+    li.vakata-contextmenu-disabled a,
+    .vakata-context li.vakata-contextmenu-disabled a:hover {
+        color:silver;
+        background-color:transparent;
+        border:0;
+        box-shadow:0 0 0;
     }
 
 }
 // }}}
 // {{{ jstree-container
-.jstree-container { 
+.jstree-container {
     position: absolute;
-    width:auto; 
-    height:auto; 
-    overflow:auto; 
-    overflow-x:hidden; 
+    width:auto;
+    height:auto;
+    overflow:auto;
+    overflow-x:hidden;
     min-height: 100%;
     width: 100%;
 }
 // }}}
 // {{{ jstree
 .jstree {
-    li { 
-        line-height: 24px !important; 
+    li {
+        line-height: 24px !important;
         min-height: 24px !important;
     }
-    a { 
-        line-height: 24px !important; 
+    a {
+        line-height: 24px !important;
         min-height: 24px !important;
     }
-    span { 
+    span {
         margin-left: 10px;
-        color: #999999; 
+        color: #999999;
     }
-    * { 
-        -webkit-box-sizing:content-box; 
-        -moz-box-sizing:content-box; 
-        box-sizing:content-box; 
+    * {
+        -webkit-box-sizing:content-box;
+        -moz-box-sizing:content-box;
+        box-sizing:content-box;
     }
     ul,
-    li { 
-        display:block; 
-        margin:0 0 0 0; 
-        padding:0 0 0 0; 
-        list-style-type:none; 
-    } 
-    li { 
-        display:block; 
-        min-height:18px; 
-        line-height:18px; 
-        white-space:nowrap; 
-        margin-left:18px; 
-        min-width:18px; 
-    } 
-    & > ul > li { 
-        margin-left:0px; 
-    } 
-    .jstree-icon { 
-        display:inline-block; 
-        text-decoration:none; 
-        margin:0; 
-        padding:0; 
-        vertical-align:top; 
-    } 
-    .jstree-ocl { width:18px; height:18px; text-align:center; line-height:18px; cursor:pointer; vertical-align:top; } 
-    a { display:inline-block; line-height:16px; height:16px; color:black; white-space:nowrap; padding:1px 2px; margin:0; } 
-    a:focus { outline: none; } 
-    li.jstree-open > ul { display:block; } 
-    li.jstree-closed > ul { display:none; } 
+    li {
+        display:block;
+        margin:0 0 0 0;
+        padding:0 0 0 0;
+        list-style-type:none;
+    }
+    li {
+        display:block;
+        min-height:18px;
+        line-height:18px;
+        white-space:nowrap;
+        margin-left:18px;
+        min-width:18px;
+    }
+    & > ul > li {
+        margin-left:0px;
+    }
+    .jstree-icon {
+        display:inline-block;
+        text-decoration:none;
+        margin:0;
+        padding:0;
+        vertical-align:top;
+    }
+    .jstree-ocl { width:18px; height:18px; text-align:center; line-height:18px; cursor:pointer; vertical-align:top; }
+    a { display:inline-block; line-height:16px; height:16px; color:black; white-space:nowrap; padding:1px 2px; margin:0; }
+    a:focus { outline: none; }
+    li.jstree-open > ul { display:block; }
+    li.jstree-closed > ul { display:none; }
 }
 // }}}
 // {{{ marker @todo add to subclass?
@@ -195,10 +195,10 @@
     overflow:hidden;
     height:24px;
     line-height: 24px;
-    width:24px; 
-    position: absolute; 
+    width:24px;
+    position: absolute;
     z-index:10000;
-    background-repeat:no-repeat; 
+    background-repeat:no-repeat;
     display:none;
     cursor: pointer;
 }
@@ -222,136 +222,136 @@
 // }}}
 
 // {{{ jstree-default
-.jstree-default { 
+.jstree-default {
     background: #e3e3e3;
 
-    &.jstree-focused { 
-        background:#ffffff; 
+    &.jstree-focused {
+        background:#ffffff;
     }
 
-    li, 
-    ins { 
-        background-image:url("../images/jstree/tree.png"); 
-        background-repeat:no-repeat; 
-        background-color:transparent; 
+    li,
+    ins {
+        background-image:url("../images/jstree/tree.png");
+        background-repeat:no-repeat;
+        background-color:transparent;
     }
-    li { 
-        background-position:-90px 0; 
-        background-repeat:repeat-y; 
+    li {
+        background-position:-90px 0;
+        background-repeat:repeat-y;
     }
-    li.jstree-last { 
-        background:transparent; 
+    li.jstree-last {
+        background:transparent;
     }
-    .jstree-open > .jstree-ocl { 
-        background-position:-72px 0; 
+    .jstree-open > .jstree-ocl {
+        background-position:-72px 0;
     }
-    .jstree-closed > .jstree-ocl { 
-        background-position:-54px 0; 
+    .jstree-closed > .jstree-ocl {
+        background-position:-54px 0;
     }
-    .jstree-leaf > .jstree-ocl { 
-        background-position:-36px 0; 
+    .jstree-leaf > .jstree-ocl {
+        background-position:-36px 0;
     }
-    .jstree-loading > .jstree-ocl { 
-        background:url("../images/jstree/throbber.gif") center center no-repeat !important; 
+    .jstree-loading > .jstree-ocl {
+        background:url("../images/jstree/throbber.gif") center center no-repeat !important;
     }
 
-    .jstree-hovered { 
-        background:#e7f4f9; 
-        border:1px solid #d8f0fa; 
-        padding:0 2px 0 1px; 
-        border-radius:2px; 
+    .jstree-hovered {
+        background:#e7f4f9;
+        border:1px solid #d8f0fa;
+        padding:0 2px 0 1px;
+        border-radius:2px;
     }
-    .jstree-clicked { 
-        background:#beebff; 
-        border:1px solid #99defd; 
-        padding:0 2px 0 1px; 
-        border-radius:2px; 
+    .jstree-clicked {
+        background:#beebff;
+        border:1px solid #99defd;
+        padding:0 2px 0 1px;
+        border-radius:2px;
     }
-    a .jstree-themeicon { 
-        background-position:-56px -19px; 
+    a .jstree-themeicon {
+        background-position:-56px -19px;
     }
 
     .jstree-no-dots {
-        li, 
-        .jstree-leaf > .jstree-ocl { 
-            background:transparent; 
+        li,
+        .jstree-leaf > .jstree-ocl {
+            background:transparent;
         }
-        .jstree-open > .jstree-ocl { 
-            background-position:-18px 0; 
+        .jstree-open > .jstree-ocl {
+            background-position:-18px 0;
         }
-        .jstree-closed > .jstree-ocl { 
-            background-position:0 0; 
+        .jstree-closed > .jstree-ocl {
+            background-position:0 0;
         }
     }
 
     & > .jstree-wholerow-ul {
-        .jstree-hovered, 
-        .jstree-clicked { 
-            background:transparent; border:0; 
-            padding:1px 2px; 
-            border-radius:0; 
+        .jstree-hovered,
+        .jstree-clicked {
+            background:transparent; border:0;
+            padding:1px 2px;
+            border-radius:0;
         }
-        .jstree-wholerow-hovered { 
-            background:#e7f4f9; 
+        .jstree-wholerow-hovered {
+            background:#e7f4f9;
         }
-        .jstree-wholerow-clicked { 
-            background:#beebff; 
+        .jstree-wholerow-clicked {
+            background:#beebff;
         }
     }
 
 
-    .jstree-no-icons a .jstree-themeicon { 
-        display:none; 
+    .jstree-no-icons a .jstree-themeicon {
+        display:none;
     }
 
-    .jstree-search { 
-        font-style:italic; 
-        color:aqua; 
+    .jstree-search {
+        font-style:italic;
+        color:aqua;
     }
 
-    .jstree-no-checkboxes .jstree-checkbox { 
-        display:none !important; 
+    .jstree-no-checkboxes .jstree-checkbox {
+        display:none !important;
     }
 
-    .jstree-check { 
-        display:none; 
+    .jstree-check {
+        display:none;
     }
-    .jstree-checkbox { 
-        background-position:-2px -19px; 
+    .jstree-checkbox {
+        background-position:-2px -19px;
     }
-    .jstree-checked { 
-        background-position:-38px -19px; 
+    .jstree-checked {
+        background-position:-38px -19px;
     }
-    .jstree-undetermined { 
-        background-position:-20px -19px; 
+    .jstree-undetermined {
+        background-position:-20px -19px;
     }
     a:hover {
-        .jstree-checkbox { 
-            background-position:-2px -37px; 
+        .jstree-checkbox {
+            background-position:-2px -37px;
         }
-        .jstree-checked { 
-            background-position:-38px -37px; 
+        .jstree-checked {
+            background-position:-38px -37px;
         }
-        .jstree-undetermined { 
-            background-position:-20px -37px; 
+        .jstree-undetermined {
+            background-position:-20px -37px;
         }
     }
 
     &#jstree-dnd {
-        ins { 
-            background:transparent; 
+        ins {
+            background:transparent;
         }
-        .jstree-ok { 
-            background:url("../images/jstree/tree.png") -2px -53px no-repeat; 
+        .jstree-ok {
+            background:url("../images/jstree/tree.png") -2px -53px no-repeat;
         }
-        .jstree-er { 
-            background:url("../images/jstree/tree.png") -18px -53px no-repeat; 
+        .jstree-er {
+            background:url("../images/jstree/tree.png") -18px -53px no-repeat;
         }
     }
 
-    .jstree-locked a { 
-        color:silver; 
-        cursor:default; 
+    .jstree-locked a {
+        color:silver;
+        cursor:default;
     }
 }
 // }}}

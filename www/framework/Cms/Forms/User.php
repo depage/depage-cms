@@ -20,13 +20,15 @@ class User extends \Depage\HtmlForm\HtmlForm
         $this->user = $params['user'];
         $this->authUser = $params['authUser'];
 
+        $params['label'] = _("Save User");
+
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
 
         parent::__construct($name, $params);
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
-            $f = $this->addFieldSet("Basics", array(
+            $f = $this->addFieldset("Basics", array(
                 'label' => _("Basics"),
             ));
             $f->addText("name", array(
@@ -45,7 +47,7 @@ class User extends \Depage\HtmlForm\HtmlForm
         }
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
-            $f = $this->addFieldSet("Password", array(
+            $f = $this->addFieldset("Password", array(
                 'label' => _("Change Password"),
             ));
             $f->addPassword("password1", array(
@@ -60,7 +62,7 @@ class User extends \Depage\HtmlForm\HtmlForm
         }
 
         if ($this->authUser->canEditAllUsers()) {
-            $f = $this->addFieldSet("Permission", array(
+            $f = $this->addFieldset("Permission", array(
                 'label' => _("Permissions"),
             ));
             $f->addSingle("type", array(

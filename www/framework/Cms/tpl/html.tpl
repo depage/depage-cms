@@ -13,6 +13,7 @@
         <?php $this->include_js("interface", array(
             "framework/Cms/js/interface.js",
             "framework/shared/jquery.cookie.js",
+            "framework/HtmlForm/lib/js/effect.js",
             //"framework/shared/jquery.hotkeys.js",
             //"framework/Cms/js/jstree.js",
         )); ?>

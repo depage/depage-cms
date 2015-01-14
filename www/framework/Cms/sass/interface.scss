@@ -8,7 +8,8 @@
     }
     a,
     h2 a:hover,
-    .error span {
+    .error span,
+    .depage-form p.cancel input {
         color: #882200;
     }
     body {
@@ -80,6 +81,20 @@ $toolbarHeight: 30px;
 $infoHeight: 15px;
 $editWidth: 820px;
 //$editWidth: 610px;
+
+// {{{ mixin: clearfix()
+@mixin clearfix($direction: 'both') {
+    display: inline-block;
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: $direction;
+        visibility: hidden;
+    }
+    * html & { height: 1px }
+}
+// }}}
 
 /* {{{ global */
 * {
@@ -490,6 +505,7 @@ header.info {
 @import "../../HtmlForm/lib/sass/depage-forms.scss";
 
 .depage-form {
+    @include clearfix();
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -499,6 +515,33 @@ header.info {
         position: absolute;
         top: 0;
         right: 0;
+    }
+    p.submit,
+    p.cancel {
+        float: left;
+        input {
+            margin-top: 24px;
+            cursor: pointer;
+        }
+    }
+    p.submit {
+        input {
+            font-weight: bold;
+        }
+    }
+    p.cancel {
+        clear: none;
+        margin-left: 12px;
+
+        input {
+            background: none;
+            border: none;
+            text-decoration: underline;
+
+            &:hover {
+                color: #000000;
+            }
+        }
     }
     fieldset {
         position: relative;

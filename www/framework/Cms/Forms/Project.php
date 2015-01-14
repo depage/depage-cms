@@ -23,6 +23,8 @@ class Project extends \Depage\HtmlForm\HtmlForm
         }
         $this->project = $params['project'];
 
+        $params['label'] = _("Save Project");
+
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
 

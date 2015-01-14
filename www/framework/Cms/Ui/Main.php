@@ -91,7 +91,7 @@ class Main extends Base {
 
             $form->process();
 
-            if ($form->isValid()) {
+            if ($form->valid) {
                 $form->clearSession();
             } else {
                 $error = "";

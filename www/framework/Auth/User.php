@@ -312,7 +312,8 @@ class User extends \Depage\Entity\Entity
         $this->data['fullname'] = $value;
         $this->dirty['fullname'] = true;
 
-        $this->data['sortname'] = end(explode(" ", trim($value)));
+        $nameparts = explode(" ", trim($value));
+        $this->data['sortname'] = end($nameparts);
         $this->dirty['sortname'] = true;
     }
     // }}}
