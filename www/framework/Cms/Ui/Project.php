@@ -69,11 +69,16 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
+        if ($this->project->id != null) {
+            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
+        } else {
+            $title = _("Add new Project");
+        }
         $h = new Html("box.tpl", array(
             'id' => "projects",
             'icon' => "framework/Cms/images/icon_projects.gif",
             'class' => "first",
-            'title' => sprintf(_("Project '%s' Settings"), $this->project->name),
+            'title' => $title,
             'content' => array(
                 $this->toolbar(),
                 $form,
@@ -102,6 +107,7 @@ class Project extends Base
             ));
 
             $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $cache);
+            //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
             $value = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
 
             $form->clearSession();
@@ -115,7 +121,6 @@ class Project extends Base
             'class' => "first",
             'title' => sprintf(_("Import Project '%s'"), $this->project->name),
             'content' => array(
-                $this->toolbar(),
                 $form,
             ),
         ), $this->htmlOptions);
@@ -134,7 +139,6 @@ class Project extends Base
 
         $h = new Html(array(
             'content' => array(
-                $this->toolbar(),
                 $hProject,
             ),
         ));
@@ -158,7 +162,6 @@ class Project extends Base
 
         $h = new Html(array(
             'content' => array(
-                $this->toolbar(),
                 $hProject,
             ),
         ));

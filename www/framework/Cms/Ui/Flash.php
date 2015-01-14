@@ -34,6 +34,12 @@ class Flash extends Base {
         return $this->flash();
     }
     // }}}
+    // {{{ toolbar()
+    function toolbar() {
+        // don't display toolbar in flash iframe
+        return "";
+    }
+    // }}}
     // {{{ flash
     /**
      * function to show error messages

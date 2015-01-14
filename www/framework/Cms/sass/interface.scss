@@ -197,7 +197,7 @@ a img {
             background-position: 48px 48px;
         }
     }
-    &.first .content {
+    .toolbar + & .content {
         height: auto !important;
         height: 200px;
         min-height: 200px;
@@ -522,7 +522,7 @@ header.info {
 /* }}} */
 
 /* {{{ projectlisting */
-#box_projects {
+.box_projects {
     .content:before {
         background-position: 0px 0px;
     }
@@ -612,7 +612,7 @@ ul.projectlisting {
 }
 /* }}} */
 /* {{{ users */
-#box_users {
+.box_users {
     .content:before {
         background-position: 0 (-1 * 48px);
     }
@@ -623,7 +623,7 @@ ul.users p {
 }
 /* }}} */
 /* {{{ tasks */
-#box_tasks {
+.box_tasks {
     .content:before {
         background-position: 0 (-2 * 48px);
     }

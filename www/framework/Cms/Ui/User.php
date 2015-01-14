@@ -35,10 +35,10 @@ class User extends Base
 
     // {{{ index()
     function index() {
-        if ($this->userName == "+") {
+        if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
             return $this->edit();
         } else {
-            return $this->edit();
+            return $this->show();
         }
     }
     // }}}
@@ -51,6 +51,9 @@ class User extends Base
      **/
     protected function edit()
     {
+        if (!($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null)) {
+            throw new \Exception("you are not allowed to to this!");
+        }
         $form = new \Depage\Cms\Forms\User("edit-user-" . $this->user->id, array(
             "user" => $this->user,
             "authUser" => $this->authUser,
@@ -85,8 +88,26 @@ class User extends Base
             'class' => "first",
             'title' => $title,
             'content' => array(
-                $this->toolbar(),
                 $form,
+            ),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ show()
+    /**
+     * @brief show
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function show()
+    {
+        $h = new Html("box.tpl", array(
+            'class' => "box_users",
+            'title' => $title,
+            'content' => array(
             ),
         ), $this->htmlOptions);
 

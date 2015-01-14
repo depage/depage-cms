@@ -42,7 +42,6 @@ class Main extends Base {
             // logged in
             $h = new Html(array(
                 'content' => array(
-                    $this->toolbar(),
                     $this->projects(),
                     $this->users("current"),
                     $this->tasks(),
@@ -52,7 +51,6 @@ class Main extends Base {
             // not logged in
             $h = new Html(array(
                 'content' => array(
-                    $this->toolbar(),
                     'content' => new Html("welcome.tpl", array(
                         'title' => "Welcome to\n depage::cms ",
                         'login' => "Login",
@@ -102,9 +100,8 @@ class Main extends Base {
                 }
 
                 $h = new Html("box.tpl", array(
-                    'id' => "login",
                     'icon' => "framework/cms/images/icon_login.gif",
-                    'class' => "first",
+                    'class' => "box_login",
                     'title' => "Login",
                     'content' => array(
                         $error,
@@ -124,8 +121,7 @@ class Main extends Base {
         //}
 
         $h = new Html("box.tpl", array(
-            'id' => "logout",
-            'class' => "first",
+            'class' => "box_logout",
             'title' => "Bye bye!",
             'content' => new Html("logout.tpl", array(
                 'content' => "Thank you for using depage::cms. ",
@@ -151,8 +147,7 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", array(
-            'id' => "projects",
-            'class' => "first",
+            'class' => "box_projects",
             'title' => "Projects",
             'content' => new Html("projectlist.tpl", array(
                 'projects' => $projects,
@@ -181,7 +176,7 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", array(
-            'id' => "tasks",
+            'class' => "box_tasks",
             'title' => "Tasks",
             'content' => new Html("taskProgress.tpl", array(
                 'tasks' => $tasks,
@@ -210,7 +205,7 @@ class Main extends Base {
         }
 
         $h = new Html("box.tpl", array(
-            'id' => "users",
+            'class' => "box_users",
             'title' => "Users",
             'content' => new Html("userlist.tpl", array(
                 'title' => $this->basetitle,

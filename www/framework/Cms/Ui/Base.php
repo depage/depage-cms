@@ -81,7 +81,10 @@ class Base extends \Depage\Depage\Ui\Base
             $output = new Html("html.tpl", array(
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
-                'content' => $output,
+                'content' => array(
+                    $this->toolbar(),
+                    $output,
+                )
             ), $this->htmlOptions);
         }
 

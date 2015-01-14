@@ -25,22 +25,24 @@ class User extends \Depage\HtmlForm\HtmlForm
 
         parent::__construct($name, $params);
 
-        $f = $this->addFieldSet("Basics", array(
-            'label' => _("Basics"),
-        ));
-        $f->addText("name", array(
-            "label" => _("Username"),
-            "required" => "true",
-            "validator" => "/[-a-zA-Z0-9_]+/",
-            "disabled" => $this->user->id !== null,
-        ));
-        $f->addText("fullname", array(
-            "label" => _("Display Name"),
-            "required" => "true",
-        ));
-        $f->addEmail("email", array(
-            "label" => _("Email"),
-        ));
+        if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
+            $f = $this->addFieldSet("Basics", array(
+                'label' => _("Basics"),
+            ));
+            $f->addText("name", array(
+                "label" => _("Username"),
+                "required" => "true",
+                "validator" => "/[-a-zA-Z0-9_]+/",
+                "disabled" => $this->user->id !== null,
+            ));
+            $f->addText("fullname", array(
+                "label" => _("Display Name"),
+                "required" => "true",
+            ));
+            $f->addEmail("email", array(
+                "label" => _("Email"),
+            ));
+        }
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
             $f = $this->addFieldSet("Password", array(
