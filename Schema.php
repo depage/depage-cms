@@ -104,7 +104,7 @@ class Schema
             throw new Exceptions\SchemaException('Incomplete statement at the end of "' . $fileName . '".');
         }
 
-        $this->updateData = array(
+        $this->updateData[] = array(
             'tableName' => $this->replace($tableName),
             'statementBlock' => $statementBlock,
             'versions' => $versions
@@ -130,37 +130,41 @@ class Schema
     // {{{ run
     protected function run()
     {
-        extract($this->updateData);
-        $keys = array_keys($versions);
+        foreach($this->updateData as $dataSet) {
+            extract($dataSet);
+            $keys = array_keys($versions);
 
-        if ($this->tableExists($tableName)) {
-            $currentVersion = $this->currentTableVersion($tableName);
-            $search = array_search($currentVersion, $keys);
+            if ($this->tableExists($tableName)) {
+                $currentVersion = $this->currentTableVersion($tableName);
+                $search = array_search($currentVersion, $keys);
 
-            if ($search == count($keys) - 1) {
-                $startKey = false;
-            } elseif ($search === false) {
-                $startKey = false;
-                trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
-            } else {
-                $startKey = $keys[$search + 1];
-            }
-        } else {
-            $startKey = $keys[0];
-        }
-
-        if ($startKey !== false) {
-            $startLine = $versions[$startKey];
-
-            foreach ($statementBlock as $lineNumber => $statements) {
-                if ($lineNumber >= $startLine) {
-                    $this->execute($lineNumber, $statements);
+                if ($search == count($keys) - 1) {
+                    $startKey = false;
+                } elseif ($search === false) {
+                    $startKey = false;
+                    trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
+                } else {
+                    $startKey = $keys[$search + 1];
                 }
+            } else {
+                $startKey = $keys[0];
             }
 
-            $lastVersion = $keys[count($keys) - 1];
-            $this->updateTableVersion($tableName, $lastVersion);
+            if ($startKey !== false) {
+                $startLine = $versions[$startKey];
+
+                foreach ($statementBlock as $lineNumber => $statements) {
+                    if ($lineNumber >= $startLine) {
+                        $this->execute($lineNumber, $statements);
+                    }
+                }
+
+                $lastVersion = $keys[count($keys) - 1];
+                $this->updateTableVersion($tableName, $lastVersion);
+            }
         }
+
+        $this->updateData = array();
     }
     // }}}
     // {{{ execute
