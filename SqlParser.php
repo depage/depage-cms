@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/DB/SQLParser.php
+ * @file    framework/Db/SqlParser.php
  *
  * depage database module
  *
@@ -8,9 +8,9 @@
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
-namespace depage\DB;
+namespace Depage\Db;
 
-class SQLParser
+class SqlParser
 {
     // {{{ variables
     protected $split        = array();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/DB/PDO.php
+ * @file    framework/DB/Pdo.php
  *
  * depage database module
  *
@@ -10,9 +10,9 @@
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
 
-namespace depage\DB;
+namespace Depage\Db;
 
-class PDO
+class Pdo
 {
     /* {{{ variables*/
     public $prefix = "";
@@ -45,6 +45,17 @@ class PDO
             unset($driver_options['prefix']);
         }
         $this->driver_options = $driver_options;
+    }
+    // }}}
+    // {{{ destructor
+    /**
+     * removes the pdo object which closes the connection to the database
+     *
+     * @return  void
+     */
+    public function __destruct()
+    {
+        $this->pdo = null;
     }
     // }}}
     // {{{ lateInitialize
@@ -109,7 +120,7 @@ class PDO
 
     // {{{ __sleep()
     /**
-     * allows depage\DB\PDO-object to be serialized
+     * allows Depage\Db\Pdo-object to be serialized
      */
     public function __sleep()
     {
@@ -124,7 +135,7 @@ class PDO
     // }}}
     // {{{ __wakeup()
     /**
-     * allows depage\DB\PDO-object to be unserialized
+     * allows Depage\Db\Pdo-object to be unserialized
      *
      * We don't need to initialize the connection because we are already initializing them late.
      */

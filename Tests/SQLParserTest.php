@@ -1,13 +1,13 @@
 <?php
 
-use depage\DB\SQLParser;
+use Depage\Db\SqlParser;
 
-class SQLParserTest extends PHPUnit_Framework_TestCase
+class SqlParserTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
     {
-        $this->parser = new SQLParser();
+        $this->parser = new SqlParser();
     }
     // }}}
 

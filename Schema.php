@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/DB/Schema.php
+ * @file    framework/Db/Schema.php
  *
  * depage database module
  *
@@ -8,7 +8,7 @@
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
-namespace depage\DB;
+namespace Depage\Db;
 
 class Schema
 {
@@ -48,10 +48,10 @@ class Schema
     public function loadFile($fileName)
     {
         if (!is_readable($fileName)) {
-            throw new Exceptions\SchemaException('File "' . $fileName . '" doesn\'t exist or isn\'t readable.'); 
+            throw new Exceptions\SchemaException('File "' . $fileName . '" doesn\'t exist or isn\'t readable.');
         }
 
-        $parser         = new SQLParser();
+        $parser         = new SqlParser();
         $header         = true;
         $versions       = array();
         $dictionary     = array();
@@ -261,10 +261,14 @@ class Schema
         $comments       = array_filter($split, function ($v) { return $v['type'] == 'comment'; });
         $matchedTags    = array();
 
+        $values = array_values($comments);
+        $values = array_shift($values);
+        $comment = $values['string'];
+
         foreach ($tags as $tag) {
             if (
                 count($comments) == 1
-                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', array_shift(array_values($comments))['string'], $matches)
+                && preg_match('/' . $tag . '\s+(\S.*\S)\s*$/', $comment, $matches)
                 && count($matches) == 2
             ) {
                 // @todo get rid of '*/' in preg_match

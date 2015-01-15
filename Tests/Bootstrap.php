@@ -1,8 +1,8 @@
 <?php
 
-require_once('../SQLParser.php');
-require_once('../Schema.php');
-require_once('../Exceptions/SchemaException.php');
+require_once(__DIR__ . '/../SqlParser.php');
+require_once(__DIR__ . '/../Schema.php');
+require_once(__DIR__ . '/../Exceptions/SchemaException.php');
 
 // {{{ PDOTestClass
 class PDOTestClass extends PDO

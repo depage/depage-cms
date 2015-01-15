@@ -58,7 +58,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testCompleteUpdate
     public function testCompleteUpdate()
     {
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
@@ -66,7 +66,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testIncrementalUpdates
     public function testIncrementalUpdates()
     {
-        $this->schema->loadFile('Fixtures/TestFilePart.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFilePart.sql');
         $this->schema->update();
 
         $firstVersion = "CREATE TABLE `test` (\n" .
@@ -76,7 +76,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
 
         $this->assertEquals($firstVersion, $this->showCreateTestTable());
 
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
@@ -84,11 +84,11 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testUpToDate
     public function testUpToDate()
     {
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
 
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals($this->finalShowCreate, $this->showCreateTestTable());
     }
@@ -96,7 +96,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     // {{{ testDryRun
     public function testDryRun()
     {
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
 
         $expected = array(
             'CREATE TABLE test ( uid int(10) unsigned NOT NULL DEFAULT \'0\', pid int(10) unsigned NOT NULL DEFAULT \'0\' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
@@ -122,7 +122,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
                             'check the manual that corresponds to your MySQL server version ' .
                             'for the right syntax to use near \'=InnoDB DEFAULT CHARSET=utf8mb4\' at line 7';
 
-        $this->schema->loadFile('Fixtures/TestSyntaxError.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestSyntaxError.sql');
 
         try {
             $this->schema->update();
@@ -152,14 +152,14 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->assertEquals($expected, $this->showCreateTestTable());
 
         // trigger exception
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
     }
     // }}}
     // {{{ testCurrentTableVersion
     public function testCurrentTableVersion()
     {
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals('version 0.2', $this->schema->currentTableVersion('test'));
     }
@@ -168,7 +168,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
     public function testCurrentTableVersionFallback()
     {
         $this->pdo->queryFail = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "test" LIMIT 1';
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
         $this->assertEquals('version 0.2', $this->schema->currentTableVersion('test'));
     }
@@ -192,7 +192,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->pdo->queryFail = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "test" LIMIT 1';
 
         // trigger exception
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
     }
     // }}}
@@ -206,7 +206,7 @@ class SchemaDatabaseTest extends Generic_Tests_DatabaseTestCase
         $this->pdo->queryFail = 'SELECT 1 FROM test';
 
         // trigger exception
-        $this->schema->loadFile('Fixtures/TestFile.sql');
+        $this->schema->loadFile(__DIR__ . '/Fixtures/TestFile.sql');
         $this->schema->update();
     }
     // }}}
