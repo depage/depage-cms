@@ -2,10 +2,23 @@
 
 require_once('../Fs.php');
 require_once('../FsFile.php');
+require_once('../FsSsh.php');
 require_once('../Exceptions/FsException.php');
 
 // {{{ FsTestClass
-class FsTestClass extends Depage\Fs\FsFile
+class FsTestClass extends Depage\Fs\Fs
+{
+    public function parseUrl($url) {
+        return parent::parseUrl($url);
+    }
+
+    public function cleanUrl($url) {
+        return parent::cleanUrl($url);
+    }
+}
+// }}}
+// {{{ FsFileTestClass
+class FsFileTestClass extends Depage\Fs\FsFile
 {
     public function parseUrl($url) {
         return parent::parseUrl($url);

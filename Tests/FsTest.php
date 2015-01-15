@@ -17,7 +17,7 @@ class FsTest extends PHPUnit_Framework_TestCase
             'scheme' => 'file',
         );
 
-        $this->fs = new FsTestClass($params);
+        $this->fs = new FsFileTestClass($params);
     }
     // }}}
     // {{{ tearDown
@@ -133,7 +133,7 @@ class FsTest extends PHPUnit_Framework_TestCase
             'hidden' => true,
         );
 
-        $hiddenFs = new FsTestClass($params);
+        $hiddenFs = new FsFileTestClass($params);
         $lsReturn = $hiddenFs->ls('testDir/*');
         $expected = array(
             'testDir/.testFileHidden',
@@ -429,7 +429,6 @@ class FsTest extends PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testCleanUrlFtp
-    /*
     public function testCleanUrlFtp()
     {
         $params = array(
@@ -438,19 +437,18 @@ class FsTest extends PHPUnit_Framework_TestCase
             'pass' => 'testPass',
             'host' => 'testHost',
             'port' => 42,
-            'path' => '/',
+            'path' => '',
         );
 
         $ftpFs = new FsTestClass($params);
         $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('path/to/file'));
         $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('/path/to/file'));
 
-        $params['path'] = '/testSubDir/';
+        $params['path'] = '/testSubDir';
         $ftpFsSubDir = new FsTestClass($params);
         $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('path/to/file'));
         $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('/testSubDir/path/to/file'));
     }
-    */
     // }}}
 }
 
