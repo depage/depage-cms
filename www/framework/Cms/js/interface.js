@@ -38,7 +38,8 @@ var depageCMS = (function() {
         // {{{ setup
         setup: function() {
             localJS.setupVarious();
-            localJS.updateTasks();
+            setTimeout(localJS.updateTasks, 1000);
+            setTimeout(localJS.updateUsers, 8000);
         },
         // }}}
         // {{{ setupVarious
@@ -53,15 +54,36 @@ var depageCMS = (function() {
             });
         },
         // }}}
-        // {{{ loadTasks
+        // {{{ updateUsers
+        updateUsers: function() {
+            localJS.updateBox("#box-users", localJS.updateUsers);
+        },
+        // }}}
+        // {{{ updateTasks
         updateTasks: function() {
-            var $tasks = $("#box_tasks");
+            localJS.updateBox("#box-tasks", localJS.updateTasks);
+        },
+        // }}}
+        // {{{ updateBox
+        updateBox: function(id, successFunction) {
+            var $box = $(id);
+            var url;
 
-            if ($tasks.length > 0) {
-                var taskUrl = baseUrl + "tasks/ #box_tasks .content";
+            if ($box.length > 0) {
+                url = $box.attr("data-ajax-update-url");
+                var taskUrl = baseUrl + url.trim() + "?ajax=true " + id + " .content";
+                var timeout;
 
-                $tasks.load(taskUrl, function() {
-                    setTimeout(localJS.updateTasks, 2000);
+                $box.load(taskUrl, function(responseText, textStatus, jqXHR) {
+                    var matches = /( data-ajax-update-timeout="(\d+)")/.exec(responseText);
+                    if (matches !== null) {
+                        timeout = parseInt(matches[2], 10);
+                    } else {
+                        timeout = 5000;
+                    }
+                    if (typeof successFunction === "function") {
+                        setTimeout(successFunction, timeout);
+                    }
                 });
             }
         },

@@ -3,7 +3,7 @@ use \Depage\Html\Html;
 
 if (count($this->tasks) > 0) {
 ?>
-    <dl class="tasks">
+    <dl class="tasks" data-ajax-update-timeout="1000">
 <?php
 
 foreach($this->tasks as $task) {
@@ -17,7 +17,7 @@ foreach($this->tasks as $task) {
         <dt><?php Html::t($name); ?></dt>
         <dd>
             <progress value="<?php Html::e($progress->percent); ?>" max="100"></progress>
-            <p><?php Html::t(sprintf(_("'%s' will finish in %s sec"), $progress->description, $progress->estimated)); ?></p>
+            <p><?php Html::t(sprintf(_("%s%% / '%s' will finish in %s sec"), $progress->percent, $progress->description, $progress->estimated)); ?></p>
         <dd>
     <?php
 }

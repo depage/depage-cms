@@ -476,7 +476,7 @@ class Html {
     {
         if (!empty($value)) {
             echo(" $name=\"");
-            echo(htmlspecialchars($value));
+            echo(trim(htmlspecialchars($value)));
             echo("\"");
         }
 

@@ -168,17 +168,13 @@ a img {
 }
 /* }}} */
 /* {{{ border-radius */
-.centered_box .content {
-    -moz-border-radius: 0 0 12px 0;
-    -webkit-border-bottom-right-radius: 12px;
-}
 .toolbar a,
-.projectlisting a {
-    /*
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    */
+.projectlisting a,
+.depage-form .submit input,
+.depage-form .cancel input {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
 }
 /* }}} */
 /* {{{ centered_box */
@@ -210,6 +206,12 @@ a img {
             background-image: url(../images/icon_sprite.svg);
             background-size: (2 * 48px) (10 * 48px);
             background-position: 48px 48px;
+            opacity: 0.8;
+        }
+    }
+    &:hover {
+        .content:before {
+            opacity: 1;
         }
     }
     .toolbar + & .content {
@@ -565,7 +567,7 @@ header.info {
 /* }}} */
 
 /* {{{ projectlisting */
-.box_projects {
+.box-projects {
     .content:before {
         background-position: 0px 0px;
     }
@@ -655,7 +657,7 @@ ul.projectlisting {
 }
 /* }}} */
 /* {{{ users */
-.box_users {
+.box-users {
     .content:before {
         background-position: 0 (-1 * 48px);
     }
@@ -666,7 +668,7 @@ ul.users p {
 }
 /* }}} */
 /* {{{ tasks */
-.box_tasks {
+.box-tasks {
     .content:before {
         background-position: 0 (-2 * 48px);
     }

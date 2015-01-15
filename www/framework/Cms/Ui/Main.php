@@ -101,7 +101,7 @@ class Main extends Base {
 
                 $h = new Html("box.tpl", array(
                     'icon' => "framework/cms/images/icon_login.gif",
-                    'class' => "box_login",
+                    'class' => "box-login",
                     'title' => "Login",
                     'content' => array(
                         $error,
@@ -121,7 +121,7 @@ class Main extends Base {
         //}
 
         $h = new Html("box.tpl", array(
-            'class' => "box_logout",
+            'class' => "box-logout",
             'title' => "Bye bye!",
             'content' => new Html("logout.tpl", array(
                 'content' => "Thank you for using depage::cms. ",
@@ -147,7 +147,7 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", array(
-            'class' => "box_projects",
+            'class' => "box-projects",
             'title' => "Projects",
             'content' => new Html("projectlist.tpl", array(
                 'projects' => $projects,
@@ -176,8 +176,10 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", array(
-            'class' => "box_tasks",
+            'id' => "box-tasks",
+            'class' => "box-tasks",
             'title' => "Tasks",
+            'updateUrl' => "tasks/",
             'content' => new Html("taskProgress.tpl", array(
                 'tasks' => $tasks,
             )),
@@ -196,17 +198,19 @@ class Main extends Base {
     public function users($current = null) {
         $this->auth->enforce();
 
-        $current = $current === "current";
+        $showCurrent = $current === "current";
 
-        if ($current) {
+        if ($showCurrent) {
             $users = \Depage\Auth\User::loadActive($this->pdo);
         } else {
             $users = \Depage\Auth\User::loadAll($this->pdo);
         }
 
         $h = new Html("box.tpl", array(
-            'class' => "box_users",
+            'id' => "box-users",
+            'class' => "box-users",
             'title' => "Users",
+            'updateUrl' => "users/$current/",
             'content' => new Html("userlist.tpl", array(
                 'title' => $this->basetitle,
                 'users' => $users,
