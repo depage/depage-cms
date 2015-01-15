@@ -140,8 +140,8 @@ class Schema
             if ($search == count($keys) - 1) {
                 $startKey = false;
             } elseif ($search === false) {
-                trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
                 $startKey = false;
+                trigger_error('Current table version (' . $currentVersion . ') not in schema file.', E_USER_WARNING);
             } else {
                 $startKey = $keys[$search + 1];
             }
