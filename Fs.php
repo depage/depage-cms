@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Depage\Fs;
 
 class Fs
@@ -11,13 +12,8 @@ class Fs
         protected $hidden = false;
     // }}}
     // {{{ constructor
-    public function __construct($url, $params = array())
+    public function __construct($params = array())
     {
-        $parsed = $this->parseUrl($url);
-        $path = isset($parsed['path']) ? $parsed['path'] : '';
-        unset($parsed['path']);
-
-        $this->url = $parsed;
         if (isset($params['scheme']))   $this->url['scheme']    = $params['scheme'];
         if (isset($params['user']))     $this->url['user']      = $params['user'];
         if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
@@ -26,19 +22,26 @@ class Fs
         if (isset($params['hidden']))   $this->hidden           = $params['hidden'];
         if (isset($params['key']))      $this->key              = $params['key'];
 
-        if (!isset($this->url['scheme'])) {
-            $this->url['scheme'] = 'file';
-
-            $path = realpath($path);
-            if ($path === false) {
-                throw new Exceptions\FsException('Invalid path: ' . $path);
-            }
+        $this->setBase($params['path']);
+        /*
         } else if ($this->url['scheme'] == 'ssh2.sftp') {
             $this->sshConnect();
         }
+        */
+    }
+    // }}}
+    // {{{ factory
+    public static function factory($url, $params = array())
+    {
+        $parsed = self::parseUrl($url);
+        $params['path'] = isset($parsed['path']) ? $parsed['path'] : '';
+        $params = array_merge($parsed, $params);
+        if (!isset($params['scheme'])) {
+            $params['scheme'] = 'file';
+        }
+        $schemeClass = '\Depage\Fs\Fs' . ucfirst($params['scheme']);
 
-        $cleanPath = $this->cleanPath($path);
-        $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
+        return new $schemeClass($params);
     }
     // }}}
 
@@ -127,11 +130,6 @@ class Fs
         if (is_dir($cleanUrl)) {
             foreach ($this->scanDir($cleanUrl, true) as $nested) {
                 $this->rm($cleanUrl . '/' .  $nested);
-            }
-
-            // workaround, rmdir does not support file stream wrappers
-            if ($this->url['scheme'] == 'file') {
-                $cleanUrl = preg_replace(';^file://;', '', $cleanUrl);
             }
 
             $success = rmdir($cleanUrl);
@@ -258,6 +256,13 @@ class Fs
     }
     // }}}
 
+    // {{{ setBase
+    protected function setBase($path)
+    {
+        $cleanPath = $this->cleanPath($path);
+        $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
+    }
+    // }}}
     // {{{ parseUrl
     protected function parseUrl($url)
     {
@@ -330,16 +335,16 @@ class Fs
     {
         $path = $parsed['scheme'] . '://';
 
-        if ($this->sftpSession) {
-            $path .= $this->sftpSession;
-        } else {
+        //if ($this->sftpSession) {
+        //    $path .= $this->sftpSession;
+        //} else {
             $path .= isset($parsed['user']) ? $parsed['user']       : '';
             $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
             $path .= isset($parsed['user']) ? '@'                   : '';
             $path .= isset($parsed['host']) ? $parsed['host']       : '';
             $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
-        }
-        $path .= isset($parsed['path']) ? $parsed['path']       : '/';
+        //}
+        $path .= isset($parsed['path']) ? $parsed['path'] : '/';
 
         return $path;
     }
