@@ -57,6 +57,22 @@ class Task {
      **/
     protected $numberOfSubtasks = 100;
 
+    /**
+     * @brief timeToCheckSubtasks seconds after which task runner will check for new subtask
+     **/
+    protected $timeToCheckSubtasks = 10;
+
+    /**
+     * @brief lastCheck time of last check for new subtasks
+     **/
+    protected $lastCheck = null;
+
+    /**
+     * @brief subTasksRun array of subtask ids that where already run
+     **/
+    protected $subTasksRun = array();
+
+
     // {{{ constructor
     private function __construct($pdo) {
         $this->pdo = $pdo;
@@ -238,6 +254,10 @@ class Task {
     // }}}
     // {{{ getNextSubtask();
     public function getNextSubtask() {
+        if (time() - $this->timeToCheckSubtasks > $this->lastCheck) {
+            // clear subtasks so that subtask have to be reloaded
+            $this->subtasks = array();
+        }
         $subtask = current($this->subtasks);
 
         if (!$subtask) {
@@ -260,6 +280,7 @@ class Task {
 
         // evaluate statement
         $value = eval($subtask->php);
+        $this->subTasksRun[$subtask->id] = true;
 
         // unset internal variables
         unset($subtask, $_tmpindex, $_tmpvar);
@@ -456,6 +477,8 @@ class Task {
     // }}}
     // {{{ loadSubtasks()
     private function loadSubtasks() {
+        $this->lastCheck = time();
+
         $query = $this->pdo->prepare(
             "SELECT *
             FROM {$this->tableSubtasks}
@@ -475,7 +498,7 @@ class Task {
         foreach ($subtasks as $subtask) {
             if (empty($subtask->status)) {
                 $this->subtasks[$subtask->id] = $subtask;
-                $this->includeDependentSubtask($subtask, $id_to_subtask);
+                $this->includeDependentSubtask($subtask);
             }
         }
 
@@ -503,10 +526,12 @@ class Task {
     }
     // }}}
     // {{{ includeDependentSubtask()
-    private function includeDependentSubtask($subtask, &$id_to_subtask) {
+    private function includeDependentSubtask($subtask) {
         while ($subtask->depends_on && !isset($this->subtasks[$subtask->depends_on])) {
             $subtask = $this->loadSubtaskById($subtask->depends_on);
-            $this->subtasks[$subtask->id] = $subtask;
+            if (!isset($this->subTasksRun[$subtask->id])) {
+                $this->subtasks[$subtask->id] = $subtask;
+            }
         }
     }
     // }}}
