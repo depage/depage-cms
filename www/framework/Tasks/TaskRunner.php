@@ -86,15 +86,19 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     // }}}
 
     // {{{ runNow
-    public function runNow($taskId) {
-        if ($this->force_login)
+    public function runNow($taskId, $lowPriority = true) {
+        if ($this->force_login) {
             $this->auth->enforce();
+        }
 
+        $this->lowPriority = $lowPriority;
         $this->task = Task::load($this->pdo, (int)$taskId);
         $this->abnormal_exit = true;
         register_shutdown_function(array($this, "_atShutdown"));
 
-        if ($this->task->lock()) {
+        if ($this->task->status == "failed") {
+            $this->log->log("task {$this->task->taskName} failed");
+        } else if ($this->task->lock()) {
             try {
                 $this->log->log("starting task {$taskId} ({$this->task->taskName})");
 
@@ -133,9 +137,12 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     public function run($taskId, $lowPriority = true) {
         $this->lowPriority = $lowPriority;
         $this->task = Task::load($this->pdo, (int)$taskId);
-        $this->abnormal_exit = true;
 
-        register_shutdown_function(array($this, "_atShutdown"));
+        if ($this->task->status != "failed" && $this->task->lock()) {
+            $this->abnormal_exit = true;
+
+            register_shutdown_function(array($this, "_atShutdown"));
+        }
     }
     // }}}
 
@@ -152,8 +159,6 @@ class TaskRunner extends \Depage\Depage\Ui\Base
             );
 
             $this->executeInBackground(__DIR__ . "/../../", "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
-        } else {
-            $this->log->log("normal exit");
         }
     }
     // }}}

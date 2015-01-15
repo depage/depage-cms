@@ -354,19 +354,19 @@ class Task {
 
         // {{{ get progress
         $query = $this->pdo->prepare(
-            "SELECT COUNT(*) AS count, status
-            FROM {$this->tableSubtasks}
-            WHERE task_id = :taskId
-            GROUP BY status"
+            "SELECT
+                (SELECT COUNT(*) FROM {$this->tableSubtasks} WHERE task_id = :taskId1) AS num,
+                (SELECT COUNT(*) FROM {$this->tableSubtasks} WHERE task_id = :taskId2 AND status = 'done') AS done"
         );
         $query->execute(array(
-            "taskId" => $this->taskId,
+            "taskId1" => $this->taskId,
+            "taskId2" => $this->taskId,
         ));
-        $result = $query->fetchALL(\PDO::FETCH_COLUMN);
+        $result = $query->fetchObject();
 
-        $tasksPlanned = $result[0];
-        $tasksDone = isset($result[1]) ? $result[1] : 0.0001;
-        $tasksSum = $tasksPlanned + $tasksDone;
+        $tasksSum = $result->num;
+        $tasksDone = $result->done > 0 ? $result->done : 0.0001;
+        $tasksPlanned = $tasksSum - $tasksDone;
 
         $progress['percent'] = (int) ($tasksDone / $tasksSum * 100);
         // }}}
@@ -384,13 +384,13 @@ class Task {
         $progress['estimated'] = (int) (($result->time / $tasksDone) * $tasksPlanned);
         $progress['time_started'] = (int) $result->time_started;
         // }}}
-        // {{{ get name of running subtask
+        // {{{ get name and status of running subtask
         $query = $this->pdo->prepare(
-            "SELECT name
+            "SELECT name, status
             FROM {$this->tableSubtasks}
             WHERE
                 task_id = :taskId AND
-                status IS NULL
+                (status IS NULL OR status != 'done')
             ORDER BY id ASC
             LIMIT 1"
         );
@@ -399,7 +399,13 @@ class Task {
         ));
         $result = $query->fetchObject();
 
-        $progress['description'] = $result->name;
+        if ($result) {
+            $progress['description'] = $result->name;
+            $progress['status'] = $result->status;
+        } else {
+            $progress['description'] = "";
+            $progress['status'] = "";
+        }
         // }}}
 
         return (object) $progress;
