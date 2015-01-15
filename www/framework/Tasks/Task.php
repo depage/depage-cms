@@ -52,6 +52,11 @@ class Task {
      **/
     protected $tableSubtasks = "";
 
+    /**
+     * @brief numberOfSubtasks number of subtasks to load at the same time
+     **/
+    protected $numberOfSubtasks = 100;
+
 
     // {{{ constructor
     private function __construct($pdo) {
@@ -455,20 +460,20 @@ class Task {
         $query = $this->pdo->prepare(
             "SELECT *
             FROM {$this->tableSubtasks}
-            WHERE task_id = :taskId
-            ORDER BY id ASC"
+            WHERE
+                task_id = :taskId AND
+                status IS NULL
+            ORDER BY id ASC
+            LIMIT $this->numberOfSubtasks"
         );
         $query->execute(array(
             "taskId" => $this->taskId,
         ));
 
         $subtasks = $query->fetchAll(\PDO::FETCH_OBJ);
-        $id_to_subtask = array();
         $this->subtasks = array();
 
         foreach ($subtasks as $subtask) {
-            $id_to_subtask[$subtask->id] = $subtask;
-
             if (empty($subtask->status)) {
                 $this->subtasks[$subtask->id] = $subtask;
                 $this->includeDependentSubtask($subtask, $id_to_subtask);
@@ -478,10 +483,30 @@ class Task {
         ksort($this->subtasks);
     }
     // }}}
+    // {{{ loadSubtaskById()
+    private function loadSubtaskById($id) {
+        $query = $this->pdo->prepare(
+            "SELECT *
+            FROM {$this->tableSubtasks}
+            WHERE
+                id = :id AND
+                task_id = :taskId
+            LIMIT 1"
+        );
+        $query->execute(array(
+            "id" => $id,
+            "taskId" => $this->taskId,
+        ));
+
+        $subtask = $query->fetchObject();
+
+        return $subtask;
+    }
+    // }}}
     // {{{ includeDependentSubtask()
     private function includeDependentSubtask($subtask, &$id_to_subtask) {
-        while ($subtask->depends_on) {
-            $subtask = $id_to_subtask[$subtask->depends_on];
+        while ($subtask->depends_on && !isset($this->subtasks[$subtask->depends_on])) {
+            $subtask = $this->loadSubtaskById($subtask->depends_on);
             $this->subtasks[$subtask->id] = $subtask;
         }
     }
