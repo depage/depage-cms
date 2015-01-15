@@ -23,11 +23,6 @@ class Fs
         if (isset($params['key']))      $this->key              = $params['key'];
 
         $this->setBase($params['path']);
-        /*
-        } else if ($this->url['scheme'] == 'ssh2.sftp') {
-            $this->sshConnect();
-        }
-        */
     }
     // }}}
     // {{{ factory
@@ -334,17 +329,12 @@ class Fs
     protected function buildUrl($parsed)
     {
         $path = $parsed['scheme'] . '://';
-
-        //if ($this->sftpSession) {
-        //    $path .= $this->sftpSession;
-        //} else {
-            $path .= isset($parsed['user']) ? $parsed['user']       : '';
-            $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
-            $path .= isset($parsed['user']) ? '@'                   : '';
-            $path .= isset($parsed['host']) ? $parsed['host']       : '';
-            $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
-        //}
-        $path .= isset($parsed['path']) ? $parsed['path'] : '/';
+        $path .= isset($parsed['user']) ? $parsed['user']       : '';
+        $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+        $path .= isset($parsed['user']) ? '@'                   : '';
+        $path .= isset($parsed['host']) ? $parsed['host']       : '';
+        $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
+        $path .= isset($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
     }
@@ -441,30 +431,6 @@ class Fs
         } else {
             restore_error_handler();
         }
-    }
-    // }}}
-    // {{{ sshConnect
-    protected function sshConnect()
-    {
-        $this->session = ssh2_connect($this->url['host'], $this->url['port']);
-
-        if (isset($this->key)) {
-            ssh2_auth_pubkey_file(
-                $this->session,
-                $this->url['user'],
-                $this->key . '.pub',
-                $this->key,
-                $this->url['pass']
-            );
-        } else {
-            ssh2_auth_password(
-                $this->session,
-                $this->url['user'],
-                $this->url['pass']
-            );
-        }
-
-        $this->sftpSession = ssh2_sftp($this->session);
     }
     // }}}
 }
