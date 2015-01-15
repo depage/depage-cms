@@ -24,6 +24,12 @@ foreach($this->tasks as $task) {
         <dd>
             <progress value="<?php Html::e($progress->percent); ?>" max="100"></progress>
             <p><?php Html::t($status); ?></p>
+            <?php
+                $element = $this->taskForm->getElement("taskId");
+                $element->setDefaultValue($task->taskId);
+
+                Html::e($this->taskForm);
+            ?>
         <dd>
     <?php
 }

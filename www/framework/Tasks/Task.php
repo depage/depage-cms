@@ -57,7 +57,6 @@ class Task {
      **/
     protected $numberOfSubtasks = 100;
 
-
     // {{{ constructor
     private function __construct($pdo) {
         $this->pdo = $pdo;

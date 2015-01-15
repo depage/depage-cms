@@ -164,6 +164,21 @@ class Main extends Base {
      * @return  null
      */
     public function tasks() {
+        // handle tasks deletion
+        $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", array(
+            'label' => _("Remove"),
+            'successUrl' => DEPAGE_BASE,
+        ));
+        $taskForm->addHidden("taskId");
+
+        $taskForm->process();
+        if ($taskForm->valid) {
+            $task = \Depage\Tasks\Task::load($this->pdo, $taskForm->getValues()['taskId']);
+            $task->remove();
+
+            $taskForm->clearSession();
+        }
+
         // get data
         $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
 
@@ -180,6 +195,39 @@ class Main extends Base {
             'class' => "box-tasks",
             'title' => "Tasks",
             'updateUrl' => "tasks/",
+            'content' => new Html("taskProgress.tpl", array(
+                'tasks' => $tasks,
+                'taskForm' => $taskForm,
+            )),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ task
+    /**
+     * gets a list of projects
+     *
+     * @return  null
+     */
+    public function task($taskId) {
+        // get data
+        $tasks = array();
+        $task = \Depage\Tasks\Task::load($this->pdo, $taskId);
+
+        if ($task) {
+            $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
+            $taskrunner->run($task->taskId);
+
+            $tasks[] = $task;
+        }
+
+        // construct template
+        $h = new Html("box.tpl", array(
+            'id' => "box-tasks",
+            'class' => "box-tasks",
+            'title' => "Task $taskId",
+            'updateUrl' => "task/$taskId/",
             'content' => new Html("taskProgress.tpl", array(
                 'tasks' => $tasks,
             )),
@@ -218,6 +266,34 @@ class Main extends Base {
         ), $this->htmlOptions);
 
         return $h;
+    }
+    // }}}
+    // {{{ test_task()
+    /**
+     * @brief test_task
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function test_task()
+    {
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task 6");
+        $sleep = 1;
+
+        for ($i = 0; $i < 10; $i++) {
+            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); sleep($sleep);");
+
+            for ($j = 0; $j < 10; $j++) {
+                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); sleep($sleep);", $dep1);
+
+                for ($k = 0; $k < 10; $k++) {
+                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); sleep($sleep);", $dep2);
+                }
+            }
+        }
+        //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
+
+        \Depage\Depage\Runner::redirect(DEPAGE_BASE);
     }
     // }}}
 
