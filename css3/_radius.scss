@@ -1,0 +1,24 @@
+// {{{ mixin: radius
+@mixin radius($radius, $vert: "", $horiz: "") {
+    $other: "";
+    $moz: "";
+
+    @if $vert != '' and $horiz != '' {
+        $other: "#{$vert}-#{$horiz}-";
+        $moz: "#{$vert}#{$horiz}-";
+    } @else if $horiz != '' {
+        $other: "#{$horiz}-";
+        $moz: "#{$horiz}-";
+    } @else if $vert != '' {
+        $other: "#{$vert}-";
+        $moz: "#{$vert}-";
+    }
+
+    -webkit-border-#{$other}radius: $radius;
+    -moz-border-#{$moz}radius: $radius;
+    -ms-border-#{$other}radius: $radius;
+    -o-border-#{$other}radius: $radius;
+    border-#{$other}radius: $radius;
+}
+// }}}
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

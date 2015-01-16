@@ -32,54 +32,6 @@
 }
 // }}}
 
-// {{{ mixin: radius
-@mixin radius($radius, $vert: "", $horiz: "") {
-    $other: "";
-    $moz: "";
-
-    @if $vert != '' and $horiz != '' {
-        $other: "#{$vert}-#{$horiz}-";
-        $moz: "#{$vert}#{$horiz}-";
-    } @else if $horiz != '' {
-        $other: "#{$horiz}-";
-        $moz: "#{$horiz}-";
-    } @else if $vert != '' {
-        $other: "#{$vert}-";
-        $moz: "#{$vert}-";
-    }
-
-    -webkit-border-#{$other}radius: $radius;
-    -moz-border-#{$moz}radius: $radius;
-    -ms-border-#{$other}radius: $radius;
-    -o-border-#{$other}radius: $radius;
-    border-#{$other}radius: $radius;
-}
-// }}}
-// {{{ mixin: box-shadow
-@mixin box-shadow($properties) {
-    -webkit-box-shadow: $properties;
-    -moz-box-shadow: $properties;
-    box-shadow: $properties;
-}
-// }}}
-// {{{ mixin: text-shadow
-@mixin text-shadow($properties) {
-    -webkit-text-shadow: $properties;
-    -moz-text-shadow: $properties;
-    text-shadow: $properties;
-}
-// }}}
-// {{{ mixin: gradient
-@mixin gradient($colors...){
-    background: nth($colors, 1); // Old browsers
-    background: -moz-linear-gradient(top, $colors); // FF3.6+
-    background: -webkit-linear-gradient(top, $colors); // Chrome10+,Safari5.1+
-    background: -o-linear-gradient(top, $colors); // Opera 11.10+
-    background: -ms-linear-gradient(top, $colors); // IE10+
-    background: linear-gradient(to bottom, $colors); // W3C
-}
-// }}}
-
 // {{{ mixin: custom-bullet
 @mixin custom-bullet($character, $indent: 1.5em) {
     margin-left: $indent;

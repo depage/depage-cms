@@ -1,5 +1,3 @@
-@import "_prefixer";
-
 @mixin transition($speed: 500ms, $property: "background, color, border, opacity, transform, font-size"){
     $property: unquote($property);
     $value: $speed ease-out;

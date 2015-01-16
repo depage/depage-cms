@@ -1,9 +1,14 @@
-@import "_prefixer";
-@import "_global";
-@import "_html5";
+@import "helper/_prefixer";
+@import "base/_global";
+@import "base/_html5";
+
+@import "css3/_radius";
+@import "css3/_gradients";
+@import "css3/_shadows";
+@import "css3/_animation";
+@import "css3/_transitions";
+
 @import "_mixins";
 @import "_sizebox";
-@import "_animation";
-@import "_transitions";
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :
