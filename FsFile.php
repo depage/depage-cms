@@ -16,6 +16,7 @@ class FsFile extends Fs
      */
     public function rm($url)
     {
+        // @todo boilerplate
         $cleanUrl = $this->cleanUrl($url);
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
             throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
@@ -27,7 +28,7 @@ class FsFile extends Fs
                 $this->rm($cleanUrl . '/' .  $nested);
             }
 
-            // workaround, rmdir does not support file stream wrappers
+            // workaround, rmdir does not support file stream wrappers <= PHP 5.6.2
             $cleanUrl = preg_replace(';^file://;', '', $cleanUrl);
 
             $success = rmdir($cleanUrl);

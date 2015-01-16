@@ -36,7 +36,6 @@ class FsSsh extends Fs
         $this->sftpSession = ssh2_sftp($this->session);
     }
     // }}}
-
     // {{{ buildUrl
     protected function buildUrl($parsed)
     {
