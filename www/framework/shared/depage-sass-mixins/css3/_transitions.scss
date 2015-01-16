@@ -1,0 +1,24 @@
+@mixin transition($speed: 500ms, $property: "background, color, border, opacity, transform, font-size"){
+    $property: unquote($property);
+    $value: $speed ease-out;
+
+    @include prefixer(transition, $value, webkit moz ms o spec);
+    @include prefixer(transition-property, $value, webkit moz ms o spec);
+}
+@mixin transform($value){
+    @include prefixer(transform, $value, webkit moz ms o spec);
+}
+@mixin transform-origin($value){
+    @include prefixer(transform-orign, $value, webkit moz ms o spec);
+}
+@mixin rotate($degree, $origin: 50% 50%) {
+    @include transform(rotate($degree));
+    @include transform-origin($origin);
+}
+@mixin skew($degreeX, $degreeY, $origin: 50% 50%) {
+    @include transform(skewX($degreeX));
+    @include transform(skewY($degreeY));
+    @include transform-origin($origin);
+}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

@@ -1,0 +1,15 @@
+// {{{ mixin: box-shadow
+@mixin box-shadow($properties) {
+    -webkit-box-shadow: $properties;
+    -moz-box-shadow: $properties;
+    box-shadow: $properties;
+}
+// }}}
+// {{{ mixin: text-shadow
+@mixin text-shadow($properties) {
+    -webkit-text-shadow: $properties;
+    -moz-text-shadow: $properties;
+    text-shadow: $properties;
+}
+// }}}
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

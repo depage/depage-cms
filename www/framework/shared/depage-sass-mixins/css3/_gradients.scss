@@ -1,0 +1,12 @@
+// {{{ mixin: gradient
+@mixin gradient($colors...) {
+    background: nth($colors, 1); // Old browsers
+    background: -moz-linear-gradient(top, $colors); // FF3.6+
+    background: -webkit-linear-gradient(top, $colors); // Chrome10+,Safari5.1+
+    background: -o-linear-gradient(top, $colors); // Opera 11.10+
+    background: -ms-linear-gradient(top, $colors); // IE10+
+    background: linear-gradient(to bottom, $colors); // W3C
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

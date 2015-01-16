@@ -1,0 +1,34 @@
+/* {{{ global */
+/**
+ * ## Basic global reset
+ *
+ * It changes the font-sizes of the body so that 1em is exactly 10px.
+ */
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    font-size: 12pt;
+}
+body {
+    font-size: 62.5%;
+}
+img {
+    display: block;
+}
+a img {
+    border: none;
+}
+*, *:before, *:after {
+    @include prefixer (box-sizing, border-box, webkit moz spec);
+}
+.invisible {
+    visibility: hidden;
+}
+.hidden {
+    display: none;
+}
+/* }}} */
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
