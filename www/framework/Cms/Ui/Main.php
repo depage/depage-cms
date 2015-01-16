@@ -163,8 +163,8 @@ class Main extends Base {
      *
      * @return  null
      */
-    public function tasks() {
-        // handle tasks deletion
+    public function tasks($taskId = null) {
+        // handle tasks deletion form
         $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", array(
             'label' => _("Remove"),
             'successUrl' => DEPAGE_BASE,
@@ -180,7 +180,21 @@ class Main extends Base {
         }
 
         // get data
-        $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
+        if (!empty($taskId)) {
+            // load specific task
+            $tasks = array();
+            $task = \Depage\Tasks\Task::load($this->pdo, $taskId);
+
+            if ($task) {
+                $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
+                $taskrunner->run($task->taskId);
+
+                $tasks[] = $task;
+            }
+        } else {
+            // load all tasks
+            $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
+        }
 
         foreach ($tasks as $task) {
             if ($task) {
@@ -211,29 +225,7 @@ class Main extends Base {
      * @return  null
      */
     public function task($taskId) {
-        // get data
-        $tasks = array();
-        $task = \Depage\Tasks\Task::load($this->pdo, $taskId);
-
-        if ($task) {
-            $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-            $taskrunner->run($task->taskId);
-
-            $tasks[] = $task;
-        }
-
-        // construct template
-        $h = new Html("box.tpl", array(
-            'id' => "box-tasks",
-            'class' => "box-tasks",
-            'title' => "Task $taskId",
-            'updateUrl' => "task/$taskId/",
-            'content' => new Html("taskProgress.tpl", array(
-                'tasks' => $tasks,
-            )),
-        ), $this->htmlOptions);
-
-        return $h;
+        return $this->tasks($taskId);
     }
     // }}}
 

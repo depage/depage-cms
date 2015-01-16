@@ -96,7 +96,9 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         $this->abnormal_exit = true;
         register_shutdown_function(array($this, "_atShutdown"));
 
-        if ($this->task->status == "failed") {
+        if (!$this->task) {
+            $this->log->log("task with id {$taskId} does not exist");
+        } else if ($this->task->status == "failed") {
             $this->log->log("task {$this->task->taskName} failed");
         } else if ($this->task->lock()) {
             try {
