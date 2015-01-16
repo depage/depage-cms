@@ -1,20 +1,9 @@
-/* {{{ global */
-* {
-    margin: 0;
-    padding: 0;
-}
-html {
-    font-size: 12pt;
-}
-body {
-    font-size: 62.5%;
-}
-.invisible {
-    visibility: hidden;
-}
-.hidden {
-    display: none; 
-}
-/* }}} */
+@import "_global";
+@import "_html5";
+@import "_mixins";
+@import "_sizebox";
+@import "_prefixer";
+@import "_animation";
+@import "_transitions";
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

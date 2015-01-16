@@ -1,8 +1,8 @@
 // {{{ size-box
-@mixin size-box($size, $baseLineHeight: 1.5em) {
+@mixin size-box($size, $baseLineHeight: 1.5) {
     // recalculate smaller lineHeigth based on size (1.5 is base)
     $lineHeight: $baseLineHeight - ($size * 0.1 - 0.15);
-    margin-bottom: $lineHeight * $size * 0.75;
+    margin-bottom: $lineHeight * $size * 0.75em;
 
     h1,
     h2,
@@ -10,9 +10,10 @@
     p,
     li {
         font-size: #{$size}em;
-        line-height: $lineHeight;
+        line-height: #{$lineHeight}em;
     }
     li {
+        li,
         p {
             font-size: 1em;
             margin-bottom: 0;
