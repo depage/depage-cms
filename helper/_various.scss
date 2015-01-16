@@ -1,0 +1,18 @@
+// {{{ mixin: debug
+@mixin debug {
+    border: 1px solid #000000;
+}
+// }}}
+// {{{ mixin: clearfix()
+@mixin clearfix($direction: 'both') {
+    display: inline-block;
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: $direction;
+        visibility: hidden;
+    }
+    * html & { height: 1px }
+}
+// }}}
