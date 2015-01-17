@@ -664,25 +664,40 @@ ul.users p {
 }
 .tasks {
     dt {
-        margin-top: 12px;
-        font-weight: bold;
+        font-weight: normal;
+        color: #882200;
+        margin-top: 24px;
+
+        &:first-child {
+            margin-top: 12px;
+        }
     }
     dd {
         margin-left: 0;
         position: relative;
+        color: #666666;
+
+        strong {
+            font-weight: normal;
+            color: #000000;
+        }
+        p {
+            width: 80%;
+        }
     }
     progress {
-        @include progress(#ffffff, #ff9900) {
+        @include progress(#ffffff, #882200) {
             @include radius(2em);
             width: 80%;
             height: 12px;
             margin: 6px 0;
-            border: 1px solid #000000;
+            border: none;
+            height: 4px;
         };
     }
     #delete-task {
         position: absolute;
-        top: 0;
+        top: -4px;
         right: 0;
         width: auto;
 

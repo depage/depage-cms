@@ -14,16 +14,16 @@ foreach($this->tasks as $task) {
     }
     $name .= $task->taskName;
     if ($task->status == "failed") {
-        $status = sprintf(_("%s%% / '%s' failed with error '%s'"), $progress->percent, $progress->description, $progress->status);
+        $status = sprintf(_("'%s' failed with error '%s'"), $progress->description, $progress->status);
     } else {
-        $status = sprintf(_("%s%% / '%s' will finish in %s sec"), $progress->percent, $progress->description, $progress->estimated);
+        $status = sprintf(_("'%s' will finish in %s sec"), $progress->description, $progress->estimated);
     }
 
     ?>
-        <dt><?php Html::t($name); ?></dt>
+        <dt><?php Html::t($progress->percent); ?>%</dt>
         <dd>
             <progress value="<?php Html::e($progress->percent); ?>" max="100"></progress>
-            <p><?php Html::t($status); ?></p>
+            <p><strong><?php Html::t($name); ?></strong> <?php Html::t($status); ?></p>
             <?php
                 $element = $this->taskForm->getElement("taskId");
                 $element->setDefaultValue($task->taskId);

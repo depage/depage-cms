@@ -33,13 +33,15 @@ var depageCMS = (function() {
 
             $previewFrame = $("#previewFrame");
             $flashFrame = $("#flashFrame")[0];
+
+            // setup ajax timers
+            setTimeout(localJS.updateTasks, 1000);
+            setTimeout(localJS.updateUsers, 8000);
         },
         // }}}
         // {{{ setup
         setup: function() {
             localJS.setupVarious();
-            setTimeout(localJS.updateTasks, 1000);
-            setTimeout(localJS.updateUsers, 8000);
         },
         // }}}
         // {{{ setupVarious
