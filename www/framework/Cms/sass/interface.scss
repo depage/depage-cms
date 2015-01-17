@@ -75,6 +75,7 @@
     }
 /* }}} */
 
+@import "../../shared/depage-sass-mixins/_base";
 @import "icons";
 
 $toolbarHeight: 30px;
@@ -82,25 +83,13 @@ $infoHeight: 15px;
 $editWidth: 820px;
 //$editWidth: 610px;
 
-// {{{ mixin: clearfix()
-@mixin clearfix($direction: 'both') {
-    display: inline-block;
-    &:after {
-        content: ".";
-        display: block;
-        height: 0;
-        clear: $direction;
-        visibility: hidden;
-    }
-    * html & { height: 1px }
-}
-// }}}
-
 /* {{{ global */
 * {
-    font-family : Tahoma, Verdana, Arial, Geneva, sans-serif;
+    @include font(Tahoma, Verdana, Arial, Geneva, sans-serif);
     margin: 0;
     padding: 0;
+}
+body {
 }
 a {
     text-decoration : none;
@@ -266,7 +255,7 @@ a img {
 }
 .toolbar {
     padding: 2px 8px;
-    height: 26px;
+    height: 30px;
 
     menu,
     ul,
@@ -278,7 +267,7 @@ a img {
         display: block;
         float: left;
         line-height: 22px;
-        height: 22px;
+        height: 26px;
         padding: 2px 8px;
     }
     .right {
@@ -682,25 +671,14 @@ ul.users p {
         margin-left: 0;
 
     }
-    progress[value] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-
-        width: 100%;
-        height: 12px;
-        margin: 6px 0;
-        border-radius: 3px;
-        border: 1px solid #000000;
-        background: #ffffff;
-        color: #ff9900;
-
-        &::-webkit-progress-bar,
-        &::-moz-progress-bar,
-        &::progress-bar {
-            background: #ff9900;
-            color: #ff9900;
-        }
+    progress {
+        @include progress(#ffffff, #ff9900) {
+            @include radius(2em);
+            width: 80%;
+            height: 12px;
+            margin: 6px 0;
+            border: 1px solid #000000;
+        };
     }
 }
 /* }}} */
