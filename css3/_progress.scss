@@ -1,0 +1,43 @@
+// {{{ progress
+@mixin progress($colorBack, $colorBar) {
+    & {
+        @include prefixer (appearance, none, webkit moz spec);
+
+        overflow: hidden;
+        height: 1em;
+        width: 6em;
+        @content;
+
+        &::-webkit-progress-bar {
+            background: $colorBack !important;
+        }
+        &::-webkit-progress-value {
+            background: $colorBar !important;
+        }
+        &::-moz-progress-bar {
+            background: $colorBar !important;
+            color: $colorBar !important;
+        }
+
+        // test fallback for internet explorer 9 ?
+        &:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            height: 2em;
+            width: 2em;
+            content: " ";
+            display: block;
+            background: #ff9900;
+        }
+        @for $i from 1 through 100 {
+            &[value = '#{$i}']:before {
+                width: percentage($i / 100);
+            }
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
