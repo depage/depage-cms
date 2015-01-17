@@ -7,6 +7,7 @@
         height: 1em;
         width: 6em;
         background: $colorBack;
+        position: relative;
         @content;
 
         &::-webkit-progress-bar {
@@ -18,6 +19,12 @@
         &::-moz-progress-bar {
             background: $colorBar !important;
         }
+        &::progress-bar {
+            background: $colorBack !important;
+        }
+        &::progress-value {
+            background: $colorBar !important;
+        }
 
         // test fallback for internet explorer 9 ?
         &:before {
@@ -25,14 +32,18 @@
             top: 0;
             left: 0;
             height: 100%;
-            height: 2em;
-            width: 2em;
             content: " ";
             display: block;
-            background: #ff9900;
+            background: $colorBar;
         }
-        @for $i from 1 through 100 {
-            &[value = '#{$i}']:before {
+        @for $i from 0 through 100 {
+            $dec: $i / 100;
+            // for progress without max
+            &[value ^= '#{$dec}']:before {
+                width: percentage($i / 100);
+            }
+            // for progress with max of 100 (for percent)
+            &[max = '100'][value ^= '#{$i}']:before {
                 width: percentage($i / 100);
             }
         }
