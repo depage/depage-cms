@@ -6,6 +6,7 @@
         overflow: hidden;
         height: 1em;
         width: 6em;
+        background: $colorBack;
         @content;
 
         &::-webkit-progress-bar {
@@ -16,7 +17,6 @@
         }
         &::-moz-progress-bar {
             background: $colorBar !important;
-            color: $colorBar !important;
         }
 
         // test fallback for internet explorer 9 ?
