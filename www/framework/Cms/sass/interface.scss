@@ -669,7 +669,7 @@ ul.users p {
     }
     dd {
         margin-left: 0;
-
+        position: relative;
     }
     progress {
         @include progress(#ffffff, #ff9900) {
@@ -679,6 +679,21 @@ ul.users p {
             margin: 6px 0;
             border: 1px solid #000000;
         };
+    }
+    #delete-task {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: auto;
+
+        p.submit {
+            input {
+                margin: 0;
+                font-weight: normal;
+                //background: none;
+                //border: none;
+            }
+        }
     }
 }
 /* }}} */

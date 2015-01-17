@@ -168,6 +168,7 @@ class Main extends Base {
         $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", array(
             'label' => _("Remove"),
             'successUrl' => DEPAGE_BASE,
+            'class' => "action-form",
         ));
         $taskForm->addHidden("taskId");
 
