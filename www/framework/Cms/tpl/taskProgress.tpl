@@ -6,6 +6,8 @@ if (count($this->tasks) > 0) {
     <dl class="tasks" data-ajax-update-timeout="1000">
 <?php
 
+$timeFormatter = new \Depage\Formatters\TimeNatural();
+
 foreach($this->tasks as $task) {
     $progress = $task->getProgress();
     $name = "";
@@ -16,7 +18,7 @@ foreach($this->tasks as $task) {
     if ($task->status == "failed") {
         $status = sprintf(_("'%s' failed with error '%s'"), $progress->description, $progress->status);
     } else {
-        $status = sprintf(_("'%s' will finish in %s sec"), $progress->description, $progress->estimated);
+        $status = sprintf(_("'%s' will finish in %s"), $progress->description, $timeFormatter->format($progress->estimated));
     }
 
     ?>
