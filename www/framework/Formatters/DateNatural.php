@@ -26,7 +26,7 @@ class DateNatural
             $now_ti = $now->getTimestamp();
             $diff = $now_ti - $date_ti;
         } else {
-            throw new InvalidArgumentException("date must be an instance of DateTime. Input was " . $date);
+            throw new \InvalidArgumentException("date must be an instance of DateTime. Input was " . $date);
         }
 
         if ($addTime) {
