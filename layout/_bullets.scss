@@ -17,7 +17,7 @@
 }
 // }}}
 // {{{ mixin: custom-numbering
-@mixin custom-numbering($character: ".", $indent: 2em) {
+@mixin custom-numbering($character: ".", $indent: 2em, $numberFormat: decimal) {
     margin-left: $indent;
     position: relative;
     list-style: none;
@@ -32,7 +32,7 @@
         top: 0;
         left: - $indent;
         width: $indent;
-        content: counter(customNumbering) $character; /* Use the counter as content */
+        content: counter(customNumbering, $numberFormat) $character; /* Use the counter as content */
         counter-increment: customNumbering; /* Increment the counter by 1 */
 
         @content;
