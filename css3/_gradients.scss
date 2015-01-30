@@ -1,11 +1,31 @@
+@function first($list) {
+  @return nth($list, 1);
+}
+
+@function last($list) {
+  @return nth($list, length($list));
+}
 // {{{ mixin: gradient
 @mixin gradient($colors...) {
-    background: nth($colors, 1); // Old browsers
+    background: first(first($colors)); // Old browsers
+
+    @if function_exists(base64Encode) {
+        // IE 9
+        $svg: '<?xml version="1.0" ?><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1 1" preserveAspectRatio="none"><linearGradient id="grad-ucgg-generated" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">';
+        @each $color in $colors {
+            $svg: $svg + '<stop offset="#{nth($color, 2)}" stop-color="#{first($color)}" stop-opacity="1"/>';
+        }
+        $svg: $svg + '</linearGradient><rect x="0" y="0" width="1" height="1" fill="url(#grad-ucgg-generated)" /></svg>';
+        $url: 'data:image/svg+xml;charset=utf-8;base64,' + base64Encode($svg);
+        background: url($url) no-repeat scroll 0 0 / 100% 100% transparent;
+    }
+
     background: -moz-linear-gradient(top, $colors); // FF3.6+
     background: -webkit-linear-gradient(top, $colors); // Chrome10+,Safari5.1+
     background: -o-linear-gradient(top, $colors); // Opera 11.10+
     background: -ms-linear-gradient(top, $colors); // IE10+
     background: linear-gradient(to bottom, $colors); // W3C
+
 }
 // }}}
 
