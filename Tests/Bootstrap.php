@@ -4,6 +4,7 @@ require_once('../Fs.php');
 require_once('../FsFile.php');
 require_once('../FsSsh.php');
 require_once('../Exceptions/FsException.php');
+require_once('TestBase.php');
 
 // {{{ FsTestClass
 class FsTestClass extends Depage\Fs\Fs

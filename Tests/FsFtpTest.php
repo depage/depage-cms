@@ -1,16 +1,10 @@
 <?php
 
-class FsFtpTest extends PHPUnit_Framework_TestCase
+class FsFtpTest extends TestBase
 {
-    // {{{ setUp
-    public function setUp()
+    // {{{ createTestClass
+    public function createTestClass()
     {
-        chdir($GLOBALS['FTP_DIR']);
-        $this->rmr('Temp');
-        mkdir('Temp');
-        chmod('Temp', 0777);
-        chdir('Temp');
-
         $params = array(
             'path' => '/Temp',
             'scheme' => 'ftp',
@@ -19,11 +13,22 @@ class FsFtpTest extends PHPUnit_Framework_TestCase
             'pass' => $GLOBALS['FTP_PASS'],
         );
 
-        $this->fs = new FsTestClass($params);
+        return new FsTestClass($params);
     }
     // }}}
-    // {{{ tearDown
-    public function tearDown()
+
+    // {{{ createRemoteTestDir
+    public function createRemoteTestDir()
+    {
+        $this->rmr($GLOBALS['FTP_DIR'] . '/Temp');
+        mkdir($GLOBALS['FTP_DIR'] . '/Temp');
+        // @todo verify
+
+        return $GLOBALS['FTP_DIR'] . '/Temp';
+    }
+    // }}}
+    // {{{ deleteRemoteTestDir
+    public function deleteRemoteTestDir()
     {
         if (!empty($this->nodes)) {
             $script =   "ftp -n " . $GLOBALS['FTP_HOST'] . " <<END_OF_SESSION\n" .
@@ -42,58 +47,6 @@ class FsFtpTest extends PHPUnit_Framework_TestCase
 
         chdir($GLOBALS['FTP_DIR']);
         $this->rmr('Temp');
-    }
-    // }}}
-    // {{{ rmr
-    protected function rmr($path)
-    {
-        if (is_dir($path)) {
-            $scanDir = array_diff(scandir($path), array('.', '..'));
-
-            foreach ($scanDir as $nested) {
-                $this->rmr($path . '/' . $nested);
-            }
-            rmdir($path);
-        } else if (is_file($path)) {
-            unlink($path);
-        }
-    }
-    // }}}
-    // {{{ createTestFile
-    protected function createTestFile($path)
-    {
-        $testFile = fopen($path, 'w');
-        fwrite($testFile, 'testString');
-        fclose($testFile);
-    }
-    // }}}
-    // {{{ confirmTestFile
-    protected function confirmTestFile($path)
-    {
-        $contents = file($path);
-        return $contents == array('testString');
-    }
-    // }}}
-    // {{{ invokeMkdir
-    protected function invokeMkdir($path)
-    {
-        // @todo explode recursive paths
-        $this->nodes[] = array('dir', $path);
-        $this->fs->mkdir($path);
-    }
-    // }}}
-    // {{{ invokePut
-    protected function invokePut($local, $remotePath)
-    {
-        $this->nodes[] = array('file', $remotePath);
-        $this->fs->put($local, $remotePath);
-    }
-    // }}}
-    // {{{ invokePutString
-    protected function invokePutString($remotePath, $string)
-    {
-        $this->nodes[] = array('file', $remotePath);
-        $this->fs->putString($remotePath, $string);
     }
     // }}}
 
@@ -356,10 +309,8 @@ class FsFtpTest extends PHPUnit_Framework_TestCase
     // {{{ testPut
     public function testPut()
     {
-        // create test nodes
-        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
-        $this->createTestFile('testDir/testSubDir/testFile');
-        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+        //var_dump(sprintf('%o', $this->fs->fileInfo('testDir')->getPerms()));
+        //$this->assertTrue($this->confirmTestFile($this->test'Fixtures/testFile'));
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
         $this->assertFalse(file_exists('testDir/testFile'));
 

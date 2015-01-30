@@ -1,58 +1,23 @@
 <?php
 
-class FsFileTest extends PHPUnit_Framework_TestCase
+class FsFileTest extends TestBase
 {
-    // {{{ setUp
-    public function setUp()
+    // {{{ createTestClass
+    public function createTestClass()
     {
-        $this->testDirectory = getcwd();
-        $this->rmr('Temp');
-        mkdir('Temp');
-        chdir('Temp');
-
         $params = array(
             'path' => '',
             'scheme' => 'file',
         );
 
-        $this->fs = new FsFileTestClass($params);
+        return new FsFileTestClass($params);
     }
     // }}}
-    // {{{ tearDown
-    public function tearDown()
-    {
-        chdir($this->testDirectory);
-        $this->rmr('Temp');
-    }
-    // }}}
-    // {{{ rmr
-    protected function rmr($path)
-    {
-        if (is_dir($path)) {
-            $scanDir = array_diff(scandir($path), array('.', '..'));
 
-            foreach ($scanDir as $nested) {
-                $this->rmr($path . '/' . $nested);
-            }
-            rmdir($path);
-        } else if (is_file($path)) {
-            unlink($path);
-        }
-    }
-    // }}}
-    // {{{ createTestFile
-    protected function createTestFile($path)
+    // {{{ createRemoteTestDir
+    public function createRemoteTestDir()
     {
-        $testFile = fopen($path, 'w');
-        fwrite($testFile, 'testString');
-        fclose($testFile);
-    }
-    // }}}
-    // {{{ confirmTestFile
-    protected function confirmTestFile($path)
-    {
-        $contents = file($path);
-        return $contents == array('testString');
+        return $this->localDir;
     }
     // }}}
 
