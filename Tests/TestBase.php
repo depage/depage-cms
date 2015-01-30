@@ -5,12 +5,12 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ setUp
     public function setUp()
     {
-        $this->testDir = getcwd();
-
+        $this->testRootDir = getcwd();
         $this->localDir = $this->createLocalTestDir();
         $this->remoteDir = $this->createRemoteTestDir();
-
         $this->fs = $this->createTestClass();
+
+        $this->chTestDir();
     }
     // }}}
     // {{{ tearDown
@@ -18,6 +18,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     {
         $this->deleteLocalTestDir();
         $this->deleteRemoteTestDir();
+        chdir($this->testRootDir);
     }
     // }}}
     // {{{ rmr
@@ -39,17 +40,17 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ createLocalTestDir
     public function createLocalTestDir()
     {
-        $this->rmr($this->testDir . '/Temp');
-        mkdir($this->testDir . '/Temp');
+        $this->rmr($this->testRootDir . '/Temp');
+        mkdir($this->testRootDir . '/Temp');
         // @todo verify
 
-        return $this->testDir . '/Temp';
+        return $this->testRootDir . '/Temp';
     }
     // }}}
     // {{{ deleteLocalTestDir
     public function deleteLocalTestDir()
     {
-        $this->rmr($this->localTestDir . '/Temp');
+        $this->rmr($this->localDir);
     }
     // }}}
 

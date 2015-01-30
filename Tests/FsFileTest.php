@@ -2,22 +2,32 @@
 
 class FsFileTest extends TestBase
 {
+    // {{{ chTestDir
+    public function chTestDir()
+    {
+        chdir($this->localDir);
+    }
+    // }}}
     // {{{ createTestClass
     public function createTestClass()
     {
         $params = array(
-            'path' => '',
+            'path' => 'Temp',
             'scheme' => 'file',
         );
 
         return new FsFileTestClass($params);
     }
     // }}}
-
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
         return $this->localDir;
+    }
+    // }}}
+    // {{{ deleteRemoteTestDir
+    public function deleteRemoteTestDir()
+    {
     }
     // }}}
 
