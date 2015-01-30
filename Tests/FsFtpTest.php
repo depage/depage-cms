@@ -256,8 +256,8 @@ class FsFtpTest extends PHPUnit_Framework_TestCase
     public function testCdOutOfBaseDir()
     {
         $basePwd = $this->fs->pwd();
-        $pwd = preg_replace(';Temp$;', '', $basePwd);
-        $this->assertEquals($pwd . 'Temp', $basePwd);
+        $pwd = preg_replace(';Temp/$;', '', $basePwd);
+        $this->assertEquals($pwd . 'Temp/', $basePwd);
 
         $this->fs->cd($pwd);
     }
