@@ -1,27 +1,46 @@
 <?php
 
-class FsFileTest extends PHPUnit_Framework_TestCase
+class FsFtpTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
     {
-        $this->testDirectory = getcwd();
+        chdir($GLOBALS['FTP_DIR']);
         $this->rmr('Temp');
         mkdir('Temp');
+        chmod('Temp', 0777);
         chdir('Temp');
 
         $params = array(
-            'path' => '',
-            'scheme' => 'file',
+            'path' => '/Temp',
+            'scheme' => 'ftp',
+            'host' => $GLOBALS['FTP_HOST'],
+            'user' => $GLOBALS['FTP_USER'],
+            'pass' => $GLOBALS['FTP_PASS'],
         );
 
-        $this->fs = new FsFileTestClass($params);
+        $this->fs = new FsTestClass($params);
     }
     // }}}
     // {{{ tearDown
     public function tearDown()
     {
-        chdir($this->testDirectory);
+        if (!empty($this->nodes)) {
+            $script =   "ftp -n " . $GLOBALS['FTP_HOST'] . " <<END_OF_SESSION\n" .
+                        "user " . $GLOBALS['FTP_USER'] . " " . $GLOBALS['FTP_PASS'] . "\n";
+
+            foreach(array_reverse($this->nodes) as $node) {
+                if ($node[0] == 'dir') {
+                    $script .= "rmdir Temp/" . $node[1] . "\n";
+                } elseif ($node[0] == 'file') {
+                    $script .= "delete Temp/" . $node[1] . "\n";
+                }
+            }
+            $script .= "END_OF_SESSION\n";
+            exec($script);
+        }
+
+        chdir($GLOBALS['FTP_DIR']);
         $this->rmr('Temp');
     }
     // }}}
@@ -53,6 +72,28 @@ class FsFileTest extends PHPUnit_Framework_TestCase
     {
         $contents = file($path);
         return $contents == array('testString');
+    }
+    // }}}
+    // {{{ invokeMkdir
+    protected function invokeMkdir($path)
+    {
+        // @todo explode recursive paths
+        $this->nodes[] = array('dir', $path);
+        $this->fs->mkdir($path);
+    }
+    // }}}
+    // {{{ invokePut
+    protected function invokePut($local, $remotePath)
+    {
+        $this->nodes[] = array('file', $remotePath);
+        $this->fs->put($local, $remotePath);
+    }
+    // }}}
+    // {{{ invokePutString
+    protected function invokePutString($remotePath, $string)
+    {
+        $this->nodes[] = array('file', $remotePath);
+        $this->fs->putString($remotePath, $string);
     }
     // }}}
 
@@ -126,13 +167,17 @@ class FsFileTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $lsReturn);
 
         $params = array(
-            'path' => '',
-            'scheme' => 'file',
+            'path' => '/Temp',
+            'scheme' => 'ftp',
             'hidden' => true,
+            'host' => $GLOBALS['FTP_HOST'],
+            'user' => $GLOBALS['FTP_USER'],
+            'pass' => $GLOBALS['FTP_PASS'],
         );
 
-        $hiddenFs = new FsFileTestClass($params);
+        $hiddenFs = new FsTestClass($params);
         $lsReturn = $hiddenFs->ls('testDir/*');
+
         $expected = array(
             'testDir/.testFileHidden',
             'testDir/.testSubDirHidden',
@@ -203,17 +248,6 @@ class FsFileTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($pwd . 'testDir/', $newPwd);
     }
     // }}}
-    // {{{ testCdIntoWrapperUrl
-    public function testCdIntoWrapperUrl()
-    {
-        $pwd = $this->fs->pwd();
-        mkdir('testDir');
-        $this->fs->cd('file://' . getcwd() . '/testDir');
-        $newPwd = $this->fs->pwd();
-
-        $this->assertEquals($pwd . 'testDir/', $newPwd);
-    }
-    // }}}
     // {{{ testCdOutOfBaseDir
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
@@ -221,7 +255,7 @@ class FsFileTest extends PHPUnit_Framework_TestCase
      */
     public function testCdOutOfBaseDir()
     {
-        $basePwd = getcwd();
+        $basePwd = $this->fs->pwd();
         $pwd = preg_replace(';Temp$;', '', $basePwd);
         $this->assertEquals($pwd . 'Temp', $basePwd);
 
@@ -256,7 +290,8 @@ class FsFileTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists('testDir'));
         $this->assertFalse(file_exists('testDir/testDir'));
 
-        $mkdirReturn = $this->fs->mkdir('testDir/testDir');
+        $mkdirReturn = $this->invokeMkdir('testDir');
+        $mkdirReturn = $this->invokeMkdir('testDir/testDir');
 
         $this->assertTrue(file_exists('testDir/testDir'));
     }
@@ -265,12 +300,12 @@ class FsFileTest extends PHPUnit_Framework_TestCase
     public function testRm()
     {
         // create test nodes
-        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
-        touch('testDir/testFile');
-        touch('testDir/testSubDir/testFile');
+        $this->invokeMkdir('testDir');
+        $this->invokeMkdir('testDir/testSubDir');
+        $this->invokeMkdir('testDir/testSubDir/testAnotherSubDir');
+        $this->invokePutString('testDir/testFile', '');
+        $this->invokePutString('testDir/testSubDir/testFile', '');
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
-        $this->assertTrue(file_exists('testDir/testSubDir/testFile'));
-        $this->assertTrue(file_exists('testDir/testFile'));
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists('testDir'));
@@ -331,7 +366,7 @@ class FsFileTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
         $this->assertFalse(file_exists('testDir/testFile'));
 
-        $this->fs->put('testDir/testSubDir/testFile', 'testDir/testFile');
+        $this->invokePut('testDir/testSubDir/testFile', 'testDir/testFile');
         $this->assertTrue($this->confirmTestFile('testDir/testFile'));
         $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
     }
@@ -368,7 +403,7 @@ class FsFileTest extends PHPUnit_Framework_TestCase
     // {{{ testPutString
     public function testPutString()
     {
-        $this->fs->putString('testFile', 'testString');
+        $this->invokePutString('testFile', 'testString');
 
         $this->assertTrue($this->confirmTestFile('testFile'));
     }

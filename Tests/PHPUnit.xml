@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit bootstrap="Bootstrap.php">
+    <php>
+        <var name="FTP_HOST" value="localhost" />
+        <var name="FTP_USER" value="ftptest" />
+        <var name="FTP_PASS" value="testpass" />
+        <var name="FTP_DIR" value="/home/ftptest/" />
+    </php>
+
     <logging>
         <log
         type="coverage-html"

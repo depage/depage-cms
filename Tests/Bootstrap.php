@@ -11,7 +11,6 @@ class FsTestClass extends Depage\Fs\Fs
     public function parseUrl($url) {
         return parent::parseUrl($url);
     }
-
     public function cleanUrl($url) {
         return parent::cleanUrl($url);
     }
@@ -23,7 +22,6 @@ class FsFileTestClass extends Depage\Fs\FsFile
     public function parseUrl($url) {
         return parent::parseUrl($url);
     }
-
     public function cleanUrl($url) {
         return parent::cleanUrl($url);
     }
