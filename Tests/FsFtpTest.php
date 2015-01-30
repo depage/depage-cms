@@ -315,16 +315,13 @@ class FsFtpTest extends PHPUnit_Framework_TestCase
     // {{{ testMv
     public function testMv()
     {
-        // create test nodes
-        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
-        $this->createTestFile('testDir/testFile');
-        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
-        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
-        $this->assertFalse(file_exists('testDir/testSubDir/testFile'));
+        $this->createTestFile('testFile');
+        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertFalse(file_exists('testFile2'));
 
-        $this->fs->mv('testDir/testFile', 'testDir/testSubDir/testFile');
-        $this->assertFalse(file_exists('testDir/testFile'));
-        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+        $this->fs->mv('testFile', 'testFile2');
+        $this->assertFalse(file_exists('testFile'));
+        $this->assertTrue($this->confirmTestFile('testFile2'));
     }
     // }}}
     // {{{ testMvSourceDoesntExist
