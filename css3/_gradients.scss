@@ -5,6 +5,7 @@
 @function last($list) {
   @return nth($list, length($list));
 }
+
 // {{{ mixin: gradient
 @mixin gradient($colors...) {
     background: first(first($colors)); // Old browsers
