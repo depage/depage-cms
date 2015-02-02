@@ -1,18 +1,25 @@
 /* {{{ global */
-/**
- * ## Basic global reset
- *
- * It changes the font-sizes of the body so that 1em is exactly 10px.
- */
 * {
     margin: 0;
     padding: 0;
 }
-html {
-    font-size: 12pt;
-}
-body {
-    font-size: 62.5%;
+$depage-set-font-scale: true !default;
+@if $depage-set-font-scale {
+    /**
+    * ## Basic global reset
+    *
+    * It changes the font-sizes of the body so that 1em is exactly 10px.
+    */
+    html {
+        font-size: 12pt;
+    }
+    body {
+        font-size: 62.5%;
+    }
+} @else {
+    html {
+        font-size: 12pt;
+    }
 }
 img {
     display: block;
