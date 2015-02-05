@@ -344,13 +344,13 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testPut()
     {
         // create test nodes
-        $this->createTestFile($this->localDir . '/testDir/testFile');
-        $this->assertTrue(file_exists($this->localDir . '/testDir/testFile'));
-        $this->assertFalse(file_exists($this->remoteDir . '/testDir/testFile2'));
+        $this->createTestFile('testFile');
+        $this->assertTrue(file_exists('testFile'));
+        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
 
-        $this->invokePut('testDir/testFile', 'testDir/testFile2');
-        $this->assertTrue($this->confirmTestFile($this->localDir . '/testDir/testFile'));
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testDir/testFile2'));
+        $this->invokePut('testFile', 'testFile2');
+        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
     }
     // }}}
 
