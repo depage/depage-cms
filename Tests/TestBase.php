@@ -118,8 +118,8 @@ class TestBase extends PHPUnit_Framework_TestCase
         touch($this->remoteDir . '/testDir/testFile');
         touch($this->remoteDir . '/testDir/testAnotherFile');
 
-        $lsDirReturn    = $this->fs->lsDir('testDir/*');
-        $expected       = array(
+        $lsDirReturn = $this->fs->lsDir('testDir/*');
+        $expected = array(
             'testDir/testAnotherSubDir',
             'testDir/testSubDir',
         );
@@ -303,13 +303,13 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testMv
     public function testMv()
     {
-        $this->createTestFile('testFile');
-        $this->assertTrue($this->confirmTestFile('testFile'));
-        $this->assertFalse(file_exists('testFile2'));
+        $this->createRemoteTestFile('testFile');
+        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile'));
+        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
 
         $this->fs->mv('testFile', 'testFile2');
-        $this->assertFalse(file_exists('testFile'));
-        $this->assertTrue($this->confirmTestFile('testFile2'));
+        $this->assertFalse(file_exists($this->remoteDir . '/testFile'));
+        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
     }
     // }}}
     // {{{ testMvSourceDoesntExist

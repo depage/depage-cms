@@ -344,15 +344,15 @@ class Fs
     protected function lsFilter($path = '', $function)
     {
         // @todo slow
-        $ls         = $this->ls($path);
-        $lsFiles    = array_filter(
+        $ls = $this->ls($path);
+        $lsFiltered = array_filter(
             $ls,
             function ($element) use ($function) {
                 return $function($element);
             }
         );
-        natcasesort($lsFiles);
-        $sorted = array_values($lsFiles);
+        natcasesort($lsFiltered);
+        $sorted = array_values($lsFiltered);
 
         return $sorted;
     }

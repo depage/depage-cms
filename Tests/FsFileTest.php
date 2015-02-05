@@ -26,6 +26,12 @@ class FsFileTest extends TestBase
     {
     }
     // }}}
+    // {{{ createRemoteTestFile
+    public function createRemoteTestFile($path)
+    {
+        $this->createTestFile('Temp/' . $path);
+    }
+    // }}}
 
     // {{{ testCdIntoWrapperUrl
     public function testCdIntoWrapperUrl()
