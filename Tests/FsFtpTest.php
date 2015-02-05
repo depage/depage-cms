@@ -2,7 +2,7 @@
 
 class FsFtpTest extends TestBase
 {
-    // {{{ createTestClasses
+    // {{{ createTestClass
     public function createTestClass($override = array())
     {
         $params = array(

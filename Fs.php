@@ -176,9 +176,9 @@ class Fs
     public function get($remotePath, $local = null)
     {
         if ($local === null) {
-            $pathInfo   = pathinfo($remotePath);
-            $fileName   = $pathInfo['filename'];
-            $extension  = $pathInfo['extension'];
+            $pathInfo = pathinfo($remotePath);
+            $fileName = $pathInfo['filename'];
+            $extension = $pathInfo['extension'];
 
             $local = $fileName . '.' . $extension;
         }

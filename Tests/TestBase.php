@@ -8,6 +8,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->testRootDir = getcwd();
         $this->localDir = $this->createLocalTestDir();
         $this->remoteDir = $this->createRemoteTestDir();
+        chdir($this->localDir);
         $this->fs = $this->createTestClass();
     }
     // }}}
@@ -38,11 +39,14 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ createLocalTestDir
     public function createLocalTestDir()
     {
-        $this->rmr($this->testRootDir . '/Temp');
-        mkdir($this->testRootDir . '/Temp');
+        $localTestDir = $this->testRootDir . '/Temp';
+
+        $this->rmr($localTestDir);
+        mkdir($localTestDir);
+        chmod($localTestDir, 0777);
         // @todo verify
 
-        return $this->testRootDir . '/Temp';
+        return $localTestDir;
     }
     // }}}
     // {{{ deleteLocalTestDir
@@ -329,16 +333,11 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testGet
     public function testGet()
     {
-        // create test nodes
-        mkdir($this->remoteDir . '/testDir/testSubDir/testAnotherSubDir', 0777, true);
-        $this->createTestFile('testDir/testFile');
-        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
-        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
-        $this->assertFalse(file_exists('testDir/testSubDir/testFile'));
+        // create test node
+        $this->createRemoteTestFile('testFile');
 
-        $this->fs->get('testDir/testFile', 'testDir/testSubDir/testFile');
-        $this->assertTrue($this->confirmTestFile('testDir/testFile'));
-        $this->assertTrue($this->confirmTestFile('testDir/testSubDir/testFile'));
+        $this->fs->get('testFile', 'testFile2');
+        $this->assertTrue($this->confirmTestFile('testFile2'));
     }
     // }}}
     // {{{ testPut

@@ -42,13 +42,13 @@ class FsFile extends Fs
     // {{{ setBase
     protected function setBase($path)
     {
-        $path = realpath($path);
+        $realPath = realpath($path);
 
-        if ($path === false) {
-            throw new Exceptions\FsException('Invalid path: ' . $path);
+        if ($realPath === false) {
+            throw new Exceptions\FsException('Invalid path: "' . $path . '"');
         }
 
-        return parent::setBase($path);
+        return parent::setBase($realPath);
     }
     // }}}
 }
