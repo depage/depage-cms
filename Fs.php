@@ -22,7 +22,8 @@ class Fs
         if (isset($params['hidden']))   $this->hidden           = $params['hidden'];
         if (isset($params['key']))      $this->key              = $params['key'];
 
-        $this->setBase($params['path']);
+        $path = isset($params['path']) ? $params['path'] : '.';
+        $this->setBase($path);
     }
     // }}}
     // {{{ factory

@@ -7,6 +7,10 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ setUp
     public function setUp()
     {
+        $params = array(
+            'scheme' => 'file'
+        );
+
         $this->fs = new FsFileTestClass($params);
     }
     // }}}
