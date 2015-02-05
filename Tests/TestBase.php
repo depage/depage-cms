@@ -279,7 +279,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $mkdirReturn = $this->invokeMkdir('testDir');
         $mkdirReturn = $this->invokeMkdir('testDir/testDir');
 
-        $this->assertTrue(file_exists('testDir/testDir'));
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testDir'));
     }
     // }}}
     // {{{ testRm
