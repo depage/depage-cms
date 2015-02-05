@@ -291,9 +291,9 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->invokeMkdir('testDir/testSubDir/testAnotherSubDir');
         $this->invokePutString('testDir/testFile', '');
         $this->invokePutString('testDir/testSubDir/testFile', '');
-        $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
-        $this->assertTrue(file_exists('testDir/testSubDir/testFile'));
-        $this->assertTrue(file_exists('testDir/testFile'));
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testAnotherSubDir'));
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testFile'));
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testFile'));
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists('testDir'));
