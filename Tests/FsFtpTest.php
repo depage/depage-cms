@@ -2,6 +2,11 @@
 
 class FsFtpTest extends TestBase
 {
+    // {{{ chTestDir
+    public function chTestDir()
+    {
+    }
+    // }}}
     // {{{ createTestClass
     public function createTestClass()
     {
@@ -16,7 +21,6 @@ class FsFtpTest extends TestBase
         return new FsTestClass($params);
     }
     // }}}
-
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
@@ -53,10 +57,10 @@ class FsFtpTest extends TestBase
     // {{{ testLs
     public function testLs()
     {
-        mkdir('testDir/testSubDir', 0777, true);
-        mkdir('testDir/testAnotherSubDir', 0777, true);
-        touch('testDir/testFile');
-        touch('testDir/testAnotherFile');
+        mkdir($this->remoteDir . '/testDir/testSubDir', 0777, true);
+        mkdir($this->remoteDir . '/testDir/testAnotherSubDir', 0777, true);
+        touch($this->remoteDir . '/testDir/testFile');
+        touch($this->remoteDir . '/testDir/testAnotherFile');
 
         $lsReturn = $this->fs->ls('testDir/*');
         $expected = array(
@@ -72,10 +76,10 @@ class FsFtpTest extends TestBase
     // {{{ testLsDir
     public function testLsDir()
     {
-        mkdir('testDir/testSubDir', 0777, true);
-        mkdir('testDir/testAnotherSubDir', 0777, true);
-        touch('testDir/testFile');
-        touch('testDir/testAnotherFile');
+        mkdir($this->remoteDir . '/testDir/testSubDir', 0777, true);
+        mkdir($this->remoteDir . '/testDir/testAnotherSubDir', 0777, true);
+        touch($this->remoteDir . '/testDir/testFile');
+        touch($this->remoteDir . '/testDir/testAnotherFile');
 
         $lsDirReturn    = $this->fs->lsDir('testDir/*');
         $expected       = array(
@@ -89,10 +93,10 @@ class FsFtpTest extends TestBase
     // {{{ testLsFiles
     public function testLsFiles()
     {
-        mkdir('testDir/testSubDir', 0777, true);
-        mkdir('testDir/testAnotherSubDir', 0777, true);
-        touch('testDir/testFile');
-        touch('testDir/testAnotherFile');
+        mkdir($this->remoteDir . '/testDir/testSubDir', 0777, true);
+        mkdir($this->remoteDir . '/testDir/testAnotherSubDir', 0777, true);
+        touch($this->remoteDir . '/testDir/testFile');
+        touch($this->remoteDir . '/testDir/testAnotherFile');
 
         $lsFilesReturn  = $this->fs->lsFiles('testDir/*');
         $expected       = array(
@@ -106,10 +110,10 @@ class FsFtpTest extends TestBase
     // {{{ testLsHidden
     public function testLsHidden()
     {
-        mkdir('testDir/testSubDir', 0777, true);
-        mkdir('testDir/.testSubDirHidden', 0777, true);
-        touch('testDir/testFile');
-        touch('testDir/.testFileHidden');
+        mkdir($this->remoteDir . '/testDir/testSubDir', 0777, true);
+        mkdir($this->remoteDir . '/testDir/.testSubDirHidden', 0777, true);
+        touch($this->remoteDir . '/testDir/testFile');
+        touch($this->remoteDir . '/testDir/.testFileHidden');
 
         $lsReturn = $this->fs->ls('testDir/*');
         $expected = array(
@@ -144,14 +148,14 @@ class FsFtpTest extends TestBase
     // {{{ testLsRecursive
     public function testLsRecursive()
     {
-        mkdir('testDir/abc/abc/abc', 0777, true);
-        mkdir('testDir/abc/abcd/abcd', 0777, true);
-        mkdir('testDir/abc/abcde/abcde', 0777, true);
-        mkdir('testDir/abcd/abcde/abcde', 0777, true);
-        touch('testDir/abcFile');
-        touch('testDir/abc/abcFile');
-        touch('testDir/abc/abcd/abcFile');
-        touch('testDir/abcd/abcde/abcde/abcFile');
+        mkdir($this->remoteDir . '/testDir/abc/abc/abc', 0777, true);
+        mkdir($this->remoteDir . '/testDir/abc/abcd/abcd', 0777, true);
+        mkdir($this->remoteDir . '/testDir/abc/abcde/abcde', 0777, true);
+        mkdir($this->remoteDir . '/testDir/abcd/abcde/abcde', 0777, true);
+        touch($this->remoteDir . '/testDir/abcFile');
+        touch($this->remoteDir . '/testDir/abc/abcFile');
+        touch($this->remoteDir . '/testDir/abc/abcd/abcFile');
+        touch($this->remoteDir . '/testDir/abcd/abcde/abcde/abcFile');
 
         $globReturn = $this->fs->ls('testDir');
         $this->assertEquals(array('testDir'), $globReturn);
@@ -194,7 +198,7 @@ class FsFtpTest extends TestBase
     public function testCd()
     {
         $pwd = $this->fs->pwd();
-        mkdir('testDir');
+        mkdir($this->remoteDir . '/testDir');
         $this->fs->cd('testDir');
         $newPwd = $this->fs->pwd();
 
@@ -233,7 +237,7 @@ class FsFtpTest extends TestBase
     public function testCdFail()
     {
         $pwd = $this->fs->pwd();
-        mkdir('testDir', 400);
+        mkdir($this->remoteDir . '/testDir', 400);
         $this->fs->cd('testDir');
     }
     // }}}
@@ -295,7 +299,7 @@ class FsFtpTest extends TestBase
     public function testGet()
     {
         // create test nodes
-        mkdir('testDir/testSubDir/testAnotherSubDir', 0777, true);
+        mkdir($this->remoteDir . '/testDir/testSubDir/testAnotherSubDir', 0777, true);
         $this->createTestFile('testDir/testFile');
         $this->assertTrue($this->confirmTestFile('testDir/testFile'));
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
@@ -309,8 +313,6 @@ class FsFtpTest extends TestBase
     // {{{ testPut
     public function testPut()
     {
-        //var_dump(sprintf('%o', $this->fs->fileInfo('testDir')->getPerms()));
-        //$this->assertTrue($this->confirmTestFile($this->test'Fixtures/testFile'));
         $this->assertTrue(file_exists('testDir/testSubDir/testAnotherSubDir'));
         $this->assertFalse(file_exists('testDir/testFile'));
 
@@ -323,7 +325,7 @@ class FsFtpTest extends TestBase
     // {{{ testExists
     public function testExists()
     {
-        mkdir('testDir');
+        mkdir($this->remoteDir . '/testDir');
 
         $this->assertTrue($this->fs->exists('testDir'));
         $this->assertFalse($this->fs->exists('i_dont_exist'));
