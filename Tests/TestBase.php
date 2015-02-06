@@ -366,7 +366,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testFileInfo
     public function testFileInfo()
     {
-        $this->createTestFile('testFile');
+        $this->createRemoteTestFile('testFile');
         $fileInfo = $this->fs->fileInfo('testFile');
 
         $this->assertTrue(is_a($fileInfo, 'SplFileInfo'));
