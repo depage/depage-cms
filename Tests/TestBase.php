@@ -43,7 +43,6 @@ class TestBase extends PHPUnit_Framework_TestCase
 
         $this->rmr($localTestDir);
         mkdir($localTestDir);
-        chmod($localTestDir, 0777);
         // @todo verify
 
         return $localTestDir;
