@@ -62,7 +62,7 @@ class FsFtpTest extends TestBase
     {
         $script =   "ftp -n " . $GLOBALS['FTP_HOST'] . " <<END_OF_SESSION\n" .
                     "user " . $GLOBALS['FTP_USER'] . " " . $GLOBALS['FTP_PASS'] . "\n" .
-                    "$script . END_OF_SESSION\n";
+                    $script . "END_OF_SESSION";
 
         exec($script);
     }

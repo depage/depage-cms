@@ -5,7 +5,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ setUp
     public function setUp()
     {
-        $this->testRootDir = getcwd();
+        $this->testRootDir = __DIR__;
         $this->localDir = $this->createLocalTestDir();
         $this->remoteDir = $this->createRemoteTestDir();
         chdir($this->localDir);
@@ -15,8 +15,8 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ tearDown
     public function tearDown()
     {
-        $this->deleteLocalTestDir();
         $this->deleteRemoteTestDir();
+        $this->deleteLocalTestDir();
         chdir($this->testRootDir);
     }
     // }}}
