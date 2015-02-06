@@ -348,7 +348,7 @@ class Fs
         $lsFiltered = array_filter(
             $ls,
             function ($element) use ($function) {
-                return $function($element);
+                return $function($this->pwd() . $element);
             }
         );
         natcasesort($lsFiltered);
