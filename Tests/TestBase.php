@@ -268,9 +268,7 @@ class TestBase extends PHPUnit_Framework_TestCase
      */
     public function testCdFail()
     {
-        $pwd = $this->fs->pwd();
-        mkdir($this->remoteDir . '/testDir', 400);
-        $this->fs->cd('testDir');
+        $this->fs->cd('dirDoesntExist');
     }
     // }}}
     // {{{ testMkdir
