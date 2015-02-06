@@ -1,15 +1,28 @@
 <?php
 
-require_once('../Fs.php');
-require_once('../Exceptions/FsException.php');
+require_once(__DIR__ . '/../Fs.php');
+require_once(__DIR__ . '/../FsFile.php');
+require_once(__DIR__ . '/../FsSsh.php');
+require_once(__DIR__ . '/../Exceptions/FsException.php');
+require_once(__DIR__ . '/TestBase.php');
 
 // {{{ FsTestClass
-class FsTestClass extends depage\Fs\Fs
+class FsTestClass extends Depage\Fs\Fs
 {
     public function parseUrl($url) {
         return parent::parseUrl($url);
     }
-
+    public function cleanUrl($url) {
+        return parent::cleanUrl($url);
+    }
+}
+// }}}
+// {{{ FsFileTestClass
+class FsFileTestClass extends Depage\Fs\FsFile
+{
+    public function parseUrl($url) {
+        return parent::parseUrl($url);
+    }
     public function cleanUrl($url) {
         return parent::cleanUrl($url);
     }
