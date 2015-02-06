@@ -1,10 +1,10 @@
 <?php
 
-require_once('../Fs.php');
-require_once('../FsFile.php');
-require_once('../FsSsh.php');
-require_once('../Exceptions/FsException.php');
-require_once('TestBase.php');
+require_once(__DIR__ . '/../Fs.php');
+require_once(__DIR__ . '/../FsFile.php');
+require_once(__DIR__ . '/../FsSsh.php');
+require_once(__DIR__ . '/../Exceptions/FsException.php');
+require_once(__DIR__ . '/TestBase.php');
 
 // {{{ FsTestClass
 class FsTestClass extends Depage\Fs\Fs
