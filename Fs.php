@@ -86,7 +86,8 @@ class Fs
         if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
             $this->currentPath = str_replace($this->pwd(), '', $cleanUrl) . '/';
         } else {
-            $path = $this->parseUrl($cleanUrl)['path'];
+            $parsedUrl = $this->parseUrl($cleanUrl);
+            $path = $parsedUrl['path'];
             throw new Exceptions\FsException('Directory not accessible ' . $path);
         }
     }
