@@ -346,10 +346,11 @@ class Fs
     {
         // @todo slow
         $ls = $this->ls($path);
+        $pwd = $this->pwd();
         $lsFiltered = array_filter(
             $ls,
-            function ($element) use ($function) {
-                return $function($this->pwd() . $element);
+            function ($element) use ($function, $pwd) {
+                return $function($pwd . $element);
             }
         );
         natcasesort($lsFiltered);
