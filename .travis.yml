@@ -9,7 +9,7 @@ services:
 before_script:
     - sudo apt-get update
     - sudo apt-get install -y --force-yes proftpd-basic ftp
-    - sudo pecl install channel://pecl.php.net/ssh2-0.12
+    - pecl install channel://pecl.php.net/ssh2-0.12
     - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
     - sudo cp /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
     - sudo /etc/init.d/proftpd restart
