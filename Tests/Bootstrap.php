@@ -28,6 +28,17 @@ class FsFileTestClass extends Depage\Fs\FsFile
     }
 }
 // }}}
+// {{{ FsSshTestClass
+class FsSshTestClass extends Depage\Fs\FsSsh
+{
+    public function parseUrl($url) {
+        return parent::parseUrl($url);
+    }
+    public function cleanUrl($url) {
+        return parent::cleanUrl($url);
+    }
+}
+// }}}
 
 // {{{ getMode
 function getMode($path) {
