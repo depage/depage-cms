@@ -24,15 +24,16 @@ class FsTest extends PHPUnit_Framework_TestCase
             'pass' => 'testPass',
             'host' => 'testHost',
             'port' => 42,
-            'path' => '',
         );
 
         $ftpFs = new FsTestClass($params);
+        $ftpFs->lateConnect();
         $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('path/to/file'));
         $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $ftpFs->cleanUrl('/path/to/file'));
 
         $params['path'] = '/testSubDir';
         $ftpFsSubDir = new FsTestClass($params);
+        $ftpFsSubDir->lateConnect();
         $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('path/to/file'));
         $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $ftpFsSubDir->cleanUrl('/testSubDir/path/to/file'));
     }
@@ -84,6 +85,7 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ testCleanUrlFile
     public function testCleanUrlFile()
     {
+        $this->fs->lateConnect();
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl('path/to/file'));
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->fs->cleanUrl(getcwd() . '/path/to/file'));

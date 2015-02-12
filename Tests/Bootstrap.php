@@ -10,6 +10,10 @@ require_once(__DIR__ . '/TestRemote.php');
 // {{{ FsTestClass
 class FsTestClass extends Depage\Fs\Fs
 {
+    public function lateConnect() {
+        return parent::lateConnect();
+    }
+
     public function parseUrl($url) {
         return parent::parseUrl($url);
     }
@@ -21,6 +25,9 @@ class FsTestClass extends Depage\Fs\Fs
 // {{{ FsFileTestClass
 class FsFileTestClass extends Depage\Fs\FsFile
 {
+    public function lateConnect() {
+        return parent::lateConnect();
+    }
     public function parseUrl($url) {
         return parent::parseUrl($url);
     }

@@ -8,6 +8,7 @@ class FsSsh extends Fs
     public function __construct($params = array())
     {
         parent::__construct($params);
+        $this->key = (isset($params['key'])) ? $params['key'] : false;
         $this->sshConnect();
     }
     // }}}
@@ -17,7 +18,7 @@ class FsSsh extends Fs
     {
         $this->session = ssh2_connect($this->url['host'], $this->url['port']);
 
-        if (isset($this->key)) {
+        if ($this->key) {
             ssh2_auth_pubkey_file(
                 $this->session,
                 $this->url['user'],

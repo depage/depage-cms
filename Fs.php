@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Depage\Fs;
 
 class Fs
@@ -19,11 +18,9 @@ class Fs
         if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
         if (isset($params['host']))     $this->url['host']      = $params['host'];
         if (isset($params['port']))     $this->url['port']      = $params['port'];
-        if (isset($params['hidden']))   $this->hidden           = $params['hidden'];
-        if (isset($params['key']))      $this->key              = $params['key'];
 
-        $path = isset($params['path']) ? $params['path'] : '.';
-        $this->setBase($path);
+        $this->hidden   = (isset($params['hidden']))    ? $params['hidden'] : false;
+        $this->path     = (isset($params['path']))      ? $params['path']   : '.';
     }
     // }}}
     // {{{ factory
@@ -44,6 +41,8 @@ class Fs
     // {{{ pwd
     public function pwd()
     {
+        $this->lateConnect();
+
         $url = $this->url;
         $url['path'] = $this->base . $this->currentPath;
 
@@ -53,6 +52,8 @@ class Fs
     // {{{ ls
     public function ls($url)
     {
+        $this->lateConnect();
+
         $cleanUrl = $this->cleanUrl($url);
         $path = str_replace($this->pwd(), '', $cleanUrl);
 
@@ -81,6 +82,8 @@ class Fs
      */
     public function cd($url)
     {
+        $this->lateConnect();
+
         $cleanUrl = $this->cleanUrl($url);
 
         if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
@@ -102,6 +105,8 @@ class Fs
      */
     public function mkdir($url)
     {
+        $this->lateConnect();
+
         $cleanUrl = $this->cleanUrl($url);
         return mkdir($cleanUrl, 0777, true);
     }
@@ -118,6 +123,8 @@ class Fs
      */
     public function rm($url)
     {
+        $this->lateConnect();
+
         $cleanUrl = $this->cleanUrl($url);
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
             throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
@@ -150,6 +157,8 @@ class Fs
      */
     public function mv($sourcePath, $targetPath)
     {
+        $this->lateConnect();
+
         $source = $this->cleanUrl($sourcePath);
         $target = $this->cleanUrl($targetPath);
 
@@ -176,6 +185,8 @@ class Fs
      */
     public function get($remotePath, $local = null)
     {
+        $this->lateConnect();
+
         if ($local === null) {
             $pathInfo = pathinfo($remotePath);
             $fileName = $pathInfo['filename'];
@@ -201,6 +212,8 @@ class Fs
      */
     public function put($local, $remotePath)
     {
+        $this->lateConnect();
+
         $remote = $this->cleanUrl($remotePath);
         return copy($local, $remote);
     }
@@ -217,6 +230,8 @@ class Fs
      */
     public function exists($remotePath)
     {
+        $this->lateConnect();
+
         $remote = $this->cleanUrl($remotePath);
         return file_exists($remote);
     }
@@ -224,6 +239,8 @@ class Fs
     // {{{ fileInfo
     public function fileInfo($remotePath)
     {
+        $this->lateConnect();
+
         $remote = $this->cleanUrl($remotePath);
         return new \SplFileInfo($remote);
     }
@@ -231,6 +248,8 @@ class Fs
     // {{{ getString
     public function getString($remotePath)
     {
+        $this->lateConnect();
+
         $remote = $this->cleanUrl($remotePath);
         return file_get_contents($remote);
     }
@@ -248,11 +267,21 @@ class Fs
      */
     public function putString($remotePath, $string)
     {
+        $this->lateConnect();
+
         $remote = $this->cleanUrl($remotePath);
         return file_put_contents($remote, $string);
     }
     // }}}
 
+    // {{{ lateConnect
+    protected function lateConnect()
+    {
+        if (!isset($this->base)) {
+            $this->setBase($this->path);
+        }
+    }
+    // }}}
     // {{{ setBase
     protected function setBase($path)
     {
