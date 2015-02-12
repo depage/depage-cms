@@ -5,20 +5,7 @@ class TestRemote extends TestBase
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        $dir = $GLOBALS['FTP_DIR'] . '/Temp';
-
-        if (file_exists($dir)) {
-            $this->rmr($dir);
-            if (file_exists($dir)) {
-                $this->fail('Remote test directory not clean: ' . $dir);
-            }
-        }
-
-        mkdir($dir, 0777);
-        chmod($dir, 0777);
-        $this->assertTrue(is_dir($dir));
-
-        return $dir;
+        return $this->createTestDir($GLOBALS['FTP_DIR']);
     }
     // }}}
     // {{{ deleteRemoteTestDir

@@ -36,16 +36,29 @@ class TestBase extends PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ createTestDir
+    public function createTestDir($path)
+    {
+        $dir = $path . '/Temp';
+
+        if (file_exists($dir)) {
+            $this->rmr($dir);
+            if (file_exists($dir)) {
+                $this->fail('Test directory not clean: ' . $dir);
+            }
+        }
+
+        mkdir($dir, 0777);
+        chmod($dir, 0777);
+        $this->assertTrue(is_dir($dir));
+
+        return $dir;
+    }
+    // }}}
     // {{{ createLocalTestDir
     public function createLocalTestDir()
     {
-        $localTestDir = $this->testRootDir . '/Temp';
-
-        $this->rmr($localTestDir);
-        mkdir($localTestDir);
-        // @todo verify
-
-        return $localTestDir;
+        return $this->createTestDir($this->testRootDir);
     }
     // }}}
     // {{{ deleteLocalTestDir
