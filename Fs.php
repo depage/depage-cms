@@ -129,7 +129,7 @@ class Fs
                 $this->rm($cleanUrl . '/' .  $nested);
             }
 
-            $success = rmdir($cleanUrl);
+            $success = $this->rmdir($cleanUrl);
         } else if (is_file($cleanUrl)) {
             $success = unlink($cleanUrl);
         }
@@ -434,6 +434,12 @@ class Fs
         } else {
             restore_error_handler();
         }
+    }
+    // }}}
+    // {{{ rmdir
+    protected function rmdir($url)
+    {
+        return rmdir($url);
     }
     // }}}
 }
