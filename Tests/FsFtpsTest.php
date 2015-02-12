@@ -6,11 +6,11 @@ class FsFtpsTest extends FsFtpTest
     public function createTestClass($override = array())
     {
         $params = array(
-                'path' => '/Temp',
-                'scheme' => 'ftps',
-                'host' => $GLOBALS['FTP_HOST'],
-                'user' => $GLOBALS['FTP_USER'],
-                'pass' => $GLOBALS['FTP_PASS'],
+            'path' => '/Temp',
+            'scheme' => 'ftps',
+            'host' => $GLOBALS['FTP_HOST'],
+            'user' => $GLOBALS['FTP_USER'],
+            'pass' => $GLOBALS['FTP_PASS'],
         );
 
         $newParams = array_merge($params, $override);
