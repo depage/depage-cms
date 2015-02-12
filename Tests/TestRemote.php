@@ -2,48 +2,47 @@
 
 class TestRemote extends TestBase
 {
+    // {{{ sshConnection
+    public function sshConnection()
+    {
+
+        if (!isset($GLOBALS['SSH_CONNECTION'])) {
+            $GLOBALS['SSH_CONNECTION'] = ssh2_connect($GLOBALS['REMOTE_HOST'], 22);
+            ssh2_auth_password($GLOBALS['SSH_CONNECTION'], $GLOBALS['REMOTE_USER'], $GLOBALS['REMOTE_PASS']);
+        }
+
+        return $GLOBALS['SSH_CONNECTION'];
+    }
+    // }}}
+
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        return $this->createTestDir($GLOBALS['FTP_DIR']);
+        return $this->createTestDir($GLOBALS['REMOTE_DIR']);
     }
     // }}}
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
         if (!empty($this->nodes)) {
-            $script = '';
             foreach(array_reverse($this->nodes) as $node) {
+                $path = $GLOBALS['REMOTE_DIR'] . 'Temp/' . $node[1];
+
                 if ($node[0] == 'dir') {
-                    $script .= "rmdir Temp/" . $node[1] . "\n";
+                    ssh2_exec($this->sshConnection(), 'rmdir ' . $path);
                 } elseif ($node[0] == 'file') {
-                    $script .= "delete Temp/" . $node[1] . "\n";
+                    ssh2_exec($this->sshConnection(), 'rm ' . $path);
                 }
             }
-            $this->runFtpScript($script);
         }
-        chdir($GLOBALS['FTP_DIR']);
-        $this->rmr('Temp');
+        $this->rmr($GLOBALS['REMOTE_DIR'] . '/Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path)
     {
-        $this->createTestFile('testFile.tmp');
         $this->nodes[] = array('file', $path);
-        $this->runFtpScript("cd Temp\nput testFile.tmp $path\n");
-        $this->rmr('testFile.tmp');
-    }
-    // }}}
-
-    // {{{ runFtpScript
-    public function runFtpScript($script)
-    {
-        $script =   "ftp -n " . $GLOBALS['FTP_HOST'] . " <<END_OF_SESSION\n" .
-                    "user " . $GLOBALS['FTP_USER'] . " " . $GLOBALS['FTP_PASS'] . "\n" .
-                    $script . "END_OF_SESSION";
-
-        exec($script);
+        ssh2_exec($this->sshConnection(), 'printf "testString" > ' . $GLOBALS['REMOTE_DIR'] . 'Temp/' . $path);
     }
     // }}}
 }

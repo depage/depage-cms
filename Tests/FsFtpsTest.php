@@ -8,9 +8,9 @@ class FsFtpsTest extends FsFtpTest
         $params = array(
             'path' => '/Temp',
             'scheme' => 'ftps',
-            'host' => $GLOBALS['FTP_HOST'],
-            'user' => $GLOBALS['FTP_USER'],
-            'pass' => $GLOBALS['FTP_PASS'],
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['REMOTE_PASS'],
         );
 
         $newParams = array_merge($params, $override);

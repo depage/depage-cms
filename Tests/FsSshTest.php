@@ -6,11 +6,11 @@ class FsSshTest extends TestRemote
     public function createTestClass($override = array())
     {
         $params = array(
-            'path' => '/home/ftptest/Temp',
+            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
             'scheme' => 'ssh2.sftp',
-            'host' => $GLOBALS['FTP_HOST'],
-            'user' => $GLOBALS['FTP_USER'],
-            'pass' => $GLOBALS['FTP_PASS'],
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['REMOTE_PASS'],
             'port' => '22',
         );
 
