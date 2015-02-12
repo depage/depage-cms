@@ -4,44 +4,57 @@ namespace Depage\Fs;
 
 class FsSsh extends Fs
 {
+    // {{{ variables
+        protected $sshSession = null;
+    // }}}
     // {{{ constructor
     public function __construct($params = array())
     {
         parent::__construct($params);
         $this->key = (isset($params['key'])) ? $params['key'] : false;
-        $this->sshConnect();
     }
     // }}}
 
+    // {{{ lateConnect
+    protected function lateConnect()
+    {
+        parent::lateConnect();
+        $this->sshConnect();
+    }
+    // }}}
     // {{{ sshConnect
     protected function sshConnect()
     {
-        $this->session = ssh2_connect($this->url['host'], $this->url['port']);
+        if (!$this->sshSession) {
+            $session = ssh2_connect($this->url['host'], $this->url['port']);
 
-        if ($this->key) {
-            ssh2_auth_pubkey_file(
-                $this->session,
-                $this->url['user'],
-                $this->key . '.pub',
-                $this->key,
-                $this->url['pass']
-            );
-        } else {
-            ssh2_auth_password(
-                $this->session,
-                $this->url['user'],
-                $this->url['pass']
-            );
+            if ($this->key) {
+                ssh2_auth_pubkey_file(
+                    $session,
+                    $this->url['user'],
+                    $this->key . '.pub',
+                    $this->key,
+                    $this->url['pass']
+                );
+            } else {
+                ssh2_auth_password(
+                    $session,
+                    $this->url['user'],
+                    $this->url['pass']
+                );
+            }
+
+            $this->sshSession = ssh2_sftp($session);
         }
 
-        $this->sftpSession = ssh2_sftp($this->session);
+        return $this->sshSession;
     }
     // }}}
     // {{{ buildUrl
     protected function buildUrl($parsed)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= $this->sftpSession;
+        $path .= $this->sshSession;
         $path .= isset($parsed['path']) ? $parsed['path'] : '/';
 
         return $path;
