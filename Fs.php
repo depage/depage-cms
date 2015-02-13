@@ -45,8 +45,10 @@ class Fs
 
         $url = $this->url;
         $url['path'] = $this->base . $this->currentPath;
+        $pwd = $this->buildUrl($url);
 
-        return $this->buildUrl($url);
+        $this->postCommandHook();
+        return $pwd;
     }
     // }}}
     // {{{ ls
@@ -56,22 +58,32 @@ class Fs
 
         $cleanUrl = $this->cleanUrl($url);
         $path = str_replace($this->pwd(), '', $cleanUrl);
+        $ls = $this->lsRecursive($path, '');
 
-        return $this->lsRecursive($path, '');
+        $this->postCommandHook();
+        return $ls;
     }
     // }}}
     // {{{ lsDir
     public function lsDir($path = '')
     {
         $this->preCommandHook();
-        return $this->lsFilter($path, 'is_dir');
+
+        $lsDir = $this->lsFilter($path, 'is_dir');
+
+        $this->postCommandHook();
+        return $lsDir;
     }
     // }}}
     // {{{ lsFiles
     public function lsFiles($path = '')
     {
         $this->preCommandHook();
-        return $this->lsFilter($path, 'is_file');
+
+        $lsFiles = $this->lsFilter($path, 'is_file');
+
+        $this->postCommandHook();
+        return $lsFiles;
     }
     // }}}
     // {{{ cd
@@ -136,24 +148,9 @@ class Fs
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
             throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
         }
-
-        $success = false;
-        if (is_dir($cleanUrl)) {
-            foreach ($this->scanDir($cleanUrl, true) as $nested) {
-                $success = $this->rm($cleanUrl . '/' .  $nested) && $success;
-            }
-
-            $success = $this->rmdir($cleanUrl);
-        } else if (is_file($cleanUrl)) {
-            $success = unlink($cleanUrl);
-        }
-
-        if ($success) {
-            clearstatcache (false, $cleanUrl);
-        }
+        $this->rmRecursive($url);
 
         $this->postCommandHook();
-        return $success;
     }
     // }}}
     // {{{ mv
@@ -315,11 +312,13 @@ class Fs
         $testString = 'depage-fs-test-string';
 
         try {
-            $success = !$this->exists($testFile)
-                && $this->putString($testFile, $testString)
-                && $this->getString($testFile) === $testString
-                && $this->rm($testFile)
-                && !$this->exists($testFile);
+            if (!$this->exists($testFile)) {
+                $this->putString($testFile, $testString);
+                if ($this->getString($testFile) === $testString) {
+                    $this->rm($testFile);
+                    $success = !$this->exists($testFile);
+                }
+            }
         } catch (Exceptions\FsException $exception) {
             $success = false;
         }
@@ -488,6 +487,27 @@ class Fs
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ rmRecursive
+    protected function rmRecursive($url)
+    {
+        $cleanUrl = $this->cleanUrl($url);
+
+        if (is_dir($cleanUrl)) {
+            foreach ($this->scanDir($cleanUrl, true) as $nested) {
+                $this->rmRecursive($cleanUrl . '/' .  $nested);
+            }
+            $success = $this->rmdir($cleanUrl);
+        } else if (is_file($cleanUrl)) {
+            $success = unlink($cleanUrl);
+        }
+
+        if ($success) {
+            clearstatcache (true, $cleanUrl);
+        } else {
+            throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '"');
+        }
     }
     // }}}
     // {{{ scanDir
