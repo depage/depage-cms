@@ -23,24 +23,12 @@ class TestRemote extends TestBase
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
-        if (!empty($this->nodes)) {
-            foreach(array_reverse($this->nodes) as $node) {
-                $path = $GLOBALS['REMOTE_DIR'] . 'Temp/' . $node[1];
-
-                if ($node[0] == 'dir') {
-                    ssh2_exec($this->sshConnection(), 'rmdir ' . $path);
-                } elseif ($node[0] == 'file') {
-                    ssh2_exec($this->sshConnection(), 'rm ' . $path);
-                }
-            }
-        }
-        $this->rmr($GLOBALS['REMOTE_DIR'] . '/Temp');
+        ssh2_exec($this->sshConnection(), 'rm -r ' . $GLOBALS['REMOTE_DIR'] . '/Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path)
     {
-        $this->nodes[] = array('file', $path);
         ssh2_exec($this->sshConnection(), 'printf "testString" > ' . $GLOBALS['REMOTE_DIR'] . 'Temp/' . $path);
     }
     // }}}

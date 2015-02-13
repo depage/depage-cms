@@ -84,29 +84,6 @@ class TestBase extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ invokeMkdir
-    protected function invokeMkdir($path)
-    {
-        // @todo explode recursive paths
-        $this->nodes[] = array('dir', $path);
-        $this->fs->mkdir($path);
-    }
-    // }}}
-    // {{{ invokePut
-    protected function invokePut($local, $remotePath)
-    {
-        $this->nodes[] = array('file', $remotePath);
-        $this->fs->put($local, $remotePath);
-    }
-    // }}}
-    // {{{ invokePutString
-    protected function invokePutString($remotePath, $string)
-    {
-        $this->nodes[] = array('file', $remotePath);
-        $this->fs->putString($remotePath, $string);
-    }
-    // }}}
-
     // {{{ testLs
     public function testLs()
     {
@@ -290,8 +267,8 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists('testDir'));
         $this->assertFalse(file_exists('testDir/testDir'));
 
-        $mkdirReturn = $this->invokeMkdir('testDir');
-        $mkdirReturn = $this->invokeMkdir('testDir/testDir');
+        $mkdirReturn = $this->fs->mkdir('testDir');
+        $mkdirReturn = $this->fs->mkdir('testDir/testDir');
 
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testDir'));
     }
@@ -300,11 +277,11 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testRm()
     {
         // create test nodes
-        $this->invokeMkdir('testDir');
-        $this->invokeMkdir('testDir/testSubDir');
-        $this->invokeMkdir('testDir/testSubDir/testAnotherSubDir');
-        $this->invokePutString('testDir/testFile', '');
-        $this->invokePutString('testDir/testSubDir/testFile', '');
+        $this->fs->mkdir('testDir');
+        $this->fs->mkdir('testDir/testSubDir');
+        $this->fs->mkdir('testDir/testSubDir/testAnotherSubDir');
+        $this->fs->putString('testDir/testFile', '');
+        $this->fs->putString('testDir/testSubDir/testFile', '');
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testAnotherSubDir'));
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testFile'));
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testFile'));
@@ -358,7 +335,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists('testFile'));
         $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
 
-        $this->invokePut('testFile', 'testFile2');
+        $this->fs->put('testFile', 'testFile2');
         $this->assertTrue($this->confirmTestFile('testFile'));
         $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
     }
@@ -395,7 +372,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testPutString
     public function testPutString()
     {
-        $this->invokePutString('testFile', 'testString');
+        $this->fs->putString('testFile', 'testString');
 
         $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile'));
     }
