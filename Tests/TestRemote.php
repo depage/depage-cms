@@ -5,7 +5,6 @@ class TestRemote extends TestBase
     // {{{ sshConnection
     public function sshConnection()
     {
-
         if (!isset($GLOBALS['SSH_CONNECTION'])) {
             $GLOBALS['SSH_CONNECTION'] = ssh2_connect($GLOBALS['REMOTE_HOST'], 22);
             ssh2_auth_password($GLOBALS['SSH_CONNECTION'], $GLOBALS['REMOTE_USER'], $GLOBALS['REMOTE_PASS']);

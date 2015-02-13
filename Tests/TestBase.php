@@ -400,4 +400,13 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile'));
     }
     // }}}
+
+    // {{{ testTest
+    public function testTest()
+    {
+        $this->assertTrue($this->fs->test());
+        rmdir($this->remoteDir);
+        $this->assertFalse($this->fs->test());
+    }
+    // }}}
 }

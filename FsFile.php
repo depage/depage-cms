@@ -4,6 +4,7 @@ namespace Depage\Fs;
 
 class FsFile extends Fs
 {
+    // {{{ rmdir
     protected function rmdir($url)
     {
         // workaround, rmdir does not support file stream wrappers <= PHP 5.6.2

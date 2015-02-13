@@ -133,12 +133,16 @@ class Fs
         $success = false;
         if (is_dir($cleanUrl)) {
             foreach ($this->scanDir($cleanUrl, true) as $nested) {
-                $this->rm($cleanUrl . '/' .  $nested);
+                $success = $this->rm($cleanUrl . '/' .  $nested) && $success;
             }
 
             $success = $this->rmdir($cleanUrl);
         } else if (is_file($cleanUrl)) {
             $success = unlink($cleanUrl);
+        }
+
+        if ($success) {
+            clearstatcache (false, $cleanUrl);
         }
 
         return $success;
@@ -270,7 +274,23 @@ class Fs
         $this->lateConnect();
 
         $remote = $this->cleanUrl($remotePath);
+
         return file_put_contents($remote, $string);
+    }
+    // }}}
+
+    // {{{ test
+    public function test()
+    {
+        $file = 'depage-fs-test-file.tmp';
+
+        $success = !$this->exists($file);
+        $success = $success && $this->putString($file, 'depage-fs-test-string');
+        $success = $success && $this->getString($file) === 'depage-fs-test-string';
+        $success = $success && $this->rm($file);
+        $success = $success && !$this->exists($file);
+
+        return $success;
     }
     // }}}
 
