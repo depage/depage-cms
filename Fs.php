@@ -315,11 +315,11 @@ class Fs
         $testString = 'depage-fs-test-string';
 
         try {
-            $success = !$this->exists($testFile);
-            $success = $success && $this->putString($testFile, $testString);
-            $success = $success && $this->getString($testFile) === $testString;
-            $success = $success && $this->rm($testFile);
-            $success = $success && !$this->exists($testFile);
+            $success = !$this->exists($testFile)
+                && $this->putString($testFile, $testString)
+                && $this->getString($testFile) === $testString
+                && $this->rm($testFile)
+                && !$this->exists($testFile);
         } catch (Exceptions\FsException $exception) {
             $success = false;
         }
