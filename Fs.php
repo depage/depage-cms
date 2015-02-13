@@ -86,6 +86,40 @@ class Fs
         return $lsFiles;
     }
     // }}}
+    // {{{ exists
+    /**
+     * Checks if file exists
+     *
+     * @public
+     *
+     * @param $path (string) path to file to check
+     *
+     * @return $exist (bool) true if file exists, false otherwise
+     */
+    public function exists($remotePath)
+    {
+        $this->preCommandHook();
+
+        $remote = $this->cleanUrl($remotePath);
+        $exists = file_exists($remote);
+
+        $this->postCommandHook();
+        return $exists;
+    }
+    // }}}
+    // {{{ fileInfo
+    public function fileInfo($remotePath)
+    {
+        $this->preCommandHook();
+
+        $remote = $this->cleanUrl($remotePath);
+        $fileInfo = new \SplFileInfo($remote);
+
+        $this->postCommandHook();
+        return $fileInfo;
+    }
+    // }}}
+
     // {{{ cd
     /**
      * Changes current directory
@@ -181,6 +215,7 @@ class Fs
         $this->postCommandHook();
     }
     // }}}
+
     // {{{ get
     /**
      * Writes content of a remote file to targetfile
@@ -229,39 +264,6 @@ class Fs
         }
 
         $this->postCommandHook();
-    }
-    // }}}
-    // {{{ exists
-    /**
-     * Checks if file exists
-     *
-     * @public
-     *
-     * @param $path (string) path to file to check
-     *
-     * @return $exist (bool) true if file exists, false otherwise
-     */
-    public function exists($remotePath)
-    {
-        $this->preCommandHook();
-
-        $remote = $this->cleanUrl($remotePath);
-        $exists = file_exists($remote);
-
-        $this->postCommandHook();
-        return $exists;
-    }
-    // }}}
-    // {{{ fileInfo
-    public function fileInfo($remotePath)
-    {
-        $this->preCommandHook();
-
-        $remote = $this->cleanUrl($remotePath);
-        $fileInfo = new \SplFileInfo($remote);
-
-        $this->postCommandHook();
-        return $fileInfo;
     }
     // }}}
     // {{{ getString
