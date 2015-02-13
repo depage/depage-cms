@@ -127,7 +127,7 @@ class Fs
         $success = mkdir($cleanUrl, 0777, true);
 
         if (!$success) {
-            throw new Exceptions\FsException('Cannot create directory "' . $url . '"');
+            throw new Exceptions\FsException('Cannot create directory "' . $url . '".');
         }
 
         $this->postCommandHook();
@@ -392,7 +392,7 @@ class Fs
         $newUrl['path'] = $this->cleanPath($newPath);
 
         if (!preg_match(';^' . preg_quote($this->cleanPath($this->base)) . '(.*)$;',  $newUrl['path'])) {
-            throw new Exceptions\FsException('Cannot leave base directory ' . $this->base);
+            throw new Exceptions\FsException('Cannot leave base directory "' . $this->base . '".');
         }
 
         return $this->buildUrl($newUrl);
@@ -503,7 +503,7 @@ class Fs
         if ($success) {
             clearstatcache (true, $cleanUrl);
         } else {
-            throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '"');
+            throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '".');
         }
     }
     // }}}
@@ -539,6 +539,7 @@ class Fs
         if ($start) {
             set_error_handler(
                 function($errno, $errstr, $errfile, $errline, array $errcontext) {
+                    restore_error_handler();
                     throw new Exceptions\FsException($errstr);
                 }
             );
