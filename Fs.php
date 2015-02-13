@@ -41,7 +41,7 @@ class Fs
     // {{{ pwd
     public function pwd()
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $url = $this->url;
         $url['path'] = $this->base . $this->currentPath;
@@ -52,7 +52,7 @@ class Fs
     // {{{ ls
     public function ls($url)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
         $path = str_replace($this->pwd(), '', $cleanUrl);
@@ -63,12 +63,14 @@ class Fs
     // {{{ lsDir
     public function lsDir($path = '')
     {
+        $this->preCommandHook();
         return $this->lsFilter($path, 'is_dir');
     }
     // }}}
     // {{{ lsFiles
     public function lsFiles($path = '')
     {
+        $this->preCommandHook();
         return $this->lsFilter($path, 'is_file');
     }
     // }}}
@@ -82,7 +84,7 @@ class Fs
      */
     public function cd($url)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
 
@@ -93,6 +95,8 @@ class Fs
             $path = $parsedUrl['path'];
             throw new Exceptions\FsException('Directory not accessible ' . $path);
         }
+
+        $this->postCommandHook();
     }
     // }}}
     // {{{ mkdir
@@ -105,10 +109,13 @@ class Fs
      */
     public function mkdir($url)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
-        return mkdir($cleanUrl, 0777, true);
+        $success = mkdir($cleanUrl, 0777, true);
+
+        $this->postCommandHook();
+        return $success;
     }
     // }}}
     // {{{ rm
@@ -123,7 +130,7 @@ class Fs
      */
     public function rm($url)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
@@ -145,6 +152,7 @@ class Fs
             clearstatcache (false, $cleanUrl);
         }
 
+        $this->postCommandHook();
         return $success;
     }
     // }}}
@@ -161,19 +169,23 @@ class Fs
      */
     public function mv($sourcePath, $targetPath)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $source = $this->cleanUrl($sourcePath);
         $target = $this->cleanUrl($targetPath);
+        $success = false;
 
         if (file_exists($source)) {
-            if (!($value = rename($source, $target))) {
+            $success = rename($source, $target);
+            if (!$success) {
                 throw new Exceptions\FsException("could not move '$source' to '$target'");
             }
-            return $value;
         } else {
             throw new Exceptions\FsException("could not move '$source' to '$target' - source doesn't exist");
         }
+
+        $this->postCommandHook();
+        return $success;
     }
     // }}}
     // {{{ get
@@ -189,7 +201,7 @@ class Fs
      */
     public function get($remotePath, $local = null)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         if ($local === null) {
             $pathInfo = pathinfo($remotePath);
@@ -200,7 +212,10 @@ class Fs
         }
 
         $remote = $this->cleanUrl($remotePath);
-        return copy($remote, $local);
+        $success = copy($remote, $local);
+
+        $this->postCommandHook();
+        return $success;
     }
     // }}}
     // {{{ put
@@ -216,10 +231,13 @@ class Fs
      */
     public function put($local, $remotePath)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        return copy($local, $remote);
+        $success = copy($local, $remote);
+
+        $this->postCommandHook();
+        return $success;
     }
     // }}}
     // {{{ exists
@@ -234,28 +252,37 @@ class Fs
      */
     public function exists($remotePath)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        return file_exists($remote);
+        $exists = file_exists($remote);
+
+        $this->postCommandHook();
+        return $exists;
     }
     // }}}
     // {{{ fileInfo
     public function fileInfo($remotePath)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        return new \SplFileInfo($remote);
+        $fileInfo = new \SplFileInfo($remote);
+
+        $this->postCommandHook();
+        return $fileInfo;
     }
     // }}}
     // {{{ getString
     public function getString($remotePath)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        return file_get_contents($remote);
+        $string = file_get_contents($remote);
+
+        $this->postCommandHook();
+        return $string;
     }
     // }}}
     // {{{ putString
@@ -271,11 +298,13 @@ class Fs
      */
     public function putString($remotePath, $string)
     {
-        $this->lateConnect();
+        $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
+        $bytes = file_put_contents($remote, $string);
 
-        return file_put_contents($remote, $string);
+        $this->postCommandHook();
+        return $bytes;
     }
     // }}}
 
@@ -295,6 +324,19 @@ class Fs
     }
     // }}}
 
+    // {{{ preCommandHook
+    protected function preCommandHook()
+    {
+        $this->lateConnect();
+        $this->errorHandler(true);
+    }
+    // }}}
+    // {{{ postCommandHook
+    protected function postCommandHook()
+    {
+        $this->errorHandler(false);
+    }
+    // }}}
     // {{{ lateConnect
     protected function lateConnect()
     {
@@ -453,9 +495,7 @@ class Fs
             $hidden = $this->hidden;
         }
 
-        $this->errorHandler(true);
         $scanDir = scandir($cleanUrl);
-        $this->errorHandler(false);
 
         $filtered = array_diff($scanDir, array('.', '..'));
 
