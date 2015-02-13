@@ -105,7 +105,7 @@ class Fs
         } else {
             $parsedUrl = $this->parseUrl($cleanUrl);
             $path = $parsedUrl['path'];
-            throw new Exceptions\FsException('Directory not accessible ' . $path);
+            throw new Exceptions\FsException('Directory not accessible "' . $path . '".');
         }
 
         $this->postCommandHook();
@@ -126,8 +126,11 @@ class Fs
         $cleanUrl = $this->cleanUrl($url);
         $success = mkdir($cleanUrl, 0777, true);
 
+        if (!$success) {
+            throw new Exceptions\FsException('Cannot create directory "' . $url . '"');
+        }
+
         $this->postCommandHook();
-        return $success;
     }
     // }}}
     // {{{ rm
@@ -137,8 +140,6 @@ class Fs
      * @public
      *
      * @param $path (string) path to file or directory
-     *
-     * @return $success (bool) true on success, false on error
      */
     public function rm($url)
     {
@@ -146,7 +147,7 @@ class Fs
 
         $cleanUrl = $this->cleanUrl($url);
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
-            throw new Exceptions\FsException('Cannot delete current directory ' . $this->pwd());
+            throw new Exceptions\FsException('Cannot delete current directory "' . $this->pwd() . '".');
         }
         $this->rmRecursive($url);
 
@@ -161,8 +162,6 @@ class Fs
      *
      * @param    $source (string) name of source file or directory
      * @param    $target (string) target
-     *
-     * @return    $success (bool) true on success, false on error
      */
     public function mv($sourcePath, $targetPath)
     {
@@ -170,31 +169,26 @@ class Fs
 
         $source = $this->cleanUrl($sourcePath);
         $target = $this->cleanUrl($targetPath);
-        $success = false;
 
         if (file_exists($source)) {
-            $success = rename($source, $target);
-            if (!$success) {
-                throw new Exceptions\FsException("could not move '$source' to '$target'");
+            if (!rename($source, $target)) {
+                throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '".');
             }
         } else {
-            throw new Exceptions\FsException("could not move '$source' to '$target' - source doesn't exist");
+            throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '" - source doesn\'t exist.');
         }
 
         $this->postCommandHook();
-        return $success;
     }
     // }}}
     // {{{ get
     /**
-     * Writes content of a local file to targetfile
+     * Writes content of a remote file to targetfile
      *
      * @public
      *
      * @param    $filepath (string) name of targetfile
      * @param    $sourcefile (string) path to sourcefile
-     *
-     * @return    $success (bool) true on success, false on error
      */
     public function get($remotePath, $local = null)
     {
@@ -209,10 +203,11 @@ class Fs
         }
 
         $remote = $this->cleanUrl($remotePath);
-        $success = copy($remote, $local);
+        if (!copy($remote, $local)) {
+            throw new Exceptions\FsException('Cannot copy "' . $remote  . '" to "' . $local . '".');
+        }
 
         $this->postCommandHook();
-        return $success;
     }
     // }}}
     // {{{ put
@@ -223,18 +218,17 @@ class Fs
      *
      * @param    $filepath (string) name of targetfile
      * @param    $sourcefile (string) path to sourcefile
-     *
-     * @return    $success (bool) true on success, false on error
      */
     public function put($local, $remotePath)
     {
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        $success = copy($local, $remote);
+        if (!copy($local, $remote)) {
+            throw new Exceptions\FsException('Cannot copy "' . $local  . '" to "' . $remote . '".');
+        }
 
         $this->postCommandHook();
-        return $success;
     }
     // }}}
     // {{{ exists
@@ -277,6 +271,9 @@ class Fs
 
         $remote = $this->cleanUrl($remotePath);
         $string = file_get_contents($remote);
+        if ($string === false) {
+            throw new Exceptions\FsException('Cannot get contents of "' . $remote . '".');
+        }
 
         $this->postCommandHook();
         return $string;
@@ -290,8 +287,6 @@ class Fs
      *
      * @param    $filepath (string) name of targetfile
      * @param    $str (string) content to write to file
-     *
-     * @return    $success (bool) true on success, false on error
      */
     public function putString($remotePath, $string)
     {
@@ -299,9 +294,11 @@ class Fs
 
         $remote = $this->cleanUrl($remotePath);
         $bytes = file_put_contents($remote, $string);
+        if ($bytes === false) {
+            throw new Exceptions\FsException('Cannot write string to "' . $remote . '".');
+        }
 
         $this->postCommandHook();
-        return $bytes;
     }
     // }}}
 
