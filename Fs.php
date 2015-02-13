@@ -282,13 +282,14 @@ class Fs
     // {{{ test
     public function test()
     {
-        $file = 'depage-fs-test-file.tmp';
+        $testFile = 'depage-fs-test-file.tmp';
+        $testString = 'depage-fs-test-string';
 
-        $success = !$this->exists($file);
-        $success = $success && $this->putString($file, 'depage-fs-test-string');
-        $success = $success && $this->getString($file) === 'depage-fs-test-string';
-        $success = $success && $this->rm($file);
-        $success = $success && !$this->exists($file);
+        $success = !$this->exists($testFile);
+        $success = $success && $this->putString($testFile, $testString);
+        $success = $success && $this->getString($testFile) === $testString;
+        $success = $success && $this->rm($testFile);
+        $success = $success && !$this->exists($testFile);
 
         return $success;
     }
