@@ -287,7 +287,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testFile'));
 
         $this->fs->rm('testDir');
-        $this->assertFalse(file_exists('testDir'));
+        $this->assertFalse(file_exists($this->remoteDir . '/testDir'));
     }
     // }}}
 
