@@ -314,11 +314,15 @@ class Fs
         $testFile = 'depage-fs-test-file.tmp';
         $testString = 'depage-fs-test-string';
 
-        $success = !$this->exists($testFile);
-        $success = $success && $this->putString($testFile, $testString);
-        $success = $success && $this->getString($testFile) === $testString;
-        $success = $success && $this->rm($testFile);
-        $success = $success && !$this->exists($testFile);
+        try {
+            $success = !$this->exists($testFile);
+            $success = $success && $this->putString($testFile, $testString);
+            $success = $success && $this->getString($testFile) === $testString;
+            $success = $success && $this->rm($testFile);
+            $success = $success && !$this->exists($testFile);
+        } catch (Exceptions\FsException $exception) {
+            $success = false;
+        }
 
         return $success;
     }
