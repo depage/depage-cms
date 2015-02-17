@@ -11,7 +11,7 @@ class FsSshKeyTest extends TestRemote
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
-            'key' =>  $GLOBALS['SSH_KEY'],
+            'key' => __DIR__ . '/../' . $GLOBALS['SSH_KEY'],
             'port' => '22',
         );
 
