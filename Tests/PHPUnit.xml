@@ -5,6 +5,7 @@
         <var name="REMOTE_USER" value="testuser" />
         <var name="REMOTE_PASS" value="testpass" />
         <var name="REMOTE_DIR" value="/home/testuser/" />
+        <var name="SSH_KEY" value="~/testkey" />
     </php>
 
     <logging>

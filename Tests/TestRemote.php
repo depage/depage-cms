@@ -3,7 +3,7 @@
 class TestRemote extends TestBase
 {
     // {{{ sshConnection
-    public function sshConnection()
+    protected function sshConnection()
     {
         if (!isset($GLOBALS['SSH_CONNECTION'])) {
             $GLOBALS['SSH_CONNECTION'] = ssh2_connect($GLOBALS['REMOTE_HOST'], 22);
@@ -13,23 +13,58 @@ class TestRemote extends TestBase
         return $GLOBALS['SSH_CONNECTION'];
     }
     // }}}
+    // {{{ sshExec
+    protected function sshExec($cmd)
+    {
+        return ssh2_exec($this->sshConnection(), $cmd);
+    }
+    // }}}
+
+    // {{{ mkdirRemote
+    protected function mkdirRemote($path, $mode = 0777, $recursive = false)
+    {
+        $remotePath = $this->remoteDir . '/' . $path;
+        $this->sshExec('mkdir -p -m 777 ' . $remotePath);
+        $this->assertTrue(is_dir($remotePath));
+    }
+    // }}}
+    // {{{ touchRemote
+    protected function touchRemote($path, $mode = 0777)
+    {
+        $remotePath = $this->remoteDir . '/' . $path;
+        $this->sshExec('touch ' . $remotePath);
+        $this->assertTrue(is_file($remotePath));
+    }
+    // }}}
 
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        return $this->createTestDir($GLOBALS['REMOTE_DIR']);
+        $dir = $GLOBALS['REMOTE_DIR'] . 'Temp';
+
+        if (file_exists($dir)) {
+            $this->deleteRemoteTestDir();
+            if (file_exists($dir)) {
+                $this->fail('Test directory not clean: ' . $dir);
+            }
+        }
+
+        $this->sshExec('mkdir -m 777 ' . $dir);
+        $this->assertTrue(is_dir($dir));
+
+        return $dir;
     }
     // }}}
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
-        ssh2_exec($this->sshConnection(), 'rm -r ' . $GLOBALS['REMOTE_DIR'] . '/Temp');
+        $this->sshExec('rm -r ' . $GLOBALS['REMOTE_DIR'] . 'Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path)
     {
-        ssh2_exec($this->sshConnection(), 'printf "testString" > ' . $GLOBALS['REMOTE_DIR'] . 'Temp/' . $path);
+        $this->sshExec('printf "testString" > ' . $this->remoteDir . '/' . $path);
     }
     // }}}
 }

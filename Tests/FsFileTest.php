@@ -11,6 +11,24 @@ class FsFileTest extends TestBase
         return new FsFileTestClass($newParams);
     }
     // }}}
+
+    // {{{ mkdirRemote
+    protected function mkdirRemote($path, $mode = 0777, $recursive = false)
+    {
+        $remotePath = $this->remoteDir . '/' . $path;
+        mkdir($remotePath, $mode, $recursive);
+        chmod($remotePath, $mode);
+    }
+    // }}}
+    // {{{ touchRemote
+    protected function touchRemote($path, $mode = 0777)
+    {
+        $remotePath = $this->remoteDir . '/' . $path;
+        touch($remotePath, $mode);
+        chmod($remotePath, $mode);
+    }
+    // }}}
+
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
@@ -20,6 +38,7 @@ class FsFileTest extends TestBase
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
+        $this->rmr($this->localDir);
     }
     // }}}
     // {{{ createRemoteTestFile

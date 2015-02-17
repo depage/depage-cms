@@ -14,7 +14,11 @@ before_script:
     - sudo cp /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
     - sudo /etc/init.d/proftpd restart
     - sudo useradd -m -p co.yjyxRTlonU testuser
-    - sudo chmod 777 -R /home/testuser
+    - ssh-keygen -N testpass -f testkey
+    - openssl rsa -passin pass:testpass -in testkey -out testkey
+    - mkdir /home/testuser/.ssh
+    - cp /home/testuser/.ssh/authorized_keys
+    - chown -R testuser:testuser /home/testuser/.ssh
 
 script: phpunit --configuration Tests/PHPUnit.xml Tests/
 
