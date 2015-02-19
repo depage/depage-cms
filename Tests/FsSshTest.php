@@ -9,9 +9,10 @@ class FsSshTest extends TestRemote
             'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
+            'port' => '22',
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
-            'port' => '22',
+            'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
         $newParams = array_merge($params, $override);

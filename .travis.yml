@@ -11,7 +11,7 @@ before_script:
     - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
     - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
     - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
-    - sudo cp /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
+    - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
     - sudo /etc/init.d/proftpd restart
     - sudo useradd -m -p co.yjyxRTlonU testuser
     - mkdir ssh
@@ -20,6 +20,9 @@ before_script:
     - sudo mkdir /home/testuser/.ssh
     - sudo cp ssh/testkey.pub /home/testuser/.ssh/authorized_keys
     - sudo chown -R testuser:testuser /home/testuser/.ssh
+    - fingerprint=$(ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub | awk '{print $2}' | sed 's/://g')
+    - cat Tests/PHPUnit.xml | sed "s/fingerprint/$fingerprint/" > Tests/PHPUnit.xml.tmp
+    - mv Tests/PHPUnit.xml.tmp Tests/PHPUnit.xml
 
 script: phpunit --configuration Tests/PHPUnit.xml Tests/
 

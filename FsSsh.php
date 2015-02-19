@@ -12,6 +12,7 @@ class FsSsh extends Fs
     {
         parent::__construct($params);
         $this->key = (isset($params['key'])) ? $params['key'] : false;
+        $this->fingerprint = (isset($params['fingerprint'])) ? $params['fingerprint'] : false;
     }
     // }}}
 
@@ -27,6 +28,10 @@ class FsSsh extends Fs
     {
         if (!$this->sshSession) {
             $session = ssh2_connect($this->url['host'], $this->url['port']);
+
+            if (strcasecmp($this->fingerprint, ssh2_fingerprint($session))) {
+                throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
+            }
 
             if ($this->key) {
                 ssh2_auth_pubkey_file(
