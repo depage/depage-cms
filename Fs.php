@@ -5,10 +5,10 @@ namespace Depage\Fs;
 class Fs
 {
     // {{{ variables
-        protected $currentPath;
-        protected $base;
-        protected $url;
-        protected $hidden = false;
+    protected $currentPath;
+    protected $base;
+    protected $url;
+    protected $hidden = false;
     // }}}
     // {{{ constructor
     public function __construct($params = array())

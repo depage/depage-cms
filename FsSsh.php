@@ -5,7 +5,7 @@ namespace Depage\Fs;
 class FsSsh extends Fs
 {
     // {{{ variables
-        protected $sshSession = null;
+    protected $sshSession = null;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
@@ -21,6 +21,16 @@ class FsSsh extends Fs
     {
         parent::lateConnect();
         $this->sshConnect();
+    }
+    // }}}
+    // {{{ getFingerprint
+    public function getFingerprint()
+    {
+        $session = ssh2_connect($this->url['host'], $this->url['port']);
+        $fingerprint = ssh2_fingerprint($session);
+        $session = null;
+
+        return $fingerprint;
     }
     // }}}
     // {{{ sshConnect
