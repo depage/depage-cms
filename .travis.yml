@@ -15,8 +15,8 @@ before_script:
     - sudo /etc/init.d/proftpd restart
     - sudo useradd -m -p co.yjyxRTlonU testuser
     - mkdir ssh
-    - ssh-keygen -N testpass -f ssh/testkey
-    - openssl rsa -passin pass:testpass -in ssh/testkey -out ssh/testkey
+    - ssh-keygen -N testkeypass -f ssh/testkey
+    - openssl rsa -passin pass:testkeypass -in ssh/testkey -out ssh/testkey
     - sudo mkdir /home/testuser/.ssh
     - sudo cp ssh/testkey.pub /home/testuser/.ssh/authorized_keys
     - sudo chown -R testuser:testuser /home/testuser/.ssh

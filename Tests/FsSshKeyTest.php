@@ -10,7 +10,7 @@ class FsSshKeyTest extends TestRemote
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
-            'pass' => $GLOBALS['REMOTE_PASS'],
+            'pass' => $GLOBALS['SSH_KEYPASS'],
             'key' => __DIR__ . '/../' . $GLOBALS['SSH_KEY'],
             'port' => '22',
         );
