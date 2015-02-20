@@ -84,7 +84,11 @@ class Log
         $date = date("c");
 
         if ($this->options->file != "") {
-            error_log("[$date] [$type] $message\n", 3, $this->options->file);
+            if (php_sapi_name() == 'cli') {
+                fwrite(STDERR, "$message\n");
+            } else {
+                error_log("[$date] [$type] $message\n", 3, $this->options->file);
+            }
         } else {
             error_log("[$date] [$type] $message\n");
         }

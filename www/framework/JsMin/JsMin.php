@@ -97,9 +97,6 @@ abstract class JsMin
         if ($regenerate || !($src = $this->cache->getFile($file))) {
             $log = new \Depage\Log\Log();
             $log->log("jsmin: minifying '$file'");
-            if (php_sapi_name() == 'cli') {
-                fwrite(STDERR, "jsmin: minifying '$file'\n");
-            }
 
             if (preg_match("/\.min\.js$/", $file)) {
                 // dont minify already minified files
