@@ -305,7 +305,7 @@ class Fs
     // }}}
 
     // {{{ test
-    public function test()
+    public function test(&$error = null)
     {
         $testFile = 'depage-fs-test-file.tmp';
         $testString = 'depage-fs-test-string';
@@ -319,6 +319,7 @@ class Fs
                 }
             }
         } catch (Exceptions\FsException $exception) {
+            $error = $exception->getMessage();
             $success = false;
         }
 

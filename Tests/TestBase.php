@@ -382,7 +382,8 @@ class TestBase extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue($this->fs->test());
         $this->deleteRemoteTestDir();
-        $this->assertFalse($this->fs->test());
+        $this->assertFalse($this->fs->test($error));
+        $this->assertContains('file_put_contents', $error);
     }
     // }}}
 }
