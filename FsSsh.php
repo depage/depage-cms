@@ -5,7 +5,8 @@ namespace Depage\Fs;
 class FsSsh extends Fs
 {
     // {{{ variables
-    protected $sshSession = null;
+    protected $session = null;
+    protected $connection = null;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
@@ -20,32 +21,40 @@ class FsSsh extends Fs
     protected function lateConnect()
     {
         parent::lateConnect();
-        $this->sshConnect();
+        $this->getSession();
     }
     // }}}
     // {{{ getFingerprint
     public function getFingerprint()
     {
-        $session = ssh2_connect($this->url['host'], $this->url['port']);
-        $fingerprint = ssh2_fingerprint($session);
-        $session = null;
-
+        $this->getConnection($fingerprint);
         return $fingerprint;
     }
     // }}}
-    // {{{ sshConnect
-    protected function sshConnect()
+    // {{{ getConnection
+    protected function getConnection(&$fingerprint = null)
     {
-        if (!$this->sshSession) {
-            $session = ssh2_connect($this->url['host'], $this->url['port']);
+        if (!$this->connection) {
+            $this->connection = ssh2_connect($this->url['host'], $this->url['port']);
+        }
+        $fingerprint = ssh2_fingerprint($this->connection);
 
-            if (strcasecmp($this->fingerprint, ssh2_fingerprint($session))) {
+        return $this->connection;
+    }
+    // }}}
+    // {{{ getSession
+    protected function getSession()
+    {
+        if (!$this->session) {
+            $connection = $this->getConnection($fingerprint);
+
+            if (strcasecmp($this->fingerprint, $fingerprint) !== 0) {
                 throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
             }
 
             if ($this->key) {
                 ssh2_auth_pubkey_file(
-                    $session,
+                    $connection,
                     $this->url['user'],
                     $this->key . '.pub',
                     $this->key,
@@ -53,23 +62,30 @@ class FsSsh extends Fs
                 );
             } else {
                 ssh2_auth_password(
-                    $session,
+                    $connection,
                     $this->url['user'],
                     $this->url['pass']
                 );
             }
 
-            $this->sshSession = ssh2_sftp($session);
+            $this->session = ssh2_sftp($connection);
         }
 
-        return $this->sshSession;
+        return $this->session;
+    }
+    // }}}
+    // {{{ disconnect
+    protected function disconnect()
+    {
+        $this->connection = null;
+        $this->session = null;
     }
     // }}}
     // {{{ buildUrl
     protected function buildUrl($parsed)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= $this->sshSession;
+        $path .= $this->getSession();
         $path .= isset($parsed['path']) ? $parsed['path'] : '/';
 
         return $path;
