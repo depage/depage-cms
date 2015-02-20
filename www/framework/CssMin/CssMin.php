@@ -105,6 +105,9 @@ abstract class CssMin
         if ($regenerate || !($src = $this->cache->getFile($file))) {
             $log = new \Depage\Log\Log();
             $log->log("cssmin: minifying '$file'");
+            if (php_sapi_name() == 'cli') {
+                fwrite(STDERR, "jsmin: minifying '$file'\n");
+            }
 
             $src = $this->minifySrc(file_get_contents($file));
             $this->cache->setFile($file, $src, true);
