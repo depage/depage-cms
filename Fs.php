@@ -27,14 +27,34 @@ class Fs
     public static function factory($url, $params = array())
     {
         $parsed = self::parseUrl($url);
-        $params['path'] = isset($parsed['path']) ? $parsed['path'] : '';
         $params = array_merge($parsed, $params);
-        if (!isset($params['scheme'])) {
-            $params['scheme'] = 'file';
-        }
-        $schemeClass = '\Depage\Fs\Fs' . ucfirst($params['scheme']);
+        $scheme = isset($params['scheme']) ? $params['scheme'] : null;
+        $alias = self::schemeAlias($scheme);
+
+        $schemeClass = '\Depage\Fs\Fs' . ucfirst($alias['class']);
+        $params['scheme'] = $alias['scheme'];
 
         return new $schemeClass($params);
+    }
+    // }}}
+    // {{{ schemeAlias
+    public function schemeAlias($alias)
+    {
+        $aliases = array(
+            'ssh2.sftp' => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
+            'ssh'       => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
+            'sftp'      => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
+            'ftps'      => array('class' => 'ftp', 'scheme' => 'ftps'),
+            'ftp'       => array('class' => 'ftp', 'scheme' => 'ftp'),
+        );
+
+        if (array_key_exists($alias, $aliases)) {
+            $translation = $aliases[$alias];
+        } else {
+            $translation = array('class' => 'file', 'scheme' => 'file');
+        }
+
+        return $translation;
     }
     // }}}
 
