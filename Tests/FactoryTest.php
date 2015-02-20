@@ -4,6 +4,19 @@ use Depage\Fs\Fs;
 
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
+
+    // {{{ getScheme
+    public function getScheme($fs)
+    {
+        $reflector = new ReflectionClass($fs);
+        $urlProperty = $reflector->getProperty('url');
+        $urlProperty->setAccessible(true);
+        $url = $urlProperty->getValue($fs);
+
+        return $url['scheme'];
+    }
+    // }}}
+
     // {{{ testFsFile
     public function testFsFile()
     {
@@ -15,18 +28,46 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'bogusScheme://path/to/file',
         );
 
-        $reflector = new ReflectionClass('Depage\Fs\FsFile');
-        $urlProperty = $reflector->getProperty('url');
-        $urlProperty->setAccessible(true);
-
         foreach ($cases as $case) {
             $fs = Fs::factory($case);
 
             $this->assertInstanceOf('Depage\Fs\FsFile', $fs);
+            $this->assertEquals('file', $this->getScheme($fs));
+        }
+    }
+    // }}}
+    // {{{ testFsFtp
+    public function testFsFtp()
+    {
+        $fs = Fs::factory('ftp://user@host/path/to/file');
 
-            $url = $urlProperty->getValue($fs);
-            $scheme = $url['scheme'];
-            $this->assertEquals('file', $scheme);
+        $this->assertInstanceOf('Depage\Fs\Fs', $fs);
+        $this->assertEquals('ftp', $this->getScheme($fs));
+    }
+    // }}}
+    // {{{ testFsFtps
+    public function testFsFtps()
+    {
+        $fs = Fs::factory('ftps://user@host/path/to/file');
+
+        $this->assertInstanceOf('Depage\Fs\Fs', $fs);
+        $this->assertEquals('ftps', $this->getScheme($fs));
+    }
+    // }}}
+    // {{{ testFsSsh
+    public function testFsSsh()
+    {
+        $cases = array(
+            'ssh://user@host/path/to/file',
+            'sftp://user@host/path/to/file',
+            'ssh2.sftp://user@host/path/to/file',
+        );
+
+        foreach ($cases as $case) {
+            $fs = Fs::factory($case);
+
+            $this->assertInstanceOf('Depage\Fs\FsSsh', $fs);
+            $this->assertEquals('ssh2.sftp', $this->getScheme($fs));
         }
     }
     // }}}

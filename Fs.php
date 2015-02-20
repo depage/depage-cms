@@ -27,7 +27,9 @@ class Fs
     public static function factory($url, $params = array())
     {
         $parsed = self::parseUrl($url);
-        $params = array_merge($parsed, $params);
+        if (is_array($parsed)) {
+            $params = array_merge($parsed, $params);
+        }
         $scheme = isset($params['scheme']) ? $params['scheme'] : null;
         $alias = self::schemeAlias($scheme);
 
@@ -41,11 +43,11 @@ class Fs
     public function schemeAlias($alias)
     {
         $aliases = array(
-            'ssh2.sftp' => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
-            'ssh'       => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
-            'sftp'      => array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),
-            'ftps'      => array('class' => 'ftp', 'scheme' => 'ftps'),
-            'ftp'       => array('class' => 'ftp', 'scheme' => 'ftp'),
+            'ssh2.sftp' => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
+            'ssh'       => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
+            'sftp'      => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
+            'ftps'      => array('class' => '',     'scheme' => 'ftps'),
+            'ftp'       => array('class' => '',     'scheme' => 'ftp'),
         );
 
         if (array_key_exists($alias, $aliases)) {
