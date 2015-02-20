@@ -70,7 +70,7 @@ class Request {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postStr);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
@@ -84,7 +84,7 @@ class Request {
 
         curl_close($ch);
 
-        return new response($header, $body, $info);
+        return new Response($header, $body, $info);
     }
     // }}}
     // {{{ getRequestIp()

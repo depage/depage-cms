@@ -43,7 +43,7 @@ abstract class JsMin
      * @param $options (array) image processing parameters
      **/
     public function __construct($options = array()) {
-        $this->cache = \depage\cache\cache::factory("js");
+        $this->cache = \Depage\Cache\Cache::factory("js");
     }
     // }}}
 
