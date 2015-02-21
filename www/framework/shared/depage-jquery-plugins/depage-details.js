@@ -37,30 +37,53 @@
                 $(this).prepend("<span class=\"opener\"></span>");
 
                 $detail.hide();
+
+                $head.find("a").on("click", function(e) {
+                    // stop links inside header opening/closing details
+                    e.stopPropagation();
+                });
                 $head.click(function() {
                     if (!$head.hasClass("active")) {
-                        $("dt", base.el).removeClass("active");
-                        $head.addClass("active")
-                        $head.siblings("dd").slideUp();
-                        $detail.addClass("active")
-                        $detail.slideDown();
+                        base.closeDetail($("dt.active", base.el));
+                        base.openDetail($head);
+
                     } else {
-                        $detail.removeClass("active")
-                        $detail.slideUp("normal", function() {
-                            $head.removeClass("active");
-                        });
+                        base.closeDetail($head);
                     }
                 });
             });
+        };
+
+        base.openDetail = function($head) {
+            if ($head.length == 0) {
+                return;
+            }
+            var $detail = $head.nextAll("dd:first");
+
+            $head.addClass("active");
+            $head.siblings("dd").slideUp();
+            $detail.addClass("active");
+            $detail.slideDown();
+            base.$el.trigger("depage.detail-opened", [$head, $detail]);
+        };
+        base.closeDetail = function($head) {
+            if ($head.length == 0) {
+                return;
+            }
+            var $detail = $head.nextAll("dd:first");
+
+            $detail.removeClass("active");
+            $detail.slideUp("normal", function() {
+                $head.removeClass("active");
+            });
+            base.$el.trigger("depage.detail-closed", [$head, $detail]);
         };
 
         // Run initializer
         base.init();
     };
 
-    $.depage.details.defaultOptions = {
-        option1: "default"
-    };
+    $.depage.details.defaultOptions = {};
 
     $.fn.depageDetails = function(options){
         return this.each(function(){
