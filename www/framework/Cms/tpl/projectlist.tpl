@@ -1,19 +1,25 @@
-<ul id="projectlist">
+<dl class="projectlist">
     <?php foreach($this->projects as $project) { ?>
-        <li>
-            <h2><?php self::t($project->fullname); ?></h2>
-            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
-                <?php self::t(_('edit')) ?>
-            </a>
-            <a href="project/<?php self::t($project->name); ?>/preview/" class="button">
-                <?php self::t(_('preview')) ?>
-            </a>
-            <a href="project/<?php self::t($project->name); ?>/settings/" class="button">
-                <?php self::t(_('settings')) ?>
-            </a>
-        </li>
+        <dt data-project="<?php self::t($project->name); ?>">
+            <strong><?php self::t($project->fullname); ?></strong>
+
+            <div class="buttons">
+                <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
+                    <?php self::t(_('edit')) ?>
+                </a>
+                <a href="project/<?php self::t($project->name); ?>/preview/" class="button">
+                    <?php self::t(_('preview')) ?>
+                </a>
+                <a href="project/<?php self::t($project->name); ?>/settings/" class="button">
+                    <?php self::t(_('settings')) ?>
+                </a>
+            </div>
+        </dt>
+        <dd>
+            more info
+        </dd>
     <?php } ?>
-</ul>
+</dl>
 <div class="bottom">
     <a href="project/+/" class="button">
         <?php self::t(_('add new project')) ?>

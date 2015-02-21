@@ -83,6 +83,41 @@ $infoHeight: 15px;
 $editWidth: 820px;
 //$editWidth: 610px;
 
+@mixin icon-base($name: "", $scale: 1) {
+    $iconSize: 48px;
+
+    background-repeat: no-repeat;
+    background-image: url(../images/icon_sprite.svg);
+    background-size: (2 * $iconSize) (10 * $iconSize);
+
+    @if ($name != "") {
+        @include icon($name, $scale);
+    }
+
+}
+@mixin icon($name, $scale: 1) {
+    $iconSize: 48px * $scale;
+
+    @if ($name == "projects") {
+        background-position: 0px 0px;
+    } @else if ($name == "users") {
+        background-position: 0 (-1 * $iconSize);
+    } @else if ($name == "tasks") {
+        background-position: 0 (-2 * $iconSize);
+    } @else if ($name == "closed") {
+        background-position: 0 (-8 * $iconSize);
+        background-size: (2 * $iconSize) (10 * $iconSize);
+    } @else if ($name == "open") {
+        background-position: 0 (-9 * $iconSize);
+    } @else {
+        background-position: 800px 800px;
+    }
+    @if ($scale != 1) {
+        background-size: (2 * $iconSize) (10 * $iconSize);
+    }
+
+}
+
 /* {{{ global */
 * {
     @include font(Tahoma, Verdana, Arial, Geneva, sans-serif);
@@ -191,11 +226,9 @@ a img {
             width: 48px;
             height: 48px;
             font-size: 1em;
-            background-repeat: no-repeat;
-            background-image: url(../images/icon_sprite.svg);
-            background-size: (2 * 48px) (10 * 48px);
-            background-position: 48px 48px;
             opacity: 0.8;
+            opacity: 1;
+            @include icon-base();
         }
     }
     &:hover {
@@ -558,37 +591,56 @@ header.info {
 /* {{{ projectlisting */
 .box-projects {
     .content:before {
-        background-position: 0px 0px;
+        @include icon("projects");
     }
 }
-ul.projectlisting {
+dl.projectlist {
     text-indent: 0;
-    margin: 0;
+    margin: 12px 0 24px 0;
 
-    li {
-        clear: both;
+    dt {
         padding: 0;
         margin: 0;
+        width: 100%;
+        height: 26px;
+        @include clearfix();
     }
-    p {
-        float: right;
-    }
-    div.details {
+    dd {
         clear: both;
         padding: 12px;
         margin-bottom: 12px;
-        display: none;
+        background: #ffffff;
     }
-    .open div.details {
+
+    .opener {
         display: block;
-    }
-    a.details_control.arrow,
-    a.details_control.arrow:hover {
+        float: left;
+        width: 15px;
+        height: 15px;
+        margin-top: 7px;
         background: url(pics/icon_details_closed.gif);
+        @include icon-base("closed", 0.25);
     }
-    .open a.details_control.arrow,
-    .open a.details_control.arrow:hover {
-        background: url(pics/icon_details_open.gif);
+    .active .opener {
+        @include icon("open", 0.25);
+    }
+    dt strong,
+    a.button {
+        float: left;
+        line-height: 20px;
+        height: 26px;
+        padding: 1px 7px;
+        border: 1px solid transparent;
+    }
+    a.button:hover {
+        background: #ffffff;
+        //border: 1px solid #000000;
+    }
+    .buttons {
+        float: right;
+    }
+    dt strong {
+        padding-left: 0;
     }
     div.details table.lastchanged_pages {
         margin-bottom: 16px;
@@ -615,40 +667,12 @@ ul.projectlisting {
         right: 0;
         top: 0;
     }
-    a {
-        display: block;
-        float: left;
-        line-height: 22px;
-        height: 22px;
-        padding: 2px 8px;
-    }
-    ul h2 {
-        display: block;
-        float: left;
-    }
-    h2 {
-        float: left;
-    }
-    h2 a {
-        padding-left: 0;
-    }
-    h2 a:hover {
-        background: none;
-    }
-    a span {
-        position: relative;
-        padding-right: 20px;
-    }
-    a img {
-        position: absolute;
-        top: -3px;
-    }
 }
 /* }}} */
 /* {{{ users */
 .box-users {
     .content:before {
-        background-position: 0 (-1 * 48px);
+        @include icon("users");
     }
 }
 ul.users h3,
@@ -659,7 +683,7 @@ ul.users p {
 /* {{{ tasks */
 .box-tasks {
     .content:before {
-        background-position: 0 (-2 * 48px);
+        @include icon("tasks");
     }
 }
 .tasks {

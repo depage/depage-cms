@@ -1,6 +1,7 @@
 /*
  * @require framework/shared/jquery-1.8.3.js
  * @require framework/shared/jquery.cookie.js
+ * @require framework/shared/depage-jquery-plugins/depage-details.js
  *
  *
  * @file    js/global.js
@@ -42,6 +43,7 @@ var depageCMS = (function() {
         // {{{ setup
         setup: function() {
             localJS.setupVarious();
+            localJS.setupProjectList();
         },
         // }}}
         // {{{ setupVarious
@@ -53,6 +55,15 @@ var depageCMS = (function() {
             // add click event for teaser
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
+            });
+        },
+        // }}}
+        // {{{ setupProjectList
+        setupProjectList: function() {
+            var $projects = $(".projectlist").depageDetails();
+
+            $projects.on("depage.detail-opened", function(e, $head, $detail) {
+                console.log("open", $head.data("project"), $detail);
             });
         },
         // }}}
