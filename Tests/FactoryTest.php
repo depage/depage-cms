@@ -25,7 +25,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'file://',
             'file:///path/to/file',
             'path/to/file',
-            'bogusScheme://path/to/file',
         );
 
         foreach ($cases as $case) {
@@ -69,6 +68,15 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             $this->assertInstanceOf('Depage\Fs\FsSsh', $fs);
             $this->assertEquals('ssh2.sftp', $this->getScheme($fs));
         }
+    }
+    // }}}
+    // {{{ testFsCustom
+    public function testFsCustom()
+    {
+        $fs = Fs::factory('madeupscheme://user@host/path/to/file');
+
+        $this->assertInstanceOf('Depage\Fs\Fs', $fs);
+        $this->assertEquals('madeupscheme', $this->getScheme($fs));
     }
     // }}}
 }

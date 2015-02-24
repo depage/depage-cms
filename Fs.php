@@ -46,14 +46,14 @@ class Fs
             'ssh2.sftp' => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
             'ssh'       => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
             'sftp'      => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
-            'ftps'      => array('class' => '',     'scheme' => 'ftps'),
-            'ftp'       => array('class' => '',     'scheme' => 'ftp'),
+            'file'      => array('class' => 'file', 'scheme' => 'file'),
+            ''          => array('class' => 'file', 'scheme' => 'file'),
         );
 
         if (array_key_exists($alias, $aliases)) {
             $translation = $aliases[$alias];
         } else {
-            $translation = array('class' => 'file', 'scheme' => 'file');
+            $translation = array('class' => '', 'scheme' => $alias);
         }
 
         return $translation;
