@@ -16,6 +16,12 @@ class FsSsh extends Fs
         $this->fingerprint = (isset($params['fingerprint'])) ? $params['fingerprint'] : false;
     }
     // }}}
+    // {{{ destructor
+    public function __destruct()
+    {
+        $this->disconnect();
+    }
+    // }}}
 
     // {{{ lateConnect
     protected function lateConnect()
