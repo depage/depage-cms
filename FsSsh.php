@@ -59,21 +59,26 @@ class FsSsh extends Fs
             }
 
             if ($this->key) {
-                $publicKey = $this->key . '.pub';
+                $private = $this->key;
+                $public = $this->key . '.pub';
 
-                if (!is_readable($this->key)) {
-                    throw new Exceptions\FsException('Cannot read SSH private key file "' . $this->key . '".');
+                if (!is_readable($private)) {
+                    throw new Exceptions\FsException('Cannot read SSH private key file "' . $private . '".');
                 }
 
-                if (!is_readable($publicKey)) {
-                    throw new Exceptions\FsException('Cannot read SSH public key file "' . $publicKey . '".');
+                if (!is_readable($public)) {
+                    throw new Exceptions\FsException('Cannot read SSH public key file "' . $public . '".');
+                }
+
+                if (openssl_pkey_get_private('file://' . $private) === false) {
+                    throw new Exceptions\FsException('Invalid SSH private key file format "' . $private . '" (PEM format required).');
                 }
 
                 ssh2_auth_pubkey_file(
                     $connection,
                     $this->url['user'],
-                    $publicKey,
-                    $this->key,
+                    $public,
+                    $private,
                     $this->url['pass']
                 );
             } else {
