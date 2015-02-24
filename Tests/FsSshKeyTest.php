@@ -21,6 +21,22 @@ class FsSshKeyTest extends TestRemote
         return new FsSshTestClass($newParams);
     }
     // }}}
+
+    // {{{ testInaccessiblePrivateKey
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Cannot read SSH private key file "filedoesntexist".
+     */
+    public function testInaccessiblePrivateKey()
+    {
+        $params = array(
+            'key' => 'filedoesntexist',
+        );
+
+        $fs = $this->createTestClass($params);
+        $fs->ls('*');
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
