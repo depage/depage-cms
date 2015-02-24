@@ -62,10 +62,11 @@ class FsSsh extends Fs
                 $publicKey = $this->key . '.pub';
 
                 if (!is_readable($this->key)) {
-                    throw new Exceptions\FsException('Cannot read SSH private key file "' $this->key '".');
+                    throw new Exceptions\FsException('Cannot read SSH private key file "' . $this->key . '".');
                 }
+
                 if (!is_readable($publicKey)) {
-                    throw new Exceptions\FsException('Cannot read SSH public key file "' $publicKey '".');
+                    throw new Exceptions\FsException('Cannot read SSH public key file "' . $publicKey . '".');
                 }
 
                 ssh2_auth_pubkey_file(

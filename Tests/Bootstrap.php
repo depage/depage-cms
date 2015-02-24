@@ -14,7 +14,7 @@ class FsTestClass extends Depage\Fs\Fs
         return parent::lateConnect();
     }
 
-    public function parseUrl($url) {
+    public static function parseUrl($url) {
         return parent::parseUrl($url);
     }
     public function cleanUrl($url) {
@@ -28,7 +28,7 @@ class FsFileTestClass extends Depage\Fs\FsFile
     public function lateConnect() {
         return parent::lateConnect();
     }
-    public function parseUrl($url) {
+    public static function parseUrl($url) {
         return parent::parseUrl($url);
     }
     public function cleanUrl($url) {
@@ -39,7 +39,7 @@ class FsFileTestClass extends Depage\Fs\FsFile
 // {{{ FsSshTestClass
 class FsSshTestClass extends Depage\Fs\FsSsh
 {
-    public function parseUrl($url) {
+    public static function parseUrl($url) {
         return parent::parseUrl($url);
     }
     public function cleanUrl($url) {

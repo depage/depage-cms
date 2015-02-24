@@ -40,7 +40,7 @@ class Fs
     }
     // }}}
     // {{{ schemeAlias
-    public function schemeAlias($alias)
+    public static function schemeAlias($alias)
     {
         $aliases = array(
             'ssh2.sftp' => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
@@ -378,7 +378,7 @@ class Fs
     }
     // }}}
     // {{{ parseUrl
-    protected function parseUrl($url)
+    protected static function parseUrl($url)
     {
         $parsed = parse_url($url);
 
