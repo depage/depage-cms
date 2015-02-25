@@ -12,7 +12,8 @@ class FsSshKeyTest extends TestRemote
             'port' => '22',
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['SSH_KEYPASS'],
-            'key' => __DIR__ . '/../' . $GLOBALS['SSH_KEY'],
+            'private' => __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'],
+            'public' => __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'],
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
@@ -30,7 +31,33 @@ class FsSshKeyTest extends TestRemote
     public function testInaccessiblePrivateKey()
     {
         $params = array(
-            'key' => 'filedoesntexist',
+            'private' => 'filedoesntexist',
+        );
+
+        $fs = $this->createTestClass($params);
+        $fs->ls('*');
+    }
+    // }}}
+    // {{{ testInaccessiblePublicKey
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Cannot read SSH public key file "filedoesntexist".
+     */
+    public function testInaccessiblePublicKey()
+    {
+        $params = array(
+            'public' => 'filedoesntexist',
+        );
+
+        $fs = $this->createTestClass($params);
+        $fs->ls('*');
+    }
+    // }}}
+    // {{{ testGeneratePublicKey
+    public function testGeneratePublicKey()
+    {
+        $params = array(
+            'public' => '/tmp',
         );
 
         $fs = $this->createTestClass($params);

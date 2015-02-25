@@ -5,7 +5,8 @@
         <var name="REMOTE_USER" value="testuser" />
         <var name="REMOTE_PASS" value="testpass" />
         <var name="REMOTE_DIR" value="/home/testuser/" />
-        <var name="SSH_KEY" value="ssh/testkey" />
+        <var name="SSH_PRIVATE_KEY" value="ssh/testkey" />
+        <var name="SSH_PUBLIC_KEY" value="ssh/testkey.pub" />
         <var name="SSH_FINGERPRINT" value="fingerprint" />
         <var name="SSH_KEYPASS" value="testkeypass" />
     </php>
