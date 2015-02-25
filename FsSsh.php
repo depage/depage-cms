@@ -139,22 +139,9 @@ class FsSsh extends Fs
     // {{{ extractPublicKey
     /**
      * from http://stackoverflow.com/questions/5524121/converting-an-openssl-generated-rsa-public-key-to-openssh-format-php
-     **/
+     */
     protected function extractPublicKey($privateKey)
     {
-        function sshEncodePublicKey($privKey)
-        {
-            $keyInfo = openssl_pkey_get_details($privKey);
-
-            $buffer  = pack("N", 7) . "ssh-rsa" .
-                sshEncodeBuffer($keyInfo['rsa']['e']) .
-                sshEncodeBuffer($keyInfo['rsa']['n']);
-
-
-            // @todo bug (won't work without space or user@host at the end)
-            return 'ssh-rsa ' . base64_encode($buffer) . "\n"; 
-        }
-
         function sshEncodeBuffer($buffer)
         {
             $len = strlen($buffer);
@@ -165,8 +152,12 @@ class FsSsh extends Fs
 
             return pack('Na*', $len, $buffer);
         }
+        $keyInfo = openssl_pkey_get_details($privateKey);
+        $buffer = pack('N', 7) . 'ssh-rsa' .
+            sshEncodeBuffer($keyInfo['rsa']['e']) .
+            sshEncodeBuffer($keyInfo['rsa']['n']);
 
-        return sshEncodePublicKey($privateKey);
+        return 'ssh-rsa ' . base64_encode($buffer) . "\n";
     }
     // }}}
 }
