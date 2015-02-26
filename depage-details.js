@@ -31,11 +31,11 @@
         base.init = function() {
             base.options = $.extend({},$.depage.details.defaultOptions, options);
 
-            base.$heads = $("dt", base.el).each(function() {
+            base.$heads = $(base.options.head, base.el).each(function() {
                 var $head = $(this).css({
                     cursor: "pointer"
                 });
-                var $detail = $head.nextUntil("dt");
+                var $detail = $head.nextUntil(base.options.head);
                 $head.data("$detail", $detail);
 
                 $(this).prepend("<span class=\"opener\"></span>");
@@ -125,6 +125,7 @@
     };
 
     $.depage.details.defaultOptions = {
+        head: "dt",
         speed: 400,
         correctScroll: false,
         scrollOffset: 0
