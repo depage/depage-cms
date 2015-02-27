@@ -100,7 +100,7 @@ class FsSshKeyTest extends TestRemote
     // {{{ testInvalidPrivateKeyString
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH private key file format "iamnotaprivatesshkey" (PEM format required).
+     * @expectedExceptionMessage Invalid SSH private key format (PEM format required).
      */
     public function testInvalidPrivateKeyString()
     {

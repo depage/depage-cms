@@ -10,7 +10,7 @@ class PrivateSshKey extends PublicSshKey
         $details = openssl_pkey_get_private($keyString);
 
         if ($details === false) {
-            throw new Exceptions\FsException('Invalid SSH private key file format "' . $keyString . '" (PEM format required).');
+            throw new Exceptions\FsException('Invalid SSH private key format (PEM format required).');
         }
 
         return $details;
