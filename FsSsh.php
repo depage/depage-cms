@@ -66,47 +66,10 @@ class FsSsh extends Fs
                 throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
             }
 
-            if ($this->privateKey || $this->publicKey) {
-                $private = $this->privateKey;
-                $public = $this->publicKey;
-                $temp = false;
-
-                if (!is_readable($private)) {
-                    throw new Exceptions\FsException('Cannot read SSH private key file "' . $private . '".');
-                }
-                $privateKeyResource = openssl_pkey_get_private(file_get_contents($private));
-                if ($privateKeyResource === false) {
-                    throw new Exceptions\FsException('Invalid SSH private key file format "' . $private . '" (PEM format required).');
-                }
-                if (is_dir($public) && is_writable($public)) {
-                    $public = tempnam($public, 'depage-fs');
-                    $temp = true;
-                    $publicKeyString = $this->extractPublicKey($privateKeyResource);
-                    file_put_contents($public, $publicKeyString);
-                }
-                if (
-                    (is_file($public) && !is_readable($public))
-                    || !file_exists($public)
-                ) {
-                    throw new Exceptions\FsException('Cannot read SSH public key file "' . $public . '".');
-                }
-
-                $authenticated = ssh2_auth_pubkey_file(
-                    $connection,
-                    $this->url['user'],
-                    $public,
-                    $private,
-                    $this->url['pass']
-                );
-                if ($temp) {
-                    unlink($public);
-                }
+            if ($this->privateKey || $this->publicKey || $this->tmp) {
+                $authenticated = $this->authenticateKey($connection);
             } else {
-                $authenticated = ssh2_auth_password(
-                    $connection,
-                    $this->url['user'],
-                    $this->url['pass']
-                );
+                $authenticated = $this->authenticatePassword($connection);
             }
 
             if ($authenticated) {
@@ -117,6 +80,57 @@ class FsSsh extends Fs
         }
 
         return $this->session;
+    }
+    // }}}
+    // {{{ authenticatePassword
+    protected function authenticatePassword($connection)
+    {
+        return ssh2_auth_password(
+            $connection,
+            $this->url['user'],
+            $this->url['pass']
+        );
+    }
+    // }}}
+    // {{{ authenticateKey
+    protected function authenticateKey($connection)
+    {
+        $private = $this->privateKey;
+        $public = $this->publicKey;
+        $temp = false;
+
+        if (!is_readable($private)) {
+            throw new Exceptions\FsException('Cannot read SSH private key file "' . $private . '".');
+        }
+        $privateKeyResource = openssl_pkey_get_private(file_get_contents($private));
+        if ($privateKeyResource === false) {
+            throw new Exceptions\FsException('Invalid SSH private key file format "' . $private . '" (PEM format required).');
+        }
+        if (is_dir($public) && is_writable($public)) {
+            $public = tempnam($public, 'depage-fs');
+            $temp = true;
+            $publicKeyString = $this->extractPublicKey($privateKeyResource);
+            file_put_contents($public, $publicKeyString);
+        }
+        if (
+            (is_file($public) && !is_readable($public))
+            || !file_exists($public)
+        ) {
+            throw new Exceptions\FsException('Cannot read SSH public key file "' . $public . '".');
+        }
+
+        $authenticated = ssh2_auth_pubkey_file(
+            $connection,
+            $this->url['user'],
+            $public,
+            $private,
+            $this->url['pass']
+        );
+        if ($temp) {
+            unlink($public);
+        }
+
+        return $authenticated;
     }
     // }}}
     // {{{ disconnect
