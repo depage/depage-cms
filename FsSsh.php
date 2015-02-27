@@ -111,7 +111,7 @@ class FsSsh extends Fs
             $private,
             $this->url['pass']
         );
-        
+
         $private->clean();
         $public->clean();
 

@@ -5,9 +5,15 @@ namespace Depage\Fs;
 class PrivateSshKey extends PublicSshKey
 {
     // {{{ details
-    protected function details($path)
+    protected function details($keyString)
     {
-        return openssl_pkey_get_private(file_get_contents($path));
+        $details = openssl_pkey_get_private($keyString);
+
+        if ($details === false) {
+            throw new Exceptions\FsException('Invalid SSH private key file format "' . $keyString . '" (PEM format required).');
+        }
+
+        return $details;
     }
     // }}}
     // {{{ extractPublicKey

@@ -26,7 +26,7 @@ class FsSshKeyTest extends TestRemote
     // {{{ testInaccessiblePrivateKey
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH key "filedoesntexist".
+     * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
      */
     public function testInaccessiblePrivateKey()
     {
@@ -41,7 +41,7 @@ class FsSshKeyTest extends TestRemote
     // {{{ testInaccessiblePublicKey
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH key "filedoesntexist".
+     * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
      */
     public function testInaccessiblePublicKey()
     {

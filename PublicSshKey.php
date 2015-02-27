@@ -5,23 +5,28 @@ namespace Depage\Fs;
 class PublicSshKey
 {
     // {{{ variables
-        protected $key = null;
-        protected $path = null;
-        protected $tmpDir = false;
-        protected $temporary = false;
+    protected $key = null;
+    protected $path = null;
+    protected $tmpDir = false;
+    protected $temporary = false;
     // }}}
     // {{{ constructor
     public function __construct($data, $tmpDir = false)
     {
-        $this->key = $this->details($data);
         $this->tmpDir = $tmpDir;
+        $parsed = parse_url($data);
+        $path = $parsed['path'];
 
-        if ($this->key === false) {
-            throw new Exceptions\FsException('Invalid SSH key "' . $data . '".');
-        } elseif (is_file($data)) {
-            $this->path = $data;
-        } elseif (is_dir($tmpDir)) {
-            if (is_writable($tmpDir)) {
+        if ($path) {
+            $this->path = $path;
+            if (is_file($path) && is_readable($path)) {
+                $this->key = $this->details(file_get_contents($path));
+            } else {
+                throw new Exceptions\FsException('SSH key file not accessible: "' . $path . '".');
+            }
+        } else {
+            $this->key = $this->details($data);
+            if (is_dir($tmpDir) && is_writable($tmpDir)) {
                 $this->path = tempnam($tmpDir, 'depage-fs');
                 $this->temporary = true;
                 $bytesWritten = file_put_contents($this->path, $data);
@@ -42,10 +47,10 @@ class PublicSshKey
     // }}}
 
     // {{{ details
-    protected function details($path)
+    protected function details($keyString)
     {
         // @todo do proper check
-        return file_get_contents($path);
+        return $keyString;
     }
     // }}}
     // {{{ toString
