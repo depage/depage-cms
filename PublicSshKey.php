@@ -60,6 +60,7 @@ class PublicSshKey
     // {{{ clean
     public function clean()
     {
+        unset($this->key);
         if ($this->temporary) {
             if (unlink($this->path)) {
                 $this->temporary = false;
