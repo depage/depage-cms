@@ -69,9 +69,9 @@ class FsSsh extends Fs
             }
 
             if ($this->privateKey || $this->publicKey || $this->tmp) {
-                $authenticated = $this->authenticateKey($connection);
+                $authenticated = $this->authenticateByKey($connection);
             } else {
-                $authenticated = $this->authenticatePassword($connection);
+                $authenticated = $this->authenticateByPassword($connection);
             }
 
             if ($authenticated) {
@@ -84,8 +84,8 @@ class FsSsh extends Fs
         return $this->session;
     }
     // }}}
-    // {{{ authenticatePassword
-    protected function authenticatePassword($connection)
+    // {{{ authenticateByPassword
+    protected function authenticateByPassword($connection)
     {
         return ssh2_auth_password(
             $connection,
@@ -94,8 +94,8 @@ class FsSsh extends Fs
         );
     }
     // }}}
-    // {{{ authenticateKey
-    protected function authenticateKey($connection)
+    // {{{ authenticateByKey
+    protected function authenticateByKey($connection)
     {
         $private = new PrivateSshKey($this->privateKey, $this->tmp);
         if ($this->publicKey) {

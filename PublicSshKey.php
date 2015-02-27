@@ -14,8 +14,7 @@ class PublicSshKey
     public function __construct($data, $tmpDir = false)
     {
         $this->tmpDir = $tmpDir;
-        $parsed = parse_url($data);
-        $path = $parsed['path'];
+        $path = parse_url($data, PHP_URL_PATH);
 
         if ($path) {
             $this->path = $path;
