@@ -2,7 +2,7 @@
 
 namespace Depage\Fs;
 
-class PrivateSshKey extends SshKey
+class PrivateSshKey extends PublicSshKey
 {
     // {{{ details
     protected function details($path)
