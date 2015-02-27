@@ -10,6 +10,7 @@ class FsSsh extends Fs
     protected $privateKey = null;
     protected $publicKey = null;
     protected $fingerprint = null;
+    protected $tmp = null;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
@@ -17,6 +18,7 @@ class FsSsh extends Fs
         parent::__construct($params);
         $this->privateKey = (isset($params['private'])) ? $params['private'] : false;
         $this->publicKey = (isset($params['public'])) ? $params['public'] : false;
+        $this->tmp = (isset($params['public'])) ? $params['public'] : false;
         $this->fingerprint = (isset($params['fingerprint'])) ? $params['fingerprint'] : false;
     }
     // }}}
@@ -95,28 +97,11 @@ class FsSsh extends Fs
     // {{{ authenticateKey
     protected function authenticateKey($connection)
     {
-        $private = $this->privateKey;
-        $public = $this->publicKey;
-        $temp = false;
-
-        if (!is_readable($private)) {
-            throw new Exceptions\FsException('Cannot read SSH private key file "' . $private . '".');
-        }
-        $privateKeyResource = openssl_pkey_get_private(file_get_contents($private));
-        if ($privateKeyResource === false) {
-            throw new Exceptions\FsException('Invalid SSH private key file format "' . $private . '" (PEM format required).');
-        }
-        if (is_dir($public) && is_writable($public)) {
-            $public = tempnam($public, 'depage-fs');
-            $temp = true;
-            $publicKeyString = $this->extractPublicKey($privateKeyResource);
-            file_put_contents($public, $publicKeyString);
-        }
-        if (
-            (is_file($public) && !is_readable($public))
-            || !file_exists($public)
-        ) {
-            throw new Exceptions\FsException('Cannot read SSH public key file "' . $public . '".');
+        $private = new PrivateSshKey($this->privateKey, $this->tmp);
+        if ($this->publicKey) {
+            $public = new PublicSshKey($this->publicKey, $this->tmp);
+        } else {
+            $public = $private->extractPublicKey();
         }
 
         $authenticated = ssh2_auth_pubkey_file(
@@ -126,9 +111,9 @@ class FsSsh extends Fs
             $private,
             $this->url['pass']
         );
-        if ($temp) {
-            unlink($public);
-        }
+        
+        $private->clean();
+        $public->clean();
 
         return $authenticated;
     }
@@ -148,30 +133,6 @@ class FsSsh extends Fs
         $path .= isset($parsed['path']) ? $parsed['path'] : '/';
 
         return $path;
-    }
-    // }}}
-    // {{{ extractPublicKey
-    /**
-     * from http://stackoverflow.com/questions/5524121/converting-an-openssl-generated-rsa-public-key-to-openssh-format-php
-     */
-    protected function extractPublicKey($privateKey)
-    {
-        function sshEncodeBuffer($buffer)
-        {
-            $len = strlen($buffer);
-            if (ord($buffer[0]) & 0x80) {
-                $len++;
-                $buffer = "\x00" . $buffer;
-            }
-
-            return pack('Na*', $len, $buffer);
-        }
-        $keyInfo = openssl_pkey_get_details($privateKey);
-        $buffer = pack('N', 7) . 'ssh-rsa' .
-            sshEncodeBuffer($keyInfo['rsa']['e']) .
-            sshEncodeBuffer($keyInfo['rsa']['n']);
-
-        return 'ssh-rsa ' . base64_encode($buffer) . "\n";
     }
     // }}}
 }

@@ -26,7 +26,7 @@ class FsSshKeyTest extends TestRemote
     // {{{ testInaccessiblePrivateKey
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot read SSH private key file "filedoesntexist".
+     * @expectedExceptionMessage Invalid SSH key "filedoesntexist".
      */
     public function testInaccessiblePrivateKey()
     {
@@ -41,7 +41,7 @@ class FsSshKeyTest extends TestRemote
     // {{{ testInaccessiblePublicKey
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot read SSH public key file "filedoesntexist".
+     * @expectedExceptionMessage Invalid SSH key "filedoesntexist".
      */
     public function testInaccessiblePublicKey()
     {
@@ -57,7 +57,7 @@ class FsSshKeyTest extends TestRemote
     public function testGeneratePublicKey()
     {
         $params = array(
-            'public' => '/tmp',
+            'tmp' => '/tmp',
         );
 
         $fs = $this->createTestClass($params);

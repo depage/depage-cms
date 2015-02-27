@@ -3,6 +3,9 @@
 require_once(__DIR__ . '/../Fs.php');
 require_once(__DIR__ . '/../FsFile.php');
 require_once(__DIR__ . '/../FsSsh.php');
+require_once(__DIR__ . '/../SshKey.php');
+require_once(__DIR__ . '/../PublicSshKey.php');
+require_once(__DIR__ . '/../PrivateSshKey.php');
 require_once(__DIR__ . '/../Exceptions/FsException.php');
 require_once(__DIR__ . '/TestBase.php');
 require_once(__DIR__ . '/TestRemote.php');
