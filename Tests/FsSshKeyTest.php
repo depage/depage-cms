@@ -12,8 +12,8 @@ class FsSshKeyTest extends TestRemote
             'port' => '22',
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['SSH_KEYPASS'],
-            'private' => __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'],
-            'public' => __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'],
+            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'],
+            'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'],
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
@@ -23,30 +23,30 @@ class FsSshKeyTest extends TestRemote
     }
     // }}}
 
-    // {{{ testInaccessiblePrivateKey
+    // {{{ testInaccessiblePrivateKeyFile
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
      */
-    public function testInaccessiblePrivateKey()
+    public function testInaccessiblePrivateKeyFile()
     {
         $params = array(
-            'private' => 'filedoesntexist',
+            'privateKeyFile' => 'filedoesntexist',
         );
 
         $fs = $this->createTestClass($params);
         $fs->ls('*');
     }
     // }}}
-    // {{{ testInaccessiblePublicKey
+    // {{{ testInaccessiblePublicKeyFile
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
      */
-    public function testInaccessiblePublicKey()
+    public function testInaccessiblePublicKeyFile()
     {
         $params = array(
-            'public' => 'filedoesntexist',
+            'publicKeyFile' => 'filedoesntexist',
         );
 
         $fs = $this->createTestClass($params);
@@ -57,10 +57,18 @@ class FsSshKeyTest extends TestRemote
     public function testGeneratePublicKey()
     {
         $params = array(
+            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'scheme' => 'ssh2.sftp',
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'port' => '22',
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['SSH_KEYPASS'],
             'tmp' => '/tmp',
+            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'],
+            'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
-        $fs = $this->createTestClass($params);
+        $fs =  new FsSshTestClass($params);
         $fs->ls('*');
     }
     // }}}

@@ -14,17 +14,9 @@ class PublicSshKey
     public function __construct($data, $tmpDir = false)
     {
         $this->tmpDir = $tmpDir;
-        $path = parse_url($data, PHP_URL_PATH);
 
-        if ($path) {
-            $this->path = $path;
-            if (is_file($path) && is_readable($path)) {
-                $this->key = $this->details(file_get_contents($path));
-            } else {
-                throw new Exceptions\FsException('SSH key file not accessible: "' . $path . '".');
-            }
-        } else {
-            $this->key = $this->details($data);
+        if ($tmpDir) {
+            $this->key = $this->parse($data);
             if (is_dir($tmpDir) && is_writable($tmpDir)) {
                 $this->path = tempnam($tmpDir, 'depage-fs');
                 $this->temporary = true;
@@ -33,7 +25,14 @@ class PublicSshKey
                     throw new Exceptions\FsException('Cannot create temporary key file "' . $this->path . '".');
                 }
             } else {
-                throw new Exceptions\FsException('Cannot write to temporary key directory "' . $tmpDir . '".');
+                throw new Exceptions\FsException('Cannot write to temporary key file directory "' . $tmpDir . '".');
+            }
+        } else {
+            $this->path = $data;
+            if (is_file($data) && is_readable($data)) {
+                $this->key = $this->parse(file_get_contents($data));
+            } else {
+                throw new Exceptions\FsException('SSH key file not accessible: "' . $data . '".');
             }
         }
     }
@@ -45,8 +44,8 @@ class PublicSshKey
     }
     // }}}
 
-    // {{{ details
-    protected function details($keyString)
+    // {{{ parse
+    protected function parse($keyString)
     {
         // @todo do proper check
         return $keyString;

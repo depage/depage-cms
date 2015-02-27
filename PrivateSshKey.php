@@ -4,8 +4,8 @@ namespace Depage\Fs;
 
 class PrivateSshKey extends PublicSshKey
 {
-    // {{{ details
-    protected function details($keyString)
+    // {{{ parse
+    protected function parse($keyString)
     {
         $details = openssl_pkey_get_private($keyString);
 
@@ -20,7 +20,7 @@ class PrivateSshKey extends PublicSshKey
     /**
      * from http://stackoverflow.com/questions/5524121/converting-an-openssl-generated-rsa-public-key-to-openssh-format-php
      */
-    public function extractPublicKey()
+    public function extractPublicKey($tmpDir)
     {
         function sshEncodeBuffer($buffer)
         {
@@ -32,14 +32,14 @@ class PrivateSshKey extends PublicSshKey
 
             return pack('Na*', $len, $buffer);
         }
-        $keyInfo = openssl_pkey_get_details($privateKey);
-        $buffer = pack('N', 7) . 'ssh-rsa' .
-            sshEncodeBuffer($keyInfo['rsa']['e']) .
-            sshEncodeBuffer($keyInfo['rsa']['n']);
 
+        $details = openssl_pkey_get_details($this->key);
+        $buffer = pack('N', 7) . 'ssh-rsa' .
+            sshEncodeBuffer($details['rsa']['e']) .
+            sshEncodeBuffer($details['rsa']['n']);
         $publicKeyString = 'ssh-rsa ' . base64_encode($buffer) . "\n";
 
-        return new PublicSshKey($publicKeyString, $this->tmpDir);
+        return new PublicSshKey($publicKeyString, $tmpDir);
     }
     // }}}
 }

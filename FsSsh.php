@@ -7,6 +7,8 @@ class FsSsh extends Fs
     // {{{ variables
     protected $session = null;
     protected $connection = null;
+    protected $privateKeyFile = null;
+    protected $publicKeyFile = null;
     protected $privateKey = null;
     protected $publicKey = null;
     protected $fingerprint = null;
@@ -16,9 +18,11 @@ class FsSsh extends Fs
     public function __construct($params = array())
     {
         parent::__construct($params);
-        $this->privateKey = (isset($params['private'])) ? $params['private'] : false;
-        $this->publicKey = (isset($params['public'])) ? $params['public'] : false;
-        $this->tmp = (isset($params['public'])) ? $params['public'] : false;
+        $this->privateKeyFile = (isset($params['privateKeyFile'])) ? $params['privateKeyFile'] : false;
+        $this->publicKeyFile = (isset($params['publicKeyFile'])) ? $params['publicKeyFile'] : false;
+        $this->privateKey = (isset($params['privateKey'])) ? $params['privateKey'] : false;
+        $this->publicKey = (isset($params['publicKey'])) ? $params['publicKey'] : false;
+        $this->tmp = (isset($params['tmp'])) ? $params['tmp'] : false;
         $this->fingerprint = (isset($params['fingerprint'])) ? $params['fingerprint'] : false;
     }
     // }}}
@@ -68,7 +72,13 @@ class FsSsh extends Fs
                 throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
             }
 
-            if ($this->privateKey || $this->publicKey || $this->tmp) {
+            if (
+                $this->privateKeyFile
+                || $this->publicKeyFile
+                || $this->privateKey
+                || $this->publicKey
+                || $this->tmp
+            ) {
                 $authenticated = $this->authenticateByKey($connection);
             } else {
                 $authenticated = $this->authenticateByPassword($connection);
@@ -97,11 +107,18 @@ class FsSsh extends Fs
     // {{{ authenticateByKey
     protected function authenticateByKey($connection)
     {
-        $private = new PrivateSshKey($this->privateKey, $this->tmp);
-        if ($this->publicKey) {
+        if ($this->privateKeyFile) {
+            $private = new PrivateSshKey($this->privateKeyFile);
+        } elseif ($this->privateKey) {
+            $private = new PrivateSshKey($this->privateKey, $this->tmp);
+        }
+
+        if ($this->publicKeyFile) {
+            $public = new PublicSshKey($this->publicKeyFile);
+        } elseif ($this->publicKey) {
             $public = new PublicSshKey($this->publicKey, $this->tmp);
         } else {
-            $public = $private->extractPublicKey();
+            $public = $private->extractPublicKey($this->tmp);
         }
 
         $authenticated = ssh2_auth_pubkey_file(
