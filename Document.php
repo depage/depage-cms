@@ -137,7 +137,9 @@ class Document {
                 docs.name AS name,
                 docs.rootid AS rootid,
                 docs.type AS type,
-                docs.ns AS namespaces
+                docs.ns AS namespaces,
+                docs.lastchange AS lastchange,
+                docs.lastchange_uid AS lastchangeUid
             FROM {$this->table_docs} AS docs
             WHERE docs.id = :doc_id
             LIMIT 1"
@@ -146,7 +148,13 @@ class Document {
             'doc_id' => $this->doc_id,
         ));
 
-        return $query->fetchObject();
+        $info = $query->fetchObject();
+
+        if ($info) {
+            $info->lastchange = new \DateTime($info->lastchange);
+        }
+
+        return $info;
     }
     // }}}
 
