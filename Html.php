@@ -106,10 +106,12 @@ class Html {
      */
     public function __construct($template, $args = array(), $param = null) {
         if (is_array($template)) {
+            // allow template to be empty -> pull args and parameters up
             $this->template = null;
             $this->args = $template;
-            $this->param = $param;
+            $this->param = $args;
         } else {
+            // template not empty
             $this->template = $template;
             $this->args = $args;
             $this->param = $param;
