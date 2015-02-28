@@ -44,6 +44,7 @@ var depageCMS = (function() {
         setup: function() {
             localJS.setupVarious();
             localJS.setupProjectList();
+            localJS.setupPreviewLinks();
         },
         // }}}
         // {{{ setupVarious
@@ -63,8 +64,17 @@ var depageCMS = (function() {
             var $projects = $(".projectlist").depageDetails();
 
             $projects.on("depage.detail-opened", function(e, $head, $detail) {
-                console.log("open", $head.data("project"), $detail);
+                var changesUrl = baseUrl + "project/" + $head.data("project") + "/details/15/?ajax=true";
+
+                $.get(changesUrl)
+                    .done(function(data) {
+                        $detail.empty().html(data);
+                    });
             });
+        },
+        // }}}
+        // {{{ setupPreviewLinks
+        setupPreviewLinks: function() {
         },
         // }}}
         // {{{ updateUsers

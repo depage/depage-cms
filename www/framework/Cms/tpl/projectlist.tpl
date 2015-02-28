@@ -1,6 +1,10 @@
 <dl class="projectlist">
     <?php foreach($this->projects as $project) { ?>
         <dt data-project="<?php self::t($project->name); ?>">
+            <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
+                <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
+            <?php } ?>
+
             <strong><?php self::t($project->fullname); ?></strong>
 
             <div class="buttons">
@@ -16,7 +20,7 @@
             </div>
         </dt>
         <dd>
-            more info
+            loading...
         </dd>
     <?php } ?>
 </dl>

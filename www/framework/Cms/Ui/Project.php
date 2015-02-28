@@ -134,14 +134,14 @@ class Project extends Base
         // construct template
         $hProject = new Html("flashedit.tpl", array(
             'flashUrl' => "project/{$this->projectName}/flash/flash/false",
-            'previewUrl' => "project/{$this->projectName}/preview/html/noncached/",
-        ), $this->htmlOptions);
+            'previewUrl' => $this->project->getPreviewPath(),
+        ));
 
         $h = new Html(array(
             'content' => array(
                 $hProject,
             ),
-        ));
+        ), $this->htmlOptions);
 
         return $h;
     }
@@ -165,6 +165,30 @@ class Project extends Base
                 $hProject,
             ),
         ));
+
+        return $h;
+    }
+    // }}}
+
+    // {{{ details()
+    function details($max = null) {
+        $h = new Html(array(
+            'content' => array(
+                $this->recent_changes($max),
+            ),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ recent-changes()
+    function recent_changes($max = null) {
+        $pages = $this->project->getRecentlyChangedPages($max);
+
+        $h = new Html("changelist.tpl", array(
+            'previewPath' => $this->project->getPreviewPath(),
+            'pages' => $pages,
+        ), $this->htmlOptions);
 
         return $h;
     }

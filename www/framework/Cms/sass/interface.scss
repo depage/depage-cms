@@ -28,26 +28,26 @@
         background: #ccc8c4;
     }
     .centered_box .toolbar a:hover,
-    .projectlisting a:hover {
+    .projectlist a:hover {
         background: #ffffff;
     }
-    .projectlisting div.details {
+    .projectlist div.details {
         background: #ffffff;
     }
-    .projectlisting div.details a {
+    .projectlist div.details a {
         color: #000000;
     }
-    .projectlisting div.details a:hover {
+    .projectlist div.details a:hover {
         color: #882200;
         background: #ccc8c4;
     }
-    .projectlisting div.details table.lastchanged_pages .date,
-    .projectlisting div.details table.lastchanged_pages .lastpublish,
-    .projectlisting div.details table.lastchanged_pages .published a {
+    .projectlist div.details table.lastchanged_pages .date,
+    .projectlist div.details table.lastchanged_pages .lastpublish,
+    .projectlist div.details table.lastchanged_pages .published a {
         color: #777777;
     }
-    .projectlisting div.details table.lastchanged_pages tr:hover a .date,
-    .projectlisting div.details table.lastchanged_pages tr:hover a {
+    .projectlist div.details table.lastchanged_pages tr:hover a .date,
+    .projectlist div.details table.lastchanged_pages tr:hover a {
         color: #882200;
     }
     #dlg {
@@ -193,7 +193,7 @@ a img {
 /* }}} */
 /* {{{ border-radius */
 .toolbar a,
-.projectlisting a,
+.projectlist a,
 .depage-form .submit input,
 .depage-form .cancel input {
     -moz-border-radius: 3px;
@@ -208,7 +208,7 @@ a img {
 
     .content {
         position: relative;
-        width: 420px;
+        width: 520px;
         margin-left: auto;
         margin-right: auto;
         padding: 0 12px 12px 12px;
@@ -365,7 +365,7 @@ header.info {
 }
 /* }}} */
 /* {{{ preview */
-.preview {
+div.preview {
     position: absolute;
     top: $toolbarHeight + $infoHeight;
     left: $editWidth;
@@ -380,51 +380,40 @@ header.info {
         height: 100%;
     }
 }
-/*
-.layout-narrow .preview,
-.layout-wide.trees-hidden .preview {
-    left: 0px;
-    border-left: none;
-}
-.layout-wide .preview {
-    left: 310px;
-    border-left: 1px solid #000000;
-}
-*/
-.preview .zoomwrapper {
+div.preview .zoomwrapper {
     width: 100%;
     height: 100%;
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
 }
-.preview.zoom50 .zoomwrapper {
+div.preview.zoom50 .zoomwrapper {
     zoom: 0.5;
     -moz-transform: scale(0.5);
     -o-transform: scale(0.5);
     -webkit-transform: scale(0.5);
 }
-.preview.zoom50 iframe {
+div.preview.zoom50 iframe {
     width: 200%;
     height: 200%;
 }
-.preview.zoom75 .zoomwrapper {
+div.preview.zoom75 .zoomwrapper {
     zoom: 0.75;
     -moz-transform: scale(0.75);
     -o-transform: scale(0.75);
     -webkit-transform: scale(0.75);
 }
-.preview.zoom75 iframe {
+div.preview.zoom75 iframe {
     width: 133%;
     height: 133%;
 }
-.preview.zoom100 .zoomwrapper {
+div.preview.zoom100 .zoomwrapper {
     zoom: 1;
     -moz-transform: scale(1);
     -o-transform: scale(1);
     -webkit-transform: scale(1);
 }
-.preview.zoom100 iframe {
+div.preview.zoom100 iframe {
     width: 100%;
     height: 100%;
 }
@@ -588,7 +577,7 @@ header.info {
 }
 /* }}} */
 
-/* {{{ projectlisting */
+/* {{{ projectlist */
 .box-projects {
     .content:before {
         @include icon("projects");
@@ -596,9 +585,10 @@ header.info {
 }
 dl.projectlist {
     text-indent: 0;
-    margin: 12px 0 24px 0;
+    margin: 12px 0 24px 24px;
 
     dt {
+        position: relative;
         padding: 0;
         margin: 0;
         width: 100%;
@@ -606,23 +596,35 @@ dl.projectlist {
         @include clearfix();
     }
     dd {
+        position: relative;
         clear: both;
         padding: 12px;
         margin-bottom: 12px;
         background: #ffffff;
     }
 
+    img.thumb {
+        position: absolute;
+        top: 0;
+        left: -24px;
+        display: block;
+        float: left;
+        width: 16px;
+        height: 16px;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
     .opener {
         display: block;
         float: left;
-        width: 15px;
-        height: 15px;
+        width: 16px;
+        height: 16px;
         margin-top: 7px;
         background: url(pics/icon_details_closed.gif);
-        @include icon-base("closed", 0.25);
+        @include icon-base("closed", 0.28);
     }
     .active .opener {
-        @include icon("open", 0.25);
+        @include icon("open", 0.28);
     }
     dt strong,
     a.button {
@@ -666,6 +668,38 @@ dl.projectlist {
         font-size: 10px;
         right: 0;
         top: 0;
+    }
+}
+/* }}} */
+/* {{{ recent-changed */
+table.recent-changes {
+    width: 100%;
+    table-layout: fixed;
+
+    td {
+        line-height: 24px;
+    }
+
+    td.url {
+        width: 70%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        a {
+            color: #000000;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    td.date {
+        width: 30%;
+        text-align: right;
+        font-size: 0.8em;
+        white-space: nowrap;
+        color: #aaaaaa;
     }
 }
 /* }}} */

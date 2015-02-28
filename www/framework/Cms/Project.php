@@ -34,6 +34,16 @@ class Project extends \Depage\Entity\Entity
      * @brief pdo object for database access
      **/
     protected $pdo = null;
+
+    /**
+     * @brief cache
+     **/
+    protected $cache = null;
+
+    /**
+     * @brief xmldb
+     **/
+    public $xmldb = null;
     // }}}
 
     /* {{{ constructor */
@@ -52,58 +62,6 @@ class Project extends \Depage\Entity\Entity
         $this->pdo = $pdo;
     }
     /* }}} */
-
-    // {{{ getProjects()
-    /**
-     * gets available projects from database.
-     *
-     * @public
-     *
-     * @return    $projects (array) available projects
-     */
-    function getProjects($all = true) {
-        $projects = array();
-
-        //return array( "depage" => 1, );
-
-        //@todo implement this correctly
-        $sid = $this->user->sid;
-        if ($all || $this->user->get_level_by_sid() == 1) {
-            // get all projects for admins
-            $query = $this->pdo->prepare(
-                "SELECT projects.*
-                FROM
-                    $this->table_projects AS projects
-                ORDER BY name"
-            );
-        } else {
-            // get only allowed projects for normal users
-            $query = $this->pdo->prepare(
-                "SELECT projects.*
-                FROM
-                    $this->table_projects AS projects,
-                    $this->table_sessions AS sessions,
-                    $this->table_user_projects AS user_projects
-                WHERE
-                    sessions.sid = '$sid' AND
-                    sessions.userid = user_projects.uid AND
-                    user_projects.pid = projects.id
-                ORDER BY name"
-            );
-        }
-        $success = $query->execute();
-        if ($success) {
-
-            var_dump($query->fetchAll());
-            die();
-            while ($row = mysql_fetch_assoc($result)) {
-                $projects[$row['name']] = $row['id_doc'];
-            }
-        }
-
-        return $projects;
-    }
-    // }}}
 
     // {{{ loadAll()
     /**
@@ -325,6 +283,68 @@ class Project extends \Depage\Entity\Entity
             $schema->loadFile($file);
             $schema->update();
         }
+    }
+    // }}}
+
+    // {{{ getRecentlyChangedPages
+    /**
+     * @brief initProject
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getRecentlyChangedPages($max = null)
+    {
+        $pages = array();
+
+        // get cache instance
+        $this->cache = \Depage\Cache\Cache::factory("xmldb");
+
+        $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->name}", $this->pdo, $this->cache, array(
+            'pathXMLtemplate' => $this->xmlPath,
+        ));
+
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
+        $nodelist = $xpath->query("//pg:page");
+
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $docId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+            $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
+            $docInfo->url = $node->getAttribute("url");
+
+            $pages[] = $docInfo;
+        }
+
+        usort($pages, function($a, $b) {
+            $aTi = $a->lastchange->getTimestamp();
+            $bTi = $b->lastchange->getTimestamp();
+            if ($aTi == $bTi) {
+                return 0;
+            }
+            return ($aTi > $bTi) ? -1 : 1;
+        });
+
+        if ($max > 0) {
+            $pages = array_splice($pages, 0, $max);
+        }
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getPreviewPath()
+    /**
+     * @brief getPreviewPath
+     *
+     * @return Path for preview url for this project
+     **/
+    public function getPreviewPath()
+    {
+        // @todo check languages
+        return "project/{$this->name}/preview/html/cached/de";
     }
     // }}}
 }

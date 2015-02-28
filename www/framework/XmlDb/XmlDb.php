@@ -130,9 +130,9 @@ class XmlDb implements XmlGetter
         $query_param = array();
 
         if ($name) {
-            $namequery = "WHERE name LIKE :projectname";
+            $namequery = "WHERE name = :name";
             $query_param = array(
-                'projectname' => $name
+                'name' => $name
             );
         }
 
@@ -144,7 +144,7 @@ class XmlDb implements XmlGetter
                 docs.rootid AS rootid,
                 docs.type AS type
             FROM {$this->table_docs} AS docs
-            $namequery
+                $namequery
             ORDER BY docs.name ASC"
         );
 
