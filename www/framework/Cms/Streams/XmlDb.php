@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\Cms\Streams;
+namespace Depage\Cms\Streams;
 
 class XmlDb extends Base {
     protected static $parameters;
