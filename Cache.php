@@ -49,7 +49,6 @@ abstract class Cache
         if (!isset($options['disposition'])) {
             $options['disposition'] = "file";
         }
-
         if (in_array($options['disposition'], array("memcached", "memory")) && extension_loaded("memcached")) {
             return new \Depage\Cache\Providers\Memcached($prefix, $options);
         } elseif (in_array($options['disposition'], array("memcache", "memory")) && extension_loaded("memcache")) {
@@ -133,7 +132,7 @@ abstract class Cache
      */
     abstract public function clear();
     // }}}
-    
+
     // {{{ rmr */
     /**
      * @brief deletes files and direcories recursively
