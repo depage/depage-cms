@@ -41,22 +41,22 @@ class Main extends Base {
         if ($this->auth->enforceLazy()) {
             // logged in
             $h = new Html(array(
-                'content' => array(
-                    $this->projects(),
-                    $this->users("current"),
-                    $this->tasks(),
-                ),
-            ));
+                'content' => new Html("home.tpl", array(
+                    'content' => array(
+                        $this->projects(),
+                        $this->users("current"),
+                        $this->tasks(),
+                    ),
+                )),
+            ), $this->htmlOptions);
         } else {
             // not logged in
             $h = new Html(array(
-                'content' => array(
-                    'content' => new Html("welcome.tpl", array(
-                        'title' => "Welcome to\n depage::cms ",
-                        'login' => "Login",
-                        'login_link' => "login/",
-                    )),
-                )
+                'content' => new Html("welcome.tpl", array(
+                    'title' => "Welcome to\n depage::cms ",
+                    'login' => "Login",
+                    'login_link' => "login/",
+                )),
             ), $this->htmlOptions);
         }
 
@@ -270,17 +270,18 @@ class Main extends Base {
      **/
     public function test_task()
     {
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task 6");
-        $sleep = 1;
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
+        $sleepMin = 0;
+        $sleepMax = 10 * 1000000;
 
-        for ($i = 0; $i < 10; $i++) {
-            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); sleep($sleep);");
+        for ($i = 0; $i < 5; $i++) {
+            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");
 
-            for ($j = 0; $j < 10; $j++) {
-                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); sleep($sleep);", $dep1);
+            for ($j = 0; $j < 5; $j++) {
+                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); usleep(rand($sleepMin, $sleepMax));", $dep1);
 
                 for ($k = 0; $k < 10; $k++) {
-                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); sleep($sleep);", $dep2);
+                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); usleep(rand($sleepMin, $sleepMax));", $dep2);
                 }
             }
         }

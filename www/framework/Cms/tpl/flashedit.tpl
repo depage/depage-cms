@@ -1,10 +1,10 @@
-<div class="flash">
+<div class="edit layout layout-left">
     <header class="info">
         <h1><?php self::e(_("Tree/Edit")); ?></h1>
     </header>
     <iframe id="flashFrame" src="<?php self::e($this->flashUrl); ?>"></iframe>
 </div>
-<div class="preview zoom100">
+<div class="preview layout layout-right zoom100">
     <header class="info">
         <h1><?php self::e(_("Preview")); ?></h1>
     </header>

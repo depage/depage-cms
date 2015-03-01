@@ -286,23 +286,34 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
-    // {{{ getRecentlyChangedPages
+    // {{{ initXmlDb()
     /**
-     * @brief initProject
+     * @brief initXmlDb
      *
-     * @param mixed
-     * @return void
+     * @return xmldb
      **/
-    public function getRecentlyChangedPages($max = null)
+    protected function initXmlDb()
     {
-        $pages = array();
-
         // get cache instance
         $this->cache = \Depage\Cache\Cache::factory("xmldb");
 
         $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->name}", $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
         ));
+    }
+    // }}}
+    // {{{ getRecentlyChangedPages
+    /**
+     * @brief getRecentlyChangedPages
+     *
+     * @param max
+     * @return array
+     **/
+    public function getRecentlyChangedPages($max = null)
+    {
+        $pages = array();
+
+        $this->initXmlDb();
 
         $xml = $this->xmldb->getDocXml("pages");
 
@@ -343,8 +354,27 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getPreviewPath()
     {
-        // @todo check languages
+        // @todo check languages and template path
         return "project/{$this->name}/preview/html/cached/de";
+    }
+    // }}}
+    // {{{ getHomeUrl()
+    /**
+     * @brief getHomeUrl
+     *
+     * @return Get path to home page
+     **/
+    public function getHomeUrl()
+    {
+        $this->initXmlDb();
+
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
+        $nodelist = $xpath->query("//pg:page");
+
+        return $this->getPreviewPath() . $nodelist->item(0)->getAttribute("url");
     }
     // }}}
 }

@@ -69,14 +69,22 @@ var depageCMS = (function() {
                 $.get(changesUrl)
                     .done(function(data) {
                         $detail.empty().html(data);
+
+                        localJS.setupPreviewLinks();
                     });
             });
         },
         // }}}
         // {{{ setupPreviewLinks
         setupPreviewLinks: function() {
+            $("a.preview").on("click", function(e) {
+                localJS.preview(this.href);
+
+                return false;
+            });
         },
         // }}}
+
         // {{{ updateUsers
         updateUsers: function() {
             localJS.updateBox("#box-users", localJS.updateUsers);
@@ -112,12 +120,40 @@ var depageCMS = (function() {
         },
         // }}}
 
+        // {{{ switchLayout
+        switchLayout: function(layoutName) {
+            if (layoutName == "split") {
+                $(".layout-full").removeClass("layout-full").addClass("layout-left");
+            }
+        },
+        // }}}
         // {{{ preview
         preview: function(url) {
             if ($previewFrame.length > 0) {
                 $previewFrame[0].src = unescape(url);
-            } else {
+            } else if (parent != window) {
                 parent.depageCMS.preview(url);
+            } else {
+                // add preview frame
+                var projectName = url.match(/project\/(.*)\/preview/)[1];
+
+                $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
+                    var $result = $("<div></div>").html( data ).find("div.preview");
+                    $result.css({
+                        left: "100%"
+                    }).appendTo("body");
+                    var $header = $result.find("header.info").css({
+                        left: "100%"
+                    });
+
+                    $previewFrame = $("#previewFrame");
+                    $previewFrame[0].src = unescape(url);
+
+                    $result.attr("style", "");
+                    $header.attr("style", "");
+
+                    localJS.switchLayout("split");
+                });
             }
         },
         // }}}

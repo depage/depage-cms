@@ -236,10 +236,11 @@ a img {
             opacity: 1;
         }
     }
-    .toolbar + & .content {
+    .toolbar + & .content,
+    header.info + & .content {
         height: auto !important;
         height: 200px;
-        min-height: 200px;
+        min-height: 250px;
         margin-top: 100px;
     }
     .bottom {
@@ -327,11 +328,9 @@ a img {
 
 /* {{{ header.info */
 header.info {
-    position: absolute;
-    left: 0;
-    top: - $infoHeight;
+    position: fixed;
+    top: $toolbarHeight;
     height: $infoHeight;
-    width: 101%;
     border-bottom: 1px solid #000000;
     background: #CCC8C4;
     z-index: 10001;
@@ -346,16 +345,47 @@ header.info {
     }
 }
 /* }}} */
-/* {{{ flash */
-.flash {
+/* {{{ layouts */
+header.info,
+.layout {
+    @include transition(200ms, "left, right, width");
+}
+.layout-full,
+.layout-left,
+.layout-right {
     position: absolute;
-    left: 0;
-    top: $toolbarHeight + $infoHeight;
-    width: $editWidth;
-    max-width: 100%;
+    top: $toolbarHeight;
+    padding-top: $infoHeight;
     bottom: 0;
-    border-right: 8px solid #ffffff;
-
+    overflow: scroll;
+}
+.layout-left {
+    &,
+    header.info {
+        left: 0;
+        width: $editWidth;
+        max-width: 100%;
+    }
+}
+.layout-right {
+    &,
+    header.info {
+        left: $editWidth;
+        right: 0;
+        border-left: 1px solid #000000;
+    }
+}
+.layout-full {
+    &,
+    header.info {
+        left: 0;
+        right: 0;
+        width: 100%;
+    }
+}
+/* }}} */
+/* {{{ flash/edit */
+.edit {
     iframe {
         display: block;
         border: none;
@@ -366,18 +396,12 @@ header.info {
 /* }}} */
 /* {{{ preview */
 div.preview {
-    position: absolute;
-    top: $toolbarHeight + $infoHeight;
-    left: $editWidth;
-    right: 0;
-    bottom: 0;
-    border-left: 1px solid #000000;
-
     iframe {
         display: block;
         border: none;
         width: 100%;
         height: 100%;
+        background: #ffffff;
     }
 }
 div.preview .zoomwrapper {

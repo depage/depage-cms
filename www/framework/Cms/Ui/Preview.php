@@ -92,7 +92,14 @@ class Preview extends \Depage\Depage\Ui\Base
 
         $lang = array_shift($args);
 
-        $urlPath = implode("/", $args);
+        $urlPath = "/" . implode("/", $args);
+
+        if ($urlPath == "/") {
+            // redirect to home
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE . $project->getHomeUrl());
+        }
 
         return $this->preview($urlPath, $lang);
     }
@@ -124,8 +131,8 @@ class Preview extends \Depage\Depage\Ui\Base
      */
     protected function preview($urlPath, $lang)
     {
-        $transformer = \depage\Transformer\Transformer::factory($this->previewType, $this->pdo, $this->projectName, $this->template);
-        $html = $transformer->display("/" . $urlPath, $lang);
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $this->pdo, $this->projectName, $this->template);
+        $html = $transformer->display($urlPath, $lang);
 
         return $html;
     }

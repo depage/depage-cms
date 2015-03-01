@@ -11,7 +11,7 @@
                 <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
                     <?php self::t(_('edit')) ?>
                 </a>
-                <a href="project/<?php self::t($project->name); ?>/preview/" class="button">
+                <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
                     <?php self::t(_('preview')) ?>
                 </a>
                 <a href="project/<?php self::t($project->name); ?>/settings/" class="button">
