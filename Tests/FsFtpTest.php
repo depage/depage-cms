@@ -15,7 +15,7 @@ class FsFtpTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new FsTestClass($newParams);
+        return new FsFtpTestClass($newParams);
     }
     // }}}
 }

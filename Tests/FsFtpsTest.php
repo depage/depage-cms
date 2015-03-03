@@ -15,7 +15,7 @@ class FsFtpsTest extends FsFtpTest
 
         $newParams = array_merge($params, $override);
 
-        return new FsTestClass($newParams);
+        return new FsFtpTestClass($newParams);
     }
     // }}}
 }

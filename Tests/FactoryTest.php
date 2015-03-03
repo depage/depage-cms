@@ -40,7 +40,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
         $fs = Fs::factory('ftp://user@host/path/to/file');
 
-        $this->assertInstanceOf('Depage\Fs\Fs', $fs);
+        $this->assertInstanceOf('Depage\Fs\FsFtp', $fs);
         $this->assertEquals('ftp', $this->getScheme($fs));
     }
     // }}}
@@ -49,7 +49,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
         $fs = Fs::factory('ftps://user@host/path/to/file');
 
-        $this->assertInstanceOf('Depage\Fs\Fs', $fs);
+        $this->assertInstanceOf('Depage\Fs\FsFtp', $fs);
         $this->assertEquals('ftps', $this->getScheme($fs));
     }
     // }}}

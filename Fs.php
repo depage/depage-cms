@@ -43,11 +43,13 @@ class Fs
     public static function schemeAlias($alias)
     {
         $aliases = array(
+            ''          => array('class' => 'file', 'scheme' => 'file'),
+            'file'      => array('class' => 'file', 'scheme' => 'file'),
+            'ftp'       => array('class' => 'ftp',  'scheme' => 'ftp'),
+            'ftps'      => array('class' => 'ftp',  'scheme' => 'ftps'),
             'ssh2.sftp' => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
             'ssh'       => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
             'sftp'      => array('class' => 'ssh',  'scheme' => 'ssh2.sftp'),
-            'file'      => array('class' => 'file', 'scheme' => 'file'),
-            ''          => array('class' => 'file', 'scheme' => 'file'),
         );
 
         if (array_key_exists($alias, $aliases)) {
@@ -280,8 +282,8 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        if (!copy($local, $remote)) {
-            throw new Exceptions\FsException('Cannot copy "' . $local  . '" to "' . $remote . '".');
+        if (!$this->copy($local, $remote)) {
+            throw new Exceptions\FsException('Cannot copy "' . $local . '" to "' . $remote . '".');
         }
 
         $this->postCommandHook();
@@ -596,6 +598,18 @@ class Fs
     protected function rename($source, $target)
     {
         return rename($source, $target);
+    }
+    // }}}
+    // {{{ copy
+    protected function copy($source, $target, $context = null)
+    {
+        if ($context === null) {
+            $result = copy($source, $target);
+        } else {
+            $result = copy($source, $target, $context);
+        }
+
+        return $result;
     }
     // }}}
 }

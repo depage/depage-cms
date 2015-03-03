@@ -356,6 +356,16 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
     }
     // }}}
+    // {{{ testPutOverwrite
+    public function testPutOverwrite()
+    {
+        $this->createRemoteTestFile('testFile', 'before');
+        $this->createTestFile('testFile2', 'after');
+
+        $this->fs->put('testFile2', 'testFile');
+        $this->assertTrue($this->confirmRemoteTestFile('testFile', 'after'));
+    }
+    // }}}
 
     // {{{ testExists
     public function testExists()

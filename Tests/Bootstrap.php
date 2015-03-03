@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../Fs.php');
 require_once(__DIR__ . '/../FsFile.php');
+require_once(__DIR__ . '/../FsFtp.php');
 require_once(__DIR__ . '/../FsSsh.php');
 require_once(__DIR__ . '/../PublicSshKey.php');
 require_once(__DIR__ . '/../PrivateSshKey.php');
@@ -26,6 +27,20 @@ class FsTestClass extends Depage\Fs\Fs
 // }}}
 // {{{ FsFileTestClass
 class FsFileTestClass extends Depage\Fs\FsFile
+{
+    public function lateConnect() {
+        return parent::lateConnect();
+    }
+    public static function parseUrl($url) {
+        return parent::parseUrl($url);
+    }
+    public function cleanUrl($url) {
+        return parent::cleanUrl($url);
+    }
+}
+// }}}
+// {{{ FsFtpTestClass
+class FsFtpTestClass extends Depage\Fs\FsFtp
 {
     public function lateConnect() {
         return parent::lateConnect();
