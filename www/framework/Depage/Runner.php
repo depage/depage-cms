@@ -219,7 +219,7 @@ class Runner {
         if (!isset($path)) {
             if (php_sapi_name() == 'cli') {
                 $options = self::getCliOptions();
-                $path = $options['dp-path'];
+                $path = $options['dp-path'] . "/";
             } else {
                 // http
                 if (getcwd() == "") {
