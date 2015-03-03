@@ -23,8 +23,12 @@ class TestRemote extends TestBase
     // {{{ mkdirRemote
     protected function mkdirRemote($path, $mode = 0777, $recursive = false)
     {
+        $parents = ($recursive) ? '-p ' : '';
         $remotePath = $this->remoteDir . '/' . $path;
-        $this->sshExec('mkdir -p -m 777 ' . $remotePath);
+        $decMode = decoct($mode);
+        $command = 'mkdir ' . $parents . '-m ' . $decMode . ' ' . $remotePath;
+
+        $this->sshExec($command);
         $this->assertTrue(is_dir($remotePath));
     }
     // }}}
