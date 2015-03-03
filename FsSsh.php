@@ -167,6 +167,19 @@ class FsSsh extends Fs
         return $path;
     }
     // }}}
+
+    // {{{ rename
+    protected function rename($source, $target)
+    {
+        // workaround, rename doesn't overwrite files with ssh2.sftp stream wrapper
+        if (file_exists($target) && is_file($target)) {
+            $this->rm($target);
+        }
+
+        return parent::rename($source, $target);
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

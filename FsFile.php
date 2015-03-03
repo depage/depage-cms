@@ -4,13 +4,6 @@ namespace Depage\Fs;
 
 class FsFile extends Fs
 {
-    // {{{ rmdir
-    protected function rmdir($url)
-    {
-        // workaround, rmdir does not support file stream wrappers <= PHP 5.6.2
-        return parent::rmdir(preg_replace(';^file://;', '', $url));
-    }
-    // }}}
     // {{{ setBase
     protected function setBase($path)
     {
@@ -21,6 +14,13 @@ class FsFile extends Fs
         }
 
         return parent::setBase($realPath);
+    }
+    // }}}
+    // {{{ rmdir
+    protected function rmdir($url)
+    {
+        // workaround, rmdir does not support file stream wrappers <= PHP 5.6.2
+        return parent::rmdir(preg_replace(';^file://;', '', $url));
     }
     // }}}
 }

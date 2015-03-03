@@ -227,7 +227,7 @@ class Fs
         $target = $this->cleanUrl($targetPath);
 
         if (file_exists($source)) {
-            if (!rename($source, $target)) {
+            if (!$this->rename($source, $target)) {
                 throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '".');
             }
         } else {
@@ -573,10 +573,17 @@ class Fs
         }
     }
     // }}}
+
     // {{{ rmdir
     protected function rmdir($url)
     {
         return rmdir($url);
+    }
+    // }}}
+    // {{{ rename
+    protected function rename($source, $target)
+    {
+        return rename($source, $target);
     }
     // }}}
 }
