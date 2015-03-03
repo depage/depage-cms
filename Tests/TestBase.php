@@ -275,7 +275,6 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists('testDir'));
         $this->assertFalse(file_exists('testDir/testDir'));
 
-        $this->fs->mkdir('testDir');
         $this->fs->mkdir('testDir/testDir');
 
         $this->assertTrue(file_exists($this->remoteDir . '/testDir/testDir'));
@@ -285,14 +284,9 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testRm()
     {
         // create test nodes
-        $this->fs->mkdir('testDir');
-        $this->fs->mkdir('testDir/testSubDir');
-        $this->fs->mkdir('testDir/testSubDir/testAnotherSubDir');
-        $this->fs->putString('testDir/testFile', '');
-        $this->fs->putString('testDir/testSubDir/testFile', '');
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testAnotherSubDir'));
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir/testFile'));
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testFile'));
+        $this->mkdirRemote('testDir/testSubDir', 0777, true);
+        $this->createRemoteTestFile('testDir/testFile');
+        $this->createRemoteTestFile('testDir/testSubDir/testFile');
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists($this->remoteDir . '/testDir'));
