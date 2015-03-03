@@ -586,7 +586,6 @@ class Fs
     }
     // }}}
 
-
     // {{{ rmdir
     protected function rmdir($url)
     {
