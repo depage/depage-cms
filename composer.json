@@ -12,7 +12,7 @@
         "php": " >= 5.3"
     },
     "autoload": {
-        "psr-4": { "Depage\\DB\\": "" }
+        "psr-4": { "Depage\\Db\\": "" }
     },
     "support": {
         "email": "info@depage.net",
