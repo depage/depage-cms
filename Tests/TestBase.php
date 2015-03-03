@@ -85,6 +85,12 @@ class TestBase extends PHPUnit_Framework_TestCase
         return $read === array($content);
     }
     // }}}
+    // {{{ confirmRemoteTestFile
+    protected function confirmRemoteTestFile($path, $content = null)
+    {
+        return $this->confirmTestFile($this->remoteDir . '/' . $path, $content);
+    }
+    // }}}
 
     // {{{ testLs
     public function testLs()
@@ -297,12 +303,11 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testMv()
     {
         $this->createRemoteTestFile('testFile');
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile'));
         $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
 
         $this->fs->mv('testFile', 'testFile2');
         $this->assertFalse(file_exists($this->remoteDir . '/testFile'));
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
+        $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
     }
     // }}}
     // {{{ testMvOverwrite
@@ -312,7 +317,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->createRemoteTestFile('testFile2', 'after');
 
         $this->fs->mv('testFile2', 'testFile');
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile', 'after'));
+        $this->assertTrue($this->confirmRemoteTestFile('testFile', 'after'));
     }
     // }}}
     // {{{ testMvSourceDoesntExist
@@ -342,14 +347,12 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testPut
     public function testPut()
     {
-        // create test nodes
         $this->createTestFile('testFile');
-        $this->assertTrue(file_exists('testFile'));
-        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
 
+        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
         $this->fs->put('testFile', 'testFile2');
         $this->assertTrue($this->confirmTestFile('testFile'));
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
+        $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
     }
     // }}}
 
@@ -376,7 +379,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testGetString
     public function testGetString()
     {
-        $this->createTestFile($this->remoteDir . '/testFile');
+        $this->createRemoteTestFile('testFile');
 
         $this->assertEquals('testString', $this->fs->getString('testFile'));
     }
@@ -386,7 +389,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     {
         $this->fs->putString('testFile', 'testString');
 
-        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile'));
+        $this->assertTrue($this->confirmRemoteTestFile('testFile'));
     }
     // }}}
 

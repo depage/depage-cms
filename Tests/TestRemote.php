@@ -66,6 +66,7 @@ class TestRemote extends TestBase
     {
         $content = ($content === null) ? 'testString' : $content;
         $this->sshExec('printf "' . $content . '" > ' . $this->remoteDir . '/' . $path);
+        $this->confirmRemoteTestFile($path, $content);
     }
     // }}}
 }
