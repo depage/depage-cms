@@ -9,6 +9,8 @@ class Fs
     protected $base;
     protected $url;
     protected $hidden = false;
+    protected $streamContextOptions = array();
+    protected $streamContext;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
@@ -21,6 +23,8 @@ class Fs
 
         $this->hidden   = (isset($params['hidden']))    ? $params['hidden'] : false;
         $this->path     = (isset($params['path']))      ? $params['path']   : '.';
+
+        $this->streamContext = stream_context_create($this->streamContextOptions);
     }
     // }}}
     // {{{ factory
@@ -261,7 +265,7 @@ class Fs
         }
 
         $remote = $this->cleanUrl($remotePath);
-        if (!$this->copy($remote, $local)) {
+        if (!copy($remote, $local, $this->streamContext)) {
             throw new Exceptions\FsException('Cannot copy "' . $remote  . '" to "' . $local . '".');
         }
 
@@ -282,7 +286,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        if (!$this->copy($local, $remote)) {
+        if (!copy($local, $remote, $this->streamContext)) {
             throw new Exceptions\FsException('Cannot copy "' . $local . '" to "' . $remote . '".');
         }
 
@@ -318,7 +322,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        $bytes = file_put_contents($remote, $string);
+        $bytes = file_put_contents($remote, $string, 0, $this->streamContext);
         if ($bytes === false) {
             throw new Exceptions\FsException('Cannot write string to "' . $remote . '".');
         }
@@ -598,18 +602,6 @@ class Fs
     protected function rename($source, $target)
     {
         return rename($source, $target);
-    }
-    // }}}
-    // {{{ copy
-    protected function copy($source, $target, $context = null)
-    {
-        if ($context === null) {
-            $result = copy($source, $target);
-        } else {
-            $result = copy($source, $target, $context);
-        }
-
-        return $result;
     }
     // }}}
 }
