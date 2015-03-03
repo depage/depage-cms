@@ -238,6 +238,8 @@ class Gd extends \Depage\Graphics\Graphics
                 $this->optimizeImage($this->output);
             }
         }
+
+        parent::renderFinished();
     }
     // }}}
 
