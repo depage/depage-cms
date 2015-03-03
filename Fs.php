@@ -261,7 +261,7 @@ class Fs
         }
 
         $remote = $this->cleanUrl($remotePath);
-        if (!copy($remote, $local)) {
+        if (!$this->copy($remote, $local)) {
             throw new Exceptions\FsException('Cannot copy "' . $remote  . '" to "' . $local . '".');
         }
 
