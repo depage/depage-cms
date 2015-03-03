@@ -171,7 +171,7 @@ class FsSsh extends Fs
     // {{{ rename
     protected function rename($source, $target)
     {
-        // workaround, rename doesn't overwrite files with ssh2.sftp stream wrapper
+        // workaround, rename doesn't overwrite files via ssh
         if (file_exists($target) && is_file($target)) {
             $this->rm($target);
         }

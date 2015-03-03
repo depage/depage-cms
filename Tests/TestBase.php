@@ -283,7 +283,6 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testRm
     public function testRm()
     {
-        // create test nodes
         $this->mkdirRemote('testDir/testSubDir', 0777, true);
         $this->createRemoteTestFile('testDir/testFile');
         $this->createRemoteTestFile('testDir/testSubDir/testFile');
@@ -312,6 +311,16 @@ class TestBase extends PHPUnit_Framework_TestCase
 
         $this->fs->mv('testFile2', 'testFile');
         $this->assertTrue($this->confirmRemoteTestFile('testFile', 'after'));
+    }
+    // }}}
+    // {{{ testMvIntoDirectory
+    public function testMvIntoDirectory()
+    {
+        $this->createRemoteTestFile('testFile');
+        $this->mkdirRemote('testDir/testSubDir', 0777, true);
+
+        $this->fs->mv('testFile', 'testDir/testSubDir');
+        $this->assertTrue($this->confirmRemoteTestFile('testDir/testSubDir/testFile'));
     }
     // }}}
     // {{{ testMvSourceDoesntExist

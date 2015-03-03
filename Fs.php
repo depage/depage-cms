@@ -227,6 +227,9 @@ class Fs
         $target = $this->cleanUrl($targetPath);
 
         if (file_exists($source)) {
+            if(file_exists($target) && is_dir($target)) {
+                $target .= '/' . $this->extractFileName($source);
+            }
             if (!$this->rename($source, $target)) {
                 throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '".');
             }
@@ -252,11 +255,7 @@ class Fs
         $this->preCommandHook();
 
         if ($local === null) {
-            $pathInfo = pathinfo($remotePath);
-            $fileName = $pathInfo['filename'];
-            $extension = $pathInfo['extension'];
-
-            $local = $fileName . '.' . $extension;
+            $local = $this->extractFileName($remotePath);
         }
 
         $remote = $this->cleanUrl($remotePath);
@@ -573,6 +572,20 @@ class Fs
         }
     }
     // }}}
+    // {{{ extractFileName
+    protected function extractFileName($path)
+    {
+        $pathInfo = pathinfo($path);
+        $fileName = $pathInfo['filename'];
+
+        if (isset($pathInfo['extension'])) {
+            $fileName .= '.' . $pathInfo['extension'];
+        }
+
+        return $fileName;
+    }
+    // }}}
+
 
     // {{{ rmdir
     protected function rmdir($url)
