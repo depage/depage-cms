@@ -68,18 +68,21 @@ class TestBase extends PHPUnit_Framework_TestCase
     // }}}
 
     // {{{ createTestFile
-    protected function createTestFile($path)
+    protected function createTestFile($path, $content = null)
     {
         $testFile = fopen($path, 'w');
-        fwrite($testFile, 'testString');
+        $content = ($content === null) ? 'testString' : $content;
+        fwrite($testFile, $content);
         fclose($testFile);
+        $this->assertTrue($this->confirmTestFile($path, $content));
     }
     // }}}
     // {{{ confirmTestFile
-    protected function confirmTestFile($path)
+    protected function confirmTestFile($path, $content = null)
     {
-        $contents = file($path);
-        return $contents == array('testString');
+        $read = file($path);
+        $content = ($content === null) ? 'testString' : $content;
+        return $read === array($content);
     }
     // }}}
 
@@ -300,6 +303,16 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->fs->mv('testFile', 'testFile2');
         $this->assertFalse(file_exists($this->remoteDir . '/testFile'));
         $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile2'));
+    }
+    // }}}
+    // {{{ testMvOverwrite
+    public function testMvOverwrite()
+    {
+        $this->createRemoteTestFile('testFile', 'before');
+        $this->createRemoteTestFile('testFile2', 'after');
+
+        $this->fs->mv('testFile2', 'testFile');
+        $this->assertTrue($this->confirmTestFile($this->remoteDir . '/testFile', 'after'));
     }
     // }}}
     // {{{ testMvSourceDoesntExist

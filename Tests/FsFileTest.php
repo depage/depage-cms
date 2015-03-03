@@ -42,9 +42,9 @@ class FsFileTest extends TestBase
     }
     // }}}
     // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path)
+    public function createRemoteTestFile($path, $content = null)
     {
-        $this->createTestFile($path);
+        $this->createTestFile($path, $content);
     }
     // }}}
 

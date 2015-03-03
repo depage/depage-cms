@@ -62,9 +62,10 @@ class TestRemote extends TestBase
     }
     // }}}
     // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path)
+    public function createRemoteTestFile($path, $content = null)
     {
-        $this->sshExec('printf "testString" > ' . $this->remoteDir . '/' . $path);
+        $content = ($content === null) ? 'testString' : $content;
+        $this->sshExec('printf "' . $content . '" > ' . $this->remoteDir . '/' . $path);
     }
     // }}}
 }
