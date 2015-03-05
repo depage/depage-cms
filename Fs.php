@@ -438,7 +438,7 @@ class Fs
         foreach ($dirs as $dir) {
             if ($dir == '..') {
                 array_pop($newDirs);
-            } else if ($dir != '.' && $dir != '') {
+            } elseif ($dir != '.' && $dir != '') {
                 $newDirs[] = $dir;
             }
         }
@@ -520,13 +520,16 @@ class Fs
     protected function rmRecursive($url)
     {
         $cleanUrl = $this->cleanUrl($url);
+        $success = false;
 
-        if (is_dir($cleanUrl)) {
+        if (!file_exists($cleanUrl)) {
+            throw new Exceptions\FsException('"' . $cleanUrl . '" doesn\'t exist.');
+        } elseif (is_dir($cleanUrl)) {
             foreach ($this->scandir($cleanUrl, true) as $nested) {
                 $this->rmRecursive($cleanUrl . '/' .  $nested);
             }
             $success = $this->rmdir($cleanUrl);
-        } else if (is_file($cleanUrl)) {
+        } elseif (is_file($cleanUrl)) {
             $success = unlink($cleanUrl, $this->streamContext);
         }
 

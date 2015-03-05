@@ -30,7 +30,7 @@ class TestBase extends PHPUnit_Framework_TestCase
                 $this->rmr($path . '/' . $nested);
             }
             rmdir($path);
-        } else if (is_file($path)) {
+        } elseif (is_file($path)) {
             unlink($path);
         }
     }
@@ -312,6 +312,16 @@ class TestBase extends PHPUnit_Framework_TestCase
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists($this->remoteDir . '/testDir'));
+    }
+    // }}}
+    // {{{ testRmDoesntExist
+    /**
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    doesn't exist.
+     */
+    public function testRmDoesntExist()
+    {
+        $this->fs->rm('filedoesntexist');
     }
     // }}}
     // {{{ testRmCurrent

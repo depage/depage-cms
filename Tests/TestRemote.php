@@ -37,6 +37,8 @@ class TestRemote extends TestBase
     {
         $remotePath = $this->remoteDir . '/' . $path;
         $this->sshExec('touch ' . $remotePath);
+        $decMode = decoct($mode);
+        $this->sshExec('chmod ' . $decMode . ' ' . $remotePath);
         $this->assertTrue(is_file($remotePath));
     }
     // }}}
