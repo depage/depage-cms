@@ -20,6 +20,14 @@ class FsSshTest extends TestRemote
         return new FsSshTestClass($newParams);
     }
     // }}}
+
+    // {{{ testGetFingerprint
+    public function testGetFingerprint()
+    {
+        $caseInsensitiveCompare = strcasecmp($GLOBALS['SSH_FINGERPRINT'], $this->fs->getFingerprint());
+        $this->assertSame(0, $caseInsensitiveCompare);
+    }
+    // }}}
     // {{{ testDefaultPort
     public function testDefaultPort()
     {
