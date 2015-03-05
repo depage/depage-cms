@@ -23,9 +23,14 @@ class PrivateSshKey extends PublicSshKey
     public function extractPublicKey($tmpDir)
     {
         $details = openssl_pkey_get_details($this->key);
-        $buffer = pack('N', 7) . 'ssh-rsa' .
-            $this->sshEncodeBuffer($details['rsa']['e']) .
-            $this->sshEncodeBuffer($details['rsa']['n']);
+
+        if (isset($details['rsa'])) {
+            $buffer = pack('N', 7) . 'ssh-rsa' .
+                $this->sshEncodeBuffer($details['rsa']['e']) .
+                $this->sshEncodeBuffer($details['rsa']['n']);
+        } else {
+            throw new Exceptions\FsException('Currently public key generation is only supported for RSA keys.');
+        }
         $publicKeyString = 'ssh-rsa ' . base64_encode($buffer) . "\n";
 
         return new PublicSshKey($publicKeyString, $tmpDir);
