@@ -317,7 +317,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testRmCurrent
     /**
      * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Cannot delete current directory
+     * @expectedExceptionMessage    Cannot delete current or parent directory
      */
     public function testRmCurrent()
     {
@@ -325,6 +325,20 @@ class TestBase extends PHPUnit_Framework_TestCase
 
         $this->fs->cd('testDir');
         $this->fs->rm('testDir');
+    }
+    // }}}
+    // {{{ testRmParentDirOfCurrent
+    /**
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    Cannot delete current or parent directory
+     */
+    public function testRmParentDirOfCurrent()
+    {
+        $this->mkdirRemote('testDir/testSubDir');
+
+        $pwd = $this->fs->pwd();
+        $this->fs->cd('testDir/testSubDir');
+        $this->fs->rm($pwd . '/testDir');
     }
     // }}}
 

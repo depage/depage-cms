@@ -208,8 +208,8 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
-        if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\/?$/', $this->pwd())) {
-            throw new Exceptions\FsException('Cannot delete current directory "' . $this->pwd() . '".');
+        if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\//', $this->pwd() . '/')) {
+            throw new Exceptions\FsException('Cannot delete current or parent directory "' . $this->pwd() . '".');
         }
         $this->rmRecursive($url);
 
