@@ -178,10 +178,10 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testLsRecursive
     public function testLsRecursive()
     {
-        $this->mkdirRemote('testDir/abc/abc/abc', 0777, true);
-        $this->mkdirRemote('testDir/abc/abcd/abcd', 0777, true);
-        $this->mkdirRemote('testDir/abc/abcde/abcde', 0777, true);
-        $this->mkdirRemote('testDir/abcd/abcde/abcde', 0777, true);
+        $this->mkdirRemote('testDir/abc/abc/abc');
+        $this->mkdirRemote('testDir/abc/abcd/abcd');
+        $this->mkdirRemote('testDir/abc/abcde/abcde');
+        $this->mkdirRemote('testDir/abcd/abcde/abcde');
         $this->touchRemote('testDir/abcFile');
         $this->touchRemote('testDir/abc/abcFile');
         $this->touchRemote('testDir/abc/abcd/abcFile');
