@@ -20,6 +20,22 @@ class FsSshTest extends TestRemote
         return new FsSshTestClass($newParams);
     }
     // }}}
+    // {{{ testDefaultPort
+    public function testDefaultPort()
+    {
+        $params = array(
+            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'scheme' => 'ssh2.sftp',
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['REMOTE_PASS'],
+            'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
+        );
+
+        $fs = new FsSshTestClass($params);
+        $this->assertTrue($fs->test());
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

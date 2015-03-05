@@ -179,7 +179,6 @@ class FsSsh extends Fs
         return parent::rename($source, $target);
     }
     // }}}
-
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
