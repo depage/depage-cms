@@ -1,6 +1,6 @@
 <?php
 
-class FsSshKeyTest extends TestRemote
+class FsSshKeyTest extends FsSshTest
 {
     // {{{ createTestClass
     public function createTestClass($override = array())

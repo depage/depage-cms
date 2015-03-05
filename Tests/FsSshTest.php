@@ -9,7 +9,7 @@ class FsSshTest extends TestRemote
             'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
-            'port' => '22',
+            'port' => 22,
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
@@ -42,6 +42,17 @@ class FsSshTest extends TestRemote
 
         $fs = new FsSshTestClass($params);
         $this->assertTrue($fs->test());
+    }
+    // }}}
+
+    // {{{ testLateConnectInvalidDirectoryFail
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Unable to open ssh2.sftp://
+     */
+    public function testLateConnectInvalidDirectoryFail()
+    {
+        return parent::testLateConnectInvalidDirectoryFail();
     }
     // }}}
 }

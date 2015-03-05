@@ -432,4 +432,24 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertContains('file_put_contents', $error);
     }
     // }}}
+
+    // {{{ testLateConnectInvalidDirectory
+    public function testLateConnectInvalidDirectory()
+    {
+        $params = array('path' => 'directorydoesnotexist');
+        $this->createTestClass($params);
+    }
+    // }}}
+    // {{{ testLateConnectInvalidDirectoryFail
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Invalid path: "directorydoesnotexist"
+     */
+    public function testLateConnectInvalidDirectoryFail()
+    {
+        $params = array('path' => 'directorydoesnotexist');
+        $fs = $this->createTestClass($params);
+        $fs->ls('*');
+    }
+    // }}}
 }

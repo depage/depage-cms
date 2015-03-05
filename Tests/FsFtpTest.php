@@ -34,6 +34,17 @@ class FsFtpTest extends TestRemote
         $this->assertTrue($fs->test());
     }
     // }}}
+
+    // {{{ testLateConnectInvalidDirectoryFail
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage No such file or directory
+     */
+    public function testLateConnectInvalidDirectoryFail()
+    {
+        return parent::testLateConnectInvalidDirectoryFail();
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

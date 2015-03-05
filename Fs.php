@@ -378,7 +378,7 @@ class Fs
     // {{{ setBase
     protected function setBase($path)
     {
-        $cleanPath = $this->cleanPath($path);
+        $cleanPath = $this->cleanPath('/' . $path);
         $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
     }
     // }}}

@@ -9,6 +9,7 @@ require_once(__DIR__ . '/../PrivateSshKey.php');
 require_once(__DIR__ . '/../Exceptions/FsException.php');
 require_once(__DIR__ . '/TestBase.php');
 require_once(__DIR__ . '/TestRemote.php');
+require_once(__DIR__ . '/FsSshTest.php');
 
 // {{{ FsTestClass
 class FsTestClass extends Depage\Fs\Fs
