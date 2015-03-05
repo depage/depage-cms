@@ -574,7 +574,7 @@ class Fs
             $hidden = $this->hidden;
         }
 
-        $scanDir = scandir($cleanUrl, SCANDIR_SORT_ASCENDING, $this->streamContext);
+        $scanDir = scandir($cleanUrl, 0, $this->streamContext);
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {
