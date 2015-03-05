@@ -21,7 +21,7 @@ class TestRemote extends TestBase
     // }}}
 
     // {{{ mkdirRemote
-    protected function mkdirRemote($path, $mode = 0777, $recursive = false)
+    protected function mkdirRemote($path, $mode = 0777, $recursive = true)
     {
         $parents = ($recursive) ? '-p ' : '';
         $remotePath = $this->remoteDir . '/' . $path;

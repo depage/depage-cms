@@ -306,12 +306,25 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testRm
     public function testRm()
     {
-        $this->mkdirRemote('testDir/testSubDir', 0777, true);
+        $this->mkdirRemote('testDir/testSubDir');
         $this->createRemoteTestFile('testDir/testFile');
         $this->createRemoteTestFile('testDir/testSubDir/testFile');
 
         $this->fs->rm('testDir');
         $this->assertFalse(file_exists($this->remoteDir . '/testDir'));
+    }
+    // }}}
+    // {{{ testRmCurrent
+    /**
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    Cannot delete current directory
+     */
+    public function testRmCurrent()
+    {
+        $this->mkdirRemote('testDir');
+
+        $this->fs->cd('testDir');
+        $this->fs->rm('testDir');
     }
     // }}}
 
