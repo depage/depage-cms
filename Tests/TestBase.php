@@ -375,7 +375,8 @@ class TestBase extends PHPUnit_Framework_TestCase
     // }}}
     // {{{ testMvSourceDoesntExist
     /**
-     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    source doesn't exist
      */
     public function testMvSourceDoesntExist()
     {
