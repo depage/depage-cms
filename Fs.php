@@ -186,7 +186,7 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
-        $success = mkdir($cleanUrl, 0777, true);
+        $success = mkdir($cleanUrl, 0777, true, $this->streamContext);
 
         if (!$success) {
             throw new Exceptions\FsException('Cannot create directory "' . $url . '".');
@@ -299,7 +299,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        $string = file_get_contents($remote);
+        $string = file_get_contents($remote, false, $this->streamContext);
         if ($string === false) {
             throw new Exceptions\FsException('Cannot get contents of "' . $remote . '".');
         }
@@ -492,7 +492,7 @@ class Fs
             $pattern = array_shift($patterns);
             if (preg_match('/[\*\?\[\]]/', $pattern)) {
                 $matches = array_filter(
-                    $this->scanDir($current),
+                    $this->scandir($current),
                     function ($node) use ($pattern) { return fnmatch($pattern, $node); }
                 );
             } else {
@@ -522,45 +522,19 @@ class Fs
         $cleanUrl = $this->cleanUrl($url);
 
         if (is_dir($cleanUrl)) {
-            foreach ($this->scanDir($cleanUrl, true) as $nested) {
+            foreach ($this->scandir($cleanUrl, true) as $nested) {
                 $this->rmRecursive($cleanUrl . '/' .  $nested);
             }
             $success = $this->rmdir($cleanUrl);
         } else if (is_file($cleanUrl)) {
-            $success = unlink($cleanUrl);
+            $success = unlink($cleanUrl, $this->streamContext);
         }
 
         if ($success) {
-            clearstatcache (true, $cleanUrl);
+            clearstatcache(true, $cleanUrl);
         } else {
             throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '".');
         }
-    }
-    // }}}
-    // {{{ scanDir
-    protected function scanDir($url = '', $hidden = null)
-    {
-        $cleanUrl = $this->cleanUrl($url);
-
-        if ($hidden === null) {
-            $hidden = $this->hidden;
-        }
-
-        $scanDir = scandir($cleanUrl);
-
-        $filtered = array_diff($scanDir, array('.', '..'));
-
-        if (!$hidden) {
-            $filtered = array_filter(
-                $filtered,
-                function ($node) { return ($node[0] != '.'); }
-            );
-        }
-
-        natcasesort($filtered);
-        $sorted = array_values($filtered);
-
-        return $sorted;
     }
     // }}}
     // {{{ errorHandler
@@ -592,16 +566,40 @@ class Fs
     }
     // }}}
 
+    // {{{ scandir
+    protected function scandir($url = '', $hidden = null)
+    {
+        $cleanUrl = $this->cleanUrl($url);
+        if ($hidden === null) {
+            $hidden = $this->hidden;
+        }
+
+        $scanDir = scandir($cleanUrl, SCANDIR_SORT_ASCENDING, $this->streamContext);
+        $filtered = array_diff($scanDir, array('.', '..'));
+
+        if (!$hidden) {
+            $filtered = array_filter(
+                $filtered,
+                function ($node) { return ($node[0] != '.'); }
+            );
+        }
+
+        natcasesort($filtered);
+        $sorted = array_values($filtered);
+
+        return $sorted;
+    }
+    // }}}
     // {{{ rmdir
     protected function rmdir($url)
     {
-        return rmdir($url);
+        return rmdir($url, $this->streamContext);
     }
     // }}}
     // {{{ rename
     protected function rename($source, $target)
     {
-        return rename($source, $target);
+        return rename($source, $target, $this->streamContext);
     }
     // }}}
 }
