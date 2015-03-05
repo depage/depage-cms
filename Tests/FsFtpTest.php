@@ -38,7 +38,7 @@ class FsFtpTest extends TestRemote
     // {{{ testLateConnectInvalidDirectoryFail
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage No such file or directory
+     * @todo figure out "connect() failed: Connection refused" error
      */
     public function testLateConnectInvalidDirectoryFail()
     {

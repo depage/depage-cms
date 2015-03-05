@@ -49,6 +49,7 @@ class FsSshTest extends TestRemote
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage Unable to open ssh2.sftp://
+     * @todo ambiguous error message
      */
     public function testLateConnectInvalidDirectoryFail()
     {
