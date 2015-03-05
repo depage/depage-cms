@@ -13,7 +13,7 @@ class FsFileTest extends TestBase
     // }}}
 
     // {{{ mkdirRemote
-    protected function mkdirRemote($path, $mode = 0777, $recursive = false)
+    protected function mkdirRemote($path, $mode = 0777, $recursive = true)
     {
         $remotePath = $this->remoteDir . '/' . $path;
         mkdir($remotePath, $mode, $recursive);
@@ -57,6 +57,16 @@ class FsFileTest extends TestBase
         $newPwd = $this->fs->pwd();
 
         $this->assertEquals($pwd . 'testDir/', $newPwd);
+    }
+    // }}}
+    // {{{ testMkdirFail
+    /**
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    mkdir(): No such file or directory
+     */
+    public function testMkdirFail()
+    {
+        return parent::testMkdirFail();
     }
     // }}}
 }

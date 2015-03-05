@@ -44,7 +44,7 @@ class Fs
     }
     // }}}
     // {{{ schemeAlias
-    public static function schemeAlias($alias)
+    protected static function schemeAlias($alias)
     {
         $aliases = array(
             ''          => array('class' => 'file', 'scheme' => 'file'),
@@ -181,15 +181,15 @@ class Fs
      *
      * @param $path (string) path of new directory
      */
-    public function mkdir($url)
+    public function mkdir($pathName, $mode = 0777, $recursive = true)
     {
         $this->preCommandHook();
 
-        $cleanUrl = $this->cleanUrl($url);
-        $success = mkdir($cleanUrl, 0777, true, $this->streamContext);
+        $cleanUrl = $this->cleanUrl($pathName);
+        $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
         if (!$success) {
-            throw new Exceptions\FsException('Cannot create directory "' . $url . '".');
+            throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
         }
 
         $this->postCommandHook();

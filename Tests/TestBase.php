@@ -273,11 +273,34 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testMkdir()
     {
         $this->assertFalse(file_exists('testDir'));
-        $this->assertFalse(file_exists('testDir/testDir'));
+        $this->fs->mkdir('testDir');
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir'));
+    }
+    // }}}
+    // {{{ testMkdirRecursive
+    public function testMkdirRecursive()
+    {
+        $this->assertFalse(file_exists('testDir'));
+        $this->assertFalse(file_exists('testDir/testSubDir'));
 
-        $this->fs->mkdir('testDir/testDir');
+        $this->fs->mkdir('testDir/testSubDir');
 
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testDir'));
+        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir'));
+    }
+    // }}}
+    // {{{ testMkdirFail
+    /**
+     * @expectedException           Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage    Error while creating directory "testDir/testSubDir".
+     */
+    public function testMkdirFail()
+    {
+        $this->assertFalse(file_exists('testDir'));
+        $this->assertFalse(file_exists('testDir/testSubDir'));
+
+        $this->fs->mkdir('testDir/testSubDir', 0777, false);
+
+        $this->assertFalse(file_exists($this->remoteDir . '/testDir/testSubDir'));
     }
     // }}}
     // {{{ testRm
