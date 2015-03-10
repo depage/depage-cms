@@ -382,6 +382,22 @@ class Fs
         $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
     }
     // }}}
+    // {{{ errorHandler
+    protected function errorHandler($start)
+    {
+        if ($start) {
+            set_error_handler(
+                function($errno, $errstr, $errfile, $errline, array $errcontext) {
+                    restore_error_handler();
+                    throw new Exceptions\FsException($errstr);
+                }
+            );
+        } else {
+            restore_error_handler();
+        }
+    }
+    // }}}
+
     // {{{ parseUrl
     protected static function parseUrl($url)
     {
@@ -463,6 +479,20 @@ class Fs
         return $path;
     }
     // }}}
+    // {{{ extractFileName
+    protected function extractFileName($path)
+    {
+        $pathInfo = pathinfo($path);
+        $fileName = $pathInfo['filename'];
+
+        if (isset($pathInfo['extension'])) {
+            $fileName .= '.' . $pathInfo['extension'];
+        }
+
+        return $fileName;
+    }
+    // }}}
+
     // {{{ lsFilter
     protected function lsFilter($path = '', $function)
     {
@@ -538,34 +568,6 @@ class Fs
         } else {
             throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '".');
         }
-    }
-    // }}}
-    // {{{ errorHandler
-    protected function errorHandler($start)
-    {
-        if ($start) {
-            set_error_handler(
-                function($errno, $errstr, $errfile, $errline, array $errcontext) {
-                    restore_error_handler();
-                    throw new Exceptions\FsException($errstr);
-                }
-            );
-        } else {
-            restore_error_handler();
-        }
-    }
-    // }}}
-    // {{{ extractFileName
-    protected function extractFileName($path)
-    {
-        $pathInfo = pathinfo($path);
-        $fileName = $pathInfo['filename'];
-
-        if (isset($pathInfo['extension'])) {
-            $fileName .= '.' . $pathInfo['extension'];
-        }
-
-        return $fileName;
     }
     // }}}
 

@@ -28,6 +28,17 @@ class FsSshTest extends TestRemote
         $this->assertSame(0, $caseInsensitiveCompare);
     }
     // }}}
+    // {{{ testWrongFingerprint
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage SSH RSA Fingerprints don't match.
+     */
+    public function testWrongFingerprint()
+    {
+        $fs = $this->createTestObject(array('fingerprint' => 'wrongfingerprint'));
+        $fs->ls('*');
+    }
+    // }}}
     // {{{ testDefaultPort
     public function testDefaultPort()
     {
