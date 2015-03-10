@@ -33,14 +33,24 @@ for lang in $languages; do
         cp $potAll locale/$lang/LC_MESSAGES/messages.po
     fi
     cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
+    cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old_bak.po
     msgmerge locale/$lang/LC_MESSAGES/messages_old.po $potAll -o locale/$lang/LC_MESSAGES/messages.po
     if [[ -a framework/locale/$lang/LC_MESSAGES/messages.po ]] ; then
         cp locale/$lang/LC_MESSAGES/messages.po locale/$lang/LC_MESSAGES/messages_old.po
         msgcat locale/$lang/LC_MESSAGES/messages_old.po framework/locale/$lang/LC_MESSAGES/messages.po -o locale/$lang/LC_MESSAGES/messages.po
     fi
-    rm locale/$lang/LC_MESSAGES/messages_old.po
 
-    msgfmt -o locale/$lang/LC_MESSAGES/messages.mo locale/$lang/LC_MESSAGES/messages.po
+    chanchedLines=$( diff -I ".POT-Creation-Date:.*" locale/$lang/LC_MESSAGES/messages_old_bak.po locale/$lang/LC_MESSAGES/messages.po | grep -v '^[<>-]' | wc -l | grep -o "[0-9]\+" )
+
+    if [ "$chanchedLines" != "0" ] ; then
+        # there are changes
+        rm locale/$lang/LC_MESSAGES/messages_old.po locale/$lang/LC_MESSAGES/messages_old_bak.po
+        msgfmt -o locale/$lang/LC_MESSAGES/messages.mo locale/$lang/LC_MESSAGES/messages.po
+    else
+        # no changes -> keep old version
+        rm locale/$lang/LC_MESSAGES/messages_old.po
+        mv locale/$lang/LC_MESSAGES/messages_old_bak.po locale/$lang/LC_MESSAGES/messages.po
+    fi
 done
 
 rm $filesPHP $filesXML $potAll
