@@ -397,6 +397,15 @@ class TestBase extends PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ testGet
+    public function testGet()
+    {
+        $this->createRemoteTestFile('testFile');
+
+        $this->fs->get('testFile');
+        $this->assertTrue($this->confirmTestFile('testFile'));
+    }
+    // }}}
     // {{{ testGetNamed
     public function testGetNamed()
     {
