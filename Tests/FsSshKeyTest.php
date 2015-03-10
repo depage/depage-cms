@@ -2,8 +2,8 @@
 
 class FsSshKeyTest extends FsSshTest
 {
-    // {{{ createTestClass
-    public function createTestClass($override = array())
+    // {{{ createTestObject
+    public function createTestObject($override = array())
     {
         $params = array(
             'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
@@ -19,11 +19,11 @@ class FsSshKeyTest extends FsSshTest
 
         $newParams = array_merge($params, $override);
 
-        return new FsSshTestClass($newParams);
+        return new Depage\Fs\FsSsh($newParams);
     }
     // }}}
-    // {{{ createTestClassWithoutKeys
-    public function createTestClassWithoutKeys($override = array())
+    // {{{ createTestObjectWithoutKeys
+    public function createTestObjectWithoutKeys($override = array())
     {
         $params = array(
             'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
@@ -37,7 +37,7 @@ class FsSshKeyTest extends FsSshTest
 
         $newParams = array_merge($params, $override);
 
-        return new FsSshTestClass($newParams);
+        return new Depage\Fs\FsSsh($newParams);
     }
     // }}}
 
@@ -52,7 +52,7 @@ class FsSshKeyTest extends FsSshTest
             'privateKeyFile' => 'filedoesntexist',
         );
 
-        $fs = $this->createTestClass($params);
+        $fs = $this->createTestObject($params);
         $fs->ls('*');
     }
     // }}}
@@ -67,7 +67,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKeyFile' => 'filedoesntexist',
         );
 
-        $fs = $this->createTestClass($params);
+        $fs = $this->createTestObject($params);
         $fs->ls('*');
     }
     // }}}
@@ -80,7 +80,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'],
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
     }
     // }}}
@@ -93,7 +93,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY']),
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
     }
     // }}}
@@ -110,7 +110,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'],
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $fs->ls('*');
     }
     // }}}
@@ -127,7 +127,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKey' => 'iamnotapublicsshkey',
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $fs->ls('*');
     }
     // }}}
@@ -140,7 +140,7 @@ class FsSshKeyTest extends FsSshTest
             'publicKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY']),
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
     }
     // }}}
@@ -152,7 +152,7 @@ class FsSshKeyTest extends FsSshTest
             'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'],
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
     }
     // }}}
@@ -164,7 +164,7 @@ class FsSshKeyTest extends FsSshTest
             'privateKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY']),
         );
 
-        $fs = $this->createTestClassWithoutKeys($params);
+        $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
     }
     // }}}

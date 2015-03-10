@@ -2,8 +2,8 @@
 
 class FsFtpTest extends TestRemote
 {
-    // {{{ createTestClass
-    public function createTestClass($override = array())
+    // {{{ createTestObject
+    public function createTestObject($override = array())
     {
         $params = array(
             'path' => '/Temp',
@@ -16,7 +16,7 @@ class FsFtpTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new FsFtpTestClass($newParams);
+        return new Depage\Fs\FsFtp($newParams);
     }
     // }}}
     // {{{ testDefaultPort
@@ -30,7 +30,7 @@ class FsFtpTest extends TestRemote
             'pass' => $GLOBALS['REMOTE_PASS'],
         );
 
-        $fs = new FsFtpTestClass($params);
+        $fs = new Depage\Fs\FsFtp($params);
         $this->assertTrue($fs->test());
     }
     // }}}

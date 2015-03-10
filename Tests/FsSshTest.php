@@ -2,8 +2,8 @@
 
 class FsSshTest extends TestRemote
 {
-    // {{{ createTestClass
-    public function createTestClass($override = array())
+    // {{{ createTestObject
+    public function createTestObject($override = array())
     {
         $params = array(
             'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
@@ -17,7 +17,7 @@ class FsSshTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new FsSshTestClass($newParams);
+        return new Depage\Fs\FsSsh($newParams);
     }
     // }}}
 
@@ -40,7 +40,7 @@ class FsSshTest extends TestRemote
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
-        $fs = new FsSshTestClass($params);
+        $fs = new Depage\Fs\FsSsh($params);
         $this->assertTrue($fs->test());
     }
     // }}}

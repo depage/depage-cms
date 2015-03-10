@@ -9,7 +9,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->localDir = $this->createLocalTestDir();
         $this->remoteDir = $this->createRemoteTestDir();
         chdir($this->localDir);
-        $this->fs = $this->createTestClass();
+        $this->fs = $this->createTestObject();
     }
     // }}}
     // {{{ tearDown
@@ -162,7 +162,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $lsReturn);
 
         $params = array('hidden' => true);
-        $hiddenFs = $this->createTestClass($params);
+        $hiddenFs = $this->createTestObject($params);
         $lsReturn = $hiddenFs->ls('*');
 
         $expected = array(
@@ -507,7 +507,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testLateConnectInvalidDirectory()
     {
         $params = array('path' => 'directorydoesnotexist');
-        $this->createTestClass($params);
+        $this->createTestObject($params);
     }
     // }}}
     // {{{ testLateConnectInvalidDirectoryFail
@@ -518,7 +518,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testLateConnectInvalidDirectoryFail()
     {
         $params = array('path' => 'directorydoesnotexist');
-        $fs = $this->createTestClass($params);
+        $fs = $this->createTestObject($params);
         $fs->ls('*');
     }
     // }}}

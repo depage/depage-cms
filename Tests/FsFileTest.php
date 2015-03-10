@@ -2,13 +2,13 @@
 
 class FsFileTest extends TestBase
 {
-    // {{{ createTestClass
-    public function createTestClass($override = array())
+    // {{{ createTestObject
+    public function createTestObject($override = array())
     {
         $params = array('scheme' => 'file');
         $newParams = array_merge($params, $override);
 
-        return new FsFileTestClass($newParams);
+        return new Depage\Fs\FsFile($newParams);
     }
     // }}}
 
