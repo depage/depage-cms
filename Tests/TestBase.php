@@ -334,7 +334,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->mkdirRemote('testDir');
 
         $this->fs->cd('testDir');
-        $this->fs->rm('testDir');
+        $this->fs->rm('../testDir');
     }
     // }}}
     // {{{ testRmParentDirOfCurrent
@@ -397,8 +397,8 @@ class TestBase extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testGet
-    public function testGet()
+    // {{{ testGetNamed
+    public function testGetNamed()
     {
         $this->createRemoteTestFile('testFile');
 

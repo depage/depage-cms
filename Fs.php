@@ -413,8 +413,8 @@ class Fs
             if (substr($url, 0, 1) == '/') {
                 $newPath = $url;
             } else {
-                $newPath = $this->base;
-                $newPath .= (substr($path, 0, 1) == '/') ? $this->currentPath . '/' : '';
+                $newPath = $this->base . $this->currentPath;
+                $newPath .= (substr($path, 0, 1) == '/') ? '' : '/';
                 $newPath .= $path;
             }
         }
