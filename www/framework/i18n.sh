@@ -1,6 +1,13 @@
 #!/bin/bash
 if ! test -d locale
 then
+    # search for locale dir if not in current path
+    localeDir=$( find . -type d -name locale | grep locale )
+    cd $localeDir/..
+fi
+
+if ! test -d locale
+then
     echo "run this script in the parent directory of your locale directory"
     exit 1
 fi
