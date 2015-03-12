@@ -44,7 +44,7 @@ class Fs
     }
     // }}}
     // {{{ schemeAlias
-    protected static function schemeAlias($alias)
+    protected static function schemeAlias($alias = '')
     {
         $aliases = array(
             ''          => array('class' => 'file', 'scheme' => 'file'),

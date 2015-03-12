@@ -14,39 +14,22 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->fs = new Depage\Fs\FsFile($params);
     }
     // }}}
-    // {{{ invoke
-    public function invoke($fs, $methodName, $args = null)
-    {
-        $reflector = new ReflectionClass($fs);
-        $reflectionMethod = $reflector->getMethod($methodName);
-        $reflectionMethod->setAccessible(true);
-        $result = null;
-
-        if ($args === null) {
-            $result = $reflectionMethod->invoke($fs);
-        } else {
-            $result = $reflectionMethod->invokeArgs($fs, $args);
-        }
-
-        return $result;
-    }
-    // }}}
     // {{{ invokeCleanUrl
     public function invokeCleanUrl($url)
     {
-        return $this->invoke($this->fs, 'cleanUrl', array($url));
+        return invoke($this->fs, 'cleanUrl', array($url));
     }
     // }}}
     // {{{ invokeParseUrl
     public function invokeParseUrl($url)
     {
-        return $this->invoke($this->fs, 'parseUrl', array($url));
+        return invoke($this->fs, 'parseUrl', array($url));
     }
     // }}}
     // {{{ invokeExtractFileName
     public function invokeExtractFileName($path)
     {
-        return $this->invoke($this->fs, 'extractFileName', array($path));
+        return invoke($this->fs, 'extractFileName', array($path));
     }
     // }}}
 
@@ -62,21 +45,21 @@ class FsTest extends PHPUnit_Framework_TestCase
         );
 
         $fs = new Depage\Fs\Fs($params);
-        $this->invoke($fs, 'lateConnect');
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $this->invoke($fs, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $this->invoke($fs, 'cleanUrl', array('/path/to/file')));
+        invoke($fs, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', invoke($fs, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', invoke($fs, 'cleanUrl', array('/path/to/file')));
 
         $params['path'] = '/testSubDir';
         $fsSubDir = new Depage\Fs\Fs($params);
-        $this->invoke($fsSubDir, 'lateConnect');
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
+        invoke($fsSubDir, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
 
         $params['path'] = '/testSubDir/';
         $fsSubDir = new Depage\Fs\Fs($params);
-        $this->invoke($fsSubDir, 'lateConnect');
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
+        invoke($fsSubDir, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
     }
     // }}}
     // {{{ testCleanUrlSpecialCharacters
@@ -85,29 +68,29 @@ class FsTest extends PHPUnit_Framework_TestCase
         $params = array('scheme' => 'testScheme');
 
         $fs = new Depage\Fs\Fs($params);
-        $this->invoke($fs, 'lateConnect');
-        $this->assertEquals('testScheme:///path',           $this->invoke($fs, 'cleanUrl', array('path')));
-        $this->assertEquals('testScheme:///path/to/file',   $this->invoke($fs, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('testScheme:///path/to/file',   $this->invoke($fs, 'cleanUrl', array('/path/to/file')));
-        $this->assertEquals('testScheme:/// ',              $this->invoke($fs, 'cleanUrl', array(' ')));
-        $this->assertEquals('testScheme:///pa h/to/fi e',   $this->invoke($fs, 'cleanUrl', array('/pa h/to/fi e')));
-        $this->assertEquals('testScheme:///?',              $this->invoke($fs, 'cleanUrl', array('?')));
-        $this->assertEquals('testScheme:///pa?h/to/fi?e',   $this->invoke($fs, 'cleanUrl', array('/pa?h/to/fi?e')));
-        $this->assertEquals('testScheme:///|',              $this->invoke($fs, 'cleanUrl', array('|')));
-        $this->assertEquals('testScheme:///pa|h/to/fi|e',   $this->invoke($fs, 'cleanUrl', array('/pa|h/to/fi|e')));
-        $this->assertEquals('testScheme:///<',              $this->invoke($fs, 'cleanUrl', array('<')));
-        $this->assertEquals('testScheme:///>',              $this->invoke($fs, 'cleanUrl', array('>')));
-        $this->assertEquals('testScheme:///pa<h/to/fi>e',   $this->invoke($fs, 'cleanUrl', array('/pa<h/to/fi>e')));
-        $this->assertEquals('testScheme:///(',              $this->invoke($fs, 'cleanUrl', array('(')));
-        $this->assertEquals('testScheme:///)',              $this->invoke($fs, 'cleanUrl', array(')')));
-        $this->assertEquals('testScheme:///pa(h/to/fi)e',   $this->invoke($fs, 'cleanUrl', array('/pa(h/to/fi)e')));
-        $this->assertEquals('testScheme:///[',              $this->invoke($fs, 'cleanUrl', array('[')));
-        $this->assertEquals('testScheme:///]',              $this->invoke($fs, 'cleanUrl', array(']')));
-        $this->assertEquals('testScheme:///pa[h/to/fi]e',   $this->invoke($fs, 'cleanUrl', array('/pa[h/to/fi]e')));
-        $this->assertEquals('testScheme:///"',              $this->invoke($fs, 'cleanUrl', array('"')));
-        $this->assertEquals('testScheme:///pa"h/to/fi"e',   $this->invoke($fs, 'cleanUrl', array('/pa"h/to/fi"e')));
-        $this->assertEquals('testScheme:///\'',             $this->invoke($fs, 'cleanUrl', array('\'')));
-        $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $this->invoke($fs, 'cleanUrl', array('/pa\'h/to/fi\'e')));
+        invoke($fs, 'lateConnect');
+        $this->assertEquals('testScheme:///path',           invoke($fs, 'cleanUrl', array('path')));
+        $this->assertEquals('testScheme:///path/to/file',   invoke($fs, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme:///path/to/file',   invoke($fs, 'cleanUrl', array('/path/to/file')));
+        $this->assertEquals('testScheme:/// ',              invoke($fs, 'cleanUrl', array(' ')));
+        $this->assertEquals('testScheme:///pa h/to/fi e',   invoke($fs, 'cleanUrl', array('/pa h/to/fi e')));
+        $this->assertEquals('testScheme:///?',              invoke($fs, 'cleanUrl', array('?')));
+        $this->assertEquals('testScheme:///pa?h/to/fi?e',   invoke($fs, 'cleanUrl', array('/pa?h/to/fi?e')));
+        $this->assertEquals('testScheme:///|',              invoke($fs, 'cleanUrl', array('|')));
+        $this->assertEquals('testScheme:///pa|h/to/fi|e',   invoke($fs, 'cleanUrl', array('/pa|h/to/fi|e')));
+        $this->assertEquals('testScheme:///<',              invoke($fs, 'cleanUrl', array('<')));
+        $this->assertEquals('testScheme:///>',              invoke($fs, 'cleanUrl', array('>')));
+        $this->assertEquals('testScheme:///pa<h/to/fi>e',   invoke($fs, 'cleanUrl', array('/pa<h/to/fi>e')));
+        $this->assertEquals('testScheme:///(',              invoke($fs, 'cleanUrl', array('(')));
+        $this->assertEquals('testScheme:///)',              invoke($fs, 'cleanUrl', array(')')));
+        $this->assertEquals('testScheme:///pa(h/to/fi)e',   invoke($fs, 'cleanUrl', array('/pa(h/to/fi)e')));
+        $this->assertEquals('testScheme:///[',              invoke($fs, 'cleanUrl', array('[')));
+        $this->assertEquals('testScheme:///]',              invoke($fs, 'cleanUrl', array(']')));
+        $this->assertEquals('testScheme:///pa[h/to/fi]e',   invoke($fs, 'cleanUrl', array('/pa[h/to/fi]e')));
+        $this->assertEquals('testScheme:///"',              invoke($fs, 'cleanUrl', array('"')));
+        $this->assertEquals('testScheme:///pa"h/to/fi"e',   invoke($fs, 'cleanUrl', array('/pa"h/to/fi"e')));
+        $this->assertEquals('testScheme:///\'',             invoke($fs, 'cleanUrl', array('\'')));
+        $this->assertEquals('testScheme:///pa\'h/to/fi\'e', invoke($fs, 'cleanUrl', array('/pa\'h/to/fi\'e')));
     }
     // }}}
     // {{{ testParseUrl
@@ -157,7 +140,7 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ testCleanUrlFile
     public function testCleanUrlFile()
     {
-        $this->invoke($this->fs, 'lateConnect');
+        invoke($this->fs, 'lateConnect');
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl('file://' . getcwd() . '/path/to/file'));
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl('path/to/file'));
         $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl(getcwd() . '/path/to/file'));

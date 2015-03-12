@@ -79,6 +79,22 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('madeupscheme', $this->getScheme($fs));
     }
     // }}}
+
+    // {{{ testSchemeAlias
+    public function testSchemeAlias()
+    {
+        $fs = new Fs();
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array()));
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array('')));
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array('file')));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftp'),         invoke($fs, 'schemeAlias', array('ftp')));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftps'),        invoke($fs, 'schemeAlias', array('ftps')));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('ssh2.sftp')));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('ssh')));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('sftp')));
+        $this->assertEquals(array('class' => '', 'scheme' => 'madeupscheme'),   invoke($fs, 'schemeAlias', array('madeupscheme')));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
