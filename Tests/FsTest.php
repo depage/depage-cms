@@ -54,23 +54,60 @@ class FsTest extends PHPUnit_Framework_TestCase
     public function testCleanUrl()
     {
         $params = array(
-            'scheme' => 'ftp',
+            'scheme' => 'testScheme',
             'user' => 'testUser',
             'pass' => 'testPass',
             'host' => 'testHost',
             'port' => 42,
         );
 
-        $ftpFs = new Depage\Fs\Fs($params);
-        $this->invoke($ftpFs, 'lateConnect');
-        $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $this->invoke($ftpFs, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('ftp://testUser:testPass@testHost:42/path/to/file', $this->invoke($ftpFs, 'cleanUrl', array('/path/to/file')));
+        $fs = new Depage\Fs\Fs($params);
+        $this->invoke($fs, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $this->invoke($fs, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $this->invoke($fs, 'cleanUrl', array('/path/to/file')));
 
         $params['path'] = '/testSubDir';
-        $ftpFsSubDir = new Depage\Fs\Fs($params);
-        $this->invoke($ftpFsSubDir, 'lateConnect');
-        $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($ftpFsSubDir, 'cleanUrl', array('path/to/file')));
-        $this->assertEquals('ftp://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($ftpFsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
+        $fsSubDir = new Depage\Fs\Fs($params);
+        $this->invoke($fsSubDir, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
+
+        $params['path'] = '/testSubDir/';
+        $fsSubDir = new Depage\Fs\Fs($params);
+        $this->invoke($fsSubDir, 'lateConnect');
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $this->invoke($fsSubDir, 'cleanUrl', array('/testSubDir/path/to/file')));
+    }
+    // }}}
+    // {{{ testCleanUrlSpecialCharacters
+    public function testCleanUrlSpecialCharacters()
+    {
+        $params = array('scheme' => 'testScheme');
+
+        $fs = new Depage\Fs\Fs($params);
+        $this->invoke($fs, 'lateConnect');
+        $this->assertEquals('testScheme:///path',           $this->invoke($fs, 'cleanUrl', array('path')));
+        $this->assertEquals('testScheme:///path/to/file',   $this->invoke($fs, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('testScheme:///path/to/file',   $this->invoke($fs, 'cleanUrl', array('/path/to/file')));
+        $this->assertEquals('testScheme:/// ',              $this->invoke($fs, 'cleanUrl', array(' ')));
+        $this->assertEquals('testScheme:///pa h/to/fi e',   $this->invoke($fs, 'cleanUrl', array('/pa h/to/fi e')));
+        $this->assertEquals('testScheme:///?',              $this->invoke($fs, 'cleanUrl', array('?')));
+        $this->assertEquals('testScheme:///pa?h/to/fi?e',   $this->invoke($fs, 'cleanUrl', array('/pa?h/to/fi?e')));
+        $this->assertEquals('testScheme:///|',              $this->invoke($fs, 'cleanUrl', array('|')));
+        $this->assertEquals('testScheme:///pa|h/to/fi|e',   $this->invoke($fs, 'cleanUrl', array('/pa|h/to/fi|e')));
+        $this->assertEquals('testScheme:///<',              $this->invoke($fs, 'cleanUrl', array('<')));
+        $this->assertEquals('testScheme:///>',              $this->invoke($fs, 'cleanUrl', array('>')));
+        $this->assertEquals('testScheme:///pa<h/to/fi>e',   $this->invoke($fs, 'cleanUrl', array('/pa<h/to/fi>e')));
+        $this->assertEquals('testScheme:///(',              $this->invoke($fs, 'cleanUrl', array('(')));
+        $this->assertEquals('testScheme:///)',              $this->invoke($fs, 'cleanUrl', array(')')));
+        $this->assertEquals('testScheme:///pa(h/to/fi)e',   $this->invoke($fs, 'cleanUrl', array('/pa(h/to/fi)e')));
+        $this->assertEquals('testScheme:///[',              $this->invoke($fs, 'cleanUrl', array('[')));
+        $this->assertEquals('testScheme:///]',              $this->invoke($fs, 'cleanUrl', array(']')));
+        $this->assertEquals('testScheme:///pa[h/to/fi]e',   $this->invoke($fs, 'cleanUrl', array('/pa[h/to/fi]e')));
+        $this->assertEquals('testScheme:///"',              $this->invoke($fs, 'cleanUrl', array('"')));
+        $this->assertEquals('testScheme:///pa"h/to/fi"e',   $this->invoke($fs, 'cleanUrl', array('/pa"h/to/fi"e')));
+        $this->assertEquals('testScheme:///\'',             $this->invoke($fs, 'cleanUrl', array('\'')));
+        $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $this->invoke($fs, 'cleanUrl', array('/pa\'h/to/fi\'e')));
     }
     // }}}
     // {{{ testParseUrl
@@ -86,13 +123,13 @@ class FsTest extends PHPUnit_Framework_TestCase
 
         $expected = array(
             'path'      => '/path/to/file',
-            'scheme'    => 'ftp',
+            'scheme'    => 'testScheme',
             'user'      => 'testUser',
             'pass'      => 'testPass',
             'host'      => 'testHost',
             'port'      => '42',
         );
-        $this->assertEquals($expected, $this->invokeParseUrl('ftp://testUser:testPass@testHost:42/path/to/file'));
+        $this->assertEquals($expected, $this->invokeParseUrl('testScheme://testUser:testPass@testHost:42/path/to/file'));
     }
     // }}}
     // {{{ testParseUrlPath
