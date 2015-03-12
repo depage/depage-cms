@@ -107,7 +107,7 @@ class FsSsh extends Fs
     // {{{ authenticateByKey
     protected function authenticateByKey($connection)
     {
-        if (!$this->checkKeyCombination()) {
+        if (!$this->isValidKeyCombination()) {
             throw new Exceptions\FsException('Invalid SSH key combination.');
         }
 
@@ -139,8 +139,8 @@ class FsSsh extends Fs
         return $authenticated;
     }
     // }}}
-    // {{{ checkKeyCombination
-    protected function checkKeyCombination()
+    // {{{ isValidKeyCombination
+    protected function isValidKeyCombination()
     {
         return ($this->privateKeyFile && $this->publicKeyFile)
             || ($this->tmp && ($this->privateKeyFile || $this->privateKey));
