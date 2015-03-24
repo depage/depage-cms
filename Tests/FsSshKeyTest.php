@@ -170,6 +170,21 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
+    // {{{ testInvalidKeyCombination
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Invalid SSH key combination.
+     */
+    public function testInvalidKeyCombination()
+    {
+        $params = array(
+            'publicKey' => $GLOBALS['SSH_PUBLIC_KEY'],
+        );
+
+        $fs = $this->createTestObjectWithoutKeys($params);
+        $fs->ls('*');
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
