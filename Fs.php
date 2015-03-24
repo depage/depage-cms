@@ -8,7 +8,7 @@ class Fs
     protected $currentPath;
     protected $base;
     protected $url;
-    protected $hidden = false;
+    protected $hidden;
     protected $streamContextOptions = array();
     protected $streamContext;
     // }}}
@@ -165,9 +165,7 @@ class Fs
         if (is_dir($cleanUrl) && is_readable($cleanUrl . '/.')) {
             $this->currentPath = str_replace($this->pwd(), '', $cleanUrl) . '/';
         } else {
-            $parsedUrl = $this->parseUrl($cleanUrl);
-            $path = $parsedUrl['path'];
-            throw new Exceptions\FsException('Directory not accessible "' . $path . '".');
+            throw new Exceptions\FsException('Directory not accessible "' . $this->cleanUrl($url, false) . '".');
         }
 
         $this->postCommandHook();
@@ -208,8 +206,10 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($url);
-        if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\//', $this->pwd() . '/')) {
-            throw new Exceptions\FsException('Cannot delete current or parent directory "' . $this->pwd() . '".');
+        $pwd = $this->pwd();
+
+        if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\//', $pwd . '/')) {
+            throw new Exceptions\FsException('Cannot delete current or parent directory "' . $this->cleanUrl($pwd, false) . '".');
         }
         $this->rmRecursive($url);
 
@@ -237,10 +237,10 @@ class Fs
                 $target .= '/' . $this->extractFileName($source);
             }
             if (!$this->rename($source, $target)) {
-                throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '".');
+                throw new Exceptions\FsException('Cannot move "' . $this->cleanUrl($sourcePath, false) . '" to "' . $this->cleanUrl($targetPath, false) . '".');
             }
         } else {
-            throw new Exceptions\FsException('Cannot move "' . $source . '" to "' . $target . '" - source doesn\'t exist.');
+            throw new Exceptions\FsException('Cannot move "' . $this->cleanUrl($sourcePath, false) . '" to "' . $this->cleanUrl($targetPath, false) . '" - source doesn\'t exist.');
         }
 
         $this->postCommandHook();
@@ -266,7 +266,7 @@ class Fs
 
         $remote = $this->cleanUrl($remotePath);
         if (!copy($remote, $local, $this->streamContext)) {
-            throw new Exceptions\FsException('Cannot copy "' . $remote  . '" to "' . $local . '".');
+            throw new Exceptions\FsException('Cannot copy "' . $this->cleanUrl($remotePath, false) . '" to "' . $local . '".');
         }
 
         $this->postCommandHook();
@@ -287,7 +287,7 @@ class Fs
 
         $remote = $this->cleanUrl($remotePath);
         if (!copy($local, $remote, $this->streamContext)) {
-            throw new Exceptions\FsException('Cannot copy "' . $local . '" to "' . $remote . '".');
+            throw new Exceptions\FsException('Cannot copy "' . $local . '" to "' . $this->cleanUrl($remotePath, false) . '".');
         }
 
         $this->postCommandHook();
@@ -301,7 +301,7 @@ class Fs
         $remote = $this->cleanUrl($remotePath);
         $string = file_get_contents($remote, false, $this->streamContext);
         if ($string === false) {
-            throw new Exceptions\FsException('Cannot get contents of "' . $remote . '".');
+            throw new Exceptions\FsException('Cannot get contents of "' . $this->cleanUrl($remotePath, false) . '".');
         }
 
         $this->postCommandHook();
@@ -324,7 +324,7 @@ class Fs
         $remote = $this->cleanUrl($remotePath);
         $bytes = file_put_contents($remote, $string, 0, $this->streamContext);
         if ($bytes === false) {
-            throw new Exceptions\FsException('Cannot write string to "' . $remote . '".');
+            throw new Exceptions\FsException('Cannot write string to "' . $this->cleanUrl($remotePath, false) . '".');
         }
 
         $this->postCommandHook();
@@ -415,7 +415,7 @@ class Fs
     }
     // }}}
     // {{{ cleanUrl
-    protected function cleanUrl($url)
+    protected function cleanUrl($url, $showPass = true)
     {
         $parsed = $this->parseUrl($url);
         $scheme = (isset($parsed['scheme'])) ? $parsed['scheme'] : null;
@@ -441,7 +441,7 @@ class Fs
             throw new Exceptions\FsException('Cannot leave base directory "' . $this->base . '".');
         }
 
-        return $this->buildUrl($newUrl);
+        return $this->buildUrl($newUrl, $showPass);
     }
     // }}}
     // {{{ cleanPath
@@ -466,11 +466,15 @@ class Fs
     }
     // }}}
     // {{{ buildUrl
-    protected function buildUrl($parsed)
+    protected function buildUrl($parsed, $showPass = true)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= isset($parsed['user']) ? $parsed['user']       : '';
-        $path .= isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+        $path .= isset($parsed['user']) ? $parsed['user'] : '';
+
+        if (isset($parsed['pass'])) {
+            $path .= ($showPass) ? ':' . $parsed['pass'] : ':...';
+        }
+
         $path .= isset($parsed['user']) ? '@'                   : '';
         $path .= isset($parsed['host']) ? $parsed['host']       : '';
         $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
@@ -553,7 +557,7 @@ class Fs
         $success = false;
 
         if (!file_exists($cleanUrl)) {
-            throw new Exceptions\FsException('"' . $cleanUrl . '" doesn\'t exist.');
+            throw new Exceptions\FsException('"' . $this->cleanUrl($url, false) . '" doesn\'t exist.');
         } elseif (is_dir($cleanUrl)) {
             foreach ($this->scandir($cleanUrl, true) as $nested) {
                 $this->rmRecursive($cleanUrl . '/' .  $nested);
@@ -566,7 +570,7 @@ class Fs
         if ($success) {
             clearstatcache(true, $cleanUrl);
         } else {
-            throw new Exceptions\FsException('Cannot delete "' . $cleanUrl . '".');
+            throw new Exceptions\FsException('Cannot delete "' . $this->cleanUrl($url, false) . '".');
         }
     }
     // }}}

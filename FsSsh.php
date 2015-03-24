@@ -154,7 +154,7 @@ class FsSsh extends Fs
     }
     // }}}
     // {{{ buildUrl
-    protected function buildUrl($parsed)
+    protected function buildUrl($parsed, $showPass = true)
     {
         $path = $parsed['scheme'] . '://';
         $path .= $this->getSession();
