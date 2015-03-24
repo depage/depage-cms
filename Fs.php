@@ -211,7 +211,7 @@ class Fs
         if (preg_match('/^' . preg_quote($cleanUrl, '/') . '\//', $pwd . '/')) {
             throw new Exceptions\FsException('Cannot delete current or parent directory "' . $this->cleanUrl($pwd, false) . '".');
         }
-        $this->rmRecursive($url);
+        $this->rmRecursive($cleanUrl);
 
         $this->postCommandHook();
     }
@@ -526,7 +526,7 @@ class Fs
             $pattern = array_shift($patterns);
             if (preg_match('/[\*\?\[\]]/', $pattern)) {
                 $matches = array_filter(
-                    $this->scandir($current),
+                    $this->scandir($this->pwd() . $current),
                     function ($node) use ($pattern) { return fnmatch($pattern, $node); }
                 );
             } else {
@@ -538,7 +538,7 @@ class Fs
 
                 if ($count == 1) {
                     $result[] = $next;
-                } elseif (is_dir($this->cleanUrl($next))) {
+                } elseif (is_dir($this->pwd() . $next)) {
                     $result = array_merge(
                         $result,
                         $this->lsRecursive(implode('/', $patterns), $next)
@@ -551,13 +551,12 @@ class Fs
     }
     // }}}
     // {{{ rmRecursive
-    protected function rmRecursive($url)
+    protected function rmRecursive($cleanUrl)
     {
-        $cleanUrl = $this->cleanUrl($url);
         $success = false;
 
         if (!file_exists($cleanUrl)) {
-            throw new Exceptions\FsException('"' . $this->cleanUrl($url, false) . '" doesn\'t exist.');
+            throw new Exceptions\FsException('"' . $this->cleanUrl($cleanUrl, false) . '" doesn\'t exist.');
         } elseif (is_dir($cleanUrl)) {
             foreach ($this->scandir($cleanUrl, true) as $nested) {
                 $this->rmRecursive($cleanUrl . '/' .  $nested);
@@ -570,15 +569,14 @@ class Fs
         if ($success) {
             clearstatcache(true, $cleanUrl);
         } else {
-            throw new Exceptions\FsException('Cannot delete "' . $this->cleanUrl($url, false) . '".');
+            throw new Exceptions\FsException('Cannot delete "' . $this->cleanUrl($cleanUrl, false) . '".');
         }
     }
     // }}}
 
     // {{{ scandir
-    protected function scandir($url = '', $hidden = null)
+    protected function scandir($cleanUrl = '', $hidden = null)
     {
-        $cleanUrl = $this->cleanUrl($url);
         if ($hidden === null) {
             $hidden = $this->hidden;
         }
