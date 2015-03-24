@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/FsSshTest.php');
+
 class FsSshKeyTest extends FsSshTest
 {
     // {{{ createTestObject

@@ -55,7 +55,6 @@ class FsSshTest extends TestRemote
         $this->assertTrue($fs->test());
     }
     // }}}
-
     // {{{ testLateConnectInvalidDirectoryFail
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
