@@ -8,16 +8,10 @@ class FsTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $params = array(
-            'scheme' => 'file'
+            'scheme' => 'testScheme'
         );
 
-        $this->fs = new Depage\Fs\FsFile($params);
-    }
-    // }}}
-    // {{{ invokeCleanUrl
-    public function invokeCleanUrl($url)
-    {
-        return invoke($this->fs, 'cleanUrl', array($url));
+        $this->fs = new Depage\Fs\Fs($params);
     }
     // }}}
     // {{{ invokeParseUrl
@@ -140,10 +134,11 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ testCleanUrlFile
     public function testCleanUrlFile()
     {
-        invoke($this->fs, 'lateConnect');
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl('file://' . getcwd() . '/path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl('path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $this->invokeCleanUrl(getcwd() . '/path/to/file'));
+        $fs = new Depage\Fs\FsFile(array('scheme' => 'file'));
+        invoke($fs, 'lateConnect');
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', invoke($fs, 'cleanUrl', array('file://' . getcwd() . '/path/to/file')));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', invoke($fs, 'cleanUrl', array('path/to/file')));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', invoke($fs, 'cleanUrl', array(getcwd() . '/path/to/file')));
     }
     // }}}
     // {{{ testExtractFileName
@@ -173,6 +168,20 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('.extension', $this->invokeExtractFileName('path/to/.extension'));
         $this->assertEquals('.extension', $this->invokeExtractFileName('/.extension'));
         $this->assertEquals('.extension', $this->invokeExtractFileName('.extension'));
+    }
+    // }}}
+    // {{{ testEmptyPassword
+    public function testEmptyPassword()
+    {
+        $params = array(
+            'scheme' => 'testScheme',
+            'user' => 'testUser',
+            'pass' => '',
+            'host' => 'testHost',
+        );
+
+        $fs = new Depage\Fs\Fs($params);
+        $this->assertEquals('testScheme://testUser:@testHost/', $fs->pwd());
     }
     // }}}
 }
