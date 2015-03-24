@@ -156,11 +156,18 @@ class FsSsh extends Fs
     // {{{ buildUrl
     protected function buildUrl($parsed, $showPass = true)
     {
-        $path = $parsed['scheme'] . '://';
-        $path .= $this->getSession();
-        $path .= isset($parsed['path']) ? $parsed['path'] : '/';
+        $url = $parsed['scheme'] . '://';
+        $url .= $this->getSession();
 
-        return $path;
+        $path = isset($parsed['path']) ? $parsed['path'] : '/';
+        // workaround for https://bugs.php.net/bug.php?id=64169
+        if ($path === '/') {
+            $path = '/.';
+        }
+
+        $url .= $path;
+
+        return $url;
     }
     // }}}
 

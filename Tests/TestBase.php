@@ -522,4 +522,25 @@ class TestBase extends PHPUnit_Framework_TestCase
         $fs->ls('*');
     }
     // }}}
+
+    // {{{ testEmptyParamsPath
+    public function testEmptyParamsPath()
+    {
+        $params = array();
+        $fs = $this->createTestObject($params);
+        $fs->ls('*');
+
+        $params = array('path' => '');
+        $fs = $this->createTestObject($params);
+        $fs->ls('*');
+
+        $params = array('path' => '.');
+        $fs = $this->createTestObject($params);
+        $fs->ls('*');
+
+        $params = array('path' => './');
+        $fs = $this->createTestObject($params);
+        $fs->ls('*');
+    }
+    // }}}
 }
