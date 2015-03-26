@@ -2,7 +2,7 @@
 
 Transparent, protocol independent, local and remote file system operations.
 
-Abstract virtual-file-system-like behauviour across local file systems and
+Abstract virtual-file-system-like behavior across local file systems and
 remote protocols. With a syntax analogue to FTP-clients (put, get) depage-fs
 makes PHP stream wrappers easily accessible and provides a unified user
 interface.

@@ -10,21 +10,54 @@ require_once(__DIR__ . '/../Exceptions/FsException.php');
 require_once(__DIR__ . '/TestBase.php');
 require_once(__DIR__ . '/TestRemote.php');
 
-// {{{ invoke
-function invoke($fs, $methodName, $args = null)
+// {{{ FsTestClass
+class FsTestClass extends \Depage\Fs\Fs
 {
-    $reflector = new ReflectionClass($fs);
-    $reflectionMethod = $reflector->getMethod($methodName);
-    $reflectionMethod->setAccessible(true);
-    $result = null;
-
-    if ($args === null) {
-        $result = $reflectionMethod->invoke($fs);
-    } else {
-        $result = $reflectionMethod->invokeArgs($fs, $args);
+    public static function schemeAlias($alias = '')
+    {
+        return parent::schemeAlias($alias);
     }
-
-    return $result;
+    public function lateConnect()
+    {
+        return parent::lateConnect();
+    }
+    public static function parseUrl($url)
+    {
+        return parent::parseUrl($url);
+    }
+    public function cleanUrl($url, $showPass = true)
+    {
+        return parent::cleanUrl($url, $showPass);
+    }
+    public function extractFileName($path)
+    {
+        return parent::extractFileName($path);
+    }
+}
+// }}}
+// {{{ FsTestClass
+class FsFileTestClass extends \Depage\Fs\FsFile
+{
+    public static function schemeAlias($alias = '')
+    {
+        return parent::schemeAlias($alias);
+    }
+    public function lateConnect()
+    {
+        return parent::lateConnect();
+    }
+    public static function parseUrl($url)
+    {
+        return parent::parseUrl($url);
+    }
+    public function cleanUrl($url, $showPass = true)
+    {
+        return parent::cleanUrl($url, $showPass);
+    }
+    public function extractFileName($path)
+    {
+        return parent::extractFileName($path);
+    }
 }
 // }}}
 

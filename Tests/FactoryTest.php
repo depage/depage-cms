@@ -4,19 +4,6 @@ use Depage\Fs\Fs;
 
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
-
-    // {{{ getScheme
-    public function getScheme($fs)
-    {
-        $reflector = new ReflectionClass($fs);
-        $urlProperty = $reflector->getProperty('url');
-        $urlProperty->setAccessible(true);
-        $url = $urlProperty->getValue($fs);
-
-        return $url['scheme'];
-    }
-    // }}}
-
     // {{{ testFsFile
     public function testFsFile()
     {
@@ -31,7 +18,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             $fs = Fs::factory($case);
 
             $this->assertInstanceOf('Depage\Fs\FsFile', $fs);
-            $this->assertEquals('file', $this->getScheme($fs));
         }
     }
     // }}}
@@ -41,7 +27,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $fs = Fs::factory('ftp://user@host/path/to/file');
 
         $this->assertInstanceOf('Depage\Fs\FsFtp', $fs);
-        $this->assertEquals('ftp', $this->getScheme($fs));
     }
     // }}}
     // {{{ testFsFtps
@@ -50,7 +35,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $fs = Fs::factory('ftps://user@host/path/to/file');
 
         $this->assertInstanceOf('Depage\Fs\FsFtp', $fs);
-        $this->assertEquals('ftps', $this->getScheme($fs));
     }
     // }}}
     // {{{ testFsSsh
@@ -66,7 +50,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             $fs = Fs::factory($case);
 
             $this->assertInstanceOf('Depage\Fs\FsSsh', $fs);
-            $this->assertEquals('ssh2.sftp', $this->getScheme($fs));
         }
     }
     // }}}
@@ -76,23 +59,22 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $fs = Fs::factory('madeupscheme://user@host/path/to/file');
 
         $this->assertInstanceOf('Depage\Fs\Fs', $fs);
-        $this->assertEquals('madeupscheme', $this->getScheme($fs));
     }
     // }}}
 
     // {{{ testSchemeAlias
     public function testSchemeAlias()
     {
-        $fs = new Fs();
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array()));
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array('')));
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       invoke($fs, 'schemeAlias', array('file')));
-        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftp'),         invoke($fs, 'schemeAlias', array('ftp')));
-        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftps'),        invoke($fs, 'schemeAlias', array('ftps')));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('ssh2.sftp')));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('ssh')));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   invoke($fs, 'schemeAlias', array('sftp')));
-        $this->assertEquals(array('class' => '', 'scheme' => 'madeupscheme'),   invoke($fs, 'schemeAlias', array('madeupscheme')));
+        $fs = new FsTestClass();
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias());
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias(''));
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias('file'));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftp'),         $fs->schemeAlias('ftp'));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftps'),        $fs->schemeAlias('ftps'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('ssh2.sftp'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('ssh'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('sftp'));
+        $this->assertEquals(array('class' => '', 'scheme' => 'madeupscheme'),   $fs->schemeAlias('madeupscheme'));
     }
     // }}}
 }
