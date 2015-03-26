@@ -22,13 +22,13 @@ $fs->cd('new/path');
 $fs->put('file.zip');
 ```
 
-######First, get the SSH fingerprint
+######First, get the SSH fingerprint...
 ```php
 $fs = Fs::factory('ssh://host');
 $print = $fs->getFingerprint();
 ```
 
-######Connect with SSH key
+######...then connect with SSH key
 ```php
 $params = array(
     'user'              => 'user',
@@ -47,14 +47,14 @@ $fs->get('/home/user/file.zip');
 - depage-fs error handler converts any file system operation errors/warnings to
 exceptions. The problem causing them may be in a location different to the one
 stated in the exception.
-- !Important in FTPS!: If the server does not support SSL, then the connection
-falls back to regular unencrypted FTP. Currently there is no way to make sure
-the connection is encrypted.
+- !!!Important in FTPS!!!: If the server does not support SSL, then the
+connection falls back to regular unencrypted FTP. Currently there is no way to
+make sure the connection is encrypted. Susceptible to MITM attacks!
 - SSH keys need to be PEM-formatted.
 - SSH keys can be strings or files. However, internally php requires key files
-(for some strange reason, both public and private). Key files are automatically
-generated (and deleted) in a temporary directory specified by the 'tmp'
-parameter.
+(for some strange reason, both public and private). The files are automatically
+generated (and subsequently deleted) in a temporary directory specified by the
+'tmp'-parameter.
 
 ##License (dual)
 
