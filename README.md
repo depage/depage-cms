@@ -15,7 +15,7 @@ local, ftp(s), ssh (authentication by password or key)
 ##Example
 ######File transfer, local to remote
 ```php
-$fs = Fs:factory('ftp://user:pass@host/');
+$fs = Fs::factory('ftp://user:pass@host/');
 
 $fs->mkdir('new/path');
 $fs->cd('new/path');
@@ -24,7 +24,7 @@ $fs->put('file.zip');
 
 ######First, get the SSH fingerprint
 ```php
-$fs = Fs:factory('ssh://host');
+$fs = Fs::factory('ssh://host');
 $print = $fs->getFingerprint();
 ```
 
@@ -38,7 +38,7 @@ $params = array(
     'tmp'               => '.'
 );
 
-$fs = Fs:factory('ssh://host', $params);
+$fs = Fs::factory('ssh://host', $params);
 $fs->get('/home/user/file.zip');
 ```
 
@@ -47,10 +47,10 @@ $fs->get('/home/user/file.zip');
 - depage-fs error handler converts any file system operation errors/warnings to
 exceptions. The problem causing them may be in a location different to the one
 stated in the exception.
-- Important in FTPS: If the server does not support SSL, then the connection
+- !Important in FTPS!: If the server does not support SSL, then the connection
 falls back to regular unencrypted FTP. Currently there is no way to make sure
 the connection is encrypted.
-- SSH keys need to be pem formatted.
+- SSH keys need to be PEM-formatted.
 - SSH keys can be strings or files. However, internally php requires key files
 (for some strange reason, both public and private). Key files are automatically
 generated (and deleted) in a temporary directory specified by the 'tmp'
