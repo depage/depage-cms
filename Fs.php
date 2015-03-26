@@ -535,12 +535,18 @@ class Fs
     }
     // }}}
     // {{{ rmdir
+    /**
+     * Hook, allows overriding of rmdir function
+     */
     protected function rmdir($url)
     {
         return rmdir($url, $this->streamContext);
     }
     // }}}
     // {{{ rename
+    /**
+     * Hook, allows overriding of rename function
+     */
     protected function rename($source, $target)
     {
         return rename($source, $target, $this->streamContext);

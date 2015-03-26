@@ -62,7 +62,7 @@ stated in the exception.
 - !!! Important in FTPS !!! If the server does not support SSL, then the
 connection falls back to regular unencrypted FTP. Currently there is no way to
 make sure the connection is encrypted. Susceptible to MITM attacks!
-- SSH keys need to be PEM-formatted.
+- SSH keys need to be PEM-formatted (base64).
 - SSH keys can be strings or files. However, internally php requires key files
 (for some strange reason, both public and private). The files are automatically
 generated (and subsequently deleted) in a temporary directory specified by the

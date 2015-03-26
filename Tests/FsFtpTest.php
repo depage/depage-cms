@@ -35,10 +35,11 @@ class FsFtpTest extends TestRemote
     }
     // }}}
 
-    // {{{ testLateConnectInvalidDirectoryFail
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @todo figure out "connect() failed: Connection refused" error
+     * 
+     * override,
+     * ftp stream wrappers give weird error messages
      */
     public function testLateConnectInvalidDirectoryFail()
     {
