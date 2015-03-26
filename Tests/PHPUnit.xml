@@ -7,7 +7,7 @@
         <var name="REMOTE_DIR" value="/home/testuser/" />
         <var name="SSH_PRIVATE_KEY" value="ssh/testkey" />
         <var name="SSH_PUBLIC_KEY" value="ssh/testkey.pub" />
-        <var name="SSH_FINGERPRINT" value="fingerprint" />
+        <var name="SSH_FINGERPRINT" value="a37dca4636f2b13f71be73031cf6106e" />
         <var name="SSH_KEYPASS" value="testkeypass" />
     </php>
 

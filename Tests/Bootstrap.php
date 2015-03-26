@@ -35,13 +35,9 @@ class FsTestClass extends \Depage\Fs\Fs
     }
 }
 // }}}
-// {{{ FsTestClass
+// {{{ FsFileTestClass
 class FsFileTestClass extends \Depage\Fs\FsFile
 {
-    public static function schemeAlias($alias = '')
-    {
-        return parent::schemeAlias($alias);
-    }
     public function lateConnect()
     {
         return parent::lateConnect();
@@ -53,10 +49,6 @@ class FsFileTestClass extends \Depage\Fs\FsFile
     public function cleanUrl($url, $showPass = true)
     {
         return parent::cleanUrl($url, $showPass);
-    }
-    public function extractFileName($path)
-    {
-        return parent::extractFileName($path);
     }
 }
 // }}}
