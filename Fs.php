@@ -115,15 +115,6 @@ class Fs
     }
     // }}}
     // {{{ exists
-    /**
-     * Checks if file exists
-     *
-     * @public
-     *
-     * @param $path (string) path to file to check
-     *
-     * @return $exist (bool) true if file exists, false otherwise
-     */
     public function exists($remotePath)
     {
         $this->preCommandHook();
@@ -149,13 +140,6 @@ class Fs
     // }}}
 
     // {{{ cd
-    /**
-     * Changes current directory
-     *
-     * @public
-     *
-     * @param $path (string) path of directory to change to
-     */
     public function cd($url)
     {
         $this->preCommandHook();
@@ -172,13 +156,6 @@ class Fs
     }
     // }}}
     // {{{ mkdir
-    /**
-     * Creates new directory recursive if it doesn't exist
-     *
-     * @public
-     *
-     * @param $path (string) path of new directory
-     */
     public function mkdir($pathName, $mode = 0777, $recursive = true)
     {
         $this->preCommandHook();
@@ -194,13 +171,6 @@ class Fs
     }
     // }}}
     // {{{ rm
-    /**
-     * Removes files and directories recursive
-     *
-     * @public
-     *
-     * @param $path (string) path to file or directory
-     */
     public function rm($url)
     {
         $this->preCommandHook();
@@ -217,14 +187,6 @@ class Fs
     }
     // }}}
     // {{{ mv
-    /**
-     * Renames or moves file or directory
-     *
-     * @public
-     *
-     * @param    $source (string) name of source file or directory
-     * @param    $target (string) target
-     */
     public function mv($sourcePath, $targetPath)
     {
         $this->preCommandHook();
@@ -248,14 +210,6 @@ class Fs
     // }}}
 
     // {{{ get
-    /**
-     * Writes content of a remote file to targetfile
-     *
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $sourcefile (string) path to sourcefile
-     */
     public function get($remotePath, $local = null)
     {
         $this->preCommandHook();
@@ -273,14 +227,6 @@ class Fs
     }
     // }}}
     // {{{ put
-    /**
-     * Writes content of a local file to targetfile
-     *
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $sourcefile (string) path to sourcefile
-     */
     public function put($local, $remotePath)
     {
         $this->preCommandHook();
@@ -309,14 +255,6 @@ class Fs
     }
     // }}}
     // {{{ putString
-    /**
-     * Writes a String directly to a file
-     *
-     * @public
-     *
-     * @param    $filepath (string) name of targetfile
-     * @param    $str (string) content to write to file
-     */
     public function putString($remotePath, $string)
     {
         $this->preCommandHook();
@@ -500,7 +438,6 @@ class Fs
     // {{{ lsFilter
     protected function lsFilter($path = '', $function)
     {
-        // @todo slow
         $ls = $this->ls($path);
         $pwd = $this->pwd();
         $lsFiltered = array_filter(
