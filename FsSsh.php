@@ -5,25 +5,25 @@ namespace Depage\Fs;
 class FsSsh extends Fs
 {
     // {{{ variables
-    protected $session = null;
-    protected $connection = null;
-    protected $privateKeyFile = null;
-    protected $publicKeyFile = null;
-    protected $privateKey = null;
-    protected $publicKey = null;
-    protected $fingerprint = null;
-    protected $tmp = null;
+    protected $session;
+    protected $connection;
+    protected $privateKeyFile;
+    protected $publicKeyFile;
+    protected $privateKey;
+    protected $publicKey;
+    protected $fingerprint;
+    protected $tmp;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
     {
         parent::__construct($params);
-        $this->privateKeyFile = (isset($params['privateKeyFile'])) ? $params['privateKeyFile'] : false;
-        $this->publicKeyFile = (isset($params['publicKeyFile'])) ? $params['publicKeyFile'] : false;
-        $this->privateKey = (isset($params['privateKey'])) ? $params['privateKey'] : false;
-        $this->publicKey = (isset($params['publicKey'])) ? $params['publicKey'] : false;
-        $this->tmp = (isset($params['tmp'])) ? $params['tmp'] : false;
-        $this->fingerprint = (isset($params['fingerprint'])) ? $params['fingerprint'] : false;
+        $this->privateKeyFile   = (isset($params['privateKeyFile']))    ? $params['privateKeyFile'] : null;
+        $this->publicKeyFile    = (isset($params['publicKeyFile']))     ? $params['publicKeyFile']  : null;
+        $this->privateKey       = (isset($params['privateKey']))        ? $params['privateKey']     : null;
+        $this->publicKey        = (isset($params['publicKey']))         ? $params['publicKey']      : null;
+        $this->tmp              = (isset($params['tmp']))               ? $params['tmp']            : null;
+        $this->fingerprint      = (isset($params['fingerprint']))       ? $params['fingerprint']    : null;
     }
     // }}}
     // {{{ destructor
@@ -33,13 +33,6 @@ class FsSsh extends Fs
     }
     // }}}
 
-    // {{{ lateConnect
-    protected function lateConnect()
-    {
-        parent::lateConnect();
-        $this->getSession();
-    }
-    // }}}
     // {{{ getFingerprint
     public function getFingerprint()
     {
@@ -153,6 +146,15 @@ class FsSsh extends Fs
         $this->session = null;
     }
     // }}}
+
+    // {{{ lateConnect
+    protected function lateConnect()
+    {
+        parent::lateConnect();
+        $this->getSession();
+    }
+    // }}}
+
     // {{{ buildUrl
     protected function buildUrl($parsed, $showPass = true)
     {
