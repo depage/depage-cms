@@ -2,6 +2,18 @@
 
 Transparent, protocol independent, local and remote file system operations.
 
+Abstract virtual-file-system-like behauviour across local file systems and
+remote protocols. With a syntax analogue to FTP-clients (put, get) depage-fs
+makes PHP stream wrappers easily accessible and provides a unified user
+interface.
+
+Usage follows a local-remote paradigm where 'local' means the actual current
+working directory and 'remote' can be another local directory or a directory on
+a remote system.
+
+depage-fs virtually tracks the remote working directory (cd, pwd). Once the
+remote path is set, it prevents any operations in parent directories.
+
 ##Features
 ####List of operations
 
