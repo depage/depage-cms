@@ -47,7 +47,7 @@ $fs->get('/home/user/file.zip');
 - depage-fs error handler converts any file system operation errors/warnings to
 exceptions. The problem causing them may be in a location different to the one
 stated in the exception.
-- !!!Important in FTPS!!!: If the server does not support SSL, then the
+- !!! Important in FTPS !!! If the server does not support SSL, then the
 connection falls back to regular unencrypted FTP. Currently there is no way to
 make sure the connection is encrypted. Susceptible to MITM attacks!
 - SSH keys need to be PEM-formatted.
