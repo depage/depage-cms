@@ -1,7 +1,7 @@
 #depage-db
 
 ## PDO Wrapper
-A small wrapper around the pdo object which allows late/on demand initializition
+A small wrapper around the pdo object which allows late/on demand initialization
 of the database connection.
 
 ## Schema
