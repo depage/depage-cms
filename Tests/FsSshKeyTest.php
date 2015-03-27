@@ -58,21 +58,6 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
-    // {{{ testInaccessiblePublicKeyFile
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
-     */
-    public function testInaccessiblePublicKeyFile()
-    {
-        $params = array(
-            'publicKeyFile' => 'filedoesntexist',
-        );
-
-        $fs = $this->createTestObject($params);
-        $fs->ls('*');
-    }
-    // }}}
     // {{{ testPrivateKeyString
     public function testPrivateKeyString()
     {
@@ -86,8 +71,8 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
-    // {{{ testPublicKeyString
-    public function testPublicKeyString()
+    // {{{ testConnectPublicKeyString
+    public function testConnectPublicKeyString()
     {
         $params = array(
             'tmp' => '/tmp',
@@ -99,12 +84,12 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
-    // {{{ testInvalidPrivateKeyString
+    // {{{ testConnectInvalidPrivateKeyString
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage Invalid SSH private key format (PEM format required).
      */
-    public function testInvalidPrivateKeyString()
+    public function testConnectInvalidPrivateKeyString()
     {
         $params = array(
             'tmp' => '/tmp',
@@ -116,12 +101,12 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
-    // {{{ testInvalidPublicKeyString
+    // {{{ testConnectInvalidPublicKeyString
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * @expectedExceptionMessage ssh2_auth_pubkey_file(): Authentication failed for testuser using public key: Invalid public key data
      */
-    public function testInvalidPublicKeyString()
+    public function testConnectInvalidPublicKeyString()
     {
         $params = array(
             'tmp' => '/tmp',
@@ -133,8 +118,8 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
-    // {{{ testKeyPairStrings
-    public function testKeyPairStrings()
+    // {{{ testConnectKeyPairStrings
+    public function testConnectKeyPairStrings()
     {
         $params = array(
             'tmp' => '/tmp',

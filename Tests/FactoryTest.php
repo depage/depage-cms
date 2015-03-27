@@ -1,6 +1,7 @@
 <?php
 
 use Depage\Fs\Fs;
+use Depage\Fs\FsTestClass;
 
 class FactoryTest extends PHPUnit_Framework_TestCase
 {

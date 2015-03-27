@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Fs;
+
 require_once(__DIR__ . '/../Fs.php');
 require_once(__DIR__ . '/../FsFile.php');
 require_once(__DIR__ . '/../FsFtp.php');
@@ -9,6 +11,25 @@ require_once(__DIR__ . '/../PrivateSshKey.php');
 require_once(__DIR__ . '/../Exceptions/FsException.php');
 require_once(__DIR__ . '/TestBase.php');
 require_once(__DIR__ . '/TestRemote.php');
+
+// {{{ mock built-in functions
+function file_put_contents($path, $data, $flags = 0, $context = null)
+{
+    if ($data === 'writeFail!') {
+        return false;
+    } else {
+        return \file_put_contents($path, $data, $flags, $context);
+    }
+}
+function openssl_pkey_get_private($data)
+{
+    if ($data === 'writeFail!') {
+        return $data;
+    } else {
+        return \openssl_pkey_get_private($data);
+    }
+}
+// }}}
 
 // {{{ FsTestClass
 class FsTestClass extends \Depage\Fs\Fs

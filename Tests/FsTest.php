@@ -1,6 +1,8 @@
 <?php
 
 use Depage\Fs\Fs;
+use Depage\Fs\FsTestClass;
+use Depage\Fs\FsFileTestClass;
 
 class FsTest extends PHPUnit_Framework_TestCase
 {

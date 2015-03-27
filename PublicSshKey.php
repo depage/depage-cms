@@ -40,6 +40,7 @@ class PublicSshKey
         if (is_dir($tmpDir) && is_writable($tmpDir)) {
             $path = tempnam($tmpDir, 'depage-fs');
             $bytesWritten = file_put_contents($path, $data);
+
             if ($bytesWritten === false) {
                 throw new Exceptions\FsException('Cannot create temporary key file "' . $path . '".');
             }
@@ -69,7 +70,8 @@ class PublicSshKey
     {
         unset($this->key);
         if ($this->temporary) {
-            if (unlink($this->path)) {
+            if (is_file($this->path) && is_writable($this->path)) {
+                unlink($this->path);
                 $this->temporary = false;
             } else {
                 throw new Exceptions\FsException('Cannot delete temporary key file "' . $this->path . '".');
