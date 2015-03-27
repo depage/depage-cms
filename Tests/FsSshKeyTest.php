@@ -58,8 +58,8 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
-    // {{{ testPrivateKeyString
-    public function testPrivateKeyString()
+    // {{{ testConnectPrivateKeyString
+    public function testConnectPrivateKeyString()
     {
         $params = array(
             'tmp' => '/tmp',
@@ -131,8 +131,8 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
-    // {{{ testGeneratePublicKeyFromPrivateKeyFile
-    public function testGeneratePublicKeyFromPrivateKeyFile()
+    // {{{ testConnectGeneratePublicKeyFromPrivateKeyFile
+    public function testConnectGeneratePublicKeyFromPrivateKeyFile()
     {
         $params = array(
             'tmp' => '/tmp',
@@ -143,8 +143,8 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
-    // {{{ testGeneratePublicKeyFromPrivateKeyString
-    public function testGeneratePublicKeyFromPrivateKeyString()
+    // {{{ testConnectGeneratePublicKeyFromPrivateKeyString
+    public function testConnectGeneratePublicKeyFromPrivateKeyString()
     {
         $params = array(
             'tmp' => '/tmp',
