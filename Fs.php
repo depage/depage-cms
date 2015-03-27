@@ -198,9 +198,7 @@ class Fs
             if(file_exists($target) && is_dir($target)) {
                 $target .= '/' . $this->extractFileName($source);
             }
-            if (!$this->rename($source, $target)) {
-                throw new Exceptions\FsException('Cannot move "' . $this->cleanUrl($sourcePath, false) . '" to "' . $this->cleanUrl($targetPath, false) . '".');
-            }
+            $this->rename($source, $target);
         } else {
             throw new Exceptions\FsException('Cannot move "' . $this->cleanUrl($sourcePath, false) . '" to "' . $this->cleanUrl($targetPath, false) . '" - source doesn\'t exist.');
         }
@@ -219,9 +217,7 @@ class Fs
         }
 
         $remote = $this->cleanUrl($remotePath);
-        if (!copy($remote, $local, $this->streamContext)) {
-            throw new Exceptions\FsException('Cannot copy "' . $this->cleanUrl($remotePath, false) . '" to "' . $local . '".');
-        }
+        copy($remote, $local, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -232,9 +228,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        if (!copy($local, $remote, $this->streamContext)) {
-            throw new Exceptions\FsException('Cannot copy "' . $local . '" to "' . $this->cleanUrl($remotePath, false) . '".');
-        }
+        copy($local, $remote, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -246,9 +240,6 @@ class Fs
 
         $remote = $this->cleanUrl($remotePath);
         $string = file_get_contents($remote, false, $this->streamContext);
-        if ($string === false) {
-            throw new Exceptions\FsException('Cannot get contents of "' . $this->cleanUrl($remotePath, false) . '".');
-        }
 
         $this->postCommandHook();
         return $string;
@@ -260,10 +251,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        $bytes = file_put_contents($remote, $string, 0, $this->streamContext);
-        if ($bytes === false) {
-            throw new Exceptions\FsException('Cannot write string to "' . $this->cleanUrl($remotePath, false) . '".');
-        }
+        file_put_contents($remote, $string, 0, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -490,24 +478,18 @@ class Fs
     // {{{ rmRecursive
     protected function rmRecursive($cleanUrl)
     {
-        $success = false;
-
         if (!file_exists($cleanUrl)) {
             throw new Exceptions\FsException('"' . $this->cleanUrl($cleanUrl, false) . '" doesn\'t exist.');
         } elseif (is_dir($cleanUrl)) {
             foreach ($this->scandir($cleanUrl, true) as $nested) {
                 $this->rmRecursive($cleanUrl . '/' .  $nested);
             }
-            $success = $this->rmdir($cleanUrl);
+            $this->rmdir($cleanUrl);
         } elseif (is_file($cleanUrl)) {
-            $success = unlink($cleanUrl, $this->streamContext);
+            unlink($cleanUrl, $this->streamContext);
         }
 
-        if ($success) {
-            clearstatcache(true, $cleanUrl);
-        } else {
-            throw new Exceptions\FsException('Cannot delete "' . $this->cleanUrl($cleanUrl, false) . '".');
-        }
+        clearstatcache(true, $cleanUrl);
     }
     // }}}
 

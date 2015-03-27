@@ -72,16 +72,12 @@ class FsSsh extends Fs
                 || $this->publicKey
                 || $this->tmp
             ) {
-                $authenticated = $this->authenticateByKey($connection);
+                $this->authenticateByKey($connection);
             } else {
-                $authenticated = $this->authenticateByPassword($connection);
+                $this->authenticateByPassword($connection);
             }
 
-            if ($authenticated) {
-                $this->session = ssh2_sftp($connection);
-            } else {
-                throw new Exceptions\FsException('Could not authenticate session.');
-            }
+            $this->session = ssh2_sftp($connection);
         }
 
         return $this->session;
