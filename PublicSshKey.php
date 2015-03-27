@@ -7,26 +7,14 @@ class PublicSshKey
     // {{{ variables
     protected $key = null;
     protected $path = null;
-    protected $tmpDir = false;
     protected $temporary = false;
     // }}}
     // {{{ constructor
     public function __construct($data, $tmpDir = false)
     {
-        $this->tmpDir = $tmpDir;
-
         if ($tmpDir) {
             $this->key = $this->parse($data);
-            if (is_dir($tmpDir) && is_writable($tmpDir)) {
-                $this->path = tempnam($tmpDir, 'depage-fs');
-                $this->temporary = true;
-                $bytesWritten = file_put_contents($this->path, $data);
-                if ($bytesWritten === false) {
-                    throw new Exceptions\FsException('Cannot create temporary key file "' . $this->path . '".');
-                }
-            } else {
-                throw new Exceptions\FsException('Cannot write to temporary key file directory "' . $tmpDir . '".');
-            }
+            $this->path = $this->createTmpFile($tmpDir, $data);
         } else {
             $this->path = $data;
             if (is_file($data) && is_readable($data)) {
@@ -41,6 +29,25 @@ class PublicSshKey
     public function __destruct()
     {
         $this->clean();
+    }
+    // }}}
+
+    // {{{ createTmpFile
+    protected function createTmpFile($tmpDir, $data)
+    {
+        $this->temporary = true;
+
+        if (is_dir($tmpDir) && is_writable($tmpDir)) {
+            $path = tempnam($tmpDir, 'depage-fs');
+            $bytesWritten = file_put_contents($path, $data);
+            if ($bytesWritten === false) {
+                throw new Exceptions\FsException('Cannot create temporary key file "' . $path . '".');
+            }
+        } else {
+            throw new Exceptions\FsException('Cannot write to temporary key file directory "' . $tmpDir . '".');
+        }
+
+        return $path;
     }
     // }}}
 
