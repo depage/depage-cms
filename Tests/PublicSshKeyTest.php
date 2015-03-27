@@ -7,7 +7,7 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
     // {{{ setUp
     public function setUp()
     {
-        $this->keyPath = __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'];
+        $this->keyPath = __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'];
         $this->testKey = file_get_contents($this->keyPath);
     }
     // }}}

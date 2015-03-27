@@ -9,8 +9,8 @@ class PrivateSshKeyTest extends PublicSshKeyTest
     // {{{ setUp
     public function setUp()
     {
-        $this->keyPath = __DIR__ . '/../' . $GLOBALS['SSH_PRIVATE_KEY'];
-        $this->publicKeyPath = __DIR__ . '/../' . $GLOBALS['SSH_PUBLIC_KEY'];
+        $this->keyPath = __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'];
+        $this->publicKeyPath = __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'];
         $this->testKey = file_get_contents($this->keyPath);
     }
     // }}}
@@ -38,6 +38,18 @@ class PrivateSshKeyTest extends PublicSshKeyTest
         $publicKeyStringTrimmed = trim($match[0]);
 
         $this->assertEquals($publicKeyStringTrimmed, $extractedKeyString);
+    }
+    // }}}
+    // {{{ testExtractPublicKeyDsa
+    /**
+     * @expectedException Depage\Fs\Exceptions\FsException
+     * @expectedExceptionMessage Currently public key generation is only supported for RSA keys.
+     */
+    public function testExtractPublicKeyDsa()
+    {
+        $key = $this->generateTestObject(__DIR__ . '/../' . $GLOBALS['PRIVATE_DSA_KEY']);
+
+        $public = $key->extractPublicKey('/tmp');
     }
     // }}}
     // {{{ testInvalidKey

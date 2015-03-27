@@ -26,11 +26,15 @@ before_script:
 
     # generate ssh key files
     - mkdir ssh
-    - ssh-keygen -N testkeypass -f ssh/testkey
+    - ssh-keygen -t rsa -N testkeypass -f ssh/rsakey
+    - ssh-keygen -t dsa -N testkeypass -f ssh/dsakey
     # convert key to pem format
-    - openssl rsa -passin pass:testkeypass -in ssh/testkey -out ssh/testkey
+    - openssl rsa -passin pass:testkeypass -in ssh/rsakey -out ssh/rsakey
+    - openssl dsa -passin pass:testkeypass -in ssh/dsakey -out ssh/dsakey
     - sudo mkdir /home/testuser/.ssh
-    - sudo cp ssh/testkey.pub /home/testuser/.ssh/authorized_keys
+    # add to authorized keys
+    - sudo cp ssh/rsakey.pub /home/testuser/.ssh/authorized_keys
+    - sudo bash -c 'cat ssh/dsakey.pub >> /home/testuser/.ssh/authorized_keys'
     - sudo chown -R testuser:testuser /home/testuser/.ssh
 
     # add local ssh fingerprint to unit test configuration
