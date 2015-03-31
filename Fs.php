@@ -284,13 +284,13 @@ class Fs
     protected function preCommandHook()
     {
         $this->lateConnect();
-        $this->errorHandler(true);
+        $this->setErrorHandler(true);
     }
     // }}}
     // {{{ postCommandHook
     protected function postCommandHook()
     {
-        $this->errorHandler(false);
+        $this->setErrorHandler(false);
     }
     // }}}
     // {{{ lateConnect
@@ -308,16 +308,19 @@ class Fs
         $this->base = (substr($cleanPath, -1) == '/') ? $cleanPath : $cleanPath . '/';
     }
     // }}}
-    // {{{ errorHandler
-    protected function errorHandler($start)
+
+    // {{{ depageFsErrorHandler
+    public function depageFsErrorHandler($errno, $errstr, $errfile, $errline, array $errcontext)
+    {
+        restore_error_handler();
+        throw new Exceptions\FsException($errstr);
+    }
+    // }}}
+    // {{{ setErrorHandler
+    protected function setErrorHandler($start)
     {
         if ($start) {
-            set_error_handler(
-                function($errno, $errstr, $errfile, $errline, array $errcontext) {
-                    restore_error_handler();
-                    throw new Exceptions\FsException($errstr);
-                }
-            );
+            set_error_handler(array($this, 'depageFsErrorHandler'));
         } else {
             restore_error_handler();
         }

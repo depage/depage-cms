@@ -5,14 +5,23 @@ use Depage\Fs\FsFileTestClass;
 
 class FsTest extends PHPUnit_Framework_TestCase
 {
-    // {{{ setUp
-    public function setUp()
+
+    // {{{ createTestObject
+    public function createTestObject($override = array())
     {
         $params = array(
             'scheme' => 'testScheme'
         );
 
-        $this->fs = new FsTestClass($params);
+        $newParams = array_merge($params, $override);
+
+        return new FsTestClass($newParams);
+    }
+    // }}}
+    // {{{ setUp
+    public function setUp()
+    {
+        $this->fs = $this->createTestObject();
     }
     // }}}
 
@@ -62,26 +71,25 @@ class FsTest extends PHPUnit_Framework_TestCase
     public function testCleanUrl()
     {
         $params = array(
-            'scheme' => 'testScheme',
             'user' => 'testUser',
             'pass' => 'testPass',
             'host' => 'testHost',
             'port' => 42,
         );
 
-        $fs = new FsTestClass($params);
+        $fs = $this->createTestObject($params);
         $fs->lateConnect();
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $fs->cleanUrl('path/to/file'));
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/path/to/file', $fs->cleanUrl('/path/to/file'));
 
         $params['path'] = '/testSubDir';
-        $fsSubDir = new FsTestClass($params);
+        $fsSubDir = $this->createTestObject($params);
         $fsSubDir->lateConnect();
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $fsSubDir->cleanUrl('path/to/file'));
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $fsSubDir->cleanUrl('/testSubDir/path/to/file'));
 
         $params['path'] = '/testSubDir/';
-        $fsSubDir = new FsTestClass($params);
+        $fsSubDir = $this->createTestObject($params);
         $fsSubDir->lateConnect();
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $fsSubDir->cleanUrl('path/to/file'));
         $this->assertEquals('testScheme://testUser:testPass@testHost:42/testSubDir/path/to/file', $fsSubDir->cleanUrl('/testSubDir/path/to/file'));
@@ -90,33 +98,30 @@ class FsTest extends PHPUnit_Framework_TestCase
     // {{{ testCleanUrlSpecialCharacters
     public function testCleanUrlSpecialCharacters()
     {
-        $params = array('scheme' => 'testScheme');
+        $this->fs->lateConnect();
 
-        $fs = new FsTestClass($params);
-        $fs->lateConnect();
-
-        $this->assertEquals('testScheme:///path',           $fs->cleanUrl('path'));
-        $this->assertEquals('testScheme:///path/to/file',   $fs->cleanUrl('path/to/file'));
-        $this->assertEquals('testScheme:///path/to/file',   $fs->cleanUrl('/path/to/file'));
-        $this->assertEquals('testScheme:/// ',              $fs->cleanUrl(' '));
-        $this->assertEquals('testScheme:///pa h/to/fi e',   $fs->cleanUrl('/pa h/to/fi e'));
-        $this->assertEquals('testScheme:///?',              $fs->cleanUrl('?'));
-        $this->assertEquals('testScheme:///pa?h/to/fi?e',   $fs->cleanUrl('/pa?h/to/fi?e'));
-        $this->assertEquals('testScheme:///|',              $fs->cleanUrl('|'));
-        $this->assertEquals('testScheme:///pa|h/to/fi|e',   $fs->cleanUrl('/pa|h/to/fi|e'));
-        $this->assertEquals('testScheme:///<',              $fs->cleanUrl('<'));
-        $this->assertEquals('testScheme:///>',              $fs->cleanUrl('>'));
-        $this->assertEquals('testScheme:///pa<h/to/fi>e',   $fs->cleanUrl('/pa<h/to/fi>e'));
-        $this->assertEquals('testScheme:///(',              $fs->cleanUrl('('));
-        $this->assertEquals('testScheme:///)',              $fs->cleanUrl(')'));
-        $this->assertEquals('testScheme:///pa(h/to/fi)e',   $fs->cleanUrl('/pa(h/to/fi)e'));
-        $this->assertEquals('testScheme:///[',              $fs->cleanUrl('['));
-        $this->assertEquals('testScheme:///]',              $fs->cleanUrl(']'));
-        $this->assertEquals('testScheme:///pa[h/to/fi]e',   $fs->cleanUrl('/pa[h/to/fi]e'));
-        $this->assertEquals('testScheme:///"',              $fs->cleanUrl('"'));
-        $this->assertEquals('testScheme:///pa"h/to/fi"e',   $fs->cleanUrl('/pa"h/to/fi"e'));
-        $this->assertEquals('testScheme:///\'',             $fs->cleanUrl('\''));
-        $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $fs->cleanUrl('/pa\'h/to/fi\'e'));
+        $this->assertEquals('testScheme:///path',           $this->fs->cleanUrl('path'));
+        $this->assertEquals('testScheme:///path/to/file',   $this->fs->cleanUrl('path/to/file'));
+        $this->assertEquals('testScheme:///path/to/file',   $this->fs->cleanUrl('/path/to/file'));
+        $this->assertEquals('testScheme:/// ',              $this->fs->cleanUrl(' '));
+        $this->assertEquals('testScheme:///pa h/to/fi e',   $this->fs->cleanUrl('/pa h/to/fi e'));
+        $this->assertEquals('testScheme:///?',              $this->fs->cleanUrl('?'));
+        $this->assertEquals('testScheme:///pa?h/to/fi?e',   $this->fs->cleanUrl('/pa?h/to/fi?e'));
+        $this->assertEquals('testScheme:///|',              $this->fs->cleanUrl('|'));
+        $this->assertEquals('testScheme:///pa|h/to/fi|e',   $this->fs->cleanUrl('/pa|h/to/fi|e'));
+        $this->assertEquals('testScheme:///<',              $this->fs->cleanUrl('<'));
+        $this->assertEquals('testScheme:///>',              $this->fs->cleanUrl('>'));
+        $this->assertEquals('testScheme:///pa<h/to/fi>e',   $this->fs->cleanUrl('/pa<h/to/fi>e'));
+        $this->assertEquals('testScheme:///(',              $this->fs->cleanUrl('('));
+        $this->assertEquals('testScheme:///)',              $this->fs->cleanUrl(')'));
+        $this->assertEquals('testScheme:///pa(h/to/fi)e',   $this->fs->cleanUrl('/pa(h/to/fi)e'));
+        $this->assertEquals('testScheme:///[',              $this->fs->cleanUrl('['));
+        $this->assertEquals('testScheme:///]',              $this->fs->cleanUrl(']'));
+        $this->assertEquals('testScheme:///pa[h/to/fi]e',   $this->fs->cleanUrl('/pa[h/to/fi]e'));
+        $this->assertEquals('testScheme:///"',              $this->fs->cleanUrl('"'));
+        $this->assertEquals('testScheme:///pa"h/to/fi"e',   $this->fs->cleanUrl('/pa"h/to/fi"e'));
+        $this->assertEquals('testScheme:///\'',             $this->fs->cleanUrl('\''));
+        $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $this->fs->cleanUrl('/pa\'h/to/fi\'e'));
     }
     // }}}
     // {{{ testCleanUrlFile
@@ -210,14 +215,64 @@ class FsTest extends PHPUnit_Framework_TestCase
     public function testEmptyPassword()
     {
         $params = array(
-            'scheme' => 'testScheme',
             'user' => 'testUser',
             'pass' => '',
             'host' => 'testHost',
         );
 
-        $fs = new FsTestClass($params);
+        $fs = $this->createTestObject($params);
         $this->assertEquals('testScheme://testUser:@testHost/', $fs->pwd());
+    }
+    // }}}
+
+    // {{{ currentErrorHandler
+    public function currentErrorHandler()
+    {
+        $handler = set_error_handler(function() {});
+        restore_error_handler();
+        return $handler;
+    }
+    // }}}
+    // {{{ testErrorHandlerCommand
+    public function testErrorHandlerCommand()
+    {
+        $initialHandler = $this->currentErrorHandler();
+
+        $fs = $this->createTestObject();
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
+
+        $fs->pwd();
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
+    }
+    // }}}
+    // {{{ testErrorHandlerPrePostCommand
+    public function testErrorHandlerPrePostCommand()
+    {
+        $initialHandler = $this->currentErrorHandler();
+
+        $fs = $this->createTestObject();
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
+
+        $fs->preCommandHook();
+        $this->assertSame(array($fs, 'depageFsErrorHandler'), $this->currentErrorHandler());
+
+        $fs->postCommandHook();
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
+    }
+    // }}}
+    // {{{ testErrorHandlerAfterException
+    public function testErrorHandlerAfterException()
+    {
+        $initialHandler = $this->currentErrorHandler();
+
+        $fs = $this->createTestObject();
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
+
+        try {
+            $this->fs->cd('invalidPath');
+        } catch (Depage\Fs\Exceptions\FsException $e) {}
+
+        $this->assertSame($initialHandler, $this->currentErrorHandler());
     }
     // }}}
 }

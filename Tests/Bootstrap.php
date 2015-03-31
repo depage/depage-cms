@@ -58,6 +58,14 @@ class FsTestClass extends \Depage\Fs\Fs
     {
         return parent::cleanPath($path);
     }
+    public function preCommandHook()
+    {
+        return parent::preCommandHook();
+    }
+    public function postCommandHook()
+    {
+        return parent::postCommandHook();
+    }
 }
 // }}}
 // {{{ FsFileTestClass
