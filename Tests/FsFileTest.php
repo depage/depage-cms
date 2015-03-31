@@ -51,11 +51,11 @@ class FsFileTest extends TestBase
     // {{{ testGet
     public function testGet()
     {
-        // file-scheme: create sub directory so we don't overwrite the 'local' file
+        // file-scheme: create subdirectory so we don't overwrite the 'local' file
         $this->mkdirRemote('testDir');
-        $this->fs->cd('testDir');
         $this->createRemoteTestFile('testDir/testFile');
 
+        $this->fs->cd('testDir');
         $this->fs->get('testFile');
         $this->assertTrue($this->confirmTestFile('testFile'));
     }
