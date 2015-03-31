@@ -442,39 +442,47 @@ class Fs
         return $sorted;
     }
     // }}}
+    // {{{ matchNodesInPath
+    protected function matchNodesInPath($path, $pattern)
+    {
+        if (preg_match('/[' . preg_quote('*?[]') . ']/', $pattern)) {
+            $matches = array_filter(
+                $this->scandir($path),
+                function ($node) use ($pattern) { return fnmatch($pattern, $node); }
+            );
+        } else {
+            $matches = array($pattern);
+        }
+        return $matches;
+    }
+    // }}}
     // {{{ lsRecursive
     protected function lsRecursive($path, $current)
     {
-        $result = array();
+        $nodes = array();
         $patterns = explode('/', $path);
         $count = count($patterns);
+        $pwd = $this->pwd();
 
         if ($count) {
             $pattern = array_shift($patterns);
-            if (preg_match('/[' . preg_quote('*?[]') . ']/', $pattern)) {
-                $matches = array_filter(
-                    $this->scandir($this->pwd() . $current),
-                    function ($node) use ($pattern) { return fnmatch($pattern, $node); }
-                );
-            } else {
-                $matches = array($pattern);
-            }
+            $matches = $this->matchNodesInPath($pwd . $current, $pattern);
 
             foreach ($matches as $match) {
                 $next = ($current) ? $current . '/' . $match : $match;
 
-                if ($count == 1) {
-                    $result[] = $next;
-                } elseif (is_dir($this->pwd() . $next)) {
-                    $result = array_merge(
-                        $result,
+                if ($count === 1) {
+                    $nodes[] = $next;
+                } elseif (is_dir($pwd . $next)) {
+                    $nodes = array_merge(
+                        $nodes,
                         $this->lsRecursive(implode('/', $patterns), $next)
                     );
                 }
             }
         }
 
-        return $result;
+        return $nodes;
     }
     // }}}
     // {{{ rmRecursive
