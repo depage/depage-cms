@@ -451,7 +451,7 @@ class Fs
 
         if ($count) {
             $pattern = array_shift($patterns);
-            if (preg_match('/[\*\?\[\]]/', $pattern)) {
+            if (preg_match('/[' . preg_quote('*?[]') . ']/', $pattern)) {
                 $matches = array_filter(
                     $this->scandir($this->pwd() . $current),
                     function ($node) use ($pattern) { return fnmatch($pattern, $node); }
