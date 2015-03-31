@@ -1,11 +1,9 @@
 <?php
 
 use Depage\Fs\FsTestClass;
-use Depage\Fs\FsFileTestClass;
 
 class FsTest extends PHPUnit_Framework_TestCase
 {
-
     // {{{ createTestObject
     public function createTestObject($override = array())
     {
@@ -122,17 +120,6 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('testScheme:///pa"h/to/fi"e',   $this->fs->cleanUrl('/pa"h/to/fi"e'));
         $this->assertEquals('testScheme:///\'',             $this->fs->cleanUrl('\''));
         $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $this->fs->cleanUrl('/pa\'h/to/fi\'e'));
-    }
-    // }}}
-    // {{{ testCleanUrlFile
-    public function testCleanUrlFile()
-    {
-        $fs = new FsFileTestClass(array('scheme' => 'file'));
-        $fs->lateConnect();
-
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl(getcwd() . '/path/to/file'));
     }
     // }}}
 

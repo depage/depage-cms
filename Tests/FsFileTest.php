@@ -8,7 +8,7 @@ class FsFileTest extends TestBase
         $params = array('scheme' => 'file');
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsFile($newParams);
+        return new Depage\Fs\FsFileTestClass($newParams);
     }
     // }}}
 
@@ -79,6 +79,18 @@ class FsFileTest extends TestBase
     public function testMkdirFail()
     {
         return parent::testMkdirFail();
+    }
+    // }}}
+
+    // {{{ testCleanUrlFile
+    public function testCleanUrlFile()
+    {
+        $fs = $this->createTestObject();
+        $fs->lateConnect();
+
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl(getcwd() . '/path/to/file'));
     }
     // }}}
 }
