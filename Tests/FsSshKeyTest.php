@@ -1,5 +1,7 @@
 <?php
 
+use Depage\Fs\FsSshTestClass;
+
 require_once(__DIR__ . '/FsSshTest.php');
 
 class FsSshKeyTest extends FsSshTest
@@ -21,7 +23,7 @@ class FsSshKeyTest extends FsSshTest
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsSsh($newParams);
+        return new FsSshTestClass($newParams);
     }
     // }}}
     // {{{ createTestObjectWithoutKeys
@@ -58,6 +60,7 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
+
     // {{{ testConnectPrivateKeyString
     public function testConnectPrivateKeyString()
     {
@@ -84,6 +87,7 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
+
     // {{{ testConnectInvalidPrivateKeyString
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
@@ -118,6 +122,7 @@ class FsSshKeyTest extends FsSshTest
         $fs->ls('*');
     }
     // }}}
+
     // {{{ testConnectKeyPairStrings
     public function testConnectKeyPairStrings()
     {
@@ -131,6 +136,7 @@ class FsSshKeyTest extends FsSshTest
         $this->assertTrue($fs->test());
     }
     // }}}
+
     // {{{ testConnectGeneratePublicKeyFromPrivateKeyFile
     public function testConnectGeneratePublicKeyFromPrivateKeyFile()
     {
@@ -153,6 +159,58 @@ class FsSshKeyTest extends FsSshTest
 
         $fs = $this->createTestObjectWithoutKeys($params);
         $this->assertTrue($fs->test());
+    }
+    // }}}
+
+    // {{{ testIsValidKeyCombination
+    public function testIsValidKeyCombination()
+    {
+        $perms = array(
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 0, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 0),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 0),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 0, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 0, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 0, 'publicKey' => 1, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 0, 'pass' => 1),
+            array('privateKeyFile' => 1, 'publicKeyFile' => 1, 'tmp' => 1, 'privateKey' => 1, 'publicKey' => 1, 'pass' => 1),
+        );
+
+        foreach($perms as $perm) {
+            extract($perm);
+            $fs = new FsSshTestClass();
+            $fs->privateKeyFile = $privateKeyFile;
+            $fs->publicKeyFile = $publicKeyFile;
+            $fs->privateKey = $privateKey;
+            $fs->publicKey = $publicKey;
+            $fs->tmp = $tmp;
+
+            $this->assertEquals($pass, $fs->isValidKeyCombination());
+        }
     }
     // }}}
     // {{{ testInvalidKeyCombination

@@ -77,5 +77,20 @@ class FsFileTestClass extends \Depage\Fs\FsFile
     }
 }
 // }}}
+// {{{ FsSshTestClass
+class FsSshTestClass extends \Depage\Fs\FsSsh
+{
+    public $privateKeyFile;
+    public $publicKeyFile;
+    public $privateKey;
+    public $publicKey;
+    public $tmp;
+
+    public function isValidKeyCombination()
+    {
+        return parent::isValidKeyCombination();
+    }
+}
+// }}}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
