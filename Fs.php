@@ -373,7 +373,6 @@ class Fs
     // {{{ cleanPath
     protected function cleanPath($path)
     {
-        // @todo handle backslashes
         $dirs = explode('/', $path);
         $newDirs = array();
 

@@ -176,6 +176,32 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('testScheme://testUser:@testHost/', $fs->pwd());
     }
     // }}}
+    // {{{ testCleanPath
+    public function testCleanPath()
+    {
+        $this->assertEquals('', $this->fs->cleanPath(''));
+        $this->assertEquals('', $this->fs->cleanPath('.'));
+        $this->assertEquals('', $this->fs->cleanPath('./'));
+        $this->assertEquals('', $this->fs->cleanPath('.//'));
+
+        $this->assertEquals('/', $this->fs->cleanPath('/'));
+        $this->assertEquals('/', $this->fs->cleanPath('//'));
+
+        $this->assertEquals('', $this->fs->cleanPath('..'));
+        $this->assertEquals('/', $this->fs->cleanPath('/..'));
+
+        $this->assertEquals('path/to/file', $this->fs->cleanPath('path/to/file'));
+        $this->assertEquals('path/file', $this->fs->cleanPath('path//file'));
+        $this->assertEquals('path/file', $this->fs->cleanPath('path/./file'));
+        $this->assertEquals('file', $this->fs->cleanPath('path/../file'));
+
+        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/path/to/file'));
+        $this->assertEquals('/path/file', $this->fs->cleanPath('/path//file'));
+        $this->assertEquals('/path/file', $this->fs->cleanPath('/path/./file'));
+        $this->assertEquals('/file', $this->fs->cleanPath('/path/../file'));
+        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/../path/to/file'));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

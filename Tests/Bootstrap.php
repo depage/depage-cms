@@ -54,6 +54,10 @@ class FsTestClass extends \Depage\Fs\Fs
     {
         return parent::extractFileName($path);
     }
+    public function cleanPath($path)
+    {
+        return parent::cleanPath($path);
+    }
 }
 // }}}
 // {{{ FsFileTestClass
