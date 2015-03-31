@@ -1,7 +1,6 @@
 <?php
 
 use Depage\Fs\Fs;
-use Depage\Fs\FsTestClass;
 
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -60,22 +59,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $fs = Fs::factory('madeupscheme://user@host/path/to/file');
 
         $this->assertInstanceOf('Depage\Fs\Fs', $fs);
-    }
-    // }}}
-
-    // {{{ testSchemeAlias
-    public function testSchemeAlias()
-    {
-        $fs = new FsTestClass();
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias());
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias(''));
-        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $fs->schemeAlias('file'));
-        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftp'),         $fs->schemeAlias('ftp'));
-        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftps'),        $fs->schemeAlias('ftps'));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('ssh2.sftp'));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('ssh'));
-        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $fs->schemeAlias('sftp'));
-        $this->assertEquals(array('class' => '', 'scheme' => 'madeupscheme'),   $fs->schemeAlias('madeupscheme'));
     }
     // }}}
 }

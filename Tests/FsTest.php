@@ -1,6 +1,5 @@
 <?php
 
-use Depage\Fs\Fs;
 use Depage\Fs\FsTestClass;
 use Depage\Fs\FsFileTestClass;
 
@@ -14,6 +13,48 @@ class FsTest extends PHPUnit_Framework_TestCase
         );
 
         $this->fs = new FsTestClass($params);
+    }
+    // }}}
+
+    // {{{ testSchemeAlias
+    public function testSchemeAlias()
+    {
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $this->fs->schemeAlias());
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $this->fs->schemeAlias(''));
+        $this->assertEquals(array('class' => 'file', 'scheme' => 'file'),       $this->fs->schemeAlias('file'));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftp'),         $this->fs->schemeAlias('ftp'));
+        $this->assertEquals(array('class' => 'ftp', 'scheme' => 'ftps'),        $this->fs->schemeAlias('ftps'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $this->fs->schemeAlias('ssh2.sftp'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $this->fs->schemeAlias('ssh'));
+        $this->assertEquals(array('class' => 'ssh', 'scheme' => 'ssh2.sftp'),   $this->fs->schemeAlias('sftp'));
+        $this->assertEquals(array('class' => '', 'scheme' => 'madeupscheme'),   $this->fs->schemeAlias('madeupscheme'));
+    }
+    // }}}
+
+    // {{{ testCleanPath
+    public function testCleanPath()
+    {
+        $this->assertEquals('', $this->fs->cleanPath(''));
+        $this->assertEquals('', $this->fs->cleanPath('.'));
+        $this->assertEquals('', $this->fs->cleanPath('./'));
+        $this->assertEquals('', $this->fs->cleanPath('.//'));
+
+        $this->assertEquals('/', $this->fs->cleanPath('/'));
+        $this->assertEquals('/', $this->fs->cleanPath('//'));
+
+        $this->assertEquals('', $this->fs->cleanPath('..'));
+        $this->assertEquals('/', $this->fs->cleanPath('/..'));
+
+        $this->assertEquals('path/to/file', $this->fs->cleanPath('path/to/file'));
+        $this->assertEquals('path/file', $this->fs->cleanPath('path//file'));
+        $this->assertEquals('path/file', $this->fs->cleanPath('path/./file'));
+        $this->assertEquals('file', $this->fs->cleanPath('path/../file'));
+
+        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/path/to/file'));
+        $this->assertEquals('/path/file', $this->fs->cleanPath('/path//file'));
+        $this->assertEquals('/path/file', $this->fs->cleanPath('/path/./file'));
+        $this->assertEquals('/file', $this->fs->cleanPath('/path/../file'));
+        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/../path/to/file'));
     }
     // }}}
 
@@ -78,6 +119,18 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('testScheme:///pa\'h/to/fi\'e', $fs->cleanUrl('/pa\'h/to/fi\'e'));
     }
     // }}}
+    // {{{ testCleanUrlFile
+    public function testCleanUrlFile()
+    {
+        $fs = new FsFileTestClass(array('scheme' => 'file'));
+        $fs->lateConnect();
+
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('path/to/file'));
+        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl(getcwd() . '/path/to/file'));
+    }
+    // }}}
+
     // {{{ testParseUrl
     public function testParseUrl()
     {
@@ -122,17 +175,7 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('path'=>'&&'),        $this->fs->parseUrl('&&'));
     }
     // }}}
-    // {{{ testCleanUrlFile
-    public function testCleanUrlFile()
-    {
-        $fs = new FsFileTestClass(array('scheme' => 'file'));
-        $fs->lateConnect();
 
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl(getcwd() . '/path/to/file'));
-    }
-    // }}}
     // {{{ testExtractFileName
     public function testExtractFileName()
     {
@@ -162,6 +205,7 @@ class FsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('.extension', $this->fs->extractFileName('.extension'));
     }
     // }}}
+
     // {{{ testEmptyPassword
     public function testEmptyPassword()
     {
@@ -172,34 +216,8 @@ class FsTest extends PHPUnit_Framework_TestCase
             'host' => 'testHost',
         );
 
-        $fs = new Depage\Fs\Fs($params);
+        $fs = new FsTestClass($params);
         $this->assertEquals('testScheme://testUser:@testHost/', $fs->pwd());
-    }
-    // }}}
-    // {{{ testCleanPath
-    public function testCleanPath()
-    {
-        $this->assertEquals('', $this->fs->cleanPath(''));
-        $this->assertEquals('', $this->fs->cleanPath('.'));
-        $this->assertEquals('', $this->fs->cleanPath('./'));
-        $this->assertEquals('', $this->fs->cleanPath('.//'));
-
-        $this->assertEquals('/', $this->fs->cleanPath('/'));
-        $this->assertEquals('/', $this->fs->cleanPath('//'));
-
-        $this->assertEquals('', $this->fs->cleanPath('..'));
-        $this->assertEquals('/', $this->fs->cleanPath('/..'));
-
-        $this->assertEquals('path/to/file', $this->fs->cleanPath('path/to/file'));
-        $this->assertEquals('path/file', $this->fs->cleanPath('path//file'));
-        $this->assertEquals('path/file', $this->fs->cleanPath('path/./file'));
-        $this->assertEquals('file', $this->fs->cleanPath('path/../file'));
-
-        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/path/to/file'));
-        $this->assertEquals('/path/file', $this->fs->cleanPath('/path//file'));
-        $this->assertEquals('/path/file', $this->fs->cleanPath('/path/./file'));
-        $this->assertEquals('/file', $this->fs->cleanPath('/path/../file'));
-        $this->assertEquals('/path/to/file', $this->fs->cleanPath('/../path/to/file'));
     }
     // }}}
 }
