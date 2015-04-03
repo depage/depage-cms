@@ -208,6 +208,7 @@ a img {
 /* }}} */
 /* {{{ border-radius */
 .button,
+select,
 .toggle-button,
 .toolbar a,
 .projectlist a,
@@ -313,7 +314,8 @@ a img {
         display: inline;
     }
     h1,
-    a {
+    a,
+    select {
         display: block;
         float: left;
         line-height: 22px;
@@ -338,6 +340,27 @@ a img {
       background-color: #fff;
       color: #aaa;
       cursor: default;
+    }
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        &::-ms-expand {
+            display: none;
+        }
+        padding: 2px;
+        padding-right: 5px;
+        margin-right: 3em;
+        background-color: #ffffff;
+        border: none;
+
+        option {
+            padding: 2px;
+        }
+
+        &:hover {
+            background-color: #eeeeee;
+        }
     }
     .pills {
 

@@ -80,12 +80,25 @@ var depageCMS = (function() {
                 "split",
                 "right-full"
             ];
-            var $pillButtons = $("<li class=\"pills layout-buttons\"></li>").prependTo($toolbarRight);
 
+            // add zoom select
+            var $zoomButtons = $("<li class=\"layout-buttons\"></li>").prependTo($toolbarRight);
+            var $zoomSelect = $("<select><option value=\"zoom100\">100%</option><option value=\"zoom75\">75%</option><option value=\"zoom50\">50%</option></select>").appendTo($zoomButtons).on("change", function() {
+                this.blur();
+                $preview = $("div.preview")
+                    .removeClass("zoom100")
+                    .removeClass("zoom75")
+                    .removeClass("zoom50")
+                    .addClass(this.value);
+            });
+
+
+            // add layout buttons
+            var $layoutButtons = $("<li class=\"pills layout-buttons\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
                 var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
-                    .appendTo($pillButtons)
+                    .appendTo($layoutButtons)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
         },
@@ -180,6 +193,8 @@ var depageCMS = (function() {
         preview: function(url) {
             if ($previewFrame.length > 0) {
                 $previewFrame[0].src = unescape(url);
+
+                $window.triggerHandler("switchLayout", "split");
             } else if (parent != window) {
                 parent.depageCMS.preview(url);
             } else {
