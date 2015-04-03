@@ -2,7 +2,7 @@
 <!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="144px" height="480px" viewBox="0 0 144 480" enable-background="new 0 0 144 480" xml:space="preserve">
+	 width="192px" height="480px" viewBox="0 0 192 480" enable-background="new 0 0 192 480" xml:space="preserve">
 <g id="grid">
 	<rect y="240" fill="#CCCCCC" width="48" height="48"/>
 	<rect y="288" fill="#CCCCCC" width="48" height="48"/>
@@ -23,14 +23,21 @@
 	<rect x="96" y="432" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="48" fill="#CCCCCC" width="48" height="48"/>
-	<rect x="144" y="192" fill="#CCCCCC" width="48" height="48"/>
-	<rect x="144" y="144.205" fill="#CCCCCC" width="48" height="48"/>
-	<rect x="144" y="96" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="240" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="288" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="336" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="384" fill="#CCCCCC" width="48" height="48"/>
 	<rect x="144" y="432" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="48" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="192" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="144.205" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="96" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="240" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="288" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="336" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="384" fill="#CCCCCC" width="48" height="48"/>
+	<rect x="192" y="432" fill="#CCCCCC" width="48" height="48"/>
 </g>
 <path opacity="0.8" fill="#605E5D" enable-background="new    " d="M4.933,6.871c0.637-0.853,1.937-1,12.686-0.938
 	c10.508,0.062,13.44-0.506,14.561,0.75c0.487,0.547,1.655,5.452,3.562,12.811c1.898,7.326,2.501,13.591,2.312,14.311
@@ -96,43 +103,51 @@
 	c-0.26,0.26-0.559,0.39-0.895,0.39s-0.635-0.13-0.893-0.39L6.162,447.645c-0.26-0.26-0.389-0.557-0.389-0.895
 	c0-0.336,0.129-0.634,0.389-0.894"/>
 <g>
-	<g>
-		<path fill="#4E4C4B" d="M70,157.205v22H57v-22H70 M71,156.205H56v24h15V156.205L71,156.205z"/>
-	</g>
-	<g>
-		<path fill="#4E4C4B" d="M88,157.205v22H75v-22H88 M89,156.205H74v24h15V156.205L89,156.205z"/>
-	</g>
-	<g>
-		<path fill="#4E4C4B" d="M135,157.205v22h-28v-22H135 M136,156.205h-30v24h30V156.205L136,156.205z"/>
-	</g>
-	<g>
-		<rect x="103" y="156.205" fill="#4E4C4B" width="1" height="24"/>
-	</g>
-	<g>
-		<rect x="40" y="156.205" fill="#4E4C4B" width="1" height="24"/>
-	</g>
-	<g>
-		<path fill="#4E4C4B" d="M37,157.205v22H9v-22H37 M38,156.205H8v24h30V156.205L38,156.205z"/>
-	</g>
+	<path fill="#4E4C4B" d="M70,157.205v22H57v-22H70 M71,156.205H56v24h15V156.205L71,156.205z"/>
 </g>
 <g>
-	<g>
-		<path fill="#882200" d="M70,205v22H57v-22H70 M71,204H56v24h15V204L71,204z"/>
-	</g>
-	<g>
-		<path fill="#882200" d="M88,205v22H75v-22H88 M89,204H74v24h15V204L89,204z"/>
-	</g>
-	<g>
-		<path fill="#882200" d="M135,205v22h-28v-22H135 M136,204h-30v24h30V204L136,204z"/>
-	</g>
-	<g>
-		<rect x="103" y="204" fill="#4E4C4B" width="1" height="24"/>
-	</g>
-	<g>
-		<rect x="40" y="204" fill="#4E4C4B" width="1" height="24"/>
-	</g>
-	<g>
-		<path fill="#882200" d="M37,205v22H9v-22H37 M38,204H8v24h30V204L38,204z"/>
-	</g>
+	<path fill="#4E4C4B" d="M88,157.205v22H75v-22H88 M89,156.205H74v24h15V156.205L89,156.205z"/>
+</g>
+<g>
+	<rect x="40" y="156.205" fill="#4E4C4B" width="1" height="24"/>
+</g>
+<g>
+	<path fill="#4E4C4B" d="M37,157.205v22H9v-22H37 M38,156.205H8v24h30V156.205L38,156.205z"/>
+</g>
+<g>
+	<path fill="#882200" d="M70,205v22H57v-22H70 M71,204H56v24h15V204L71,204z"/>
+</g>
+<g>
+	<path fill="#882200" d="M88,205v22H75v-22H88 M89,204H74v24h15V204L89,204z"/>
+</g>
+<g>
+	<path fill="#4E4C4B" d="M109.5,157.205v22h-5v-22H109.5 M110.5,156.205h-7v24h7V156.205L110.5,156.205z"/>
+</g>
+<g>
+	<path fill="#4E4C4B" d="M135.5,157.205v22h-21v-22H135.5 M136.5,156.205h-23v24h23V156.205L136.5,156.205z"/>
+</g>
+<g>
+	<path fill="#882200" d="M109.5,205v22h-5v-22H109.5 M110.5,204h-7v24h7V204L110.5,204z"/>
+</g>
+<g>
+	<path fill="#882200" d="M135.5,205v22h-21v-22H135.5 M136.5,204h-23v24h23V204L136.5,204z"/>
+</g>
+<g>
+	<path fill="#4E4C4B" d="M183.5,157.205v22h-28v-22H183.5 M184.5,156.205h-30v24h30V156.205L184.5,156.205z"/>
+</g>
+<g>
+	<rect x="151.5" y="156.205" fill="#4E4C4B" width="1" height="24"/>
+</g>
+<g>
+	<path fill="#882200" d="M183.5,205v22h-28v-22H183.5 M184.5,204h-30v24h30V204L184.5,204z"/>
+</g>
+<g>
+	<rect x="151.5" y="204" fill="#4E4C4B" width="1" height="24"/>
+</g>
+<g>
+	<rect x="40" y="204" fill="#4E4C4B" width="1" height="24"/>
+</g>
+<g>
+	<path fill="#882200" d="M37,205v22H9v-22H37 M38,204H8v24h30V204L38,204z"/>
 </g>
 </svg>

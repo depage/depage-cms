@@ -81,14 +81,14 @@
 $toolbarHeight: 30px;
 $infoHeight: 15px;
 $editWidth: 820px;
-//$editWidth: 610px;
+$treeWidth: 255px;
 
 @mixin icon-base($name: "", $scale: 1) {
     $iconSize: 48px;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: (3 * $iconSize) (10 * $iconSize);
+    background-size: (4 * $iconSize) (10 * $iconSize);
 
     @if ($name != "") {
         @include icon($name, $scale);
@@ -109,15 +109,19 @@ $editWidth: 820px;
         background-position: 0 (-3 * $iconSize);
     } @else if ($name == "split") {
         background-position: (-1 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "right-full") {
+    } @else if ($name == "tree-split") {
         background-position: (-2 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "right-full") {
+        background-position: (-3 * $iconSize) (-3 * $iconSize);
 
     } @else if ($name == "left-full-active") {
         background-position: 0 (-4 * $iconSize);
     } @else if ($name == "split-active") {
         background-position: (-1 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "right-full-active") {
+    } @else if ($name == "tree-split-active") {
         background-position: (-2 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "right-full-active") {
+        background-position: (-3 * $iconSize) (-4 * $iconSize);
 
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
@@ -128,7 +132,7 @@ $editWidth: 820px;
         background-position: 800px 800px;
     }
     @if ($scale != 1) {
-        background-size: (3 * $iconSize) (10 * $iconSize);
+        background-size: (4 * $iconSize) (10 * $iconSize);
     }
 
 }
@@ -299,10 +303,6 @@ select,
     border-bottom: 1px solid;
     width: 100%;
     z-index: 10000;
-
-    .right {
-        padding-right: 16px;
-    }
 }
 .toolbar {
     padding: 2px 8px;
@@ -398,6 +398,9 @@ select,
         &.split {
             @include icon("split", $iconScale);
         }
+        &.tree-split {
+            @include icon("tree-split", $iconScale);
+        }
         &.right-full {
             @include icon("right-full", $iconScale);
         }
@@ -408,6 +411,9 @@ select,
             }
             &.split {
                 @include icon("split-active", $iconScale);
+            }
+            &.tree-split {
+                @include icon("tree-split-active", $iconScale);
             }
             &.right-full {
                 @include icon("right-full-active", $iconScale);
@@ -478,8 +484,8 @@ html {
     }
     &.layout-right-full {
         .layout-left {
-            left: -400px;
-            width: 400px;
+            left: -$editWidth;
+            width: $editWidth;
         }
         .layout-right {
             left: 0;
@@ -494,6 +500,18 @@ html {
         }
         .layout-right {
             left: $editWidth;
+            right: 0;
+            border-left: 1px solid #000000;
+        }
+    }
+    &.layout-tree-split {
+        .layout-left {
+            left: 0;
+            width: $editWidth;
+            max-width: 100%;
+        }
+        .layout-right {
+            left: $treeWidth;
             right: 0;
             border-left: 1px solid #000000;
         }

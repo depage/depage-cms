@@ -24,6 +24,7 @@ var depageCMS = (function() {
     var $flashFrame;
     var $toolbarLeft;
     var $toolbarRight;
+    var currentLayout;
 
     // local Project instance that holds all variables and function
     var localJS = {
@@ -78,6 +79,7 @@ var depageCMS = (function() {
             var layouts = [
                 "left-full",
                 "split",
+                "tree-split",
                 "right-full"
             ];
 
@@ -166,14 +168,14 @@ var depageCMS = (function() {
 
         // {{{ switchLayout
         switchLayout: function(event, layout) {
-            var newLayout = layout;
+            currentLayout = layout;
 
             if (typeof event.data != "undefined" && typeof event.data.layout != "undefined") {
-                newLayout = event.data.layout;
+                currentLayout = event.data.layout;
             }
 
             if ($("div.preview").length === 0) {
-                newLayout = "left-full";
+                currentLayout = "left-full";
                 $(".layout-buttons").hide();
             } else {
                 $(".layout-buttons").show();
@@ -181,12 +183,13 @@ var depageCMS = (function() {
             $html
                 .removeClass("layout-left-full")
                 .removeClass("layout-right-full")
+                .removeClass("layout-tree-split")
                 .removeClass("layout-split")
-                .addClass("layout-" + newLayout);
+                .addClass("layout-" + currentLayout);
 
             var $buttons = $toolbarRight.find(".layout-buttons a")
                 .removeClass("active")
-                .filter("." + newLayout).addClass("active");
+                .filter("." + currentLayout).addClass("active");
         },
         // }}}
         // {{{ preview
@@ -194,7 +197,10 @@ var depageCMS = (function() {
             if ($previewFrame.length > 0) {
                 $previewFrame[0].src = unescape(url);
 
-                $window.triggerHandler("switchLayout", "split");
+                if (currentLayout != "split" && currentLayout != "tree-split") {
+                    console.log(currentLayout);
+                    $window.triggerHandler("switchLayout", "split");
+                }
             } else if (parent != window) {
                 parent.depageCMS.preview(url);
             } else {
