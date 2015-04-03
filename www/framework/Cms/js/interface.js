@@ -18,19 +18,29 @@ var depageCMS = (function() {
 
     var lang = $('html').attr('lang');
     var baseUrl = $("base").attr("href");
+    var $html;
+    var $window;
     var $previewFrame;
     var $flashFrame;
+    var $toolbarLeft;
+    var $toolbarRight;
 
     // local Project instance that holds all variables and function
     var localJS = {
         // {{{ ready
         ready: function() {
-            $("html").addClass("javascript");
+            $window = $(window);
+
+            $html = $("html");
+            $html.addClass("javascript");
 
             localJS.setup();
 
             // setup global events
-            $(window).on("statechangecomplete", localJS.setup);
+            $window.on("statechangecomplete", localJS.setup);
+            $window.on("switchLayout", localJS.switchLayout);
+
+            $window.triggerHandler("switchLayout", "split");
 
             $previewFrame = $("#previewFrame");
             $flashFrame = $("#flashFrame")[0];
@@ -43,6 +53,7 @@ var depageCMS = (function() {
         // {{{ setup
         setup: function() {
             localJS.setupVarious();
+            localJS.setupToolbar();
             localJS.setupProjectList();
             localJS.setupPreviewLinks();
         },
@@ -57,6 +68,26 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+        },
+        // }}}
+        // {{{ setupToolbar
+        setupToolbar: function() {
+            $toolbarLeft = $("#toolbarmain menu.left");
+            $toolbarRight = $("#toolbarmain menu.right");
+
+            var layouts = [
+                "left-full",
+                "split",
+                "right-full"
+            ];
+            var $pillButtons = $("<li class=\"pills layout-buttons\"></li>").prependTo($toolbarRight);
+
+            for (var i in layouts) {
+                var newLayout = layouts[i];
+                var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
+                    .appendTo($pillButtons)
+                    .on("click", {layout: newLayout}, localJS.switchLayout);
+            }
         },
         // }}}
         // {{{ setupProjectList
@@ -121,10 +152,28 @@ var depageCMS = (function() {
         // }}}
 
         // {{{ switchLayout
-        switchLayout: function(layoutName) {
-            if (layoutName == "split") {
-                $(".layout-full").removeClass("layout-full").addClass("layout-left");
+        switchLayout: function(event, layout) {
+            var newLayout = layout;
+
+            if (typeof event.data != "undefined" && typeof event.data.layout != "undefined") {
+                newLayout = event.data.layout;
             }
+
+            if ($("div.preview").length === 0) {
+                newLayout = "left-full";
+                $(".layout-buttons").hide();
+            } else {
+                $(".layout-buttons").show();
+            }
+            $html
+                .removeClass("layout-left-full")
+                .removeClass("layout-right-full")
+                .removeClass("layout-split")
+                .addClass("layout-" + newLayout);
+
+            var $buttons = $toolbarRight.find(".layout-buttons a")
+                .removeClass("active")
+                .filter("." + newLayout).addClass("active");
         },
         // }}}
         // {{{ preview
@@ -138,21 +187,16 @@ var depageCMS = (function() {
                 var projectName = url.match(/project\/(.*)\/preview/)[1];
 
                 $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
-                    var $result = $("<div></div>").html( data ).find("div.preview");
-                    $result.css({
-                        left: "100%"
-                    }).appendTo("body");
-                    var $header = $result.find("header.info").css({
-                        left: "100%"
-                    });
+                    var $result = $("<div></div>")
+                        .html( data )
+                        .find("div.preview")
+                        .appendTo("body");
+                    var $header = $result.find("header.info");
 
                     $previewFrame = $("#previewFrame");
                     $previewFrame[0].src = unescape(url);
 
-                    $result.attr("style", "");
-                    $header.attr("style", "");
-
-                    localJS.switchLayout("split");
+                    $window.triggerHandler("switchLayout", "split");
                 });
             }
         },

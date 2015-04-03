@@ -88,7 +88,7 @@ $editWidth: 820px;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: (2 * $iconSize) (10 * $iconSize);
+    background-size: (3 * $iconSize) (10 * $iconSize);
 
     @if ($name != "") {
         @include icon($name, $scale);
@@ -104,6 +104,21 @@ $editWidth: 820px;
         background-position: 0 (-1 * $iconSize);
     } @else if ($name == "tasks") {
         background-position: 0 (-2 * $iconSize);
+
+    } @else if ($name == "left-full") {
+        background-position: 0 (-3 * $iconSize);
+    } @else if ($name == "split") {
+        background-position: (-1 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "right-full") {
+        background-position: (-2 * $iconSize) (-3 * $iconSize);
+
+    } @else if ($name == "left-full-active") {
+        background-position: 0 (-4 * $iconSize);
+    } @else if ($name == "split-active") {
+        background-position: (-1 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "right-full-active") {
+        background-position: (-2 * $iconSize) (-4 * $iconSize);
+
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
         background-size: (2 * $iconSize) (10 * $iconSize);
@@ -113,7 +128,7 @@ $editWidth: 820px;
         background-position: 800px 800px;
     }
     @if ($scale != 1) {
-        background-size: (2 * $iconSize) (10 * $iconSize);
+        background-size: (3 * $iconSize) (10 * $iconSize);
     }
 
 }
@@ -192,13 +207,14 @@ a img {
 }
 /* }}} */
 /* {{{ border-radius */
+.button,
+.toggle-button,
 .toolbar a,
 .projectlist a,
 .depage-form .submit input,
 .depage-form .cancel input {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
+    @include radius(3px);
+    cursor: pointer;
 }
 /* }}} */
 /* {{{ centered_box */
@@ -323,6 +339,58 @@ a img {
       color: #aaa;
       cursor: default;
     }
+    .pills {
+
+        a.button,
+        a.toggle-button {
+            background-color: #eeeeee;
+            border-right: 1px solid #dddddd;
+            @include radius(0);
+
+            &:first-child {
+                margin-left: 1em;
+                @include radius(3px, "top", "left");
+                @include radius(3px, "bottom", "left");
+            }
+            &:last-child {
+                margin-right: 1em;
+                @include radius(3px, "top", "right");
+                @include radius(3px, "bottom", "right");
+                border-right: none;
+            }
+        }
+        a.toggle-button.active {
+            color: #4E4C4B;
+        }
+    }
+    .layout-buttons a {
+        $iconScale: 0.55;
+        @include icon-base;
+        text-indent: -1000em;
+        width: 2.4em;
+
+        &.left-full {
+            @include icon("left-full", $iconScale);
+        }
+        &.split {
+            @include icon("split", $iconScale);
+        }
+        &.right-full {
+            @include icon("right-full", $iconScale);
+        }
+        &.active,
+        &:hover {
+            &.left-full {
+                @include icon("left-full-active", $iconScale);
+            }
+            &.split {
+                @include icon("split-active", $iconScale);
+            }
+            &.right-full {
+                @include icon("right-full-active", $iconScale);
+            }
+        }
+    }
 }
 /* }}} */
 
@@ -346,41 +414,66 @@ header.info {
 }
 /* }}} */
 /* {{{ layouts */
-header.info,
-.layout {
-    @include transition(200ms, "left, right, width");
-}
-.layout-full,
-.layout-left,
-.layout-right {
-    position: absolute;
-    top: $toolbarHeight;
-    padding-top: $infoHeight;
-    bottom: 0;
-    overflow: scroll;
-}
-.layout-left {
-    &,
-    header.info {
-        left: 0;
-        width: $editWidth;
-        max-width: 100%;
+html {
+    // base styles for layouts
+    header.info,
+    .layout {
+        @include transition(200ms, "left, right, width");
     }
-}
-.layout-right {
-    &,
-    header.info {
-        left: $editWidth;
-        right: 0;
-        border-left: 1px solid #000000;
+    .layout-left,
+    .layout-right {
+        position: absolute;
+        top: $toolbarHeight;
+        padding-top: $infoHeight;
+        bottom: 0;
+        overflow: scroll;
+
+        header.info {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+        }
     }
-}
-.layout-full {
-    &,
-    header.info {
+    .layout-left {
         left: 0;
+    }
+    .layout-right {
         right: 0;
-        width: 100%;
+    }
+
+    // layouts
+    &.layout-left-full {
+        .layout-left {
+            right: 0;
+            width: 100%;
+        }
+        .layout-right {
+            left: 100%;
+            width: 0;
+        }
+    }
+    &.layout-right-full {
+        .layout-left {
+            left: -400px;
+            width: 400px;
+        }
+        .layout-right {
+            left: 0;
+            width: 100%;
+        }
+    }
+    &.layout-split {
+        .layout-left {
+            left: 0;
+            width: $editWidth;
+            max-width: 100%;
+        }
+        .layout-right {
+            left: $editWidth;
+            right: 0;
+            border-left: 1px solid #000000;
+        }
     }
 }
 /* }}} */
