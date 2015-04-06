@@ -315,7 +315,7 @@ select,
     }
     h1,
     a,
-    select {
+    span.zoom-select {
         display: block;
         float: left;
         line-height: 22px;
@@ -363,7 +363,6 @@ select,
         }
     }
     .pills {
-
         a.button,
         a.toggle-button {
             background-color: #eeeeee;
@@ -507,7 +506,7 @@ html {
     &.layout-tree-split {
         .layout-left {
             left: 0;
-            width: $editWidth;
+            width: $editWidth * 0.85;
             max-width: 100%;
         }
         .layout-right {

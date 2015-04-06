@@ -79,20 +79,21 @@ var depageCMS = (function() {
             var layouts = [
                 "left-full",
                 "split",
-                "tree-split",
+                //"tree-split",
                 "right-full"
             ];
 
             // add zoom select
             var $zoomButtons = $("<li class=\"layout-buttons\"></li>").prependTo($toolbarRight);
-            var $zoomSelect = $("<select><option value=\"zoom100\">100%</option><option value=\"zoom75\">75%</option><option value=\"zoom50\">50%</option></select>").appendTo($zoomButtons).on("change", function() {
-                this.blur();
-                $preview = $("div.preview")
-                    .removeClass("zoom100")
-                    .removeClass("zoom75")
-                    .removeClass("zoom50")
-                    .addClass(this.value);
-            });
+            var $zoomSelect = $("<span class=\"zoom-select\"><select><option value=\"zoom100\">100%</option><option value=\"zoom75\">75%</option><option value=\"zoom50\">50%</option></select></span>")
+                .appendTo($zoomButtons)
+                .find("select")
+                .on("change", function() {
+                    this.blur();
+                    $preview = $("div.preview")
+                        .removeClass("zoom100 zoom75 zoom50")
+                        .addClass(this.value);
+                });
 
 
             // add layout buttons
@@ -176,15 +177,12 @@ var depageCMS = (function() {
 
             if ($("div.preview").length === 0) {
                 currentLayout = "left-full";
-                $(".layout-buttons").hide();
+                $(".layout-buttons").css({visibility: "hidden"});
             } else {
-                $(".layout-buttons").show();
+                $(".layout-buttons").css({visibility: "visible"});
             }
             $html
-                .removeClass("layout-left-full")
-                .removeClass("layout-right-full")
-                .removeClass("layout-tree-split")
-                .removeClass("layout-split")
+                .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")
                 .addClass("layout-" + currentLayout);
 
             var $buttons = $toolbarRight.find(".layout-buttons a")
