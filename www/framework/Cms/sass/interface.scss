@@ -470,7 +470,7 @@ html {
         right: 0;
     }
 
-    // layouts
+    // layout basics
     &.layout-left-full {
         .layout-left {
             right: 0;
@@ -513,6 +513,44 @@ html {
             left: $treeWidth;
             right: 0;
             border-left: 1px solid #000000;
+        }
+    }
+
+    // layouts for media sizes
+    @media screen and (max-width: 1200px) {
+        $currentEditWidth: $editWidth * 0.8;
+
+        &.layout-right-full {
+            .layout-left {
+                left: -$currentEditWidth;
+                width: $currentEditWidth;
+            }
+        }
+        &.layout-split {
+            .layout-left {
+                width: $currentEditWidth;
+            }
+            .layout-right {
+                left: $currentEditWidth;
+            }
+        }
+    }
+    @media screen and (max-width: 1024px) {
+        $currentEditWidth: $editWidth * 0.7;
+
+        &.layout-right-full {
+            .layout-left {
+                left: -$currentEditWidth;
+                width: $currentEditWidth;
+            }
+        }
+        &.layout-split {
+            .layout-left {
+                width: $currentEditWidth;
+            }
+            .layout-right {
+                left: $currentEditWidth;
+            }
         }
     }
 }
