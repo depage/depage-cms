@@ -58,7 +58,27 @@ class Log
 
         if (gettype($arg) != 'string') {
             ob_start();
-            print_r($arg);
+
+            if (is_object($arg)) {
+                $obj = $arg;
+
+                if ($obj instanceof \DOMDocument) {
+                    echo "XPath: {$obj->getNodePath()}\n".$obj->saveXML($obj);
+                } else if ($obj instanceof \DOMElement) {
+                    echo "XPath: {$obj->getNodePath()}\n".$obj->ownerDocument->saveXML($obj);
+                } else if ($obj instanceof \DOMAttr) {
+                    echo "XPath: {$obj->getNodePath()}\n".$obj->ownerDocument->saveXML($obj);
+                } else if ($obj instanceof \DOMNodeList) {
+                    for ($i = 0; $i < $obj->length; $i++) {
+                        echo "Item #$i, XPath: {$obj->item($i)->getNodePath()}\n".  "{$obj->item($i)->ownerDocument->saveXML($obj->item($i))}\n";
+                    }
+                } else {
+                    print_r($obj);
+                }
+            } else {
+                print_r($arg);
+            }
+
             $message .= ob_get_contents();
             ob_end_clean();
         } else {
@@ -92,6 +112,25 @@ class Log
         } else {
             error_log("[$date] [$type] $message\n");
         }
+    }
+    // }}}
+    // {{{ backtrace
+    /**
+     * logs a backtrace of current call
+     *
+     * @param   $type (string) type of the log message
+     *
+     * @return  null
+     */
+    public function backtrace($type = "debug") {
+        ob_start();
+
+        debug_print_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        $message = ob_get_contents();
+        ob_end_clean();
+
+        $this->log($message, $type);
     }
     // }}}
 }
