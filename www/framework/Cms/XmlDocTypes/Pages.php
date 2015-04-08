@@ -72,13 +72,8 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
     // {{{ onAddNode()
     /**
      * On Add Node
-     *
-     * Creates a new xmldb document node with a uniquely generated name: _{$type}_hash.
-     *
-     * @param string $type
-     * @return \depage\xmldb\document
      */
-    public function onAddNode(\DomElement $node, $target_id, $target_pos) {
+    public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras = array()) {
         if (isset($this->availableNodes[$node->nodeName])) {
             $properties = $this->availableNodes[$node->nodeName];
 
@@ -90,8 +85,20 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
                 $document = $this->xmldb->createDoc($doc_name, $properties->doc_type);
                 $node->setAttribute('db:docref', $document->getDocId());
                 $xml = $this->loadXmlTemplate($properties->xml_template);
+                $rootId = $document->getDocInfo()->rootid;
 
-                return $document->save($xml);
+                $docId = $document->save($xml);
+
+                if (isset($extras['dataNodes'])) {
+                    // add document data to page data document
+                    $rootId = $document->getDocInfo()->rootid;
+
+                    foreach ($extras['dataNodes'] as $dataNode) {
+                        $document->addNode($dataNode, $rootId);
+                    }
+                }
+
+                return $docId;
             }
         }
 
@@ -108,6 +115,12 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
      * @return null
      */
     public function onCopyNode($node_id, $copy_id) {
+        $log = new \Depage\Log\Log();
+
+        // copy attached document as new document
+        $log->log("------------------------------");
+        $log->log("copying $node_id");
+
         return true;
     }
     // }}}
@@ -121,7 +134,7 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
      * @return boolean
      */
     public function onDeleteNode($nodeId) {
-        // @todo check functionality
+        // @todo check wether to delete attached documents directly or later
         //$this->xmldb->removeDoc($doc_id);
         return true;
     }
@@ -129,6 +142,8 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
 
     // {{{ testDocument
     public function testDocument($node) {
+        // @todo rename nodes on same level that have the same name
+
         $xmlnav = new \Depage\Cms\XmlNav();
 
         $xmlnav->addUrlAttributes($node);

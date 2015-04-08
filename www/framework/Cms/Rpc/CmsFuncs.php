@@ -127,22 +127,23 @@ class CmsFuncs {
     // }}}
     // {{{ get_tree()
     function get_tree($args) {
-        $callbackFunc = "update_tree_{$args['type']}";
+        $treeType = $args['type'];
+        $callbackFunc = "update_tree_{$treeType}";
 
         $data = array();
         $project_name = $this->projectName;
 
-        if ($args['type'] == 'settings') {
+        if ($treeType == 'settings') {
             $data['data'] = $this->getTreeSettings();
-        } elseif ($args['type'] == 'colors') {
+        } elseif ($treeType == 'colors') {
             $data['data'] = $this->getTreeColors();
-        } elseif ($args['type'] == 'tpl_newnodes') {
+        } elseif ($treeType == 'tpl_newnodes') {
             $data['data'] = $this->getTreeTplNewnodes();
-        } elseif ($args['type'] == 'pages') {
+        } elseif ($treeType == 'pages') {
             $data['data'] = $this->getTreePages();
-        } elseif ($args['type'] == 'page_data') {
+        } elseif ($treeType == 'page_data') {
             $data['data'] = $this->getTreePagedata($args['id']);
-        } elseif ($args['type'] == 'files') {
+        } elseif ($treeType == 'files') {
             $data['data'] = $this->getTreeFiles();
         }
 
@@ -172,8 +173,6 @@ class CmsFuncs {
             $info['path'] = $args['filepath'];
             $info['filesize'] = $sizeFormatter->format($info['filesize']);
             $info['date'] = $dateFormatter->format($info['date'], true);
-
-            $this->log->log($info);
         }
         foreach ($info as $key => $value) {
             if (is_bool($value)) {
@@ -186,10 +185,11 @@ class CmsFuncs {
     // }}}
     // {{{ get_prop()
     function get_prop($args) {
+        $treeType = $args['type'];
         $data = array();
-        $callbackFunc = "update_prop_{$args['type']}";
+        $callbackFunc = "update_prop_{$treeType}";
 
-        if ($args['type'] == 'files' && !empty($args['id'])) {
+        if ($treeType == 'files' && !empty($args['id'])) {
             $data['data'] = $this->getFilesForPath($args['id']);
         }
 
@@ -198,6 +198,7 @@ class CmsFuncs {
     // }}}
     // {{{ save_node()
     function save_node($args) {
+        $treeType = $args['type'];
         $node = $args['data'][0];
         $nodeId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
         $changedIds = array();
@@ -208,30 +209,41 @@ class CmsFuncs {
         }
         $changedIds[] = $nodeId;
 
-        $this->addCallback($args['type'], $changedIds);
+        $this->addCallback($treeType, $changedIds);
     }
     // }}}
     // {{{ add_node()
     function add_node($args) {
         $targetId = $args['target_id'];
+        $treeType = $args['type'];
+        $newName = !empty($args['new_name']) ? $args['new_name'] : "";
+
+        // unfortunate double use of node_type parameter
+        $nodeName = $args['node_type'];
         $newNodes = $args['node_type'];
-        $newName = $args['new_name'];
+
         $changedIds = array();
+        $extras = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
             // {{{ tree-type specific actions
-            if ($args['type'] == "pages") {
+            if ($treeType == "pages") {
                 // create node for page-types
                 $newNodes = array();
                 $tempdoc = new \DOMDocument();
-                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $newNodes . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
+
+                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $nodeName . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
                 $newNodes[] = $tempdoc->documentElement;
-            } else if ($args['type'] == "colors") {
+
+                if (count($args["xmldata"]) > 0) {
+                    $extras['dataNodes'] = $args["xmldata"];
+                }
+            } else if ($treeType == "colors") {
                 // init newNodes for colors
                 $newNodes = array();
                 $tempdoc = new \DOMDocument();
-                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><proj:colorscheme xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" name="' . htmlentities($newName) . '" />');
+                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><proj:colorscheme xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" />');
                 $newNodes[] = $tempdoc->documentElement;
 
                 // adjust target id -> colorscheme are always added to root
@@ -239,34 +251,23 @@ class CmsFuncs {
                 $targetId = $xmldoc->getDocInfo()->rootid;
             }
             // }}}
+
             foreach($newNodes as $i => $node) {
-                $savedId = $xmldoc->addNode($node, $targetId);
+                $savedId = $xmldoc->addNode($node, $targetId, -1, $extras);
                 if (!empty($newName)) {
-                    //$xmldoc->setAttribute($savedId, "name", $newName);
+                    $xmldoc->setAttribute($savedId, "name", $newName);
                 }
-
-                // {{{ tree-type specific actions
-                if ($args['type'] == "pages") {
-                    // add document data to page data document
-                    $dbRef = (int) $node->getAttribute("db:docref");
-                    if (isset($args["xmldata"][$i]) && $dbRef > 0) {
-                        $pagedataDoc = $this->xmldb->getDoc($dbRef);
-                        $rootId = $pagedataDoc->getDocInfo()->rootid;
-
-                        $pagedataDoc->addNode($args["xmldata"][$i], $rootId);
-                    }
-                }
-                // }}}
                 $changedIds[] = $savedId;
             }
         }
         $changedIds[] = $targetId;
 
-        $this->addCallback($args['type'], $changedIds, $changedIds[0]);
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
     }
     // }}}
     // {{{ rename_node()
     function rename_node($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
         $changedIds = array();
@@ -277,11 +278,12 @@ class CmsFuncs {
         }
         $changedIds[] = $nodeId;
 
-        $this->addCallback($args['type'], $changedIds);
+        $this->addCallback($treeType, $changedIds);
     }
     // }}}
     // {{{ move_node_in()
     function move_node_in($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -290,11 +292,12 @@ class CmsFuncs {
             $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ move_node_before()
     function move_node_before($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -303,11 +306,12 @@ class CmsFuncs {
             $xmldoc->moveNodeBefore($nodeId, $targetId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ move_node_after()
     function move_node_after($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -316,11 +320,12 @@ class CmsFuncs {
             $xmldoc->moveNodeAfter($nodeId, $targetId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_in()
     function copy_node_in($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -329,11 +334,12 @@ class CmsFuncs {
             $xmldoc->copyNodeIn($nodeId, $targetId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_before()
     function copy_node_before($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -342,11 +348,12 @@ class CmsFuncs {
             $xmldoc->copyNodeBefore($nodeId, $targetId);
         }
 
-        $this->getCallback($args['type'], array($nodeId, $targetId));
+        $this->getCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_after()
     function copy_node_after($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
 
@@ -355,18 +362,19 @@ class CmsFuncs {
             $xmldoc->copyNodeAfter($nodeId, $targetId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ duplicate_node()
     function duplicate_node($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
         $changedIds = array();
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $savedId = $xmldoc->duplicateNode($nodeId, $args['type'] == "page_data" ||  $args['type'] == "colors");
+            $savedId = $xmldoc->duplicateNode($nodeId, $treeType == "page_data" ||  $treeType == "colors");
             if (!empty($newName)) {
                 $xmldoc->setAttribute($savedId, "name", $newName);
             }
@@ -374,11 +382,12 @@ class CmsFuncs {
         }
         $changedIds[] = $nodeId;
 
-        $this->addCallback($args['type'], $changedIds, $changedIds[0]);
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
     }
     // }}}
     // {{{ delete_node()
     function delete_node($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
@@ -386,11 +395,12 @@ class CmsFuncs {
             $parentId = $xmldoc->unlinkNode($nodeId);
         }
 
-        $this->addCallback($args['type'], array($nodeId, $parentId));
+        $this->addCallback($treeType, array($nodeId, $parentId));
     }
     // }}}
     // {{{ set_page_colorscheme()
     function set_page_colorscheme($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $colorscheme = $args['colorscheme'];
 
@@ -399,11 +409,12 @@ class CmsFuncs {
             $xmldoc->setAttribute($nodeId, "colorscheme", $colorscheme);
         }
 
-        $this->addCallback($args['type'], array($nodeId));
+        $this->addCallback($treeType, array($nodeId));
     }
     // }}}
     // {{{ set_page_navigations()
     function set_page_navigations($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $navigationNode = $args['navigations'][0];
 
@@ -414,7 +425,7 @@ class CmsFuncs {
             }
         }
 
-        $this->addCallback($args['type'], array($nodeId));
+        $this->addCallback($treeType, array($nodeId));
         $this->addCallback('pages', array($nodeId));
 
         return new Func('preview_update', array('error' => 0));
@@ -422,6 +433,7 @@ class CmsFuncs {
     // }}}
     // {{{ set_page_file_options()
     function set_page_file_options($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
         $multilang = $args['multilang'];
         $filetype = $args['file_type'];
@@ -968,8 +980,6 @@ class CmsFuncs {
                     $data['width'] = $info['width'];
                     $data['height'] = $info['height'];
                 }
-
-                $this->log->log($data);
 
                 $dirXML .= "<file";
                 foreach ($data as $key => $value) {

@@ -116,9 +116,10 @@ class Base
      * @param \DomElement $node
      * @param $target_id
      * @param $target_pos
+     * @param $extras
      * @return null
      */
-    public function onAddNode(\DomElement $node, $target_id, $target_pos) {
+    public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras) {
         return null;
     }
     // }}}

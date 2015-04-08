@@ -5,7 +5,7 @@ namespace Depage\Cms\XmlDocTypes;
 class Page extends \Depage\XmlDb\XmlDocTypes\Base
 {
     private $table_nodetypes;
-    private $pathXMLtemplate;
+    private $pathXMLtemplate = "";
 
     // {{{ constructor
     public function __construct($xmldb, $docId) {
@@ -20,13 +20,8 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
     // {{{ onAddNode()
     /**
      * On Add Node
-     *
-     * Creates a new xmldb document node with a uniquely generated name: _{$type}_hash.
-     *
-     * @param string $type
-     * @return \depage\xmldb\document
      */
-    public function onAddNode(\DomElement $node, $target_id, $target_pos) {
+    public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras = array()) {
         $this->testNodeLanguages($node);
     }
     // }}}
