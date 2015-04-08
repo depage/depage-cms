@@ -398,10 +398,10 @@ class Document {
      * @param $target_pos
      * @return bool
      */
-    public function addNode(\DomElement $node, $target_id, $target_pos = -1) {
+    public function addNode(\DomElement $node, $target_id, $target_pos = -1, $extras = array()) {
         $dth = $this->getDoctypeHandler();
         if ($dth->isAllowedAdd($node, $target_id)) {
-            $dth->onAddNode($node, $target_id, $target_pos);
+            $dth->onAddNode($node, $target_id, $target_pos, $extras);
             return $this->saveNode($node, $target_id, $target_pos, true);
         }
         return false;
@@ -419,12 +419,9 @@ class Document {
         $dth = $this->getDoctypeHandler();
         $target_name = $this->getNodeNameById($target_id);
 
-        if ($dth->isAllowedIn($name, $target_name)) {
-            $newNode = $dth->getNewNodeFor($name);
-            if ($newNode) {
-                $dth->onAddNode($newNode, $target_id, $target_pos);
-                return $this->addNode($newNode, $target_id, $target_pos);
-            }
+        $newNode = $dth->getNewNodeFor($name);
+        if ($newNode) {
+            return $this->addNode($newNode, $target_id, $target_pos);
         }
         return false;
     }
@@ -1646,7 +1643,7 @@ class Document {
     /**
      * gets unused db-node-ids for saving nodes
      *
-     * @param    $needed (int) mininum number of ids, that are requested
+     * @param    $needed (int) minimum number of ids, that are requested
      */
     private function getFreeNodeIds($needed = 1) {
         // @todo check to replace this with an extra table of deleted ids (trigger on delete)
@@ -1661,25 +1658,28 @@ class Document {
         $this->free_element_ids = array();
         $lastMax = 0;
 
-        $query = $this->pdo->prepare(
-            "SELECT row AS id FROM
-                (SELECT
-                    @row := @row + 1 as row, xml.id
-                FROM
-                    {$this->table_xml} as xml,
-                    (SELECT @row := :start) r
-                WHERE @row <> id
-                ORDER BY xml.id) AS seq
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM {$this->table_xml} as xml
-                WHERE xml.id = row
-            );"
-        );
-
         do {
+            // @todo for some reason preparing before the loop does not work with native prepared statements
+            $query = $this->pdo->prepare(
+                "SELECT row AS id FROM
+                    (SELECT
+                        @row := @row + 1 as row, xml.id
+                    FROM
+                        {$this->table_xml} as xml,
+                        (SELECT @row := :start) r
+                    WHERE @row <> id
+                    ORDER BY xml.id) AS seq
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM {$this->table_xml} as xml
+                    WHERE xml.id = row
+                ) LIMIT :maxCount;"
+
+            );
+
             $query->execute(array(
                 'start' => $lastMax,
+                'maxCount' => $needed,
             ));
 
             $results = $query->fetchAll(\PDO::FETCH_OBJ);
@@ -1687,7 +1687,7 @@ class Document {
                 $this->free_element_ids[] = $id->id;
             }
             if (count($results) > 0) {
-                $lastMax = $id->id;
+                $lastMax = (int) $id->id;
             }
         } while (count($this->free_element_ids) < $needed && count($results) > 0);
 
