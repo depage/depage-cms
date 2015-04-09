@@ -6,7 +6,7 @@ test:
 	cd Tests; $(MAKE) $(MFLAGS)
 
 clean:
-	cd tests; $(MAKE) $(MFLAGS) clean
+	cd Tests; $(MAKE) $(MFLAGS) clean
 
 .PHONY: all
 .PHONY: clean
