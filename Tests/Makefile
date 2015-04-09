@@ -2,7 +2,7 @@ RM = rm -rf
 
 test:
 	mkdir -p cache
-	phpunit --coverage-html phpunit/ .
+	phpunit --bootstrap Bootstrap.php --coverage-html phpunit/ .
 
 clean:
 	${RM} phpunit

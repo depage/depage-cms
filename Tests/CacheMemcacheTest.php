@@ -1,9 +1,5 @@
 <?php
 
-namespace Depage\Cache\Cache\Tests;
-
-use Depage\Cache\Cache;
-
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
