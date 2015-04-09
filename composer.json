@@ -17,7 +17,7 @@
         "phpunit": "*"
     },
     "autoload": {
-        "psr-0": { "depage\\cache\\": "../../" }
+        "psr-4": { "Depage\\Cache\\": "" }
     },
     "support": {
         "email": "info@depage.net",

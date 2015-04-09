@@ -11,25 +11,6 @@
 
 namespace Depage\Cache;
 
-// {{{ autoloader
-/**
- * @brief PHP autoloader
- *
- * Autoloads classes by namespace. (requires PHP >= 5.3)
- **/
-function autoload($class)
-{
-    $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
-    $file = __DIR__ . '/' .  $class . '.php';
-
-    if (file_exists($file)) {
-        require_once($file);
-    }
-}
-
-spl_autoload_register(__NAMESPACE__ . '\autoload');
-// }}}
-
 abstract class Cache
 {
     // {{{ variables

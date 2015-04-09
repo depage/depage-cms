@@ -1,11 +1,5 @@
 <?php
 
-namespace Depage\Cache\Cache\Tests;
-
-require_once(__DIR__ . "/bootstrap.php");
-
-use Depage\Cache\Cache;
-
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
@@ -21,7 +15,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
     {
         $this->clean();
 
-        $this->cache = \Depage\Cache\Cache::factory("test", array(
+        $this->cache = Depage\Cache\Cache::factory("test", array(
             'disposition' => "file",
             'cachepath' => "cache",
         ));
