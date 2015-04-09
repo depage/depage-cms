@@ -2,8 +2,6 @@
 
 namespace Depage\Cache\Cache\Tests;
 
-require_once("bootstrap.php");
-
 use Depage\Cache\Cache;
 
 /**
