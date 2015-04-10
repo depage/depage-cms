@@ -15,7 +15,7 @@
         "php": " >= 5.3",
         "depage/cache": "*",
         "depage/db": "*",
-        "depage/xml": "*",
+        "depage/xml": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
