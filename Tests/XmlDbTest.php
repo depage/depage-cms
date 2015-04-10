@@ -1,6 +1,6 @@
 <?php
 
-class XmlDbTest extends \PHPUnit_Extensions_Database_TestCase
+class XmlDbTest extends Generic_Tests_DatabaseTestCase
 {
     protected $xmldb;
 
@@ -12,24 +12,13 @@ class XmlDbTest extends \PHPUnit_Extensions_Database_TestCase
     protected function setUp() {
         parent::setUp();
 
-        // get database instance
-        $pdo = new db_pdo (
-            "mysql:dbname=depage_phpunit;host=localhost",
-            "root",
-            "",
-            array(
-                'prefix' => "xmldb", // database prefix
-                \PDO::ATTR_PERSISTENT => true,
-            )
-        );
-
         // get cache instance
-        $cache = depage\cache\cache::factory("xmldb", array(
+        $cache = Depage\Cache\Cache::factory("xmldb", array(
             'disposition' => "uncached",
         ));
 
         // get xmldb instance
-        $this->xmldb = new depage\xmldb\xmldb($pdo->prefix . "_proj_test", $pdo, $cache, array(
+        $this->xmldb = new Depage\XmlDb\XmlDb($pdo->prefix . "_proj_test", $pdo, $cache, array(
             "root",
             "child",
         ));
@@ -46,27 +35,7 @@ class XmlDbTest extends \PHPUnit_Extensions_Database_TestCase
         parent::tearDown();
     }
     // }}}
-    // {{{ getConnection()
-    /**
-     * gets database connection
-     */
-    protected function getConnection() {
-        $pdo = new pdo("mysql:dbname=depage_phpunit;host=localhost", "root", "", array(
-            \PDO::ATTR_PERSISTENT => true,
-        ));
 
-        return $this->createDefaultDBConnection($pdo, 'testdb');
-    }
-    // }}}
-    // {{{ getDataSet()
-    /**
-     * gets dataset
-     */
-    protected function getDataSet() {
-        return $this->createXMLDataSet(__DIR__.'/xmldb_dataset.xml');
-    }
-    // }}}
-    
     // {{{ testGet_doc_list()
     public function testGet_doc_list() {
         // get list for one document
