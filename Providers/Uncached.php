@@ -1,6 +1,6 @@
 <?php
 
-namespace Depage\Cache;
+namespace Depage\Cache\Providers;
 
 class Uncached extends \Depage\Cache\Cache
 {
