@@ -11,6 +11,9 @@ require_once(__DIR__ . '/../XmlGetter.php');
 require_once(__DIR__ . '/../Document.php');
 require_once(__DIR__ . '/../XmlDb.php');
 
+const DEPAGE_CACHE_PATH = 'cache';
+const DEPAGE_BASE = 'base';
+
 // {{{ Generic_Tests_DatabaseTestCase
 class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 {

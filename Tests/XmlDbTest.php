@@ -13,9 +13,7 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
         parent::setUp();
 
         // get cache instance
-        $cache = Depage\Cache\Cache::factory("xmldb", array(
-            'disposition' => "uncached",
-        ));
+        $cache = Depage\Cache\Cache::factory("xmldb", array('disposition' => "uncached"));
 
         // get xmldb instance
         $this->xmldb = new Depage\XmlDb\XmlDb($pdo->prefix . "_proj_test", $pdo, $cache, array(
