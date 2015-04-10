@@ -13,7 +13,6 @@ class CacheUncachedTest extends \PHPUnit_Framework_TestCase
     {
         $this->cache = \Depage\Cache\Cache::factory("test", array(
             'disposition' => 'uncached',
-            'cachepath' => "cache",
         ));
     }
     // }}}
