@@ -1,6 +1,7 @@
 <?php
 
-require_once(__DIR__ . '/vendor/autoload.php');
+// @todo reenable once composer installs are available
+//require_once(__DIR__ . '/../vendor/autoload.php');
 
 require_once(__DIR__ . '/../XmlGetter.php');
 require_once(__DIR__ . '/../Document.php');
