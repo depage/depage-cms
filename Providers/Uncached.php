@@ -110,6 +110,16 @@ class Uncached extends \Depage\Cache\Cache
     {
     }
     // }}}
+    // {{{ clear */
+    /**
+     * @brief clears all items from current cache
+     *
+     * @return void
+     */
+    public function clear()
+    {
+    }
+    // }}}
 }
 
 /* vim:set ft=php sts=4 fdm=marker et : */
