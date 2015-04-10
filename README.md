@@ -22,7 +22,6 @@ can also be templates to allow for prefixing/replacement of table identifiers.
 ####Example
 
 ######SQL schema file (schema.sql)
-
 ```mysql
 # @tablename example
 # @version 0.1
