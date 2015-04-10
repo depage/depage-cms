@@ -5,7 +5,8 @@
     "require": {
         "depage/cache": "*",
         "depage/db": "*",
-        "depage/xml": "*"
+        "depage/xml": "*",
+        "phpunit/phpunit": "*"
     }
 }
 
