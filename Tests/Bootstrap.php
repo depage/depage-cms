@@ -6,10 +6,14 @@
 // @todo delete once composer installs are available
 require_once(__DIR__ . '/../vendor/depage-cache/Cache.php');
 require_once(__DIR__ . '/../vendor/depage-cache/Providers/Uncached.php');
+require_once(__DIR__ . '/../vendor/depage-db/Pdo.php');
+require_once(__DIR__ . '/../vendor/depage-db/Schema.php');
+require_once(__DIR__ . '/../vendor/depage-db/SqlParser.php');
 
 require_once(__DIR__ . '/../XmlGetter.php');
 require_once(__DIR__ . '/../Document.php');
 require_once(__DIR__ . '/../XmlDb.php');
+require_once(__DIR__ . '/../XmlNs.php');
 
 const DEPAGE_CACHE_PATH = 'cache';
 const DEPAGE_BASE = 'base';
@@ -22,12 +26,16 @@ class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCas
 
     final public function getConnection()
     {
-        $this->pdo = new PDO(
+        $this->pdo = new Depage\Db\Pdo(
             $GLOBALS['DB_DSN'],
             $GLOBALS['DB_USER'],
-            $GLOBALS['DB_PASSWD']
+            $GLOBALS['DB_PASSWD'],
+            array(
+                'prefix' => "xmldb", // database prefix
+                \PDO::ATTR_PERSISTENT => true,
+            )
         );
-        $this->conn = $this->createDefaultDBConnection($this->pdo, $GLOBALS['DB_DBNAME']);
+        $this->conn = $this->createDefaultDBConnection($this->pdo->getPdoObject(), $GLOBALS['DB_DBNAME']);
 
         return $this->conn;
     }
@@ -40,6 +48,9 @@ class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCas
 
     protected function setUp() {
         $this->getConnection();
+        $this->pdo->query("SET foreign_key_checks = 0");
+        parent::setUp();
+        $this->pdo->query("SET foreign_key_checks = 1");
     }
 }
 // }}}

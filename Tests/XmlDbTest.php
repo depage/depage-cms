@@ -4,7 +4,7 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
 {
     protected $xmldb;
 
-    // {{{ setUp()
+    // {{{ setUp
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -13,31 +13,20 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
         parent::setUp();
 
         // get cache instance
-        $cache = Depage\Cache\Cache::factory("xmldb", array('disposition' => "uncached"));
+        $cache = Depage\Cache\Cache::factory("xmldb", array("disposition" => "uncached"));
 
         // get xmldb instance
-        $this->xmldb = new Depage\XmlDb\XmlDb($pdo->prefix . "_proj_test", $pdo, $cache, array(
+        $this->xmldb = new Depage\XmlDb\XmlDb($this->pdo->prefix . "_proj_test", $this->pdo, $cache, array(
             "root",
             "child",
         ));
     }
     // }}}
-    // {{{ tearDown()
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
-        //unset($this->xmldb);
 
-        parent::tearDown();
-    }
-    // }}}
-
-    // {{{ testGet_doc_list()
-    public function testGet_doc_list() {
+    // {{{ testGetDocuments
+    public function testGetDocuments() {
         // get list for one document
-        $docs = $this->xmldb->getDocList("pages");
+        $docs = $this->xmldb->getDocuments("pages");
 
         $this->assertEquals(array(
             'pages' => (object) array(
@@ -49,7 +38,7 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
         ), $docs);
 
         // get list of all documents
-        $docs = $this->xmldb->getDocList();
+        $docs = $this->xmldb->getDocuments();
 
         $this->assertEquals(array(
             'pages' => (object) array(
