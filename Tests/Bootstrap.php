@@ -18,6 +18,25 @@ require_once(__DIR__ . '/../XmlNs.php');
 const DEPAGE_CACHE_PATH = 'cache';
 const DEPAGE_BASE = 'base';
 
+$pdo = new Depage\Db\Pdo(
+    $GLOBALS['DB_DSN'],
+    $GLOBALS['DB_USER'],
+    $GLOBALS['DB_PASSWD']
+);
+
+function prefix($name)
+{
+    return 'xmldb_proj_test' . $name;
+};
+
+$schema = new \Depage\Db\Schema($pdo);
+$schema->setReplace('prefix');
+$schema->loadGlob(__DIR__ . '/../Sql/*.sql');
+
+$pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+$schema->update();
+$pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+
 // {{{ Generic_Tests_DatabaseTestCase
 class Generic_Tests_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase
 {
