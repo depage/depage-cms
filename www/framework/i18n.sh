@@ -47,7 +47,7 @@ for lang in $languages; do
         msgcat locale/$lang/LC_MESSAGES/messages_old.po framework/locale/$lang/LC_MESSAGES/messages.po -o locale/$lang/LC_MESSAGES/messages.po
     fi
 
-    chanchedLines=$( diff -I ".POT-Creation-Date:.*" locale/$lang/LC_MESSAGES/messages_old_bak.po locale/$lang/LC_MESSAGES/messages.po | grep -v '^[<>-]' | wc -l | grep -o "[0-9]\+" )
+    chanchedLines=$( diff -I ".POT-Creation-Date:.*" -I "#.*" locale/$lang/LC_MESSAGES/messages_old_bak.po locale/$lang/LC_MESSAGES/messages.po | grep -v '^[<>-]' | wc -l | grep -o "[0-9]\+" )
 
     if [ "$chanchedLines" != "0" ] ; then
         # there are changes
