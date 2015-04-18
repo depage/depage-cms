@@ -348,7 +348,7 @@ class CmsFuncs {
             $xmldoc->copyNodeBefore($nodeId, $targetId);
         }
 
-        $this->getCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, array($nodeId, $targetId));
     }
     // }}}
     // {{{ copy_node_after()
