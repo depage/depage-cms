@@ -2948,7 +2948,7 @@ class_propBox_edit_img.prototype.load_thumb = function() {
                 force_height =  this._parent.data.attributes.force_height;
             }
 
-            _root.mainInterface.interface.layouts.dlgChoose_files.setActive(this._parent._parent.propObj.saveFilePath, this._parent._parent.propObj, [this._parent.thumb.filepath, this._parent.data.nid, "jpg,jpeg,gif,png", force_width, force_height]);
+            _root.mainInterface.interface.layouts.dlgChoose_files.setActive(this._parent._parent.propObj.saveFilePath, this._parent._parent.propObj, [this._parent.thumb.filepath, this._parent.data.nid, "jpg,jpeg,gif,png,svg", force_width, force_height]);
 	}
 	this.buttonHref.onClick = function() {
             var href_id = "";
