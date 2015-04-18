@@ -74,7 +74,8 @@ class XmlNav {
 
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
-        $xpath = new \DOMXpath($xml);
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
         $pages = $xpath->query("//pg:*[@url]");
 
         if ($pages->length == 0) {
