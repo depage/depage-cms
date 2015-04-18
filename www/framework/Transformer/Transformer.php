@@ -60,7 +60,9 @@ abstract class Transformer
     public function initXmlGetter()
     {
         // create xmldb-project
-        $this->xmlGetter = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache);
+        $this->xmlGetter = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, array(
+            'pathXMLtemplate' => $this->xmlPath,
+        ));
     }
     // }}}
     // {{{ initXsltProc()
@@ -186,7 +188,7 @@ abstract class Transformer
             list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
         }
         if ($pageId === false || $pagedataId === false) {
-            throw new \exception("page '{$urlPath}' does not exist");
+            throw new \Exception("page '{$urlPath}' does not exist");
         }
 
         $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
@@ -209,7 +211,7 @@ abstract class Transformer
         ));
 
         if ($pageXml === false) {
-            throw new \exception("page does not exist");
+            throw new \Exception("page does not exist");
         } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {
             $errors = libxml_get_errors();
             foreach($errors as $error) {
@@ -220,7 +222,7 @@ abstract class Transformer
             $error = libxml_get_last_error();
             $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
 
-            throw new \exception($error);
+            throw new \Exception($error);
         }
 
         $cleaner = new \Depage\Html\Cleaner();
