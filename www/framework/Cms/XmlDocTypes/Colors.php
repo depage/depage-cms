@@ -2,11 +2,11 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
+class Colors extends UniqueNames {
 
     // {{{ constructor
-    public function __construct($xmldb, $docId) {
-        parent::__construct($xmldb, $docId);
+    public function __construct($xmldb, $document) {
+        parent::__construct($xmldb, $document);
 
         // list of elements that may created by a user
         $this->availableNodes = array(
@@ -38,7 +38,11 @@ class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
 
     // {{{ testDocument
     public function testDocument($node) {
-        return $this->testColors($node);
+        $changed = parent::testDocument($node);
+
+        $changed = $changed || $this->testColors($node);
+
+        return $changed;
     }
     // }}}
     // {{{ testColors

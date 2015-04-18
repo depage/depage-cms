@@ -5,11 +5,11 @@ namespace Depage\Cms\XmlDocTypes;
 // TODO configure
 define('XML_TEMPLATE_DIR', __DIR__ . '/XmlTemplates/');
 
-class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
+class Pages extends UniqueNames {
 
     // {{{ constructor
-    public function __construct($xmldb, $docId) {
-        parent::__construct($xmldb, $docId);
+    public function __construct($xmldb, $document) {
+        parent::__construct($xmldb, $document);
 
         // list of elements that may created by a user
         $this->availableNodes = array(
@@ -49,16 +49,19 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
         $this->validParents = array(
             'pg:page' => array(
                 'dpg:pages',
+                'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
             ),
             'pg:folder' => array(
                 'dpg:pages',
+                'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
             ),
             'pg:redirect' => array(
                 'dpg:pages',
+                'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
             ),
@@ -117,9 +120,26 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
     public function onCopyNode($node_id, $copy_id) {
         $log = new \Depage\Log\Log();
 
-        // copy attached document as new document
-        $log->log("------------------------------");
-        $log->log("copying $node_id");
+        // get all copied nodes
+        $copiedXml = $this->document->getSubdocByNodeId($copy_id, true);
+        $xpath = new \DOMXPath($copiedXml);
+        $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
+
+        $xp_result = $xpath->query("./descendant-or-self::node()[@db:docref]", $copiedXml);
+
+        foreach ($xp_result as $node) {
+            // get node ids and docrefids
+            $nodeId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+            $docrefId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+
+            // duplicate document as new
+            $newDocName = '_Page_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
+
+            $copiedDoc = $this->xmldb->duplicateDoc($docrefId, $newDocName);
+            $info = $copiedDoc->getDocInfo();
+
+            $this->document->setAttribute($nodeId, "db:docref", $info->id);
+        }
 
         return true;
     }
@@ -142,11 +162,57 @@ class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
 
     // {{{ testDocument
     public function testDocument($node) {
-        // @todo rename nodes on same level that have the same name
+        $changed = parent::testDocument($node);
 
         $xmlnav = new \Depage\Cms\XmlNav();
-
         $xmlnav->addUrlAttributes($node);
+
+        return $changed;
+    }
+    // }}}
+    // {{{ testChildNodeNames()
+    /*
+     * Test childnames of node so that every node on the same level has a unique name
+     *
+     * @param $node
+     */
+    public function testChildNodeNames($node) {
+        $changed = false;
+        $names = array();
+
+        foreach ($node->childNodes as $child) {
+            if ($child->nodeType == \XML_ELEMENT_NODE) {
+                $nodeId = $child->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+                $nodeName = $child->getAttribute("name");
+                $found = false;
+
+                while (in_array($nodeName, $names)) {
+                    // @todo updated to take _("(copy)") into account when renaming
+                    preg_match('/([\D]*)([\d]*)/', $nodeName, $matches);
+                    $baseName = $matches[1];
+
+                    if ($matches[2] !== "") {
+                        $number = $matches[2] + 1;
+                    } else {
+                        $baseName .= " ";
+                        $number = 2;
+                    }
+
+                    $nodeName  = $baseName . $number;
+
+                    $found = true;
+                }
+                if ($found) {
+                    $child->setAttribute("name", $nodeName);
+
+                    $changed = true;
+                }
+
+                $names[$nodeId] = $nodeName;
+            }
+        }
+
+        return $changed;
     }
     // }}}
 

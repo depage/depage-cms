@@ -1,8 +1,8 @@
 <?php
 
-namespace depage\Cms\XmlDocTypes;
+namespace Depage\Cms\XmlDocTypes;
 
-class Folder extends \Depage\XmlDb\XmlDocTypes\Base
+class Folder extends \Depage\Cms\XmlDocTypes\Page
 {
 }
 

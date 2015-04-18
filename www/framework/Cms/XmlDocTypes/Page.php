@@ -8,8 +8,8 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
     private $pathXMLtemplate = "";
 
     // {{{ constructor
-    public function __construct($xmldb, $docId) {
-        parent::__construct($xmldb, $docId);
+    public function __construct($xmldb, $document) {
+        parent::__construct($xmldb, $document);
 
         $this->pathXMLtemplate = $this->xmldb->options['pathXMLtemplate'];
 
@@ -108,6 +108,7 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
         return $nodetypes;
     }
     // }}}
+
     // {{{ testDocument
     public function testDocument($node) {
         return $this->testNodeLanguages($node);
@@ -192,7 +193,7 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
 
                                 $temp_node = $lang_node->cloneNode(true);
                                 $parent_node->insertBefore($temp_node, $temp_nodes[$i]);
-                                $this->xmldb->getDoc($this->docId)->removeIdAttr($temp_node);
+                                $this->document->removeIdAttr($temp_node);
                                 $temp_node->setAttribute('lang', $languages[$j]);
                             }
                         }
