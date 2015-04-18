@@ -79,7 +79,7 @@ class Flash extends Base {
      *
      * @return  null
      */
-    public function test($type = "start-project")
+    public function test($type = "copy-page-in")
     {
         // {{{ get-config}
         if ($type == "get-config") {
@@ -146,6 +146,10 @@ class Flash extends Base {
         // {{{ duplicate-page
         } elseif ($type == "duplicate-page") {
             $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="get_tree"><rpc:param name="sid">179mvr3930lhp431quinqrvh93</rpc:param><rpc:param name="wid">179mvr3930lhp431quinqrvh93</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="type">page_data</rpc:param><rpc:param name="id">12</rpc:param></rpc:func></rpc:msg>';
+        // }}}
+        // {{{ copy page in
+        } elseif ($type == "copy-page-in") {
+            $xmlInput = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE ttdoc [ <!ENTITY nbsp "&amp;nbsp;"><!ENTITY auml "&amp;auml;"><!ENTITY ouml "&amp;ouml;"><!ENTITY uuml "&amp;uuml;"><!ENTITY Auml "&amp;Auml;"><!ENTITY Ouml "&amp;Ouml;"><!ENTITY Uuml "&amp;Uuml;"><!ENTITY mdash "&amp;mdash;"><!ENTITY ndash "&amp;ndash;"><!ENTITY copy "&amp;copy;"><!ENTITY euro "&amp;euro;"> ]><rpc:msg xmlns:backup="http://cms.depagecms.net/ns/backup" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc"><rpc:func name="copy_node_in"><rpc:param name="sid">ot7lk7lhghebbl6d2nnj3dvfe4</rpc:param><rpc:param name="wid">ot7lk7lhghebbl6d2nnj3dvfe4</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="id">57</rpc:param><rpc:param name="target_id">55</rpc:param><rpc:param name="type">pages</rpc:param><rpc:param name="new_name">development (copy)</rpc:param></rpc:func>,<rpc:func name="get_tree"><rpc:param name="sid">ot7lk7lhghebbl6d2nnj3dvfe4</rpc:param><rpc:param name="wid">ot7lk7lhghebbl6d2nnj3dvfe4</rpc:param><rpc:param name="project_name">depage</rpc:param><rpc:param name="type">page_data</rpc:param><rpc:param name="id">18</rpc:param></rpc:func></rpc:msg>';
         // }}}
         // {{{ set-page-colorscheme
         } elseif ($type == "set-page-colorscheme") {
