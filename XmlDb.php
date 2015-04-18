@@ -27,6 +27,7 @@ class XmlDb implements XmlGetter
     private $table_docs;
     private $table_xml;
     private $table_nodetypes;
+    private $transactions = 0;
 
     private $options;
     // }}}
@@ -345,6 +346,30 @@ class XmlDb implements XmlGetter
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
         $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
+    }
+    // }}}
+
+    // {{{ beginTransaction()
+    /**
+     * wrap database begin transaction
+     */
+    public function beginTransaction() {
+        if ($this->transactions == 0) {
+            $this->pdo->beginTransaction();
+        }
+        $this->transactions++;
+    }
+    // }}}
+
+    // {{{ endTransaction()
+    /**
+     * wrap database end transaction
+     */
+    public function endTransaction() {
+        $this->transactions--;
+        if ($this->transactions == 0) {
+            $this->pdo->commit();
+        }
     }
     // }}}
 }
