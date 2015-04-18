@@ -111,10 +111,10 @@ class Document {
             $className = $this->getDocInfo()->type;
 
             if (empty($className)) {
-                $handler = new XmlDocTypes\Base($this->xmldb, $this->doc_id);
+                $handler = new XmlDocTypes\Base($this->xmldb, $this);
             } else {
                 $className = "\\" . $className;
-                $handler = new $className($this->xmldb, $this->doc_id);
+                $handler = new $className($this->xmldb, $this);
             }
 
             $this->doctypeHandlers[$this->doc_id] = $handler;
@@ -701,7 +701,7 @@ class Document {
 
             $this->clearCache();
 
-            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, false);
+            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
             $docHandler->onCopyNode($node_id, $copy_id);
 

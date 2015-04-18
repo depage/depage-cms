@@ -251,6 +251,32 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
+    // {{{ duplicateDoc()
+    /**
+     * @brief duplicateDoc
+     *
+     * @param mixed $docNameOrId
+     * @param mixed $newName
+     * @return bool success
+     **/
+    public function duplicateDoc($docNameOrId, $newName)
+    {
+        $original = $this->getDoc($docNameOrId);
+
+        if ($original !== false) {
+            $info = $original->getDocInfo();
+            $xml = $original->getXml(false);
+
+            $copy = $this->createDoc($newName, $info->type);
+            $copy->save($xml);
+
+            return $copy;
+        }
+
+        return false;
+    }
+    // }}}
+
     // {{{ removeDoc()
     /**
      * @param $doc_id_or_name
