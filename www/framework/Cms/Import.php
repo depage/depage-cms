@@ -405,24 +405,39 @@ class Import
     // {{{ updatePageRefs()
     protected function updatePageRefs($xmlData)
     {
+        // test all links with a pageref
         $xpath = new \DOMXPath($xmlData);
         $nodelist = $xpath->query("//*[@href and starts-with(@href,'pageref:')]");
 
-        // test all links with a pageref
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $href = $node->getAttribute("href");
 
-            $href = preg_replace("/pageref:[\/]{0,3}/", "pageref://", $href);
+            $hrefId = preg_replace("/pageref:[\/]{0,3}/", "", $href);
 
-            if (isset($this->pageIds[$href])) {
-                $node->setAttribute("href", $href);
+            if (isset($this->pageIds[$hrefId])) {
+                $node->setAttribute("href", "pageref://" . $this->pageIds[$hrefId]);
             } else {
-                // clear links with a non-existant page reference
+                // clear links with a non-existent page reference
                 $node->setAttribute("href", "");
             }
         }
 
+        // test all links with href_id
+        $xpath = new \DOMXPath($xmlData);
+        $nodelist = $xpath->query("//*[@href_id]");
+
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $hrefId = $node->getAttribute("href_id");
+
+            if (isset($this->pageIds[$hrefId])) {
+                $node->setAttribute("href_id", $this->pageIds[$hrefId]);
+            } else {
+                // clear links with a non-existent page reference
+                $node->setAttribute("href_id", "");
+            }
+        }
     }
     // }}}
     // {{{ updateLibRefs()
