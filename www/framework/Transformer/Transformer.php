@@ -38,7 +38,7 @@ abstract class Transformer
         $this->template = $template;
 
         // @todo complete baseurl this in a better way, also based on previewTyoe
-        $this->baseurl = "'" . DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/'";
+        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
         // set basic variables
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
@@ -103,6 +103,7 @@ abstract class Transformer
         } else {
             $regenerate = true;
         }
+        // @todo clear xsl cache when settings are saved
 
         if ($regenerate) {
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -208,6 +209,7 @@ abstract class Transformer
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => $this->isLive,
+            "baseurl" => $this->baseUrl,
         ));
 
         if ($pageXml === false) {

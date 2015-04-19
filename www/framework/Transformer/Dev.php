@@ -1,11 +1,11 @@
 <?php
 
-namespace depage\Transformer;
+namespace Depage\Transformer;
 
 class Dev extends Transformer
 {
     protected $previewType = "dev";
-    
+
     // {{{ getXsltEntities()
     protected function getXsltEntities()
     {

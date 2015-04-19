@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\Transformer;
+namespace Depage\Transformer;
 
 class Live extends Preview
 {
