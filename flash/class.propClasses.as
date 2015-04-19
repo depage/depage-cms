@@ -11,7 +11,7 @@ class_prop = function() {
 // {{{ init()
 class_prop.prototype.init = function(type, projectObj) {
 	this.type = type;
-	
+
 	this.project = projectObj;
 	this.onChangeObj = null;
 	this.clear();
@@ -31,7 +31,7 @@ class_prop.prototype.onShow = function() {
 class_prop.prototype.load = function(id, node) {
 	var args = [];
 	args['data'] = this.data.toString();
-	
+
 	this.set_data(args);
 };
 // }}}
@@ -55,7 +55,7 @@ class_prop.prototype.isPropNode = function(node) {
 // {{{ onChange()
 class_prop.prototype.onChange = function() {
 	if (this.onChangeObj != null) {
-		this.onChangeObj.onChange();	
+		this.onChangeObj.onChange();
 	}
 };
 // }}}
@@ -63,14 +63,14 @@ class_prop.prototype.onChange = function() {
 class_prop.prototype.save = function(id) {
 	var tempNode = this.data.getRootNode();
 	var save_data;
-	
+
 	for (i = 0; i < tempNode.childNodes.length; i++) {
 		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
-		}	
+		}
 	}
-	
-	alert("data on id '" + id + "' to save:\n" + save_data);		
+
+	alert("data on id '" + id + "' to save:\n" + save_data);
 };
 // }}}
 // {{{ getPropNodes()
@@ -83,11 +83,11 @@ class_prop.prototype.getPropNodes = function() {
 		if (this.isPropNode(tempNode)) {
 			propNodes.push(tempNode);
 		}
-		
-		tempNode = tempNode.nextSibling;	
+
+		tempNode = tempNode.nextSibling;
 	}
-	
-	return propNodes;	
+
+	return propNodes;
 };
 // }}}
 
@@ -130,7 +130,7 @@ class_prop_page_data.prototype.setNodeIds = class_tree_page_data.prototype.setNo
 // {{{ save()
 class_prop_page_data.prototype.save = function(id, dataNode, type) {
 	var tempNode;
-	
+
 	if (type == "colorscheme") {
 		_root.phpConnect.send("set_page_colorscheme", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["colorscheme", dataNode.attributes.colorscheme], ["type", this.type]]);
 	} else if (type == "navigation") {
@@ -140,11 +140,11 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 				delete(tempNode.attributes[attr]);
 			}
 		}
-		
+
 		_root.phpConnect.send("set_page_navigations", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["navigations", tempNode], ["type", this.type]]);
 	} else if (type == "file") {
 		_root.phpConnect.send("set_page_file_options", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["multilang", dataNode.attributes.multilang], ["file_name", dataNode.attributes.file_name], ["file_type", dataNode.attributes.file_type], ["type", this.type]]);
-	} else if (this.data.isRootNode()) {  
+	} else if (this.data.isRootNode()) {
 		//conf.project.tree.content.propObj.save(id, dataNode, type);
 	} else {
 		var tempNode = this.data;
@@ -156,10 +156,10 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 			for (i = 0; i < tempNode.childNodes.length; i++) {
 				if (tempNode.childNodes[i].nid == id) {
 					save_data = tempNode.childNodes[i];
-				}	
+				}
 			}
 		}
-				
+
 		_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
 	}
 };
@@ -168,7 +168,7 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 class_prop_page_data.prototype.getPropNodes = function() {
 	var tempNode;
 	var propNodes = [];
-	
+
 	if (this.data.nodeName == conf.ns.edit + ":plain_source") {
 		propNodes.push(this.data);
 	} else if (this.data.isRootNode()) {
@@ -178,7 +178,7 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			tempNode = this.data.cloneNode(false);
 			tempNode.nodeName = "pg_date";
 			propNodes.push(tempNode);
-		
+
 			//tempNode = this.data.cloneNode(false);
 			tempXML = new XML("<pg_colorscheme />");
 			tempNode = tempXML.firstChild;
@@ -186,13 +186,13 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			tempNode.attributes["db:id"] = this.data.attributes['db:id'];
 			tempNode.setNodeIdByDBId();
 			propNodes.push(tempNode);
-		
+
 			tempNode = this.tree_displayObj.activeNode.cloneNode(false);
 			tempNode.nodeName = "pg_navigation";
 			tempNode.setNodeIdByDBId();
 			propNodes.push(tempNode);
 
-			if (conf.user.mayEditSourceCode()) {			
+			if (conf.user.mayEditSourceCode()) {
 				tempNode = this.tree_displayObj.activeNode.cloneNode(false);
 				tempNode.nodeName = "pg_file";
 				tempNode.setNodeIdByDBId();
@@ -205,13 +205,13 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			propNodes.push(tempNode);
 		}
 
-		tempNode = this.data.firstChild;	
+		tempNode = this.data.firstChild;
 		while (tempNode != null) {
 			if (this.isPropNode(tempNode)) {
 				propNodes.push(tempNode);
 			}
-			
-			tempNode = tempNode.nextSibling;	
+
+			tempNode = tempNode.nextSibling;
 		}
 	} else {
             if (conf.user.mayEditTemplates()) {
@@ -224,23 +224,23 @@ class_prop_page_data.prototype.getPropNodes = function() {
                 propNodes.push(tempNode);
             }
 
-		tempNode = this.data.firstChild;	
+		tempNode = this.data.firstChild;
 		while (tempNode != null) {
 			if (this.isPropNode(tempNode)) {
 				propNodes.push(tempNode);
 			}
-			
-			tempNode = tempNode.nextSibling;	
+
+			tempNode = tempNode.nextSibling;
 		}
 	}
 
-	return propNodes;	
+	return propNodes;
 };
 // }}}
 // {{{ getImageProp()
 class_prop_page_data.prototype.getImageProp = function(path, name, callbackFunc, callbackObj) {
 	this.imageCallback.push([path, name, callbackFunc, callbackObj]);
-	
+
 	_root.phpConnect.msgHandler.register_func("set_imageProp", this.setImageProp, this);
 	_root.phpConnect.send("get_imageProp", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["filepath", path], ["filename", name]]);
 };
@@ -263,7 +263,7 @@ class_prop_page_data.prototype.setImageProp = function(args) {
 // {{{ saveFilePath()
 class_prop_page_data.prototype.saveFilePath = function(path, id) {
 	var i;
-	
+
 	if (path != "") {
 		for (i = 0; i < this.data.childNodes.length; i++) {
 			if (this.data.childNodes[i].nid == id) {
@@ -277,12 +277,12 @@ class_prop_page_data.prototype.saveFilePath = function(path, id) {
 // {{{ saveFileRef()
 class_prop_page_data.prototype.saveFileRef = function(href_id, id) {
 	var i;
-	
+
 	//alert("hrefid: " + href_id + ", id: " + id);
 	if (href_id != "") {
 		for (i = 0; i < this.data.childNodes.length; i++) {
 			if (this.data.childNodes[i].nid == id) {
-				if (href_id.substring(0, conf.url_lib_scheme_intern.length + 2) == conf.url_lib_scheme_intern + ":/") {
+				if (href_id.substring(0, conf.url_lib_scheme_intern.length + 3) == conf.url_lib_scheme_intern + "://") {
 					this.data.childNodes[i].attributes.href = href_id;
 					delete(this.data.childNodes[i].attributes.href_id);
 				} else {
@@ -374,8 +374,8 @@ class_prop_colors.prototype.getPropNodes = function() {
 	var propNodes = [];
 
 	propNodes.push(this.data);
-		
-	return propNodes;	
+
+	return propNodes;
 };
 // }}}
 
@@ -414,15 +414,15 @@ class_prop_tpl_templates.prototype.setNodeIds = class_tree_tpl_templates.prototy
 class_prop_tpl_templates.prototype.save = function(id) {
 	var tempNode = this.data.getRootNode();
 	var save_data;
-	
+
 	for (i = 0; i < tempNode.childNodes.length; i++) {
 		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
-		}	
+		}
 	}
 
 	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
-	this.project.preview();	
+	this.project.preview();
 };
 // }}}
 // {{{ getPropNodes()
@@ -432,31 +432,31 @@ class_prop_tpl_templates.prototype.getPropNodes = function() {
 	var propNodes = [];
 
 	propNodes.push(this.data.getRootNode());
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (this.isPropNode(tempNode)) {
 			propNodes.push(tempNode);
 		}
-		
-		tempNode = tempNode.nextSibling;	
+
+		tempNode = tempNode.nextSibling;
 	}
-	
-	return propNodes;	
+
+	return propNodes;
 };
 // }}}
 // {{{ setTemplatePropActive()
 class_prop_tpl_templates.prototype.setTemplatePropActive = function(id, newActive) {
 	_root.phpConnect.send("set_template_node_active", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["type", this.type], ["new_active", newActive.toString()]]);
 	this.data.attributes.active = newActive;
-	this.project.preview();	
+	this.project.preview();
 };
 // }}}
 // {{{ setTemplatePropType()
 class_prop_tpl_templates.prototype.setTemplatePropType = function(id, newType) {
 	_root.phpConnect.send("set_template_node_type", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["type", this.type], ["new_type", newType]]);
 	this.data.attributes.type = newType;
-	this.project.preview();	
+	this.project.preview();
 };
 // }}}
 
@@ -496,11 +496,11 @@ class_prop_tpl_newnodes.prototype.isPropNode = function(node) {
 class_prop_tpl_newnodes.prototype.save = function(id) {
 	var tempNode = this.data;
 	var save_data;
-	
+
 	for (i = 0; i < tempNode.childNodes.length; i++) {
 		if (tempNode.childNodes[i].nid == id) {
 			save_data = tempNode.childNodes[i];
-		}	
+		}
 	}
 
 	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
@@ -511,21 +511,21 @@ class_prop_tpl_newnodes.prototype.getPropNodes = function() {
 	var tempNode;
 	var propNodes = [];
 
-	tempNode = this.data.firstChild;	
+	tempNode = this.data.firstChild;
 	while (tempNode != null) {
 		if (this.isPropNode(tempNode)) {
 			propNodes.push(tempNode);
 		}
-		
-		tempNode = tempNode.nextSibling;	
+
+		tempNode = tempNode.nextSibling;
 	}
-	
-	return propNodes;	
+
+	return propNodes;
 };
 // }}}
 
 /*
- *	Class PropSettings 
+ *	Class PropSettings
  *
  *	Extends class_prop()
  *	Handles Project-Settings and its Modules
@@ -560,36 +560,36 @@ class_prop_settings.prototype.getPropNodes = function() {
 	} else if (this.data.nodeName == conf.ns.project + ":template_set" || this.data.nodeName == conf.ns.project + ":global_file" || this.data.nodeName == conf.ns.project + ":publish_folder" || this.data.nodeName == conf.ns.project + ":language" || this.data.nodeName == conf.ns.project + ":navigation"  || this.data.nodeName == conf.ns.project + ":variable" || this.data.nodeName == conf.ns.project + ":backup_backup" || this.data.nodeName == conf.ns.project + ":backup_restore") {
 		propNodes.push(this.data);
 	} else {
-		tempNode = this.data.firstChild;	
+		tempNode = this.data.firstChild;
 		while (tempNode != null) {
 			if (this.isPropNode(tempNode)) {
 				propNodes.push(tempNode);
 			}
-			
-			tempNode = tempNode.nextSibling;	
+
+			tempNode = tempNode.nextSibling;
 		}
 	}
-	
-	return propNodes;	
+
+	return propNodes;
 };
 // }}}
 // {{{ save()
 class_prop_settings.prototype.save = function(id) {
 	var tempNode = this.data;
 	var save_data;
-	
+
 	if (tempNode.nid == id) {
 		save_data = tempNode;
 	} else {
 		for (i = 0; i < tempNode.childNodes.length; i++) {
 			if (tempNode.childNodes[i].nid == id) {
 				save_data = tempNode.childNodes[i];
-			}	
+			}
 		}
 	}
-	
+
 	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", save_data], ["type", this.type]]);
-	this.project.preview();	
+	this.project.preview();
 };
 // }}}
 

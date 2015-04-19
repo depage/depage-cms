@@ -2556,11 +2556,11 @@ class_propBox_edit_a.prototype.generateComponents = function() {
 
 	this.buttonHref.onClick = function() {
 		var href_id = "";
-		if (this._parent.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+		if (this._parent.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 			href_id = conf.project.tree.pages.getIdByUri(this._parent.hrefBox.value);
 			_root.mainInterface.interface.layouts.dlgChoose_page.setActive(this._parent._parent.propObj.saveFileRef, this._parent._parent.propObj, [href_id, this._parent.data.nid]);
-		} else if (this._parent.hrefBox.value.substring(0, conf.url_lib_scheme_intern.length + 2) == conf.url_lib_scheme_intern + ":/") {
-			href_id = this._parent.hrefBox.value.substr(conf.url_lib_scheme_intern.length + 1);
+		} else if (this._parent.hrefBox.value.substring(0, conf.url_lib_scheme_intern.length + 3) == conf.url_lib_scheme_intern + "://") {
+			href_id = this._parent.hrefBox.value.substr(conf.url_lib_scheme_intern.length + 2);
 			_root.mainInterface.interface.layouts.dlgChoose_file_link.setActive(this._parent._parent.propObj.saveFileRef, this._parent._parent.propObj, [href_id, this._parent.data.nid]);
 		} else {
 			_root.mainInterface.interface.layouts.dlgChoose_page.setActive(this._parent._parent.propObj.saveFileRef, this._parent._parent.propObj, [href_id, this._parent.data.nid]);
@@ -2678,7 +2678,7 @@ class_propBox_edit_a.prototype.saveData = function() {
 
 	this.data.firstChild.removeNode();
 	this.data.appendChild(tempNode);
-	if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+	if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 		delete(this.data.attributes.href);
 		this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
 	} else {
@@ -2952,7 +2952,7 @@ class_propBox_edit_img.prototype.load_thumb = function() {
 	}
 	this.buttonHref.onClick = function() {
             var href_id = "";
-            if (this._parent.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+            if (this._parent.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
                     href_id = conf.project.tree.pages.getIdByUri(this._parent.hrefBox.value);
             }
             _root.mainInterface.interface.layouts.dlgChoose_page.setActive(this._parent._parent.propObj.saveFileRef, this._parent._parent.propObj, [href_id, this._parent.data.nid]);
@@ -2973,7 +2973,7 @@ class_propBox_edit_img.prototype.setImageProp = function(iwidth, iheigth, isize,
 class_propBox_edit_img.prototype.saveData = function() {
 	this.data.attributes.src = this.inputBox.value;
 	if (this.hrefBox._visible == true) {
-		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 			delete(this.data.attributes.href);
 			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
 		} else {
@@ -3139,7 +3139,7 @@ class_propBox_edit_audio.prototype.load_thumb = function() {
 class_propBox_edit_audio.prototype.saveData = function() {
 	this.data.attributes.src = this.inputBox.value;
 	if (this.hrefBox._visible == true) {
-		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 			delete(this.data.attributes.href);
 			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
 		} else {
@@ -3303,7 +3303,7 @@ class_propBox_edit_video.prototype.load_thumb = function() {
 class_propBox_edit_video.prototype.saveData = function() {
 	this.data.attributes.src = this.inputBox.value;
 	if (this.hrefBox._visible == true) {
-		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 			delete(this.data.attributes.href);
 			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
 		} else {
@@ -3467,7 +3467,7 @@ class_propBox_edit_flash.prototype.load_thumb = function() {
 class_propBox_edit_flash.prototype.saveData = function() {
 	this.data.attributes.src = this.inputBox.value;
 	if (this.hrefBox._visible == true) {
-		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 2) == conf.url_page_scheme_intern + ":/") {
+		if (this.hrefBox.value.substring(0, conf.url_page_scheme_intern.length + 3) == conf.url_page_scheme_intern + "://") {
 			delete(this.data.attributes.href);
 			this.data.attributes.href_id = conf.project.tree.pages.getIdByUri(this.hrefBox.value);
 		} else {

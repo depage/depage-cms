@@ -789,11 +789,11 @@ class_treeDisplayData_files.prototype.setActiveNodeById = function(id) {
 	if (id == null) {
 		targetNode = null;
 		return false
-	} else if (ids.length == 2) {
+	} else if (ids.length == 3) {
 		targetNode = this.treeObj.data.getRootNode();
 	} else {
 		targetNode = this.treeObj.data.getRootNode();
-		for (i = 1; i < ids.length - 1; i++) {
+		for (i = 2; i < ids.length - 1; i++) {
 			tempNode = targetNode.firstChild;
 			while (tempNode != null && tempNode.attributes.name != ids[i]) {
 				tempNode = tempNode.nextSibling;
@@ -1354,7 +1354,7 @@ class_interfaceLayout_dlgChoose_files.prototype.generate = function(dlgArgs) {
 		return this._parent.divider_vertical._x - 38 - 21;
 	};
 	this.movClip.dlgBox.onOk = function() {
-		this._parent.interface.returnDlg(true, [conf.url_lib_scheme_intern + ":" + this._parent.treeBox1.treeObj.treeObj.selectedFile, this._parent.interface.activeLayout.dataNodeId]);
+		this._parent.interface.returnDlg(true, [conf.url_lib_scheme_intern + ":/" + this._parent.treeBox1.treeObj.treeObj.selectedFile, this._parent.interface.activeLayout.dataNodeId]);
 	};
 	this.movClip.dlgBox.onCancel = function() {
 		this._parent.interface.returnDlg(false);

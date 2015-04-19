@@ -1,6 +1,6 @@
 /**
  * Class Tree
- * 
+ *
  * main Tree Class
  */
 // {{{ constructor
@@ -13,13 +13,13 @@ class_tree.prototype.allowReordering = true;
 // {{{ init()
 class_tree.prototype.init = function(type, projectObj) {
 	this.type = type;
-	
+
 	this.project = projectObj;
 	this.loading = false;
 	this.clipboardMsgHandler = new class_ttRpcMsgHandler(conf.nsrpc, conf.nsrpcuri);
 	this.onChangeObjs = [];
 	this.clear();
-	
+
 	this.addProperty("updateEnabled", this.updateEnabledGet, this.updateEnabledSet);
 };
 // }}}
@@ -41,10 +41,10 @@ class_tree.prototype.clear = function() {
 // {{{ load()
 class_tree.prototype.load = function() {
 	var args = [];
-	
+
 	this.loading = true;
 	args['data'] = this.data.toString();
-	
+
 	this.set_data(args);
 };
 // }}}
@@ -73,7 +73,7 @@ class_tree.prototype.setNodeIds = function(actualNode) {
 		actualNode = actualNode.firstChild;
 		while (actualNode != null) {
 			this.setNodeIds(actualNode);
-			actualNode = actualNode.nextSibling;	
+			actualNode = actualNode.nextSibling;
 		}
 	}
 };
@@ -85,22 +85,22 @@ class_tree.prototype.update_data = function(args) {
 // }}}
 // {{{ isEmpty()
 class_tree.prototype.isEmpty = function() {
-	return this.data.getRootNode().nodeName == "empty";	
+	return this.data.getRootNode().nodeName == "empty";
 };
 // }}}
 // {{{ isTreeNode()
 class_tree.prototype.isTreeNode = function(node) {
-	return node.nodeType == 1;	
+	return node.nodeType == 1;
 };
 // }}}
 // {{{ isFolder()
 class_tree.prototype.isFolder = function(node) {
-	return node.nodeName == conf.ns.page + ":folder";	
+	return node.nodeName == conf.ns.page + ":folder";
 };
 // }}}
 // {{{ isSeparatorNode()
 class_tree.prototype.isSeparatorNode = function(node) {
-	return node.nodeName == conf.ns.section + ":separator";	
+	return node.nodeName == conf.ns.section + ":separator";
 };
 // }}}
 // {{{ isAccessible
@@ -116,7 +116,7 @@ class_tree.prototype.isRenamable = function(node) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		return invalidActions.searchFor("name") == -1;
 	} else {
-		return true;	
+		return true;
 	}
 };
 // }}}
@@ -140,14 +140,14 @@ class_tree.prototype.isValidMove = function(node, targetNode) {
 	if (isValid && node.attributes[conf.ns.database + ":invalid"] != undefined) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		if (invalidActions.searchFor("move") > -1) {
-			return false;		
+			return false;
 		} else if (invalidActions.searchFor("inlayer") > -1 && node.parentNode != targetNode) {
 			return false;
 		} else {
 			return true;
 		}
 	} else {
-		return isValid;	
+		return isValid;
 	}
 };
 // }}}
@@ -157,12 +157,12 @@ class_tree.prototype.isValidCopy = function(node, targetNode) {
 	if (isValid && node.attributes[conf.ns.database + ":invalid"] != undefined) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		if (invalidActions.searchFor("dupl") > -1) {
-			return false;		
+			return false;
 		} else {
 			return true;
 		}
 	} else {
-		return isValid;	
+		return isValid;
 	}
 };
 // }}}
@@ -172,12 +172,12 @@ class_tree.prototype.isValidDelete = function(node) {
 	if (isValid && node.attributes[conf.ns.database + ":invalid"] != undefined) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		if (invalidActions.searchFor("del") > -1) {
-			return false;		
+			return false;
 		} else {
 			return true;
 		}
 	} else {
-		return isValid;	
+		return isValid;
 	}
 };
 // }}}
@@ -187,12 +187,12 @@ class_tree.prototype.isValidDuplicate = function(node) {
 	if (isValid && node.attributes[conf.ns.database + ":invalid"] != undefined) {
 		var invalidActions = node.attributes[conf.ns.database + ":invalid"].replace(" ", "").split(",");
 		if (invalidActions.searchFor("dupl") > -1) {
-			return false;		
+			return false;
 		} else {
 			return true;
 		}
 	} else {
-		return isValid;	
+		return isValid;
 	}
 };
 // }}}
@@ -204,21 +204,21 @@ class_tree.prototype.isValidName = function(node, new_name) {
 // {{{ hasTreeChildNodes()
 class_tree.prototype.hasTreeChildNodes = function(node) {
 	var actualChild;
-	
+
 	actualChild = node.firstChild;
 	while (actualChild != null) {
 		if (this.isTreeNode(actualChild)) {
-			return true;	
+			return true;
 		}
 		actualChild = actualChild.nextSibling;
-	}	
+	}
 	return false;
 };
 // }}}
 // {{{ setActiveIdOutside()
 class_tree.prototype.setActiveIdOutside = function(args) {
 	var i;
-	
+
 	for (i = 0; i < this.onChangeObjs.length; i++) {
 		this.onChangeObjs[i].setActiveNodeByIdWaiting(args['id']);
 	}
@@ -237,7 +237,7 @@ class_tree.prototype.getValidNameLetters = function() {
 // {{{ onChange()
 class_tree.prototype.onChange = function(node) {
 	var i;
-	
+
 	for (i = 0; i < this.onChangeObjs.length; i++) {
 		this.onChangeObjs[i].onChange(node);
 	}
@@ -246,13 +246,13 @@ class_tree.prototype.onChange = function(node) {
 // {{{ addOnChangeListener()
 class_tree.prototype.addOnChangeListener = function(obj) {
 	var i, found = false;
-	
+
 	for (i = 0; i < this.onChangeObjs.length; i++) {
 		if (this.onChangeObjs[i] == obj) {
 			found = true;
 		}
 	}
-	
+
 	if (!found) {
 		this.onChangeObjs.push(obj);
 	}
@@ -260,7 +260,7 @@ class_tree.prototype.addOnChangeListener = function(obj) {
 
 class_tree.prototype.removeOnChangeListener = function (obj) {
 	var i;
-	
+
 	for (i = 0; i < this.onChangeObjs.length; i++) {
 		if (this.onChangeObjs[i] == obj) {
 			this.onChangeObjs.splice(i, 1);
@@ -300,16 +300,16 @@ class_tree.prototype.duplicate = function(node, noOnChange) {
 	if (node != null && this.isValidDuplicate(node)) {
 		tempNode = node.cloneNode(false);
 		if (node.isRootNode()) {
-			node.appendChild(tempNode);		
+			node.appendChild(tempNode);
 		} else {
 			if (node.nextSibling != null) {
-				node.parentNode.insertBefore(tempNode, node.nextSibling);	
+				node.parentNode.insertBefore(tempNode, node.nextSibling);
 			} else {
-				node.parentNode.appendChild(tempNode);			
+				node.parentNode.appendChild(tempNode);
 			}
 		}
                 if (noOnChange != true) {
-                    this.onChange(); 
+                    this.onChange();
                 }
 	}
 	return tempNode;
@@ -320,10 +320,10 @@ class_tree.prototype.move_in = function(node, targetNode) {
 	if (this.isValidMove(node, targetNode)) {
 		var tempXML = new XML();
 		tempXML.appendChild(node);
-		
+
 		targetNode.appendChild(node);
 	}
-	this.onChange();	
+	this.onChange();
 };
 // }}}
 // {{{ move_before()
@@ -331,9 +331,9 @@ class_tree.prototype.move_before = function(node, targetNode) {
 	if (node != targetNode && this.isValidMove(node, targetNode.parentNode)) {
 		var tempXML = new XML();
 		tempXML.appendChild(node);
-	
+
 		targetNode.parentNode.insertBefore(node, targetNode);
-		this.onChange();	
+		this.onChange();
 	}
 };
 // }}}
@@ -342,13 +342,13 @@ class_tree.prototype.move_after = function(node, targetNode) {
 	if (node != targetNode && this.isValidMove(node, targetNode.parentNode)) {
 		var tempXML = new XML();
 		tempXML.appendChild(node);
-	
+
 		if (targetNode.nextSibling == null) {
 			targetNode.parentNode.appendChild(node);
 		} else {
 			targetNode.parentNode.insertBefore(node, targetNode.nextSibling);
 		}
-		this.onChange();	
+		this.onChange();
 	}
 };
 // }}}
@@ -388,7 +388,7 @@ class_tree.prototype.copy_after = function(node, targetNode) {
 // }}}
 // {{{ getAddNodes()
 class_tree.prototype.getAddNodes = function(targetNode) {
-	return [];	
+	return [];
 };
 // }}}
 // {{{ addNode()
@@ -402,24 +402,24 @@ class_tree.prototype.addNode = function(targetNode, type) {
 // {{{ idIsInData()
 class_tree.prototype.idIsInData = function(idsToSearch, actualNode) {
 	if (actualNode == undefined) {
-		return this.idIsInData(IdsToSearch, this.data);	
+		return this.idIsInData(IdsToSearch, this.data);
 	} else {
 		var i;
 		var found = false;
-		
+
 		for (i = 0; i < idsToSearch.length; i++) {
 			if (actualNode.nid == idsToSearch[i]) {
 				found = true;
-			}	
+			}
 		}
-		
+
 		actualNode = actualNode.firstChild;
 		while (!found && actualNode != null) {
 			found = this.idIsInData(idsToSearch, actualNode);
-			
+
 			actualNode = actualNode.nextSibling;
 		}
-		
+
 		return found;
 	}
 };
@@ -441,7 +441,7 @@ class_tree_pages.prototype.showChildrenInitLevel = 2;
 // {{{ init()
 class_tree_pages.prototype.init = function(type, projectObj) {
 	super.init(type, projectObj);
-	
+
 	_root.pocketConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
@@ -474,12 +474,12 @@ class_tree_pages.prototype.setNodeIds = function(actualNode) {
 // }}}
 // {{{ getValidNameLetters()
 class_tree_pages.prototype.getValidNameLetters = function() {
-	return "";	
+	return "";
 };
 // }}}
 // {{{ isTreeNode()
 class_tree_pages.prototype.isTreeNode = function(node) {
-	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct" || node.nodeName == conf.ns.section + ":separator");	
+	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct" || node.nodeName == conf.ns.section + ":separator");
 };
 // }}}
 // {{{ isSeparatorNode()
@@ -505,7 +505,7 @@ class_tree_pages.prototype.isValidCopy = function(node, targetNode) {
 // {{{ isValidName()
 class_tree_pages.prototype.isValidName = function(node, new_name) {
 	var i;
-	
+
 	for (i = 0; i < node.parentNode.childNodes.length; i++) {
 		if (node.parentNode.childNodes[i] != node) {
 			if (node.parentNode.childNodes[i].attributes.name == new_name) {
@@ -531,13 +531,13 @@ class_tree_pages.prototype.onDelete = function(node) {
 	var idToDelete;
 	if (this.isValidDelete(node)) {
 		idToDelete = node.nid;
-		
+
 		node.removeIds();
 		this.loading = true;
 		this.onChange();
-		
+
 		_root.phpConnect.send("delete_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", idToDelete], ["type", this.type]]);
-		
+
 		super.onDelete();
 	}
 };
@@ -552,7 +552,7 @@ class_tree_pages.prototype.duplicate = function(node) {
 		tempNode.removeIds();
 		this.loading = true;
 		this.onChange();
-		
+
 		_root.phpConnect.send("duplicate_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", copyid], ["new_name", newName], ["type", this.type]]);
 	}
 };
@@ -638,7 +638,7 @@ class_tree_pages.prototype.copy_after = function(node, targetNode) {
 // }}}
 // {{{ getAddNodes()
 class_tree_pages.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_folder, [conf.lang.tree_name_new_page, [conf.lang.tree_name_new_page_empty].concat(this.project.tree.page_data.getAddNodes())], conf.lang.tree_name_new_separator, conf.lang.tree_name_new_redirect];	
+	return [conf.lang.tree_name_new_folder, [conf.lang.tree_name_new_page, [conf.lang.tree_name_new_page_empty].concat(this.project.tree.page_data.getAddNodes())], conf.lang.tree_name_new_separator, conf.lang.tree_name_new_redirect];
 };
 // }}}
 // {{{ addNode()
@@ -646,16 +646,16 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 	var temp_node;
 	var add_node_string = "";
 	var new_name = conf.lang.tree_name_untitled;
-	
+
 	if (type == conf.lang.tree_name_new_folder) {
 		type = "folder";
-		var newNode = super.addNode(targetNode, conf.ns.page + ":folder");	
+		var newNode = super.addNode(targetNode, conf.ns.page + ":folder");
         } else if (type == conf.lang.tree_name_new_separator) {
 		type = "separator";
-		var newNode = super.addNode(targetNode, conf.ns.section + ":separator");	
+		var newNode = super.addNode(targetNode, conf.ns.section + ":separator");
         } else if (type == conf.lang.tree_name_new_redirect) {
 		type = "redirect";
-		var newNode = super.addNode(targetNode, conf.ns.section + ":page");	
+		var newNode = super.addNode(targetNode, conf.ns.section + ":page");
 	} else if (type == conf.lang.tree_name_new_page) {
 		type = "page";
 		if (subType != null && subType != conf.lang.tree_name_new_page_empty) {
@@ -669,9 +669,9 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 						}
 					}
 				}
-			}	
+			}
 		}
-		var newNode = super.addNode(targetNode, conf.ns.page + ":page");	
+		var newNode = super.addNode(targetNode, conf.ns.page + ":page");
 	}
 	if (targetNode != null) {
 		targetNode.showChildren = true;
@@ -679,7 +679,7 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["xmldata", add_node_string], ["new_name", new_name]]);
 		newNode.attributes.name = new_name;
 		this.onChange();
-	}	
+	}
 };
 // }}}
 // {{{ getPathById()
@@ -703,7 +703,7 @@ class_tree_pages.prototype.getPathById = function(id, lang, type) {
 		path = "/int" + url;
 	}
 
-	return path;	
+	return path;
 };
 // }}}
 // {{{ getIdByPath()
@@ -715,11 +715,11 @@ class_tree_pages.prototype.getIdByPath = function(id) {
 class_tree_pages.prototype.getUriById = function(id) {
 	var path = "";
 	var tempNode = this.data.searchForId(id);
-	
+
 	if (tempNode == null) {
 		return "";
 	}
-	
+
 	while (tempNode != this.data) {
 		if (tempNode != this.data.getRootNode()) {
 			if (id == tempNode.nid && !this.isFolder(tempNode)) {
@@ -731,40 +731,41 @@ class_tree_pages.prototype.getUriById = function(id) {
 		}
 		tempNode = tempNode.parentNode;
 	}
-	
-	return  conf.url_page_scheme_intern + ":/" + path;
+
+	return  conf.url_page_scheme_intern + "://" + path;
 };
 // }}}
 // {{{ getUrlById()
 class_tree_pages.prototype.getUrlById = function(id) {
 	var path = "";
 	var tempNode = this.data.searchForId(id);
-	
+
 	if (tempNode == null) {
 		return "";
 	}
-	
+
         path = tempNode.attributes.url;
 
-	return  conf.url_page_scheme_intern + ":/" + path;
+	return  conf.url_page_scheme_intern + "://" + path;
 };
 // }}}
 // {{{ getIdByUri()
 class_tree_pages.prototype.getIdByURI = function(uri) {
 	var i, j;
 	var tempNode;
-	var uri = uri.split("/");
-	
+	uri = uri.split("/");
+
 	if (uri[uri.length - 1] != "") {
 		uri.push("");
 	}
-	if (uri.length < 2) {
+
+	if (uri.length < 3) {
 		targetNode = null;
-	} else if (uri.length == 2 && uri[1] == "") {
+	} else if (uri.length == 3 && uri[2] == "") {
 		targetNode = this.data.getRootNode();
 	} else {
 		tempNode = this.data.getRootNode();
-		for (i = 1; i < uri.length - 1; i++) {
+		for (i = 2; i < uri.length - 1; i++) {
 			tempNode = tempNode.firstChild;
 			while (tempNode != null && tempNode.attributes.name.glpEncode() != uri[i]) {
 				tempNode = tempNode.nextSibling;
@@ -773,11 +774,11 @@ class_tree_pages.prototype.getIdByURI = function(uri) {
 				var targetNode = null;
 				break;
 			} else {
-				var targetNode = tempNode;	
+				var targetNode = tempNode;
 			}
 		}
 	}
-	
+
 	if (targetNode == null) {
 		return "";
 	} else {
@@ -790,7 +791,7 @@ class_tree_pages.prototype.getIdByURL = function(url, node) {
     if (node == undefined) {
         node = this.data.getRootNode();
     }
-	
+
     testurl1 = url;
     if (testurl1.substr(testurl1.length - 5) == ".html") {
         testurl2 = testurl1.substr(0, testurl1.length - 5) + ".php";
@@ -826,7 +827,7 @@ class_tree_page_data.prototype.setNodeIds = class_tree_pages.prototype.setNodeId
 // {{{ init()
 class_tree_page_data.prototype.init = function(type, projectObj) {
 	super.init(type, projectObj);
-		
+
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	_root.pocketConnect.msgHandler.register_func("get_update_tree_" + this.type, this.get_new_update, this);
@@ -837,11 +838,11 @@ class_tree_page_data.prototype.init = function(type, projectObj) {
 class_tree_page_data.prototype.get_new_update = function(args) {
 	var i;
 	var idsToUpdate = [];
-	
+
 	for (i = 1; i <= int(args['id_num']); i++) {
-		idsToUpdate.push(args['id' + i]);	
+		idsToUpdate.push(args['id' + i]);
 	}
-	
+
 	if (this.idIsInData(idsToUpdate)) {
 		if (this.updateEnabled) {
 			this.load(this.lastid, null, true);
@@ -873,7 +874,7 @@ class_tree_page_data.prototype.set_data = function(args) {
 	this.loading = false;
 	if (!args['error']) {
 		this.data = new XML(args['data']);
-		
+
 		this.setNodeIds();
 		this.onChange();
 	}
@@ -881,7 +882,7 @@ class_tree_page_data.prototype.set_data = function(args) {
 // }}}
 // {{{ isTreeNode()
 class_tree_page_data.prototype.isTreeNode = function(node) {
-	return node.getNameSpace() == conf.ns.section.toString() || node.nodeName == conf.ns.page + ":page_data" || node.nodeName == conf.ns.page + ":folder_data" || node.nodeName == conf.ns.page + ":meta" || node.nodeName == conf.ns.edit + ":plain_source";	
+	return node.getNameSpace() == conf.ns.section.toString() || node.nodeName == conf.ns.page + ":page_data" || node.nodeName == conf.ns.page + ":folder_data" || node.nodeName == conf.ns.page + ":meta" || node.nodeName == conf.ns.edit + ":plain_source";
 };
 // }}}
 // {{{ getAddNodes()
@@ -897,7 +898,7 @@ class_tree_page_data.prototype.getAddNodes = function(targetNode) {
 	var temp_node, i, temp_string;
 	var parent_array = [];
 	var node_array = [];
-	
+
 	temp_node = this.project.tree.tpl_newnodes.data.getRootNode().firstChild;
 	while (temp_node != null) {
 		for (i = 0; i < temp_node.childNodes.length; i++) {
@@ -910,25 +911,25 @@ class_tree_page_data.prototype.getAddNodes = function(targetNode) {
 				parent_array = temp_string.split(",");
 			}
 		}
-		
+
 		for (i = 0; i < parent_array.length; i++) {
 			if (parent_array[i] == "*" || parent_array[i] == targetNodeName) {
 				node_array.push(temp_node.attributes.name);
 				break;
 			}
 		}
-		
+
 		temp_node = temp_node.nextSibling;
 	}
-	
-	return node_array;	
+
+	return node_array;
 };
 // }}}
 // {{{ getValidParents()
 class_tree_page_data.prototype.getValidParents = function(nodeName) {
 	var temp_node, i, j, temp_string, temp_xml;
 	var node_array = [];
-	
+
 	temp_node = this.project.tree.tpl_newnodes.data.getRootNode().firstChild;
 	while (temp_node != null) {
 		for (i = 0; i < temp_node.childNodes.length; i++) {
@@ -949,24 +950,24 @@ class_tree_page_data.prototype.getValidParents = function(nodeName) {
 				}
 			}
 		}
-		
+
 		if (temp_node != null) {
 			temp_node = temp_node.nextSibling;
 		}
 	}
-	
-	return node_array;	
+
+	return node_array;
 };
 // }}}
 // {{{ addNode()
 class_tree_page_data.prototype.addNode = function(targetNode, type) {
 	var i, j;
 	var temp_node, add_node, add_node_string = "", temp_XML;
-	
+
 	if (targetNode.nodeName == conf.ns.page + ":meta") {
 		targetNode = targetNode.parentNode;
 	}
-	
+
 	if (targetNode != null) {
 		temp_node = this.project.tree.tpl_newnodes.data.getRootNode().firstChild;
 		while (temp_node != null) {
@@ -981,13 +982,13 @@ class_tree_page_data.prototype.addNode = function(targetNode, type) {
 					}
 				}
 			}
-			
+
 			temp_node = temp_node.nextSibling;
 		}
 		this.loading = true;
 		this.onChange();
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", add_node_string], ["new_name", new_name]]);
-	}	
+	}
 };
 // }}}
 // {{{ onDelete()
@@ -1046,7 +1047,7 @@ class_tree_page_data.prototype.copy_after = function(node, targetNode) {
 class_tree_page_data.prototype.isValidMove = function(node, targetNode) {
 	var validNodes, i;
 	var isValid = super.isValidMove(node, targetNode);
-	
+
 	if (isValid) {
 		isValid = false;
 		validNodes = this.getValidParents(node.nodeName);
@@ -1056,29 +1057,29 @@ class_tree_page_data.prototype.isValidMove = function(node, targetNode) {
 			}
 		}
 	}
-	
+
 	return isValid
 };
 // }}}
 // {{{ isValidCopy()
 class_tree_page_data.prototype.isValidCopy = function(node, targetNode) {
 	var isValid = super.isValidCopy(node, targetNode);
-	
+
 	if (isValid) {
-		
+
 	}
-	
+
 	return isValid
 };
 // }}}
 // {{{ isValidDuplicate()
 class_tree_page_data.prototype.isValidDuplicate = function(node) {
 	var isValid = super.isValidDuplicate(node);
-	
+
 	if (node == this.data.getRootNode()) {
 		isValid = false;
 	}
-	
+
 	return isValid;
 };
 // }}}
@@ -1096,7 +1097,7 @@ class_tree_files.prototype.allowReordering = false;
 // }}}
 // {{{ getValidNameLetters()
 class_tree_files.prototype.getValidNameLetters = function() {
-	return "a-zA-Z0-9_.";	
+	return "a-zA-Z0-9_.";
 };
 // }}}
 // {{{ init()
@@ -1104,11 +1105,11 @@ class_tree_files.prototype.init = function(type, projectObj) {
 	super.init(type, projectObj);
 
 	this.onChange();
-		
+
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	//_root.pocketConnect.msgHandler.register_func("update_fileTree", this.set_data, this); //???
-	
+
 	this.setFileFilter();
 };
 // }}}
@@ -1118,10 +1119,10 @@ class_tree_files.prototype.onShow = function() {
 	_root.phpConnect.msgHandler.register_func("get_update_tree_" + this.type, this.load, this);
 	_root.pocketConnect.msgHandler.register_func("get_update_prop_" + this.type, this.get_newFileProp_update, this);
 	_root.phpConnect.msgHandler.register_func("get_update_prop_" + this.type, this.get_newFileProp_update, this);
-	
+
 	this.clear();
 	this.onChange();
-	this.load();	
+	this.load();
 };
 // }}}
 // {{{ onHide()
@@ -1129,7 +1130,7 @@ class_tree_files.prototype.onHide = function() {
 	this.clear();
 	this.propObj.clear();
 	this.activeNode = null;
-	
+
 	_root.pocketConnect.msgHandler.unregister_func("get_update_tree_" + this.type);
 	_root.pocketConnect.msgHandler.unregister_func("get_update_prop_" + this.type);
 };
@@ -1138,7 +1139,7 @@ class_tree_files.prototype.onHide = function() {
 class_tree_files.prototype.load = function() {
 	this.selectedFile = "";
 	this.loading = true;
-	
+
 	_root.phpConnect.send("get_tree", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["type", this.type]]);
 };
 // }}}
@@ -1160,7 +1161,7 @@ class_tree_files.prototype.setNodeIds = function(actualNode, path) {
 		actualNode = actualNode.firstChild;
 		while (actualNode != null) {
 			this.setNodeIds(actualNode, path);
-			actualNode = actualNode.nextSibling;	
+			actualNode = actualNode.nextSibling;
 		}
 	}
 };
@@ -1220,7 +1221,7 @@ class_tree_files.prototype.isValidDelete = function(node) {
 // }}}
 // {{{ getAddNodes()
 class_tree_files.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_folder];	
+	return [conf.lang.tree_name_new_folder];
 };
 // }}}
 // {{{ setFileFilter()
@@ -1247,7 +1248,7 @@ class_tree_files.prototype.addNode = function(targetNode, type) {
 		this.loading = true;
 		this.onChange();
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", newName]]);
-	}	
+	}
 };
 // }}}
 
@@ -1265,7 +1266,7 @@ class_tree_colors.prototype.showRootNode = false;
 // }}}
 // {{{ init()
 class_tree_colors.prototype.init = function(type, projectObj) {
-	super.init(type, projectObj);	
+	super.init(type, projectObj);
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	_root.pocketConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
@@ -1293,7 +1294,7 @@ class_tree_colors.prototype.set_data = function(args) {
 // }}}
 // {{{ isTreeNode()
 class_tree_colors.prototype.isTreeNode = function(node) {
-	return node.getNameSpace() == conf.ns.project.toString() || this.isSeparatorNode(node);	
+	return node.getNameSpace() == conf.ns.project.toString() || this.isSeparatorNode(node);
 };
 // }}}
 // {{{ isGlobalColorscheme()
@@ -1303,7 +1304,7 @@ class_tree_colors.prototype.isGlobalColorscheme = function(node) {
 // }}}
 // {{{ isRenamable()
 class_tree_colors.prototype.isRenamable = function(node) {
-	return !this.isGlobalColorscheme(node);	
+	return !this.isGlobalColorscheme(node);
 };
 // }}}
 // {{{ isValidDuplicate()
@@ -1337,7 +1338,7 @@ class_tree_colors.prototype.renameNode = class_tree_pages.prototype.renameNode;
 // }}}
 // {{{ move_in()
 class_tree_colors.prototype.move_in = class_tree_pages.prototype.move_in;
-// }}} 
+// }}}
 // {{{ move_before()
 class_tree_colors.prototype.move_before = class_tree_pages.prototype.move_before;
 // }}}
@@ -1357,16 +1358,16 @@ class_tree_colors.prototype.copy_after = class_tree_pages.prototype.copy_after;
 class_tree_colors.prototype.getColorschemes = function() {
 	var tempNode;
 	var colorArray = [];
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (!this.isGlobalColorscheme(tempNode) && !this.isSeparatorNode(tempNode)) {
 			colorArray.push(tempNode.attributes.name);
 		}
-	
-		tempNode = tempNode.nextSibling;	
-	}		
-		
+
+		tempNode = tempNode.nextSibling;
+	}
+
 	return colorArray;
 };
 // }}}
@@ -1374,7 +1375,7 @@ class_tree_colors.prototype.getColorschemes = function() {
 class_tree_colors.prototype.getColors = function(colorschemeName) {
 	var tempNode, i;
 	var colorArray = [];
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (!this.isGlobalColorscheme(tempNode) && !this.isSeparatorNode(tempNode)) {
@@ -1384,10 +1385,10 @@ class_tree_colors.prototype.getColors = function(colorschemeName) {
 				}
 			}
 		}
-	
-		tempNode = tempNode.nextSibling;	
-	}		
-		
+
+		tempNode = tempNode.nextSibling;
+	}
+
 	return colorArray;
 };
 // }}}
@@ -1397,7 +1398,7 @@ class_tree_colors.prototype.addColor = function(colorschemeNode) {
 	var tempNode = tempXML.getRootNode();
 	var colorschemesNode = colorschemeNode.parentNode;
 	var i;
-	
+
 	if (this.isGlobalColorscheme(colorschemeNode)) {
 		colorschemeNode.appendChild(tempNode);
 		_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", colorschemeNode.toString()], ["type", this.type]]);
@@ -1418,7 +1419,7 @@ class_tree_colors.prototype.deleteColor = function(colorNode) {
 	var colorschemesNode = colorschemeNode.parentNode;
 	var i;
 	var nodePos;
-	
+
 	if (this.isGlobalColorscheme(colorschemeNode)) {
 		colorNode.removeNode();
 		_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", colorschemeNode.toString()], ["type", this.type]]);
@@ -1426,7 +1427,7 @@ class_tree_colors.prototype.deleteColor = function(colorNode) {
 		for (i = 0; i < colorschemeNode.childNodes.length; i++) {
 			if (colorschemeNode.childNodes[i] == colorNode) {
 				nodePos = i;
-			}	
+			}
 		}
 		for (i = 0; i < colorschemesNode.childNodes.length; i++) {
 			if (!this.isGlobalColorscheme(colorschemesNode.childNodes[i]) && !this.isSeparator(colorschemesNode.childNodes[i])) {
@@ -1452,7 +1453,7 @@ class_tree_colors.prototype.renameColor = function(colorNode, newName) {
 		for (i = 0; i < colorschemeNode.childNodes.length; i++) {
 			if (colorschemeNode.childNodes[i] == colorNode) {
 				nodePos = i;
-			}	
+			}
 		}
 		for (i = 0; i < colorschemesNode.childNodes.length; i++) {
 			if (!this.isGlobalColorscheme(colorschemesNode.childNodes[i]) && !this.isSeparator(colorschemesNode.childNodes[i])) {
@@ -1466,27 +1467,27 @@ class_tree_colors.prototype.renameColor = function(colorNode, newName) {
 // {{{ setColor()
 class_tree_colors.prototype.setColor = function(colorNode, newValue) {
 	colorNode.attributes.value = newValue;
-	
+
 	_root.phpConnect.send("save_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["data", colorNode.toString()], ["type", this.type]]);
 	//this.project.preview();
 };
 // }}}
 // {{{ getAddNodes()
 class_tree_colors.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_colorscheme];	
+	return [conf.lang.tree_name_new_colorscheme];
 };
 // }}}
 // {{{ addNode()
 class_tree_colors.prototype.addNode = function(targetNode, type) {
 	var new_name = conf.lang.tree_name_untitled;
 	if (type == conf.lang.tree_name_new_colorscheme) {
-		type = "colorscheme";	
+		type = "colorscheme";
 	}
 	if (targetNode != null) {
 		this.loading = true;
 		this.onChange();
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
-	}	
+	}
 	//this.project.preview();
 };
 // }}}
@@ -1506,7 +1507,7 @@ class_tree_tpl_templates.prototype.showChildrenInitLevel = 2;
 // }}}
 // {{{ init()
 class_tree_tpl_templates.prototype.init = function(type, projectObj) {
-	super.init(type, projectObj);	
+	super.init(type, projectObj);
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	_root.pocketConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
@@ -1531,12 +1532,12 @@ class_tree_tpl_templates.prototype.set_data = function(args) {
 // {{{ onShow()
 class_tree_tpl_templates.prototype.onShow = function() {
 	super.onShow();
-	this.project.preview();	
+	this.project.preview();
 };
 // }}}
 // {{{ isTreeNode()
 class_tree_tpl_templates.prototype.isTreeNode = function(node) {
-	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":template" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":tpl_templates_struct");	
+	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":template" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":tpl_templates_struct");
 };
 // }}}
 // {{{ setNodeIds()
@@ -1576,14 +1577,14 @@ class_tree_tpl_templates.prototype.copy_after = class_tree_pages.prototype.copy_
 // }}}
 // {{{ getAddNodes()
 class_tree_tpl_templates.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_folder, conf.lang.tree_name_new_template];	
+	return [conf.lang.tree_name_new_folder, conf.lang.tree_name_new_template];
 };
 // }}}
 // {{{ addNode()
 class_tree_tpl_templates.prototype.addNode = function(targetNode, type) {
 	var new_name = conf.lang.tree_name_untitled;
 	if (type == conf.lang.tree_name_new_folder) {
-		type = "folder";	
+		type = "folder";
 		var tempNode = super.addNode(conf.ns.page + ":folder");
 	} else if (type == conf.lang.tree_name_new_template) {
 		type = "template";
@@ -1594,7 +1595,7 @@ class_tree_tpl_templates.prototype.addNode = function(targetNode, type) {
 		this.loading = true;
 		this.onChange();
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["new_name", new_name]]);
-	}	
+	}
 };
 // }}}
 
@@ -1612,7 +1613,7 @@ class_tree_tpl_newnodes.prototype.showRootNode = false;
 // }}}
 // {{{ init()
 class_tree_tpl_newnodes.prototype.init = function(type, projectObj) {
-	super.init(type, projectObj);	
+	super.init(type, projectObj);
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.phpConnect.msgHandler.register_func("set_activeId_" + this.type, this.setActiveIdOutside, this);
 	_root.pocketConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
@@ -1671,7 +1672,7 @@ class_tree_tpl_newnodes.prototype.copy_after = class_tree_pages.prototype.copy_a
 // }}}
 // {{{ getAddNodes()
 class_tree_tpl_newnodes.prototype.getAddNodes = function(targetNode) {
-	return [conf.lang.tree_name_new_new_node];	
+	return [conf.lang.tree_name_new_new_node];
 };
 // }}}
 // {{{ addNode()
@@ -1681,7 +1682,7 @@ class_tree_tpl_newnodes.prototype.addNode = function(targetNode, type) {
 		type = "new_node";
 		var tempNode = super.addNode(conf.ns.page + ":newnode");
 	}
-	
+
 	targetNode = this.data.getRootNode();
 	if (targetNode != null) {
 		tempNode.attributes.name = new_name;
@@ -1717,7 +1718,7 @@ class_tree.prototype.showChildrenInitLevel = 2;
 // }}}
 // {{{ init()
 class_tree_settings.prototype.init = function(type, projectObj) {
-	super.init(type, projectObj);	
+	super.init(type, projectObj);
 	_root.phpConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 	_root.pocketConnect.msgHandler.register_func("update_tree_" + this.type, this.set_data, this);
 };
@@ -1778,7 +1779,7 @@ class_tree_settings.prototype.isTreeNode = function(node) {
 			return true;
 		} else {
 			return false;
-		}		
+		}
 	} else {
 		return false;
 	}
@@ -1786,23 +1787,23 @@ class_tree_settings.prototype.isTreeNode = function(node) {
 // }}}
 // {{{ isFolder()
 class_tree_settings.prototype.isFolder = function(node) {
-	return node.nodeName == conf.ns.project + ":publish" || node.nodeName == conf.ns.project + ":template_sets" || node.nodeName == conf.ns.project + ":global_files" || node.nodeName == conf.ns.project + ":languages" || node.nodeName == conf.ns.project + ":navigations" || node.nodeName == conf.ns.project + ":variables" || node.nodeName == conf.ns.project + ":backup";	
+	return node.nodeName == conf.ns.project + ":publish" || node.nodeName == conf.ns.project + ":template_sets" || node.nodeName == conf.ns.project + ":global_files" || node.nodeName == conf.ns.project + ":languages" || node.nodeName == conf.ns.project + ":navigations" || node.nodeName == conf.ns.project + ":variables" || node.nodeName == conf.ns.project + ":backup";
 };
 // }}}
 // {{{ isRenamable()
 class_tree_settings.prototype.isRenamable = function(node) {
 	if (node.nodeName == conf.ns.project + ":navigation") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":variable") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":language") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":global_file") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
-		return true;		
+		return true;
 	} else {
 		return false;
 	}
@@ -1811,17 +1812,17 @@ class_tree_settings.prototype.isRenamable = function(node) {
 // {{{ isValidMove()
 class_tree_settings.prototype.isValidMove = function(node, targetNode) {
 	if (node.nodeName == conf.ns.project + ":navigation" && targetNode.nodeName == conf.ns.project + ":navigations") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":variable" && targetNode.nodeName == conf.ns.project + ":variables") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":language" && targetNode.nodeName == conf.ns.project + ":languages") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":template_set" && targetNode.nodeName == conf.ns.project + ":template_sets") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":global_file" && targetNode.nodeName == conf.ns.project + ":global_files") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":publish_folder" && targetNode.nodeName == conf.ns.project + ":publish") {
-		return true;		
+		return true;
 	} else {
 		return false;
 	}
@@ -1837,15 +1838,15 @@ class_tree_settings.prototype.isValidDelete = function(node) {
 	if (node.nodeName == conf.ns.project + ":navigation") {
 		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else if (node.nodeName == conf.ns.project + ":variable") {
-		return true && (node.previousSibling != null || node.nextSibling != null);		
+		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else if (node.nodeName == conf.ns.project + ":language") {
-		return true && (node.previousSibling != null || node.nextSibling != null);		
+		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
-		return true && (node.previousSibling != null || node.nextSibling != null);		
+		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else if (node.nodeName == conf.ns.project + ":global_file") {
-		return true && (node.previousSibling != null || node.nextSibling != null);		
+		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
-		return true && (node.previousSibling != null || node.nextSibling != null);		
+		return true && (node.previousSibling != null || node.nextSibling != null);
 	} else {
 		return false;
 	}
@@ -1854,17 +1855,17 @@ class_tree_settings.prototype.isValidDelete = function(node) {
 // {{{ isValidDuplicate()
 class_tree_settings.prototype.isValidDuplicate = function(node) {
 	if (node.nodeName == conf.ns.project + ":navigation") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":variable") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":language") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":template_set") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":global_file") {
-		return true;		
+		return true;
 	} else if (node.nodeName == conf.ns.project + ":publish_folder") {
-		return true;		
+		return true;
 	} else {
 		return false;
 	}
@@ -1893,7 +1894,7 @@ class_tree_settings.prototype.getNavigations = function() {
 	var tempNode;
 	var tempObj;
 	var navigations = [];
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (tempNode.nodeName == conf.ns.project + ":navigations") {
@@ -1905,7 +1906,7 @@ class_tree_settings.prototype.getNavigations = function() {
 			}
 			return navigations;
 		}
-			
+
 		tempNode = tempNode.nextSibling;
 	}
 };
@@ -1915,7 +1916,7 @@ class_tree_settings.prototype.getVariables = function() {
 	var tempNode;
 	var tempObj;
 	var variables = [];
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (tempNode.nodeName == conf.ns.project + ":variables") {
@@ -1927,7 +1928,7 @@ class_tree_settings.prototype.getVariables = function() {
 			}
 			return variables;
 		}
-			
+
 		tempNode = tempNode.nextSibling;
 	}
 };
@@ -1947,7 +1948,7 @@ class_tree_settings.prototype.getVariable = function(name) {
                             }
 			}
 		}
-			
+
 		tempNode = tempNode.nextSibling;
 	}
 
@@ -1959,7 +1960,7 @@ class_tree_settings.prototype.getLanguages = function() {
 	var tempNode;
 	var tempObj;
 	var languages = [];
-	
+
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (tempNode.nodeName == conf.ns.project + ":languages") {
@@ -1971,7 +1972,7 @@ class_tree_settings.prototype.getLanguages = function() {
 			}
 			return languages;
 		}
-			
+
 		tempNode = tempNode.nextSibling;
 	}
 };
@@ -1980,7 +1981,7 @@ class_tree_settings.prototype.getLanguages = function() {
 class_tree_settings.prototype.getTemplateSets = function() {
 	var tempNode, i;
 	var val_array = [];
-		
+
 	tempNode = this.data.getRootNode();
 	tempNode = tempNode.firstChild;
 	while (tempNode != null) {
@@ -1990,7 +1991,7 @@ class_tree_settings.prototype.getTemplateSets = function() {
 			}
 			tempNode = null;
 		} else {
-			tempNode = tempNode.nextSibling;	
+			tempNode = tempNode.nextSibling;
 		}
 	}
 	return val_array;
@@ -1998,7 +1999,7 @@ class_tree_settings.prototype.getTemplateSets = function() {
 // }}}
 // {{{ getAddNodes()
 class_tree_settings.prototype.getAddNodes = function(targetNode) {
-	return [];	
+	return [];
 };
 // }}}
 
