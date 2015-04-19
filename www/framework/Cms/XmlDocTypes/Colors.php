@@ -42,6 +42,10 @@ class Colors extends UniqueNames {
 
         $changed = $changed || $this->testColors($node);
 
+        if ($changed) {
+            // @todo regenerate css
+        }
+
         return $changed;
     }
     // }}}
