@@ -31,20 +31,20 @@
     <xsl:template name="init-feed">
         <title><xsl:value-of select="$title" /></title>
 
-        <link><xsl:attribute name="href"><xsl:value-of select="$baseurl" /></xsl:attribute></link>
-        <link rel="self"><xsl:attribute name="href"><xsl:value-of select="concat($baseurl,$tt_lang,'/atom.xml')" /></xsl:attribute></link>
+        <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /></xsl:attribute></link>
+        <link rel="self"><xsl:attribute name="href"><xsl:value-of select="concat($baseUrl,$tt_lang,'/atom.xml')" /></xsl:attribute></link>
 
-        <id><xsl:value-of select="$baseurl" /></id>
+        <id><xsl:value-of select="$baseUrl" /></id>
         <updated><xsl:value-of select="document('call:formatdate////Y-m-d\TH:i:s\Z')" /></updated>
         <author>
             <name><xsl:value-of select="$author" /></name>
         </author>
         <rights><xsl:value-of select="$rights" /></rights>
         <xsl:if test="$icon != ''">
-            <icon><xsl:value-of select="concat($baseurl,$icon)" /></icon>
+            <icon><xsl:value-of select="concat($baseUrl,$icon)" /></icon>
         </xsl:if>
         <xsl:if test="$logo != ''">
-            <logo><xsl:value-of select="concat($baseurl,$logo)" /></logo>
+            <logo><xsl:value-of select="concat($baseUrl,$logo)" /></logo>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
@@ -53,8 +53,8 @@
         <xsl:param name="anchor" />
         <xsl:param name="pageid" />
 
-        <link><xsl:attribute name="href"><xsl:value-of select="$baseurl" /><xsl:value-of select="document(concat('pageref:',$pageid,'/',$tt_lang))" /><xsl:value-of select="$anchor" /></xsl:attribute></link>
-        <id><xsl:value-of select="$baseurl" /><xsl:value-of select="document(concat('pageref:',$pageid,'/',$tt_lang))" /><xsl:value-of select="$anchor" /></id>
+        <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref:',$pageid,'/',$tt_lang))" /><xsl:value-of select="$anchor" /></xsl:attribute></link>
+        <id><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref:',$pageid,'/',$tt_lang))" /><xsl:value-of select="$anchor" /></id>
         <updated><xsl:value-of select="document(concat('call:formatdate/',edit:date/@value,'/','Y-m-d\TH:i:s\Z'))" /></updated>
         <title><xsl:value-of select="edit:text_headline[@lang = $tt_lang]/*" /></title>
         <summary><xsl:value-of select=".//edit:text_formatted[@lang = $tt_lang and 1]/*" /></summary>
@@ -90,7 +90,7 @@
         <xsl:if test="@src != ''">
             <img>
                 <xsl:attribute name="src">
-                    <xsl:value-of select="$baseurl" />lib<xsl:value-of select="substring(@src,8)"/>
+                    <xsl:value-of select="$baseUrl" />lib<xsl:value-of select="substring(@src,8)"/>
                 </xsl:attribute>
                 <xsl:attribute name="width"><xsl:value-of select="document(concat('call:fileinfo/', @src))/file/@width"/></xsl:attribute>
                 <xsl:attribute name="height"><xsl:value-of select="document(concat('call:fileinfo/', @src))/file/@height"/></xsl:attribute>
@@ -127,7 +127,7 @@
             <xsl:choose>
                 <xsl:when test="$href and substring($href, 1, 8) = 'libref:/'">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseurl" />lib<xsl:value-of select="substring(@href,8)" disable-output-escaping="yes" />
+                        <xsl:value-of select="$baseUrl" />lib<xsl:value-of select="substring(@href,8)" disable-output-escaping="yes" />
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="@href and substring($href, 1, 7) = 'mailto:'">
@@ -137,12 +137,12 @@
                 </xsl:when>
                 <xsl:when test="$href and substring($href, 1, 8) = 'pageref:'">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseurl" /><xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="$href_id != ''">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseurl" /><xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>

@@ -19,7 +19,7 @@ abstract class Transformer
     public $pagedataIdByPageId = array();
 
     // {{{ factory()
-   static public function factory($previewType, $pdo, $projectName, $template, $cacheOptions = array())
+    static public function factory($previewType, $pdo, $projectName, $template, $cacheOptions = array())
     {
         if ($previewType == "live") {
             return new Live($pdo, $projectName, $template, $cacheOptions);
@@ -36,6 +36,7 @@ abstract class Transformer
         $this->pdo = $pdo;
         $this->projectName = $projectName;
         $this->template = $template;
+        $this->log = new \Depage\Log\Log();
 
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
@@ -104,6 +105,7 @@ abstract class Transformer
             $regenerate = true;
         }
         // @todo clear xsl cache when settings are saved
+        $regenerate = true;
 
         if ($regenerate) {
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -117,7 +119,7 @@ abstract class Transformer
                 'currentLang' => null,
                 'currentPageId' => null,
                 'depageIsLive' => "false()",
-                'baseurl' => $this->baseUrl,
+                'baseUrl' => null,
             );
             $variables = array(
                 'navigation' => "document('xmldb://pages')",
@@ -154,6 +156,7 @@ abstract class Transformer
 
             $xslt .= $this->getXsltIncludes($files);
             $xslt .= "\n</xsl:stylesheet>";
+
 
             $doc = new \Depage\Xml\Document();
             $doc->loadXML($xslt);
@@ -209,7 +212,7 @@ abstract class Transformer
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => $this->isLive,
-            "baseurl" => $this->baseUrl,
+            "baseUrl" => $this->baseUrl,
         ));
 
         if ($pageXml === false) {

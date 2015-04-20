@@ -291,6 +291,8 @@ class Import
                         "pageref:/" => "pageref://",
                         "pageref:///" => "pageref://",
                         "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
+                        "\$baseurl" => "\$baseUrl",
+                        "<xsl:param name=\"baseurl\"" => "<xsl:param name=\"baseUrl\"",
                         "\$tt_lang" => "\$currentLang",
                         "\$content_type" => "\$currentContentType",
                         "\$content_encoding" => "\$currentEncoding",
