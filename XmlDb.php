@@ -225,11 +225,12 @@ class XmlDb implements XmlGetter
     /**
      * CreateDoc
      *
-     * @param $doc_id_or_name
+     * @param string $docType class-name of doctype for new document
+     * @param string $docName optional name of document
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($docName = null, $docType = 'Depage\XmlDb\XmlDocTypes\Base') {
+    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null) {
         if (is_null($docName)) {
             // generate generic docname based on doctype
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
@@ -260,7 +261,7 @@ class XmlDb implements XmlGetter
      * @brief duplicateDoc
      *
      * @param mixed $docNameOrId
-     * @param mixed $newName
+     * @param string $newName optional name for new document
      * @return bool success
      **/
     public function duplicateDoc($docNameOrId, $newName = null)
@@ -271,7 +272,7 @@ class XmlDb implements XmlGetter
             $info = $original->getDocInfo();
             $xml = $original->getXml(false);
 
-            $copy = $this->createDoc($newName, $info->type);
+            $copy = $this->createDoc($info->type, $newName);
             $copy->save($xml);
 
             return $copy;
