@@ -132,17 +132,17 @@ class Import
     {
         $this->docNavigation = $this->xmldb->getDoc("pages");
         if (!$this->docNavigation) {
-            $this->docNavigation = $this->xmldb->createDoc("pages", "Depage\\Cms\\XmlDocTypes\\Pages");
+            $this->docNavigation = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\Pages", "pages");
         }
 
         $this->docSettings = $this->xmldb->getDoc("settings");
         if (!$this->docSettings) {
-            $this->docSettings = $this->xmldb->createDoc("settings", "Depage\Cms\XmlDocTypes\\Settings");
+            $this->docSettings = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Settings", "settings");
         }
 
         $this->docColors = $this->xmldb->getDoc("colors");
         if (!$this->docColors) {
-            $this->docColors = $this->xmldb->createDoc("colors", "Depage\Cms\XmlDocTypes\\Colors");
+            $this->docColors = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Colors", "colors");
         }
     }
     // }}}
@@ -217,7 +217,7 @@ class Import
 
             $this->updatePageData($xmlData);
 
-            $doc = $this->xmldb->createDoc(null, "Depage\\Cms\\XmlDocTypes\\$docType");
+            $doc = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\$docType");
             $newId = $doc->save($xmlData);
 
             // updated reference attributes

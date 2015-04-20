@@ -84,7 +84,7 @@ class Pages extends UniqueNames {
                 $node->setAttribute("name", $properties->new);
             }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
-                $document = $this->xmldb->createDoc(null, $properties->doc_type);
+                $document = $this->xmldb->createDoc($properties->doc_type);
                 $node->setAttribute('db:docref', $document->getDocId());
                 $xml = $this->loadXmlTemplate($properties->xml_template);
                 $rootId = $document->getDocInfo()->rootid;
