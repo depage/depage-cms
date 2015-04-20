@@ -173,9 +173,9 @@ class_project.prototype.previewNow = function() {
             url += this.preview_type + "/";
 
             if (this.previewDisableCache) {
-                url += "noncached";
+                url += "dev";
             } else {
-                url += "cached";
+                url += "preview";
             }
             url += urlId;
 
