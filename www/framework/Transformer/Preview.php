@@ -18,7 +18,17 @@ class Preview extends Transformer
         $xslt = "";
         foreach ($files as $file) {
             $tpl = new \Depage\Xml\Document();
+            $tpl->resolveExternals = true;
             $tpl->load($file);
+
+            // @todo check if and how to copy all entities from source documents
+            /*
+            $entities = $tpl->doctype->entities;
+            foreach ($entities as $entity) {
+                var_dump($entity);
+            }
+            die();
+             */
 
             foreach ($tpl->documentElement->childNodes as $node) {
                 $xslt .= $tpl->saveXML($node);
@@ -26,6 +36,14 @@ class Preview extends Transformer
         }
 
         return $xslt;
+    }
+    // }}}
+
+    // {{{ transformXml()
+    protected function transformXml($pageId, $pagedataId)
+    {
+        // @todo add caching and automatic cache clearing when changing documents
+        return parent::transformXml($pageId, $pagedataId);
     }
     // }}}
 }
