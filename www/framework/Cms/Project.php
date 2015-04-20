@@ -354,8 +354,32 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getPreviewPath()
     {
-        // @todo check languages and template path
-        return "project/{$this->name}/preview/html/cached/de";
+        $languages = array_keys($this->getLanguages());
+
+        // @todo check template path
+        return "project/{$this->name}/preview/html/dev/{$languages[0]}";
+    }
+    // }}}
+    // {{{ getLanguages()
+    /**
+     * @brief getLanguages
+     *
+     * @param mixed
+     * @return array of languages
+     **/
+    public function getLanguages()
+    {
+        $languages = array();
+        $this->initXmlDb();
+
+        $settings = $this->xmldb->getDoc("settings");
+        $nodes = $settings->getNodeIdsByXpath("//proj:language");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $languages[$attr['shortname']] = $attr['name'];
+        }
+
+        return $languages;
     }
     // }}}
     // {{{ getHomeUrl()
