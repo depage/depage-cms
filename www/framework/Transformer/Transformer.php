@@ -105,7 +105,7 @@ abstract class Transformer
             $regenerate = true;
         }
         // @todo clear xsl cache when settings are saved
-        $regenerate = true;
+        //$regenerate = true;
 
         if ($regenerate) {
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -483,6 +483,7 @@ abstract class Transformer
     public function xsltCallChangeSrc($source) {
         $newSource = "";
         $posOffset = 0;
+        // @todo check libref:/(/)
         while (($startPos = strpos($source, '"libref:/', $posOffset)) !== false) {
             $newSource .= substr($source, $posOffset, $startPos - $posOffset) . '"';
             $posOffset = $startPos + strlen("libref:/") + 3;

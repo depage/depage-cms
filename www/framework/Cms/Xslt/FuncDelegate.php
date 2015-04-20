@@ -2,6 +2,10 @@
 
 namespace Depage\Cms\Xslt;
 
+/*
+ * Allows to register php functions with xsl processor to be called inside of the
+ * context of a given object instead of just statically.
+ */
 class FuncDelegate {
     protected static $functions = array();
 
