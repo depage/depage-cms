@@ -153,12 +153,11 @@ abstract class Transformer
                 $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
             }
 
-
             $xslt .= $this->getXsltIncludes($files);
             $xslt .= "\n</xsl:stylesheet>";
 
-
             $doc = new \Depage\Xml\Document();
+            $doc->resolveExternals = true;
             $doc->loadXML($xslt);
 
             $this->xsltCache->set($xslFile, $doc);

@@ -175,7 +175,7 @@ class_project.prototype.previewNow = function() {
             if (this.previewDisableCache) {
                 url += "dev";
             } else {
-                url += "preview";
+                url += "pre";
             }
             url += urlId;
 

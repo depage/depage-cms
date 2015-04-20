@@ -357,7 +357,7 @@ class Project extends \Depage\Entity\Entity
         $languages = array_keys($this->getLanguages());
 
         // @todo check template path
-        return "project/{$this->name}/preview/html/dev/{$languages[0]}";
+        return "project/{$this->name}/preview/html/pre/{$languages[0]}";
     }
     // }}}
     // {{{ getLanguages()
@@ -394,9 +394,7 @@ class Project extends \Depage\Entity\Entity
 
         $xml = $this->xmldb->getDocXml("pages");
 
-        $xpath = new \DOMXPath($xml);
-        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-        $nodelist = $xpath->query("//pg:page");
+        $nodelist = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "page");
 
         return $this->getPreviewPath() . $nodelist->item(0)->getAttribute("url");
     }
