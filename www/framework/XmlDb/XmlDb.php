@@ -29,7 +29,7 @@ class XmlDb implements XmlGetter
     private $table_nodetypes;
     private $transactions = 0;
 
-    private $options;
+    public $options;
     // }}}
 
     // {{{ __get()
@@ -229,9 +229,12 @@ class XmlDb implements XmlGetter
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($doc_name, $doc_type = 'Depage\XmlDb\XmlDocTypes\Base') {
-        // @TODO add option to generate doc name
-        if (!is_string($doc_name)) {
+    public function createDoc($docName = null, $docType = 'Depage\XmlDb\XmlDocTypes\Base') {
+        if (is_null($docName)) {
+            // generate generic docname based on doctype
+            $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
+        }
+        if (!is_string($docName)) {
             throw new XmlDbException("You have to give a valid name to save a new document.");
         }
 
@@ -240,13 +243,13 @@ class XmlDb implements XmlGetter
                 name = :name, type = :type;"
         );
         $query->execute(array(
-            'name' => $doc_name,
-            'type' => $doc_type,
+            'name' => $docName,
+            'type' => $docType,
         ));
 
-        $doc_id = $this->pdo->lastInsertId();
+        $docId = $this->pdo->lastInsertId();
 
-        $document = new Document($this, $doc_id);
+        $document = new Document($this, $docId);
 
         return $document;
     }
@@ -260,7 +263,7 @@ class XmlDb implements XmlGetter
      * @param mixed $newName
      * @return bool success
      **/
-    public function duplicateDoc($docNameOrId, $newName)
+    public function duplicateDoc($docNameOrId, $newName = null)
     {
         $original = $this->getDoc($docNameOrId);
 

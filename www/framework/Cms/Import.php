@@ -215,16 +215,17 @@ class Import
             list($ns, $docType) = explode(":", $this->docNavigation->getNodeNameById($pageId));
             $docType = ucfirst(strtolower($docType));
 
-            $docName = '_' . $docType . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
-
             $this->updatePageData($xmlData);
 
-            $doc = $this->xmldb->createDoc($docName, "Depage\\Cms\\XmlDocTypes\\$docType");
+            $doc = $this->xmldb->createDoc(null, "Depage\\Cms\\XmlDocTypes\\$docType");
             $newId = $doc->save($xmlData);
 
             // updated reference attributes
             $this->docNavigation->removeAttribute($pageId, "db:ref");
             $this->docNavigation->setAttribute($pageId, "db:docref", $newId);
+
+            // @todo update document dates based on old data
+            // @todo update last user ids based on old data
         }
     }
     // }}}

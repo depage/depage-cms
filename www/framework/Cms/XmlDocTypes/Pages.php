@@ -84,8 +84,7 @@ class Pages extends UniqueNames {
                 $node->setAttribute("name", $properties->new);
             }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
-                $doc_name = '_' . strtolower($properties->name) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
-                $document = $this->xmldb->createDoc($doc_name, $properties->doc_type);
+                $document = $this->xmldb->createDoc(null, $properties->doc_type);
                 $node->setAttribute('db:docref', $document->getDocId());
                 $xml = $this->loadXmlTemplate($properties->xml_template);
                 $rootId = $document->getDocInfo()->rootid;
@@ -133,9 +132,7 @@ class Pages extends UniqueNames {
             $docrefId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
 
             // duplicate document as new
-            $newDocName = '_Page_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
-
-            $copiedDoc = $this->xmldb->duplicateDoc($docrefId, $newDocName);
+            $copiedDoc = $this->xmldb->duplicateDoc($docrefId);
             $info = $copiedDoc->getDocInfo();
 
             $this->document->setAttribute($nodeId, "db:docref", $info->id);
