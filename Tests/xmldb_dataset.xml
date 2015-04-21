@@ -12,7 +12,7 @@
     <row>
       <value>1</value>
       <value>pages</value>
-      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>1</value>
@@ -21,7 +21,7 @@
     <row>
       <value>2</value>
       <value>tpl_templates</value>
-      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>3</value>
@@ -30,7 +30,7 @@
     <row>
       <value>3</value>
       <value>tpl_newnodes</value>
-      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>5</value>
