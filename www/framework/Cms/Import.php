@@ -403,6 +403,7 @@ class Import
         $this->updatePageRefs($xmlData);
         $this->updateLibRefs($xmlData);
         $this->updateImageSizes($xmlData);
+        $this->updateSourceVars($xmlData);
     }
     // }}}
     // {{{ updatePageRefs()
@@ -499,6 +500,27 @@ class Import
 
             $node->removeAttribute("force_width");
             $node->removeAttribute("force_height");
+        }
+
+    }
+    // }}}
+    // {{{ updateSourceVars()
+    protected function updateSourceVars($xmlData)
+    {
+        $xpath = new \DOMXPath($xmlData);
+        $xpath->registerNamespace("edit", "http://cms.depagecms.net/ns/edit");
+        $nodelist = $xpath->query("//edit:plain_source/text()");
+
+        $replacements = array(
+            "\$tt_lang" => "\$currentLang",
+        );
+
+        // test all images with a forced with or height
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $text = $nodelist->item($i)->data;
+            $text = str_replace(array_keys($replacements), array_values($replacements), $text);
+
+            $nodelist->item($i)->data = $text;
         }
 
     }
