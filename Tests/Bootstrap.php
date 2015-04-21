@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../Document.php');
 require_once(__DIR__ . '/../XmlDb.php');
 require_once(__DIR__ . '/../XmlNs.php');
 require_once(__DIR__ . '/../XmlDocTypes/Base.php');
+require_once(__DIR__ . '/../XmlDbException.php');
 
 const DEPAGE_CACHE_PATH = 'cache';
 const DEPAGE_BASE = 'base';
