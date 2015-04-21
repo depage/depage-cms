@@ -111,10 +111,10 @@ class Document {
             $className = $this->getDocInfo()->type;
 
             if (empty($className)) {
-                $handler = new XmlDocTypes\Base($this->xmldb, $this->doc_id);
+                $handler = new XmlDocTypes\Base($this->xmldb, $this);
             } else {
                 $className = "\\" . $className;
-                $handler = new $className($this->xmldb, $this->doc_id);
+                $handler = new $className($this->xmldb, $this);
             }
 
             $this->doctypeHandlers[$this->doc_id] = $handler;
@@ -214,7 +214,7 @@ class Document {
             $xml_doc->loadXML($xml_str);
         } else {
             // read from database
-            $this->beginTransaction();
+            $this->xmldb->beginTransaction();
 
             $query = $this->pdo->prepare(
                 "SELECT
@@ -282,13 +282,15 @@ class Document {
 
                 $xml_str .= "</{$row->name}>";
             } else {
+                $this->xmldb->endTransaction();
+
                 throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
 
             $success = $xml_doc->loadXML($xml_str);
             $dth = $this->getDoctypeHandler();
 
-            $this->endTransaction();
+            $this->xmldb->endTransaction();
 
             $changed = $dth->testDocument($xml_doc);
             if ($changed) {
@@ -336,7 +338,7 @@ class Document {
      * @throws xmldbException
      */
     public function save(\DomDocument $xml) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $doc_info = $this->cleanDoc();
         $xml_text = $xml->saveXML();
@@ -370,7 +372,7 @@ class Document {
 
         $this->clearCache();
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $doc_info->id;
     }
@@ -438,7 +440,7 @@ class Document {
      * @return    $changed_ids (array) list of db-ids that has been changed
      */
     public function replaceNode($node, $id_to_replace) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $target_id = $this->getParentIdById($id_to_replace);
         $target_pos = $this->getPosById($id_to_replace);
@@ -449,7 +451,7 @@ class Document {
         $changed_ids[] = $this->saveNode($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $changed_ids;
     }
@@ -463,7 +465,7 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function moveNodeIn($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
             "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos
@@ -478,7 +480,7 @@ class Document {
 
         $success = $this->moveNode($node_id, $target_id, $result->newpos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -492,14 +494,14 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function moveNodeBefore($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id);
 
         $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -513,14 +515,14 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function moveNodeAfter($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id) + 1;
 
         $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -541,9 +543,9 @@ class Document {
     public function moveNode($node_id, $target_id, $target_pos) {
         $success = false;
 
-        $this->beginTransaction();
-
         if ($node_id !== $target_id && $this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
+            $this->xmldb->beginTransaction();
+
             $node_parent_id = $this->getParentIdById($node_id);
             $node_pos = $this->getPosById($node_id);
 
@@ -604,9 +606,9 @@ class Document {
             }
 
             $success = true;
-        }
 
-        $this->endTransaction();
+            $this->xmldb->endTransaction();
+        }
 
         return $success;
     }
@@ -620,7 +622,7 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function copyNodeIn($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
             "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos
@@ -635,7 +637,7 @@ class Document {
 
         $success = $this->copyNode($node_id, $target_id, $result->newpos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -649,14 +651,14 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function copyNodeBefore($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id);
 
         $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -670,14 +672,14 @@ class Document {
      * @param    $target_id (int) db-id of target node
      */
     public function copyNodeAfter($node_id, $target_id) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id) + 1;
 
         $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -696,14 +698,18 @@ class Document {
     public function copyNode($node_id, $target_id, $target_pos) {
         $docHandler = $this->getDoctypeHandler();
         if ($docHandler->isAllowedMove($node_id, $target_id)) {
+            $this->xmldb->beginTransaction();
+
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
             $this->clearCache();
 
-            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, false);
+            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
             $docHandler->onCopyNode($node_id, $copy_id);
+
+            $this->xmldb->endTransaction();
 
             return $copy_id;
         }
@@ -779,7 +785,7 @@ class Document {
     public function setAttribute($node_id, $attr_name, $attr_value) {
         $success = false;
 
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $attributes = $this->getAttributes($node_id);
 
@@ -791,7 +797,7 @@ class Document {
             $success = $this->saveAttributes($node_id, $attributes);
         }
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -807,7 +813,7 @@ class Document {
     public function removeAttribute($node_id, $attr_name) {
         $success = false;
 
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $attributes = $this->getAttributes($node_id);
 
@@ -817,7 +823,7 @@ class Document {
             $success = $this->saveAttributes($node_id, $attributes);
         }
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -831,7 +837,7 @@ class Document {
      * @param    $attributes (array) array of attribute values
      */
     protected function saveAttributes($node_id, $attributes) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_xml} AS xml
@@ -848,7 +854,7 @@ class Document {
 
         $this->clearCache();
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $success;
     }
@@ -1031,7 +1037,7 @@ class Document {
      * @param    $inc_children (bool) also save the related child nodes
      */
     public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true) {
-        $this->beginTransaction();
+        $this->xmldb->beginTransaction();
 
         if ($target_id !== null) {
             /*
@@ -1137,7 +1143,7 @@ class Document {
 
         $this->updateLastchange();
 
-        $this->endTransaction();
+        $this->xmldb->endTransaction();
 
         return $node_array[0]['id'];
     }
@@ -1967,30 +1973,6 @@ class Document {
     private function clearCache() {
         if (!is_null($this->doc_id)) {
             $this->cache->delete("{$this->table_docs}_d{$this->doc_id}/");
-        }
-    }
-    // }}}
-
-    // {{{ beginTransaction()
-    /**
-     * wrap database begin transaction
-     */
-    private function beginTransaction() {
-        if ($this->transaction == 0) {
-            $this->pdo->beginTransaction();
-        }
-        $this->transaction++;
-    }
-    // }}}
-
-    // {{{ endTransaction()
-    /**
-     * wrap database end transaction
-     */
-    private function endTransaction() {
-        $this->transaction--;
-        if ($this->transaction == 0) {
-            $this->pdo->commit();
         }
     }
     // }}}
