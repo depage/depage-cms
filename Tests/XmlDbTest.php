@@ -70,6 +70,15 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
         }
     }
     // }}}
+    // {{{ testGetDocNonExistent()
+    public function testGetDocNonExistent() {
+        $xml = $this->xmldb->getDoc("non existing document");
+        $this->assertFalse($xml);
+
+        $xml = $this->xmldb->getDoc(100);
+        $this->assertFalse($xml);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
