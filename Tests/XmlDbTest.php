@@ -23,43 +23,32 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetDocumentsByName
+    public function testGetDocumentsByName() {
+        $docs = $this->xmldb->getDocuments('pages');
+        $pagesDoc = $docs['pages'];
+
+        $this->assertEquals(array('pages'), array_keys($docs));
+        $this->assertInstanceOf('Depage\XmlDb\Document', $pagesDoc);
+        $this->assertEquals('pages', $pagesDoc->getDocInfo()->name);
+    }
+    // }}}
     // {{{ testGetDocuments
     public function testGetDocuments() {
-        // get list for one document
-        $docs = $this->xmldb->getDocuments("pages");
-
-        $this->assertEquals(array(
-            'pages' => (object) array(
-                'name' => 'pages',
-                'id' => '1',
-                'rootid' => '1',
-                'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
-            ),
-        ), $docs);
-
-        // get list of all documents
         $docs = $this->xmldb->getDocuments();
+        $expectedNames = array(
+            'pages',
+            'tpl_newnodes',
+            'tpl_templates',
+        );
 
-        $this->assertEquals(array(
-            'pages' => (object) array(
-                'name' => 'pages',
-                'id' => '1',
-                'rootid' => '1',
-                'permissions' => 'a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}',
-            ),
-            'tpl_newnodes' => (object) array(
-                'name' => 'tpl_newnodes',
-                'id' => '3',
-                'rootid' => '5',
-                'permissions' => '',
-            ),
-            'tpl_templates' => (object) array(
-                'name' => 'tpl_templates',
-                'id' => '2',
-                'rootid' => '3',
-                'permissions' => '',
-            ),
-        ), $docs);
+        $this->assertEquals($expectedNames, array_keys($docs));
+
+        foreach ($expectedNames as $expectedName) {
+            $expectedDoc = $docs[$expectedName];
+            $this->assertInstanceOf('Depage\XmlDb\Document', $expectedDoc);
+            $this->assertEquals($expectedName, $expectedDoc->getDocInfo()->name);
+        }
     }
     // }}}
 }

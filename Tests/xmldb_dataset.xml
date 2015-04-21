@@ -3,33 +3,38 @@
   <table name="xmldb_proj_test_xmldocs">
     <column>id</column>
     <column>name</column>
+    <column>type</column>
     <column>ns</column>
     <column>entities</column>
     <column>rootid</column>
-    <column>permissions</column>
+    <column>lastchange</column>
+    <column>lastchange_uid</column>
     <row>
       <value>1</value>
       <value>pages</value>
+      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>1</value>
-      <value>a:2:{i:0;a:2:{s:7:"pg:page";a:1:{i:0;s:3:"all";}s:9:"pg:folder";a:1:{i:0;s:3:"all";}}i:1;a:0:{}}</value>
+      <value>0000-00-00 00:00:00</value>
     </row>
     <row>
       <value>2</value>
       <value>tpl_templates</value>
+      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>3</value>
-      <value></value>
+      <value>0000-00-00 00:00:00</value>
     </row>
     <row>
       <value>3</value>
       <value>tpl_newnodes</value>
+      <value>Depage\\Cms\\XmlDocTypes\\Pages</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>5</value>
-      <value></value>
+      <value>0000-00-00 00:00:00</value>
     </row>
   </table>
   <table name="xmldb_proj_test_xmltree">
