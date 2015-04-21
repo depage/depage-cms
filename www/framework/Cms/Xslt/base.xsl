@@ -311,6 +311,13 @@
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
+    <!-- {{{ edit:text_formatted mode autolist-->
+    <xsl:template match="edit:text_formatted" mode="autolist">
+        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
+            <xsl:apply-templates mode="autolist" />
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
         <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
@@ -329,6 +336,31 @@
             </xsl:when>
             <xsl:when test="$linebreaks != ''">
                 <xsl:apply-templates/><xsl:if test="position() != last()"><br /></xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <p><xsl:apply-templates/>&#160;</p>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ p mode autolist -->
+    <xsl:template match="p" mode="autolist">
+        <xsl:choose>
+            <xsl:when test="normalize-space(substring(., 1, 2)) = '-'">
+                <xsl:if test="position() = 1 or normalize-space(substring(preceding-sibling::*[1], 1, 2)) != '-'">
+                    <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                </xsl:if>
+                <li><xsl:for-each select="child::node()">
+                        <xsl:if test="position() = 1">
+                            <xsl:value-of select="substring(., 3)" />
+                        </xsl:if>
+                        <xsl:if test="position() != 1">
+                            <xsl:apply-templates select="." />
+                        </xsl:if>
+                    </xsl:for-each>&#160;</li>
+                <xsl:if test="position() = last or normalize-space(substring(following-sibling::*[1], 1, 2)) != '-'">
+                    <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                </xsl:if>
             </xsl:when>
             <xsl:otherwise>
                 <p><xsl:apply-templates/>&#160;</p>
