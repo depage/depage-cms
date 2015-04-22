@@ -224,8 +224,17 @@ class Import
             $this->docNavigation->removeAttribute($pageId, "db:ref");
             $this->docNavigation->setAttribute($pageId, "db:docref", $newId);
 
-            // @todo update document dates based on old data
-            // @todo update last user ids based on old data
+            $metaNode = $dataNode->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
+            $changeDate = $metaNode->getAttribute("lastchange_UTC");
+            $uid = $metaNode->getAttribute("lastchange_uid");
+
+            $user = \Depage\Auth\User::loadById($this->pdo, $uid);
+
+            if (!$user) {
+                $uid = null;
+            }
+
+            $doc->updateLastChange($changeDate, $uid);
         }
     }
     // }}}
