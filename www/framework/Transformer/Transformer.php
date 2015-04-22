@@ -264,11 +264,17 @@ abstract class Transformer
         $dynamic = $this->saveTransformed($this->savePath, $html);
 
         if ($dynamic) {
-            // @todo pass POST data along?
-            return file_get_contents(DEPAGE_BASE . $this->savePath);
+            $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath);
+            $request->setPostData($_POST);
+            $request->setCookie($_COOKIE);
+            $request->allowUnsafeSSL = true; // because it's our own local server
+
+            $response = $request->execute();
+
+            // @todo capture and adjust redirects
+            return $response;
         } else {
             return $html;
-            //return new Html(null, array("content" => $html), $this->htmlOptions);
         }
     }
     // }}}
