@@ -16,6 +16,7 @@ class Request {
     protected $postData = array();
     protected $headers = array();
     protected $cookie = "";
+    public $allowUnsafeSSL = false;
 
     // {{{ __construct()
     /**
@@ -39,7 +40,17 @@ class Request {
     // }}}
     // {{{ setCookie()
     public function setCookie($cookie) {
-        $this->cookie = $cookie;
+        if (is_array($cookie)) {
+            $cookies = array();
+            foreach ($cookie as $key => $val) {
+                $cookies[] = $key . "=" . rawurlencode($val);
+            }
+            if( count($cookies) > 0 ) {
+                $this->cookie = trim(implode('; ', $cookies));
+            }
+        } else {
+            $this->cookie = $cookie;
+        }
     }
     // }}}
     // {{{ setHeader()
@@ -74,6 +85,11 @@ class Request {
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
+
+        if ($this->allowUnsafeSSL) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
 
         //execute request
         $response = curl_exec($ch);
