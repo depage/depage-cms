@@ -95,6 +95,23 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($xmlStr, $savedXml->getXml());
     }
     // }}}
+
+    // {{{ testRemoveDoc
+    public function testRemoveDoc() {
+        $return = $this->xmldb->removeDoc('pages');
+
+        $this->assertTrue($return);
+        $this->assertArrayNotHasKey('pages', $this->xmldb->getDocuments('pages'));
+    }
+    // }}}
+    // {{{ testRemoveDocUnavailable
+    public function testRemoveDocUnavailable() {
+        $return = $this->xmldb->removeDoc('non existent document');
+
+        $this->assertFalse($return);
+        $this->assertArrayNotHasKey('non existent document', $this->xmldb->getDocuments('non existent document'));
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
