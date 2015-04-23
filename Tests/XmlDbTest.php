@@ -86,16 +86,24 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     // {{{ testSaveDoc
     public function testSaveDoc()
     {
+        // xml string to be saved
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
 
+        // create document and save xml
         $xml = new \DOMDocument;
         $xml->loadXML($xmlStr);
-
         $doc = $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'testdoc');
         $doc->save($xml);
-        $savedXml = $this->xmldb->getDoc('testdoc');
 
-        $this->assertXmlStringEqualsXmlString($xmlStr, $savedXml->getXml());
+        // load previously saved xml string
+        $savedDoc = $this->xmldb->getDoc('testdoc');
+        $savedXml = $savedDoc->getXml(false);
+
+        // remove "lastchange"-attributes (automatically added during save) for easier comparison
+        $regex = preg_quote(' db:lastchange="') . '[0-9\- \:]{19}' . preg_quote('" db:lastchangeUid=""');
+        $savedXmlWithoutAttributes = preg_replace('#' . $regex . '#', '', $savedXml);
+
+        $this->assertXmlStringEqualsXmlString($xmlStr, $savedXmlWithoutAttributes);
     }
     // }}}
 
