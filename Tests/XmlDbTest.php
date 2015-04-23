@@ -5,11 +5,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     protected $xmldb;
 
     // {{{ setUp
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
 
         // get cache instance
@@ -24,7 +21,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     // }}}
 
     // {{{ testGetDocumentsByName
-    public function testGetDocumentsByName() {
+    public function testGetDocumentsByName()
+    {
         $docs = $this->xmldb->getDocuments('pages');
         $pagesDoc = $docs['pages'];
 
@@ -34,7 +32,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
     // {{{ testGetDocuments
-    public function testGetDocuments() {
+    public function testGetDocuments()
+    {
         $docs = $this->xmldb->getDocuments();
         $expectedNames = array(
             'pages',
@@ -52,7 +51,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
     // {{{ testDocExists
-    public function testDocExists() {
+    public function testDocExists()
+    {
         $this->assertFalse($this->xmldb->docExists("non existent document"));
         $this->assertFalse($this->xmldb->docExists(100));
         $this->assertEquals(1, $this->xmldb->docExists("pages"));
@@ -61,7 +61,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     // }}}
 
     // {{{ testGetDoc
-    public function testGetDoc() {
+    public function testGetDoc()
+    {
         $xmlStr = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid="" db:name=""><pg:page file_type="html" multilang="true" name="Home" db:dataid="3" db:id="2"><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4" db:id="6"/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5" db:id="7"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7" db:id="9"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
 
         $searches = array(1, '1', 'pages');
@@ -72,7 +73,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
     // {{{ testGetDocNonExistent
-    public function testGetDocNonExistent() {
+    public function testGetDocNonExistent()
+    {
         $xml = $this->xmldb->getDoc("non existing document");
         $this->assertFalse($xml);
 
@@ -82,7 +84,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     // }}}
 
     // {{{ testSaveDoc
-    public function testSaveDoc() {
+    public function testSaveDoc()
+    {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
 
         $xml = new \DOMDocument;
@@ -97,7 +100,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     // }}}
 
     // {{{ testRemoveDoc
-    public function testRemoveDoc() {
+    public function testRemoveDoc()
+    {
         $return = $this->xmldb->removeDoc('pages');
 
         $this->assertTrue($return);
@@ -105,7 +109,8 @@ class XmlDbTest extends Generic_Tests_DatabaseTestCase
     }
     // }}}
     // {{{ testRemoveDocUnavailable
-    public function testRemoveDocUnavailable() {
+    public function testRemoveDocUnavailable()
+    {
         $return = $this->xmldb->removeDoc('non existent document');
 
         $this->assertFalse($return);
