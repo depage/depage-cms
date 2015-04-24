@@ -1,27 +1,11 @@
 <?php
 
-// @todo reenable once composer installs are available
-//require_once(__DIR__ . '/../vendor/autoload.php');
-
-// @todo delete once composer installs are available
-require_once(__DIR__ . '/../vendor/depage-cache/Cache.php');
-require_once(__DIR__ . '/../vendor/depage-cache/Providers/Uncached.php');
-require_once(__DIR__ . '/../vendor/depage-db/Pdo.php');
-require_once(__DIR__ . '/../vendor/depage-db/Schema.php');
-require_once(__DIR__ . '/../vendor/depage-db/SqlParser.php');
-require_once(__DIR__ . '/../vendor/depage-xml/Document.php');
-
-require_once(__DIR__ . '/../XmlGetter.php');
-require_once(__DIR__ . '/../Document.php');
-require_once(__DIR__ . '/../XmlDb.php');
-require_once(__DIR__ . '/../XmlNs.php');
-require_once(__DIR__ . '/../XmlDocTypes/Base.php');
-require_once(__DIR__ . '/../XmlDbException.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 const DEPAGE_CACHE_PATH = 'cache';
 const DEPAGE_BASE = 'base';
 
-$pdo = new Depage\Db\Pdo(
+$pdo = new \Depage\Db\Pdo(
     $GLOBALS['DB_DSN'],
     $GLOBALS['DB_USER'],
     $GLOBALS['DB_PASSWD']

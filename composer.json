@@ -9,13 +9,13 @@
         "pdo"
     ],
     "config": {
-        "preferred-install" : "dist"
+        "preferred-install": "dist"
     },
     "require": {
         "php": " >= 5.3",
-        "depage/cache": "*",
-        "depage/db": "*",
-        "depage/xml": "*"
+        "depage/cache": "*@dev",
+        "depage/db": "*@dev",
+        "depage/xml": "*@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
@@ -42,5 +42,3 @@
         }
     ]
 }
-
-
