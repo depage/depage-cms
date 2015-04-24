@@ -1,6 +1,7 @@
 <?php
 
 use Depage\Fs\FsTestClass;
+use Depage\Fs\Fs;
 
 class FsTest extends PHPUnit_Framework_TestCase
 {
@@ -130,9 +131,9 @@ class FsTest extends PHPUnit_Framework_TestCase
             'path'=>'/path/to/file',
             'scheme'=>'file',
         );
-        $this->assertEquals($expected, $this->fs->parseUrl('file:///path/to/file'));
+        $this->assertEquals($expected, Fs::parseUrl('file:///path/to/file'));
 
-        $this->assertEquals(array('path'=>'/path/to/file'), $this->fs->parseUrl('/path/to/file'));
+        $this->assertEquals(array('path'=>'/path/to/file'), Fs::parseUrl('/path/to/file'));
 
         $expected = array(
             'path'      => '/path/to/file',
@@ -142,29 +143,29 @@ class FsTest extends PHPUnit_Framework_TestCase
             'host'      => 'testHost',
             'port'      => '42',
         );
-        $this->assertEquals($expected, $this->fs->parseUrl('testScheme://testUser:testPass@testHost:42/path/to/file'));
+        $this->assertEquals($expected, Fs::parseUrl('testScheme://testUser:testPass@testHost:42/path/to/file'));
     }
     // }}}
     // {{{ testParseUrlPath
     public function testParseUrlPath()
     {
-        $this->assertEquals(array('path'=>''),          $this->fs->parseUrl(''));
-        $this->assertEquals(array('path'=>'abc'),       $this->fs->parseUrl('abc'));
-        $this->assertEquals(array('path'=>'a[bd]c'),    $this->fs->parseUrl('a[bd]c'));
-        $this->assertEquals(array('path'=>'abc*'),      $this->fs->parseUrl('abc*'));
-        $this->assertEquals(array('path'=>'*abc'),      $this->fs->parseUrl('*abc'));
-        $this->assertEquals(array('path'=>'*abc*'),     $this->fs->parseUrl('*abc*'));
-        $this->assertEquals(array('path'=>'*'),         $this->fs->parseUrl('*'));
-        $this->assertEquals(array('path'=>'**'),        $this->fs->parseUrl('**'));
-        $this->assertEquals(array('path'=>'abc?'),      $this->fs->parseUrl('abc?'));
-        $this->assertEquals(array('path'=>'ab?c'),      $this->fs->parseUrl('ab?c'));
-        $this->assertEquals(array('path'=>'?abc'),      $this->fs->parseUrl('?abc'));
-        $this->assertEquals(array('path'=>'?abc?'),     $this->fs->parseUrl('?abc?'));
-        $this->assertEquals(array('path'=>'?'),         $this->fs->parseUrl('?'));
-        $this->assertEquals(array('path'=>'??'),        $this->fs->parseUrl('??'));
-        $this->assertEquals(array('path'=>'a&b'),       $this->fs->parseUrl('a&b'));
-        $this->assertEquals(array('path'=>'&'),         $this->fs->parseUrl('&'));
-        $this->assertEquals(array('path'=>'&&'),        $this->fs->parseUrl('&&'));
+        $this->assertEquals(array('path'=>''),          Fs::parseUrl(''));
+        $this->assertEquals(array('path'=>'abc'),       Fs::parseUrl('abc'));
+        $this->assertEquals(array('path'=>'a[bd]c'),    Fs::parseUrl('a[bd]c'));
+        $this->assertEquals(array('path'=>'abc*'),      Fs::parseUrl('abc*'));
+        $this->assertEquals(array('path'=>'*abc'),      Fs::parseUrl('*abc'));
+        $this->assertEquals(array('path'=>'*abc*'),     Fs::parseUrl('*abc*'));
+        $this->assertEquals(array('path'=>'*'),         Fs::parseUrl('*'));
+        $this->assertEquals(array('path'=>'**'),        Fs::parseUrl('**'));
+        $this->assertEquals(array('path'=>'abc?'),      Fs::parseUrl('abc?'));
+        $this->assertEquals(array('path'=>'ab?c'),      Fs::parseUrl('ab?c'));
+        $this->assertEquals(array('path'=>'?abc'),      Fs::parseUrl('?abc'));
+        $this->assertEquals(array('path'=>'?abc?'),     Fs::parseUrl('?abc?'));
+        $this->assertEquals(array('path'=>'?'),         Fs::parseUrl('?'));
+        $this->assertEquals(array('path'=>'??'),        Fs::parseUrl('??'));
+        $this->assertEquals(array('path'=>'a&b'),       Fs::parseUrl('a&b'));
+        $this->assertEquals(array('path'=>'&'),         Fs::parseUrl('&'));
+        $this->assertEquals(array('path'=>'&&'),        Fs::parseUrl('&&'));
     }
     // }}}
 

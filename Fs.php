@@ -328,7 +328,7 @@ class Fs
     // }}}
 
     // {{{ parseUrl
-    protected static function parseUrl($url)
+    public static function parseUrl($url)
     {
         $parsed = parse_url($url);
 
@@ -346,7 +346,7 @@ class Fs
     // {{{ cleanUrl
     protected function cleanUrl($url, $showPass = true)
     {
-        $parsed = $this->parseUrl($url);
+        $parsed = self::parseUrl($url);
         $scheme = (isset($parsed['scheme'])) ? $parsed['scheme'] : null;
         $path = (isset($parsed['path'])) ? $parsed['path'] : null;
 
