@@ -4,16 +4,43 @@ php:
     - 5.4
     - 5.3
 
+branches:
+  only:
+      - master
+
 services:
 
 before_script:
+    # install ftp server and ssh dependencies
     - sudo apt-get update
-    - sudo apt-get install -y --force-yes proftpd-basic ftp
+    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
+    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
+
+    # edit ftp server settings: root user to user directory, display hidden files
     - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
-    - sudo cp /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
+    - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
     - sudo /etc/init.d/proftpd restart
-    - sudo useradd -m -p co.yjyxRTlonU ftptest
-    - sudo chmod 777 -R /home/ftptest
+
+    # create test user account with 'testpass' password
+    - sudo useradd -m -p co.yjyxRTlonU testuser
+
+    # generate ssh key files
+    - mkdir ssh
+    - ssh-keygen -t rsa -N testkeypass -f ssh/rsakey
+    - ssh-keygen -t dsa -N testkeypass -f ssh/dsakey
+    # convert key to pem format
+    - openssl rsa -passin pass:testkeypass -in ssh/rsakey -out ssh/rsakey
+    - openssl dsa -passin pass:testkeypass -in ssh/dsakey -out ssh/dsakey
+    - sudo mkdir /home/testuser/.ssh
+    # add to authorized keys
+    - sudo cp ssh/rsakey.pub /home/testuser/.ssh/authorized_keys
+    - sudo bash -c 'cat ssh/dsakey.pub >> /home/testuser/.ssh/authorized_keys'
+    - sudo chown -R testuser:testuser /home/testuser/.ssh
+
+    # add local ssh fingerprint to unit test configuration
+    - fingerprint=$(ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub | awk '{print $2}' | sed 's/://g')
+    - cat Tests/PHPUnit.xml | sed "s/fingerprint/$fingerprint/" > Tests/PHPUnit.xml.tmp
+    - mv Tests/PHPUnit.xml.tmp Tests/PHPUnit.xml
 
 script: phpunit --configuration Tests/PHPUnit.xml Tests/
 

@@ -1,13 +1,13 @@
 <?php
 
-class FsFtpTest extends TestRemote
+class FsFtpsTest extends FsFtpTest
 {
     // {{{ createTestObject
     public function createTestObject($override = array())
     {
         $params = array(
             'path' => '/Temp',
-            'scheme' => 'ftp',
+            'scheme' => 'ftps',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => 21,
             'user' => $GLOBALS['REMOTE_USER'],
@@ -24,7 +24,7 @@ class FsFtpTest extends TestRemote
     {
         $params = array(
             'path' => '/Temp',
-            'scheme' => 'ftp',
+            'scheme' => 'ftps',
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
@@ -32,18 +32,6 @@ class FsFtpTest extends TestRemote
 
         $fs = new Depage\Fs\FsFtp($params);
         $this->assertTrue($fs->test());
-    }
-    // }}}
-
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * 
-     * override,
-     * ftp stream wrappers give weird error messages
-     */
-    public function testLateConnectInvalidDirectoryFail()
-    {
-        return parent::testLateConnectInvalidDirectoryFail();
     }
     // }}}
 }

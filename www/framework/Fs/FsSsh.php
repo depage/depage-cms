@@ -4,46 +4,180 @@ namespace Depage\Fs;
 
 class FsSsh extends Fs
 {
+    // {{{ variables
+    protected $session;
+    protected $connection;
+    protected $privateKeyFile;
+    protected $publicKeyFile;
+    protected $privateKey;
+    protected $publicKey;
+    protected $fingerprint;
+    protected $tmp;
+    // }}}
     // {{{ constructor
     public function __construct($params = array())
     {
         parent::__construct($params);
-        $this->sshConnect();
+        $this->privateKeyFile   = (isset($params['privateKeyFile']))    ? $params['privateKeyFile'] : null;
+        $this->publicKeyFile    = (isset($params['publicKeyFile']))     ? $params['publicKeyFile']  : null;
+        $this->privateKey       = (isset($params['privateKey']))        ? $params['privateKey']     : null;
+        $this->publicKey        = (isset($params['publicKey']))         ? $params['publicKey']      : null;
+        $this->tmp              = (isset($params['tmp']))               ? $params['tmp']            : null;
+        $this->fingerprint      = (isset($params['fingerprint']))       ? $params['fingerprint']    : null;
+    }
+    // }}}
+    // {{{ destructor
+    public function __destruct()
+    {
+        $this->disconnect();
     }
     // }}}
 
-    // {{{ sshConnect
-    protected function sshConnect()
+    // {{{ getFingerprint
+    public function getFingerprint()
     {
-        $this->session = ssh2_connect($this->url['host'], $this->url['port']);
+        $this->getConnection($fingerprint);
+        return $fingerprint;
+    }
+    // }}}
+    // {{{ getConnection
+    protected function getConnection(&$fingerprint = null)
+    {
+        if (!$this->connection) {
+            if (isset($this->url['port'])) {
+                $this->connection = ssh2_connect($this->url['host'], $this->url['port']);
+            } else {
+                $this->connection = ssh2_connect($this->url['host']);
+            }
+        }
+        $fingerprint = ssh2_fingerprint($this->connection);
 
-        if (isset($this->key)) {
-            ssh2_auth_pubkey_file(
-                $this->session,
-                $this->url['user'],
-                $this->key . '.pub',
-                $this->key,
-                $this->url['pass']
-            );
-        } else {
-            ssh2_auth_password(
-                $this->session,
-                $this->url['user'],
-                $this->url['pass']
-            );
+        return $this->connection;
+    }
+    // }}}
+    // {{{ getSession
+    protected function getSession()
+    {
+        if (!$this->session) {
+            $connection = $this->getConnection($fingerprint);
+
+            if (strcasecmp($this->fingerprint, $fingerprint) !== 0) {
+                throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
+            }
+
+            if (
+                $this->privateKeyFile
+                || $this->publicKeyFile
+                || $this->privateKey
+                || $this->publicKey
+                || $this->tmp
+            ) {
+                $this->authenticateByKey($connection);
+            } else {
+                $this->authenticateByPassword($connection);
+            }
+
+            $this->session = ssh2_sftp($connection);
         }
 
-        $this->sftpSession = ssh2_sftp($this->session);
+        return $this->session;
     }
     // }}}
-    // {{{ buildUrl
-    protected function buildUrl($parsed)
+    // {{{ authenticateByPassword
+    protected function authenticateByPassword($connection)
     {
-        $path = $parsed['scheme'] . '://';
-        $path .= $this->sftpSession;
-        $path .= isset($parsed['path']) ? $parsed['path'] : '/';
+        return ssh2_auth_password(
+            $connection,
+            $this->url['user'],
+            $this->url['pass']
+        );
+    }
+    // }}}
+    // {{{ authenticateByKey
+    protected function authenticateByKey($connection)
+    {
+        if (!$this->isValidKeyCombination()) {
+            throw new Exceptions\FsException('Invalid SSH key combination.');
+        }
 
-        return $path;
+        if ($this->privateKeyFile) {
+            $private = new PrivateSshKey($this->privateKeyFile);
+        } elseif ($this->privateKey) {
+            $private = new PrivateSshKey($this->privateKey, $this->tmp);
+        }
+
+        if ($this->publicKeyFile) {
+            $public = new PublicSshKey($this->publicKeyFile);
+        } elseif ($this->publicKey) {
+            $public = new PublicSshKey($this->publicKey, $this->tmp);
+        } else {
+            $public = $private->extractPublicKey($this->tmp);
+        }
+
+        $authenticated = ssh2_auth_pubkey_file(
+            $connection,
+            $this->url['user'],
+            $public,
+            $private,
+            $this->url['pass']
+        );
+
+        $private->clean();
+        $public->clean();
+
+        return $authenticated;
+    }
+    // }}}
+    // {{{ isValidKeyCombination
+    protected function isValidKeyCombination()
+    {
+        return ($this->privateKeyFile && $this->publicKeyFile)
+            || ($this->tmp && ($this->privateKeyFile || $this->privateKey));
+    }
+    // }}}
+    // {{{ disconnect
+    protected function disconnect()
+    {
+        $this->connection = null;
+        $this->session = null;
+    }
+    // }}}
+
+    // {{{ lateConnect
+    protected function lateConnect()
+    {
+        parent::lateConnect();
+        $this->getSession();
+    }
+    // }}}
+
+    // {{{ buildUrl
+    protected function buildUrl($parsed, $showPass = true)
+    {
+        $url = $parsed['scheme'] . '://';
+        $url .= $this->getSession();
+
+        $path = isset($parsed['path']) ? $parsed['path'] : '/';
+        // workaround for https://bugs.php.net/bug.php?id=64169
+        if ($path === '/') {
+            $path = '/.';
+        }
+
+        $url .= $path;
+
+        return $url;
+    }
+    // }}}
+
+    // {{{ rename
+    protected function rename($source, $target)
+    {
+        // workaround, rename doesn't overwrite files via ssh
+        if (file_exists($target) && is_file($target)) {
+            $this->rm($target);
+        }
+
+        return parent::rename($source, $target);
     }
     // }}}
 }

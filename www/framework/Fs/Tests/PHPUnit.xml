@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit bootstrap="Bootstrap.php">
     <php>
-        <var name="FTP_HOST" value="localhost" />
-        <var name="FTP_USER" value="ftptest" />
-        <var name="FTP_PASS" value="testpass" />
-        <var name="FTP_DIR" value="/home/ftptest/" />
+        <var name="REMOTE_HOST" value="localhost" />
+        <var name="REMOTE_USER" value="testuser" />
+        <var name="REMOTE_PASS" value="testpass" />
+        <var name="REMOTE_DIR" value="/home/testuser/" />
+        <var name="PRIVATE_RSA_KEY" value="ssh/rsakey" />
+        <var name="PUBLIC_RSA_KEY" value="ssh/rsakey.pub" />
+        <var name="PRIVATE_DSA_KEY" value="ssh/dsakey" />
+        <var name="PUBLIC_DSA_KEY" value="ssh/dsakey.pub" />
+        <var name="SSH_FINGERPRINT" value="fingerprint" />
+        <var name="SSH_KEYPASS" value="testkeypass" />
     </php>
 
     <logging>

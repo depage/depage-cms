@@ -1,37 +1,103 @@
 <?php
 
+namespace Depage\Fs;
+
 require_once(__DIR__ . '/../Fs.php');
 require_once(__DIR__ . '/../FsFile.php');
+require_once(__DIR__ . '/../FsFtp.php');
 require_once(__DIR__ . '/../FsSsh.php');
+require_once(__DIR__ . '/../PublicSshKey.php');
+require_once(__DIR__ . '/../PrivateSshKey.php');
 require_once(__DIR__ . '/../Exceptions/FsException.php');
 require_once(__DIR__ . '/TestBase.php');
+require_once(__DIR__ . '/TestRemote.php');
+
+// {{{ mock built-in functions
+function file_put_contents($path, $data, $flags = 0, $context = null)
+{
+    if ($data === 'writeFail!') {
+        return false;
+    } else {
+        return \file_put_contents($path, $data, $flags, $context);
+    }
+}
+function openssl_pkey_get_private($data)
+{
+    if ($data === 'writeFail!') {
+        return $data;
+    } else {
+        return \openssl_pkey_get_private($data);
+    }
+}
+// }}}
 
 // {{{ FsTestClass
-class FsTestClass extends Depage\Fs\Fs
+class FsTestClass extends \Depage\Fs\Fs
 {
-    public function parseUrl($url) {
+    public static function schemeAlias($alias = '')
+    {
+        return parent::schemeAlias($alias);
+    }
+    public function lateConnect()
+    {
+        return parent::lateConnect();
+    }
+    public static function parseUrl($url)
+    {
         return parent::parseUrl($url);
     }
-    public function cleanUrl($url) {
-        return parent::cleanUrl($url);
+    public function cleanUrl($url, $showPass = true)
+    {
+        return parent::cleanUrl($url, $showPass);
+    }
+    public function extractFileName($path)
+    {
+        return parent::extractFileName($path);
+    }
+    public function cleanPath($path)
+    {
+        return parent::cleanPath($path);
+    }
+    public function preCommandHook()
+    {
+        return parent::preCommandHook();
+    }
+    public function postCommandHook()
+    {
+        return parent::postCommandHook();
     }
 }
 // }}}
 // {{{ FsFileTestClass
-class FsFileTestClass extends Depage\Fs\FsFile
+class FsFileTestClass extends \Depage\Fs\FsFile
 {
-    public function parseUrl($url) {
+    public function lateConnect()
+    {
+        return parent::lateConnect();
+    }
+    public static function parseUrl($url)
+    {
         return parent::parseUrl($url);
     }
-    public function cleanUrl($url) {
-        return parent::cleanUrl($url);
+    public function cleanUrl($url, $showPass = true)
+    {
+        return parent::cleanUrl($url, $showPass);
     }
 }
 // }}}
+// {{{ FsSshTestClass
+class FsSshTestClass extends \Depage\Fs\FsSsh
+{
+    public $privateKeyFile;
+    public $publicKeyFile;
+    public $privateKey;
+    public $publicKey;
+    public $tmp;
 
-// {{{ getMode
-function getMode($path) {
-    return substr(sprintf('%o', fileperms($path)), -4);
+    public function isValidKeyCombination()
+    {
+        return parent::isValidKeyCombination();
+    }
 }
 // }}}
 
