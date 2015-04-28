@@ -96,13 +96,8 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
         // load previously saved xml string
         $savedDoc = $this->xmldb->getDoc('testdoc');
-        $savedXml = $savedDoc->getXml(false);
 
-        // remove "lastchange"-attributes (automatically added during save) for easier comparison
-        $regex = preg_quote(' db:lastchange="') . '[0-9\- \:]{19}' . preg_quote('" db:lastchangeUid=""');
-        $savedXmlWithoutAttributes = preg_replace('#' . $regex . '#', '', $savedXml);
-
-        $this->assertXmlStringEqualsXmlString($xmlStr, $savedXmlWithoutAttributes);
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $savedDoc->getXml(false));
     }
     // }}}
 

@@ -65,7 +65,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // }}}
 
     // {{{ assertXmlStringEqualsXmlStringIgnoreAttributes
-    public function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
+    protected function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
     {
         foreach ($attributes as $attribute) {
             $regex = preg_quote($attribute .'=') . '"[^"]*"';
@@ -76,7 +76,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     }
     // }}}
     // {{{ assertXmlStringEqualsXmlStringIgnoreLastchange
-    public function assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $actual, $message = '')
+    protected function assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $actual, $message = '')
     {
         return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
             $expected,
