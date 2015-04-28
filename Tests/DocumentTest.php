@@ -121,7 +121,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -137,7 +137,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         }
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database">' . $nodes . '</root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -149,7 +149,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child attr="test"></child></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -161,7 +161,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><db:child attr="test"></db:child><child db:data="blub" /></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -173,7 +173,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child>bla</child>blub<b/><c/><child>bla</child></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -185,7 +185,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><?php echo("bla"); ?></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -197,7 +197,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><!-- comment --></root>';
 
-        $xml = new \DomDocument;
+        $xml = new DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -217,6 +217,18 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
         $this->assertEquals(2, $deleted);
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($after, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveNode
+    public function testSaveNode()
+    {
+        $doc = new DomDocument();
+        $doc->loadXML('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+
+        $this->doc->saveNode($doc);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange('<?xml version="1.0"?>
+<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>', $this->doc->getXml());
     }
     // }}}
 }
