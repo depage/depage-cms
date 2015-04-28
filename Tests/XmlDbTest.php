@@ -1,6 +1,6 @@
 <?php
 
-class XmlDbTest extends Generic_Tests_DatabaseTestCase
+class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 {
     protected $xmldb;
 
