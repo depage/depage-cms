@@ -63,6 +63,18 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         $pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
     // }}}
+
+    // {{{ assertXmlStringEqualsXmlStringIgnoreAttributes
+    public function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
+    {
+        foreach ($attributes as $attribute) {
+            $regex = preg_quote($attribute .'=') . '"[^"]*"';
+            $actual = preg_replace('#' . $regex . '#', '', $actual);
+        }
+
+        return $this->assertXmlStringEqualsXmlString($expected, $actual, $message);
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
