@@ -126,14 +126,8 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
         $after = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" ><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
-            $after,
-            $this->doc->getXml(false),
-            array(
-                'db:lastchange',
-                'db:lastchangeUid',
-            )
-        );
+        $this->assertEquals(2, $deleted);
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($after, $this->doc->getXml(false));
     }
     // }}}
 }

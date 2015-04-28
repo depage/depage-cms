@@ -3,7 +3,6 @@
 class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 {
     protected $xmldb;
-
     // {{{ setUp
     protected function setUp()
     {

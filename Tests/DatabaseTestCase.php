@@ -75,6 +75,20 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         return $this->assertXmlStringEqualsXmlString($expected, $actual, $message);
     }
     // }}}
+    // {{{ assertXmlStringEqualsXmlStringIgnoreLastchange
+    public function assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $actual, $message = '')
+    {
+        return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
+            $expected,
+            $actual,
+            array(
+                'db:lastchange',
+                'db:lastchangeUid',
+            ),
+            $message
+        );
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
