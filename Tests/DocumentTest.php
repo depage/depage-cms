@@ -121,7 +121,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -137,7 +137,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         }
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database">' . $nodes . '</root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -149,7 +149,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child attr="test"></child></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -161,7 +161,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><db:child attr="test"></db:child><child db:data="blub" /></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -173,7 +173,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child>bla</child>blub<b/><c/><child>bla</child></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -185,7 +185,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><?php echo("bla"); ?></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 
@@ -197,7 +197,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><!-- comment --></root>';
 
-        $xml = new \DOMDocument;
+        $xml = new \DomDocument;
         $xml->loadXML($xmlStr);
         $this->doc->save($xml);
 

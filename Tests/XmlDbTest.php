@@ -100,6 +100,17 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertArrayNotHasKey('non existent document', $this->xmldb->getDocuments('non existent document'));
     }
     // }}}
+
+    // {{{ testCreateDocExisting
+    /**
+     * @expectedException PdoException
+     * @expectedExceptionMessage SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'pages' for key 'SECONDARY'
+     */
+    public function testCreateDocExisting()
+    {
+        $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'pages');
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
