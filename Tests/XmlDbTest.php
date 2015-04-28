@@ -85,6 +85,7 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
+        $this->assertArrayHasKey('pages', $this->xmldb->getDocuments('pages'));
         $return = $this->xmldb->removeDoc('pages');
 
         $this->assertTrue($return);
