@@ -9,12 +9,12 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
         parent::setUp();
 
         // get cache instance
-        $cache = Depage\Cache\Cache::factory("xmldb", array("disposition" => "uncached"));
+        $cache = Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
 
         // get xmldb instance
         $this->xmldb = new Depage\XmlDb\XmlDb($this->pdo->prefix . "_proj_test", $this->pdo, $cache, array(
-            "root",
-            "child",
+            'root',
+            'child',
         ));
     }
     // }}}
@@ -79,25 +79,6 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
         $xml = $this->xmldb->getDoc(100);
         $this->assertFalse($xml);
-    }
-    // }}}
-
-    // {{{ testSaveDoc
-    public function testSaveDoc()
-    {
-        // xml string to be saved
-        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
-
-        // create document and save xml
-        $xml = new \DOMDocument;
-        $xml->loadXML($xmlStr);
-        $doc = $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'testdoc');
-        $doc->save($xml);
-
-        // load previously saved xml string
-        $savedDoc = $this->xmldb->getDoc('testdoc');
-
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $savedDoc->getXml(false));
     }
     // }}}
 

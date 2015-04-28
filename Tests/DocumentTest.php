@@ -116,6 +116,95 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testSaveElementNodes
+    public function testSaveElementNodes()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveElementNodesMany
+    public function testSaveElementNodesMany()
+    {
+        $nodes = '';
+        for ($i = 0; $i < 10; $i++) {
+            $nodes .= '<child></child><child/><child></child><child></child>text<child/><child/>text<child/><child/><child/>';
+        }
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database">' . $nodes . '</root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveElementNodesWithAttribute
+    public function testSaveElementNodesWithAttribute()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child attr="test"></child></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveElementNodesWithNamespaces
+    public function testSaveElementNodesWithNamespaces()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><db:child attr="test"></db:child><child db:data="blub" /></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveTextNodes
+    public function testSaveTextNodes()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child>bla</child>blub<b/><c/><child>bla</child></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSavePiNode
+    public function testSavePiNode()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><?php echo("bla"); ?></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveCommentNode
+    public function testSaveCommentNode()
+    {
+        $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><!-- comment --></root>';
+
+        $xml = new \DOMDocument;
+        $xml->loadXML($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+
     // {{{ testUnlinkNode
     public function testUnlinkNode()
     {
