@@ -48,9 +48,55 @@ class Project extends Base
      * @param mixed
      * @return void
      **/
-    protected function settings()
+    public function settings($type)
     {
-        $form = new \Depage\Cms\Forms\Project("edit-project-" . $this->project->id, array(
+        $html = "";
+
+        if ($type == "languages") {
+            $html =  $this->settings_languages();
+        } else if ($type == "navigation") {
+            $html =  $this->settings_languages();
+        } else if ($type == "tags") {
+            $html =  $this->settings_tags();
+        } else if ($type == "variables") {
+            $html =  $this->settings_variables();
+        } else if ($type == "publish") {
+            $html =  $this->settings_publish();
+        } else if ($type == "import") {
+            $html = $this->import();
+        } else {
+            $html =  $this->settings_basic();
+        }
+
+        if ($this->project->id != null) {
+            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
+        } else {
+            $title = _("Add new Project");
+        }
+        $h = new Html("box.tpl", array(
+            'id' => "projects",
+            'icon' => "framework/Cms/images/icon_projects.gif",
+            'class' => "first",
+            'title' => $title,
+            'content' => array(
+                $this->toolbar(),
+                $html,
+            ),
+        ), $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ settings-basic()
+    /**
+     * @brief basic settings
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function settings_basic()
+    {
+        $form = new \Depage\Cms\Forms\Project\Basic("edit-project-basic-" . $this->project->id, array(
             "project" => $this->project,
             "projectGroups" => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
         ));
@@ -69,23 +115,107 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        if ($this->project->id != null) {
-            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
-        } else {
-            $title = _("Add new Project");
-        }
-        $h = new Html("box.tpl", array(
-            'id' => "projects",
-            'icon' => "framework/Cms/images/icon_projects.gif",
-            'class' => "first",
-            'title' => $title,
-            'content' => array(
-                $this->toolbar(),
-                $form,
-            ),
-        ), $this->htmlOptions);
+        return $form;
+    }
+    // }}}
+    // {{{ settings-languages()
+    /**
+     * @brief language settings
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function settings_languages()
+    {
+        $form = new \Depage\Cms\Forms\Project\Languages("edit-project-languages-" . $this->project->id, array(
+            "project" => $this->project,
+        ));
+        $form->process();
 
-        return $h;
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
+    }
+    // }}}
+    // {{{ settings-tags()
+    /**
+     * @brief tags settings
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function settings_tags()
+    {
+        $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-" . $this->project->id, array(
+            "project" => $this->project,
+        ));
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
+    }
+    // }}}
+    // {{{ settings-variables()
+    /**
+     * @brief variable settings
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function settings_variables()
+    {
+        $form = new \Depage\Cms\Forms\Project\Variables("edit-project-variables-" . $this->project->id, array(
+            "project" => $this->project,
+        ));
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
+    }
+    // }}}
+    // {{{ settings-publish()
+    /**
+     * @brief publish settings
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function settings_publish()
+    {
+        $form = new \Depage\Cms\Forms\Project\Publish("edit-project-publish-" . $this->project->id, array(
+            "project" => $this->project,
+        ));
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
     }
     // }}}
     // {{{ import()
@@ -95,9 +225,11 @@ class Project extends Base
      * @param mixed
      * @return void
      **/
-    protected function import()
+    private function import()
     {
-        $form = new \Depage\Cms\Forms\Import("import-project-" . $this->project->id);
+        $form = new \Depage\Cms\Forms\Project\Import("import-project-" . $this->project->id, array(
+            'project' => $this->project,
+        ));
         $form->process();
 
         if ($form->validate()) {
@@ -117,17 +249,7 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        $h = new Html("box.tpl", array(
-            'id' => "projects",
-            'icon' => "framework/Cms/images/icon_projects.gif",
-            'class' => "first",
-            'title' => sprintf(_("Import Project '%s'"), $this->project->name),
-            'content' => array(
-                $form,
-            ),
-        ), $this->htmlOptions);
-
-        return $h;
+        return $form;
     }
     // }}}
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Depage\Cms\Forms;
+namespace Depage\Cms\Forms\Project;
 
 /**
  * brief Project
  * Class Project
  */
-class Import extends \Depage\HtmlForm\HtmlForm
+class Import extends Base
 {
     // {{{ __construct()
     /**
@@ -32,3 +32,4 @@ class Import extends \Depage\HtmlForm\HtmlForm
     // }}}
 }
 
+/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
