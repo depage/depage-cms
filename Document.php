@@ -407,7 +407,7 @@ class Document
      *
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
-    public function unlinkNodeById($node_id)
+    protected function unlinkNodeById($node_id)
     {
         // get parent and position (enables other node positions to be updated after delete)
         $target_id = $this->getParentIdById($node_id);
