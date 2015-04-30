@@ -12,8 +12,8 @@
  */
 namespace Depage\XmlDb;
 
-class Document {
-
+class Document
+{
     // {{{ variables
     private $pdo;
     private $cache;
@@ -38,20 +38,6 @@ class Document {
 
     private $doctypeHandlers = array();
     // }}}
-
-    /* public */
-
-    // {{{ getDocId()
-    /**
-     * Get Doc ID
-     *
-     * @return int
-     */
-    public function getDocId() {
-        return $this->doc_id;
-    }
-    // }}}
-
     // {{{ constructor()
     /**
      * Construct
@@ -74,6 +60,17 @@ class Document {
         $this->table_nodetypes = $xmldb->table_nodetypes;
 
         $this->doc_id = $doc_id;
+    }
+    // }}}
+
+    // {{{ getDocId()
+    /**
+     * Get Doc ID
+     *
+     * @return int
+     */
+    public function getDocId() {
+        return $this->doc_id;
     }
     // }}}
 
@@ -311,7 +308,6 @@ class Document {
         return $xml_doc;
     }
     // }}}
-
     // {{{ getSubDocByXpath()
     /**
      * gets document by xpath. if xpath directs to more than
@@ -392,6 +388,51 @@ class Document {
         return false;
     }
     // }}}
+    // {{{ unlinkNodeById()
+    /**
+     * unlinks and deletes a specific node from database.
+     * re-indexes the positions of the remaining elements.
+     *
+     * @param     $node_id (int) db-id of node to delete
+     *
+     * @return    $deleted_ids (array) list of db-ids of deleted nodes
+     */
+    public function unlinkNodeById($node_id)  {
+        // get parent and position (enables other node positions to be updated after delete)
+        $target_id = $this->getParentIdById($node_id);
+        $target_pos = $this->getPosById($node_id);
+
+        $dth = $this->getDoctypeHandler();
+
+        if ($dth->onDeleteNode($node_id)) {
+
+            // delete the node
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->table_xml}
+                WHERE id_doc = :doc_id AND id = :node_id"
+            );
+            $query->execute(array(
+                'doc_id' => $this->doc_id,
+                'node_id' => $node_id,
+            ));
+
+            $this->clearCache();
+
+            // update position of remaining nodes
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                    SET pos=pos-1
+                    WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'node_parent_id' => $target_id,
+                'node_pos' => $target_pos,
+                'doc_id' => $this->doc_id,
+            ));
+        }
+        return $target_id;
+    }
+    // }}}
 
     // {{{ addNode()
     /**
@@ -409,7 +450,6 @@ class Document {
         return false;
     }
     // }}}
-
     // {{{ addNodeByName()
     /**
      * @param $name
@@ -485,7 +525,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ moveNodeBefore()
     /**
      * moves node before another node (insert before)
@@ -506,7 +545,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ moveNodeAfter()
     /**
      * moves node after another node
@@ -527,7 +565,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ moveNode()
     /**
      * moves node in database
@@ -642,7 +679,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{  copyNodeBefore()
     /**
      * copy node before another node
@@ -663,7 +699,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ copyNodeAfter()
     /**
      * copy node after another node
@@ -684,7 +719,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ copyNode()
     /**
      * copy node in database
@@ -802,7 +836,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ removeAttribute()
     /**
      * removes an attribute of a node
@@ -828,7 +861,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ saveAttributes()
     /**
      * sets attribute of node
@@ -859,7 +891,6 @@ class Document {
         return $success;
     }
     // }}}
-
     // {{{ getAttribute()
     /**
      * gets attribute of node
@@ -879,7 +910,6 @@ class Document {
         return false;
     }
     // }}}
-
     // {{{ getAttributes()
     /**
      * gets all attributes of a node by id
@@ -940,8 +970,6 @@ class Document {
         return false;
     }
     // }}}
-
-
     // {{{ getNodeId()
     /**
      * gets node db-id from db-id attribute
@@ -956,7 +984,6 @@ class Document {
             : null;
     }
     // }}}
-
     // {{{ getNodeDataId()
     /**
      * gets node db-dataid from db-dataid attribute
@@ -971,6 +998,250 @@ class Document {
         return $node->nodeType == XML_ELEMENT_NODE
             ?  $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute)
             : null;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpath()
+    /**
+     * gets node_ids by xpath
+     *
+     * @attention this supports only a small subset of xpath-queries. so recheck source before using.
+     *
+     * @param    $this->doc_id (int) id of document
+     * @param    $xpath (string) xpath to target node
+     *
+     * @return    $nodeids (array) array of found node ids
+     *
+     * @todo    implement full xpath specifications
+     */
+    public function getNodeIdsByXpath($xpath) {
+        $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
+
+        $fetched_ids = $this->cache->get($identifier);
+
+        if ($fetched_ids === false) {
+            $pName = "(?:([^\/\[\]]*):)?([^\/\[\]]+)";
+            $pCondition = "(?:\[(.*?)\])?";
+
+            preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
+
+            $query = $this->pdo->prepare(
+                "SELECT docs.rootid AS rootid
+                FROM {$this->table_docs} AS docs
+                WHERE docs.id = :doc_id"
+            );
+            $query->execute(array(
+                'doc_id' => $this->doc_id,
+            ));
+            $result = $query->fetchObject();
+            $actual_ids = array(NULL);
+
+            foreach ($xpath_elements as $level => $element) {
+                $fetched_ids = array();
+                $element[] = '';
+                list(,$divider, $ns, $name, $condition) = $element;
+                $strings = array();
+
+                if ($divider == '/') {
+                    // {{{ fetch only by name:
+                    if ($condition == '') {
+                        /*
+                         * "... /ns:name ..."
+                         */
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, null, true));
+                        }
+                        // }}}
+                        // {{{ fetch by name and position:
+                    } else if (preg_match("/^([0-9]+)$/", $condition)) {
+                        /*
+                         * "... /ns:name[n] ..."
+                         */
+                        foreach ($actual_ids as $actual_id) {
+                            $temp_ids = $this->getChildIdsByName($actual_id, $ns, $name, null, true);
+                            $fetched_ids[] = $temp_ids[((int) $condition) - 1];
+                        }
+                        // }}}
+                        // {{{ fetch by simple attributes:
+                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
+                        /*
+                         * "... /ns:name[@attr1] ..."
+                         * "... /ns:name[@attr1 = 'string1'] ..."
+                         * "... /ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+                         */
+                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, $cond_array, true));
+                        }
+                        // }}}
+                    } else {
+                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
+                    }
+                } elseif ($divider == '//' && $level == 0) {
+                    // {{{ fetch only by name recursive:
+                    if ($condition == '') {
+                        /*
+                         * "//ns:name ..."
+                         */
+                        $fetched_ids = $this->getNodeIdsByName($ns, $name);
+                        // }}}
+                        // {{{ fetch by simple attributes:
+                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
+                        /*
+                         * "//ns:name[@attr1] ..."
+                         * "//ns:name[@attr1 = 'string1'] ..."
+                         * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+                         */
+                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                        foreach ($actual_ids as $actual_id) {
+                            $fetched_ids = $this->getNodeIdsByName($ns, $name, $cond_array);
+                        }
+                        // }}}
+                    } else {
+                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
+                    }
+                } else {
+                    //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
+                }
+
+                $actual_ids = $fetched_ids;
+            }
+
+            $this->cache->set($identifier, $fetched_ids);
+        }
+        return $fetched_ids;
+    }
+
+    /**
+     * gets attributes array from xpath-condition\n
+     * (... [@this = 'some' and @that = 'some other'])\n
+     * can be used with:\n
+     *        1. getChildIdsByName()
+     *        2. getNodeIdsByName()
+     *
+     * @private
+     *
+     * @param    $condition (string) attribute conditions
+     * @param    $strings (array) of literal strings used in condition
+     *
+     * @return    $attr (array) array of attr-conditions
+     */
+    private function get_condition_attributes($condition, $strings) {
+        $cond_array = array();
+
+        $pAttr = "@(\w[\w\d:]*)";
+        $pOperator = "(=)";
+        $pBool = "(and|or|AND|OR)";
+        $pString = "\\$(\d*)";
+        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
+
+        for ($i = 0; $i < count($conditions[0]); $i++) {
+            $cond_array[] = array(
+                'name' => $conditions[1][$i],
+                'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
+                'operator' => $i > 0 ? $conditions[4][$i - 1] : "",
+            );
+        }
+
+        return $cond_array;
+    }
+
+    /**
+     * replaces strings surrounded by " or ' with pointer to array
+     *
+     * @private
+     *
+     * @param    $text (string) text to process
+     * @param    $strings (array) array of removed strings
+     *
+     * @return    $text (string)
+     */
+    private function remove_literal_strings($text, &$strings) {
+        $n = 0;
+        $newText = '';
+        $strings = array();
+
+        $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
+        preg_match_all($p, $text, $parts);
+
+        for ($i = 0; $i < count($parts[0]); $i++) {
+            if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
+                $strings[$n] = $parts[2][$i] . $parts[3][$i];
+                $newText .= "\$$n";
+                $n++;
+            } else {
+                $newText .= $parts[1][$i];
+            }
+        }
+        return $newText;
+    }
+    // }}}
+    // {{{ getFreeNodeIds()
+    /**
+     * gets unused db-node-ids for saving nodes
+     *
+     * @param    $needed (int) minimum number of ids, that are requested
+     */
+    private function getFreeNodeIds($needed = 1) {
+        // @todo check to replace this with an extra table of deleted ids (trigger on delete)
+        /* see here:
+            CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
+            FOR EACH ROW
+            BEGIN
+            DELETE FROM patron_info
+                WHERE patron_info.pid = old.id;
+            END
+         */
+        $this->free_element_ids = array();
+        $lastMax = 0;
+
+        do {
+            // @todo for some reason preparing before the loop does not work with native prepared statements
+            $query = $this->pdo->prepare(
+                "SELECT row AS id FROM
+                    (SELECT
+                        @row := @row + 1 as row, xml.id
+                    FROM
+                        {$this->table_xml} as xml,
+                        (SELECT @row := :start) r
+                    WHERE @row <> id
+                    ORDER BY xml.id) AS seq
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM {$this->table_xml} as xml
+                    WHERE xml.id = row
+                ) LIMIT :maxCount;"
+
+            );
+
+            $query->execute(array(
+                'start' => $lastMax,
+                'maxCount' => $needed,
+            ));
+
+            $results = $query->fetchAll(\PDO::FETCH_OBJ);
+            foreach ($results as $id) {
+                $this->free_element_ids[] = $id->id;
+            }
+            if (count($results) > 0) {
+                $lastMax = (int) $id->id;
+            }
+        } while (count($this->free_element_ids) < $needed && count($results) > 0);
+
+        $num = count($this->free_element_ids);
+
+        if ($num < $needed) {
+            $query = $this->pdo->prepare(
+                "SELECT IFNULL(MAX(xml.id), 0) + 1 AS id_max
+                FROM {$this->table_xml} AS xml"
+            );
+            $query->execute();
+            $result = $query->fetchObject();
+
+            $until = $needed - $num;
+            for ($i = 0; $i < $until; $i++) {
+                $this->free_element_ids[] = $result->id_max + $i;
+            }
+        }
     }
     // }}}
 
@@ -1149,52 +1420,6 @@ class Document {
     }
     // }}}
 
-    // {{{ unlinkNodeById()
-    /**
-     * unlinks and deletes a specific node from database.
-     * re-indexes the positions of the remaining elements.
-     *
-     * @param     $node_id (int) db-id of node to delete
-     *
-     * @return    $deleted_ids (array) list of db-ids of deleted nodes
-     */
-    public function unlinkNodeById($node_id)  {
-        // get parent and position (enables other node positions to be updated after delete)
-        $target_id = $this->getParentIdById($node_id);
-        $target_pos = $this->getPosById($node_id);
-
-        $dth = $this->getDoctypeHandler();
-
-        if ($dth->onDeleteNode($node_id)) {
-
-            // delete the node
-            $query = $this->pdo->prepare(
-                "DELETE FROM {$this->table_xml}
-                WHERE id_doc = :doc_id AND id = :node_id"
-            );
-            $query->execute(array(
-                'doc_id' => $this->doc_id,
-                'node_id' => $node_id,
-            ));
-
-            $this->clearCache();
-
-            // update position of remaining nodes
-            $query = $this->pdo->prepare(
-                "UPDATE {$this->table_xml}
-                    SET pos=pos-1
-                    WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'node_parent_id' => $target_id,
-                'node_pos' => $target_pos,
-                'doc_id' => $this->doc_id,
-            ));
-        }
-        return $target_id;
-    }
-    // }}}
-
     // {{{ getPermissions
     /**
      * @return mixed
@@ -1263,7 +1488,6 @@ class Document {
         return $node_ids;
     }
     // }}}
-
     // {{{ getChildIdsByName()
     /**
      * gets ids of children of node by their nodename
@@ -1328,253 +1552,6 @@ class Document {
         return $node_ids;
     }
     // }}}
-
-    // {{{ getNameQuery()
-    /**
-     * gets part of sql query for selecting nodes by their name
-     *
-     * @param    $node_ns (string) namespace prefix of node
-     * @param    $node_name (string) name of node
-     *
-     * @return    $name_query (string)
-     */
-    private function getNameQuery($node_ns, $node_name) {
-        if ($node_ns == '' && ($node_name == '' || $node_name == '*')) {
-            $name_query = '';
-            $name_param = array();
-        } else if ($node_ns == '*') {
-            $name_query = " and xml.name LIKE :node_name";
-            $name_param = array(
-                'node_name' => "%$node_name",
-            );
-        } else if ($node_ns != '' && $node_name == '*') {
-            $name_query = " and xml.name LIKE :node_name";
-            $name_param = array(
-                'node_name' => "$node_ns:%",
-            );
-        } else if ($node_ns != '') {
-            $name_query = " and xml.name = :node_name";
-            $name_param = array(
-                'node_name' => "$node_ns:$node_name",
-            );
-        } else {
-            $name_query = " and xml.name = :node_name";
-            $name_param = array(
-                'node_name' => $node_name,
-            );
-        }
-
-        return array($name_query, $name_param);
-    }
-    // }}}
-
-    // {{{ getAttrQuery()
-    /**
-     * gets part of sql query for selecting node by their attribute
-     *
-     * @param    $attr_cond (array) every element must have following
-     *            subelements: name, value and operator.
-     *
-     * @return    $attr_query (string)
-     */
-    private function getAttrQuery($attr_cond) {
-        $attr_query = '';
-        $attr_param = array();
-
-        if (is_array($attr_cond) && count($attr_cond) > 0) {
-            $attr_query = 'and (';
-            foreach($attr_cond as $i => $temp_cond) {
-                if ($temp_cond['value'] == null) {
-                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
-                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=%";
-                } else {
-                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
-                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=\"" . htmlspecialchars($temp_cond['value']) . "\"%";
-                }
-            }
-            $attr_query .= ')';
-        }
-
-        return array($attr_query, $attr_param);
-    }
-    // }}}
-
-    // {{{ getNodeIdsByXpath()
-    /**
-     * gets node_ids by xpath
-     *
-     * @attention this supports only a small subset of xpath-queries. so recheck source before using.
-     *
-     * @param    $this->doc_id (int) id of document
-     * @param    $xpath (string) xpath to target node
-     *
-     * @return    $nodeids (array) array of found node ids
-     *
-     * @todo    implement full xpath specifications
-     */
-    public function getNodeIdsByXpath($xpath) {
-        $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
-
-        $fetched_ids = $this->cache->get($identifier);
-
-        if ($fetched_ids === false) {
-            $pName = "(?:([^\/\[\]]*):)?([^\/\[\]]+)";
-            $pCondition = "(?:\[(.*?)\])?";
-
-            preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
-
-            $query = $this->pdo->prepare(
-                "SELECT docs.rootid AS rootid
-                FROM {$this->table_docs} AS docs
-                WHERE docs.id = :doc_id"
-            );
-            $query->execute(array(
-                'doc_id' => $this->doc_id,
-            ));
-            $result = $query->fetchObject();
-            $actual_ids = array(NULL);
-
-            foreach ($xpath_elements as $level => $element) {
-                $fetched_ids = array();
-                $element[] = '';
-                list(,$divider, $ns, $name, $condition) = $element;
-                $strings = array();
-
-                if ($divider == '/') {
-                    // {{{ fetch only by name:
-                    if ($condition == '') {
-                        /*
-                         * "... /ns:name ..."
-                         */
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, null, true));
-                        }
-                        // }}}
-                        // {{{ fetch by name and position:
-                    } else if (preg_match("/^([0-9]+)$/", $condition)) {
-                        /*
-                         * "... /ns:name[n] ..."
-                         */
-                        foreach ($actual_ids as $actual_id) {
-                            $temp_ids = $this->getChildIdsByName($actual_id, $ns, $name, null, true);
-                            $fetched_ids[] = $temp_ids[((int) $condition) - 1];
-                        }
-                        // }}}
-                        // {{{ fetch by simple attributes:
-                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                        /*
-                         * "... /ns:name[@attr1] ..."
-                         * "... /ns:name[@attr1 = 'string1'] ..."
-                         * "... /ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                         */
-                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, $cond_array, true));
-                        }
-                        // }}}
-                    } else {
-                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                    }
-                } elseif ($divider == '//' && $level == 0) {
-                    // {{{ fetch only by name recursive:
-                    if ($condition == '') {
-                        /*
-                         * "//ns:name ..."
-                         */
-                        $fetched_ids = $this->getNodeIdsByName($ns, $name);
-                        // }}}
-                        // {{{ fetch by simple attributes:
-                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                        /*
-                         * "//ns:name[@attr1] ..."
-                         * "//ns:name[@attr1 = 'string1'] ..."
-                         * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                         */
-                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = $this->getNodeIdsByName($ns, $name, $cond_array);
-                        }
-                        // }}}
-                    } else {
-                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                    }
-                } else {
-                    //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                }
-
-                $actual_ids = $fetched_ids;
-            }
-
-            $this->cache->set($identifier, $fetched_ids);
-        }
-        return $fetched_ids;
-    }
-
-    /**
-     * gets attributes array from xpath-condition\n
-     * (... [@this = 'some' and @that = 'some other'])\n
-     * can be used with:\n
-     *        1. getChildIdsByName()
-     *        2. getNodeIdsByName()
-     *
-     * @private
-     *
-     * @param    $condition (string) attribute conditions
-     * @param    $strings (array) of literal strings used in condition
-     *
-     * @return    $attr (array) array of attr-conditions
-     */
-    private function get_condition_attributes($condition, $strings) {
-        $cond_array = array();
-
-        $pAttr = "@(\w[\w\d:]*)";
-        $pOperator = "(=)";
-        $pBool = "(and|or|AND|OR)";
-        $pString = "\\$(\d*)";
-        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
-
-        for ($i = 0; $i < count($conditions[0]); $i++) {
-            $cond_array[] = array(
-                'name' => $conditions[1][$i],
-                'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
-                'operator' => $i > 0 ? $conditions[4][$i - 1] : "",
-            );
-        }
-
-        return $cond_array;
-    }
-
-    /**
-     * replaces strings surrounded by " or ' with pointer to array
-     *
-     * @private
-     *
-     * @param    $text (string) text to process
-     * @param    $strings (array) array of removed strings
-     *
-     * @return    $text (string)
-     */
-    private function remove_literal_strings($text, &$strings) {
-        $n = 0;
-        $newText = '';
-        $strings = array();
-
-        $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
-        preg_match_all($p, $text, $parts);
-
-        for ($i = 0; $i < count($parts[0]); $i++) {
-            if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
-                $strings[$n] = $parts[2][$i] . $parts[3][$i];
-                $newText .= "\$$n";
-                $n++;
-            } else {
-                $newText .= $parts[1][$i];
-            }
-        }
-        return $newText;
-    }
-    // }}}
-
     // {{{ getChildnodesByParentId()
     /**
      * gets child nodes of a node as string
@@ -1645,73 +1622,73 @@ class Document {
     }
     // }}}
 
-    // {{{ getFreeNodeIds()
+    // {{{ getNameQuery()
     /**
-     * gets unused db-node-ids for saving nodes
+     * gets part of sql query for selecting nodes by their name
      *
-     * @param    $needed (int) minimum number of ids, that are requested
+     * @param    $node_ns (string) namespace prefix of node
+     * @param    $node_name (string) name of node
+     *
+     * @return    $name_query (string)
      */
-    private function getFreeNodeIds($needed = 1) {
-        // @todo check to replace this with an extra table of deleted ids (trigger on delete)
-        /* see here:
-            CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
-            FOR EACH ROW
-            BEGIN
-            DELETE FROM patron_info
-                WHERE patron_info.pid = old.id;
-            END
-         */
-        $this->free_element_ids = array();
-        $lastMax = 0;
-
-        do {
-            // @todo for some reason preparing before the loop does not work with native prepared statements
-            $query = $this->pdo->prepare(
-                "SELECT row AS id FROM
-                    (SELECT
-                        @row := @row + 1 as row, xml.id
-                    FROM
-                        {$this->table_xml} as xml,
-                        (SELECT @row := :start) r
-                    WHERE @row <> id
-                    ORDER BY xml.id) AS seq
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM {$this->table_xml} as xml
-                    WHERE xml.id = row
-                ) LIMIT :maxCount;"
-
+    private function getNameQuery($node_ns, $node_name) {
+        if ($node_ns == '' && ($node_name == '' || $node_name == '*')) {
+            $name_query = '';
+            $name_param = array();
+        } else if ($node_ns == '*') {
+            $name_query = " and xml.name LIKE :node_name";
+            $name_param = array(
+                'node_name' => "%$node_name",
             );
-
-            $query->execute(array(
-                'start' => $lastMax,
-                'maxCount' => $needed,
-            ));
-
-            $results = $query->fetchAll(\PDO::FETCH_OBJ);
-            foreach ($results as $id) {
-                $this->free_element_ids[] = $id->id;
-            }
-            if (count($results) > 0) {
-                $lastMax = (int) $id->id;
-            }
-        } while (count($this->free_element_ids) < $needed && count($results) > 0);
-
-        $num = count($this->free_element_ids);
-
-        if ($num < $needed) {
-            $query = $this->pdo->prepare(
-                "SELECT IFNULL(MAX(xml.id), 0) + 1 AS id_max
-                FROM {$this->table_xml} AS xml"
+        } else if ($node_ns != '' && $node_name == '*') {
+            $name_query = " and xml.name LIKE :node_name";
+            $name_param = array(
+                'node_name' => "$node_ns:%",
             );
-            $query->execute();
-            $result = $query->fetchObject();
-
-            $until = $needed - $num;
-            for ($i = 0; $i < $until; $i++) {
-                $this->free_element_ids[] = $result->id_max + $i;
-            }
+        } else if ($node_ns != '') {
+            $name_query = " and xml.name = :node_name";
+            $name_param = array(
+                'node_name' => "$node_ns:$node_name",
+            );
+        } else {
+            $name_query = " and xml.name = :node_name";
+            $name_param = array(
+                'node_name' => $node_name,
+            );
         }
+
+        return array($name_query, $name_param);
+    }
+    // }}}
+
+    // {{{ getAttrQuery()
+    /**
+     * gets part of sql query for selecting node by their attribute
+     *
+     * @param    $attr_cond (array) every element must have following
+     *            subelements: name, value and operator.
+     *
+     * @return    $attr_query (string)
+     */
+    private function getAttrQuery($attr_cond) {
+        $attr_query = '';
+        $attr_param = array();
+
+        if (is_array($attr_cond) && count($attr_cond) > 0) {
+            $attr_query = 'and (';
+            foreach($attr_cond as $i => $temp_cond) {
+                if ($temp_cond['value'] == null) {
+                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
+                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=%";
+                } else {
+                    $attr_query .= " {$temp_cond['operator']} xml.value LIKE :attr{$i}_cond";
+                    $attr_param["attr{$i}_cond"] = "%{$temp_cond['name']}=\"" . htmlspecialchars($temp_cond['value']) . "\"%";
+                }
+            }
+            $attr_query .= ')';
+        }
+
+        return array($attr_query, $attr_param);
     }
     // }}}
 
