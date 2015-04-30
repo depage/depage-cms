@@ -231,6 +231,18 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>', $this->doc->getXml());
     }
     // }}}
+
+    // {{{ testReplaceNode
+    public function testReplaceNode() {
+        $doc = new DOMDocument();
+        $doc->loadXML('<root><node/></root>');
+
+        $this->doc->replaceNode($doc, 2);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange('<?xml version="1.0"?>
+<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>', $this->doc->getXml());
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

@@ -1043,7 +1043,7 @@ class Document {
             /*
              * if target_id is not set, assume we are saving an existing node with a node
              * db:id-attribute set. if target_id is set, assume we want to save a new node
-             * so remove alls existing node attributes first.
+             * so remove all existing node attributes first.
              */
             $this->removeIdAttr($node);
         }
