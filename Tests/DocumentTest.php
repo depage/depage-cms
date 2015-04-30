@@ -320,6 +320,31 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
 <dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" textattr="new value" db:id="2"><pg:page name="Subpage" multilang="false" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $this->doc->getXml());
     }
     // }}}
+    // {{{ testGetAttribute
+    public function testGetAttribute()
+    {
+        $attr = $this->doc->getAttribute(2, 'name');
+        $this->assertEquals('Home', $attr);
+
+        $attr = $this->doc->getAttribute(2, 'undefindattr');
+        $this->assertFalse($attr);
+    }
+    // }}}
+    // {{{ testGetAttributes
+    public function testGetAttributes()
+    {
+        $attrs = $this->doc->getAttributes(2);
+
+        $expected = array(
+            'name' => 'Home',
+            'multilang' => 'true',
+            'file_type' => 'html',
+            'db:dataid' => '3',
+        );
+
+        $this->assertEquals($expected, $attrs);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
