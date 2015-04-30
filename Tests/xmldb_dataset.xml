@@ -17,6 +17,7 @@
       <value></value>
       <value>1</value>
       <value>0000-00-00 00:00:00</value>
+      <null/>
     </row>
     <row>
       <value>2</value>
@@ -26,6 +27,7 @@
       <value></value>
       <value>3</value>
       <value>0000-00-00 00:00:00</value>
+      <null/>
     </row>
     <row>
       <value>3</value>
@@ -35,6 +37,7 @@
       <value></value>
       <value>5</value>
       <value>0000-00-00 00:00:00</value>
+      <null/>
     </row>
   </table>
   <table name="xmldb_proj_test_xmltree">
