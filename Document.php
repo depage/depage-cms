@@ -1962,6 +1962,7 @@ class Document
             list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
             $xpath = new \DOMXPath($xml);
+            $xpath->registerNamespace($this->db_ns->ns, $this->db_ns->uri);
             $xp_result = $xpath->query("./descendant-or-self::node()[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
             foreach ($xp_result as $node) {
                 $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
