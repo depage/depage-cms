@@ -38,15 +38,15 @@ class Document
 
     private $doctypeHandlers = array();
     // }}}
-    // {{{ constructor()
+    // {{{ constructor
     /**
      * Construct
      *
      * @param $xmldb
      * @param $doc_id
      */
-    public function __construct($xmldb, $doc_id) {
-
+    public function __construct($xmldb, $doc_id)
+    {
         $this->pdo = $xmldb->pdo;
         $this->cache = $xmldb->cache;
 
@@ -63,13 +63,14 @@ class Document
     }
     // }}}
 
-    // {{{ getDocId()
+    // {{{ getDocId
     /**
      * Get Doc ID
      *
      * @return int
      */
-    public function getDocId() {
+    public function getDocId()
+    {
         return $this->doc_id;
     }
     // }}}
@@ -80,7 +81,8 @@ class Document
      *
      * @return history
      */
-    public function getHistory() {
+    public function getHistory()
+    {
         return new history($this->pdo, $this->table_prefix, $this);
     }
     // }}}
@@ -91,19 +93,21 @@ class Document
      *
      * @return string
      */
-    public function getXml($add_id_attribute = true) {
+    public function getXml($add_id_attribute = true)
+    {
         $root_id = $this->getDocInfo()->rootid;
         return $this->getSubdocByNodeId($root_id, $add_id_attribute);
     }
     // }}}
 
-    // {{{ getDoctypeHandler()
+    // {{{ getDoctypeHandler
     /**
      *
      * @param $doc_id
      * @return mixed
      */
-    public function getDoctypeHandler() {
+    public function getDoctypeHandler()
+    {
         if (!isset($this->doctypeHandlers[$this->doc_id])) {
             $className = $this->getDocInfo()->type;
 
@@ -121,13 +125,14 @@ class Document
     }
     // }}}
 
-    // {{{ getDocInfo()
+    // {{{ getDocInfo
     /**
      * gets info about a document by doc_id
      *
      * @return $doc (array)
      */
-    public function getDocInfo() {
+    public function getDocInfo()
+    {
         $query = $this->pdo->prepare(
             "SELECT
                 docs.id AS id,
@@ -155,13 +160,14 @@ class Document
     }
     // }}}
 
-    // {{{ cleanDoc()
+    // {{{ cleanDoc
     /**
      * clean all nodes inside of document
      *
      * @return $doc (array)
      */
-    public function cleanDoc() {
+    public function cleanDoc()
+    {
         $info = $this->getDocInfo();
 
         $query = $this->pdo->prepare(
@@ -190,7 +196,7 @@ class Document
     }
     // }}}
 
-    // {{{ getSubdocByNodeId()
+    // {{{ getSubdocByNodeId
     /**
      * gets an xml-document-object from specific db-id
      *
@@ -199,7 +205,8 @@ class Document
      *            to xml-definition, false to remove them.
      * @param    $level (int) number of recursive getChildnodesByParentId calls. how deep to traverse the tree.
      */
-    public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX) {
+    public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX)
+    {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
 
         $xml_doc = new \Depage\Xml\Document();
@@ -308,7 +315,7 @@ class Document
         return $xml_doc;
     }
     // }}}
-    // {{{ getSubDocByXpath()
+    // {{{ getSubDocByXpath
     /**
      * gets document by xpath. if xpath directs to more than
      * one node, only the first node will be returned.
@@ -318,7 +325,8 @@ class Document
      *
      * @return    $doc (domxmlobject)
      */
-    public function getSubDocByXpath($xpath, $add_id_attribute = true) {
+    public function getSubDocByXpath($xpath, $add_id_attribute = true)
+    {
         $ids = $this->getNodeIdsByXpath($xpath);
         if (count($ids) > 0) {
             return $this->getSubdocByNodeId($ids[0], $add_id_attribute);
@@ -327,13 +335,14 @@ class Document
     }
     // }}}
 
-    // {{{ save()
+    // {{{ save
     /**
      * @param $xml
      * @return mixed
      * @throws xmldbException
      */
-    public function save(\DomDocument $xml) {
+    public function save(\DomDocument $xml)
+    {
         $this->xmldb->beginTransaction();
 
         $doc_info = $this->cleanDoc();
@@ -374,12 +383,13 @@ class Document
     }
     // }}}
 
-    // {{{ unlinkNode()
+    // {{{ unlinkNode
     /**
      * @param $node_id
      * @return bool
      */
-    public function unlinkNode($node_id) {
+    public function unlinkNode($node_id)
+    {
         if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
             $this->updateLastchange();
 
@@ -388,7 +398,7 @@ class Document
         return false;
     }
     // }}}
-    // {{{ unlinkNodeById()
+    // {{{ unlinkNodeById
     /**
      * unlinks and deletes a specific node from database.
      * re-indexes the positions of the remaining elements.
@@ -397,7 +407,8 @@ class Document
      *
      * @return    $deleted_ids (array) list of db-ids of deleted nodes
      */
-    public function unlinkNodeById($node_id)  {
+    public function unlinkNodeById($node_id)
+    {
         // get parent and position (enables other node positions to be updated after delete)
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id);
@@ -434,14 +445,15 @@ class Document
     }
     // }}}
 
-    // {{{ addNode()
+    // {{{ addNode
     /**
      * @param $node
      * @param $target_id
      * @param $target_pos
      * @return bool
      */
-    public function addNode(\DomElement $node, $target_id, $target_pos = -1, $extras = array()) {
+    public function addNode(\DomElement $node, $target_id, $target_pos = -1, $extras = array())
+    {
         $dth = $this->getDoctypeHandler();
         if ($dth->isAllowedAdd($node, $target_id)) {
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
@@ -450,14 +462,15 @@ class Document
         return false;
     }
     // }}}
-    // {{{ addNodeByName()
+    // {{{ addNodeByName
     /**
      * @param $name
      * @param $target_id
      * @param $target_pos
      * @return bool
      */
-    public function addNodeByName($name, $target_id, $target_pos) {
+    public function addNodeByName($name, $target_id, $target_pos)
+    {
         $dth = $this->getDoctypeHandler();
         $target_name = $this->getNodeNameById($target_id);
 
@@ -469,7 +482,7 @@ class Document
     }
     // }}}
 
-    // {{{ replaceNode()
+    // {{{ replaceNode
     /**
      * replaces a node in database
      *
@@ -479,7 +492,8 @@ class Document
      *
      * @return    $changed_ids (array) list of db-ids that has been changed
      */
-    public function replaceNode($node, $id_to_replace) {
+    public function replaceNode($node, $id_to_replace)
+    {
         $this->xmldb->beginTransaction();
 
         $target_id = $this->getParentIdById($id_to_replace);
@@ -504,7 +518,8 @@ class Document
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function moveNodeIn($node_id, $target_id) {
+    public function moveNodeIn($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
@@ -525,14 +540,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ moveNodeBefore()
+    // {{{ moveNodeBefore
     /**
      * moves node before another node (insert before)
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function moveNodeBefore($node_id, $target_id) {
+    public function moveNodeBefore($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
@@ -545,14 +561,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ moveNodeAfter()
+    // {{{ moveNodeAfter
     /**
      * moves node after another node
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function moveNodeAfter($node_id, $target_id) {
+    public function moveNodeAfter($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
@@ -565,7 +582,7 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ moveNode()
+    // {{{ moveNode
     /**
      * moves node in database
      *
@@ -577,7 +594,8 @@ class Document
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos (int) position to move to
      */
-    public function moveNode($node_id, $target_id, $target_pos) {
+    public function moveNode($node_id, $target_id, $target_pos)
+    {
         $success = false;
 
         if ($node_id !== $target_id && $this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
@@ -651,14 +669,15 @@ class Document
     }
     // }}}
 
-    // {{{ copyNodeIn()
+    // {{{ copyNodeIn
     /**
      * copy node to another node
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function copyNodeIn($node_id, $target_id) {
+    public function copyNodeIn($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
@@ -679,14 +698,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{  copyNodeBefore()
+    // {{{  copyNodeBefore
     /**
      * copy node before another node
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function copyNodeBefore($node_id, $target_id) {
+    public function copyNodeBefore($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
@@ -699,14 +719,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ copyNodeAfter()
+    // {{{ copyNodeAfter
     /**
      * copy node after another node
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      */
-    public function copyNodeAfter($node_id, $target_id) {
+    public function copyNodeAfter($node_id, $target_id)
+    {
         $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
@@ -719,7 +740,7 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ copyNode()
+    // {{{ copyNode
     /**
      * copy node in database
      *
@@ -729,7 +750,8 @@ class Document
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos (int) pos to copy to
      */
-    public function copyNode($node_id, $target_id, $target_pos) {
+    public function copyNode($node_id, $target_id, $target_pos)
+    {
         $docHandler = $this->getDoctypeHandler();
         if ($docHandler->isAllowedMove($node_id, $target_id)) {
             $this->xmldb->beginTransaction();
@@ -752,7 +774,7 @@ class Document
     }
     // }}}
 
-    // {{{ duplicateNode()
+    // {{{ duplicateNode
     /**
      * duplicate node in database, and inserts it in the next position
      *
@@ -762,7 +784,8 @@ class Document
      *
      * @return bool (success)
      */
-    public function duplicateNode($node_id, $recursive = false) {
+    public function duplicateNode($node_id, $recursive = false)
+    {
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
@@ -785,14 +808,15 @@ class Document
     }
     // }}}
 
-    // {{{ buildNode()
+    // {{{ buildNode
     /**
      *
      * @param $name
      * @param $attributes
      * @return \DOMElement
      */
-    public function buildNode($name, $attributes) {
+    public function buildNode($name, $attributes)
+    {
         //@todo dont build node directly but get from templates according to document type
         $doc_info = $this->getNamespacesAndEntities($this->doc_id);
         $xml = "<$name {$doc_info->namespaces}";
@@ -808,7 +832,7 @@ class Document
     }
     // }}}
 
-    // {{{ setAttribute()
+    // {{{ setAttribute
     /**
      * sets attribute of node
      *
@@ -816,7 +840,8 @@ class Document
      * @param    $attr_name (string) name of attribute
      * @param    $attr_value (string) new value of attribute
      */
-    public function setAttribute($node_id, $attr_name, $attr_value) {
+    public function setAttribute($node_id, $attr_name, $attr_value)
+    {
         $success = false;
 
         $this->xmldb->beginTransaction();
@@ -836,14 +861,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ removeAttribute()
+    // {{{ removeAttribute
     /**
      * removes an attribute of a node
      *
      * @param    $node_id (int) db-id of node to set attribute
      * @param    $attr_name (string) name of attribute
      */
-    public function removeAttribute($node_id, $attr_name) {
+    public function removeAttribute($node_id, $attr_name)
+    {
         $success = false;
 
         $this->xmldb->beginTransaction();
@@ -861,14 +887,15 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ saveAttributes()
+    // {{{ saveAttributes
     /**
      * sets attribute of node
      *
      * @param    $node_id (int) db-id of node to set attribute
      * @param    $attributes (array) array of attribute values
      */
-    protected function saveAttributes($node_id, $attributes) {
+    protected function saveAttributes($node_id, $attributes)
+    {
         $this->xmldb->beginTransaction();
 
         $query = $this->pdo->prepare(
@@ -891,7 +918,7 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ getAttribute()
+    // {{{ getAttribute
     /**
      * gets attribute of node
      *
@@ -900,7 +927,8 @@ class Document
      *
      * @return    $val (string) value
      */
-    public function getAttribute($node_id, $attr_name) {
+    public function getAttribute($node_id, $attr_name)
+    {
         $attributes = $this->getAttributes($node_id);
 
         if (isset($attributes[$attr_name])) {
@@ -910,7 +938,7 @@ class Document
         return false;
     }
     // }}}
-    // {{{ getAttributes()
+    // {{{ getAttributes
     /**
      * gets all attributes of a node by id
      *
@@ -918,7 +946,8 @@ class Document
      *
      * @return    $attributes (array) array of attributes
      */
-    public function getAttributes($node_id) {
+    public function getAttributes($node_id)
+    {
         $attributes = array();
 
         $query = $this->pdo->prepare(
@@ -953,7 +982,8 @@ class Document
      *
      * @return    $parent_id (id) db-id of parent node, false, if node doesn't exist.
      */
-    public function getParentIdById($id) {
+    public function getParentIdById($id)
+    {
         $query = $this->pdo->prepare(
             "SELECT xml.id_parent AS id_parent
             FROM {$this->table_xml} AS xml
@@ -970,7 +1000,7 @@ class Document
         return false;
     }
     // }}}
-    // {{{ getNodeId()
+    // {{{ getNodeId
     /**
      * gets node db-id from db-id attribute
      *
@@ -978,13 +1008,14 @@ class Document
      *
      * @return    $db_id (int)
      */
-    public function getNodeId($node) {
+    public function getNodeId($node)
+    {
         return $node->nodeType == XML_ELEMENT_NODE
             ? $node->getAttributeNS($this->db_ns->uri, $this->id_attribute)
             : null;
     }
     // }}}
-    // {{{ getNodeDataId()
+    // {{{ getNodeDataId
     /**
      * gets node db-dataid from db-dataid attribute
      *
@@ -994,13 +1025,14 @@ class Document
      *
      * @return    $db_id (int)
      */
-    public function getNodeDataId($node) {
+    public function getNodeDataId($node)
+    {
         return $node->nodeType == XML_ELEMENT_NODE
             ?  $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute)
             : null;
     }
     // }}}
-    // {{{ getNodeIdsByXpath()
+    // {{{ getNodeIdsByXpath
     /**
      * gets node_ids by xpath
      *
@@ -1013,7 +1045,8 @@ class Document
      *
      * @todo    implement full xpath specifications
      */
-    public function getNodeIdsByXpath($xpath) {
+    public function getNodeIdsByXpath($xpath)
+    {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
 
         $fetched_ids = $this->cache->get($identifier);
@@ -1125,7 +1158,8 @@ class Document
      *
      * @return    $attr (array) array of attr-conditions
      */
-    private function get_condition_attributes($condition, $strings) {
+    private function get_condition_attributes($condition, $strings)
+    {
         $cond_array = array();
 
         $pAttr = "@(\w[\w\d:]*)";
@@ -1155,7 +1189,8 @@ class Document
      *
      * @return    $text (string)
      */
-    private function remove_literal_strings($text, &$strings) {
+    private function remove_literal_strings($text, &$strings)
+    {
         $n = 0;
         $newText = '';
         $strings = array();
@@ -1175,13 +1210,14 @@ class Document
         return $newText;
     }
     // }}}
-    // {{{ getFreeNodeIds()
+    // {{{ getFreeNodeIds
     /**
      * gets unused db-node-ids for saving nodes
      *
      * @param    $needed (int) minimum number of ids, that are requested
      */
-    private function getFreeNodeIds($needed = 1) {
+    private function getFreeNodeIds($needed = 1)
+    {
         // @todo check to replace this with an extra table of deleted ids (trigger on delete)
         /* see here:
             CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
@@ -1253,7 +1289,8 @@ class Document
      *
      * @return    $node_name (string) name of node, false if node doesn't exist.
      */
-    public function getNodeNameById($id) {
+    public function getNodeNameById($id)
+    {
         $query = $this->pdo->prepare(
             "SELECT xml.name AS name
             FROM {$this->table_xml} AS xml
@@ -1271,8 +1308,9 @@ class Document
     }
     // }}}
 
-    // {{{ extractNamespaces()
-    public function extractNamespaces($str) {
+    // {{{ extractNamespaces
+    public function extractNamespaces($str)
+    {
         $namespaces = array();
         $pName = "([a-zA-Z0-9]*)";
         $pAttr = "([^\"]*)";
@@ -1284,8 +1322,9 @@ class Document
     }
     // }}}
 
-    // {{{ getNamespacesAndEntities()
-    public function getNamespacesAndEntities() {
+    // {{{ getNamespacesAndEntities
+    public function getNamespacesAndEntities()
+    {
         $query = $this->pdo->prepare(
             "SELECT docs.entities AS entities, docs.ns AS namespaces
             FROM {$this->table_docs} AS docs
@@ -1298,7 +1337,7 @@ class Document
     }
     // }}}
 
-    // {{{ saveNode()
+    // {{{ saveNode
     /**
      * saves a xml document or part of an document to database
      *
@@ -1307,7 +1346,8 @@ class Document
      * @param    $target_pos (int) position to save at
      * @param    $inc_children (bool) also save the related child nodes
      */
-    public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true) {
+    public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true)
+    {
         $this->xmldb->beginTransaction();
 
         if ($target_id !== null) {
@@ -1424,7 +1464,8 @@ class Document
     /**
      * @return mixed
      */
-    public function getPermissions() {
+    public function getPermissions()
+    {
         return $this->getDoctypeHandler()->getPermissions();
     }
     // }}}
@@ -1437,7 +1478,8 @@ class Document
      *
      * @return    $pos (int) position in node parents childlist
      */
-    private function getPosById($id) {
+    private function getPosById($id)
+    {
         $query = $this->pdo->prepare(
             "SELECT xml.pos AS pos
             FROM {$this->table_xml} AS xml
@@ -1455,7 +1497,7 @@ class Document
     }
     // }}}
 
-    // {{{ getNodeIdsByName()
+    // {{{ getNodeIdsByName
     /**
      * gets node-ids by name from specific document
      *
@@ -1464,7 +1506,8 @@ class Document
      *
      * @return    $node_ids (array) db-ids of nodes
      */
-    private function getNodeIdsByName($node_ns = '', $node_name = '', $attr_cond = null) {
+    private function getNodeIdsByName($node_ns = '', $node_name = '', $attr_cond = null)
+    {
         $node_ids = array();
 
         list($name_query, $name_param) = $this->getNameQuery($node_ns, $node_name);
@@ -1488,7 +1531,7 @@ class Document
         return $node_ids;
     }
     // }}}
-    // {{{ getChildIdsByName()
+    // {{{ getChildIdsByName
     /**
      * gets ids of children of node by their nodename
      *
@@ -1499,7 +1542,8 @@ class Document
      *
      * @return    $node_ids (array) list of node db-ids
      */
-    private function getChildIdsByName($parent_id, $node_ns = '', $node_name = '', $attr_cond = null, $only_element_nodes = false) {
+    private function getChildIdsByName($parent_id, $node_ns = '', $node_name = '', $attr_cond = null, $only_element_nodes = false)
+    {
         $node_ids = array();
 
         list($name_query, $name_param) = $this->getNameQuery($node_ns, $node_name);
@@ -1552,7 +1596,7 @@ class Document
         return $node_ids;
     }
     // }}}
-    // {{{ getChildnodesByParentId()
+    // {{{ getChildnodesByParentId
     /**
      * gets child nodes of a node as string
      *
@@ -1560,7 +1604,8 @@ class Document
      * @param   $level (int) number of recursive calls. how deep to traverse the tree.
      * @return  $xml_doc (string) xml node definition of node
      */
-    private function getChildnodesByParentId($parent_id, $level = PHP_INT_MAX) {
+    private function getChildnodesByParentId($parent_id, $level = PHP_INT_MAX)
+    {
         static $query = null;
 
         // prepare query
@@ -1622,7 +1667,7 @@ class Document
     }
     // }}}
 
-    // {{{ getNameQuery()
+    // {{{ getNameQuery
     /**
      * gets part of sql query for selecting nodes by their name
      *
@@ -1631,7 +1676,8 @@ class Document
      *
      * @return    $name_query (string)
      */
-    private function getNameQuery($node_ns, $node_name) {
+    private function getNameQuery($node_ns, $node_name)
+    {
         if ($node_ns == '' && ($node_name == '' || $node_name == '*')) {
             $name_query = '';
             $name_param = array();
@@ -1661,7 +1707,7 @@ class Document
     }
     // }}}
 
-    // {{{ getAttrQuery()
+    // {{{ getAttrQuery
     /**
      * gets part of sql query for selecting node by their attribute
      *
@@ -1670,7 +1716,8 @@ class Document
      *
      * @return    $attr_query (string)
      */
-    private function getAttrQuery($attr_cond) {
+    private function getAttrQuery($attr_cond)
+    {
         $attr_query = '';
         $attr_param = array();
 
@@ -1692,7 +1739,7 @@ class Document
     }
     // }}}
 
-    // {{{ saveNodeToDb()
+    // {{{ saveNodeToDb
     /**
      * saves a node to database
      *
@@ -1705,7 +1752,8 @@ class Document
      *
      * @return    $id (int) db-id under which node has been saved
      */
-    private function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false) {
+    private function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
+    {
         static $insert_query = null;
         if (is_null($insert_query)) {
             $insert_query = $this->pdo->prepare(
@@ -1813,7 +1861,8 @@ class Document
     /**
      * updates the lastchange date and uid for the current document
      */
-    protected function updateLastchange() {
+    protected function updateLastchange()
+    {
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -1844,7 +1893,7 @@ class Document
     }
     // }}}
 
-    // {{{ getNodeArrayForSaving()
+    // {{{ getNodeArrayForSaving
     /**
      * gets all nodes of a document in one array
      *
@@ -1857,7 +1906,8 @@ class Document
      * @param    $stripwhitespace (bool) wether to strip whitespace from textnodes
      *            while saving
      */
-    private function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true) {
+    private function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
+    {
         $type = $node->nodeType;
         //is DOCUMENT_NODE
         if ($type == XML_DOCUMENT_NODE) {
@@ -1906,7 +1956,8 @@ class Document
      *
      * @param    $node (domxmlnode) node to remove attribute from
      */
-    public function removeIdAttr($node) {
+    public function removeIdAttr($node)
+    {
         if ($node->nodeType == XML_ELEMENT_NODE || $node->nodeType == XML_DOCUMENT_NODE) {
             list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
@@ -1919,13 +1970,14 @@ class Document
     }
     // }}}
 
-    // {{{ getAttributeString()
+    // {{{ getAttributeString
     /**
      * gets attribute string for saving
      *
      * @param    $attributes (array) array of attribute values
      */
-    private function getAttributeString($attributes) {
+    private function getAttributeString($attributes)
+    {
         $attr_str = "";
         $autogeneratedAttr = array(
             $this->db_ns->ns . ':' . $this->id_attribute,
@@ -1942,12 +1994,13 @@ class Document
     }
     // }}}
 
-    // {{{ clearCache()
+    // {{{ clearCache
     /**
      * clears the node-cache
      *
      */
-    private function clearCache() {
+    private function clearCache()
+    {
         if (!is_null($this->doc_id)) {
             $this->cache->delete("{$this->table_docs}_d{$this->doc_id}/");
         }
