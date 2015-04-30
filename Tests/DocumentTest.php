@@ -345,6 +345,29 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertEquals($expected, $attrs);
     }
     // }}}
+
+    // {{{ testGetNodeId
+    public function testGetNodeId()
+    {
+        $doc = new DOMDocument();
+        $doc->loadXml('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+
+        $id = $this->doc->getNodeId($doc->documentElement);
+
+        $this->assertEquals(2, $id);
+    }
+    // }}}
+    // {{{ testGetNodeDataId
+    public function testGetNodeDataId()
+    {
+        $doc = new DOMDocument();
+        $doc->loadXml('<root db:dataid="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+
+        $id = $this->doc->getNodeDataId($doc->documentElement);
+
+        $this->assertEquals(2, $id);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
