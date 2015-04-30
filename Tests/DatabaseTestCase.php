@@ -49,13 +49,14 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
             $GLOBALS['DB_PASSWD']
         );
 
-        function prefix($name)
-        {
-            return 'xmldb_proj_test' . $name;
-        };
-
+        
         $schema = new \Depage\Db\Schema($pdo);
-        $schema->setReplace('prefix');
+        $schema->setReplace(
+            function ($name)
+            {
+                return 'xmldb_proj_test' . $name;
+            }
+        );
         $schema->loadGlob(__DIR__ . '/../Sql/*.sql');
 
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
