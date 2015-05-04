@@ -16,6 +16,27 @@
         </xsl:copy>
     </xsl:template>
 
+    <!-- {{{ update navigation -->
+    <xsl:template match="proj:navigations">
+        <proj:navigation>
+            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates select="proj:navigation[not(substring(@value, 1, 4) = 'tag_')]" mode="navigation"/>
+        </proj:navigation>
+        <proj:tags>
+            <xsl:apply-templates select="proj:navigation[substring(@value, 1, 4) = 'tag_']" mode="tag" />
+        </proj:tags>
+    </xsl:template>
+    <xsl:template match="proj:navigation" mode="navigation">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="proj:navigation" mode="tag">
+        <proj:tag>
+            <xsl:apply-templates select="@*|node()"/>
+        </proj:tag>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ update publish targets -->
     <xsl:template match="proj:publish">
         <proj:publishTargets>
@@ -25,7 +46,7 @@
     </xsl:template>
     <xsl:template match="proj:publish_folder">
         <proj:publishTarget>
-            <xsl:attribute name="default"><xsl:if test="position() = 1">true</xsl:if><xsl:if test="position() &gt; 1">false</xsl:if><xsl:value-of select="'bla'"/></xsl:attribute>
+            <xsl:attribute name="default"><xsl:if test="position() = 1">true</xsl:if><xsl:if test="position() &gt; 1">false</xsl:if></xsl:attribute>
 
             <xsl:apply-templates select="@*|node()"/>
         </proj:publishTarget>
@@ -44,14 +65,8 @@
     </xsl:template>
     <!-- }}} -->
 
-    <!-- {{{ delete old backup elements -->
-    <xsl:template match="proj:backup"></xsl:template>
-    <!-- }}} -->
-    <!-- {{{ delete @db:name -->
-    <xsl:template match="@db:name"></xsl:template>
-    <!-- }}} -->
-    <!-- {{{ delete @db:invalid -->
-    <xsl:template match="@db:invalid"></xsl:template>
+    <!-- {{{ delete elements -->
+    <xsl:template match="proj:backup|proj:type|@db:name|@db:invalid"></xsl:template>
     <!-- }}} -->
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
