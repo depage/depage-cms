@@ -1160,12 +1160,12 @@ class Document {
      */
     public function unlinkNodeById($node_id)  {
         // get parent and position (enables other node positions to be updated after delete)
-        $target_id = $this->getParentIdById($node_id);
+        $parent_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id);
 
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->onDeleteNode($node_id)) {
+        if ($dth->onDeleteNode($node_id, $parent_id)) {
 
             // delete the node
             $query = $this->pdo->prepare(
@@ -1186,12 +1186,12 @@ class Document {
                     WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
             );
             $query->execute(array(
-                'node_parent_id' => $target_id,
+                'node_parent_id' => $parent_id,
                 'node_pos' => $target_pos,
                 'doc_id' => $this->doc_id,
             ));
         }
-        return $target_id;
+        return $parent_id;
     }
     // }}}
 

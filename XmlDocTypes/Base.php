@@ -111,7 +111,7 @@ class Base
      * @return null
      */
     public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras) {
-        return null;
+        return true;
     }
     // }}}
     // {{{ onCopyNode
@@ -134,7 +134,7 @@ class Base
      * @param $node_id
      * @return bool
      */
-    public function onDeleteNode($node_id){
+    public function onDeleteNode($node_id, $parent_id){
         return true;
     }
     // }}}
