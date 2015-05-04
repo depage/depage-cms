@@ -128,11 +128,11 @@ class Project extends Base
     private function settings_languages()
     {
         $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getXml();
+        $xml = $settings->getSubDocByXpath("//proj:languages");
 
         $form = new \Depage\Cms\Forms\Project\Languages("edit-project-languages-" . $this->project->id, array(
             'project' => $this->project,
-            'dataNode' => $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/project", "languages")->item(0),
+            'dataNode' => $xml,
         ));
         $form->process();
 
@@ -207,13 +207,18 @@ class Project extends Base
      **/
     private function settings_publish()
     {
+        $settings = $this->project->getSettingsDoc();
+        $xml = $settings->getSubDocByXpath("//proj:publish");
+
         $form = new \Depage\Cms\Forms\Project\Publish("edit-project-publish-" . $this->project->id, array(
             'project' => $this->project,
+            'dataNode' => $xml,
         ));
         $form->process();
 
         if ($form->validate()) {
-            $values = $form->getValues();
+            $node = $form->getValuesXml();
+            $settings->saveNode($node);
 
             $form->clearSession();
 
