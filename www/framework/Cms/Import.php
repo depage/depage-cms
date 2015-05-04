@@ -402,6 +402,8 @@ class Import
             $this->xmlSettings->appendChild($node);
         }
 
+        $this->xmlSettings = $this->updateSettings($this->xmlSettings);
+
         $this->docSettings->save($this->xmlSettings);
     }
     // }}}
@@ -532,6 +534,20 @@ class Import
             $nodelist->item($i)->data = $text;
         }
 
+    }
+    // }}}
+    // {{{ updateSettings()
+    protected function updateSettings($xmlData)
+    {
+        $xsltProc = new \XSLTProcessor();
+
+        $xslDom = new \Depage\Xml\Document();
+        $xslDom->load(__DIR__ . "/Xslt/Import/LegacySettings.xsl");
+
+        $xsltProc->importStylesheet($xslDom);
+        $newXml = $xsltProc->transformToDoc($xmlData);
+
+        return $newXml;
     }
     // }}}
 }
