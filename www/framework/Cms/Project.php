@@ -263,10 +263,8 @@ class Project extends \Depage\Entity\Entity
     {
         $projectName = $this->name;
 
-        $xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$projectName}", $this->pdo, $this->cache, array(
-            'pathXMLtemplate' => $this->xmlPath,
-        ));
-        $xmldb->updateSchema();
+        $this->initXmlDb();
+        $this->xmldb->updateSchema();
 
         $schema = new \Depage\DB\Schema($this->pdo);
 
@@ -300,6 +298,20 @@ class Project extends \Depage\Entity\Entity
         $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->name}", $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
         ));
+    }
+    // }}}
+    // {{{ getSettingsDoc()
+    /**
+     * @brief getSettingsDoc
+     *
+     * @param mixed 
+     * @return void
+     **/
+    public function getSettingsDoc()
+    {
+        $this->initXmlDb();
+
+        return $this->xmldb->getDoc("settings");
     }
     // }}}
     // {{{ getRecentlyChangedPages

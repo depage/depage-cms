@@ -97,8 +97,8 @@ class Project extends Base
     private function settings_basic()
     {
         $form = new \Depage\Cms\Forms\Project\Basic("edit-project-basic-" . $this->project->id, array(
-            "project" => $this->project,
-            "projectGroups" => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
+            'project' => $this->project,
+            'projectGroups' => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
         ));
         $form->process();
 
@@ -127,13 +127,18 @@ class Project extends Base
      **/
     private function settings_languages()
     {
+        $settings = $this->project->getSettingsDoc();
+        $xml = $settings->getXml();
+
         $form = new \Depage\Cms\Forms\Project\Languages("edit-project-languages-" . $this->project->id, array(
-            "project" => $this->project,
+            'project' => $this->project,
+            'dataNode' => $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/project", "languages")->item(0),
         ));
         $form->process();
 
         if ($form->validate()) {
-            $values = $form->getValues();
+            $node = $form->getValuesXml();
+            $settings->saveNode($node);
 
             $form->clearSession();
 
@@ -153,7 +158,7 @@ class Project extends Base
     private function settings_tags()
     {
         $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-" . $this->project->id, array(
-            "project" => $this->project,
+            'project' => $this->project,
         ));
         $form->process();
 
@@ -178,7 +183,7 @@ class Project extends Base
     private function settings_variables()
     {
         $form = new \Depage\Cms\Forms\Project\Variables("edit-project-variables-" . $this->project->id, array(
-            "project" => $this->project,
+            'project' => $this->project,
         ));
         $form->process();
 
@@ -203,7 +208,7 @@ class Project extends Base
     private function settings_publish()
     {
         $form = new \Depage\Cms\Forms\Project\Publish("edit-project-publish-" . $this->project->id, array(
-            "project" => $this->project,
+            'project' => $this->project,
         ));
         $form->process();
 

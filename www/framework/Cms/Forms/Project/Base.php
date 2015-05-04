@@ -43,8 +43,8 @@ class Base extends \Depage\HtmlForm\HtmlForm
     {
         $tabs = array(
             "basic" => _("Project Settings"),
-            "languages" => _("Languages"),
             "tags" => _("Tags"),
+            "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publish" => _("Publish"),
             "import" => _("Import"),
