@@ -82,6 +82,21 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetDocByNodeId
+    public function testGetDocByNodeId()
+    {
+        $this->assertEquals(1, $this->xmldb->getDocByNodeId(1)->getDocId());
+        $this->assertEquals(3, $this->xmldb->getDocByNodeId(5)->getDocId());
+        $this->assertEquals(2, $this->xmldb->getDocByNodeId(4)->getDocId());
+    }
+    // }}}
+    // {{{ testGetDocByNodeIdNonExistent
+    public function testGetDocByNodeIdNonExistent()
+    {
+        $this->assertFalse($this->xmldb->getDocByNodeId(42));
+    }
+    // }}}
+
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
