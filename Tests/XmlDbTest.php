@@ -97,6 +97,26 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testCreateDoc
+    public function testCreateDoc()
+    {
+        $doc = $this->xmldb->createDoc();
+
+        $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
+        $this->assertEquals(4, $doc->getDocId());
+    }
+    // }}}
+    // {{{ testCreateDocSpecific
+    public function testCreateDocSpecific()
+    {
+        $doc = $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'newDoc');
+
+        $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
+        $this->assertEquals('newDoc', $doc->getDocInfo()->name);
+        $this->assertEquals(4, $doc->getDocId());
+    }
+    // }}}
+
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
