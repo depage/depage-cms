@@ -452,7 +452,7 @@ class Document
      * @param $target_pos
      * @return bool
      */
-    public function addNode(\DomElement $node, $target_id, $target_pos = -1, $extras = array())
+    public function addNode(\DomDocument $node, $target_id, $target_pos = -1, $extras = array())
     {
         $dth = $this->getDoctypeHandler();
         if ($dth->isAllowedAdd($node, $target_id)) {
