@@ -31,21 +31,6 @@ class XmlDb implements XmlGetter
 
     public $options;
     // }}}
-
-    // {{{ __get()
-    /**
-     * Get properties (basically read-only)
-     *
-     * @param $property
-     * @return mixed
-     */
-    public function __get($property) {
-        if (property_exists($this, $property)) {
-            return $this->$property;
-        }
-    }
-    // }}}
-
     // {{{ constructor()
     public function __construct($table_prefix, $pdo, $cache, $options = array()) {
         $this->pdo = $pdo;
@@ -61,6 +46,20 @@ class XmlDb implements XmlGetter
         $this->table_docs = $table_prefix . "_xmldocs";
         $this->table_xml = $table_prefix . "_xmltree";
         $this->table_nodetypes = $table_prefix . "_xmlnodetypes";
+    }
+    // }}}
+
+    // {{{ __get()
+    /**
+     * Get properties (basically read-only)
+     *
+     * @param $property
+     * @return mixed
+     */
+    public function __get($property) {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
     }
     // }}}
 
@@ -158,7 +157,6 @@ class XmlDb implements XmlGetter
         return $docs;
     }
     // }}}
-
     // {{{ getDoc()
     /**
      * Get xmldb\document
@@ -174,7 +172,6 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-
     // {{{ getDocByNodeId()
     /**
      * Get xmldb\document
@@ -255,7 +252,6 @@ class XmlDb implements XmlGetter
         return $document;
     }
     // }}}
-
     // {{{ duplicateDoc()
     /**
      * @brief duplicateDoc
@@ -281,7 +277,6 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-
     // {{{ removeDoc()
     /**
      * @param $doc_id_or_name
@@ -340,7 +335,6 @@ class XmlDb implements XmlGetter
         }
     }
     // }}}
-
     // {{{ clearTables()
     /**
      * Removes SQL tables
@@ -364,7 +358,6 @@ class XmlDb implements XmlGetter
         $this->transactions++;
     }
     // }}}
-
     // {{{ endTransaction()
     /**
      * wrap database end transaction
