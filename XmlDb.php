@@ -31,8 +31,9 @@ class XmlDb implements XmlGetter
 
     public $options;
     // }}}
-    // {{{ constructor()
-    public function __construct($table_prefix, $pdo, $cache, $options = array()) {
+    // {{{ constructor
+    public function __construct($table_prefix, $pdo, $cache, $options = array())
+    {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
@@ -49,28 +50,30 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ __get()
+    // {{{ __get
     /**
      * Get properties (basically read-only)
      *
      * @param $property
      * @return mixed
      */
-    public function __get($property) {
+    public function __get($property)
+    {
         if (property_exists($this, $property)) {
             return $this->$property;
         }
     }
     // }}}
 
-    // {{{ docExists()
+    // {{{ docExists
     /**
      * gets the doc-id of a xml-document by name or id and checks if the document exists
      *
      * @param     $doc_id_or_name (mixed) id or name of the document
      * @return    (int) id of the document or false when document does not exist
      */
-    public function docExists($doc_id_or_name) {
+    public function docExists($doc_id_or_name)
+    {
         if (!isset($this->doc_ids[$doc_id_or_name])) {
             if ((int) $doc_id_or_name > 0) {
 
@@ -117,13 +120,14 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ getDocuments()
+    // {{{ getDocuments
     /**
      * gets available documents in database
      *
      * @return    $docs (array) the key is the name of the document, the value is the document db-id.
      */
-    public function getDocuments($name = "") {
+    public function getDocuments($name = "")
+    {
         $docs = array();
 
         $namequery = "";
@@ -157,14 +161,15 @@ class XmlDb implements XmlGetter
         return $docs;
     }
     // }}}
-    // {{{ getDoc()
+    // {{{ getDoc
     /**
      * Get xmldb\document
      *
      * @param $doc_id_or_name
      * @return bool|document
      */
-    public function getDoc($doc_id_or_name) {
+    public function getDoc($doc_id_or_name)
+    {
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             return new Document($this, $doc_id);
         }
@@ -172,14 +177,15 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-    // {{{ getDocByNodeId()
+    // {{{ getDocByNodeId
     /**
      * Get xmldb\document
      *
      * @param $nodeId
      * @return bool|document
      */
-    public function getDocByNodeId($nodeId) {
+    public function getDocByNodeId($nodeId)
+    {
         $query = $this->pdo->prepare(
             "SELECT
                 xml.id_doc AS id_doc
@@ -200,13 +206,14 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ getDocXml()
+    // {{{ getDocXml
     /**
      * @param $doc_id_or_name
      * @param bool $add_id_attribute
      * @return bool
      */
-    public function getDocXml($doc_id_or_name, $add_id_attribute = true) {
+    public function getDocXml($doc_id_or_name, $add_id_attribute = true)
+    {
         $xml = false;
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
@@ -218,7 +225,7 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ createDoc()
+    // {{{ createDoc
     /**
      * CreateDoc
      *
@@ -227,7 +234,8 @@ class XmlDb implements XmlGetter
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null) {
+    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null)
+    {
         if (is_null($docName)) {
             // generate generic docname based on doctype
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
@@ -252,7 +260,7 @@ class XmlDb implements XmlGetter
         return $document;
     }
     // }}}
-    // {{{ duplicateDoc()
+    // {{{ duplicateDoc
     /**
      * @brief duplicateDoc
      *
@@ -277,12 +285,13 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-    // {{{ removeDoc()
+    // {{{ removeDoc
     /**
      * @param $doc_id_or_name
      * @return bool
      */
-    public function removeDoc($doc_id) {
+    public function removeDoc($doc_id)
+    {
         $doc_id = $this->docExists($doc_id);
 
         if ($doc_id !== false) {
@@ -303,7 +312,7 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ updateSchema()
+    // {{{ updateSchema
     /**
      * @brief updateSchema
      *
@@ -317,7 +326,8 @@ class XmlDb implements XmlGetter
         $projectName = $this->name;
 
         $schema->setReplace(
-            function ($tableName) use ($projectName) {
+            function ($tableName) use ($projectName)
+    {
                 if ($tableName == "_auth_user") {
                     return $this->pdo->prefix . $tableName;
                 } else {
@@ -335,11 +345,12 @@ class XmlDb implements XmlGetter
         }
     }
     // }}}
-    // {{{ clearTables()
+    // {{{ clearTables
     /**
      * Removes SQL tables
      */
-    public function clearTables() {
+    public function clearTables()
+    {
         $this->pdo->query("DELETE FROM `{$this->table_docs}`;");
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
@@ -347,22 +358,24 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ beginTransaction()
+    // {{{ beginTransaction
     /**
      * wrap database begin transaction
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         if ($this->transactions == 0) {
             $this->pdo->beginTransaction();
         }
         $this->transactions++;
     }
     // }}}
-    // {{{ endTransaction()
+    // {{{ endTransaction
     /**
      * wrap database end transaction
      */
-    public function endTransaction() {
+    public function endTransaction()
+    {
         $this->transactions--;
         if ($this->transactions == 0) {
             $this->pdo->commit();
