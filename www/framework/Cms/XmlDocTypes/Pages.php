@@ -150,7 +150,8 @@ class Pages extends UniqueNames {
      * @param $doc_id
      * @return boolean
      */
-    public function onDeleteNode($nodeId) {
+    public function onDeleteNode($node_id, $parent_id)
+    {
         // @todo check wether to delete attached documents directly or later
         //$this->xmldb->removeDoc($doc_id);
         return true;
