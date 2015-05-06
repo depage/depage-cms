@@ -40,12 +40,17 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
         if (isset($params['dataNode'])) {
             foreach ($this->getElements() as $element) {
                 if (!empty($element->dataInfo)) {
-                    $nodes = $this->dataNodeXpath->evaluate($element->dataInfo);
+                    $node = $this->dataNodeXpath->evaluate($element->dataInfo)->item(0);
+                    $value = "";
+
+                    // @todo add textarea
                     if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
-                        $element->setDefaultValue($nodes->item(0)->value == "true" ? true : false);
+                        $value = $node->value == "true" ? true : false;
                     } else {
-                        $element->setDefaultValue($nodes->item(0)->value);
+                        $value = $node->nodeValue;
                     }
+
+                    $element->setDefaultValue($value);
                 }
             }
         }
@@ -62,11 +67,13 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
         if (isset($this->dataNode)) {
             foreach ($this->getElements() as $element) {
                 if (!empty($element->dataInfo)) {
-                    $nodes = $this->dataNodeXpath->evaluate($element->dataInfo);
+                    $node = $this->dataNodeXpath->query($element->dataInfo)->item(0);
+
+                    // @todo add textarea
                     if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
-                        $nodes->item(0)->value = $element->getValue() === true ? "true" : "false";
+                        $node->nodeValue = $element->getValue() === true ? "true" : "false";
                     } else {
-                        $nodes->item(0)->value = $element->getValue();
+                        $node->nodeValue = $element->getValue();
                     }
                 }
             }
