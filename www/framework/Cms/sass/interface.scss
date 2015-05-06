@@ -1,3 +1,67 @@
+@import "../../shared/depage-sass-mixins/_base";
+@import "../../HtmlForm/lib/sass/depage-forms.scss";
+
+@import "icons";
+
+$toolbarHeight: 30px;
+$infoHeight: 15px;
+$editWidth: 820px;
+$treeWidth: 255px;
+
+@mixin icon-base($name: "", $scale: 1) {
+    $iconSize: 48px;
+
+    background-repeat: no-repeat;
+    background-image: url(../images/icon_sprite.svg);
+    background-size: (4 * $iconSize) (10 * $iconSize);
+
+    @if ($name != "") {
+        @include icon($name, $scale);
+    }
+
+}
+@mixin icon($name, $scale: 1) {
+    $iconSize: 48px * $scale;
+
+    @if ($name == "projects") {
+        background-position: 0px 0px;
+    } @else if ($name == "users") {
+        background-position: 0 (-1 * $iconSize);
+    } @else if ($name == "tasks") {
+        background-position: 0 (-2 * $iconSize);
+
+    } @else if ($name == "left-full") {
+        background-position: 0 (-3 * $iconSize);
+    } @else if ($name == "split") {
+        background-position: (-1 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "tree-split") {
+        background-position: (-2 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "right-full") {
+        background-position: (-3 * $iconSize) (-3 * $iconSize);
+
+    } @else if ($name == "left-full-active") {
+        background-position: 0 (-4 * $iconSize);
+    } @else if ($name == "split-active") {
+        background-position: (-1 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "tree-split-active") {
+        background-position: (-2 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "right-full-active") {
+        background-position: (-3 * $iconSize) (-4 * $iconSize);
+
+    } @else if ($name == "closed") {
+        background-position: 0 (-8 * $iconSize);
+        background-size: (2 * $iconSize) (10 * $iconSize);
+    } @else if ($name == "open") {
+        background-position: 0 (-9 * $iconSize);
+    } @else {
+        background-position: 800px 800px;
+    }
+    @if ($scale != 1) {
+        background-size: (4 * $iconSize) (10 * $iconSize);
+    }
+
+}
+
 /* {{{ colors */
     .head {
         color: #000000;
@@ -88,69 +152,28 @@
             }
         }
     }
+    .depage-form {
+        input,
+        textarea,
+        select {
+            border: 1px solid #000000;
+            background: #d9d9d9;
+            color: #000000;
+
+            &:focus {
+                background: #ffffff;
+            }
+            &:disabled {
+                color: #7c808f;
+            }
+        }
+        p.submit {
+            input {
+                border: 1px solid lighten(#7c808f, 10%);
+            }
+        }
+    }
 /* }}} */
-
-@import "../../shared/depage-sass-mixins/_base";
-@import "icons";
-
-$toolbarHeight: 30px;
-$infoHeight: 15px;
-$editWidth: 820px;
-$treeWidth: 255px;
-
-@mixin icon-base($name: "", $scale: 1) {
-    $iconSize: 48px;
-
-    background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg);
-    background-size: (4 * $iconSize) (10 * $iconSize);
-
-    @if ($name != "") {
-        @include icon($name, $scale);
-    }
-
-}
-@mixin icon($name, $scale: 1) {
-    $iconSize: 48px * $scale;
-
-    @if ($name == "projects") {
-        background-position: 0px 0px;
-    } @else if ($name == "users") {
-        background-position: 0 (-1 * $iconSize);
-    } @else if ($name == "tasks") {
-        background-position: 0 (-2 * $iconSize);
-
-    } @else if ($name == "left-full") {
-        background-position: 0 (-3 * $iconSize);
-    } @else if ($name == "split") {
-        background-position: (-1 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "tree-split") {
-        background-position: (-2 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "right-full") {
-        background-position: (-3 * $iconSize) (-3 * $iconSize);
-
-    } @else if ($name == "left-full-active") {
-        background-position: 0 (-4 * $iconSize);
-    } @else if ($name == "split-active") {
-        background-position: (-1 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "tree-split-active") {
-        background-position: (-2 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "right-full-active") {
-        background-position: (-3 * $iconSize) (-4 * $iconSize);
-
-    } @else if ($name == "closed") {
-        background-position: 0 (-8 * $iconSize);
-        background-size: (2 * $iconSize) (10 * $iconSize);
-    } @else if ($name == "open") {
-        background-position: 0 (-9 * $iconSize);
-    } @else {
-        background-position: 800px 800px;
-    }
-    @if ($scale != 1) {
-        background-size: (4 * $iconSize) (10 * $iconSize);
-    }
-
-}
 
 /* {{{ global */
 * {
@@ -767,19 +790,26 @@ div.preview.zoom100 iframe {
 }
 /* }}} */
 /* {{{ depage-forms */
-@import "../../HtmlForm/lib/sass/depage-forms.scss";
-
 .depage-form {
     @include clearfix();
     position: relative;
     width: 100%;
     max-width: 100%;
 
+    input,
+    textarea,
+    select {
+        padding: 4px 9px;
+    }
+
     &.saving::before {
         content: "saving";
         position: absolute;
         top: 0;
         right: 0;
+    }
+    p {
+        margin-bottom: 5px;
     }
     p.submit,
     p.cancel {
