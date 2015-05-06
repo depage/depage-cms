@@ -48,7 +48,7 @@ class Project extends Base
      * @param mixed
      * @return void
      **/
-    public function settings($type)
+    public function settings($type = "")
     {
         $html = "";
 
@@ -157,13 +157,19 @@ class Project extends Base
      **/
     private function settings_tags()
     {
+        // @todo updated with multiple forms per element
+        $settings = $this->project->getSettingsDoc();
+        $xml = $settings->getSubDocByXpath("//proj:tags");
+
         $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-" . $this->project->id, array(
             'project' => $this->project,
+            'dataNode' => $xml,
         ));
         $form->process();
 
         if ($form->validate()) {
-            $values = $form->getValues();
+            $node = $form->getValuesXml();
+            $settings->saveNode($node);
 
             $form->clearSession();
 
@@ -208,7 +214,7 @@ class Project extends Base
     private function settings_publish()
     {
         $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getSubDocByXpath("//proj:publish");
+        $xml = $settings->getSubDocByXpath("//proj:publishTargets");
 
         $form = new \Depage\Cms\Forms\Project\Publish("edit-project-publish-" . $this->project->id, array(
             'project' => $this->project,
@@ -249,8 +255,8 @@ class Project extends Base
             ));
 
             $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $cache);
-            //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
-            //return;
+            $value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
+            return;
 
             $value = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
 

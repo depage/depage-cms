@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms\Project;
  * brief Project
  * Class Project
  */
-class Base extends \Depage\HtmlForm\HtmlForm
+class Base extends \Depage\Cms\Forms\XmlForm
 {
     /**
      * @brief baseUrl of current project settings

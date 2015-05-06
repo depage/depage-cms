@@ -8,16 +8,6 @@ namespace Depage\Cms\Forms\Project;
  */
 class Languages extends Base
 {
-    /**
-     * @brief dataNode
-     **/
-    protected $dataNode = null;
-
-    /**
-     * @brief dataNodeXpath
-     **/
-    protected $dataNodeXpath = null;
-
     // {{{ __construct()
     /**
      * @brief __construct
@@ -29,20 +19,7 @@ class Languages extends Base
     {
         $params['label'] = _("Save Languages");
 
-        list($document, $this->dataNode) = \Depage\Xml\Document::getDocAndNode($params['dataNode']);
-
-        $this->dataNodeXpath = new \DOMXPath($document);
-        $this->dataNodeXpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
-        $this->dataNodeXpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
-
         parent::__construct($name, $params);
-
-        foreach ($this->getElements() as $element) {
-            if (!empty($element->dataInfo)) {
-                $nodes = $this->dataNodeXpath->evaluate($element->dataInfo);
-                $element->setDefaultValue($nodes->item(0)->value);
-            }
-        }
     }
     // }}}
     // {{{ addChildElements()
@@ -77,31 +54,13 @@ class Languages extends Base
         }
         $this->addHtml("</div>");
 
-        $fs->addSingle("default", array(
+        $this->addSingle("default", array(
             "label" => _("Select default languages"),
             "list" => array(
                 "de",
                 "en",
             ),
         ));
-    }
-    // }}}
-    // {{{ getValuesXml()
-    /**
-     * @brief getValuesXml
-     *
-     * @return void
-     **/
-    public function getValuesXml()
-    {
-        foreach ($this->getElements() as $element) {
-            if (!empty($element->dataInfo)) {
-                $nodes = $this->dataNodeXpath->evaluate($element->dataInfo);
-                $nodes->item(0)->value = $element->getValue();
-            }
-        }
-
-        return $this->dataNode;
     }
     // }}}
 }

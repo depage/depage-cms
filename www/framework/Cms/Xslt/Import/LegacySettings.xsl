@@ -51,13 +51,13 @@
 
                     <xsl:choose>
                         <xsl:when test="$lang = 'en'">
-                            <xsl:value-of select="substring($tag/@shortname, 5)" />
+                            <xsl:value-of select="translate(substring($tag/@shortname, 5), '_', ' ')" />
                         </xsl:when>
-                        <xsl:when test="$lang = 'de'">
+                        <xsl:when test="$lang = 'de' and not(substring-after($tag/@name, ': ') = '')">
                             <xsl:value-of select="substring-after($tag/@name, ': ')" />
                         </xsl:when>
                         <otherwise>
-                            <xsl:value-of select="$tag/@name" />
+                            <xsl:value-of select="translate($tag/@name, '_', ' ')" />
                         </otherwise>
                     </xsl:choose>
                 </localized>
