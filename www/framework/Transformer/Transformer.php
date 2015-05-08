@@ -217,6 +217,7 @@ abstract class Transformer
         if ($pageXml === false) {
             throw new \Exception("page does not exist");
         } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {
+            // @todo add better error handling
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
@@ -227,6 +228,12 @@ abstract class Transformer
             $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
 
             throw new \Exception($error);
+        } else {
+            // @todo add better error handling
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log($error);
+            }
         }
 
         $cleaner = new \Depage\Html\Cleaner();
@@ -267,7 +274,9 @@ abstract class Transformer
             $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath);
             $request->setPostData($_POST);
             $request->setCookie($_COOKIE);
-            $request->allowUnsafeSSL = true; // because it's our own local server
+
+            // because it's our own local server -> @todo make this configurable
+            $request->allowUnsafeSSL = true;
 
             $response = $request->execute();
 
