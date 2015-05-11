@@ -184,6 +184,23 @@ class Import
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $node->setAttribute("db:oldid", $node->getAttribute("db:id"));
+
+        }
+
+        // update nav to tag names
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $attrs = $node->attributes;
+
+            for ($j = $attrs->length - 1; $j >= 0; $j--) {
+                $attrNode = $attrs->item($j);
+                $attrName = $attrNode->nodeName;
+                if (strpos($attrName, "nav_tag_") === 0 || strpos($attrName, "nav_cat_") === 0) {
+                    $newName = "tag_" . substr($attrName, 8);
+                    $node->setAttribute($newName, $attrNode->nodeValue);
+                    $node->removeAttribute($attrName);
+                }
+            }
         }
 
         $this->docNavigation->save($this->xmlNavigation);
@@ -276,11 +293,14 @@ class Import
 
                     // make path for temlate group
                     $path = $this->xsltPath . $dataNode->getAttribute("type") . "/";
-                    if (!is_dir($path)) mkdir($path);
+                    if (!is_dir($path)) {
+                        mkdir($path);
+                    }
                     $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
 
                     // string replacement map
                     $replacements = array(
+                        // general
                         "\t" => "    ",
                         "\n" => "\n    ",
                         "document('call:doctype/html/5')" => "'&lt;!DOCTYPE html&gt;&#xa;'",
@@ -316,6 +336,18 @@ class Import
                         "\"/pg:page\"" => "\"\$currentPage\"",
                         "\"/pg:page/" => "\"\$currentPage/",
                         "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
+
+                        // project specific:
+                        // @todo move these into the project folders because they are specific
+                        // roamantiozzo
+                        "<xsl:for-each select=\"(dp:atomizeText( string(\$headline1),' '))/atomized/*\"><xsl:copy-of select=\".\" /><xsl:text> </xsl:text></xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(string(\$headline1))\" disable-output-escaping=\"yes\" />",
+                        "<xsl:for-each select=\"(dp:atomizeText( string(\$headline2),' '))/atomized/*\"><xsl:copy-of select=\".\" /><xsl:text> </xsl:text></xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(string(\$headline1))\" disable-output-escaping=\"yes\" />",
+
+                        //santa vendetta
+                        "<xsl:for-each select=\"(dp:atomizeText( string(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)))/atomized/*\">\n                    <xsl:copy-of select="." /><xsl:text> </xsl:text>\n                </xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)\" disable-output-escaping=\"yes\" />",
+
+                        // rlm trier
+
                     );
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
@@ -330,6 +362,13 @@ class Import
                     }
 
                     file_put_contents($filename, "{$this->xslHeader}    {$xsl}\n{$this->xslFooter}");
+
+                    /*
+                    $testDoc = new \Depage\Xml\Document();
+                    $testDoc->load($filename);
+
+                    $testDoc->save($filename);
+                     */
                 }
             }
             if ($child->nodeName == "pg:folder" || $child->nodeName == "pg:template") {
@@ -546,6 +585,20 @@ class Import
 
         $xsltProc->importStylesheet($xslDom);
         $newXml = $xsltProc->transformToDoc($xmlData);
+
+        /* /
+        echo("<pre>");
+        echo(htmlentities($newXml->saveXml()));
+        echo("</pre>");
+
+        $errors = libxml_get_errors();
+        foreach($errors as $error) {
+            var_dump($error);
+        }
+        $error = libxml_get_last_error();
+        var_dump($error);
+        die();
+        /* */
 
         return $newXml;
     }
