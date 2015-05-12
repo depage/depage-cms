@@ -73,10 +73,10 @@ class_interface.prototype.initSettings = function() {
 		this.layouts.files.init();
 		this.layouts.colors = new class_interfaceLayout_colors(this, conf.lang.register_name_colors);
 		this.layouts.colors.init();
-		this.layouts.templates = new class_interfaceLayout_templates(this, conf.lang.register_name_templates);
-		this.layouts.templates.init();
-		this.layouts.settings = new class_interfaceLayout_settings(this, conf.lang.register_name_settings);
-		this.layouts.settings.init();
+		//this.layouts.templates = new class_interfaceLayout_templates(this, conf.lang.register_name_templates);
+		//this.layouts.templates.init();
+		//this.layouts.settings = new class_interfaceLayout_settings(this, conf.lang.register_name_settings);
+		//this.layouts.settings.init();
 
 		// DialogLayouts
 		this.layouts.dlgChoose_page = new class_interfaceLayout_dlgChoose_page(this, conf.lang.register_name_edit_pages);
@@ -122,7 +122,6 @@ class_interface.prototype.initSettings = function() {
 				tooltip	: conf.lang.register_tip_templates
 			});
 		}
-                */
 		if (conf.user.mayEditSettings()) {
 			this.movClip.register.register.push({
 				title	: this.layouts.settings.title,
@@ -132,6 +131,7 @@ class_interface.prototype.initSettings = function() {
 				tooltip	: conf.lang.register_tip_settings
 			});
 		}
+                */
 
 		//buttonBar
 		this.movClip.buttonBar.buttons = new Array();
