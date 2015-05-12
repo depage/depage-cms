@@ -1933,6 +1933,109 @@ class_propBox_pg_navigation.prototype.setHeight = function() {
 // }}}
 
 /*
+ *	Class PropBox_page_tags
+ *
+ *	Extends class_propBox
+ *	Handles Tags of a Page
+ */
+// {{{ constructor
+class_propBox_pg_tags = function() {};
+class_propBox_pg_tags.prototype = new class_propBox();
+
+class_propBox_pg_tags.prototype.propName = [];
+class_propBox_pg_tags.prototype.propName[0] = conf.lang.prop_name_page_tags;
+// }}}
+// {{{ generateComponents()
+class_propBox_pg_tags.prototype.generateComponents = function() {
+	var tempNode, i;
+	var navigations = [];
+
+	this.attachMovie("rectangle", "textBoxBack", 2);
+	this.textBoxBack.back.setRGB(conf.interface.color_component_face);
+	this.textBoxBack.outline.setRGB(conf.interface.color_component_line);
+
+	this.tags = conf.project.tree.settings.tags;
+	for (var i = 1; i <= this.tags.length; i++) {
+		this.attachMovie("component_checkBox", "checkBox" + i, i + 2);
+		this["checkBox" + i].onChanged = function() {
+			this._parent.onChanged();
+		};
+	}
+};
+// }}}
+// {{{ setData()
+class_propBox_pg_tags.prototype.setData = function() {
+	var i, tempNode;
+
+	super.setData();
+        this.setTitle(conf.lang.prop_name_page_tags);
+
+	for (var i = 1; i <= this.tags.length; i++) {
+		this["checkBox" + i].caption = this.tags[i - 1].name;
+		if (this.data.attributes["tag_" + this.tags[i - 1].name] == "true") {
+			this["checkBox" + i].value = true;
+		} else {
+			this["checkBox" + i].value = false;
+		}
+	}
+};
+// }}}
+// {{{ saveData()
+class_propBox_pg_tags.prototype.saveData = function(forceSave) {
+	if (this.isChanged == true || forceSave == true) {
+		var tempNode;
+		var tempXML = new XML();
+
+		for (var i = 1; i <= this.tags.length; i++) {
+			if (this["checkBox" + i].value) {
+				this.data.attributes["tag_" + this.tags[i - 1].name] = "true";
+			} else {
+				this.data.attributes["tag_" + this.tags[i - 1].name] = "false";
+			}
+		}
+
+		this._parent.propObj.save(this.data.nid, this.data, "tags");
+		this.isChanged = false;
+	}
+	return true;
+};
+// }}}
+// {{{ setComponents()
+class_propBox_pg_tags.prototype.setComponents = function() {
+	var colNum, actualCol, actualRow, rows;
+
+	this.textBoxBack._x = this.settings.border_left;
+	this.textBoxBack._y = this.settings.border_top;
+	this.textBoxBack._width = this.width - this.settings.border_left - this.settings.border_right;
+
+	for (var i = 1; i <= this.tags.length; i++) {
+		this["checkBox" + i]._x = this.settings.border_left + 5;
+		this["checkBox" + i]._y = this.settings.border_top + (i - 1) * conf.interface.menu_line_height;
+		this["checkBox" + i].width = this.width - (this.settings.border_left + this.settings.border_right + 10);
+		this["checkBox" + i].setWidth();
+	}
+
+	this.setHeight();
+};
+// }}}
+// {{{ setHeight()
+class_propBox_pg_tags.prototype.setHeight = function() {
+	var temp;
+
+	this.innerHeight = this.tags.length * conf.interface.menu_line_height + 8;
+        if (this.innerHeight < 26) {
+            this.innerHeight = 26;
+        }
+	this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
+
+	this.textBoxBack._height = this.innerHeight - 5;
+
+	super.setHeight();
+	this._parent.setPropPos();
+};
+// }}}
+
+/*
  *	Class PropBox_page_file
  *
  *	Extends class_propBox
@@ -5212,6 +5315,7 @@ class_propBox_proj_backup_restore.prototype.restoreLib = function() {
 Object.registerClass("prop_pg_date", class_propBox_pg_date);
 Object.registerClass("prop_pg_colorscheme", class_propBox_pg_colorscheme);
 Object.registerClass("prop_pg_navigation", class_propBox_pg_navigation);
+Object.registerClass("prop_pg_tags", class_propBox_pg_tags);
 Object.registerClass("prop_pg_file", class_propBox_pg_file);
 
 Object.registerClass("prop_pg_title", class_propBox_pg_title);

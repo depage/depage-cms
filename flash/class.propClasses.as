@@ -142,6 +142,15 @@ class_prop_page_data.prototype.save = function(id, dataNode, type) {
 		}
 
 		_root.phpConnect.send("set_page_navigations", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["navigations", tempNode], ["type", this.type]]);
+	} else if (type == "tags") {
+		tempNode = dataNode.cloneNode();
+		for(attr in tempNode.attributes) {
+			if (attr.substring(0, 4) != "tag_") {
+				delete(tempNode.attributes[attr]);
+			}
+		}
+
+		_root.phpConnect.send("set_page_tags", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["navigations", tempNode], ["type", this.type]]);
 	} else if (type == "file") {
 		_root.phpConnect.send("set_page_file_options", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", id], ["multilang", dataNode.attributes.multilang], ["file_name", dataNode.attributes.file_name], ["file_type", dataNode.attributes.file_type], ["type", this.type]]);
 	} else if (this.data.isRootNode()) {
@@ -192,6 +201,11 @@ class_prop_page_data.prototype.getPropNodes = function() {
 			tempNode.setNodeIdByDBId();
 			propNodes.push(tempNode);
 
+			tempNode = this.tree_displayObj.activeNode.cloneNode(false);
+			tempNode.nodeName = "pg_tags";
+			tempNode.setNodeIdByDBId();
+			propNodes.push(tempNode);
+
 			if (conf.user.mayEditSourceCode()) {
 				tempNode = this.tree_displayObj.activeNode.cloneNode(false);
 				tempNode.nodeName = "pg_file";
@@ -201,6 +215,11 @@ class_prop_page_data.prototype.getPropNodes = function() {
 		} else if (this.tree_displayObj.activeNode.nodeName == conf.ns.page + ":folder") {
 			tempNode = this.tree_displayObj.activeNode.cloneNode(false);
 			tempNode.nodeName = "pg_navigation";
+			tempNode.setNodeIdByDBId();
+			propNodes.push(tempNode);
+
+			tempNode = this.tree_displayObj.activeNode.cloneNode(false);
+			tempNode.nodeName = "pg_tags";
 			tempNode.setNodeIdByDBId();
 			propNodes.push(tempNode);
 		}

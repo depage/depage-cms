@@ -17,10 +17,10 @@
 
     <!-- {{{ update navigation/tags -->
     <xsl:template match="proj:navigations">
-        <proj:navigation>
+        <proj:navigations>
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="proj:navigation[not(substring(@shortname, 1, 4) = 'tag_' or substring(@shortname, 1, 4) = 'cat_')]" mode="navigation"/>
-        </proj:navigation>
+        </proj:navigations>
         <proj:tags>
             <xsl:apply-templates select="proj:navigation[substring(@shortname, 1, 4) = 'tag_' or substring(@shortname, 1, 4) = 'cat_']" mode="tag" />
         </proj:tags>
@@ -39,9 +39,10 @@
         </xsl:copy>
     </xsl:template>
     <xsl:template match="proj:navigation" mode="tag">
+        <xsl:variable name="tag" select="." />
+
         <proj:tag>
-            <xsl:apply-templates select="@*|node()"/>
-            <xsl:variable name="tag" select="." />
+            <xsl:attribute name="name"><xsl:value-of select="substring($tag/@shortname, 5)" /></xsl:attribute>
 
             <xsl:for-each select="//proj:language">
                 <xsl:variable name="lang" select="@shortname" />

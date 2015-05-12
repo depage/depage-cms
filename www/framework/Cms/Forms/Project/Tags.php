@@ -45,11 +45,7 @@ class Tags extends Base
                 "label" => _("Name"),
                 "placeholder" => _("Language name"),
                 "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@name",
-            ));
-            $fs->addText("shortname-$nodeId", array(
-                "label" => _("Short name"),
-                "placeholder" => _("Langugage Identifier"),
-                "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@shortname",
+                "validator" => "/[-_a-zA-Z0-9]+/",
             ));
 
             foreach ($node->childNodes as $localized) {

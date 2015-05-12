@@ -1736,6 +1736,7 @@ class_tree_settings.prototype.set_data = function(args) {
 		this.data = new XML(args['data']);
 		this.setNodeIds();
 		this.navigations = this.getNavigations();
+		this.tags = this.getTags();
 		this.variables = this.getVariables();
 		this.languages = this.getLanguages();
 		this.templateSets = this.getTemplateSets();
@@ -1898,6 +1899,28 @@ class_tree_settings.prototype.getNavigations = function() {
 	tempNode = this.data.getRootNode().firstChild;
 	while (tempNode != null) {
 		if (tempNode.nodeName == conf.ns.project + ":navigations") {
+			for (i = 0; i < tempNode.childNodes.length; i++) {
+				navigations.push({
+					name		: tempNode.childNodes[i].attributes.name,
+					shortname	: tempNode.childNodes[i].attributes.shortname
+				});
+			}
+			return navigations;
+		}
+
+		tempNode = tempNode.nextSibling;
+	}
+};
+// }}}
+// {{{ getTags()
+class_tree_settings.prototype.getTags = function() {
+	var tempNode;
+	var tempObj;
+	var navigations = [];
+
+	tempNode = this.data.getRootNode().firstChild;
+	while (tempNode != null) {
+		if (tempNode.nodeName == conf.ns.project + ":tags") {
 			for (i = 0; i < tempNode.childNodes.length; i++) {
 				navigations.push({
 					name		: tempNode.childNodes[i].attributes.name,

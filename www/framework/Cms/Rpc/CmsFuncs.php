@@ -431,6 +431,25 @@ class CmsFuncs {
         return new Func('preview_update', array('error' => 0));
     }
     // }}}
+    // {{{ set_page_tags()
+    function set_page_tags($args) {
+        $treeType = $args['type'];
+        $nodeId = $args['id'];
+        $navigationNode = $args['navigations'][0];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        if ($xmldoc) {
+            foreach($navigationNode->attributes as $attr) {
+                $xmldoc->setAttribute($nodeId, $attr->name, $attr->value);
+            }
+        }
+
+        $this->addCallback($treeType, array($nodeId));
+        $this->addCallback('pages', array($nodeId));
+
+        return new Func('preview_update', array('error' => 0));
+    }
+    // }}}
     // {{{ set_page_file_options()
     function set_page_file_options($args) {
         $treeType = $args['type'];
@@ -606,6 +625,7 @@ class CmsFuncs {
             'prop_name_page_icon' => _("icon"),
             'prop_name_page_linkdesc' => _("linkinfo"),
             'prop_name_page_navigation' => _("navigation"),
+            'prop_name_page_tags' => _("tags"),
             'prop_name_page_title' => _("title"),
             'prop_name_pg_template' => _("type"),
             'prop_name_proj_bak_backup_auto' => _("backup"),
