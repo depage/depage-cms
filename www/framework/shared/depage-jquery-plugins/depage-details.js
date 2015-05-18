@@ -42,7 +42,7 @@
                     // stop links inside header opening/closing details
                     e.stopPropagation();
                 });
-                $head.click(function() {
+                $head.on("click", function() {
                     if (!$head.hasClass("active")) {
                         base.closeDetail($(base.options.headSelector, base.el).filter(".active"));
                         base.openDetail($head);
@@ -50,6 +50,9 @@
                     } else {
                         base.closeDetail($head);
                     }
+                });
+                $head.on("depage.filter-hidden", function(e, $detail) {
+                    base.closeDetail($detail);
                 });
             });
         };
