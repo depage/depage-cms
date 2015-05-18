@@ -188,13 +188,19 @@ class Project extends Base
      **/
     private function settings_variables()
     {
+        $settings = $this->project->getSettingsDoc();
+        $xml = $settings->getSubDocByXpath("//proj:variables");
+
         $form = new \Depage\Cms\Forms\Project\Variables("edit-project-variables-" . $this->project->id, array(
             'project' => $this->project,
+            'dataNode' => $xml,
         ));
         $form->process();
 
         if ($form->validate()) {
-            $values = $form->getValues();
+            $node = $form->getValuesXml();
+            $settings->saveNode($node);
+
 
             $form->clearSession();
 
