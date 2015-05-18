@@ -28,11 +28,11 @@
             base.options = $.extend({},$.depage.details.defaultOptions, options);
 
             // Put your initialization code here
-            $("dt", base.el).each(function() {
+            $(base.options.headSelector, base.el).each(function() {
                 var $head = $(this).css({
                     cursor: "pointer"
                 });
-                var $detail = $head.nextAll("dd:first");
+                var $detail = $head.nextUntil(base.options.headSelector);
 
                 $(this).prepend("<span class=\"opener\"></span>");
 
@@ -44,7 +44,7 @@
                 });
                 $head.click(function() {
                     if (!$head.hasClass("active")) {
-                        base.closeDetail($("dt.active", base.el));
+                        base.closeDetail($(base.options.headSelector, base.el).filter(".active"));
                         base.openDetail($head);
 
                     } else {
@@ -58,10 +58,10 @@
             if ($head.length == 0) {
                 return;
             }
-            var $detail = $head.nextAll("dd:first");
+            var $detail = $head.nextUntil(base.options.headSelector);
 
             $head.addClass("active");
-            $head.siblings("dd").slideUp();
+            $head.siblings(base.options.detailSelector).slideUp();
             $detail.addClass("active");
             $detail.slideDown();
             base.$el.trigger("depage.detail-opened", [$head, $detail]);
@@ -70,7 +70,7 @@
             if ($head.length == 0) {
                 return;
             }
-            var $detail = $head.nextAll("dd:first");
+            var $detail = $head.nextUntil(base.options.headSelector);
 
             $detail.removeClass("active");
             $detail.slideUp("normal", function() {
@@ -83,7 +83,10 @@
         base.init();
     };
 
-    $.depage.details.defaultOptions = {};
+    $.depage.details.defaultOptions = {
+        headSelector: "dt",
+        detailSelector: "dd",
+    };
 
     $.fn.depageDetails = function(options){
         return this.each(function(){
