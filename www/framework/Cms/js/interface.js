@@ -2,6 +2,7 @@
  * @require framework/shared/jquery-1.8.3.js
  * @require framework/shared/jquery.cookie.js
  * @require framework/shared/depage-jquery-plugins/depage-details.js
+ * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  *
  *
  * @file    js/global.js
@@ -119,6 +120,10 @@ var depageCMS = (function() {
 
                         localJS.setupPreviewLinks();
                     });
+            });
+
+            $projects.depageLiveFilter("dt", "strong", {
+                placeholder: "Filter Projects"
             });
         },
         // }}}
