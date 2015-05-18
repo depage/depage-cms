@@ -61,6 +61,12 @@
             for (var i = 0; i < $items.length; i++) {
                 keywords[i] = $(base.searchSelector, $items[i]).text().toLowerCase();
             }
+
+            if ($items.length > 1) {
+                base.$input.removeAttr("disabled");
+            } else {
+                base.$input.attr("disabled", "disabled");
+            }
         };
         // }}}
         // {{{ filterBy
@@ -84,6 +90,7 @@
                     $item.trigger("depage.filter-hidden", [$item]);
                 }
             }
+            // @todo add placeholder message when list is empty
         };
         // }}}
 
