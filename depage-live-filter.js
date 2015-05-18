@@ -38,7 +38,12 @@
             var $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").insertBefore(base.$el);
             base.$input = $("<input type=\"search\" placeholder=\"" + base.options.placeholder + "\">").prependTo($container);
 
-            base.$input.on("input keyup", function() {
+            base.$input.on("input keyup", function(e) {
+                var key = e.which || e.keyCode;
+                if (key == 27) {
+                    // clear on escape key
+                    this.value = "";
+                }
                 base.filterBy(this.value);
             });
 
