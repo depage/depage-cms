@@ -41,45 +41,47 @@ class Publish extends Base
                 "label" => $node->getAttribute("name"),
             ));
 
-            $fs->addText("name-$nodeId", array(
-                "label" => _("Name"),
-                "placeholder" => _("Name of publishing target"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
-            ));
-            $fs->addText("output_folder-$nodeId", array(
-                "label" => _("Output folder"),
-                "placeholder" => _("URL, where to publish project to"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
-            ));
-            $fs->addUrl("baseurl-$nodeId", array(
-                "label" => _("Base Url"),
-                "placeholder" => _("Base URL of publish target"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
-            ));
-            $fs->addText("output_user-$nodeId", array(
-                "label" => _("Username"),
-                "placeholder" => _("Username"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
-            ));
-            $fs->addPassword("output_password-$nodeId", array(
-                "label" => _("Password"),
-                "placeholder" => _("Password"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
-            ));
-            $fs->addSingle("template_set-$nodeId", array(
-                "label" => _("Template Set"),
-                "list" => array(),
-                "skin" => "select",
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
-            ));
-            $fs->addBoolean("mod_rewrite-$nodeId", array(
-                "label" => _("Server supports mod rewrite"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
-            ));
-            $fs->addBoolean("default-$nodeId", array(
-                "label" => _("Publish to this target as default"),
-                "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
-            ));
+            $fs->addHtml("<div class=\"detail\">");
+                $fs->addText("name-$nodeId", array(
+                    "label" => _("Name"),
+                    "placeholder" => _("Name of publishing target"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
+                ));
+                $fs->addText("output_folder-$nodeId", array(
+                    "label" => _("Output folder"),
+                    "placeholder" => _("URL, where to publish project to"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
+                ));
+                $fs->addUrl("baseurl-$nodeId", array(
+                    "label" => _("Base Url"),
+                    "placeholder" => _("Base URL of publish target"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
+                ));
+                $fs->addText("output_user-$nodeId", array(
+                    "label" => _("Username"),
+                    "placeholder" => _("Username"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
+                ));
+                $fs->addPassword("output_password-$nodeId", array(
+                    "label" => _("Password"),
+                    "placeholder" => _("Password"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
+                ));
+                $fs->addSingle("template_set-$nodeId", array(
+                    "label" => _("Template Set"),
+                    "list" => array(),
+                    "skin" => "select",
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
+                ));
+                $fs->addBoolean("mod_rewrite-$nodeId", array(
+                    "label" => _("Server supports mod rewrite"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
+                ));
+                $fs->addBoolean("default-$nodeId", array(
+                    "label" => _("Publish to this target as default"),
+                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
+                ));
+            $fs->addHtml("</div>");
         }
         $this->addHtml("</div>");
     }

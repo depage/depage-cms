@@ -1,6 +1,8 @@
 /*
  * @require framework/shared/jquery-1.8.3.js
  * @require framework/shared/jquery.cookie.js
+ * @require framework/shared/jquery-sortable.js
+ *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  *
@@ -58,6 +60,7 @@ var depageCMS = (function() {
             localJS.setupToolbar();
             localJS.setupProjectList();
             localJS.setupPreviewLinks();
+            localJS.setupSortables();
         },
         // }}}
         // {{{ setupVarious
@@ -133,6 +136,34 @@ var depageCMS = (function() {
                 localJS.preview(this.href);
 
                 return false;
+            });
+        },
+        // }}}
+        // {{{ setupSortables
+        setupSortables: function() {
+            $(".sortable-fieldsets").depageDetails({
+                headSelector: "legend",
+                detailSelector: ".detail",
+            }).sortable({
+                itemSelector: "fieldset",
+                nested: false,
+                vertical: false,
+                handle: "legend",
+                pullPlaceholder: false,
+                tolerance: 5,
+                onDragStart: function($item, container, _super, event) {
+                    _super($item, container);
+                },
+                onDrag: function ($item, position, _super, event) {
+                },
+                onDrop: function($item, container, _super) {
+                    _super($item, container);
+                },
+                onCancel: function($item, container, _super) {
+                    _super($item, container);
+                },
+                afterMove: function ($placeholder, container, $closestItemOrContainer) {
+                }
             });
         },
         // }}}

@@ -41,23 +41,25 @@ class Tags extends Base
                 "label" => $node->getAttribute("name"),
             ));
 
-            $fs->addText("name-$nodeId", array(
-                "label" => _("Name"),
-                "placeholder" => _("Language name"),
-                "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@name",
-                "validator" => "/[-_a-zA-Z0-9]+/",
-            ));
-
-            foreach ($node->childNodes as $localized) {
-                //$langId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-                $lang = $localized->getAttribute("lang");
-
-                $fs->addText("localized-$nodeId-$lang", array(
-                    "label" => $lang,
-                    "placeholder" => _("Localized name"),
-                    "dataInfo" => "//proj:tag[@db:id = '$nodeId']/localized[@lang = '$lang']",
+            $fs->addHtml("<div class=\"detail\">");
+                $fs->addText("name-$nodeId", array(
+                    "label" => _("Name"),
+                    "placeholder" => _("Language name"),
+                    "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@name",
+                    "validator" => "/[-_a-zA-Z0-9]+/",
                 ));
-            }
+
+                foreach ($node->childNodes as $localized) {
+                    //$langId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+                    $lang = $localized->getAttribute("lang");
+
+                    $fs->addText("localized-$nodeId-$lang", array(
+                        "label" => $lang,
+                        "placeholder" => _("Localized name"),
+                        "dataInfo" => "//proj:tag[@db:id = '$nodeId']/localized[@lang = '$lang']",
+                    ));
+                }
+            $fs->addHtml("</div>");
         }
         $this->addHtml("</div>");
     }

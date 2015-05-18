@@ -861,19 +861,32 @@ div.preview.zoom100 iframe {
 /* {{{ sortable fieldset */
 .depage-form .sortable-fieldsets {
     fieldset {
-        position: relative;
-        margin-left: 25%;
-        width: 75%;
-        //border-top: none;
-        padding-top: 1em;
-
         legend {
-            position: absolute;
-            top: 0.3em;
-            left: -33%;
-            width: 25%;
+            display: block;
+        }
+        .content {
+            display: block;
         }
     }
+}
+/* }}} */
+/* {{{ details */
+dl.projectlist dt .opener,
+.sortable-fieldsets legend {
+    display: block;
+    content: " ";
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-top: 7px;
+    @include icon-base("closed", 0.28);
+}
+.sortable-fieldsets legend {
+    text-indent: 16px;
+}
+dl.projectlist dt.active .opener,
+.sortable-fieldsets legend.active {
+    @include icon("open", 0.28);
 }
 /* }}} */
 
@@ -913,18 +926,6 @@ dl.projectlist {
         height: 16px;
         margin-top: 5px;
         margin-right: 5px;
-    }
-    .opener:before {
-        display: block;
-        content: " ";
-        float: left;
-        width: 16px;
-        height: 16px;
-        margin-top: 7px;
-        @include icon-base("closed", 0.28);
-    }
-    .active .opener:before {
-        @include icon("open", 0.28);
     }
     dt strong,
     a.button {

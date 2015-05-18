@@ -41,16 +41,18 @@ class Languages extends Base
                 "label" => $node->getAttribute("name"),
             ));
 
-            $fs->addText("name-$nodeId", array(
-                "label" => _("Name"),
-                "placeholder" => _("Language name"),
-                "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
-            ));
-            $fs->addText("shortname-$nodeId", array(
-                "label" => _("Short name"),
-                "placeholder" => _("Langugage Identifier"),
-                "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
-            ));
+            $fs->addHtml("<div class=\"detail\">");
+                $fs->addText("name-$nodeId", array(
+                    "label" => _("Name"),
+                    "placeholder" => _("Language name"),
+                    "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
+                ));
+                $fs->addText("shortname-$nodeId", array(
+                    "label" => _("Short name"),
+                    "placeholder" => _("Langugage Identifier"),
+                    "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
+                ));
+            $fs->addHtml("</div>");
         }
         $this->addHtml("</div>");
 
