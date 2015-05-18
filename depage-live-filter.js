@@ -41,8 +41,11 @@
             base.$input.on("input keyup", function(e) {
                 var key = e.which || e.keyCode;
                 if (key == 27) {
-                    // clear on escape key
+                    // clear filter on escape key
                     this.value = "";
+                } else if (key == 13) {
+                    // leave input on enter
+                    this.blur();
                 }
                 base.filterBy(this.value);
             });
@@ -53,6 +56,7 @@
         // {{{ updateItems
         base.updateItems = function() {
             $items = $(base.itemSelector, base.$el);
+            keywords = [];
 
             for (var i = 0; i < $items.length; i++) {
                 keywords[i] = $(base.searchSelector, $items[i]).text().toLowerCase();
@@ -72,16 +76,12 @@
 
                 var $item = $items.eq(i);
 
-                // @todo add events when showing/hiding elements
                 if (found) {
                     $item.show();
+                    $item.trigger("depage.filter-shown", [$item]);
                 } else {
                     $item.hide();
-
-                    // @todo adjust live filter to work with filtering depage-details -> only a hack
-                    if ($item.is("dt")) {
-                        $item.next("dd").hide();
-                    }
+                    $item.trigger("depage.filter-hidden", [$item]);
                 }
             }
         };
