@@ -5,8 +5,6 @@
  *       have ttl in the setter instead of the getter
  *
  * @todo add increment/decrement ?
- *
- * @todo add provider for redis ?
  */
 
 namespace Depage\Cache;
@@ -47,7 +45,7 @@ abstract class Cache
     // {{{ constructor
     protected function __construct($prefix, $options = array())
     {
-        $class_vars = get_class_vars('\depage\cache\cache');
+        $class_vars = get_class_vars('\Depage\Cache\Cache');
         $options = array_merge($class_vars['defaults'], $options);
 
         $this->prefix = $prefix;
