@@ -112,7 +112,7 @@ abstract class Cache
      */
     abstract public function clear();
     // }}}
-    
+
     // {{{ rmr */
     /**
      * @brief deletes files and direcories recursively
@@ -145,6 +145,70 @@ abstract class Cache
     protected function getCachePath($key)
     {
         return $this->cachepath . $key;
+    }
+    // }}}
+
+    // {{{ serialize
+    /**
+     * @brief serializes data ob a cache item
+     *
+     * @param   $data (object) object to save. $data must be serializable
+     *
+     * @return (bool) true on success, false on failure
+     */
+    public function serialize($key, $data)
+    {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+            // do not serialize xml or json -> string expected
+            // @todo trigger error when not a string
+            return $data;
+        } else {
+            return serialize($data);
+        }
+    }
+    // }}}
+    // {{{ unserialize */
+    /**
+     * @brief unserializes a cached object
+     *
+     * @param   $key (string) key of item to get
+     *
+     * @return (object) unserialized content of cache item, false if the cache item does not exist
+     */
+    public function unserialize($key, $value)
+    {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+            // do not unserialize xml or json -> give back string
+            return $value;
+        } else {
+            return unserialize($value);
+        }
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'prefix',
+            'cachepath',
+            'baseurl',
+            'host',
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows Depage\Db\Pdo-object to be unserialized
+     *
+     * We don't need to initialize the connection because we are already initializing them late.
+     */
+    public function __wakeup()
+    {
+        $this->init();
     }
     // }}}
 }

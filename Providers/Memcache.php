@@ -14,7 +14,7 @@ class Memcache extends \Depage\Cache\Cache
     private $memc;
     protected $keyNs = "~~namespace";
     // }}}
-    
+
     // {{{ constructor
     protected function __construct($prefix, $options = array())
     {
@@ -23,7 +23,13 @@ class Memcache extends \Depage\Cache\Cache
         $options = array_merge($this->defaults, $options);
         $this->host = $options['host'];
 
-        $this->memc = $this->init();
+        $this->init();
+    }
+    // }}}
+    // {{{ init()
+    protected function init()
+    {
+        $this->memc = $this->getInstance();
 
         if (!is_array($this->host)) {
             $this->host = array($this->host);
@@ -41,8 +47,8 @@ class Memcache extends \Depage\Cache\Cache
         }
     }
     // }}}
-    // {{{ init
-    protected function init()
+    // {{{ getInstance()
+    protected function getInstance()
     {
         return new \Memcache();
     }
@@ -87,7 +93,7 @@ class Memcache extends \Depage\Cache\Cache
     {
         $k = $this->getMemcKey($key);
 
-        return $this->memc->set($k, $data);
+        return $this->memc->set($k, $this->serialize($key, $data));
     }
     // }}}
     // {{{ get */
@@ -102,7 +108,7 @@ class Memcache extends \Depage\Cache\Cache
     {
         $k = $this->getMemcKey($key);
 
-        return $this->memc->get($k);
+        return $this->unserialize($key, $this->memc->get($k));
     }
     // }}}
 

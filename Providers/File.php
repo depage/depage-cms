@@ -110,9 +110,7 @@ class File extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        $str = serialize($data);
-
-        return $this->setFile($key, $str);
+        return $this->setFile($key, $this->serialize($key, $data));
     }
     // }}}
     // {{{ get */
@@ -127,7 +125,7 @@ class File extends \Depage\Cache\Cache
     {
         $value = $this->getFile($key);
 
-        return unserialize($value);
+        return $this->unserialize($key, $value);
     }
     // }}}
     // {{{ getUrl */
@@ -142,6 +140,21 @@ class File extends \Depage\Cache\Cache
     {
         if ($this->baseurl !== null) {
             return $this->baseurl . $key;
+        }
+    }
+    // }}}
+    // {{{ getPath */
+    /**
+     * @brief returns cache-url of cache-item for direct access through http
+     *
+     * @param   $key (string) key of cache item
+     *
+     * @return (string) url of cache-item
+     */
+    public function getPath($key)
+    {
+        if ($this->cachepath !== null) {
+            return $this->cachepath . $key;
         }
     }
     // }}}

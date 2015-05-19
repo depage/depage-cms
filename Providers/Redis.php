@@ -10,7 +10,7 @@ class Redis extends \Depage\Cache\Cache
     );
     private $redis;
     // }}}
-    
+
     // {{{ constructor
     protected function __construct($prefix, $options = array())
     {
@@ -19,7 +19,13 @@ class Redis extends \Depage\Cache\Cache
         $options = array_merge($this->defaults, $options);
         $this->host = $options['host'];
 
-        $this->redis = $this->init();
+        $this->init();
+    }
+    // }}}
+    // {{{ init
+    protected function init()
+    {
+        $this->redis = new \Redis();
 
         if (!is_array($this->host)) {
             $this->host = array($this->host);
@@ -35,12 +41,6 @@ class Redis extends \Depage\Cache\Cache
 
             $this->redis->connect($host, (int) $port);
         }
-    }
-    // }}}
-    // {{{ init
-    protected function init()
-    {
-        return new \Redis();
     }
     // }}}
 
@@ -80,9 +80,7 @@ class Redis extends \Depage\Cache\Cache
      */
     public function set($key, $data)
     {
-        $str = serialize($data);
-
-        return $this->redis->set($key, $str);
+        return $this->redis->set($key, $this->serialize($key, $data));
     }
     // }}}
     // {{{ get */
@@ -97,7 +95,7 @@ class Redis extends \Depage\Cache\Cache
     {
         $value = $this->redis->get($key);
 
-        return unserialize($value);
+        return $this->unserialize($key, $value);
     }
     // }}}
 

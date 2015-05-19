@@ -9,7 +9,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
 
     // {{{ setUp()
     /**
-     * setup function 
+     * setup function
      **/
     public function setUp()
     {
@@ -23,7 +23,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
     // }}}
     // {{{ tearDown()
     /**
-     * setup function 
+     * setup function
      **/
     public function tearDown()
     {
@@ -40,7 +40,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         exec("rm -r cache/* 2> /dev/null");
     }
     // }}}
-    
+
     // {{{ testSetGetSimpleString()
     /**
      * Tests basic getter and setter
@@ -86,7 +86,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($var, $this->cache->get($key));
     }
     // }}}
-    
+
     // {{{ testExists()
     /**
      * Tests basic exists test
@@ -106,7 +106,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->cache->exist($key2));
     }
     // }}}
-    
+
     // {{{ testDelete()
     /**
      * Tests basic return value for unset keys
@@ -131,7 +131,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->cache->get("key"));
     }
     // }}}
-    
+
     // {{{ testSetGetNamespace()
     /**
      * Tests basic getter and setter
@@ -169,12 +169,12 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->cache->get($key1));
         $this->assertFalse($this->cache->get($key2));
         $this->assertFalse($this->cache->get($key3));
-        
+
         // things in the test namespace should still be set
         $this->assertEquals($var, $this->cache->get($key4));
     }
     // }}}
-    
+
     // {{{ testClear()
     /**
      * Tests clear function

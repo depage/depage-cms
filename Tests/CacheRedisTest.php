@@ -7,7 +7,7 @@ class CacheRedisTest extends CacheFileTest
 {
     // {{{ setUp()
     /**
-     * setup function 
+     * setup function
      **/
     public function setUp()
     {
@@ -21,7 +21,7 @@ class CacheRedisTest extends CacheFileTest
     // }}}
     // {{{ tearDown()
     /**
-     * setup function 
+     * setup function
      **/
     public function tearDown()
     {

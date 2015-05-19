@@ -7,8 +7,3 @@ test:
 
 clean:
 	cd Tests; $(MAKE) $(MFLAGS) clean
-
-.PHONY: all
-.PHONY: clean
-.PHONY: test
-
