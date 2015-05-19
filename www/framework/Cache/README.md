@@ -24,7 +24,9 @@ Prerequisites
 -------------
 
 - PHP >= 5.3
+- redis extension for redis provider
 - Memcache extension for memcache provider
+- Memcached extension for memcached provider
 
 For more information
 --------------------

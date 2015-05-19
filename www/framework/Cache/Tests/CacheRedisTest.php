@@ -1,11 +1,5 @@
 <?php
 
-namespace Depage\Cache\Cache\Tests;
-
-require_once("bootstrap.php");
-
-use Depage\Cache\Cache;
-
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
@@ -13,7 +7,7 @@ class CacheRedisTest extends CacheFileTest
 {
     // {{{ setUp()
     /**
-     * setup function 
+     * setup function
      **/
     public function setUp()
     {
@@ -27,7 +21,7 @@ class CacheRedisTest extends CacheFileTest
     // }}}
     // {{{ tearDown()
     /**
-     * setup function 
+     * setup function
      **/
     public function tearDown()
     {

@@ -9,25 +9,6 @@
 
 namespace Depage\Cache;
 
-// {{{ autoloader
-/**
- * @brief PHP autoloader
- *
- * Autoloads classes by namespace. (requires PHP >= 5.3)
- **/
-function autoload($class)
-{
-    $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
-    $file = __DIR__ . '/' .  $class . '.php';
-
-    if (file_exists($file)) {
-        require_once($file);
-    }
-}
-
-spl_autoload_register(__NAMESPACE__ . '\autoload');
-// }}}
-
 abstract class Cache
 {
     // {{{ variables
@@ -47,6 +28,7 @@ abstract class Cache
         if (!isset($options['disposition'])) {
             $options['disposition'] = "file";
         }
+
         if (in_array($options['disposition'], array("memcached", "memory")) && extension_loaded("memcached")) {
             return new \Depage\Cache\Providers\Memcached($prefix, $options);
         } elseif (in_array($options['disposition'], array("memcache", "memory")) && extension_loaded("memcache")) {
@@ -63,7 +45,7 @@ abstract class Cache
     // {{{ constructor
     protected function __construct($prefix, $options = array())
     {
-        $class_vars = get_class_vars('\depage\cache\cache');
+        $class_vars = get_class_vars('\Depage\Cache\Cache');
         $options = array_merge($class_vars['defaults'], $options);
 
         $this->prefix = $prefix;
@@ -163,6 +145,44 @@ abstract class Cache
     protected function getCachePath($key)
     {
         return $this->cachepath . $key;
+    }
+    // }}}
+
+    // {{{ serialize
+    /**
+     * @brief serializes data ob a cache item
+     *
+     * @param   $data (object) object to save. $data must be serializable
+     *
+     * @return (bool) true on success, false on failure
+     */
+    public function serialize($key, $data)
+    {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+            // do not serialize xml or json -> string expected
+            // @todo trigger error when not a string
+            return $data;
+        } else {
+            return serialize($data);
+        }
+    }
+    // }}}
+    // {{{ unserialize */
+    /**
+     * @brief unserializes a cached object
+     *
+     * @param   $key (string) key of item to get
+     *
+     * @return (object) unserialized content of cache item, false if the cache item does not exist
+     */
+    public function unserialize($key, $value)
+    {
+        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+            // do not unserialize xml or json -> give back string
+            return $value;
+        } else {
+            return unserialize($value);
+        }
     }
     // }}}
 
