@@ -203,6 +203,24 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ testSerializedCacheObject()
+    /**
+     * Test serialization of Cache Object
+     **/
+    public function testSerializedCacheObject()
+    {
+        $var = "This is a test content";
+        $key = "test";
+
+        $serialized = serialize($this->cache);
+        $newCache = unserialize($serialized);
+
+        $newCache->set($key, $var);
+
+        $this->assertEquals($var, $newCache->get($key));
+    }
+    // }}}
+
     // {{{ testClear()
     /**
      * Tests clear function
