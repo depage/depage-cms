@@ -5,8 +5,6 @@
  *       have ttl in the setter instead of the getter
  *
  * @todo add increment/decrement ?
- *
- * @todo add provider for redis ?
  */
 
 namespace Depage\Cache;
@@ -165,6 +163,32 @@ abstract class Cache
     protected function getCachePath($key)
     {
         return $this->cachepath . $key;
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'prefix',
+            'cachepath',
+            'baseurl',
+            'host',
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows Depage\Db\Pdo-object to be unserialized
+     *
+     * We don't need to initialize the connection because we are already initializing them late.
+     */
+    public function __wakeup()
+    {
+        $this->init();
     }
     // }}}
 }

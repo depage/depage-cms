@@ -7,8 +7,8 @@ namespace Depage\Cache\Providers;
 
 class Memcached extends Memcache
 {
-    // {{{ init
-    protected function init()
+    // {{{ getInstance
+    protected function getInstance()
     {
         return new \Memcached();
     }
