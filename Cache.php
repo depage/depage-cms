@@ -158,7 +158,8 @@ abstract class Cache
      */
     public function serialize($key, $data)
     {
-        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+        $ext = substr($key, strrpos($key, "."));
+        if (in_array($ext, array(".xml", ".xsl", ".json"))) {
             // do not serialize xml or json -> string expected
             // @todo trigger error when not a string
             return $data;
@@ -177,7 +178,8 @@ abstract class Cache
      */
     public function unserialize($key, $value)
     {
-        if (substr($key, -4) === ".xml" || substr($key, -4) === ".xsl" || substr($key, -5) === ".json") {
+        $ext = substr($key, strrpos($key, "."));
+        if (in_array($ext, array(".xml", ".xsl", ".json"))) {
             // do not unserialize xml or json -> give back string
             return $value;
         } else {
