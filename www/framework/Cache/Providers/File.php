@@ -8,6 +8,7 @@ class File extends \Depage\Cache\Cache
     protected $prefix;
     protected $cachepath;
     protected $baseurl;
+    protected $host;
     protected $defaults = array(
         'cachepath' => DEPAGE_CACHE_PATH,
         'baseurl' => DEPAGE_BASE,
@@ -24,6 +25,14 @@ class File extends \Depage\Cache\Cache
         $this->prefix = $prefix;
         $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
         $this->baseurl = "{$options['baseurl']}/cache/{$this->prefix}/";
+    }
+    // }}}
+    // {{{ init()
+    /**
+     * @brief empty init function (called on wakeup)
+     **/
+    protected function init()
+    {
     }
     // }}}
     // {{{ exist
