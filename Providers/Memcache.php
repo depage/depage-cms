@@ -93,7 +93,7 @@ class Memcache extends \Depage\Cache\Cache
     {
         $k = $this->getMemcKey($key);
 
-        return $this->memc->set($k, $data);
+        return $this->memc->set($k, $this->serialize($key, $data));
     }
     // }}}
     // {{{ get */
@@ -108,7 +108,7 @@ class Memcache extends \Depage\Cache\Cache
     {
         $k = $this->getMemcKey($key);
 
-        return $this->memc->get($k);
+        return $this->unserialize($key, $this->memc->get($k));
     }
     // }}}
 
