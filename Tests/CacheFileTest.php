@@ -86,6 +86,34 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($var, $this->cache->get($key));
     }
     // }}}
+    // {{{ testSetGetXmlString()
+    /**
+     * Tests basic getter and setter with xml string content
+     **/
+    public function testSetGetXmlString()
+    {
+        $var = "<?xml version=\"1.0\">\n<root>text content</root>";
+        $key = "test.xml";
+
+        $this->cache->set($key, $var);
+
+        $this->assertEquals($var, $this->cache->get($key));
+    }
+    // }}}
+    // {{{ testSetGetJsonString()
+    /**
+     * Tests basic getter and setter with json string content
+     **/
+    public function testSetGetJsonString()
+    {
+        $var = '{"a":1,"b":2,"c":3,"d":4,"e":5}';
+        $key = "test.json";
+
+        $this->cache->set($key, $var);
+
+        $this->assertEquals($var, $this->cache->get($key));
+    }
+    // }}}
 
     // {{{ testExists()
     /**
