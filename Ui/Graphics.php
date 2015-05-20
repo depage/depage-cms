@@ -6,13 +6,13 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  * @author  Sebastian Reinhold <sebastian@bitbernd.de>
  **/
-namespace Depage\Graphics;
+namespace Depage\Graphics\Ui;
 /**
  * @brief Interface for accessing graphics via URI
  *
  * Translates request to graphics actions.
  **/
-class Graphics_ui extends \depage_ui
+class Graphics extends \Depage\Depage\Ui\Base
 {
     /**
      * @brief Default options array for graphics factory
@@ -60,7 +60,7 @@ class Graphics_ui extends \depage_ui
 
         $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
-        $img = graphics::factory(
+        $img = \Depage\Graphics\Graphics::factory(
             array(
                 'extension'     => $this->options->extension,
                 'executable'    => $this->options->executable,
