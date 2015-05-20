@@ -61,14 +61,27 @@ class Imgurl
             $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
             $uriParts = explode("/", $_SERVER["REQUEST_URI"]);
 
-            for ($i = 0; $i < count($uriParts); $i++) {
-                // find common parts of url up to lib parameter
-                if ($scriptParts[$i] != $uriParts[$i] || $uriParts[$i] == "lib") {
-                    break;
+            if (strpos($_SERVER["SCRIPT_NAME"], "/lib/") !== false) {
+                for ($i = 0; $i < count($uriParts); $i++) {
+                    // find common parts of url up to lib parameter
+                    if ($uriParts[$i] == "lib") {
+                        break;
+                    }
+                }
+            } else {
+                for ($i = 0; $i < count($uriParts); $i++) {
+                    // find common parts of url up to lib parameter
+                    if ($scriptParts[$i] != $uriParts[$i]) {
+                        break;
+                    }
                 }
             }
             $baseUrl = implode("/", array_slice($uriParts, 0, $i));
-            $relativePath = str_repeat("../", count($scriptParts) - $i - 1);
+            if (isset($this->options['relPath'])) {
+                $relativePath = $this->options['relPath'];
+            } else {
+                $relativePath = str_repeat("../", count($scriptParts) - $i - 1);
+            }
             $this->cachePath = $relativePath . "lib/cache/graphics/";
         }
 
@@ -133,8 +146,6 @@ class Imgurl
     // {{{ render
     public function render()
     {
-        $graphics = Graphics::factory($this->options);
-
         $this->analyze();
 
         if ($this->invalidAction) {
@@ -147,8 +158,14 @@ class Imgurl
         if (!is_dir($outDir)) {
             mkdir($outDir, 0755, true);
         }
+        if (file_exists($this->outImg) && filemtime($this->outImg) >= filemtime($this->srcImg)) {
+            // rendered image does exist already
+            return $this;
+        }
 
         try {
+            $graphics = Graphics::factory($this->options);
+
             // add actions to graphics class
             foreach ($this->actions as $action) {
                 list($func, $params) = $action;
@@ -189,8 +206,6 @@ class Imgurl
             header("Content-type: image/webp");
         }
         readfile($this->outImg);
-        // @todo disable deleting when finished
-        //unlink($this->outImg);
 
         return $this;
     }
@@ -209,7 +224,7 @@ class Imgurl
         }
     }
     // }}}
-    
+
     // {{{ addBackground()
     public function addBackground($background)
     {
