@@ -116,6 +116,16 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertEquals(4, $doc->getDocId());
     }
     // }}}
+    // {{{ testCreateDocInvalidName
+    /**
+     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedExceptionMessage You have to give a valid name to save a new document.
+     */
+    public function testCreateDocInvalidName()
+    {
+        $doc = $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', false);
+    }
+    // }}}
 
     // {{{ testRemoveDoc
     public function testRemoveDoc()
