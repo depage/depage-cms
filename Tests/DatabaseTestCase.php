@@ -71,6 +71,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         foreach ($attributes as $attribute) {
             $regex = preg_quote($attribute .'=') . '"[^"]*"';
             $actual = preg_replace('#' . $regex . '#', '', $actual);
+            $expected = preg_replace('#' . $regex . '#', '', $expected);
         }
 
         return $this->assertXmlStringEqualsXmlString($expected, $actual, $message);

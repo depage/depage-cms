@@ -127,6 +127,19 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testDuplicateDoc
+    public function testDuplicateDoc()
+    {
+        $doc = $this->xmldb->duplicateDoc('pages', 'newPages');
+
+        $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
+        $this->assertEquals(4, $doc->getDocId());
+        $this->assertEquals('newPages', $doc->getDocInfo()->name);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($this->xmldb->getDoc('pages')->getXml(false), $doc->getXml(false));
+    }
+    // }}}
+
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
