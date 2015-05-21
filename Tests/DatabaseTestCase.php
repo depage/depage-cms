@@ -5,7 +5,7 @@ namespace Depage\XmlDb\Tests;
 class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
     // {{{ variables
-    protected $pdo  = null;
+    protected $pdo = null;
     protected $conn = null;
     // }}}
 
@@ -49,7 +49,6 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
             $GLOBALS['DB_PASSWD']
         );
 
-        
         $schema = new \Depage\Db\Schema($pdo);
         $schema->setReplace(
             function ($name)
@@ -62,6 +61,42 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
         $schema->update();
         $pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+    }
+    // }}}
+
+    // {{{ tableExists
+    protected function tableExists($tableName)
+    {
+        $exists = false;
+
+        try {
+            $this->pdo->query('SELECT 1 FROM ' . $tableName);
+            $exists = true;
+        } catch (\PDOException $expected) {
+            // only catch "table doesn't exist" exception
+            if ($expected->getCode() != '42S02') {
+                throw $expected;
+            }
+        }
+
+        return $exists;
+    }
+    // }}}
+    // {{{ dropTable
+    protected function dropTable($tableName)
+    {
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->pdo->query('DROP TABLE IF EXISTS ' . $tableName);
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->assertFalse($this->tableExists($tableName));
+    }
+    // }}}
+    // {{{ dropTables
+    protected function dropTables($tableNames)
+    {
+        foreach($tableNames as $tableName) {
+            $this->dropTable($tableName);
+        }
     }
     // }}}
 

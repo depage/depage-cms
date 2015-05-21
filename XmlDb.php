@@ -339,10 +339,13 @@ class XmlDb implements XmlGetter
         // schema for xmldb
         $files = glob(__DIR__ . "/Sql/*.sql");
         sort($files);
+
+        $this->pdo->query('SET foreign_key_checks = 0');
         foreach ($files as $file) {
             $schema->loadFile($file);
             $schema->update();
         }
+        $this->pdo->query('SET foreign_key_checks = 1');
     }
     // }}}
     // {{{ clearTables
