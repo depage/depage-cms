@@ -139,6 +139,14 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($this->xmldb->getDoc('pages')->getXml(false), $doc->getXml(false));
     }
     // }}}
+    // {{{ testDuplicateDocFail
+    public function testDuplicateDocFail()
+    {
+        $doc = $this->xmldb->duplicateDoc('idontexist', 'copy');
+
+        $this->assertFalse($doc);
+    }
+    // }}}
 
     // {{{ testRemoveDoc
     public function testRemoveDoc()
