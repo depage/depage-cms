@@ -323,13 +323,16 @@ class XmlDb implements XmlGetter
     {
         $schema = new \Depage\Db\Schema($this->pdo);
 
+        $pdoPrefix = $this->pdo->prefix;
+        $tablePrefix = $this->table_prefix;
+
         $schema->setReplace(
-            function ($tableName)
+            function ($tableName) use ($pdoPrefix, $tablePrefix)
             {
                 if ($tableName == '_auth_user') {
-                    return $this->pdo->prefix . $tableName;
+                    return $pdoPrefix . $tableName;
                 } else {
-                    return $this->table_prefix . $tableName;
+                    return $tablePrefix . $tableName;
                 }
             }
         );
