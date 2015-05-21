@@ -323,12 +323,10 @@ class XmlDb implements XmlGetter
     {
         $schema = new \Depage\Db\Schema($this->pdo);
 
-        $projectName = $this->name;
-
         $schema->setReplace(
-            function ($tableName) use ($projectName)
-    {
-                if ($tableName == "_auth_user") {
+            function ($tableName)
+            {
+                if ($tableName == '_auth_user') {
                     return $this->pdo->prefix . $tableName;
                 } else {
                     return $this->table_prefix . $tableName;
@@ -336,15 +334,12 @@ class XmlDb implements XmlGetter
             }
         );
 
-        // schema for xmldb
-        $files = glob(__DIR__ . "/Sql/*.sql");
-        sort($files);
-
         $this->pdo->query('SET foreign_key_checks = 0');
-        foreach ($files as $file) {
-            $schema->loadFile($file);
-            $schema->update();
-        }
+
+        // schema for xmldb
+        $schema->loadGlob(__DIR__ . '/Sql/*.sql');
+        $schema->update();
+
         $this->pdo->query('SET foreign_key_checks = 1');
     }
     // }}}
