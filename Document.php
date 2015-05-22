@@ -1816,10 +1816,8 @@ class Document
 
             if ($id === null) {
                 $id = $query->lastInsertId();
-                $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
-            } else {
-                $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
             }
+            $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
         } else {
             if ($node->nodeType == XML_TEXT_NODE) {
                 $node_type = 'TEXT_NODE';
