@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dataset>
+  <table name="xmldb_proj_test_xmldeltaupdates"/>
   <table name="xmldb_proj_test_xmldocs">
     <column>id</column>
     <column>name</column>
@@ -40,6 +41,7 @@
       <null/>
     </row>
   </table>
+  <table name="xmldb_proj_test_xmlnodetypes"/>
   <table name="xmldb_proj_test_xmltree">
     <column>id</column>
     <column>id_doc</column>
