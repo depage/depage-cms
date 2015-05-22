@@ -54,6 +54,12 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($expected, $subDoc);
     }
     // }}}
+    // {{{ testGetSubDocByXpathNone
+    public function testGetSubDocByXpathNone()
+    {
+        $this->assertFalse($this->doc->getSubDocByXpath('//iamnosubdoc'));
+    }
+    // }}}
 
     // {{{ testGetNodeIdsByXpathByNameAll
     public function testGetNodeIdsByXpathByNameAll()
