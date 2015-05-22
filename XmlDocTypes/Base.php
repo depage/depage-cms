@@ -104,13 +104,13 @@ class Base
     /**
      * On Add Node
      *
-     * @param \DomDocument $node
+     * @param \DomNode $node
      * @param $target_id
      * @param $target_pos
      * @param $extras
      * @return null
      */
-    public function onAddNode(\DomDocument $node, $target_id, $target_pos, $extras) {
+    public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
         return null;
     }
     // }}}
