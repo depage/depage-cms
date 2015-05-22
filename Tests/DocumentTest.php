@@ -24,6 +24,26 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetDoctypeHandler
+    public function testGetDoctypeHandler()
+    {
+        $baseType = 'Depage\XmlDb\XmlDocTypes\Base';
+
+        $this->assertEquals($baseType, $this->doc->getDocInfo()->type);
+        $this->assertInstanceOf($baseType, $this->doc->getDoctypeHandler());
+    }
+    // }}}
+    // {{{ testGetDoctypeHandlerNoType
+    public function testGetDoctypeHandlerNoType()
+    {
+        // delete document type
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'\' where id=\'1\'');
+
+        $this->assertEquals('', $this->doc->getDocInfo()->type);
+        $this->assertInstanceOf('Depage\XmlDb\XmlDocTypes\Base', $this->doc->getDoctypeHandler());
+    }
+    // }}}
+
     // {{{ testGetSubDocByXpathByNameAll
     public function testGetSubDocByXpathByNameAll()
     {
