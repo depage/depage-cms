@@ -337,13 +337,13 @@ class XmlDb implements XmlGetter
             }
         );
 
-        $this->pdo->query('SET foreign_key_checks = 0');
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
 
         // schema for xmldb
         $schema->loadGlob(__DIR__ . '/Sql/*.sql');
         $schema->update();
 
-        $this->pdo->query('SET foreign_key_checks = 1');
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
     // }}}
     // {{{ clearTables

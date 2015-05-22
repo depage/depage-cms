@@ -186,6 +186,26 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testclearTables
+    public function testClearTables()
+    {
+        // @todo foreign key constraints
+        $this->insertDummyDataIntoTable('xmldb_proj_test_xmlnodetypes');
+        $this->insertDummyDataIntoTable('xmldb_proj_test_xmldocs');
+
+        $this->xmldb->clearTables();
+
+        $this->assertTableEmpty('xmldb_proj_test_xmlnodetypes');
+        $this->assertTableEmpty('xmldb_proj_test_xmldocs');
+
+        // make sure it'll work on empty tables
+        $this->xmldb->clearTables();
+
+        $this->assertTableEmpty('xmldb_proj_test_xmlnodetypes');
+        $this->assertTableEmpty('xmldb_proj_test_xmldocs');
+    }
+    // }}}
+
     // {{{ testCreateDocExisting
     /**
      * @expectedException PdoException

@@ -12,9 +12,9 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ setUp
     protected function setUp() {
         $this->getConnection();
-        $this->pdo->query('SET foreign_key_checks = 0');
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
         parent::setUp();
-        $this->pdo->query('SET foreign_key_checks = 1');
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
     // }}}
     // {{{ getConnection
@@ -97,6 +97,32 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         foreach($tableNames as $tableName) {
             $this->dropTable($tableName);
         }
+    }
+    // }}}
+    // {{{ insertDummyDataIntoTable
+    protected function insertDummyDataIntoTable($tableName)
+    {
+        $statement = $this->pdo->query('DESCRIBE ' . $tableName . ';');
+        $statement->execute();
+        while ($row = $statement->fetch()) {
+            $values[] = '" "';
+        }
+
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $rows = $this->pdo->exec('INSERT INTO ' . $tableName . ' VALUES (' . implode(',', $values) . ');');
+        $this->assertEquals(1, $rows);
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+    }
+    // }}}
+
+    // {{{ assertTableEmpty
+    protected function assertTableEmpty($tableName)
+    {
+        $statement = $this->pdo->query('SELECT COUNT(*) FROM ' . $tableName . ';');
+        $statement->execute();
+        $result = $statement->fetch();
+
+        $this->assertEquals(0, $result['COUNT(*)']);
     }
     // }}}
 
