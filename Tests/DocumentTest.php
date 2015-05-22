@@ -349,6 +349,17 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testBuildNode
+    public function testBuildNode()
+    {
+        $node = $this->doc->buildNode('newNode', array('att' => 'val', 'att2' => 'val2'));
+
+        $expected = '<newNode xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" att="val" att2="val2"/>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $node->ownerDocument->saveXML($node));
+    }
+    // }}}
+
     // {{{ testSetAttribute
     public function testSetAttribute()
     {
