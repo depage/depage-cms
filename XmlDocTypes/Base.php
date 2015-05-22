@@ -127,7 +127,7 @@ class Base
         return true;
     }
     // }}}
-    // {{{ onDeleteNode()
+    // {{{ onDeleteNode
     /**
      * On Delete Node
      *

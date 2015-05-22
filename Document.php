@@ -472,7 +472,6 @@ class Document
     public function addNodeByName($name, $target_id, $target_pos)
     {
         $dth = $this->getDoctypeHandler();
-        $target_name = $this->getNodeNameById($target_id);
 
         $newNode = $dth->getNewNodeFor($name);
         if ($newNode) {
