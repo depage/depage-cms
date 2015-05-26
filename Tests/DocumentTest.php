@@ -142,6 +142,22 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetNodeNameById
+    public function testGetNodeNameById()
+    {
+        $this->assertEquals('dpg:pages', $this->doc->getNodeNameById(1));
+        $this->assertEquals('pg:page', $this->doc->getNodeNameById(2));
+    }
+    // }}}
+    // {{{ testGetNodeNameByIdNonExistent
+    public function testGetNodeNameByIdNonExistent()
+    {
+        $this->assertFalse($this->doc->getNodeNameById(5));
+        $this->assertFalse($this->doc->getNodeNameById('noId'));
+        $this->assertFalse($this->doc->getNodeNameById(null));
+    }
+    // }}}
+
     // {{{ testSaveElementNodes
     public function testSaveElementNodes()
     {
