@@ -284,6 +284,20 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetPermissionѕ
+    public function testGetPermissionѕ()
+    {
+        $expected = array(
+            'validParents' => array(
+                '*' => array('*')
+            ),
+            'availableNodes' => array()
+        );
+
+        $this->assertEquals($expected, (array) $this->doc->getPermissions());
+    }
+    // }}}
+
     // {{{ testReplaceNode
     public function testReplaceNode()
     {
