@@ -417,6 +417,23 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetParentIdById
+    public function testGetParentIdById()
+    {
+        $this->assertNull($this->doc->getParentIdById(1));
+        $this->assertEquals(2, $this->doc->getParentIdById(6));
+    }
+    // }}}
+    // {{{ testGetParentIdByIdNonExistent
+    public function testGetParentIdByIdNonExistent()
+    {
+        $this->assertFalse($this->doc->getParentIdById(3));
+        $this->assertFalse($this->doc->getParentIdById(1000));
+        $this->assertFalse($this->doc->getParentIdById('noId'));
+        $this->assertFalse($this->doc->getParentIdById(null));
+    }
+    // }}}
+
     // {{{ testGetNodeId
     public function testGetNodeId()
     {
