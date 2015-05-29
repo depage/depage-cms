@@ -4,13 +4,16 @@ namespace Depage\XmlDb\Tests;
 
 class MockCache
 {
-    protected $cached = array();
+    public $cached = array();
+    public $deleted = false;
 
-    public function set($identifier, $xml) {
+    public function set($identifier, $xml)
+    {
         $this->cached[$identifier] = $xml;
     }
 
-    public function get($identifier) {
+    public function get($identifier)
+    {
         $result = false;
 
         if (isset($this->cached[$identifier])) {
@@ -18,6 +21,11 @@ class MockCache
         }
 
         return $result;
+    }
+
+    public function delete($identifier)
+    {
+        $this->deleted = true;
     }
 }
 

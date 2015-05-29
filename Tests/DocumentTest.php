@@ -37,7 +37,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     public function testGetDoctypeHandlerNoType()
     {
         // delete document type
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'\' where id=\'1\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'\' WHERE id=\'1\'');
 
         $this->assertEquals('', $this->doc->getDocInfo()->type);
         $this->assertInstanceOf('Depage\XmlDb\XmlDocTypes\Base', $this->doc->getDoctypeHandler());
@@ -58,7 +58,8 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $cache = new Depage\XmlDb\Tests\MockCache();
         $cache->set(
             'xmldb_proj_test_xmldocs_d1/2.xml',
-            '<pg:page xmlns:db="http://cms.depagecms.net/ns/database"  xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Home" multilang="true" file_type="html" db:dataid="3"  db:id="2" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"  db:id="6"></pg:page><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"  db:id="7"></pg:page><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"  db:id="9"></pg:folder>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6"  db:id="8">bla bla bla </pg:page></pg:page>');
+            '<pg:page xmlns:db="http://cms.depagecms.net/ns/database"  xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" name="Home" multilang="true" file_type="html" db:dataid="3"  db:id="2" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"  db:id="6"></pg:page><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"  db:id="7"></pg:page><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"  db:id="9"></pg:folder>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6"  db:id="8">bla bla bla </pg:page></pg:page>'
+        );
 
         $xmlDb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
             'root',
@@ -79,9 +80,29 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     public function testGetSubdocByNodeIdWrongNodeType()
     {
         // set up document type
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmltree SET type=\'WRONG_NODE\' where id=\'1\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmltree SET type=\'WRONG_NODE\' WHERE id=\'1\'');
 
         $this->doc->getSubdocByNodeId(1);
+    }
+    // }}}
+    // {{{ testGetSubdocByNodeIdChangedDoc
+    public function testGetSubdocByNodeIdChangedDoc()
+    {
+        // set up mock cache
+        $cache = new Depage\XmlDb\Tests\MockCache();
+
+        $xmlDb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+            'root',
+            'child',
+        ));
+        $doc = $xmlDb->getDoc(1);
+
+        // set up doc type handler, trigger save node
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'1\'');
+        $doc->getSubdocByNodeId(1);
+
+        // saveNode triggers clearCache, check for cleared cache
+        $this->assertTrue($cache->deleted);
     }
     // }}}
 
