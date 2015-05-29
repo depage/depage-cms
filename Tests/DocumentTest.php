@@ -71,6 +71,19 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($expected, $doc->getSubdocByNodeId(2));
     }
     // }}}
+    // {{{ testGetSubdocByNodeIdWrongNodeType
+    /**
+     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
+     */
+    public function testGetSubdocByNodeIdWrongNodeType()
+    {
+        // set up document type
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmltree SET type=\'WRONG_NODE\' where id=\'1\'');
+
+        $this->doc->getSubdocByNodeId(1);
+    }
+    // }}}
 
     // {{{ testGetSubDocByXpathByNameAll
     public function testGetSubDocByXpathByNameAll()
