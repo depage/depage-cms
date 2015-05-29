@@ -4,13 +4,18 @@ namespace Depage\XmlDb\Tests;
 
 class MockDoctypeHandler
 {
+    public $isAllowedUnlink = true;
+
     public function testDocument($xmlDoc)
     {
         return true;
     }
-
     public function onDeleteNode($id)
     {
+    }
+    public function isAllowedUnlink($id)
+    {
+        return $this->isAllowedUnlink;
     }
 }
 

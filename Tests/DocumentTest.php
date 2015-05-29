@@ -319,6 +319,20 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
+    // {{{ testUnlinkNodeDenied
+    public function testUnlinkNodeDenied()
+    {
+        // set up doc type handler
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'1\'');
+        $this->doc->getDoctypeHandler()->isAllowedUnlink = false;
+
+        $this->assertFalse($this->doc->unlinkNode(9));
+
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" ><pg:page file_type="html" multilang="true" name="Home" db:dataid="3"><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4"/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
     // {{{ testAddNode
     public function testAddNode()
     {
