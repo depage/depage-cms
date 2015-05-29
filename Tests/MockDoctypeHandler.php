@@ -6,6 +6,7 @@ class MockDoctypeHandler
 {
     public $isAllowedUnlink = true;
     public $isAllowedAdd = true;
+    public $isAllowedMove = true;
 
     public function testDocument($xmlDoc)
     {
@@ -15,6 +16,9 @@ class MockDoctypeHandler
     {
     }
     public function onAddNode($id)
+    {
+    }
+    public function onCopyNode($id)
     {
     }
     public function isAllowedUnlink($id)
@@ -31,6 +35,10 @@ class MockDoctypeHandler
         $doc->loadXML("<root><node>$name</node></root>");
 
         return $doc;
+    }
+    public function isAllowedMove($nodeId, $targetId)
+    {
+        return $this->isAllowedMove;
     }
 }
 
