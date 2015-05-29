@@ -5,6 +5,7 @@ namespace Depage\XmlDb\Tests;
 class MockDoctypeHandler
 {
     public $isAllowedUnlink = true;
+    public $isAllowedAdd = true;
 
     public function testDocument($xmlDoc)
     {
@@ -13,9 +14,16 @@ class MockDoctypeHandler
     public function onDeleteNode($id)
     {
     }
+    public function onAddNode($id)
+    {
+    }
     public function isAllowedUnlink($id)
     {
         return $this->isAllowedUnlink;
+    }
+    public function isAllowedAdd($id)
+    {
+        return $this->isAllowedAdd;
     }
 }
 
