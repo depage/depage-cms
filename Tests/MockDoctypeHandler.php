@@ -25,6 +25,13 @@ class MockDoctypeHandler
     {
         return $this->isAllowedAdd;
     }
+    public function getNewNodeFor($name)
+    {
+        $doc = new \DomDocument();
+        $doc->loadXML("<root><node>$name</node></root>");
+
+        return $doc;
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
