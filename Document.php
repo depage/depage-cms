@@ -290,7 +290,6 @@ class Document
 
                 throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
-
             $success = $xml_doc->loadXML($xml_str);
             $dth = $this->getDoctypeHandler();
 
