@@ -12,6 +12,10 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::getChildIdsByName($parent_id, $node_ns, $node_name, $attr_cond, $only_element_nodes);
     }
+    public function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
+    {
+        return parent::saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos);
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
