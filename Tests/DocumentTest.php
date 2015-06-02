@@ -22,7 +22,7 @@ class DocumentTest extends DatabaseTestCase
             'child',
         ));
 
-        $this->doc = $this->xmlDb->getDoc(1);
+        $this->doc = new DocumentTestClass($this->xmlDb, 1);
     }
     // }}}
     // {{{ generateDomDocument
@@ -428,6 +428,20 @@ class DocumentTest extends DatabaseTestCase
         $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><root db:id="2"><node db:id="6"/></root></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+    }
+    // }}}
+
+    // {{{ testGetPosById
+    public function testGetPosById()
+    {
+        $this->assertEquals(0, $this->doc->getPosById(2));
+    }
+    // }}}
+    // {{{ testGetPosByIdFail
+    public function testGetPosByIdFail()
+    {
+        // there's no node with id 999
+        $this->assertNull($this->doc->getPosById(999));
     }
     // }}}
 
