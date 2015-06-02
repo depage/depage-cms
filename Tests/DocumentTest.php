@@ -1,6 +1,8 @@
 <?php
 
-class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
+namespace Depage\XmlDb\Tests;
+
+class DocumentTest extends DatabaseTestCase
 {
     // {{{ variables
     protected $xmlDb;
@@ -12,15 +14,24 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         parent::setUp();
 
         // get cache instance
-        $cache = Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
 
         // get xmldb instance
-        $this->xmlDb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
             'root',
             'child',
         ));
 
         $this->doc = $this->xmlDb->getDoc(1);
+    }
+    // }}}
+    // {{{ generateDomDocument
+    protected function generateDomDocument($xml)
+    {
+        $doc = new \DomDocument();
+        $doc->loadXml($xml);
+
+        return $doc;
     }
     // }}}
 
@@ -55,13 +66,13 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testGetSubdocByNodeIdCached
     public function testGetSubdocByNodeIdCached()
     {
-        $cache = new Depage\XmlDb\Tests\MockCache();
+        $cache = new MockCache();
         $cache->set(
             'xmldb_proj_test_xmldocs_d1/2.xml',
             '<page/>'
         );
 
-        $xmlDb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
             'root',
             'child',
         ));
@@ -89,9 +100,9 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     public function testGetSubdocByNodeIdChangedDoc()
     {
         // set up mock cache
-        $cache = new Depage\XmlDb\Tests\MockCache();
+        $cache = new MockCache();
 
-        $xmlDb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
             'root',
             'child',
         ));
@@ -225,8 +236,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child></child><child/><child/></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -241,8 +251,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         }
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database">' . $nodes . '</root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -253,8 +262,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child attr="test"></child></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -265,8 +273,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><db:child attr="test"></db:child><child db:data="blub" /></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -277,8 +284,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><child>bla</child>blub<b/><c/><child>bla</child></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -289,8 +295,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><?php echo("bla"); ?></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -301,8 +306,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     {
         $xmlStr = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"><!-- comment --></root>';
 
-        $xml = new DomDocument;
-        $xml->loadXML($xmlStr);
+        $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
@@ -337,8 +341,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testAddNode
     public function testAddNode()
     {
-        $doc = new DomDocument();
-        $doc->loadXML('<root><node/></root>');
+        $doc = $this->generateDomDocument('<root><node/></root>');
 
         $this->doc->addNode($doc, 2, 1);
 
@@ -354,8 +357,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'1\'');
         $this->doc->getDoctypeHandler()->isAllowedAdd = false;
 
-        $doc = new DomDocument();
-        $doc->loadXML('<root><node/></root>');
+        $doc = $this->generateDomDocument('<root><node/></root>');
 
         $this->assertFalse($this->doc->addNode($doc, 2, 1));
 
@@ -392,8 +394,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testSaveNode
     public function testSaveNode()
     {
-        $doc = new DomDocument();
-        $doc->loadXML('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+        $doc = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
         $this->doc->saveNode($doc);
 
@@ -420,8 +421,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testReplaceNode
     public function testReplaceNode()
     {
-        $doc = new DOMDocument();
-        $doc->loadXML('<root><node/></root>');
+        $doc = $this->generateDomDocument('<root><node/></root>');
 
         $this->doc->replaceNode($doc, 2);
 
@@ -640,8 +640,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testGetNodeId
     public function testGetNodeId()
     {
-        $doc = new DOMDocument();
-        $doc->loadXml('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+        $doc = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
         $id = $this->doc->getNodeId($doc->documentElement);
 
@@ -651,8 +650,7 @@ class DocumentTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testGetNodeDataId
     public function testGetNodeDataId()
     {
-        $doc = new DOMDocument();
-        $doc->loadXml('<root db:dataid="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+        $doc = $this->generateDomDocument('<root db:dataid="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
 
         $id = $this->doc->getNodeDataId($doc->documentElement);
 
