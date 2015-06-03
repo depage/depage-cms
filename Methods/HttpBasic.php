@@ -85,7 +85,8 @@ class HttpBasic extends HttpCookie
 
                     if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
                         if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $ipAddress = \Depage\Http\Request::getRequestIp();
+                            $this->log->log("'{$user->name}' has logged in from '{$ipAddress}'", "auth");
                             $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
                         }
                         $this->startSession();
