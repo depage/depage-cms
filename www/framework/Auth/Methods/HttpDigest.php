@@ -98,7 +98,8 @@ class HttpDigest extends HttpBasic
                 if ($validResponse) {
                     if (($uid = $this->isValidSid($this->sid)) !== false) {
                         if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $ipAddress = \Depage\Http\Request::getRequestIp();
+                            $this->log->log("'{$user->name}' has logged in from '{$ipAddress}'", "auth");
                             $sid = $this->registerSession($user->id, $this->sid);
                         }
                         $this->startSession();
@@ -226,8 +227,9 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ getNonce
     protected function getNonce() {
+        $ipAddress = \Depage\Http\Request::getRequestIp();
         $time = ceil(time() / $this->sessionLifetime) * $this->sessionLifetime;
-        $hash = md5(date('Y-m-d H:i', $time).':'.$_SERVER['REMOTE_ADDR'].':'.$this->privateKey);
+        $hash = md5(date('Y-m-d H:i', $time).':'.$ipAddress.':'.$this->privateKey);
 
         return $hash;
     }

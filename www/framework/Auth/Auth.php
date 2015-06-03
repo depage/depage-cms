@@ -136,7 +136,7 @@ abstract class Auth
         );
         $session_query->execute(array(
             ':sid' => $sid,
-            ':ip' => $_SERVER['REMOTE_ADDR'],
+            ':ip' => \Depage\Http\Request::getRequestIp(),
         ));
         $result = $session_query->fetchAll();
 
@@ -153,7 +153,7 @@ abstract class Auth
             );
             $timestamp_query->execute(array(
                 ':sid' => $sid,
-                ':ip' => $_SERVER['REMOTE_ADDR'],
+                ':ip' => \Depage\Http\Request::getRequestIp(),
             ));
 
             $this->uid = $result[0]['userid'];
@@ -224,7 +224,7 @@ abstract class Auth
                     useragent = :useragent"
             )->execute(array(
                 ':sid' => $this->sid,
-                'ip' => $_SERVER['REMOTE_ADDR'],
+                'ip' => \Depage\Http\Request::getRequestIp(),
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
         } else {
@@ -242,7 +242,7 @@ abstract class Auth
             )->execute(array(
                 ':sid' => $this->sid,
                 ':uid' => $this->uid,
-                'ip' => $_SERVER['REMOTE_ADDR'],
+                'ip' => \Depage\Http\Request::getRequestIp(),
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
 
