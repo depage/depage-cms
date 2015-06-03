@@ -106,15 +106,14 @@ class Request {
     // {{{ getRequestIp()
     static function getRequestIp() {
         // get ip of request
-        $ip = '';
+        $ip = $_SERVER['REMOTE_ADDR'];
+
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip = array_pop(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
         } else if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
             $ip = $_SERVER['HTTP_X_REAL_IP'];
         } else if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
         }
 
         return $ip;
