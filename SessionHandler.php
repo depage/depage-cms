@@ -148,7 +148,7 @@ class SessionHandler implements \SessionHandlerInterface
         );
         $query->execute(array(
             ':sid' => $sessionId,
-            ':ip' => $_SERVER['REMOTE_ADDR'],
+            ':ip' => \Depage\Http\Request::getRequestIp(),
             ':useragent' => $_SERVER['HTTP_USER_AGENT'],
             ':data1' => $sessionData,
             ':data2' => $sessionData,
