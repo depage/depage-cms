@@ -83,7 +83,7 @@ class Document
      */
     public function getHistory()
     {
-        return new history($this->pdo, $this->table_prefix, $this);
+        return new DocumentHistory($this->pdo, $this->table_prefix, $this);
     }
     // }}}
 

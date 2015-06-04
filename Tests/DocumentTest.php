@@ -35,6 +35,13 @@ class DocumentTest extends DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetHistory
+    public function testGetHistory()
+    {
+        $this->assertInstanceOf('\\Depage\\XmlDb\\DocumentHistory', ($this->doc->getHistory()));
+    }
+    // }}}
+
     // {{{ testGetDoctypeHandler
     public function testGetDoctypeHandler()
     {
