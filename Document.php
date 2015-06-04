@@ -705,16 +705,7 @@ class Document
      */
     public function copyNodeBefore($node_id, $target_id)
     {
-        $this->xmldb->beginTransaction();
-
-        $target_parent_id = $this->getParentIdById($target_id);
-        $target_pos = $this->getPosById($target_id);
-
-        $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
-
-        $this->xmldb->endTransaction();
-
-        return $success;
+        return $this->copyNodeWithOffset($node_id, $target_id);
     }
     // }}}
     // {{{ copyNodeAfter
@@ -726,10 +717,23 @@ class Document
      */
     public function copyNodeAfter($node_id, $target_id)
     {
+        return $this->copyNodeWithOffset($node_id, $target_id, 1);
+    }
+    // }}}
+    // {{{ copyNodeWithOffset
+    /**
+     * copy node after another node
+     *
+     * @param    $node_id (int) db-id of node
+     * @param    $target_id (int) db-id of target node
+     * @param    $target_pos_offset (int) offset of target position
+     */
+    public function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
+    {
         $this->xmldb->beginTransaction();
 
         $target_parent_id = $this->getParentIdById($target_id);
-        $target_pos = $this->getPosById($target_id) + 1;
+        $target_pos = $this->getPosById($target_id) + $target_pos_offset;
 
         $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
@@ -750,7 +754,9 @@ class Document
      */
     public function copyNode($node_id, $target_id, $target_pos)
     {
+        $result = false;
         $docHandler = $this->getDoctypeHandler();
+
         if ($docHandler->isAllowedMove($node_id, $target_id)) {
             $this->xmldb->beginTransaction();
 
@@ -765,10 +771,10 @@ class Document
 
             $this->xmldb->endTransaction();
 
-            return $copy_id;
+            $result = $copy_id;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
