@@ -1361,22 +1361,24 @@ class Document
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
 
-        if ($node_array[0]['id'] != null && $target_id === null) {
-            //set target_id/pos/doc
-            $target_id = $this->getParentIdById($node_array[0]['id']);
-            $target_pos = $this->getPosById($node_array[0]['id']);
+        if ($target_id === null) {
+            if ($node_array[0]['id'] != null) {
+                //set target_id/pos/doc
+                $target_id = $this->getParentIdById($node_array[0]['id']);
+                $target_pos = $this->getPosById($node_array[0]['id']);
 
-            if ($target_id === false) {
+                if ($target_id === false) {
+                    $target_id = null;
+                }
+
+                //unlink old node
+                $this->unlinkNodeById($node_array[0]['id']);
+                $this->clearCache();
+            } else {
                 $target_id = null;
+                $target_pos = 0;
             }
-
-            //unlink old node
-            $this->unlinkNodeById($node_array[0]['id']);
-            $this->clearCache();
-        } else if ($target_id === null) {
-            $target_id = null;
-            $target_pos = 0;
-        } else if ($target_id !== null) {
+        } else {
             $parent_id = $this->getParentIdById($target_id);
             //unlink child nodes, if target is document
             if ($parent_id === false) {
