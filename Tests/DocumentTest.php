@@ -484,6 +484,45 @@ class DocumentTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
+    // {{{ testSaveNodeToDbEntityRef
+    public function testSaveNodeToDbEntityRef()
+    {
+        $doc = new \DomDocument();
+        $nodeElement = $doc->createEntityReference('test');
+
+        $this->assertEquals(0, $this->doc->saveNodeToDb($nodeElement, 0, 1, 1));
+
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveNodeToDbIdNull
+    public function testSaveNodeToDbIdNull()
+    {
+        $doc = new \DomDocument();
+        $nodeElement = $doc->createElement('test');
+
+        $this->assertEquals(12, $this->doc->saveNodeToDb($nodeElement, null, 1, 1));
+
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page><test/></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveNodeToDbIdNullText
+    public function testSaveNodeToDbIdNullText()
+    {
+        $doc = new \DomDocument();
+        $nodeElement = $doc->createTextNode('test');
+
+        $this->assertEquals(12, $this->doc->saveNodeToDb($nodeElement, null, 1, 1));
+
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" db:name=""><pg:page file_type="html" multilang="true" name="Home" db:dataid="3"><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4"/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6">bla bla bla </pg:page></pg:page>test</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
 
     // {{{ testUpdateLastchange
     public function testUpdateLastchange()

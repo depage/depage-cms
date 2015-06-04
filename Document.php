@@ -1813,7 +1813,7 @@ class Document
             ));
 
             if ($id === null) {
-                $id = $query->lastInsertId();
+                $id = $this->pdo->lastInsertId();
             }
             $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
         } else {
@@ -1846,7 +1846,7 @@ class Document
             ));
 
             if ($id === null) {
-                $id = $insert_query->lastInsertId();
+                $id = $this->pdo->lastInsertId();
             }
         }
         return $id;
