@@ -16,6 +16,10 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos);
     }
+    public function updateLastChange()
+    {
+        return parent::updateLastChange();
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

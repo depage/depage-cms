@@ -1859,6 +1859,10 @@ class Document
      */
     protected function updateLastchange()
     {
+        $result = false;
+        $timestamp = time();
+        $user_id = (empty($this->xmldb->options['userId'])) ? null : $this->xmldb->options['userId'];
+
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -1868,24 +1872,17 @@ class Document
                 id=:doc_id;"
         );
 
-        $timestamp = time();
-
-        if (!empty($this->xmldb->options['userId'])) {
-            $user_id = $this->xmldb->options['userId'];
-        } else {
-            $user_id = null;
-        }
-
         $params = array(
             'doc_id' => $this->getDocId(),
             'timestamp' => date('Y-m-d H:i:s', $timestamp),
             'user_id' => $user_id,
         );
+
         if ($query->execute($params)) {
-            return $timestamp;
+            $result = $timestamp;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
