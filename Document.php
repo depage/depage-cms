@@ -1768,12 +1768,13 @@ class Document
             );
         }
 
-        if ($id === null || !is_numeric($id)) {
+        if (is_null($id) || !is_numeric($id)) {
             $id_query = 'NULL';
         } else {
             $id_query = (int) $id;
         }
 
+        $node_name = null;
         if ($node->nodeType == XML_ELEMENT_NODE) {
             if ($node->prefix != '') {
                 $name_query = $node->prefix . ':' . $node->localName;
@@ -1802,53 +1803,42 @@ class Document
                 ));
             }
 
-            $insert_query->execute(array(
-                'id_query' => $id_query,
-                'target_id' => $target_id,
-                'target_pos' => $target_pos,
-                'name' => $name_query,
-                'value' => $attr_str,
-                'type' => 'ELEMENT_NODE',
-                'doc_id' => $this->doc_id,
-            ));
-
-            if ($id === null) {
-                $id = $this->pdo->lastInsertId();
-            }
-            $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
-        } else {
-            if ($node->nodeType == XML_TEXT_NODE) {
-                $node_type = 'TEXT_NODE';
-                $node_data = $node->textContent;
-                $node_name = null;
-            } else if ($node->nodeType == XML_COMMENT_NODE) {
-                $node_type = 'COMMENT_NODE';
-                $node_data = $node->textContent;
-                $node_name = null;
-            } else if ($node->nodeType == XML_PI_NODE) {
-                $node_type = 'PI_NODE';
-                $node_data = $node->textContent;
-                $node_name = $node->target;
-            } else if ($node->nodeType == XML_ENTITY_REF_NODE) {
-                $node_type = 'ENTITY_REF_NODE';
-                $node_data = $node->nodeName;
-                $node_name = null;
-            }
-
-            $insert_query->execute(array(
-                'id_query' => $id_query,
-                'target_id' => $target_id,
-                'target_pos' => $target_pos,
-                'name' => $node_name,
-                'value' => $node_data,
-                'type' => $node_type,
-                'doc_id' => $this->doc_id,
-            ));
-
-            if ($id === null) {
-                $id = $this->pdo->lastInsertId();
-            }
+            $node_type = 'ELEMENT_NODE';
+            $node_data = $attr_str;
+            $node_name = $name_query;
+        } else if ($node->nodeType == XML_TEXT_NODE) {
+            $node_type = 'TEXT_NODE';
+            $node_data = $node->textContent;
+        } else if ($node->nodeType == XML_COMMENT_NODE) {
+            $node_type = 'COMMENT_NODE';
+            $node_data = $node->textContent;
+        } else if ($node->nodeType == XML_PI_NODE) {
+            $node_type = 'PI_NODE';
+            $node_data = $node->textContent;
+            $node_name = $node->target;
+        } else if ($node->nodeType == XML_ENTITY_REF_NODE) {
+            $node_type = 'ENTITY_REF_NODE';
+            $node_data = $node->nodeName;
         }
+
+        $insert_query->execute(array(
+            'id_query' => $id_query,
+            'target_id' => $target_id,
+            'target_pos' => $target_pos,
+            'name' => $node_name,
+            'value' => $node_data,
+            'type' => $node_type,
+            'doc_id' => $this->doc_id,
+        ));
+
+        if (is_null($id)) {
+            $id = $this->pdo->lastInsertId();
+        }
+
+        if ($node->nodeType == XML_ELEMENT_NODE) {
+            $node->setAttributeNS($this->db_ns->uri, $this->db_ns->ns . ':' . $this->id_attribute, $id);
+        }
+
         return $id;
     }
     // }}}
