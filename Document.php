@@ -1560,39 +1560,31 @@ class Document
         }
 
         if ($only_element_nodes) {
-            $query = $this->pdo->prepare(
-                "SELECT xml.id AS id
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id_doc = :doc_id AND $parent_query AND (xml.type='ELEMENT_NODE' $name_query $attr_query)
-                ORDER BY pos"
-            );
-            $query->execute(array_merge(
-                $name_param,
-                $attr_param,
-                $parent_param,
-                array(
-                    'doc_id' => $this->doc_id,
-                )
-            ));
+            $type_query = "(xml.type='ELEMENT_NODE' $name_query $attr_query)";
         } else {
-            $query = $this->pdo->prepare(
-                "SELECT xml.id AS id
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id_doc = :doc_id AND $parent_query AND ((xml.type='ELEMENT_NODE' $name_query $attr_query) OR (xml.type!='ELEMENT_NODE'))
-                ORDER BY pos"
-            );
-            $query->execute(array_merge(
-                $name_param,
-                $attr_param,
-                $parent_param,
-                array(
-                    'doc_id' => $this->doc_id,
-                )
-            ));
+            $type_query = "((xml.type='ELEMENT_NODE' $name_query $attr_query) OR (xml.type!='ELEMENT_NODE'))";
         }
+
+        $query = $this->pdo->prepare(
+            "SELECT xml.id AS id
+            FROM {$this->table_xml} AS xml
+            WHERE xml.id_doc = :doc_id AND $parent_query AND $type_query
+            ORDER BY pos"
+        );
+
+        $query->execute(array_merge(
+            $name_param,
+            $attr_param,
+            $parent_param,
+            array(
+                'doc_id' => $this->doc_id,
+            )
+        ));
+
         while ($result = $query->fetchObject()) {
             $node_ids[] = $result->id;
         }
+
         return $node_ids;
     }
     // }}}
