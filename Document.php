@@ -208,15 +208,15 @@ class Document
     public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX)
     {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
-
         $xml_doc = new \Depage\Xml\Document();
-
         $xml_str = $this->cache->get($identifier);
 
         if ($xml_str) {
             // read from cache
             $xml_doc->loadXML($xml_str);
         } else {
+            $xml_str = "";
+
             // read from database
             $this->xmldb->beginTransaction();
 
@@ -250,28 +250,25 @@ class Document
                 FROM {$this->table_xml} AS xml
                 WHERE xml.id = :id AND xml.id_doc = :doc_id"
             );
-
-            $xml_str = "";
-
             $query->execute(array(
                 'doc_id' => $this->doc_id,
                 'id' => $id,
             ));
-            $row = $query->fetchObject();
+            $result = $query->fetchObject();
 
             //get ROOT-NODE
-            if ($row->type == 'ELEMENT_NODE') {
+            if ($result && $result->type == 'ELEMENT_NODE') {
                 //create node
-                $node_data = "<{$row->name}";
+                $node_data = "<{$result->name}";
 
                 $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
                 $node_data .= " {$this->namespace_string}";
 
                 //add attributes to node
-                $node_data .= " {$row->value}";
+                $node_data .= " {$result->value}";
 
                 //add id_attribute to node
-                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\"";
+                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$result->id\"";
 
                 //add lastchange-data
                 $node_data .= " {$this->db_ns->ns}:lastchange=\"{$this->lastchange}\"";
@@ -282,9 +279,9 @@ class Document
                 $xml_str .= $node_data;
 
                 //add child_nodes
-                $xml_str .= $this->getChildnodesByParentId($row->id, $level);
+                $xml_str .= $this->getChildnodesByParentId($result->id, $level);
 
-                $xml_str .= "</{$row->name}>";
+                $xml_str .= "</{$result->name}>";
             } else {
                 $this->xmldb->endTransaction();
 
@@ -295,8 +292,7 @@ class Document
 
             $this->xmldb->endTransaction();
 
-            $changed = $dth->testDocument($xml_doc);
-            if ($changed) {
+            if ($changed = $dth->testDocument($xml_doc)) {
                 $this->saveNode($xml_doc);
             }
 
