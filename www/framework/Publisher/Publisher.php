@@ -15,70 +15,59 @@ class Publisher
      * @param mixed $pdo
      * @return void
      **/
-    public function __construct($pdo, $transformer)
+    public function __construct($pdo, \Depage\Fs\Fs $fs, $publishId)
     {
         $this->pdo = $pdo;
-        $this->transformer = $transformer;
+        $this->tableFiles = $this->pdo->prefix . "_publish_files";
+        $this->fs = $fs;
+    }
+    // }}}
+    // {{{ publishFile()
+    /**
+     * @brief publihes a local file to target
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function publishFile($source, $target)
+    {
 
     }
     // }}}
-    // {{{ addPublishTask()
+    // {{{ publishString()
     /**
-     * @brief addPublishTask
+     * @brief publishes string content directly to target
      *
-     * @param mixed $param
+     * @param mixed $
      * @return void
      **/
-    protected function addPublishTask($taskName)
+    public function publishString($content, $target)
     {
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
 
-        $initId = $task->addSubtask("init", "\$publisher = " . \Depage\Tasks\Task::escapeParam($this) . ";");
+    }
+    // }}}
+    // {{{ unpublishFile()
+    /**
+     * @brief removes a file from target
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function unpublishFile($target)
+    {
 
-        $task->addSubtask("testing publish target", "\$publisher->testPublishTarget();", $initId);
+    }
+    // }}}
+    // {{{ getFilesToUnpublish()
+    /**
+     * @brief getFilesToUnpublish
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getFilesToUnpublish()
+    {
 
-        // transform pages
-        foreach ($this->pages as $pageId) {
-            foreach ($this->languages as $lang) {
-                $task->addSubtask("transforming page $page->pageId in $lang", "\$publisher->transformPage($pageId, $lang);", $initId);
-            }
-        }
-
-        // transform feeds
-        foreach ($this->languages as $lang) {
-            $task->addSubtask("transforming feed in $lang", "\$publisher->transformFeed($lang);", $initId);
-        }
-
-        // transform sitemap
-        $task->addSubtask("transforming sitemap", "\$publisher->transformSitemap();", $initId);
-
-        // transform htaccess
-        $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
-
-        // publish file library
-        foreach ($this->files as $file) {
-            $task->addSubtask("publishing $file", "\$publisher->publishFile($file);", $initId);
-        }
-
-        // publish pages
-        foreach ($this->pages as $pageId) {
-            foreach ($this->languages as $lang) {
-                $task->addSubtask("pubishing page $page->pageId in $lang", "\$publisher->publishPage($pageId, $lang);", $initId);
-            }
-        }
-
-        // publish feeds
-        foreach ($this->languages as $lang) {
-            $task->addSubtask("publish feed in $lang", "\$publisher->publishFeed($lang);", $initId);
-        }
-
-        // publish sitemap
-        $task->addSubtask("publishing sitemap", "\$publisher->publishSitemap();", $initId);
-
-        // publish htaccess
-        $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
-
-        return $task;
     }
     // }}}
 }
