@@ -22,6 +22,35 @@ class Publisher
         $this->fs = $fs;
     }
     // }}}
+
+    // {{{ testConnection()
+    /**
+     * @brief testConnection
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testConnection($baseUrl = null)
+    {
+        $id = sha1(rand(0, 1000));
+        $value = false;
+        $filename = "_test_connection_" . $id;
+
+        try {
+            $this->fs->putString($filename, $id);
+
+            // @todo add testing of content of url directly if base url is set
+
+            $value = $this->fs->getString($filename);
+        } catch (\Depage\Fs\Exceptions\FsException $e) {
+            // suppress exception -> we will return false when values don't match
+        }
+
+        // @todo throw exception with error message when test fails for taskrunner?
+
+        return $id === $value;
+    }
+    // }}}
     // {{{ publishFile()
     /**
      * @brief publihes a local file to target
@@ -32,6 +61,7 @@ class Publisher
      **/
     public function publishFile($source, $target)
     {
+        $this->mkdirForTarget($target);
         $this->fs->put($source, $target);
     }
     // }}}
@@ -45,6 +75,7 @@ class Publisher
      **/
     public function publishString($content, $target)
     {
+        $this->mkdirForTarget($target);
         $this->fs->putString($target, $content);
     }
     // }}}
@@ -74,6 +105,22 @@ class Publisher
     public function getFilesToUnpublish()
     {
 
+    }
+    // }}}
+
+    // {{{ mkdirForTarget()
+    /**
+     * @brief mkdirForTarget
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function mkdirForTarget($target)
+    {
+        $dir = dirname($target);
+        if ($dir != ".") {
+            $this->fs->mkdir($dir);
+        }
     }
     // }}}
 }

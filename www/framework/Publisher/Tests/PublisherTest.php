@@ -21,14 +21,14 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
             mkdir($this->target, 0777, true);
         }
 
-        $fs = Depage\Fs\Fs::factory($this->target);
-        $pdo = new Depage\Db\Pdo(
+        $this->fs = Depage\Fs\Fs::factory($this->target);
+        $this->pdo = new Depage\Db\Pdo(
             "mysql:dbname=depage_phpunit;host=localhost",
             "root",
             ""
         );
 
-        $this->publisher = new Depage\Publisher\Publisher($pdo, $fs, 1);
+        $this->publisher = new Depage\Publisher\Publisher($this->pdo, $this->fs, 1);
     }
     // }}}
     // {{{ tearDown()
@@ -56,6 +56,31 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ testPublishConnection()
+    /**
+     * @brief testPublishConnection
+     **/
+    public function testPublishConnection()
+    {
+        $value = $this->publisher->testConnection();
+
+        $this->assertTrue($value);
+    }
+    // }}}
+    // {{{ testUnavailablePublishConnection()
+    /**
+     * @brief testUnavailablePublishConnection
+     **/
+    public function testUnavailablePublishConnection()
+    {
+        $fs = Depage\Fs\Fs::factory("ftp://unknown:unknown@unknownserver.unknowndomain/nodir/");
+
+        $this->publisher = new Depage\Publisher\Publisher($this->pdo, $fs, 1);
+        $value = $this->publisher->testConnection();
+
+        $this->assertFalse($value);
+    }
+    // }}}
     // {{{ testPublishFile()
     /**
      * @brief testPublishFile
@@ -65,8 +90,10 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
         $content = "abcd";
         file_put_contents($this->source . "test.txt", $content);
         $this->publisher->publishFile($this->source . "test.txt", "testFile.txt");
+        $this->publisher->publishFile($this->source . "test.txt", "subdir/testFile.txt");
 
         $this->assertFileEquals($this->source . "test.txt", $this->target . "testFile.txt");
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "subdir/testFile.txt");
     }
     // }}}
     // {{{ testPublishString()
@@ -79,8 +106,10 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->source . "test.txt", $content);
 
         $this->publisher->publishString($content, "testString.txt");
+        $this->publisher->publishString($content, "subdir/testString.txt");
 
         $this->assertFileEquals($this->source . "test.txt", $this->target . "testString.txt");
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "subdir/testString.txt");
     }
     // }}}
     // {{{ testUnpublishFile()
