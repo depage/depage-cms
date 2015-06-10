@@ -26,36 +26,42 @@ class Publisher
     /**
      * @brief publihes a local file to target
      *
-     * @param mixed $
+     * @param string $source
+     * @param string $target
      * @return void
      **/
     public function publishFile($source, $target)
     {
-
+        $this->fs->put($source, $target);
     }
     // }}}
     // {{{ publishString()
     /**
      * @brief publishes string content directly to target
      *
-     * @param mixed $
+     * @param string $content
+     * @param string $target
      * @return void
      **/
     public function publishString($content, $target)
     {
-
+        $this->fs->putString($target, $content);
     }
     // }}}
     // {{{ unpublishFile()
     /**
      * @brief removes a file from target
      *
-     * @param mixed $
+     * @param string $target
      * @return void
      **/
     public function unpublishFile($target)
     {
-
+        try {
+            $this->fs->rm($target);
+        } catch (\Depage\Fs\Exceptions\FsException $e) {
+            // @todo ignore exceptions only when file does not exist -> not when it is not deletable
+        }
     }
     // }}}
     // {{{ getFilesToUnpublish()

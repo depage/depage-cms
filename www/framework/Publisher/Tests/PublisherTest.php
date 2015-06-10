@@ -37,6 +37,22 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
      **/
     public function tearDown()
     {
+        $this->rmr(__DIR__ . "/tmp/");
+    }
+    // }}}
+    // {{{ rmr
+    protected function rmr($path)
+    {
+        if (is_dir($path)) {
+            $scanDir = array_diff(scandir($path), array('.', '..'));
+
+            foreach ($scanDir as $nested) {
+                $this->rmr($path . '/' . $nested);
+            }
+            rmdir($path);
+        } elseif (is_file($path)) {
+            unlink($path);
+        }
     }
     // }}}
 
@@ -47,10 +63,10 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
     public function testPublishFile()
     {
         $content = "abcd";
-        file_put_contents($this->source . "test.txt");
-        $this->publisher->testPublishFile($this->source . "test.txt", "testFile.txt");
+        file_put_contents($this->source . "test.txt", $content);
+        $this->publisher->publishFile($this->source . "test.txt", "testFile.txt");
 
-        $this->assertFileEquals($content, $this->target . "testFile.txt");
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "testFile.txt");
     }
     // }}}
     // {{{ testPublishString()
@@ -59,8 +75,27 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
      **/
     public function testPublishString()
     {
-        $this->publisher->publishString("testcontent", "testString.txt");
+        $content = "testcontent";
+        file_put_contents($this->source . "test.txt", $content);
 
+        $this->publisher->publishString($content, "testString.txt");
+
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "testString.txt");
+    }
+    // }}}
+    // {{{ testUnpublishFile()
+    /**
+     * @brief testUnpublishFile
+     **/
+    public function testUnpublishFile()
+    {
+        $content = "abcd";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "testFileDeleted.txt");
+        $this->publisher->unpublishFile("testFileDeleted.txt");
+
+        $this->assertFileNotExists($this->target . "testFileDeleted.txt");
     }
     // }}}
 }
