@@ -74,6 +74,17 @@ class Pdo
     }
     // }}}
 
+    // {{{ getPdoObject
+    public function getPdoObject()
+    {
+        if (is_null($this->pdo)) {
+            $this->lateInitialize();
+        }
+
+        return $this->pdo;
+    }
+    // }}}
+
     // {{{ __set
     /**
      */
