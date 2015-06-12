@@ -1,7 +1,7 @@
 #depage-db
 
 ## PDO Wrapper
-A small wrapper around the pdo object which allows late/on demand initializition
+A small wrapper around the pdo object which allows late/on demand initialization
 of the database connection.
 
 ## Schema
@@ -22,7 +22,6 @@ can also be templates to allow for prefixing/replacement of table identifiers.
 ####Example
 
 ######SQL schema file (schema.sql)
-
 ```mysql
 # @tablename example
 # @version 0.1

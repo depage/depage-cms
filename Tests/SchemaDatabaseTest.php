@@ -2,7 +2,7 @@
 
 use depage\DB\Schema;
 
-// {{{ DatabaseSchemaTestClassddd
+// {{{ DatabaseSchemaTestClass
 class DatabaseSchemaTestClass extends Schema
 {
     public function currentTableVersion($tableName)
