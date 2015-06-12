@@ -5,6 +5,7 @@
 @function last($list) {
   @return nth($list, length($list));
 }
+
 // {{{ mixin: gradient
 @mixin gradient($colors...) {
     background: first(first($colors)); // Old browsers
@@ -16,8 +17,7 @@
             $svg: $svg + '<stop offset="#{nth($color, 2)}" stop-color="#{first($color)}" stop-opacity="1"/>';
         }
         $svg: $svg + '</linearGradient><rect x="0" y="0" width="1" height="1" fill="url(#grad-ucgg-generated)" /></svg>';
-        $url: 'data:image/svg+xml;charset=utf-8;base64,' + base64Encode($svg);
-        background: url($url) no-repeat scroll 0 0 / 100% 100% transparent;
+        background: url('data:image/svg+xml;charset=utf-8;base64,' + base64Encode($svg)) no-repeat scroll 0 0 / 100% 100% transparent;
     }
 
     background: -moz-linear-gradient(top, $colors); // FF3.6+
