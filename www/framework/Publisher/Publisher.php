@@ -104,9 +104,10 @@ class Publisher
      **/
     protected function fileNeedsUpdate($filename, $hash)
     {
-        $query = $this->pdo->prepare("SELECT hash FROM {$this->tableFiles} WHERE filename = :filename");
+        $query = $this->pdo->prepare("SELECT hash FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
+            'publishId' => $this->publishId,
         ));
         $data = $query->fetchObject();
 
@@ -145,20 +146,21 @@ class Publisher
      **/
     protected function fileUpdated($filename, $hash)
     {
-        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename");
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
+            'publishId' => $this->publishId,
         ));
         $query = $this->pdo->prepare("INSERT {$this->tableFiles}
             SET
-                pid = :pid,
+                publishId = :publishId,
                 filename = :filename,
                 hash = :hash,
                 lastmod = NOW(),
                 exist = 1;
         ");
         $query->execute(array(
-            'pid' => $this->publishId,
+            'publishId' => $this->publishId,
             'filename' => $filename,
             'hash' => $hash,
         ));
@@ -174,9 +176,10 @@ class Publisher
      **/
     protected function fileDeleted($filename)
     {
-        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename");
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
+            'publishId' => $this->publishId,
         ));
     }
     // }}}

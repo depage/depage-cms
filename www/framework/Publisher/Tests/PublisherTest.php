@@ -92,7 +92,7 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
             'publisher_test_published_files' => array(
                 array(
                     'id' => 1,
-                    'pid' => 1,
+                    'publishId' => 1,
                     'filename' => "testfile.txt",
                     'hash' => sha1("test"),
                     'lastmod' => "2015-04-24 17:15:23",
@@ -179,11 +179,11 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertFileNotExists($this->target . "testFileDeleted.txt");
     }
     // }}}
-    // {{{ testPublishFileNoUpdatedNeeded()
+    // {{{ testPublishFileNoUpdateNeeded()
     /**
-     * @brief testPublishFileNoUpdatedNeeded
+     * @brief testPublishFileNoUpdateNeeded
      **/
-    public function testPublishFileNoUpdatedNeeded()
+    public function testPublishFileNoUpdateNeeded()
     {
         $content = "old";
         file_put_contents($this->source . "test.txt", $content);
@@ -198,11 +198,11 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertFalse($updated);
     }
     // }}}
-    // {{{ testPublishFileUpdatedNeeded()
+    // {{{ testPublishFileUpdateNeeded()
     /**
-     * @brief testPublishFileUpdatedNeeded
+     * @brief testPublishFileUpdateNeeded
      **/
-    public function testPublishFileUpdatedNeeded()
+    public function testPublishFileUpdateNeeded()
     {
         $content = "old";
         file_put_contents($this->source . "test.txt", $content);
