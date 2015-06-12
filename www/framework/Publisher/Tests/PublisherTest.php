@@ -26,7 +26,9 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->pdo = new Depage\Db\Pdo(
             "mysql:dbname=depage_phpunit;host=localhost",
             "root",
-            ""
+            "", array(
+                'prefix' => 'publisher_test',
+            )
         );
 
         $this->publisher = new Depage\Publisher\Publisher($this->pdo, $this->fs, 1);
@@ -92,7 +94,7 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
                     'id' => 1,
                     'pid' => 1,
                     'filename' => "testfile.txt",
-                    'sha1' => sha1("test"),
+                    'hash' => sha1("test"),
                     'lastmod' => "2015-04-24 17:15:23",
                     'exist' => 1,
                 ),
@@ -134,11 +136,14 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
     {
         $content = "abcd";
         file_put_contents($this->source . "test.txt", $content);
-        $this->publisher->publishFile($this->source . "test.txt", "testFile.txt");
-        $this->publisher->publishFile($this->source . "test.txt", "subdir/testFile.txt");
 
+        $this->publisher->publishFile($this->source . "test.txt", "testFile.txt", $updated);
         $this->assertFileEquals($this->source . "test.txt", $this->target . "testFile.txt");
+        $this->assertTrue($updated);
+
+        $this->publisher->publishFile($this->source . "test.txt", "subdir/testFile.txt", $updated);
         $this->assertFileEquals($this->source . "test.txt", $this->target . "subdir/testFile.txt");
+        $this->assertTrue($updated);
     }
     // }}}
     // {{{ testPublishString()
@@ -150,11 +155,13 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $content = "testcontent";
         file_put_contents($this->source . "test.txt", $content);
 
-        $this->publisher->publishString($content, "testString.txt");
-        $this->publisher->publishString($content, "subdir/testString.txt");
-
+        $this->publisher->publishString($content, "testString.txt", $updated);
         $this->assertFileEquals($this->source . "test.txt", $this->target . "testString.txt");
+        $this->assertTrue($updated);
+
+        $this->publisher->publishString($content, "subdir/testString.txt", $updated);
         $this->assertFileEquals($this->source . "test.txt", $this->target . "subdir/testString.txt");
+        $this->assertTrue($updated);
     }
     // }}}
     // {{{ testUnpublishFile()
@@ -170,6 +177,47 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->publisher->unpublishFile("testFileDeleted.txt");
 
         $this->assertFileNotExists($this->target . "testFileDeleted.txt");
+    }
+    // }}}
+    // {{{ testPublishFileNoUpdatedNeeded()
+    /**
+     * @brief testPublishFileNoUpdatedNeeded
+     **/
+    public function testPublishFileNoUpdatedNeeded()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+
+        // file did not change
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertFalse($updated);
+    }
+    // }}}
+    // {{{ testPublishFileUpdatedNeeded()
+    /**
+     * @brief testPublishFileUpdatedNeeded
+     **/
+    public function testPublishFileUpdatedNeeded()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+
+        // file changed
+        $content = "new";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
     }
     // }}}
 }

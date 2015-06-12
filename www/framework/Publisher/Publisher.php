@@ -18,8 +18,9 @@ class Publisher
     public function __construct($pdo, \Depage\Fs\Fs $fs, $publishId)
     {
         $this->pdo = $pdo;
-        $this->tableFiles = $this->pdo->prefix . "_publish_files";
+        $this->tableFiles = $this->pdo->prefix . "_published_files";
         $this->fs = $fs;
+        $this->publishId = $publishId;
     }
     // }}}
 
@@ -59,11 +60,17 @@ class Publisher
      * @param string $target
      * @return void
      **/
-    public function publishFile($source, $target)
+    public function publishFile($source, $target, &$updated = false)
     {
-        $this->mkdirForTarget($target);
+        $updated = false;
+        $hash = sha1_file($source);
+        if ($this->fileNeedsUpdate($target, $hash)) {
+            $this->mkdirForTarget($target);
+            $this->fs->put($source, $target);
 
-        $this->fs->put($source, $target);
+            $this->fileUpdated($target, $hash);
+            $updated = true;
+        }
     }
     // }}}
     // {{{ publishString()
@@ -74,11 +81,39 @@ class Publisher
      * @param string $target
      * @return void
      **/
-    public function publishString($content, $target)
+    public function publishString($content, $target, &$updated = false)
     {
-        $this->mkdirForTarget($target);
+        $updated = false;
+        $hash = sha1($content);
+        if ($this->fileNeedsUpdate($target, $hash)) {
+            $this->mkdirForTarget($target);
+            $this->fs->putString($target, $content);
 
-        $this->fs->putString($target, $content);
+            $this->fileUpdated($target, $hash);
+            $updated = true;
+        }
+    }
+    // }}}
+    // {{{ fileNeedsUpdate()
+    /**
+     * @brief fileNeedsUpdate
+     *
+     * @param string $filename
+     * @param string $hash
+     * @return void
+     **/
+    protected function fileNeedsUpdate($filename, $hash)
+    {
+        $query = $this->pdo->prepare("SELECT hash FROM {$this->tableFiles} WHERE filename = :filename");
+        $query->execute(array(
+            'filename' => $filename,
+        ));
+        $data = $query->fetchObject();
+
+        if ($data) {
+            return $data->hash != $hash;
+        }
+        return true;
     }
     // }}}
     // {{{ unpublishFile()
@@ -95,8 +130,57 @@ class Publisher
         } catch (\Depage\Fs\Exceptions\FsException $e) {
             // @todo ignore exceptions only when file does not exist -> not when it is not deletable
         }
+
+        $this->fileDeleted($target);
     }
     // }}}
+
+    // {{{ fileUpdated()
+    /**
+     * @brief fileUpdated
+     *
+     * @param string $filename
+     * @param string $hash
+     * @return void
+     **/
+    protected function fileUpdated($filename, $hash)
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename");
+        $query->execute(array(
+            'filename' => $filename,
+        ));
+        $query = $this->pdo->prepare("INSERT {$this->tableFiles}
+            SET
+                pid = :pid,
+                filename = :filename,
+                hash = :hash,
+                lastmod = NOW(),
+                exist = 1;
+        ");
+        $query->execute(array(
+            'pid' => $this->publishId,
+            'filename' => $filename,
+            'hash' => $hash,
+        ));
+    }
+    // }}}
+    // {{{ fileDeleted()
+    /**
+     * @brief fileDeleted
+     *
+     * @param string $filename
+     * @param string $hash
+     * @return void
+     **/
+    protected function fileDeleted($filename)
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename");
+        $query->execute(array(
+            'filename' => $filename,
+        ));
+    }
+    // }}}
+
     // {{{ resetPublishedState()
     /**
      * @brief resetPublishedState
