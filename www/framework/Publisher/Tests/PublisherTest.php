@@ -98,6 +98,14 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
                     'lastmod' => "2015-04-24 17:15:23",
                     'exist' => 1,
                 ),
+                array(
+                    'id' => 2,
+                    'publishId' => 1,
+                    'filename' => "testfile2.txt",
+                    'hash' => sha1("test2"),
+                    'lastmod' => "2015-04-20 10:15:23",
+                    'exist' => 1,
+                ),
             ),
         ));
     }
@@ -179,6 +187,7 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertFileNotExists($this->target . "testFileDeleted.txt");
     }
     // }}}
+
     // {{{ testPublishFileNoUpdateNeeded()
     /**
      * @brief testPublishFileNoUpdateNeeded
@@ -220,6 +229,48 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertTrue($updated);
     }
     // }}}
+    // {{{ testPublishStringNoUpdateNeeded()
+    /**
+     * @brief testPublishStringNoUpdateNeeded
+     **/
+    public function testPublishStringNoUpdateNeeded()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishString($content, "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+
+        // content did not change
+        $this->publisher->publishString($content, "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertFalse($updated);
+    }
+    // }}}
+    // {{{ testPublishStringUpdateNeeded()
+    /**
+     * @brief testPublishStringUpdateNeeded
+     **/
+    public function testPublishStringUpdateNeeded()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishString($content, "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+
+        // content changed
+        $content = "new";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishString($content, "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+    }
+    // }}}
+
     // {{{ testClearPublishedState()
     /**
      * @brief testClearPublishedState
@@ -262,6 +313,29 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertNotContains("test1.txt", $filesToDelete);
         $this->assertContains("test2.txt", $filesToDelete);
         $this->assertContains("testfile.txt", $filesToDelete);
+    }
+    // }}}
+    // {{{ testGetPublishedFiles()
+    /**
+     * @brief testGetPublishedFiles
+     **/
+    public function testGetPublishedFiles()
+    {
+        $publishedFiles = $this->publisher->getPublishedFiles();
+
+        $this->assertNotContains("not-existant-file.txt", $publishedFiles);
+        $this->assertContains("testfile.txt", $publishedFiles);
+    }
+    // }}}
+    // {{{ testGetLastPublishDate()
+    /**
+     * @brief testGetLastPublishDate
+     **/
+    public function testGetLastPublishDate()
+    {
+        $date = $this->publisher->getLastPublishDate();
+
+        $this->assertEquals($date, new \DateTime("2015-04-24 17:15:23"));
     }
     // }}}
 }

@@ -209,21 +209,6 @@ class Publisher
     }
     // }}}
 
-    // {{{ resetPublishedState()
-    /**
-     * @brief resetPublishedState
-     *
-     * @param mixed $
-     * @return void
-     **/
-    public function resetPublishedState()
-    {
-        $query = $this->pdo->prepare("UPDATE {$this->tableFiles} SET exist=0 WHERE publishId = :publishId");
-        $query->execute(array(
-            'publishId' => $this->publishId,
-        ));
-    }
-    // }}}
     // {{{ getFilesToDelete()
     /**
      * @brief getFilesToDelete
@@ -247,6 +232,75 @@ class Publisher
         };
 
         return $deletedFiles;
+    }
+    // }}}
+    // {{{ getPublishedFiles()
+    /**
+     * @brief getPublishedFiles
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getPublishedFiles()
+    {
+        $publishedFiles = array();
+        $query = $this->pdo->prepare("SELECT filename FROM {$this->tableFiles} WHERE publishId = :publishId");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
+
+        $data = $query->fetchObject();
+        while ($data) {
+            array_push($publishedFiles, $data->filename);
+
+            $data = $query->fetchObject();
+        };
+
+        return $publishedFiles;
+    }
+    // }}}
+    // {{{ getLastPublishDate()
+    /**
+     * @brief getLastPublishDate
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getLastPublishDate()
+    {
+        $date = false;
+        $query = $this->pdo->prepare(
+            "SELECT lastmod FROM {$this->tableFiles}
+            WHERE publishId = :publishId
+            ORDER BY lastmod DESC
+            LIMIT 1"
+        );
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
+
+        $data = $query->fetchObject();
+        if ($data) {
+            $date = new \DateTime($data->lastmod);
+        }
+
+        return $date;
+    }
+    // }}}
+
+    // {{{ resetPublishedState()
+    /**
+     * @brief resetPublishedState
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function resetPublishedState()
+    {
+        $query = $this->pdo->prepare("UPDATE {$this->tableFiles} SET exist=0 WHERE publishId = :publishId");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
     }
     // }}}
     // {{{ clearPublishedState()
