@@ -62,6 +62,7 @@ class Publisher
     public function publishFile($source, $target)
     {
         $this->mkdirForTarget($target);
+
         $this->fs->put($source, $target);
     }
     // }}}
@@ -76,6 +77,7 @@ class Publisher
     public function publishString($content, $target)
     {
         $this->mkdirForTarget($target);
+
         $this->fs->putString($target, $content);
     }
     // }}}
@@ -95,14 +97,26 @@ class Publisher
         }
     }
     // }}}
-    // {{{ getFilesToUnpublish()
+    // {{{ resetPublishedState()
     /**
-     * @brief getFilesToUnpublish
+     * @brief resetPublishedState
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function resetPublishedState($target)
+    {
+
+    }
+    // }}}
+    // {{{ getDeletedFiles()
+    /**
+     * @brief getDeletedFiles
      *
      * @param mixed
      * @return void
      **/
-    public function getFilesToUnpublish()
+    public function getDeletedFiles()
     {
 
     }

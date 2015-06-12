@@ -3,7 +3,7 @@
 /**
  * Tests Publisher Class
  **/
-class PublisherTest extends \PHPUnit_Framework_TestCase
+class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
 {
     // {{{ setUp()
     /**
@@ -11,6 +11,7 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
      **/
     public function setUp()
     {
+        parent::setUp();
         $this->source = __DIR__ . "/tmp/src/";
         $this->target = __DIR__ . "/tmp/target/";
 
@@ -53,6 +54,50 @@ class PublisherTest extends \PHPUnit_Framework_TestCase
         } elseif (is_file($path)) {
             unlink($path);
         }
+    }
+    // }}}
+    // {{{ getConnection()
+    /**
+     * gets database connection
+     */
+    protected function getConnection() {
+        $pdo = new \Pdo(
+            "mysql:dbname=depage_phpunit;host=localhost",
+            "root",
+            ""
+        );
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        $schema = new \Depage\DB\Schema($pdo);
+
+        $schema->setReplace(
+            function ($tableName) {
+                return str_replace("_proj_PROJECTNAME", "publisher_test", $tableName);
+            }
+        );
+        $schema->loadGlob(__DIR__ . "/../Sql/*.sql");
+        $schema->update();
+
+        return $this->createDefaultDBConnection($pdo, 'testdb');
+    }
+    // }}}
+    // {{{ getDataSet()
+    /**
+     * gets dataset
+     */
+    protected function getDataSet() {
+        return $this->createArrayDataSet(array(
+            'publisher_test_published_files' => array(
+                array(
+                    'id' => 1,
+                    'pid' => 1,
+                    'filename' => "testfile.txt",
+                    'sha1' => sha1("test"),
+                    'lastmod' => "2015-04-24 17:15:23",
+                    'exist' => 1,
+                ),
+            ),
+        ));
     }
     // }}}
 
