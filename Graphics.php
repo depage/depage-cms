@@ -86,6 +86,10 @@ class Graphics
      * @brief Process bypass bool
      **/
     protected $bypass = true;
+    /**
+     * @brief oldIgnoreUserAbort
+     **/
+    private $oldIgnoreUserAbort = false;
     // }}}
     // {{{ factory()
     /**
@@ -312,6 +316,20 @@ class Graphics
         $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
+
+        $this->oldIgnoreUserAbort = ignore_user_abort();
+        ignore_user_abort(true);
+    }
+    // }}}
+    // {{{ renderFinished()
+    /**
+     * @brief   Called after rendering has finished
+     *
+     * Resets ignore_user_abort
+     **/
+    public function renderFinished()
+    {
+        ignore_user_abort($this->oldIgnoreUserAbort);
     }
     // }}}
     // {{{ optimizeImage()

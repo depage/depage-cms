@@ -115,6 +115,8 @@ class Graphicsmagick extends Imagemagick
                 }
             }
         }
+
+        parent::renderFinished();
     }
     // }}}
 
