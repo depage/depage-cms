@@ -70,6 +70,8 @@ class Publisher
 
             $this->fileUpdated($target, $hash);
             $updated = true;
+        } else {
+            $this->fileKept($target);
         }
     }
     // }}}
@@ -91,6 +93,8 @@ class Publisher
 
             $this->fileUpdated($target, $hash);
             $updated = true;
+        } else {
+            $this->fileKept($target);
         }
     }
     // }}}
@@ -166,6 +170,27 @@ class Publisher
         ));
     }
     // }}}
+    // {{{ fileKept()
+    /**
+     * @brief fileKept
+     *
+     * @param string $filename
+     * @param string $hash
+     * @return void
+     **/
+    protected function fileKept($filename)
+    {
+        $query = $this->pdo->prepare("UPDATE {$this->tableFiles}
+            SET
+                exist = 1
+            WHERE filename = :filename AND publishId = :publishId;
+        ");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+            'filename' => $filename,
+        ));
+    }
+    // }}}
     // {{{ fileDeleted()
     /**
      * @brief fileDeleted
@@ -191,21 +216,51 @@ class Publisher
      * @param mixed $
      * @return void
      **/
-    public function resetPublishedState($target)
+    public function resetPublishedState()
     {
-
+        $query = $this->pdo->prepare("UPDATE {$this->tableFiles} SET exist=0 WHERE publishId = :publishId");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
     }
     // }}}
-    // {{{ getDeletedFiles()
+    // {{{ getFilesToDelete()
     /**
-     * @brief getDeletedFiles
+     * @brief getFilesToDelete
      *
      * @param mixed
      * @return void
      **/
-    public function getDeletedFiles()
+    public function getFilesToDelete()
     {
+        $deletedFiles = array();
+        $query = $this->pdo->prepare("SELECT filename FROM {$this->tableFiles} WHERE exist = 0 AND publishId = :publishId");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
 
+        $data = $query->fetchObject();
+        while ($data) {
+            array_push($deletedFiles, $data->filename);
+
+            $data = $query->fetchObject();
+        };
+
+        return $deletedFiles;
+    }
+    // }}}
+    // {{{ clearPublishedState()
+    /**
+     * @brief clearPublishedState
+     *
+     * @return void
+     **/
+    public function clearPublishedState()
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE publishId = :publishId");
+        $query->execute(array(
+            'publishId' => $this->publishId,
+        ));
     }
     // }}}
 

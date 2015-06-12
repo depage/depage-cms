@@ -220,6 +220,50 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertTrue($updated);
     }
     // }}}
+    // {{{ testClearPublishedState()
+    /**
+     * @brief testClearPublishedState
+     **/
+    public function testClearPublishedState()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+
+        $this->publisher->clearPublishedState();
+
+        // published state for file got reset -> so publishing file updates target
+        $this->publisher->publishFile($this->source . "test.txt", "test.txt", $updated);
+        $this->assertFileEquals($this->source . "test.txt", $this->target . "test.txt");
+        $this->assertTrue($updated);
+    }
+    // }}}
+    // {{{ testGetDeletedFiles()
+    /**
+     * @brief testGetDeletedFiles
+     **/
+    public function testGetDeletedFiles()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test1.txt");
+        $this->publisher->publishFile($this->source . "test.txt", "test2.txt");
+
+        $this->publisher->resetPublishedState();
+
+        $this->publisher->publishFile($this->source . "test.txt", "test1.txt");
+
+        $filesToDelete = $this->publisher->getFilesToDelete();
+
+        $this->assertNotContains("test1.txt", $filesToDelete);
+        $this->assertContains("test2.txt", $filesToDelete);
+        $this->assertContains("testfile.txt", $filesToDelete);
+    }
+    // }}}
 }
 
 /* vim:set ft=php sts=4 fdm=marker et : */
