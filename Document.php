@@ -1841,14 +1841,12 @@ class Document
 
     // {{{ updateLastchange
     /**
-     * updates the lastchange date and uid for the current document
+     * set or updates the lastchange date and uid for the current document
+     *
+     * @param int $timestamp optional timestamp, defaults to now
+     * @param int $uid optional user id, defaults to current user, when user is set in xmldb options
      */
-    protected function updateLastchange()
-    {
-        $result = false;
-        $timestamp = time();
-        $user_id = (empty($this->xmldb->options['userId'])) ? null : $this->xmldb->options['userId'];
-
+    public function updateLastchange($timestamp = null, $uid = null) {
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -1857,6 +1855,20 @@ class Document
             WHERE
                 id=:doc_id;"
         );
+
+        if (empty($timestamp)) {
+            $timestamp = time();
+        } else if (is_string($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!empty($uid)) {
+            $user_id = $uid;
+        } else if (!empty($this->xmldb->options['userId'])) {
+            $user_id = $this->xmldb->options['userId'];
+        } else {
+            $user_id = null;
+        }
 
         $params = array(
             'doc_id' => $this->getDocId(),
