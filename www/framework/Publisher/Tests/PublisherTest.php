@@ -338,6 +338,32 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($date, new \DateTime("2015-04-24 17:15:23"));
     }
     // }}}
+    // {{{ testUnpublishRemovedFiles()
+    /**
+     * @brief testUnpublishRemovedFiles
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testUnpublishRemovedFiles()
+    {
+        $content = "old";
+        file_put_contents($this->source . "test.txt", $content);
+
+        $this->publisher->publishFile($this->source . "test.txt", "test1.txt");
+        $this->publisher->publishFile($this->source . "test.txt", "test2.txt");
+
+        $this->publisher->resetPublishedState();
+
+        $this->publisher->publishFile($this->source . "test.txt", "test1.txt");
+
+        $this->publisher->unpublishRemovedFiles();
+
+        $this->assertFileExists($this->target . "test1.txt");
+        $this->assertFileNotExists($this->target . "test2.txt");
+
+    }
+    // }}}
 }
 
 /* vim:set ft=php sts=4 fdm=marker et : */

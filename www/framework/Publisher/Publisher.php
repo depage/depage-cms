@@ -43,6 +43,7 @@ class Publisher
             // @todo add testing of content of url directly if base url is set
 
             $value = $this->fs->getString($filename);
+            $this->fs->rm($filename);
         } catch (\Depage\Fs\Exceptions\FsException $e) {
             // suppress exception -> we will return false when values don't match
         }
@@ -137,6 +138,21 @@ class Publisher
         }
 
         $this->fileDeleted($target);
+    }
+    // }}}
+    // {{{ unpublishRemovedFiles()
+    /**
+     * @brief deletes file that did not get published after resetPublishedState call
+     *
+     * @return void
+     **/
+    public function unpublishRemovedFiles()
+    {
+        $files = $this->getFilesToDelete();
+
+        foreach ($files as $file) {
+            $this->unpublishFile($file);
+        }
     }
     // }}}
 
@@ -329,7 +345,7 @@ class Publisher
     {
         $dir = dirname($target);
         if ($dir != ".") {
-            $this->fs->mkdir($dir);
+            $this->fs->mkdir($dir, 0777, true);
         }
     }
     // }}}
