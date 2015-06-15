@@ -38,6 +38,14 @@ abstract class Transformer
         $this->template = $template;
         $this->log = new \Depage\Log\Log();
 
+        $this->init();
+    }
+    // }}}
+    // {{{ constructor()
+    public function init()
+    {
+        $this->log = new \Depage\Log\Log();
+
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
@@ -596,6 +604,31 @@ abstract class Transformer
         $date = date($format, strtotime($date));
 
         return $date;
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'pdo',
+            'projectName',
+            'template',
+            'xsltPath',
+            'xmlPath',
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows Depage\Db\Pdo-object to be unserialized
+     */
+    public function __wakeup()
+    {
+        $this->init();
     }
     // }}}
 }
