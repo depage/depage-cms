@@ -25,9 +25,9 @@ class Project extends Base
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
         } else if ($this->projectName == "+") {
-            $this->project = new \Depage\Cms\Project($this->pdo);
+            $this->project = new \Depage\Cms\Project($this->pdo, $this->cahe);
         } else {
-            $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
+            $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->cache, $this->projectName);
         }
     }
     // }}}
@@ -255,16 +255,17 @@ class Project extends Base
         $form->process();
 
         if ($form->validate()) {
-            // get cache instance
-            $cache = \Depage\Cache\Cache::factory("xmldb", array(
-                'host' => "localhost",
-            ));
-
-            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $cache);
+            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $this->cache);
             //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
             //return;
 
-            $value = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
+            $task = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
+
+            /* *
+            $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
+            $taskrunner->runNow($task->taskId);
+            die();
+            /**/
 
             $form->clearSession();
 
@@ -272,6 +273,45 @@ class Project extends Base
         }
 
         return $form;
+    }
+    // }}}
+    // {{{ publish()
+    /**
+     * @brief publish
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function publish()
+    {
+        $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, array(
+            'project' => $this->project,
+        ));
+        $form->process();
+
+        if ($form->validate()) {
+            $publishId = $form->getValues()['publishId'];
+            $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId);
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        $title = sprintf(_("Publish Project '%s'"), $this->project->name);
+
+        $h = new Html("box.tpl", array(
+            'id' => "projects",
+            'icon' => "framework/Cms/images/icon_projects.gif",
+            'class' => "first",
+            'title' => $title,
+            'content' => array(
+                $this->toolbar(),
+                $form,
+            ),
+        ), $this->htmlOptions);
+
+        return $h;
     }
     // }}}
 

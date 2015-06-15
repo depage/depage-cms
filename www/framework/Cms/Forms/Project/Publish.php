@@ -69,7 +69,9 @@ class Publish extends Base
                 ));
                 $fs->addSingle("template_set-$nodeId", array(
                     "label" => _("Template Set"),
-                    "list" => array(),
+                    "list" => array(
+                        "html" => "html",
+                    ),
                     "skin" => "select",
                     "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
                 ));

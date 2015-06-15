@@ -56,10 +56,11 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      void
      */
-    public function __construct($pdo) {
+    public function __construct($pdo, $cache) {
         parent::__construct($pdo);
 
         $this->pdo = $pdo;
+        $this->cache = $cache;
     }
     /* }}} */
 
@@ -73,7 +74,7 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadAll($pdo) {
+    static public function loadAll($pdo, $cache) {
         $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
@@ -89,7 +90,7 @@ class Project extends \Depage\Entity\Entity
             "
         );
 
-        $projects = self::fetch($pdo, $query);
+        $projects = self::fetch($pdo, $cache, $query);
 
         return $projects;
     }
@@ -104,7 +105,7 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadByName($pdo, $name) {
+    static public function loadByName($pdo, $cache, $name) {
         $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
@@ -118,7 +119,7 @@ class Project extends \Depage\Entity\Entity
                 projectgroup.pos ASC, fullname ASC
             "
         );
-        $projects = self::fetch($pdo, $query, array(
+        $projects = self::fetch($pdo, $cache, $query, array(
             ":name" => $name,
         ));
 
@@ -136,13 +137,13 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $query
      * @return void
      **/
-    static protected function fetch($pdo, $query, $params = array())
+    static protected function fetch($pdo, $cache, $query, $params = array())
     {
         $projects = array();
         $query->execute($params);
 
         // pass pdo-instance to constructor
-        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", array($pdo));
+        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", array($pdo, $cache));
         do {
             $project = $query->fetch(\PDO::FETCH_CLASS);
             if ($project) {
@@ -240,7 +241,7 @@ class Project extends \Depage\Entity\Entity
     {
         $this->updateProjectSchema();
 
-        $projectPath = DEPAGE_PATH . "projects/{$this->name}/";
+        $projectPath = $this->getProjectPath();
 
         $success = is_writable($projectPath) || mkdir($projectPath, 0777, true);
         mkdir($projectPath . "lib/", 0777, true);
@@ -275,7 +276,10 @@ class Project extends \Depage\Entity\Entity
         );
 
         // schema for comments
-        $files = glob(__DIR__ . "/../Comments/Sql/*.sql");
+        $files = array_merge(
+            glob(__DIR__ . "/../Comments/Sql/*.sql"),
+            glob(__DIR__ . "/../Publisher/Sql/*.sql")
+        );
         sort($files);
         foreach ($files as $file) {
             $schema->loadFile($file);
@@ -292,9 +296,6 @@ class Project extends \Depage\Entity\Entity
      **/
     protected function initXmlDb()
     {
-        // get cache instance
-        $this->cache = \Depage\Cache\Cache::factory("xmldb");
-
         $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->name}", $this->pdo, $this->cache, array(
             'pathXMLtemplate' => $this->xmlPath,
         ));
@@ -304,7 +305,7 @@ class Project extends \Depage\Entity\Entity
     /**
      * @brief getSettingsDoc
      *
-     * @param mixed 
+     * @param mixed
      * @return void
      **/
     public function getSettingsDoc()
@@ -336,10 +337,13 @@ class Project extends \Depage\Entity\Entity
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $node = $nodelist->item($i);
             $docId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
-            $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
-            $docInfo->url = $node->getAttribute("url");
 
-            $pages[] = $docInfo;
+            if ($docId) {
+                $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
+                $docInfo->url = $node->getAttribute("url");
+
+                $pages[] = $docInfo;
+            }
         }
 
         usort($pages, function($a, $b) {
@@ -356,6 +360,17 @@ class Project extends \Depage\Entity\Entity
         }
 
         return $pages;
+    }
+    // }}}
+    // {{{ getProjectPath()
+    /**
+     * @brief getProjectPath
+     *
+     * @return Path for project files
+     **/
+    public function getProjectPath()
+    {
+        return DEPAGE_PATH . "projects/{$this->name}/";
     }
     // }}}
     // {{{ getPreviewPath()
@@ -394,6 +409,28 @@ class Project extends \Depage\Entity\Entity
         return $languages;
     }
     // }}}
+    // {{{ getPublishingTargets()
+    /**
+     * @brief getPublishingTargets
+     *
+     * @param mixed
+     * @return array of languages
+     **/
+    public function getPublishingTargets()
+    {
+        $targets = array();
+        $this->initXmlDb();
+
+        $settings = $this->getSettingsDoc();
+        $nodes = $settings->getNodeIdsByXpath("//proj:publishTargets/proj:publishTarget");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $targets[$nodeId] = $attr['name'];
+        }
+
+        return $targets;
+    }
+    // }}}
     // {{{ getHomeUrl()
     /**
      * @brief getHomeUrl
@@ -409,6 +446,114 @@ class Project extends \Depage\Entity\Entity
         $nodelist = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "page");
 
         return $this->getPreviewPath() . $nodelist->item(0)->getAttribute("url");
+    }
+    // }}}
+
+    // {{{ addPublishTask()
+    /**
+     * @brief addPublishTask
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function addPublishTask($taskName, $publishId)
+    {
+        $this->initXmlDb();
+
+        $projectPath = $this->getProjectPath();
+        $settings = $this->getSettingsDoc()->getAttributes($publishId);
+        $fsLocal = \Depage\Fs\Fs::factory($projectPath);
+
+        // getting als files in library
+        $files = $fsLocal->lsFiles("lib/*");
+        $dirs = $fsLocal->lsDir("lib/*");
+        while (count($dirs) > 0) {
+            $dir = array_pop($dirs);
+            $files = array_merge($files, $fsLocal->lsFiles($dir . "/*"));
+            $dirs = array_merge($dirs, $fsLocal->lsDir($dir . "/*"));
+        }
+
+        // get pdo object for publisher
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        // get transformer
+        // @todo change preview type to live, when transformer is fixed
+        $transformer = \Depage\Transformer\Transformer::factory("preview", $this->pdo, $this->name, $settings['template_set']);
+        $cache = \Depage\Cache\Cache::factory("publish/$publishId");
+        $urls = $transformer->getUrlsByPageId();
+        $languages = $this->getLanguages();
+
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
+        $initId = $task->addSubtask("init", "
+            \$fs = \\Depage\\Fs\\Fs::factory(" . \Depage\Tasks\Task::escapeParam($settings['output_folder']) . ");
+            \$publisher = new \\Depage\\Publisher\\Publisher(" . \Depage\Tasks\Task::escapeParam($publishPdo) . ", \$fs, $publishId);
+            \$transformer = " . \Depage\Tasks\Task::escapeParam($transformer) . ";
+            \$cache = " . \Depage\Tasks\Task::escapeParam($cache) . ";
+        ");
+
+        $task->addSubtask("testing publish target", "\$publisher->testConnection();", $initId);
+        $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", $initId);
+
+        // transform pages
+        foreach ($urls as $pageId => $url) {
+            foreach ($languages as $lang => $name) {
+                $target = $lang . $url;
+                $task->addSubtask("transforming page $target", "\$cache->setFile(" . \Depage\Tasks\Task::escapeParam("page_$pageId-$lang") . ", \$transformer->transform(" . \Depage\Tasks\Task::escapeParam($url) . ", " . \Depage\Tasks\Task::escapeParam($lang) . "));", $initId);
+            }
+        }
+
+        /*
+        // transform feeds
+        foreach ($this->languages as $lang) {
+            $task->addSubtask("transforming feed in $lang", "\$publisher->transformFeed($lang);", $initId);
+        }
+
+        // transform sitemap
+        $task->addSubtask("transforming sitemap", "\$publisher->transformSitemap();", $initId);
+
+        // transform htaccess
+        $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
+
+        // transform index page
+        $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
+
+         */
+
+        // publish file library
+        foreach ($files as $file) {
+            $source =  \Depage\Tasks\Task::escapeParam($projectPath . $file);
+            $target =  \Depage\Tasks\Task::escapeParam($file);
+            $task->addSubtask("publishing $file", "\$publisher->publishFile($source, $target);", $initId);
+        }
+
+        // publish pages
+        foreach ($urls as $pageId => $url) {
+            foreach ($languages as $lang => $name) {
+                $target = $lang . $url;
+                $task->addSubtask("publishing page $target", "\$publisher->publishFile(\$cache->getPath(" . \Depage\Tasks\Task::escapeParam("page_$pageId-$lang") . "), " . \Depage\Tasks\Task::escapeParam("$target") . ");", $initId);
+            }
+        }
+        /*
+        // publish feeds
+        foreach ($this->languages as $lang) {
+            $task->addSubtask("publish feed in $lang", "\$publisher->publishFeed($lang);", $initId);
+        }
+
+        // publish sitemap
+        $task->addSubtask("publishing sitemap", "\$publisher->publishSitemap();", $initId);
+
+        // publish htaccess
+        $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
+
+        // publish index page
+        $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
+         */
+
+        // unpublish removed files
+        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", $initId);
+
+        return $task;
     }
     // }}}
 }

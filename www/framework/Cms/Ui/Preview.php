@@ -96,7 +96,7 @@ class Preview extends \Depage\Depage\Ui\Base
 
         if ($urlPath == "/") {
             // redirect to home
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->projectName);
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->cache, $this->projectName);
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE . $project->getHomeUrl());
         }
