@@ -161,12 +161,13 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($pathName);
-        $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
+        if (!is_dir($cleanUrl)) {
+            $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
-        if (!$success) {
-            throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
+            if (!$success) {
+                throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
+            }
         }
-
         $this->postCommandHook();
     }
     // }}}
