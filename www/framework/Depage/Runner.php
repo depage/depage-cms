@@ -307,7 +307,7 @@ class Runner {
     static public function sendContent($content) {
         self::sendHeaders($content);
 
-        if (is_callable(array($content, 'clean'))) {
+        if (method_exists($content, 'clean')) {
             echo($content->clean($content));
         } else {
             echo($content);
@@ -343,7 +343,7 @@ class Runner {
             mb_http_input($encoding);
             mb_http_output($encoding);
         }
-        if (is_callable("iconv_set_encoding")) {
+        if (is_callable("iconv_set_encoding") && version_compare(PHP_VERSION, '5.6.0', '<')) {
             iconv_set_encoding("internal_encoding", $encoding);
             iconv_set_encoding("input_encoding", $encoding);
             iconv_set_encoding("output_encoding", $encoding);
