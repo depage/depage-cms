@@ -118,7 +118,6 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
     public function testPublishConnection()
     {
         $value = $this->publisher->testConnection();
-
         $this->assertTrue($value);
     }
     // }}}
@@ -131,9 +130,14 @@ class PublisherTest extends \PHPUnit_Extensions_Database_TestCase
         $fs = Depage\Fs\Fs::factory("ftp://unknown:unknown@unknownserver.unknowndomain/nodir/");
 
         $this->publisher = new Depage\Publisher\Publisher($this->pdo, $fs, 1);
-        $value = $this->publisher->testConnection();
 
-        $this->assertFalse($value);
+        try {
+            $value = $this->publisher->testConnection();
+        } catch (\Depage\Publisher\Exceptions\PublisherException $e) {
+            return;
+        }
+
+        $this->fail("Publisher Exception expected.");
     }
     // }}}
     // {{{ testPublishFile()

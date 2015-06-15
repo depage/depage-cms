@@ -46,9 +46,12 @@ class Publisher
             $this->fs->rm($filename);
         } catch (\Depage\Fs\Exceptions\FsException $e) {
             // suppress exception -> we will return false when values don't match
+            throw new Exceptions\PublisherException($e->getMessage(), 1, $e);
         }
 
-        // @todo throw exception with error message when test fails for taskrunner?
+        if ($id !== $value) {
+            throw new Exceptions\PublisherException("Could not publish: Written content is not equal.");
+        }
 
         return $id === $value;
     }
