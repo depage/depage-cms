@@ -331,7 +331,14 @@ class Task {
      *
      * @return int return id of created subtask that can be used for depends_on
      */
-    public function addSubtask($name, $php, $depends_on = NULL) {
+    public function addSubtask($name, $php, $params = array(), $depends_on = NULL) {
+        if (!is_array($params)) {
+            $params = array();
+        }
+        foreach ($params as &$param) {
+            $param = $this->escapeParam($param);
+        }
+        $phpCode = trim(vsprintf($php, $params));
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableSubtasks}
                 (task_id, name, php, depends_on) VALUES (:taskId, :name, :php, :depends_on)"
@@ -339,7 +346,7 @@ class Task {
         $query->execute(array(
             "taskId" => $this->taskId,
             "name" => $name,
-            "php" => $php,
+            "php" => $phpCode,
             "depends_on" => $depends_on,
         ));
 
@@ -368,7 +375,7 @@ class Task {
                 $depends_on = NULL;
             }
 
-            $task["id"] = $this->addSubtask($task["name"], $task["php"], $depends_on);
+            $task["id"] = $this->addSubtask($task["name"], $task["php"], array(), $depends_on);
         }
     }
     // }}}
