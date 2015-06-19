@@ -25,7 +25,7 @@ class Project extends Base
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
         } else if ($this->projectName == "+") {
-            $this->project = new \Depage\Cms\Project($this->pdo, $this->cahe);
+            $this->project = new \Depage\Cms\Project($this->pdo, $this->xmldbCache);
         } else {
             $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
         }

@@ -196,7 +196,7 @@ class Flash extends Base {
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
-        $xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, $this->xmldbCache, array(
+        $xmldb = new \Depage\XmlDb\XmlDb ($this->pdo->prefix . "_proj_" . $this->projectName, $this->pdo, $this->xmldbCache, array(
             'pathXMLtemplate' => $this->xmlPath,
             'userId' => $this->authUser->id,
         ));
