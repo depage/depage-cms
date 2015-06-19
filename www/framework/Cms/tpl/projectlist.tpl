@@ -17,6 +17,9 @@
                 <a href="project/<?php self::t($project->name); ?>/settings/" class="button">
                     <?php self::t(_('settings')) ?>
                 </a>
+                <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
+                    <?php self::t(_('publish')) ?>
+                </a>
             </div>
         </dt>
         <dd>
