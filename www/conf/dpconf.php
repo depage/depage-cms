@@ -17,7 +17,7 @@ $conf = array(
             //'method' => 'http_cookie',
             'method' => 'http_basic',
             //'method' => 'http_digest',
-            'digestCompat' => true,
+            //'digestCompat' => true,
         ),
         'timezone' => 'Europe/Berlin',
         //'env' => 'production',
@@ -35,6 +35,16 @@ $conf = array(
     '*/depage-cms-dev/' => array(
         'handler' => 'Depage\Cms\Ui\Main',
         'phpcli' => "/opt/local/bin/php",
+    ),
+    // }}}
+    // {{{ localhost/depage-cms/
+    'localhost/depage-cms/' => array(
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "localhost:6379",
+            ),
+        ),
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/
