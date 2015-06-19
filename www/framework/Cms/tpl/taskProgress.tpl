@@ -11,19 +11,22 @@ $timeFormatter = new \Depage\Formatters\TimeNatural();
 foreach($this->tasks as $task) {
     $progress = $task->getProgress();
     $name = "";
+    $class = "";
     if (!empty($task->projectName)) {
         $name .= $task->projectName . " / ";
     }
     $name .= $task->taskName;
     if ($task->status == "failed") {
         $status = sprintf(_("'%s' failed with error '%s'"), $progress->description, $progress->status);
+        $class = "failed";
     } else {
         $status = sprintf(_("'%s' will finish in %s"), $progress->description, $timeFormatter->format($progress->estimated));
+        $class = "running";
     }
 
     ?>
-        <dt><?php Html::t($progress->percent); ?>%</dt>
-        <dd>
+        <dt class="<?php Html::t($class); ?>"><?php Html::t($progress->percent); ?>%</dt>
+        <dd class="<?php Html::t($class); ?>">
             <progress value="<?php Html::e($progress->percent); ?>" max="100"></progress>
             <p><strong><?php Html::t($name); ?></strong> <?php Html::t($status); ?></p>
             <?php

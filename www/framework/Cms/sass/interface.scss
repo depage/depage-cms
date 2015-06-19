@@ -1043,6 +1043,25 @@ ul.users p {
         p {
             width: 80%;
         }
+
+        &.failed {
+            p,
+            strong {
+                color: #882200;
+            }
+            strong {
+                font-weight: bold;
+
+                &:before {
+                    content: "!";
+                    display: block;
+                    float: left;
+                    padding-right: 0.5em;
+                    //font-weight: normal;
+                    font-size: 2em;
+                }
+            }
+        }
     }
     progress {
         @include progress(#ffffff, #882200) {
@@ -1075,8 +1094,13 @@ ul.users p {
 /* {{{ live-filter */
 .content .depage-live-filter {
     position: absolute;
-    top: 12px;
+    top: 8px;
     right: 12px;
+
+    input {
+        font-size: 12px;
+        padding: 2px 5px;
+    }
 }
 /* }}} */
 
