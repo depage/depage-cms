@@ -1045,6 +1045,9 @@ ul.users p {
         }
 
         &.failed {
+            p {
+                margin-left: 2em;
+            }
             p,
             strong {
                 color: #882200;
@@ -1056,8 +1059,7 @@ ul.users p {
                     content: "!";
                     display: block;
                     float: left;
-                    padding-right: 0.5em;
-                    //font-weight: normal;
+                    margin-left: -1em;
                     font-size: 2em;
                 }
             }
