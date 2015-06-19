@@ -34,7 +34,10 @@ class JsTreeApplication extends \Websocket\Application\Application {
         // TODO: set project correctly
         $proj = "proj";
         $this->prefix = "{$this->pdo->prefix}_{$proj}";
-        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, \Depage\Cache\Cache::factory($this->prefix));
+        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, \Depage\Cache\Cache::factory($this->prefix, array(
+            'disposition' => "redis",
+            'host' => "127.0.0.1:6379",
+        )));
 
         /* get auth object
         $this->auth = \Depage\Auth\Auth::factory(

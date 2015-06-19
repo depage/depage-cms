@@ -143,7 +143,7 @@ class Main extends Base {
      */
     public function projects() {
         // get data
-        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->cache);
+        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         // construct template
         $h = new Html("box.tpl", array(
@@ -310,7 +310,7 @@ class Main extends Base {
         // add/update schema for project structures
         \Depage\Cms\Project::updateSchema($this->pdo);
 
-        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->cache);
+        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         foreach ($projects as $project) {
             $project->updateProjectSchema();

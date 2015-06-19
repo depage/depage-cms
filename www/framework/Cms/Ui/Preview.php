@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
-namespace depage\cms\UI;
+namespace Depage\Cms\UI;
 
 use \Depage\Html\Html;
 
@@ -25,6 +25,14 @@ class Preview extends \Depage\Depage\Ui\Base
     protected $urlsByPageId = array();
     protected $pageIdByUrl = array();
     public $routeThroughIndex = true;
+    public $defaults = array(
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "file",
+                'host' => "",
+            ),
+        ),
+    );
 
     // {{{ _init
     public function _init(array $importVariables = array()) {
@@ -41,6 +49,12 @@ class Preview extends \Depage\Depage\Ui\Base
                 )
             );
         }
+
+        // get cache object for xmldb
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
+            'disposition' => $this->options->cache->xmldb->disposition,
+            'host' => $this->options->cache->xmldb->host,
+        ));
 
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
@@ -96,7 +110,7 @@ class Preview extends \Depage\Depage\Ui\Base
 
         if ($urlPath == "/") {
             // redirect to home
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->cache, $this->projectName);
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE . $project->getHomeUrl());
         }

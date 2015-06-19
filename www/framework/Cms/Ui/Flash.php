@@ -22,11 +22,6 @@ class Flash extends Base {
         parent::_init($importVariables);
 
         $this->projectName = $this->urlSubArgs[0];
-
-        // get cache instance
-        $this->cache = \Depage\Cache\Cache::factory("xmldb", array(
-            'host' => "localhost",
-        ));
     }
     // }}}
     // {{{ index()
@@ -201,7 +196,7 @@ class Flash extends Base {
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
-        $xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, $this->cache, array(
+        $xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, $this->xmldbCache, array(
             'pathXMLtemplate' => $this->xmlPath,
             'userId' => $this->authUser->id,
         ));

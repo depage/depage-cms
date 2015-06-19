@@ -21,6 +21,14 @@ class Base extends \Depage\Depage\Ui\Base
     protected $autoEnforceAuth = true;
     protected $authUser;
     protected $pdo;
+    public $defaults = array(
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "file",
+                'host' => "",
+            ),
+        ),
+    );
 
     // {{{ _init
     public function _init(array $importVariables = array()) {
@@ -49,6 +57,12 @@ class Base extends \Depage\Depage\Ui\Base
             $this->options->auth->method, // method
             $this->options->auth->digestCompat // should we digest compatibility
         );
+
+        // get cache object for xmldb
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
+            'disposition' => $this->options->cache->xmldb->disposition,
+            'host' => $this->options->cache->xmldb->host,
+        ));
 
         // set html-options
         $this->htmlOptions = array(

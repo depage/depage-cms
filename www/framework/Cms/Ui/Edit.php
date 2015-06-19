@@ -26,16 +26,9 @@ class Edit extends Base {
             $this->docName = $this->urlSubArgs[1];
         }
 
-        // get cache instance
-        $cache = \Depage\Cache\Cache::factory("xmldb", array(
-            //'disposition' => "memory",
-            //'disposition' => "uncached",
-            'host' => "twins.local",
-        ));
-
         // get xmldb instance
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $cache, array(
+        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, array(
             "edit:text_headline",
             "edit:text_formatted",
         ));
