@@ -86,26 +86,34 @@ class Import
 
         $this->getDocs();
 
+        // @todo update extractNavigtion not to be called twice here
         $this->extractNavigation();
 
+        // @todo add better serializability to import class
+        //"\$import = " . \Depage\Tasks\Task::escapeParam($this) . ";"
         $initId = $task->addSubtask("init",
-            "\$pdo = " . \Depage\Tasks\Task::escapeParam($this->pdo) . ";" .
-            "\$cache = " . \Depage\Tasks\Task::escapeParam($this->cache) . ";" .
+            "\$pdo = %s;" .
+            "\$cache = %s;" .
             "\$import = new \Depage\Cms\Import(\"$this->projectName\", \$pdo, \$cache);"
-        );
-        $loadId = $task->addSubtask("load", "\$import->loadBackup(" . \Depage\Tasks\Task::escapeParam($xmlFile) . ");", $initId);
-        $task->addSubtask("clean docs", "\$import->cleanDocs();", $loadId);
+        , array(
+            $this->pdo,
+            $this->cache,
+        ));
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", array(
+            $xmlFile,
+        ), $initId);
+        $task->addSubtask("clean docs", "\$import->cleanDocs();", array(), $loadId);
 
-        $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", $loadId);
+        $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", array(), $loadId);
 
-        $task->addSubtask("extract navigation", "\$import->extractNavigation();", $getDocsId);
-        $task->addSubtask("extract templates", "\$import->extractTemplates();", $getDocsId);
-        $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", $getDocsId);
-        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", $getDocsId);
-        $task->addSubtask("extract settings", "\$import->extractSettings();", $getDocsId);
+        $task->addSubtask("extract navigation", "\$import->extractNavigation();", array(), $getDocsId);
+        $task->addSubtask("extract templates", "\$import->extractTemplates();", array(), $getDocsId);
+        $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", array(), $getDocsId);
+        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
+        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
 
         foreach($this->pageIds as $pageId) {
-            $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId($pageId);", $getDocsId);
+            $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId(%s);", array($pageId), $getDocsId);
         }
 
         return $task;
@@ -202,7 +210,6 @@ class Import
                 }
             }
         }
-
         $this->docNavigation->save($this->xmlNavigation);
 
         // save db:ids in pageIds

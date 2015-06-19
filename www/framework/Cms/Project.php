@@ -486,20 +486,31 @@ class Project extends \Depage\Entity\Entity
 
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
         $initId = $task->addSubtask("init", "
-            \$fs = \\Depage\\Fs\\Fs::factory(" . \Depage\Tasks\Task::escapeParam($settings['output_folder']) . ");
-            \$publisher = new \\Depage\\Publisher\\Publisher(" . \Depage\Tasks\Task::escapeParam($publishPdo) . ", \$fs, $publishId);
-            \$transformer = " . \Depage\Tasks\Task::escapeParam($transformer) . ";
-            \$cache = " . \Depage\Tasks\Task::escapeParam($cache) . ";
-        ");
+            \$fs = \\Depage\\Fs\\Fs::factory(%s);
+            \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
+            \$transformer = %s;
+            \$cache = %s;
+        ", array(
+            $settings['output_folder'],
+            $publishPdo,
+            $publishId,
+            $transformer,
+            $cache,
+        ));
 
-        $task->addSubtask("testing publish target", "\$publisher->testConnection();", $initId);
-        $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", $initId);
+        $task->addSubtask("testing publish target", "\$publisher->testConnection();", array(), $initId);
+        $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", array(), $initId);
 
         // transform pages
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
-                $task->addSubtask("transforming page $target", "\$cache->setFile(" . \Depage\Tasks\Task::escapeParam("page_$pageId-$lang") . ", \$transformer->transform(" . \Depage\Tasks\Task::escapeParam($url) . ", " . \Depage\Tasks\Task::escapeParam($lang) . "));", $initId);
+                $task->addSubtask("transforming page $target", "
+                    \$cache->setFile(%s, \$transformer->transform(%s, %s));", array(
+                        "page_$pageId-$lang",
+                        $url,
+                        $lang,
+                ), $initId);
             }
         }
 
@@ -522,16 +533,20 @@ class Project extends \Depage\Entity\Entity
 
         // publish file library
         foreach ($files as $file) {
-            $source =  \Depage\Tasks\Task::escapeParam($projectPath . $file);
-            $target =  \Depage\Tasks\Task::escapeParam($file);
-            $task->addSubtask("publishing $file", "\$publisher->publishFile($source, $target);", $initId);
+            $task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", array(
+                $projectPath . $file,
+                $file,
+            ), $initId);
         }
 
         // publish pages
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
-                $task->addSubtask("publishing page $target", "\$publisher->publishFile(\$cache->getPath(" . \Depage\Tasks\Task::escapeParam("page_$pageId-$lang") . "), " . \Depage\Tasks\Task::escapeParam("$target") . ");", $initId);
+                $task->addSubtask("publishing page $target", "\$publisher->publishFile(\$cache->getPath(%s), %s);", array(
+                    "page_$pageId-$lang",
+                    $target,
+                ), $initId);
             }
         }
         /*
@@ -551,7 +566,7 @@ class Project extends \Depage\Entity\Entity
          */
 
         // unpublish removed files
-        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", $initId);
+        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", array(), $initId);
 
         return $task;
     }
