@@ -6,9 +6,9 @@ use \Depage\Html\Html;
 
 abstract class Transformer
 {
-    protected $pdo;
     protected $projectName;
     protected $template;
+    protected $xmlGetter;
     protected $xsltPath;
     protected $xmlPath;
     protected $xsltProc;
@@ -19,21 +19,21 @@ abstract class Transformer
     public $pagedataIdByPageId = array();
 
     // {{{ factory()
-    static public function factory($previewType, $pdo, $projectName, $template, $cacheOptions = array())
+    static public function factory($previewType, $xmlGetter, $projectName, $template, $cacheOptions = array())
     {
         if ($previewType == "live") {
-            return new Live($pdo, $projectName, $template, $cacheOptions);
-        } elseif ($previewType == "pre") {
-            return new Preview($pdo, $projectName, $template, $cacheOptions);
+            return new Live($xmlGetter, $projectName, $template, $cacheOptions);
+        } elseif ($previewType == "pre" || $previewType == "preview") {
+            return new Preview($xmlGetter, $projectName, $template, $cacheOptions);
         } else {
-            return new Dev($pdo, $projectName, $template, $cacheOptions);
+            return new Dev($xmlGetter, $projectName, $template, $cacheOptions);
         }
     }
     // }}}
     // {{{ constructor()
-    public function __construct($pdo, $projectName, $template, $cacheOptions = array())
+    public function __construct($xmlGetter, $projectName, $template, $cacheOptions = array())
     {
-        $this->pdo = $pdo;
+        $this->xmlGetter = $xmlGetter;
         $this->projectName = $projectName;
         $this->template = $template;
         $this->log = new \Depage\Log\Log();
@@ -50,7 +50,7 @@ abstract class Transformer
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
         // set basic variables
-        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        //$this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
 
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
@@ -59,19 +59,12 @@ abstract class Transformer
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $cacheOptions);
 
         // get cache instance for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", $cacheOptions);
-
-        $this->initXmlGetter();
-        $this->initXsltProc();
-    }
-    // }}}
-    // {{{ initXmlGetter()
-    public function initXmlGetter()
-    {
-        // create xmldb-project
-        $this->xmlGetter = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, array(
-            'pathXMLtemplate' => $this->xmlPath,
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
+            'disposition' => "redis",
+            'host' => "127.0.0.1:6379",
         ));
+
+        $this->initXsltProc();
     }
     // }}}
     // {{{ initXsltProc()
@@ -614,7 +607,7 @@ abstract class Transformer
     public function __sleep()
     {
         return array(
-            'pdo',
+            'xmlGetter',
             'projectName',
             'template',
             'xsltPath',

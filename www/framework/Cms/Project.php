@@ -479,7 +479,7 @@ class Project extends \Depage\Entity\Entity
 
         // get transformer
         // @todo change preview type to live, when transformer is fixed
-        $transformer = \Depage\Transformer\Transformer::factory("preview", $this->pdo, $this->name, $settings['template_set']);
+        $transformer = \Depage\Transformer\Transformer::factory("preview", $this->xmldb, $this->name, $settings['template_set']);
         $cache = \Depage\Cache\Cache::factory("publish/$publishId");
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();

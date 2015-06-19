@@ -56,6 +56,9 @@ class Preview extends \Depage\Depage\Ui\Base
             'host' => $this->options->cache->xmldb->host,
         ));
 
+        $this->projectName = $this->urlSubArgs[0];
+        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->pdo->prefix . "_proj_" . $this->projectName, $this->pdo, $this->xmldbCache);
+
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
             $this->pdo, // db_pdo
@@ -100,7 +103,6 @@ class Preview extends \Depage\Depage\Ui\Base
         $args = func_get_args();
 
         // get parameters
-        $this->projectName = $this->urlSubArgs[0];
         $this->template = array_shift($args);
         $this->previewType = array_shift($args);
 
@@ -145,7 +147,7 @@ class Preview extends \Depage\Depage\Ui\Base
      */
     protected function preview($urlPath, $lang)
     {
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $this->pdo, $this->projectName, $this->template);
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $this->xmldb, $this->projectName, $this->template);
         $html = $transformer->display($urlPath, $lang);
 
         return $html;
