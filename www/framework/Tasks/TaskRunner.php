@@ -97,39 +97,39 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         register_shutdown_function(array($this, "_atShutdown"));
 
         if (!$this->task) {
-            $this->log->log("task with id {$taskId} does not exist");
+            $this->log("task with id {$taskId} does not exist");
         } else if ($this->task->status == "failed") {
-            $this->log->log("task {$this->task->taskName} failed");
+            $this->log("task {$this->task->taskName} failed");
         } else if ($this->task->lock()) {
             try {
-                $this->log->log("starting task {$taskId} ({$this->task->taskName})");
+                $this->log("starting task {$taskId} ({$this->task->taskName})");
 
                 while ($subtask = $this->task->getNextSubtask()) {
                     // @todo change logging to log output of a task to one file per task
                     $subtask_name = "{$subtask->id} ({$subtask->name})";
-                    $this->log->log("    starting subtask $subtask_name");
+                    $this->log("    starting subtask $subtask_name");
 
                     $status = $this->task->runSubtask($subtask);
                     if ($status === false) {
                         throw new \Exception("Parse Error or subtask returned false");
                     }
 
-                    $this->log->log("    finished subtask $subtask_name");
+                    $this->log("    finished subtask $subtask_name");
                     $this->task->setSubtaskStatus($subtask, "done");
                 }
 
-                $this->log->log("finished task {$taskId} ({$this->task->taskName})");
+                $this->log("finished task {$taskId} ({$this->task->taskName})");
                 $this->task->setTaskStatus("done");
                 $this->task->remove();
             } catch (\Exception $e) {
-                $this->task->setSubtaskStatus($subtask, "failed: " . $e->getMessage());
+                $this->task->setSubtaskStatus($subtask, $e->getMessage());
                 $this->task->setTaskStatus("failed");
-                $this->log->log("ERROR: " . $e->getMessage());
+                $this->log("ERROR: " . $e->getMessage());
             }
 
             $this->task->unlock();
         } else {
-            $this->log->log("task {$this->task->taskName} is already running");
+            $this->log("task {$this->task->taskName} is already running");
         }
 
         $this->abnormal_exit = false;
@@ -144,6 +144,22 @@ class TaskRunner extends \Depage\Depage\Ui\Base
             $this->abnormal_exit = true;
 
             register_shutdown_function(array($this, "_atShutdown"));
+        }
+    }
+    // }}}
+    // {{{ log()
+    /**
+     * @brief log
+     *
+     * @param mixed $message
+     * @return void
+     **/
+    protected function log($message)
+    {
+        if (php_sapi_name() == 'cli') {
+            $this->log->log($message);
+        } else {
+            echo($message . "<br>\n");
         }
     }
     // }}}
@@ -261,7 +277,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                     fputs ($fp, $header);
                     fclose($fp);
                 } else {
-                    $log->add_entry("could not execute '$script' by '$url'\n$errorno - $errstr");
+                    $this->log("could not execute '$script' by '$url'\n$errorno - $errstr");
                 }
             // TODO: probably cannot work at all:
             } else {
@@ -273,7 +289,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 if ($fp) {
                     fclose($fp);
                 } else {
-                    $log->add_entry("could not execute '$script' by '$url'\n$errorno - $errstr");
+                    $this->log("could not execute '$script' by '$url'\n$errorno - $errstr");
                 }
             }
         }
