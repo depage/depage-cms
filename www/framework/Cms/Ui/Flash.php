@@ -209,7 +209,7 @@ class Flash extends Base {
 
         $results = array();
         foreach ($funcs as $func) {
-            $func->add_args(array('ip' => $_SERVER['REMOTE_ADDR']));
+            $func->add_args(array('ip' => \Depage\Http\Request::getRequestIp()));
             $tempval = $func->call();
             if (is_a($tempval, 'Depage\\Cms\\Rpc\\Func')) {
                 $results[] = $tempval;
