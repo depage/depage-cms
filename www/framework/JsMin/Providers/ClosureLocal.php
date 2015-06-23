@@ -45,6 +45,8 @@ class ClosureLocal extends \Depage\JsMin\JsMin {
 
             // close process
             $success = proc_close($process);
+
+            // @todo add error handler when there are errors while minimizing
         }
         if ($success == 0) {
             return $result;

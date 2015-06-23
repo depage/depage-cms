@@ -33,6 +33,7 @@ class ClosureApi extends \Depage\JsMin\JsMin {
         $data = $rq->execute();
         $xml = simplexml_load_string($data);
 
+        // @todo add error handler when there are errors while minimizing
         if (!empty($xml->compiledCode)) {
             return $xml->compiledCode;
         } else {
