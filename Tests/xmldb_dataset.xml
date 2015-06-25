@@ -150,4 +150,21 @@
       <value>TEXT_NODE</value>
     </row>
   </table>
+  <table name="test_db.xmldb_proj_test_history">
+    <column>doc_id</column>
+    <column>hash</column>
+    <column>xml</column>
+    <column>last_saved_at</column>
+    <column>user_id</column>
+    <column>published</column>
+    <row>
+      <value>1</value>
+      <value>ba4e7ab543319b169e4b86eaeead19079fea5acb</value>
+      <value>&lt;?xml version=&quot;1.0&quot;?&gt;
+      &lt;dpg:pages xmlns:db=&quot;http://cms.depagecms.net/ns/database&quot; xmlns:dpg=&quot;http://www.depagecms.net/ns/depage&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:sec=&quot;http://www.depagecms.net/ns/section&quot; xmlns:edit=&quot;http://www.depagecms.net/ns/edit&quot; xmlns:pg=&quot;http://www.depagecms.net/ns/page&quot; db:name=&quot;&quot; db:id=&quot;1&quot; db:lastchange=&quot;0000-00-00 00:00:00&quot; db:lastchangeUid=&quot;&quot;&gt;&lt;pg:page name=&quot;Home&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;3&quot; db:id=&quot;2&quot;&gt;&lt;pg:page name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;4&quot; db:id=&quot;6&quot;/&gt;&lt;pg:page name=&quot;Subpage 2&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;5&quot; db:id=&quot;7&quot;/&gt;&lt;pg:folder name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;7&quot; db:id=&quot;9&quot;/&gt;bla bla blub &lt;pg:page name=&quot;bla blub&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;6&quot; db:id=&quot;8&quot;&gt;bla bla bla &lt;/pg:page&gt;&lt;/pg:page&gt;&lt;/dpg:pages&gt;</value>
+      <value>0000-00-00 00:00:00</value>
+      <value>1</value>
+      <value>0</value>
+    </row>
+  </table>
 </dataset>

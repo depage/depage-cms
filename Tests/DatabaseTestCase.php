@@ -57,6 +57,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
             }
         );
         $schema->loadGlob(__DIR__ . '/../Sql/*.sql');
+        $schema->loadGlob(__DIR__ . '/Sql/*.sql');
 
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
         $schema->update();
