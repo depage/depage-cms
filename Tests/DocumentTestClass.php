@@ -16,9 +16,9 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos);
     }
-    public function updateLastChange()
+    public function updateLastChange($timestamp = null, $uid = null)
     {
-        return parent::updateLastChange();
+        return parent::updateLastChange($timestamp, $uid);
     }
     public function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
     {

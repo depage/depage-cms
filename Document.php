@@ -1873,6 +1873,51 @@ class Document
         return $id;
     }
     // }}}
+    // {{{ updateLastchange
+    /**
+     * set or updates the lastchange date and uid for the current document
+     *
+     * @param int $timestamp optional timestamp, defaults to now
+     * @param int $uid optional user id, defaults to current user, when user is set in xmldb options
+     */
+    public function updateLastchange($timestamp = null, $uid = null) {
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->table_docs}
+            SET
+                lastchange=:timestamp,
+                lastchange_uid=:user_id
+            WHERE
+                id=:doc_id;"
+        );
+
+        if (empty($timestamp)) {
+            $timestamp = time();
+        } else if (is_string($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!empty($uid)) {
+            $user_id = $uid;
+        } else if (!empty($this->xmldb->options['userId'])) {
+            $user_id = $this->xmldb->options['userId'];
+        } else {
+            $user_id = null;
+        }
+
+        $params = array(
+            'doc_id' => $this->getDocId(),
+            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'user_id' => $user_id,
+        );
+
+        if ($query->execute($params)) {
+            $result = $timestamp;
+        }
+
+        return $result;
+    }
+    // }}}
+
     // {{{ getNodeArrayForSaving
     /**
      * gets all nodes of a document in one array
@@ -1927,39 +1972,6 @@ class Document
                 'node' => $node,
             );
         }
-    }
-    // }}}
-
-    // {{{ updateLastchange
-    /**
-     * updates the lastchange date and uid for the current document
-     */
-    protected function updateLastchange()
-    {
-        $result = false;
-        $timestamp = time();
-        $user_id = (empty($this->xmldb->options['userId'])) ? null : $this->xmldb->options['userId'];
-
-        $query = $this->pdo->prepare(
-            "UPDATE {$this->table_docs}
-            SET
-                lastchange=:timestamp,
-                lastchange_uid=:user_id
-            WHERE
-                id=:doc_id;"
-        );
-
-        $params = array(
-            'doc_id' => $this->getDocId(),
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
-            'user_id' => $user_id,
-        );
-
-        if ($query->execute($params)) {
-            $result = $timestamp;
-        }
-
-        return $result;
     }
     // }}}
 
