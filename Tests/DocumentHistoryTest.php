@@ -31,7 +31,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersions
     public function testGetVersions()
     {
-        $expeceted = array(
+        $expected = array(
             -62169987600 => array(
                 'last_saved_at' => '0000-00-00 00:00:00',
                 'user_id' => '1',
@@ -40,7 +40,7 @@ class DocumentHistoryTest extends DatabaseTestCase
             )
         );
 
-        $this->history->getVersions();
+        $this->assertEquals($expected, $this->history->getVersions());
     }
     // }}}
 }
