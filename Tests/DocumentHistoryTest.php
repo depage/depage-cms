@@ -43,6 +43,22 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertEquals($expected, $this->history->getVersions());
     }
     // }}}
+    // {{{ testGetVersionsPublished
+    public function testGetVersionsPublished()
+    {
+        $unpublished = array(
+            -62169987600 => array(
+                'last_saved_at' => '0000-00-00 00:00:00',
+                'user_id' => '1',
+                'published' => '0',
+                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
+            )
+        );
+
+        $this->assertEquals(array(), $this->history->getVersions(true));
+        $this->assertEquals($unpublished, $this->history->getVersions(false));
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
