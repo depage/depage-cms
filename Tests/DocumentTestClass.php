@@ -20,6 +20,10 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::updateLastChange();
     }
+    public function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
+    {
+        return parent::getNodeArrayForSaving($node_array, $node, $parent_index, $pos, $stripwhitespace);
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

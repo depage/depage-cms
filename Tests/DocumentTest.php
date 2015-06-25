@@ -783,6 +783,31 @@ class DocumentTest extends DatabaseTestCase
         $this->assertEquals(2, $id);
     }
     // }}}
+
+    // {{{ testGetNodeArrayForSaving
+    public function testGetNodeArrayForSaving()
+    {
+        $nodeArray = array();
+        $node = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"></root>');
+
+        $this->doc->getNodeArrayForSaving($nodeArray, $node);
+
+        $this->assertEquals(1, count($nodeArray));
+        $this->assertEquals(2, $nodeArray[0]['id']);
+    }
+    // }}}
+    // {{{ testGetNodeArrayForSavingStripWhitespace
+    public function testGetNodeArrayForSavingStripWhitespace()
+    {
+        $nodeArray = array();
+        $node = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"></root>');
+
+        $this->doc->getNodeArrayForSaving($nodeArray, $node, null, 0, false);
+
+        $this->assertEquals(1, count($nodeArray));
+        $this->assertEquals(2, $nodeArray[0]['id']);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
