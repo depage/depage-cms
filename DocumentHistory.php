@@ -128,8 +128,10 @@ class DocumentHistory
      *
      */
     public function getLastPublishedXml() {
-        $latest = reset($this->getVersions(true, 1)->first());
-        return $this->getXml($latest['date']);
+        $versions = $this->getVersions(true, 1);
+        reset($versions);
+        $latest = key($versions);
+        return $this->getXml($latest);
     }
     // }}}
 
