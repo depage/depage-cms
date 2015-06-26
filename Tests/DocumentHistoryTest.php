@@ -115,6 +115,17 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertEquals($expected, $this->history->getVersions(null, 10));
     }
     // }}}
+
+    // {{{ testGetXml
+    public function testGetXml()
+    {
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
+
+        $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'));
+
+        $this->assertXmlStringEqualsXmlString($expected, $doc->saveXml());
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
