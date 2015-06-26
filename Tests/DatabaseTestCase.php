@@ -12,9 +12,9 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ setUp
     protected function setUp() {
         $this->getConnection();
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->setForeignKeyChecks(false);
         parent::setUp();
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->setForeignKeyChecks(true);
     }
     // }}}
     // {{{ getConnection
@@ -37,6 +37,15 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ getDataSet
     protected function getDataSet() {
         return $this->createXMLDataSet(__DIR__.'/xmldb_dataset.xml');
+    }
+    // }}}
+
+    // {{{ setKeyChecks
+    protected function setForeignKeyChecks($enable) {
+        $setString = 'SET FOREIGN_KEY_CHECKS=';
+        $setString .= ($enable) ? '1;' : '0;';
+
+        $this->pdo->exec($setString);
     }
     // }}}
 
@@ -85,9 +94,9 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ dropTable
     protected function dropTable($tableName)
     {
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->setForeignKeyChecks(false);
         $this->pdo->query('DROP TABLE IF EXISTS ' . $tableName);
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->setForeignKeyChecks(true);
         $this->assertFalse($this->tableExists($tableName));
     }
     // }}}
@@ -108,10 +117,10 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
             $values[] = '" "';
         }
 
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->setForeignKeyChecks(false);
         $rows = $this->pdo->exec('INSERT INTO ' . $tableName . ' VALUES (' . implode(',', $values) . ');');
         $this->assertEquals(1, $rows);
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->setForeignKeyChecks(true);
     }
     // }}}
 

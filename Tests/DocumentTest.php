@@ -546,9 +546,9 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertXmlStringEqualsXmlString($before, $doc->getXml(false));
 
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->setForeignKeyChecks(false);
         $timestamp = $doc->updateLastChange();
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->setForeignKeyChecks(true);
 
         $date = date('Y-m-d H:i:s', $timestamp);
         $after = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="' . $date . '" db:lastchangeUid="42"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';

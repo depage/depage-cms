@@ -144,9 +144,9 @@ class DocumentHistoryTest extends DatabaseTestCase
         $newDoc->loadXml($newXml);
         $this->doc->save($newDoc);
 
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(1, true);
-        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+        $this->setForeignKeyChecks(true);
 
         $ignore = array(
             'db:id',
