@@ -32,11 +32,17 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersions()
     {
         $expected = array(
-            -62169987600 => array(
-                'last_saved_at' => '0000-00-00 00:00:00',
+            1435313257 => array(
+                'last_saved_at' => '2015-06-26 12:07:37',
                 'user_id' => '1',
                 'published' => '0',
                 'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
+            ),
+            1435313258 => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
             )
         );
 
@@ -46,17 +52,67 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersionsPublished
     public function testGetVersionsPublished()
     {
+        $published = array(
+            1435313258 => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+
+        $this->assertEquals($published, $this->history->getVersions(true));
+    }
+    // }}}
+    // {{{ testGetVersionsUnpublished
+    public function testGetVersionsUnpublished()
+    {
         $unpublished = array(
-            -62169987600 => array(
-                'last_saved_at' => '0000-00-00 00:00:00',
+            1435313257 => array(
+                'last_saved_at' => '2015-06-26 12:07:37',
                 'user_id' => '1',
                 'published' => '0',
                 'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
             )
         );
 
-        $this->assertEquals(array(), $this->history->getVersions(true));
         $this->assertEquals($unpublished, $this->history->getVersions(false));
+    }
+    // }}}
+    // {{{ testGetVersionsMaxResultsOne
+    public function testGetVersionsMaxResultsOne()
+    {
+        $expected = array(
+            1435313258 => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+
+        $this->assertEquals($expected, $this->history->getVersions(null, 1));
+    }
+    // }}}
+    // {{{ testGetVersionsMaxResultsTen
+    public function testGetVersionsMaxResultsTen()
+    {
+        $expected = array(
+            1435313257 => array(
+                'last_saved_at' => '2015-06-26 12:07:37',
+                'user_id' => '1',
+                'published' => '0',
+                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
+            ),
+            1435313258 => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+
+        $this->assertEquals($expected, $this->history->getVersions(null, 10));
     }
     // }}}
 }

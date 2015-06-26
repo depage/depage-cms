@@ -60,7 +60,7 @@ class DocumentHistory
             $params['published'] = $published == true;
         }
 
-        $query .= " ORDER BY h.last_saved_at DESC;";
+        $query .= " ORDER BY h.last_saved_at DESC";
 
         if ($maxResults > 0) {
             $query .= " LIMIT :maxResults";
