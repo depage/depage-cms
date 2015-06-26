@@ -32,13 +32,13 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersions()
     {
         $expected = array(
-            1435313257 => array(
+            strtotime('2015-06-26 12:07:37') => array(
                 'last_saved_at' => '2015-06-26 12:07:37',
                 'user_id' => '1',
                 'published' => '0',
                 'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
             ),
-            1435313258 => array(
+            strtotime('2015-06-26 12:07:38') => array(
                 'last_saved_at' => '2015-06-26 12:07:38',
                 'user_id' => '1',
                 'published' => '1',
@@ -53,7 +53,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsPublished()
     {
         $published = array(
-            1435313258 => array(
+            strtotime('2015-06-26 12:07:38') => array(
                 'last_saved_at' => '2015-06-26 12:07:38',
                 'user_id' => '1',
                 'published' => '1',
@@ -68,7 +68,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsUnpublished()
     {
         $unpublished = array(
-            1435313257 => array(
+            strtotime('2015-06-26 12:07:37') => array(
                 'last_saved_at' => '2015-06-26 12:07:37',
                 'user_id' => '1',
                 'published' => '0',
@@ -83,7 +83,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsOne()
     {
         $expected = array(
-            1435313258 => array(
+            strtotime('2015-06-26 12:07:38') => array(
                 'last_saved_at' => '2015-06-26 12:07:38',
                 'user_id' => '1',
                 'published' => '1',
@@ -98,13 +98,13 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsTen()
     {
         $expected = array(
-            1435313257 => array(
+            strtotime('2015-06-26 12:07:37') => array(
                 'last_saved_at' => '2015-06-26 12:07:37',
                 'user_id' => '1',
                 'published' => '0',
                 'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
             ),
-            1435313258 => array(
+            strtotime('2015-06-26 12:07:38') => array(
                 'last_saved_at' => '2015-06-26 12:07:38',
                 'user_id' => '1',
                 'published' => '1',
