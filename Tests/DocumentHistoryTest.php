@@ -157,6 +157,54 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp)->saveXml(), $ignore);
     }
     // }}}
+    // {{{ testSaveUserId
+    public function testSaveUserId()
+    {
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newDoc = new \DomDocument();
+        $newDoc->loadXml($newXml);
+        $this->doc->save($newDoc);
+
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->history->save(42);
+        $this->setForeignKeyChecks(true);
+
+        $versions = $this->history->getVersions();
+        $this->assertEquals(42, $versions[$timestamp]['user_id']);
+    }
+    // }}}
+    // {{{ testSavePublished
+    public function testSavePublished()
+    {
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newDoc = new \DomDocument();
+        $newDoc->loadXml($newXml);
+        $this->doc->save($newDoc);
+
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->history->save(1, true);
+        $this->setForeignKeyChecks(true);
+
+        $versions = $this->history->getVersions();
+        $this->assertEquals(1, $versions[$timestamp]['published']);
+    }
+    // }}}
+    // {{{ testSaveUnpublished
+    public function testSaveUnpublished()
+    {
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newDoc = new \DomDocument();
+        $newDoc->loadXml($newXml);
+        $this->doc->save($newDoc);
+
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->history->save(1, false);
+        $this->setForeignKeyChecks(true);
+
+        $versions = $this->history->getVersions();
+        $this->assertEquals(0, $versions[$timestamp]['published']);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
