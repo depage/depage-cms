@@ -135,6 +135,28 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($expected, $this->history->getLastPublishedXml()->saveXml());
     }
     // }}}
+
+    // {{{ testSave
+    public function testSave()
+    {
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newDoc = new \DomDocument();
+        $newDoc->loadXml($newXml);
+        $this->doc->save($newDoc);
+
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+        $timestamp = $this->history->save(1, true);
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
+
+        $ignore = array(
+            'db:id',
+            'db:lastchange',
+            'db:lastchangeUid',
+        );
+
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp)->saveXml(), $ignore);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
