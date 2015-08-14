@@ -129,9 +129,11 @@ class XmlNav {
         if ($node->getAttribute("isIndex") == "true") {
             // set url as empty when index page
             $url = "";
-        } elseif ($node->nodeName == 'pg:folder' && $node->firstChild) {
+        } elseif ($node->nodeName == 'pg:folder') {
             // set url of folders to url of first child page
-            $url = $node->firstChild->getAttribute("url");
+            $xpath = new \DOMXpath($xml);
+            $urlNodes = $xpath->query("(.//pg:page/@url)[1]", $node, true);
+            $url = $urlNodes->item(0)->value;
         } elseif ($node->nodeName == 'pg:page') {
             if ($ext = $node->getAttribute("file_type")) {
                 $url = $url . "." . $ext;
@@ -225,13 +227,9 @@ class XmlNav {
             throw new \exception('You have to load a navigation xml-file.');
         }
 
-        if ($lang !== '' && substr($lang, -1) != '/') {
-            $lang .= "/";
-        }
-
         // add attributes to dom tree
         $this->addUrlAttributes($this->xmlDOM, $lang);
-        $this->addStatusAttributes($this->xmlDOM, $lang . $activeUrl);
+        $this->addStatusAttributes($this->xmlDOM, $lang . "/" . $activeUrl);
         $this->addLocalizedAttributes($this->xmlDOM, $lang);
 
         // initialize processor and transform
