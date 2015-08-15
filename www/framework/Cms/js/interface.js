@@ -142,8 +142,8 @@ var depageCMS = (function() {
         // {{{ setupSortables
         setupSortables: function() {
             $(".sortable-fieldsets").depageDetails({
-                headSelector: "legend",
-                detailSelector: ".detail",
+                head: "legend",
+                //detail: ".detail",
             }).sortable({
                 itemSelector: "fieldset",
                 nested: false,
