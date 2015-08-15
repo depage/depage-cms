@@ -71,7 +71,7 @@
         base.playing = false;
         base.num = 0;
 
-        // test for css transition ability
+        // {{{ whichTransitionEvent - test for css transition ability
         var whichTransitionEvent = (function (){
             var t;
             var el = document.createElement('fakeelement');
@@ -90,6 +90,7 @@
             }
             return false;
         }());
+        // }}}
         /* }}} */
 
         /* {{{ init() */
@@ -97,6 +98,7 @@
             base.options = $.extend({},$.depage.slideshow.defaultOptions, options);
             base.options.speed = Number(base.$el.attr("data-slideshow-speed")) || base.options.speed;
             base.options.pause = Number(base.$el.attr("data-slideshow-pause")) || base.options.pause;
+            base.options.startPos = Number(base.options.startPos) || 0;
 
             divs = base.$el.children(base.options.elements);
             base.num = divs.length;
@@ -128,16 +130,23 @@
                     position: "static"
                 });
             }
-            for (var i = 1; i < divs.length; i++) {
-                $(divs[i]).css({
-                    visibility: "hidden",
-                    opacity: 0
-                });
+            for (var i = 0; i < divs.length; i++) {
+                if (i != base.options.startPos) {
+                    $(divs[i]).css({
+                        visibility: "hidden",
+                        opacity: 0
+                    });
+                }
             }
 
             if (divs.length > 1) {
+                base.activeSlide = base.options.startPos;
                 base.playing = true;
                 base.waitForNext();
+
+                setTimeout(function() {
+                    base.$el.triggerHandler("depage.slideshow.show", [base.options.startPos, divs.length]);
+                }, 10);
             }
         };
         /* }}} */
@@ -152,11 +161,13 @@
         base.waitForNext = function(){
             base.clearQueue();
 
-            timer = setTimeout( function() {
-                if (base.playing) {
-                    base.next();
-                }
-            }, base.options.pause);
+            if (base.options.pause != -1) {
+                timer = setTimeout( function() {
+                    if (base.playing) {
+                        base.next();
+                    }
+                }, base.options.pause);
+            }
         };
         /* }}} */
         /* {{{ play() */
@@ -192,14 +203,15 @@
         };
         /* }}} */
         /* {{{ show() */
-        base.show = function(n, waitForImagesToLoad) {
+        base.show = function(n, waitForImagesToLoad, customSpeed) {
             waitForImagesToLoad = (typeof force === "undefined") ? !base.options.waitForImagesToLoad : waitForImagesToLoad;
             if (waitForImagesToLoad && !base.imagesReadyFor(n)) {
                 setTimeout( function() { base.show(n); }, 100);
                 return false;
             }
+            customSpeed = (typeof customSpeed === "undefined") ? base.options.speed : customSpeed;
 
-            base.$el.triggerHandler("depage.slideshow.show", [n]);
+            base.$el.triggerHandler("depage.slideshow.show", [n, divs.length]);
 
             if (n == base.activeSlide) {
                 // slide n is already active
@@ -214,7 +226,7 @@
             });
             if (whichTransitionEvent) {
                 divs.css({
-                    transition: "opacity " + base.options.speed + "ms linear"
+                    transition: "opacity " + customSpeed + "ms linear"
                 });
             }
 
@@ -237,7 +249,7 @@
                         opacity: 1
                     }).animate({
                         opacity: 0
-                    }, base.options.speed, function() {
+                    }, customSpeed, function() {
                         $div.css({visibility: "hidden"});
                     });
                 }
@@ -301,6 +313,7 @@
         elements: "div, span, img",
         speed: 3000,
         pause: 3000,
+        startPos: 0,
         waitForImagesToLoad: true
     };
     /* }}} */

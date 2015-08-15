@@ -30,7 +30,7 @@
      *
      * @return void
      */
-    if ($.browser.msie && $.browser.version < 9) {
+    if ($.depage.browser.msie && $.depage.browser.version < 9) {
         $('head').append('<style>video{display:inline-block;*display:inline;*zoom:1}</style>');
         document.createElement("video");
         document.createElement("source");
@@ -76,7 +76,7 @@
         var resize_timeout = null;
 
         // use the build-in controls for iPhone and iPad
-        var useCustomControls = !$.browser.iphone && !$.browser.ipad;
+        var useCustomControls = !$.depage.browser.ios;
 
         // set the player mode - 'html5' / 'flash' / false (fallback)
         var mode = false;
@@ -586,7 +586,7 @@
 
                         var caller = function() {
                             try {
-                                if (($.browser.msie && eval("window['" + base.options.playerId + "'].f" + code)) ||
+                                if (($.depage.browser.msie && eval("window['" + base.options.playerId + "'].f" + code)) ||
                                          eval("document['" + base.options.playerId + "'].f" + code)) {
                                      clearInterval(defer);
                                 }
