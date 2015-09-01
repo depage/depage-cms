@@ -17,6 +17,17 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         $this->setForeignKeyChecks(true);
     }
     // }}}
+    // {{{ getSetUpOperation
+    protected function getSetUpOperation() {
+        return new \PHPUnit_Extensions_Database_Operation_Composite(
+            array(
+                \PHPUnit_Extensions_Database_Operation_Factory::DELETE_ALL(),
+                \PHPUnit_Extensions_Database_Operation_Factory::INSERT(),
+            )
+        );
+    }
+    // }}}
+
     // {{{ getConnection
     final public function getConnection()
     {
@@ -40,7 +51,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     }
     // }}}
 
-    // {{{ setKeyChecks
+    // {{{ setForeignKeyChecks
     protected function setForeignKeyChecks($enable) {
         $setString = 'SET FOREIGN_KEY_CHECKS=';
         $setString .= ($enable) ? '1;' : '0;';
