@@ -221,6 +221,64 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($after, $this->doc->getXml(false));
     }
     // }}}
+
+    // {{{ testDelete
+    public function testDelete()
+    {
+       $before = array(
+            strtotime('2015-06-26 12:07:37') => array(
+                'last_saved_at' => '2015-06-26 12:07:37',
+                'user_id' => '1',
+                'published' => '0',
+                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
+            ),
+            strtotime('2015-06-26 12:07:38') => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+        $this->assertEquals($before, $this->history->getVersions());
+
+        $result = $this->history->delete(strtotime('2015-06-26 12:07:37'));
+        $this->assertEquals(true, $result);
+        $after = array(
+            strtotime('2015-06-26 12:07:38') => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+        $this->assertEquals($after, $this->history->getVersions());
+    }
+    // }}}
+    // {{{ testDeleteFail
+    public function testDeleteFail()
+    {
+       $expected = array(
+            strtotime('2015-06-26 12:07:37') => array(
+                'last_saved_at' => '2015-06-26 12:07:37',
+                'user_id' => '1',
+                'published' => '0',
+                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
+            ),
+            strtotime('2015-06-26 12:07:38') => array(
+                'last_saved_at' => '2015-06-26 12:07:38',
+                'user_id' => '1',
+                'published' => '1',
+                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
+            )
+        );
+        $this->assertEquals($expected, $this->history->getVersions());
+
+        $result = $this->history->delete(strtotime('2015-06-26 12:07:57'));
+
+        $this->assertEquals(false, $result);
+        $this->assertEquals($expected, $this->history->getVersions());
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
