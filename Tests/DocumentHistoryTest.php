@@ -205,6 +205,22 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertEquals(0, $versions[$timestamp]['published']);
     }
     // }}}
+
+    // {{{ testRestore
+    public function testRestore()
+    {
+        $before = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($before, $this->doc->getXml(false));
+
+        $result = $this->history->restore(strtotime('2015-06-26 12:07:38'));
+
+        $after = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><root><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4"/><node/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6">bla bla bla </pg:page></root></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($result->saveXml(), $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($after, $this->doc->getXml(false));
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
