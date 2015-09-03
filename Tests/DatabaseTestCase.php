@@ -18,10 +18,14 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     }
     // }}}
     // {{{ getSetUpOperation
-    protected function getSetUpOperation() {
+    /**
+     * From https://gist.github.com/mlively/1319731
+     */
+    public function getSetUpOperation()
+    {
         return new \PHPUnit_Extensions_Database_Operation_Composite(
             array(
-                \PHPUnit_Extensions_Database_Operation_Factory::DELETE_ALL(),
+                new PHPUnit_Extensions_Database_Operation_MySQL55Truncate(false),
                 \PHPUnit_Extensions_Database_Operation_Factory::INSERT(),
             )
         );
