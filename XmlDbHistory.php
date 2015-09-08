@@ -4,11 +4,9 @@
  *
  * cms xmldb module
  *
- *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
- *
  */
 
 namespace Depage\XmlDb;
