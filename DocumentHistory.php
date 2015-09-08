@@ -4,11 +4,9 @@
  *
  * cms xmldb module
  *
- *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author   Ben Wallis
- *
  */
 
 namespace Depage\Xmldb;
@@ -23,8 +21,7 @@ class DocumentHistory
 
     private $table_history;
     // }}}
-
-    // {{{ constructor()
+    // {{{ constructor
     public function __construct(\Depage\Db\Pdo $pdo, $table_prefix, Document $document) {
         $this->document = $document;
 
@@ -89,7 +86,6 @@ class DocumentHistory
         return $versions;
     }
     // }}}
-
     // {{{ getXml
     /**
      * getXml
@@ -119,7 +115,6 @@ class DocumentHistory
         return $xml_doc;
     }
     // }}}
-
     // {{{ getLastPublishedXml
     /**
      * getLastPublishedXml
@@ -135,7 +130,7 @@ class DocumentHistory
     }
     // }}}
 
-    // {{{ save()
+    // {{{ save
     /**
      *
      * gets the current docuemnt xml and saves a version to the history
@@ -174,7 +169,6 @@ class DocumentHistory
         return false;
     }
     // }}}
-
     // {{{ restore
     /**
      * Restores the document to a previous state
@@ -189,7 +183,6 @@ class DocumentHistory
         return false;
     }
     // }}}
-
     // delete {{{
     /**
      * Delete
