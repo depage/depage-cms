@@ -8,6 +8,19 @@ class DocumentHistoryTest extends DatabaseTestCase
     protected $xmlDb;
     protected $doc;
     protected $history;
+    protected $version37 = array(
+        'last_saved_at' => '2015-06-26 12:07:37',
+        'user_id' => '1',
+        'published' => '0',
+        'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb',
+    );
+    protected $version38 = array(
+        'last_saved_at' => '2015-06-26 12:07:38',
+        'user_id' => '1',
+        'published' => '1',
+        'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb',
+    );
+
     // }}}
     // {{{ setUp
     protected function setUp()
@@ -32,18 +45,8 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersions()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:37') => array(
-                'last_saved_at' => '2015-06-26 12:07:37',
-                'user_id' => '1',
-                'published' => '0',
-                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
-            ),
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+            strtotime('2015-06-26 12:07:37') => $this->version37,
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
 
         $this->assertEquals($expected, $this->history->getVersions());
@@ -53,12 +56,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsPublished()
     {
         $published = array(
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
 
         $this->assertEquals($published, $this->history->getVersions(true));
@@ -68,12 +66,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsUnpublished()
     {
         $unpublished = array(
-            strtotime('2015-06-26 12:07:37') => array(
-                'last_saved_at' => '2015-06-26 12:07:37',
-                'user_id' => '1',
-                'published' => '0',
-                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
-            )
+            strtotime('2015-06-26 12:07:37') => $this->version37,
         );
 
         $this->assertEquals($unpublished, $this->history->getVersions(false));
@@ -83,12 +76,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsOne()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
 
         $this->assertEquals($expected, $this->history->getVersions(null, 1));
@@ -98,18 +86,8 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsTen()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:37') => array(
-                'last_saved_at' => '2015-06-26 12:07:37',
-                'user_id' => '1',
-                'published' => '0',
-                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
-            ),
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+            strtotime('2015-06-26 12:07:37') => $this->version37,
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
 
         $this->assertEquals($expected, $this->history->getVersions(null, 10));
@@ -225,31 +203,16 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testDelete
     public function testDelete()
     {
-       $before = array(
-            strtotime('2015-06-26 12:07:37') => array(
-                'last_saved_at' => '2015-06-26 12:07:37',
-                'user_id' => '1',
-                'published' => '0',
-                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
-            ),
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+        $before = array(
+            strtotime('2015-06-26 12:07:37') => $this->version37,
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
         $this->assertEquals($before, $this->history->getVersions());
 
         $result = $this->history->delete(strtotime('2015-06-26 12:07:37'));
         $this->assertEquals(true, $result);
         $after = array(
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
         $this->assertEquals($after, $this->history->getVersions());
     }
@@ -257,19 +220,9 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testDeleteFail
     public function testDeleteFail()
     {
-       $expected = array(
-            strtotime('2015-06-26 12:07:37') => array(
-                'last_saved_at' => '2015-06-26 12:07:37',
-                'user_id' => '1',
-                'published' => '0',
-                'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb'
-            ),
-            strtotime('2015-06-26 12:07:38') => array(
-                'last_saved_at' => '2015-06-26 12:07:38',
-                'user_id' => '1',
-                'published' => '1',
-                'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb'
-            )
+        $expected = array(
+            strtotime('2015-06-26 12:07:37') => $this->version37,
+            strtotime('2015-06-26 12:07:38') => $this->version38,
         );
         $this->assertEquals($expected, $this->history->getVersions());
 
