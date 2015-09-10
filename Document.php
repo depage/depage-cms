@@ -973,20 +973,29 @@ class Document
     // }}}
     // {{{ removeIdAttr
     /**
-     * remove all db-id attributes recursive from nodes
+     * recursively remove all db-id attributes from node
      *
      * @param    $node (domxmlnode) node to remove attribute from
      */
     public function removeIdAttr($node)
     {
+        self::removeIdAttrStatic($node, $this->db_ns, $this->id_attribute);
+    }
+    // }}}
+    // {{{ removeIdAttrStatic
+    /**
+     * recursively remove all db-id attributes from node
+     */
+    public static function removeIdAttrStatic($node, $db_ns, $id_attribute)
+    {
         if ($node->nodeType == XML_ELEMENT_NODE || $node->nodeType == XML_DOCUMENT_NODE) {
             list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
             $xpath = new \DOMXPath($xml);
-            $xpath->registerNamespace($this->db_ns->ns, $this->db_ns->uri);
-            $xp_result = $xpath->query("./descendant-or-self::node()[@{$this->db_ns->ns}:{$this->id_attribute}]", $node);
+            $xpath->registerNamespace($db_ns->ns, $db_ns->uri);
+            $xp_result = $xpath->query("./descendant-or-self::node()[@{$db_ns->ns}:{$id_attribute}]", $node);
             foreach ($xp_result as $node) {
-                $node->removeAttributeNS($this->db_ns->uri, $this->id_attribute);
+                $node->removeAttributeNS($db_ns->uri, $id_attribute);
             }
         }
     }
