@@ -92,14 +92,14 @@ class XmlDbHistory implements XmlGetter
 
         if ($doc = $query->fetchObject()) {
             $result = $doc->xml;
-        }
 
-        if (!$add_id_attribute) {
-            $doc = new \DomDocument();
-            $doc->loadXml($result);
-            Document::removeNodeAttr($doc, $this->db_ns, 'id');
+            if (!$add_id_attribute) {
+                $doc = new \DomDocument();
+                $doc->loadXml($result);
+                Document::removeNodeAttr($doc, $this->db_ns, 'id');
 
-            $result = $doc->saveXML();
+                $result = $doc->saveXML();
+            }
         }
 
         return $result;
