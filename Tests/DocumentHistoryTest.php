@@ -104,6 +104,18 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($expected, $doc->saveXml());
     }
     // }}}
+    // {{{ testGetXmlDefault
+    public function testGetXmlDefault()
+    {
+        $this->assertFalse($this->history->getXml());
+    }
+    // }}}
+    // {{{ testGetXmlFail
+    public function testGetXmlFail()
+    {
+        $this->assertFalse($this->history->getXml(42));
+    }
+    // }}}
 
     // {{{ testGetLastPublishedXml
     public function testGetLastPublishedXml()

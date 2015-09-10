@@ -94,7 +94,7 @@ class DocumentHistory
      * @return bool|\DOMDocument|object
      */
     public function getXml($timestamp = null) {
-        $xml_doc = new \DOMDocument();
+        $xml_doc = false;
 
         $query = $this->pdo->prepare(
             "SELECT h.xml
@@ -107,9 +107,10 @@ class DocumentHistory
         );
 
         if ($query->execute($params)) {
-            $result = $query->fetchObject();
-
-            $xml_doc->loadXML($result->xml);
+            if ($result = $query->fetchObject()) {
+                $xml_doc = new \DOMDocument();
+                $xml_doc->loadXML($result->xml);
+            }
         }
 
         return $xml_doc;
