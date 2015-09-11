@@ -105,8 +105,8 @@ class DocumentHistory
      * @param null $timestamp
      * @return bool|\DOMDocument|object
      */
-    public function getXml($timestamp = null) {
-        $xml_doc = false;
+    public function getXml($timestamp, $add_id_attribute = true) {
+        $doc = false;
 
         $query = $this->pdo->prepare(
             "SELECT h.xml
@@ -118,14 +118,16 @@ class DocumentHistory
             'timestamp' => date($this->dateFormat, $timestamp),
         );
 
-        if ($query->execute($params)) {
-            if ($result = $query->fetchObject()) {
-                $xml_doc = new \DOMDocument();
-                $xml_doc->loadXML($result->xml);
+        if ($query->execute($params) && $result = $query->fetchObject()) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($result->xml);
+
+            if (!$add_id_attribute) {
+                Document::removeNodeAttr($doc, $this->db_ns, 'id');
             }
         }
 
-        return $xml_doc;
+        return $doc;
     }
     // }}}
     // {{{ getLastPublishedXml

@@ -982,7 +982,7 @@ class Document
         self::removeNodeAttr($node, $this->db_ns, $this->id_attribute);
     }
     // }}}
-    // {{{ removeIdAttrStatic
+    // {{{ removeNodeAttr
     /**
      * recursively remove attributes from node
      */

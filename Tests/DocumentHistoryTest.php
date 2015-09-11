@@ -139,10 +139,14 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertXmlStringEqualsXmlString($this->xml37, $doc->saveXml());
     }
     // }}}
-    // {{{ testGetXmlDefault
-    public function testGetXmlDefault()
+    // {{{ testGetXmlNoIdAttr
+    public function testGetXmlNoIdAttr()
     {
-        $this->assertFalse($this->history->getXml());
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+
+        $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'), false);
+
+        $this->assertXmlStringEqualsXmlString($expected, $doc->saveXml());
     }
     // }}}
     // {{{ testGetXmlFail
