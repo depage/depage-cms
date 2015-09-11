@@ -24,6 +24,10 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::getNodeArrayForSaving($node_array, $node, $parent_index, $pos, $stripwhitespace);
     }
+    public function getFreeNodeIds($needed = 1)
+    {
+        return parent::getFreeNodeIds($needed);
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
