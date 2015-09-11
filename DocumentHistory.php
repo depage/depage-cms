@@ -20,6 +20,7 @@ class DocumentHistory
     private $document;
 
     private $table_history;
+    private $dateFormat = 'Y-m-d H:i:s';
     // }}}
     // {{{ constructor
     public function __construct(\Depage\Db\Pdo $pdo, $table_prefix, Document $document) {
@@ -114,7 +115,7 @@ class DocumentHistory
         );
 
         $params = array(
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'timestamp' => date($this->dateFormat, $timestamp),
         );
 
         if ($query->execute($params)) {
@@ -174,7 +175,7 @@ class DocumentHistory
                 'doc_id' => $this->document->getDocId(),
                 'hash' => $hash,
                 'xml' => $xml,
-                'timestamp' => date('Y-m-d H:i:s', $timestamp),
+                'timestamp' => date($this->dateFormat, $timestamp),
                 'user_id' => $user_id,
                 'published' => $published,
             );
@@ -217,7 +218,7 @@ class DocumentHistory
 
         $params = array(
             'doc_id' => $this->document->getDocId(),
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'timestamp' => date($this->dateFormat, $timestamp),
         );
 
         if ($query->execute($params)) {
