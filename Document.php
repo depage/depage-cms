@@ -1296,7 +1296,6 @@ class Document
                     FROM {$this->table_xml} as xml
                     WHERE xml.id = row
                 ) LIMIT :maxCount;"
-
             );
 
             $query->execute(array(

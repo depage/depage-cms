@@ -51,7 +51,7 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
     // }}}
     // {{{ getDataSet
     protected function getDataSet() {
-        return $this->createXMLDataSet(__DIR__.'/xmldb_dataset.xml');
+        return $this->createXMLDataSet(__DIR__.'/dataset.xml');
     }
     // }}}
 
