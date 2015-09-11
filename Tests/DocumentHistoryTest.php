@@ -20,6 +20,10 @@ class DocumentHistoryTest extends DatabaseTestCase
         'published' => '1',
         'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb',
     );
+    protected $ignoreAttributes = array(
+        'db:id',
+        'db:lastchangeUid',
+    );
 
     // }}}
     // {{{ setUp
@@ -38,6 +42,17 @@ class DocumentHistoryTest extends DatabaseTestCase
 
         $this->doc = new DocumentTestClass($this->xmlDb, 1);
         $this->history = $this->doc->getHistory();
+    }
+    // }}}
+
+    // {{{ addTestDoc
+    protected function addTestDoc($xml)
+    {
+        $newDoc = new \DomDocument();
+        $newDoc->loadXml($xml);
+        $this->doc->save($newDoc);
+
+        return $newDoc;
     }
     // }}}
 
@@ -94,10 +109,28 @@ class DocumentHistoryTest extends DatabaseTestCase
     }
     // }}}
 
+    // {{{ testGetLatestVersion
+    public function testGetLatestVersion()
+    {
+        $this->assertEquals($this->version38, $this->history->getLatestVersion());
+
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $this->addTestDoc($newXml);
+
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->history->save(1, true);
+        $this->setForeignKeyChecks(true);
+
+        $latestVersion = $this->history->getLatestVersion();
+        $newTimestamp = strtotime($latestVersion['last_saved_at']);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($newTimestamp)->saveXml(), $this->ignoreAttributes);
+    }
+    // }}}
+
     // {{{ testGetXml
     public function testGetXml()
     {
-        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
 
         $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'));
 
@@ -120,7 +153,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetLastPublishedXml
     public function testGetLastPublishedXml()
     {
-        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchange="2015-06-26 14:07:37" db:lastchangeUid=""><root db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><node db:id="12"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></root></dpg:pages>';
+        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchangeUid=""><root db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><node db:id="12"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></root></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlString($expected, $this->history->getLastPublishedXml()->saveXml());
     }
@@ -130,30 +163,20 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testSave()
     {
         $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
-        $newDoc = new \DomDocument();
-        $newDoc->loadXml($newXml);
-        $this->doc->save($newDoc);
+        $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(1, true);
         $this->setForeignKeyChecks(true);
 
-        $ignore = array(
-            'db:id',
-            'db:lastchange',
-            'db:lastchangeUid',
-        );
-
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp)->saveXml(), $ignore);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp)->saveXml(), $this->ignoreAttributes);
     }
     // }}}
     // {{{ testSaveUserId
     public function testSaveUserId()
     {
         $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
-        $newDoc = new \DomDocument();
-        $newDoc->loadXml($newXml);
-        $this->doc->save($newDoc);
+        $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(42);
@@ -167,9 +190,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testSavePublished()
     {
         $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
-        $newDoc = new \DomDocument();
-        $newDoc->loadXml($newXml);
-        $this->doc->save($newDoc);
+        $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(1, true);
@@ -183,9 +204,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testSaveUnpublished()
     {
         $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
-        $newDoc = new \DomDocument();
-        $newDoc->loadXml($newXml);
-        $this->doc->save($newDoc);
+        $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(1, false);
@@ -199,13 +218,13 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testRestore
     public function testRestore()
     {
-        $before = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $before = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($before, $this->doc->getXml(false));
 
         $result = $this->history->restore(strtotime('2015-06-26 12:07:38'));
 
-        $after = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><root><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4"/><node/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6">bla bla bla </pg:page></root></dpg:pages>';
+        $after = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchangeUid=""><root><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4"/><node/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6">bla bla bla </pg:page></root></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($result->saveXml(), $this->doc->getXml());
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($after, $this->doc->getXml(false));
