@@ -12,13 +12,13 @@ class DocumentHistoryTest extends DatabaseTestCase
         'last_saved_at' => '2015-06-26 12:07:37',
         'user_id' => '1',
         'published' => '0',
-        'hash' => 'ba4e7ab543319b169e4b86eaeead19079fea5acb',
+        'hash' => '9b8911ed83d9ccd6669ae95272fb1777f901c2f2',
     );
     protected $version38 = array(
         'last_saved_at' => '2015-06-26 12:07:38',
         'user_id' => '1',
         'published' => '1',
-        'hash' => '2bc9284487aa7441400f8e363e8b3065993432fb',
+        'hash' => 'a02ccf643388c40161a22d5f82d6581d149e9222',
     );
     protected $ignoreAttributes = array(
         'db:id',
@@ -212,6 +212,21 @@ class DocumentHistoryTest extends DatabaseTestCase
 
         $versions = $this->history->getVersions();
         $this->assertEquals(0, $versions[$timestamp]['published']);
+    }
+    // }}}
+    // {{{ testSaveDuplicate
+    public function testSaveDuplicate()
+    {
+        $latestVersion = $this->history->getLatestVersion();
+        $beforeDate = $latestVersion['last_saved_at'];
+
+        $this->setForeignKeyChecks(false);
+        $afterTimestamp = $this->history->save(1, true);
+        $this->setForeignKeyChecks(true);
+
+        $afterDate = date('Y-m-d H:i:s', $afterTimestamp);
+
+        $this->assertEquals($beforeDate, $afterDate);
     }
     // }}}
 

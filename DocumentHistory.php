@@ -183,7 +183,7 @@ class DocumentHistory
                 $result = $timestamp;
             }
         } else {
-            $result = $latestVersion['timestamp'];
+            $result = strtotime($latestVersion['last_saved_at']);
         }
 
         return $result;
