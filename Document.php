@@ -1107,15 +1107,6 @@ class Document
 
             preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
 
-            $query = $this->pdo->prepare(
-                "SELECT docs.rootid AS rootid
-                FROM {$this->table_docs} AS docs
-                WHERE docs.id = :doc_id"
-            );
-            $query->execute(array(
-                'doc_id' => $this->doc_id,
-            ));
-            $result = $query->fetchObject();
             $actual_ids = array(NULL);
 
             foreach ($xpath_elements as $level => $element) {
