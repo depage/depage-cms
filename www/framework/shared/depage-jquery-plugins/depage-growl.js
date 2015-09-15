@@ -6,8 +6,8 @@
  *
  * copyright (c) 2009-2015 Frank Hellenkamp [jonas@depage.net]
  *
- * @todo use html-fallback and use system notifications based on new api
- * see here: https://github.com/alexgibson/notify.js/blob/master/notify.js
+ * @todo add different behaviour depending on the page being visible:
+ * https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -86,7 +86,7 @@
     InternalNotification.prototype.growl = function() {
         if (this.testSystemSupport()) {
             this.growlSystemNotification();
-            this.growlHtmlFallback();
+            //this.growlHtmlFallback();
         } else {
             this.growlHtmlFallback();
         }
@@ -107,6 +107,7 @@
     InternalNotification.prototype.growlHtmlFallback = function() {
         // get or add notification-area
         var $notificationArea = $("#depageGrowlArea");
+        var $notification;
         var iconImg = "";
         var currentNotification = this;
 
@@ -120,22 +121,32 @@
             });
         }
 
+        var closeNotification = function() {
+            $notification.clearQueue().fadeOut(800, function() {
+                $(this).remove();
+            });
+        };
+
         if (this.options.icon) {
             iconImg = "<img src=\"" + this.options.icon + "\" class=\"depage-growl-icon\">";
         }
-        var $notification = $("<div class=\"depage-growl-message\">" + iconImg + "<h3>" + htmlEncode(this.title) + "</h3><p>" + htmlEncode(this.options.message) + "</p></div>")
+        $notification = $("<div class=\"depage-growl-message\">" + iconImg + "<h3>" + htmlEncode(this.title) + "</h3><p>" + htmlEncode(this.options.message) + "</p></div>")
             .appendTo($notificationArea)
-            .click( function(e) {
-                $(this).remove();
-
-                currentNotification.onClick(e);
-            })
             .hide()
             .fadeIn(400)
-            .animate( { opacity: 1 }, 3500)
-            .fadeOut(800, function() {
-                $(this).remove();
+            .animate({
+                opacity: 1
+            },{
+                duration: 3500,
+                complete: function() {
+                    closeNotification();
+                }
             });
+        $notification.click( function(e) {
+            currentNotification.onClick(e);
+
+            closeNotification();
+        });
     };
     // }}}
 
