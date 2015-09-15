@@ -13,10 +13,8 @@ class DocumentTest extends DatabaseTestCase
     {
         parent::setUp();
 
-        // get cache instance
         $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
 
-        // get xmldb instance
         $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
             'root',
             'child',

@@ -28,11 +28,12 @@ class XmlDbHistory implements XmlGetter
     // }}}
 
     // {{{ constructor
-    public function __construct($table_prefix, $pdo)
+    public function __construct($table_prefix, $pdo, $cache, $options = array())
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
+        $this->xmlDb = new XmlDb($table_prefix, $pdo, $cache, $options);
         $this->db_ns = new XmlNs("db", "http://cms.depagecms.net/ns/database");
 
         $this->table_prefix = $table_prefix;
@@ -44,29 +45,7 @@ class XmlDbHistory implements XmlGetter
     // {{{ docExists
     public function docExists($doc_id_or_name)
     {
-        $result = false;
-
-        $query = $this->pdo->prepare("SELECT h.doc_id AS id, docs.name, h.published
-            FROM {$this->table_history} AS h
-            JOIN {$this->table_docs} AS docs
-            ON h.doc_id=docs.id
-            WHERE published = true
-            AND (
-                id = :id
-                OR name = :name
-            )"
-        );
-
-        $query->execute(array(
-            'id' => $doc_id_or_name,
-            'name' => $doc_id_or_name,
-        ));
-
-        if ($doc = $query->fetchObject()) {
-            $result = (int) $doc->id;
-        }
-
-        return $result;
+        return $this->xmlDb->docExists($doc_id_or_name);
     }
     // }}}
     // {{{ getDocXml

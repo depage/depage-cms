@@ -14,7 +14,9 @@ class XmlDbHistoryTest extends DatabaseTestCase
     {
         parent::setUp();
 
-        $this->xmlDbHistory = new \Depage\XmlDb\XmlDbHistory($this->pdo->prefix . '_proj_test', $this->pdo);
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+
+        $this->xmlDbHistory = new \Depage\XmlDb\XmlDbHistory($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache);
     }
     // }}}
 
@@ -27,13 +29,13 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testDocExistsByIdFail
     public function testDocExistsByIdFail()
     {
-        $this->assertFalse($this->xmlDbHistory->docExists(2));
+        $this->assertFalse($this->xmlDbHistory->docExists(42));
     }
     // }}}
     // {{{ testDocExistsByName
     public function testDocExistsByName()
     {
-        $this->assertSame(1, $this->xmlDbHistory->docExists('pages'));
+        $this->assertEquals(1, $this->xmlDbHistory->docExists('pages'));
     }
     // }}}
     // {{{ testDocExistsByNameFail
