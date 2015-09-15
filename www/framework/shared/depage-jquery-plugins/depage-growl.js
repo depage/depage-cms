@@ -86,7 +86,9 @@
     InternalNotification.prototype.growl = function() {
         if (this.testSystemSupport()) {
             this.growlSystemNotification();
-            //this.growlHtmlFallback();
+            if (this.options.alwaysShowFallback) {
+                this.growlHtmlFallback();
+            }
         } else {
             this.growlHtmlFallback();
         }
@@ -168,6 +170,7 @@
     base.defaultOptions = {
         message: "",
         icon: "",
+        alwaysShowFallback: false,
         onClick: null,
         onError: null
     };
