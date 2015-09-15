@@ -29,7 +29,7 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testDocExistsByIdFail
     public function testDocExistsByIdFail()
     {
-        $this->assertFalse($this->xmlDbHistory->docExists(42));
+        $this->assertFalse($this->xmlDbHistory->docExists(2));
     }
     // }}}
     // {{{ testDocExistsByName

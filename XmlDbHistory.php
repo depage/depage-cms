@@ -45,28 +45,43 @@ class XmlDbHistory implements XmlGetter
     // {{{ docExists
     public function docExists($doc_id_or_name)
     {
-        return $this->xmlDb->docExists($doc_id_or_name);
+        $result = false;
+
+        $id = $this->xmlDb->docExists($doc_id_or_name);
+
+        $query = $this->pdo->prepare("
+            SELECT doc_id
+            FROM {$this->table_history}
+            WHERE doc_id = :id
+            LIMIT 1
+        ");
+
+        $query->execute(array(
+            'id' => $id,
+        ));
+
+        if ($query->fetch()) {
+            $result = $id;
+        }
+
+        return $result;
     }
     // }}}
     // {{{ getDocXml
     public function getDocXml($doc_id_or_name, $add_id_attribute = true)
     {
         $result = false;
+        $id = $this->docExists($doc_id_or_name);
 
-        $query = $this->pdo->prepare("SELECT h.doc_id AS id, docs.name, h.published, h.xml
-            FROM {$this->table_history} AS h
-            JOIN {$this->table_docs} AS docs
-            ON h.doc_id=docs.id
+        $query = $this->pdo->prepare("
+            SELECT doc_id, published, xml
+            FROM {$this->table_history}
             WHERE published = true
-            AND (
-                id = :id
-                OR name = :name
-            )"
-        );
+            AND doc_id = :id
+        ");
 
         $query->execute(array(
-            'id' => $doc_id_or_name,
-            'name' => $doc_id_or_name,
+            'id' => $id,
         ));
 
         if ($doc = $query->fetchObject()) {
