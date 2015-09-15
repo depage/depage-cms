@@ -20,33 +20,50 @@
         $.depage = {};
     }
 
-    var base = {};
-
     // {{{ htmlEncode
     var htmlEncode = function(value) {
         return $('<div/>').text(value).html();
     };
     // }}}
 
-    // {{{ growl()
-    base.growl = function(title, options) {
-        base.options = $.extend({}, base.defaultOptions, options);
 
-        if (base.testSystemSupport()) {
-            base.growlSystemNotification(title, base.options.message, base.options.icon);
-        } else {
-            base.growlHtmlFallback(title, base.options.message, base.options.icon);
+    var InternalNotification = function(title, options) {
+        this.title = title;
+        this.options = options;
+    };
+
+    // {{{ handleEvent
+    InternalNotification.prototype.handleEvent = function(e) {
+        switch (e.type) {
+        case 'click':
+            this.onClick(e);
+            break;
+        case 'error':
+            this.onError(e);
+            break;
         }
     };
     // }}}
+    // {{{ onClick
+    InternalNotification.prototype.onClick = function(e) {
+        if (typeof this.options.onClick === "function") {
+            this.options.onClick(e);
+        }
+    };
+    // }}}
+    // {{{ onError
+    InternalNotification.prototype.onError = function(e) {
+        if (typeof this.options.onError === "function") {
+            this.options.onError(e);
+        }
+    };
+    // }}}
+
     // {{{ testSystemSupport
-    base.testSystemSupport = function() {
+    InternalNotification.prototype.testSystemSupport = function() {
         var isSupported = 'Notification' in window;
         var needsPermission = !(isSupported && Notification.permission === 'granted');
         var permissionLevel = (isSupported ? Notification.permission : null);
-
-        console.log(isSupported);
-        console.log(Notification);
 
         if (isSupported && needsPermission) {
             Notification.requestPermission(function (perm) {
@@ -65,32 +82,53 @@
         return false;
     };
     // }}}
+    // {{{ growl
+    InternalNotification.prototype.growl = function() {
+        if (this.testSystemSupport()) {
+            this.growlSystemNotification();
+            this.growlHtmlFallback();
+        } else {
+            this.growlHtmlFallback();
+        }
+    };
+    // }}}
     // {{{ growlSystemNotification
-    base.growlSystemNotification = function(title, message, icon) {
-        new Notification(title, {
-            body: message,
-            icon: icon
+    InternalNotification.prototype.growlSystemNotification = function() {
+        var n = new Notification(this.title, {
+            body: this.options.message,
+            icon: this.options.icon
         });
+
+        n.addEventListener("error", this, false);
+        n.addEventListener("click", this, false);
     };
     // }}}
     // {{{ growlHtmlFallback
-    base.growlHtmlFallback = function(title, message, icon) {
+    InternalNotification.prototype.growlHtmlFallback = function() {
         // get or add notification-area
         var $notificationArea = $("#depageGrowlArea");
+        var iconImg = "";
+        var currentNotification = this;
 
         if ($notificationArea.length === 0) {
             $notificationArea = $("<div id=\"depageGrowlArea\"></div>").appendTo("body");
             $notificationArea.css({
-                position: "absolute",
+                position: "fixed",
                 top: 0,
-                right: 0
+                right: 0,
+                zIndex: 30000
             });
         }
 
-        var $notification = $("<div><h3>" + htmlEncode(title) + "</h3><p>" + htmlEncode(message) + "</p></div>")
+        if (this.options.icon) {
+            iconImg = "<img src=\"" + this.options.icon + "\" class=\"depage-growl-icon\">";
+        }
+        var $notification = $("<div class=\"depage-growl-message\">" + iconImg + "<h3>" + htmlEncode(this.title) + "</h3><p>" + htmlEncode(this.options.message) + "</p></div>")
             .appendTo($notificationArea)
-            .click( function() {
+            .click( function(e) {
                 $(this).remove();
+
+                currentNotification.onClick(e);
             })
             .hide()
             .fadeIn(400)
@@ -101,12 +139,24 @@
     };
     // }}}
 
+
+    var base = {};
+
+    // {{{ growl()
+    base.growl = function(title, options) {
+        options = $.extend({}, base.defaultOptions, options);
+
+        var n = new InternalNotification(title, options);
+        n.growl();
+
+        console.log(n);
+    };
+    // }}}
+
     // {{{ defaultOptions
     base.defaultOptions = {
         message: "",
         icon: "",
-        onShow: null,
-        onClose: null,
         onClick: null,
         onError: null
     };
