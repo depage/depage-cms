@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\html;
+namespace Depage\Html;
 
 class Cleaner
 {
@@ -14,7 +14,7 @@ class Cleaner
     public function __construct()
     {
         $this->dontCleanTags = implode("|<", array(
-            "pre", 
+            "pre",
             "textarea",
         ));
     }
@@ -46,7 +46,7 @@ class Cleaner
                 $html .= $line . "\n";
             } else {
                 // trim line
-                $line = trim($line); 
+                $line = trim($line);
                 // replace multiple spaces with only one space
                 $line = preg_replace("/( )+/", " ", $line);
                 // throw away empty lines
