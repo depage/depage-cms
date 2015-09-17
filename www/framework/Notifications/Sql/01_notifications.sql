@@ -2,13 +2,13 @@
     Notification Table
     -----------------------------------
 
-    @tablename _auth_notifications
+    @tablename _notifications
     @connection _auth_user
     @connection _auth_sessions
     @version 1.5.0-beta.1
 */
 
-CREATE TABLE `_auth_notifications` (
+CREATE TABLE `_notifications` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `sid` varchar(32) DEFAULT NULL,
     `uid` int(11) unsigned DEFAULT NULL,
