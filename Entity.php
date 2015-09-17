@@ -97,7 +97,7 @@ abstract class Entity
     public function __get($key)
     {
         $getter = "get" . ucfirst($key);
-        if (is_callable(array($this, $getter))) {
+        if (method_exists($this, $getter)) {
             return $this->$getter();
         }
         if (isset($this->data[$key])) {
@@ -120,7 +120,7 @@ abstract class Entity
     public function __set($key, $val)
     {
         $setter = "set" . ucfirst($key);
-        if (is_callable(array($this, $setter))) {
+        if (method_exists($this, $setter)) {
             return $this->$setter($val);
         }
         if (array_key_exists($key, static::$fields)) {
@@ -135,6 +135,39 @@ abstract class Entity
 
             return true;
         }
+        return false;
+    }
+    // }}}
+
+    // {{{ __call()
+    /**
+     * Call
+     *
+     * Allows to set and get variables via setVarname and getVarname methods without
+     * declaring them explicitly
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function __call($name, $arguments)
+    {
+        $prefix = substr($name, 0, 3);
+        $key = strtolower(substr($name, 3));
+
+        if ($prefix == "set") {
+            if (array_key_exists($key, static::$fields)) {
+                $this->$key = $arguments[0];
+
+                return $this;
+            }
+        } else if ($prefix == "get") {
+            if (array_key_exists($key, static::$fields)) {
+                return $this->$key;
+            }
+        }
+
         return false;
     }
     // }}}
@@ -173,6 +206,25 @@ abstract class Entity
         }
 
         return $fields;
+    }
+    // }}}
+
+    // {{{ setData()
+    /**
+     * @brief setData
+     *
+     * Sets object data with data array instead of setting properties explicitly
+     *
+     * @param mixed $data
+     * @return void
+     **/
+    public function setData($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+
+        return $this;
     }
     // }}}
 }
