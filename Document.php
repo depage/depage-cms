@@ -1082,6 +1082,7 @@ class Document
             : null;
     }
     // }}}
+
     // {{{ getNodeIdsByXpath
     /**
      * gets node_ids by xpath
@@ -1098,7 +1099,6 @@ class Document
     public function getNodeIdsByXpath($xpath)
     {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
-
         $fetched_ids = $this->cache->get($identifier);
 
         if ($fetched_ids === false) {
@@ -1116,60 +1116,32 @@ class Document
                 $strings = array();
 
                 if ($divider == '/') {
-                    // {{{ fetch only by name:
                     if ($condition == '') {
-                        /*
-                         * "... /ns:name ..."
-                         */
+                        // fetch only by name: "... /ns:name ..."
                         foreach ($actual_ids as $actual_id) {
                             $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, null, true));
                         }
-                        // }}}
-                        // {{{ fetch by name and position:
                     } else if (preg_match("/^([0-9]+)$/", $condition)) {
-                        /*
-                         * "... /ns:name[n] ..."
-                         */
+                        // fetch by name and position: "... /ns:name[n] ..."
                         foreach ($actual_ids as $actual_id) {
                             $temp_ids = $this->getChildIdsByName($actual_id, $ns, $name, null, true);
                             $fetched_ids[] = $temp_ids[((int) $condition) - 1];
                         }
-                        // }}}
-                        // {{{ fetch by simple attributes:
-                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                        /*
-                         * "... /ns:name[@attr1] ..."
-                         * "... /ns:name[@attr1 = 'string1'] ..."
-                         * "... /ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                         */
-                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                    } else if ($cond_array = $this->fetchBySimpleAttributes($condition, $strings)) {
                         foreach ($actual_ids as $actual_id) {
                             $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, $cond_array, true));
                         }
-                        // }}}
                     } else {
                         //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
                     }
                 } elseif ($divider == '//' && $level == 0) {
-                    // {{{ fetch only by name recursive:
                     if ($condition == '') {
-                        /*
-                         * "//ns:name ..."
-                         */
+                        // fetch only by name recursive:  "//ns:name ..."
                         $fetched_ids = $this->getNodeIdsByName($ns, $name);
-                        // }}}
-                        // {{{ fetch by simple attributes:
-                    } else if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->remove_literal_strings($condition, $strings))) {
-                        /*
-                         * "//ns:name[@attr1] ..."
-                         * "//ns:name[@attr1 = 'string1'] ..."
-                         * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-                         */
-                        $cond_array = $this->get_condition_attributes($temp_condition, $strings);
+                    } else if ($cond_array = $this->fetchBySimpleAttributes($condition, $strings)) {
                         foreach ($actual_ids as $actual_id) {
                             $fetched_ids = $this->getNodeIdsByName($ns, $name, $cond_array);
                         }
-                        // }}}
                     } else {
                         //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
                     }
@@ -1184,7 +1156,25 @@ class Document
         }
         return $fetched_ids;
     }
+    // }}}
+    // {{{ fetchBySimpleAttributes
+    protected function fetchBySimpleAttributes($condition, $strings)
+    {
+        $cond_array = false;
 
+        if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->removeLiteralStrings($condition, $strings))) {
+            /**
+            * "//ns:name[@attr1] ..."
+            * "//ns:name[@attr1 = 'string1'] ..."
+            * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+            */
+            $cond_array = $this->getConditionAttributes($temp_condition, $strings);
+        }
+
+        return $cond_array;
+    }
+    // }}}
+    // {{{ getConditionAttributes
     /**
      * gets attributes array from xpath-condition\n
      * (... [@this = 'some' and @that = 'some other'])\n
@@ -1199,7 +1189,7 @@ class Document
      *
      * @return    $attr (array) array of attr-conditions
      */
-    protected function get_condition_attributes($condition, $strings)
+    protected function getConditionAttributes($condition, $strings)
     {
         $cond_array = array();
 
@@ -1219,7 +1209,8 @@ class Document
 
         return $cond_array;
     }
-
+    // }}}
+    // {{{ removeLiteralStrings
     /**
      * replaces strings surrounded by " or ' with pointer to array
      *
@@ -1230,7 +1221,7 @@ class Document
      *
      * @return    $text (string)
      */
-    protected function remove_literal_strings($text, &$strings)
+    protected function removeLiteralStrings($text, &$strings)
     {
         $n = 0;
         $newText = '';
@@ -1251,6 +1242,7 @@ class Document
         return $newText;
     }
     // }}}
+
     // {{{ getFreeNodeIds
     /**
      * gets unused db-node-ids for saving nodes
