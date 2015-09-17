@@ -62,54 +62,25 @@ class Notification extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
-        $fields = implode(", ", self::getFields());
+        $fields = "n." . implode(", n.", self::getFields());
 
         $query = $pdo->prepare(
             "SELECT $fields
             FROM
-                {$pdo->prefix}_auth_notifications AS notifications
+                {$pdo->prefix}_notifications AS n,
+                {$pdo->prefix}_auth_sessions AS s
             WHERE
-                sid = :sid"
+                n.sid = :sid1 OR
+                (s.sid = :sid2 AND n.uid = s.userId)"
         );
         $query->execute(array(
-            ':sid' => $sid,
+            ':sid1' => $sid,
+            ':sid2' => $sid,
         ));
 
         // pass pdo-instance to constructor
         $query->setFetchMode(\PDO::FETCH_CLASS, get_called_class(), array($pdo));
         $n = $query->fetchAll();
-
-        return $n;
-    }
-    // }}}
-    // {{{ loadByUid()
-    /**
-     * gets a user-object by id directly from database
-     *
-     * @public
-     *
-     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
-     * @param       int     $id         id of the user
-     *
-     * @return      auth_user
-     */
-    static public function loadByUid($pdo, $uid) {
-        $fields = implode(", ", self::getFields());
-
-        $query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_notifications AS notifications
-            WHERE
-                uid = :uid"
-        );
-        $query->execute(array(
-            ':uid' => $uid,
-        ));
-
-        // pass pdo-instance to constructor
-        $query->setFetchMode(\PDO::FETCH_CLASS, get_called_class(), array($pdo));
-        $n = $query->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
         return $n;
     }
@@ -130,9 +101,9 @@ class Notification extends \Depage\Entity\Entity
 
         if (count($dirty) > 0) {
             if ($isNew) {
-                $query = "INSERT INTO {$this->pdo->prefix}_auth_notifications";
+                $query = "INSERT INTO {$this->pdo->prefix}_notifications";
             } else {
-                $query = "UPDATE {$this->pdo->prefix}_auth_notifications";
+                $query = "UPDATE {$this->pdo->prefix}_notifications";
             }
             foreach ($dirty as $key) {
                 $fields[] = "$key=:$key";
@@ -172,13 +143,32 @@ class Notification extends \Depage\Entity\Entity
         $isNew = $this->data[$primary] === null;
 
         if (!$isNew) {
-            $query = $this->pdo->prepare("DELETE FROM {$this->pdo->prefix}_auth_notifications WHERE $primary=:primary");
+            $query = $this->pdo->prepare("DELETE FROM {$this->pdo->prefix}_notifications WHERE $primary=:primary");
             $sucess = $query->execute(array(
                 'primary' => $this->data[$primary],
             ));
         }
 
         return true;
+    }
+    // }}}
+    // {{{ updateSchema()
+    /**
+     * @brief updateSchema
+     *
+     * @return void
+     **/
+    public static function updateSchema($pdo)
+    {
+        $schema = new \Depage\Db\Schema($pdo);
+
+        $schema->setReplace(
+            function ($tableName) use ($pdo) {
+                return $pdo->prefix . $tableName;
+            }
+        );
+        $schema->loadGlob(__DIR__ . "/Sql/*.sql");
+        $schema->update();
     }
     // }}}
 }
