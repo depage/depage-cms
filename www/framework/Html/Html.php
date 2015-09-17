@@ -210,7 +210,7 @@ class Html {
                 }
                 */
             } else {
-                html::e($this->content);
+                self::e($this->content);
             }
         } catch (Exception $e) {
             var_dump($e);
