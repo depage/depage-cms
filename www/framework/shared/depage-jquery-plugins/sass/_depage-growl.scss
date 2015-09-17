@@ -1,0 +1,40 @@
+/* {{{ depageGrowlArea */
+#depageGrowlArea {
+    position: fixed;
+    margin-top: 55px;
+    margin-right: 0;
+    z-index: 30000;
+
+    div.depage-growl-message {
+        font-size: 12px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        width: 250px;
+        min-height: 36px + 2 * 8px;
+        background: #555555;
+        padding: 5px 8px;
+        color: #ffffff;
+        cursor: pointer;
+        border-width: 1px;
+        border-style: solid;
+        border-color: transparent;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+
+        &:hover {
+            border-color: #ffffff;
+        }
+
+        img.depage-growl-icon {
+            float: left;
+            display: block;
+            width: 36px;
+            height: 36px;
+            margin-right: 10px;
+        }
+    }
+}
+/* }}} */
+
+/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
