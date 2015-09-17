@@ -5,6 +5,7 @@
  *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
+ * @require framework/shared/depage-jquery-plugins/depage-growl.js
  *
  *
  * @file    js/global.js
@@ -50,8 +51,7 @@ var depageCMS = (function() {
             $flashFrame = $("#flashFrame")[0];
 
             // setup ajax timers
-            setTimeout(localJS.updateTasks, 1000);
-            setTimeout(localJS.updateUsers, 8000);
+            setTimeout(localJS.updateAjaxContent, 1000);
         },
         // }}}
         // {{{ setup
@@ -168,38 +168,35 @@ var depageCMS = (function() {
         },
         // }}}
 
-        // {{{ updateUsers
-        updateUsers: function() {
-            localJS.updateBox("#box-users", localJS.updateUsers);
-        },
-        // }}}
-        // {{{ updateTasks
-        updateTasks: function() {
-            localJS.updateBox("#box-tasks", localJS.updateTasks);
-        },
-        // }}}
-        // {{{ updateBox
-        updateBox: function(id, successFunction) {
-            var $box = $(id);
-            var url;
+        // {{{ updateAjaxContent
+        updateAjaxContent: function() {
+            var url = "overview/";
+            var timeout = 5000;
 
-            if ($box.length > 0) {
-                url = $box.attr("data-ajax-update-url");
-                var taskUrl = baseUrl + url.trim() + "?ajax=true " + id + " .content";
-                var timeout;
+            $.ajax({
+                url: baseUrl + url.trim() + "?ajax=true",
+                success: function(responseText, textStatus, jqXHR) {
+                    var $html = $(responseText);
 
-                $box.load(taskUrl, function(responseText, textStatus, jqXHR) {
-                    var matches = /( data-ajax-update-timeout="(\d+)")/.exec(responseText);
-                    if (matches !== null) {
-                        timeout = parseInt(matches[2], 10);
-                    } else {
-                        timeout = 5000;
-                    }
-                    if (typeof successFunction === "function") {
-                        setTimeout(successFunction, timeout);
-                    }
-                });
-            }
+                    // get children with ids and replace content
+                    $html.filter("[id]").each( function() {
+                        var $el = $(this);
+                        var id = this.id;
+                        var newTimeout = $el.data("ajax-update-timeout");
+
+                        if (newTimeout && newTimeout < timeout) {
+                            timeout = newTimeout;
+                        }
+                        $("#" + id).empty().append($el.children());
+                    });
+
+                    // get script elements
+                    $html.filter("script").each( function() {
+                        $("body").append(this);
+                    });
+                    setTimeout(localJS.updateAjaxContent, timeout);
+                }
+            });
         },
         // }}}
 
