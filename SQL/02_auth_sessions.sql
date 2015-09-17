@@ -18,6 +18,6 @@ CREATE TABLE `_auth_sessions` (
     `sessionData` longblob,
     PRIMARY KEY (`sid`),
     KEY `userId` (`userId`),
-    CONSTRAINT `_auth_sessions_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `_auth_sessions_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
