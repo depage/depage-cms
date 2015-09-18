@@ -230,10 +230,12 @@ class XmlDb implements XmlGetter
      * gets document by xpath. if xpath directs to more than
      * one node, only the first node will be returned.
      *
-     * @param    $xpath (string) xpath to target node
-     * @param    $add_id_attribute (bool) whether to add db:id attribute or not
+     * @param   $xpath (string) xpath to target node
+     * @param   $add_id_attribute (bool) whether to add db:id attribute or not
      *
-     * @return    $doc (domxmlobject)
+     * @return  $doc (domxmlobject)
+     *
+     * @todo    implement
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true)
     {
@@ -246,18 +248,107 @@ class XmlDb implements XmlGetter
      *
      * @attention this supports only a small subset of xpath-queries. so recheck source before using.
      *
-     * @param    $this->doc_id (int) id of document
-     * @param    $xpath (string) xpath to target node
+     * @param   $this->doc_id (int) id of document
+     * @param   $xpath (string) xpath to target node
      *
-     * @return    $nodeids (array) array of found node ids
+     * @return  $nodeids (array) array of found node ids
      *
      * @todo    implement full xpath specifications
      */
-    public function getNodeIdsByXpath($xpath)
+    public function getNodeIdsByXpath($xpath, $docId = null)
     {
-        $fetchedIDs = array();
+        if (is_null($docId)) {
+            $docClause = '';
+            $params = array();
+        } else {
+            $docClause = ' AND WHERE nodes.id_doc = :docId ';
+            $params = array('docId' => $docId);
+        }
 
-        return $fetchedIDs;
+        $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
+        $pCondition = '(?:\[(.*?)\])?';
+        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
+
+        $actualIds = array(null);
+        $results = array();
+
+        foreach ($xpathElements as $level => $element) {
+            $fetchedIds = array();
+            $element[] = '';
+            list(,$divider, $ns, $name, $condition) = $element;
+            $strings = array();
+
+            if ($divider == '/') {
+                if ($condition == '') {
+                } else if (preg_match('/^([0-9]+)$/', $condition)) {
+                    // fetch by name and position: "... /ns:name[n] ..."
+                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                    // fetch by simple attributes: "//ns:name[@attr1] ..."
+                } else {
+                    // not yet implemented
+                }
+            } elseif ($divider == '//' && $level == 0) {
+                if ($condition == '') {
+                    // fetch only by name recursive:  "//ns:name ..."
+                    $sql = "
+                        SELECT nodes.id
+                        FROM {$this->table_xml} AS nodes
+                        WHERE nodes.name = :name
+                        $docClause
+                    ";
+                    $params['name'] = "$ns:$name";
+
+                    $query = $this->pdo->prepare($sql);
+                    $query->execute($params);
+                    $results = $query->fetchAll();
+                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                    // fetch by simple attributes: "//ns:name[@attr1] ..."
+                } else {
+                    // not yet implemented
+                }
+            } else {
+                // not yet implemented
+            }
+        }
+
+        $fetchedIDs = array();
+        foreach ($results as $result) {
+            $fetchedIds[] = $result[0];
+        }
+
+        return $fetchedIds;
+    }
+    // }}}
+    // {{{ removeLiteralStrings
+    /**
+     * replaces strings surrounded by " or ' with pointer to array
+     *
+     * @protected
+     *
+     * @param    $text (string) text to process
+     * @param    $strings (array) array of removed strings
+     *
+     * @return    $text (string)
+     */
+    protected function removeLiteralStrings($text, &$strings)
+    {
+        $n = 0;
+        $newText = '';
+        $strings = array();
+
+        $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
+        preg_match_all($p, $text, $parts);
+
+        for ($i = 0; $i < count($parts[0]); $i++) {
+            if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
+                $strings[$n] = $parts[2][$i] . $parts[3][$i];
+                $newText .= "\$$n";
+                $n++;
+            } else {
+                $newText .= $parts[1][$i];
+            }
+        }
+        return $newText;
     }
     // }}}
 
