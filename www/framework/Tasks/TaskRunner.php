@@ -38,13 +38,18 @@ require_once(__DIR__ . "/../Depage/Runner.php");
  * current request will be repeated.
  */
 
-/* TODO:
- webserver timeouts may happen before php max execution timeout:
- "Your web server can have other timeout configurations that
- may also interrupt PHP execution. Apache has a Timeout directive
- and IIS has a CGI timeout function. Both default to 300 seconds.
- See your web server documentation for specific details."
-
+/*
+ * @todo
+ * webserver timeouts may happen before php max execution timeout:
+ + "Your web server can have other timeout configurations that
+ + may also interrupt PHP execution. Apache has a Timeout directive
+ + and IIS has a CGI timeout function. Both default to 300 seconds.
+ + See your web server documentation for specific details."
+ +
+ * @todo:
+ *  - how to handle errors?
+ *  - restart failed task!? wird erstmal nicht gebraucht!
+ *  - what happens when a subtask takes longer than a specific timeout
 */
 
 class TaskRunner extends \Depage\Depage\Ui\Base
@@ -121,10 +126,14 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 $this->log("finished task {$taskId} ({$this->task->taskName})");
                 $this->task->setTaskStatus("done");
                 $this->task->remove();
+
+                $this->sendNotification("Task finished", "'{$this->task->taskName}' has finished successfully");
             } catch (\Exception $e) {
                 $this->task->setSubtaskStatus($subtask, $e->getMessage());
                 $this->task->setTaskStatus("failed");
                 $this->log("ERROR: " . $e->getMessage());
+
+                $this->sendNotification("Task failed", "'{$this->task->taskName}' failed with " . $e->getMessage());
             }
 
             $this->task->unlock();
@@ -160,6 +169,29 @@ class TaskRunner extends \Depage\Depage\Ui\Base
             $this->log->log($message);
         } else {
             echo($message . "<br>\n");
+        }
+    }
+    // }}}
+    // {{{ sendNotification()
+    /**
+     * @brief sendNotification
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function sendNotification($title, $message)
+    {
+        if (class_exists("Depage\\Notifications\\Notification")) {
+            $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
+            foreach ($activeUsers as $user) {
+                $newN = new \Depage\Notifications\Notification($this->pdo);
+                $newN->setData([
+                    'sid' => $user->sid,
+                    'tag' => "depage." . $this->task->projectName,
+                    'title' => $title,
+                    'message' => $message,
+                ])->save();
+            }
         }
     }
     // }}}
@@ -341,10 +373,4 @@ if (php_sapi_name() == 'cli') {
     $task_runner->runNow($options['task-id'], true);
 }
 
-/* TODO:
- *  - how to handle errors?
- *  - restart failed task!? wird erstmal nicht gebraucht!
- *  - was ist wenn ein einzelner Subtaks Zeitlimit überschreitet?
- */
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
-
