@@ -225,6 +225,42 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
+    // {{{ getSubDocByXpath
+    /**
+     * gets document by xpath. if xpath directs to more than
+     * one node, only the first node will be returned.
+     *
+     * @param    $xpath (string) xpath to target node
+     * @param    $add_id_attribute (bool) whether to add db:id attribute or not
+     *
+     * @return    $doc (domxmlobject)
+     */
+    public function getSubDocByXpath($xpath, $add_id_attribute = true)
+    {
+        return false;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpath
+    /**
+     * gets node_ids by xpath
+     *
+     * @attention this supports only a small subset of xpath-queries. so recheck source before using.
+     *
+     * @param    $this->doc_id (int) id of document
+     * @param    $xpath (string) xpath to target node
+     *
+     * @return    $nodeids (array) array of found node ids
+     *
+     * @todo    implement full xpath specifications
+     */
+    public function getNodeIdsByXpath($xpath)
+    {
+        $fetchedIDs = array();
+
+        return $fetchedIDs;
+    }
+    // }}}
+
     // {{{ createDoc
     /**
      * CreateDoc

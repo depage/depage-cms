@@ -216,6 +216,162 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
         $this->xmldb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'pages');
     }
     // }}}
+
+    // {{{ getNodeIdsByDomXpath
+    protected function getNodeIdsByDomXpath($doc, $xpath)
+    {
+        $ids = array();
+
+        $domXpath = new \DomXpath($doc->getXml());
+        $list = $domXpath->query($xpath);
+        foreach ($list as $item) {
+            $ids[] = $item->attributes->getNamedItem('id')->nodeValue;
+        }
+
+        return $ids;
+    }
+    // }}}
+    // {{{ getAllNodeIdsByDomXpath
+    protected function getAllNodeIdsByDomXpath($xpath)
+    {
+        $ids = array();
+
+        foreach ($this->xmldb->getDocuments() as $doc) {
+            $ids = array_merge($ids, $this->getNodeIdsByDomXpath($doc, $xpath));
+        }
+
+        return $ids;
+    }
+    // }}}
+    // {{{ assertCorrectXpathIds
+    protected function assertCorrectXpathIds(array $expectedIds, $xpath)
+    {
+        $actualIds = $this->xmldb->getNodeIdsByXpath($xpath);
+
+        $this->assertEquals($expectedIds, $this->getAllNodeIdsByDomXpath($xpath), 'Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly?');
+        $this->assertEquals($expectedIds, $actualIds);
+    }
+    // }}}
+    // {{{ assertCorrectXpathIdsNoDomXpath
+    protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
+    {
+        $this->assertEquals($expectedIds, $this->xmldb->getNodeIdsByXpath($xpath));
+    }
+    // }}}
+
+    // {{{ testGetNodeIdsByXpathByNameAll
+    public function testGetNodeIdsByXpathByNameAll()
+    {
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttribute
+    public function testGetNodeIdsByXpathByNameAllWithAttribute()
+    {
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page[@name]');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValue
+    public function testGetNodeIdsByXpathByNameAllWithAttributeWithValue()
+    {
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameWithChild
+    public function testGetNodeIdsByXpathByNameWithChild()
+    {
+        $this->assertCorrectXpathIds(array('2'), '/dpg:pages/pg:page');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameWithChildAndPosition
+    public function testGetNodeIdsByXpathByNameWithChildAndPosition()
+    {
+        $this->assertCorrectXpathIds(array('8'), '/dpg:pages/pg:page/pg:page[3]');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAndAttribute
+    public function testGetNodeIdsByXpathByNameAndAttribute()
+    {
+        $this->assertCorrectXpathIds(array('6', '7', '8'), '/dpg:pages/pg:page/pg:page[@name]');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAndAttributeWithValue
+    public function testGetNodeIdsByXpathByNameAndAttributeWithValue()
+    {
+        $this->assertCorrectXpathIds(array('6'), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildcardAndAttributeWithValue
+    public function testGetNodeIdsByXpathByWildcardAndAttributeWithValue()
+    {
+        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildcardNsAndAttributeWithValue
+    public function testGetNodeIdsByXpathByWildcardNsAndAttributeWithValue()
+    {
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildcardNameAndAttributeWithValue
+    public function testGetNodeIdsByXpathByWildcardNameAndAttributeWithValue()
+    {
+        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathNoResult
+    public function testGetNodeIdsByXpathNoResult()
+    {
+        $this->assertCorrectXpathIds(array(), '/nonode');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllAndPosition
+    public function testGetNodeIdsByXpathByNameAllAndPosition()
+    {
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeNoResult
+    public function testGetNodeIdsByXpathByNameAllWithAttributeNoResult()
+    {
+        $this->assertCorrectXpathIds(array(), '//pg:page[@unknown]');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult
+    public function testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult()
+    {
+        $this->assertCorrectXpathIds(array(), '//pg:page[@name = \'unknown\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue()
+    {
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*[@id = \'6\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue()
+    {
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*:page[@id = \'6\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue()
+    {
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/pg:*[@id = \'6\']');
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult
+    public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult()
+    {
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array(), '/*[@id = \'20\']');
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
