@@ -12,6 +12,8 @@
 
 namespace Depage\Cms\Rpc;
 
+use \Depage\Notifications\Notification;
+
 class CmsFuncs {
     protected $projectName;
     protected $callbacks = array();
@@ -1028,20 +1030,18 @@ class CmsFuncs {
             $this->callbacks[] = $this->getCallbackForPagedata($ids);
         }
 
-        // add updates to rcp-updates table
-        $query = $this->pdo->prepare(
-            "INSERT INTO {$this->pdo->prefix}_rpc_updates
-                (sid, projectname, message) VALUES (:sid, :projectname, :message)"
-        );
         $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
         foreach ($this->callbacks as $callback) {
             foreach ($activeUsers as $user) {
                 if ($user->sid != $this->user->sid) {
-                    $query->execute(array(
+                    $newN = new Notification($this->pdo);
+                    $newN->setData([
                         'sid' => $user->sid,
-                        'projectname' => $this->projectName,
+                        'tag' => "flashRpcUpdate." . $this->projectName,
+                        'title' => $this->projectName,
                         'message' => $callback,
-                    ));
+                    ])
+                    ->save();
                 }
             }
         }
@@ -1054,38 +1054,12 @@ class CmsFuncs {
     // }}}
     // {{{ getCallbacks()
     function getCallbacks() {
-        $this->pdo->beginTransaction();
+        $nn = Notification::loadBySid($this->pdo, $this->user->sid, "flashRpcUpdate." . $this->projectName);
 
-        // get callbacks
-        $query = $this->pdo->prepare(
-            "SELECT
-                message
-            FROM {$this->pdo->prefix}_rpc_updates
-            WHERE
-                projectname = :projectName AND
-                sid = :sid"
-        );
-        $query->execute(array(
-            'projectName' => $this->projectName,
-            'sid' => $this->user->sid,
-        ));
-        while ($result = $query->fetchObject()) {
-            $this->callbacks[] = $result->message;
+        foreach ($nn as $n) {
+            $this->callbacks[] = $n->message;
+            $n->delete();
         }
-
-        // delete used callbacks
-        $query = $this->pdo->prepare(
-            "DELETE FROM {$this->pdo->prefix}_rpc_updates
-            WHERE
-                projectname = :projectName AND
-                sid = :sid"
-        );
-        $query->execute(array(
-            'projectName' => $this->projectName,
-            'sid' => $this->user->sid,
-        ));
-
-        $this->pdo->commit();
 
         return $this->callbacks;
     }
