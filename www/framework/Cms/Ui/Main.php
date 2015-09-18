@@ -13,6 +13,7 @@
 namespace Depage\Cms\Ui;
 
 use \Depage\Html\Html;
+use \Depage\Notifications\Notification;
 
 class Main extends Base {
     protected $autoEnforceAuth = false;
@@ -157,6 +158,38 @@ class Main extends Base {
         return $h;
     }
     // }}}
+
+    // {{{ overview()
+    /**
+     * @brief overview
+     *
+     * @return void
+     **/
+    public function overview()
+    {
+        $content = array();
+
+        $content[] = $this->users("current");
+        $content[] = $this->tasks();
+        $content[] = $this->notifications();
+
+        /*
+        $newN = new Notification($this->pdo);
+        $newN->setData([
+            'sid' => $this->authUser->sid,
+            'tag' => "depage.growl",
+            'title' => "title dsofjh sdkjfh ",
+            'message' => "message sdjfh ksjdhf ksdf",
+        ])
+        ->save();
+        /* */
+
+        return new Html(array(
+            'content' => $content,
+        ), $this->htmlOptions);
+    }
+    // }}}
+
     // {{{ tasks
     /**
      * gets a list of projects
@@ -229,6 +262,57 @@ class Main extends Base {
         return $this->tasks($taskId);
     }
     // }}}
+    // {{{ test_task()
+    /**
+     * @brief test_task
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function test_task()
+    {
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
+        $sleepMin = 0;
+        $sleepMax = 10 * 1000000;
+
+        for ($i = 0; $i < 5; $i++) {
+            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");
+
+            for ($j = 0; $j < 5; $j++) {
+                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); usleep(rand($sleepMin, $sleepMax));", $dep1);
+
+                for ($k = 0; $k < 10; $k++) {
+                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); usleep(rand($sleepMin, $sleepMax));", $dep2);
+                }
+            }
+        }
+        //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
+
+        \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+    }
+    // }}}
+
+    // {{{ notifications
+    /**
+     * gets notifications as javascript
+     *
+     * @return  null
+     */
+    public function notifications() {
+        $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
+
+        // construct template
+        $h = new Html("notifications.tpl", array(
+            'notifications' => $nn,
+        ), $this->htmlOptions);
+
+        foreach ($nn as $n) {
+            $n->delete();
+        }
+
+        return $h;
+    }
+    // }}}
 
     // {{{ users
     /**
@@ -261,35 +345,6 @@ class Main extends Base {
         return $h;
     }
     // }}}
-    // {{{ test_task()
-    /**
-     * @brief test_task
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function test_task()
-    {
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
-        $sleepMin = 0;
-        $sleepMax = 10 * 1000000;
-
-        for ($i = 0; $i < 5; $i++) {
-            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");
-
-            for ($j = 0; $j < 5; $j++) {
-                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); usleep(rand($sleepMin, $sleepMax));", $dep1);
-
-                for ($k = 0; $k < 10; $k++) {
-                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); usleep(rand($sleepMin, $sleepMax));", $dep2);
-                }
-            }
-        }
-        //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
-
-        \Depage\Depage\Runner::redirect(DEPAGE_BASE);
-    }
-    // }}}
 
     // {{{ setup()
     /**
@@ -304,11 +359,9 @@ class Main extends Base {
 
         $this->auth->enforce();
 
-        // add/update schema for tasks
         \Depage\Tasks\Task::updateSchema($this->pdo);
-
-        // add/update schema for project structures
         \Depage\Cms\Project::updateSchema($this->pdo);
+        \Depage\Notifications\Notification::updateSchema($this->pdo);
 
         $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
