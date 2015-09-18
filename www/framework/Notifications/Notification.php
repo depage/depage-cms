@@ -20,6 +20,7 @@ class Notification extends \Depage\Entity\Entity
         "title" => "",
         "message" => "",
         "options" => "",
+        "date" => null,
     );
 
     /**
@@ -98,6 +99,10 @@ class Notification extends \Depage\Entity\Entity
         $fields = array();
         $primary = self::$primary[0];
         $isNew = $this->data[$primary] === null;
+
+        if ($isNew) {
+            $this->date = date("Y-m-d H:i:s");
+        }
 
         $dirty = array_keys($this->dirty, true);
 

@@ -16,6 +16,7 @@ CREATE TABLE `_notifications` (
     `title` varchar(255) NOT NULL DEFAULT '',
     `message` longblob NOT NULL DEFAULT '',
     `options` longblob NOT NULL DEFAULT '',
+    `date` datetime DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `_auth_notifications_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `_auth_sessions` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `_auth_notifications_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `_auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
