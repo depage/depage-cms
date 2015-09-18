@@ -87,10 +87,30 @@ var depageCMS = (function() {
                 "right-full"
             ];
 
+            // add layout buttons
+            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\"></li>").prependTo($toolbarRight);
+            for (var i in layouts) {
+                var newLayout = layouts[i];
+                var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
+                    .appendTo($layoutButtons)
+                    .on("click", {layout: newLayout}, localJS.switchLayout);
+            }
+
+            // add button placeholder
+            var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarRight);
+
+            // add reload button
+            var $reloadButton = $("<a class=\"button\">reload</a>")
+                .appendTo($previewButtons)
+                .on("click", function() {
+                    if ($previewFrame.length > 0) {
+                        $previewFrame[0].contentWindow.location.reload();
+                    }
+                });
+
             // add zoom select
-            var $zoomButtons = $("<li class=\"layout-buttons\"></li>").prependTo($toolbarRight);
             var $zoomSelect = $("<span class=\"zoom-select\"><select><option value=\"zoom100\">100%</option><option value=\"zoom75\">75%</option><option value=\"zoom50\">50%</option></select></span>")
-                .appendTo($zoomButtons)
+                .appendTo($previewButtons)
                 .find("select")
                 .on("change", function() {
                     this.blur();
@@ -100,14 +120,6 @@ var depageCMS = (function() {
                 });
 
 
-            // add layout buttons
-            var $layoutButtons = $("<li class=\"pills layout-buttons\"></li>").prependTo($toolbarRight);
-            for (var i in layouts) {
-                var newLayout = layouts[i];
-                var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
-                    .appendTo($layoutButtons)
-                    .on("click", {layout: newLayout}, localJS.switchLayout);
-            }
         },
         // }}}
         // {{{ setupProjectList
@@ -210,9 +222,9 @@ var depageCMS = (function() {
 
             if ($("div.preview").length === 0) {
                 currentLayout = "left-full";
-                $(".layout-buttons").css({visibility: "hidden"});
+                $(".preview-buttons").css({visibility: "hidden"});
             } else {
-                $(".layout-buttons").css({visibility: "visible"});
+                $(".preview-buttons").css({visibility: "visible"});
             }
             $html
                 .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")
