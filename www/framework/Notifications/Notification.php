@@ -83,8 +83,8 @@ class Notification extends \Depage\Entity\Entity
                 {$pdo->prefix}_auth_sessions AS s
             ON n.uid = s.userId
             WHERE
-                n.sid = :sid1 OR
-                (s.sid = :sid2 AND n.uid = s.userId)
+                (n.sid = :sid1 OR
+                (s.sid = :sid2 AND n.uid = s.userId))
                 $tagQuery
             ORDER BY n.id"
         );
