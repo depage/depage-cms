@@ -26,8 +26,9 @@ var depageCMS = (function() {
     var $window;
     var $previewFrame;
     var $flashFrame;
-    var $toolbarLeft;
-    var $toolbarRight;
+    var $toolbarLeft,
+        $toolbarPreview,
+        $toolbarRight;
     var currentLayout;
 
     // local Project instance that holds all variables and function
@@ -78,6 +79,7 @@ var depageCMS = (function() {
         // {{{ setupToolbar
         setupToolbar: function() {
             $toolbarLeft = $("#toolbarmain menu.left");
+            $toolbarPreview = $("#toolbarmain menu.preview");
             $toolbarRight = $("#toolbarmain menu.right");
 
             var layouts = [
@@ -97,7 +99,7 @@ var depageCMS = (function() {
             }
 
             // add button placeholder
-            var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarRight);
+            var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
 
             // add reload button
             var $reloadButton = $("<a class=\"button\">reload</a>")
@@ -237,15 +239,15 @@ var depageCMS = (function() {
         // }}}
         // {{{ preview
         preview: function(url) {
-            if ($previewFrame.length > 0) {
+            if (parent != window) {
+                parent.depageCMS.preview(url);
+            } else if ($previewFrame.length == 1) {
                 $previewFrame[0].src = unescape(url);
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {
                     console.log(currentLayout);
                     $window.triggerHandler("switchLayout", "split");
                 }
-            } else if (parent != window) {
-                parent.depageCMS.preview(url);
             } else {
                 // add preview frame
                 var projectName = url.match(/project\/(.*)\/preview/)[1];

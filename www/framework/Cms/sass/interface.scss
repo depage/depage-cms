@@ -339,15 +339,34 @@ select,
     top: 0;
     left: 0;
     margin: 0;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid #777777;
     width: 100%;
     z-index: 10000;
 }
 .toolbar {
-    padding: 2px 8px;
     height: 30px;
 
-    menu,
+    menu {
+        padding: 2px 8px;
+        display: block;
+        height: 100%;
+
+        &.right,
+        &.preview,
+        &.left {
+            position: absolute;
+            top: 0;
+        }
+        &.left {
+            left: 100px;
+        }
+        &.right {
+            right: 0;
+        }
+        &.preview {
+            display: none;
+        }
+    }
     ul,
     li {
         display: inline;
@@ -360,9 +379,6 @@ select,
         line-height: 22px;
         height: 26px;
         padding: 2px 8px;
-    }
-    .right {
-        float: right;
     }
     a {
         span {
@@ -466,7 +482,7 @@ header.info {
     position: fixed;
     top: $toolbarHeight;
     height: $infoHeight;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid #777777;
     background: #CCC8C4;
     z-index: 10001;
 
@@ -484,6 +500,7 @@ header.info {
 html {
     // base styles for layouts
     header.info,
+    .toolbar menu.preview,
     .layout {
         @include transition(200ms, "left, right, width");
     }
@@ -529,6 +546,10 @@ html {
             left: 0;
             width: 100%;
         }
+        .toolbar menu.preview {
+            left: 160px;
+            display: block;
+        }
     }
     &.layout-split {
         .layout-left {
@@ -540,6 +561,10 @@ html {
             left: $editWidth;
             right: 0;
             border-left: 1px solid #000000;
+        }
+        .toolbar menu.preview {
+            left: $editWidth;
+            display: block;
         }
     }
     &.layout-tree-split {
@@ -572,6 +597,9 @@ html {
             .layout-right {
                 left: $currentEditWidth;
             }
+            .toolbar menu.preview {
+                left: $currentEditWidth;
+            }
         }
     }
     @media screen and (max-width: 1024px) {
@@ -588,6 +616,9 @@ html {
                 width: $currentEditWidth;
             }
             .layout-right {
+                left: $currentEditWidth;
+            }
+            #toolbarmain menu.preview {
                 left: $currentEditWidth;
             }
         }
