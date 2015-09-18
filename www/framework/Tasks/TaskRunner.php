@@ -183,11 +183,15 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     {
         if (class_exists("Depage\\Notifications\\Notification")) {
             $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
+            $tag = "depage.task";
+            if ($this->task->projectName) {
+                $tag .= ".project." . $this->task->projectName;
+            }
             foreach ($activeUsers as $user) {
                 $newN = new \Depage\Notifications\Notification($this->pdo);
                 $newN->setData([
                     'sid' => $user->sid,
-                    'tag' => "depage." . $this->task->projectName,
+                    'tag' => $tag,
                     'title' => $title,
                     'message' => $message,
                 ])->save();
