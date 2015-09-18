@@ -67,11 +67,13 @@ class Notification extends \Depage\Entity\Entity
         $query = $pdo->prepare(
             "SELECT $fields
             FROM
-                {$pdo->prefix}_notifications AS n,
+                {$pdo->prefix}_notifications AS n LEFT JOIN
                 {$pdo->prefix}_auth_sessions AS s
+            ON n.uid = s.userId
             WHERE
                 n.sid = :sid1 OR
-                (s.sid = :sid2 AND n.uid = s.userId)"
+                (s.sid = :sid2 AND n.uid = s.userId)
+            ORDER BY n.id"
         );
         $query->execute(array(
             ':sid1' => $sid,
