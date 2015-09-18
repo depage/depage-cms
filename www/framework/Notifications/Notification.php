@@ -53,17 +53,28 @@ class Notification extends \Depage\Entity\Entity
 
     // {{{ loadBySid()
     /**
-     * gets a user-object by id directly from database
+     * gets a notifications by sid for a specific user
      *
      * @public
      *
      * @param       Depage\Db\Pdo     $pdo        pdo object for database access
-     * @param       int     $id         id of the user
+     * @param       String            $sid        sid of the user
+     * @param       String            $tag        tag with which to filter the notifications. SQL wildcards % and _ are allowed to match substrings.
      *
      * @return      auth_user
      */
-    static public function loadBySid($pdo, $sid) {
+    static public function loadBySid($pdo, $sid, $tag = null) {
         $fields = "n." . implode(", n.", self::getFields());
+        $tagQuery = "";
+        $params = array(
+            ':sid1' => $sid,
+            ':sid2' => $sid,
+        );
+
+        if ($tag) {
+            $tagQuery = " AND tag LIKE :tag";
+            $params[':tag'] = $tag;
+        }
 
         $query = $pdo->prepare(
             "SELECT $fields
@@ -74,12 +85,10 @@ class Notification extends \Depage\Entity\Entity
             WHERE
                 n.sid = :sid1 OR
                 (s.sid = :sid2 AND n.uid = s.userId)
+                $tagQuery
             ORDER BY n.id"
         );
-        $query->execute(array(
-            ':sid1' => $sid,
-            ':sid2' => $sid,
-        ));
+        $query->execute($params);
 
         // pass pdo-instance to constructor
         $query->setFetchMode(\PDO::FETCH_CLASS, get_called_class(), array($pdo));
@@ -91,7 +100,7 @@ class Notification extends \Depage\Entity\Entity
 
     // {{{ save()
     /**
-     * save a user object
+     * save a notification object
      *
      * @public
      */
@@ -139,7 +148,7 @@ class Notification extends \Depage\Entity\Entity
     // }}}
     // {{{ delete()
     /**
-     * @brief delete
+     * @brief deletes a notifification object
      *
      * @param mixed
      * @return void
@@ -159,6 +168,7 @@ class Notification extends \Depage\Entity\Entity
         return true;
     }
     // }}}
+
     // {{{ updateSchema()
     /**
      * @brief updateSchema
