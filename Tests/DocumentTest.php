@@ -33,6 +33,36 @@ class DocumentTest extends DatabaseTestCase
     }
     // }}}
 
+    // {{{ getNodeIdsByDomXpath
+    protected function getNodeIdsByDomXpath($xpath)
+    {
+        $ids = array();
+
+        $domXpath = new \DomXpath($this->doc->getXml());
+        $list = $domXpath->query($xpath);
+        foreach ($list as $item) {
+            $ids[] = $item->attributes->getNamedItem('id')->nodeValue;
+        }
+
+        return $ids;
+    }
+    // }}}
+    // {{{ assertCorrectXpathIds
+    protected function assertCorrectXpathIds(array $expectedIds, $xpath)
+    {
+        $actualIds = $this->doc->getNodeIdsByXpath($xpath);
+
+        $this->assertEquals($expectedIds, $this->getNodeIdsByDomXpath($xpath), 'Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly?');
+        $this->assertEquals($expectedIds, $actualIds);
+    }
+    // }}}
+    // {{{ assertCorrectXpathIdsNoDomXpath
+    protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
+    {
+        $this->assertEquals($expectedIds, $this->doc->getNodeIdsByXpath($xpath));
+    }
+    // }}}
+
     // {{{ testGetHistory
     public function testGetHistory()
     {
@@ -152,145 +182,114 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testGetNodeIdsByXpathByNameAll
     public function testGetNodeIdsByXpathByNameAll()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page');
-
-        $this->assertEquals(array('2', '6', '7', '8'), $ids);
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAllWithAttribute
     public function testGetNodeIdsByXpathByNameAllWithAttribute()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name]');
-
-        $this->assertEquals(array('2', '6', '7', '8'), $ids);
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page[@name]');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValue
     public function testGetNodeIdsByXpathByNameAllWithAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name = \'bla blub\']');
-
-        $this->assertEquals(array('8'), $ids);
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameWithChild
     public function testGetNodeIdsByXpathByNameWithChild()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page');
-
-        $this->assertEquals(array('2'), $ids);
+        $this->assertCorrectXpathIds(array('2'), '/dpg:pages/pg:page');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameWithChildAndPosition
     public function testGetNodeIdsByXpathByNameWithChildAndPosition()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/pg:page[3]');
-
-        $this->assertEquals(array('8'), $ids);
+        $this->assertCorrectXpathIds(array('8'), '/dpg:pages/pg:page/pg:page[3]');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAndAttribute
     public function testGetNodeIdsByXpathByNameAndAttribute()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/pg:page[@name]');
-
-        $this->assertEquals(array('6', '7', '8'), $ids);
+        $this->assertCorrectXpathIds(array('6', '7', '8'), '/dpg:pages/pg:page/pg:page[@name]');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAndAttributeWithValue
     public function testGetNodeIdsByXpathByNameAndAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
-
-        $this->assertEquals(array('6'), $ids);
+        $this->assertCorrectXpathIds(array('6'), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildcardAndAttributeWithValue
     public function testGetNodeIdsByXpathByWildcardAndAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/*[@name = \'Subpage\']');
-
-        $this->assertEquals(array('6', '9'), $ids);
+        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildcardNsAndAttributeWithValue
     public function testGetNodeIdsByXpathByWildcardNsAndAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
-
-        $this->assertEquals(array('6'), $ids);
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildcardNameAndAttributeWithValue
     public function testGetNodeIdsByXpathByWildcardNameAndAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
-
-        $this->assertEquals(array('6', '9'), $ids);
+        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathNoResult
     public function testGetNodeIdsByXpathNoResult()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/nonode');
-
-        $this->assertEquals(array(), $ids);
+        $this->assertCorrectXpathIds(array(), '/nonode');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAllAndPosition
     public function testGetNodeIdsByXpathByNameAllAndPosition()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page[3]');
-
-        $this->assertEquals(array('6', '9'), $ids);
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAllWithAttributeNoResult
     public function testGetNodeIdsByXpathByNameAllWithAttributeNoResult()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@unknown]');
-
-        $this->assertEquals(array(), $ids);
+        $this->assertCorrectXpathIds(array(), '//pg:page[@unknown]');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult
     public function testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult()
     {
-        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name = \'unknown\']');
-
-        $this->assertEquals(array(), $ids);
+        $this->assertCorrectXpathIds(array(), '//pg:page[@name = \'unknown\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue
     public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/*[@id = \'6\']');
-
-        $this->assertEquals(array('6'), $ids);
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*[@id = \'6\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue
     public function testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/*:page[@id = \'6\']');
-
-        $this->assertEquals(array('6'), $ids);
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*:page[@id = \'6\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue
     public function testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/pg:*[@id = \'6\']');
-
-        $this->assertEquals(array('6'), $ids);
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/pg:*[@id = \'6\']');
     }
     // }}}
     // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult
     public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult()
     {
-        $ids = $this->doc->getNodeIdsByXpath('/*[@id = \'20\']');
-
-        $this->assertEquals(array(), $ids);
+        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
+        $this->assertCorrectXpathIdsNoDomXpath(array(), '/*[@id = \'20\']');
     }
     // }}}
 
