@@ -160,21 +160,29 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testGetNodeIdsByXpathByNameAllWithAttribute
     public function testGetNodeIdsByXpathByNameAllWithAttribute()
     {
+        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name]');
+
+        $this->assertEquals(array('2', '6', '7', '8'), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValue
+    public function testGetNodeIdsByXpathByNameAllWithAttributeWithValue()
+    {
         $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name = \'bla blub\']');
 
         $this->assertEquals(array('8'), $ids);
     }
     // }}}
-    // {{{ testGetNodeIdsByXpathByNameAllWithChild
-    public function testGetNodeIdsByXpathByNameAllWithChild()
+    // {{{ testGetNodeIdsByXpathByNameWithChild
+    public function testGetNodeIdsByXpathByNameWithChild()
     {
         $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page');
 
         $this->assertEquals(array('2'), $ids);
     }
     // }}}
-    // {{{ testGetNodeIdsByXpathByNameAndPosition
-    public function testGetNodeIdsByXpathByNameAndPosition()
+    // {{{ testGetNodeIdsByXpathByNameWithChildAndPosition
+    public function testGetNodeIdsByXpathByNameWithChildAndPosition()
     {
         $ids = $this->doc->getNodeIdsByXpath('/dpg:pages/pg:page/pg:page[3]');
 
@@ -225,6 +233,62 @@ class DocumentTest extends DatabaseTestCase
     public function testGetNodeIdsByXpathNoResult()
     {
         $ids = $this->doc->getNodeIdsByXpath('/nonode');
+
+        $this->assertEquals(array(), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllAndPosition
+    public function testGetNodeIdsByXpathByNameAllAndPosition()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('//pg:page[3]');
+
+        $this->assertEquals(array('6', '9'), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeNoResult
+    public function testGetNodeIdsByXpathByNameAllWithAttributeNoResult()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@unknown]');
+
+        $this->assertEquals(array(), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult
+    public function testGetNodeIdsByXpathByNameAllWithAttributeWithValueNoResult()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('//pg:page[@name = \'unknown\']');
+
+        $this->assertEquals(array(), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValue()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('/*[@id = \'6\']');
+
+        $this->assertEquals(array('6'), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardNsAndIdAttributeWithValue()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('/*:page[@id = \'6\']');
+
+        $this->assertEquals(array('6'), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue
+    public function testGetNodeIdsByXpathByWildCardNameAndIdAttributeWithValue()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('/pg:*[@id = \'6\']');
+
+        $this->assertEquals(array('6'), $ids);
+    }
+    // }}}
+    // {{{ testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult
+    public function testGetNodeIdsByXpathByWildCardAndIdAttributeWithValueNoResult()
+    {
+        $ids = $this->doc->getNodeIdsByXpath('/*[@id = \'20\']');
 
         $this->assertEquals(array(), $ids);
     }
