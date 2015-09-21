@@ -67,12 +67,12 @@ for lang in $languages; do
     if [ "$chanchedLines" != "0" ] ; then
         # there are changes
         rm $localeDir/$lang/LC_MESSAGES/messages_old.po $localeDir/$lang/LC_MESSAGES/messages_old_bak.po
-        msgfmt -o $localeDir/$lang/LC_MESSAGES/messages.mo $localeDir/$lang/LC_MESSAGES/messages.po
     else
         # no changes -> keep old version
         rm $localeDir/$lang/LC_MESSAGES/messages_old.po
         mv $localeDir/$lang/LC_MESSAGES/messages_old_bak.po $localeDir/$lang/LC_MESSAGES/messages.po
     fi
+    msgfmt -o $localeDir/$lang/LC_MESSAGES/messages.mo $localeDir/$lang/LC_MESSAGES/messages.po
 done
 
 rm $filesPHP $filesXML $filesJS $potAll $potJS
