@@ -167,26 +167,17 @@ class Main extends Base {
      **/
     public function overview()
     {
-        $content = array();
+        if ($this->auth->enforceLazy()) {
+            $content = array();
 
-        $content[] = $this->users("current");
-        $content[] = $this->tasks();
-        $content[] = $this->notifications();
+            $content[] = $this->users("current");
+            $content[] = $this->tasks();
+            $content[] = $this->notifications();
 
-        /*
-        $newN = new Notification($this->pdo);
-        $newN->setData([
-            'sid' => $this->authUser->sid,
-            'tag' => "depage.growl",
-            'title' => "title dsofjh sdkjfh ",
-            'message' => "message sdjfh ksjdhf ksdf",
-        ])
-        ->save();
-        /* */
-
-        return new Html(array(
-            'content' => $content,
-        ), $this->htmlOptions);
+            return new Html(array(
+                'content' => $content,
+            ), $this->htmlOptions);
+        }
     }
     // }}}
 
@@ -274,6 +265,7 @@ class Main extends Base {
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
         $sleepMin = 0;
         $sleepMax = 10 * 1000000;
+        $sleepMax = 10000;
 
         for ($i = 0; $i < 5; $i++) {
             $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");

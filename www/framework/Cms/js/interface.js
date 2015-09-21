@@ -190,6 +190,9 @@ var depageCMS = (function() {
             $.ajax({
                 url: baseUrl + url.trim() + "?ajax=true",
                 success: function(responseText, textStatus, jqXHR) {
+                    if (!responseText) {
+                        return;
+                    }
                     var $html = $(responseText);
 
                     // get children with ids and replace content
