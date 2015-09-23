@@ -34,9 +34,18 @@
 
             base.options = $.extend({},$.depage.liveFilter.defaultOptions, options);
 
+            var extraAttr = "";
+            if (base.options.autofocus) {
+                extraAttr += " autofocus";
+            }
+
             // Put your initialization code here
             var $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").insertBefore(base.$el);
-            base.$input = $("<input type=\"search\" placeholder=\"" + base.options.placeholder + "\">").prependTo($container);
+            base.$input = $("<input type=\"search\" placeholder=\"" + base.options.placeholder + "\"" + extraAttr + ">").prependTo($container);
+
+            if (base.options.autofocus) {
+                base.$input.focus();
+            }
 
             base.$input.on("input keyup", function(e) {
                 var key = e.which || e.keyCode;
@@ -100,7 +109,8 @@
 
     $.depage.liveFilter.defaultOptions = {
         inputClass: "depage-live-filter",
-        placeholder: "Search"
+        placeholder: "Search",
+        autofocus: false
     };
 
     $.fn.depageLiveFilter = function(itemSelector, searchSelector, options){
