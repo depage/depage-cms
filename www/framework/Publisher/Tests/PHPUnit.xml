@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit bootstrap="Bootstrap.php">
+    <filter>
+        <blacklist>
+            <directory suffix=".php">../../Fs/</directory>
+            <directory suffix=".php">../../Db/</directory>
+        </blacklist>
+    </filter>
+    <logging>
+        <log
+        type="coverage-html"
+        target="Report"
+        />
+    </logging>
+</phpunit>
