@@ -443,6 +443,28 @@ class Project extends \Depage\Entity\Entity
         return $this->getPreviewPath() . $nodelist->item(0)->getAttribute("url");
     }
     // }}}
+    // {{{ getLastPublishDate()
+    /**
+     * @brief getLastPublishDate
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getLastPublishDate()
+    {
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        $targets = $this->getPublishingTargets();
+        list($publishId) = array_keys($targets);
+        $fs = \Depage\Fs\Fs::factory($this->getProjectPath());
+        $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
+
+        $date = $publisher->getLastPublishDate();
+
+        return $date;
+    }
+    // }}}
 
     // {{{ addPublishTask()
     /**

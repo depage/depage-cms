@@ -370,10 +370,12 @@ class Project extends Base
     // {{{ recent-changes()
     function recent_changes($max = null) {
         $pages = $this->project->getRecentlyChangedPages($max);
+        $date = $this->project->getLastPublishDate();
 
         $h = new Html("changelist.tpl", array(
             'previewPath' => $this->project->getPreviewPath(),
             'pages' => $pages,
+            'lastPublishDate' => $date,
         ), $this->htmlOptions);
 
         return $h;

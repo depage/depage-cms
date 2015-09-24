@@ -984,6 +984,10 @@ table.recent-changes {
         line-height: 24px;
     }
 
+    td.lastchange {
+        text-align: center;
+        font-size: 0.8em;
+    }
     td.url {
         width: 70%;
         white-space: nowrap;
@@ -1003,7 +1007,14 @@ table.recent-changes {
         text-align: right;
         font-size: 0.8em;
         white-space: nowrap;
-        color: #aaaaaa;
+    }
+    td.lastchange,
+    td.date,
+    td.published {
+        &,
+        a {
+            color: #aaaaaa;
+        }
     }
 }
 /* }}} */
@@ -1105,6 +1116,11 @@ ul.users p {
     input {
         font-size: 12px;
         padding: 2px 5px;
+        border: 1px solid #ffffff;
+
+        &:focus {
+            border: 1px solid #000000;
+        }
     }
 }
 /* }}} */
