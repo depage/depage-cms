@@ -294,7 +294,7 @@ class Main extends Base {
         $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
 
         // construct template
-        $h = new Html("notifications.tpl", array(
+        $h = new Html("Notifications.tpl", array(
             'notifications' => $nn,
         ), $this->htmlOptions);
 
