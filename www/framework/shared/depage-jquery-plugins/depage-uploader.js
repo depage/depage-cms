@@ -532,7 +532,6 @@
                     // TODO x-browser test and fallback
                     if (e.lengthComputable) {
                         base.setProgress( e.loaded * 100 / e.total, e.loaded, e.total);
-                        // base.setProgress( e.position * 100 / e.totalSize );
                     }
                 };
                 base.xhrHttpRequest.onload = function(e) {
@@ -604,6 +603,8 @@
             }
             base.clear();
             base.$el.trigger('error', message);
+
+            base.setTextinfo("upload error");
         };
         // }}}
 
@@ -623,6 +624,8 @@
             });
             base.$el.attr('disabled', true);
             base.controls.progress.show();
+            base.setProgress(0);
+            base.setTextinfo("upload starting");
             base.$el.trigger('start');
         };
         // }}}
@@ -643,6 +646,8 @@
             base.$el.trigger(base.options.complete_event, [response]);
             base.setProgress(100);
             base.clear();
+
+            base.setTextinfo("upload finished");
         };
         // }}}
 
@@ -695,17 +700,17 @@
         base.setProgress = function(percent, loaded, total){
             var text = "";
 
-            base.controls.percent.width(percent + '%');
+            base.controls.progress.prop("value", percent.toFixed(0));
 
             if (loaded !== undefined && total !== undefined) {
-                text += Math.floor(percent * 10) / 10;
+                text += percent.toFixed(1);
                 text += " % uploaded (";
                 text += base.bytesToSize(loaded, 1);
                 text += "/";
                 text += base.bytesToSize(total, 1);
                 text += ")";
             }
-            base.controls.textinfo.text(text);
+            base.setTextinfo(text);
         };
         // }}}
 
@@ -726,7 +731,7 @@
             var terabyte = gigabyte * 1024;
 
             if ((bytes >= 0) && (bytes < kilobyte)) {
-                return bytes + ' B';
+                return bytes + ' B ';
             } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
                 return (bytes / kilobyte).toFixed(precision) + ' KB';
             } else if ((bytes >= megabyte) && (bytes < gigabyte)) {
@@ -736,7 +741,7 @@
             } else if (bytes >= terabyte) {
                 return (bytes / terabyte).toFixed(precision) + ' TB';
             } else {
-                return bytes + ' B';
+                return bytes + ' B ';
             }
         };
         // }}}
@@ -755,7 +760,6 @@
         base.fallback = function(){
             var $img = $('<img />')
                 .attr({
-                    'id' : base.options.iframe + '-loader',
                     'src' : base.options.loader_img,
                     'alt' : "uploading"
                 }).error(function(){
@@ -776,30 +780,38 @@
          */
         base.addProgress = function() {
             base.controls = {
-                progress : $('<span />').attr({
-                    'id': base.el.id + '-progress',
+                progress : $('<progress max="100" value="0" />').attr({
                     //'style' : 'display:none;'
                     'class' : base.options.classes.progress
                 }),
                 percent : $('<span />').attr({
-                    'id': base.el.id + '-percent',
                     'class' : base.options.classes.percent
                 }).width('0%'),
                 textinfo : $('<span />').attr({
-                    'id': base.el.id + '-textinfo',
                     'class' : base.options.classes.textinfo
                 })
             };
 
-            base.$el.after(base.controls.textinfo);
+            //base.controls.progress.append(base.controls.percent);
 
-            base.controls.progress.append(base.controls.percent);
-
-            if(base.options.$progress_container) {
+            if (base.options.$progress_container) {
                 base.options.$progress_container.append(base.controls.progress);
+                base.options.$progress_container.append(base.controls.textinfo);
             } else {
                 base.$el.after(base.controls.progress);
+                base.$el.after(base.controls.textinfo);
             }
+        };
+        // }}}
+
+        // {{{ setTextinfo()
+        /**
+         * setTextinfo
+         *
+         * @return
+         */
+        base.setTextinfo = function(text) {
+            base.controls.textinfo.text(text);
         };
         // }}}
 
