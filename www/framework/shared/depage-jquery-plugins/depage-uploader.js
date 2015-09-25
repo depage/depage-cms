@@ -63,6 +63,9 @@
         // Cache the XHR object
         base.xhrHttpRequest = new XMLHttpRequest();
 
+        // save dropped files
+        base.droppedFiles = [];
+
         // {{{ init
         /**
          * Init
@@ -122,6 +125,9 @@
             // default drag and drop for input
             if (base.options.$drop_area === null) {
                 base.options.$drop_area = base.$el;
+            }
+
+            if (base.mode == "xhr") {
                 base.dropAndDrop();
             }
         };
@@ -256,8 +262,7 @@
 
                     $(document)
                         .on('dragover', function () {
-                            base.options.$drop_area.addClass('drag-over');
-                            return false;
+                            base.options.$drop_area.addClass('drag-over'); return false;
                         })
                         .on('dragend', function () {
                             base.options.$drop_area.removeClass('drag-over');
@@ -268,6 +273,8 @@
                                 base.options.$drop_area.removeClass('drag-over');
                                 // append the dropped files to the input element (triggers upload via change event)
                                 base.$el.prop("files", e.dataTransfer.files);
+                                base.droppedFiles = e.dataTransfer.files;
+                                base.upload();
                             }
                             return false;
                         });
@@ -545,9 +552,13 @@
                 formData.append('ajax', 'true');
 
                 // append the files
-                for(var i = 0; i < base.el.files.length; i++) {
+                for (var i = 0; i < base.el.files.length; i++) {
                     formData.append(base.el.name, base.el.files[i]);
                 }
+                for (var j = 0; j < base.droppedFiles.length; j++) {
+                    formData.append(base.el.name, base.droppedFiles[j]);
+                }
+                base.droppedFiles = [];
 
                 base.xhrHttpRequest.send(formData);
             }
