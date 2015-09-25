@@ -62,24 +62,13 @@ class XpathDocumentTest extends DatabaseTestCase
     }
     // }}}
 
-    // {{{ testNameAll
-    public function testNameAll()
+    // {{{ testNoResult
+    public function testNoResult()
     {
-        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page');
+        $this->assertCorrectXpathIds(array(), '/nonode');
     }
     // }}}
-    // {{{ testNameAllWithAttribute
-    public function testNameAllWithAttribute()
-    {
-        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page[@name]');
-    }
-    // }}}
-    // {{{ testNameAllWithAttributeWithValue
-    public function testNameAllWithAttributeWithValue()
-    {
-        $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
-    }
-    // }}}
+
     // {{{ testNameWithChild
     public function testNameWithChild()
     {
@@ -104,6 +93,7 @@ class XpathDocumentTest extends DatabaseTestCase
         $this->assertCorrectXpathIds(array('6'), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
     }
     // }}}
+
     // {{{ testWildcardAndAttributeWithValue
     public function testWildcardAndAttributeWithValue()
     {
@@ -123,56 +113,67 @@ class XpathDocumentTest extends DatabaseTestCase
         $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
     }
     // }}}
-    // {{{ testNoResult
-    public function testNoResult()
+
+    // {{{ testAllName
+    public function testAllName()
     {
-        $this->assertCorrectXpathIds(array(), '/nonode');
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page');
     }
     // }}}
-    // {{{ testNameAllAndPosition
-    public function testNameAllAndPosition()
+    // {{{ testAllNameWithAttribute
+    public function testAllNameWithAttribute()
+    {
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page[@name]');
+    }
+    // }}}
+    // {{{ testAllNameWithAttributeWithValue
+    public function testAllNameWithAttributeWithValue()
+    {
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
+    }
+    // }}}
+    // {{{ testAllNameAndPosition
+    public function testAllNameAndPosition()
     {
         $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
     }
     // }}}
-    // {{{ testNameAllWithAttributeNoResult
-    public function testNameAllWithAttributeNoResult()
+    // {{{ testAllNameWithAttributeNoResult
+    public function testAllNameWithAttributeNoResult()
     {
         $this->assertCorrectXpathIds(array(), '//pg:page[@unknown]');
     }
     // }}}
-    // {{{ testNameAllWithAttributeWithValueNoResult
-    public function testNameAllWithAttributeWithValueNoResult()
+    // {{{ testAllNameWithAttributeWithValueNoResult
+    public function testAllNameWithAttributeWithValueNoResult()
     {
         $this->assertCorrectXpathIds(array(), '//pg:page[@name = \'unknown\']');
     }
     // }}}
-    // {{{ testWildCardAndIdAttributeWithValue
-    public function testWildCardAndIdAttributeWithValue()
+
+    // {{{ testAllWildCardAndIdAttributeWithValue
+    public function testAllWildCardAndIdAttributeWithValue()
     {
-        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//*[@id = \'6\']');
     }
     // }}}
-    // {{{ testWildCardNsAndIdAttributeWithValue
-    public function testWildCardNsAndIdAttributeWithValue()
+    // {{{ testAllWildCardNsAndIdAttributeWithValue
+    public function testAllWildCardNsAndIdAttributeWithValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/*:page[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//*:page[@id = \'6\']');
     }
     // }}}
-    // {{{ testWildCardNameAndIdAttributeWithValue
-    public function testWildCardNameAndIdAttributeWithValue()
+    // {{{ testAllWildCardNameAndIdAttributeWithValue
+    public function testAllWildCardNameAndIdAttributeWithValue()
     {
-        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/pg:*[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//pg:*[@id = \'6\']');
     }
     // }}}
-    // {{{ testWildCardAndIdAttributeWithValueNoResult
-    public function testWildCardAndIdAttributeWithValueNoResult()
+    // {{{ testAllWildCardAndIdAttributeWithValueNoResult
+    public function testAllWildCardAndIdAttributeWithValueNoResult()
     {
-        // can't be verified by DOMXpath. Namespace issue (@id, @dḃ:id)
-        $this->assertCorrectXpathIdsNoDomXpath(array(), '/*[@id = \'20\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@id = \'20\']');
     }
     // }}}
 }
