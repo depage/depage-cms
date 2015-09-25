@@ -34,6 +34,9 @@ class XpathDocumentTest extends DatabaseTestCase
     {
         $ids = array();
 
+        // hack, match internal representation of node ids
+        $xpath = str_replace('@id', '@db:id', $xpath);
+
         $domXpath = new \DomXpath($doc->getXml());
         $list = $domXpath->query($xpath);
         foreach ($list as $item) {
@@ -132,12 +135,6 @@ class XpathDocumentTest extends DatabaseTestCase
         $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
     }
     // }}}
-    // {{{ testAllNameAndPosition
-    public function testAllNameAndPosition()
-    {
-        $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
-    }
-    // }}}
     // {{{ testAllNameWithAttributeNoResult
     public function testAllNameWithAttributeNoResult()
     {
@@ -150,11 +147,36 @@ class XpathDocumentTest extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(), '//pg:page[@name = \'unknown\']');
     }
     // }}}
+    // {{{ testAllNameAndPosition
+    public function testAllNameAndPosition()
+    {
+        $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
+    }
+    // }}}
 
+    // {{{ testAllWildCard
+    public function testAllWildCard()
+    {
+        $this->assertCorrectXpathIds(array('1', '2', '6', '7', '8', '9'), '//*');
+    }
+    // }}}
+    // {{{ testAllWildCardNs
+    public function testAllWildCardNs()
+    {
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        $this->assertCorrectXpathIdsNoDomXpath(array('2', '6', '7', '8'), '//*:page');
+    }
+    // }}}
+    // {{{ testAllWildCardName
+    public function testAllWildCardName()
+    {
+        $this->assertCorrectXpathIds(array('2', '6', '7', '8', '9'), '//pg:*');
+    }
+    // }}}
     // {{{ testAllWildCardAndIdAttributeWithValue
     public function testAllWildCardAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//*[@id = \'6\']');
+        $this->assertCorrectXpathIds(array('6'), '//*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNsAndIdAttributeWithValue
@@ -167,13 +189,13 @@ class XpathDocumentTest extends DatabaseTestCase
     // {{{ testAllWildCardNameAndIdAttributeWithValue
     public function testAllWildCardNameAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//pg:*[@id = \'6\']');
+        $this->assertCorrectXpathIds(array('6'), '//pg:*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeWithValueNoResult
     public function testAllWildCardAndIdAttributeWithValueNoResult()
     {
-        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@id = \'20\']');
+        $this->assertCorrectXpathIds(array(), '//*[@id = \'20\']');
     }
     // }}}
 }
