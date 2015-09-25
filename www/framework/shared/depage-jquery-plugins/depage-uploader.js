@@ -74,8 +74,14 @@
          * @return void
          */
         base.init = function(){
-
             base.options = $.extend({}, $.depage.uploader.defaultOptions, options);
+
+            if (base.options.src === "") {
+                base.options.src = base.$form.attr('action');
+            }
+            if (base.options.src === "") {
+                base.options.src = document.location.href;
+            }
 
             if ( base.support() === 'iframe') {
                 // make iframe id unique // TODO enforce
@@ -534,6 +540,7 @@
 
                 var formData = new FormData();
                 formData.append('formName', $('input[name="formName"]', base.$form).val());
+                formData.append('formCsrfToken', $('input[name="formCsrfToken"]', base.$form).val());
                 formData.append('formAutosave', 'true');
                 formData.append('ajax', 'true');
 
@@ -812,7 +819,7 @@
             percent:  'percent',
             textinfo: 'textinfo'
         },
-        src: document.location.href,
+        src: "",
         iframe: 'upload_target',
         server_src : 'framework/media/uploadprogress.php',
         server_upload_key : 'APC_UPLOAD_PROGRESS',
