@@ -54,7 +54,7 @@ var depageCMS = (function() {
             $flashFrame = $("#flashFrame")[0];
 
             // @todo test/remove
-            //localJS.openUpload("depage", "/");
+            localJS.openUpload("depage", "/");
 
             // setup ajax timers
             setTimeout(localJS.updateAjaxContent, 1000);
@@ -286,6 +286,13 @@ var depageCMS = (function() {
 
             var uploadUrl = baseUrl + "project/" + projectName + "/upload" + targetPath;
 
+            $(document).bind('keyup.uploader', function(e){
+                var key = e.which || e.keyCode;
+                if (key == 27) {
+                    localJS.closeUpload();
+                }
+            });
+
             $upload.load(uploadUrl, function() {
                 var $submitButton = $upload.find('input[type="submit"]');
                 var $dropArea = $upload.find('p.input-file').append("<p>Drop files here</p>");
@@ -293,7 +300,7 @@ var depageCMS = (function() {
                 var $finishButton = $("<a class=\"button\">finished uploading/cancel</a>").appendTo($upload);
 
                 $finishButton.on("click", function() {
-                    $upload.remove();
+                    localJS.closeUpload();
                 });
 
                 $upload.find('input[type="file"]').depageUploader({
@@ -307,6 +314,15 @@ var depageCMS = (function() {
                     $submitButton.show();
                 });
             });
+        },
+        // }}}
+        // {{{ closeUpload
+        closeUpload: function() {
+            $upload = $("#upload");
+
+            $upload.remove();
+
+            $(document).unbind('keyup.uploader');
         },
         // }}}
         // {{{ setStatus
