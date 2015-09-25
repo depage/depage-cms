@@ -862,7 +862,7 @@ class_treeDisplayData_files.prototype.defineButtons = function() {
 	tbutton.height = 17;
 	// {{{ tbutton.onClick()
 	tbutton.onClick = function() {
-		call_jsfunc("depageCMS.openUpload('" + conf.user.sid + "', '" + conf.user.wid + "', '" + escape(this._parent.treeObj.activeNodeId) + "')");
+		call_jsfunc("depageCMS.openUpload('" + escape(conf.project_name) + "', '" + escape(this._parent.treeObj.activeNodeId) + "')");
 	};
 	// }}}
 	// {{{ tbutton.getEnabledState()

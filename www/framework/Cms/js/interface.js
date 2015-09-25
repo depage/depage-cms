@@ -4,6 +4,7 @@
  * @require framework/shared/jquery-sortable.js
  *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
+ * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
  *
@@ -26,6 +27,7 @@ var depageCMS = (function() {
     var $window;
     var $previewFrame;
     var $flashFrame;
+    var $upload;
     var $toolbarLeft,
         $toolbarPreview,
         $toolbarRight;
@@ -50,6 +52,9 @@ var depageCMS = (function() {
 
             $previewFrame = $("#previewFrame");
             $flashFrame = $("#flashFrame")[0];
+
+            // @todo test/remove
+            //localJS.openUpload("depage", "/");
 
             // setup ajax timers
             setTimeout(localJS.updateAjaxContent, 1000);
@@ -140,7 +145,8 @@ var depageCMS = (function() {
             });
 
             $projects.depageLiveFilter("dt", "strong", {
-                placeholder: "Filter Projects"
+                placeholder: "Filter Projects",
+                autofocus: true
             });
         },
         // }}}
@@ -271,7 +277,36 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ openUpload
-        openUpload: function() {
+        openUpload: function(projectName, targetPath) {
+            $upload = $("#upload");
+
+            if ($upload.length === 0) {
+                $upload = $("<div id=\"upload\" class=\"layout-left\"></div>").appendTo("body");
+            }
+
+            var uploadUrl = baseUrl + "project/" + projectName + "/upload" + targetPath;
+
+            $upload.load(uploadUrl, function() {
+                var $submitButton = $upload.find('input[type="submit"]');
+                var $dropArea = $upload.find('p.input-file').append("<p>Drop files here</p>");
+                var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($upload);
+                var $finishButton = $("<a class=\"button\">finished uploading/cancel</a>").appendTo($upload);
+
+                $finishButton.on("click", function() {
+                    $upload.remove();
+                });
+
+                $upload.find('input[type="file"]').depageUploader({
+                    //loader_img : scriptPath + '/progress.gif'
+                    $drop_area: $dropArea,
+                    $progress_container: $progressArea
+                }).on('start', function(e, html) {
+                    $submitButton.hide();
+                    //$uploadIndicator.show();
+                }).on('complete', function(e, html) {
+                    $submitButton.show();
+                });
+            });
         },
         // }}}
         // {{{ setStatus

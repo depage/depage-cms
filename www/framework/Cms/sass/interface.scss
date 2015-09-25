@@ -1079,16 +1079,6 @@ ul.users p {
             }
         }
     }
-    progress {
-        @include progress(#ffffff, #882200) {
-            @include radius(2em);
-            width: 80%;
-            height: 12px;
-            margin: 6px 0;
-            border: none;
-            height: 4px;
-        };
-    }
     #delete-task {
         position: absolute;
         top: -4px;
@@ -1106,6 +1096,53 @@ ul.users p {
     }
 }
 /* }}} */
+/* {{{ upload */
+#upload {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 10%;
+
+    p.submit {
+        display: none;
+    }
+    p.input-file {
+        width: 100%;
+        height: 200px;
+        border: 5px solid #882200;
+        padding: 10px;
+        background: #eeeeee;
+
+        input {
+            width: 100%;
+            border: none;
+            background: none;
+            padding-left: 0;
+        }
+    }
+    .progressArea {
+        width: 400px;
+
+        .textinfo {
+            display: block;
+        }
+        progress {
+            display: block;
+        }
+    }
+}
+/* }}} */
+/* {{{ progress */
+progress {
+    display: block;
+    @include progress(#ffffff, #882200) {
+        @include radius(2em);
+        width: 80%;
+        height: 12px;
+        margin: 6px 0;
+        border: none;
+        height: 4px;
+    };
+}
+/* }}} */
 
 /* {{{ live-filter */
 .content .depage-live-filter {

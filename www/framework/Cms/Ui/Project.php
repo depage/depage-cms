@@ -314,6 +314,37 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ upload()
+    /**
+     * @brief upload
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function upload()
+    {
+        $targetPath = $this->project->getProjectPath() . "lib/" . implode("/", func_get_args());
+
+        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", array(
+            'project' => $this->project,
+        ));
+        $form->process();
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            if (is_dir($targetPath)) {
+                foreach ($values['file'] as $file) {
+                    rename($file['tmp_name'], $targetPath . "/" . $file['name']);
+                }
+            }
+
+            //$form->clearSession();
+            $form->getElement("file")->clearValue();
+        }
+
+        return $form;
+    }
+    // }}}
 
     // {{{ edit()
     function edit() {

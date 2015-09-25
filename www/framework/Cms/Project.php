@@ -457,7 +457,8 @@ class Project extends \Depage\Entity\Entity
 
         $targets = $this->getPublishingTargets();
         list($publishId) = array_keys($targets);
-        $fs = \Depage\Fs\Fs::factory($this->getProjectPath());
+
+        $fs = \Depage\Fs\Fs::factory("");
         $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
 
         $date = $publisher->getLastPublishDate();
