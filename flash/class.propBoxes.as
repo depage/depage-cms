@@ -514,8 +514,9 @@ class_propBox_edit_text_multiline.prototype.onScroller = function() {
 // {{{ setNewPos()
 class_propBox_edit_text_multiline.prototype.setNewPos = function() {
 	var textBoxMinY = this.settings.border_top + this.settings.minPropHeight + 2;
-	var textBoxHeight = this.innerHeight + this.lineHeight;
+	var textBoxHeight = this.innerHeight + this.lineHeight * 2;
 	var textBoxAddHeight = 0;
+        this.oldTextBoxHeight = this.textBox._height;
 
 	if (this.getGlobalY() > -textBoxMinY && this.getGlobalY() < Stage.height) {
 		this.textBox._y = this.settings.border_top + this.settings.minPropHeight + 2;
@@ -530,9 +531,12 @@ class_propBox_edit_text_multiline.prototype.setNewPos = function() {
 		this.textBox._visible = false;
 	}
 
-	textBoxHeight = textBoxHeight.limit(null, Stage.height - this.textBox.getGlobalY());
-	textBoxHeight = textBoxHeight.limit(null, this.innerHeight + this.settings.border_top - this.textBox._y - 2);
-	this.textBox._height = textBoxHeight;
+	textBoxHeight = textBoxHeight.limit(this.lineHeight, Stage.height - this.textBox.getGlobalY());
+	textBoxHeight = textBoxHeight.limit(this.lineHeight, this.innerHeight + this.settings.border_top - this.textBox._y - 2);
+
+        if (this.oldTextBoxHeight != textBoxHeight) {
+            this.textBox._height = textBoxHeight - 2;
+        }
 
 	this.oldTextScroll = this.textBox.scroll;
 };
