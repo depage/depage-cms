@@ -7,5 +7,7 @@
         <li><a href="user/<?php self::t($this->username); ?>/" class="button"><?php self::t($this->username); ?></a></li>
         <li><a href="logout/" id="logout" class="button">logout</a></li>
     </menu>
+    <menu class="preview">
+    </menu>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

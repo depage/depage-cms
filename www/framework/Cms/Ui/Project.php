@@ -323,10 +323,12 @@ class Project extends Base
      **/
     public function upload()
     {
-        $targetPath = $this->project->getProjectPath() . "lib/" . implode("/", func_get_args());
+        $libPath = "/" . implode("/", func_get_args());
+        $targetPath = $this->project->getProjectPath() . "lib" . $libPath;
 
         $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", array(
             'project' => $this->project,
+            'targetPath' => $libPath,
         ));
         $form->process();
         if ($form->validate()) {

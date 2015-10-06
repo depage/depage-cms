@@ -54,7 +54,7 @@ var depageCMS = (function() {
             $flashFrame = $("#flashFrame")[0];
 
             // @todo test/remove
-            localJS.openUpload("depage", "/");
+            //localJS.openUpload("depage", "/");
 
             // setup ajax timers
             setTimeout(localJS.updateAjaxContent, 1000);
@@ -282,6 +282,7 @@ var depageCMS = (function() {
 
             if ($upload.length === 0) {
                 $upload = $("<div id=\"upload\" class=\"layout-left\"></div>").appendTo("body");
+                var $box = $("<div class=\"box\"></div>").appendTo($upload);
             }
 
             var uploadUrl = baseUrl + "project/" + projectName + "/upload" + targetPath;
@@ -293,17 +294,17 @@ var depageCMS = (function() {
                 }
             });
 
-            $upload.load(uploadUrl, function() {
-                var $submitButton = $upload.find('input[type="submit"]');
-                var $dropArea = $upload.find('p.input-file').append("<p>Drop files here</p>");
-                var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($upload);
-                var $finishButton = $("<a class=\"button\">finished uploading/cancel</a>").appendTo($upload);
+            $box.load(uploadUrl, function() {
+                var $submitButton = $box.find('input[type="submit"]');
+                var $dropArea = $box.find('.dropArea');
+                var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($box);
+                var $finishButton = $("<a class=\"button\">finished uploading/cancel</a>").appendTo($box);
 
                 $finishButton.on("click", function() {
                     localJS.closeUpload();
                 });
 
-                $upload.find('input[type="file"]').depageUploader({
+                $box.find('input[type="file"]').depageUploader({
                     //loader_img : scriptPath + '/progress.gif'
                     $drop_area: $dropArea,
                     $progress_container: $progressArea

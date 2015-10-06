@@ -255,6 +255,7 @@
                 // check browser drag and drop support
                 var div = document.createElement('div'); // TODO could move this to support() function
                 if (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div && !!window.FileReader)) {
+                    base.options.$drop_area.addClass("has-drop-support");
 
                     // TODO deprecate on jquery upgrade
                     // fix for jquery 1.7 bug http://bugs.jquery.com/ticket/10756
@@ -545,21 +546,27 @@
                 base.start();
 
                 var formData = new FormData();
-                formData.append('formName', $('input[name="formName"]', base.$form).val());
-                formData.append('formCsrfToken', $('input[name="formCsrfToken"]', base.$form).val());
-                formData.append('formAutosave', 'true');
-                formData.append('ajax', 'true');
+                var hasFiles = false;
 
                 // append the files
                 for (var i = 0; i < base.el.files.length; i++) {
                     formData.append(base.el.name, base.el.files[i]);
+                    hasFiles = true;
                 }
                 for (var j = 0; j < base.droppedFiles.length; j++) {
                     formData.append(base.el.name, base.droppedFiles[j]);
+                    hasFiles = true;
                 }
                 base.droppedFiles = [];
 
-                base.xhrHttpRequest.send(formData);
+                if (hasFiles) {
+                    formData.append('formName', $('input[name="formName"]', base.$form).val());
+                    formData.append('formCsrfToken', $('input[name="formCsrfToken"]', base.$form).val());
+                    formData.append('formAutosave', 'true');
+                    formData.append('ajax', 'true');
+
+                    base.xhrHttpRequest.send(formData);
+                }
             }
             // }}}
         };

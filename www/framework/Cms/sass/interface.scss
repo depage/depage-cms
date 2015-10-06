@@ -9,6 +9,8 @@ $infoHeight: 15px;
 $editWidth: 820px;
 $treeWidth: 255px;
 
+$borderColor: #999999;
+
 @mixin icon-base($name: "", $scale: 1) {
     $iconSize: 48px;
 
@@ -49,9 +51,14 @@ $treeWidth: 255px;
     } @else if ($name == "right-full-active") {
         background-position: (-3 * $iconSize) (-4 * $iconSize);
 
+    } @else if ($name == "upload") {
+        background-position: 0 (-5 * $iconSize);
+    } @else if ($name == "upload-drag-over") {
+        background-position: (-1 * $iconSize) (-5 * $iconSize);
+
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
-        background-size: (2 * $iconSize) (10 * $iconSize);
+        //background-size: (2 * $iconSize) (10 * $iconSize);
     } @else if ($name == "open") {
         background-position: 0 (-9 * $iconSize);
     } @else {
@@ -339,7 +346,7 @@ select,
     top: 0;
     left: 0;
     margin: 0;
-    border-bottom: 1px solid #777777;
+    border-bottom: 1px solid $borderColor;
     width: 100%;
     z-index: 10000;
 }
@@ -482,7 +489,7 @@ header.info {
     position: fixed;
     top: $toolbarHeight;
     height: $infoHeight;
-    border-bottom: 1px solid #777777;
+    border-bottom: 1px solid $borderColor;
     background: #CCC8C4;
     z-index: 10001;
 
@@ -1099,23 +1106,59 @@ ul.users p {
 /* {{{ upload */
 #upload {
     background: rgba(255, 255, 255, 0.5);
-    padding: 10%;
+
+    .box {
+        //@include radius(7px);
+        @include box-shadow(0px 5px 15px 5px rgba(0, 0, 0, 0.3));
+        width: 520px;
+        border: 1px solid $borderColor;
+        padding: 10px;
+        background: #ccc8c4;
+        margin: auto;
+        margin-top: 100px;
+    }
 
     p.submit {
         display: none;
     }
     p.input-file {
         width: 100%;
-        height: 200px;
-        border: 5px solid #882200;
-        padding: 10px;
-        background: #eeeeee;
 
         input {
             width: 100%;
             border: none;
             background: none;
             padding-left: 0;
+        }
+    }
+    .dropArea.has-drop-support {
+        $scale: 2.5;
+        $size: 48px * $scale;
+        height: 250px;
+
+        .content:before {
+            content: "Drop files here";
+            display: block;
+            position: relative;
+            margin: auto;
+            width: $size * 2;
+            text-align: center;
+            font-size: 16px;
+        }
+        .content:after {
+            @include icon-base("upload", $scale);
+            display: block;
+            content: " ";
+            position: relative;
+            border: 1px solid $borderColor;
+            @include radius(14px);
+            margin: auto;
+            width: $size;
+            height: $size;
+        }
+        &.drag-over .content:after {
+            @include icon("upload-drag-over", $scale);
+            border-color: #4E4C4B;
         }
     }
     .progressArea {
