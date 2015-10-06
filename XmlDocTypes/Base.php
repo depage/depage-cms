@@ -104,14 +104,14 @@ class Base
     /**
      * On Add Node
      *
-     * @param \DomElement $node
+     * @param \DomNode $node
      * @param $target_id
      * @param $target_pos
      * @param $extras
      * @return null
      */
-    public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras) {
-        return true;
+    public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
+        return null;
     }
     // }}}
     // {{{ onCopyNode

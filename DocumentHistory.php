@@ -4,11 +4,9 @@
  *
  * cms xmldb module
  *
- *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author   Ben Wallis
- *
  */
 
 namespace Depage\Xmldb;
@@ -22,10 +20,10 @@ class DocumentHistory
     private $document;
 
     private $table_history;
+    private $dateFormat = 'Y-m-d H:i:s';
     // }}}
-
-    // {{{ constructor()
-    public function __construct($table_prefix, \depage\DB\PDO $pdo, $table_prefix, document $document) {
+    // {{{ constructor
+    public function __construct(\Depage\Db\Pdo $pdo, $table_prefix, Document $document) {
         $this->document = $document;
 
         $this->pdo = $pdo;
@@ -60,7 +58,7 @@ class DocumentHistory
             $params['published'] = $published == true;
         }
 
-        $query .= " ORDER BY h.last_saved_at DESC;";
+        $query .= " ORDER BY h.last_saved_at DESC";
 
         if ($maxResults > 0) {
             $query .= " LIMIT :maxResults";
@@ -89,7 +87,17 @@ class DocumentHistory
         return $versions;
     }
     // }}}
-
+    // {{{ getLatestVersion
+    /**
+     * getLatestVersion
+     *
+     * gets the last document version
+     */
+    public function getLatestVersion() {
+        $versions = $this->getVersions(null, 1);
+        return reset($versions);
+    }
+    // }}}
     // {{{ getXml
     /**
      * getXml
@@ -97,8 +105,8 @@ class DocumentHistory
      * @param null $timestamp
      * @return bool|\DOMDocument|object
      */
-    public function getXml($timestamp = null) {
-        $xml_doc = new \DOMDocument();
+    public function getXml($timestamp, $add_id_attribute = true) {
+        $doc = false;
 
         $query = $this->pdo->prepare(
             "SELECT h.xml
@@ -107,72 +115,83 @@ class DocumentHistory
         );
 
         $params = array(
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'timestamp' => date($this->dateFormat, $timestamp),
         );
 
-        if ($query->execute($params)) {
-            $result = $query->fetchObject();
+        if ($query->execute($params) && $result = $query->fetchObject()) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($result->xml);
 
-            $xml_doc->loadXML($result->xml);
+            if (!$add_id_attribute) {
+                Document::removeNodeAttr($doc, $this->db_ns, 'id');
+            }
         }
 
-        return $xml_doc;
+        return $doc;
     }
     // }}}
-
     // {{{ getLastPublishedXml
     /**
      * getLastPublishedXml
      *
-     * load last published version from history
-     *
+     * load xml from last published version from history
      */
     public function getLastPublishedXml() {
-        $latest = reset($this->getVersions(true, 1)->first());
-        return $this->getXml($latest['date']);
+        $versions = $this->getVersions(true, 1);
+        reset($versions);
+        $latest = key($versions);
+
+        return $this->getXml($latest);
     }
     // }}}
 
-    // {{{ save()
+    // {{{ save
     /**
-     *
-     * gets the current docuemnt xml and saves a version to the history
+     * gets the current document xml and saves a version to the history
      * add SHA hash column for data integrity
      *
      * @param $user_id
      * @param bool $published
      *
-     * @return timestamp
+     * @return bool | timestamp
      */
-    public function save($user_id, $published = false) {
-
-        // TODO ADD SHA1 hash
-        $query = $this->pdo->prepare(
-            "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
-             VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
-        );
-
+    public function save($user_id, $published = false)
+    {
+        $result = false;
         $timestamp = time();
 
-        $xml = $this->document->getXml()->saveXml();
+        $doc = $this->document->getXml();
+        Document::removeNodeAttr($doc, $this->db_ns, 'lastchange');
+        $xml = $doc->saveXml();
+        $hash = sha1($xml);
 
-        $params = array(
-            'doc_id' => $this->document->getDocId(),
-            'hash' => sha1($xml),
-            'xml' => $xml,
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
-            'user_id' => $user_id,
-            'published' => $published,
-        );
+        $latestVersion = $this->getLatestVersion();
 
-        if ($query->execute($params)) {
-            return $timestamp;
+        if (!$latestVersion || $latestVersion['hash'] != $hash) {
+            $query = $this->pdo->prepare(
+                "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
+                VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
+            );
+
+            $params = array(
+                'doc_id' => $this->document->getDocId(),
+                'hash' => $hash,
+                'xml' => $xml,
+                'timestamp' => date($this->dateFormat, $timestamp),
+                'user_id' => $user_id,
+                'published' => $published,
+            );
+
+            if ($query->execute($params)) {
+                $result = $timestamp;
+            }
+        } else {
+            $result = strtotime($latestVersion['last_saved_at']);
         }
 
-        return false;
+        return $result;
     }
     // }}}
-
     // {{{ restore
     /**
      * Restores the document to a previous state
@@ -187,7 +206,6 @@ class DocumentHistory
         return false;
     }
     // }}}
-
     // delete {{{
     /**
      * Delete
@@ -202,7 +220,7 @@ class DocumentHistory
 
         $params = array(
             'doc_id' => $this->document->getDocId(),
-            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'timestamp' => date($this->dateFormat, $timestamp),
         );
 
         if ($query->execute($params)) {

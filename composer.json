@@ -1,0 +1,44 @@
+{
+    "name": "depage/xmldb",
+    "description": "xmldb",
+    "type": "library",
+    "keywords": [
+        "xml",
+        "database",
+        "db",
+        "pdo"
+    ],
+    "config": {
+        "preferred-install": "dist"
+    },
+    "require": {
+        "php": " >= 5.3",
+        "depage/cache": "*@dev",
+        "depage/db": "*@dev",
+        "depage/xml": "*@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\XmlDb\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-xmldb",
+        "issues": "https://github.com/depage/depage-xmldb/issues"
+
+    },
+    "time": "2014-11-26",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
