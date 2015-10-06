@@ -17,11 +17,17 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
     }
     // }}}
 
-    // {{{ onAddNode()
+    // {{{ onAddNode
     /**
      * On Add Node
+     *
+     * @param \DomNode $node
+     * @param $target_id
+     * @param $target_pos
+     * @param $extras
+     * @return null
      */
-    public function onAddNode(\DomElement $node, $target_id, $target_pos, $extras = array()) {
+    public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
         $this->testNodeLanguages($node);
     }
     // }}}
