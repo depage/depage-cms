@@ -190,6 +190,9 @@ class Document
             ));
 
             $this->clearCache();
+
+            $docHandler = $this->getDoctypeHandler();
+            $docHandler->onDocumentChange();
         }
 
         return $info;
@@ -288,11 +291,11 @@ class Document
                 throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
             $success = $xml_doc->loadXML($xml_str);
-            $dth = $this->getDoctypeHandler();
+            $docHandler = $this->getDoctypeHandler();
 
             $this->xmldb->endTransaction();
 
-            if ($changed = $dth->testDocument($xml_doc)) {
+            if ($changed = $docHandler->testDocument($xml_doc)) {
                 $this->saveNode($xml_doc);
             }
 
@@ -374,6 +377,9 @@ class Document
 
         $this->xmldb->endTransaction();
 
+        $docHandler = $this->getDoctypeHandler();
+        $docHandler->onDocumentChange();
+
         return $doc_info->id;
     }
     // }}}
@@ -408,9 +414,9 @@ class Document
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id);
 
-        $dth = $this->getDoctypeHandler();
+        $docHandler = $this->getDoctypeHandler();
 
-        if ($dth->onDeleteNode($node_id, $target_id)) {
+        if ($docHandler->onDeleteNode($node_id, $target_id)) {
 
             // delete the node
             $query = $this->pdo->prepare(
@@ -435,6 +441,8 @@ class Document
                 'node_pos' => $target_pos,
                 'doc_id' => $this->doc_id,
             ));
+
+            $docHandler->onDocumentChange();
         }
         return $target_id;
     }
@@ -449,10 +457,14 @@ class Document
      */
     public function addNode(\DomNode $node, $target_id, $target_pos = -1, $extras = array())
     {
-        $dth = $this->getDoctypeHandler();
-        if ($dth->isAllowedAdd($node, $target_id)) {
-            $dth->onAddNode($node, $target_id, $target_pos, $extras);
-            return $this->saveNode($node, $target_id, $target_pos, true);
+        $docHandler = $this->getDoctypeHandler();
+        if ($docHandler->isAllowedAdd($node, $target_id)) {
+            $docHandler->onAddNode($node, $target_id, $target_pos, $extras);
+            $success = $this->saveNode($node, $target_id, $target_pos, true);
+
+            $docHandler->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -466,11 +478,15 @@ class Document
      */
     public function addNodeByName($name, $target_id, $target_pos)
     {
-        $dth = $this->getDoctypeHandler();
+        $docHandler = $this->getDoctypeHandler();
 
-        $newNode = $dth->getNewNodeFor($name);
+        $newNode = $docHandler->getNewNodeFor($name);
         if ($newNode) {
-            return $this->addNode($newNode, $target_id, $target_pos);
+            $success = $this->addNode($newNode, $target_id, $target_pos);
+
+            $docHandler->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -524,6 +540,9 @@ class Document
 
         $this->xmldb->endTransaction();
 
+        $docHandler = $this->getDoctypeHandler();
+        $docHandler->onDocumentChange();
+
         return $changed_ids;
     }
     // }}}
@@ -553,6 +572,7 @@ class Document
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
 
             $docHandler->onCopyNode($node_id, $copy_id);
+            $docHandler->onDocumentChange();
 
             return $copy_id;
         }
@@ -708,6 +728,9 @@ class Document
                 $this->updateLastchange();
 
                 $this->clearCache();
+
+                $docHandler = $this->getDoctypeHandler();
+                $docHandler->onDocumentChange();
             }
 
             $success = true;
@@ -823,6 +846,8 @@ class Document
 
             $this->xmldb->endTransaction();
 
+            $docHandler->onDocumentChange();
+
             $result = $copy_id;
         }
 
@@ -912,6 +937,9 @@ class Document
         $this->clearCache();
 
         $this->xmldb->endTransaction();
+
+        $docHandler = $this->getDoctypeHandler();
+        $docHandler->onDocumentChange();
 
         return $success;
     }
