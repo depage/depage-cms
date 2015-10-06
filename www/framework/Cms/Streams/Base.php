@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\Cms\Streams;
+namespace Depage\Cms\Streams;
 
 abstract class Base {
     protected $position = 0;
@@ -12,7 +12,7 @@ abstract class Base {
         $class = get_called_class();
         static::$parameters = $parameters;
 
-        if (in_array($class, stream_get_wrappers())) {
+        if (in_array($protocol, stream_get_wrappers())) {
             stream_wrapper_unregister($protocol);
         }
         stream_wrapper_register($protocol, $class);
