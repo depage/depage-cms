@@ -31,23 +31,9 @@ class XmlDb implements XmlGetter
 
     public $options;
     // }}}
-
-    // {{{ __get()
-    /**
-     * Get properties (basically read-only)
-     *
-     * @param $property
-     * @return mixed
-     */
-    public function __get($property) {
-        if (property_exists($this, $property)) {
-            return $this->$property;
-        }
-    }
-    // }}}
-
-    // {{{ constructor()
-    public function __construct($table_prefix, $pdo, $cache, $options = array()) {
+    // {{{ constructor
+    public function __construct($table_prefix, $pdo, $cache, $options = array())
+    {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
@@ -64,14 +50,30 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ docExists()
+    // {{{ __get
+    /**
+     * Get properties (basically read-only)
+     *
+     * @param $property
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
+    }
+    // }}}
+
+    // {{{ docExists
     /**
      * gets the doc-id of a xml-document by name or id and checks if the document exists
      *
      * @param     $doc_id_or_name (mixed) id or name of the document
      * @return    (int) id of the document or false when document does not exist
      */
-    public function docExists($doc_id_or_name) {
+    public function docExists($doc_id_or_name)
+    {
         if (!isset($this->doc_ids[$doc_id_or_name])) {
             if ((int) $doc_id_or_name > 0) {
 
@@ -118,13 +120,14 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ getDocuments()
+    // {{{ getDocuments
     /**
      * gets available documents in database
      *
      * @return    $docs (array) the key is the name of the document, the value is the document db-id.
      */
-    public function getDocuments($name = "") {
+    public function getDocuments($name = "")
+    {
         $docs = array();
 
         $namequery = "";
@@ -158,15 +161,15 @@ class XmlDb implements XmlGetter
         return $docs;
     }
     // }}}
-
-    // {{{ getDoc()
+    // {{{ getDoc
     /**
      * Get xmldb\document
      *
      * @param $doc_id_or_name
      * @return bool|document
      */
-    public function getDoc($doc_id_or_name) {
+    public function getDoc($doc_id_or_name)
+    {
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             return new Document($this, $doc_id);
         }
@@ -174,15 +177,15 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-
-    // {{{ getDocByNodeId()
+    // {{{ getDocByNodeId
     /**
      * Get xmldb\document
      *
      * @param $nodeId
      * @return bool|document
      */
-    public function getDocByNodeId($nodeId) {
+    public function getDocByNodeId($nodeId)
+    {
         $query = $this->pdo->prepare(
             "SELECT
                 xml.id_doc AS id_doc
@@ -203,13 +206,14 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ getDocXml()
+    // {{{ getDocXml
     /**
      * @param $doc_id_or_name
      * @param bool $add_id_attribute
      * @return bool
      */
-    public function getDocXml($doc_id_or_name, $add_id_attribute = true) {
+    public function getDocXml($doc_id_or_name, $add_id_attribute = true)
+    {
         $xml = false;
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
@@ -221,7 +225,134 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ createDoc()
+    // {{{ getSubDocByXpath
+    /**
+     * gets document by xpath. if xpath directs to more than
+     * one node, only the first node will be returned.
+     *
+     * @param   $xpath (string) xpath to target node
+     * @param   $add_id_attribute (bool) whether to add db:id attribute or not
+     *
+     * @return  $doc (domxmlobject)
+     *
+     * @todo    implement
+     */
+    public function getSubDocByXpath($xpath, $add_id_attribute = true)
+    {
+        return false;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpath
+    /**
+     * gets node_ids by xpath
+     *
+     * @attention this supports only a small subset of xpath-queries. so recheck source before using.
+     *
+     * @param   $this->doc_id (int) id of document
+     * @param   $xpath (string) xpath to target node
+     *
+     * @return  $nodeids (array) array of found node ids
+     *
+     * @todo    implement full xpath specifications
+     */
+    public function getNodeIdsByXpath($xpath, $docId = null)
+    {
+        if (is_null($docId)) {
+            $docClause = '';
+            $params = array();
+        } else {
+            $docClause = ' AND WHERE nodes.id_doc = :docId ';
+            $params = array('docId' => $docId);
+        }
+
+        $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
+        $pCondition = '(?:\[(.*?)\])?';
+        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
+
+        $actualIds = array(null);
+        $results = array();
+
+        foreach ($xpathElements as $level => $element) {
+            $fetchedIds = array();
+            $element[] = '';
+            list(,$divider, $ns, $name, $condition) = $element;
+            $strings = array();
+
+            if ($divider == '/') {
+                if ($condition == '') {
+                } else if (preg_match('/^([0-9]+)$/', $condition)) {
+                    // fetch by name and position: "... /ns:name[n] ..."
+                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                    // fetch by simple attributes: "//ns:name[@attr1] ..."
+                } else {
+                    // not yet implemented
+                }
+            } elseif ($divider == '//' && $level == 0) {
+                if ($condition == '') {
+                    // fetch only by name recursive:  "//ns:name ..."
+                    $sql = "
+                        SELECT nodes.id
+                        FROM {$this->table_xml} AS nodes
+                        WHERE nodes.name = :name
+                        $docClause
+                    ";
+                    $params['name'] = "$ns:$name";
+
+                    $query = $this->pdo->prepare($sql);
+                    $query->execute($params);
+                    $results = $query->fetchAll();
+                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                    // fetch by simple attributes: "//ns:name[@attr1] ..."
+                } else {
+                    // not yet implemented
+                }
+            } else {
+                // not yet implemented
+            }
+        }
+
+        $fetchedIDs = array();
+        foreach ($results as $result) {
+            $fetchedIds[] = $result[0];
+        }
+
+        return $fetchedIds;
+    }
+    // }}}
+    // {{{ removeLiteralStrings
+    /**
+     * replaces strings surrounded by " or ' with pointer to array
+     *
+     * @protected
+     *
+     * @param    $text (string) text to process
+     * @param    $strings (array) array of removed strings
+     *
+     * @return    $text (string)
+     */
+    protected function removeLiteralStrings($text, &$strings)
+    {
+        $n = 0;
+        $newText = '';
+        $strings = array();
+
+        $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
+        preg_match_all($p, $text, $parts);
+
+        for ($i = 0; $i < count($parts[0]); $i++) {
+            if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
+                $strings[$n] = $parts[2][$i] . $parts[3][$i];
+                $newText .= "\$$n";
+                $n++;
+            } else {
+                $newText .= $parts[1][$i];
+            }
+        }
+        return $newText;
+    }
+    // }}}
+
+    // {{{ createDoc
     /**
      * CreateDoc
      *
@@ -230,7 +361,8 @@ class XmlDb implements XmlGetter
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null) {
+    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null)
+    {
         if (is_null($docName)) {
             // generate generic docname based on doctype
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
@@ -255,8 +387,7 @@ class XmlDb implements XmlGetter
         return $document;
     }
     // }}}
-
-    // {{{ duplicateDoc()
+    // {{{ duplicateDoc
     /**
      * @brief duplicateDoc
      *
@@ -281,13 +412,13 @@ class XmlDb implements XmlGetter
         return false;
     }
     // }}}
-
-    // {{{ removeDoc()
+    // {{{ removeDoc
     /**
      * @param $doc_id_or_name
      * @return bool
      */
-    public function removeDoc($doc_id) {
+    public function removeDoc($doc_id)
+    {
         $doc_id = $this->docExists($doc_id);
 
         if ($doc_id !== false) {
@@ -308,7 +439,7 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ updateSchema()
+    // {{{ updateSchema
     /**
      * @brief updateSchema
      *
@@ -319,33 +450,35 @@ class XmlDb implements XmlGetter
     {
         $schema = new \Depage\Db\Schema($this->pdo);
 
-        $projectName = $this->name;
+        $pdoPrefix = $this->pdo->prefix;
+        $tablePrefix = $this->table_prefix;
 
         $schema->setReplace(
-            function ($tableName) use ($projectName) {
-                if ($tableName == "_auth_user") {
-                    return $this->pdo->prefix . $tableName;
+            function ($tableName) use ($pdoPrefix, $tablePrefix)
+            {
+                if ($tableName == '_auth_user') {
+                    return $pdoPrefix . $tableName;
                 } else {
-                    return $this->table_prefix . $tableName;
+                    return $tablePrefix . $tableName;
                 }
             }
         );
 
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+
         // schema for xmldb
-        $files = glob(__DIR__ . "/Sql/*.sql");
-        sort($files);
-        foreach ($files as $file) {
-            $schema->loadFile($file);
-            $schema->update();
-        }
+        $schema->loadGlob(__DIR__ . '/Sql/*.sql');
+        $schema->update();
+
+        $this->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
     // }}}
-
-    // {{{ clearTables()
+    // {{{ clearTables
     /**
      * Removes SQL tables
      */
-    public function clearTables() {
+    public function clearTables()
+    {
         $this->pdo->query("DELETE FROM `{$this->table_docs}`;");
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
@@ -353,23 +486,24 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ beginTransaction()
+    // {{{ beginTransaction
     /**
      * wrap database begin transaction
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         if ($this->transactions == 0) {
             $this->pdo->beginTransaction();
         }
         $this->transactions++;
     }
     // }}}
-
-    // {{{ endTransaction()
+    // {{{ endTransaction
     /**
      * wrap database end transaction
      */
-    public function endTransaction() {
+    public function endTransaction()
+    {
         $this->transactions--;
         if ($this->transactions == 0) {
             $this->pdo->commit();
