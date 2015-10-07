@@ -198,8 +198,9 @@ class Main extends Base {
 
         $taskForm->process();
         if ($taskForm->valid) {
-            $task = \Depage\Tasks\Task::load($this->pdo, $taskForm->getValues()['taskId']);
-            $task->remove();
+            if ($task = \Depage\Tasks\Task::load($this->pdo, $taskForm->getValues()['taskId'])) {
+                $task->remove();
+            }
 
             $taskForm->clearSession();
         }
@@ -211,9 +212,6 @@ class Main extends Base {
             $task = \Depage\Tasks\Task::load($this->pdo, $taskId);
 
             if ($task) {
-                $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                $taskrunner->run($task->taskId);
-
                 $tasks[] = $task;
             }
         } else {
