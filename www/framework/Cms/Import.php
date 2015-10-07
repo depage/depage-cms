@@ -67,8 +67,8 @@ class Import
         $this->extractNavigation();
         $this->extractTemplates();
         $this->extractNewnodes();
-        $this->extractColorschemes();
         $this->extractSettings();
+        $this->extractColorschemes();
 
         foreach($this->pageIds as $pageId) {
             $this->extractPagedataForId($pageId);
@@ -109,8 +109,8 @@ class Import
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", array(), $getDocsId);
         $task->addSubtask("extract templates", "\$import->extractTemplates();", array(), $getDocsId);
         $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", array(), $getDocsId);
-        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
         $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
+        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
 
         foreach($this->pageIds as $pageId) {
             $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId(%s);", array($pageId), $getDocsId);
