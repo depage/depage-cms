@@ -23,8 +23,8 @@ class Live extends Preview
         $this->xmlGetter = new \Depage\XmlDb\XmlDbHistory($this->prefix, $this->pdo);
     }
     // }}}
-    // {{{ transformXml()
-    protected function transformXml($pageId, $pagedataId)
+    // {{{ transformPage()
+    protected function transformPage($pageId, $pagedataId)
     {
         // @todo add publishing id/domain/baseurl to cachePath
         $cachePath = $this->projectName . "/" . $this->template . "/" . $this->lang . $this->currentPath;
@@ -32,7 +32,7 @@ class Live extends Preview
         if ($this->transformCache->exist($cachePath)) {
             $html = $this->transformCache->getFile($cachePath);
         } else {
-            $html = parent::transformXml($pageId, $pagedataId);
+            $html = parent::transformPage($pageId, $pagedataId);
             $this->transformCache->setFile($cachePath, $html);
         }
 

@@ -14,6 +14,7 @@ abstract class Transformer
     protected $xsltProc;
     protected $lang = "";
     protected $isLive = false;
+    public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
     public $pagedataIdByPageId = array();
@@ -41,11 +42,9 @@ abstract class Transformer
         $this->init();
     }
     // }}}
-    // {{{ constructor()
+    // {{{ init()
     public function init()
     {
-        $this->log = new \Depage\Log\Log();
-
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
@@ -121,6 +120,7 @@ abstract class Transformer
                 'currentPageId' => null,
                 'depageIsLive' => "false()",
                 'baseUrl' => null,
+                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
             $variables = array(
                 'navigation' => "document('xmldb://pages')",
@@ -128,7 +128,6 @@ abstract class Transformer
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings//proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
-                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
 
             // add variables from settings
@@ -177,8 +176,8 @@ abstract class Transformer
     abstract protected function getXsltIncludes($files);
     // }}}
 
-    // {{{ transform()
-    public function transform($urlPath, $lang)
+    // {{{ transformUrl()
+    public function transformUrl($urlPath, $lang)
     {
         $this->currentPath = $urlPath;
         $this->lang = $lang;
@@ -197,15 +196,18 @@ abstract class Transformer
 
         $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
-        return $this->transformXml($pageId, $pagedataId);
+        return $this->transformPage($pageId, $pagedataId);
     }
     // }}}
-    // {{{ transformXml()
-    protected function transformXml($pageId, $pagedataId)
+    // {{{ transformPage()
+    protected function transformPage($pageId, $pagedataId)
     {
         $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+        if ($pageXml === false) {
+            throw new \Exception("page does not exist");
+        }
 
-        $this->xsltProc->setParameter("", array(
+        $content = $this->transform($pageXml, array(
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
             "currentContentType" => "text/html",
@@ -215,9 +217,24 @@ abstract class Transformer
             "baseUrl" => $this->baseUrl,
         ));
 
-        if ($pageXml === false) {
-            throw new \Exception("page does not exist");
-        } elseif (!$html = $this->xsltProc->transformToXml($pageXml)) {
+        $cleaner = new \Depage\Html\Cleaner();
+        $content = $cleaner->clean($content);
+
+        return $content;
+    }
+    // }}}
+    // {{{ transform()
+    /**
+     * @brief transform
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function transform($xml, $parameters)
+    {
+        $this->xsltProc->setParameter("", $parameters);
+
+        if (!$content = $this->xsltProc->transformToXml($xml)) {
             // @todo add better error handling
             $errors = libxml_get_errors();
             foreach($errors as $error) {
@@ -237,17 +254,14 @@ abstract class Transformer
             }
         }
 
-        $cleaner = new \Depage\Html\Cleaner();
-        $html = $cleaner->clean($html);
-
-        return $html;
+        return $content;
     }
     // }}}
     // {{{ saveTransformed()
     /**
      * @return  null
      */
-    protected function saveTransformed($savePath, $html)
+    protected function saveTransformed($savePath, $content)
     {
         $dynamic = array(
             "php",
@@ -258,7 +272,7 @@ abstract class Transformer
             @mkdir($info['dirname'], 0777, true);
         }
 
-        file_put_contents($savePath, $html);
+        file_put_contents($savePath, $content);
 
         return in_array($info['extension'], $dynamic);
     }
@@ -266,7 +280,7 @@ abstract class Transformer
     // {{{ display()
     public function display($urlPath, $lang)
     {
-        $html = $this->transform($urlPath, $lang);
+        $html = $this->transformUrl($urlPath, $lang);
 
         // cache transformed source
         $dynamic = $this->saveTransformed($this->savePath, $html);

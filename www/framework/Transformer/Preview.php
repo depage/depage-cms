@@ -38,14 +38,6 @@ class Preview extends Transformer
         return $xslt;
     }
     // }}}
-
-    // {{{ transformXml()
-    protected function transformXml($pageId, $pagedataId)
-    {
-        // @todo add caching and automatic cache clearing when changing documents
-        return parent::transformXml($pageId, $pagedataId);
-    }
-    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
