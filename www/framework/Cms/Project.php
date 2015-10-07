@@ -602,6 +602,61 @@ class Project extends \Depage\Entity\Entity
         return $task;
     }
     // }}}
+    // {{{ generateCss()
+    /**
+     * @brief generateCss
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateCss()
+    {
+        $this->removeGeneratedCss();
+
+        $this->xmldb = $this->getXmlDb();
+
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "css");
+        $xml = $this->xmldb->getDocXml("colors");
+        $xpath = new \DOMXPath($xml);
+        $nodes = $xpath->query("//proj:colorscheme[@name != 'tree_name_color_global']/@name");
+        $parameters = array(
+            "currentContentType" => "text/css",
+            "currentEncoding" => "UTF-8",
+            "depageVersion" => \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => $this->isLive,
+        );
+        $cssPath = $this->getProjectPath() . "lib/global/css/";
+
+        // generate global colorscheme
+        $css = $transformer->transform($xml, $parameters);
+        file_put_contents($cssPath . "colors-all.css", $css);
+
+        // generate css files for colorschemes
+        foreach ($nodes as $node) {
+            $colorscheme = $node->value;
+            $parameters['currentColorscheme'] = "$colorscheme";
+            $css = $transformer->transform($xml, $parameters);
+            file_put_contents($cssPath . "color_" . $colorscheme . ".css", $css);
+        }
+    }
+    // }}}
+    // {{{ removeGeneratedCss()
+    /**
+     * @brief removeGeneratedCss
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function removeGeneratedCss()
+    {
+        $cssPath = $this->getProjectPath() . "lib/global/css/";
+        $files = glob($cssPath . "color_*.css");
+
+        foreach ($files as $file) {
+            unlink($file);
+        }
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

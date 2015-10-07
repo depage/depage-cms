@@ -49,10 +49,6 @@ class Colors extends UniqueNames {
 
         $changed = $changed || $this->testColors($node);
 
-        if ($changed) {
-            // @todo regenerate css
-        }
-
         return $changed;
     }
     // }}}
@@ -129,6 +125,23 @@ class Colors extends UniqueNames {
         }
 
         $node->removeChild($tempNode);
+    }
+    // }}}
+    // {{{ onDocumentChange()
+    /**
+     * @brief onDocumentChange
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function onDocumentChange()
+    {
+        parent::onDocumentChange();
+
+        $this->project->generateCss();
+
+        return true;
+
     }
     // }}}
 }
