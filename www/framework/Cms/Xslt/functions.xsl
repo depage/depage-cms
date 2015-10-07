@@ -59,7 +59,16 @@
         <xsl:param name="name" />
         <xsl:param name="colorscheme" select="$currentColorscheme" />
 
-        <func:result select="translate($colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]/@value,'ABCDEF','abcdef')" />
+        <xsl:choose>
+            <xsl:when test="$colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]">
+                <!-- color from named colorscheme -->
+                <func:result select="translate($colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]/@value,'ABCDEF','abcdef')" />
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- color from default colorscheme -->
+                <func:result select="translate($colors//color[@name = $name]/@value,'ABCDEF','abcdef')" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
 
