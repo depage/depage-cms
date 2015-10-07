@@ -109,8 +109,11 @@ class Document
     public function getDoctypeHandler()
     {
         if (!isset($this->doctypeHandlers[$this->doc_id])) {
-            $className = $this->getDocInfo()->type;
+            $className = "";
 
+            if ($info = $this->getDocInfo()) {
+                $className = $info->type;
+            }
             if (empty($className)) {
                 $handler = new XmlDocTypes\Base($this->xmldb, $this);
             } else {
@@ -190,9 +193,6 @@ class Document
             ));
 
             $this->clearCache();
-
-            $docHandler = $this->getDoctypeHandler();
-            $docHandler->onDocumentChange();
         }
 
         return $info;
@@ -288,16 +288,16 @@ class Document
             } else {
                 $this->xmldb->endTransaction();
 
-                throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist");
+                throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist (with id $id)");
             }
             $success = $xml_doc->loadXML($xml_str);
             $docHandler = $this->getDoctypeHandler();
 
-            $this->xmldb->endTransaction();
-
             if ($changed = $docHandler->testDocument($xml_doc)) {
                 $this->saveNode($xml_doc);
             }
+
+            $this->xmldb->endTransaction();
 
             // add xml to xml-cache
             // TODO bug in cache caused by saving when level is 0
@@ -394,7 +394,12 @@ class Document
         if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
             $this->updateLastchange();
 
-            return $this->unlinkNodeById($node_id);
+            $success = $this->unlinkNodeById($node_id);
+
+            $docHandler = $this->getDoctypeHandler();
+            $docHandler->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -441,8 +446,6 @@ class Document
                 'node_pos' => $target_pos,
                 'doc_id' => $this->doc_id,
             ));
-
-            $docHandler->onDocumentChange();
         }
         return $target_id;
     }
@@ -728,14 +731,14 @@ class Document
                 $this->updateLastchange();
 
                 $this->clearCache();
-
-                $docHandler = $this->getDoctypeHandler();
-                $docHandler->onDocumentChange();
             }
 
             $success = true;
 
             $this->xmldb->endTransaction();
+
+            $docHandler = $this->getDoctypeHandler();
+            $docHandler->onDocumentChange();
         }
 
         return $success;
@@ -842,10 +845,9 @@ class Document
 
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
-            $docHandler->onCopyNode($node_id, $copy_id);
-
             $this->xmldb->endTransaction();
 
+            $docHandler->onCopyNode($node_id, $copy_id);
             $docHandler->onDocumentChange();
 
             $result = $copy_id;
@@ -1676,12 +1678,14 @@ class Document
     {
         $this->xmldb->beginTransaction();
 
-        if ($target_id !== null) {
-            /*
-             * if target_id is not set, assume we are saving an existing node with a node
-             * db:id-attribute set. if target_id is set, assume we want to save a new node
-             * so remove all existing node attributes first.
-             */
+        /*
+         * if target_id is not set, assume we are saving an existing node with a node
+         * db:id-attribute set. if target_id is set, assume we want to save a new node
+         * so remove all existing node attributes first.
+         */
+        $saveExisting = $target_id === null;
+
+        if (!$saveExisting) {
             $this->removeIdAttr($node);
         }
 
@@ -1697,6 +1701,7 @@ class Document
 
                 if ($target_id === false) {
                     $target_id = null;
+                    $saveExisting = false;
                 }
 
                 //unlink old node
@@ -1783,6 +1788,11 @@ class Document
         $this->updateLastchange();
 
         $this->xmldb->endTransaction();
+
+        if ($saveExisting) {
+            $docHandler = $this->getDoctypeHandler();
+            $docHandler->onDocumentChange();
+        }
 
         return $node_array[0]['id'];
     }
