@@ -191,17 +191,10 @@ class Flash extends Base {
             $this->log->log($xmlInput);
         }
 
-        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        $project = $this->getProject($this->projectName);
+        $this->xmldb = $project->getXmlDb($this->authUser->id);
 
-        $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
-        $this->xmlPath = "projects/" . $this->projectName . "/xml/";
-
-        $xmldb = new \Depage\XmlDb\XmlDb ($this->pdo->prefix . "_proj_" . $this->projectName, $this->pdo, $this->xmldbCache, array(
-            'pathXMLtemplate' => $this->xmlPath,
-            'userId' => $this->authUser->id,
-        ));
-
-        $funcHandler = new \Depage\Cms\Rpc\CmsFuncs($this->projectName, $this->pdo, $xmldb, $this->authUser);
+        $funcHandler = new \Depage\Cms\Rpc\CmsFuncs($this->projectName, $this->pdo, $this->xmldb, $this->authUser);
         $msgHandler = new \Depage\Cms\Rpc\Message($funcHandler);
 
         //call

@@ -41,18 +41,16 @@ class Import
     protected $xmlFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</proj:newnode>";
 
     // {{{ constructor
-    public function __construct($name, $pdo, $cache)
+    public function __construct($project, $pdo)
     {
-        $this->projectName = $name;
+        $this->projectName = $project->name;
 
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
         $this->pdo = $pdo;
-        $this->cache = $cache;
-        $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->projectName}", $this->pdo, $this->cache, array(
-            'pathXMLtemplate' => $this->xmlPath,
-        ));
+        $this->project = $project;
+        $this->xmldb = $this->project->getXmlDb();
     }
     // }}}
     // {{{ importProject()
@@ -93,11 +91,11 @@ class Import
         //"\$import = " . \Depage\Tasks\Task::escapeParam($this) . ";"
         $initId = $task->addSubtask("init",
             "\$pdo = %s;" .
-            "\$cache = %s;" .
-            "\$import = new \Depage\Cms\Import(\"$this->projectName\", \$pdo, \$cache);"
+            "\$project = %s;" .
+            "\$import = new \Depage\Cms\Import(\$project, \$pdo);"
         , array(
             $this->pdo,
-            $this->cache,
+            $this->project,
         ));
         $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", array(
             $xmlFile,

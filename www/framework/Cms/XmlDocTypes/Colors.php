@@ -4,9 +4,16 @@ namespace Depage\Cms\XmlDocTypes;
 
 class Colors extends UniqueNames {
 
+    /**
+     * @brief project
+     **/
+    protected $project = null;
+
     // {{{ constructor
     public function __construct($xmldb, $document) {
         parent::__construct($xmldb, $document);
+
+        $this->project = $this->xmldb->options['project'];
 
         // list of elements that may created by a user
         $this->availableNodes = array(

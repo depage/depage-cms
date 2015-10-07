@@ -27,7 +27,7 @@ class Project extends Base
         } else if ($this->projectName == "+") {
             $this->project = new \Depage\Cms\Project($this->pdo, $this->xmldbCache);
         } else {
-            $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+            $this->project = $this->getProject($this->projectName);
         }
     }
     // }}}
@@ -255,7 +255,11 @@ class Project extends Base
         $form->process();
 
         if ($form->validate()) {
-            $import = new \Depage\Cms\Import($this->project->name, $this->pdo, $this->xmldbCache);
+            $import = new \Depage\Cms\Import($this->project, $this->pdo);
+
+            // @todo move cleaning back into import task (double pdo connection?)
+            $import->cleanDocs();
+
             //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
             //return;
 

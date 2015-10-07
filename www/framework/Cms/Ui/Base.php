@@ -106,6 +106,19 @@ class Base extends \Depage\Depage\Ui\Base
     }
     // }}}
 
+    // {{{ getProject()
+    /**
+     * @brief getProject
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function getProject($projectName)
+    {
+        return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+    }
+    // }}}
+
     // {{{ toolbar
     protected function toolbar() {
         if ($this->user = $this->auth->enforceLazy()) {

@@ -259,7 +259,7 @@ class Project extends \Depage\Entity\Entity
     {
         $projectName = $this->name;
 
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
         $this->xmldb->updateSchema();
 
         $schema = new \Depage\DB\Schema($this->pdo);
@@ -283,19 +283,32 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
-    // {{{ initXmlDb()
+    // {{{ getXmlDb()
     /**
-     * @brief initXmlDb
+     * @brief getXmlDb
      *
      * @return xmldb
      **/
-    protected function initXmlDb()
+    public function getXmlDb($userId = null)
     {
-        $this->xmldb = new \Depage\XmlDb\XmlDb("{$this->pdo->prefix}_proj_{$this->name}", $this->pdo, $this->cache, array(
-            'pathXMLtemplate' => $this->xmlPath,
-        ));
+        if (is_null($this->xmldb)) {
+            $prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+            $xsltPath = "projects/" . $this->name . "/xslt/";
+            $xmlPath = "projects/" . $this->name . "/xml/";
+            $libPath = "projects/" . $this->name . "/lib/";
+
+            $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, array(
+                'pathXMLtemplate' => $xmlPath,
+                'project' => $this,
+                'userId' => $userId,
+            ));
+        }
+
+        return $this->xmldb;
     }
     // }}}
+
     // {{{ getSettingsDoc()
     /**
      * @brief getSettingsDoc
@@ -305,7 +318,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getSettingsDoc()
     {
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         return $this->xmldb->getDoc("settings");
     }
@@ -321,7 +334,7 @@ class Project extends \Depage\Entity\Entity
     {
         $pages = array();
 
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         $xml = $this->xmldb->getDocXml("pages");
 
@@ -392,7 +405,7 @@ class Project extends \Depage\Entity\Entity
     public function getLanguages()
     {
         $languages = array();
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         $settings = $this->xmldb->getDoc("settings");
         $nodes = $settings->getNodeIdsByXpath("//proj:language");
@@ -414,7 +427,7 @@ class Project extends \Depage\Entity\Entity
     public function getPublishingTargets()
     {
         $targets = array();
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         $settings = $this->getSettingsDoc();
         $nodes = $settings->getNodeIdsByXpath("//proj:publishTargets/proj:publishTarget");
@@ -434,7 +447,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getHomeUrl()
     {
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         $xml = $this->xmldb->getDocXml("pages");
 
@@ -476,7 +489,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId)
     {
-        $this->initXmlDb();
+        $this->xmldb = $this->getXmlDb();
 
         $projectPath = $this->getProjectPath();
         $settings = $this->getSettingsDoc()->getAttributes($publishId);

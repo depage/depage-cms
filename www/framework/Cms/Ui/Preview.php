@@ -57,7 +57,8 @@ class Preview extends \Depage\Depage\Ui\Base
         ));
 
         $this->projectName = $this->urlSubArgs[0];
-        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->pdo->prefix . "_proj_" . $this->projectName, $this->pdo, $this->xmldbCache);
+        $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        $this->xmldb = $this->project->getXmlDb();
 
         // get auth object
         $this->auth = \depage\Auth\Auth::factory(
