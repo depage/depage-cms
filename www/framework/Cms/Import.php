@@ -370,6 +370,16 @@ class Import
 
                     file_put_contents($filename, "{$this->xslHeader}    {$xsl}\n{$this->xslFooter}");
 
+                    if (strpos($filename, "CSS") !== false) {
+                        $path = $this->xsltPath . "css/";
+                        if (!is_dir($path)) {
+                            mkdir($path);
+                        }
+                        $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
+                        $extraXsl = "<xsl:template match=\"proj:colorschemes\"><xsl:call-template name=\"pg:css\" /></xsl:template>";
+                        file_put_contents($filename, "{$this->xslHeader}    {$extraXsl}\n\n    {$xsl}\n{$this->xslFooter}");
+                    }
+
                     /*
                     $testDoc = new \Depage\Xml\Document();
                     $testDoc->load($filename);
