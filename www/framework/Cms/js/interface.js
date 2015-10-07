@@ -205,7 +205,7 @@ var depageCMS = (function() {
                     $html.filter("[id]").each( function() {
                         var $el = $(this);
                         var id = this.id;
-                        var newTimeout = $el.data("ajax-update-timeout");
+                        var newTimeout = $el.find("*[data-ajax-update-timeout]").data("ajax-update-timeout");
 
                         if (newTimeout && newTimeout < timeout) {
                             timeout = newTimeout;
