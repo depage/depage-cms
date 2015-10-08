@@ -8,6 +8,9 @@
  * copyright (c) 2011-2012 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
+ *
+ * @todo
+ * - add tree functions for library tree
  */
 
 namespace Depage\Cms\Rpc;
@@ -16,11 +19,15 @@ use \Depage\Notifications\Notification;
 
 class CmsFuncs {
     protected $projectName;
+    protected $libPath;
+    protected $trashPath;
     protected $callbacks = array();
 
     // {{{ __construct
     function __construct($project, $pdo, $xmldb, $user) {
         $this->projectName = $project;
+        $this->libPath = "projects/{$this->projectName}/lib";
+        $this->trashPath = "projects/{$this->projectName}/trash";
         $this->pdo = $pdo;
         $this->xmldb = $xmldb;
         $this->user = $user;
@@ -31,7 +38,6 @@ class CmsFuncs {
 
     // {{{ keepAlive()
     function keepAlive($args) {
-        // @todo implement
     }
     // }}}
     // {{{ register_window()
@@ -55,7 +61,7 @@ class CmsFuncs {
 
         $conf_array['thumb_width'] = 85;
         $conf_array['thumb_height'] = 72;
-        $conf_array['thumb_load_num'] = 100;
+        $conf_array['thumb_load_num'] = 20;
 
         $conf_array['interface_lib'] = "framework/Cms/lib/lib_interface.swf";
 
@@ -160,7 +166,7 @@ class CmsFuncs {
     function get_imageProp($args) {
         $info = array();
         $data = array();
-        $filename = "projects/{$this->projectName}/lib{$args['filepath']}{$args['filename']}";
+        $filename = "{$this->libPath}{$args['filepath']}{$args['filename']}";
 
         $mediainfo = new \Depage\Media\MediaInfo(array(
             'cache' => \Depage\Cache\Cache::factory("mediainfo"),
@@ -216,6 +222,19 @@ class CmsFuncs {
     // }}}
     // {{{ add_node()
     function add_node($args) {
+        $treeType = $args['type'];
+
+        if ($treeType == "files") {
+            $changedIds = $this->add_node_files($args);
+        } else {
+            $changedIds = $this->add_node_xml($args);
+        }
+
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
+    }
+    // }}}
+    // {{{ add_node_xml()
+    function add_node_xml($args) {
         $targetId = $args['target_id'];
         $treeType = $args['type'];
         $newName = !empty($args['new_name']) ? $args['new_name'] : "";
@@ -264,7 +283,25 @@ class CmsFuncs {
         }
         $changedIds[] = $targetId;
 
-        $this->addCallback($treeType, $changedIds, $changedIds[0]);
+        return $chanchedIds;
+    }
+    // }}}
+    // {{{ add_node_files()
+    function add_node_files($args) {
+        $targetId = $args['target_id'];
+        $treeType = $args['type'];
+        $newName = !empty($args['new_name']) ? $args['new_name'] : "";
+
+        $changedIds = array();
+
+        $newFolder = "{$this->libPath}{$targetId}{$newName}";
+        if (!is_dir($newFolder)) {
+            mkdir($newFolder);
+        }
+
+        $changedIds[] = '/lib' . $targetId . $newName . '/';
+
+        return $changedIds;
     }
     // }}}
     // {{{ rename_node()
@@ -274,17 +311,69 @@ class CmsFuncs {
         $newName = $args['new_name'];
         $changedIds = array();
 
-        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
-        if ($xmldoc) {
-            $xmldoc->setAttribute($nodeId, "name", $newName);
+        if ($treeType == "files") {
+            $changedIds = $this->rename_node_files($args);
+        } else {
+            $changedIds = $this->rename_node_xml($args);
         }
-        $changedIds[] = $nodeId;
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
+    }
+    // }}}
+    // {{{ rename_node_xml()
+    function rename_node_xml($args) {
+        $treeType = $args['type'];
+        $nodeId = $args['id'];
+        $newName = $args['new_name'];
+        $changedIds = array();
 
-        $this->addCallback($treeType, $changedIds);
+        if ($treeType == "files") {
+            var_dump($nodeId);
+            var_dump($newName);
+            die();
+        } else {
+            $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+            if ($xmldoc) {
+                $xmldoc->setAttribute($nodeId, "name", $newName);
+            }
+            $changedIds[] = $nodeId;
+        }
+
+        return $changedIds;
+    }
+    // }}}
+    // {{{ rename_node_files()
+    function rename_node_files($args) {
+        $treeType = $args['type'];
+        $nodeId = $args['id'];
+        $newName = $args['new_name'];
+        $changedIds = array();
+
+        $oldpath_array = explode('/', $nodeId);
+        array_pop($oldpath_array);
+        $newpath_array = $oldpath_array;
+        $newpath_array[count($newpath_array) - 1] = $newName;
+        rename($this->libPath . implode('/', $oldpath_array), $this->libPath . implode('/', $newpath_array));
+
+        $changedIds[] = '/lib' . implode('/', $newpath_array) . '/';
+
+        return $changedIds;
     }
     // }}}
     // {{{ move_node_in()
     function move_node_in($args) {
+        $treeType = $args['type'];
+
+        if ($treeType == "files") {
+            $changedIds = $this->move_node_in_files($args);
+        } else {
+            $changedIds = $this->move_node_in_xml($args);
+        }
+
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
+    }
+    // }}}
+    // {{{ move_node_in_xml()
+    function move_node_in_xml($args) {
         $treeType = $args['type'];
         $nodeId = $args['id'];
         $targetId = $args['target_id'];
@@ -294,7 +383,19 @@ class CmsFuncs {
             $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $changedIds = array($nodeId, $targetId);
+    }
+    // }}}
+    // {{{ move_node_in_files()
+    function move_node_in_files($args) {
+        $nodeId = $args['id'];
+        $targetId = $args['target_id'];
+
+        $temppath = explode('/', $this->libPath . $nodeId);
+        $temppath = $temppath[count($temppath) - 2];
+        rename($this->libPath . $nodeId, $this->libPath . $targetId . $temppath . '/');
+
+        $changedIds = array($nodeId, $targetId);
     }
     // }}}
     // {{{ move_node_before()
@@ -390,6 +491,19 @@ class CmsFuncs {
     // {{{ delete_node()
     function delete_node($args) {
         $treeType = $args['type'];
+
+        if ($treeType == "files") {
+            $changedIds = $this->delete_node_files($args);
+        } else {
+            $changedIds = $this->delete_node_xml($args);
+        }
+
+        $this->addCallback($treeType, $changedIds);
+    }
+    // }}}
+    // {{{ delete_node_xml()
+    function delete_node_xml($args) {
+        $treeType = $args['type'];
         $nodeId = $args['id'];
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
@@ -397,7 +511,55 @@ class CmsFuncs {
             $parentId = $xmldoc->unlinkNode($nodeId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $parentId));
+        $changedIds = array($nodeId, $parentId);
+
+        return $changedIds;
+    }
+    // }}}
+    // {{{ delete_node_files()
+    function delete_node_files($args) {
+        $nodeId = $args['id'];
+        $srcPath = $this->libPath . $nodeId;
+        $targetPath = $this->trashPath . $nodeId;
+
+        if (!is_dir($this->trashPath)) {
+            mkdir($this->trashPath, 0777, true);
+        }
+
+        $pathinfo = pathinfo($targetPath);
+        if (!is_dir($pathinfo['dirname'])) {
+            mkdir($pathinfo['dirname'], 0777, true);
+        }
+
+        if (file_exists($targetPath)) {
+            $targetPath = $this->renameExistingTrashTarget($targetPath);
+        }
+
+        rename($srcPath, $targetPath);
+
+        $changedIds = array($pathinfo['dirname'], $nodeId);
+
+        return $changedIds;
+    }
+    // }}}
+    // {{{ renameExistingTrashTarget()
+    /**
+     * @brief renameExistingTrashTarget
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function renameExistingTrashTarget($targetPath)
+    {
+        $pathinfo = pathinfo($targetPath);
+        $date = date("_Y-m-d_h-i-s");
+
+        $targetPath = $pathinfo['dirname'] . "/" . $pathinfo['filename'] . $date;
+        if (isset($pathinfo['extension'])) {
+            $targetPath .= "." . $pathinfo['extension'];
+        }
+
+        return $targetPath;
     }
     // }}}
     // {{{ set_page_colorscheme()
@@ -952,10 +1114,8 @@ class CmsFuncs {
     // }}}
     // {{{ getTreeFiles()
     function getTreeFiles() {
-        $path = "projects/{$this->projectName}/lib/";
-
         $dirXML = "<proj:dir xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:db=\"http://cms.depagecms.net/ns/database\" db:invalid=\"name\" name=\"" . htmlentities($this->projectName) . "\">";
-        $dirXML .= $this->getTreeDirectoriesForPath($path);
+        $dirXML .= $this->getTreeDirectoriesForPath($this->libPath);
         $dirXML .= "</proj:dir>";
 
         return $dirXML;
@@ -963,7 +1123,7 @@ class CmsFuncs {
     // }}}
     // {{{ getTreeDirectoriesForPath()
     function getTreeDirectoriesForPath($path) {
-        $dirs = glob($path . "*", \GLOB_ONLYDIR | \GLOB_MARK);
+        $dirs = glob($path . "/*", \GLOB_ONLYDIR | \GLOB_MARK);
         $dirXML = "";
 
         foreach ($dirs as $dir) {
@@ -977,7 +1137,7 @@ class CmsFuncs {
     // }}}
     // {{{ getFilesForPath()
     function getFilesForPath($path) {
-        $files = glob("projects/" . $this->projectName . "/lib" . $path . "*", \GLOB_MARK);
+        $files = glob($this->libPath . $path . "*", \GLOB_MARK);
         $dirXML = "";
 
         $mediainfo = new \Depage\Media\MediaInfo(array(
@@ -1028,6 +1188,8 @@ class CmsFuncs {
             $this->callbacks[] = $this->getCallbackForPages($ids);
         } elseif ($type == 'page_data') {
             $this->callbacks[] = $this->getCallbackForPagedata($ids);
+        } elseif ($type == 'files') {
+            $this->callbacks[] = $this->getCallbackForFiles($ids);
         }
 
         $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
@@ -1101,6 +1263,15 @@ class CmsFuncs {
         $data['id_num'] = count($ids);
 
         return new Func("get_update_tree_page_data", $data);
+    }
+    // }}}
+    // {{{ getCallbackForFiles()
+    function getCallbackForFiles($ids = array()) {
+        $data = array();
+
+        $data['data'] = $this->getTreeFiles();
+
+        return new Func("update_tree_files", $data);
     }
     // }}}
 }
