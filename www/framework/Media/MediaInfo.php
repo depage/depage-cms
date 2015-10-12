@@ -75,12 +75,12 @@ class MediaInfo
         $this->info = $this->getBasicInfo();
 
         // add mimetype info
-        $info['mime'] = "application/octet-stream";
+        $this->info['mime'] = "application/octet-stream";
 
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $finfo = new \finfo(\FILEINFO_MIME_TYPE);
         $mime = $finfo->file($this->filename);
         if (is_string($mime) && !empty($mime)) {
-            $info['mime'] = $mime;
+            $this->info['mime'] = $mime;
         }
 
         if ($this->info['exists']) {
@@ -191,7 +191,7 @@ class MediaInfo
                 $streams[] = $tmp;
             } elseif ($line == "[/FORMAT]") {
                 $format = $tmp;
-            } else {
+            } else if (strpos($line, "=") !== false){
                 list($key, $value) = explode("=", $line, 2);
                 $tmp[$key] = $value;
             }
@@ -214,7 +214,7 @@ class MediaInfo
         if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1") {
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
         } else {
-            list($aspectW, $aspectH) = implode(":", $info['streams']['video'][0]['display_aspect_ratio']);
+            list($aspectW, $aspectH) = explode(":", $info['streams']['video'][0]['display_aspect_ratio']);
             $info['displayAspectRatio'] = $aspectW / $aspectH;
         }
         if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
