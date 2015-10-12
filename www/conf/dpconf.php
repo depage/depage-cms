@@ -45,6 +45,12 @@ $conf = array(
                 'host' => "localhost:6379",
             ),
         ),
+        'video' => array (
+            'ffmpeg' => '/opt/local/bin/ffmpeg',
+            'ffprobe' => '/opt/local/bin/ffprobe',
+            'qtfaststart' => '/opt/local/bin/qt-faststart',
+            'aaccodec' => 'aac',
+        ),
     ),
     // }}}
     // {{{ localhost/depage_1.5/live/
