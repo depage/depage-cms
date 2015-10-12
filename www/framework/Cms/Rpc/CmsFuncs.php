@@ -1270,10 +1270,13 @@ class CmsFuncs {
     function getCallbackForFiles($ids = array()) {
         $data = array();
 
-        $cache = \Depage\Cache\Cache::factory("graphics");
+        $cacheGraphice = \Depage\Cache\Cache::factory("graphics");
+        $cacheMediainfo = \Depage\Cache\Cache::factory("mediainfo");
+
         foreach ($ids as $path) {
             $path = "projects/{$this->projectName}{$path}";
-            $cache->delete($path);
+            $cacheGraphice->delete($path);
+            $cacheMediainfo->delete($path);
         }
 
         $data['data'] = $this->getTreeFiles();

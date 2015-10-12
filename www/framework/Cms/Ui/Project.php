@@ -358,9 +358,7 @@ class Project extends Base
                 ->save();
             }
 
-            //$form->clearSession();
-            $form->getElement("file")->clearValue();
-            // @todo fix clearValue to delete session data
+            $form->clearValueOf("file");
         }
 
         return $form;
