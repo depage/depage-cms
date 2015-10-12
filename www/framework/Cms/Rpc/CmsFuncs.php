@@ -283,7 +283,7 @@ class CmsFuncs {
         }
         $changedIds[] = $targetId;
 
-        return $chanchedIds;
+        return $changedIds;
     }
     // }}}
     // {{{ add_node_files()
@@ -355,6 +355,7 @@ class CmsFuncs {
         rename($this->libPath . implode('/', $oldpath_array), $this->libPath . implode('/', $newpath_array));
 
         $changedIds[] = '/lib' . implode('/', $newpath_array) . '/';
+        $changedIds[] = '/lib' . implode('/', $oldpath_array) . '/';
 
         return $changedIds;
     }
@@ -395,7 +396,7 @@ class CmsFuncs {
         $temppath = $temppath[count($temppath) - 2];
         rename($this->libPath . $nodeId, $this->libPath . $targetId . $temppath . '/');
 
-        $changedIds = array($nodeId, $targetId);
+        return array('/lib' . $targetId . $temppath . '/lib/', $nodeId);
     }
     // }}}
     // {{{ move_node_before()
@@ -498,7 +499,7 @@ class CmsFuncs {
             $changedIds = $this->delete_node_xml($args);
         }
 
-        $this->addCallback($treeType, $changedIds);
+        $this->addCallback($treeType, $changedIds, $changedIds[0]);
     }
     // }}}
     // {{{ delete_node_xml()
@@ -537,9 +538,9 @@ class CmsFuncs {
 
         rename($srcPath, $targetPath);
 
-        $changedIds = array($pathinfo['dirname'], $nodeId);
+        $pathinfo = pathinfo($nodeId);
 
-        return $changedIds;
+        return array('/lib' . $pathinfo['dirname'] . '/');
     }
     // }}}
     // {{{ renameExistingTrashTarget()
@@ -1193,9 +1194,9 @@ class CmsFuncs {
         }
 
         $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
-        foreach ($this->callbacks as $callback) {
-            foreach ($activeUsers as $user) {
-                if ($user->sid != $this->user->sid) {
+        foreach ($activeUsers as $user) {
+            if ($user->sid != $this->user->sid) {
+                foreach ($this->callbacks as $callback) {
                     $newN = new Notification($this->pdo);
                     $newN->setData([
                         'sid' => $user->sid,
@@ -1268,6 +1269,12 @@ class CmsFuncs {
     // {{{ getCallbackForFiles()
     function getCallbackForFiles($ids = array()) {
         $data = array();
+
+        $cache = \Depage\Cache\Cache::factory("graphics");
+        foreach ($ids as $path) {
+            $path = "projects/{$this->projectName}{$path}";
+            $cache->delete($path);
+        }
 
         $data['data'] = $this->getTreeFiles();
 

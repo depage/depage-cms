@@ -13,6 +13,7 @@
 namespace Depage\Cms\Ui;
 
 use \Depage\Html\Html;
+use \Depage\Notifications\Notification;
 
 class Project extends Base
 {
@@ -344,8 +345,22 @@ class Project extends Base
                 }
             }
 
+            $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
+            $callback = new \Depage\Cms\Rpc\Func("get_update_prop_files", array('path' => $libPath . '/'));
+            foreach ($activeUsers as $user) {
+                $newN = new Notification($this->pdo);
+                $newN->setData([
+                    'sid' => $user->sid,
+                    'tag' => "flashRpcUpdate." . $this->projectName,
+                    'title' => $this->projectName,
+                    'message' => $callback,
+                ])
+                ->save();
+            }
+
             //$form->clearSession();
             $form->getElement("file")->clearValue();
+            // @todo fix clearValue to delete session data
         }
 
         return $form;
