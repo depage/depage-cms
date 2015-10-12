@@ -1213,6 +1213,9 @@ class CmsFuncs {
         if (!is_null($newActiveId)) {
             $this->callbacks[] = new Func("set_activeId_{$type}", array('id' => $newActiveId));
         }
+        if ($type == 'pages' || $type == 'page_data') {
+            $this->callbacks[] = new Func("preview_update");
+        }
     }
     // }}}
     // {{{ getCallbacks()
