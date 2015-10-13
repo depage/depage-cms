@@ -537,7 +537,7 @@ class Project extends \Depage\Entity\Entity
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
                 $task->addSubtask("transforming page $target", "
-                    \$cache->setFile(%s, \$transformer->transform(%s, %s));", array(
+                    \$cache->setFile(%s, \$transformer->transformUrl(%s, %s));", array(
                         "page_$pageId-$lang",
                         $url,
                         $lang,
@@ -602,6 +602,33 @@ class Project extends \Depage\Entity\Entity
         return $task;
     }
     // }}}
+
+    // {{{ generateSitemap()
+    /**
+     * @brief generateSitemap
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateSitemap()
+    {
+        $this->xmldb = $this->getXmlDb();
+
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "sitemap");
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $parameters = array(
+            "currentContentType" => "text/xml",
+            "currentEncoding" => "UTF-8",
+            "depageVersion" => \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => true,
+            "baseUrl" => "https://depage.net/",
+        );
+
+        $sitemap = $transformer->transform($xml, $parameters);
+        return $sitemap;
+    }
+    // }}}
     // {{{ generateCss()
     /**
      * @brief generateCss
@@ -623,7 +650,7 @@ class Project extends \Depage\Entity\Entity
             "currentContentType" => "text/css",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
-            "depageIsLive" => $this->isLive,
+            "depageIsLive" => true,
         );
         $cssPath = $this->getProjectPath() . "lib/global/css/";
 
