@@ -13,7 +13,7 @@ class Live extends Preview
         parent::__construct($pdo, $projectName, $template, $cacheOptions);
 
         // get cache instance for transforms
-        $this->transformCache = \depage\cache\cache::factory("transform", $cacheOptions);
+        $this->transformCache = \Depage\Cache\Cache::factory("transform", $cacheOptions);
     }
     // }}}
 
@@ -34,6 +34,8 @@ class Live extends Preview
         } else {
             $html = parent::transformPage($pageId, $pagedataId);
             $this->transformCache->setFile($cachePath, $html);
+
+            var_dump($this->getUsedDocuments());
         }
 
         return $html;

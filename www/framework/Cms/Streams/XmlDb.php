@@ -3,7 +3,7 @@
 namespace Depage\Cms\Streams;
 
 class XmlDb extends Base {
-    protected static $parameters;
+    protected static $parameters = array();
     protected $xmldb = null;
 
     // {{{ stream_open()
@@ -14,8 +14,12 @@ class XmlDb extends Base {
         $url = parse_url($path);
         $docName = $url['host'];
 
-        if (!empty($docName) && $this->xmldb->docExists($docName)) {
+        if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {
             $this->data = $this->xmldb->getDocXml($docName);
+
+            if (isset($this->transformer)) {
+                $this->transformer->addToUsedDocuments($docId);
+            }
 
             // proj:pages_struct
             if ($this->data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {

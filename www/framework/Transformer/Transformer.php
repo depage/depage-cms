@@ -14,6 +14,7 @@ abstract class Transformer
     protected $xsltProc;
     protected $lang = "";
     protected $isLive = false;
+    protected $usedDocuments = array();
     public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
@@ -37,7 +38,7 @@ abstract class Transformer
         $this->xmlGetter = $xmlGetter;
         $this->projectName = $projectName;
         $this->template = $template;
-        $this->log = new \Depage\Log\Log();
+        $this->cacheOptions = $cacheOptions;
 
         $this->init();
     }
@@ -45,6 +46,9 @@ abstract class Transformer
     // {{{ init()
     public function init()
     {
+        // add log object
+        $this->log = new \Depage\Log\Log();
+
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
@@ -55,7 +59,7 @@ abstract class Transformer
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
         // get cache instance for templates
-        $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $cacheOptions);
+        $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $this->cacheOptions);
 
         // get cache instance for xmldb
         $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
@@ -207,6 +211,7 @@ abstract class Transformer
             throw new \Exception("page does not exist");
         }
 
+        $this->clearUsedDocuments();
         $content = $this->transform($pageXml, array(
             "currentLang" => $this->lang,
             "currentPageId" => $pageId,
@@ -239,7 +244,7 @@ abstract class Transformer
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
-                var_dump($error);
+                //var_dump($error);
             }
 
             $error = libxml_get_last_error();
@@ -251,6 +256,7 @@ abstract class Transformer
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
+                //var_dump($error);
             }
         }
 
@@ -300,6 +306,45 @@ abstract class Transformer
         } else {
             return $html;
         }
+    }
+    // }}}
+
+    // {{{ clearUsedDocuments()
+    /**
+     * @brief clearUsedDocuments
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function clearUsedDocuments()
+    {
+        $this->usedDocuments = array();
+
+    }
+    // }}}
+    // {{{ addToUsedDocuments()
+    /**
+     * @brief addToUsedDocuments
+     *
+     * @param mixed $docId
+     * @return void
+     **/
+    public function addToUsedDocuments($docId)
+    {
+        $this->usedDocuments[] = $docId;
+
+    }
+    // }}}
+    // {{{ getUsedDocuments()
+    /**
+     * @brief getUsedDocuments
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUsedDocuments()
+    {
+        return array_unique($this->usedDocuments);
     }
     // }}}
 
