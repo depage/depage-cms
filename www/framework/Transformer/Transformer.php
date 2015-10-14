@@ -206,8 +206,8 @@ abstract class Transformer
     // {{{ transformPage()
     protected function transformPage($pageId, $pagedataId)
     {
-        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId)) {
-            $content = $this->transformCache->get($pagedataId);
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
+            $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
             $pageXml = $this->xmlGetter->getDocXml($pagedataId);
             if ($pageXml === false) {
@@ -228,9 +228,8 @@ abstract class Transformer
             $cleaner = new \Depage\Html\Cleaner();
             $content = $cleaner->clean($content);
 
-
             if (!is_null($this->transformCache)) {
-                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content);
+                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $this->lang);
             }
         }
 

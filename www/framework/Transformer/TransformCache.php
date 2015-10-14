@@ -16,7 +16,8 @@ class TransformCache
         $this->pdo = $pdo;
         $this->projectName = $projectName;
         $this->templateName = $templateName;
-        $this->cache = \Depage\Cache\Cache::factory("transform");
+        $this->cache = \Depage\Cache\Cache::factory("transform/{$this->projectName}/{$this->templateName}");
+        $this->tableName = $this->pdo->prefix . "_proj_" . $this->projectName . "_transform_used_docs";
     }
     // }}}
     // {{{ exists()
@@ -26,9 +27,11 @@ class TransformCache
      * @param mixed $docId
      * @return void
      **/
-    public function exist($docId)
+    public function exist($docId, $subId = "default")
     {
-        //$cachePath = $this->projectName . "/" . $this->template . "/" . $this->lang . $this->currentPath;
+        $cachePath = $this->getCachePathFor($docId, $subId);
+
+        return $this->cache->exist($cachePath);
     }
     // }}}
     // {{{ get()
@@ -38,9 +41,11 @@ class TransformCache
      * @param mixed $docId
      * @return void
      **/
-    public function get($docId)
+    public function get($docId, $subId = "default")
     {
-        return false;
+        $cachePath = $this->getCachePathFor($docId, $subId);
+
+        return $this->cache->getFile($cachePath);
     }
     // }}}
     // {{{ set()
@@ -50,21 +55,59 @@ class TransformCache
      * @param mixed
      * @return void
      **/
-    public function set($docId, $usedDocuments, $content)
+    public function set($docId, $usedDocuments, $content, $subId = "default")
     {
-        return false;
+        $cachePath = $this->getCachePathFor($docId, $subId);
+
+        $this->cache->setFile($cachePath, $content);
+
+        $query = $this->pdo->prepare("INSERT INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
+
+        foreach ($usedDocuments as $id) {
+            $query->execute(array(
+                $docId,
+                $id,
+                $this->templateName,
+            ));
+        }
     }
     // }}}
     // {{{ delete()
     /**
      * @brief delete
      *
+     * @param mixed $docId
+     * @return void
+     **/
+    protected function delete($docId, $subId = "*")
+    {
+        $cachePath = $this->getCachePathFor($docId, $subId);
+
+        return $this->cache->delete($cachePath, $content);
+    }
+    // }}}
+    // {{{ clearFor()
+    /**
+     * @brief clearFor
+     *
+     * @param mixed $docId
+     * @return void
+     **/
+    public function clearFor($docId, $subId = "*")
+    {
+
+    }
+    // }}}
+    // {{{ getCachePathFor()
+    /**
+     * @brief getCachePathFor
+     *
      * @param mixed $
      * @return void
      **/
-    protected function delete($docId)
+    protected function getCachePathFor($docId, $subId = "default")
     {
-        return false;
+        return $docId . "/" . $subId;
     }
     // }}}
 }
