@@ -273,7 +273,8 @@ class Project extends \Depage\Entity\Entity
         // schema for comments
         $files = array_merge(
             glob(__DIR__ . "/../Comments/Sql/*.sql"),
-            glob(__DIR__ . "/../Publisher/Sql/*.sql")
+            glob(__DIR__ . "/../Publisher/Sql/*.sql"),
+            glob(__DIR__ . "/../Transformer/Sql/*.sql")
         );
         sort($files);
         foreach ($files as $file) {

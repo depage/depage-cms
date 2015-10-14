@@ -21,24 +21,24 @@ abstract class Transformer
     public $pagedataIdByPageId = array();
 
     // {{{ factory()
-    static public function factory($previewType, $xmlGetter, $projectName, $template, $cacheOptions = array())
+    static public function factory($previewType, $xmlGetter, $projectName, $template, $transformCache = null)
     {
         if ($previewType == "live") {
-            return new Live($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Live($xmlGetter, $projectName, $template, $transformCache);
         } elseif ($previewType == "pre" || $previewType == "preview") {
-            return new Preview($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Preview($xmlGetter, $projectName, $template, $transformCache);
         } else {
-            return new Dev($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Dev($xmlGetter, $projectName, $template, $transformCache);
         }
     }
     // }}}
     // {{{ constructor()
-    public function __construct($xmlGetter, $projectName, $template, $cacheOptions = array())
+    public function __construct($xmlGetter, $projectName, $template, $transformCache = null)
     {
         $this->xmlGetter = $xmlGetter;
         $this->projectName = $projectName;
         $this->template = $template;
-        $this->cacheOptions = $cacheOptions;
+        $this->transformCache = $transformCache;
 
         $this->init();
     }
@@ -59,7 +59,7 @@ abstract class Transformer
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
         // get cache instance for templates
-        $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $this->cacheOptions);
+        $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
 
         // get cache instance for xmldb
         $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
@@ -206,24 +206,33 @@ abstract class Transformer
     // {{{ transformPage()
     protected function transformPage($pageId, $pagedataId)
     {
-        $pageXml = $this->xmlGetter->getDocXml($pagedataId);
-        if ($pageXml === false) {
-            throw new \Exception("page does not exist");
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId)) {
+            $content = $this->transformCache->get($pagedataId);
+        } else {
+            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+            if ($pageXml === false) {
+                throw new \Exception("page does not exist");
+            }
+
+            $this->clearUsedDocuments();
+            $content = $this->transform($pageXml, array(
+                "currentLang" => $this->lang,
+                "currentPageId" => $pageId,
+                "currentContentType" => "text/html",
+                "currentEncoding" => "UTF-8",
+                "depageVersion" => \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive,
+                "baseUrl" => $this->baseUrl,
+            ));
+
+            $cleaner = new \Depage\Html\Cleaner();
+            $content = $cleaner->clean($content);
+
+
+            if (!is_null($this->transformCache)) {
+                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content);
+            }
         }
-
-        $this->clearUsedDocuments();
-        $content = $this->transform($pageXml, array(
-            "currentLang" => $this->lang,
-            "currentPageId" => $pageId,
-            "currentContentType" => "text/html",
-            "currentEncoding" => "UTF-8",
-            "depageVersion" => \Depage\Depage\Runner::getVersion(),
-            "depageIsLive" => $this->isLive,
-            "baseUrl" => $this->baseUrl,
-        ));
-
-        $cleaner = new \Depage\Html\Cleaner();
-        $content = $cleaner->clean($content);
 
         return $content;
     }
