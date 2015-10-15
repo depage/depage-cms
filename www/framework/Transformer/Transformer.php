@@ -679,6 +679,7 @@ abstract class Transformer
             'template',
             'xsltPath',
             'xmlPath',
+            'transformCache',
         );
     }
     // }}}

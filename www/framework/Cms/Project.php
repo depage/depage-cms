@@ -309,6 +309,17 @@ class Project extends \Depage\Entity\Entity
         return $this->xmldb;
     }
     // }}}
+    // {{{ getPdo()
+    /**
+     * @brief getPdo
+     *
+     * @return xmldb
+     **/
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+    // }}}
 
     // {{{ getSettingsDoc()
     /**
@@ -511,7 +522,8 @@ class Project extends \Depage\Entity\Entity
 
         // get transformer
         // @todo change preview type to live, when transformer is fixed
-        $transformer = \Depage\Transformer\Transformer::factory("preview", $this->xmldb, $this->name, $settings['template_set']);
+        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $settings['template_set'] . "-live-$publishId");
+        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $settings['template_set'], $transformCache);
         $cache = \Depage\Cache\Cache::factory("publish/$publishId");
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();

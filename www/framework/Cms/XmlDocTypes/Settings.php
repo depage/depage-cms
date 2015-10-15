@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Settings extends \Depage\XmlDb\XmlDocTypes\Base {
+class Settings extends Base {
     // @todo clean cache after updating languages
 }
 

@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-abstract class UniqueNames extends \Depage\XmlDb\XmlDocTypes\Base {
+abstract class UniqueNames extends Base {
     // {{{ testDocument
     public function testDocument($node) {
         $changed = false;

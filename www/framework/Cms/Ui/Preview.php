@@ -148,7 +148,11 @@ class Preview extends \Depage\Depage\Ui\Base
      */
     protected function preview($urlPath, $lang)
     {
-        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
+        $transformCache = null;
+        if ($this->previewType !== "dev") {
+            $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
+        }
+
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $this->xmldb, $this->projectName, $this->template, $transformCache);
         $html = $transformer->display($urlPath, $lang);
 

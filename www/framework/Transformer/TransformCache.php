@@ -79,7 +79,7 @@ class TransformCache
      * @param mixed $docId
      * @return void
      **/
-    protected function delete($docId, $subId = "*")
+    protected function delete($docId, $subId = "")
     {
         $cachePath = $this->getCachePathFor($docId, $subId);
 
@@ -93,9 +93,23 @@ class TransformCache
      * @param mixed $docId
      * @return void
      **/
-    public function clearFor($docId, $subId = "*")
+    public function clearFor($docId, $subId = "")
     {
+        $query = $this->pdo->prepare("SELECT DISTINCT transformId FROM {$this->tableName} WHERE docId = ? AND template = ?;");
+        $query->execute(array(
+            $docId,
+            $this->templateName,
+        ));
+        $deleteQuery = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE transformId = ? AND template = ?;");
 
+        while ($result = $query->fetchObject()) {
+            $this->delete($result->transformId, $subId);
+
+            $success = $deleteQuery->execute(array(
+                $result->transformId,
+                $this->templateName,
+            ));
+        }
     }
     // }}}
     // {{{ getCachePathFor()
