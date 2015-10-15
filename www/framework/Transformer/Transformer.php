@@ -11,7 +11,7 @@ abstract class Transformer
     protected $xmlGetter;
     protected $xsltPath;
     protected $xmlPath;
-    protected $xsltProc;
+    protected $xsltProc = null;
     protected $lang = "";
     protected $isLive = false;
     protected $usedDocuments = array();
@@ -39,12 +39,10 @@ abstract class Transformer
         $this->projectName = $projectName;
         $this->template = $template;
         $this->transformCache = $transformCache;
-
-        $this->init();
     }
     // }}}
-    // {{{ init()
-    public function init()
+    // {{{ lateInitialize()
+    public function lateInitialize()
     {
         // add log object
         $this->log = new \Depage\Log\Log();
@@ -60,12 +58,6 @@ abstract class Transformer
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
-
-        // get cache instance for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
-            'disposition' => "redis",
-            'host' => "127.0.0.1:6379",
-        ));
 
         $this->initXsltProc();
     }
@@ -245,6 +237,10 @@ abstract class Transformer
      **/
     public function transform($xml, $parameters)
     {
+        if (is_null($this->xsltProc)) {
+            $this->lateInitialize();
+        }
+
         $this->xsltProc->setParameter("", $parameters);
 
         if (!$content = $this->xsltProc->transformToXml($xml)) {
