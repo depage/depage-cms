@@ -8,7 +8,8 @@
     xmlns:proj="http://cms.depagecms.net/ns/project"
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:func="http://exslt.org/functions"
-    extension-element-prefixes="xsl dp func php ">
+    xmlns:exslt="http://exslt.org/common"
+    extension-element-prefixes="xsl dp func php exslt ">
 
     <!-- {{{ dp:choose() -->
     <!--
@@ -117,7 +118,9 @@
     <func:function name="dp:atomizeText">
         <xsl:param name="text" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::atomizeText', string($text))" />
+        <xsl:variable name="spans" select="php:function('Depage\Cms\Xslt\FuncDelegate::atomizeText', string($text))" />
+
+        <func:result select="$spans/*" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:phpEscape() -->

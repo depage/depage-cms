@@ -622,9 +622,12 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallAtomizeText($text) {
-        $value = "<span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span>";
+        $xml = "<spans><span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span></spans>";
 
-        return $value;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+
+        return $doc;
     }
     // }}}
     // {{{ xsltCallPhpEscape()
