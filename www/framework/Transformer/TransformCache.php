@@ -112,6 +112,21 @@ class TransformCache
         }
     }
     // }}}
+    // {{{ clearAll()
+    /**
+     * @brief clearAll
+     *
+     * @param mixed $docId
+     * @return void
+     **/
+    public function clearAll()
+    {
+        $deleteQuery = $this->pdo->prepare("TRUNCATE {$this->tableName};");
+        $success = $deleteQuery->execute();
+
+        return $this->cache->clear();
+    }
+    // }}}
     // {{{ getCachePathFor()
     /**
      * @brief getCachePathFor
