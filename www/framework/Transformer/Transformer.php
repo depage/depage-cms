@@ -201,6 +201,10 @@ abstract class Transformer
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
+            if (is_null($this->xsltProc)) {
+                $this->lateInitialize();
+            }
+
             $pageXml = $this->xmlGetter->getDocXml($pagedataId);
             if ($pageXml === false) {
                 throw new \Exception("page does not exist");
