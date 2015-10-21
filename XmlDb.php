@@ -289,13 +289,16 @@ class XmlDb implements XmlGetter
                 }
             } elseif ($divider == '//' && $level == 0) {
                 if ($condition == '') {
-                    // fetch only by name recursive:  "//ns:name ..."
+                    // fetch only by name recursively: "//ns:name ..."
                     $sql = "
                         SELECT nodes.id
                         FROM {$this->table_xml} AS nodes
-                        WHERE nodes.name = :name
+                        WHERE nodes.name LIKE :name
                         $docClause
                     ";
+
+                    $ns = ($ns == '*' || $ns == '') ? '%' : $ns;
+                    $name = ($name == '*') ? '%' : $name;
                     $params['name'] = "$ns:$name";
 
                     $query = $this->pdo->prepare($sql);
