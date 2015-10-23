@@ -285,12 +285,14 @@ class XmlDb implements XmlGetter
                     $results = $this->idsQuery($docId, $ns, $name);
                 } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->formatConditions($condition, $strings)))) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
-                    $condClause = '';
+                    $condClauses = '';
+                    $conds = array();
                     foreach ($tempCondition as $cond) {
-                        $condClause .= " AND nodes.value REGEXP '(^| )$cond( |$)'";
+                        $condClauses .= ' AND nodes.value REGEXP ? ';
+                        $conds[] = "(^| )$cond( |$)";
                     }
 
-                    $results = $this->idsQuery($docId, $ns, $name, $condClause);
+                    $results = $this->idsQuery($docId, $ns, $name, $condClauses, $conds);
                 } else {
                     // not yet implemented
                 }
@@ -308,25 +310,26 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ idsQuery
-    protected function idsQuery($docId, $ns, $name, $sqlPostfix = null)
+    protected function idsQuery($docId, $ns, $name, $sqlPostfix = null, $paramsPostfix = array())
     {
         if (is_null($docId)) {
             $docClause = '';
             $params = array();
         } else {
-            $docClause = ' AND WHERE nodes.id_doc = :docId ';
-            $params = array('docId' => $docId);
+            $docClause = ' AND WHERE nodes.id_doc = ? ';
+            $params = array($docId);
         }
 
         $sql = "
             SELECT nodes.id
             FROM {$this->table_xml} AS nodes
-            WHERE nodes.name LIKE :name
+            WHERE nodes.name LIKE ?
             $docClause
             $sqlPostfix
         ";
 
-        $params['name'] = $this->translateName($ns, $name);
+        $params[] = $this->translateName($ns, $name);
+        $params = array_merge($params, $paramsPostfix);
 
         $query = $this->pdo->prepare($sql);
         $query->execute($params);
