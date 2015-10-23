@@ -257,14 +257,6 @@ class XmlDb implements XmlGetter
      */
     public function getNodeIdsByXpath($xpath, $docId = null)
     {
-        if (is_null($docId)) {
-            $docClause = '';
-            $params = array();
-        } else {
-            $docClause = ' AND WHERE nodes.id_doc = :docId ';
-            $params = array('docId' => $docId);
-        }
-
         $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
         $pCondition = '(?:\[(.*?)\])?';
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
@@ -282,7 +274,7 @@ class XmlDb implements XmlGetter
                 if ($condition == '') {
                 } else if (preg_match('/^([0-9]+)$/', $condition)) {
                     // fetch by name and position: "... /ns:name[n] ..."
-                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->removeLiteralStrings($condition, $strings)))) {
+                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->formatConditions($condition, $strings)))) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
                 } else {
                     // not yet implemented
@@ -290,38 +282,15 @@ class XmlDb implements XmlGetter
             } elseif ($divider == '//' && $level == 0) {
                 if ($condition == '') {
                     // fetch only by name recursively: "//ns:name ..."
-                    $sql = "
-                        SELECT nodes.id
-                        FROM {$this->table_xml} AS nodes
-                        WHERE nodes.name LIKE :name
-                        $docClause
-                    ";
-
-                    $params['name'] = $this->translateName($ns, $name);
-
-                    $query = $this->pdo->prepare($sql);
-                    $query->execute($params);
-                    $results = $query->fetchAll();
-                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->removeLiteralStrings($condition, $strings)))) {
+                    $results = $this->idsQuery($docId, $ns, $name);
+                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->formatConditions($condition, $strings)))) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
                     $condClause = '';
                     foreach ($tempCondition as $cond) {
                         $condClause .= " AND nodes.value REGEXP '(^| )$cond( |$)'";
                     }
 
-                    $sql = "
-                        SELECT nodes.id
-                        FROM {$this->table_xml} AS nodes
-                        WHERE nodes.name LIKE :name
-                        $docClause
-                        $condClause
-                    ";
-
-                    $params['name'] = $this->translateName($ns, $name);
-
-                    $query = $this->pdo->prepare($sql);
-                    $query->execute($params);
-                    $results = $query->fetchAll();
+                    $results = $this->idsQuery($docId, $ns, $name, $condClause);
                 } else {
                     // not yet implemented
                 }
@@ -336,6 +305,34 @@ class XmlDb implements XmlGetter
         }
 
         return $fetchedIds;
+    }
+    // }}}
+    // {{{ idsQuery
+    protected function idsQuery($docId, $ns, $name, $sqlPostfix = null)
+    {
+        if (is_null($docId)) {
+            $docClause = '';
+            $params = array();
+        } else {
+            $docClause = ' AND WHERE nodes.id_doc = :docId ';
+            $params = array('docId' => $docId);
+        }
+
+        $sql = "
+            SELECT nodes.id
+            FROM {$this->table_xml} AS nodes
+            WHERE nodes.name LIKE :name
+            $docClause
+            $sqlPostfix
+        ";
+
+        $params['name'] = $this->translateName($ns, $name);
+
+        $query = $this->pdo->prepare($sql);
+        $query->execute($params);
+        $results = $query->fetchAll();
+
+        return $results;
     }
     // }}}
     // {{{ translateName
@@ -354,18 +351,8 @@ class XmlDb implements XmlGetter
         return $translation;
     }
     // }}}
-    // {{{ removeLiteralStrings
-    /**
-     * replaces strings surrounded by " or ' with pointer to array
-     *
-     * @protected
-     *
-     * @param    $text (string) text to process
-     * @param    $strings (array) array of removed strings
-     *
-     * @return    $text (string)
-     */
-    protected function removeLiteralStrings($text, &$strings)
+    // {{{ formatConditions
+    protected function formatConditions($text)
     {
         // @todo ugly hack
         $n = 0;
