@@ -288,8 +288,13 @@ class XmlDb implements XmlGetter
                     $condClauses = '';
                     $conds = array();
                     foreach ($tempCondition as $cond) {
-                        $condClauses .= ' AND nodes.value REGEXP ? ';
-                        $conds[] = "(^| )$cond( |$)";
+                        if (preg_match('/^id="([0-9]+)"$/', $cond, $matches)) {
+                            $condClauses .= ' AND nodes.id = ? ';
+                            $conds[] = $matches[1];
+                        } else {
+                            $condClauses .= ' AND nodes.value REGEXP ? ';
+                            $conds[] = "(^| )$cond( |$)";
+                        }
                     }
 
                     $results = $this->idsQuery($docId, $ns, $name, $condClauses, $conds);
