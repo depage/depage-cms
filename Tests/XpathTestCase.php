@@ -73,64 +73,64 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testNameWithChild
     public function testNameWithChild()
     {
-        $this->assertCorrectXpathIds(array('2'), '/dpg:pages/pg:page');
+        $this->assertCorrectXpathIds(array(2), '/dpg:pages/pg:page');
     }
     // }}}
     // {{{ testNameWithChildAndPosition
     public function testNameWithChildAndPosition()
     {
-        $this->assertCorrectXpathIds(array('8'), '/dpg:pages/pg:page/pg:page[3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[3]');
     }
     // }}}
     // {{{ testNameAndAttribute
     public function testNameAndAttribute()
     {
-        $this->assertCorrectXpathIds(array('6', '7', '8'), '/dpg:pages/pg:page/pg:page[@name]');
+        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@name]');
     }
     // }}}
     // {{{ testNameAndAttributeWithValue
     public function testNameAndAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('6'), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
     }
     // }}}
 
     // {{{ testWildcardAndAttributeWithValue
     public function testWildcardAndAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(6, 9), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testWildcardNsAndAttributeWithValue
     public function testWildcardNsAndAttributeWithValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
     }
     // }}}
     // {{{ testWildcardNameAndAttributeWithValue
     public function testWildcardNameAndAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('6', '9'), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(6, 9), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
     }
     // }}}
 
     // {{{ testAllName
     public function testAllName()
     {
-        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page');
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '//pg:page');
     }
     // }}}
     // {{{ testAllNameWithAttribute
     public function testAllNameWithAttribute()
     {
-        $this->assertCorrectXpathIds(array('2', '6', '7', '8'), '//pg:page[@name]');
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '//pg:page[@name]');
     }
     // }}}
     // {{{ testAllNameWithAttributeWithValue
     public function testAllNameWithAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('8'), '//pg:page[@name = \'bla blub\']');
+        $this->assertCorrectXpathIds(array(8), '//pg:page[@name = \'bla blub\']');
     }
     // }}}
     // {{{ testAllNameWithAttributeNoResult
@@ -148,7 +148,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllNameAndPosition
     public function testAllNameAndPosition()
     {
-        $this->assertCorrectXpathIds(array('8'), '//pg:page[3]');
+        $this->assertCorrectXpathIds(array(8), '//pg:page[3]');
     }
     // }}}
 
@@ -156,32 +156,32 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllWildCardNs()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array('2', '6', '7', '8'), '//*:page');
+        $this->assertCorrectXpathIdsNoDomXpath(array(2, 6, 7, 8), '//*:page');
     }
     // }}}
     // {{{ testAllWildCardName
     public function testAllWildCardName()
     {
-        $this->assertCorrectXpathIds(array('2', '6', '7', '8', '9'), '//pg:*');
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8, 9), '//pg:*');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeWithValue
     public function testAllWildCardAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('6'), '//*[@id = \'6\']');
+        $this->assertCorrectXpathIds(array(6), '//*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNsAndIdAttributeWithValue
     public function testAllWildCardNsAndIdAttributeWithValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array('6'), '//*:page[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*:page[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNameAndIdAttributeWithValue
     public function testAllWildCardNameAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array('6'), '//pg:*[@id = \'6\']');
+        $this->assertCorrectXpathIds(array(6), '//pg:*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeWithValueNoResult
