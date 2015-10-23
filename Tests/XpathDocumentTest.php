@@ -27,4 +27,11 @@ class XpathDocumentTest extends XpathTestCase
         return $ids;
     }
     // }}}
+
+    // {{{ testAllWildCard
+    public function testAllWildCard()
+    {
+        $this->assertCorrectXpathIds(array('1', '2', '6', '7', '8', '9'), '//*');
+    }
+    // }}}
 }

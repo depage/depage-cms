@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-class XpathXmlDbTest extends XpathDocumentTest
+class XpathXmlDbTest extends XpathTestCase
 {
     // {{{ getTestObject
     protected function getTestObject()
@@ -20,6 +20,13 @@ class XpathXmlDbTest extends XpathDocumentTest
         }
 
         return $ids;
+    }
+    // }}}
+
+    // {{{ testAllWildCard
+    public function testAllWildCard()
+    {
+        $this->assertCorrectXpathIds(array('1', '2', '3', '4', '5', '6', '7', '8', '9'), '//*');
     }
     // }}}
 }
