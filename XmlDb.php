@@ -282,7 +282,7 @@ class XmlDb implements XmlGetter
                 if ($condition == '') {
                 } else if (preg_match('/^([0-9]+)$/', $condition)) {
                     // fetch by name and position: "... /ns:name[n] ..."
-                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->removeLiteralStrings($condition, $strings)))) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
                 } else {
                     // not yet implemented
@@ -297,15 +297,31 @@ class XmlDb implements XmlGetter
                         $docClause
                     ";
 
-                    $ns = ($ns == '*' || $ns == '') ? '%' : $ns;
-                    $name = ($name == '*') ? '%' : $name;
-                    $params['name'] = "$ns:$name";
+                    $params['name'] = $this->translateName($ns, $name);
 
                     $query = $this->pdo->prepare($sql);
                     $query->execute($params);
                     $results = $query->fetchAll();
-                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
+                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->removeLiteralStrings($condition, $strings)))) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
+                    $condClause = '';
+                    foreach ($tempCondition as $cond) {
+                        $condClause .= " AND nodes.value REGEXP '(^| )$cond( |$)'";
+                    }
+
+                    $sql = "
+                        SELECT nodes.id
+                        FROM {$this->table_xml} AS nodes
+                        WHERE nodes.name LIKE :name
+                        $docClause
+                        $condClause
+                    ";
+
+                    $params['name'] = $this->translateName($ns, $name);
+
+                    $query = $this->pdo->prepare($sql);
+                    $query->execute($params);
+                    $results = $query->fetchAll();
                 } else {
                     // not yet implemented
                 }
@@ -322,6 +338,22 @@ class XmlDb implements XmlGetter
         return $fetchedIds;
     }
     // }}}
+    // {{{ translateName
+    protected function translateName($ns, $name)
+    {
+        if ($ns == '*') {
+            $translation = '%:';
+        } elseif ($ns == '') {
+            $translation = '';
+        } else {
+            $translation = "$ns:";
+        }
+
+        $translation .= ($name == '*') ? '%' : $name;
+
+        return $translation;
+    }
+    // }}}
     // {{{ removeLiteralStrings
     /**
      * replaces strings surrounded by " or ' with pointer to array
@@ -335,23 +367,26 @@ class XmlDb implements XmlGetter
      */
     protected function removeLiteralStrings($text, &$strings)
     {
+        // @todo ugly hack
         $n = 0;
-        $newText = '';
-        $strings = array();
+        $strings = array('');
 
         $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
         preg_match_all($p, $text, $parts);
 
         for ($i = 0; $i < count($parts[0]); $i++) {
             if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
-                $strings[$n] = $parts[2][$i] . $parts[3][$i];
-                $newText .= "\$$n";
+                $strings[$n] .= '"' . $parts[2][$i] . $parts[3][$i] . '"';
                 $n++;
+                $strings[$n] = '';
             } else {
-                $newText .= $parts[1][$i];
+                $strings[$n] .= str_replace('@', '', preg_replace('/\s+=\s+/', '=', $parts[1][$i]));
             }
         }
-        return $newText;
+
+        unset($strings[count($strings) - 1]);
+
+        return $strings;
     }
     // }}}
 
