@@ -51,17 +51,21 @@ class XpathDocumentTest extends DatabaseTestCase
     protected function assertCorrectXpathIds(array $expectedIds, $xpath)
     {
         $object = $this->getTestObject();
+        $domXpathIds = $this->getNodeIdsByDomXpath($object, $xpath);
+        sort($domXpathIds);
 
-        $actualIds = $object->getNodeIdsByXpath($xpath);
-
-        $this->assertEmpty(array_diff($expectedIds, $this->getNodeIdsByDomXpath($object, $xpath)), "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
-        $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
+        $this->assertEquals($expectedIds, $domXpathIds, "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
+        $this->assertCorrectXpathIdsNoDomXpath($expectedIds, $xpath);
     }
     // }}}
     // {{{ assertCorrectXpathIdsNoDomXpath
     protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
     {
-        $this->assertEquals($expectedIds, $this->getTestObject()->getNodeIdsByXpath($xpath), "Failed asserting that ID arrays match for XPath query $xpath");
+        $object = $this->getTestObject();
+        $actualIds = $object->getNodeIdsByXpath($xpath);
+        sort($actualIds);
+
+        $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
     }
     // }}}
 
