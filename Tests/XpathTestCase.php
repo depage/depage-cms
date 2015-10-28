@@ -28,9 +28,6 @@ abstract class XpathTestCase extends DatabaseTestCase
     {
         $ids = array();
 
-        // hack, match internal representation of node ids
-        $xpath = str_replace('@id', '@db:id', $xpath);
-
         $domXpath = new \DomXpath($doc->getXml());
         $list = $domXpath->query($xpath);
         foreach ($list as $item) {
@@ -168,7 +165,8 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllWildCardAndIdAttributeWithValue
     public function testAllWildCardAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array(6), '//*[@id = \'6\']');
+        // no domxpath, ids are subject to database domain
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNsAndIdAttributeWithValue
@@ -181,13 +179,15 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllWildCardNameAndIdAttributeWithValue
     public function testAllWildCardNameAndIdAttributeWithValue()
     {
-        $this->assertCorrectXpathIds(array(6), '//pg:*[@id = \'6\']');
+        // no domxpath, ids are subject to database domain
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//pg:*[@id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeWithValueNoResult
     public function testAllWildCardAndIdAttributeWithValueNoResult()
     {
-        $this->assertCorrectXpathIds(array(), '//*[@id = \'20\']');
+        // no domxpath, ids are subject to database domain
+        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@id = \'20\']');
     }
     // }}}
 }

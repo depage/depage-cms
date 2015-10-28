@@ -285,7 +285,6 @@ class XmlDb implements XmlGetter
                     $results = $this->idsQuery($docId, $ns, $name);
                 } else if ($parsedConditions = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
-
                     $condClauses = '';
                     $conds = array();
 
@@ -345,7 +344,6 @@ class XmlDb implements XmlGetter
             $docClause
             $sqlPostfix
         ";
-
 
         $params[] = $this->translateName($ns, $name);
         $params = array_merge($params, $paramsPostfix);
