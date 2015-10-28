@@ -296,12 +296,9 @@ class XmlDb implements XmlGetter
                                 $conds[] = $cond['value'];
                             } else {
                                 $condClauses .= ' nodes.value REGEXP ? ' . $cond['operator'];
-                                
-                                if ($cond['value']) {
-                                    $valueString = $cond['name'] . '="' . $cond['value'] . '"';
-                                } else {
-                                    $valueString = $cond['name'] . '=".*"';
-                                }
+
+                                $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
+                                $valueString = $cond['name'] . '="' . $value . '"';
 
                                 $conds[] = "(^| )$valueString( |$)";
                             }
