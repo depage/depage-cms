@@ -274,7 +274,7 @@ class XmlDb implements XmlGetter
                 if ($condition == '') {
                 } else if (preg_match('/^([0-9]+)$/', $condition)) {
                     // fetch by name and position: "... /ns:name[n] ..."
-                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->formatConditions($condition, $strings)))) {
+                } else if ($parsedConditions = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
                 } else {
                     // not yet implemented
@@ -283,18 +283,31 @@ class XmlDb implements XmlGetter
                 if ($condition == '') {
                     // fetch only by name recursively: "//ns:name ..."
                     $results = $this->idsQuery($docId, $ns, $name);
-                } else if (preg_match('/[\w\d@=: _-]*/', implode(' ', $tempCondition = $this->formatConditions($condition, $strings)))) {
+                } else if ($parsedConditions = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
+
                     $condClauses = '';
                     $conds = array();
-                    foreach ($tempCondition as $cond) {
-                        if (preg_match('/^id="([0-9]+)"$/', $cond, $matches)) {
-                            $condClauses .= ' AND nodes.id = ? ';
-                            $conds[] = $matches[1];
-                        } else {
-                            $condClauses .= ' AND nodes.value REGEXP ? ';
-                            $conds[] = "(^| )$cond( |$)";
+
+                    if ($parsedConditions) {
+                        $condClauses .= ' AND (';
+                        foreach ($parsedConditions as $cond) {
+                            if ($cond['name'] == 'id') {
+                                $condClauses .= ' nodes.id = ? ' . $cond['operator'];
+                                $conds[] = $cond['value'];
+                            } else {
+                                $condClauses .= ' nodes.value REGEXP ? ' . $cond['operator'];
+                                
+                                if ($cond['value']) {
+                                    $valueString = $cond['name'] . '="' . $cond['value'] . '"';
+                                } else {
+                                    $valueString = $cond['name'] . '=".*"';
+                                }
+
+                                $conds[] = "(^| )$valueString( |$)";
+                            }
                         }
+                        $condClauses .= ') ';
                     }
 
                     $results = $this->idsQuery($docId, $ns, $name, $condClauses, $conds);
@@ -333,6 +346,7 @@ class XmlDb implements XmlGetter
             $sqlPostfix
         ";
 
+
         $params[] = $this->translateName($ns, $name);
         $params = array_merge($params, $paramsPostfix);
 
@@ -359,29 +373,66 @@ class XmlDb implements XmlGetter
         return $translation;
     }
     // }}}
-    // {{{ formatConditions
-    protected function formatConditions($text)
+
+    // {{{ parseAttributes
+    protected function parseAttributes($condition)
     {
-        // @todo ugly hack
+        $cond_array = false;
+
+        if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->removeLiteralStrings($condition, $strings))) {
+            /**
+             * "//ns:name[@attr1] ..."
+             * "//ns:name[@attr1 = 'string1'] ..."
+             * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+             */
+            $cond_array = $this->getConditionAttributes($temp_condition, $strings);
+        }
+
+        return $cond_array;
+    }
+    // }}}
+    // {{{ getConditionAttributes
+    protected function getConditionAttributes($condition, $strings)
+    {
+        $cond_array = array();
+
+        $pAttr = "@(\w[\w\d:]*)";
+        $pOperator = "(=)";
+        $pBool = "(and|or|AND|OR)";
+        $pString = "\\$(\d*)";
+        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
+
+        for ($i = 0; $i < count($conditions[0]); $i++) {
+            $cond_array[] = array(
+                'name' => $conditions[1][$i],
+                'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
+                'operator' => $i > 0 ? $conditions[4][$i - 1] : "",
+            );
+        }
+
+        return $cond_array;
+    }
+    // }}}
+    // {{{ removeLiteralStrings
+    protected function removeLiteralStrings($text, &$strings)
+    {
         $n = 0;
-        $strings = array('');
+        $newText = '';
+        $strings = array();
 
         $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
         preg_match_all($p, $text, $parts);
 
         for ($i = 0; $i < count($parts[0]); $i++) {
             if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
-                $strings[$n] .= '"' . $parts[2][$i] . $parts[3][$i] . '"';
+                $strings[$n] = $parts[2][$i] . $parts[3][$i];
+                $newText .= "\$$n";
                 $n++;
-                $strings[$n] = '';
             } else {
-                $strings[$n] .= str_replace('@', '', preg_replace('/\s+=\s+/', '=', $parts[1][$i]));
+                $newText .= $parts[1][$i];
             }
         }
-
-        unset($strings[count($strings) - 1]);
-
-        return $strings;
+        return $newText;
     }
     // }}}
 
