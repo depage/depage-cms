@@ -11,40 +11,43 @@ abstract class Transformer
     protected $xmlGetter;
     protected $xsltPath;
     protected $xmlPath;
-    protected $xsltProc;
+    protected $xsltProc = null;
     protected $lang = "";
     protected $isLive = false;
+    protected $profiling = false;
+    protected $usedDocuments = array();
     public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
     public $pagedataIdByPageId = array();
 
     // {{{ factory()
-    static public function factory($previewType, $xmlGetter, $projectName, $template, $cacheOptions = array())
+    static public function factory($previewType, $xmlGetter, $projectName, $template, $transformCache = null)
     {
         if ($previewType == "live") {
-            return new Live($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Live($xmlGetter, $projectName, $template, $transformCache);
         } elseif ($previewType == "pre" || $previewType == "preview") {
-            return new Preview($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Preview($xmlGetter, $projectName, $template, $transformCache);
         } else {
-            return new Dev($xmlGetter, $projectName, $template, $cacheOptions);
+            return new Dev($xmlGetter, $projectName, $template, $transformCache);
         }
     }
     // }}}
     // {{{ constructor()
-    public function __construct($xmlGetter, $projectName, $template, $cacheOptions = array())
+    public function __construct($xmlGetter, $projectName, $template, $transformCache = null)
     {
         $this->xmlGetter = $xmlGetter;
         $this->projectName = $projectName;
         $this->template = $template;
-        $this->log = new \Depage\Log\Log();
-
-        $this->init();
+        $this->transformCache = $transformCache;
     }
     // }}}
-    // {{{ init()
-    public function init()
+    // {{{ lateInitialize()
+    public function lateInitialize()
     {
+        // add log object
+        $this->log = new \Depage\Log\Log();
+
         // @todo complete baseurl this in a better way, also based on previewTyoe
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
@@ -55,13 +58,7 @@ abstract class Transformer
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
 
         // get cache instance for templates
-        $this->xsltCache = \Depage\Cache\Cache::factory("xslt", $cacheOptions);
-
-        // get cache instance for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
-            'disposition' => "redis",
-            'host' => "127.0.0.1:6379",
-        ));
+        $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
 
         $this->initXsltProc();
     }
@@ -79,7 +76,9 @@ abstract class Transformer
 
         $xslDOM = $this->getXsltTemplate($this->template);
 
-        $this->xsltProc->setProfiling('logs/xslt-profiling.txt');
+        if ($this->profiling) {
+            $this->xsltProc->setProfiling('logs/xslt-profiling.txt');
+        }
         $this->xsltProc->importStylesheet($xslDOM);
 
     }
@@ -202,23 +201,36 @@ abstract class Transformer
     // {{{ transformPage()
     protected function transformPage($pageId, $pagedataId)
     {
-        $pageXml = $this->xmlGetter->getDocXml($pagedataId);
-        if ($pageXml === false) {
-            throw new \Exception("page does not exist");
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
+            $content = $this->transformCache->get($pagedataId, $this->lang);
+        } else {
+            if (is_null($this->xsltProc)) {
+                $this->lateInitialize();
+            }
+
+            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+            if ($pageXml === false) {
+                throw new \Exception("page does not exist");
+            }
+
+            $this->clearUsedDocuments();
+            $content = $this->transform($pageXml, array(
+                "currentLang" => $this->lang,
+                "currentPageId" => $pageId,
+                "currentContentType" => "text/html",
+                "currentEncoding" => "UTF-8",
+                "depageVersion" => \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive,
+                "baseUrl" => $this->baseUrl,
+            ));
+
+            $cleaner = new \Depage\Html\Cleaner();
+            $content = $cleaner->clean($content);
+
+            if (!is_null($this->transformCache)) {
+                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $this->lang);
+            }
         }
-
-        $content = $this->transform($pageXml, array(
-            "currentLang" => $this->lang,
-            "currentPageId" => $pageId,
-            "currentContentType" => "text/html",
-            "currentEncoding" => "UTF-8",
-            "depageVersion" => \Depage\Depage\Runner::getVersion(),
-            "depageIsLive" => $this->isLive,
-            "baseUrl" => $this->baseUrl,
-        ));
-
-        $cleaner = new \Depage\Html\Cleaner();
-        $content = $cleaner->clean($content);
 
         return $content;
     }
@@ -232,6 +244,10 @@ abstract class Transformer
      **/
     public function transform($xml, $parameters)
     {
+        if (is_null($this->xsltProc)) {
+            $this->lateInitialize();
+        }
+
         $this->xsltProc->setParameter("", $parameters);
 
         if (!$content = $this->xsltProc->transformToXml($xml)) {
@@ -239,7 +255,7 @@ abstract class Transformer
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
-                var_dump($error);
+                //var_dump($error);
             }
 
             $error = libxml_get_last_error();
@@ -251,6 +267,7 @@ abstract class Transformer
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log($error);
+                //var_dump($error);
             }
         }
 
@@ -300,6 +317,45 @@ abstract class Transformer
         } else {
             return $html;
         }
+    }
+    // }}}
+
+    // {{{ clearUsedDocuments()
+    /**
+     * @brief clearUsedDocuments
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function clearUsedDocuments()
+    {
+        $this->usedDocuments = array();
+
+    }
+    // }}}
+    // {{{ addToUsedDocuments()
+    /**
+     * @brief addToUsedDocuments
+     *
+     * @param mixed $docId
+     * @return void
+     **/
+    public function addToUsedDocuments($docId)
+    {
+        $this->usedDocuments[] = $docId;
+
+    }
+    // }}}
+    // {{{ getUsedDocuments()
+    /**
+     * @brief getUsedDocuments
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUsedDocuments()
+    {
+        return array_unique($this->usedDocuments);
     }
     // }}}
 
@@ -573,9 +629,12 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallAtomizeText($text) {
-        $value = "<span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span>";
+        $xml = "<spans><span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span></spans>";
 
-        return $value;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+
+        return $doc;
     }
     // }}}
     // {{{ xsltCallPhpEscape()
@@ -626,6 +685,7 @@ abstract class Transformer
             'template',
             'xsltPath',
             'xmlPath',
+            'transformCache',
         );
     }
     // }}}
