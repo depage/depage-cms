@@ -212,7 +212,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 "task-id" => $this->task->taskId,
             );
 
-            $this->executeInBackground(__DIR__ . "/../../", "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
+            $this->executeInBackground(DEPAGE_PATH, "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
         }
     }
     // }}}
