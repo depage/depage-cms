@@ -262,72 +262,68 @@ class XmlDb implements XmlGetter
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
 
         $actualIds = array(null);
-        $results = array();
 
-        $query = array();
-        $query['tables']['sql'] = '';
-        $query['tables']['params'] = array();
-        $query['conds']['sql'] = '';
-        $query['conds']['params'] = array();
+        $tables['sql'] = array();
+        $tables['params'] = array();
+        $conds['sql'] = array();
+        $conds['params'] = array();
 
         foreach ($xpathElements as $level => $element) {
             $fetchedIds = array();
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
-            $strings = array();
-            $levels = count($xpathElements) - 1;
 
             if ($level == 0) {
-                $query['tables']['sql'][] = "SELECT l$levels.id FROM";
+                $levels = count($xpathElements) - 1;
+                $tables['sql'][] = "SELECT l$levels.id FROM";
                 if ($divider == '/') {
-                    $query['conds']['sql'][] = "l$level.id_parent IS NULL";
+                    $conds['sql'][] = "l$level.id_parent IS NULL";
                 }
             } else {
-                $query['tables']['sql'][] = "INNER JOIN";
+                $tables['sql'][] = 'INNER JOIN';
                 if ($divider == '/') {
                     $parentLevel = $level - 1;
-                    $query['conds']['sql'][] = "l$level.id_parent = l$parentLevel.id";
+                    $conds['sql'][] = "l$level.id_parent = l$parentLevel.id";
                 }
             }
 
-            $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
+            $tables['sql'][] = "{$this->table_xml} AS l$level";
+            $conds['sql'][] = "l$level.name LIKE ?";
+            $conds['params'][] = $this->translateName($ns, $name);
 
             if (!is_null($docId)) {
-                $query['conds']['sql'][] .= "l$level.id_doc = ?";
-                $query['conds']['params'][] = $docId;
+                $conds['sql'][] .= "l$level.id_doc = ?";
+                $conds['params'][] = $docId;
             }
-
-            $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
 
             if ($condition == '') {
                 // fetch only by name "/ns:name ..."
             } else if (preg_match('/^([0-9]+)$/', $condition)) {
                 // fetch by name and position: "... /ns:name[n] ..."
-            } else if ($parsedConditions = $this->parseAttributes($condition)) {
+            } else if ($attributes = $this->parseAttributes($condition)) {
                 // fetch by simple attributes: "//ns:name[@attr1] ..."
-                if ($parsedConditions) {
+                if ($attributes) {
                     $attributeCondition = '(';
-                    foreach ($parsedConditions as $cond) {
-                        if ($cond['name'] == 'db:id') {
-                            $attributeCondition .= " l$level.id = ? " . $cond['operator'];
-                            $query['conds']['params'][] = $cond['value'];
+                    foreach ($attributes as $attribute) {
+                        if ($attribute['name'] == 'db:id') {
+                            $attributeCondition .= " l$level.id = ? " . $attribute['operator'];
+                            $conds['params'][] = $attribute['value'];
                         } else {
-                            $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
-                            $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
-                            $valueString = $cond['name'] . '="' . $value . '"';
-                            $query['conds']['params'][] = "(^| )$valueString( |$)";
+                            $attributeCondition .= " l$level.value REGEXP ? " . $attribute['operator'];
+                            $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
+                            $conds['params'][] = "(^| ){$attribute['name']}=\"$value\"( |$)";
                         }
                     }
                     $attributeCondition .= ')';
-                    $query['conds']['sql'][] = $attributeCondition;
+                    $conds['sql'][] = $attributeCondition;
                 }
             } else {
                 // not yet implemented
             }
         }
 
-        $sql = implode(' ', $query['tables']['sql']) . ' WHERE ' . implode(' AND ', $query['conds']['sql']);
-        $params = array_merge($query['tables']['params'], $query['conds']['params']);
+        $sql = implode(' ', $tables['sql']) . ' WHERE ' . implode(' AND ', $conds['sql']);
+        $params = array_merge($tables['params'], $conds['params']);
 
         $query = $this->pdo->prepare($sql);
         $query->execute($params);
