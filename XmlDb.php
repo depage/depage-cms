@@ -264,49 +264,88 @@ class XmlDb implements XmlGetter
         $actualIds = array(null);
         $results = array();
 
+        $query = array();
+        $query['tables']['sql'] = '';
+        $query['tables']['params'] = array();
+        $query['conds']['sql'] = '';
+        $query['conds']['params'] = array();
+
         foreach ($xpathElements as $level => $element) {
             $fetchedIds = array();
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
             $strings = array();
+            $levels = count($xpathElements) - 1;
+
+            if (!is_null($docId)) {
+                $query['conds']['sql'][] .= "l$level.id_doc = ?";
+                $query['conds']['params'][] = $docId;
+            }
 
             if ($divider == '/') {
+                if ($level == 0) {
+                    $query['tables']['sql'][] = "SELECT l$levels.id FROM";
+                    $query['conds']['sql'][] = "l$level.id_parent IS NULL";
+                } else {
+                    $query['tables']['sql'][] = "INNER JOIN";
+                    $parentLevel = $level - 1;
+                    $query['conds']['sql'][] = "l$level.id_parent = l$parentLevel.id";
+                }
+
+                $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
+                $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
+
                 if ($condition == '') {
+                    // fetch only by name "/ns:name ..."
                 } else if (preg_match('/^([0-9]+)$/', $condition)) {
                     // fetch by name and position: "... /ns:name[n] ..."
                 } else if ($parsedConditions = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
+                    if ($parsedConditions) {
+                        $attributeCondition = '(';
+                        foreach ($parsedConditions as $cond) {
+                            if ($cond['name'] == 'db:id') {
+                                $attributeCondition .= " l$level.id = ? " . $cond['operator'];
+                                $query['conds']['params'][] = $cond['value'];
+                            } else {
+                                $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
+                                $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
+                                $valueString = $cond['name'] . '="' . $value . '"';
+                                $query['conds']['params'][] = "(^| )$valueString( |$)";
+                            }
+                        }
+                        $attributeCondition .= ')';
+                        $query['conds']['sql'][] = $attributeCondition;
+                    }
                 } else {
                     // not yet implemented
                 }
             } elseif ($divider == '//' && $level == 0) {
+                $query['tables']['sql'][] = "SELECT l$levels.id FROM";
+                $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
+                $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
+
                 if ($condition == '') {
                     // fetch only by name recursively: "//ns:name ..."
-                    $results = $this->idsQuery($docId, $ns, $name);
                 } else if ($parsedConditions = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "//ns:name[@attr1] ..."
-                    $condClauses = '';
-                    $conds = array();
 
                     if ($parsedConditions) {
-                        $condClauses .= ' AND (';
+                        $attributeCondition = '(';
                         foreach ($parsedConditions as $cond) {
                             if ($cond['name'] == 'db:id') {
-                                $condClauses .= ' nodes.id = ? ' . $cond['operator'];
-                                $conds[] = $cond['value'];
+                                $attributeCondition .= " l$level.id = ? " . $cond['operator'];
+                                $query['conds']['params'][] = $cond['value'];
                             } else {
-                                $condClauses .= ' nodes.value REGEXP ? ' . $cond['operator'];
-
+                                $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
                                 $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
                                 $valueString = $cond['name'] . '="' . $value . '"';
-
-                                $conds[] = "(^| )$valueString( |$)";
+                                $query['conds']['params'][] = "(^| )$valueString( |$)";
                             }
                         }
-                        $condClauses .= ') ';
+                        $attributeCondition .= ')';
+                        $query['conds']['sql'][] = $attributeCondition;
                     }
-
-                    $results = $this->idsQuery($docId, $ns, $name, $condClauses, $conds);
                 } else {
                     // not yet implemented
                 }
@@ -314,6 +353,13 @@ class XmlDb implements XmlGetter
                 // not yet implemented
             }
         }
+
+        $sql = implode(' ', $query['tables']['sql']) . ' WHERE ' . implode(' AND ', $query['conds']['sql']);
+        $params = array_merge($query['tables']['params'], $query['conds']['params']);
+
+        $query = $this->pdo->prepare($sql);
+        $query->execute($params);
+        $results = $query->fetchAll();
 
         $fetchedIDs = array();
         foreach ($results as $result) {
@@ -323,34 +369,6 @@ class XmlDb implements XmlGetter
         return $fetchedIds;
     }
     // }}}
-    // {{{ idsQuery
-    protected function idsQuery($docId, $ns, $name, $sqlPostfix = null, $paramsPostfix = array())
-    {
-        if (is_null($docId)) {
-            $docClause = '';
-            $params = array();
-        } else {
-            $docClause = ' AND WHERE nodes.id_doc = ? ';
-            $params = array($docId);
-        }
-
-        $sql = "
-            SELECT nodes.id
-            FROM {$this->table_xml} AS nodes
-            WHERE nodes.name LIKE ?
-            $docClause
-            $sqlPostfix
-        ";
-
-        $params[] = $this->translateName($ns, $name);
-        $params = array_merge($params, $paramsPostfix);
-
-        $query = $this->pdo->prepare($sql);
-        $query->execute($params);
-        $results = $query->fetchAll();
-
-        return $results;
-    }
     // }}}
     // {{{ translateName
     protected function translateName($ns, $name)
