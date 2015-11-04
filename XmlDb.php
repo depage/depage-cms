@@ -291,7 +291,7 @@ class XmlDb implements XmlGetter
                     if ($parsedConditions) {
                         $condClauses .= ' AND (';
                         foreach ($parsedConditions as $cond) {
-                            if ($cond['name'] == 'id') {
+                            if ($cond['name'] == 'db:id') {
                                 $condClauses .= ' nodes.id = ? ' . $cond['operator'];
                                 $conds[] = $cond['value'];
                             } else {

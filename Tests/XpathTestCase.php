@@ -166,28 +166,28 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllWildCardAndIdAttributeWithValue()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*[@db:id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNsAndIdAttributeWithValue
     public function testAllWildCardNsAndIdAttributeWithValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*:page[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*:page[@db:id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardNameAndIdAttributeWithValue
     public function testAllWildCardNameAndIdAttributeWithValue()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//pg:*[@id = \'6\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//pg:*[@db:id = \'6\']');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeWithValueNoResult
     public function testAllWildCardAndIdAttributeWithValueNoResult()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@id = \'20\']');
+        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@db:id = \'20\']');
     }
     // }}}
 }
