@@ -277,77 +277,49 @@ class XmlDb implements XmlGetter
             $strings = array();
             $levels = count($xpathElements) - 1;
 
+            if ($level == 0) {
+                $query['tables']['sql'][] = "SELECT l$levels.id FROM";
+                if ($divider == '/') {
+                    $query['conds']['sql'][] = "l$level.id_parent IS NULL";
+                }
+            } else {
+                $query['tables']['sql'][] = "INNER JOIN";
+                if ($divider == '/') {
+                    $parentLevel = $level - 1;
+                    $query['conds']['sql'][] = "l$level.id_parent = l$parentLevel.id";
+                }
+            }
+
+            $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
+
             if (!is_null($docId)) {
                 $query['conds']['sql'][] .= "l$level.id_doc = ?";
                 $query['conds']['params'][] = $docId;
             }
 
-            if ($divider == '/') {
-                if ($level == 0) {
-                    $query['tables']['sql'][] = "SELECT l$levels.id FROM";
-                    $query['conds']['sql'][] = "l$level.id_parent IS NULL";
-                } else {
-                    $query['tables']['sql'][] = "INNER JOIN";
-                    $parentLevel = $level - 1;
-                    $query['conds']['sql'][] = "l$level.id_parent = l$parentLevel.id";
-                }
+            $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
 
-                $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
-                $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
-
-                if ($condition == '') {
-                    // fetch only by name "/ns:name ..."
-                } else if (preg_match('/^([0-9]+)$/', $condition)) {
-                    // fetch by name and position: "... /ns:name[n] ..."
-                } else if ($parsedConditions = $this->parseAttributes($condition)) {
-                    // fetch by simple attributes: "//ns:name[@attr1] ..."
-                    if ($parsedConditions) {
-                        $attributeCondition = '(';
-                        foreach ($parsedConditions as $cond) {
-                            if ($cond['name'] == 'db:id') {
-                                $attributeCondition .= " l$level.id = ? " . $cond['operator'];
-                                $query['conds']['params'][] = $cond['value'];
-                            } else {
-                                $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
-                                $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
-                                $valueString = $cond['name'] . '="' . $value . '"';
-                                $query['conds']['params'][] = "(^| )$valueString( |$)";
-                            }
+            if ($condition == '') {
+                // fetch only by name "/ns:name ..."
+            } else if (preg_match('/^([0-9]+)$/', $condition)) {
+                // fetch by name and position: "... /ns:name[n] ..."
+            } else if ($parsedConditions = $this->parseAttributes($condition)) {
+                // fetch by simple attributes: "//ns:name[@attr1] ..."
+                if ($parsedConditions) {
+                    $attributeCondition = '(';
+                    foreach ($parsedConditions as $cond) {
+                        if ($cond['name'] == 'db:id') {
+                            $attributeCondition .= " l$level.id = ? " . $cond['operator'];
+                            $query['conds']['params'][] = $cond['value'];
+                        } else {
+                            $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
+                            $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
+                            $valueString = $cond['name'] . '="' . $value . '"';
+                            $query['conds']['params'][] = "(^| )$valueString( |$)";
                         }
-                        $attributeCondition .= ')';
-                        $query['conds']['sql'][] = $attributeCondition;
                     }
-                } else {
-                    // not yet implemented
-                }
-            } elseif ($divider == '//' && $level == 0) {
-                $query['tables']['sql'][] = "SELECT l$levels.id FROM";
-                $query['tables']['sql'][] = "{$this->table_xml} AS l$level";
-                $query['conds']['sql'][] = "l$level.name LIKE \"" . $this->translateName($ns, $name) . '"';
-
-                if ($condition == '') {
-                    // fetch only by name recursively: "//ns:name ..."
-                } else if ($parsedConditions = $this->parseAttributes($condition)) {
-                    // fetch by simple attributes: "//ns:name[@attr1] ..."
-
-                    if ($parsedConditions) {
-                        $attributeCondition = '(';
-                        foreach ($parsedConditions as $cond) {
-                            if ($cond['name'] == 'db:id') {
-                                $attributeCondition .= " l$level.id = ? " . $cond['operator'];
-                                $query['conds']['params'][] = $cond['value'];
-                            } else {
-                                $attributeCondition .= " l$level.value REGEXP ? " . $cond['operator'];
-                                $value = (is_null($cond['value'])) ? '.*' : $cond['value'];
-                                $valueString = $cond['name'] . '="' . $value . '"';
-                                $query['conds']['params'][] = "(^| )$valueString( |$)";
-                            }
-                        }
-                        $attributeCondition .= ')';
-                        $query['conds']['sql'][] = $attributeCondition;
-                    }
-                } else {
-                    // not yet implemented
+                    $attributeCondition .= ')';
+                    $query['conds']['sql'][] = $attributeCondition;
                 }
             } else {
                 // not yet implemented
