@@ -292,14 +292,16 @@ class XmlDb implements XmlGetter
             $conds['params'][] = $this->translateName($ns, $name);
 
             if (!is_null($docId)) {
-                $conds['sql'][] .= "l$level.id_doc = ?";
+                $conds['sql'][] = "l$level.id_doc = ?";
                 $conds['params'][] = $docId;
             }
 
             if ($condition == '') {
                 // fetch only by name "/ns:name ..."
-            } else if (preg_match('/^([0-9]+)$/', $condition)) {
+            } else if (preg_match('/^([0-9]+)$/', $condition, $matches)) {
                 // fetch by name and position: "... /ns:name[n] ..."
+                $position = $matches[0] - 1;
+                $conds['sql'][count($conds['sql']) - 1] .= " ORDER BY l$level.pos LIMIT $position,1";
             } else if ($attributes = $this->parseAttributes($condition)) {
                 // fetch by simple attributes: "//ns:name[@attr1] ..."
                 if ($attributes) {
@@ -336,7 +338,6 @@ class XmlDb implements XmlGetter
 
         return $fetchedIds;
     }
-    // }}}
     // }}}
     // {{{ translateName
     protected function translateName($ns, $name)
