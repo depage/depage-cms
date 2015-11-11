@@ -287,9 +287,21 @@ class XmlDb implements XmlGetter
                 }
             }
 
-            $tables['sql'][] = "{$this->table_xml} AS l$level";
-            $conds['sql'][] = "l$level.name LIKE ?";
-            $conds['params'][] = $this->translateName($ns, $name);
+            $position = preg_match('/^([0-9]+)$/', $condition, $matches) ? $matches[0] : null;
+
+            if ($position) {
+                $tables['sql'][] = "(
+                        SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
+                        FROM {$this->table_xml} AS sub$level
+                        WHERE sub$level.name LIKE ?
+                        ORDER BY sub$level.id_parent, sub$level.pos
+                    ) l$level";
+                $tables['params'][] = $this->translateName($ns, $name);
+            } else {
+                $tables['sql'][] = "{$this->table_xml} AS l$level";
+                $conds['sql'][] = "l$level.name LIKE ?";
+                $conds['params'][] = $this->translateName($ns, $name);
+            }
 
             if (!is_null($docId)) {
                 $conds['sql'][] = "l$level.id_doc = ?";
@@ -298,10 +310,9 @@ class XmlDb implements XmlGetter
 
             if ($condition == '') {
                 // fetch only by name "/ns:name ..."
-            } else if (preg_match('/^([0-9]+)$/', $condition, $matches)) {
+            } else if ($position) {
                 // fetch by name and position: "... /ns:name[n] ..."
-                $position = $matches[0] - 1;
-                $conds['sql'][count($conds['sql']) - 1] .= " ORDER BY l$level.pos LIMIT ?,1";
+                $conds['sql'][] = " l$level.tpos = ?";
                 $conds['params'][] = $position;
             } else if ($attributes = $this->parseAttributes($condition)) {
                 // fetch by simple attributes: "//ns:name[@attr1] ..."
