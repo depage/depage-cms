@@ -104,7 +104,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     }
     // }}}
     // {{{ testNameAndAttributeWithAndOperatorWithValue
-    public function testNameAndAttributeWithAndOperatore()
+    public function testNameAndAttributeWithAndOperatorWithValue()
     {
         $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@multilang = \'true\']');
         $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page[@multilang = \'true\' and @name = \'Subpage 2\']');

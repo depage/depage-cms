@@ -308,6 +308,8 @@ class XmlDb implements XmlGetter
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '(';
                     foreach ($attributes as $attribute) {
+                        $attributeCond .= $attribute['operator'];
+
                         if ($attribute['name'] == 'db:id') {
                             $attributeCond .= " l$level.id = ? ";
                             $condParams[] = $attribute['value'];
@@ -316,7 +318,6 @@ class XmlDb implements XmlGetter
                             $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
                             $condParams[] = "(^| ){$attribute['name']}=\"$value\"( |$)";
                         }
-                        $attributeCond .= $attribute['operator'];
                     }
                     $condSql[] = "$attributeCond )";
                 } else {
