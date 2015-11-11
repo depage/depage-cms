@@ -347,17 +347,8 @@ class XmlDb implements XmlGetter
     // {{{ translateName
     protected function translateName($ns, $name)
     {
-        if ($ns == '*') {
-            $translation = '%:';
-        } elseif ($ns == '') {
-            $translation = '';
-        } else {
-            $translation = "$ns:";
-        }
-
-        $translation .= ($name == '*') ? '%' : $name;
-
-        return $translation;
+        $colon = (strlen($ns) && strlen($name)) ? ':' : '';
+        return str_replace('*', '%', "$ns$colon$name");
     }
     // }}}
 
