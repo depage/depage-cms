@@ -67,26 +67,26 @@ abstract class XpathTestCase extends DatabaseTestCase
     }
     // }}}
 
-    // {{{ testNameWithChild
-    public function testNameWithChild()
+    // {{{ testNameChild
+    public function testNameChild()
     {
         $this->assertCorrectXpathIds(array(2), '/dpg:pages/pg:page');
     }
     // }}}
-    // {{{ testNameWithChildAndPosition
-    public function testNameWithChildAndPosition()
+    // {{{ testNameChildAndPosition
+    public function testNameChildAndPosition()
     {
         $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[3]');
     }
     // }}}
-    // {{{ testNameWithChildAndPositionNoResult
-    public function testNameWithChildAndPositionNoResult()
+    // {{{ testNameChildAndPositionNoResult
+    public function testNameChildAndPositionNoResult()
     {
         $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page[2]');
     }
     // }}}
-    // {{{ testNameWithChildAndPositionMultiple
-    public function testNameWithChildAndPositionMultiple()
+    // {{{ testNameChildAndPositionMultiple
+    public function testNameChildAndPositionMultiple()
     {
         $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page[1]/pg:page[2]');
     }
@@ -97,35 +97,42 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@name]');
     }
     // }}}
-    // {{{ testNameAndAttributeWithValue
-    public function testNameAndAttributeWithValue()
+    // {{{ testNameAndAttributeValue
+    public function testNameAndAttributeValue()
     {
         $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
     }
     // }}}
-    // {{{ testNameAndAttributeWithAndOperatorWithValue
-    public function testNameAndAttributeWithAndOperatorWithValue()
+    // {{{ testNameAndAttributeAndOperatorValue
+    public function testNameAndAttributeAndOperatorValue()
     {
         $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@multilang = \'true\']');
         $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page[@multilang = \'true\' and @name = \'Subpage 2\']');
     }
     // }}}
+    // {{{ testNameAndAttributeOrOperatorValue
+    public function testNameAndAttributeOrOperatorValue()
+    {
+        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\' or @name = \'Subpage 2\']');
+    }
+    // }}}
 
-    // {{{ testWildcardAndAttributeWithValue
-    public function testWildcardAndAttributeWithValue()
+    // {{{ testWildcardAndAttributeValue
+    public function testWildcardAndAttributeValue()
     {
         $this->assertCorrectXpathIds(array(6, 9), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
     }
     // }}}
-    // {{{ testWildcardNsAndAttributeWithValue
-    public function testWildcardNsAndAttributeWithValue()
+    // {{{ testWildcardNsAndAttributeValue
+    public function testWildcardNsAndAttributeValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
         $this->assertCorrectXpathIdsNoDomXpath(array(6), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
     }
     // }}}
-    // {{{ testWildcardNameAndAttributeWithValue
-    public function testWildcardNameAndAttributeWithValue()
+    // {{{ testWildcardNameAndAttributeValue
+    public function testWildcardNameAndAttributeValue()
     {
         $this->assertCorrectXpathIds(array(6, 9), '/dpg:pages/pg:page/pg:*[@name = \'Subpage\']');
     }
@@ -143,26 +150,26 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(9), '//pg:page/pg:folder');
     }
     // }}}
-    // {{{ testAllNameWithAttribute
-    public function testAllNameWithAttribute()
+    // {{{ testAllNameAttribute
+    public function testAllNameAttribute()
     {
         $this->assertCorrectXpathIds(array(2, 6, 7, 8), '//pg:page[@name]');
     }
     // }}}
-    // {{{ testAllNameWithAttributeWithValue
-    public function testAllNameWithAttributeWithValue()
+    // {{{ testAllNameAttributeValue
+    public function testAllNameAttributeValue()
     {
         $this->assertCorrectXpathIds(array(8), '//pg:page[@name = \'bla blub\']');
     }
     // }}}
-    // {{{ testAllNameWithAttributeNoResult
-    public function testAllNameWithAttributeNoResult()
+    // {{{ testAllNameAttributeNoResult
+    public function testAllNameAttributeNoResult()
     {
         $this->assertCorrectXpathIds(array(), '//pg:page[@unknown]');
     }
     // }}}
-    // {{{ testAllNameWithAttributeWithValueNoResult
-    public function testAllNameWithAttributeWithValueNoResult()
+    // {{{ testAllNameAttributeValueNoResult
+    public function testAllNameAttributeValueNoResult()
     {
         $this->assertCorrectXpathIds(array(), '//pg:page[@name = \'unknown\']');
     }
@@ -193,29 +200,29 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(2, 6, 7, 8, 9), '//pg:*');
     }
     // }}}
-    // {{{ testAllWildCardAndIdAttributeWithValue
-    public function testAllWildCardAndIdAttributeWithValue()
+    // {{{ testAllWildCardAndIdAttributeValue
+    public function testAllWildCardAndIdAttributeValue()
     {
         // no domxpath, ids are subject to database domain
         $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*[@db:id = \'6\']');
     }
     // }}}
-    // {{{ testAllWildCardNsAndIdAttributeWithValue
-    public function testAllWildCardNsAndIdAttributeWithValue()
+    // {{{ testAllWildCardNsAndIdAttributeValue
+    public function testAllWildCardNsAndIdAttributeValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
         $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*:page[@db:id = \'6\']');
     }
     // }}}
-    // {{{ testAllWildCardNameAndIdAttributeWithValue
-    public function testAllWildCardNameAndIdAttributeWithValue()
+    // {{{ testAllWildCardNameAndIdAttributeValue
+    public function testAllWildCardNameAndIdAttributeValue()
     {
         // no domxpath, ids are subject to database domain
         $this->assertCorrectXpathIdsNoDomXpath(array(6), '//pg:*[@db:id = \'6\']');
     }
     // }}}
-    // {{{ testAllWildCardAndIdAttributeWithValueNoResult
-    public function testAllWildCardAndIdAttributeWithValueNoResult()
+    // {{{ testAllWildCardAndIdAttributeValueNoResult
+    public function testAllWildCardAndIdAttributeValueNoResult()
     {
         // no domxpath, ids are subject to database domain
         $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@db:id = \'20\']');
