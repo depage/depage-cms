@@ -301,7 +301,8 @@ class XmlDb implements XmlGetter
             } else if (preg_match('/^([0-9]+)$/', $condition, $matches)) {
                 // fetch by name and position: "... /ns:name[n] ..."
                 $position = $matches[0] - 1;
-                $conds['sql'][count($conds['sql']) - 1] .= " ORDER BY l$level.pos LIMIT $position,1";
+                $conds['sql'][count($conds['sql']) - 1] .= " ORDER BY l$level.pos LIMIT ?,1";
+                $conds['params'][] = $position;
             } else if ($attributes = $this->parseAttributes($condition)) {
                 // fetch by simple attributes: "//ns:name[@attr1] ..."
                 if ($attributes) {
