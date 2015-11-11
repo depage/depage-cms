@@ -261,90 +261,83 @@ class XmlDb implements XmlGetter
         $pCondition = '(?:\[(.*?)\])?';
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
 
-        $actualIds = array(null);
-
-        $tables['sql'] = array();
-        $tables['params'] = array();
-        $conds['sql'] = array();
-        $conds['params'] = array();
+        $tableSql = array();
+        $tableParams = array();
+        $condSql = array();
+        $condParams = array();
 
         foreach ($xpathElements as $level => $element) {
-            $fetchedIds = array();
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
 
             if ($level == 0) {
                 $levels = count($xpathElements) - 1;
-                $tables['sql'][] = "SELECT l$levels.id FROM";
+                $tableSql[] = "SELECT l$levels.id FROM";
                 if ($divider == '/') {
-                    $conds['sql'][] = "l$level.id_parent IS NULL";
+                    $condSql[] = "l$level.id_parent IS NULL";
                 }
             } else {
-                $tables['sql'][] = 'INNER JOIN';
+                $tableSql[] = 'INNER JOIN';
                 if ($divider == '/') {
                     $parentLevel = $level - 1;
-                    $conds['sql'][] = "l$level.id_parent = l$parentLevel.id";
+                    $condSql[] = "l$level.id_parent = l$parentLevel.id";
                 }
             }
 
             $position = preg_match('/^([0-9]+)$/', $condition, $matches) ? $matches[0] : null;
 
             if ($position) {
-                $tables['sql'][] = "(
-                        SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
-                        FROM {$this->table_xml} AS sub$level
-                        WHERE sub$level.name LIKE ?
-                        ORDER BY sub$level.id_parent, sub$level.pos
-                    ) l$level";
-                $tables['params'][] = $this->translateName($ns, $name);
+                // fetch by name and position: "... ns:name[n] ..."
+                $tableSql[] = "(
+                    SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
+                    FROM {$this->table_xml} AS sub$level
+                    WHERE sub$level.name LIKE ?
+                    ORDER BY sub$level.id_parent, sub$level.pos
+                ) l$level";
+                $tableParams[] = $this->translateName($ns, $name);
+                $condSql[] = " l$level.tpos = ?";
+                $condParams[] = $position;
             } else {
-                $tables['sql'][] = "{$this->table_xml} AS l$level";
-                $conds['sql'][] = "l$level.name LIKE ?";
-                $conds['params'][] = $this->translateName($ns, $name);
+                $tableSql[] = "{$this->table_xml} AS l$level";
+                $condSql[] = "l$level.name LIKE ?";
+                $condParams[] = $this->translateName($ns, $name);
+
+                if ($condition == '') {
+                    // fetch only by name "ns:name ..."
+                } else if ($attributes = $this->parseAttributes($condition)) {
+                    // fetch by simple attributes: "ns:name[@attr1] ..."
+                    $attributeCond = '(';
+                    foreach ($attributes as $attribute) {
+                        if ($attribute['name'] == 'db:id') {
+                            $attributeCond .= " l$level.id = ? ";
+                            $condParams[] = $attribute['value'];
+                        } else {
+                            $attributeCond .= " l$level.value REGEXP ? ";
+                            $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
+                            $condParams[] = "(^| ){$attribute['name']}=\"$value\"( |$)";
+                        }
+                        $attributeCond .= $attribute['operator'];
+                    }
+                    $condSql[] = "$attributeCond )";
+                } else {
+                    // not yet implemented
+                }
             }
 
             if (!is_null($docId)) {
-                $conds['sql'][] = "l$level.id_doc = ?";
-                $conds['params'][] = $docId;
-            }
-
-            if ($condition == '') {
-                // fetch only by name "/ns:name ..."
-            } else if ($position) {
-                // fetch by name and position: "... /ns:name[n] ..."
-                $conds['sql'][] = " l$level.tpos = ?";
-                $conds['params'][] = $position;
-            } else if ($attributes = $this->parseAttributes($condition)) {
-                // fetch by simple attributes: "//ns:name[@attr1] ..."
-                if ($attributes) {
-                    $attributeCondition = '(';
-                    foreach ($attributes as $attribute) {
-                        if ($attribute['name'] == 'db:id') {
-                            $attributeCondition .= " l$level.id = ? " . $attribute['operator'];
-                            $conds['params'][] = $attribute['value'];
-                        } else {
-                            $attributeCondition .= " l$level.value REGEXP ? " . $attribute['operator'];
-                            $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
-                            $conds['params'][] = "(^| ){$attribute['name']}=\"$value\"( |$)";
-                        }
-                    }
-                    $attributeCondition .= ')';
-                    $conds['sql'][] = $attributeCondition;
-                }
-            } else {
-                // not yet implemented
+                $condSql[] = "l$level.id_doc = ?";
+                $condParams[] = $docId;
             }
         }
 
-        $sql = implode(' ', $tables['sql']) . ' WHERE ' . implode(' AND ', $conds['sql']);
-        $params = array_merge($tables['params'], $conds['params']);
+        $sql = implode(' ', $tableSql) . ' WHERE ' . implode(' AND ', $condSql);
+        $params = array_merge($tableParams, $condParams);
 
         $query = $this->pdo->prepare($sql);
         $query->execute($params);
-        $results = $query->fetchAll();
 
-        $fetchedIDs = array();
-        foreach ($results as $result) {
+        $fetchedIds = array();
+        foreach ($query->fetchAll() as $result) {
             $fetchedIds[] = $result[0];
         }
 
