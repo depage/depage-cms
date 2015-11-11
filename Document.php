@@ -1102,55 +1102,7 @@ class Document
         $fetched_ids = $this->cache->get($identifier);
 
         if ($fetched_ids === false) {
-            $pName = "(?:([^\/\[\]]*):)?([^\/\[\]]+)";
-            $pCondition = "(?:\[(.*?)\])?";
-
-            preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpath_elements, PREG_SET_ORDER);
-
-            $actual_ids = array(NULL);
-
-            foreach ($xpath_elements as $level => $element) {
-                $fetched_ids = array();
-                $element[] = '';
-                list(,$divider, $ns, $name, $condition) = $element;
-                $strings = array();
-
-                if ($divider == '/') {
-                    if ($condition == '') {
-                        // fetch only by name: "... /ns:name ..."
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, null, true));
-                        }
-                    } else if (preg_match("/^([0-9]+)$/", $condition)) {
-                        // fetch by name and position: "... /ns:name[n] ..."
-                        foreach ($actual_ids as $actual_id) {
-                            $temp_ids = $this->getChildIdsByName($actual_id, $ns, $name, null, true);
-                            $fetched_ids[] = $temp_ids[((int) $condition) - 1];
-                        }
-                    } else if ($cond_array = $this->fetchBySimpleAttributes($condition, $strings)) {
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = array_merge($fetched_ids, $this->getChildIdsByName($actual_id, $ns, $name, $cond_array, true));
-                        }
-                    } else {
-                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                    }
-                } elseif ($divider == '//' && $level == 0) {
-                    if ($condition == '') {
-                        // fetch only by name recursive:  "//ns:name ..."
-                        $fetched_ids = $this->getNodeIdsByName($ns, $name);
-                    } else if ($cond_array = $this->fetchBySimpleAttributes($condition, $strings)) {
-                        foreach ($actual_ids as $actual_id) {
-                            $fetched_ids = $this->getNodeIdsByName($ns, $name, $cond_array);
-                        }
-                    } else {
-                        //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                    }
-                } else {
-                    //$log->add_entry("get_xpath \"$xpath\" for this syntax not yet defined.");
-                }
-
-                $actual_ids = $fetched_ids;
-            }
+            $fetched_ids = $this->xmldb->getNodeIdsByXpath($xpath, $this->doc_id);
 
             $this->cache->set($identifier, $fetched_ids);
         }
