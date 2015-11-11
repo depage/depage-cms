@@ -79,6 +79,18 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[3]');
     }
     // }}}
+    // {{{ testNameWithChildAndPositionNoResult
+    public function testNameWithChildAndPositionNoResult()
+    {
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page[2]');
+    }
+    // }}}
+    // {{{ testNameWithChildAndPositionMultiple
+    public function testNameWithChildAndPositionMultiple()
+    {
+        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page[1]/pg:page[2]');
+    }
+    // }}}
     // {{{ testNameAndAttribute
     public function testNameAndAttribute()
     {
@@ -89,6 +101,13 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testNameAndAttributeWithValue()
     {
         $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
+    }
+    // }}}
+    // {{{ testNameAndAttributeWithAndOperatorWithValue
+    public function testNameAndAttributeWithAndOperatore()
+    {
+        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@multilang = \'true\']');
+        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page[@multilang = \'true\' and @name = \'Subpage 2\']');
     }
     // }}}
 
@@ -116,6 +135,12 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllName()
     {
         $this->assertCorrectXpathIds(array(2, 6, 7, 8), '//pg:page');
+    }
+    // }}}
+    // {{{ testAllNameMultiple
+    public function testAllNameMultiple()
+    {
+        $this->assertCorrectXpathIds(array(9), '//pg:page/pg:folder');
     }
     // }}}
     // {{{ testAllNameWithAttribute
@@ -146,6 +171,12 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllNameAndPosition()
     {
         $this->assertCorrectXpathIds(array(8), '//pg:page[3]');
+    }
+    // }}}
+    // {{{ testAllNameAndPositionMultiple
+    public function testAllNameAndPositionMultiple()
+    {
+        $this->assertCorrectXpathIds(array(2, 6), '//pg:page[1]');
     }
     // }}}
 
