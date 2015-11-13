@@ -169,11 +169,23 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
-        $this->assertArrayHasKey('pages', $this->xmldb->getDocuments('pages'));
-        $return = $this->xmldb->removeDoc('pages');
+        $idsBefore = array(
+            1 => '1',
+            'pages' => '1',
+        );
 
+        $idsAfter = array();
+
+        $this->assertArrayHasKey('pages', $this->xmldb->getDocuments('pages'));
+
+        $this->xmldb->docExists('pages'); // load id into cache
+        $this->assertEquals($idsBefore, $this->xmldb->doc_ids);
+
+        $return = $this->xmldb->removeDoc('pages');
         $this->assertTrue($return);
+
         $this->assertArrayNotHasKey('pages', $this->xmldb->getDocuments('pages'));
+        $this->assertEquals($idsAfter, $this->xmldb->doc_ids);
     }
     // }}}
     // {{{ testRemoveDocUnavailable

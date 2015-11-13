@@ -16,7 +16,7 @@ namespace Depage\XmlDb;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    private $doc_ids = array();
+    protected $doc_ids = array();
 
     private $pdo;
     private $cache;
@@ -482,6 +482,7 @@ class XmlDb implements XmlGetter
      */
     public function removeDoc($doc_id)
     {
+        $result = false;
         $doc_id = $this->docExists($doc_id);
 
         if ($doc_id !== false) {
@@ -493,12 +494,21 @@ class XmlDb implements XmlGetter
             $query->execute(array(
                 'doc_id' => $doc_id,
             ));
+
             $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
 
-            return true;
+            $this->doc_ids = array_filter(
+                $this->doc_ids,
+                function($id) use ($doc_id)
+                {
+                    return $id != $doc_id;
+                }
+            );
+
+            $result = true;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
