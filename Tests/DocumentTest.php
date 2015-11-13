@@ -379,25 +379,6 @@ class DocumentTest extends DatabaseTestCase
     }
     // }}}
 
-    // {{{ testGetChildIdsByName
-    public function testGetChildIdsByName()
-    {
-        $this->assertEquals(array(2), $this->doc->getChildIdsByName(1, 'pg', 'page'));
-        $this->assertEquals(array(6, 7, 11, 8), $this->doc->getChildIdsByName(2, 'pg', 'page'));
-        $this->assertEquals(array(), $this->doc->getChildIdsByName(1, 'nonamespace', 'noname'));
-        // @todo intended behaviour (name == null)
-        $this->assertEquals(array(11), $this->doc->getChildIdsByName(2, 'nonamespace', 'noname'));
-    }
-    // }}}
-    // {{{ testGetChildIdsByNameOnlyElementNodes
-    public function testGetChildIdsByNameOnlyElementNodes()
-    {
-        $this->assertEquals(array(2), $this->doc->getChildIdsByName(1, 'pg', 'page', null, true));
-        $this->assertEquals(array(6, 7, 8), $this->doc->getChildIdsByName(2, 'pg', 'page', null, true));
-        $this->assertEquals(array(), $this->doc->getChildIdsByName(1, 'nonamespace', 'noname', null, true));
-    }
-    // }}}
-
     // {{{ testSaveNodeToDb
     public function testSaveNodeToDb()
     {
