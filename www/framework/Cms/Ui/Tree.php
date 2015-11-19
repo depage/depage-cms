@@ -106,13 +106,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ create_node
+    // {{{ createNode
     /**
      * @param $doc_id document id
      * @param $node child node data
      * @param $position position for new child in parent
      */
-    public function create_node() {
+    public function createNode() {
         $status = false;
         $this->log->log($_REQUEST);
 
@@ -133,13 +133,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ rename_node
+    // {{{ renameNode
     /**
      * Rename Node
      *
      * @return \json
      */
-    public function rename_node() {
+    public function renameNode() {
         $status = false;
         $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
@@ -156,13 +156,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ move_node
+    // {{{ moveNode
     /**
      * Move Node
      *
      * @return \json
      */
-    public function move_node() {
+    public function moveNode() {
         $status = false;
         $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
@@ -180,13 +180,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ copy_node
+    // {{{ copyNode
     /**
      * Copy Node
      *
      * @return \json
      */
-    public function copy_node() {
+    public function copyNode() {
         $status = false;
         $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
@@ -204,13 +204,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ remove_node
+    // {{{ deleteNode
     /**
      * Remove Node
      *
      * @return \json
      */
-    public function remove_node() {
+    public function deleteNode() {
         $status = false;
         $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);

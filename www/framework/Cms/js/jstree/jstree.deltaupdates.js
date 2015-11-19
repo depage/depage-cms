@@ -1,6 +1,6 @@
 /*
  * delta updates
- *   expects JSON strings from Server, mapping ids to html code 
+ *   expects JSON strings from Server, mapping ids to html code
  *   config params:
  *     url
  *     fallbackPollURL
@@ -54,10 +54,10 @@
 
                 _this._init_update_seq();
                 _this._ajax_call({
-                    operation : "create_node",
+                    operation : "createNode",
                     data : {
                         "doc_id" : tree.attr("data-doc-id"),
-                        "target_id" : parent.attr("id").replace("node_",""), 
+                        "target_id" : parent.attr("id").replace("node_",""),
                         "position" : data.rslt.position,
                         "node" : {
                             // TODO: include every .data(...) attribute
@@ -90,7 +90,7 @@
                     "name" : data.rslt.title
                 };
                 _this._ajax_call({
-                    operation : "rename_node",
+                    operation : "renameNode",
                     data : d,
                     success : function (r) {
                         if(!r.status) {
@@ -113,7 +113,7 @@
                     };
 
                     _this._ajax_call({
-                        operation : "move_node",
+                        operation : "moveNode",
                         data : d,
                         success : function (r) {
                             if(r.status) {
@@ -140,7 +140,7 @@
                     };
 
                     _this._ajax_call({
-                        operation : "copy_node",
+                        operation : "copyNode",
                         data : d,
                         success : function (r) {
                             if(r.status) {
@@ -213,7 +213,7 @@
                 _this._init_update_seq();
                 data.rslt.obj.each(function () {
                     _this._ajax_call({
-                        operation : "remove_node",
+                        operation : "deleteNode",
                         data : {
                             "doc_id" : tree.attr("data-doc-id"),
                             "id" : this.id.replace("node_","")
@@ -288,7 +288,7 @@
                 });
 
                 this.data.deltaupdates.pending_updates = [];
-            },        
+            },
             // }}}
             // {{{ _init_update_seq
             _init_update_seq : function () {
