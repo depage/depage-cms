@@ -36,12 +36,13 @@ class Tags extends Base
         $this->addHtml("<div class=\"sortable-fieldsets\">");
         foreach ($nodelist as $node) {
             $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
             $fs = $this->addFieldset("tag-$nodeId", array(
                 "label" => $node->getAttribute("name"),
             ));
 
-            $fs->addHtml("<div class=\"detail\">");
+            $fs->addHtml("<div class=\"detail\" data-nodeid=\"$nodeId\" data-parentid=\"$parentId\">");
                 $fs->addText("name-$nodeId", array(
                     "label" => _("Name"),
                     "placeholder" => _("Language name"),

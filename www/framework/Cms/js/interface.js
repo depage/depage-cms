@@ -161,6 +161,8 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupSortables
         setupSortables: function() {
+            var currentPos, newPos;
+
             $(".sortable-fieldsets").depageDetails({
                 head: "legend",
                 //detail: ".detail",
@@ -172,17 +174,39 @@ var depageCMS = (function() {
                 pullPlaceholder: false,
                 tolerance: 5,
                 onDragStart: function($item, container, _super, event) {
+                    currentPos = $item.index();
+
                     _super($item, container);
                 },
                 onDrag: function ($item, position, _super, event) {
                 },
                 onDrop: function($item, container, _super) {
                     _super($item, container);
+                    var $detail = $item.children(".detail");
+
+                    var data = {
+                        "id" : $detail.data("nodeid"),
+                        "target_id" : $detail.data("parentid"),
+                        "position" : newPos
+                    };
+                    // @todo add correct project name into url
+                    var postUrl = baseUrl + "project/depage/tree/settings/moveNode/";
+
+                    $.ajax({
+                        async : true,
+                        type: 'POST',
+                        url: postUrl,
+                        data: data,
+                        complete : function (e) {
+                            console.log(e);
+                        }
+                    });
                 },
                 onCancel: function($item, container, _super) {
                     _super($item, container);
                 },
                 afterMove: function ($placeholder, container, $closestItemOrContainer) {
+                    newPos = $placeholder.index();
                 }
             });
         },
