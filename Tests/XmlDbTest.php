@@ -137,7 +137,7 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // {{{ testCreateDocInvalidName
     /**
      * @expectedException Depage\XmlDb\XmlDbException
-     * @expectedExceptionMessage You have to give a valid name to save a new document.
+     * @expectedExceptionMessage Invalid or duplicate document name: ""
      */
     public function testCreateDocInvalidName()
     {
@@ -220,8 +220,8 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
     // {{{ testCreateDocExisting
     /**
-     * @expectedException PdoException
-     * @expectedExceptionMessage SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'pages' for key 'SECONDARY'
+     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedExceptionMessage Invalid or duplicate document name: "pages"
      */
     public function testCreateDocExisting()
     {

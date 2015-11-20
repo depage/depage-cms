@@ -76,7 +76,6 @@ class XmlDb implements XmlGetter
     {
         if (!isset($this->doc_ids[$doc_id_or_name])) {
             if ((int) $doc_id_or_name > 0) {
-
                 $id = (int) $doc_id_or_name;
 
                 // is already a doc-id
@@ -90,18 +89,14 @@ class XmlDb implements XmlGetter
                 ));
 
                 $result = $query->fetchObject();
-
                 if ($result === false) {
                     // document does not exist
                     return false;
                 }
 
                 $name = $result->docname;
-
             } else {
-
                 $name = $doc_id_or_name;
-
                 $doc_list = $this->getDocuments($name);
 
                 if (!isset($doc_list[$name])) {
@@ -430,8 +425,8 @@ class XmlDb implements XmlGetter
             // generate generic docname based on doctype
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
-        if (!is_string($docName)) {
-            throw new XmlDbException("You have to give a valid name to save a new document.");
+        if (!is_string($docName) || $this->docExists($docName)) {
+            throw new XmlDbException("Invalid or duplicate document name: \"$docName\"");
         }
 
         $query = $this->pdo->prepare(
