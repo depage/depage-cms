@@ -159,6 +159,7 @@ class Tree extends Base {
 
         $old_parent_id = $this->doc->getParentIdById($id);
         $status = $this->doc->moveNode($id, $target_id, $position);
+
         if ($status) {
             $this->recordChange($this->docId, array($old_parent_id, $target_id));
         }

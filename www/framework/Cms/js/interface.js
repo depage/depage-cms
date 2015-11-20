@@ -7,11 +7,12 @@
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
+ * @require framework/Cms/js/xmldb.js
  *
  *
  * @file    js/global.js
  *
- * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2006-2015 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -188,32 +189,10 @@ var depageCMS = (function() {
                     var $detail = $item.find(".detail p");
                     var $form = $item.parents("form");
 
-                    var data = {
-                        "id" : $detail.data("nodeid"),
-                        "target_id" : $detail.data("parentid"),
-                        "position" : newPos
-                    };
-                    var postUrl = baseUrl + "project/depage/tree/" + $form.data('document') + "/moveNode/";
+                    // @todo get project name correctly
+                    var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
 
-                    // @todo extract ajax functions into javascript library to call document functions
-                    $.ajax({
-                        async : true,
-                        type: 'POST',
-                        url: postUrl,
-                        data: data,
-                        complete : function (e) {
-                            console.log("complete");
-                            console.log(e);
-                        },
-                        error: function(e) {
-                            console.log("error");
-                            console.log(e);
-                        },
-                        succes: function(e) {
-                            console.log("success");
-                            console.log(e);
-                        }
-                    });
+                    xmldb.moveNode($detail.data("nodeid"), $detail.data("parentid"), newPos);
                 },
                 onCancel: function($item, container, _super) {
                     _super($item, container);
