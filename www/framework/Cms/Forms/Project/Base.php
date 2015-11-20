@@ -29,6 +29,9 @@ class Base extends \Depage\Cms\Forms\XmlForm
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
+        $params['dataAttr'] = array(
+            "document" => "settings",
+        );
 
         parent::__construct($name, $params);
     }

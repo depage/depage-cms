@@ -36,6 +36,7 @@ class Languages extends Base
         $this->addHtml("<div class=\"sortable-fieldsets\">");
         foreach ($nodelist as $node) {
             $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
             $fs = $this->addFieldset("language-$nodeId", array(
                 "label" => $node->getAttribute("name"),
@@ -46,6 +47,10 @@ class Languages extends Base
                     "label" => _("Name"),
                     "placeholder" => _("Language name"),
                     "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
+                    "dataAttr" => array(
+                        "nodeid" => $nodeId,
+                        "parentid" => $parentId,
+                    ),
                 ));
                 $fs->addText("shortname-$nodeId", array(
                     "label" => _("Short name"),

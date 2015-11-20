@@ -36,6 +36,7 @@ class Variables extends Base
         $this->addHtml("<div class=\"sortable-fieldsets\">");
         foreach ($nodelist as $node) {
             $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
             $fs = $this->addFieldset("variable-$nodeId", array(
                 "label" => $node->getAttribute("name"),
@@ -47,6 +48,10 @@ class Variables extends Base
                     "placeholder" => _("Language name"),
                     "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@name",
                     "validator" => "/[-_a-zA-Z0-9]+/",
+                    "dataAttr" => array(
+                        "nodeid" => $nodeId,
+                        "parentid" => $parentId,
+                    ),
                 ));
 
                 $fs->addText("localized-$nodeId-$lang", array(

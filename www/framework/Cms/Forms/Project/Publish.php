@@ -36,6 +36,7 @@ class Publish extends Base
         $this->addHtml("<div class=\"sortable-fieldsets\">");
         foreach ($nodelist as $node) {
             $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
             $fs = $this->addFieldset("publish-$nodeId", array(
                 "label" => $node->getAttribute("name"),
@@ -46,6 +47,10 @@ class Publish extends Base
                     "label" => _("Name"),
                     "placeholder" => _("Name of publishing target"),
                     "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
+                    "dataAttr" => array(
+                        "nodeid" => $nodeId,
+                        "parentid" => $parentId,
+                    ),
                 ));
                 $fs->addText("output_folder-$nodeId", array(
                     "label" => _("Output folder"),

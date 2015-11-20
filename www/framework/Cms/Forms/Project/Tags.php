@@ -42,12 +42,16 @@ class Tags extends Base
                 "label" => $node->getAttribute("name"),
             ));
 
-            $fs->addHtml("<div class=\"detail\" data-nodeid=\"$nodeId\" data-parentid=\"$parentId\">");
+            $fs->addHtml("<div class=\"detail\">");
                 $fs->addText("name-$nodeId", array(
                     "label" => _("Name"),
                     "placeholder" => _("Language name"),
                     "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@name",
                     "validator" => "/[-_a-zA-Z0-9]+/",
+                    "dataAttr" => array(
+                        "nodeid" => $nodeId,
+                        "parentid" => $parentId,
+                    ),
                 ));
 
                 foreach ($node->childNodes as $localized) {
