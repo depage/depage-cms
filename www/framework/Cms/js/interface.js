@@ -52,6 +52,7 @@ var depageCMS = (function() {
 
             $previewFrame = $("#previewFrame");
             $flashFrame = $("#flashFrame")[0];
+            // @todo add event to page, when clicking outside of edit interface to save current fields
 
             // @todo test/remove
             //localJS.openUpload("depage", "/");
@@ -163,6 +164,8 @@ var depageCMS = (function() {
         setupSortables: function() {
             var currentPos, newPos;
 
+            // @todo add delete button
+            // @todo add form to add new element
             $(".sortable-fieldsets").depageDetails({
                 head: "legend",
                 //detail: ".detail",
@@ -182,22 +185,32 @@ var depageCMS = (function() {
                 },
                 onDrop: function($item, container, _super) {
                     _super($item, container);
-                    var $detail = $item.children(".detail");
+                    var $detail = $item.find(".detail p");
+                    var $form = $item.parents("form");
 
                     var data = {
                         "id" : $detail.data("nodeid"),
                         "target_id" : $detail.data("parentid"),
                         "position" : newPos
                     };
-                    // @todo add correct project name into url
-                    var postUrl = baseUrl + "project/depage/tree/settings/moveNode/";
+                    var postUrl = baseUrl + "project/depage/tree/" + $form.data('document') + "/moveNode/";
 
+                    // @todo extract ajax functions into javascript library to call document functions
                     $.ajax({
                         async : true,
                         type: 'POST',
                         url: postUrl,
                         data: data,
                         complete : function (e) {
+                            console.log("complete");
+                            console.log(e);
+                        },
+                        error: function(e) {
+                            console.log("error");
+                            console.log(e);
+                        },
+                        succes: function(e) {
+                            console.log("success");
                             console.log(e);
                         }
                     });
