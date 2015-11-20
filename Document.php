@@ -780,7 +780,7 @@ class Document
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos_offset (int) offset of target position
      */
-    public function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
+    protected function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
     {
         $this->xmldb->beginTransaction();
 
