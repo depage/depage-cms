@@ -10,7 +10,7 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
-    extension-element-prefixes="xsl rpc db proj pg sec edit backup ">
+    extension-element-prefixes="xsl db proj pg sec edit ">
 <!-- {{{ opengraph -->
 <xsl:template name="opengraph">
     <xsl:param name="title"></xsl:param>
