@@ -254,7 +254,7 @@ abstract class Transformer
             // @todo add better error handling
             $errors = libxml_get_errors();
             foreach($errors as $error) {
-                $this->log->log($error);
+                $this->log->log("LibXMLError: " . $error->message);
                 //var_dump($error);
             }
 
@@ -266,7 +266,7 @@ abstract class Transformer
             // @todo add better error handling
             $errors = libxml_get_errors();
             foreach($errors as $error) {
-                $this->log->log($error);
+                $this->log->log("LibXMLError: " . $error->message);
                 //var_dump($error);
             }
         }
