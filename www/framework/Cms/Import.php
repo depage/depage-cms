@@ -654,11 +654,7 @@ class Import
             "\"/pg:page\"" => "\"\$currentPage\"",
             "\"/pg:page/" => "\"\$currentPage/",
             "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
-
-            // project specific:
-            // @todo move these into the project folders because they are specific
-            //santa vendetta
-            "<xsl:for-each select=\"(dp:atomizeText( string(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)))/atomized/*\">\n                    <xsl:copy-of select="." /><xsl:text> </xsl:text>\n                </xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)\" disable-output-escaping=\"yes\" />",
+            "nav_tag_" => "tag_",
         );
 
         return $replacements;
