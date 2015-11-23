@@ -137,13 +137,13 @@ class Project extends Base
         ));
         $form->process();
 
-        if ($form->validate()) {
+        if ($form->validateAutosave()) {
             $node = $form->getValuesXml();
             $settings->saveNode($node);
 
             $form->clearSession();
 
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            //\Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;
@@ -168,13 +168,9 @@ class Project extends Base
         ));
         $form->process();
 
-        if ($form->validate()) {
+        if ($form->validateAutosave()) {
             $node = $form->getValuesXml();
             $settings->saveNode($node);
-
-            $form->clearSession();
-
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;
@@ -198,14 +194,9 @@ class Project extends Base
         ));
         $form->process();
 
-        if ($form->validate()) {
+        if ($form->validateAutosave()) {
             $node = $form->getValuesXml();
             $settings->saveNode($node);
-
-
-            $form->clearSession();
-
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;
@@ -229,13 +220,9 @@ class Project extends Base
         ));
         $form->process();
 
-        if ($form->validate()) {
+        if ($form->validateAutosave()) {
             $node = $form->getValuesXml();
             $settings->saveNode($node);
-
-            $form->clearSession();
-
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;

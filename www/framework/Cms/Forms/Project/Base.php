@@ -29,6 +29,7 @@ class Base extends \Depage\Cms\Forms\XmlForm
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
+        $params['jsAutosave'] = true;
         $params['dataAttr'] = array(
             "document" => "settings",
         );
