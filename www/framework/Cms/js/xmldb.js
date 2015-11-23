@@ -64,9 +64,8 @@ var DepageXmldb = (function() {
                     console.log(e);
                 },
                 success: function(data, status) {
-                    console.log("success");
-                    console.log(data);
                     console.log(status);
+                    console.log(data);
                 }
             });
         },

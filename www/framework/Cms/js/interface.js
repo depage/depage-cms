@@ -172,20 +172,19 @@ var depageCMS = (function() {
                 //detail: ".detail",
             }).sortable({
                 itemSelector: "fieldset",
+                containerSelector: ".sortable-fieldsets",
                 nested: false,
                 vertical: false,
                 handle: "legend",
-                pullPlaceholder: false,
-                tolerance: 5,
+                //pullPlaceholder: false,
+                placeholder: '<div class="placeholder"></div>',
+                tolerance: 10,
                 onDragStart: function($item, container, _super, event) {
                     currentPos = $item.index();
 
                     _super($item, container);
                 },
-                onDrag: function ($item, position, _super, event) {
-                },
-                onDrop: function($item, container, _super) {
-                    _super($item, container);
+                onDrop: function($item, container, _super, event) {
                     var $detail = $item.find(".detail p");
                     var $form = $item.parents("form");
 
@@ -193,8 +192,7 @@ var depageCMS = (function() {
                     var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
 
                     xmldb.moveNode($detail.data("nodeid"), $detail.data("parentid"), newPos);
-                },
-                onCancel: function($item, container, _super) {
+
                     _super($item, container);
                 },
                 afterMove: function ($placeholder, container, $closestItemOrContainer) {
