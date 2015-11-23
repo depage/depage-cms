@@ -1214,6 +1214,7 @@ class CmsFuncs {
             $this->callbacks[] = new Func("set_activeId_{$type}", array('id' => $newActiveId));
         }
         if ($type == 'pages' || $type == 'page_data') {
+            // @todo see if we add this all the time?
             $this->callbacks[] = new Func("preview_update");
         }
     }
