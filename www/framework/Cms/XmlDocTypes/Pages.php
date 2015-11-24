@@ -3,9 +3,9 @@
 namespace Depage\Cms\XmlDocTypes;
 
 // TODO configure
-define('XML_TEMPLATE_DIR', __DIR__ . '/XmlTemplates/');
 
 class Pages extends UniqueNames {
+    const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';
 
     // {{{ constructor
     public function __construct($xmldb, $document) {
@@ -184,7 +184,7 @@ class Pages extends UniqueNames {
      */
     private function loadXmlTemplate($template) {
         $doc = new \DOMDocument();
-        $doc->load(XML_TEMPLATE_DIR . $template);
+        $doc->load(self::XML_TEMPLATE_DIR . $template);
         return $doc;
     }
     // }}}
