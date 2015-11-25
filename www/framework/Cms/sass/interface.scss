@@ -869,20 +869,73 @@ div.preview.zoom100 iframe {
 }
 /* }}} */
 /* {{{ sortable fieldset */
-.depage-form .sortable-fieldsets {
-    fieldset {
-        legend {
-            display: block;
+.sortable-forms {
+    $height: 26px;
+    margin-top: 15px;
+
+    .sortable {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        height: $height;
+        width: 75%;
+        margin-left: 25%;
+    }
+
+    h1,
+    form {
+        padding: 5px 10px;
+        background: #ffffff;
+    }
+    h1 {
+        position: absolute;
+        left: -33%;
+        top: 0;
+        display: block;
+        cursor: pointer;
+        width: 34%;
+        height: $height;
+        margin: 0;
+        float: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: none;
+        font-weight: normal;
+
+        &:hover {
+            text-decoration: underline;
         }
-        .content {
+    }
+    form {
+        display: none;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+    }
+    p.submit {
+        position: static;
+        float: none;
+    }
+    .sortable.active {
+        h1 {
+            background: #ffffff;
+            font-weight: bold;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+        form {
             display: block;
         }
     }
 }
 /* }}} */
 /* {{{ details */
-dl.projectlist dt .opener,
-.sortable-fieldsets legend {
+dl.projectlist dt .opener {
     display: block;
     content: " ";
     float: left;
@@ -891,11 +944,7 @@ dl.projectlist dt .opener,
     margin-top: 7px;
     @include icon-base("closed", 0.28);
 }
-.sortable-fieldsets legend {
-    text-indent: 16px;
-}
-dl.projectlist dt.active .opener,
-.sortable-fieldsets legend.active {
+dl.projectlist dt.active .opener {
     @include icon("open", 0.28);
 }
 /* }}} */

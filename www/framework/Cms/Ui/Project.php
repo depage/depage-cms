@@ -74,6 +74,16 @@ class Project extends Base
         } else {
             $title = _("Add new Project");
         }
+
+        $tabTitles = array(
+            "basic" => _("Project Settings"),
+            "tags" => _("Tags"),
+            "languages" => _("Languages"),
+            "variables" => _("Variables"),
+            "publish" => _("Publish"),
+            "import" => _("Import"),
+        );
+
         $h = new Html("box.tpl", array(
             'id' => "projects",
             'icon' => "framework/Cms/images/icon_projects.gif",
@@ -81,6 +91,11 @@ class Project extends Base
             'title' => $title,
             'content' => array(
                 $this->toolbar(),
+                new Html("tabs.tpl", array(
+                    'baseUrl' => "project/" . $this->project->name . "/settings/",
+                    'tabs' => $tabTitles,
+                    'activeTab' => $type,
+                )),
                 $html,
             ),
         ), $this->htmlOptions);
@@ -103,7 +118,7 @@ class Project extends Base
         ));
         $form->process();
 
-        if ($form->validate()) {
+        if ($form->validateAutosave()) {
             $values = $form->getValues();
 
             foreach ($values as $key => $val) {
@@ -111,9 +126,9 @@ class Project extends Base
             }
 
             $this->project->save();
-            $form->clearSession();
+            $form->clearSession(false);
 
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            //\Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;
@@ -158,22 +173,42 @@ class Project extends Base
      **/
     private function settings_tags()
     {
-        // @todo updated with multiple forms per element
         $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getSubDocByXpath("//proj:tags");
+        $nodeIds = $settings->getNodeIdsByXpath("//proj:tags/proj:tag");
+        $parentId = $settings->getParentIdById($nodeIds[0]);
+        $forms = array();
 
-        $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-" . $this->project->id, array(
+        foreach($nodeIds as $nodeId) {
+            $xml = $settings->getSubdocByNodeId($nodeId);
+            $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-{$this->project->id}-{$nodeId}", array(
+                'project' => $this->project,
+                'dataNode' => $xml,
+                'parentId' => $parentId,
+            ));
+            array_push($forms, $form);
+        }
+        // @todo add form for new tag
+        /*
+        $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-{$this->project->id}-new", array(
             'project' => $this->project,
             'dataNode' => $xml,
         ));
-        $form->process();
+        array_push($forms, $form);
+         */
 
-        if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
-            $settings->saveNode($node);
+        foreach ($forms as $form) {
+            $form->process();
+
+            if ($form->validateAutosave()) {
+                $node = $form->getValuesXml();
+                $targetId = null;
+                $settings->saveNode($node, $targetId);
+
+                $form->clearSession(false);
+            }
         }
 
-        return $form;
+        return "<div class=\"sortable-forms\">" . implode($forms) . "</div>";
     }
     // }}}
     // {{{ settings-variables()
@@ -185,6 +220,7 @@ class Project extends Base
      **/
     private function settings_variables()
     {
+        // @todo updated with multiple forms per element
         $settings = $this->project->getSettingsDoc();
         $xml = $settings->getSubDocByXpath("//proj:variables");
 
@@ -211,6 +247,7 @@ class Project extends Base
      **/
     private function settings_publish()
     {
+        // @todo updated with multiple forms per element
         $settings = $this->project->getSettingsDoc();
         $xml = $settings->getSubDocByXpath("//proj:publishTargets");
 

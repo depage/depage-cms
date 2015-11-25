@@ -23,13 +23,12 @@ class Base extends \Depage\Cms\Forms\XmlForm
     public function __construct($name, $params)
     {
         $this->project = $params['project'];
+        $this->parentId = $params['parentId'];
         $this->baseUrl = "project/{$this->project->name}/";
 
         $groups = array();
 
-        $params['cancelUrl'] = DEPAGE_BASE;
-        $params['cancelLabel'] = _("Cancel");
-        $params['jsAutosave'] = true;
+        //$params['jsAutosave'] = !$this->isNew();
         $params['dataAttr'] = array(
             "document" => "settings",
         );
@@ -37,24 +36,17 @@ class Base extends \Depage\Cms\Forms\XmlForm
         parent::__construct($name, $params);
     }
     // }}}
-    // {{{ getTabs()
+    // {{{ isNew()
     /**
-     * @brief getTabs
+     * @brief isNew
      *
-     * @return array tabs
+     * @param mixed
+     * @return void
      **/
-    public static function getTabs()
+    public function isNew()
     {
-        $tabs = array(
-            "basic" => _("Project Settings"),
-            "tags" => _("Tags"),
-            "languages" => _("Languages"),
-            "variables" => _("Variables"),
-            "publish" => _("Publish"),
-            "import" => _("Import"),
-        );
+        return false;
 
-        return $tabs;
     }
     // }}}
     // {{{ __toString()
@@ -67,25 +59,15 @@ class Base extends \Depage\Cms\Forms\XmlForm
     public function __toString()
     {
         $html = "";
-        if ($this->project->id !== null) {
-            $tabs = self::getTabs();
-            $class = get_class($this);
-            $class = strtolower(substr($class, strrpos($class, "\\") + 1));
 
-            $html .= "<ul class=\"tabs\">";
-            foreach ($tabs as $id => $title) {
-                $className = "tab";
-
-                if ($id == $class) {
-                    $className .= " active";
-                }
-
-                $html .= "<li class=\"$className\"><a href=\"{$this->baseUrl}settings/$id/\">" . htmlentities($title) . "</a></li>";
-            }
-            $html .= "</ul>";
+        if (isset($this->dataNode) && !empty($this->parentId)) {
+            $html .= "<div class=\"sortable\">";
+            $html .= "<h1>" . htmlentities($this->dataNode->getAttribute("name")) . "</h1>";
+            $html .= parent::__toString();
+            $html .= "</div>";
+        } else {
+            $html .= parent::__toString();
         }
-
-        $html .= parent::__toString();
 
         return $html;
     }

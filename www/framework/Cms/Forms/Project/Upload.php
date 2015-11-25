@@ -8,11 +8,6 @@ namespace Depage\Cms\Forms\Project;
  */
 class Upload extends \Depage\HtmlForm\HtmlForm
 {
-    /**
-     * @brief baseUrl of current project settings
-     **/
-    protected $baseUrl = "";
-
     // {{{ __construct()
     /**
      * @brief __construct
@@ -23,7 +18,6 @@ class Upload extends \Depage\HtmlForm\HtmlForm
     public function __construct($name, $params)
     {
         $this->project = $params['project'];
-        $this->baseUrl = "project/{$this->project->name}/";
         $this->targetPath = $params['targetPath'];
 
         parent::__construct($name, $params);

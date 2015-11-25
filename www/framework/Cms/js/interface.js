@@ -167,16 +167,26 @@ var depageCMS = (function() {
 
             // @todo add delete button
             // @todo add form to add new element
-            $(".sortable-fieldsets").depageDetails({
-                head: "legend",
-                //detail: ".detail",
-            }).sortable({
-                itemSelector: "fieldset",
-                containerSelector: ".sortable-fieldsets",
+            $(".sortable-forms .sortable").each(function() {
+                var $form = $(this);
+                var $head = $(this).find("h1");
+
+                $head.on("click", function() {
+                    if ($form.hasClass("active")) {
+                        $form.removeClass("active");
+                    } else {
+                        $(".sortable.active").removeClass("active");
+                        $form.addClass("active");
+                    }
+                });
+            });
+            $(".sortable-forms").sortable({
+                itemSelector: ".sortable",
+                containerSelector: ".sortable-forms",
                 nested: false,
                 vertical: false,
-                handle: "legend",
-                //pullPlaceholder: false,
+                handle: "h1",
+                pullPlaceholder: false,
                 placeholder: '<div class="placeholder"></div>',
                 tolerance: 10,
                 onDragStart: function($item, container, _super, event) {
@@ -185,13 +195,12 @@ var depageCMS = (function() {
                     _super($item, container);
                 },
                 onDrop: function($item, container, _super, event) {
-                    var $detail = $item.find(".detail p");
-                    var $form = $item.parents("form");
+                    var $input = $item.find("p.node-name");
 
                     // @todo get project name correctly
                     var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
 
-                    xmldb.moveNode($detail.data("nodeid"), $detail.data("parentid"), newPos);
+                    xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
 
                     _super($item, container);
                 },

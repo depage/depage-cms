@@ -1037,15 +1037,57 @@ div.preview.zoom100 iframe {
 
 /* }}} */
 /* {{{ sortable fieldset */
-.depage-form .sortable-fieldsets fieldset legend {
-  display: block; }
-.depage-form .sortable-fieldsets fieldset .content {
-  display: block; }
+.sortable-forms {
+  margin-top: 15px; }
+  .sortable-forms .sortable {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    height: 26px;
+    width: 75%;
+    margin-left: 25%; }
+  .sortable-forms h1,
+  .sortable-forms form {
+    padding: 5px 10px;
+    background: #ffffff; }
+  .sortable-forms h1 {
+    position: absolute;
+    left: -33%;
+    top: 0;
+    display: block;
+    cursor: pointer;
+    width: 34%;
+    height: 26px;
+    margin: 0;
+    float: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: none;
+    font-weight: normal; }
+    .sortable-forms h1:hover {
+      text-decoration: underline; }
+  .sortable-forms form {
+    display: none;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10; }
+  .sortable-forms p.submit {
+    position: static;
+    float: none; }
+  .sortable-forms .sortable.active h1 {
+    background: #ffffff;
+    font-weight: bold; }
+    .sortable-forms .sortable.active h1:hover {
+      text-decoration: none; }
+  .sortable-forms .sortable.active form {
+    display: block; }
 
 /* }}} */
 /* {{{ details */
-dl.projectlist dt .opener,
-.sortable-fieldsets legend {
+dl.projectlist dt .opener {
   display: block;
   content: " ";
   float: left;
@@ -1058,11 +1100,7 @@ dl.projectlist dt .opener,
   background-position: 0 -107.52px;
   background-size: 53.76px 134.4px; }
 
-.sortable-fieldsets legend {
-  text-indent: 16px; }
-
-dl.projectlist dt.active .opener,
-.sortable-fieldsets legend.active {
+dl.projectlist dt.active .opener {
   background-position: 0 -120.96px;
   background-size: 53.76px 134.4px; }
 
