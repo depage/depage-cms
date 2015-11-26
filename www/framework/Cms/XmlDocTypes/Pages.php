@@ -4,7 +4,9 @@ namespace Depage\Cms\XmlDocTypes;
 
 // TODO configure
 
-class Pages extends UniqueNames {
+class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
+    use Traits\UniqueNames;
+
     const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';
 
     // {{{ constructor
@@ -166,7 +168,7 @@ class Pages extends UniqueNames {
 
     // {{{ testDocument
     public function testDocument($node) {
-        $changed = parent::testDocument($node);
+        $changed = $this->testUniqueNames($node, "//pg:*");
 
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->addUrlAttributes($node);
