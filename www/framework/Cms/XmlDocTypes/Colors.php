@@ -2,7 +2,8 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Colors extends UniqueNames {
+class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
+    use Traits\UniqueNames;
 
     /**
      * @brief project
@@ -47,6 +48,7 @@ class Colors extends UniqueNames {
     public function testDocument($node) {
         $changed = parent::testDocument($node);
 
+        $changed = $changed || $this->testUniqueNames($node, "//proj:colorschemes | //proj:colorscheme");
         $changed = $changed || $this->testColors($node);
 
         return $changed;
