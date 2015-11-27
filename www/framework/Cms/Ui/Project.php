@@ -187,21 +187,29 @@ class Project extends Base
             ));
             array_push($forms, $form);
         }
-        // @todo add form for new tag
-        /*
+
+        $xml = new \Depage\Xml\Document();
+        $xml->load(__DIR__ . "/../XmlDocTypes/SettingsXml/tag.xml");
+        $languages = array_keys($this->project->getLanguages());
+        \Depage\Cms\XmlDocTypes\Traits\MultipleLanguages::updateLangNodes($xml, $languages);
         $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-{$this->project->id}-new", array(
             'project' => $this->project,
             'dataNode' => $xml,
+            'parentId' => $parentId,
         ));
         array_push($forms, $form);
-         */
 
         foreach ($forms as $form) {
             $form->process();
 
             if ($form->validateAutosave()) {
                 $node = $form->getValuesXml();
-                $targetId = null;
+                if ($node->ownerDocument->documentElement->hasAttributeNS("http://cms.depagecms.net/ns/database", "lastchange")) {
+                    $targetId = null;
+                } else {
+                    $targetId = $parentId;
+                }
+
                 $settings->saveNode($node, $targetId);
 
                 $form->clearSession(false);

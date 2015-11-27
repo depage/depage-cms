@@ -23,7 +23,9 @@ class Base extends \Depage\Cms\Forms\XmlForm
     public function __construct($name, $params)
     {
         $this->project = $params['project'];
-        $this->parentId = $params['parentId'];
+        if (!empty($params['parentId'])) {
+            $this->parentId = $params['parentId'];
+        }
         $this->baseUrl = "project/{$this->project->name}/";
 
         $groups = array();

@@ -880,6 +880,36 @@ div.preview.zoom100 iframe {
         height: $height;
         width: 75%;
         margin-left: 25%;
+
+        &.active {
+            h1 {
+                background: #ffffff;
+                font-weight: bold;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+            form {
+                display: block;
+            }
+        }
+        &.dragged {
+            position: absolute;
+            z-index: 10000;
+
+            h1 {
+                background: #ffffff;
+                font-weight: bold;
+            }
+            form {
+                display: none !important;
+            }
+        }
+    }
+    .placeholder {
+        //border: 1px solid #ffffff;
+        height: $height;
     }
 
     h1,
@@ -918,19 +948,6 @@ div.preview.zoom100 iframe {
     p.submit {
         position: static;
         float: none;
-    }
-    .sortable.active {
-        h1 {
-            background: #ffffff;
-            font-weight: bold;
-
-            &:hover {
-                text-decoration: none;
-            }
-        }
-        form {
-            display: block;
-        }
     }
 }
 /* }}} */
