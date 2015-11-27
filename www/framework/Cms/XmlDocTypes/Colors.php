@@ -48,8 +48,8 @@ class Colors extends \Depage\XmlDb\XmlDocTypes\Base {
     public function testDocument($node) {
         $changed = parent::testDocument($node);
 
-        $changed = $changed || $this->testUniqueNames($node, "//proj:colorschemes | //proj:colorscheme");
-        $changed = $changed || $this->testColors($node);
+        $changed = $this->testUniqueNames($node, "//proj:colorschemes | //proj:colorscheme") || $changed;
+        $changed = $this->testColors($node) || $changed;
 
         return $changed;
     }

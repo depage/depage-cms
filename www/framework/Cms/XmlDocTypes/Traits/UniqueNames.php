@@ -15,7 +15,7 @@ trait UniqueNames
         $pages = $xpath->query("//pg:*");
 
         foreach ($pages as $page) {
-            $changed = $changed || $this->testChildNodeNames($page);
+            $changed = $this->testChildNodeNames($page) || $changed;
         }
 
         return $changed;
