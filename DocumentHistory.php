@@ -121,6 +121,8 @@ class DocumentHistory
         if ($query->execute($params) && $result = $query->fetchObject()) {
             $doc = new \DOMDocument();
             $doc->loadXML($result->xml);
+            $doc->documentElement->setAttribute('db:docid', $this->document->getDocId());
+            $doc->documentElement->setAttribute('db:lastchange', date($this->dateFormat, $timestamp));
 
             if (!$add_id_attribute) {
                 Document::removeNodeAttr($doc, $this->db_ns, 'id');
