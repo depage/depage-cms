@@ -4,10 +4,12 @@ namespace Depage\XmlDb\Tests;
 
 class XpathXmlDbTest extends XpathTestCase
 {
-    // {{{ getTestObject
-    protected function getTestObject()
+    // {{{ setUp
+    protected function setUp()
     {
-        return $this->xmldb;
+        parent::setUp();
+
+        $this->testObject = $this->xmldb;
     }
     // }}}
     // {{{ getNodeIdsByDomXpath

@@ -41,8 +41,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ assertCorrectXpathIds
     protected function assertCorrectXpathIds(array $expectedIds, $xpath)
     {
-        $object = $this->getTestObject();
-        $domXpathIds = $this->getNodeIdsByDomXpath($object, $xpath);
+        $domXpathIds = $this->getNodeIdsByDomXpath($this->testObject, $xpath);
         sort($domXpathIds);
 
         $this->assertEquals($expectedIds, $domXpathIds, "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
@@ -52,8 +51,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ assertCorrectXpathIdsNoDomXpath
     protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
     {
-        $object = $this->getTestObject();
-        $actualIds = $object->getNodeIdsByXpath($xpath);
+        $actualIds = $this->testObject->getNodeIdsByXpath($xpath);
         sort($actualIds);
 
         $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
@@ -64,6 +62,23 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testNoResult()
     {
         $this->assertCorrectXpathIds(array(), '/nonode');
+    }
+    // }}}
+
+    // {{{ testGetSubDocByXpathByName
+    public function testGetSubDocByXpathByName()
+    {
+        $subDoc = $this->testObject->getSubDocByXpath('//pg:folder');
+
+        $expected = '<pg:folder xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" file_type="html" multilang="true" name="Subpage" db:dataid="7" db:id="9" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""/>';
+
+        $this->assertXmlStringEqualsXmlString($expected, $subDoc);
+    }
+    // }}}
+    // {{{ testGetSubDocByXpathNone
+    public function testGetSubDocByXpathNone()
+    {
+        $this->assertFalse($this->testObject->getSubDocByXpath('//iamnosubdoc'));
     }
     // }}}
 
