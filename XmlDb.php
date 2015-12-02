@@ -234,7 +234,14 @@ class XmlDb implements XmlGetter
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true)
     {
-        return false;
+        $subDoc = false;
+        $ids = $this->getNodeIdsByXpath($xpath);
+
+        if (isset($ids[0])) {
+            $subDoc = $this->getDocByNodeId($ids[0])->getSubdocByNodeId($ids[0], $add_id_attribute);
+        }
+
+        return $subDoc;
     }
     // }}}
     // {{{ getNodeIdsByXpath

@@ -322,11 +322,14 @@ class Document
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true)
     {
+        $subDoc = false;
         $ids = $this->getNodeIdsByXpath($xpath);
-        if (count($ids) > 0) {
-            return $this->getSubdocByNodeId($ids[0], $add_id_attribute);
+
+        if (isset($ids[0])) {
+            $subDoc = $this->getSubdocByNodeId($ids[0], $add_id_attribute);
         }
-        return false;
+
+        return $subDoc;
     }
     // }}}
 
