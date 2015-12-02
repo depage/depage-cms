@@ -1609,11 +1609,7 @@ class Document
             'user_id' => $user_id,
         );
 
-        if ($query->execute($params)) {
-            $result = $timestamp;
-        }
-
-        return $result;
+        return ($query->execute($params)) ? $timestamp : false;
     }
     // }}}
 
