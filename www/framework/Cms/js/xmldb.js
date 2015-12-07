@@ -43,7 +43,10 @@ var DepageXmldb = (function() {
         },
         // }}}
         // {{{ deleteNode()
-        deleteNode: function() {
+        deleteNode: function(nodeId) {
+            this.ajaxCall("deleteNode", {
+                "id" : nodeId
+            });
         },
         // }}}
         // {{{ duplicateNode()

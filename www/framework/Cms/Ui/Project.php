@@ -213,6 +213,8 @@ class Project extends Base
                 $settings->saveNode($node, $targetId);
 
                 $form->clearSession(false);
+
+                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/" . $this->project->name . "/settings/tags/");
             }
         }
 

@@ -163,28 +163,47 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupSortables
         setupSortables: function() {
+            // @todo get project name correctly
+            var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
             var currentPos, newPos;
 
             // @todo add delete button
             // @todo add form to add new element
             $(".sortable-forms .sortable").each(function() {
-                var $form = $(this);
+                var $container = $(this);
                 var $head = $(this).find("h1");
+                var $form = $(this).find("form");
 
                 $head.on("click", function() {
-                    if ($form.hasClass("active")) {
-                        $form.removeClass("active");
+                    if ($container.hasClass("active")) {
+                        $container.removeClass("active");
                     } else {
                         $(".sortable.active").removeClass("active");
-                        $form.addClass("active");
+                        $container.addClass("active");
                     }
                 });
+
+                if (!$container.hasClass("new")) {
+                    // @todo make last element undeletable
+                    var $deleteButton = $("<a class=\"button delete\">Delete</a>");
+
+                    $deleteButton.appendTo($form.find("p.submit"));
+                    $deleteButton.on("click", function() {
+                        var $input = $form.find("p.node-name");
+
+                        // @todo add dialog to ask if sure
+                        xmldb.deleteNode($input.data("nodeid"));
+
+                        $container.remove();
+
+                        return false;
+                    });
+                }
             });
             $(".sortable-forms").sortable({
-                itemSelector: ".sortable",
+                itemSelector: ".sortable:not(.new)",
                 containerSelector: ".sortable-forms",
                 nested: false,
-                vertical: false,
                 handle: "h1",
                 pullPlaceholder: false,
                 placeholder: '<div class="placeholder"></div>',
@@ -194,11 +213,15 @@ var depageCMS = (function() {
 
                     _super($item, container);
                 },
+                onDrag: function ($item, position, _super, event) {
+                    position.left = 5;
+                    position.top -= 10;
+
+                    $item.css(position);
+                    $(".placeholder").text($item.find("h1").text());
+                },
                 onDrop: function($item, container, _super, event) {
                     var $input = $item.find("p.node-name");
-
-                    // @todo get project name correctly
-                    var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
 
                     xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
 

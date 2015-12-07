@@ -30,12 +30,13 @@ class Base extends \Depage\Cms\Forms\XmlForm
 
         $groups = array();
 
-        //$params['jsAutosave'] = !$this->isNew();
         $params['dataAttr'] = array(
             "document" => "settings",
         );
 
         parent::__construct($name, $params);
+
+        $this->jsAutosave = !$this->isNew();
     }
     // }}}
     // {{{ isNew()
@@ -47,8 +48,26 @@ class Base extends \Depage\Cms\Forms\XmlForm
      **/
     public function isNew()
     {
-        return false;
+        return isset($this->dataNode) && empty($this->dataNode->getAttribute("name"));
 
+    }
+    // }}}
+    // {{{ getFormTitle()
+    /**
+     * @brief getFormTitle
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function getFormTitle()
+    {
+        $title = "";
+
+        if (isset($this->dataNode)) {
+            $title = $this->dataNode->getAttribute("name");
+        }
+
+        return $title;
     }
     // }}}
     // {{{ __toString()
@@ -62,9 +81,17 @@ class Base extends \Depage\Cms\Forms\XmlForm
     {
         $html = "";
 
-        if (isset($this->dataNode) && !empty($this->parentId)) {
-            $html .= "<div class=\"sortable\">";
-            $html .= "<h1>" . htmlentities($this->dataNode->getAttribute("name")) . "</h1>";
+        if ($title = $this->getFormTitle()) {
+            if (empty($title)) {
+                $title = _("New Tag");
+            }
+            $class = "sortable";
+            if ($this->isNew()) {
+                $class .= " new";
+            }
+
+            $html .= "<div class=\"$class\">";
+            $html .= "<h1>" . htmlentities($title) . "</h1>";
             $html .= parent::__toString();
             $html .= "</div>";
         } else {

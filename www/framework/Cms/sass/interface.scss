@@ -881,6 +881,10 @@ div.preview.zoom100 iframe {
         width: 75%;
         margin-left: 25%;
 
+        &.new {
+            margin-top: 22px;
+        }
+        &:target,
         &.active {
             h1 {
                 background: #ffffff;
