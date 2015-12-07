@@ -54,15 +54,15 @@ class Project extends Base
         $html = "";
 
         if ($type == "languages") {
-            $html =  $this->settings_languages();
+            $html =  $this->settingsXmlForms("language");
         } else if ($type == "navigation") {
-            $html =  $this->settings_languages();
+            $html =  $this->settingsXmlForms("navigation");
         } else if ($type == "tags") {
-            $html =  $this->settings_tags();
+            $html =  $this->settingsXmlForms("tag");
         } else if ($type == "variables") {
-            $html =  $this->settings_variables();
-        } else if ($type == "publish") {
-            $html =  $this->settings_publish();
+            $html =  $this->settingsXmlForms("variable");
+        } else if ($type == "publishs") {
+            $html =  $this->settingsXmlForms("publish");
         } else if ($type == "import") {
             $html = $this->import();
         } else {
@@ -80,7 +80,7 @@ class Project extends Base
             "tags" => _("Tags"),
             "languages" => _("Languages"),
             "variables" => _("Variables"),
-            "publish" => _("Publish"),
+            "publishs" => _("Publish"),
             "import" => _("Import"),
         );
 
@@ -134,53 +134,29 @@ class Project extends Base
         return $form;
     }
     // }}}
-    // {{{ settings-languages()
-    /**
-     * @brief language settings
-     *
-     * @param mixed
-     * @return void
-     **/
-    private function settings_languages()
-    {
-        $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getSubDocByXpath("//proj:languages");
-
-        $form = new \Depage\Cms\Forms\Project\Languages("edit-project-languages-" . $this->project->id, array(
-            'project' => $this->project,
-            'dataNode' => $xml,
-        ));
-        $form->process();
-
-        if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
-            $settings->saveNode($node);
-
-            $form->clearSession();
-
-            //\Depage\Depage\Runner::redirect(DEPAGE_BASE);
-        }
-
-        return $form;
-    }
-    // }}}
-    // {{{ settings-tags()
+    // {{{ settingsXmlForms()
     /**
      * @brief tags settings
      *
      * @param mixed
      * @return void
      **/
-    private function settings_tags()
+    private function settingsXmlForms($type)
     {
         $settings = $this->project->getSettingsDoc();
-        $nodeIds = $settings->getNodeIdsByXpath("//proj:tags/proj:tag");
+        $formClass = "\\Depage\\Cms\\Forms\\Project\\" . ucfirst($type);
+        if ($type == "publish") {
+            $nodeName = "publishTarget";
+        } else {
+            $nodeName = $type;
+        }
+        $nodeIds = $settings->getNodeIdsByXpath("//proj:{$nodeName}s/proj:{$nodeName}");
         $parentId = $settings->getParentIdById($nodeIds[0]);
         $forms = array();
 
         foreach($nodeIds as $nodeId) {
             $xml = $settings->getSubdocByNodeId($nodeId);
-            $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-{$this->project->id}-{$nodeId}", array(
+            $form = new $formClass("edit-project-{$type}s-{$this->project->id}-{$nodeId}", array(
                 'project' => $this->project,
                 'dataNode' => $xml,
                 'parentId' => $parentId,
@@ -189,10 +165,10 @@ class Project extends Base
         }
 
         $xml = new \Depage\Xml\Document();
-        $xml->load(__DIR__ . "/../XmlDocTypes/SettingsXml/tag.xml");
+        $xml->load(__DIR__ . "/../XmlDocTypes/SettingsXml/{$type}.xml");
         $languages = array_keys($this->project->getLanguages());
         \Depage\Cms\XmlDocTypes\Traits\MultipleLanguages::updateLangNodes($xml, $languages);
-        $form = new \Depage\Cms\Forms\Project\Tags("edit-project-tags-{$this->project->id}-new", array(
+        $form = new $formClass("edit-project-{$type}s-{$this->project->id}-new", array(
             'project' => $this->project,
             'dataNode' => $xml,
             'parentId' => $parentId,
@@ -214,65 +190,11 @@ class Project extends Base
 
                 $form->clearSession(false);
 
-                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/" . $this->project->name . "/settings/tags/");
+                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/" . $this->project->name . "/settings/{$type}/");
             }
         }
 
         return "<div class=\"sortable-forms\">" . implode($forms) . "</div>";
-    }
-    // }}}
-    // {{{ settings-variables()
-    /**
-     * @brief variable settings
-     *
-     * @param mixed
-     * @return void
-     **/
-    private function settings_variables()
-    {
-        // @todo updated with multiple forms per element
-        $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getSubDocByXpath("//proj:variables");
-
-        $form = new \Depage\Cms\Forms\Project\Variables("edit-project-variables-" . $this->project->id, array(
-            'project' => $this->project,
-            'dataNode' => $xml,
-        ));
-        $form->process();
-
-        if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
-            $settings->saveNode($node);
-        }
-
-        return $form;
-    }
-    // }}}
-    // {{{ settings-publish()
-    /**
-     * @brief publish settings
-     *
-     * @param mixed
-     * @return void
-     **/
-    private function settings_publish()
-    {
-        // @todo updated with multiple forms per element
-        $settings = $this->project->getSettingsDoc();
-        $xml = $settings->getSubDocByXpath("//proj:publishTargets");
-
-        $form = new \Depage\Cms\Forms\Project\Publish("edit-project-publish-" . $this->project->id, array(
-            'project' => $this->project,
-            'dataNode' => $xml,
-        ));
-        $form->process();
-
-        if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
-            $settings->saveNode($node);
-        }
-
-        return $form;
     }
     // }}}
     // {{{ import()

@@ -31,66 +31,68 @@ class Publish extends Base
      **/
     public function addChildElements()
     {
-        $nodelist = $this->dataNodeXpath->query("//proj:publishTarget");
+        $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $this->addHtml("<div class=\"sortable-fieldsets\">");
-        foreach ($nodelist as $node) {
-            $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $this->addText("name-$nodeId", array(
+            "label" => _("Name"),
+            "placeholder" => _("Name of publishing target"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
+            "required" => true,
+            "dataAttr" => array(
+                "nodeid" => $nodeId,
+                "parentid" => $this->parentId,
+            ),
+        ));
+        $this->addText("output_folder-$nodeId", array(
+            "label" => _("Output folder"),
+            "placeholder" => _("URL, where to publish project to"),
+            "required" => true,
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
+        ));
+        $this->addUrl("baseurl-$nodeId", array(
+            "label" => _("Base Url"),
+            "placeholder" => _("Base URL of publish target"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
+        ));
+        $this->addText("output_user-$nodeId", array(
+            "label" => _("Username"),
+            "placeholder" => _("Username"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
+        ));
+        $this->addPassword("output_password-$nodeId", array(
+            "label" => _("Password"),
+            "placeholder" => _("Password"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
+        ));
+        $this->addSingle("template_set-$nodeId", array(
+            "label" => _("Template Set"),
+            "list" => array(
+                "html" => "html",
+            ),
+            "skin" => "select",
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
+        ));
+        $this->addBoolean("mod_rewrite-$nodeId", array(
+            "label" => _("Server supports mod rewrite"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
+        ));
+        $this->addBoolean("default-$nodeId", array(
+            "label" => _("Publish to this target as default"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
+        ));
+    }
+    // }}}
+    // {{{ getFormTitle()
+    /**
+     * @brief getFormTitle
+     *
+     * @return void
+     **/
+    protected function getFormTitle()
+    {
+        $title = parent::getFormTitle();
 
-            $fs = $this->addFieldset("publish-$nodeId", array(
-                "label" => $node->getAttribute("name"),
-            ));
-
-            $fs->addHtml("<div class=\"detail\">");
-                $fs->addText("name-$nodeId", array(
-                    "label" => _("Name"),
-                    "placeholder" => _("Name of publishing target"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
-                    "dataAttr" => array(
-                        "nodeid" => $nodeId,
-                        "parentid" => $parentId,
-                    ),
-                ));
-                $fs->addText("output_folder-$nodeId", array(
-                    "label" => _("Output folder"),
-                    "placeholder" => _("URL, where to publish project to"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
-                ));
-                $fs->addUrl("baseurl-$nodeId", array(
-                    "label" => _("Base Url"),
-                    "placeholder" => _("Base URL of publish target"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
-                ));
-                $fs->addText("output_user-$nodeId", array(
-                    "label" => _("Username"),
-                    "placeholder" => _("Username"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
-                ));
-                $fs->addPassword("output_password-$nodeId", array(
-                    "label" => _("Password"),
-                    "placeholder" => _("Password"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
-                ));
-                $fs->addSingle("template_set-$nodeId", array(
-                    "label" => _("Template Set"),
-                    "list" => array(
-                        "html" => "html",
-                    ),
-                    "skin" => "select",
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
-                ));
-                $fs->addBoolean("mod_rewrite-$nodeId", array(
-                    "label" => _("Server supports mod rewrite"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
-                ));
-                $fs->addBoolean("default-$nodeId", array(
-                    "label" => _("Publish to this target as default"),
-                    "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
-                ));
-            $fs->addHtml("</div>");
-        }
-        $this->addHtml("</div>");
+        return !empty($title) ? $title : _("Add new publishing target");
     }
     // }}}
     // {{{ onValidate()
