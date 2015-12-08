@@ -3,10 +3,10 @@
 namespace Depage\Cms\Forms\Project;
 
 /**
- * brief Variables Settings
- * Form for editing project variables
+ * brief Tag Settings
+ * Form for editing project navigations
  */
-class Variable extends Base
+class Navigation extends Base
 {
     // {{{ __construct()
     /**
@@ -17,7 +17,7 @@ class Variable extends Base
      **/
     public function __construct($name, $params)
     {
-        $params['label'] = _("Save Variables");
+        $params['label'] = _("Save Tag");
 
         parent::__construct($name, $params);
     }
@@ -35,8 +35,8 @@ class Variable extends Base
 
         $this->addText("name-$nodeId", array(
             "label" => _("Name"),
-            "placeholder" => _("Variable name"),
-            "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@name",
+            "placeholder" => _("Navigation filter name"),
+            "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@name",
             "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
@@ -46,16 +46,19 @@ class Variable extends Base
             ),
         ));
 
-        $this->addText("value-$nodeId", array(
-            "label" => _("Value"),
-            "placeholder" => _("Variable value"),
-            "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@value",
-            "class" => "node-value",
-            "dataAttr" => array(
-                "nodeid" => $nodeId,
-            ),
-        ));
+        $fs = $this->addFieldset("localized", [
+            'label' => _("Localized labels"),
+        ]);
 
+        foreach ($this->dataNode->childNodes as $localized) {
+            $lang = $localized->getAttribute("lang");
+
+            $fs->addText("localized-$nodeId-$lang", array(
+                "label" => $lang,
+                "placeholder" => _("Localized name") . " ($lang)",
+                "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/localized[@lang = '$lang']",
+            ));
+        }
     }
     // }}}
     // {{{ getFormTitle()
@@ -68,7 +71,7 @@ class Variable extends Base
     {
         $title = parent::getFormTitle();
 
-        return !empty($title) ? $title : _("Add new variable");
+        return !empty($title) ? $title : _("Add new Navigation filter");
     }
     // }}}
 }

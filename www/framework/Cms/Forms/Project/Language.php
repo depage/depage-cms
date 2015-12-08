@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms\Project;
  * brief Language Settings
  * Form for editing project languages
  */
-class Languages extends Base
+class Language extends Base
 {
     // {{{ __construct()
     /**
@@ -31,43 +31,58 @@ class Languages extends Base
      **/
     public function addChildElements()
     {
-        $nodelist = $this->dataNodeXpath->query("//proj:language");
+        $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $this->addHtml("<div class=\"sortable-fieldsets\">");
-        foreach ($nodelist as $node) {
-            $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-            $parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-
-            $fs = $this->addFieldset("language-$nodeId", array(
-                "label" => $node->getAttribute("name"),
-            ));
-
-            $fs->addHtml("<div class=\"detail\">");
-                $fs->addText("name-$nodeId", array(
-                    "label" => _("Name"),
-                    "placeholder" => _("Language name"),
-                    "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
-                    "dataAttr" => array(
-                        "nodeid" => $nodeId,
-                        "parentid" => $parentId,
-                    ),
-                ));
-                $fs->addText("shortname-$nodeId", array(
-                    "label" => _("Short name"),
-                    "placeholder" => _("Langugage Identifier"),
-                    "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
-                ));
-            $fs->addHtml("</div>");
-        }
-        $this->addHtml("</div>");
-
-        $this->addSingle("default", array(
-            "label" => _("Select default languages"),
-            "list" => array(
-                "de",
-                "en",
+        $this->addText("name-$nodeId", array(
+            "label" => _("Name"),
+            "placeholder" => _("Language name"),
+            "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
+            "validator" => "/[-_a-zA-Z0-9]+/",
+            "required" => true,
+            "class" => "node-name",
+            "dataAttr" => array(
+                "nodeid" => $nodeId,
+                "parentid" => $this->parentId,
             ),
         ));
+
+        $this->addText("shortname-$nodeId", array(
+            "label" => _("Language code"),
+            "placeholder" => _("Short name"),
+            "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
+            "validator" => "/[-_a-zA-Z0-9]{2}/",
+            "required" => true,
+            "class" => "node-value",
+            "helpMessageHtml" => sprintf(_("Language code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"), "https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes"),
+            "dataAttr" => array(
+                "nodeid" => $nodeId,
+                "parentid" => $this->parentId,
+            ),
+        ));
+
+        $fs = $this->addFieldset("metadata-$nodeId", array(
+            "label" => _("Global metadata"),
+        ));
+
+        $fs->addText("title-$nodeId", array(
+            "label" => _("Title"),
+        ));
+        $fs->addText("keyword-$nodeId", array(
+            "label" => _("Keywords"),
+        ));
+    }
+    // }}}
+    // {{{ getFormTitle()
+    /**
+     * @brief getFormTitle
+     *
+     * @return void
+     **/
+    protected function getFormTitle()
+    {
+        $title = parent::getFormTitle();
+
+        return !empty($title) ? $title : _("Add new language");
     }
     // }}}
 }

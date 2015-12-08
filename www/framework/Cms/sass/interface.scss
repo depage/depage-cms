@@ -868,7 +868,7 @@ div.preview.zoom100 iframe {
     }
 }
 /* }}} */
-/* {{{ sortable fieldset */
+/* {{{ sortable forms */
 .sortable-forms {
     $height: 26px;
     margin-top: 15px;
@@ -889,6 +889,7 @@ div.preview.zoom100 iframe {
             h1 {
                 background: #ffffff;
                 font-weight: bold;
+                width: 34%;
 
                 &:hover {
                     text-decoration: none;
@@ -927,7 +928,7 @@ div.preview.zoom100 iframe {
         top: 0;
         display: block;
         cursor: pointer;
-        width: 34%;
+        width: 100%;
         height: $height;
         margin: 0;
         float: none;

@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms\Project;
  * brief Tag Settings
  * Form for editing project tags
  */
-class Tags extends Base
+class Tag extends Base
 {
     // {{{ __construct()
     /**
@@ -32,7 +32,6 @@ class Tags extends Base
     public function addChildElements()
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-        //$parentId = $node->parentNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
         $this->addText("name-$nodeId", array(
             "label" => _("Name"),

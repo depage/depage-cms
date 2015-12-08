@@ -54,19 +54,19 @@ class Project extends Base
         $html = "";
 
         if ($type == "languages") {
-            $html =  $this->settingsXmlForms("language");
-        } else if ($type == "navigation") {
-            $html =  $this->settingsXmlForms("navigation");
+            $html .=  $this->settingsXmlForms("language");
         } else if ($type == "tags") {
-            $html =  $this->settingsXmlForms("tag");
+            $html .=  $this->settingsXmlForms("tag");
+            $html .= "<hr>";
+            $html .=  $this->settingsXmlForms("navigation");
         } else if ($type == "variables") {
-            $html =  $this->settingsXmlForms("variable");
+            $html .=  $this->settingsXmlForms("variable");
         } else if ($type == "publishs") {
-            $html =  $this->settingsXmlForms("publish");
+            $html .=  $this->settingsXmlForms("publish");
         } else if ($type == "import") {
-            $html = $this->import();
+            $html .= $this->import();
         } else {
-            $html =  $this->settings_basic();
+            $html .=  $this->settings_basic();
         }
 
         if ($this->project->id != null) {

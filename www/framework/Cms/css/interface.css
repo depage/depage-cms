@@ -1036,7 +1036,7 @@ div.preview.zoom100 iframe {
       margin-bottom: 6px; }
 
 /* }}} */
-/* {{{ sortable fieldset */
+/* {{{ sortable forms */
 .sortable-forms {
   margin-top: 15px; }
   .sortable-forms .sortable {
@@ -1050,7 +1050,8 @@ div.preview.zoom100 iframe {
       margin-top: 22px; }
     .sortable-forms .sortable:target h1, .sortable-forms .sortable.active h1 {
       background: #ffffff;
-      font-weight: bold; }
+      font-weight: bold;
+      width: 34%; }
       .sortable-forms .sortable:target h1:hover, .sortable-forms .sortable.active h1:hover {
         text-decoration: none; }
     .sortable-forms .sortable:target form, .sortable-forms .sortable.active form {
@@ -1075,7 +1076,7 @@ div.preview.zoom100 iframe {
     top: 0;
     display: block;
     cursor: pointer;
-    width: 34%;
+    width: 100%;
     height: 26px;
     margin: 0;
     float: none;
