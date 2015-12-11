@@ -243,6 +243,20 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ getNodeIdsByXpath
+    public function getNodeIdsByXpath($xpath, $docId = null)
+    {
+        $result = array();
+
+        try {
+            $result = $this->getNodeIdsByXpathDatabase($xpath, $docId);
+        } catch (\Depage\XmlDb\Exceptions\XpathException $e) {
+            $result = $this->getNodeIdsByXpathDom($xpath, $docId);
+        }
+
+        return $result;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpathDatabase
     /**
      * gets node_ids by xpath
      *
@@ -255,7 +269,7 @@ class XmlDb implements XmlGetter
      *
      * @todo    implement full xpath specifications
      */
-    public function getNodeIdsByXpath($xpath, $docId = null)
+    protected function getNodeIdsByXpathDatabase($xpath, $docId = null)
     {
         $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
         $pCondition = '(?:\[(.*?)\])?';
@@ -281,6 +295,8 @@ class XmlDb implements XmlGetter
                 if ($divider == '/') {
                     $parentLevel = $level - 1;
                     $condSql[] = "l$level.id_parent = l$parentLevel.id";
+                } else {
+                    throw new Exceptions\XpathException('Xpath feature not yet implemented.');
                 }
             }
 
@@ -343,6 +359,31 @@ class XmlDb implements XmlGetter
         }
 
         return $fetchedIds;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpathDom
+    protected function getNodeIdsByXpathDom($xpath, $docId = null)
+    {
+        $docs = array();
+        $ids = array();
+
+        if (is_null($docId)) {
+            $docs = $this->getDocuments();
+        } else {
+            if ($doc = $this->docExists($docId)) {
+                $docs[] = $this->getDoc($doc);
+            }
+        }
+
+        foreach ($docs as $doc) {
+            $domXpath = new \DomXpath($doc->getXml());
+            $list = $domXpath->query($xpath);
+            foreach ($list as $item) {
+                $ids[] = $item->attributes->getNamedItem('id')->nodeValue;
+            }
+        }
+
+        return $ids;
     }
     // }}}
     // {{{ translateName

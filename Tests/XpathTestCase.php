@@ -243,4 +243,14 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@db:id = \'20\']');
     }
     // }}}
+
+    // {{{ testDomFallback
+    public function testDomFallback()
+    {
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '/dpg:pages//pg:page');
+        $this->assertCorrectXpathIds(array(9), '/dpg:pages//pg:folder');
+        $this->assertCorrectXpathIds(array(), '/dpg:folder//pg:page');
+        $this->assertCorrectXpathIds(array(2, 8), '//pg:page[last()]');
+    }
+    // }}}
 }
