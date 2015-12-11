@@ -229,8 +229,6 @@ class XmlDb implements XmlGetter
      * @param   $add_id_attribute (bool) whether to add db:id attribute or not
      *
      * @return  $doc (domxmlobject)
-     *
-     * @todo    implement
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true)
     {
