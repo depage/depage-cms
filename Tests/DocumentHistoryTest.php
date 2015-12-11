@@ -128,7 +128,7 @@ class DocumentHistoryTest extends DatabaseTestCase
 
         $latestVersion = $this->history->getLatestVersion();
         $newTimestamp = strtotime($latestVersion['last_saved_at']);
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->history->getXml($newTimestamp)->saveXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->history->getXml($newTimestamp));
     }
     // }}}
 
@@ -137,7 +137,8 @@ class DocumentHistoryTest extends DatabaseTestCase
     {
         $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'));
 
-        $this->assertXmlStringEqualsXmlString($this->xml37, $doc->saveXml());
+        $this->assertInstanceOf('\Depage\Xml\Document', $doc);
+        $this->assertXmlStringEqualsXmlString($this->xml37, $doc);
     }
     // }}}
     // {{{ testGetXmlNoIdAttr
@@ -147,7 +148,7 @@ class DocumentHistoryTest extends DatabaseTestCase
 
         $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'), false);
 
-        $this->assertXmlStringEqualsXmlString($expected, $doc->saveXml());
+        $this->assertXmlStringEqualsXmlString($expected, $doc);
     }
     // }}}
     // {{{ testGetXmlFail
@@ -160,7 +161,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetLastPublishedXml
     public function testGetLastPublishedXml()
     {
-        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml()->saveXml());
+        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml());
     }
     // }}}
 
@@ -181,7 +182,7 @@ class DocumentHistoryTest extends DatabaseTestCase
             'db:lastchangeUid',
         );
 
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp)->saveXml(), $ignore);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp), $ignore);
     }
     // }}}
     // {{{ testSaveUserId
@@ -245,13 +246,13 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testRestore
     public function testRestore()
     {
-        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml()->saveXml());
+        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml());
 
         $result = $this->history->restore(strtotime('2015-06-26 12:07:37'));
 
         $ignore = array('db:lastchange');
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($this->xml37, $this->doc->getXml()->saveXml(), $ignore);
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($result->saveXml(), $this->doc->getXml()->saveXml(), $ignore);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($this->xml37, $this->doc->getXml(), $ignore);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($result, $this->doc->getXml(), $ignore);
     }
     // }}}
 
