@@ -70,7 +70,7 @@ class DocumentTest extends DatabaseTestCase
     // }}}
     // {{{ testGetSubdocByNodeIdNodeDoesntExist
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
      */
     public function testGetSubdocByNodeIdNodeDoesntExist()
@@ -100,7 +100,7 @@ class DocumentTest extends DatabaseTestCase
     // }}}
     // {{{ testGetSubdocByNodeIdWrongNodeType
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
      */
     public function testGetSubdocByNodeIdWrongNodeType()

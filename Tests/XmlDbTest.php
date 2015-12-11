@@ -136,7 +136,7 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
     // }}}
     // {{{ testCreateDocInvalidName
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage Invalid or duplicate document name: ""
      */
     public function testCreateDocInvalidName()
@@ -220,7 +220,7 @@ class XmlDbTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
     // {{{ testCreateDocExisting
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage Invalid or duplicate document name: "pages"
      */
     public function testCreateDocExisting()

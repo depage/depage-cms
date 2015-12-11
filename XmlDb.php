@@ -321,7 +321,7 @@ class XmlDb implements XmlGetter
                     }
                     $condSql[] = "$attributeCond )";
                 } else {
-                    // not yet implemented
+                    throw new Exceptions\XpathException('Xpath feature not yet implemented.');
                 }
             }
 
@@ -431,7 +431,7 @@ class XmlDb implements XmlGetter
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
         if (!is_string($docName) || $this->docExists($docName)) {
-            throw new XmlDbException("Invalid or duplicate document name: \"$docName\"");
+            throw new Exceptions\XmlDbException("Invalid or duplicate document name: \"$docName\"");
         }
 
         $query = $this->pdo->prepare(

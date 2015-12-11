@@ -285,7 +285,7 @@ class Document
             } else {
                 $this->xmldb->endTransaction();
 
-                throw new XmlDbException("This node is no ELEMENT_NODE or node does not exist");
+                throw new Exceptions\XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
             $success = $xml_doc->loadXML($xml_str);
             $dth = $this->getDoctypeHandler();
@@ -1081,7 +1081,7 @@ class Document
     public function getNodeDataId($node)
     {
         return $node->nodeType == XML_ELEMENT_NODE
-            ?  $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute)
+            ? $db_id = $node->getAttributeNS($this->db_ns->uri, $this->id_data_attribute)
             : null;
     }
     // }}}
