@@ -52,29 +52,8 @@ class Project extends Base
     public function settings($type = "")
     {
         $html = "";
-
-        if ($type == "languages") {
-            $html .=  $this->settingsXmlForms("language");
-        } else if ($type == "tags") {
-            $html .=  $this->settingsXmlForms("tag");
-            $html .= "<hr>";
-            $html .=  $this->settingsXmlForms("navigation");
-        } else if ($type == "variables") {
-            $html .=  $this->settingsXmlForms("variable");
-        } else if ($type == "publishs") {
-            $html .=  $this->settingsXmlForms("publish");
-        } else if ($type == "import") {
-            $html .= $this->import();
-        } else {
-            $html .=  $this->settings_basic();
-        }
-
-        if ($this->project->id != null) {
-            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
-        } else {
-            $title = _("Add new Project");
-        }
-
+        $infoHead = "";
+        $infoText = "";
         $tabTitles = array(
             "basic" => _("Project Settings"),
             "tags" => _("Tags"),
@@ -83,6 +62,46 @@ class Project extends Base
             "publishs" => _("Publish"),
             "import" => _("Import"),
         );
+        if (!$this->authUser->canEditTemplates()) {
+            unset($tabTitles["variables"]);
+            unset($tabTitles["import"]);
+        }
+
+        if ($type == "languages") {
+            $infoHead = _("Languages");
+            $infoText = _("depage-cms allows to have pages in multiple languages. Here you can add or edit the available languages.\nThe first language acts as the fallback-language if the page is not available in the users language. You can adjust the order by drag and drop.");
+
+            $html .=  $this->settingsXmlForms("language");
+        } else if ($type == "tags") {
+            $infoHead = _("Tags");
+            $infoText = _("Tags help you to categorize and filter your pages. Your templates have to support them though.\nYou can adjust the order by drag and drop.");
+            $html .= $this->settingsXmlForms("tag");
+
+            if ($this->authUser->canEditTemplates()) {
+                $html .= "<hr>";
+                $html .= $this->settingsXmlForms("navigation");
+            }
+        } else if ($type == "variables") {
+            $infoHead = _("Variables");
+            $infoText = _("Variables can be used for settings and can globally change the behaviour of various templates.");
+
+            $html .= $this->settingsXmlForms("variable");
+        } else if ($type == "publishs") {
+            $infoHead = _("Publishing targets");
+            $infoText = _("depage-cms allows to publish you pages to either a local folder or to another webserver to serve from. The first publishing targets acts as the default target. You can adjust the order by drag and drop.");
+
+            $html .= $this->settingsXmlForms("publish");
+        } else if ($type == "import") {
+            $html .= $this->import();
+        } else {
+            $html .= $this->settings_basic();
+        }
+
+        if ($this->project->id != null) {
+            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
+        } else {
+            $title = _("Add new Project");
+        }
 
         $h = new Html("box.tpl", array(
             'id' => "projects",
@@ -96,6 +115,10 @@ class Project extends Base
                     'tabs' => $tabTitles,
                     'activeTab' => $type,
                 )),
+                new Html("info.tpl", [
+                    'title' => $infoHead,
+                    'content' => $infoText,
+                ]),
                 $html,
             ),
         ), $this->htmlOptions);

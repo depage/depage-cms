@@ -69,6 +69,17 @@ class CmsUser extends \Depage\Auth\User
         return $this->canEditAllProjects();
     }
     // }}}
+    // {{{ canEditTemplates()
+    /**
+     * @brief canEditTemplates
+     *
+     * @return bool true of false if the user can edit templates and template specific variables
+     **/
+    public function canEditTemplates()
+    {
+        return $this->level <= 2;
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
