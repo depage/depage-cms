@@ -164,6 +164,7 @@ class DocumentHistory
 
         $doc = $this->document->getXml();
         Document::removeNodeAttr($doc, $this->db_ns, 'lastchange');
+        Document::removeNodeAttr($doc, $this->db_ns, 'docid');
         $xml = $doc->saveXml();
         $hash = sha1($xml);
 

@@ -166,23 +166,19 @@ class DocumentHistoryTest extends DatabaseTestCase
     // }}}
 
     // {{{ testSave
-    public function testSave()
+    public function testSave2()
     {
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:lastchange="2015-06-26 12:07:37"></root>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(1, true);
         $this->setForeignKeyChecks(true);
 
-        $ignore = array(
-            'db:id',
-            'db:docid',
-            'db:lastchange',
-            'db:lastchangeUid',
-        );
+        $historyTable = $this->getConnection()->createQueryTable('xmldb_proj_test_history', 'SELECT * FROM xmldb_proj_test_history');
+        $expected = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database" db:id="1" db:lastchangeUid=""></root>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($newXml, $this->history->getXml($timestamp), $ignore);
+        $this->assertXmlStringEqualsXmlString($expected, $historyTable->getValue(2,'xml'));
     }
     // }}}
     // {{{ testSaveUserId
