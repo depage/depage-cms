@@ -56,6 +56,9 @@ $borderColor: #999999;
     } @else if ($name == "upload-drag-over") {
         background-position: (-1 * $iconSize) (-5 * $iconSize);
 
+    } @else if ($name == "add") {
+        background-position: 0 (-6 * $iconSize);
+
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
         //background-size: (2 * $iconSize) (10 * $iconSize);
@@ -348,7 +351,7 @@ select,
     margin: 0;
     border-bottom: 1px solid $borderColor;
     width: 100%;
-    z-index: 10000;
+    z-index: 10002;
 }
 .toolbar {
     height: 30px;
@@ -374,9 +377,60 @@ select,
             display: none;
         }
     }
-    ul,
     li {
-        display: inline;
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+
+        menu {
+            display: none;
+            position: absolute;
+            top: $toolbarHeight - 3px;
+            right: 0;
+            border: 1px solid $borderColor;
+            border-top: none;
+            height: auto;
+            z-index: 10002;
+            background-color: #eeeeee !important;
+            padding: 10px 0;
+            min-width: 200px;
+
+            li,
+            hr {
+                float: none;
+                clear: both;
+                display: block;
+                white-space: nowrap;
+            }
+            a {
+                clear: left;
+                float: left;
+            }
+            a.right {
+                clear: none;
+                float: right;
+            }
+            a:hover {
+                background-color: #ffffff !important;
+            }
+            hr {
+                height: 20px;
+                border: none;
+            }
+
+        }
+    }
+    menu li.open {
+        &,
+        &:hover,
+        > a:hover {
+            background-color: #eeeeee !important;
+        }
+
+        menu {
+            display: block;
+        }
     }
     h1,
     a,
@@ -883,11 +937,26 @@ div.preview.zoom100 iframe {
 
         &.new {
             margin-top: 22px;
+            h1 {
+                padding-left: 2em;
+
+                &:before {
+                    display: block;
+                    content: " ";
+                    position: absolute;
+                    top: 0em;
+                    left: 0em;
+                    width: 2em;
+                    height: 2em;
+                    background-color: transparent;
+                    @include icon-base("add", 0.5);
+                }
+            }
         }
         &:target,
         &.active {
             h1 {
-                background: #ffffff;
+                background-color: #ffffff;
                 font-weight: bold;
                 width: 34%;
 
@@ -910,6 +979,10 @@ div.preview.zoom100 iframe {
             form {
                 display: none !important;
             }
+        }
+        h1 {
+            position: relative;
+            position: relative;
         }
     }
     .placeholder {

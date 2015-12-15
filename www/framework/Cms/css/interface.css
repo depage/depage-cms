@@ -593,7 +593,7 @@ select,
   margin: 0;
   border-bottom: 1px solid #999999;
   width: 100%;
-  z-index: 10000; }
+  z-index: 10002; }
 
 .toolbar {
   height: 30px; }
@@ -610,9 +610,45 @@ select,
       right: 0; }
     .toolbar menu.preview {
       display: none; }
-  .toolbar ul,
   .toolbar li {
-    display: inline; }
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0; }
+    .toolbar li menu {
+      display: none;
+      position: absolute;
+      top: 27px;
+      right: 0;
+      border: 1px solid #999999;
+      border-top: none;
+      height: auto;
+      z-index: 10002;
+      background-color: #eeeeee !important;
+      padding: 10px 0;
+      min-width: 200px; }
+      .toolbar li menu li,
+      .toolbar li menu hr {
+        float: none;
+        clear: both;
+        display: block;
+        white-space: nowrap; }
+      .toolbar li menu a {
+        clear: left;
+        float: left; }
+      .toolbar li menu a.right {
+        clear: none;
+        float: right; }
+      .toolbar li menu a:hover {
+        background-color: #ffffff !important; }
+      .toolbar li menu hr {
+        height: 20px;
+        border: none; }
+  .toolbar menu li.open, .toolbar menu li.open:hover,
+  .toolbar menu li.open > a:hover {
+    background-color: #eeeeee !important; }
+  .toolbar menu li.open menu {
+    display: block; }
   .toolbar h1,
   .toolbar a,
   .toolbar span.zoom-select {
@@ -1048,8 +1084,24 @@ div.preview.zoom100 iframe {
     margin-left: 25%; }
     .sortable-forms .sortable.new {
       margin-top: 22px; }
+      .sortable-forms .sortable.new h1 {
+        padding-left: 2em; }
+        .sortable-forms .sortable.new h1:before {
+          display: block;
+          content: " ";
+          position: absolute;
+          top: 0em;
+          left: 0em;
+          width: 2em;
+          height: 2em;
+          background-color: transparent;
+          background-repeat: no-repeat;
+          background-image: url(../images/icon_sprite.svg);
+          background-size: 192px 480px;
+          background-position: 0 -144px;
+          background-size: 96px 240px; }
     .sortable-forms .sortable:target h1, .sortable-forms .sortable.active h1 {
-      background: #ffffff;
+      background-color: #ffffff;
       font-weight: bold;
       width: 34%; }
       .sortable-forms .sortable:target h1:hover, .sortable-forms .sortable.active h1:hover {
@@ -1064,6 +1116,9 @@ div.preview.zoom100 iframe {
         font-weight: bold; }
       .sortable-forms .sortable.dragged form {
         display: none !important; }
+    .sortable-forms .sortable h1 {
+      position: relative;
+      position: relative; }
   .sortable-forms .placeholder {
     height: 26px; }
   .sortable-forms h1,
