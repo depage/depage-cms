@@ -26,6 +26,7 @@ var depageCMS = (function() {
     var baseUrl = $("base").attr("href");
     var $html;
     var $window;
+    var $body;
     var $previewFrame;
     var $flashFrame;
     var $upload;
@@ -42,6 +43,7 @@ var depageCMS = (function() {
 
             $html = $("html");
             $html.addClass("javascript");
+            $body = $("body");
 
             localJS.setup();
 
@@ -85,9 +87,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupToolbar
         setupToolbar: function() {
-            $toolbarLeft = $("#toolbarmain menu.left");
-            $toolbarPreview = $("#toolbarmain menu.preview");
-            $toolbarRight = $("#toolbarmain menu.right");
+            $toolbarLeft = $("#toolbarmain > menu.left");
+            $toolbarPreview = $("#toolbarmain > menu.preview");
+            $toolbarRight = $("#toolbarmain > menu.right");
 
             var layouts = [
                 "left-full",
@@ -128,7 +130,43 @@ var depageCMS = (function() {
                         .addClass(this.value);
                 });
 
+            // add menu navigation
+            var $menus = $("#toolbarmain > menu > li");
+            var menuOpen = false;
 
+            $menus.each(function() {
+                var $entry = $(this);
+                var $sub = $entry.find("menu");
+
+                if ($sub.length > 0) {
+                    $entry.children("a").on("click", function(e) {
+                        if (!menuOpen) {
+                            // open submenu if there is one
+                            $menus.removeClass("open");
+                            $entry.addClass("open");
+                        } else {
+                            // close opened submenu
+                            $menus.removeClass("open");
+                        }
+                        menuOpen = !menuOpen;
+
+                        return false;
+                    });
+                    $entry.children("a").on("hover", function(e) {
+                        // open submenu on hover if a menu is already open
+                        if (menuOpen) {
+                            $menus.removeClass("open");
+                            $entry.addClass("open");
+                        }
+                    });
+                }
+            });
+
+            $html.on("click", function() {
+                // close menu when clicking outside
+                $menus.removeClass("open");
+                menuOpen = false;
+            });
         },
         // }}}
         // {{{ setupProjectList
@@ -261,7 +299,7 @@ var depageCMS = (function() {
 
                     // get script elements
                     $html.filter("script").each( function() {
-                        $("body").append(this);
+                        $body.append(this);
                     });
                     setTimeout(localJS.updateAjaxContent, timeout);
                 }
@@ -311,7 +349,7 @@ var depageCMS = (function() {
                     var $result = $("<div></div>")
                         .html( data )
                         .find("div.preview")
-                        .appendTo("body");
+                        .appendTo($body);
                     var $header = $result.find("header.info");
 
                     $previewFrame = $("#previewFrame");
@@ -327,7 +365,7 @@ var depageCMS = (function() {
             $upload = $("#upload");
 
             if ($upload.length === 0) {
-                $upload = $("<div id=\"upload\" class=\"layout-left\"></div>").appendTo("body");
+                $upload = $("<div id=\"upload\" class=\"layout-left\"></div>").appendTo($body);
                 var $box = $("<div class=\"box\"></div>").appendTo($upload);
             }
 
