@@ -54,7 +54,7 @@ var depageCMS = (function() {
             $window.triggerHandler("switchLayout", "split");
 
             $previewFrame = $("#previewFrame");
-            $flashFrame = $("#flashFrame")[0];
+            $flashFrame = $("#flashFrame");
             // @todo add event to page, when clicking outside of edit interface to save current fields
 
             // @todo test/remove
@@ -123,7 +123,17 @@ var depageCMS = (function() {
             var $editButton = $("<a class=\"button\">edit</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
-                    // @todo implement flash edit callback
+                    var url = $previewFrame[0].contentWindow.location.href;
+                    var matches = url.match(/project\/([^\/]*)\/preview\/[^\/]*\/[^\/]*\/[^\/]*(\/.*)/);
+
+                    if (matches) {
+                        var project = matches[1];
+                        var page = matches[2];
+
+                        var flash = $flashFrame.contents().find("#flash")[0];
+                        flash.SetVariable("/:gotopage",page);
+                        flash.Play();
+                    }
                 });
 
             // add zoom select
@@ -347,7 +357,7 @@ var depageCMS = (function() {
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
-                var oldUrl = $previewFrame[0].src;
+                var oldUrl = $previewFrame[0].contentWindow.location.href;
                 var newUrl = baseUrl + unescape(url);
 
                 if (oldUrl == newUrl) {
