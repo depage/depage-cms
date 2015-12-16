@@ -430,6 +430,7 @@ select,
 
         menu {
             display: block;
+            @include box-shadow(0 2px 0.2em 0 #aaaaaa);
         }
     }
     h1,

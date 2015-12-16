@@ -648,7 +648,10 @@ select,
   .toolbar menu li.open > a:hover {
     background-color: #eeeeee !important; }
   .toolbar menu li.open menu {
-    display: block; }
+    display: block;
+    -webkit-box-shadow: 0 2px 0.2em 0 #aaaaaa;
+    -moz-box-shadow: 0 2px 0.2em 0 #aaaaaa;
+    box-shadow: 0 2px 0.2em 0 #aaaaaa; }
   .toolbar h1,
   .toolbar a,
   .toolbar span.zoom-select {

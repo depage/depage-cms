@@ -109,7 +109,6 @@ class Project extends Base
             'class' => "first",
             'title' => $title,
             'content' => array(
-                $this->toolbar(),
                 new Html("tabs.tpl", array(
                     'baseUrl' => "project/" . $this->project->name . "/settings/",
                     'tabs' => $tabTitles,

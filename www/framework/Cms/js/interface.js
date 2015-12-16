@@ -119,16 +119,28 @@ var depageCMS = (function() {
                     }
                 });
 
-            // add zoom select
-            var $zoomSelect = $("<span class=\"zoom-select\"><select><option value=\"zoom100\">100%</option><option value=\"zoom75\">75%</option><option value=\"zoom50\">50%</option></select></span>")
+            // add edit button
+            var $editButton = $("<a class=\"button\">edit</a>")
                 .appendTo($previewButtons)
-                .find("select")
-                .on("change", function() {
-                    this.blur();
-                    $preview = $("div.preview")
-                        .removeClass("zoom100 zoom75 zoom50")
-                        .addClass(this.value);
+                .on("click", function() {
+                    // @todo implement flash edit callback
                 });
+
+            // add zoom select
+            var zooms = [100, 75, 50];
+            var $zoomMenu = $("<li><a>" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
+            var $zoomMenuLabel = $zoomMenu.siblings("a");
+            var $preview = $("div.preview");
+
+            $(zooms).each(function() {
+                var zoom = this;
+                var $zoomButton = $("<li><a>" + zoom + "%</a></li>").appendTo($zoomMenu).find("a");
+                $zoomButton.on("click", function() {
+                    $preview.removeClass("zoom100 zoom75 zoom50")
+                        .addClass("zoom" + zoom);
+                    $zoomMenuLabel.text(zoom + "%");
+                });
+            });
 
             // add menu navigation
             var $menus = $("#toolbarmain > menu > li");
@@ -335,10 +347,16 @@ var depageCMS = (function() {
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
-                $previewFrame[0].src = unescape(url);
+                var oldUrl = $previewFrame[0].src;
+                var newUrl = baseUrl + unescape(url);
+
+                if (oldUrl == newUrl) {
+                    $previewFrame[0].contentWindow.location.reload();
+                } else {
+                    $previewFrame[0].src = newUrl;
+                }
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {
-                    console.log(currentLayout);
                     $window.triggerHandler("switchLayout", "split");
                 }
             } else {
