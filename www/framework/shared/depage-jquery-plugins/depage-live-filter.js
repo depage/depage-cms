@@ -22,6 +22,7 @@
         base.$el.data("depage.liveFilter", base);
 
         var $items = null;
+        var $topItem = null;
         var keywords = [];
 
         // {{{ init()
@@ -59,8 +60,14 @@
                     // clear filter on escape key
                     this.value = "";
                 } else if (key == 13) {
-                    // leave input on enter
-                    this.blur();
+                    if ($topItem !== null) {
+                        // leave input on enter
+                        this.blur();
+
+                        if (typeof base.options.onSelect == 'function') {
+                            base.options.onSelect($topItem);
+                        }
+                    }
                 }
                 base.filterBy(this.value);
             });
@@ -87,6 +94,7 @@
         // {{{ filterBy
         base.filterBy = function(searchVal) {
             var values = searchVal.toLowerCase().split(" ");
+            $topItem = null;
 
             for (var i = 0; i < $items.length; i++) {
                 var found = true;
@@ -100,6 +108,10 @@
                 if (found) {
                     $item.show();
                     $item.trigger("depage.filter-shown", [$item]);
+
+                    if ($topItem == null) {
+                        $topItem = $item;
+                    }
                 } else {
                     $item.hide();
                     $item.trigger("depage.filter-hidden", [$item]);
@@ -117,6 +129,7 @@
         inputClass: "depage-live-filter",
         placeholder: "Search",
         attachInputInside: false,
+        onSelect: null,
         autofocus: false
     };
 
