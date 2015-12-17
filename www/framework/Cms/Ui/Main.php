@@ -143,8 +143,10 @@ class Main extends Base {
      * @return  null
      */
     public function projects() {
+        $this->user = $this->auth->enforce();
+
         // get data
-        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
 
         // construct template
         $h = new Html("box.tpl", array(
@@ -353,7 +355,7 @@ class Main extends Base {
         \Depage\Cms\Project::updateSchema($this->pdo);
         \Depage\Notifications\Notification::updateSchema($this->pdo);
 
-        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
 
         foreach ($projects as $project) {
             $project->updateProjectSchema();

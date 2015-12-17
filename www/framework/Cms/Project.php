@@ -95,6 +95,45 @@ class Project extends \Depage\Entity\Entity
         return $projects;
     }
     // }}}
+    // {{{ loadByUser()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     *
+     * @return      Array array of projects
+     */
+    static public function loadByUser($pdo, $cache, $user) {
+        if ($user->canEditAllProjects()) {
+            return self::loadAll($pdo, $cache);
+        } else {
+            $fields = implode(", ", self::getFields("projects"));
+
+            $query = $pdo->prepare(
+                "SELECT $fields, projectgroup.name as groupName
+                FROM
+                    {$pdo->prefix}_projects AS projects,
+                    {$pdo->prefix}_project_groups AS projectgroup,
+                    {$pdo->prefix}_project_auth AS projectauth
+                WHERE
+                    projects.groupId = projectgroup.id AND
+                    (projects.id = projectauth.projectId AND projectauth.userId = :userid)
+                ORDER BY
+                    projectgroup.pos ASC, fullname ASC
+
+                "
+            );
+
+            $projects = self::fetch($pdo, $cache, $query, [
+                'userid' => $user->id,
+            ]);
+
+            return $projects;
+        }
+    }
+    // }}}
     // {{{ loadByName()
     /**
      * gets an array of user-objects
