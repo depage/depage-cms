@@ -635,15 +635,26 @@ select,
         white-space: nowrap; }
       .toolbar li menu a {
         clear: left;
-        float: left; }
+        float: left;
+        display: block;
+        width: 100%; }
       .toolbar li menu a.right {
         clear: none;
-        float: right; }
+        float: right;
+        width: 30%;
+        margin-left: -100%; }
       .toolbar li menu a:hover {
         background-color: #ffffff !important; }
       .toolbar li menu hr {
         height: 20px;
         border: none; }
+      .toolbar li menu .depage-live-filter {
+        text-align: right;
+        padding-right: 0.2em; }
+        .toolbar li menu .depage-live-filter input {
+          border: none;
+          font-size: 1em;
+          padding: 0.2em 0.4em; }
   .toolbar menu li.open, .toolbar menu li.open:hover,
   .toolbar menu li.open > a:hover {
     background-color: #eeeeee !important; }

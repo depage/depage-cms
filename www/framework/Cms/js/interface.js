@@ -152,6 +152,12 @@ var depageCMS = (function() {
                 });
             });
 
+            // add live filter to projects menu
+            $("menu.projects").depageLiveFilter("li", "a", {
+                placeholder: "Filter Projects",
+                attachInputInside: true
+            });
+
             // add menu navigation
             var $menus = $("#toolbarmain > menu > li");
             var menuOpen = false;
@@ -162,13 +168,18 @@ var depageCMS = (function() {
 
                 if ($sub.length > 0) {
                     $entry.children("a").on("click", function(e) {
+                        var $input = $entry.find("input");
                         if (!menuOpen) {
                             // open submenu if there is one
                             $menus.removeClass("open");
                             $entry.addClass("open");
+
+                            $input.focus();
                         } else {
                             // close opened submenu
                             $menus.removeClass("open");
+
+                            $input.blur();
                         }
                         menuOpen = !menuOpen;
 
@@ -180,6 +191,9 @@ var depageCMS = (function() {
                             $menus.removeClass("open");
                             $entry.addClass("open");
                         }
+                    });
+                    $sub.on("click", function(e) {
+                        e.stopPropagation();
                     });
                 }
             });

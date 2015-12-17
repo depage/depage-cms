@@ -10,7 +10,7 @@
         <?php if(!empty($this->projectname)) { ?>
             <!-- @todo add submenu for project -->
             <li><a href="" class="button"><?php self::t($this->projectname); ?></a>
-                <menu class="popup">
+                <menu class="popup projects">
                     <?php foreach($this->projects as $project) { ?>
                         <li><a href="project/<?php self::t($project->name); ?>/"><?php self::t($project->fullname); ?></a><a href="project/<?php self::t($project->name); ?>/settings/" class="right"><?php self::t(_("Settings")); ?></a></li>
                     <?php } ?>
