@@ -24,6 +24,7 @@ class User extends \Depage\HtmlForm\HtmlForm
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
+        $params['class'] = _("edit-user");
 
         parent::__construct($name, $params);
 

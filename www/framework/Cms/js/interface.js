@@ -319,6 +319,16 @@ var depageCMS = (function() {
             });
         },
         // }}}
+        // {{{ setupForms
+        setupForms: function() {
+            // clear password inputs on user edit page to reset autofill
+            setTimeout(function() {
+                $(".depage-form.edit-user input[type=password]").each(function() {
+                    this.value = "";
+                });
+            }, 300);
+        },
+        // }}}
 
         // {{{ updateAjaxContent
         updateAjaxContent: function() {
