@@ -129,7 +129,7 @@ class Base extends \Depage\Depage\Ui\Base
             }
             $h = new Html("toolbar_main.tpl", array(
                 'title' => $this->basetitle,
-                'username' => $this->user->name,
+                'user' => $this->user,
                 'projects' => \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user),
                 'projectname' => $projectDisplayName,
             ), $this->htmlOptions);

@@ -71,6 +71,7 @@ var depageCMS = (function() {
             localJS.setupProjectList();
             localJS.setupPreviewLinks();
             localJS.setupSortables();
+            localJS.setupForms();
         },
         // }}}
         // {{{ setupVarious
@@ -134,6 +135,8 @@ var depageCMS = (function() {
                         var flash = $flashFrame.contents().find("#flash")[0];
                         flash.SetVariable("/:gotopage",page);
                         flash.Play();
+
+                        $window.triggerHandler("switchLayout", "split");
                     }
                 });
 

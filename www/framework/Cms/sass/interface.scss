@@ -372,9 +372,22 @@ select,
         }
         &.right {
             right: 0;
+
+            li menu {
+                right: 0;
+                left: auto;
+            }
         }
         &.preview {
             display: none;
+        }
+        a {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        > li > a {
+            max-width: 10em;
         }
     }
     li {
@@ -387,7 +400,7 @@ select,
             display: none;
             position: absolute;
             top: $toolbarHeight - 3px;
-            right: 0;
+            left: 0;
             border: 1px solid $borderColor;
             border-top: none;
             height: auto;
@@ -408,6 +421,16 @@ select,
                 float: left;
                 display: block;
                 width: 100%;
+                max-width: 100%;
+
+                .thumb {
+                    position: static;
+                    display: inline-block;
+                    width: 14px;
+                    height: 14px;
+                    margin-right: 2px;
+                    margin-bottom: -2px;
+                }
             }
             a.right {
                 clear: none;
@@ -518,7 +541,7 @@ select,
     }
     .layout-buttons a {
         $iconScale: 0.55;
-        @include icon-base;
+        @include icon-base();
         text-indent: -1000em;
         width: 2.4em;
 

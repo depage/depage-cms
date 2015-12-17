@@ -608,8 +608,17 @@ select,
       left: 100px; }
     .toolbar menu.right {
       right: 0; }
+      .toolbar menu.right li menu {
+        right: 0;
+        left: auto; }
     .toolbar menu.preview {
       display: none; }
+    .toolbar menu a {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+    .toolbar menu > li > a {
+      max-width: 10em; }
   .toolbar li {
     position: relative;
     display: inline-block;
@@ -619,7 +628,7 @@ select,
       display: none;
       position: absolute;
       top: 27px;
-      right: 0;
+      left: 0;
       border: 1px solid #999999;
       border-top: none;
       height: auto;
@@ -637,7 +646,15 @@ select,
         clear: left;
         float: left;
         display: block;
-        width: 100%; }
+        width: 100%;
+        max-width: 100%; }
+        .toolbar li menu a .thumb {
+          position: static;
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          margin-right: 2px;
+          margin-bottom: -2px; }
       .toolbar li menu a.right {
         clear: none;
         float: right;

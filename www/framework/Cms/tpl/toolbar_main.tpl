@@ -9,18 +9,26 @@
     <menu class="right">
         <?php if(!empty($this->projectname)) { ?>
             <!-- @todo add submenu for project -->
-            <li><a href="" class="button"><?php self::t($this->projectname); ?></a>
+            <li><a href="" class="button icon-projects"><?php self::t($this->projectname); ?></a>
                 <menu class="popup projects">
                     <?php foreach($this->projects as $project) { ?>
-                        <li><a href="project/<?php self::t($project->name); ?>/"><?php self::t($project->fullname); ?></a><a href="project/<?php self::t($project->name); ?>/settings/" class="right"><?php self::t(_("Settings")); ?></a></li>
+                        <li>
+                            <a href="project/<?php self::t($project->name); ?>/">
+                                <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
+                                    <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
+                                <?php } ?>
+                                <?php self::t($project->fullname); ?>
+                            </a>
+                            <a href="project/<?php self::t($project->name); ?>/settings/" class="right"><?php self::t(_("Settings")); ?></a>
+                        </li>
                     <?php } ?>
                 </menu>
             </li>
         <?php } ?>
         <!-- @todo add submenu for user -->
-        <li><a href="user/<?php self::t($this->username); ?>/"><?php self::t($this->username); ?></a>
+        <li><a href="user/<?php self::t($this->user->name); ?>/" class="button icon-user"><?php self::t($this->user->fullname); ?></a>
             <menu class="popup">
-                <li><a href="user/<?php self::t($this->username); ?>/"><?php self::t(_("Account settings")); ?></a></li>
+                <li><a href="user/<?php self::t($this->user->name); ?>/"><?php self::t(_("Account settings")); ?></a></li>
                 <li><hr></li>
                 <li><a href="logout/" id="logout">logout</a></li>
             </menu>
