@@ -129,6 +129,7 @@ var depageCMS = (function() {
                     if (matches) {
                         var project = matches[1];
                         var page = matches[2];
+                        // @todo load edit interface if there is no flash frame loaded
 
                         var flash = $flashFrame.contents().find("#flash")[0];
                         flash.SetVariable("/:gotopage",page);
@@ -140,13 +141,12 @@ var depageCMS = (function() {
             var zooms = [100, 75, 50];
             var $zoomMenu = $("<li><a>" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
             var $zoomMenuLabel = $zoomMenu.siblings("a");
-            var $preview = $("div.preview");
 
             $(zooms).each(function() {
                 var zoom = this;
                 var $zoomButton = $("<li><a>" + zoom + "%</a></li>").appendTo($zoomMenu).find("a");
                 $zoomButton.on("click", function() {
-                    $preview.removeClass("zoom100 zoom75 zoom50")
+                    $("div.preview").removeClass("zoom100 zoom75 zoom50")
                         .addClass("zoom" + zoom);
                     $zoomMenuLabel.text(zoom + "%");
                 });
@@ -155,7 +155,13 @@ var depageCMS = (function() {
             // add live filter to projects menu
             $("menu.projects").depageLiveFilter("li", "a", {
                 placeholder: "Filter Projects",
-                attachInputInside: true
+                attachInputInside: true,
+                onSelect: function($item) {
+                    var $link = $item.find("a").first();
+                    if ($link.click()) {
+                        window.location = $link[0].href;
+                    }
+                }
             });
 
             // add menu navigation
@@ -178,7 +184,6 @@ var depageCMS = (function() {
                         } else {
                             // close opened submenu
                             $menus.removeClass("open");
-
                             $input.blur();
                         }
                         menuOpen = !menuOpen;
@@ -194,6 +199,12 @@ var depageCMS = (function() {
                     });
                     $sub.on("click", function(e) {
                         e.stopPropagation();
+                    });
+                    $sub.find("a").on("click", function(e) {
+                        if (menuOpen) {
+                            $menus.removeClass("open");
+                            menuOpen = false;
+                        }
                     });
                 }
             });
@@ -241,8 +252,6 @@ var depageCMS = (function() {
             var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
             var currentPos, newPos;
 
-            // @todo add delete button
-            // @todo add form to add new element
             $(".sortable-forms .sortable").each(function() {
                 var $container = $(this);
                 var $head = $(this).find("h1");
@@ -372,7 +381,11 @@ var depageCMS = (function() {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
                 var oldUrl = $previewFrame[0].contentWindow.location.href;
-                var newUrl = baseUrl + unescape(url);
+                var newUrl = unescape(url);
+
+                if (newUrl.substring(0, baseUrl.length) != baseUrl) {
+                    newUrl = baseUrl + newUrl;
+                }
 
                 if (oldUrl == newUrl) {
                     $previewFrame[0].contentWindow.location.reload();
