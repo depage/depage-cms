@@ -628,6 +628,11 @@ select,
         margin-bottom: -8px;
         margin-left: -2px;
         margin-right: 6px; }
+      @media screen and (max-width: 1200px) {
+        .toolbar menu a.icon-user, .toolbar menu a.icon-help, .toolbar menu a.icon-projects {
+          width: 34px; }
+          .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before {
+            margin-right: 20px; } }
       .toolbar menu a.icon-user:before {
         background-position: -24px -24px;
         background-size: 96px 240px; }

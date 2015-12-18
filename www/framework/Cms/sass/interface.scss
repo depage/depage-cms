@@ -411,6 +411,13 @@ select,
                     margin-left: -2px;
                     margin-right: 6px;
                 }
+                @media screen and (max-width: 1200px) {
+                    width: 34px;
+
+                    &:before {
+                        margin-right: 20px;
+                    }
+                }
             }
             &.icon-user:before {
                 @include icon("user", 0.5);
