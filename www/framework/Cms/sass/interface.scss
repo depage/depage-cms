@@ -24,12 +24,16 @@ $borderColor: #999999;
 
 }
 @mixin icon($name, $scale: 1) {
+    // @todo simplify by specifying size instead of scale
     $iconSize: 48px * $scale;
 
+    // @todo simplify with mixin or function
     @if ($name == "projects") {
         background-position: 0px 0px;
     } @else if ($name == "users") {
         background-position: 0 (-1 * $iconSize);
+    } @else if ($name == "user") {
+        background-position: (-1 * $iconSize) (-1 * $iconSize);
     } @else if ($name == "tasks") {
         background-position: 0 (-2 * $iconSize);
 
@@ -58,6 +62,14 @@ $borderColor: #999999;
 
     } @else if ($name == "add") {
         background-position: 0 (-6 * $iconSize);
+    } @else if ($name == "remove") {
+        background-position: (-1 * $iconSize) (-6 * $iconSize);
+
+    } @else if ($name == "help") {
+        background-position: 0 (-7 * $iconSize);
+    } @else if ($name == "help-active") {
+        background-position: (-1 * $iconSize) (-7 * $iconSize);
+
 
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
@@ -385,6 +397,42 @@ select,
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+
+            &.icon-user,
+            &.icon-help,
+            &.icon-projects {
+                &:before {
+                    content: " ";
+                    display: inline-block;
+                    width: 24px;
+                    height: 24px;
+                    @include icon-base();
+                    margin-bottom: -8px;
+                    margin-left: -2px;
+                    margin-right: 6px;
+                }
+            }
+            &.icon-user:before {
+                @include icon("user", 0.5);
+            }
+            &.icon-projects:before {
+                @include icon("projects", 0.5);
+            }
+            &.icon-help {
+                width: 34px;
+
+                &:hover {
+                    background: none;
+                }
+            }
+            &.icon-help:before {
+                @include icon("help", 0.5);
+                margin-right: 20px;
+            }
+            &.icon-help.active:before,
+            &.icon-help:hover:before {
+                @include icon("help-active", 0.5);
+            }
         }
         > li > a {
             max-width: 10em;

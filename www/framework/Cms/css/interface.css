@@ -617,6 +617,34 @@ select,
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
+      .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before {
+        content: " ";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background-repeat: no-repeat;
+        background-image: url(../images/icon_sprite.svg);
+        background-size: 192px 480px;
+        margin-bottom: -8px;
+        margin-left: -2px;
+        margin-right: 6px; }
+      .toolbar menu a.icon-user:before {
+        background-position: -24px -24px;
+        background-size: 96px 240px; }
+      .toolbar menu a.icon-projects:before {
+        background-position: 0px 0px;
+        background-size: 96px 240px; }
+      .toolbar menu a.icon-help {
+        width: 34px; }
+        .toolbar menu a.icon-help:hover {
+          background: none; }
+      .toolbar menu a.icon-help:before {
+        background-position: 0 -168px;
+        background-size: 96px 240px;
+        margin-right: 20px; }
+      .toolbar menu a.icon-help.active:before, .toolbar menu a.icon-help:hover:before {
+        background-position: -24px -168px;
+        background-size: 96px 240px; }
     .toolbar menu > li > a {
       max-width: 10em; }
   .toolbar li {

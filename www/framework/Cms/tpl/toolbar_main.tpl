@@ -33,7 +33,7 @@
                 <li><a href="logout/" id="logout">logout</a></li>
             </menu>
         </li>
-        <li><a id="help">?</a></li>
+        <li><a id="help" class="button icon-help">?</a></li>
     </menu>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :
