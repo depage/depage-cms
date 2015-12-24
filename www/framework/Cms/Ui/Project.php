@@ -104,9 +104,8 @@ class Project extends Base
         }
 
         $h = new Html("box.tpl", array(
-            'id' => "projects",
-            'icon' => "framework/Cms/images/icon_projects.gif",
-            'class' => "first",
+            'id' => "box-settings",
+            'class' => "box-settings",
             'title' => $title,
             'content' => array(
                 new Html("tabs.tpl", array(

@@ -19,7 +19,7 @@
                                 <?php } ?>
                                 <?php self::t($project->fullname); ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/settings/" class="right"><?php self::t(_("Settings")); ?></a>
+                            <a href="project/<?php self::t($project->name); ?>/settings/" class="right icon-settings"><?php self::t(_("Settings")); ?></a>
                         </li>
                     <?php } ?>
                 </menu>

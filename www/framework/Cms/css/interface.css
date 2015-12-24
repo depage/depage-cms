@@ -617,7 +617,7 @@ select,
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
-      .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before {
+      .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before, .toolbar menu a.icon-settings:before {
         content: " ";
         display: inline-block;
         width: 24px;
@@ -629,15 +629,18 @@ select,
         margin-left: -2px;
         margin-right: 6px; }
       @media screen and (max-width: 1200px) {
-        .toolbar menu a.icon-user, .toolbar menu a.icon-help, .toolbar menu a.icon-projects {
+        .toolbar menu a.icon-user, .toolbar menu a.icon-help, .toolbar menu a.icon-projects, .toolbar menu a.icon-settings {
           width: 34px; }
-          .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before {
+          .toolbar menu a.icon-user:before, .toolbar menu a.icon-help:before, .toolbar menu a.icon-projects:before, .toolbar menu a.icon-settings:before {
             margin-right: 20px; } }
       .toolbar menu a.icon-user:before {
         background-position: -24px -24px;
         background-size: 96px 240px; }
       .toolbar menu a.icon-projects:before {
         background-position: 0px 0px;
+        background-size: 96px 240px; }
+      .toolbar menu a.icon-settings:before {
+        background-position: -24px -48px;
         background-size: 96px 240px; }
       .toolbar menu a.icon-help {
         width: 34px; }
@@ -691,7 +694,7 @@ select,
       .toolbar li menu a.right {
         clear: none;
         float: right;
-        width: 30%;
+        width: 34px;
         margin-left: -100%; }
       .toolbar li menu a:hover {
         background-color: #ffffff !important; }
@@ -1390,6 +1393,11 @@ ul.users p {
   .tasks #delete-task p.submit input {
     margin: 0;
     font-weight: normal; }
+
+/* }}} */
+/* {{{ settings */
+.box-settings .content:before {
+  background-position: -48px -96px; }
 
 /* }}} */
 /* {{{ upload */

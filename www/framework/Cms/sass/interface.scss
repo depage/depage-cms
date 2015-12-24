@@ -36,6 +36,8 @@ $borderColor: #999999;
         background-position: (-1 * $iconSize) (-1 * $iconSize);
     } @else if ($name == "tasks") {
         background-position: 0 (-2 * $iconSize);
+    } @else if ($name == "settings") {
+        background-position: (-1 * $iconSize) (-2 * $iconSize);
 
     } @else if ($name == "left-full") {
         background-position: 0 (-3 * $iconSize);
@@ -400,7 +402,8 @@ select,
 
             &.icon-user,
             &.icon-help,
-            &.icon-projects {
+            &.icon-projects,
+            &.icon-settings {
                 &:before {
                     content: " ";
                     display: inline-block;
@@ -424,6 +427,9 @@ select,
             }
             &.icon-projects:before {
                 @include icon("projects", 0.5);
+            }
+            &.icon-settings:before {
+                @include icon("settings", 0.5);
             }
             &.icon-help {
                 width: 34px;
@@ -490,7 +496,7 @@ select,
             a.right {
                 clear: none;
                 float: right;
-                width: 30%;
+                width: 34px;
                 margin-left: -100%;
             }
             a:hover {
@@ -1337,6 +1343,13 @@ ul.users p {
                 //border: none;
             }
         }
+    }
+}
+/* }}} */
+/* {{{ settings */
+.box-settings {
+    .content:before {
+        @include icon("settings");
     }
 }
 /* }}} */
