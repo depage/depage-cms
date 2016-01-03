@@ -1,0 +1,29 @@
+#depage-live-help {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20001;
+    background: rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    @include transition(500ms, opacity);
+
+    &.visible {
+        opacity: 1;
+    }
+    div {
+        position: absolute;
+        padding: 0.5em;
+        background: #047cbf;
+        color: #ffffff;
+        @include radius(0.5em);
+        max-width: 12em;
+
+        &.big {
+            max-width: 20em;
+        }
+    }
+}
