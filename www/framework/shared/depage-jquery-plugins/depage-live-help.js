@@ -28,8 +28,6 @@
             // Put your initialization code here
             base.$el.on("click", base.toggleHelp);
 
-            base.showHelp();
-
             $window.on("resize", onResize);
         };
         // }}}
@@ -61,7 +59,13 @@
 
                 var offset = $el.offset();
                 var css = {};
-                var isAreaElement = $el.width() > 100 || $el.height() > 100;
+                var isAreaElement = $el.width() > 200 || $el.height() > 50;
+
+                // width
+                if (isAreaElement) {
+                    css.maxWidth = $el.outerWidth() - 60;
+                }
+                $div.attr("style", "").css(css);
 
                 // horizontal position
                 if (isAreaElement) {
@@ -75,18 +79,47 @@
                 // vertical position
                 if (isAreaElement) {
                     css.top = offset.top + 30;
-                } else if (offset.top < height / 3 * 2) {
-                    css.top = offset.top + 30;
                 } else {
-                    css.bottom = height - offset.top - $el.outerHeight();
+                    css.top = offset.top + 30;
                 }
 
-                // width
-                if (isAreaElement) {
-                    css.maxWidth = $el.outerWidth() - 60;
+                // calculate bounds
+                var bounds = {};
+                if (css.left) {
+                    bounds.left = css.left;
+                    bounds.right = bounds.left + $div.outerWidth();
+                }
+                if (css.right) {
+                    bounds.right = width - css.right;
+                    bounds.left = bounds.right - $div.outerWidth();
+                }
+                bounds.top = css.top;
+                bounds.bottom = bounds.top + $div.outerHeight();
+
+                // handle collisions
+                for (var j = 0; j < i; j++) {
+                    var $compare = base.$helpDivs.eq(j);
+                    var compare = $compare.offset();
+
+                    compare.right = compare.left + $compare.outerWidth();
+                    compare.bottom = compare.top + $compare.outerHeight();
+
+                    if (!(compare.right < bounds.left ||
+                        compare.left > bounds.right ||
+                        compare.bottom < bounds.top ||
+                        compare.top > bounds.bottom)) {
+
+                        if (isAreaElement) {
+                            bounds.top = compare.bottom + 30;
+                        } else {
+                            bounds.top = compare.bottom + 5;
+                        }
+                        css.top = bounds.top;
+                    }
                 }
 
-                $div.attr("style", "").css(css);
+
+                $div.css(css);
             });
         };
         // }}}
