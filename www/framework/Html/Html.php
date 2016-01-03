@@ -476,12 +476,19 @@ class Html {
      **/
     protected function attr($name, $value = "")
     {
-        if (!empty($value)) {
+        if (is_array($name)) {
+            foreach($name as $attr => $value) {
+                if (!empty($value)) {
+                    echo(" $attr=\"");
+                    echo(trim(htmlspecialchars($value)));
+                    echo("\"");
+                }
+            }
+        } else if (!empty($value)) {
             echo(" $name=\"");
             echo(trim(htmlspecialchars($value)));
             echo("\"");
         }
-
     }
     // }}}
     // {{{ hash()
