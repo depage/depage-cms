@@ -7,6 +7,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
+ * @require framework/shared/depage-jquery-plugins/depage-live-help.js
  * @require framework/Cms/js/xmldb.js
  *
  *
@@ -72,6 +73,7 @@ var depageCMS = (function() {
             localJS.setupPreviewLinks();
             localJS.setupSortables();
             localJS.setupForms();
+            localJS.setupHelp();
         },
         // }}}
         // {{{ setupVarious
@@ -327,6 +329,11 @@ var depageCMS = (function() {
                     this.value = "";
                 });
             }, 300);
+        },
+        // }}}
+        // {{{ setupHelp
+        setupHelp: function() {
+            $("#help").depageLivehelp({});
         },
         // }}}
 
