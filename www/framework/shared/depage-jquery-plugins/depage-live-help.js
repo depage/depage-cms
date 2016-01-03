@@ -4,8 +4,11 @@
     }
 
     $.depage.livehelp = function(el, options){
+        // {{{ variables
         // To avoid scope issues, use 'base' instead of 'this' to reference this class from internal events and functions.
         var base = this;
+        var $html = $("html");
+        var $window = $(window);
 
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
@@ -14,21 +17,116 @@
         // Add a reverse reference to the DOM object
         base.$el.data("depage.livehelp", base);
 
+        base.$helpPane = false;
+        base.$helpElements = false;
+        // }}}
+
+        // {{{ init()
         base.init = function(){
             base.options = $.extend({},$.depage.livehelp.defaultOptions, options);
 
             // Put your initialization code here
-            base.$el.on("click", base.showHelp);
-        };
+            base.$el.on("click", base.toggleHelp);
 
+            base.showHelp();
+
+            $window.on("resize", onResize);
+        };
+        // }}}
+
+        // {{{ onResize()
+        onResize = function(){
+            if (!base.$helpPane) return;
+
+            var width = $html.width();
+            var height = $html.height();
+
+            if (width < window.innerWidth) {
+                width = window.innerWidth;
+            }
+            if (height < window.innerHeight) {
+                height = window.innerHeight;
+            }
+            base.$helpPane.width(width);
+            base.$helpPane.height(height);
+
+            base.$helpElements.each(function(i, el) {
+                // original element
+                var $el = $(el);
+
+                // current help display
+                var $div = base.$helpDivs.eq(i);
+
+                var offset = $el.offset();
+                var css = {};
+
+                if (offset.left < width / 2) {
+                    css.left = offset.left;
+                } else {
+                    css.right = width - offset.left - $el.outerWidth();
+                }
+
+                if (offset.top < height / 3 * 2) {
+                    css.top = offset.top + 30;
+                } else {
+                    css.top = height - offset.top - $el.outerHeight();
+                }
+
+                $div.css(css);
+            });
+        };
+        // }}}
+
+        // {{{ toggleHelp()
+        base.toggleHelp = function(){
+            if (!base.$helpPane) {
+                base.showHelp();
+            } else {
+                base.hideHelp();
+            }
+
+            base.$el.blur();
+        };
+        // }}}
         // {{{ showHelp()
         base.showHelp = function(){
+            $html.trigger("depage.livehelp.show");
 
+            base.$helpPane = $("<div id=\"depage-live-help\"></div>").appendTo("body");
+            base.$helpElements = $("*[data-live-help]");
+
+            base.$helpElements.each(function() {
+                var helpText = $(this).attr("data-live-help");
+                var $div = $("<div></div>").text(helpText).appendTo(base.$helpPane);
+
+                if (helpText.length > 100) {
+                    $div.addClass("big");
+                }
+            });
+            base.$helpDivs = base.$helpPane.children("div");
+
+            base.$helpPane.on("click", base.toggleHelp);
+
+            setTimeout(function() {
+                onResize();
+
+                base.$helpPane.addClass("visible");
+                base.$el.addClass("active");
+            }, 100);
         };
         // }}}
         // {{{ hideHelp()
         base.hideHelp = function() {
+            base.$helpPane.removeClass("visible");
 
+            setTimeout(function() {
+                base.$el.removeClass("active");
+
+                base.$helpPane.remove();
+                base.$helpPane = false;
+
+                $html.trigger("depage.livehelp.hide");
+            }, 500);
         };
         // }}}
 
