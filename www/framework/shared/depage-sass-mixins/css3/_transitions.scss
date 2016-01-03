@@ -3,7 +3,7 @@
     $value: $speed ease-out;
 
     @include prefixer(transition, $value, webkit moz ms o spec);
-    @include prefixer(transition-property, $value, webkit moz ms o spec);
+    @include prefixer(transition-property, $property, webkit moz ms o spec);
 }
 @mixin transition-delay($delay: 500ms) {
     @include prefixer(transition-delay, $delay, webkit moz ms o spec);
