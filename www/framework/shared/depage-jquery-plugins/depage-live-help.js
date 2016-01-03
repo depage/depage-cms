@@ -38,6 +38,8 @@
         onResize = function(){
             if (!base.$helpPane) return;
 
+            base.$helpElements = $("*[data-live-help]");
+
             var width = $html.width();
             var height = $html.height();
 
@@ -59,20 +61,32 @@
 
                 var offset = $el.offset();
                 var css = {};
+                var isAreaElement = $el.width() > 100 || $el.height() > 100;
 
-                if (offset.left < width / 2) {
+                // horizontal position
+                if (isAreaElement) {
+                    css.left = offset.left + 30;
+                } else if (offset.left < width / 2) {
                     css.left = offset.left;
                 } else {
                     css.right = width - offset.left - $el.outerWidth();
                 }
 
-                if (offset.top < height / 3 * 2) {
+                // vertical position
+                if (isAreaElement) {
+                    css.top = offset.top + 30;
+                } else if (offset.top < height / 3 * 2) {
                     css.top = offset.top + 30;
                 } else {
-                    css.top = height - offset.top - $el.outerHeight();
+                    css.bottom = height - offset.top - $el.outerHeight();
                 }
 
-                $div.css(css);
+                // width
+                if (isAreaElement) {
+                    css.maxWidth = $el.outerWidth() - 60;
+                }
+
+                $div.attr("style", "").css(css);
             });
         };
         // }}}
