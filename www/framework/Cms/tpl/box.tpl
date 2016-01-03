@@ -1,9 +1,12 @@
-<div <?php
-    self::attr("id", $this->id);
-    self::attr("class", "centered_box $this->class");
-    self::attr("data-ajax-update-url", $this->updateUrl);
-?>>
-    <div class="content">
+<div <?php self::attr([
+        "id" => $this->id,
+        "class" => "centered_box $this->class",
+        "data-ajax-update-url" => $this->updateUrl,
+    ]); ?>>
+    <div <?php self::attr([
+        "class" => "content",
+        "data-live-help" => $this->liveHelp,
+    ]); ?>>
         <?php if ($this->title != null) { ?>
             <h1><?php self::t($this->title); ?></h1>
         <?php } ?>

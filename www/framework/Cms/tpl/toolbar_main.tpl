@@ -1,7 +1,11 @@
 <div id="toolbarmain" class="toolbar">
     <h1>depage::cms</h1>
     <menu class="left">
-        <li><a href="" class="button">home</a></li>
+        <li><a <?php self::attr([
+                "href" => " ",
+                "class" => "button",
+                "data-live-help" => _("Go to home page"),
+            ]); ?>>home</a></li>
     </menu>
     <menu class="preview">
         <!-- empty placeholder - content is added with javascript -->
@@ -9,7 +13,11 @@
     <menu class="right">
         <?php if(!empty($this->projectname)) { ?>
             <!-- @todo add submenu for project -->
-            <li><a href="" class="button icon-projects"><?php self::t($this->projectname); ?></a>
+            <li><a <?php self::attr([
+                    "href" => "",
+                    "class" => "button icon-projects",
+                    "data-live-help" => _("Change current project"),
+                ]); ?>><?php self::t($this->projectname); ?></a>
                 <menu class="popup projects">
                     <?php foreach($this->projects as $project) { ?>
                         <li>
@@ -26,7 +34,11 @@
             </li>
         <?php } ?>
         <!-- @todo add submenu for user -->
-        <li><a href="user/<?php self::t($this->user->name); ?>/" class="button icon-user"><?php self::t($this->user->fullname); ?></a>
+        <li><a <?php self::attr([
+                "href" => "user/$this->user->name",
+                "class" => "button icon-user",
+                "data-live-help" => _("Change user settings or logout"),
+            ]); ?>><?php self::t($this->user->fullname); ?></a>
             <menu class="popup">
                 <li><a href="user/<?php self::t($this->user->name); ?>/"><?php self::t(_("Account settings")); ?></a></li>
                 <li><hr></li>

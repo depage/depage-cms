@@ -104,6 +104,7 @@ class Main extends Base {
                     'icon' => "framework/cms/images/icon_login.gif",
                     'class' => "box-login",
                     'title' => "Login",
+                    'liveHelp' => _("Login"),
                     'content' => array(
                         $error,
                         $form,
@@ -152,6 +153,7 @@ class Main extends Base {
         $h = new Html("box.tpl", array(
             'class' => "box-projects",
             'title' => "Projects",
+            'liveHelp' => _("Edit, preview or changed settings for your projects."),
             'content' => new Html("projectlist.tpl", array(
                 'projects' => $projects,
             )),
@@ -234,6 +236,7 @@ class Main extends Base {
             'class' => "box-tasks",
             'title' => "Tasks",
             'updateUrl' => "tasks/",
+            'liveHelp' => _("Shows the currently running background tasks."),
             'content' => new Html("taskProgress.tpl", array(
                 'tasks' => $tasks,
                 'taskForm' => $taskForm,
@@ -328,6 +331,7 @@ class Main extends Base {
             'class' => "box-users",
             'title' => "Users",
             'updateUrl' => "users/$current/",
+            'liveHelp' => _("Shows the users that are currently logged in."),
             'content' => new Html("userlist.tpl", array(
                 'title' => $this->basetitle,
                 'users' => $users,
