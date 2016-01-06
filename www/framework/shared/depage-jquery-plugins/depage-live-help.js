@@ -19,6 +19,7 @@
 
         base.$helpPane = false;
         base.$helpElements = false;
+        base.$helpSvg = false;
         // }}}
 
         // {{{ init()
@@ -27,6 +28,8 @@
 
             // Put your initialization code here
             base.$el.on("click", base.toggleHelp);
+
+            base.showHelp();
 
             $window.on("resize", onResize);
         };
@@ -38,8 +41,13 @@
 
             base.$helpElements = $("*[data-live-help]");
 
+            if (base.$helpSvg) {
+                base.$helpSvg.remove();
+            }
+
             var width = $html.width();
             var height = $html.height();
+            var svg = "<svg width=\"100%\" height=\"100%\">";
 
             if (width < window.innerWidth) {
                 width = window.innerWidth;
@@ -49,6 +57,7 @@
             }
             base.$helpPane.width(width);
             base.$helpPane.height(height);
+
 
             base.$helpElements.each(function(i, el) {
                 // original element
@@ -76,11 +85,17 @@
                     css.right = width - offset.left - $el.outerWidth();
                 }
 
+                if (css.left < 10) {
+                    css.left = 10;
+                }
+
                 // vertical position
                 if (isAreaElement) {
                     css.top = offset.top + 30;
+                } else if (offset.top < height / 3 * 2) {
+                    css.top = offset.top + $el.outerHeight() + 10;
                 } else {
-                    css.top = offset.top + 30;
+                    css.top = offset.top - $div.outerHeight() - 10;
                 }
 
                 // calculate bounds
@@ -109,6 +124,8 @@
                         compare.bottom < bounds.top ||
                         compare.top > bounds.bottom)) {
 
+                        // @todo change move direction depending on closeness to window borders
+                        // @todo fix that elements never move out of content area
                         if (isAreaElement) {
                             bounds.top = compare.bottom + 30;
                         } else {
@@ -118,9 +135,34 @@
                     }
                 }
 
-
                 $div.css(css);
+
+                // draw line
+                if (!isAreaElement) {
+                    var x1, y1, x2, y2;
+                    var o = 10;
+
+                    if (offset.left < width / 2) {
+                        x1 = offset.left + o;
+                        x2 = bounds.left + o;
+                    } else {
+                        x1 = offset.left + $el.outerWidth() - o;
+                        x2 = bounds.right - o;
+                    }
+                    if (offset.top < height / 3 * 2) {
+                        y1 = offset.top + $el.outerHeight() - o;
+                        y2 = bounds.top + o;
+                    } else {
+                        y1 = offset.top + o;
+                        y2 = bounds.top + o;
+                    }
+                    svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>';
+                }
+
             });
+
+            svg += "</svg>";
+            base.$helpSvg = $(svg).appendTo(base.$helpPane);
         };
         // }}}
 
