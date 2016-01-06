@@ -795,6 +795,37 @@ html {
         height: 100%;
     }
 }
+.mock {
+    position: absolute;
+    z-index: -1;
+    //border: 1px solid;
+
+    &.tree-pages {
+        top: 36px;
+        bottom: 50%;
+        left: 36px;
+        width: 250px - 36px;
+    }
+    &.tree-page {
+        top: 53%;
+        bottom: 0;
+        left: 36px;
+        right: 75%;
+        width: 250px - 36px;
+    }
+    &.content-properties {
+        top: 36px;
+        bottom: 0;
+        left: 250px;
+        right: 0;
+    }
+    &.preview-button {
+        left: 0;
+        bottom: 10px;
+        height: 36px;
+        width: 36px;
+    }
+}
 /* }}} */
 /* {{{ preview */
 div.preview {

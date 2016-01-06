@@ -102,7 +102,7 @@ var depageCMS = (function() {
             ];
 
             // add layout buttons
-            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\"></li>").prependTo($toolbarRight);
+            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"Switch layout to: Edit-only, Split-view and Preview-only\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
                 var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
@@ -114,7 +114,7 @@ var depageCMS = (function() {
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
 
             // add reload button
-            var $reloadButton = $("<a class=\"button\">reload</a>")
+            var $reloadButton = $("<a class=\"button\" data-live-help=\"Reload preview\">reload</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     if ($previewFrame.length > 0) {
@@ -123,7 +123,7 @@ var depageCMS = (function() {
                 });
 
             // add edit button
-            var $editButton = $("<a class=\"button\">edit</a>")
+            var $editButton = $("<a class=\"button\" data-live-help=\"Edit current page in edit interface on the right ←.\">edit</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     var url = $previewFrame[0].contentWindow.location.href;
@@ -144,7 +144,7 @@ var depageCMS = (function() {
 
             // add zoom select
             var zooms = [100, 75, 50];
-            var $zoomMenu = $("<li><a>" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
+            var $zoomMenu = $("<li><a data-live-help=\"Change zoom level of preview.\">" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
             var $zoomMenuLabel = $zoomMenu.siblings("a");
 
             $(zooms).each(function() {

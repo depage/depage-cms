@@ -4,7 +4,7 @@
         <li><a <?php self::attr([
                 "href" => " ",
                 "class" => "button",
-                "data-live-help" => _("Go to home page"),
+                "data-live-help" => _("Go to dashboard"),
             ]); ?>>home</a></li>
     </menu>
     <menu class="preview">
@@ -45,7 +45,11 @@
                 <li><a href="logout/" id="logout">logout</a></li>
             </menu>
         </li>
-        <li><a id="help" class="button icon-help">?</a></li>
+        <li><a <?php self::attr([
+                "id" => "help",
+                "class" => "button icon-help",
+                "data-live-help" => _("Help"),
+            ]); ?>>?</a></li>
     </menu>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :
