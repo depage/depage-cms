@@ -375,6 +375,7 @@ select,
         padding: 2px 8px;
         display: block;
         height: 100%;
+        text-align: left;
 
         &.right,
         &.preview,
@@ -742,7 +743,7 @@ html {
     }
 
     // layouts for media sizes
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1300px) {
         $currentEditWidth: $editWidth * 0.8;
 
         &.layout-right-full {
@@ -781,6 +782,9 @@ html {
             }
             #toolbarmain menu.preview {
                 left: $currentEditWidth;
+                margin-left: -180px;
+                width: 180px;
+                text-align: right;
             }
         }
     }
