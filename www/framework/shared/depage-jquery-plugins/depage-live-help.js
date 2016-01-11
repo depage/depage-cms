@@ -29,7 +29,7 @@
             // Put your initialization code here
             base.$el.on("click", base.toggleHelp);
 
-            base.showHelp();
+            //base.showHelp();
 
             $window.on("resize", onResize);
         };
@@ -69,6 +69,7 @@
                 var offset = $el.offset();
                 var css = {};
                 var isAreaElement = $el.width() > 200 || $el.height() > 50;
+                var isVisible = $el.is(":visible");
 
                 // width
                 if (isAreaElement) {
@@ -96,6 +97,11 @@
                     css.top = offset.top + $el.outerHeight() + 10;
                 } else {
                     css.top = offset.top - $div.outerHeight() - 10;
+                }
+
+                if (!isVisible) {
+                    css.top = 0;
+                    css.left = -1000;
                 }
 
                 // calculate bounds
@@ -131,6 +137,7 @@
                         } else {
                             bounds.top = compare.bottom + 5;
                         }
+                        bounds.bottom = bounds.top + $div.outerHeight();
                         css.top = bounds.top;
                     }
                 }
@@ -138,7 +145,7 @@
                 $div.css(css);
 
                 // draw line
-                if (!isAreaElement) {
+                if (!isAreaElement && isVisible) {
                     var x1, y1, x2, y2;
                     var o = 10;
 
