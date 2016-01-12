@@ -318,6 +318,7 @@ class_interface.prototype.setActiveLayout = function(newLayout, returnFunc, retu
 		}
 	}
 	this.movClip.register.show();
+        call_jsfunc("depageCMS.flashLayoutChanged('" + escape(this.activeLayout.title) + "')");
 
 	setTimeout(this.activeLayout.generate, this.activeLayout, 20, [this.dlgArgs], false);
 };

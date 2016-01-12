@@ -382,9 +382,9 @@ var depageCMS = (function() {
 
             if ($("div.preview").length === 0) {
                 currentLayout = "left-full";
-                $(".preview-buttons").css({visibility: "hidden"});
+                $(".preview-buttons").hide();
             } else {
-                $(".preview-buttons").css({visibility: "visible"});
+                $(".preview-buttons").show();
             }
             $html
                 .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")
@@ -509,6 +509,11 @@ var depageCMS = (function() {
         // }}}
         // {{{ flashLoaded
         flashLoaded: function() {
+        },
+        // }}}
+        // {{{ flashLayoutChanged
+        flashLayoutChanged: function(layout) {
+            console.log(layout);
         },
         // }}}
 
