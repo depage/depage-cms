@@ -19,4 +19,11 @@ class XpathDocumentTest extends XpathTestCase
         $this->assertCorrectXpathIds(array(1, 2, 6, 7, 8, 9), '//*');
     }
     // }}}
+    // {{{ testAllWildCardAndIdAttributeValueLessThan
+    public function testAllWildCardAndIdAttributeValueLessThan()
+    {
+        // no domxpath, ids are subject to database domain
+        $this->assertCorrectXpathIdsNoDomXpath(array(1, 2), '//*[@db:id < \'6\']');
+    }
+    // }}}
 }

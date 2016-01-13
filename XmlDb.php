@@ -324,15 +324,24 @@ class XmlDb implements XmlGetter
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '(';
                     foreach ($attributes as $attribute) {
-                        $attributeCond .= $attribute['operator'];
+                        $attributeCond .= $attribute['bool'];
 
                         if ($attribute['name'] == 'db:id') {
-                            $attributeCond .= " l$level.id = ? ";
-                            $condParams[] = $attribute['value'];
+                            if (preg_match('/^[=<>]+$/', $attribute['operator'])) {
+                                $attributeCond .= " l$level.id {$attribute['operator']} ? ";
+                                $condParams[] = $attribute['value'];
+                            } else {
+                                throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                            }
                         } else {
                             $attributeCond .= " l$level.value REGEXP ? ";
                             $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
-                            $condParams[] = "(^| ){$attribute['name']}=\"$value\"( |$)";
+
+                            if ($attribute['operator'] == '=') {
+                                $condParams[] = "(^| ){$attribute['name']}=\"$value\"( |$)";
+                            } else {
+                                throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                            }
                         }
                     }
                     $condSql[] = "$attributeCond )";
@@ -386,6 +395,7 @@ class XmlDb implements XmlGetter
         return $ids;
     }
     // }}}
+
     // {{{ translateName
     protected function translateName($ns, $name)
     {
@@ -393,13 +403,13 @@ class XmlDb implements XmlGetter
         return str_replace('*', '%', "$ns$colon$name");
     }
     // }}}
-
     // {{{ parseAttributes
     protected function parseAttributes($condition)
     {
         $cond_array = false;
+        $temp_condition = $this->removeLiteralStrings($condition, $strings);
 
-        if (preg_match("/[\w\d@=: _-]*/", $temp_condition = $this->removeLiteralStrings($condition, $strings))) {
+        if (preg_match("/^[\w\d@=: -<>\*]*$/", $temp_condition)) {
             /**
              * "//ns:name[@attr1] ..."
              * "//ns:name[@attr1 = 'string1'] ..."
@@ -417,7 +427,7 @@ class XmlDb implements XmlGetter
         $cond_array = array();
 
         $pAttr = "@(\w[\w\d:]*)";
-        $pOperator = "(=)";
+        $pOperator = "(<=|>=|=|<|>)";
         $pBool = "(and|or|AND|OR)";
         $pString = "\\$(\d*)";
         preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
@@ -426,7 +436,8 @@ class XmlDb implements XmlGetter
             $cond_array[] = array(
                 'name' => $conditions[1][$i],
                 'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
-                'operator' => $i > 0 ? $conditions[4][$i - 1] : "",
+                'bool' => $i > 0 ? $conditions[4][$i - 1] : "",
+                'operator' => $conditions[2][$i],
             );
         }
 
