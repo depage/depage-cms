@@ -16,7 +16,7 @@ $borderColor: #999999;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: (4 * $iconSize) (10 * $iconSize);
+    background-size: (4 * $iconSize) (20 * $iconSize);
 
     @if ($name != "") {
         @include icon($name, $scale);
@@ -75,14 +75,21 @@ $borderColor: #999999;
 
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
-        //background-size: (2 * $iconSize) (10 * $iconSize);
     } @else if ($name == "open") {
         background-position: 0 (-9 * $iconSize);
+
+    } @else if ($name == "help-tree") {
+        background-position: 0 (-10 * $iconSize);
+    } @else if ($name == "help-properties") {
+        background-position: (-1 * $iconSize) (-10 * $iconSize);
+    } @else if ($name == "help-preview") {
+        background-position: (-2 * $iconSize) (-10 * $iconSize);
+
     } @else {
         background-position: 800px 800px;
     }
     @if ($scale != 1) {
-        background-size: (4 * $iconSize) (10 * $iconSize);
+        background-size: (4 * $iconSize) (20 * $iconSize);
     }
 
 }
@@ -1501,6 +1508,35 @@ progress {
         p:first-child {
             font-weight: bold;
         }
+    }
+    p {
+        line-height: 1.3em;
+    }
+    $iconSize: 32px;
+    .icon {
+        padding-left: $iconSize + 10px;
+        min-height: $iconSize + 10px;
+        min-width: $iconSize * 3;
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: $iconSize;
+            height: $iconSize;
+            @include icon-base();
+        }
+    }
+    .icon-tree:before {
+        @include icon("help-tree", 0.665);
+    }
+    .icon-properties:before {
+        @include icon("help-properties", 0.665);
+    }
+    .icon-preview:before {
+        @include icon("help-preview", 0.665);
     }
 }
 /* }}} */

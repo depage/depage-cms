@@ -10,30 +10,31 @@
         <div <?php self::attr([
             "class" => "mock tree-pages",
             "data-live-help" => _("Page tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
-            "data-live-help-class" => "icon-tree",
+            "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
         <div <?php self::attr([
             "class" => "mock tree-page",
             "data-live-help" => _("Content tree:\\nHere you can add content to your pages. Select an element to edit its properties in the pane on the right →."),
-            "data-live-help-class" => "icon-tree",
+            "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
         <div <?php self::attr([
             "class" => "mock content-properties",
             "data-live-help" => _("Content properties:\\nHere you can edit all properties of the currently selected element."),
+            "data-live-help-class" => "icon icon-properties",
         ]); ?>></div>
     </div>
     <div class="live-help-mock layout-files">
         <div <?php self::attr([
             "class" => "mock tree-pages",
             "data-live-help" => _("File library:\\n"),
-            "data-live-help-class" => "icon-tree",
+            "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
     </div>
     <div class="live-help-mock layout-colors">
         <div <?php self::attr([
             "class" => "mock tree-pages",
             "data-live-help" => _("Colors:\\n"),
-            "data-live-help-class" => "icon-tree",
+            "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
     </div>
     <div <?php self::attr([
@@ -44,7 +45,7 @@
 <div <?php self::attr([
         "class" => "preview layout layout-right zoom100",
         "data-live-help" => _("The preview of the currently selected page."),
-        "data-live-help-class" => "icon-preview",
+        "data-live-help-class" => "icon icon-preview",
     ]); ?>>
     <header class="info">
         <h1><?php self::e(_("Preview")); ?></h1>

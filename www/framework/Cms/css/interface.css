@@ -555,7 +555,7 @@ select,
       opacity: 1;
       background-repeat: no-repeat;
       background-image: url(../images/icon_sprite.svg);
-      background-size: 192px 480px; }
+      background-size: 192px 960px; }
   .centered_box:hover .content:before {
     opacity: 1; }
   .toolbar + .centered_box .content, header.info + .centered_box .content {
@@ -625,7 +625,7 @@ select,
         height: 24px;
         background-repeat: no-repeat;
         background-image: url(../images/icon_sprite.svg);
-        background-size: 192px 480px;
+        background-size: 192px 960px;
         margin-bottom: -8px;
         margin-left: -2px;
         margin-right: 6px; }
@@ -636,24 +636,24 @@ select,
             margin-right: 20px; } }
       .toolbar menu a.icon-user:before {
         background-position: -24px -24px;
-        background-size: 96px 240px; }
+        background-size: 96px 480px; }
       .toolbar menu a.icon-projects:before {
         background-position: 0px 0px;
-        background-size: 96px 240px; }
+        background-size: 96px 480px; }
       .toolbar menu a.icon-settings:before {
         background-position: -24px -48px;
-        background-size: 96px 240px; }
+        background-size: 96px 480px; }
       .toolbar menu a.icon-help {
         width: 34px; }
         .toolbar menu a.icon-help:hover {
           background: none; }
       .toolbar menu a.icon-help:before {
         background-position: 0 -168px;
-        background-size: 96px 240px;
+        background-size: 96px 480px;
         margin-right: 20px; }
       .toolbar menu a.icon-help.active:before, .toolbar menu a.icon-help:hover:before {
         background-position: -24px -168px;
-        background-size: 96px 240px; }
+        background-size: 96px 480px; }
     .toolbar menu > li > a {
       max-width: 10em; }
   .toolbar li {
@@ -792,33 +792,33 @@ select,
   .toolbar .layout-buttons a {
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: 192px 480px;
+    background-size: 192px 960px;
     text-indent: -1000em;
     width: 2.4em; }
     .toolbar .layout-buttons a.left-full {
       background-position: 0 -79.2px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.split {
       background-position: -26.4px -79.2px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.tree-split {
       background-position: -52.8px -79.2px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.right-full {
       background-position: -79.2px -79.2px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.active.left-full, .toolbar .layout-buttons a:hover.left-full {
       background-position: 0 -105.6px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.active.split, .toolbar .layout-buttons a:hover.split {
       background-position: -26.4px -105.6px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.active.tree-split, .toolbar .layout-buttons a:hover.tree-split {
       background-position: -52.8px -105.6px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
     .toolbar .layout-buttons a.active.right-full, .toolbar .layout-buttons a:hover.right-full {
       background-position: -79.2px -105.6px;
-      background-size: 105.6px 264px; }
+      background-size: 105.6px 528px; }
 
 /* }}} */
 /* {{{ header.info */
@@ -1193,9 +1193,9 @@ div.preview.zoom100 iframe {
           background-color: transparent;
           background-repeat: no-repeat;
           background-image: url(../images/icon_sprite.svg);
-          background-size: 192px 480px;
+          background-size: 192px 960px;
           background-position: 0 -144px;
-          background-size: 96px 240px; }
+          background-size: 96px 480px; }
     .sortable-forms .sortable:target h1, .sortable-forms .sortable.active h1 {
       background-color: #ffffff;
       font-weight: bold;
@@ -1260,13 +1260,13 @@ dl.projectlist dt .opener {
   margin-top: 7px;
   background-repeat: no-repeat;
   background-image: url(../images/icon_sprite.svg);
-  background-size: 192px 480px;
+  background-size: 192px 960px;
   background-position: 0 -107.52px;
-  background-size: 53.76px 134.4px; }
+  background-size: 53.76px 268.8px; }
 
 dl.projectlist dt.active .opener {
   background-position: 0 -120.96px;
-  background-size: 53.76px 134.4px; }
+  background-size: 53.76px 268.8px; }
 
 /* }}} */
 /* {{{ projectlist */
@@ -1464,9 +1464,9 @@ ul.users p {
     #upload .dropArea.has-drop-support .content:after {
       background-repeat: no-repeat;
       background-image: url(../images/icon_sprite.svg);
-      background-size: 192px 480px;
+      background-size: 192px 960px;
       background-position: 0 -600px;
-      background-size: 480px 1200px;
+      background-size: 480px 2400px;
       display: block;
       content: " ";
       position: relative;
@@ -1481,7 +1481,7 @@ ul.users p {
       height: 120px; }
     #upload .dropArea.has-drop-support.drag-over .content:after {
       background-position: -120px -600px;
-      background-size: 480px 1200px;
+      background-size: 480px 2400px;
       border-color: #4E4C4B; }
   #upload .progressArea {
     width: 400px; }
@@ -2007,6 +2007,32 @@ progress {
 
 #depage-live-help .area p:first-child {
   font-weight: bold; }
+#depage-live-help p {
+  line-height: 1.3em; }
+#depage-live-help .icon, #depage-live-help .icon-editor-bold, #depage-live-help .icon-editor-italic {
+  padding-left: 42px;
+  min-height: 42px;
+  min-width: 96px; }
+  #depage-live-help .icon:before, #depage-live-help .icon-editor-bold:before, #depage-live-help .icon-editor-italic:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    background-image: url(../images/icon_sprite.svg);
+    background-size: 192px 960px; }
+#depage-live-help .icon-tree:before {
+  background-position: 0 -319.2px;
+  background-size: 127.68px 638.4px; }
+#depage-live-help .icon-properties:before {
+  background-position: -31.92px -319.2px;
+  background-size: 127.68px 638.4px; }
+#depage-live-help .icon-preview:before {
+  background-position: -63.84px -319.2px;
+  background-size: 127.68px 638.4px; }
 
 /* }}} */
 /* {{{ dlg */
