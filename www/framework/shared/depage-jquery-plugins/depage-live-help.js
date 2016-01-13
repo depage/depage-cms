@@ -74,6 +74,8 @@
                 // width
                 if (isAreaElement) {
                     css.maxWidth = $el.outerWidth() - 60;
+
+                    $div.addClass("area");
                 }
                 $div.attr("style", "").css(css);
 
@@ -192,10 +194,16 @@
             base.$helpElements = $("*[data-live-help]");
 
             base.$helpElements.each(function() {
-                var helpText = $(this).attr("data-live-help");
-                var $div = $("<div></div>").text(helpText).appendTo(base.$helpPane);
+                var helpTexts = $(this).attr("data-live-help").split("\\n");
+                var classes = $(this).attr("data-live-help-class") || "";
+                var $div = $("<div class=\"" + classes + "\"></div>");
 
-                if (helpText.length > 100) {
+                for (var i = 0; i < helpTexts.length; i++) {
+                    $("<p></p>").text(helpTexts[i]).appendTo($div);
+                }
+                $div.appendTo(base.$helpPane);
+
+                if (helpTexts.join().length > 100) {
                     $div.addClass("big");
                 }
             });
