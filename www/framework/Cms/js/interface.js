@@ -123,7 +123,7 @@ var depageCMS = (function() {
                 });
 
             // add edit button
-            var $editButton = $("<a class=\"button\" data-live-help=\"Edit current page in edit interface on the right ←.\">edit</a>")
+            var $editButton = $("<a class=\"button\" data-live-help=\"Edit current page in edit interface on the left ←.\">edit</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     var url = $previewFrame[0].contentWindow.location.href;
@@ -132,13 +132,8 @@ var depageCMS = (function() {
                     if (matches) {
                         var project = matches[1];
                         var page = matches[2];
-                        // @todo load edit interface if there is no flash frame loaded
 
-                        var flash = $flashFrame.contents().find("#flash")[0];
-                        flash.SetVariable("/:gotopage",page);
-                        flash.Play();
-
-                        $window.triggerHandler("switchLayout", "split");
+                        localJS.edit(project, page);
                     }
                 });
 
@@ -435,6 +430,35 @@ var depageCMS = (function() {
             }
         },
         // }}}
+        // {{{ edit
+        edit: function(projectName, page) {
+            if (parent != window) {
+                parent.depageCMS.edit(projectName, page);
+            } else if ($flashFrame.length == 1) {
+                var flash = $flashFrame.contents().find("#flash")[0];
+                flash.SetVariable("/:gotopage",page);
+                flash.Play();
+
+                if (currentLayout != "split" && currentLayout != "tree-split") {
+                    $window.triggerHandler("switchLayout", "split");
+                }
+            } else {
+                $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
+                    var $result = $("<div></div>")
+                        .html( data )
+                        .find("div.edit")
+                        .appendTo($body);
+                    var $header = $result.find("header.info");
+
+                    $flashFrame = $("#flashFrame");
+                    $flashFrame[0].src = unescape("project/" + projectName + "/flash/flash/false");
+                    //@todo add page to flash url
+
+                    $window.triggerHandler("switchLayout", "split");
+                });
+            }
+        },
+        // }}}
         // {{{ openUpload
         openUpload: function(projectName, targetPath) {
             $upload = $("#upload");
@@ -513,7 +537,15 @@ var depageCMS = (function() {
         // }}}
         // {{{ flashLayoutChanged
         flashLayoutChanged: function(layout) {
-            console.log(layout);
+            if (parent != window) {
+                parent.depageCMS.flashLayoutChanged(layout);
+            } else {
+                layout = layout.replace(/ /, "-");
+                $(".live-help-mock")
+                    .hide()
+                    .filter(".layout-" + layout)
+                    .show();
+            }
         },
         // }}}
 

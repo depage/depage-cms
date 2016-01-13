@@ -1,7 +1,6 @@
 @import "../../shared/depage-sass-mixins/_base";
 @import "../../HtmlForm/lib/sass/depage-forms";
 @import "../../shared/depage-jquery-plugins/sass/_depage-growl";
-@import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
 @import "icons";
 
@@ -1486,6 +1485,21 @@ progress {
 
         &:focus {
             border: 1px solid #000000;
+        }
+    }
+}
+/* }}} */
+/* {{{ live-help */
+.live-help-mock {
+    display: none;
+}
+
+@import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
+
+#depage-live-help {
+    .area {
+        p:first-child {
+            font-weight: bold;
         }
     }
 }
