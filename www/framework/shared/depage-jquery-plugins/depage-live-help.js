@@ -73,7 +73,7 @@
 
                 // width
                 if (isAreaElement) {
-                    css.maxWidth = $el.outerWidth() - 60;
+                    css.maxWidth = $el.outerWidth() - 40;
 
                     $div.addClass("area");
                 }
@@ -81,7 +81,8 @@
 
                 // horizontal position
                 if (isAreaElement) {
-                    css.left = offset.left + 30;
+                    //css.left = offset.left + 10;
+                    css.left = offset.left + $el.outerWidth() / 2 - $div.outerWidth() / 2;
                 } else if (offset.left < width / 2) {
                     css.left = offset.left;
                 } else {
@@ -94,7 +95,8 @@
 
                 // vertical position
                 if (isAreaElement) {
-                    css.top = offset.top + 30;
+                    //css.top = offset.top + 10;
+                    css.top = offset.top + $el.outerHeight() / 3 - $div.outerHeight() / 2;
                 } else if (offset.top < height / 3 * 2) {
                     css.top = offset.top + $el.outerHeight() + 10;
                 } else {
