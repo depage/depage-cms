@@ -38,10 +38,14 @@ class_propBox.prototype.onLoad = function() {
 	this.onResize();
 
 	Stage.addListener(this);
+
+        //this.saveIntervalID = setInterval(this, "save", 1000);
 };
 // }}}
 // {{{ onUnload()
 class_propBox.prototype.onUnload = function() {
+        //clearInterval(this.saveIntervalID);
+
 	Stage.removeListener(this);
 };
 // }}}
