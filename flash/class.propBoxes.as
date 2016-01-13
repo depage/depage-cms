@@ -38,13 +38,11 @@ class_propBox.prototype.onLoad = function() {
 	this.onResize();
 
 	Stage.addListener(this);
-
-        //this.saveIntervalID = setInterval(this, "save", 1000);
 };
 // }}}
 // {{{ onUnload()
 class_propBox.prototype.onUnload = function() {
-        //clearInterval(this.saveIntervalID);
+        this.saveIntervalTimeout.clear();
 
 	Stage.removeListener(this);
 };
@@ -99,7 +97,10 @@ class_propBox.prototype.onChanged = function() {
 				this._parent["propLine" + (this.num - 1)].onChanged();
 			}
 		}
-	}
+        }
+
+        this.saveIntervalTimeout.clear();
+        this.saveIntervalTimeout = setTimeout(this.save, this, 500);
 };
 // }}}
 // {{{ onLeave()
