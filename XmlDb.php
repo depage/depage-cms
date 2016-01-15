@@ -328,12 +328,8 @@ class XmlDb implements XmlGetter
                         $attributeCond .= $bool;
 
                         if ($name == 'db:id') {
-                            if (preg_match('/^[=<>]+$/', $operator)) {
-                                $attributeCond .= " l$level.id $operator ? ";
-                                $condParams[] = $value;
-                            } else {
-                                throw new Exceptions\XpathException('Xpath feature not implemented yet.');
-                            }
+                            $attributeCond .= " l$level.id $operator ? ";
+                            $condParams[] = $value;
                         } else {
                             $attributeCond .= " l$level.value REGEXP ? ";
                             $regExValue = (is_null($value)) ? '.*' : $value;

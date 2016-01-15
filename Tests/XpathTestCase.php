@@ -246,10 +246,16 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(2, 8), '//pg:page[last()]', true, true);
     }
     // }}}
-    // {{{ testAllIdLessThan
+    // {{{ testAllLessThan
     public function testAllLessThan()
     {
         $this->assertCorrectXpathIds(array(2, 6), '//pg:page[@db:dataid < \'5\']', true, true);
+    }
+    // }}}
+    // {{{ testArbitraryDescendants
+    public function testArbitraryDescendants()
+    {
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '/dpg:pages//pg:page', true, true);
     }
     // }}}
 }
