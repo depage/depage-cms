@@ -423,17 +423,17 @@ class XmlDb implements XmlGetter
     {
         $cond_array = array();
 
-        $pAttr = "@(\w[\w\d:]*)";
-        $pOperator = "(<=|>=|=|<|>)";
-        $pBool = "(and|or|AND|OR)";
-        $pString = "\\$(\d*)";
+        $pAttr = '@(\w[\w\d:]*)';
+        $pOperator = '(<=|>=|=|<|>)';
+        $pBool = '(and|or|AND|OR)';
+        $pString = '\$(\d*)';
         preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
 
         for ($i = 0; $i < count($conditions[0]); $i++) {
             $cond_array[] = array(
                 'name' => $conditions[1][$i],
                 'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
-                'bool' => $i > 0 ? $conditions[4][$i - 1] : "",
+                'bool' => $i > 0 ? $conditions[4][$i - 1] : '',
                 'operator' => $conditions[2][$i],
             );
         }
