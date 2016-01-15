@@ -37,45 +37,20 @@ abstract class XpathTestCase extends DatabaseTestCase
         return $ids;
     }
     // }}}
-
     // {{{ assertCorrectXpathIds
-    protected function assertCorrectXpathIds(array $expectedIds, $xpath)
+    protected function assertCorrectXpathIds(array $expectedIds, $xpath, $domTest = true, $fallbackCalled = false)
     {
-        $this->assertCorrectXpathIdsNoFallbackTest($expectedIds, $xpath);
-        $this->assertFalse($this->xmldb->fallbackCall);
-    }
-    // }}}
-    // {{{ assertCorrectXpathIdsWithFallback
-    protected function assertCorrectXpathIdsWithFallback(array $expectedIds, $xpath)
-    {
-        $this->assertCorrectXpathIdsNoFallbackTest($expectedIds, $xpath);
-        $this->assertTrue($this->xmldb->fallbackCall);
-    }
-    // }}}
-    // {{{ assertCorrectXpathIdsNoFallbackTest
-    protected function assertCorrectXpathIdsNoFallbackTest(array $expectedIds, $xpath)
-    {
-        $domXpathIds = $this->getNodeIdsByDomXpath($this->testObject, $xpath);
-        sort($domXpathIds);
+        if ($domTest) {
+            $domXpathIds = $this->getNodeIdsByDomXpath($this->testObject, $xpath);
+            sort($domXpathIds);
+            $this->assertEquals($expectedIds, $domXpathIds, "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
+        }
 
-        $this->assertEquals($expectedIds, $domXpathIds, "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
-        $this->assertCorrectXpathIdsNoDomXpathNoFallbackTest($expectedIds, $xpath);
-    }
-    // }}}
-    // {{{ assertCorrectXpathIdsNoDomXpath
-    protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
-    {
-        $this->assertCorrectXpathIdsNoDomXpathNoFallbackTest($expectedIds, $xpath);
-        $this->assertFalse($this->xmldb->fallbackCall);
-    }
-    // }}}
-    // {{{ assertCorrectXpathIdsNoDomXpathNoFallbackTest
-    protected function assertCorrectXpathIdsNoDomXpathNoFallbackTest(array $expectedIds, $xpath)
-    {
         $actualIds = $this->testObject->getNodeIdsByXpath($xpath);
         sort($actualIds);
-
         $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
+
+        $this->assertSame($fallbackCalled, $this->xmldb->fallbackCall);
     }
     // }}}
 
@@ -164,7 +139,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testWildcardNsAndAttributeValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']', false);
     }
     // }}}
     // {{{ testWildcardNameAndAttributeValue
@@ -227,7 +202,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllWildCardNs()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array(2, 6, 7, 8), '//*:page');
+        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '//*:page', false);
     }
     // }}}
     // {{{ testAllWildCardName
@@ -240,41 +215,41 @@ abstract class XpathTestCase extends DatabaseTestCase
     public function testAllWildCardAndIdAttributeValue()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*[@db:id = \'6\']');
+        $this->assertCorrectXpathIds(array(6), '//*[@db:id = \'6\']', false);
     }
     // }}}
     // {{{ testAllWildCardNsAndIdAttributeValue
     public function testAllWildCardNsAndIdAttributeValue()
     {
         // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//*:page[@db:id = \'6\']');
+        $this->assertCorrectXpathIds(array(6), '//*:page[@db:id = \'6\']', false);
     }
     // }}}
     // {{{ testAllWildCardNameAndIdAttributeValue
     public function testAllWildCardNameAndIdAttributeValue()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(6), '//pg:*[@db:id = \'6\']');
+        $this->assertCorrectXpathIds(array(6), '//pg:*[@db:id = \'6\']', false);
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeValueNoResult
     public function testAllWildCardAndIdAttributeValueNoResult()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(), '//*[@db:id = \'20\']');
+        $this->assertCorrectXpathIds(array(), '//*[@db:id = \'20\']', false);
     }
     // }}}
 
     // {{{ testAllLast
     public function testAllLast()
     {
-        $this->assertCorrectXpathIdsWithFallback(array(2, 8), '//pg:page[last()]');
+        $this->assertCorrectXpathIds(array(2, 8), '//pg:page[last()]', true, true);
     }
     // }}}
     // {{{ testAllIdLessThan
     public function testAllLessThan()
     {
-        $this->assertCorrectXpathIdsWithFallback(array(2, 6), '//pg:page[@db:dataid < \'5\']');
+        $this->assertCorrectXpathIds(array(2, 6), '//pg:page[@db:dataid < \'5\']', true, true);
     }
     // }}}
 }

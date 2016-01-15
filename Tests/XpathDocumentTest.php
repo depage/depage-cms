@@ -23,7 +23,7 @@ class XpathDocumentTest extends XpathTestCase
     public function testAllWildCardAndIdAttributeValueLessThan()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIdsNoDomXpath(array(1, 2), '//*[@db:id < \'6\']');
+        $this->assertCorrectXpathIds(array(1, 2), '//*[@db:id < \'6\']', false);
     }
     // }}}
 }
