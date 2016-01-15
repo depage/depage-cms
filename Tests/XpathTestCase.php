@@ -15,7 +15,7 @@ abstract class XpathTestCase extends DatabaseTestCase
         parent::setUp();
 
         $this->cache = \Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->xmldb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
             'root',
             'child',
         ));
@@ -41,15 +41,36 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ assertCorrectXpathIds
     protected function assertCorrectXpathIds(array $expectedIds, $xpath)
     {
+        $this->assertCorrectXpathIdsNoFallbackTest($expectedIds, $xpath);
+        $this->assertFalse($this->xmldb->fallbackCall);
+    }
+    // }}}
+    // {{{ assertCorrectXpathIdsWithFallback
+    protected function assertCorrectXpathIdsWithFallback(array $expectedIds, $xpath)
+    {
+        $this->assertCorrectXpathIdsNoFallbackTest($expectedIds, $xpath);
+        $this->assertTrue($this->xmldb->fallbackCall);
+    }
+    // }}}
+    // {{{ assertCorrectXpathIdsNoFallbackTest
+    protected function assertCorrectXpathIdsNoFallbackTest(array $expectedIds, $xpath)
+    {
         $domXpathIds = $this->getNodeIdsByDomXpath($this->testObject, $xpath);
         sort($domXpathIds);
 
         $this->assertEquals($expectedIds, $domXpathIds, "Failed asserting that expected IDs match DOMXPath query node IDs. Is the test set up correctly for XPath query $xpath ?");
-        $this->assertCorrectXpathIdsNoDomXpath($expectedIds, $xpath);
+        $this->assertCorrectXpathIdsNoDomXpathNoFallbackTest($expectedIds, $xpath);
     }
     // }}}
     // {{{ assertCorrectXpathIdsNoDomXpath
     protected function assertCorrectXpathIdsNoDomXpath(array $expectedIds, $xpath)
+    {
+        $this->assertCorrectXpathIdsNoDomXpathNoFallbackTest($expectedIds, $xpath);
+        $this->assertFalse($this->xmldb->fallbackCall);
+    }
+    // }}}
+    // {{{ assertCorrectXpathIdsNoDomXpathNoFallbackTest
+    protected function assertCorrectXpathIdsNoDomXpathNoFallbackTest(array $expectedIds, $xpath)
     {
         $actualIds = $this->testObject->getNodeIdsByXpath($xpath);
         sort($actualIds);
@@ -247,13 +268,13 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllLast
     public function testAllLast()
     {
-        $this->assertCorrectXpathIds(array(2, 8), '//pg:page[last()]');
+        $this->assertCorrectXpathIdsWithFallback(array(2, 8), '//pg:page[last()]');
     }
     // }}}
-    // {{{ testAllLessThan
+    // {{{ testAllIdLessThan
     public function testAllLessThan()
     {
-        $this->assertCorrectXpathIds(array(2, 6), '//pg:page[@db:dataid < \'5\']');
+        $this->assertCorrectXpathIdsWithFallback(array(2, 6), '//pg:page[@db:dataid < \'5\']');
     }
     // }}}
 }

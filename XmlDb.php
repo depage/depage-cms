@@ -296,7 +296,7 @@ class XmlDb implements XmlGetter
                     $parentLevel = $level - 1;
                     $condSql[] = "l$level.id_parent = l$parentLevel.id";
                 } else {
-                    throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
                 }
             }
 
@@ -324,29 +324,30 @@ class XmlDb implements XmlGetter
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '(';
                     foreach ($attributes as $attribute) {
-                        $attributeCond .= $attribute['bool'];
+                        extract($attribute);
+                        $attributeCond .= $bool;
 
-                        if ($attribute['name'] == 'db:id') {
-                            if (preg_match('/^[=<>]+$/', $attribute['operator'])) {
-                                $attributeCond .= " l$level.id {$attribute['operator']} ? ";
-                                $condParams[] = $attribute['value'];
+                        if ($name == 'db:id') {
+                            if (preg_match('/^[=<>]+$/', $operator)) {
+                                $attributeCond .= " l$level.id $operator ? ";
+                                $condParams[] = $value;
                             } else {
-                                throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                                throw new Exceptions\XpathException('Xpath feature not implemented yet.');
                             }
                         } else {
                             $attributeCond .= " l$level.value REGEXP ? ";
-                            $value = (is_null($attribute['value'])) ? '.*' : $attribute['value'];
+                            $regExValue = (is_null($value)) ? '.*' : $value;
 
-                            if ($attribute['operator'] == '=') {
-                                $condParams[] = "(^| ){$attribute['name']}=\"$value\"( |$)";
+                            if ( $operator == '=' || $operator == '') {
+                                $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
                             } else {
-                                throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                                throw new Exceptions\XpathException('Xpath feature not implemented yet.');
                             }
                         }
                     }
-                    $condSql[] = "$attributeCond )";
+                    $condSql[] = "$attributeCond)";
                 } else {
-                    throw new Exceptions\XpathException('Xpath feature not yet implemented.');
+                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
                 }
             }
 
