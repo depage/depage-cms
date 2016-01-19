@@ -1387,7 +1387,8 @@ class Document
         $query = $this->pdo->prepare(
             "SELECT xml.id AS id
             FROM {$this->table_xml} AS xml
-            WHERE xml.id_doc = :doc_id and xml.type='ELEMENT_NODE' $name_query $attr_query"
+            WHERE xml.id_doc = :doc_id and xml.type='ELEMENT_NODE' $name_query $attr_query
+            ORDER BY xml.id_parent, xml.pos"
         );
         $query->execute(array_merge(
             $name_param,
