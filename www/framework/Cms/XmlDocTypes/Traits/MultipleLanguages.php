@@ -33,7 +33,6 @@ trait MultipleLanguages
         $actual_languages = array();
         $temp_nodes = array();
 
-
         $xpath = new \DOMXPath($xml);
         $nodelist = $xpath->query("./descendant-or-self::node()[@lang]", $node);
 
@@ -50,17 +49,14 @@ trait MultipleLanguages
                 }
             }
 
-            // get the difference of languages
-            $langdiff = array_merge(array_diff($languages, $actual_languages), array_diff($actual_languages, $languages));
-
-            if (count($langdiff) > 0) {
+            if (implode(",", $languages) != implode(",", $actual_languages)) {
                 $first_lang = $nodelist->item(0)->getAttribute('lang');
 
                 // add temporary nodes as markers to insert new nodes
                 foreach ($nodelist as $node) {
                     $parent_node = $node->parentNode;
                     if ($node->getAttribute('lang') == $first_lang || $node->getAttribute('lang') == "_new_language") {
-                        $temp_node = $xml->createElement('temp_node');
+                        $temp_node = $xml->createElement('temp_lang_node');
                         $parent_node->insertBefore($temp_node, $node);
                         $temp_nodes[] = $temp_node;
                     }
@@ -69,6 +65,7 @@ trait MultipleLanguages
                     $lang_nodes = array();
                     $temp_node = $temp_nodes[$i];
                     $sibl_node = $temp_node->nextSibling;
+                    $parent_node = $temp_node->parentNode;
 
                     // search for siblings with lang-nodes
                     while ($sibl_node && $sibl_node->nodeType == \XML_ELEMENT_NODE && $sibl_node->hasAttribute("lang")) {
@@ -80,24 +77,22 @@ trait MultipleLanguages
                         }
                         $sibl_node = $sibl_node->nextSibling;
                     }
-                    $parent_node = $temp_nodes[$i]->parentNode;
-                    for ($j = 0; $j < count($languages); $j++) {
-                        if (isset($lang_nodes[$languages[$j]])) {
+                    foreach ($languages as $key => $lang) {
+                        if (isset($lang_nodes[$lang])) {
                             // move lang-node before temporary node, so we have the same order
                             // the language settings
-                            $temp_node = $lang_nodes[$languages[$j]]->cloneNode(true);
+                            $temp_node = $lang_nodes[$lang]->cloneNode(true);
                             $parent_node->insertBefore($temp_node, $temp_nodes[$i]);
-                            $temp_node->setAttribute('lang', $languages[$j]);
+                            $temp_node->setAttribute('lang', $lang);
                         } else {
                             // add new languages by copying existing lang-node
                             if (count($lang_nodes) > 0) {
-                                reset($lang_nodes);
-                                $lang_node = current($lang_nodes);
+                                $lang_node = reset($lang_nodes);
 
                                 $temp_node = $lang_node->cloneNode(true);
                                 $parent_node->insertBefore($temp_node, $temp_nodes[$i]);
                                 \Depage\XmlDb\Document::removeNodeAttr($temp_node, "http://cms.depagecms.net/ns/database", "db");
-                                $temp_node->setAttribute('lang', $languages[$j]);
+                                $temp_node->setAttribute('lang', $lang);
                             }
                         }
                     }
