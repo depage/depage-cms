@@ -377,8 +377,8 @@ class Document
 
         $this->xmldb->endTransaction();
 
-        $docHandler = $this->getDoctypeHandler();
-        $docHandler->onDocumentChange();
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
 
         return $doc_info->id;
     }
@@ -396,8 +396,8 @@ class Document
 
             $success = $this->unlinkNodeById($node_id);
 
-            $docHandler = $this->getDoctypeHandler();
-            $docHandler->onDocumentChange();
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
 
             return $success;
         }
@@ -465,7 +465,7 @@ class Document
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
             $success =  $this->saveNode($node, $target_id, $target_pos, true);
 
-            $docHandler->onDocumentChange();
+            $dth->onDocumentChange();
 
             return $success;
         }
@@ -487,7 +487,7 @@ class Document
         if ($newNode) {
             $success = $this->addNode($newNode, $target_id, $target_pos);
 
-            $docHandler->onDocumentChange();
+            $dth->onDocumentChange();
 
             return $success;
         }
@@ -543,8 +543,8 @@ class Document
 
         $this->xmldb->endTransaction();
 
-        $docHandler = $this->getDoctypeHandler();
-        $docHandler->onDocumentChange();
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
 
         return $changed_ids;
     }
@@ -564,9 +564,9 @@ class Document
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
-        $docHandler = $this->getDoctypeHandler();
+        $dth = $this->getDoctypeHandler();
 
-        if ($docHandler->isAllowedMove($node_id, $target_id)) {
+        if ($dth->isAllowedMove($node_id, $target_id)) {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
@@ -574,8 +574,8 @@ class Document
 
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
 
-            $docHandler->onCopyNode($node_id, $copy_id);
-            $docHandler->onDocumentChange();
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
 
             return $copy_id;
         }
@@ -737,8 +737,8 @@ class Document
 
             $this->xmldb->endTransaction();
 
-            $docHandler = $this->getDoctypeHandler();
-            $docHandler->onDocumentChange();
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
         }
 
         return $success;
@@ -833,9 +833,9 @@ class Document
     public function copyNode($node_id, $target_id, $target_pos)
     {
         $result = false;
-        $docHandler = $this->getDoctypeHandler();
+        $dth = $this->getDoctypeHandler();
 
-        if ($docHandler->isAllowedMove($node_id, $target_id)) {
+        if ($dth->isAllowedMove($node_id, $target_id)) {
             $this->xmldb->beginTransaction();
 
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
@@ -847,8 +847,8 @@ class Document
 
             $this->xmldb->endTransaction();
 
-            $docHandler->onCopyNode($node_id, $copy_id);
-            $docHandler->onDocumentChange();
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
 
             $result = $copy_id;
         }
@@ -940,8 +940,8 @@ class Document
 
         $this->xmldb->endTransaction();
 
-        $docHandler = $this->getDoctypeHandler();
-        $docHandler->onDocumentChange();
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
 
         return $success;
     }
@@ -1493,10 +1493,10 @@ class Document
         $this->updateLastchange();
 
         $this->xmldb->endTransaction();
-        
+
         if ($saveExisting) {
-            $docHandler = $this->getDoctypeHandler();
-            $docHandler->onDocumentChange();
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
         }
 
         return $node_array[0]['id'];
