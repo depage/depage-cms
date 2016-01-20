@@ -377,6 +377,9 @@ class Document
 
         $this->xmldb->endTransaction();
 
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
+
         return $doc_info->id;
     }
     // }}}
@@ -391,7 +394,12 @@ class Document
         if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
             $this->updateLastchange();
 
-            return $this->unlinkNodeById($node_id);
+            $success = $this->unlinkNodeById($node_id);
+
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -455,7 +463,11 @@ class Document
         $dth = $this->getDoctypeHandler();
         if ($dth->isAllowedAdd($node, $target_id)) {
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
-            return $this->saveNode($node, $target_id, $target_pos, true);
+            $success =  $this->saveNode($node, $target_id, $target_pos, true);
+
+            $dth->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -473,7 +485,11 @@ class Document
 
         $newNode = $dth->getNewNodeFor($name);
         if ($newNode) {
-            return $this->addNode($newNode, $target_id, $target_pos);
+            $success = $this->addNode($newNode, $target_id, $target_pos);
+
+            $dth->onDocumentChange();
+
+            return $success;
         }
         return false;
     }
@@ -527,6 +543,9 @@ class Document
 
         $this->xmldb->endTransaction();
 
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
+
         return $changed_ids;
     }
     // }}}
@@ -545,9 +564,9 @@ class Document
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
-        $docHandler = $this->getDoctypeHandler();
+        $dth = $this->getDoctypeHandler();
 
-        if ($docHandler->isAllowedMove($node_id, $target_id)) {
+        if ($dth->isAllowedMove($node_id, $target_id)) {
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
 
@@ -555,7 +574,8 @@ class Document
 
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
 
-            $docHandler->onCopyNode($node_id, $copy_id);
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
 
             return $copy_id;
         }
@@ -716,6 +736,9 @@ class Document
             $success = true;
 
             $this->xmldb->endTransaction();
+
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
         }
 
         return $success;
@@ -810,9 +833,9 @@ class Document
     public function copyNode($node_id, $target_id, $target_pos)
     {
         $result = false;
-        $docHandler = $this->getDoctypeHandler();
+        $dth = $this->getDoctypeHandler();
 
-        if ($docHandler->isAllowedMove($node_id, $target_id)) {
+        if ($dth->isAllowedMove($node_id, $target_id)) {
             $this->xmldb->beginTransaction();
 
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
@@ -822,9 +845,10 @@ class Document
 
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
-            $docHandler->onCopyNode($node_id, $copy_id);
-
             $this->xmldb->endTransaction();
+
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
 
             $result = $copy_id;
         }
@@ -915,6 +939,9 @@ class Document
         $this->clearCache();
 
         $this->xmldb->endTransaction();
+
+        $dth = $this->getDoctypeHandler();
+        $dth->onDocumentChange();
 
         return $success;
     }
@@ -1356,12 +1383,14 @@ class Document
     {
         $this->xmldb->beginTransaction();
 
-        if ($target_id !== null) {
-            /*
-             * if target_id is not set, assume we are saving an existing node with a node
-             * db:id-attribute set. if target_id is set, assume we want to save a new node
-             * so remove all existing node attributes first.
-             */
+        /*
+         * if target_id is not set, assume we are saving an existing node with a node
+         * db:id-attribute set. if target_id is set, assume we want to save a new node
+         * so remove all existing node attributes first.
+         */
+        $saveExisting = $target_id === null;
+
+        if (!$saveExisting) {
             $this->removeIdAttr($node);
         }
 
@@ -1377,6 +1406,7 @@ class Document
 
                 if ($target_id === false) {
                     $target_id = null;
+                    $saveExisting = false;
                 }
 
                 //unlink old node
@@ -1463,6 +1493,11 @@ class Document
         $this->updateLastchange();
 
         $this->xmldb->endTransaction();
+
+        if ($saveExisting) {
+            $dth = $this->getDoctypeHandler();
+            $dth->onDocumentChange();
+        }
 
         return $node_array[0]['id'];
     }
