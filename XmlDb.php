@@ -327,13 +327,16 @@ class XmlDb implements XmlGetter
                         extract($attribute);
 
                         if ($name == 'db:id') {
-                            $attributeCond .= " l$level.id $operator ? ";
-                            $condParams[] = $value;
+                            $operators = array('<=', '>=', '<', '>', '=');
+                            if (in_array($operator, $operators)) {
+                                $attributeCond .= " l$level.id $operator ? ";
+                                $condParams[] = $value;
+                            }
                         } else {
                             $attributeCond .= " l$level.value REGEXP ? ";
                             $regExValue = (is_null($value)) ? '.*' : $value;
 
-                            if ( $operator == '=' || $operator == '') {
+                            if ($operator == '=' || $operator == '') {
                                 $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
                             } else {
                                 throw new Exceptions\XpathException('Xpath feature not implemented yet.');
