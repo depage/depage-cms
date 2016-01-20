@@ -325,7 +325,6 @@ class XmlDb implements XmlGetter
                     $attributeCond = '(';
                     foreach ($attributes as $attribute) {
                         extract($attribute);
-                        $attributeCond .= $bool;
 
                         if ($name == 'db:id') {
                             $attributeCond .= " l$level.id $operator ? ";
@@ -340,6 +339,8 @@ class XmlDb implements XmlGetter
                                 throw new Exceptions\XpathException('Xpath feature not implemented yet.');
                             }
                         }
+
+                        $attributeCond .= $bool;
                     }
                     $condSql[] = "$attributeCond)";
                 } else {
@@ -419,26 +420,27 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ getConditionAttributes
-    protected function getConditionAttributes($condition, $strings)
+    protected function getConditionAttributes($conditionString, $strings)
     {
-        $cond_array = array();
+        $conditionArray = array();
 
         $pAttr = '@(\w[\w\d:]*)';
         $pOperator = '(<=|>=|=|<|>)';
         $pBool = '(and|or|AND|OR)';
         $pString = '\$(\d*)';
-        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
 
-        for ($i = 0; $i < count($conditions[0]); $i++) {
-            $cond_array[] = array(
-                'name' => $conditions[1][$i],
-                'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
-                'bool' => $i > 0 ? $conditions[4][$i - 1] : '',
-                'operator' => $conditions[2][$i],
+        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $conditionString, $conditions, PREG_SET_ORDER);
+
+        foreach ($conditions as $condition) {
+            $conditionArray[] = array(
+                'name' => $condition[1],
+                'operator' => isset($condition[2]) ? $condition[2] : null,
+                'value' => isset($condition[3]) ? $strings[$condition[3]] : null,
+                'bool' => isset($condition[4]) ? $condition[4] : null,
             );
         }
 
-        return $cond_array;
+        return $conditionArray;
     }
     // }}}
     // {{{ removeLiteralStrings
