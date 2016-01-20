@@ -138,6 +138,17 @@ class Base
         return true;
     }
     // }}}
+    // {{{ onDocumentChange()
+    /**
+     * On Document Change
+     *
+     * @return bool
+     */
+    public function onDocumentChange()
+    {
+        return true;
+    }
+    // }}}
 
     // {{{ testDocument
     public function testDocument($xml) {
