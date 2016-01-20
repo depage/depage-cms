@@ -70,7 +70,7 @@ class DocumentTest extends DatabaseTestCase
     // }}}
     // {{{ testGetSubdocByNodeIdNodeDoesntExist
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
      */
     public function testGetSubdocByNodeIdNodeDoesntExist()
@@ -100,7 +100,7 @@ class DocumentTest extends DatabaseTestCase
     // }}}
     // {{{ testGetSubdocByNodeIdWrongNodeType
     /**
-     * @expectedException Depage\XmlDb\XmlDbException
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
      * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
      */
     public function testGetSubdocByNodeIdWrongNodeType()
@@ -129,23 +129,6 @@ class DocumentTest extends DatabaseTestCase
 
         // saveNode triggers clearCache, check for cleared cache
         $this->assertTrue($cache->deleted);
-    }
-    // }}}
-
-    // {{{ testGetSubDocByXpathByNameAll
-    public function testGetSubDocByXpathByNameAll()
-    {
-        $subDoc = $this->doc->getSubDocByXpath('//pg:page');
-
-        $expected = '<pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" file_type="html" multilang="true" name="Home" db:dataid="3" db:id="2" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4" db:id="6"/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5" db:id="7"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7" db:id="9"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page>';
-
-        $this->assertXmlStringEqualsXmlString($expected, $subDoc);
-    }
-    // }}}
-    // {{{ testGetSubDocByXpathNone
-    public function testGetSubDocByXpathNone()
-    {
-        $this->assertFalse($this->doc->getSubDocByXpath('//iamnosubdoc'));
     }
     // }}}
 
@@ -376,25 +359,6 @@ class DocumentTest extends DatabaseTestCase
     {
         // there's no node with id 999
         $this->assertNull($this->doc->getPosById(999));
-    }
-    // }}}
-
-    // {{{ testGetChildIdsByName
-    public function testGetChildIdsByName()
-    {
-        $this->assertEquals(array(2), $this->doc->getChildIdsByName(1, 'pg', 'page'));
-        $this->assertEquals(array(6, 7, 11, 8), $this->doc->getChildIdsByName(2, 'pg', 'page'));
-        $this->assertEquals(array(), $this->doc->getChildIdsByName(1, 'nonamespace', 'noname'));
-        // @todo intended behaviour (name == null)
-        $this->assertEquals(array(11), $this->doc->getChildIdsByName(2, 'nonamespace', 'noname'));
-    }
-    // }}}
-    // {{{ testGetChildIdsByNameOnlyElementNodes
-    public function testGetChildIdsByNameOnlyElementNodes()
-    {
-        $this->assertEquals(array(2), $this->doc->getChildIdsByName(1, 'pg', 'page', null, true));
-        $this->assertEquals(array(6, 7, 8), $this->doc->getChildIdsByName(2, 'pg', 'page', null, true));
-        $this->assertEquals(array(), $this->doc->getChildIdsByName(1, 'nonamespace', 'noname', null, true));
     }
     // }}}
 

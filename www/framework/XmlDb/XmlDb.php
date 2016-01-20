@@ -16,7 +16,7 @@ namespace Depage\XmlDb;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    private $doc_ids = array();
+    protected $doc_ids = array();
 
     private $pdo;
     private $cache;
@@ -76,7 +76,6 @@ class XmlDb implements XmlGetter
     {
         if (!isset($this->doc_ids[$doc_id_or_name])) {
             if ((int) $doc_id_or_name > 0) {
-
                 $id = (int) $doc_id_or_name;
 
                 // is already a doc-id
@@ -90,18 +89,14 @@ class XmlDb implements XmlGetter
                 ));
 
                 $result = $query->fetchObject();
-
                 if ($result === false) {
                     // document does not exist
                     return false;
                 }
 
                 $name = $result->docname;
-
             } else {
-
                 $name = $doc_id_or_name;
-
                 $doc_list = $this->getDocuments($name);
 
                 if (!isset($doc_list[$name])) {
@@ -234,15 +229,34 @@ class XmlDb implements XmlGetter
      * @param   $add_id_attribute (bool) whether to add db:id attribute or not
      *
      * @return  $doc (domxmlobject)
-     *
-     * @todo    implement
      */
     public function getSubDocByXpath($xpath, $add_id_attribute = true)
     {
-        return false;
+        $subDoc = false;
+        $ids = $this->getNodeIdsByXpath($xpath);
+
+        if (isset($ids[0])) {
+            $subDoc = $this->getDocByNodeId($ids[0])->getSubdocByNodeId($ids[0], $add_id_attribute);
+        }
+
+        return $subDoc;
     }
     // }}}
     // {{{ getNodeIdsByXpath
+    public function getNodeIdsByXpath($xpath, $docId = null)
+    {
+        $result = array();
+
+        try {
+            $result = $this->getNodeIdsByXpathDatabase($xpath, $docId);
+        } catch (\Depage\XmlDb\Exceptions\XpathException $e) {
+            $result = $this->getNodeIdsByXpathDom($xpath, $docId);
+        }
+
+        return $result;
+    }
+    // }}}
+    // {{{ getNodeIdsByXpathDatabase
     /**
      * gets node_ids by xpath
      *
@@ -255,81 +269,179 @@ class XmlDb implements XmlGetter
      *
      * @todo    implement full xpath specifications
      */
-    public function getNodeIdsByXpath($xpath, $docId = null)
+    protected function getNodeIdsByXpathDatabase($xpath, $docId = null)
     {
-        if (is_null($docId)) {
-            $docClause = '';
-            $params = array();
-        } else {
-            $docClause = ' AND WHERE nodes.id_doc = :docId ';
-            $params = array('docId' => $docId);
-        }
-
         $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
         $pCondition = '(?:\[(.*?)\])?';
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
 
-        $actualIds = array(null);
-        $results = array();
+        $tableSql = array();
+        $tableParams = array();
+        $condSql = array();
+        $condParams = array();
 
         foreach ($xpathElements as $level => $element) {
-            $fetchedIds = array();
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
-            $strings = array();
 
-            if ($divider == '/') {
-                if ($condition == '') {
-                } else if (preg_match('/^([0-9]+)$/', $condition)) {
-                    // fetch by name and position: "... /ns:name[n] ..."
-                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
-                    // fetch by simple attributes: "//ns:name[@attr1] ..."
-                } else {
-                    // not yet implemented
-                }
-            } elseif ($divider == '//' && $level == 0) {
-                if ($condition == '') {
-                    // fetch only by name recursive:  "//ns:name ..."
-                    $sql = "
-                        SELECT nodes.id
-                        FROM {$this->table_xml} AS nodes
-                        WHERE nodes.name = :name
-                        $docClause
-                    ";
-                    $params['name'] = "$ns:$name";
-
-                    $query = $this->pdo->prepare($sql);
-                    $query->execute($params);
-                    $results = $query->fetchAll();
-                } else if (preg_match('/[\w\d@=: _-]*/', $tempCondition = $this->removeLiteralStrings($condition, $strings))) {
-                    // fetch by simple attributes: "//ns:name[@attr1] ..."
-                } else {
-                    // not yet implemented
+            if ($level == 0) {
+                $levels = count($xpathElements) - 1;
+                $tableSql[] = "SELECT l$levels.id FROM";
+                if ($divider == '/') {
+                    $condSql[] = "l$level.id_parent IS NULL";
                 }
             } else {
-                // not yet implemented
+                $tableSql[] = 'INNER JOIN';
+                if ($divider == '/') {
+                    $parentLevel = $level - 1;
+                    $condSql[] = "l$level.id_parent = l$parentLevel.id";
+                } else {
+                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
+                }
+            }
+
+            $position = preg_match('/^([0-9]+)$/', $condition, $matches) ? $matches[0] : null;
+
+            if ($position) {
+                // fetch by name and position: "... ns:name[n] ..."
+                $tableSql[] = "(
+                    SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
+                    FROM {$this->table_xml} AS sub$level
+                    WHERE sub$level.name LIKE ?
+                    ORDER BY sub$level.id_parent, sub$level.pos
+                ) l$level";
+                $tableParams[] = $this->translateName($ns, $name);
+                $condSql[] = " l$level.tpos = ?";
+                $condParams[] = $position;
+            } else {
+                $tableSql[] = "{$this->table_xml} AS l$level";
+                $condSql[] = "l$level.name LIKE ?";
+                $condParams[] = $this->translateName($ns, $name);
+
+                if ($condition == '') {
+                    // fetch only by name "ns:name ..."
+                } else if ($attributes = $this->parseAttributes($condition)) {
+                    // fetch by simple attributes: "ns:name[@attr1] ..."
+                    $attributeCond = '(';
+                    foreach ($attributes as $attribute) {
+                        extract($attribute);
+                        $attributeCond .= $bool;
+
+                        if ($name == 'db:id') {
+                            $attributeCond .= " l$level.id $operator ? ";
+                            $condParams[] = $value;
+                        } else {
+                            $attributeCond .= " l$level.value REGEXP ? ";
+                            $regExValue = (is_null($value)) ? '.*' : $value;
+
+                            if ( $operator == '=' || $operator == '') {
+                                $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
+                            } else {
+                                throw new Exceptions\XpathException('Xpath feature not implemented yet.');
+                            }
+                        }
+                    }
+                    $condSql[] = "$attributeCond)";
+                } else {
+                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
+                }
+            }
+
+            if (!is_null($docId)) {
+                $condSql[] = "l$level.id_doc = ?";
+                $condParams[] = $docId;
             }
         }
 
-        $fetchedIDs = array();
-        foreach ($results as $result) {
+        $sql = implode(' ', $tableSql) . ' WHERE ' . implode(' AND ', $condSql);
+        $params = array_merge($tableParams, $condParams);
+
+        $query = $this->pdo->prepare($sql);
+        $query->execute($params);
+
+        $fetchedIds = array();
+        foreach ($query->fetchAll() as $result) {
             $fetchedIds[] = $result[0];
         }
 
         return $fetchedIds;
     }
     // }}}
+    // {{{ getNodeIdsByXpathDom
+    protected function getNodeIdsByXpathDom($xpath, $docId = null)
+    {
+        $docs = array();
+        $ids = array();
+
+        if (is_null($docId)) {
+            $docs = $this->getDocuments();
+        } else {
+            if ($doc = $this->docExists($docId)) {
+                $docs[] = $this->getDoc($doc);
+            }
+        }
+
+        foreach ($docs as $doc) {
+            $domXpath = new \DomXpath($doc->getXml());
+            $list = $domXpath->query($xpath);
+            foreach ($list as $item) {
+                $ids[] = $item->attributes->getNamedItem('id')->nodeValue;
+            }
+        }
+
+        return $ids;
+    }
+    // }}}
+
+    // {{{ translateName
+    protected function translateName($ns, $name)
+    {
+        $colon = (strlen($ns) && strlen($name)) ? ':' : '';
+        return str_replace('*', '%', "$ns$colon$name");
+    }
+    // }}}
+    // {{{ parseAttributes
+    protected function parseAttributes($condition)
+    {
+        $cond_array = false;
+        $temp_condition = $this->removeLiteralStrings($condition, $strings);
+
+        if (preg_match("/^[\w\d@=: -<>\*]*$/", $temp_condition)) {
+            /**
+             * "//ns:name[@attr1] ..."
+             * "//ns:name[@attr1 = 'string1'] ..."
+             * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
+             */
+            $cond_array = $this->getConditionAttributes($temp_condition, $strings);
+        }
+
+        return $cond_array;
+    }
+    // }}}
+    // {{{ getConditionAttributes
+    protected function getConditionAttributes($condition, $strings)
+    {
+        $cond_array = array();
+
+        $pAttr = '@(\w[\w\d:]*)';
+        $pOperator = '(<=|>=|=|<|>)';
+        $pBool = '(and|or|AND|OR)';
+        $pString = '\$(\d*)';
+        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $condition, $conditions);
+
+        for ($i = 0; $i < count($conditions[0]); $i++) {
+            $cond_array[] = array(
+                'name' => $conditions[1][$i],
+                'value' => $conditions[2][$i] == '' ? null : $strings[$conditions[3][$i]],
+                'bool' => $i > 0 ? $conditions[4][$i - 1] : '',
+                'operator' => $conditions[2][$i],
+            );
+        }
+
+        return $cond_array;
+    }
+    // }}}
     // {{{ removeLiteralStrings
-    /**
-     * replaces strings surrounded by " or ' with pointer to array
-     *
-     * @protected
-     *
-     * @param    $text (string) text to process
-     * @param    $strings (array) array of removed strings
-     *
-     * @return    $text (string)
-     */
     protected function removeLiteralStrings($text, &$strings)
     {
         $n = 0;
@@ -367,8 +479,8 @@ class XmlDb implements XmlGetter
             // generate generic docname based on doctype
             $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
-        if (!is_string($docName)) {
-            throw new XmlDbException("You have to give a valid name to save a new document.");
+        if (!is_string($docName) || $this->docExists($docName)) {
+            throw new Exceptions\XmlDbException("Invalid or duplicate document name: \"$docName\"");
         }
 
         $query = $this->pdo->prepare(
@@ -419,6 +531,7 @@ class XmlDb implements XmlGetter
      */
     public function removeDoc($doc_id)
     {
+        $result = false;
         $doc_id = $this->docExists($doc_id);
 
         if ($doc_id !== false) {
@@ -430,12 +543,21 @@ class XmlDb implements XmlGetter
             $query->execute(array(
                 'doc_id' => $doc_id,
             ));
+
             $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
 
-            return true;
+            $this->doc_ids = array_filter(
+                $this->doc_ids,
+                function($id) use ($doc_id)
+                {
+                    return $id != $doc_id;
+                }
+            );
+
+            $result = true;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
