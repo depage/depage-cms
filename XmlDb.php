@@ -353,7 +353,7 @@ class XmlDb implements XmlGetter
             }
         }
 
-        $sql = implode(' ', $tableSql) . ' WHERE ' . implode(' AND ', $condSql);
+        $sql = implode(' ', $tableSql) . ' WHERE ' . implode(' AND ', $condSql) . " ORDER BY l$level.id_parent, l$level.pos";
         $params = array_merge($tableParams, $condParams);
 
         $query = $this->pdo->prepare($sql);
