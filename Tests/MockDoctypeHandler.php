@@ -18,7 +18,10 @@ class MockDoctypeHandler
     public function onAddNode($id)
     {
     }
-    public function onCopyNode($id)
+    public function onCopyNode($id, $copyId)
+    {
+    }
+    public function onDocumentChange()
     {
     }
     public function isAllowedUnlink($id)

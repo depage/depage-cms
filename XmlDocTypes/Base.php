@@ -127,15 +127,14 @@ class Base
         return true;
     }
     // }}}
-    // {{{ onDeleteNode()
+    // {{{ onDeleteNode
     /**
      * On Delete Node
      *
      * @param $node_id
      * @return bool
      */
-    public function onDeleteNode($node_id, $parent_id)
-    {
+    public function onDeleteNode($node_id){
         return true;
     }
     // }}}
