@@ -347,7 +347,9 @@ class XmlDb implements XmlGetter
                             }
                         }
 
-                        $attributeCond .= $bool;
+                        if ($bool) {
+                            $attributeCond .= $this->cleanOperator($bool);
+                        }
                     }
                     $condSql[] = "$attributeCond)";
                 } else {
@@ -475,7 +477,7 @@ class XmlDb implements XmlGetter
     // {{{ cleanOperator
     protected function cleanOperator($operator)
     {
-        $operators = array('<=', '>=', '<', '>', '=');
+        $operators = array('<=', '>=', '<', '>', '=', 'and', 'AND', 'or', 'OR');
         if (!in_array($operator, $operators)) {
             throw new Exceptions\XpathException();
         }
