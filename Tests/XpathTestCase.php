@@ -84,24 +84,69 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(2), '/dpg:pages/pg:page');
     }
     // }}}
-    // {{{ testNameChildAndPosition
-    public function testNameChildAndPosition()
+    // {{{ testNameChildAndPositionShort
+    public function testNameChildAndPositionShort()
     {
         $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[3]');
     }
     // }}}
-    // {{{ testNameChildAndPositionNoResult
-    public function testNameChildAndPositionNoResult()
+    // {{{ testNameChildAndPositionShortNoResult
+    public function testNameChildAndPositionShortNoResult()
     {
         $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page[2]');
     }
     // }}}
-    // {{{ testNameChildAndPositionMultiple
-    public function testNameChildAndPositionMultiple()
+    // {{{ testNameChildAndPositionShortMultiple
+    public function testNameChildAndPositionShortMultiple()
     {
         $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page[1]/pg:page[2]');
     }
     // }}}
+    // {{{ testNameChildAndPositionParsing
+    public function testNameChildAndPositionParsing()
+    {
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() = 3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()= 3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() =3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()=3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()   =   3]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[  position()   =   3  ]');
+    }
+    // }}}
+    // {{{ testNameChildAndPosition
+    public function testNameChildAndPosition()
+    {
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() = 13]');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() = 3]');
+    }
+    // }}}
+    // {{{ testNameChildAndPositionLessThan
+    public function testNameChildAndPositionLessThan()
+    {
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() < 1]');
+        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() < 3]');
+    }
+    // }}}
+    // {{{ testNameChildAndPositionGreaterThan
+    public function testNameChildAndPositionGreaterThan()
+    {
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() > 3]');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page[position() > 1]');
+    }
+    // }}}
+    // {{{ testNameChildAndPositionLessThanOrEqualTo
+    public function testNameChildAndPositionLessThanOrEqualTo()
+    {
+        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() <= 2]', false);
+    }
+    // }}}
+    // {{{ testNameChildAndPositionGreaterThanOrEqualTo
+    public function testNameChildAndPositionGreaterThanOrEqualTo()
+    {
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page[position() >= 2]', false);
+    }
+    // }}}
+
     // {{{ testNameAndAttribute
     public function testNameAndAttribute()
     {

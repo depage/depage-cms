@@ -300,9 +300,16 @@ class XmlDb implements XmlGetter
                 }
             }
 
-            $position = preg_match('/^([0-9]+)$/', $condition, $matches) ? $matches[0] : null;
+            $position = null;
+            $pOperator = '(<=|>=|=|<|>)';
+            $pPosition = '([0-9]+)';
 
-            if ($position) {
+            if (preg_match("/^\s*(?:(?:position\(\))\s*$pOperator)?\s*$pPosition\s*$/", $condition, $matches)) {
+                $operator = ($matches[1] == '') ? '=' : $matches[1];
+                $position = $matches[2];
+            }
+
+            if (!is_null($position)) {
                 // fetch by name and position: "... ns:name[n] ..."
                 $tableSql[] = "(
                     SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
@@ -311,7 +318,7 @@ class XmlDb implements XmlGetter
                     ORDER BY sub$level.id_parent, sub$level.pos
                 ) l$level";
                 $tableParams[] = $this->translateName($ns, $name);
-                $condSql[] = " l$level.tpos = ?";
+                $condSql[] = "l$level.tpos {$this->cleanOperator($operator)} ?";
                 $condParams[] = $position;
             } else {
                 $tableSql[] = "{$this->table_xml} AS l$level";
@@ -327,11 +334,8 @@ class XmlDb implements XmlGetter
                         extract($attribute);
 
                         if ($name == 'db:id') {
-                            $operators = array('<=', '>=', '<', '>', '=');
-                            if (in_array($operator, $operators)) {
-                                $attributeCond .= " l$level.id $operator ? ";
-                                $condParams[] = $value;
-                            }
+                            $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
+                            $condParams[] = $value;
                         } else {
                             $attributeCond .= " l$level.value REGEXP ? ";
                             $regExValue = (is_null($value)) ? '.*' : $value;
@@ -466,6 +470,17 @@ class XmlDb implements XmlGetter
             }
         }
         return $newText;
+    }
+    // }}}
+    // {{{ cleanOperator
+    protected function cleanOperator($operator)
+    {
+        $operators = array('<=', '>=', '<', '>', '=');
+        if (!in_array($operator, $operators)) {
+            throw new Exceptions\XpathException();
+        }
+
+        return $operator;
     }
     // }}}
 
