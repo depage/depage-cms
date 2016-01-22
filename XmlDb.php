@@ -301,7 +301,7 @@ class XmlDb implements XmlGetter
             }
 
             $position = null;
-            $pOperator = '(<=|>=|=|<|>)';
+            $pOperator = '(=|!=|<|>|<=|>=)';
             $pPosition = '([0-9]+)';
 
             if (preg_match("/^\s*(?:(?:position\(\))\s*$pOperator)?\s*$pPosition\s*$/", $condition, $matches)) {
@@ -434,7 +434,7 @@ class XmlDb implements XmlGetter
         $conditionArray = array();
 
         $pAttr = '@(\w[\w\d:]*)';
-        $pOperator = '(<=|>=|=|<|>)';
+        $pOperator = '(=|!=|<|>|<=|>=)';
         $pBool = '(and|or|AND|OR)';
         $pString = '\$(\d*)';
 
@@ -477,7 +477,7 @@ class XmlDb implements XmlGetter
     // {{{ cleanOperator
     protected function cleanOperator($operator)
     {
-        $operators = array('<=', '>=', '<', '>', '=', 'and', 'AND', 'or', 'OR');
+        $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'AND', 'or', 'OR');
         if (!in_array($operator, $operators)) {
             throw new Exceptions\XpathException();
         }

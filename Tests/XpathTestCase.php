@@ -120,6 +120,13 @@ abstract class XpathTestCase extends DatabaseTestCase
         $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() = 3]');
     }
     // }}}
+    // {{{ testNameChildAndPositionNot
+    public function testNameChildAndPositionNot()
+    {
+        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[position() != 13]');
+        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() != 3]');
+    }
+    // }}}
     // {{{ testNameChildAndPositionLessThan
     public function testNameChildAndPositionLessThan()
     {
