@@ -287,26 +287,23 @@ class XmlDb implements XmlGetter
                 }
             }
 
-            $position = null;
-            $pOperator = '(=|!=|<|>|<=|>=)';
-            $pPosition = '([0-9]+)';
+            if ($positionArray = $this->parsePosition($condition)) {
+                extract($positionArray);
 
-            if (preg_match("/^\s*(?:(?:position\(\))\s*$pOperator)?\s*$pPosition\s*$/", $condition, $matches)) {
-                $operator = ($matches[1] == '') ? '=' : $matches[1];
-                $position = $matches[2];
-            }
-
-            if (!is_null($position) && $this->isOperator($operator)) {
-                // fetch by name and position: "... ns:name[n] ..."
-                $tableSql[] = "(
-                    SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
-                    FROM {$this->table_xml} AS sub$level
-                    WHERE sub$level.name LIKE ?
-                    ORDER BY sub$level.id_parent, sub$level.pos
-                ) l$level";
-                $tableParams[] = $this->translateName($ns, $name);
-                $condSql[] = "l$level.tpos $operator ?";
-                $condParams[] = $position;
+                if ($this->isOperator($operator)) {
+                    // fetch by name and position: "... ns:name[n] ..."
+                    $tableSql[] = "(
+                        SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
+                        FROM {$this->table_xml} AS sub$level
+                        WHERE sub$level.name LIKE ?
+                        ORDER BY sub$level.id_parent, sub$level.pos
+                    ) l$level";
+                    $tableParams[] = $this->translateName($ns, $name);
+                    $condSql[] = "l$level.tpos $operator ?";
+                    $condParams[] = $position;
+                } else {
+                    $fallback = true;
+                }
             } else {
                 $tableSql[] = "{$this->table_xml} AS l$level";
                 $condSql[] = "l$level.name LIKE ?";
@@ -371,7 +368,12 @@ class XmlDb implements XmlGetter
         }
 
         if ($fallback) {
-            $fetchedIds = $this->getNodeIdsByXpathDom($xpath, $fetchedIds);
+            if (is_null($docId)) {
+                $docIds = $fetchedIds;
+            } else {
+                $docIds = array($docId);
+            }
+            $fetchedIds = $this->getNodeIdsByXpathDom($xpath, $docIds);
         }
 
         return $fetchedIds;
@@ -399,6 +401,21 @@ class XmlDb implements XmlGetter
     {
         $colon = (strlen($ns) && strlen($name)) ? ':' : '';
         return str_replace('*', '%', "$ns$colon$name");
+    }
+    // }}}
+    // {{{ parsePosition
+    protected function parsePosition($condition)
+    {
+        $positionArray = array();
+        $pOperator = '(=|!=|<|>|<=|>=)';
+        $pPosition = '([0-9]+)';
+
+        if (preg_match("/^\s*(?:(?:position\(\))\s*$pOperator)?\s*$pPosition\s*$/", $condition, $matches)) {
+            $positionArray['operator'] = ($matches[1] == '') ? '=' : $matches[1];
+            $positionArray['position'] = $matches[2];
+        }
+
+        return $positionArray;
     }
     // }}}
     // {{{ parseAttributes
