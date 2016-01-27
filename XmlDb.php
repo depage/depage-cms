@@ -271,6 +271,7 @@ class XmlDb implements XmlGetter
      */
     protected function getNodeIdsByXpathDatabase($xpath, $docId = null)
     {
+        $fallback = false;
         $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
         $pCondition = '(?:\[(.*?)\])?';
         preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
@@ -296,7 +297,7 @@ class XmlDb implements XmlGetter
                     $parentLevel = $level - 1;
                     $condSql[] = "l$level.id_parent = l$parentLevel.id";
                 } else {
-                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
+                    $fallback = true;
                 }
             }
 
@@ -329,31 +330,31 @@ class XmlDb implements XmlGetter
                     // fetch only by name "ns:name ..."
                 } else if ($attributes = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "ns:name[@attr1] ..."
-                    $attributeCond = '(';
+                    $attributeCond = '';
                     foreach ($attributes as $attribute) {
                         extract($attribute);
 
                         if ($name == 'db:id') {
                             $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
                             $condParams[] = $value;
-                        } else {
+                        } else if ($operator == '=' || $operator == '') {
                             $attributeCond .= " l$level.value REGEXP ? ";
                             $regExValue = (is_null($value)) ? '.*' : $value;
-
-                            if ($operator == '=' || $operator == '') {
-                                $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
-                            } else {
-                                throw new Exceptions\XpathException('Xpath feature not implemented yet.');
-                            }
+                            $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
+                        } else {
+                            $fallback = true;
                         }
 
                         if ($bool) {
                             $attributeCond .= $this->cleanOperator($bool);
                         }
                     }
-                    $condSql[] = "$attributeCond)";
+
+                    if (!empty($attributeCond)) {
+                        $condSql[] = $attributeCond;
+                    }
                 } else {
-                    throw new Exceptions\XpathException('Xpath feature not implemented yet.');
+                    $fallback = true;
                 }
             }
 
@@ -363,7 +364,12 @@ class XmlDb implements XmlGetter
             }
         }
 
-        $sql = implode(' ', $tableSql) . ' WHERE ' . implode(' AND ', $condSql) . " ORDER BY l$level.id_parent, l$level.pos";
+        if ($fallback) {
+            $levels = count($xpathElements) - 1;
+            $tableSql[0] = "SELECT DISTINCT l$level.id_doc FROM";
+        }
+
+        $sql = implode(' ', $tableSql) . ' WHERE (' . implode(') AND (', $condSql) . ") ORDER BY l$level.id_parent, l$level.pos";
         $params = array_merge($tableParams, $condParams);
 
         $query = $this->pdo->prepare($sql);
@@ -374,25 +380,20 @@ class XmlDb implements XmlGetter
             $fetchedIds[] = $result[0];
         }
 
+        if ($fallback) {
+            $fetchedIds = $this->getNodeIdsByXpathDom($xpath, $fetchedIds);
+        }
+
         return $fetchedIds;
     }
     // }}}
     // {{{ getNodeIdsByXpathDom
-    protected function getNodeIdsByXpathDom($xpath, $docId = null)
+    protected function getNodeIdsByXpathDom($xpath, $docs = array())
     {
-        $docs = array();
         $ids = array();
 
-        if (is_null($docId)) {
-            $docs = $this->getDocuments();
-        } else {
-            if ($doc = $this->docExists($docId)) {
-                $docs[] = $this->getDoc($doc);
-            }
-        }
-
         foreach ($docs as $doc) {
-            $domXpath = new \DomXpath($doc->getXml());
+            $domXpath = new \DomXpath($this->getDoc($doc)->getXml());
             $list = $domXpath->query($xpath);
             foreach ($list as $item) {
                 $ids[] = $item->attributes->getNamedItem('id')->nodeValue;
