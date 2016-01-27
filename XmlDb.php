@@ -275,7 +275,7 @@ class XmlDb implements XmlGetter
                 $levels = count($xpathElements) - 1;
                 $tableSql[] = "SELECT l$levels.id FROM";
                 if ($divider == '/') {
-                    $condSql[] = "l$level.id_parent IS NULL";
+                    $condSql[] = "l0.id_parent IS NULL";
                 }
             } else {
                 $tableSql[] = 'INNER JOIN';
@@ -288,22 +288,18 @@ class XmlDb implements XmlGetter
             }
 
             if ($positionArray = $this->parsePosition($condition)) {
+                // fetch by name and position: "... ns:name[n] ..."
                 extract($positionArray);
 
-                if ($this->isOperator($operator)) {
-                    // fetch by name and position: "... ns:name[n] ..."
-                    $tableSql[] = "(
-                        SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
-                        FROM {$this->table_xml} AS sub$level
-                        WHERE sub$level.name LIKE ?
-                        ORDER BY sub$level.id_parent, sub$level.pos
-                    ) l$level";
-                    $tableParams[] = $this->translateName($ns, $name);
-                    $condSql[] = "l$level.tpos $operator ?";
-                    $condParams[] = $position;
-                } else {
-                    $fallback = true;
-                }
+                $tableSql[] = "(
+                    SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
+                    FROM {$this->table_xml} AS sub$level
+                    WHERE sub$level.name LIKE ?
+                    ORDER BY sub$level.id_parent, sub$level.pos
+                ) l$level";
+                $tableParams[] = $this->translateName($ns, $name);
+                $condSql[] = "l$level.tpos {$this->cleanOperator($operator)} ?";
+                $condParams[] = $position;
             } else {
                 $tableSql[] = "{$this->table_xml} AS l$level";
                 $condSql[] = "l$level.name LIKE ?";
@@ -317,8 +313,8 @@ class XmlDb implements XmlGetter
                     foreach ($attributes as $attribute) {
                         extract($attribute);
 
-                        if ($name == 'db:id' && $this->isOperator($operator)) {
-                            $attributeCond .= " l$level.id $operator ? ";
+                        if ($name == 'db:id') {
+                            $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
                             $condParams[] = $value;
                         } else if ($operator == '=' || $operator == '') {
                             $attributeCond .= " l$level.value REGEXP ? ";
@@ -328,8 +324,8 @@ class XmlDb implements XmlGetter
                             $fallback = true;
                         }
 
-                        if ($bool && $this->isOperator($bool)) {
-                            $attributeCond .= $bool;
+                        if ($bool) {
+                            $attributeCond .= $this->cleanOperator($bool);
                         }
                     }
 
@@ -482,12 +478,17 @@ class XmlDb implements XmlGetter
         return $newText;
     }
     // }}}
-    // {{{ isOperator
-    protected function isOperator($operator)
+    // {{{ cleanOperator
+    protected function cleanOperator($operator)
     {
+        $result = '';
         $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'AND', 'or', 'OR');
 
-        return in_array($operator, $operators);
+        if (in_array($operator, $operators)) {
+            $result = $operator;
+        }
+
+        return $result;
     }
     // }}}
 
