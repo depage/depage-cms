@@ -243,20 +243,6 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ getNodeIdsByXpath
-    public function getNodeIdsByXpath($xpath, $docId = null)
-    {
-        $result = array();
-
-        try {
-            $result = $this->getNodeIdsByXpathDatabase($xpath, $docId);
-        } catch (\Depage\XmlDb\Exceptions\XpathException $e) {
-            $result = $this->getNodeIdsByXpathDom($xpath, $docId);
-        }
-
-        return $result;
-    }
-    // }}}
-    // {{{ getNodeIdsByXpathDatabase
     /**
      * gets node_ids by xpath
      *
@@ -269,7 +255,7 @@ class XmlDb implements XmlGetter
      *
      * @todo    implement full xpath specifications
      */
-    protected function getNodeIdsByXpathDatabase($xpath, $docId = null)
+    public function getNodeIdsByXpath($xpath, $docId = null)
     {
         $fallback = false;
         $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
@@ -310,7 +296,7 @@ class XmlDb implements XmlGetter
                 $position = $matches[2];
             }
 
-            if (!is_null($position)) {
+            if (!is_null($position) && $this->isOperator($operator)) {
                 // fetch by name and position: "... ns:name[n] ..."
                 $tableSql[] = "(
                     SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
@@ -319,7 +305,7 @@ class XmlDb implements XmlGetter
                     ORDER BY sub$level.id_parent, sub$level.pos
                 ) l$level";
                 $tableParams[] = $this->translateName($ns, $name);
-                $condSql[] = "l$level.tpos {$this->cleanOperator($operator)} ?";
+                $condSql[] = "l$level.tpos $operator ?";
                 $condParams[] = $position;
             } else {
                 $tableSql[] = "{$this->table_xml} AS l$level";
@@ -334,8 +320,8 @@ class XmlDb implements XmlGetter
                     foreach ($attributes as $attribute) {
                         extract($attribute);
 
-                        if ($name == 'db:id') {
-                            $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
+                        if ($name == 'db:id' && $this->isOperator($operator)) {
+                            $attributeCond .= " l$level.id $operator ? ";
                             $condParams[] = $value;
                         } else if ($operator == '=' || $operator == '') {
                             $attributeCond .= " l$level.value REGEXP ? ";
@@ -345,8 +331,8 @@ class XmlDb implements XmlGetter
                             $fallback = true;
                         }
 
-                        if ($bool) {
-                            $attributeCond .= $this->cleanOperator($bool);
+                        if ($bool && $this->isOperator($bool)) {
+                            $attributeCond .= $bool;
                         }
                     }
 
@@ -361,6 +347,10 @@ class XmlDb implements XmlGetter
             if (!is_null($docId)) {
                 $condSql[] = "l$level.id_doc = ?";
                 $condParams[] = $docId;
+            }
+
+            if ($fallback) {
+                break;
             }
         }
 
@@ -475,15 +465,12 @@ class XmlDb implements XmlGetter
         return $newText;
     }
     // }}}
-    // {{{ cleanOperator
-    protected function cleanOperator($operator)
+    // {{{ isOperator
+    protected function isOperator($operator)
     {
         $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'AND', 'or', 'OR');
-        if (!in_array($operator, $operators)) {
-            throw new Exceptions\XpathException();
-        }
 
-        return $operator;
+        return in_array($operator, $operators);
     }
     // }}}
 

@@ -307,7 +307,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testArbitraryDescendants
     public function testArbitraryDescendants()
     {
-        $this->assertCorrectXpathIds(array(2, 6, 7, 8), '/dpg:pages//pg:page', true, true);
+        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages//pg:page/pg:page', true, true);
     }
     // }}}
 }

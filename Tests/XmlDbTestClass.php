@@ -13,9 +13,9 @@ class XmlDbTestClass extends \Depage\XmlDb\XmlDb
         return parent::getNodeIdsByXpathDom($xpath, $docId);
     }
 
-    public function cleanOperator($operator)
+    public function isOperator($operator)
     {
-        return parent::cleanOperator($operator);
+        return parent::isOperator($operator);
     }
 }
 

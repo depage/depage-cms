@@ -229,27 +229,20 @@ class XmlDbTest extends DatabaseTestCase
     }
     // }}}
 
-    // {{{ testCleanOperator
-    public function testCleanOperator()
+    // {{{ testIsOperator
+    public function testIsOperator()
     {
-        $this->assertEquals('=', $this->xmlDb->cleanOperator('='));
-        $this->assertEquals('<', $this->xmlDb->cleanOperator('<'));
-        $this->assertEquals('>', $this->xmlDb->cleanOperator('>'));
-        $this->assertEquals('<=', $this->xmlDb->cleanOperator('<='));
-        $this->assertEquals('>=', $this->xmlDb->cleanOperator('>='));
-        $this->assertEquals('and', $this->xmlDb->cleanOperator('and'));
-        $this->assertEquals('AND', $this->xmlDb->cleanOperator('AND'));
-        $this->assertEquals('or', $this->xmlDb->cleanOperator('or'));
-        $this->assertEquals('OR', $this->xmlDb->cleanOperator('OR'));
-    }
-    // }}}
-    // {{{ testCleanOperatorFail
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XpathException
-     */
-    public function testCleanOperatorFail()
-    {
-        $this->xmlDb->cleanOperator('\'');
+        $this->assertTrue($this->xmlDb->isOperator('='));
+        $this->assertTrue($this->xmlDb->isOperator('<'));
+        $this->assertTrue($this->xmlDb->isOperator('>'));
+        $this->assertTrue($this->xmlDb->isOperator('<='));
+        $this->assertTrue($this->xmlDb->isOperator('>='));
+        $this->assertTrue($this->xmlDb->isOperator('and'));
+        $this->assertTrue($this->xmlDb->isOperator('AND'));
+        $this->assertTrue($this->xmlDb->isOperator('or'));
+        $this->assertTrue($this->xmlDb->isOperator('OR'));
+
+        $this->assertFalse($this->xmlDb->isOperator('\''));
     }
     // }}}
 }
