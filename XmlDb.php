@@ -258,21 +258,18 @@ class XmlDb implements XmlGetter
     public function getNodeIdsByXpath($xpath, $docId = null)
     {
         $fallback = false;
-        $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
-        $pCondition = '(?:\[(.*?)\])?';
-        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $xpathElements, PREG_SET_ORDER);
-
         $tableSql = array();
         $tableParams = array();
         $condSql = array();
         $condParams = array();
+        $xpathElements = $this->parseXpathElements($xpath);
+        $levels = count($xpathElements) - 1;
 
         foreach ($xpathElements as $level => $element) {
             $element[] = '';
             list(,$divider, $ns, $name, $condition) = $element;
 
             if ($level == 0) {
-                $levels = count($xpathElements) - 1;
                 $tableSql[] = "SELECT l$levels.id FROM";
                 if ($divider == '/') {
                     $condSql[] = "l0.id_parent IS NULL";
@@ -348,7 +345,6 @@ class XmlDb implements XmlGetter
         }
 
         if ($fallback) {
-            $levels = count($xpathElements) - 1;
             $tableSql[0] = "SELECT DISTINCT l$level.id_doc FROM";
         }
 
@@ -392,11 +388,14 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ translateName
-    protected function translateName($ns, $name)
+    // {{{ parseXpathElements
+    protected function parseXpathElements($xpath)
     {
-        $colon = (strlen($ns) && strlen($name)) ? ':' : '';
-        return str_replace('*', '%', "$ns$colon$name");
+        $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
+        $pCondition = '(?:\[(.*?)\])?';
+        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $levels, PREG_SET_ORDER);
+
+        return $levels;
     }
     // }}}
     // {{{ parsePosition
@@ -430,6 +429,13 @@ class XmlDb implements XmlGetter
         }
 
         return $cond_array;
+    }
+    // }}}
+    // {{{ translateName
+    protected function translateName($ns, $name)
+    {
+        $colon = (strlen($ns) && strlen($name)) ? ':' : '';
+        return str_replace('*', '%', "$ns$colon$name");
     }
     // }}}
     // {{{ getConditionAttributes
