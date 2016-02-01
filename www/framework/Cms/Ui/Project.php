@@ -202,12 +202,10 @@ class Project extends Base
             if ($form->validateAutosave()) {
                 $node = $form->getValuesXml();
                 if ($node->ownerDocument->documentElement->hasAttributeNS("http://cms.depagecms.net/ns/database", "lastchange")) {
-                    $targetId = null;
+                    $settings->saveNode($node);
                 } else {
-                    $targetId = $parentId;
+                    $settings->addNode($node, $parentId);
                 }
-
-                $settings->saveNode($node, $targetId);
 
                 $form->clearSession(false);
 

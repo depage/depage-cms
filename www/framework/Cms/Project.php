@@ -469,7 +469,7 @@ class Project extends \Depage\Entity\Entity
         $this->xmldb = $this->getXmlDb();
 
         $settings = $this->getSettingsDoc();
-        $nodes = $settings->getNodeIdsByXpath("//proj:publishTargets/proj:publishTarget");
+        $nodes = $settings->getNodeIdsByXpath("//proj:publishTarget");
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
             $targets[$nodeId] = $attr['name'];

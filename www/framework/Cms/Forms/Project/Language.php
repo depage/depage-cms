@@ -37,7 +37,7 @@ class Language extends Base
             "label" => _("Name"),
             "placeholder" => _("Language name"),
             "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
-            "validator" => "/[-_a-zA-Z0-9]+/",
+            //"validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
             "dataAttr" => array(

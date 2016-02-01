@@ -38,6 +38,7 @@ class Publish extends Base
             "placeholder" => _("Name of publishing target"),
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
             "required" => true,
+            "class" => "node-name",
             "dataAttr" => array(
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
