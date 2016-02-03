@@ -17,7 +17,7 @@
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>1</value>
-      <value>0000-00-00 00:00:00</value>
+      <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
     <row>
@@ -27,7 +27,7 @@
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>3</value>
-      <value>0000-00-00 00:00:00</value>
+      <value>2016-02-03 16:09:05È</value>
       <null/>
     </row>
     <row>
@@ -37,7 +37,37 @@
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>5</value>
-      <value>0000-00-00 00:00:00</value>
+      <value>2016-02-03 16:09:05</value>
+      <null/>
+    </row>
+    <row>
+      <value>4</value>
+      <value>pages2</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
+      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value></value>
+      <value>15</value>
+      <value>2016-02-03 16:09:05</value>
+      <null/>
+    </row>
+    <row>
+      <value>5</value>
+      <value>pages3</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
+      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value></value>
+      <value>21</value>
+      <value>2016-02-03 16:09:05</value>
+      <null/>
+    </row>
+    <row>
+      <value>6</value>
+      <value>pages4</value>
+      <value>Depage\XmlDb\XmlDocTypes\Base</value>
+      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value></value>
+      <value>27</value>
+      <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
   </table>
@@ -65,7 +95,7 @@
       <value>1</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="Home" multilang="true" file_type="html" db:dataid="3" </value>
+      <value>name="Home1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
@@ -101,50 +131,311 @@
       <value>2</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="Subpage" multilang="true" file_type="html" db:dataid="4" </value>
+      <value>name="P1.1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>7</value>
       <value>1</value>
-      <value>2</value>
-      <value>1</value>
+      <value>6</value>
+      <value>0</value>
       <value>pg:page</value>
-      <value>name="Subpage 2" multilang="true" file_type="html" db:dataid="5" </value>
+      <value>name="P1.1.1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>8</value>
       <value>1</value>
-      <value>2</value>
-      <value>4</value>
+      <value>6</value>
+      <value>1</value>
       <value>pg:page</value>
-      <value>name="bla blub" multilang="true" file_type="html" db:dataid="6" </value>
+      <value>name="P1.1.2" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>9</value>
       <value>1</value>
-      <value>2</value>
-      <value>2</value>
+      <value>8</value>
+      <value>0</value>
       <value>pg:folder</value>
-      <value>name="Subpage" multilang="true" file_type="html" db:dataid="7" </value>
+      <value>name="F1.1.2.1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>10</value>
       <value>1</value>
       <value>8</value>
+      <value>2</value>
+      <value>pg:page</value>
+      <value>name="P1.1.2.3" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>11</value>
+      <value>1</value>
+      <value>6</value>
+      <value>2</value>
+      <value>pg:page</value>
+      <value>name="P1.1.3" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>12</value>
+      <value>1</value>
+      <value>2</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P1.2" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>13</value>
+      <value>1</value>
+      <value>2</value>
+      <value>2</value>
+      <value>pg:folder</value>
+      <value>name="F1.3" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>14</value>
+      <value>1</value>
+      <value>2</value>
+      <value>4</value>
+      <value>pg:folder</value>
+      <value>name="P1.5" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>15</value>
+      <value>4</value>
+      <null/>
+      <value>0</value>
+      <value>dpg:pages</value>
+      <value>name="" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>16</value>
+      <value>4</value>
+      <value>15</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="Home4" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>17</value>
+      <value>4</value>
+      <value>16</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="P4.1" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>18</value>
+      <value>4</value>
+      <value>16</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P4.2" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>19</value>
+      <value>4</value>
+      <value>16</value>
+      <value>2</value>
+      <value>pg:folder</value>
+      <value>name="F4.3" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>20</value>
+      <value>4</value>
+      <value>16</value>
+      <value>4</value>
+      <value>pg:page</value>
+      <value>name="P4.5" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>21</value>
+      <value>5</value>
+      <null/>
+      <value>0</value>
+      <value>dpg:pages</value>
+      <value>name="" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>22</value>
+      <value>5</value>
+      <value>21</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="Home5" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>23</value>
+      <value>5</value>
+      <value>22</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="P5.1" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>24</value>
+      <value>5</value>
+      <value>22</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P5.2" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>25</value>
+      <value>5</value>
+      <value>22</value>
+      <value>2</value>
+      <value>pg:folder</value>
+      <value>name="F5.3" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>26</value>
+      <value>5</value>
+      <value>22</value>
+      <value>4</value>
+      <value>pg:page</value>
+      <value>name="P5.5" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>27</value>
+      <value>6</value>
+      <null/>
+      <value>0</value>
+      <value>dpg:pages</value>
+      <value>name="" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>28</value>
+      <value>6</value>
+      <value>27</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="Home6" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>29</value>
+      <value>6</value>
+      <value>28</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="P6.1" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>30</value>
+      <value>6</value>
+      <value>29</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P6.1.2" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>31</value>
+      <value>6</value>
+      <value>28</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P6.2" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>32</value>
+      <value>1</value>
+      <value>8</value>
+      <value>1</value>
+      <null/>
+      <value>bla bla bla </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>33</value>
+      <value>1</value>
+      <value>10</value>
+      <value>0</value>
+      <null/>
+      <value>bla bla blub </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>34</value>
+      <value>1</value>
+      <value>2</value>
+      <value>3</value>
+      <null/>
+      <value>bla bla bla </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>35</value>
+      <value>1</value>
+      <value>14</value>
       <value>0</value>
       <null/>
       <value>bla bla bla </value>
       <value>TEXT_NODE</value>
     </row>
     <row>
-      <value>11</value>
-      <value>1</value>
-      <value>2</value>
+      <value>36</value>
+      <value>4</value>
+      <value>16</value>
       <value>3</value>
+      <null/>
+      <value>bla bla blub </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>37</value>
+      <value>4</value>
+      <value>20</value>
+      <value>0</value>
+      <null/>
+      <value>bla bla bla </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>38</value>
+      <value>5</value>
+      <value>22</value>
+      <value>3</value>
+      <null/>
+      <value>bla bla blub </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>39</value>
+      <value>5</value>
+      <value>26</value>
+      <value>0</value>
+      <null/>
+      <value>bla bla bla </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>40</value>
+      <value>6</value>
+      <value>29</value>
+      <value>0</value>
       <null/>
       <value>bla bla blub </value>
       <value>TEXT_NODE</value>
@@ -161,7 +452,7 @@
       <value>1</value>
       <value>9b8911ed83d9ccd6669ae95272fb1777f901c2f2</value>
       <value>&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;dpg:pages xmlns:db=&quot;http://cms.depagecms.net/ns/database&quot; xmlns:dpg=&quot;http://www.depagecms.net/ns/depage&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:sec=&quot;http://www.depagecms.net/ns/section&quot; xmlns:edit=&quot;http://www.depagecms.net/ns/edit&quot; xmlns:pg=&quot;http://www.depagecms.net/ns/page&quot; db:name=&quot;&quot; db:id=&quot;1&quot; db:lastchangeUid=&quot;&quot;&gt;&lt;pg:page name=&quot;Home&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;3&quot; db:id=&quot;2&quot;&gt;&lt;pg:page name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;4&quot; db:id=&quot;6&quot;/&gt;&lt;pg:page name=&quot;Subpage 2&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;5&quot; db:id=&quot;7&quot;/&gt;&lt;pg:folder name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;7&quot; db:id=&quot;9&quot;/&gt;bla bla blub &lt;pg:page name=&quot;bla blub&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;6&quot; db:id=&quot;8&quot;&gt;bla bla bla &lt;/pg:page&gt;&lt;/pg:page&gt;&lt;/dpg:pages&gt;</value>
+&lt;dpg:pages xmlns:db=&quot;http://cms.depagecms.net/ns/database&quot; xmlns:dpg=&quot;http://www.depagecms.net/ns/depage&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:sec=&quot;http://www.depagecms.net/ns/section&quot; xmlns:edit=&quot;http://www.depagecms.net/ns/edit&quot; xmlns:pg=&quot;http://www.depagecms.net/ns/page&quot; db:name=&quot;&quot; db:id=&quot;1&quot; db:lastchangeUid=&quot;&quot;&gt;&lt;pg:page name=&quot;Home&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;2&quot;&gt;&lt;pg:page name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;6&quot;/&gt;&lt;pg:page name=&quot;Subpage 2&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;7&quot;/&gt;&lt;pg:folder name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;9&quot;/&gt;bla bla blub &lt;pg:page name=&quot;bla blub&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;8&quot;&gt;bla bla bla &lt;/pg:page&gt;&lt;/pg:page&gt;&lt;/dpg:pages&gt;</value>
       <value>2015-06-26 12:07:37</value>
       <value>1</value>
       <value>0</value>
@@ -170,7 +461,7 @@
       <value>1</value>
       <value>a02ccf643388c40161a22d5f82d6581d149e9222</value>
       <value>&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;dpg:pages xmlns:db=&quot;http://cms.depagecms.net/ns/database&quot; xmlns:dpg=&quot;http://www.depagecms.net/ns/depage&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:sec=&quot;http://www.depagecms.net/ns/section&quot; xmlns:edit=&quot;http://www.depagecms.net/ns/edit&quot; xmlns:pg=&quot;http://www.depagecms.net/ns/page&quot; db:name=&quot;&quot; db:id=&quot;1&quot; db:lastchangeUid=&quot;&quot;&gt;&lt;root db:id=&quot;2&quot;&gt;&lt;pg:page name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;4&quot; db:id=&quot;6&quot;/&gt;&lt;node db:id=&quot;12&quot;/&gt;&lt;pg:page name=&quot;Subpage 2&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;5&quot; db:id=&quot;7&quot;/&gt;&lt;pg:folder name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;7&quot; db:id=&quot;9&quot;/&gt;bla bla blub &lt;pg:page name=&quot;bla blub&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:dataid=&quot;6&quot; db:id=&quot;8&quot;&gt;bla bla bla &lt;/pg:page&gt;&lt;/root&gt;&lt;/dpg:pages&gt;</value>
+&lt;dpg:pages xmlns:db=&quot;http://cms.depagecms.net/ns/database&quot; xmlns:dpg=&quot;http://www.depagecms.net/ns/depage&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:sec=&quot;http://www.depagecms.net/ns/section&quot; xmlns:edit=&quot;http://www.depagecms.net/ns/edit&quot; xmlns:pg=&quot;http://www.depagecms.net/ns/page&quot; db:name=&quot;&quot; db:id=&quot;1&quot; db:lastchangeUid=&quot;&quot;&gt;&lt;root db:id=&quot;2&quot;&gt;&lt;pg:page name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;6&quot;/&gt;&lt;node db:id=&quot;12&quot;/&gt;&lt;pg:page name=&quot;Subpage 2&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;7&quot;/&gt;&lt;pg:folder name=&quot;Subpage&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;9&quot;/&gt;bla bla blub &lt;pg:page name=&quot;bla blub&quot; multilang=&quot;true&quot; file_type=&quot;html&quot; db:id=&quot;8&quot;&gt;bla bla bla &lt;/pg:page&gt;&lt;/root&gt;&lt;/dpg:pages&gt;</value>
       <value>2015-06-26 12:07:38</value>
       <value>1</value>
       <value>1</value>
