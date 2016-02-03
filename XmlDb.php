@@ -276,7 +276,7 @@ class XmlDb implements XmlGetter
                 }
             } else {
                 $tableSql[] = 'INNER JOIN';
-                if ($divider == '/') {
+                if ($divider == '/' && !$fallback) {
                     $parentLevel = $level - 1;
                     $condSql[] = "l$level.id_parent = l$parentLevel.id";
                 } else {
@@ -286,7 +286,7 @@ class XmlDb implements XmlGetter
 
             if ($positionArray = $this->parsePosition($condition)) {
                 // fetch by name and position: "... ns:name[n] ..."
-                extract($positionArray);
+                extract($positionArray); // $operator, $position
 
                 $tableSql[] = "(
                     SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
@@ -294,6 +294,7 @@ class XmlDb implements XmlGetter
                     WHERE sub$level.name LIKE ?
                     ORDER BY sub$level.id_parent, sub$level.pos
                 ) l$level";
+
                 $tableParams[] = $this->translateName($ns, $name);
                 $condSql[] = "l$level.tpos {$this->cleanOperator($operator)} ?";
                 $condParams[] = $position;
@@ -308,7 +309,7 @@ class XmlDb implements XmlGetter
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '';
                     foreach ($attributes as $attribute) {
-                        extract($attribute);
+                        extract($attribute); // $name, $operator, $value, $bool
 
                         if ($name == 'db:id') {
                             $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
@@ -337,10 +338,6 @@ class XmlDb implements XmlGetter
             if (!is_null($docId)) {
                 $condSql[] = "l$level.id_doc = ?";
                 $condParams[] = $docId;
-            }
-
-            if ($fallback) {
-                break;
             }
         }
 
