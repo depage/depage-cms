@@ -63,7 +63,7 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testGetSubdocByNodeId
     public function testGetSubdocByNodeId()
     {
-        $expected = '<pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" file_type="html" multilang="true" name="P6.1" db:id="29" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid="">bla bla blub <pg:page file_type="html" multilang="true" name="P6.1.2" db:id="30"/></pg:page>';
+        $expected = '<pg:page xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="P6.1" db:id="29" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid="">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page>';
 
         $this->assertXmlStringEqualsXmlString($expected, $this->doc->getSubdocByNodeId(29));
     }
@@ -233,10 +233,10 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testUnlinkNode
     public function testUnlinkNode()
     {
-        $deleted = $this->doc->unlinkNode(30);
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page file_type="html" multilang="true" name="Home6"><pg:page file_type="html" multilang="true" name="P6.1">bla bla blub </pg:page><pg:page file_type="html" multilang="true" name="P6.2"/></pg:page></dpg:pages>';
+        $this->assertEquals(29, $this->doc->unlinkNode(30));
 
-        $this->assertEquals(29, $deleted);
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub </pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
+
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
@@ -249,7 +249,7 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertFalse($this->doc->unlinkNode(9));
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page file_type="html" multilang="true" name="Home6"><pg:page file_type="html" multilang="true" name="P6.1">bla bla blub <pg:page file_type="html" multilang="true" name="P6.1.2"/></pg:page><pg:page file_type="html" multilang="true" name="P6.2"/></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
