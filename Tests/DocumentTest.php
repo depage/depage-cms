@@ -566,7 +566,7 @@ class DocumentTest extends DatabaseTestCase
     {
         $node = $this->doc->buildNode('newNode', array('att' => 'val', 'att2' => 'val2'));
 
-        $expected = '<newNode xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" att="val" att2="val2"/>';
+        $expected = '<newNode xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" att="val" att2="val2"/>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $node->ownerDocument->saveXML($node));
     }
@@ -575,21 +575,22 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSetAttribute
     public function testSetAttribute()
     {
-        $this->doc->setAttribute(2, 'textattr', 'new value');
-        $this->doc->setAttribute(6, 'multilang', 'false');
+        $this->doc->setAttribute(29, 'textattr', 'new value');
+        $this->doc->setAttribute(30, 'name', 'newName');
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange('<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" textattr="new value" db:id="2"><pg:page name="Subpage" multilang="false" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>', $this->doc->getXml());
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1" textattr="new value">bla bla blub <pg:page name="newName"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
     // {{{ testRemoveAttribute
     public function testRemoveAttribute()
     {
-        $return = $this->doc->removeAttribute(2, 'multilang');
+        $this->assertTrue($this->doc->removeAttribute(30, 'name'));
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';;
 
-        $this->assertTrue($return);
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
     // {{{ testRemoveAttributeNonExistent
@@ -597,32 +598,28 @@ class DocumentTest extends DatabaseTestCase
     {
         $expected = $this->doc->getXml();
 
-        $return = $this->doc->removeAttribute(2, 'idontexist');
+        $this->assertFalse($this->doc->removeAttribute(30, 'idontexist'));
 
-        $this->assertFalse($return);
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
     }
     // }}}
     // {{{ testGetAttribute
     public function testGetAttribute()
     {
-        $attr = $this->doc->getAttribute(2, 'name');
-        $this->assertEquals('Home', $attr);
+        $attr = $this->doc->getAttribute(28, 'name');
+        $this->assertEquals('Home6', $attr);
 
-        $attr = $this->doc->getAttribute(2, 'undefindattr');
+        $attr = $this->doc->getAttribute(28, 'undefindattr');
         $this->assertFalse($attr);
     }
     // }}}
     // {{{ testGetAttributes
     public function testGetAttributes()
     {
-        $attrs = $this->doc->getAttributes(2);
+        $attrs = $this->doc->getAttributes(28);
 
         $expected = array(
-            'name' => 'Home',
-            'multilang' => 'true',
-            'file_type' => 'html',
-            'db:dataid' => '3',
+            'name' => 'Home6',
         );
 
         $this->assertEquals($expected, $attrs);
