@@ -418,9 +418,9 @@ class DocumentTest extends DatabaseTestCase
     public function testUpdateLastchange()
     {
         $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array('userId' => 42));
-        $doc = new DocumentTestClass($xmlDb, 1);
+        $doc = new DocumentTestClass($xmlDb, 6);
 
-        $before = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $before = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlString($before, $doc->getXml(false));
 
@@ -429,7 +429,7 @@ class DocumentTest extends DatabaseTestCase
         $this->setForeignKeyChecks(true);
 
         $date = date('Y-m-d H:i:s', $timestamp);
-        $after = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchange="' . $date . '" db:lastchangeUid="42"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $after = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="" db:lastchange="' . $date . '" db:lastchangeUid="42"><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
         $this->assertXmlStringEqualsXmlString($after, $doc->getXml(false));
     }
@@ -438,41 +438,41 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNodeIn
     public function testMoveNodeIn()
     {
-        $this->doc->moveNodeIn(7, 8);
+        $this->doc->moveNodeIn(30, 29);
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla <pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/></pg:page></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastChange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastChange($expected, $this->doc->getXml(false));
     }
     // }}}
     // {{{ testMoveNodeBefore
     public function testMoveNodeBefore()
     {
-        $this->doc->moveNodeBefore(7, 2);
+        $this->doc->moveNodeBefore(30, 29);
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1.2"/><pg:page name="P6.1">bla bla blub </pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
     // {{{ testMoveNodeAfter
     public function testMoveNodeAfter()
     {
-        $this->doc->moveNodeAfter(7, 2);
+        $this->doc->moveNodeAfter(30, 29);
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub </pg:page><pg:page name="P6.1.2"/><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
     // {{{ testMoveNodeAfterSameLevel
     public function testMoveNodeAfterSameLevel()
     {
-        $this->doc->moveNodeAfter(6, 7);
+        $this->doc->moveNodeAfter(31, 30);
 
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1"><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/><pg:page name="P6.2"/></pg:page></pg:page></dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
 
