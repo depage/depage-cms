@@ -379,14 +379,15 @@ abstract class Auth
      **/
     public function updateSchema()
     {
-        $schema = new \Depage\DB\Schema($this->pdo);
+        $pdo = $this->pdo; // needed reference for php 5.3
+        $schema = new \Depage\Db\Schema($pdo);
 
-        $schema->setReplace(
-            function ($tableName) {
-                return $this->pdo->prefix . $tableName;
-            }
-        );
-        $schema->loadGlob(__DIR__ . "/SQL/*.sql");
+        $schema
+            ->setReplace(function ($tableName) use ($pdo) {
+                return $pdo->prefix . "_" . $tableName;
+            })
+            ->loadGlob(__DIR__ . "/SQL/*.sql")
+            ->update();
     }
     // }}}
 }
