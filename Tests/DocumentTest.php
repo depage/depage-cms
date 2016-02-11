@@ -629,8 +629,8 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testGetParentIdById
     public function testGetParentIdById()
     {
-        $this->assertNull($this->doc->getParentIdById(1));
-        $this->assertEquals(2, $this->doc->getParentIdById(6));
+        $this->assertNull($this->doc->getParentIdById(27));
+        $this->assertEquals(29, $this->doc->getParentIdById(30));
     }
     // }}}
     // {{{ testGetParentIdByIdNonExistent

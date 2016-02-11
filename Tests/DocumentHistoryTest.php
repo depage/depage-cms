@@ -8,21 +8,27 @@ class DocumentHistoryTest extends DatabaseTestCase
     protected $xmlDb;
     protected $doc;
     protected $history;
-    protected $version37 = array(
-        'last_saved_at' => '2015-06-26 12:07:37',
+    protected $ver1 = array(
+        'last_saved_at' => '2016-02-03 16:01:00',
         'user_id' => '1',
         'published' => '0',
-        'hash' => '9b8911ed83d9ccd6669ae95272fb1777f901c2f2',
+        'hash' => '91c9ab72534f336e7f7d7759060508f36333bff4',
     );
-    protected $version38 = array(
-        'last_saved_at' => '2015-06-26 12:07:38',
+    protected $ver2 = array(
+        'last_saved_at' => '2016-02-03 16:02:00',
         'user_id' => '1',
         'published' => '1',
-        'hash' => 'a02ccf643388c40161a22d5f82d6581d149e9222',
+        'hash' => 'b8d61df8cd5d29de11231a347d9c31a6f523a4f8',
+    );
+    protected $ver3 = array(
+        'last_saved_at' => '2016-02-03 16:03:00',
+        'user_id' => '1',
+        'published' => '0',
+        'hash' => '12a17a2601f621bbe05ffa5c599ed6abed59a072',
     );
 
-    protected $xml37 = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:docid="1" db:id="1" db:lastchange="2015-06-26 12:07:37" db:lastchangeUid="" db:name=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
-    protected $xml38 = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:docid="1" db:id="1" db:lastchange="2015-06-26 12:07:38" db:lastchangeUid="" db:name=""><root db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><node db:id="12"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></root></dpg:pages>';
+    protected $xml1 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver1" db:docid="6" db:id="27" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6" db:id="28"><pg:page name="P6.1" db:id="29">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page><pg:page name="P6.2" db:id="31"/></pg:page></dpg:pages>';
+    protected $xml2 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="6" db:id="27" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6" db:id="28"><pg:page name="P6.1" db:id="29">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page><pg:page name="P6.2" db:id="31"/></pg:page></dpg:pages>';
 
     protected $ignoreAttributes = array(
         'db:id',
@@ -44,7 +50,7 @@ class DocumentHistoryTest extends DatabaseTestCase
             'child',
         ));
 
-        $this->doc = new DocumentTestClass($this->xmlDb, 1);
+        $this->doc = new DocumentTestClass($this->xmlDb, 6);
         $this->history = $this->doc->getHistory();
     }
     // }}}
@@ -64,8 +70,9 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersions()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:37') => $this->version37,
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:01:00') => $this->ver1,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
 
         $this->assertEquals($expected, $this->history->getVersions());
@@ -75,7 +82,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsPublished()
     {
         $published = array(
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
         );
 
         $this->assertEquals($published, $this->history->getVersions(true));
@@ -85,7 +92,8 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsUnpublished()
     {
         $unpublished = array(
-            strtotime('2015-06-26 12:07:37') => $this->version37,
+            strtotime('2016-02-03 16:01:00') => $this->ver1,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
 
         $this->assertEquals($unpublished, $this->history->getVersions(false));
@@ -95,7 +103,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsOne()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
 
         $this->assertEquals($expected, $this->history->getVersions(null, 1));
@@ -105,8 +113,9 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testGetVersionsMaxResultsTen()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:37') => $this->version37,
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:01:00') => $this->ver1,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
 
         $this->assertEquals($expected, $this->history->getVersions(null, 10));
@@ -116,14 +125,14 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetLatestVersion
     public function testGetLatestVersion()
     {
-        $this->assertEquals($this->version38, $this->history->getLatestVersion());
+        $this->assertEquals($this->ver3, $this->history->getLatestVersion());
 
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
-        $expected = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="1" db:id="1" db:lastchangeUid=""></root>';
+        $newXml = '<root/>';
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="6" db:id="27"/>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(1, true);
+        $timestamp = $this->history->save(6, true);
         $this->setForeignKeyChecks(true);
 
         $latestVersion = $this->history->getLatestVersion();
@@ -135,18 +144,18 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetXml
     public function testGetXml()
     {
-        $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'));
+        $doc = $this->history->getXml(strtotime('2016-02-03 16:02:00'));
 
         $this->assertInstanceOf('\Depage\Xml\Document', $doc);
-        $this->assertXmlStringEqualsXmlString($this->xml37, $doc);
+        $this->assertXmlStringEqualsXmlString($this->xml2, $doc);
     }
     // }}}
     // {{{ testGetXmlNoIdAttr
     public function testGetXmlNoIdAttr()
     {
-        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:docid="1" db:lastchange="2015-06-26 12:07:37" db:lastchangeUid="" db:name=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="6" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
-        $doc = $this->history->getXml(strtotime('2015-06-26 12:07:37'), false);
+        $doc = $this->history->getXml(strtotime('2016-02-03 16:02:00'), false);
 
         $this->assertXmlStringEqualsXmlString($expected, $doc);
     }
@@ -161,30 +170,32 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetLastPublishedXml
     public function testGetLastPublishedXml()
     {
-        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml());
+        $this->assertXmlStringEqualsXmlString($this->xml2, $this->history->getLastPublishedXml());
     }
     // }}}
 
     // {{{ testSave
-    public function testSave2()
+    public function testSave()
     {
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:lastchange="2015-06-26 12:07:37"></root>';
+        $newXml = '<root/>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(1, true);
+        $timestamp = $this->history->save(6, true);
         $this->setForeignKeyChecks(true);
 
         $historyTable = $this->getConnection()->createQueryTable('xmldb_proj_test_history', 'SELECT * FROM xmldb_proj_test_history');
-        $expected = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database" db:id="1" db:lastchangeUid=""></root>';
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:id="27" db:lastchangeUid=""></root>';
 
-        $this->assertXmlStringEqualsXmlString($expected, $historyTable->getValue(2,'xml'));
+        $rows = $historyTable->getRowCount();
+        $lastRowNumber = $rows - 1;
+        $this->assertXmlStringEqualsXmlString($expected, $historyTable->getValue($lastRowNumber,'xml'));
     }
     // }}}
     // {{{ testSaveUserId
     public function testSaveUserId()
     {
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newXml = '<root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
@@ -198,7 +209,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testSavePublished
     public function testSavePublished()
     {
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newXml = '<root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
@@ -212,7 +223,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testSaveUnpublished
     public function testSaveUnpublished()
     {
-        $newXml = '<?xml version="1.0"?><root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newXml = '<root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
@@ -242,12 +253,12 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testRestore
     public function testRestore()
     {
-        $this->assertXmlStringEqualsXmlString($this->xml38, $this->history->getLastPublishedXml());
+        $this->assertXmlStringEqualsXmlString($this->xml2, $this->history->getLastPublishedXml());
 
-        $result = $this->history->restore(strtotime('2015-06-26 12:07:37'));
+        $result = $this->history->restore(strtotime('2016-02-03 16:01:00'));
 
         $ignore = array('db:lastchange');
-        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($this->xml37, $this->doc->getXml(), $ignore);
+        $this->assertXmlStringEqualsXmlStringIgnoreAttributes($this->xml1, $this->doc->getXml(), $ignore);
         $this->assertXmlStringEqualsXmlStringIgnoreAttributes($result, $this->doc->getXml(), $ignore);
     }
     // }}}
@@ -256,15 +267,17 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testDelete()
     {
         $before = array(
-            strtotime('2015-06-26 12:07:37') => $this->version37,
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:01:00') => $this->ver1,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
         $this->assertEquals($before, $this->history->getVersions());
 
-        $result = $this->history->delete(strtotime('2015-06-26 12:07:37'));
+        $result = $this->history->delete(strtotime('2016-02-03 16:01:00'));
         $this->assertEquals(true, $result);
         $after = array(
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
         $this->assertEquals($after, $this->history->getVersions());
     }
@@ -273,12 +286,13 @@ class DocumentHistoryTest extends DatabaseTestCase
     public function testDeleteFail()
     {
         $expected = array(
-            strtotime('2015-06-26 12:07:37') => $this->version37,
-            strtotime('2015-06-26 12:07:38') => $this->version38,
+            strtotime('2016-02-03 16:01:00') => $this->ver1,
+            strtotime('2016-02-03 16:02:00') => $this->ver2,
+            strtotime('2016-02-03 16:03:00') => $this->ver3,
         );
         $this->assertEquals($expected, $this->history->getVersions());
 
-        $result = $this->history->delete(strtotime('2015-06-26 12:07:57'));
+        $result = $this->history->delete(strtotime('1985-10-26 09:00:00'));
 
         $this->assertEquals(false, $result);
         $this->assertEquals($expected, $this->history->getVersions());
