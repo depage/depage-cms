@@ -5,6 +5,7 @@ namespace Depage\XmlDb\Tests;
 class XmlDbTest extends DatabaseTestCase
 {
     protected $xmlDb;
+    protected $xmlPages4 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
 
     // {{{ setUp
     protected function setUp()
@@ -36,6 +37,9 @@ class XmlDbTest extends DatabaseTestCase
         $docs = $this->xmlDb->getDocuments();
         $expectedNames = array(
             'pages',
+            'pages2',
+            'pages3',
+            'pages4',
             'tpl_newnodes',
             'tpl_templates',
         );
@@ -62,12 +66,10 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testGetDoc
     public function testGetDoc()
     {
-        $xmlStr = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid="" db:name=""><pg:page file_type="html" multilang="true" name="Home" db:dataid="3" db:id="2"><pg:page file_type="html" multilang="true" name="Subpage" db:dataid="4" db:id="6"/><pg:page file_type="html" multilang="true" name="Subpage 2" db:dataid="5" db:id="7"/><pg:folder file_type="html" multilang="true" name="Subpage" db:dataid="7" db:id="9"/>bla bla blub <pg:page file_type="html" multilang="true" name="bla blub" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
-
-        $searches = array(1, '1', 'pages');
+        $searches = array(6, '6', 'pages4');
 
         foreach ($searches as $search) {
-            $this->assertXmlStringEqualsXmlString($xmlStr, $this->xmlDb->getDoc($search)->getXml());
+            $this->assertXmlStringEqualsXmlString($this->xmlPages4, $this->xmlDb->getDoc($search)->getXml(false));
         }
     }
     // }}}
@@ -100,10 +102,8 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testGetDocXml
     public function testGetDocXml()
     {
-        $expected = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""><pg:page name="Home" multilang="true" file_type="html" db:dataid="3" db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></pg:page></dpg:pages>';
-
-        $this->assertXmlStringEqualsXmlString($expected, $this->xmlDb->getDocXml('pages'));
-        $this->assertXmlStringEqualsXmlString($expected, $this->xmlDb->getDocXml(1));
+        $this->assertXmlStringEqualsXmlString($this->xmlPages4, $this->xmlDb->getDocXml('pages4', false));
+        $this->assertXmlStringEqualsXmlString($this->xmlPages4, $this->xmlDb->getDocXml(6, false));
     }
     // }}}
     // {{{ testGetDocXmlFail
@@ -121,7 +121,7 @@ class XmlDbTest extends DatabaseTestCase
         $doc = $this->xmlDb->createDoc();
 
         $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
-        $this->assertEquals(4, $doc->getDocId());
+        $this->assertEquals(7, $doc->getDocId());
     }
     // }}}
     // {{{ testCreateDocSpecific
@@ -131,7 +131,7 @@ class XmlDbTest extends DatabaseTestCase
 
         $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
         $this->assertEquals('newDoc', $doc->getDocInfo()->name);
-        $this->assertEquals(4, $doc->getDocId());
+        $this->assertEquals(7, $doc->getDocId());
     }
     // }}}
     // {{{ testCreateDocInvalidName
@@ -151,7 +151,7 @@ class XmlDbTest extends DatabaseTestCase
         $doc = $this->xmlDb->duplicateDoc('pages', 'newPages');
 
         $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
-        $this->assertEquals(4, $doc->getDocId());
+        $this->assertEquals(7, $doc->getDocId());
         $this->assertEquals('newPages', $doc->getDocInfo()->name);
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($this->xmlDb->getDoc('pages')->getXml(false), $doc->getXml(false));
