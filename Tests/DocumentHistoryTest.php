@@ -223,11 +223,11 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testSaveUnpublished
     public function testSaveUnpublished()
     {
-        $newXml = '<root xmlns:db="http://cms.depagecms.net/ns/database"></root>';
+        $newXml = '<root/>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(1, false);
+        $timestamp = $this->history->save(6, false);
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
@@ -241,7 +241,7 @@ class DocumentHistoryTest extends DatabaseTestCase
         $beforeDate = $latestVersion['last_saved_at'];
 
         $this->setForeignKeyChecks(false);
-        $afterTimestamp = $this->history->save(1, true);
+        $afterTimestamp = $this->history->save(6, true);
         $this->setForeignKeyChecks(true);
 
         $afterDate = date('Y-m-d H:i:s', $afterTimestamp);

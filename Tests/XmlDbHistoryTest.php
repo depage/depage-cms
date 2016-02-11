@@ -6,8 +6,8 @@ class XmlDbHistoryTest extends DatabaseTestCase
 {
     // {{{ variables
     protected $xmlDbHistory;
-    protected $testXmlDocument = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:id="1" db:lastchangeUid=""><root db:id="2"><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4" db:id="6"/><node db:id="12"/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5" db:id="7"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7" db:id="9"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6" db:id="8">bla bla bla </pg:page></root></dpg:pages>';
-    protected $testXmlDocumentNoIdAttr = '<?xml version="1.0"?><dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" db:name="" db:lastchangeUid=""><root><pg:page name="Subpage" multilang="true" file_type="html" db:dataid="4"/><node/><pg:page name="Subpage 2" multilang="true" file_type="html" db:dataid="5"/><pg:folder name="Subpage" multilang="true" file_type="html" db:dataid="7"/>bla bla blub <pg:page name="bla blub" multilang="true" file_type="html" db:dataid="6">bla bla bla </pg:page></root></dpg:pages>';
+    protected $testXmlDocument = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:id="27" db:lastchangeUid=""><pg:page name="Home6" db:id="28"><pg:page name="P6.1" db:id="29">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page><pg:page name="P6.2" db:id="31"/></pg:page></dpg:pages>';
+    protected $testXmlDocumentNoIdAttr = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:lastchangeUid=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
     // }}}
     // {{{ setUp
     protected function setUp()
@@ -23,7 +23,7 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testDocExistsById
     public function testDocExistsById()
     {
-        $this->assertSame(1, $this->xmlDbHistory->docExists(1));
+        $this->assertSame(6, $this->xmlDbHistory->docExists(6));
     }
     // }}}
     // {{{ testDocExistsByIdFail
@@ -35,7 +35,7 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testDocExistsByName
     public function testDocExistsByName()
     {
-        $this->assertEquals(1, $this->xmlDbHistory->docExists('pages'));
+        $this->assertEquals(6, $this->xmlDbHistory->docExists('pages4'));
     }
     // }}}
     // {{{ testDocExistsByNameFail
@@ -48,13 +48,13 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testGetDocXmlById
     public function testGetDocXmlById()
     {
-        $this->assertXmlStringEqualsXmlString($this->testXmlDocument, $this->xmlDbHistory->getDocXml(1));
+        $this->assertXmlStringEqualsXmlString($this->testXmlDocument, $this->xmlDbHistory->getDocXml(6));
     }
     // }}}
     // {{{ testGetDocXmlByIdNoIdAttr
     public function testGetDocXmlByIdNoIdAttr()
     {
-        $this->assertXmlStringEqualsXmlString($this->testXmlDocumentNoIdAttr, $this->xmlDbHistory->getDocXml(1, false));
+        $this->assertXmlStringEqualsXmlString($this->testXmlDocumentNoIdAttr, $this->xmlDbHistory->getDocXml(6, false));
     }
     // }}}
     // {{{ testGetDocXmlByIdFail
@@ -66,13 +66,13 @@ class XmlDbHistoryTest extends DatabaseTestCase
     // {{{ testGetDocXmlByName
     public function testGetDocXmlByName()
     {
-        $this->assertXmlStringEqualsXmlString($this->testXmlDocument, $this->xmlDbHistory->getDocXml('pages'));
+        $this->assertXmlStringEqualsXmlString($this->testXmlDocument, $this->xmlDbHistory->getDocXml('pages4'));
     }
     // }}}
     // {{{ testGetDocXmlByNameNoIdAttr
     public function testGetDocXmlByNameNoIdAttr()
     {
-        $this->assertXmlStringEqualsXmlString($this->testXmlDocumentNoIdAttr, $this->xmlDbHistory->getDocXml('pages', false));
+        $this->assertXmlStringEqualsXmlString($this->testXmlDocumentNoIdAttr, $this->xmlDbHistory->getDocXml('pages4', false));
     }
     // }}}
     // {{{ testGetDocXmlByNameFail
