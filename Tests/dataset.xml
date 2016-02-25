@@ -34,7 +34,7 @@
       <value>3</value>
       <value>pages</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
-      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value>xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>4</value>
       <value>2016-02-03 16:09:05</value>
@@ -44,7 +44,7 @@
       <value>4</value>
       <value>pages2</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
-      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value>xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>9</value>
       <value>2016-02-03 16:09:05</value>
@@ -54,7 +54,7 @@
       <value>5</value>
       <value>pages3</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
-      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value>xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>15</value>
       <value>2016-02-03 16:09:05</value>
@@ -64,7 +64,7 @@
       <value>6</value>
       <value>pages4</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
-      <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
+      <value>xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
       <value>27</value>
       <value>2016-02-03 16:09:05</value>
