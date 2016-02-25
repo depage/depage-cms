@@ -66,7 +66,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     {
         $subDoc = $this->testObject->getSubDocByXpath('//pg:folder');
 
-        $expected = '<pg:folder xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" file_type="html" multilang="true" name="Subpage" db:dataid="7" db:id="9" db:lastchange="0000-00-00 00:00:00" db:lastchangeUid=""/>';
+        $expected = '<pg:folder xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="F1.3" db:id="13" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""/>';
 
         $this->assertXmlStringEqualsXmlString($expected, $subDoc);
     }
@@ -87,7 +87,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testNameChildAndPositionShort
     public function testNameChildAndPositionShort()
     {
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[3]');
     }
     // }}}
     // {{{ testNameChildAndPositionShortNoResult
@@ -99,99 +99,100 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testNameChildAndPositionShortMultiple
     public function testNameChildAndPositionShortMultiple()
     {
-        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page[1]/pg:page[2]');
+        $this->assertCorrectXpathIds(array(12), '/dpg:pages/pg:page[1]/pg:page[2]');
     }
     // }}}
     // {{{ testNameChildAndPositionParsing
     public function testNameChildAndPositionParsing()
     {
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() = 3]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()= 3]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() =3]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()=3]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position()   =   3]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[  position()   =   3  ]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[position() = 3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[position()= 3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[position() =3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[position()=3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[position()   =   3]');
+        $this->assertCorrectXpathIds(array(11), '/dpg:pages/pg:page/pg:page/pg:page[  position()   =   3  ]');
     }
     // }}}
     // {{{ testNameChildAndPosition
     public function testNameChildAndPosition()
     {
         $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() = 13]');
-        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page[position() = 3]');
     }
     // }}}
     // {{{ testNameChildAndPositionNot
     public function testNameChildAndPositionNot()
     {
-        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[position() != 13]');
-        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() != 3]');
+        $this->assertCorrectXpathIds(array(7, 8, 11), '/dpg:pages/pg:page/pg:page/pg:page[position() != 13]');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[position() != 3]');
     }
     // }}}
     // {{{ testNameChildAndPositionLessThan
     public function testNameChildAndPositionLessThan()
     {
-        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() < 1]');
-        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() < 3]');
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page/pg:page[position() < 1]');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[position() < 3]');
     }
     // }}}
     // {{{ testNameChildAndPositionGreaterThan
     public function testNameChildAndPositionGreaterThan()
     {
-        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page[position() > 3]');
-        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page[position() > 1]');
+        $this->assertCorrectXpathIds(array(), '/dpg:pages/pg:page/pg:page/pg:page[position() > 3]');
+        $this->assertCorrectXpathIds(array(8, 11), '/dpg:pages/pg:page/pg:page/pg:page[position() > 1]');
     }
     // }}}
     // {{{ testNameChildAndPositionLessThanOrEqualTo
     public function testNameChildAndPositionLessThanOrEqualTo()
     {
-        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[position() <= 2]', false);
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[position() <= 2]', false);
     }
     // }}}
     // {{{ testNameChildAndPositionGreaterThanOrEqualTo
     public function testNameChildAndPositionGreaterThanOrEqualTo()
     {
-        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page[position() >= 2]', false);
+        $this->assertCorrectXpathIds(array(8, 11), '/dpg:pages/pg:page/pg:page/pg:page[position() >= 2]', false);
     }
     // }}}
 
     // {{{ testNameAndAttribute
     public function testNameAndAttribute()
     {
-        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@name]');
+        $this->assertCorrectXpathIds(array(7, 8, 11), '/dpg:pages/pg:page/pg:page/pg:page[@name]');
     }
     // }}}
     // {{{ testNameAndAttributeValue
     public function testNameAndAttributeValue()
     {
-        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(8), '/dpg:pages/pg:page/pg:page/pg:page[@name = \'P1.1.2\']');
     }
     // }}}
     // {{{ testNameAndAttributeAndOperatorValue
     public function testNameAndAttributeAndOperatorValue()
     {
-        $this->assertCorrectXpathIds(array(6, 7, 8), '/dpg:pages/pg:page/pg:page[@multilang = \'true\']');
-        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page[@multilang = \'true\' and @name = \'Subpage 2\']');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\']');
+        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\' and @multilang = \'true\']');
+        $this->assertCorrectXpathIds(array(7), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\' AND @multilang = \'true\']');
     }
     // }}}
     // {{{ testNameAndAttributeOrOperatorValue
     public function testNameAndAttributeOrOperatorValue()
     {
-        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\']');
-        $this->assertCorrectXpathIds(array(6, 7), '/dpg:pages/pg:page/pg:page[@name = \'Subpage\' or @name = \'Subpage 2\']');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\']');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\' or @multilang = \'true\']');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/pg:page[@file_type = \'html\' OR @multilang = \'true\']');
     }
     // }}}
 
     // {{{ testWildcardAndAttributeValue
     public function testWildcardAndAttributeValue()
     {
-        $this->assertCorrectXpathIds(array(6, 9), '/dpg:pages/pg:page/*[@name = \'Subpage\']');
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/*[@file_type = \'html\']');
     }
     // }}}
     // {{{ testWildcardNsAndAttributeValue
     public function testWildcardNsAndAttributeValue()
     {
-        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIds(array(6), '/dpg:pages/pg:page/*:page[@name = \'Subpage\']', false);
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath >= 2.0
+        $this->assertCorrectXpathIds(array(7, 8), '/dpg:pages/pg:page/pg:page/*:page[@file_type = \'html\']', false);
     }
     // }}}
     // {{{ testWildcardNameAndAttributeValue

@@ -16,7 +16,7 @@ class XpathDocumentTest extends XpathTestCase
     // {{{ testAllWildCard
     public function testAllWildCard()
     {
-        $this->assertCorrectXpathIds(array(1, 2, 6, 7, 8, 9), '//*');
+        $this->assertCorrectXpathIds(array(1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14), '//*');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeValueLessThan

@@ -12,7 +12,7 @@
     <column>lastchange_uid</column>
     <row>
       <value>1</value>
-      <value>pages</value>
+      <value>tpl_templates</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
@@ -22,7 +22,7 @@
     </row>
     <row>
       <value>2</value>
-      <value>tpl_templates</value>
+      <value>tpl_newnodes</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
@@ -32,11 +32,11 @@
     </row>
     <row>
       <value>3</value>
-      <value>tpl_newnodes</value>
+      <value>pages</value>
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
-      <value>5</value>
+      <value>4</value>
       <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
@@ -46,7 +46,7 @@
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
-      <value>15</value>
+      <value>9</value>
       <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
@@ -56,7 +56,7 @@
       <value>Depage\XmlDb\XmlDocTypes\Base</value>
       <value> xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sec="http://www.depagecms.net/ns/section" xmlns:edit="http://www.depagecms.net/ns/edit" xmlns:pg="http://www.depagecms.net/ns/page"</value>
       <value></value>
-      <value>21</value>
+      <value>15</value>
       <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
@@ -84,9 +84,9 @@
       <value>1</value>
       <value>1</value>
       <null/>
-      <null/>
-      <value>dpg:pages</value>
-      <value>db:name="" </value>
+      <value>0</value>
+      <value>dpg:templates</value>
+      <value>db:name="tree_name_template_root"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
@@ -94,8 +94,8 @@
       <value>1</value>
       <value>1</value>
       <value>0</value>
-      <value>pg:page</value>
-      <value>name="Home1" multilang="true" file_type="html" </value>
+      <value>dpg:tpl_template_set</value>
+      <value>db:invalid="del,move,name,dupl" name="html"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
@@ -103,111 +103,57 @@
       <value>2</value>
       <null/>
       <value>0</value>
-      <value>dpg:templates</value>
-      <value>db:name="tree_name_template_root" </value>
+      <value>dpg:tpl_newnodes</value>
+      <value>db:name="tree_name_newnodes_root"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>4</value>
-      <value>2</value>
       <value>3</value>
+      <null/>
       <value>0</value>
-      <value>dpg:tpl_template_set</value>
-      <value>db:invalid="del,move,name,dupl" name="html" </value>
+      <value>dpg:pages</value>
+      <value>name=""</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>5</value>
       <value>3</value>
-      <null/>
+      <value>4</value>
       <value>0</value>
-      <value>dpg:tpl_newnodes</value>
-      <value>db:name="tree_name_newnodes_root" </value>
+      <value>pg:page</value>
+      <value>name="Home3"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>6</value>
-      <value>1</value>
-      <value>2</value>
+      <value>3</value>
+      <value>5</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="P1.1" multilang="true" file_type="html" </value>
+      <value>name="P3.1"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>7</value>
-      <value>1</value>
+      <value>3</value>
       <value>6</value>
-      <value>0</value>
+      <value>1</value>
       <value>pg:page</value>
-      <value>name="P1.1.1" multilang="true" file_type="html" </value>
+      <value>name="P3.1.2"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>8</value>
-      <value>1</value>
-      <value>6</value>
+      <value>3</value>
+      <value>5</value>
       <value>1</value>
       <value>pg:page</value>
-      <value>name="P1.1.2" multilang="false" file_type="html" </value>
+      <value>name="P3.2"</value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>9</value>
-      <value>1</value>
-      <value>8</value>
-      <value>0</value>
-      <value>pg:folder</value>
-      <value>name="F1.1.2.1" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>10</value>
-      <value>1</value>
-      <value>8</value>
-      <value>2</value>
-      <value>pg:page</value>
-      <value>name="P1.1.2.3" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>11</value>
-      <value>1</value>
-      <value>6</value>
-      <value>2</value>
-      <value>pg:page</value>
-      <value>name="P1.1.3" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>12</value>
-      <value>1</value>
-      <value>2</value>
-      <value>1</value>
-      <value>pg:page</value>
-      <value>name="P1.2" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>13</value>
-      <value>1</value>
-      <value>2</value>
-      <value>2</value>
-      <value>pg:folder</value>
-      <value>name="F1.3" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>14</value>
-      <value>1</value>
-      <value>2</value>
-      <value>4</value>
-      <value>pg:folder</value>
-      <value>name="P1.5" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>15</value>
       <value>4</value>
       <null/>
       <value>0</value>
@@ -216,228 +162,246 @@
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>16</value>
+      <value>10</value>
       <value>4</value>
-      <value>15</value>
+      <value>9</value>
       <value>0</value>
       <value>pg:page</value>
       <value>name="Home4" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>17</value>
+      <value>11</value>
       <value>4</value>
-      <value>16</value>
+      <value>10</value>
       <value>0</value>
       <value>pg:page</value>
       <value>name="P4.1" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>18</value>
+      <value>12</value>
       <value>4</value>
-      <value>16</value>
+      <value>10</value>
       <value>1</value>
       <value>pg:page</value>
       <value>name="P4.2" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>19</value>
+      <value>13</value>
       <value>4</value>
-      <value>16</value>
+      <value>10</value>
       <value>2</value>
       <value>pg:folder</value>
       <value>name="F4.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>20</value>
+      <value>14</value>
       <value>4</value>
-      <value>16</value>
+      <value>10</value>
       <value>4</value>
       <value>pg:page</value>
       <value>name="P4.5" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>21</value>
-      <value>5</value>
+      <value>15</value>
+      <value>6</value>
       <null/>
-      <value>0</value>
+      <null/>
       <value>dpg:pages</value>
-      <value>name="" </value>
+      <value>db:name="" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>16</value>
+      <value>6</value>
+      <value>15</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="Home6" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>17</value>
+      <value>6</value>
+      <value>16</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="P6.1" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>18</value>
+      <value>6</value>
+      <value>17</value>
+      <value>0</value>
+      <value>pg:page</value>
+      <value>name="P6.1.1" multilang="true" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>19</value>
+      <value>6</value>
+      <value>18</value>
+      <value>1</value>
+      <value>pg:page</value>
+      <value>name="P6.1.2" multilang="false" file_type="html" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>20</value>
+      <value>6</value>
+      <value>19</value>
+      <value>0</value>
+      <value>pg:folder</value>
+      <value>name="F6.1.2.1" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>21</value>
+      <value>6</value>
+      <value>19</value>
+      <value>2</value>
+      <value>pg:page</value>
+      <value>name="P6.1.2.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>22</value>
-      <value>5</value>
-      <value>21</value>
-      <value>0</value>
+      <value>6</value>
+      <value>17</value>
+      <value>2</value>
       <value>pg:page</value>
-      <value>name="Home5" </value>
+      <value>name="P6.1.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>23</value>
-      <value>5</value>
-      <value>22</value>
-      <value>0</value>
-      <value>pg:page</value>
-      <value>name="P5.1" </value>
+      <value>6</value>
+      <value>17</value>
+      <value>3</value>
+      <value>page</value>
+      <value>name="P6.1.4" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>24</value>
-      <value>5</value>
-      <value>22</value>
-      <value>1</value>
-      <value>pg:page</value>
-      <value>name="P5.2" </value>
+      <value>6</value>
+      <value>17</value>
+      <value>4</value>
+      <value>dpg:page</value>
+      <value>name="P6.1.5" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>25</value>
+      <value>6</value>
+      <value>17</value>
       <value>5</value>
-      <value>22</value>
-      <value>2</value>
       <value>pg:folder</value>
-      <value>name="F5.3" </value>
+      <value>name="P6.1.6" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>26</value>
-      <value>5</value>
-      <value>22</value>
-      <value>4</value>
-      <value>pg:page</value>
-      <value>name="P5.5" </value>
+      <value>6</value>
+      <value>17</value>
+      <value>6</value>
+      <value>folder</value>
+      <value>name="P6.1.7" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>27</value>
       <value>6</value>
-      <null/>
-      <value>0</value>
-      <value>dpg:pages</value>
-      <value>name="" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>28</value>
-      <value>6</value>
-      <value>27</value>
-      <value>0</value>
-      <value>pg:page</value>
-      <value>name="Home6" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>29</value>
-      <value>6</value>
-      <value>28</value>
-      <value>0</value>
-      <value>pg:page</value>
-      <value>name="P6.1" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>30</value>
-      <value>6</value>
-      <value>29</value>
-      <value>1</value>
-      <value>pg:page</value>
-      <value>name="P6.1.2" </value>
-      <value>ELEMENT_NODE</value>
-    </row>
-    <row>
-      <value>31</value>
-      <value>6</value>
-      <value>28</value>
+      <value>16</value>
       <value>1</value>
       <value>pg:page</value>
       <value>name="P6.2" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>32</value>
-      <value>1</value>
-      <value>8</value>
-      <value>1</value>
-      <null/>
-      <value>bla bla bla </value>
-      <value>TEXT_NODE</value>
+      <value>28</value>
+      <value>6</value>
+      <value>16</value>
+      <value>2</value>
+      <value>pg:folder</value>
+      <value>name="F6.3" </value>
+      <value>ELEMENT_NODE</value>
     </row>
     <row>
-      <value>33</value>
-      <value>1</value>
-      <value>10</value>
+      <value>29</value>
+      <value>6</value>
+      <value>16</value>
+      <value>5</value>
+      <value>pg:folder</value>
+      <value>name="P6.5" </value>
+      <value>ELEMENT_NODE</value>
+    </row>
+    <row>
+      <value>30</value>
+      <value>3</value>
+      <value>6</value>
       <value>0</value>
       <null/>
       <value>bla bla blub </value>
       <value>TEXT_NODE</value>
     </row>
     <row>
-      <value>34</value>
-      <value>1</value>
-      <value>2</value>
+      <value>31</value>
+      <value>4</value>
+      <value>10</value>
       <value>3</value>
       <null/>
       <value>bla bla bla </value>
       <value>TEXT_NODE</value>
     </row>
     <row>
-      <value>35</value>
-      <value>1</value>
+      <value>32</value>
+      <value>4</value>
       <value>14</value>
       <value>0</value>
+      <null/>
+      <value>bla bla blub </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>33</value>
+      <value>6</value>
+      <value>19</value>
+      <value>1</value>
+      <null/>
+      <value>bla bla bla </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>34</value>
+      <value>6</value>
+      <value>21</value>
+      <value>0</value>
+      <null/>
+      <value>bla bla blub </value>
+      <value>TEXT_NODE</value>
+    </row>
+    <row>
+      <value>35</value>
+      <value>6</value>
+      <value>16</value>
+      <value>3</value>
       <null/>
       <value>bla bla bla </value>
       <value>TEXT_NODE</value>
     </row>
     <row>
       <value>36</value>
-      <value>4</value>
-      <value>16</value>
-      <value>3</value>
-      <null/>
-      <value>bla bla blub </value>
-      <value>TEXT_NODE</value>
-    </row>
-    <row>
-      <value>37</value>
-      <value>4</value>
-      <value>20</value>
-      <value>0</value>
-      <null/>
-      <value>bla bla bla </value>
-      <value>TEXT_NODE</value>
-    </row>
-    <row>
-      <value>38</value>
-      <value>5</value>
-      <value>22</value>
-      <value>3</value>
-      <null/>
-      <value>bla bla blub </value>
-      <value>TEXT_NODE</value>
-    </row>
-    <row>
-      <value>39</value>
-      <value>5</value>
-      <value>26</value>
-      <value>0</value>
-      <null/>
-      <value>bla bla bla </value>
-      <value>TEXT_NODE</value>
-    </row>
-    <row>
-      <value>40</value>
       <value>6</value>
       <value>29</value>
       <value>0</value>
       <null/>
-      <value>bla bla blub </value>
+      <value>bla bla bla </value>
       <value>TEXT_NODE</value>
     </row>
   </table>
