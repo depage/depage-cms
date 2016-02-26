@@ -12,23 +12,23 @@ class DocumentHistoryTest extends DatabaseTestCase
         'last_saved_at' => '2016-02-03 16:01:00',
         'user_id' => '1',
         'published' => '0',
-        'hash' => '91c9ab72534f336e7f7d7759060508f36333bff4',
+        'hash' => '5ceae27386aa1518d346c3129ef9c2d530c18769',
     );
     protected $ver2 = array(
         'last_saved_at' => '2016-02-03 16:02:00',
         'user_id' => '1',
         'published' => '1',
-        'hash' => 'b8d61df8cd5d29de11231a347d9c31a6f523a4f8',
+        'hash' => 'a6493f0261f1287b62fa0585a16c8a0d43cf73b8',
     );
     protected $ver3 = array(
         'last_saved_at' => '2016-02-03 16:03:00',
         'user_id' => '1',
         'published' => '0',
-        'hash' => '12a17a2601f621bbe05ffa5c599ed6abed59a072',
+        'hash' => 'c8780f81274114f9f97771cd2e1428d2c39c2961',
     );
 
-    protected $xml1 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver1" db:docid="6" db:id="27" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6" db:id="28"><pg:page name="P6.1" db:id="29">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page><pg:page name="P6.2" db:id="31"/></pg:page></dpg:pages>';
-    protected $xml2 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="6" db:id="27" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6" db:id="28"><pg:page name="P6.1" db:id="29">bla bla blub <pg:page name="P6.1.2" db:id="30"/></pg:page><pg:page name="P6.2" db:id="31"/></pg:page></dpg:pages>';
+    protected $xml1 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver1" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
+    protected $xml2 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
 
     protected $ignoreAttributes = array(
         'db:id',
@@ -50,7 +50,7 @@ class DocumentHistoryTest extends DatabaseTestCase
             'child',
         ));
 
-        $this->doc = new DocumentTestClass($this->xmlDb, 6);
+        $this->doc = new DocumentTestClass($this->xmlDb, 3);
         $this->history = $this->doc->getHistory();
     }
     // }}}
@@ -128,11 +128,11 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->assertEquals($this->ver3, $this->history->getLatestVersion());
 
         $newXml = '<root/>';
-        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="6" db:id="27"/>';
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:id="4"/>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(6, true);
+        $timestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
         $latestVersion = $this->history->getLatestVersion();
@@ -153,7 +153,7 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetXmlNoIdAttr
     public function testGetXmlNoIdAttr()
     {
-        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="6" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home6"><pg:page name="P6.1">bla bla blub <pg:page name="P6.1.2"/></pg:page><pg:page name="P6.2"/></pg:page></dpg:pages>';
+        $expected = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="3" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3"><pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page><pg:page name="P3.2"/></pg:page></dpg:pages>';
 
         $doc = $this->history->getXml(strtotime('2016-02-03 16:02:00'), false);
 
@@ -181,11 +181,11 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(6, true);
+        $timestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
         $historyTable = $this->getConnection()->createQueryTable('xmldb_proj_test_history', 'SELECT * FROM xmldb_proj_test_history');
-        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:id="27" db:lastchangeUid=""></root>';
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:id="4" db:lastchangeUid=""></root>';
 
         $rows = $historyTable->getRowCount();
         $lastRowNumber = $rows - 1;
@@ -213,7 +213,7 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(1, true);
+        $timestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
@@ -227,7 +227,7 @@ class DocumentHistoryTest extends DatabaseTestCase
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
-        $timestamp = $this->history->save(6, false);
+        $timestamp = $this->history->save(42, false);
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
@@ -241,7 +241,7 @@ class DocumentHistoryTest extends DatabaseTestCase
         $beforeDate = $latestVersion['last_saved_at'];
 
         $this->setForeignKeyChecks(false);
-        $afterTimestamp = $this->history->save(6, true);
+        $afterTimestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
         $afterDate = date('Y-m-d H:i:s', $afterTimestamp);
