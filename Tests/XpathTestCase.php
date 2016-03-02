@@ -19,7 +19,7 @@ abstract class XpathTestCase extends DatabaseTestCase
             'root',
             'child',
         ));
-        $this->doc = new DocumentTestClass($this->xmldb, 6);
+        $this->doc = new DocumentTestClass($this->xmldb, 5);
     }
     // }}}
 

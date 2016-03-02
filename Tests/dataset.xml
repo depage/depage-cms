@@ -60,16 +60,6 @@
       <value>2016-02-03 16:09:05</value>
       <null/>
     </row>
-    <row>
-      <value>6</value>
-      <value>pages4</value>
-      <value>Depage\XmlDb\XmlDocTypes\Base</value>
-      <value>xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"</value>
-      <value></value>
-      <value>27</value>
-      <value>2016-02-03 16:09:05</value>
-      <null/>
-    </row>
   </table>
   <table name="xmldb_proj_test_xmlnodetypes"/>
   <table name="xmldb_proj_test_xmltree">
@@ -208,137 +198,137 @@
     </row>
     <row>
       <value>15</value>
-      <value>6</value>
+      <value>5</value>
       <null/>
-      <null/>
+      <value>0</value>
       <value>dpg:pages</value>
-      <value>db:name="" </value>
+      <value>name="" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>16</value>
-      <value>6</value>
+      <value>5</value>
       <value>15</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="Home6" multilang="true" file_type="html" </value>
+      <value>name="Home5" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>17</value>
-      <value>6</value>
+      <value>5</value>
       <value>16</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="P6.1" multilang="true" file_type="html" </value>
+      <value>name="P5.1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>18</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>0</value>
       <value>pg:page</value>
-      <value>name="P6.1.1" multilang="true" file_type="html" </value>
+      <value>name="P5.1.1" multilang="true" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>19</value>
-      <value>6</value>
+      <value>5</value>
       <value>18</value>
       <value>1</value>
       <value>pg:page</value>
-      <value>name="P6.1.2" multilang="false" file_type="html" </value>
+      <value>name="P5.1.2" multilang="false" file_type="html" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>20</value>
-      <value>6</value>
+      <value>5</value>
       <value>19</value>
       <value>0</value>
       <value>pg:folder</value>
-      <value>name="F6.1.2.1" </value>
+      <value>name="F5.1.2.1" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>21</value>
-      <value>6</value>
+      <value>5</value>
       <value>19</value>
       <value>2</value>
       <value>pg:page</value>
-      <value>name="P6.1.2.3" </value>
+      <value>name="P5.1.2.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>22</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>2</value>
       <value>pg:page</value>
-      <value>name="P6.1.3" </value>
+      <value>name="P5.1.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>23</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>3</value>
       <value>page</value>
-      <value>name="P6.1.4" </value>
+      <value>name="P5.1.4" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>24</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>4</value>
       <value>dpg:page</value>
-      <value>name="P6.1.5" </value>
+      <value>name="P5.1.5" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>25</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>5</value>
       <value>pg:folder</value>
-      <value>name="P6.1.6" </value>
+      <value>name="P5.1.6" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>26</value>
-      <value>6</value>
+      <value>5</value>
       <value>17</value>
       <value>6</value>
       <value>folder</value>
-      <value>name="P6.1.7" </value>
+      <value>name="P5.1.7" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>27</value>
-      <value>6</value>
+      <value>5</value>
       <value>16</value>
       <value>1</value>
       <value>pg:page</value>
-      <value>name="P6.2" </value>
+      <value>name="P5.2" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>28</value>
-      <value>6</value>
+      <value>5</value>
       <value>16</value>
       <value>2</value>
       <value>pg:folder</value>
-      <value>name="F6.3" </value>
+      <value>name="F5.3" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
       <value>29</value>
-      <value>6</value>
+      <value>5</value>
       <value>16</value>
       <value>5</value>
       <value>pg:folder</value>
-      <value>name="P6.5" </value>
+      <value>name="P5.5" </value>
       <value>ELEMENT_NODE</value>
     </row>
     <row>
@@ -370,7 +360,7 @@
     </row>
     <row>
       <value>33</value>
-      <value>6</value>
+      <value>5</value>
       <value>19</value>
       <value>1</value>
       <null/>
@@ -379,7 +369,7 @@
     </row>
     <row>
       <value>34</value>
-      <value>6</value>
+      <value>5</value>
       <value>21</value>
       <value>0</value>
       <null/>
@@ -388,7 +378,7 @@
     </row>
     <row>
       <value>35</value>
-      <value>6</value>
+      <value>5</value>
       <value>16</value>
       <value>3</value>
       <null/>
@@ -397,7 +387,7 @@
     </row>
     <row>
       <value>36</value>
-      <value>6</value>
+      <value>5</value>
       <value>29</value>
       <value>0</value>
       <null/>
