@@ -16,14 +16,14 @@ class XpathDocumentTest extends XpathTestCase
     // {{{ testAllWildCard
     public function testAllWildCard()
     {
-        $this->assertCorrectXpathIds(array(1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14), '//*');
+        $this->assertCorrectXpathIds(array(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29), '//*');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeValueLessThan
     public function testAllWildCardAndIdAttributeValueLessThan()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIds(array(1, 2), '//*[@db:id < \'6\']', false);
+        $this->assertCorrectXpathIds(array(15, 16), '//*[@db:id < \'17\']', false);
     }
     // }}}
 }
