@@ -50,7 +50,7 @@ abstract class XpathTestCase extends DatabaseTestCase
         sort($actualIds);
         $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
 
-        $this->assertSame($fallbackCalled, $this->xmldb->fallbackCall);
+        $this->assertSame($fallbackCalled, $this->xmldb->fallbackCall, "Failed asserting that DOMXPath query fallback was called $xpath");
     }
     // }}}
 
