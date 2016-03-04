@@ -250,6 +250,20 @@ abstract class XpathTestCase extends DatabaseTestCase
     }
     // }}}
 
+    // {{{ testAllWildCardPartial
+    public function testAllWildCardPartial()
+    {
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath >= 2.0
+        $this->assertCorrectXpathIds(array(17, 20, 25, 28, 29), '//*g:f*', false);
+    }
+    // }}}
+    // {{{ testAllWildCardNs
+    public function testAllWildCardNs()
+    {
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath <= 2.0
+        $this->assertCorrectXpathIds(array(17, 20, 25, 28, 29), '//*:folder', false);
+    }
+    // }}}
     // {{{ testAllWildCardAndIdAttributeValue
     public function testAllWildCardAndIdAttributeValue()
     {
@@ -260,7 +274,7 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllWildCardNsAndIdAttributeValue
     public function testAllWildCardNsAndIdAttributeValue()
     {
-        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath >= 2.0
         $this->assertCorrectXpathIds(array(16), '//*:page[@db:id = \'16\']', false);
     }
     // }}}
