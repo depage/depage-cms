@@ -152,12 +152,12 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSaveElementNodes
     public function testSaveElementNodes()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <child>
-                <child/>
-            </child>
-            <child/>
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<child>' .
+                '<child/>' .
+            '</child>' .
+            '<child/>' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -183,9 +183,9 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSaveElementNodesWithAttribute
     public function testSaveElementNodesWithAttribute()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <child attr="test"></child>
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<child attr="test"></child>' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -196,10 +196,10 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSaveElementNodesWithNamespaces
     public function testSaveElementNodesWithNamespaces()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <db:child attr="test"></db:child>
-            <child db:data="blub" />
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<db:child attr="test"></db:child>' .
+            '<child db:data="blub" />' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -210,9 +210,9 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSaveTextNodes
     public function testSaveTextNodes()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <child>bla</child>blub<b/><c/><child>bla</child>
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<child>bla</child>blub<b/><c/><child>bla</child>' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -223,9 +223,9 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSavePiNode
     public function testSavePiNode()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <?php echo("bla"); ?>
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<?php echo("bla"); ?>' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -236,9 +236,9 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testSaveCommentNode
     public function testSaveCommentNode()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">
-            <!-- comment -->
-        </root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<!-- comment -->' .
+        '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);
@@ -252,11 +252,11 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(5, $this->doc->unlinkNode(6));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -270,12 +270,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertFalse($this->doc->unlinkNode(6));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -288,12 +288,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->doc->addNode($doc, 6);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/><root><node/></root></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/><root><node/></root></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -309,12 +309,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertFalse($this->doc->addNode($doc, 6));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -327,16 +327,16 @@ class DocumentTest extends DatabaseTestCase
 
         $this->doc->addNodeByName('test', 8, 0);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">
-                    <root>
-                        <node>test</node>
-                    </root>
-                </pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">' .
+                    '<root>' .
+                        '<node>test</node>' .
+                    '</root>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -346,12 +346,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertFalse($this->doc->addNodeByName('test', 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -378,11 +378,11 @@ class DocumentTest extends DatabaseTestCase
 
         $this->doc->replaceNode($doc, 5);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="" db:id="4">
-            <root db:id="5">
-                <node db:id="6"/>
-            </root>
-        </dpg:pages>'; 
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="" db:id="4">' .
+            '<root db:id="5">' .
+                '<node db:id="6"/>' .
+            '</root>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
     }
@@ -409,15 +409,15 @@ class DocumentTest extends DatabaseTestCase
 
         $this->doc->saveNode($doc, 4);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-            <root>
-                <node/>
-            </root>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+            '<root>' .
+                '<node/>' .
+            '</root>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -431,14 +431,14 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, 37, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">
-                    <test/>
-                </pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">' .
+                    '<test/>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -451,12 +451,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, 37, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -469,14 +469,14 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, null, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">
-                    <test/>
-                </pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">' .
+                    '<test/>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -489,12 +489,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, null, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">test</pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">test</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -506,12 +506,12 @@ class DocumentTest extends DatabaseTestCase
         $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array('userId' => 42));
         $doc = new DocumentTestClass($xmlDb, 3);
 
-        $before = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $before = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlString($before, $doc->getXml(false));
 
@@ -520,12 +520,12 @@ class DocumentTest extends DatabaseTestCase
         $this->setForeignKeyChecks(true);
 
         $date = date('Y-m-d H:i:s', $timestamp);
-        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="' . $date . '" db:lastchangeUid="42">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="' . $date . '" db:lastchangeUid="42">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlString($after, $doc->getXml(false));
     }
@@ -536,12 +536,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->doc->moveNodeIn(6, 4);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.2"/>
-            </pg:page>
-            <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastChange($expected, $this->doc->getXml(false));
     }
@@ -551,12 +551,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->doc->moveNodeBefore(6, 5);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-            <pg:page name="Home3">
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -566,12 +566,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->doc->moveNodeAfter(6, 5);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.2"/>
-            </pg:page>
-            <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -581,12 +581,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->doc->moveNodeAfter(6, 5);
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.2"/>
-            </pg:page>
-            <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -597,14 +597,14 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(37, $this->doc->copyNode(7, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">
-                    <pg:page name="P3.1.2"/>
-                </pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">' .
+                    '<pg:page name="P3.1.2"/>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -618,12 +618,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertFalse($this->doc->copyNode(7, 8, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -633,14 +633,14 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(37, $this->doc->copyNodeIn(7, 8));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2">
-                    <pg:page name="P3.1.2"/>
-                </pg:page>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2">' .
+                    '<pg:page name="P3.1.2"/>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -650,13 +650,13 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(37, $this->doc->copyNodeBefore(7, 8));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.1.2"/>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.1.2"/>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -666,13 +666,13 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(37, $this->doc->copyNodeAfter(7, 8));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-                <pg:page name="P3.1.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+                '<pg:page name="P3.1.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -683,13 +683,13 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertEquals(37, $this->doc->duplicateNode(6));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.1"/>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.1"/>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -703,12 +703,12 @@ class DocumentTest extends DatabaseTestCase
 
         $this->assertFalse($this->doc->duplicateNode(5));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -731,12 +731,12 @@ class DocumentTest extends DatabaseTestCase
         $this->doc->setAttribute(5, 'textattr', 'new value');
         $this->doc->setAttribute(6, 'name', 'newName');
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3" textattr="new value">
-                <pg:page name="newName">bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3" textattr="new value">' .
+                '<pg:page name="newName">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
@@ -746,12 +746,12 @@ class DocumentTest extends DatabaseTestCase
     {
         $this->assertTrue($this->doc->removeAttribute(6, 'name'));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">
-            <pg:page name="Home3">
-                <pg:page>bla bla blub <pg:page name="P3.1.2"/></pg:page>
-                <pg:page name="P3.2"/>
-            </pg:page>
-        </dpg:pages>';
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page>bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
