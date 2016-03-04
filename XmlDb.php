@@ -485,7 +485,7 @@ class XmlDb implements XmlGetter
     protected function cleanOperator($operator)
     {
         $result = '';
-        $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'AND', 'or', 'OR');
+        $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'or');
 
         if (in_array($operator, $operators)) {
             $result = $operator;

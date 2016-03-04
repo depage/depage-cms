@@ -237,9 +237,7 @@ class XmlDbTest extends DatabaseTestCase
         $this->assertEquals('<=', $this->xmlDb->cleanOperator('<='));
         $this->assertEquals('>=', $this->xmlDb->cleanOperator('>='));
         $this->assertEquals('and', $this->xmlDb->cleanOperator('and'));
-        $this->assertEquals('AND', $this->xmlDb->cleanOperator('AND'));
         $this->assertEquals('or', $this->xmlDb->cleanOperator('or'));
-        $this->assertEquals('OR', $this->xmlDb->cleanOperator('OR'));
 
         $this->assertEquals('', $this->xmlDb->cleanOperator('\''));
     }
