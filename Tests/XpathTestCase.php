@@ -240,29 +240,16 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllNameAndPosition
     public function testAllNameAndPosition()
     {
-        $this->assertCorrectXpathIds(array(24), '//pg:page[5]');
+        $this->assertCorrectXpathIds(array(29), '//pg:folder[3]');
     }
     // }}}
     // {{{ testAllNameAndPositionMultiple
     public function testAllNameAndPositionMultiple()
     {
-        $this->assertCorrectXpathIds(array(16, 18, 21, 27), '//pg:page[1]');
+        $this->assertCorrectXpathIds(array(17, 20, 25), '//pg:folder[1]');
     }
     // }}}
 
-    // {{{ testAllWildCardNs
-    public function testAllWildCardNs()
-    {
-        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath => 2.0
-        $this->assertCorrectXpathIds(array(16, 18, 19, 21, 22, 24, 27), '//*:page', false);
-    }
-    // }}}
-    // {{{ testAllWildCardName
-    public function testAllWildCardName()
-    {
-        $this->assertCorrectXpathIds(array(16, 17, 18, 19, 20, 21, 22, 25, 27, 28, 29), '//pg:*');
-    }
-    // }}}
     // {{{ testAllWildCardAndIdAttributeValue
     public function testAllWildCardAndIdAttributeValue()
     {
@@ -295,13 +282,13 @@ abstract class XpathTestCase extends DatabaseTestCase
     // {{{ testAllLast
     public function testAllLast()
     {
-        $this->assertCorrectXpathIds(array(16, 21, 22, 27), '//pg:page[last()]', true, true);
+        $this->assertCorrectXpathIds(array(20, 25, 29), '//pg:folder[last()]', true, true);
     }
     // }}}
     // {{{ testArbitraryDescendants
     public function testArbitraryDescendants()
     {
-        $this->assertCorrectXpathIds(array(21, 27), '/dpg:pages//pg:page/pg:page', true, true);
+        $this->assertCorrectXpathIds(array(17, 20, 28, 29), '/dpg:pages//pg:page/pg:folder', true, true);
     }
     // }}}
 }
