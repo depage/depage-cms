@@ -411,7 +411,7 @@ class Document
      *
      * @param     $node_id (int) db-id of node to delete
      *
-     * @return    $deleted_ids (array) list of db-ids of deleted nodes
+     * @return    $deleted_ids (array) id of parent node
      */
     protected function unlinkNodeById($node_id)
     {
