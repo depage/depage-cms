@@ -576,23 +576,22 @@ class Html {
     // }}}
 
     // {{{ getEscapedUrl()
-    public static function getEscapedUrl($text, $limit = 100) {
+    public static function getEscapedUrl($text, $repl = "-", $limit = -1) {
         $origText = $text;
-
-        $text = trim($text);
+        $qRepl = preg_quote($repl);
 
         // transliterate
         $text = str_replace(array_keys(self::$substitutes), array_values(self::$substitutes), $text);
 
-        //$text = mb_ereg_replace('[^\d\w]+', '-', $text);
-        //$text = preg_replace('/[^0-9a-zA-Z]+/', '-', $text);
-        $text = preg_replace('/[^\p{L}\p{Nd}]+/u', "-", $text);
+        //$text = mb_ereg_replace('[^\d\w]+', $repl, $text);
+        //$text = preg_replace('/[^0-9a-zA-Z]+/', $repl, $text);
+        $text = preg_replace('/[^\p{L}\p{Nd}_\-\.' . $qRepl . ']+/u', $repl, $text);
 
         // replace double placeholders
-        $text = preg_replace('/(-){2,}/', '$1', $text);
+        $text = preg_replace("/($qRepl){2,}/", '$1', $text);
 
-        $text = trim($text, "-");
-        if (mb_strlen($text) > $limit) {
+        $text = trim($text, $repl);
+        if ($limit > 0 && mb_strlen($text) > $limit) {
             $title = mb_strcut($text, 0, $limit);
         }
 
