@@ -489,8 +489,6 @@ class Document
 
         if ($newNode) {
             $success = $this->addNode($newNode, $target_id, $target_pos);
-
-            $dth->onDocumentChange();
         }
 
         return $success;
