@@ -391,6 +391,8 @@ class Document
      */
     public function unlinkNode($node_id)
     {
+        $success = false;
+
         if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
             $this->updateLastchange();
 
@@ -398,10 +400,9 @@ class Document
 
             $dth = $this->getDoctypeHandler();
             $dth->onDocumentChange();
-
-            return $success;
         }
-        return false;
+
+        return $success;
     }
     // }}}
     // {{{ unlinkNodeById
@@ -460,16 +461,17 @@ class Document
      */
     public function addNode(\DomNode $node, $target_id, $target_pos = -1, $extras = array())
     {
+        $success = false;
         $dth = $this->getDoctypeHandler();
+
         if ($dth->isAllowedAdd($node, $target_id)) {
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
-            $success =  $this->saveNode($node, $target_id, $target_pos, true);
+            $success = $this->saveNode($node, $target_id, $target_pos, true);
 
             $dth->onDocumentChange();
-
-            return $success;
         }
-        return false;
+
+        return $success;
     }
     // }}}
     // {{{ addNodeByName
@@ -481,17 +483,17 @@ class Document
      */
     public function addNodeByName($name, $target_id, $target_pos)
     {
+        $success = false;
         $dth = $this->getDoctypeHandler();
-
         $newNode = $dth->getNewNodeFor($name);
+
         if ($newNode) {
             $success = $this->addNode($newNode, $target_id, $target_pos);
 
             $dth->onDocumentChange();
-
-            return $success;
         }
-        return false;
+
+        return $success;
     }
     // }}}
 
@@ -561,6 +563,7 @@ class Document
      */
     public function duplicateNode($node_id, $recursive = false)
     {
+        $success = false;
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
@@ -573,14 +576,13 @@ class Document
             $this->clearCache();
 
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
+            $success = $copy_id;
 
             $dth->onCopyNode($node_id, $copy_id);
             $dth->onDocumentChange();
-
-            return $copy_id;
         }
 
-        return false;
+        return $success;
     }
     // }}}
 
@@ -959,11 +961,7 @@ class Document
     {
         $attributes = $this->getAttributes($node_id);
 
-        if (isset($attributes[$attr_name])) {
-            return $attributes[$attr_name];
-        }
-
-        return false;
+        return (isset($attributes[$attr_name])) ? $attributes[$attr_name] : false;
     }
     // }}}
     // {{{ getAttributes
@@ -1074,10 +1072,7 @@ class Document
             'doc_id' => $this->doc_id,
         ));
 
-        if ($result = $query->fetchObject()) {
-            return $result->id_parent;
-        }
-        return false;
+        return ($result = $query->fetchObject()) ? $result->id_parent : false;
     }
     // }}}
     // {{{ getNodeId
@@ -1229,10 +1224,7 @@ class Document
             'doc_id' => $this->doc_id,
         ));
 
-        if ($result = $query->fetchObject()) {
-            return $result->name;
-        }
-        return false;
+        return ($result = $query->fetchObject()) ? $result->name : false;
     }
     // }}}
     // {{{ getChildnodesByParentId
@@ -1325,10 +1317,7 @@ class Document
             'doc_id' => $this->doc_id,
         ));
 
-        if ($result = $query->fetchObject()) {
-            return $result->pos;
-        }
-        return null;
+        return ($result = $query->fetchObject()) ? $result->pos : null;
     }
     // }}}
 
