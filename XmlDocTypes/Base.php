@@ -43,6 +43,8 @@ class Base
     // }}}
     // {{{ getNewNodeFor
     public function getNewNodeFor($name) {
+        $result = false;
+
         if (isset($this->availableNodes[$name])) {
             $nodeInfo = $this->availableNodes[$name];
             $docInfo = $this->document->getNamespacesAndEntities();
@@ -61,10 +63,10 @@ class Base
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
 
-            return $doc->documentElement;
+            $result = $doc->documentElement;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
