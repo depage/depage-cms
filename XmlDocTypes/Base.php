@@ -72,12 +72,15 @@ class Base
 
     // {{{ isAllowedIn
     public function isAllowedIn($nodeName, $targetNodeName) {
+        $result = false;
+
         if (isset($this->validParents['*'])) {
-            return in_array('*', $this->validParents['*']) || in_array($targetNodeName, $this->validParents['*']);
+            $result = in_array('*', $this->validParents['*']) || in_array($targetNodeName, $this->validParents['*']);
         } else if (isset($this->validParents[$nodeName])) {
-            return in_array('*', $this->validParents[$nodeName]) || in_array($targetNodeName, $this->validParents[$nodeName]);
+            $result = in_array('*', $this->validParents[$nodeName]) || in_array($targetNodeName, $this->validParents[$nodeName]);
         }
-        return false;
+
+        return $result;
     }
     // }}}
     // {{{ isAllowedMove

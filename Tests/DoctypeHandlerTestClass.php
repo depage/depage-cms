@@ -11,6 +11,11 @@ class DoctypeHandlerTestClass extends Base
     public $isAllowedMove = true;
     public $testDocument = false;
     public $availableNodes = array();
+    public $validParents = array(
+        '*' => array(
+            '*',
+        ),
+    );
 
     public function __construct($xmlDb, $document)
     {
@@ -42,7 +47,7 @@ class DoctypeHandlerTestClass extends Base
     {
         return ($this->isAllowedMove) ? parent::isAllowedMove($nodeId, $targetId) : false;
     }
-    public function testDocument()
+    public function testDocument($xml)
     {
         return $this->testDocument;
     }
