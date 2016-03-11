@@ -124,8 +124,9 @@ class DocumentTest extends DatabaseTestCase
         ));
         $doc = $xmlDb->getDoc(1);
 
-        // set up doc type handler, trigger save node
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'1\'');
+        // set up doc type handler, pretend the document changed, trigger save node
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'1\'');
+        $doc->getDoctypeHandler()->testDocument = true;
         $doc->getSubdocByNodeId(1);
 
         // saveNode triggers clearCache, check for cleared cache
@@ -265,7 +266,7 @@ class DocumentTest extends DatabaseTestCase
     public function testUnlinkNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'3\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
         $this->doc->getDoctypeHandler()->isAllowedUnlink = false;
 
         $this->assertFalse($this->doc->unlinkNode(6));
@@ -302,7 +303,7 @@ class DocumentTest extends DatabaseTestCase
     public function testAddNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'3\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
         $this->doc->getDoctypeHandler()->isAllowedAdd = false;
 
         $doc = $this->generateDomDocument('<root><node/></root>');
@@ -323,17 +324,15 @@ class DocumentTest extends DatabaseTestCase
     public function testAddNodeByName()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'3\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
 
-        $this->doc->addNodeByName('test', 8, 0);
+        $this->doc->addNodeByName('testNode', 8, 0);
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
                 '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
                 '<pg:page name="P3.2">' .
-                    '<root>' .
-                        '<node>test</node>' .
-                    '</root>' .
+                    '<testNode attr1="value1" attr2="value2" name="customNameAttribute"/>' .
                 '</pg:page>' .
             '</pg:page>' .
         '</dpg:pages>';
@@ -613,7 +612,7 @@ class DocumentTest extends DatabaseTestCase
     public function testCopyNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'3\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
         $this->doc->getDoctypeHandler()->isAllowedMove = false;
 
         $this->assertFalse($this->doc->copyNode(7, 8, 0));
@@ -698,7 +697,7 @@ class DocumentTest extends DatabaseTestCase
     public function testDuplicateNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\MockDoctypeHandler\' WHERE id=\'3\'');
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
         $this->doc->getDoctypeHandler()->isAllowedMove = false;
 
         $this->assertFalse($this->doc->duplicateNode(5));

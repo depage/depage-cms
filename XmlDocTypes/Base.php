@@ -140,7 +140,7 @@ class Base
         return true;
     }
     // }}}
-    // {{{ onDocumentChange()
+    // {{{ onDocumentChange
     /**
      * On Document Change
      *

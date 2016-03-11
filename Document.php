@@ -292,7 +292,7 @@ class Document
 
             $this->xmldb->endTransaction();
 
-            if ($changed = $dth->testDocument($xml_doc)) {
+            if ($dth->testDocument($xml_doc)) { // test whether the document was altered
                 $this->saveNode($xml_doc);
             }
 
@@ -1498,7 +1498,7 @@ class Document
      * @param    $target_id (int) db-id of parent node
      * @param    $target_pos (int) position to save node at
      * @param    $target_doc (int) doc-id of target document
-     * @param    $increase_pos (bool) wether to change positions in target nodes childlist
+     * @param    $increase_pos (bool) whether to change positions in target nodes childlist
      *
      * @return    $id (int) db-id under which node has been saved
      */
@@ -1645,7 +1645,7 @@ class Document
      * @param    $node (domxmlnode) current node
      * @param    $parent_index (int) index of parent node in created node list
      * @param    $pos (int) position of current node
-     * @param    $stripwhitespace (bool) wether to strip whitespace from textnodes
+     * @param    $stripwhitespace (bool) whether to strip whitespace from textnodes
      *            while saving
      */
     protected function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)

@@ -41,5 +41,4 @@ class DoctypeHandlerTest extends DatabaseTestCase
         $this->assertEquals($availableNodes, $this->dth->getAvailableNodes());
     }
     // }}}
-
 }
