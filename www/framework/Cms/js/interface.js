@@ -4,10 +4,11 @@
  * @require framework/shared/jquery-sortable.js
  *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
- * @require framework/shared/depage-jquery-plugins/depage-uploader.js
- * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
+ * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-live-help.js
+ * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
+ * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/Cms/js/xmldb.js
  *
  *
@@ -271,15 +272,27 @@ var depageCMS = (function() {
                     var $deleteButton = $("<a class=\"button delete\">Delete</a>");
 
                     $deleteButton.appendTo($form.find("p.submit"));
-                    $deleteButton.on("click", function() {
-                        var $input = $form.find("p.node-name");
+                    $deleteButton.depageShyDialogue({
+                        ok: {
+                            title: 'ok',
+                            classes: 'default',
+                            click: function(e) {
+                                var $input = $form.find("p.node-name");
 
-                        // @todo add dialog to ask if sure
-                        xmldb.deleteNode($input.data("nodeid"));
+                                // @todo add dialog to ask if sure
+                                xmldb.deleteNode($input.data("nodeid"));
 
-                        $container.remove();
+                                $container.remove();
 
-                        return false;
+                                return true;
+                            }
+                        },
+                        cancel: {
+                            title: 'cancel'
+                        }
+                    },{
+                        title: "delete",
+                        message : "delete now?"
                     });
                 }
             });
@@ -305,6 +318,8 @@ var depageCMS = (function() {
                 },
                 onDrop: function($item, container, _super, event) {
                     var $input = $item.find("p.node-name");
+
+                    console.log("onDrop", $input.data("nodeid"),  $input.data("parentid"), newPos);
 
                     xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
 

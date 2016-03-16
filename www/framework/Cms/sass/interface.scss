@@ -1,6 +1,7 @@
 @import "../../shared/depage-sass-mixins/_base";
 @import "../../HtmlForm/lib/sass/depage-forms";
 @import "../../shared/depage-jquery-plugins/sass/_depage-growl";
+@import "../../shared/depage-jquery-plugins/sass/_depage-shy-dialogue";
 
 @import "icons";
 
@@ -948,6 +949,39 @@ div.preview.zoom100 iframe {
     bottom: 0;
 }
 /* }}} */
+/* {{{ dialogs */
+.depage-shy-dialogue {
+    @include depage-shy-dialogue(
+        $width: 20em,
+        $padding: 10px,
+        $corner-radius: 10px
+    );
+    .direction-marker {
+        border: 1px solid;
+    }
+    .direction-marker.left {
+        background-image: url(../shy-dialogue/direction-left.png);
+        background-position: right center;
+    }
+    .direction-marker.right {
+        background-image: url(../shy-dialogue/direction-right.png);
+        background-position: left center;
+    }
+    .direction-marker.top {
+        background-image: url(../shy-dialogue/direction-top.png);
+        background-position: center bottom;
+    }
+    .direction-marker.bottom {
+        background-image: url(../shy-dialogue/direction-bottom.png);
+        background-position: center top;
+    }
+    h1,
+    p,
+    a {
+        font-size: 1em;
+    }
+}
+/* }}} */
 
 /* {{{ depage-scroller */
 .testbox {
@@ -1022,6 +1056,9 @@ div.preview.zoom100 iframe {
         input {
             margin-top: 24px;
             cursor: pointer;
+        }
+        input ~ a {
+            margin-left: 24px;
         }
     }
     p.submit {
@@ -1537,31 +1574,6 @@ progress {
     }
     .icon-preview:before {
         @include icon("help-preview", 0.665);
-    }
-}
-/* }}} */
-
-/* {{{ dlg */
-#dlg {
-    position: absolute;
-    padding: 10px;
-    top: 100px;
-    right: 50px;
-    line-height: 22px;
-
-    span {
-        display: inline-block;
-        position: relative;
-        width: 22px;
-    }
-    .question,
-    .yes,
-    .no {
-        display: block;
-        position: absolute;
-        top: -14px;
-        width: 22px;
-        height: 22px;
     }
 }
 /* }}} */
