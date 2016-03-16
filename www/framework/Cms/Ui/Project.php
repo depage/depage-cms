@@ -209,7 +209,12 @@ class Project extends Base
 
                 $form->clearSession(false);
 
-                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/" . $this->project->name . "/settings/{$type}/");
+                if ($type == "navigation") {
+                    $type = "tag";
+                }
+
+                // @todo add hash for the currently selected element
+                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/{$this->project->name}/settings/{$type}s/");
             }
         }
 
