@@ -434,6 +434,7 @@ class Project extends \Depage\Entity\Entity
         return "project/{$this->name}/preview/html/pre/{$languages[0]}";
     }
     // }}}
+
     // {{{ getLanguages()
     /**
      * @brief getLanguages
@@ -443,14 +444,20 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getLanguages()
     {
-        $languages = array();
-        $this->xmldb = $this->getXmlDb();
+        if ($languages = $this->cache->get("settings/languages.ser")) {
+            return $languages;
+        } else {
+            $languages = array();
+            $this->xmldb = $this->getXmlDb();
 
-        $settings = $this->xmldb->getDoc("settings");
-        $nodes = $settings->getNodeIdsByXpath("//proj:language");
-        foreach ($nodes as $nodeId) {
-            $attr = $settings->getAttributes($nodeId);
-            $languages[$attr['shortname']] = $attr['name'];
+            $settings = $this->xmldb->getDoc("settings");
+            $nodes = $settings->getNodeIdsByXpath("//proj:language");
+            foreach ($nodes as $nodeId) {
+                $attr = $settings->getAttributes($nodeId);
+                $languages[$attr['shortname']] = $attr['name'];
+            }
+
+            $this->cache->set("settings/languages.ser", $languages);
         }
 
         return $languages;
@@ -478,6 +485,7 @@ class Project extends \Depage\Entity\Entity
         return $targets;
     }
     // }}}
+
     // {{{ getHomeUrl()
     /**
      * @brief getHomeUrl

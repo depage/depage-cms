@@ -4,7 +4,7 @@ namespace Depage\Cms\XmlDocTypes;
 
 // TODO configure
 
-class Pages extends \Depage\XmlDb\XmlDocTypes\Base {
+class Pages extends Base {
     use Traits\UniqueNames;
 
     const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';

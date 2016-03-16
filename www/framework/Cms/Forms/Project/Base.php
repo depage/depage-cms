@@ -36,7 +36,7 @@ class Base extends \Depage\Cms\Forms\XmlForm
 
         parent::__construct($name, $params);
 
-        $this->jsAutosave = !$this->isNew();
+        //$this->jsAutosave = !$this->isNew();
     }
     // }}}
     // {{{ isNew()

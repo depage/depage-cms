@@ -166,9 +166,15 @@ class Import
      **/
     public function clearTransformCache()
     {
-        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, "html-pre");
-        $transformCache->clearAll();
+        $templates = ["html", "atom", "debug"];
+        $previewTypes = ["pre", "live"];
 
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, "$template-$type");
+                $transformCache->clearAll();
+            }
+        }
     }
     // }}}
     // {{{ getDocs()

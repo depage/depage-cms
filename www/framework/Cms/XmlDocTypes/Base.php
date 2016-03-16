@@ -2,10 +2,8 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Settings extends Base {
-    use Traits\MultipleLanguages;
-
-    // @todo clean cache after updating languages
+class Base extends \Depage\XmlDb\XmlDocTypes\Base
+{
     /**
      * @brief project
      **/
@@ -19,11 +17,6 @@ class Settings extends Base {
     }
     // }}}
 
-    // {{{ testDocument
-    public function testDocument($node) {
-        return $this->testNodeLanguages($node);
-    }
-    // }}}
     // {{{ onDocumentChange()
     /**
      * @brief onDocumentChange
@@ -35,20 +28,18 @@ class Settings extends Base {
     {
         parent::onDocumentChange();
 
-        $oldLanguages = $this->xmldb->cache->get("settings/languages.ser");
-        $this->xmldb->cache->delete("settings/*");
+        // @todo clear transform cache
+        $templates = ["html", "atom", "debug"];
+        $previewTypes = ["pre"];
 
-        $newLanguages = $this->project->getLanguages();
-
-        if ($oldLanguages != $newLanguages) {
-            // @todo clear page cache(s)
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->xmldb->pdo, $this->project->name, "$template-$type");
+                $transformCache->clearFor($this->document->getDocId());
+            }
         }
-
-        return true;
-
     }
     // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
-
