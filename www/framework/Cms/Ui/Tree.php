@@ -29,11 +29,13 @@ class Tree extends Base {
 
         if (!empty($this->urlSubArgs[0])) {
             $this->projectName = $this->urlSubArgs[0];
+
+            $this->project = $this->getProject($this->projectName);
         }
         if (!empty($this->urlSubArgs[1])) {
             //@todo throw error if urlSubArgs is not set or document does not exist
             $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-            $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache);
+            $this->xmldb = $this->project->getXmlDb();
 
             $this->docName = $this->urlSubArgs[1];
             $this->doc = $this->xmldb->getDoc($this->docName);
