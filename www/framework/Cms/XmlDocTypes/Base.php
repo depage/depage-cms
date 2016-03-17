@@ -30,7 +30,14 @@ class Base extends \Depage\XmlDb\XmlDocTypes\Base
 
         // @todo clear transform cache
         $templates = ["html", "atom", "debug"];
-        $previewTypes = ["pre"];
+        $previewTypes = ["pre", "live"];
+        $publishingTargets = $this->project->getPublishingTargets();
+
+        foreach ($publishingTargets as $id => $name) {
+            // @todo move this into history when live publishing uses history
+            array_push($previewTypes, "live-$id");
+        }
+
 
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {

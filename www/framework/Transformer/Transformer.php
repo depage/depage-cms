@@ -695,7 +695,7 @@ abstract class Transformer
      */
     public function __wakeup()
     {
-        $this->init();
+        $this->lateInitialize();
     }
     // }}}
 }
