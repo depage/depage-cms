@@ -556,10 +556,8 @@ class Project extends \Depage\Entity\Entity
         $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
         // get transformer
-        // @todo change preview type to live, when transformer is fixed
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $settings['template_set'] . "-live-" . $publishId);
         $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $settings['template_set'], $transformCache);
-        $cache = \Depage\Cache\Cache::factory("publish/$publishId");
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
@@ -568,27 +566,38 @@ class Project extends \Depage\Entity\Entity
             \$fs = \\Depage\\Fs\\Fs::factory(%s);
             \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
             \$transformer = %s;
-            \$cache = %s;
+            \$transformCache = %s;
         ", array(
             $settings['output_folder'],
             $publishPdo,
             $publishId,
             $transformer,
-            $cache,
+            $transformCache,
         ));
 
         $task->addSubtask("testing publish target", "\$publisher->testConnection();", array(), $initId);
         $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", array(), $initId);
 
+        // publish file library
+        foreach ($files as $file) {
+            $task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", array(
+                $projectPath . $file,
+                $file,
+            ), $initId);
+        }
+
         // transform pages
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
-                $task->addSubtask("transforming page $target", "
-                    \$cache->setFile(%s, \$transformer->transformUrl(%s, %s));", array(
-                        "page_$pageId-$lang",
+                $task->addSubtask("publishing $target", "
+                    \$publisher->publishString(
+                        \$transformer->transformUrl(%s, %s),
+                        %s
+                    );", array(
                         $url,
                         $lang,
+                        $target
                 ), $initId);
             }
         }
@@ -610,24 +619,6 @@ class Project extends \Depage\Entity\Entity
 
          */
 
-        // publish file library
-        foreach ($files as $file) {
-            $task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", array(
-                $projectPath . $file,
-                $file,
-            ), $initId);
-        }
-
-        // publish pages
-        foreach ($urls as $pageId => $url) {
-            foreach ($languages as $lang => $name) {
-                $target = $lang . $url;
-                $task->addSubtask("publishing page $target", "\$publisher->publishFile(\$cache->getPath(%s), %s);", array(
-                    "page_$pageId-$lang",
-                    $target,
-                ), $initId);
-            }
-        }
         /*
         // publish feeds
         foreach ($this->languages as $lang) {
