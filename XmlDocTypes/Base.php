@@ -134,7 +134,7 @@ class Base
      * @param $node_id
      * @return bool
      */
-    public function onDeleteNode($node_id){
+    public function onDeleteNode($node_id, $parent_id){
         return true;
     }
     // }}}
