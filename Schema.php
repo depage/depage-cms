@@ -42,6 +42,8 @@ class Schema
         foreach ($fileNames as $fileName) {
             $this->loadFile($fileName);
         }
+
+        return $this;
     }
     // }}}
     // {{{ loadFile
@@ -109,6 +111,8 @@ class Schema
             'statementBlock' => $statementBlock,
             'versions' => $versions
         );
+
+        return $this;
     }
     // }}}
     // {{{ dryRun
@@ -307,6 +311,8 @@ class Schema
     public function setReplace($replaceFunction)
     {
         $this->replaceFunction = $replaceFunction;
+
+        return $this;
     }
     // }}}
     // {{{ replace
