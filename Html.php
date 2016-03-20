@@ -290,7 +290,7 @@ class Html {
         }
     }
     // }}}
-    // {{{ include_js_get_dependecies()
+    // {{{ includeJsGetDependencies()
     /**
      * gets dependencies from filename
      */
