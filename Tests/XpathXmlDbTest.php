@@ -2,12 +2,14 @@
 
 namespace Depage\XmlDb\Tests;
 
-class XpathXmlDbTest extends XpathDocumentTest
+class XpathXmlDbTest extends XpathTestCase
 {
-    // {{{ getTestObject
-    protected function getTestObject()
+    // {{{ setUp
+    protected function setUp()
     {
-        return $this->xmldb;
+        parent::setUp();
+
+        $this->testObject = $this->xmldb;
     }
     // }}}
     // {{{ getNodeIdsByDomXpath
@@ -20,6 +22,26 @@ class XpathXmlDbTest extends XpathDocumentTest
         }
 
         return $ids;
+    }
+    // }}}
+
+    // {{{ testAllWildCard
+    public function testAllWildCard()
+    {
+        $this->assertCorrectXpathIds(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29), '//*');
+    }
+    // }}}
+    // {{{ testAllWildCardName
+    public function testAllWildCardName()
+    {
+        $this->assertCorrectXpathIds(array(5, 6, 7, 8, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 27, 28, 29), '//pg:*');
+    }
+    // }}}
+    // {{{ testAllWildCardAndIdAttributeValueLessThan
+    public function testAllWildCardAndIdAttributeValueLessThan()
+    {
+        // no domxpath, ids are subject to database domain
+        $this->assertCorrectXpathIds(array(1, 2, 3, 4, 5), '//*[@db:id < \'6\']', false);
     }
     // }}}
 }
