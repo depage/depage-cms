@@ -43,6 +43,8 @@ class Base
     // }}}
     // {{{ getNewNodeFor
     public function getNewNodeFor($name) {
+        $result = false;
+
         if (isset($this->availableNodes[$name])) {
             $nodeInfo = $this->availableNodes[$name];
             $docInfo = $this->document->getNamespacesAndEntities();
@@ -61,21 +63,24 @@ class Base
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
 
-            return $doc->documentElement;
+            $result = $doc->documentElement;
         }
 
-        return false;
+        return $result;
     }
     // }}}
 
     // {{{ isAllowedIn
     public function isAllowedIn($nodeName, $targetNodeName) {
+        $result = false;
+
         if (isset($this->validParents['*'])) {
-            return in_array('*', $this->validParents['*']) || in_array($targetNodeName, $this->validParents['*']);
+            $result = in_array('*', $this->validParents['*']) || in_array($targetNodeName, $this->validParents['*']);
         } else if (isset($this->validParents[$nodeName])) {
-            return in_array('*', $this->validParents[$nodeName]) || in_array($targetNodeName, $this->validParents[$nodeName]);
+            $result = in_array('*', $this->validParents[$nodeName]) || in_array($targetNodeName, $this->validParents[$nodeName]);
         }
-        return false;
+
+        return $result;
     }
     // }}}
     // {{{ isAllowedMove
@@ -140,6 +145,17 @@ class Base
     }
     // }}}
     // {{{ onDocumentChange()
+    /**
+     * On Document Change
+     *
+     * @return bool
+     */
+    public function onDocumentChange()
+    {
+        return true;
+    }
+    // }}}
+    // {{{ onDocumentChange
     /**
      * On Document Change
      *

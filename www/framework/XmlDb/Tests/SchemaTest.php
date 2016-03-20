@@ -1,6 +1,6 @@
 <?php
 
-class XmlDbSchemaTest extends Depage\XmlDb\Tests\DatabaseTestCase
+class SchemaTest extends Depage\XmlDb\Tests\DatabaseTestCase
 {
     // {{{ testUpdateSchema
     public function testUpdateSchema()
