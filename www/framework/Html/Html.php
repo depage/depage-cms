@@ -245,13 +245,13 @@ class Html {
         echo(DEPAGE_BASE);
     }
     // }}}
-    // {{{ include_js()
+    // {{{ includeJs()
     /**
      * includes javascript files into html
      */
-    public function include_js($name, $files = array(), $attr = "") {
+    public function includeJs($name, $files = array(), $attr = "") {
         // get file-dependencies that are required from javascript header
-        $files = $this->include_js_get_dependencies($files);
+        $files = $this->includeJsGetDependencies($files);
         $useCached = false;
 
         if ($this->param['env'] === "production") {
@@ -294,7 +294,7 @@ class Html {
     /**
      * gets dependencies from filename
      */
-    protected function include_js_get_dependencies($files = array()) {
+    protected function includeJsGetDependencies($files = array()) {
         $all_files = array();
         $max_test_lines = 10; // maximum lines to test without a match
 
@@ -309,7 +309,7 @@ class Html {
                             // add required files to included files
                             if (!in_array($matches[1], $all_files)) {
                                 // check for subdependecies
-                                $sub_files = $this->include_js_get_dependencies(array($matches[1]));
+                                $sub_files = $this->includeJsGetDependencies(array($matches[1]));
                                 $all_files = array_merge($all_files, $sub_files);
 
                                 $all_files[] = $matches[1];
@@ -335,11 +335,11 @@ class Html {
         return $all_files;
     }
     // }}}
-    // {{{ include_css()
+    // {{{ includeCss()
     /**
      * includes css files into html
      */
-    public function include_css($name, $files = array(), $for = "", $inline = false) {
+    public function includeCss($name, $files = array(), $for = "", $inline = false) {
         if ($for != "") {
             $media = "media=\"$for\"";
         } else {

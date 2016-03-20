@@ -1,0 +1,34 @@
+{
+    "name": "depage/html",
+    "description": "depage-html is a very simple template library.",
+    "version": "1.5.0-beta.1",
+    "type": "library",
+    "keywords": [
+        "html",
+        "templates"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Html\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-html",
+        "issues": "https://github.com/depage/depage-html/issues"
+
+    },
+    "time": "2015-09-07",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
