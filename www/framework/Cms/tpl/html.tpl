@@ -10,14 +10,14 @@
 
         <base href="<?php self::base(); ?>">
 
-        <?php $this->include_js("interface", array(
+        <?php $this->includeJs("interface", array(
             "framework/Cms/js/interface.js",
             "framework/shared/jquery.cookie.js",
             "framework/HtmlForm/lib/js/effect.js",
             //"framework/shared/jquery.hotkeys.js",
             //"framework/Cms/js/jstree.js",
         )); ?>
-        <?php $this->include_css("interface", array(
+        <?php $this->includeCss("interface", array(
             "framework/HtmlForm/lib/css/depage-forms.css",
             //"framework/Cms/css/jstree.css",
             "framework/Cms/css/interface.css",

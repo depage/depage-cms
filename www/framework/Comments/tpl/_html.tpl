@@ -12,11 +12,11 @@
         <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">-->
 
         <?php
-            $this->include_css("global", array(
+            $this->includeCss("global", array(
                 "framework/HtmlForm/lib/css/depage-forms.css",
             ));
 
-            $this->include_js("global", array(
+            $this->includeJs("global", array(
                 "framework/HtmlForm/lib/js/effect.js",
                 //"modules/screenpitch/lib/global/js/global.js",
             ), "defer");
