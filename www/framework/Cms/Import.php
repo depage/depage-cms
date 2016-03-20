@@ -83,10 +83,10 @@ class Import
 
         $this->getDocs();
 
+        $this->extractSettings();
         $this->extractNavigation();
         $this->extractTemplates();
         $this->extractNewnodes();
-        $this->extractSettings();
         $this->extractColorschemes();
 
         foreach($this->pageIds as $pageId) {
@@ -108,18 +108,11 @@ class Import
         $this->getDocs();
 
         // @todo update extractNavigtion not to be called twice here
+        $this->extractSettings();
         $this->extractNavigation();
 
-        // @todo add better serializability to import class
-        //"\$import = " . \Depage\Tasks\Task::escapeParam($this) . ";"
-        $initId = $task->addSubtask("init",
-            "\$pdo = %s;" .
-            "\$project = %s;" .
-            "\$import = \Depage\Cms\Import::factory(\$project, \$pdo);"
-        , array(
-            $this->pdo,
-            $this->project,
-        ));
+        $initId = $task->addSubtask("init", "\$import = %s;", array($this));
+
         $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", array(
             $xmlFile,
         ), $initId);
@@ -127,10 +120,10 @@ class Import
 
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", array(), $loadId);
 
+        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", array(), $getDocsId);
         $task->addSubtask("extract templates", "\$import->extractTemplates();", array(), $getDocsId);
         $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", array(), $getDocsId);
-        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
         $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
 
         foreach($this->pageIds as $pageId) {
@@ -270,7 +263,7 @@ class Import
         $dbref = $this->docNavigation->getAttribute($pageId, "db:ref");
 
         $xpathImport = new \DOMXPath($this->xmlImport);
-        $pagelist = $xpathImport->query("//*[@db:id = $dbref]");
+        $pagelist = $xpathImport->query("//*[@db:id = '$dbref']");
 
         // save pagedata
         if ($pagelist->length === 1) {
@@ -444,7 +437,6 @@ class Import
             $node = $this->xmlSettings->importNode($nodelist->item($i), true);
             $this->xmlSettings->appendChild($node);
         }
-
         $this->xmlSettings = $this->updateSettings($this->xmlSettings);
 
         $this->docSettings->save($this->xmlSettings);
@@ -590,23 +582,9 @@ class Import
         $xsltProc->importStylesheet($xslDom);
         $newXml = $xsltProc->transformToDoc($xmlData);
 
-        // @todo add test location for automated publishing test
+        $settingsXml = \Depage\Xml\Document::fromDomDocument($newXml);
 
-        /* /
-        echo("<pre>");
-        echo(htmlentities($newXml->saveXml()));
-        echo("</pre>");
-
-        $errors = libxml_get_errors();
-        foreach($errors as $error) {
-            var_dump($error);
-        }
-        $error = libxml_get_last_error();
-        var_dump($error);
-        die();
-        /* */
-
-        return $newXml;
+        return $settingsXml;
     }
     // }}}
 
@@ -682,6 +660,31 @@ class Import
         );
 
         return $replacements;
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'projectName',
+            'xsltPath',
+            'xmlPath',
+            'pdo',
+            'project',
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows Depage\Db\Pdo-object to be unserialized
+     */
+    public function __wakeup()
+    {
+        $this->xmldb = $this->project->getXmlDb();
     }
     // }}}
 }

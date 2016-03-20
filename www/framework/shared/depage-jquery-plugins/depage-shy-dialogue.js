@@ -71,7 +71,7 @@
          * @return void
          */
         base.bind = function(){
-            base.bind_el.bind('click.shy', function(e) {
+            base.options.bind_el.bind('click.shy', function(e) {
                 base.showDialogue(e.pageX, e.pageY);
                 return false;
             });

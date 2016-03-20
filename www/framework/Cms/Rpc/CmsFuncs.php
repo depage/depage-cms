@@ -480,7 +480,7 @@ class CmsFuncs {
         if ($xmldoc) {
             $savedId = $xmldoc->duplicateNode($nodeId, $treeType == "page_data" ||  $treeType == "colors");
             if (!empty($newName)) {
-                $xmldoc->setAttribute($savedId, "name", $newName);
+                //$xmldoc->setAttribute($savedId, "name", $newName);
             }
             $changedIds[] = $savedId;
         }

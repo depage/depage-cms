@@ -226,7 +226,7 @@ class Main extends Base {
         foreach ($tasks as $task) {
             if ($task) {
                 $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                $taskrunner->run($task->taskId);
+                //$taskrunner->run($task->taskId);
             }
         }
 

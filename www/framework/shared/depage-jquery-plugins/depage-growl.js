@@ -170,6 +170,7 @@
     base.defaultOptions = {
         message: "",
         icon: "",
+        backend: "auto",
         alwaysShowFallback: false,
         onClick: null,
         onError: null

@@ -421,7 +421,7 @@ class Document
 
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->onDeleteNode($node_id)) {
+        if ($dth->onDeleteNode($node_id, $target_id)) {
 
             // delete the node
             $query = $this->pdo->prepare(

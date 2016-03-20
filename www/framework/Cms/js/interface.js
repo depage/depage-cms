@@ -274,7 +274,7 @@ var depageCMS = (function() {
                     $deleteButton.appendTo($form.find("p.submit"));
                     $deleteButton.depageShyDialogue({
                         ok: {
-                            title: 'ok',
+                            title: 'delete',
                             classes: 'default',
                             click: function(e) {
                                 var $input = $form.find("p.node-name");

@@ -24,30 +24,6 @@ class Settings extends Base {
         return $this->testNodeLanguages($node);
     }
     // }}}
-    // {{{ onDocumentChange()
-    /**
-     * @brief onDocumentChange
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function onDocumentChange()
-    {
-        parent::onDocumentChange();
-
-        $oldLanguages = $this->xmldb->cache->get("settings/languages.ser");
-        $this->xmldb->cache->delete("settings/*");
-
-        $newLanguages = $this->project->getLanguages();
-
-        if ($oldLanguages != $newLanguages) {
-            // @todo clear page cache(s)
-        }
-
-        return true;
-
-    }
-    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -35,7 +35,7 @@
         <?php } ?>
         <!-- @todo add submenu for user -->
         <li><a <?php self::attr([
-                "href" => "user/$this->user->name",
+                "href" => "user/{$this->user->name}/",
                 "class" => "button icon-user",
                 "data-live-help" => _("Change user settings or logout"),
             ]); ?>><?php self::t($this->user->fullname); ?></a>

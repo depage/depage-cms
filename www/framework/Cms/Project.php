@@ -696,6 +696,19 @@ class Project extends \Depage\Entity\Entity
         }
     }
     // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array_merge(parent::__sleep(), array(
+            'pdo',
+            'cache',
+        ));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

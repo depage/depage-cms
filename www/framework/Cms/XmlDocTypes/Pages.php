@@ -168,7 +168,7 @@ class Pages extends Base {
 
     // {{{ testDocument
     public function testDocument($node) {
-        $changed = $this->testUniqueNames($node, "//pg:*");
+        $changed = $this->testUniqueNames($node, "//proj:pages_struct | //pg:*");
 
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->addUrlAttributes($node);
