@@ -227,6 +227,21 @@ abstract class Entity
         return $this;
     }
     // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'initialized',
+            'data',
+            'types',
+            'dirty',
+        );
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
