@@ -22,6 +22,7 @@
         base.$el.data("depage.liveFilter", base);
 
         var $items = null;
+        var $topItem = null;
         var keywords = [];
 
         // {{{ init()
@@ -40,7 +41,13 @@
             }
 
             // Put your initialization code here
-            var $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").insertBefore(base.$el);
+            var $container;
+
+            if (base.options.attachInputInside) {
+                $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").prependTo(base.$el);
+            } else {
+                $container = $("<div class=\"" + base.options.inputClass +  "\"></div>").insertBefore(base.$el);
+            }
             base.$input = $("<input type=\"search\" placeholder=\"" + base.options.placeholder + "\"" + extraAttr + ">").prependTo($container);
 
             if (base.options.autofocus) {
@@ -53,8 +60,14 @@
                     // clear filter on escape key
                     this.value = "";
                 } else if (key == 13) {
+                    if ($topItem !== null) {
                     // leave input on enter
                     this.blur();
+
+                        if (typeof base.options.onSelect == 'function') {
+                            base.options.onSelect($topItem);
+                }
+                    }
                 }
                 base.filterBy(this.value);
             });
@@ -81,6 +94,7 @@
         // {{{ filterBy
         base.filterBy = function(searchVal) {
             var values = searchVal.toLowerCase().split(" ");
+            $topItem = null;
 
             for (var i = 0; i < $items.length; i++) {
                 var found = true;
@@ -94,6 +108,10 @@
                 if (found) {
                     $item.show();
                     $item.trigger("depage.filter-shown", [$item]);
+
+                    if ($topItem == null) {
+                        $topItem = $item;
+                    }
                 } else {
                     $item.hide();
                     $item.trigger("depage.filter-hidden", [$item]);
@@ -110,6 +128,8 @@
     $.depage.liveFilter.defaultOptions = {
         inputClass: "depage-live-filter",
         placeholder: "Search",
+        attachInputInside: false,
+        onSelect: null,
         autofocus: false
     };
 
