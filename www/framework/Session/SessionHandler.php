@@ -115,9 +115,6 @@ class SessionHandler implements \SessionHandlerInterface
         if ($result) {
             return $result->sessionData;
         } else {
-            // not a valid sid available -> give the user a new sessionId
-            session_regenerate_id();
-
             return "";
         }
     }
