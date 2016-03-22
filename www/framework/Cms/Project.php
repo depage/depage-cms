@@ -444,7 +444,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getLanguages()
     {
-        if ($languages = $this->cache->get("settings/languages.ser")) {
+        if ($languages = $this->cache->get("dp_proj_{$this->name}_settings/languages.ser")) {
             return $languages;
         } else {
             $languages = array();
@@ -457,7 +457,7 @@ class Project extends \Depage\Entity\Entity
                 $languages[$attr['shortname']] = $attr['name'];
             }
 
-            $this->cache->set("settings/languages", $languages);
+            $this->cache->set("dp_proj_{$this->name}_settings/languages.ser", $languages);
         }
 
         return $languages;
