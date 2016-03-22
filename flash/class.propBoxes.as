@@ -1,4 +1,4 @@
-﻿/*
+/*
  *	Class PropBox
  *
  *	main PropertyClass
@@ -42,6 +42,8 @@ class_propBox.prototype.onLoad = function() {
 // }}}
 // {{{ onUnload()
 class_propBox.prototype.onUnload = function() {
+        this.saveIntervalTimeout.clear();
+
 	Stage.removeListener(this);
 };
 // }}}
@@ -96,6 +98,9 @@ class_propBox.prototype.onChanged = function() {
 			}
 		}
 	}
+
+        this.saveIntervalTimeout.clear();
+        this.saveIntervalTimeout = setTimeout(this.save, this, 500);
 };
 // }}}
 // {{{ onLeave()
