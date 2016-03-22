@@ -205,7 +205,7 @@ class HttpCookie extends Auth
     // }}}
     // {{{ hasSession()
     protected function hasSession() {
-        if (is_callable("session_status") && session_status() == PHP_SESSION_ACTIVE) {
+        if (is_callable("session_status") && session_status() == \PHP_SESSION_ACTIVE) {
             // PHP 5.4
             return true;
         } else {
@@ -216,7 +216,7 @@ class HttpCookie extends Auth
     // }}}
     // {{{ destroySession()
     protected function destroySession() {
-        if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
+        if (!is_callable("session_status") || session_status() == \PHP_SESSION_ACTIVE) {
             // delete cookie
             $params = session_get_cookie_params();
             setcookie(
