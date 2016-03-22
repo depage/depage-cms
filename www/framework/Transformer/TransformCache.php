@@ -83,7 +83,7 @@ class TransformCache
     {
         $cachePath = $this->getCachePathFor($docId, $subId);
 
-        return $this->cache->delete($cachePath, $content);
+        return $this->cache->delete($cachePath);
     }
     // }}}
     // {{{ clearFor()
