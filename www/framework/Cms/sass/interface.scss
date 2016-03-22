@@ -1,6 +1,8 @@
 @import "../../shared/depage-sass-mixins/_base";
 @import "../../HtmlForm/lib/sass/depage-forms";
 @import "../../shared/depage-jquery-plugins/sass/_depage-growl";
+@import "../../shared/depage-jquery-plugins/sass/_depage-shy-dialogue";
+@import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
 @import "icons";
 
@@ -16,7 +18,7 @@ $borderColor: #999999;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: (4 * $iconSize) (10 * $iconSize);
+    background-size: (4 * $iconSize) (20 * $iconSize);
 
     @if ($name != "") {
         @include icon($name, $scale);
@@ -24,14 +26,20 @@ $borderColor: #999999;
 
 }
 @mixin icon($name, $scale: 1) {
+    // @todo simplify by specifying size instead of scale
     $iconSize: 48px * $scale;
 
+    // @todo simplify with mixin or function
     @if ($name == "projects") {
         background-position: 0px 0px;
     } @else if ($name == "users") {
         background-position: 0 (-1 * $iconSize);
+    } @else if ($name == "user") {
+        background-position: (-1 * $iconSize) (-1 * $iconSize);
     } @else if ($name == "tasks") {
         background-position: 0 (-2 * $iconSize);
+    } @else if ($name == "settings") {
+        background-position: (-1 * $iconSize) (-2 * $iconSize);
 
     } @else if ($name == "left-full") {
         background-position: 0 (-3 * $iconSize);
@@ -56,16 +64,34 @@ $borderColor: #999999;
     } @else if ($name == "upload-drag-over") {
         background-position: (-1 * $iconSize) (-5 * $iconSize);
 
+    } @else if ($name == "add") {
+        background-position: 0 (-6 * $iconSize);
+    } @else if ($name == "remove") {
+        background-position: (-1 * $iconSize) (-6 * $iconSize);
+
+    } @else if ($name == "help") {
+        background-position: 0 (-7 * $iconSize);
+    } @else if ($name == "help-active") {
+        background-position: (-1 * $iconSize) (-7 * $iconSize);
+
+
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
-        //background-size: (2 * $iconSize) (10 * $iconSize);
     } @else if ($name == "open") {
         background-position: 0 (-9 * $iconSize);
+
+    } @else if ($name == "help-tree") {
+        background-position: 0 (-10 * $iconSize);
+    } @else if ($name == "help-properties") {
+        background-position: (-1 * $iconSize) (-10 * $iconSize);
+    } @else if ($name == "help-preview") {
+        background-position: (-2 * $iconSize) (-10 * $iconSize);
+
     } @else {
         background-position: 800px 800px;
     }
     @if ($scale != 1) {
-        background-size: (4 * $iconSize) (10 * $iconSize);
+        background-size: (4 * $iconSize) (20 * $iconSize);
     }
 
 }
@@ -348,7 +374,7 @@ select,
     margin: 0;
     border-bottom: 1px solid $borderColor;
     width: 100%;
-    z-index: 10000;
+    z-index: 10002;
 }
 .toolbar {
     height: 30px;
@@ -357,6 +383,7 @@ select,
         padding: 2px 8px;
         display: block;
         height: 100%;
+        text-align: left;
 
         &.right,
         &.preview,
@@ -369,14 +396,150 @@ select,
         }
         &.right {
             right: 0;
+
+            li menu {
+                right: 0;
+                left: auto;
+            }
         }
         &.preview {
             display: none;
         }
+        a {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.icon-user,
+            &.icon-help,
+            &.icon-projects,
+            &.icon-settings {
+                &:before {
+                    content: " ";
+                    display: inline-block;
+                    width: 24px;
+                    height: 24px;
+                    @include icon-base();
+                    margin-bottom: -8px;
+                    margin-left: -2px;
+                    margin-right: 6px;
+                }
+                @media screen and (max-width: 1200px) {
+                    width: 34px;
+
+                    &:before {
+                        margin-right: 20px;
+                    }
+                }
+            }
+            &.icon-user:before {
+                @include icon("user", 0.5);
+            }
+            &.icon-projects:before {
+                @include icon("projects", 0.5);
+            }
+            &.icon-settings:before {
+                @include icon("settings", 0.5);
+            }
+            &.icon-help {
+                width: 34px;
+
+                &:hover {
+                    background: none;
+                }
+            }
+            &.icon-help:before {
+                @include icon("help", 0.5);
+                margin-right: 20px;
+            }
+            &.icon-help.active:before,
+            &.icon-help:hover:before {
+                @include icon("help-active", 0.5);
+            }
+        }
+        > li > a {
+            max-width: 10em;
+        }
     }
-    ul,
     li {
-        display: inline;
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+
+        menu {
+            display: none;
+            position: absolute;
+            top: $toolbarHeight - 3px;
+            left: 0;
+            border: 1px solid $borderColor;
+            border-top: none;
+            height: auto;
+            z-index: 10002;
+            background-color: #eeeeee !important;
+            padding: 10px 0;
+            min-width: 200px;
+
+            li,
+            hr {
+                float: none;
+                clear: both;
+                display: block;
+                white-space: nowrap;
+            }
+            a {
+                clear: left;
+                float: left;
+                display: block;
+                width: 100%;
+                max-width: 100%;
+
+                .thumb {
+                    position: static;
+                    display: inline-block;
+                    width: 14px;
+                    height: 14px;
+                    margin-right: 2px;
+                    margin-bottom: -2px;
+                }
+            }
+            a.right {
+                clear: none;
+                float: right;
+                width: 34px;
+                margin-left: -100%;
+            }
+            a:hover {
+                background-color: #ffffff !important;
+            }
+            hr {
+                height: 20px;
+                border: none;
+            }
+            .depage-live-filter {
+                text-align: right;
+                padding-right: 0.2em;
+
+                input {
+                    border: none;
+                    font-size: 1em;
+                    padding: 0.2em 0.4em;
+                }
+            }
+
+        }
+    }
+    menu li.open {
+        &,
+        &:hover,
+        > a:hover {
+            background-color: #eeeeee !important;
+        }
+
+        menu {
+            display: block;
+            @include box-shadow(0 2px 0.2em 0 #aaaaaa);
+        }
     }
     h1,
     a,
@@ -449,7 +612,7 @@ select,
     }
     .layout-buttons a {
         $iconScale: 0.55;
-        @include icon-base;
+        @include icon-base();
         text-indent: -1000em;
         width: 2.4em;
 
@@ -588,7 +751,7 @@ html {
     }
 
     // layouts for media sizes
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1300px) {
         $currentEditWidth: $editWidth * 0.8;
 
         &.layout-right-full {
@@ -627,6 +790,9 @@ html {
             }
             #toolbarmain menu.preview {
                 left: $currentEditWidth;
+                margin-left: -180px;
+                width: 180px;
+                text-align: right;
             }
         }
     }
@@ -639,6 +805,37 @@ html {
         border: none;
         width: 100%;
         height: 100%;
+    }
+}
+.mock {
+    position: absolute;
+    z-index: -1;
+    //border: 1px solid;
+
+    &.tree-pages {
+        top: 36px;
+        bottom: 50%;
+        left: 36px;
+        width: 250px - 36px;
+    }
+    &.tree-page {
+        top: 53%;
+        bottom: 0;
+        left: 36px;
+        right: 75%;
+        width: 250px - 36px;
+    }
+    &.content-properties {
+        top: 36px;
+        bottom: 0;
+        left: 250px;
+        right: 0;
+    }
+    &.preview-button {
+        left: 0;
+        bottom: 10px;
+        height: 36px;
+        width: 36px;
     }
 }
 /* }}} */
@@ -828,6 +1025,9 @@ div.preview.zoom100 iframe {
             margin-top: 24px;
             cursor: pointer;
         }
+        input ~ a {
+            margin-left: 24px;
+        }
     }
     p.submit {
         input {
@@ -868,21 +1068,115 @@ div.preview.zoom100 iframe {
     }
 }
 /* }}} */
-/* {{{ sortable fieldset */
-.depage-form .sortable-fieldsets {
-    fieldset {
-        legend {
-            display: block;
+/* {{{ sortable forms */
+.sortable-forms {
+    $height: 26px;
+    margin-top: 15px;
+
+    .sortable {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        height: $height;
+        width: 75%;
+        margin-left: 25%;
+
+        &.new {
+            margin-top: 22px;
+            h1 {
+                padding-left: 2em;
+
+                &:before {
+                    display: block;
+                    content: " ";
+                    position: absolute;
+                    top: 0em;
+                    left: 0em;
+                    width: 2em;
+                    height: 2em;
+                    background-color: transparent;
+                    @include icon-base("add", 0.5);
+                }
+            }
         }
-        .content {
-            display: block;
+        &:target,
+        &.active {
+            h1 {
+                background-color: #ffffff;
+                font-weight: bold;
+                width: 34%;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+            form {
+                display: block;
+            }
         }
+        &.dragged {
+            position: absolute;
+            z-index: 10000;
+
+            h1 {
+                background: #ffffff;
+                font-weight: bold;
+            }
+            form {
+                display: none !important;
+            }
+        }
+        h1 {
+            position: relative;
+            position: relative;
+        }
+    }
+    .placeholder {
+        //border: 1px solid #ffffff;
+        height: $height;
+    }
+
+    h1,
+    form {
+        padding: 5px 10px;
+        background: #ffffff;
+    }
+    h1 {
+        position: absolute;
+        left: -33%;
+        top: 0;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        height: $height;
+        margin: 0;
+        float: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: none;
+        font-weight: normal;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    form {
+        display: none;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+    }
+    p.submit {
+        position: static;
+        float: none;
     }
 }
 /* }}} */
 /* {{{ details */
-dl.projectlist dt .opener,
-.sortable-fieldsets legend {
+dl.projectlist dt .opener {
     display: block;
     content: " ";
     float: left;
@@ -891,11 +1185,7 @@ dl.projectlist dt .opener,
     margin-top: 7px;
     @include icon-base("closed", 0.28);
 }
-.sortable-fieldsets legend {
-    text-indent: 16px;
-}
-dl.projectlist dt.active .opener,
-.sortable-fieldsets legend.active {
+dl.projectlist dt.active .opener {
     @include icon("open", 0.28);
 }
 /* }}} */
@@ -1103,6 +1393,13 @@ ul.users p {
     }
 }
 /* }}} */
+/* {{{ settings */
+.box-settings {
+    .content:before {
+        @include icon("settings");
+    }
+}
+/* }}} */
 /* {{{ upload */
 #upload {
     background: rgba(255, 255, 255, 0.5);
@@ -1201,6 +1498,48 @@ progress {
         &:focus {
             border: 1px solid #000000;
         }
+    }
+}
+/* }}} */
+/* {{{ live-help */
+.live-help-mock {
+    display: none;
+}
+
+#depage-live-help {
+    .area {
+        p:first-child {
+            font-weight: bold;
+        }
+    }
+    p {
+        line-height: 1.3em;
+    }
+    $iconSize: 32px;
+    .icon {
+        padding-left: $iconSize + 10px;
+        min-height: $iconSize + 10px;
+        min-width: $iconSize * 3;
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: $iconSize;
+            height: $iconSize;
+            @include icon-base();
+        }
+    }
+    .icon-tree:before {
+        @include icon("help-tree", 0.665);
+    }
+    .icon-properties:before {
+        @include icon("help-properties", 0.665);
+    }
+    .icon-preview:before {
+        @include icon("help-preview", 0.665);
     }
 }
 /* }}} */

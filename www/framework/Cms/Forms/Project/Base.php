@@ -23,34 +23,51 @@ class Base extends \Depage\Cms\Forms\XmlForm
     public function __construct($name, $params)
     {
         $this->project = $params['project'];
+        if (!empty($params['parentId'])) {
+            $this->parentId = $params['parentId'];
+        }
         $this->baseUrl = "project/{$this->project->name}/";
 
         $groups = array();
 
-        $params['cancelUrl'] = DEPAGE_BASE;
-        $params['cancelLabel'] = _("Cancel");
-
-        parent::__construct($name, $params);
-    }
-    // }}}
-    // {{{ getTabs()
-    /**
-     * @brief getTabs
-     *
-     * @return array tabs
-     **/
-    public static function getTabs()
-    {
-        $tabs = array(
-            "basic" => _("Project Settings"),
-            "tags" => _("Tags"),
-            "languages" => _("Languages"),
-            "variables" => _("Variables"),
-            "publish" => _("Publish"),
-            "import" => _("Import"),
+        $params['dataAttr'] = array(
+            "document" => "settings",
         );
 
-        return $tabs;
+        parent::__construct($name, $params);
+
+        $this->jsAutosave = !$this->isNew();
+    }
+    // }}}
+    // {{{ isNew()
+    /**
+     * @brief isNew
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isNew()
+    {
+        return isset($this->dataNode) && empty($this->dataNode->getAttribute("name"));
+
+    }
+    // }}}
+    // {{{ getFormTitle()
+    /**
+     * @brief getFormTitle
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function getFormTitle()
+    {
+        $title = "";
+
+        if (isset($this->dataNode)) {
+            $title = $this->dataNode->getAttribute("name");
+        }
+
+        return $title;
     }
     // }}}
     // {{{ __toString()
@@ -63,25 +80,23 @@ class Base extends \Depage\Cms\Forms\XmlForm
     public function __toString()
     {
         $html = "";
-        if ($this->project->id !== null) {
-            $tabs = self::getTabs();
-            $class = get_class($this);
-            $class = strtolower(substr($class, strrpos($class, "\\") + 1));
 
-            $html .= "<ul class=\"tabs\">";
-            foreach ($tabs as $id => $title) {
-                $className = "tab";
-
-                if ($id == $class) {
-                    $className .= " active";
-                }
-
-                $html .= "<li class=\"$className\"><a href=\"{$this->baseUrl}settings/$id/\">" . htmlentities($title) . "</a></li>";
+        if ($title = $this->getFormTitle()) {
+            if (empty($title)) {
+                $title = _("New Tag");
             }
-            $html .= "</ul>";
-        }
+            $class = "sortable";
+            if ($this->isNew()) {
+                $class .= " new";
+            }
 
-        $html .= parent::__toString();
+            $html .= "<div class=\"$class\">";
+            $html .= "<h1>" . htmlentities($title) . "</h1>";
+            $html .= parent::__toString();
+            $html .= "</div>";
+        } else {
+            $html .= parent::__toString();
+        }
 
         return $html;
     }

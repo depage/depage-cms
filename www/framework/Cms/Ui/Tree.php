@@ -9,6 +9,8 @@
  *
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  * @author    Ben Wallis
+ *
+ * @todo remove doc_id references -> implicit in url (docName)
  */
 
 namespace Depage\Cms\Ui;
@@ -27,12 +29,19 @@ class Tree extends Base {
 
         if (!empty($this->urlSubArgs[0])) {
             $this->projectName = $this->urlSubArgs[0];
+
+            $this->project = $this->getProject($this->projectName);
         }
         if (!empty($this->urlSubArgs[1])) {
+            //@todo throw error if urlSubArgs is not set or document does not exist
+            $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+            $this->xmldb = $this->project->getXmlDb();
+
             $this->docName = $this->urlSubArgs[1];
+            $this->doc = $this->xmldb->getDoc($this->docName);
+            $this->docInfo = $this->doc->getDocInfo();
+            $this->docId = $this->docInfo->id;
         }
-        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache);
     }
     // }}}
 
@@ -42,11 +51,9 @@ class Tree extends Base {
      *
      */
     public function __destruct() {
-        if (isset($_REQUEST["doc_id"])) {
-            $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], 0);
+        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
             $delta_updates->discardOldChanges();
         }
-    }
     // }}}
 
     // {{{ index
@@ -85,144 +92,123 @@ class Tree extends Base {
         $treeUrl = "project/{$this->projectName}/tree/";
         $actionUrl = "{$treeUrl}{$docName}/";
 
-        if($doc = $this->xmldb->getDoc($docName)) {
-
-            $doc_info = $doc->getDocInfo();
-
             $h = new Html("jstree.tpl", array(
                 'treeUrl' => $treeUrl,
                 'actionUrl' => $actionUrl,
-                'doc_id' => $doc_info->id,
-                'root_id' => $doc_info->rootid,
-                'seq_nr' => $this->get_current_seq_nr($doc_info->id),
+            'root_id' => $this->docInfo->rootid,
+            'seq_nr' => $this->get_current_seq_nr($this->docInfo->id),
                 'nodes' => $this->get_html_nodes($docName),
             ), $this->htmlOptions);
 
             return $h;
         }
-
-        return false;
-
-    }
     // }}}
 
-    // {{{ create_node
+    // {{{ createNode
     /**
-     * @param $doc_id document id
      * @param $node child node data
      * @param $position position for new child in parent
      */
-    public function create_node() {
+    public function createNode() {
         $status = false;
         $this->log->log($_REQUEST);
 
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $id = $doc->addNodeByName($type, $target_id, $position);
+        $id = $this->doc->addNodeByName($type, $target_id, $position);
             $status = $id !== false;
             if ($status) {
-                $this->recordChange($doc_id, array($target_id));
+            $this->recordChange($this->docId, array($target_id));
             }
-        }
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
 
-    // {{{ rename_node
+    // {{{ renameNode
     /**
      * Rename Node
      *
      * @return \json
      */
-    public function rename_node() {
+    public function renameNode() {
         $status = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $doc->setAttribute($id, "name", $name);
-            $parent_id = $doc->getParentIdById($id);
-            $this->recordChange($doc_id, array($parent_id));
+        $this->doc->setAttribute($id, "name", $name);
+        $parent_id = $this->doc->getParentIdById($id);
+        $this->recordChange($this->docId, array($parent_id));
             $status = true;
-        }
 
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
 
-    // {{{ move_node
+    // {{{ moveNode
     /**
      * Move Node
      *
      * @return \json
      */
-    public function move_node() {
+    public function moveNode() {
         $status = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
-        $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $position = filter_input(INPUT_POST, 'position', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $old_parent_id = $doc->getParentIdById($doc_id, $id);
-            $status = $this->xmldb->moveNode($id, $target_id, $position);
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $status = $this->doc->moveNode($id, $target_id, $position);
+
             if ($status) {
-                $this->recordChange($doc_id, array($old_parent_id, $target_id));
+            $this->recordChange($this->docId, array($old_parent_id, $target_id));
             }
-        }
+
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
 
-    // {{{ copy_node
+    // {{{ copyNode
     /**
      * Copy Node
      *
      * @return \json
      */
-    public function copy_node() {
+    public function copyNode() {
         $status = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $status = !! $doc->copyNode($id, $target_id, $position);
+        $status = !! $this->doc->copyNode($id, $target_id, $position);
 
             if ($status) {
-                $this->recordChange($doc_id, array($target_id, $status));
+            $this->recordChange($this->docId, array($target_id, $status));
             }
-        }
+
         return new \Depage\Json\Json(array("status" => $status, "id" => $status));
     }
     // }}}
 
-    // {{{ remove_node
+    // {{{ deleteNode
     /**
      * Remove Node
      *
      * @return \json
      */
-    public function remove_node() {
+    public function deleteNode() {
         $status = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $parent_id = $doc->getParentIdById($id);
-            $ids = $doc->unlinkNode($id);
+        $parent_id = $this->doc->getParentIdById($id);
+        $ids = $this->doc->unlinkNode($id);
             $status = count($ids) > 0;
             if ($status) {
-                $this->recordChange($doc_id, array($parent_id));
+            $this->recordChange($this->docId, array($parent_id));
             }
-        }
+
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
@@ -235,17 +221,15 @@ class Tree extends Base {
      */
     public function duplicate_node() {
         $status = false;
-        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $id = $doc->duplicateNode($id);
+        $id = $this->doc->duplicateNode($id);
 
             if ($status) {
-                $parent_id = $doc->getParentIdById($id);
-                $this->recordChange($doc_id, array($id, $parent_id));
+            $parent_id = $this->doc->getParentIdById($id);
+            $this->recordChange($this->docId, array($id, $parent_id));
             }
-        }
+
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
@@ -260,9 +244,8 @@ class Tree extends Base {
      */
     public function types_settings() {
         $settings = array();
-        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $permissions = $doc->getPermissions();
+
+        $permissions = $this->doc->getPermissions();
             $this->log->log($permissions);
             $settings = array(
                 "typesfromurl" => array(
@@ -272,35 +255,13 @@ class Tree extends Base {
                     "available_nodes" => $permissions->availableNodes
                 ),
             );
-        }
 
         return new \Depage\Json\Json($settings);
     }
     // }}}
 
-    // TODO: disable
-    // {{{ add_permissions
-    /**
-     * Add Permissions
-     *
-     * @param $doc_id
-     * @param $element
-     * @param $parent
-     */
-    public function add_permissions($doc_id, $element, $parent) {
-        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $permissions = $doc->getPermissions();
-            $permissions->allow_element_in($element, $parent);
-
-            $doc->set_permissions($permissions);
-        }
-        echo $permissions;
-    }
-    // }}}
-
     // {{{ save_version()
-    // $.post('http://localhost/depage-cms/project/depage/tree/pages/save-version', {'doc_id' : 1, 'published' : false}, function(response) { console.log(response); } );
+    // $.post('http://localhost/depage-cms/project/depage/tree/pages/save-version', {'published' : false}, function(response) { console.log(response); } );
     /**
      * save_version
      *
@@ -309,19 +270,17 @@ class Tree extends Base {
      * @return \json
      */
     public function save_version() {
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $published = filter_input(INPUT_POST, 'published', FILTER_SANITIZE_STRING);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $history = $doc->getHistory();
+        $history = $this->doc->getHistory();
             $timestamp = $history->save($this->auth_user->id, $published);
-        }
+
         return new \Depage\Json\Json(array("status" => !! $timestamp, "time" => $timestamp));
     }
     // }}}
 
     // {{{ get_versions()
-    // $.get('http://localhost/depage-cms/project/depage/tree/pages/get-versions', {'doc_id' : 1}, function(response) { console.log(response); } );
+    // $.get('http://localhost/depage-cms/project/depage/tree/pages/get-versions', function(response) { console.log(response); } );
     /**
      * save_version
      *
@@ -330,21 +289,17 @@ class Tree extends Base {
      * @return \json
      */
     public function get_versions() {
-        $doc_id = filter_input(INPUT_GET, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
-
         $versions = array();
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $history = $doc->getHistory();
+        $history = $this->doc->getHistory();
             $versions = $history->getVersions();
-        }
 
         return new \Depage\Json\Json(array("versions" => $versions));
     }
     // }}}
 
     // {{{ delete_version()
-    // $.post('http://localhost/depage-cms/project/depage/tree/pages/delete-version', {'doc_id' : 1, 'timestamp' : 1174930995}, function(response) { console.log(response); } );
+    // $.post('http://localhost/depage-cms/project/depage/tree/pages/delete-version', {'timestamp' : 1174930995}, function(response) { console.log(response); } );
     /**
      * delete_version
      *
@@ -354,20 +309,17 @@ class Tree extends Base {
      */
     public function delete_version() {
         $status = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $history = $doc->getHistory();
+        $history = $this->doc->getHistory();
             $status = $history->delete($timestamp);
-        }
 
         return new \Depage\Json\Json(array("status" => $status, "timestamp" => $timestamp));
     }
     // }}}
 
     // {{{ restore_version()
-    // $.post('http://localhost/depage-cms/project/depage/tree/pages/restore-version', {'doc_id' : 1, 'timestamp' : 1364490757}, function(response) { console.log(response); } );
+    // $.post('http://localhost/depage-cms/project/depage/tree/pages/restore-version', {'timestamp' : 1364490757}, function(response) { console.log(response); } );
     /**
      * restore_version
      *
@@ -377,14 +329,11 @@ class Tree extends Base {
      */
     public function restore_version() {
         $xml = false;
-        $doc_id = filter_input(INPUT_POST, 'doc_id', FILTER_SANITIZE_NUMBER_INT);
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
-        if ($doc = $this->xmldb->getDoc($doc_id)) {
-            $history = $doc->getHistory();
+        $history = $this->doc->getHistory();
             $xml_doc = $history->restore($timestamp);
             $xml = $xml_doc->saveXml();
-        }
 
         return new \Depage\Json\Json(array("status" => !! $xml, "timestamp" => $timestamp, "xml" => $xml));
     }
@@ -415,7 +364,7 @@ class Tree extends Base {
      * @return mixed
      */
     protected function get_html_nodes($doc_name) {
-        $doc = $this->xmldb->getDocXml($doc_name);
+        $doc = $this->doc->getXml($doc_name);
         $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc));
 
         return current($html);

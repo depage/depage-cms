@@ -1,10 +1,11 @@
 <?php
 
-namespace Depage\Cms\XmlDocTypes;
+namespace Depage\Cms\XmlDocTypes\Traits;
 
-abstract class UniqueNames extends \Depage\XmlDb\XmlDocTypes\Base {
-    // {{{ testDocument
-    public function testDocument($node) {
+trait UniqueNames
+{
+    // {{{ testUniqueNames
+    public function testUniqueNames($node, $xpathQuery = "//*") {
         $changed = false;
 
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
@@ -14,7 +15,7 @@ abstract class UniqueNames extends \Depage\XmlDb\XmlDocTypes\Base {
         $pages = $xpath->query("//pg:*");
 
         foreach ($pages as $page) {
-            $changed = $changed || $this->testChildNodeNames($page);
+            $changed = $this->testChildNodeNames($page) || $changed;
         }
 
         return $changed;

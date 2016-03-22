@@ -95,6 +95,45 @@ class Project extends \Depage\Entity\Entity
         return $projects;
     }
     // }}}
+    // {{{ loadByUser()
+    /**
+     * gets an array of user-objects
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     *
+     * @return      Array array of projects
+     */
+    static public function loadByUser($pdo, $cache, $user) {
+        if ($user->canEditAllProjects()) {
+            return self::loadAll($pdo, $cache);
+        } else {
+            $fields = implode(", ", self::getFields("projects"));
+
+            $query = $pdo->prepare(
+                "SELECT $fields, projectgroup.name as groupName
+                FROM
+                    {$pdo->prefix}_projects AS projects,
+                    {$pdo->prefix}_project_groups AS projectgroup,
+                    {$pdo->prefix}_project_auth AS projectauth
+                WHERE
+                    projects.groupId = projectgroup.id AND
+                    (projects.id = projectauth.projectId AND projectauth.userId = :userid)
+                ORDER BY
+                    projectgroup.pos ASC, fullname ASC
+
+                "
+            );
+
+            $projects = self::fetch($pdo, $cache, $query, [
+                'userid' => $user->id,
+            ]);
+
+            return $projects;
+        }
+    }
+    // }}}
     // {{{ loadByName()
     /**
      * gets an array of user-objects
@@ -395,6 +434,7 @@ class Project extends \Depage\Entity\Entity
         return "project/{$this->name}/preview/html/pre/{$languages[0]}";
     }
     // }}}
+
     // {{{ getLanguages()
     /**
      * @brief getLanguages
@@ -404,6 +444,9 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getLanguages()
     {
+        if ($languages = $this->cache->get("settings/languages.ser")) {
+            return $languages;
+        } else {
         $languages = array();
         $this->xmldb = $this->getXmlDb();
 
@@ -412,6 +455,9 @@ class Project extends \Depage\Entity\Entity
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
             $languages[$attr['shortname']] = $attr['name'];
+        }
+
+            $this->cache->set("settings/languages", $languages);
         }
 
         return $languages;
@@ -430,7 +476,7 @@ class Project extends \Depage\Entity\Entity
         $this->xmldb = $this->getXmlDb();
 
         $settings = $this->getSettingsDoc();
-        $nodes = $settings->getNodeIdsByXpath("//proj:publishTargets/proj:publishTarget");
+        $nodes = $settings->getNodeIdsByXpath("//proj:publishTarget");
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
             $targets[$nodeId] = $attr['name'];
@@ -439,6 +485,7 @@ class Project extends \Depage\Entity\Entity
         return $targets;
     }
     // }}}
+
     // {{{ getHomeUrl()
     /**
      * @brief getHomeUrl
@@ -655,6 +702,19 @@ class Project extends \Depage\Entity\Entity
         foreach ($files as $file) {
             unlink($file);
         }
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array_merge(parent::__sleep(), array(
+            'pdo',
+            'cache',
+        ));
     }
     // }}}
 }

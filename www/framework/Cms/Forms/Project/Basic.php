@@ -34,6 +34,19 @@ class Basic extends Base
         $this->populate($this->project);
     }
     // }}}
+    // {{{ isNew()
+    /**
+     * @brief isNew
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isNew()
+    {
+        return $this->project->id == null;
+
+    }
+    // }}}
     // {{{ addChildElements()
     /**
      * @brief addChildElements
