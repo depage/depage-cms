@@ -236,7 +236,7 @@ class Project extends Base
         $form->process();
 
         if ($form->validate()) {
-            $import = new \Depage\Cms\Import($this->project, $this->pdo);
+            $import = \Depage\Cms\Import::factory($this->project, $this->pdo);
 
             // @todo move cleaning back into import task (double pdo connection?)
             $import->cleanDocs();

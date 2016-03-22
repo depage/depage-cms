@@ -74,27 +74,29 @@ class MediaInfo
 
         $this->info = $this->getBasicInfo();
 
-        // add mimetype info
-        $this->info['mime'] = "application/octet-stream";
-
-        $finfo = new \finfo(\FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($this->filename);
-        if (is_string($mime) && !empty($mime)) {
-            $this->info['mime'] = $mime;
-        }
-
         if ($this->info['exists']) {
-            if ($this->hasImageExtension()) {
-                $this->getImageInfo();
-            } else if ($this->hasMediaExtension()) {
-                // we cache only mediainfo because only this takes a longer time
-                $identifier = $this->filename . ".ser";
-                if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['filemtime']) {
-                    $this->info = $this->cache->get($identifier);
-                } else {
-                    $this->getMediaInfo();
-                    if (!is_null($this->cache)) {
-                        $this->cache->set($identifier, $this->info);
+            // add mimetype info
+            $this->info['mime'] = "application/octet-stream";
+
+            $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($this->filename);
+            if (is_string($mime) && !empty($mime)) {
+                $this->info['mime'] = $mime;
+            }
+
+            if ($this->info['exists']) {
+                if ($this->hasImageExtension()) {
+                    $this->getImageInfo();
+                } else if ($this->hasMediaExtension()) {
+                    // we cache only mediainfo because only this takes a longer time
+                    $identifier = $this->filename . ".ser";
+                    if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['filemtime']) {
+                        $this->info = $this->cache->get($identifier);
+                    } else {
+                        $this->getMediaInfo();
+                        if (!is_null($this->cache)) {
+                            $this->cache->set($identifier, $this->info);
+                        }
                     }
                 }
             }
@@ -114,7 +116,9 @@ class MediaInfo
             $this->setFilename($filename);
         }
 
-        $info = array();
+        $info = array(
+            'exists' => false,
+        );
 
         if (file_exists($this->filename)) {
             $fileinfo = pathinfo($this->filename);

@@ -687,6 +687,85 @@ class Import
         $this->xmldb = $this->project->getXmlDb();
     }
     // }}}
+
+    // {{{ getTemplateReplacements()
+    /**
+     * @brief getTemplateReplacements
+     *
+     * @return void
+     **/
+    public function getTemplateReplacements()
+    {
+        // string replacement map
+        $replacements = array(
+            // general
+            "\t" => "    ",
+            "\n" => "\n    ",
+            "document('call:doctype/html/5')" => "'&lt;!DOCTYPE html&gt;&#xa;'",
+            "document('get:navigation')" => "\$navigation",
+            "document('get:colors')" => "\$colors",
+            "document('get:settings')" => "\$settings",
+            "document('get:languages')/proj:languages" => "\$languages",
+            "document('call:getversion')" => "\$depageVersion",
+            "document(concat('get:page/'," => "(dp:getpage(",
+            "document(concat('call:changesrc/'," => "(dp:changesrc(",
+            "document(concat('call:/changesrc/'," => "(dp:changesrc(",
+            "(dp:changesrc( edit:plain_source))/*" => "(dp:changesrc(edit:plain_source))",
+            "document(concat('call:urlencode/'," => "(dp:urlencode(",
+            "document(concat('call:replaceemailchars/'," => "(dp:replaceEmailChars(",
+            "document(concat('call:replaceEmailChars/'," => "(dp:replaceEmailChars(",
+            "<xsl:value-of select=\"(dp:replaceEmailChars( 'mailto:'," => "mailto: <xsl:value-of select=\"(dp:replaceEmailChars(",
+            "document(concat('call:atomizetext/'," => "(dp:atomizeText(",
+            "document(concat('call:phpescape/'," => "(dp:phpEscape(",
+            "document(concat('call:formatdate/'," => "(dp:formatDate(",
+            "href=\"get:xslt/" => "href=\"xslt://",
+            "pageref:/" => "pageref://",
+            "pageref:///" => "pageref://",
+            "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
+            "document(concat('call:fileinfo/'," => "(dp:fileinfo(",
+            "\$baseurl" => "\$baseUrl",
+            "<xsl:param name=\"baseurl\"" => "<xsl:param name=\"baseUrl\"",
+            "\$tt_lang" => "\$currentLang",
+            "\$content_type" => "\$currentContentType",
+            "\$content_encoding" => "\$currentEncoding",
+            "\$tt_actual_id" => "\$currentPageId",
+            "\$tt_actual_colorscheme" => "\$currentColorscheme",
+            "\$tt_multilang" => "\$currentPage/@multilang",
+            "\$depage_is_live" => "\$depageIsLive",
+            "\$tt_var_" => "\$var-",
+            "/pg:page/pg:page_data" => "/pg:page_data",
+            "/pg:page/@multilang" => "\$currentPage/@multilang",
+            "\"/pg:page\"" => "\"\$currentPage\"",
+            "\"/pg:page/" => "\"\$currentPage/",
+            "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
+
+            // project specific:
+            // @todo move these into the project folders because they are specific
+            //santa vendetta
+            "<xsl:for-each select=\"(dp:atomizeText( string(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)))/atomized/*\">\n                    <xsl:copy-of select="." /><xsl:text> </xsl:text>\n                </xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)\" disable-output-escaping=\"yes\" />",
+        );
+
+        return $replacements;
+    }
+    // }}}
+    // {{{ getTemplateReplacementRegexes()
+    /**
+     * @brief getTemplateReplacementRegexes
+     *
+     * @return void
+     **/
+    public function getTemplateReplacementRegexes()
+    {
+        // regex replacement map
+        $replacements = array(
+            "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
+            "/libref:[\/]{1,3}/i" => "libref://",
+            "/pageref:[\/]{1,3}/i" => "pageref://",
+        );
+
+        return $replacements;
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

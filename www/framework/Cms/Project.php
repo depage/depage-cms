@@ -312,7 +312,8 @@ class Project extends \Depage\Entity\Entity
         // schema for comments
         $files = array_merge(
             glob(__DIR__ . "/../Comments/Sql/*.sql"),
-            glob(__DIR__ . "/../Publisher/Sql/*.sql")
+            glob(__DIR__ . "/../Publisher/Sql/*.sql"),
+            glob(__DIR__ . "/../Transformer/Sql/*.sql")
         );
         sort($files);
         foreach ($files as $file) {
@@ -345,6 +346,17 @@ class Project extends \Depage\Entity\Entity
         }
 
         return $this->xmldb;
+    }
+    // }}}
+    // {{{ getPdo()
+    /**
+     * @brief getPdo
+     *
+     * @return xmldb
+     **/
+    public function getPdo()
+    {
+        return $this->pdo;
     }
     // }}}
 
@@ -641,6 +653,33 @@ class Project extends \Depage\Entity\Entity
         return $task;
     }
     // }}}
+
+    // {{{ generateSitemap()
+    /**
+     * @brief generateSitemap
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateSitemap()
+    {
+        $this->xmldb = $this->getXmlDb();
+
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "sitemap");
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $parameters = array(
+            "currentContentType" => "text/xml",
+            "currentEncoding" => "UTF-8",
+            "depageVersion" => \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => true,
+            "baseUrl" => "https://depage.net/",
+        );
+
+        $sitemap = $transformer->transform($xml, $parameters);
+        return $sitemap;
+    }
+    // }}}
     // {{{ generateCss()
     /**
      * @brief generateCss
@@ -662,7 +701,7 @@ class Project extends \Depage\Entity\Entity
             "currentContentType" => "text/css",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
-            "depageIsLive" => $this->isLive,
+            "depageIsLive" => true,
         );
         $cssPath = $this->getProjectPath() . "lib/global/css/";
 
