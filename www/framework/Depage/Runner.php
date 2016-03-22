@@ -259,7 +259,7 @@ class Runner {
         static $path;
 
         if (!isset($path)) {
-            $path = self::getDepagePath() . "/cache/";
+            $path = self::getDepagePath() . "cache/";
         }
 
         return $path;
