@@ -109,11 +109,8 @@ class Document
     public function getDoctypeHandler()
     {
         if (!isset($this->doctypeHandlers[$this->doc_id])) {
-            $className = "";
+            $className = $this->getDocInfo()->type;
 
-            if ($info = $this->getDocInfo()) {
-                $className = $info->type;
-            }
             if (empty($className)) {
                 $handler = new XmlDocTypes\Base($this->xmldb, $this);
             } else {
@@ -291,13 +288,13 @@ class Document
                 throw new Exceptions\XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
             $success = $xml_doc->loadXML($xml_str);
-            $docHandler = $this->getDoctypeHandler();
-
-            if ($changed = $docHandler->testDocument($xml_doc)) {
-                $this->saveNode($xml_doc);
-            }
+            $dth = $this->getDoctypeHandler();
 
             $this->xmldb->endTransaction();
+
+            if ($dth->testDocument($xml_doc)) { // test whether the document was altered
+                $this->saveNode($xml_doc);
+            }
 
             // add xml to xml-cache
             // TODO bug in cache caused by saving when level is 0
@@ -423,9 +420,9 @@ class Document
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id);
 
-        $docHandler = $this->getDoctypeHandler();
+        $dth = $this->getDoctypeHandler();
 
-        if ($docHandler->onDeleteNode($node_id, $target_id)) {
+        if ($dth->onDeleteNode($node_id, $target_id)) {
 
             // delete the node
             $query = $this->pdo->prepare(
