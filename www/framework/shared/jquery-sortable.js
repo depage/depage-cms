@@ -255,7 +255,7 @@
         this.itemContainer = itemContainer;
         if (this.item.is(this.options.exclude) || !this.options.onMousedown(this.item, groupDefaults.onMousedown, e)) {
             return;
-      }
+        }
         this.setPointer(e);
         this.toggleListeners('on');
         this.setupDelayTimer();

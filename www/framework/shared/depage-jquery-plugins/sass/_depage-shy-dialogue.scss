@@ -21,7 +21,7 @@
     border-#{$other}radius: $radius;
 }
 @mixin shadow (
-    $color: #333333, 
+    $color: #333333,
     $alpha: 0.5,
     $h: 0,
     $v: 0,

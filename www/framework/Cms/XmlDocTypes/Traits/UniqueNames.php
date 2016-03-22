@@ -11,8 +11,7 @@ trait UniqueNames
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXPath($xml);
-        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-        $pages = $xpath->query("//pg:*");
+        $pages = $xpath->query($xpathQuery);
 
         foreach ($pages as $page) {
             $changed = $this->testChildNodeNames($page) || $changed;
@@ -32,14 +31,14 @@ trait UniqueNames
         $names = array();
 
         foreach ($node->childNodes as $child) {
-            if ($child->nodeType == \XML_ELEMENT_NODE) {
+            if ($child->nodeType == \XML_ELEMENT_NODE && !empty($child->getAttribute("name"))) {
                 $nodeId = $child->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
                 $nodeName = $child->getAttribute("name");
                 $found = false;
 
                 while (in_array($nodeName, $names)) {
                     // @todo updated to take _("(copy)") into account when renaming
-                    preg_match('/([\D]*)([\d]*)/', $nodeName, $matches);
+                    preg_match('/^(.*?)([\\d]*)$/', $nodeName, $matches);
                     $baseName = $matches[1];
 
                     if ($matches[2] !== "") {

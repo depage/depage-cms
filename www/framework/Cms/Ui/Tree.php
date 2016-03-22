@@ -52,8 +52,8 @@ class Tree extends Base {
      */
     public function __destruct() {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
-            $delta_updates->discardOldChanges();
-        }
+        $delta_updates->discardOldChanges();
+    }
     // }}}
 
     // {{{ index
@@ -92,16 +92,16 @@ class Tree extends Base {
         $treeUrl = "project/{$this->projectName}/tree/";
         $actionUrl = "{$treeUrl}{$docName}/";
 
-            $h = new Html("jstree.tpl", array(
-                'treeUrl' => $treeUrl,
-                'actionUrl' => $actionUrl,
+        $h = new Html("jstree.tpl", array(
+            'treeUrl' => $treeUrl,
+            'actionUrl' => $actionUrl,
             'root_id' => $this->docInfo->rootid,
             'seq_nr' => $this->get_current_seq_nr($this->docInfo->id),
-                'nodes' => $this->get_html_nodes($docName),
-            ), $this->htmlOptions);
+            'nodes' => $this->get_html_nodes($docName),
+        ), $this->htmlOptions);
 
-            return $h;
-        }
+        return $h;
+    }
     // }}}
 
     // {{{ createNode
@@ -119,10 +119,11 @@ class Tree extends Base {
         $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
 
         $id = $this->doc->addNodeByName($type, $target_id, $position);
-            $status = $id !== false;
-            if ($status) {
+        $status = $id !== false;
+        if ($status) {
             $this->recordChange($this->docId, array($target_id));
-            }
+        }
+
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
@@ -141,7 +142,7 @@ class Tree extends Base {
         $this->doc->setAttribute($id, "name", $name);
         $parent_id = $this->doc->getParentIdById($id);
         $this->recordChange($this->docId, array($parent_id));
-            $status = true;
+        $status = true;
 
         return new \Depage\Json\Json(array("status" => $status));
     }
@@ -162,9 +163,9 @@ class Tree extends Base {
         $old_parent_id = $this->doc->getParentIdById($id);
         $status = $this->doc->moveNode($id, $target_id, $position);
 
-            if ($status) {
+        if ($status) {
             $this->recordChange($this->docId, array($old_parent_id, $target_id));
-            }
+        }
 
         return new \Depage\Json\Json(array("status" => $status));
     }
@@ -184,9 +185,9 @@ class Tree extends Base {
 
         $status = !! $this->doc->copyNode($id, $target_id, $position);
 
-            if ($status) {
+        if ($status) {
             $this->recordChange($this->docId, array($target_id, $status));
-            }
+        }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $status));
     }
@@ -204,10 +205,10 @@ class Tree extends Base {
 
         $parent_id = $this->doc->getParentIdById($id);
         $ids = $this->doc->unlinkNode($id);
-            $status = count($ids) > 0;
-            if ($status) {
+        $status = count($ids) > 0;
+        if ($status) {
             $this->recordChange($this->docId, array($parent_id));
-            }
+        }
 
         return new \Depage\Json\Json(array("status" => $status));
     }
@@ -225,10 +226,10 @@ class Tree extends Base {
 
         $id = $this->doc->duplicateNode($id);
 
-            if ($status) {
+        if ($status) {
             $parent_id = $this->doc->getParentIdById($id);
             $this->recordChange($this->docId, array($id, $parent_id));
-            }
+        }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
@@ -246,15 +247,15 @@ class Tree extends Base {
         $settings = array();
 
         $permissions = $this->doc->getPermissions();
-            $this->log->log($permissions);
-            $settings = array(
-                "typesfromurl" => array(
-                    "max_depth" => -2,
-                    "max_children" => -2,
-                    "valid_parents" => $permissions->validParents,
-                    "available_nodes" => $permissions->availableNodes
-                ),
-            );
+        $this->log->log($permissions);
+        $settings = array(
+            "typesfromurl" => array(
+                "max_depth" => -2,
+                "max_children" => -2,
+                "valid_parents" => $permissions->validParents,
+                "available_nodes" => $permissions->availableNodes
+            ),
+        );
 
         return new \Depage\Json\Json($settings);
     }
@@ -273,7 +274,7 @@ class Tree extends Base {
         $published = filter_input(INPUT_POST, 'published', FILTER_SANITIZE_STRING);
 
         $history = $this->doc->getHistory();
-            $timestamp = $history->save($this->auth_user->id, $published);
+        $timestamp = $history->save($this->auth_user->id, $published);
 
         return new \Depage\Json\Json(array("status" => !! $timestamp, "time" => $timestamp));
     }
@@ -292,7 +293,7 @@ class Tree extends Base {
         $versions = array();
 
         $history = $this->doc->getHistory();
-            $versions = $history->getVersions();
+        $versions = $history->getVersions();
 
         return new \Depage\Json\Json(array("versions" => $versions));
     }
@@ -312,7 +313,7 @@ class Tree extends Base {
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
         $history = $this->doc->getHistory();
-            $status = $history->delete($timestamp);
+        $status = $history->delete($timestamp);
 
         return new \Depage\Json\Json(array("status" => $status, "timestamp" => $timestamp));
     }
@@ -332,8 +333,8 @@ class Tree extends Base {
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
         $history = $this->doc->getHistory();
-            $xml_doc = $history->restore($timestamp);
-            $xml = $xml_doc->saveXml();
+        $xml_doc = $history->restore($timestamp);
+        $xml = $xml_doc->saveXml();
 
         return new \Depage\Json\Json(array("status" => !! $xml, "timestamp" => $timestamp, "xml" => $xml));
     }

@@ -61,12 +61,12 @@
                     this.value = "";
                 } else if (key == 13) {
                     if ($topItem !== null) {
-                    // leave input on enter
-                    this.blur();
+                        // leave input on enter
+                        this.blur();
 
                         if (typeof base.options.onSelect == 'function') {
                             base.options.onSelect($topItem);
-                }
+                        }
                     }
                 }
                 base.filterBy(this.value);

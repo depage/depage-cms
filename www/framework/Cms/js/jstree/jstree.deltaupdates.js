@@ -1,6 +1,6 @@
 /*
  * delta updates
- *   expects JSON strings from Server, mapping ids to html code 
+ *   expects JSON strings from Server, mapping ids to html code
  *   config params:
  *     url
  *     fallbackPollURL
@@ -57,7 +57,7 @@
                     operation : "createNode",
                     data : {
                         "doc_id" : tree.attr("data-doc-id"),
-                        "target_id" : parent.attr("id").replace("node_",""), 
+                        "target_id" : parent.attr("id").replace("node_",""),
                         "position" : data.rslt.position,
                         "node" : {
                             // TODO: include every .data(...) attribute
@@ -288,7 +288,7 @@
                 });
 
                 this.data.deltaupdates.pending_updates = [];
-            },        
+            },
             // }}}
             // {{{ _init_update_seq
             _init_update_seq : function () {

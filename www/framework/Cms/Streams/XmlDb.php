@@ -14,8 +14,9 @@ class XmlDb extends Base {
         $url = parse_url($path);
         $docName = $url['host'];
 
-        if (!empty($docName) && $this->xmldb->docExists($docName)) {
+        if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {
             $this->data = $this->xmldb->getDocXml($docName);
+            $this->transformer->addToUsedDocuments($docId);
 
             // proj:pages_struct
             if ($this->data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {

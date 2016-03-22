@@ -950,6 +950,39 @@ div.preview.zoom100 iframe {
     bottom: 0;
 }
 /* }}} */
+/* {{{ dialogs */
+.depage-shy-dialogue {
+    @include depage-shy-dialogue(
+        $width: 20em,
+        $padding: 10px,
+        $corner-radius: 10px
+    );
+    .direction-marker {
+        border: 1px solid;
+    }
+    .direction-marker.left {
+        background-image: url(../shy-dialogue/direction-left.png);
+        background-position: right center;
+    }
+    .direction-marker.right {
+        background-image: url(../shy-dialogue/direction-right.png);
+        background-position: left center;
+    }
+    .direction-marker.top {
+        background-image: url(../shy-dialogue/direction-top.png);
+        background-position: center bottom;
+    }
+    .direction-marker.bottom {
+        background-image: url(../shy-dialogue/direction-bottom.png);
+        background-position: center top;
+    }
+    h1,
+    p,
+    a {
+        font-size: 1em;
+    }
+}
+/* }}} */
 
 /* {{{ depage-scroller */
 .testbox {
@@ -1160,6 +1193,64 @@ div.preview.zoom100 iframe {
         &:hover {
             text-decoration: underline;
         }
+        &.dragged {
+            position: absolute;
+            z-index: 10000;
+
+            h1 {
+                background: #ffffff;
+                font-weight: bold;
+            }
+            form {
+                display: none !important;
+            }
+        }
+        h1 {
+            position: relative;
+            position: relative;
+        }
+    }
+    .placeholder {
+        //border: 1px solid #ffffff;
+        height: $height;
+    }
+
+    h1,
+    form {
+        padding: 5px 10px;
+        background: #ffffff;
+    }
+    h1 {
+        position: absolute;
+        left: -33%;
+        top: 0;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        height: $height;
+        margin: 0;
+        float: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: none;
+        font-weight: normal;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    form {
+        display: none;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+    }
+    p.submit {
+        position: static;
+        float: none;
     }
     form {
         display: none;
@@ -1544,27 +1635,42 @@ progress {
 }
 /* }}} */
 
-/* {{{ dlg */
-#dlg {
-    position: absolute;
-    padding: 10px;
-    top: 100px;
-    right: 50px;
-    line-height: 22px;
+@import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
-    span {
-        display: inline-block;
-        position: relative;
-        width: 22px;
+#depage-live-help {
+    .area {
+        p:first-child {
+            font-weight: bold;
+        }
     }
-    .question,
-    .yes,
-    .no {
-        display: block;
-        position: absolute;
-        top: -14px;
-        width: 22px;
-        height: 22px;
+    p {
+        line-height: 1.3em;
+    }
+    $iconSize: 32px;
+    .icon {
+        padding-left: $iconSize + 10px;
+        min-height: $iconSize + 10px;
+        min-width: $iconSize * 3;
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: $iconSize;
+            height: $iconSize;
+            @include icon-base();
+        }
+    }
+    .icon-tree:before {
+        @include icon("help-tree", 0.665);
+    }
+    .icon-properties:before {
+        @include icon("help-properties", 0.665);
+    }
+    .icon-preview:before {
+        @include icon("help-preview", 0.665);
     }
 }
 /* }}} */

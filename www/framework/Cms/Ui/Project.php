@@ -178,10 +178,10 @@ class Project extends Base
         foreach($nodeIds as $nodeId) {
             $xml = $settings->getSubdocByNodeId($nodeId);
             $form = new $formClass("edit-project-{$type}s-{$this->project->id}-{$nodeId}", array(
-            'project' => $this->project,
-            'dataNode' => $xml,
+                'project' => $this->project,
+                'dataNode' => $xml,
                 'parentId' => $parentId,
-        ));
+            ));
             array_push($forms, $form);
         }
 
@@ -197,24 +197,29 @@ class Project extends Base
         array_push($forms, $form);
 
         foreach ($forms as $form) {
-        $form->process();
+            $form->process();
 
             if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
+                $node = $form->getValuesXml();
                 if ($node->ownerDocument->documentElement->hasAttributeNS("http://cms.depagecms.net/ns/database", "lastchange")) {
-            $settings->saveNode($node);
+                    $settings->saveNode($node);
                 } else {
                     $settings->addNode($node, $parentId);
-        }
+                }
 
                 $form->clearSession(false);
 
-                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/" . $this->project->name . "/settings/{$type}/");
+                if ($type == "navigation") {
+                    $type = "tag";
+                }
+
+                // @todo add hash for the currently selected element
+                \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/{$this->project->name}/settings/{$type}s/");
+            }
         }
-    }
 
         return "<div class=\"sortable-forms\">" . implode($forms) . "</div>";
-        }
+    }
     // }}}
     // {{{ import()
     /**
@@ -236,8 +241,8 @@ class Project extends Base
             // @todo move cleaning back into import task (double pdo connection?)
             $import->cleanDocs();
 
-            $value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
-            return;
+            //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
+            //return;
 
             $task = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
 

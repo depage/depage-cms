@@ -97,7 +97,7 @@ class_propBox.prototype.onChanged = function() {
 				this._parent["propLine" + (this.num - 1)].onChanged();
 			}
 		}
-	}
+        }
 
         this.saveIntervalTimeout.clear();
         this.saveIntervalTimeout = setTimeout(this.save, this, 500);

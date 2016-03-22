@@ -78,7 +78,7 @@ class CmsUser extends \Depage\Auth\User
     public function canEditTemplates()
     {
         return $this->level <= 2;
-}
+    }
     // }}}
 }
 

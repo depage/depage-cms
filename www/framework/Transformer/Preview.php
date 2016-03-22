@@ -6,6 +6,16 @@ class Preview extends Transformer
 {
     protected $previewType = "pre";
 
+    // {{{ constructor()
+    public function __construct($xmlGetter, $projectName, $template, $transformCache = null)
+    {
+        $this->xmlGetter = $xmlGetter;
+        $this->projectName = $projectName;
+        $this->template = $template;
+        $this->transformCache = $transformCache;
+    }
+    // }}}
+
     // {{{ getXsltEntities()
     protected function getXsltEntities()
     {

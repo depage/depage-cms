@@ -77,7 +77,7 @@ abstract class Transformer
         $xslDOM = $this->getXsltTemplate($this->template);
 
         if ($this->profiling) {
-        $this->xsltProc->setProfiling('logs/xslt-profiling.txt');
+            $this->xsltProc->setProfiling('logs/xslt-profiling.txt');
         }
         $this->xsltProc->importStylesheet($xslDOM);
 
@@ -208,24 +208,24 @@ abstract class Transformer
                 $this->lateInitialize();
             }
 
-        $pageXml = $this->xmlGetter->getDocXml($pagedataId);
-        if ($pageXml === false) {
-            throw new \Exception("page does not exist");
-        }
+            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+            if ($pageXml === false) {
+                throw new \Exception("page does not exist");
+            }
 
             $this->clearUsedDocuments();
-        $content = $this->transform($pageXml, array(
-            "currentLang" => $this->lang,
-            "currentPageId" => $pageId,
-            "currentContentType" => "text/html",
-            "currentEncoding" => "UTF-8",
-            "depageVersion" => \Depage\Depage\Runner::getVersion(),
-            "depageIsLive" => $this->isLive,
-            "baseUrl" => $this->baseUrl,
-        ));
+            $content = $this->transform($pageXml, array(
+                "currentLang" => $this->lang,
+                "currentPageId" => $pageId,
+                "currentContentType" => "text/html",
+                "currentEncoding" => "UTF-8",
+                "depageVersion" => \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive,
+                "baseUrl" => $this->baseUrl,
+            ));
 
-        $cleaner = new \Depage\Html\Cleaner();
-        $content = $cleaner->clean($content);
+            $cleaner = new \Depage\Html\Cleaner();
+            $content = $cleaner->clean($content);
 
             if (!is_null($this->transformCache)) {
                 $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $this->lang);
@@ -695,7 +695,7 @@ abstract class Transformer
      */
     public function __wakeup()
     {
-        $this->init();
+        $this->lateInitialize();
     }
     // }}}
 }

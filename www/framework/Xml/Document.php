@@ -81,6 +81,23 @@ class Document extends \DOMDocument implements \Serializable
         return array($doc, $node);
     }
     // }}}
+    // {{{ fromDomDocument()
+    /**
+     * @brief fromDomDocument
+     *
+     * @param mixed
+     * @return void
+     **/
+    static public function fromDomDocument(\DOMDocument $dom)
+    {
+        $xml = new Document();
+        $rootNode = $dom->documentElement;
+        $rootNode = $xml->importNode($rootNode, true);
+        $xml->appendChild($rootNode);
+
+        return $xml;
+    }
+    // }}}
 
     // {{{ __toString()
     /**

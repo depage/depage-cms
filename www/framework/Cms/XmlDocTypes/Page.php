@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Page extends \Depage\XmlDb\XmlDocTypes\Base
+class Page extends Base
 {
     use Traits\MultipleLanguages;
 
@@ -122,6 +122,6 @@ class Page extends \Depage\XmlDb\XmlDocTypes\Base
         return $this->testNodeLanguages($node);
     }
     // }}}
-        }
+}
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

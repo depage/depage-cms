@@ -35,11 +35,32 @@ class Import
     protected $xsltPath;
     protected $xmlPath;
 
-    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n<!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities;\n]>\n<xsl:stylesheet\n    version=\"1.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n    xmlns:dp=\"http://cms.depagecms.net/ns/depage\"\n    xmlns:db=\"http://cms.depagecms.net/ns/database\"\n    xmlns:proj=\"http://cms.depagecms.net/ns/project\"\n    xmlns:pg=\"http://cms.depagecms.net/ns/page\"\n    xmlns:sec=\"http://cms.depagecms.net/ns/section\"\n    xmlns:edit=\"http://cms.depagecms.net/ns/edit\"\n    extension-element-prefixes=\"xsl db proj pg sec edit \">\n\n";
+    protected $xslHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE xsl:stylesheet [\n<!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities;\n]>\n<xsl:stylesheet\n    version=\"1.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n    xmlns:dp=\"http://cms.depagecms.net/ns/depage\"\n    xmlns:db=\"http://cms.depagecms.net/ns/database\"\n    xmlns:proj=\"http://cms.depagecms.net/ns/project\"\n    xmlns:pg=\"http://cms.depagecms.net/ns/page\"\n    xmlns:sec=\"http://cms.depagecms.net/ns/section\"\n    xmlns:edit=\"http://cms.depagecms.net/ns/edit\"\n    xmlns:exslt=\"http://exslt.org/common\"\n    extension-element-prefixes=\"xsl db proj pg sec edit exslt \">\n\n";
     protected $xslFooter = "\n    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->\n</xsl:stylesheet>";
     protected $xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<proj:newnode xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"proj sec edit \">\n";
     protected $xmlFooter = "\n    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->\n</proj:newnode>";
 
+    // {{{ factory()
+    /**
+     * @brief factory
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public static function factory($project, $pdo)
+    {
+        $classFile = "projects/" . $project->name . "/import/Import.php";
+        if (file_exists($classFile)) {
+            // import class from project directory
+            $class = "\\Depage\\Cms\\Import\\" . ucfirst($project->name);
+            require_once($classFile);
+
+            return new $class($project, $pdo);
+        } else {
+            return new \Depage\Cms\Import($project, $pdo);
+        }
+    }
+    // }}}
     // {{{ constructor
     public function __construct($project, $pdo)
     {
@@ -62,15 +83,17 @@ class Import
 
         $this->getDocs();
 
+        $this->extractSettings();
         $this->extractNavigation();
         $this->extractTemplates();
         $this->extractNewnodes();
-        $this->extractSettings();
         $this->extractColorschemes();
 
         foreach($this->pageIds as $pageId) {
             $this->extractPagedataForId($pageId);
         }
+
+        $this->clearTransformCache();
 
         return $this->xmlNavigation;
     }
@@ -85,18 +108,11 @@ class Import
         $this->getDocs();
 
         // @todo update extractNavigtion not to be called twice here
+        $this->extractSettings();
         $this->extractNavigation();
 
-        // @todo add better serializability to import class
-        //"\$import = " . \Depage\Tasks\Task::escapeParam($this) . ";"
-        $initId = $task->addSubtask("init",
-            "\$pdo = %s;" .
-            "\$project = %s;" .
-            "\$import = new \Depage\Cms\Import(\$project, \$pdo);"
-        , array(
-            $this->pdo,
-            $this->project,
-        ));
+        $initId = $task->addSubtask("init", "\$import = %s;", array($this));
+
         $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", array(
             $xmlFile,
         ), $initId);
@@ -104,15 +120,17 @@ class Import
 
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", array(), $loadId);
 
+        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
         $task->addSubtask("extract navigation", "\$import->extractNavigation();", array(), $getDocsId);
         $task->addSubtask("extract templates", "\$import->extractTemplates();", array(), $getDocsId);
         $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", array(), $getDocsId);
-        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
         $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
 
         foreach($this->pageIds as $pageId) {
             $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId(%s);", array($pageId), $getDocsId);
         }
+
+        $task->addSubtask("clear transform cache", "\$import->clearTransformCache();", array(), $getDocsId);
 
         return $task;
     }
@@ -131,6 +149,25 @@ class Import
     {
         $this->xmldb->clearTables();
         $this->xmldb->updateSchema();
+    }
+    // }}}
+    // {{{ clearTransformCache()
+    /**
+     * @brief clearTransformCache
+     *
+     * @return void
+     **/
+    public function clearTransformCache()
+    {
+        $templates = ["html", "atom", "debug"];
+        $previewTypes = ["pre", "live"];
+
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, "$template-$type");
+                $transformCache->clearAll();
+            }
+        }
     }
     // }}}
     // {{{ getDocs()
@@ -226,7 +263,7 @@ class Import
         $dbref = $this->docNavigation->getAttribute($pageId, "db:ref");
 
         $xpathImport = new \DOMXPath($this->xmlImport);
-        $pagelist = $xpathImport->query("//*[@db:id = $dbref]");
+        $pagelist = $xpathImport->query("//*[@db:id = '$dbref']");
 
         // save pagedata
         if ($pagelist->length === 1) {
@@ -303,65 +340,10 @@ class Import
                     }
                     $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
 
-                    // string replacement map
-                    $replacements = array(
-                        // general
-                        "\t" => "    ",
-                        "\n" => "\n    ",
-                        "document('call:doctype/html/5')" => "'&lt;!DOCTYPE html&gt;&#xa;'",
-                        "document('get:navigation')" => "\$navigation",
-                        "document('get:colors')" => "\$colors",
-                        "document('get:settings')" => "\$settings",
-                        "document('get:languages')/proj:languages" => "\$languages",
-                        "document('call:getversion')" => "\$depageVersion",
-                        "document(concat('get:page/'," => "(dp:getpage(",
-                        "document(concat('call:changesrc/'," => "(dp:changesrc(",
-                        "document(concat('call:/changesrc/'," => "(dp:changesrc(",
-                        "document(concat('call:urlencode/'," => "(dp:urlencode(",
-                        "document(concat('call:replaceemailchars/'," => "(dp:replaceEmailChars(",
-                        "document(concat('call:atomizetext/'," => "(dp:atomizeText(",
-                        "document(concat('call:phpescape/'," => "(dp:phpEscape(",
-                        "document(concat('call:formatdate/'," => "(dp:formatDate(",
-                        "href=\"get:xslt/" => "href=\"xslt://",
-                        "pageref:/" => "pageref://",
-                        "pageref:///" => "pageref://",
-                        "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
-                        "\$baseurl" => "\$baseUrl",
-                        "<xsl:param name=\"baseurl\"" => "<xsl:param name=\"baseUrl\"",
-                        "\$tt_lang" => "\$currentLang",
-                        "\$content_type" => "\$currentContentType",
-                        "\$content_encoding" => "\$currentEncoding",
-                        "\$tt_actual_id" => "\$currentPageId",
-                        "\$tt_actual_colorscheme" => "\$currentColorscheme",
-                        "\$tt_multilang" => "\$currentPage/@multilang",
-                        "\$depage_is_live" => "\$depageIsLive",
-                        "\$tt_var_" => "\$var-",
-                        "/pg:page/pg:page_data" => "/pg:page_data",
-                        "/pg:page/@multilang" => "\$currentPage/@multilang",
-                        "\"/pg:page\"" => "\"\$currentPage\"",
-                        "\"/pg:page/" => "\"\$currentPage/",
-                        "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
-
-                        // project specific:
-                        // @todo move these into the project folders because they are specific
-                        // roamantiozzo
-                        "<xsl:for-each select=\"(dp:atomizeText( string(\$headline1),' '))/atomized/*\"><xsl:copy-of select=\".\" /><xsl:text> </xsl:text></xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(string(\$headline1))\" disable-output-escaping=\"yes\" />",
-                        "<xsl:for-each select=\"(dp:atomizeText( string(\$headline2),' '))/atomized/*\"><xsl:copy-of select=\".\" /><xsl:text> </xsl:text></xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(string(\$headline1))\" disable-output-escaping=\"yes\" />",
-
-                        //santa vendetta
-                        "<xsl:for-each select=\"(dp:atomizeText( string(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)))/atomized/*\">\n                    <xsl:copy-of select="." /><xsl:text> </xsl:text>\n                </xsl:for-each>" => "<xsl:value-of select=\"dp:atomizeText(edit:text_singleline[@name = 'Productname' and @lang = \$currentLang]/@value)\" disable-output-escaping=\"yes\" />",
-
-                        // rlm trier
-
-                    );
+                    $replacements = $this->getTemplateReplacements();
                     $xsl = str_replace(array_keys($replacements), array_values($replacements), trim($dataNode->nodeValue));
 
-                    // regex replacement map
-                    $replacements = array(
-                        "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
-                        "/libref:[\/]{1,3}/i" => "libref://",
-                        "/pageref:[\/]{1,3}/i" => "pageref://",
-                    );
+                    $replacements = $this->getTemplateReplacementRegexes();
                     foreach ($replacements as $pattern => $replacement) {
                         $xsl = preg_replace($pattern, $replacement, $xsl);
                     }
@@ -455,7 +437,6 @@ class Import
             $node = $this->xmlSettings->importNode($nodelist->item($i), true);
             $this->xmlSettings->appendChild($node);
         }
-
         $this->xmlSettings = $this->updateSettings($this->xmlSettings);
 
         $this->docSettings->save($this->xmlSettings);
@@ -580,7 +561,7 @@ class Import
             "\$tt_lang" => "\$currentLang",
         );
 
-        // test all images with a forced with or height
+        // test all source elements
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
             $text = $nodelist->item($i)->data;
             $text = str_replace(array_keys($replacements), array_values($replacements), $text);
@@ -601,21 +582,109 @@ class Import
         $xsltProc->importStylesheet($xslDom);
         $newXml = $xsltProc->transformToDoc($xmlData);
 
-        /* /
-        echo("<pre>");
-        echo(htmlentities($newXml->saveXml()));
-        echo("</pre>");
+        $settingsXml = \Depage\Xml\Document::fromDomDocument($newXml);
 
-        $errors = libxml_get_errors();
-        foreach($errors as $error) {
-            var_dump($error);
-        }
-        $error = libxml_get_last_error();
-        var_dump($error);
-        die();
-        /* */
+        return $settingsXml;
+    }
+    // }}}
 
-        return $newXml;
+    // {{{ getTemplateReplacements()
+    /**
+     * @brief getTemplateReplacements
+     *
+     * @return void
+     **/
+    public function getTemplateReplacements()
+    {
+        // string replacement map
+        $replacements = array(
+            // general
+            "\t" => "    ",
+            "\n" => "\n    ",
+            "document('call:doctype/html/5')" => "'&lt;!DOCTYPE html&gt;&#xa;'",
+            "document('get:navigation')" => "\$navigation",
+            "document('get:colors')" => "\$colors",
+            "document('get:settings')" => "\$settings",
+            "document('get:languages')/proj:languages" => "\$languages",
+            "document('call:getversion')" => "\$depageVersion",
+            "document(concat('get:page/'," => "(dp:getpage(",
+            "document(concat('call:changesrc/'," => "(dp:changesrc(",
+            "document(concat('call:/changesrc/'," => "(dp:changesrc(",
+            "(dp:changesrc( edit:plain_source))/*" => "(dp:changesrc(edit:plain_source))",
+            "document(concat('call:urlencode/'," => "(dp:urlencode(",
+            "document(concat('call:replaceemailchars/'," => "(dp:replaceEmailChars(",
+            "document(concat('call:replaceEmailChars/'," => "(dp:replaceEmailChars(",
+            "<xsl:value-of select=\"(dp:replaceEmailChars( 'mailto:'," => "mailto: <xsl:value-of select=\"(dp:replaceEmailChars(",
+            "document(concat('call:atomizetext/'," => "(dp:atomizeText(",
+            "document(concat('call:phpescape/'," => "(dp:phpEscape(",
+            "document(concat('call:formatdate/'," => "(dp:formatDate(",
+            "href=\"get:xslt/" => "href=\"xslt://",
+            "pageref:/" => "pageref://",
+            "pageref:///" => "pageref://",
+            "document(concat('call://fileinfo/libref:" => "dp:fileinfo(concat('libref:",
+            "document(concat('call:fileinfo/'," => "(dp:fileinfo(",
+            "\$baseurl" => "\$baseUrl",
+            "<xsl:param name=\"baseurl\"" => "<xsl:param name=\"baseUrl\"",
+            "\$tt_lang" => "\$currentLang",
+            "\$content_type" => "\$currentContentType",
+            "\$content_encoding" => "\$currentEncoding",
+            "\$tt_actual_id" => "\$currentPageId",
+            "\$tt_actual_colorscheme" => "\$currentColorscheme",
+            "\$tt_multilang" => "\$currentPage/@multilang",
+            "\$depage_is_live" => "\$depageIsLive",
+            "\$tt_var_" => "\$var-",
+            "/pg:page/pg:page_data" => "/pg:page_data",
+            "/pg:page/@multilang" => "\$currentPage/@multilang",
+            "\"/pg:page\"" => "\"\$currentPage\"",
+            "\"/pg:page/" => "\"\$currentPage/",
+            "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
+            "nav_tag_" => "tag_",
+        );
+
+        return $replacements;
+    }
+    // }}}
+    // {{{ getTemplateReplacementRegexes()
+    /**
+     * @brief getTemplateReplacementRegexes
+     *
+     * @return void
+     **/
+    public function getTemplateReplacementRegexes()
+    {
+        // regex replacement map
+        $replacements = array(
+            "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
+            "/libref:[\/]{1,3}/i" => "libref://",
+            "/pageref:[\/]{1,3}/i" => "pageref://",
+        );
+
+        return $replacements;
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'projectName',
+            'xsltPath',
+            'xmlPath',
+            'pdo',
+            'project',
+        );
+    }
+    // }}}
+    // {{{ __wakeup()
+    /**
+     * allows Depage\Db\Pdo-object to be unserialized
+     */
+    public function __wakeup()
+    {
+        $this->xmldb = $this->project->getXmlDb();
     }
     // }}}
 }

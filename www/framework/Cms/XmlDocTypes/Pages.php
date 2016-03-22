@@ -3,9 +3,11 @@
 namespace Depage\Cms\XmlDocTypes;
 
 // TODO configure
-define('XML_TEMPLATE_DIR', __DIR__ . '/XmlTemplates/');
 
-class Pages extends UniqueNames {
+class Pages extends Base {
+    use Traits\UniqueNames;
+
+    const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';
 
     // {{{ constructor
     public function __construct($xmldb, $document) {
@@ -166,7 +168,7 @@ class Pages extends UniqueNames {
 
     // {{{ testDocument
     public function testDocument($node) {
-        $changed = parent::testDocument($node);
+        $changed = $this->testUniqueNames($node, "//proj:pages_struct | //pg:*");
 
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->addUrlAttributes($node);
@@ -184,7 +186,7 @@ class Pages extends UniqueNames {
      */
     private function loadXmlTemplate($template) {
         $doc = new \DOMDocument();
-        $doc->load(XML_TEMPLATE_DIR . $template);
+        $doc->load(self::XML_TEMPLATE_DIR . $template);
         return $doc;
     }
     // }}}
