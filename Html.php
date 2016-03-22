@@ -478,7 +478,7 @@ class Html {
     {
         if (is_array($name)) {
             foreach($name as $attr => $value) {
-        if (!empty($value)) {
+                if (!empty($value)) {
                     echo(" $attr=\"");
                     echo(trim(htmlspecialchars($value)));
                     echo("\"");
