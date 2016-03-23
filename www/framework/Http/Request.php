@@ -16,6 +16,7 @@ class Request {
     protected $postData = array();
     protected $headers = array();
     protected $cookie = "";
+    protected $password = "";
     public $allowUnsafeSSL = false;
 
     // {{{ __construct()
@@ -24,18 +25,23 @@ class Request {
      *
      * @param $options (array) image processing parameters
      **/
-    public function __construct($url) {
+    public function __construct($url = "") {
         $this->url = $url;
     }
     // }}}
+
     // {{{ setUrl()
     public function setUrl($url) {
         $this->url = $url;
+
+        return $this;
     }
     // }}}
     // {{{ setPostData()
     public function setPostData($postData) {
         $this->postData = $postData;
+
+        return $this;
     }
     // }}}
     // {{{ setCookie()
@@ -51,11 +57,22 @@ class Request {
         } else {
             $this->cookie = $cookie;
         }
+
+        return $this;
     }
     // }}}
     // {{{ setHeader()
     public function setHeaders($headers) {
         $this->headers = $headers;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setPassword()
+    public function setPassword($password) {
+        $this->password = $password;
+
+        return $this;
     }
     // }}}
     // {{{ execute()
@@ -75,10 +92,18 @@ class Request {
         if (!empty($this->cookie)) {
             curl_setopt($ch, CURLOPT_COOKIE, $this->cookie);
         }
-        if (count($this->postData) > 0) {
+        if (!empty($this->password)) {
+            curl_setopt($ch, CURLOPT_USERPWD, $this->password);
+        }
+        if (is_array($this->postData) && count($this->postData) > 0) {
+            // array for automatically encoding post data
             $postStr = http_build_query($this->postData, '', '&');
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postStr);
+        } else if (is_string($this->postData) && strlen($this->postData) > 0) {
+            // string for already encoded post data
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postData);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_VERBOSE, false);
@@ -103,6 +128,7 @@ class Request {
         return new Response($header, $body, $info);
     }
     // }}}
+
     // {{{ getRequestIp()
     static function getRequestIp() {
         // get ip of request
