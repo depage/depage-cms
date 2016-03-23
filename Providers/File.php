@@ -24,7 +24,7 @@ class File extends \Depage\Cache\Cache
 
         $this->prefix = $prefix;
         $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
-        $this->baseurl = "{$options['baseurl']}/cache/{$this->prefix}/";
+        $this->baseurl = "{$options['baseurl']}cache/{$this->prefix}/";
     }
     // }}}
     // {{{ init()
