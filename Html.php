@@ -20,7 +20,7 @@ class Html {
     private $param = null;
     private $template;
 
-    public $content_type = "text/html";
+    public $contentType = "text/html";
     public $charset = "UTF-8";
 
     // {{{ substitutes
