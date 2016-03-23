@@ -576,11 +576,13 @@ class Project extends \Depage\Entity\Entity
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
         $initId = $task->addSubtask("init", "
             \$fs = \\Depage\\Fs\\Fs::factory(%s);
+            \$project = %s;
             \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
             \$transformer = %s;
             \$transformCache = %s;
         ", array(
             $settings['output_folder'],
+            $this,
             $publishPdo,
             $publishId,
             $transformer,
@@ -614,14 +616,20 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
+        // publish sitemap
+        $task->addSubtask("publishing sitemap", "
+            \$publisher->publishString(
+                \$project->generateSitemap(),
+                %s
+            );", array(
+                "sitemap.xml",
+        ), $initId);
+
         /*
         // transform feeds
         foreach ($this->languages as $lang) {
             $task->addSubtask("transforming feed in $lang", "\$publisher->transformFeed($lang);", $initId);
         }
-
-        // transform sitemap
-        $task->addSubtask("transforming sitemap", "\$publisher->transformSitemap();", $initId);
 
         // transform htaccess
         $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
@@ -636,9 +644,6 @@ class Project extends \Depage\Entity\Entity
         foreach ($this->languages as $lang) {
             $task->addSubtask("publish feed in $lang", "\$publisher->publishFeed($lang);", $initId);
         }
-
-        // publish sitemap
-        $task->addSubtask("publishing sitemap", "\$publisher->publishSitemap();", $initId);
 
         // publish htaccess
         $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
