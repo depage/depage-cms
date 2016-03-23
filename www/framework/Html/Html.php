@@ -368,7 +368,7 @@ class Html {
                     $src .= $css;
                 }
 
-                $cssmin = \depage\cssmin\cssmin::factory(array(
+                $cssmin = \Depage\CssMin\CssMin::factory(array(
                 ));
                 $src = $cssmin->minifySrc($src);
 

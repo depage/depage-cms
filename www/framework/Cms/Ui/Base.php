@@ -47,7 +47,7 @@ class Base extends \Depage\Depage\Ui\Base
         }
 
         // register session handler
-        \depage\Session\SessionHandler::register($this->pdo);
+        \Depage\Session\SessionHandler::register($this->pdo);
 
         // get auth object
         $this->auth = \Depage\Auth\Auth::factory(
