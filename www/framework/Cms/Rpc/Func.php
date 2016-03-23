@@ -14,7 +14,7 @@ namespace depage\Cms\Rpc;
 
 class Func {
     // {{{ variables
-    public $content_type = "text/xml";
+    public $contentType = "text/xml";
     public $charset = "UTF-8";
     public $name;
     public $args;

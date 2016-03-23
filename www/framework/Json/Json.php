@@ -18,7 +18,7 @@ class Json
     private $param;
     private $content;
 
-    public $content_type = "text/json";
+    public $contentType = "text/json";
     public $charset = "UTF-8";
 
     // {{{ __construct()
@@ -51,7 +51,6 @@ class Json
         return $json;
     }
     // }}}
-
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

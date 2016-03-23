@@ -265,9 +265,9 @@ abstract class Base
 
     // {{{ _send_time
     protected function _send_time($time, $content = null) {
-        if (isset($content) && isset($content->content_type)) {
+        if (isset($content) && isset($content->contentType)) {
             if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
-                switch ($content->content_type) {
+                switch ($content->contentType) {
                     case 'text/html':
                         echo("<!-- $time sec -->");
                         break;

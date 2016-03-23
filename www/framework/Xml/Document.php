@@ -15,7 +15,7 @@ namespace Depage\Xml;
  */
 class Document extends \DOMDocument implements \Serializable
 {
-    public $content_type = "text/xml";
+    public $contentType = "text/xml";
     public $charset = "UTF-8";
 
     // {{{ constructor()

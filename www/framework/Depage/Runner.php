@@ -320,10 +320,10 @@ class Runner {
      */
     static public function sendHeaders($content) {
         if (is_object($content)) {
-            if (isset($content->content_type) && isset($content->charset)) {
-                header("Content-type: {$content->content_type}; charset={$content->charset}");
-            } else if (isset($content->content_type)) {
-                header("Content-type: $content->content_type");
+            if (isset($content->contentType) && isset($content->charset)) {
+                header("Content-type: {$content->contentType}; charset={$content->charset}");
+            } else if (isset($content->contentType)) {
+                header("Content-type: $content->contentType");
             }
         }
     }
