@@ -27,12 +27,27 @@ class Response {
     /**
      * @brief isRedirect
      **/
-    public $isRedirect = false;
+    protected $isRedirect = false;
 
     /**
      * @brief redirectUrl
      **/
     protected $redirectUrl = "";
+
+    /**
+     * @brief fiels
+     **/
+    protected static $fields = array(
+        "headers",
+        "body",
+        "info",
+        "contentType",
+        "charset",
+        "httpCode",
+        "httpMessage",
+        "isRedirect",
+        "redirectUrl",
+    );
 
     // {{{ __construct()
     public function __construct($headers = "", $body = "", $info = array()) {
@@ -60,6 +75,24 @@ class Response {
         $this->body = $body;
 
         return $this;
+    }
+    // }}}
+    // {{{ getJson()
+    /**
+     * @brief getJson
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function getJson()
+    {
+        $data = json_decode((string) $this->body, true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            var_dump($data);
+            throw new \Exception('Unable to parse response body into JSON: ' . json_last_error());
+        }
+
+        return $data === null ? array() : $data;
     }
     // }}}
     // {{{ addHeader()
@@ -98,6 +131,7 @@ class Response {
         return $this;
     }
     // }}}
+
     // {{{ __get()
     /**
      * @brief __get
@@ -107,17 +141,24 @@ class Response {
      **/
     public function __get($key)
     {
-        if (in_array(array(
-            "headers",
-            "body",
-            "info",
-            "contentType",
-            "charset",
-            "httpCode",
-            "httpMessage",
-            "isRedirect",
-            "redirectUrl",
-        ))) {
+        if (in_array($key, static::$fields)) {
+            return $this->$key;
+        }
+    }
+    // }}}
+    // {{{ __call()
+    /**
+     * @brief __get
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function __call($name, $arguments)
+    {
+        $prefix = substr($name, 0, 3);
+        $key = strtolower(substr($name, 3));
+
+        if ($prefix == "get" && in_array($key, static::$fields)) {
             return $this->$key;
         }
     }
