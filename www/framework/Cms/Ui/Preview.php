@@ -111,7 +111,16 @@ class Preview extends \Depage\Depage\Ui\Base
 
         $urlPath = "/" . implode("/", $args);
 
-        if ($urlPath == "/") {
+        if ($lang == "sitemap.xml") {
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+
+            $sitemap = new \Depage\Http\Response();
+            $sitemap
+                ->setBody($project->generateSitemap())
+                ->addHeader("Content-Type: text/xml; charset=UTF-8");
+
+            return $sitemap;
+        } else if ($urlPath == "/") {
             // redirect to home
             $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
 
