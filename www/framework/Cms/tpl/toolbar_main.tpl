@@ -12,7 +12,7 @@
     </menu>
     <menu class="right">
         <?php if(!empty($this->projectname)) { ?>
-            <!-- @todo add submenu for project -->
+            <!-- add submenu for project -->
             <li><a <?php self::attr([
                     "href" => "",
                     "class" => "button icon-projects",
@@ -33,7 +33,7 @@
                 </menu>
             </li>
         <?php } ?>
-        <!-- @todo add submenu for user -->
+        <!-- add submenu for user -->
         <li><a <?php self::attr([
                 "href" => "user/{$this->user->name}/",
                 "class" => "button icon-user",

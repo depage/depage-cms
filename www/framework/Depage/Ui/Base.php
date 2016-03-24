@@ -46,6 +46,7 @@ abstract class Base
      * @return  null
      */
     protected function __construct($options = NULL) {
+        // @todo check and fix config reading
         $conf = new \Depage\Config\Config($options);
         $this->options = $conf->getDefaultsFromClass($this);
 

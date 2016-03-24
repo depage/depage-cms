@@ -616,6 +616,8 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
+        // @todo add files that should be generated automatically (e.g. through graohics)
+
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
             \$publisher->publishString(
@@ -625,6 +627,7 @@ class Project extends \Depage\Entity\Entity
                 "sitemap.xml",
         ), $initId);
 
+        // publish feeds
         foreach ($languages as $lang => $name) {
             $task->addSubtask("publishing atom feed", "
                 \$publisher->publishString(

@@ -5,7 +5,6 @@ namespace Depage\Cms\XmlDocTypes;
 class Settings extends Base {
     use Traits\MultipleLanguages;
 
-    // @todo clean cache after updating languages
     /**
      * @brief project
      **/
@@ -42,6 +41,8 @@ class Settings extends Base {
 
         if ($oldLanguages != $newLanguages) {
             $this->xmldb->cache->delete("dp_proj_{$this->project->name}_*");
+            // @todo clean cache after updating languages?
+            // @todo add task to update all documents with new languages?
         }
 
         return true;

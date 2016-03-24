@@ -38,7 +38,6 @@ class Base extends \Depage\XmlDb\XmlDocTypes\Base
             array_push($previewTypes, "live-$id");
         }
 
-
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
                 $transformCache = new \Depage\Transformer\TransformCache($this->xmldb->pdo, $this->project->name, "$template-$type");

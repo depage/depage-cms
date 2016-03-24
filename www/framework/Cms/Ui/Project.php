@@ -246,12 +246,6 @@ class Project extends Base
 
             $task = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
 
-            /* *
-            $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-            $taskrunner->runNow($task->taskId);
-            die();
-            /**/
-
             $form->clearSession();
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
