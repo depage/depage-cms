@@ -45,7 +45,6 @@ class Response {
         "charset",
         "httpCode",
         "httpMessage",
-        "isRedirect",
         "redirectUrl",
     );
 
@@ -156,11 +155,23 @@ class Response {
     public function __call($name, $arguments)
     {
         $prefix = substr($name, 0, 3);
-        $key = strtolower(substr($name, 3));
+        $key = lcfirst(substr($name, 3));
 
         if ($prefix == "get" && in_array($key, static::$fields)) {
             return $this->$key;
         }
+    }
+    // }}}
+    // {{{ isRedirect()
+    /**
+     * @brief isRedirect
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isRedirect()
+    {
+        return $this->isRedirect;
     }
     // }}}
 
