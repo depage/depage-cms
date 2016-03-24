@@ -304,15 +304,18 @@ abstract class Transformer
 
         if ($dynamic) {
             $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath);
-            $request->setPostData($_POST);
-            $request->setCookie($_COOKIE);
-
-            // because it's our own local server -> @todo make this configurable
-            $request->allowUnsafeSSL = true;
+            $request
+                ->setPostData($_POST)
+                ->setCookie($_COOKIE)
+                // because it's our own local server -> @todo make this configurable
+                ->allowUnsafeSSL = true;
 
             $response = $request->execute();
 
-            // @todo capture and adjust redirects
+            if ($response->isRedirect()) {
+                \Depage\Depage\Runner::redirect($response->getRedirectUrl());
+            }
+
             return $response;
         } else {
             return $html;
