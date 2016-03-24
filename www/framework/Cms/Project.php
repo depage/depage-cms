@@ -625,12 +625,18 @@ class Project extends \Depage\Entity\Entity
                 "sitemap.xml",
         ), $initId);
 
-        /*
-        // transform feeds
-        foreach ($this->languages as $lang) {
-            $task->addSubtask("transforming feed in $lang", "\$publisher->transformFeed($lang);", $initId);
+        foreach ($languages as $lang => $name) {
+            $task->addSubtask("publishing atom feed", "
+                \$publisher->publishString(
+                    \$project->generateAtomFeed(%s),
+                    %s
+                );", array(
+                    $lang,
+                    "$lang/atom.xml",
+            ), $initId);
         }
 
+        /*
         // transform htaccess
         $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
 
@@ -640,11 +646,6 @@ class Project extends \Depage\Entity\Entity
          */
 
         /*
-        // publish feeds
-        foreach ($this->languages as $lang) {
-            $task->addSubtask("publish feed in $lang", "\$publisher->publishFeed($lang);", $initId);
-        }
-
         // publish htaccess
         $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
 
@@ -674,6 +675,33 @@ class Project extends \Depage\Entity\Entity
         $xml = $this->xmldb->getDocXml("pages");
 
         $parameters = array(
+            "currentContentType" => "text/xml",
+            "currentEncoding" => "UTF-8",
+            "depageVersion" => \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => true,
+            "baseUrl" => "https://depage.net/",
+        );
+
+        $sitemap = $transformer->transform($xml, $parameters);
+        return $sitemap;
+    }
+    // }}}
+    // {{{ generateAtomFeed()
+    /**
+     * @brief generateAtomFeed
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateAtomFeed($lang)
+    {
+        $this->xmldb = $this->getXmlDb();
+
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "atom");
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $parameters = array(
+            "currentLang" => $lang,
             "currentContentType" => "text/xml",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),

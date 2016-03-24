@@ -120,6 +120,16 @@ class Preview extends \Depage\Depage\Ui\Base
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $sitemap;
+        } else if ($urlPath == "/atom.xml") {
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+
+            return $project->generateAtomFeed($lang);
+            $feed = new \Depage\Http\Response();
+            $feed
+                ->setBody($project->generateAtomFeed($lang))
+                ->addHeader("Content-Type: text/xml; charset=UTF-8");
+
+            return $feed;
         } else if ($urlPath == "/") {
             // redirect to home
             $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
