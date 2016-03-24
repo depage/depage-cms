@@ -44,7 +44,7 @@
         <link rel="self"><xsl:attribute name="href"><xsl:value-of select="concat($baseUrl,$currentLang,'/atom.xml')" /></xsl:attribute></link>
 
         <id><xsl:value-of select="$baseUrl" /></id>
-        <updated><xsl:value-of select="document('call:formatdate////Y-m-d\TH:i:s\Z')" /></updated>
+        <updated><xsl:value-of select="dp:formatDate('Y-m-d\TH:i:s\Z')" /></updated>
         <author>
             <name><xsl:value-of select="$author" /></name>
         </author>
@@ -64,7 +64,7 @@
 
         <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://',$pageid,'/',$currentLang))" /><xsl:value-of select="$anchor" /></xsl:attribute></link>
         <id><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://',$pageid,'/',$currentLang))" /><xsl:value-of select="$anchor" /></id>
-        <updated><xsl:value-of select="document(concat('call:formatdate/',edit:date/@value,'/','Y-m-d\TH:i:s\Z'))" /></updated>
+        <updated><xsl:value-of select="dp:formatDate(edit:date/@value,'Y-m-d\TH:i:s\Z')" /></updated>
         <title><xsl:value-of select="edit:text_headline[@lang = $currentLang]/*" /></title>
         <summary><xsl:value-of select=".//edit:text_formatted[@lang = $currentLang and 1]/*" /></summary>
         <content type="xhtml">
@@ -150,7 +150,7 @@
                 </xsl:when>
                 <xsl:when test="$href_id != ''">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
@@ -195,10 +195,10 @@
     <!-- {{{ a -->
     <xsl:template match="a">
         <xsl:choose>
-            <xsl:when test="substring(@href,1,8) = 'pageref:'">
+            <xsl:when test="substring(@href,1,10) = 'pageref://'">
                 <xsl:call-template name="edit:a">
                     <xsl:with-param name="justapply" select="true()" />
-                    <xsl:with-param name="href_id" select="substring(@href,9)" />
+                    <xsl:with-param name="href_id" select="substring(@href,11)" />
                     <xsl:with-param name="target" select="@target" />
                 </xsl:call-template>
             </xsl:when>

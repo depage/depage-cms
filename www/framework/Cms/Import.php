@@ -618,6 +618,7 @@ class Import
             "document(concat('call:atomizetext/'," => "(dp:atomizeText(",
             "document(concat('call:phpescape/'," => "(dp:phpEscape(",
             "document(concat('call:formatdate/'," => "(dp:formatDate(",
+            "document('call:formatdate////Y')" => "dp:formatDate('', 'Y')",
             "href=\"get:xslt/" => "href=\"xslt://",
             "pageref:/" => "pageref://",
             "pageref:///" => "pageref://",
