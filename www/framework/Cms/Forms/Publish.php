@@ -31,9 +31,13 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         ));
 
         $targets = $this->project->getPublishingTargets();
+        $list = array();
+        foreach ($targets as $id => $target) {
+            $list[] = $target->name;
+        }
         $this->addSingle("publishId", array(
             'label' => _("Publish to"),
-            'list' => $targets,
+            'list' => $list,
         ));
     }
     // }}}

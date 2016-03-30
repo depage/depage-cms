@@ -462,7 +462,7 @@ class Project extends \Depage\Entity\Entity
             $languages = array();
             $this->xmldb = $this->getXmlDb();
 
-            $settings = $this->xmldb->getDoc("settings");
+            $settings = $this->getSettingsDoc();
             $nodes = $settings->getNodeIdsByXpath("//proj:language");
             foreach ($nodes as $nodeId) {
                 $attr = $settings->getAttributes($nodeId);
@@ -491,7 +491,7 @@ class Project extends \Depage\Entity\Entity
         $nodes = $settings->getNodeIdsByXpath("//proj:publishTarget");
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
-            $targets[$nodeId] = $attr['name'];
+            $targets[$nodeId] = (object) $attr;
         }
 
         return $targets;
@@ -629,7 +629,7 @@ class Project extends \Depage\Entity\Entity
 
         // publish feeds
         foreach ($languages as $lang => $name) {
-            $task->addSubtask("publishing atom feed", "
+            $task->addSubtask("publishing atom feed ($lang)", "
                 \$publisher->publishString(
                     \$project->generateAtomFeed(%s),
                     %s
@@ -639,22 +639,21 @@ class Project extends \Depage\Entity\Entity
             ), $initId);
         }
 
-        /*
-        // transform htaccess
-        $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
+        $task->addSubtask("publishing htaccess", "
+            \$publisher->publishString(
+                \$project->generateHtaccess(),
+                %s
+            );", array(
+                ".htaccess",
+        ), $initId);
 
-        // transform index page
-        $task->addSubtask("transforming htaccess", "\$publisher->transformHtaccess();", $initId);
-
-         */
-
-        /*
-        // publish htaccess
-        $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
-
-        // publish index page
-        $task->addSubtask("publishing htaccess", "\$publisher->publishHtaccess();", $initId);
-         */
+        $task->addSubtask("publishing index", "
+            \$publisher->publishString(
+                \$project->generateIndex(),
+                %s
+            );", array(
+                "index.php",
+        ), $initId);
 
         // unpublish removed files
         $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", array(), $initId);
@@ -714,6 +713,97 @@ class Project extends \Depage\Entity\Entity
 
         $sitemap = $transformer->transform($xml, $parameters);
         return $sitemap;
+    }
+    // }}}
+    // {{{ generateHtaccess()
+    /**
+     * @brief generateHtaccess
+     *
+     * @param mixed
+     * @return void
+     *
+     * @todo refactor htaccess generator out when it is getting more complicated than the simple basics
+     **/
+    public function generateHtaccess($publishId)
+    {
+        $htaccess = "";
+        $targets = $this->getPublishingTargets();
+        $languages = $this->getLanguages();
+        $defaultLanguage = reset(array_keys($languages));
+        $projectPath = $this->getProjectPath();
+        $conf = $targets[$publishId];
+
+        $htaccess .= "AddCharset UTF-8 .html\n\n";
+
+        // get base-url
+        $baseurl = parse_url(rtrim($conf->baseurl, "/"));
+        $rewritebase = $baseurl['path'];
+        if ($rewritebase == "") {
+            $rewritebase = "/";
+        }
+        $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
+
+        if ($conf->mod_rewrite == "true") {
+            $htaccess .= "RewriteEngine       on\n";
+            $htaccess .= "RewriteBase         $rewritebase\n\n";
+
+            if ($conf->method == "xhtml") {
+                $htaccess .= "RewriteCond         %{HTTP_ACCEPT}           application/xhtml\+xml\n";
+                $htaccess .= "RewriteRule         \.html$                  - [T=application/xhtml+xml]\n\n";
+            }
+
+            if (count($languages) > 0) {
+                // load autolangchooser
+                $htaccess .= "RewriteRule         ^/?$                     index.php [L]\n\n";
+            } else {
+                // redirect to first page
+                $htaccess .= "RewriteRule         ^/?$                     {$baseurl}/{$defaultLanguage}{$baseLink} [L,R]\n\n";
+            }
+        } else {
+            if (count($languages) > 0) {
+                // load autolangchooser
+                $htaccess .= "RedirectMatch       ^/$                      {$baseurl}/index.php\n";
+            } else {
+                // redirect to first page
+                $htaccess .= "RedirectMatch       ^/$                      {$baseurl}/{$defaultLanguage}{$baseLink}\n\n";
+            }
+        }
+
+        if (file_exists("$projectPath/lib/htaccess")) {
+            $htaccess .= file_get_contents("$projectPath/lib/htaccess");
+        }
+
+        if ($conf->mod_rewrite == "true") {
+            // redirect non-existing multipage-html to php-page
+            $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
+            $htaccess .= "RewriteRule         ^(.*)\.([0-9]+)\.html    \$1.php [L]\n\n";
+
+            // redirect non-existing html to php-page
+            $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
+            $htaccess .= "RewriteRule         ^(.*)\.html              \$1.php [L]\n\n";
+
+            $folders = implode("|", array_keys($languages)) . "|lib";
+            // redirect all pages that are not found to index-page
+            // this has to be the last rules for custom rewrite-rules to work
+            $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
+            $htaccess .= "RewriteRule         ^($folders)/(.*)$       index.php?notfound=true [L]\n\n";
+        }
+
+        return $htaccess;
+    }
+    // }}}
+    // {{{ generateIndex()
+    /**
+     * @brief generateIndex
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateIndex()
+    {
+        $index = "";
+
+        return $index;
     }
     // }}}
     // {{{ generateCss()

@@ -33,7 +33,7 @@ class Base extends \Depage\XmlDb\XmlDocTypes\Base
         $previewTypes = ["pre", "live"];
         $publishingTargets = $this->project->getPublishingTargets();
 
-        foreach ($publishingTargets as $id => $name) {
+        foreach ($publishingTargets as $id => $settings) {
             // @todo move this into history when live publishing uses history
             array_push($previewTypes, "live-$id");
         }
