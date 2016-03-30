@@ -551,7 +551,8 @@ class Project extends \Depage\Entity\Entity
         $this->xmldb = $this->getXmlDb();
 
         $projectPath = $this->getProjectPath();
-        $settings = $this->getSettingsDoc()->getAttributes($publishId);
+        $targets = $this->getPublishingTargets();
+        $conf = $targets[$publishId];
         $fsLocal = \Depage\Fs\Fs::factory($projectPath);
 
         // getting als files in library
@@ -568,8 +569,8 @@ class Project extends \Depage\Entity\Entity
         $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
         // get transformer
-        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $settings['template_set'] . "-live-" . $publishId);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $settings['template_set'], $transformCache);
+        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $conf->template_set, $transformCache);
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
@@ -581,7 +582,7 @@ class Project extends \Depage\Entity\Entity
             \$transformer = %s;
             \$transformCache = %s;
         ", array(
-            $settings['output_folder'],
+            $conf->output_folder,
             $this,
             $publishPdo,
             $publishId,
@@ -641,9 +642,10 @@ class Project extends \Depage\Entity\Entity
 
         $task->addSubtask("publishing htaccess", "
             \$publisher->publishString(
-                \$project->generateHtaccess(),
+                \$project->generateHtaccess(%s),
                 %s
             );", array(
+                $publishId,
                 ".htaccess",
         ), $initId);
 
@@ -729,7 +731,7 @@ class Project extends \Depage\Entity\Entity
         $htaccess = "";
         $targets = $this->getPublishingTargets();
         $languages = $this->getLanguages();
-        $defaultLanguage = reset(array_keys($languages));
+        $defaultLanguage = current(array_keys($languages));
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
 
@@ -746,11 +748,6 @@ class Project extends \Depage\Entity\Entity
         if ($conf->mod_rewrite == "true") {
             $htaccess .= "RewriteEngine       on\n";
             $htaccess .= "RewriteBase         $rewritebase\n\n";
-
-            if ($conf->method == "xhtml") {
-                $htaccess .= "RewriteCond         %{HTTP_ACCEPT}           application/xhtml\+xml\n";
-                $htaccess .= "RewriteRule         \.html$                  - [T=application/xhtml+xml]\n\n";
-            }
 
             if (count($languages) > 0) {
                 // load autolangchooser
