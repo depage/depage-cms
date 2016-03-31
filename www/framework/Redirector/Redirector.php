@@ -115,6 +115,7 @@ class Redirector
     public function getAlternativePage($request)
     {
         $altPage = "";
+        $isFallback = false;
         $pages = array_merge(array_keys($this->aliases), $this->pages);
 
         $request = explode("/", $request);
@@ -132,16 +133,18 @@ class Redirector
             array_pop($request);
         }
 
-        // get alias
+        // resolve alias
         if (isset($this->aliases[$altPage])) {
             $altPage = $this->aliases[$altPage];
         }
 
+        // fallback to first url
         if ($altPage == "") {
             $altPage = $this->pages[0];
+            $isFallback = true;
         }
 
-        return $altPage;
+        return new Result($altPage, $isFallback);
     }
     // }}}
 }

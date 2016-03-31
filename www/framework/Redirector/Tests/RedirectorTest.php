@@ -1,6 +1,7 @@
 <?php
 
 require(__DIR__ . "/../Redirector.php");
+require(__DIR__ . "/../Result.php");
 
 use Depage\Redirector\Redirector;
 
@@ -74,7 +75,23 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
     {
         $alternative = $this->redirector->getAlternativePage("/contact/imprint2.html");
 
+        $this->assertFalse($alternative->isFallback());
         $this->assertEquals("/contact/imprint.html", $alternative);
+    }
+    // }}}
+    // {{{ testGetAlternativePageFallback()
+    /**
+     * @brief testGetAlternativePageFallback
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testGetAlternativePageFallback()
+    {
+        $alternative = $this->redirector->getAlternativePage("/non/existant/page.html");
+
+        $this->assertTrue($alternative->isFallback());
+        $this->assertEquals("/home.html", $alternative);
     }
     // }}}
     // {{{ testAliases()
@@ -88,6 +105,7 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
     {
         $alternative = $this->redirector->getAlternativePage("/office.html");
 
+        $this->assertFalse($alternative->isFallback());
         $this->assertEquals("/contact.html", $alternative);
 
     }
