@@ -19,6 +19,11 @@ class Redirector
     protected $pages = array();
 
     /**
+     * @brief pageTree
+     **/
+    protected $pageTree = array();
+
+    /**
      * @brief aliases
      **/
     protected $aliases = array();
@@ -60,6 +65,19 @@ class Redirector
     public function setPages($pages)
     {
         $this->pages = $pages;
+
+        // sort folders and pages into hierarchical tree structure
+        foreach ($this->pages as $page) {
+            $node = &$this->pageTree;
+            $parts = explode("/", trim($page, "/"));
+
+            foreach ($parts as $part) {
+                if (!isset($node[$part])) {
+                    $node[$part] = array();
+                }
+                $node = &$node[$part];
+            }
+        }
 
         return $this;
     }
@@ -111,6 +129,8 @@ class Redirector
      *
      * @param mixed
      * @return void
+     *
+     * @todo use pagtree instead of matching substrings
      **/
     public function getAlternativePage($request)
     {

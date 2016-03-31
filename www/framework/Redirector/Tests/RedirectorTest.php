@@ -30,6 +30,8 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
                 "/home.html",
                 "/contact.html",
                 "/contact/imprint.html",
+                "/sub1/sub2/sub3/content.html",
+                "/sub1/sub2/sub3/content2.html",
             ))
             ->setAliases(array(
                 "/office.html" => "/contact.html",
