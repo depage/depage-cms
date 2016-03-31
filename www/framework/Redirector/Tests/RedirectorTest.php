@@ -29,6 +29,9 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
                 "/home.html",
                 "/contact.html",
                 "/contact/imprint.html",
+            ))
+            ->setAliases(array(
+                "/office.html" => "/contact.html",
             ));
     }
     // }}}
@@ -69,16 +72,24 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
      **/
     public function testGetAlternativePage()
     {
-        $this->redirector
-            ->setPages(array(
-                "/home.html",
-                "/contact.html",
-                "/contact/imprint.html",
-            ));
-
         $alternative = $this->redirector->getAlternativePage("/contact/imprint2.html");
 
         $this->assertEquals("/contact/imprint.html", $alternative);
+    }
+    // }}}
+    // {{{ testAliases()
+    /**
+     * @brief testAliases
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testAliases()
+    {
+        $alternative = $this->redirector->getAlternativePage("/office.html");
+
+        $this->assertEquals("/contact.html", $alternative);
+
     }
     // }}}
 }

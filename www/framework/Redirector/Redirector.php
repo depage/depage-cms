@@ -18,6 +18,11 @@ class Redirector
      **/
     protected $pages = array();
 
+    /**
+     * @brief aliases
+     **/
+    protected $aliases = array();
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -59,6 +64,20 @@ class Redirector
         return $this;
     }
     // }}}
+    // {{{ setAliases()
+    /**
+     * @brief setAliases
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setAliases($aliases)
+    {
+        $this->aliases = $aliases;
+
+        return $this;
+    }
+    // }}}
 
     // {{{ getLanguageByBrowser()
     /**
@@ -95,15 +114,17 @@ class Redirector
      **/
     public function getAlternativePage($request)
     {
-        $page = "";
+        $altPage = "";
+        $pages = array_merge(array_keys($this->aliases), $this->pages);
+
         $request = explode("/", $request);
 
         //search for pages
-        while ($page == "" && count($request) > 1) {
-            $tempurl = implode("/", $request) . "/";
-            foreach ($this->pages as $apage) {
-                if (substr($apage, 0, strlen($tempurl)) == $tempurl) {
-                    $page = $apage;
+        while ($altPage == "" && count($request) > 1) {
+            $tempUrl = implode("/", $request) . "/";
+            foreach ($pages as $page) {
+                if (substr($page . "/", 0, strlen($tempUrl)) == $tempUrl) {
+                    $altPage = $page;
 
                     break;
                 }
@@ -111,11 +132,16 @@ class Redirector
             array_pop($request);
         }
 
-        if ($page == "") {
-            $page = $availablePages[0];
+        // get alias
+        if (isset($this->aliases[$altPage])) {
+            $altPage = $this->aliases[$altPage];
         }
 
-        return $page;
+        if ($altPage == "") {
+            $altPage = $this->pages[0];
+        }
+
+        return $altPage;
     }
     // }}}
 }
