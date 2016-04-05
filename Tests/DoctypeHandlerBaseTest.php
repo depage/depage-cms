@@ -60,4 +60,10 @@ class DoctypeHandlerBaseTest extends DatabaseTestCase
         $this->assertTrue($this->dth->isAllowedIn('testNode', 'targetTestNode'));
     }
     // }}}
+    // {{{ testIsAllowedMove
+    public function testIsAllowedMove()
+    {
+        $this->assertTrue($this->dth->isAllowedMove(5, 7));
+    }
+    // }}}
 }

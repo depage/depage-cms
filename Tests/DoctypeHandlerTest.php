@@ -39,6 +39,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
         $this->assertFalse($this->dth->getNewNodeFor('unknownNode'));
     }
     // }}}
+
     // {{{ testIsAllowedInRestrictedTargets
     public function testIsAllowedInRestrictedTargets()
     {

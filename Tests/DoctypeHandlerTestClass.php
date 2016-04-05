@@ -39,9 +39,9 @@ class DoctypeHandlerTestClass extends Base
     {
         return ($this->isAllowedUnlink) ? parent::isAllowedUnlink($nodeId) : false;
     }
-    public function isAllowedAdd($nodeId, $targetId)
+    public function isAllowedAdd($node, $targetId)
     {
-        return ($this->isAllowedAdd) ? parent::isAllowedAdd($nodeId, $targetId) : false;
+        return ($this->isAllowedAdd) ? parent::isAllowedAdd($node, $targetId) : false;
     }
     public function isAllowedMove($nodeId, $targetId)
     {
