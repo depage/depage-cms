@@ -373,8 +373,6 @@ class Document
             'doc_id' => $doc_info->id,
         ));
 
-        $this->clearCache();
-
         $this->endTransaction();
 
         $dth = $this->getDoctypeHandler();
@@ -551,7 +549,7 @@ class Document
     // }}}
     // {{{ duplicateNode
     /**
-     * duplicate node in database, and inserts it in the next position
+     * duplicates node in database, and inserts it in the next position
      *
      * @TODO behaviour should differ according to tree type - don't usually want to copy all sub nodes
      *
@@ -729,8 +727,6 @@ class Document
                 ));
 
                 $this->updateLastchange();
-
-                $this->clearCache();
             }
 
             $success = true;
@@ -840,9 +836,6 @@ class Document
 
             $xml_doc = $this->getSubdocByNodeId($node_id, false);
             $root_node = $xml_doc;
-
-            $this->clearCache();
-
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
             $this->endTransaction();
@@ -873,11 +866,14 @@ class Document
 
         $attributes = $this->getAttributes($node_id);
 
-        if ((isset($attributes[$attr_name]) && $attributes[$attr_name] !== htmlspecialchars($attr_value))
+        if (
+            (
+                isset($attributes[$attr_name])
+                && $attributes[$attr_name] !== htmlspecialchars($attr_value)
+            )
             || !isset($attributes[$attr_name])
         ) {
             $attributes[$attr_name] = $attr_value;
-
             $success = $this->saveAttributes($node_id, $attributes);
         }
 
@@ -935,8 +931,6 @@ class Document
         ));
 
         $this->updateLastchange();
-
-        $this->clearCache();
 
         $this->endTransaction();
 
@@ -1398,7 +1392,6 @@ class Document
 
                 //unlink old node
                 $this->unlinkNodeById($node_array[0]['id']);
-                $this->clearCache();
             } else {
                 $target_id = null;
                 $target_pos = 0;
@@ -1418,8 +1411,6 @@ class Document
                 ));
                 $this->pdo->exec("SET foreign_key_checks = 1;");
             }
-            $this->clearCache();
-
             //set target_id/pos/doc
             $query = $this->pdo->prepare(
                 "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS pos
@@ -1701,7 +1692,13 @@ class Document
     // {{{ endTransaction
     public function endTransaction()
     {
-        return $this->xmldb->endTransaction();
+        $transactions = $this->xmldb->endTransaction();
+
+        if ($transactions === 0) {
+            $this->clearCache();
+        }
+
+        return $transactions;
     }
     // }}}
 
