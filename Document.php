@@ -725,6 +725,25 @@ class Document
     }
     // }}}
 
+    // {{{ copyNode
+    public function copyNode($node_id, $target_id, $target_pos)
+    {
+        $copy_id = false;
+        $dth = $this->getDoctypeHandler();
+
+        if ($dth->isAllowedCopy($node_id, $target_id)) {
+            $this->beginTransaction();
+
+            $copy_id = $this->copyNodePrivate($node_id, $target_id, $target_pos);
+
+            $this->endTransaction();
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
+        }
+
+        return $copy_id;
+    }
+    // }}}
     // {{{ copyNodeIn
     /**
      * copy node to another node
@@ -734,14 +753,22 @@ class Document
      */
     public function copyNodeIn($node_id, $target_id)
     {
-        $this->beginTransaction();
+        $copy_id = false;
+        $dth = $this->getDoctypeHandler();
 
-        $position = $this->getTargetPos($target_id);
-        $success = $this->copyNode($node_id, $target_id, $position);
+        if ($dth->isAllowedCopy($node_id, $target_id)) {
+            $this->beginTransaction();
 
-        $this->endTransaction();
+            $position = $this->getTargetPos($target_id);
+            $copy_id = $this->copyNodePrivate($node_id, $target_id, $position);
 
-        return $success;
+            $this->endTransaction();
+
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
+        }
+
+        return $copy_id;
     }
     // }}}
     // {{{  copyNodeBefore
@@ -753,7 +780,21 @@ class Document
      */
     public function copyNodeBefore($node_id, $target_id)
     {
-        return $this->copyNodeWithOffset($node_id, $target_id);
+        $copy_id = false;
+        $dth = $this->getDoctypeHandler();
+
+        if ($dth->isAllowedCopy($node_id, $target_id)) {
+            $this->beginTransaction();
+
+            $copy_id = $this->copyNodeWithOffset($node_id, $target_id);
+
+            $this->endTransaction();
+
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
+        }
+
+        return $copy_id;
     }
     // }}}
     // {{{ copyNodeAfter
@@ -765,7 +806,21 @@ class Document
      */
     public function copyNodeAfter($node_id, $target_id)
     {
-        return $this->copyNodeWithOffset($node_id, $target_id, 1);
+        $copy_id = false;
+        $dth = $this->getDoctypeHandler();
+
+        if ($dth->isAllowedCopy($node_id, $target_id)) {
+            $this->beginTransaction();
+
+            $copy_id = $this->copyNodeWithOffset($node_id, $target_id, 1);
+
+            $this->endTransaction();
+
+            $dth->onCopyNode($node_id, $copy_id);
+            $dth->onDocumentChange();
+        }
+
+        return $copy_id;
     }
     // }}}
     // {{{ copyNodeWithOffset
@@ -778,18 +833,14 @@ class Document
      */
     protected function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
     {
-        $this->beginTransaction();
-
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id) + $target_pos_offset;
-        $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
+        $copy_id = $this->copyNodePrivate($node_id, $target_parent_id, $target_pos);
 
-        $this->endTransaction();
-
-        return $success;
+        return $copy_id;
     }
     // }}}
-    // {{{ copyNode
+    // {{{ copyNodePrivate
     /**
      * copy node in database
      *
@@ -799,26 +850,13 @@ class Document
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos (int) pos to copy to
      */
-    public function copyNode($node_id, $target_id, $target_pos)
+    protected function copyNodePrivate($node_id, $target_id, $target_pos)
     {
-        $result = false;
-        $dth = $this->getDoctypeHandler();
+        $xml_doc = $this->getSubdocByNodeId($node_id, false);
+        $root_node = $xml_doc;
+        $save_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
-        if ($dth->isAllowedMove($node_id, $target_id)) {
-            $this->beginTransaction();
-
-            $xml_doc = $this->getSubdocByNodeId($node_id, false);
-            $root_node = $xml_doc;
-            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
-
-            $this->endTransaction();
-            $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
-
-            $result = $copy_id;
-        }
-
-        return $result;
+        return $save_id;
     }
     // }}}
 

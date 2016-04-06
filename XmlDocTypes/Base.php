@@ -83,6 +83,11 @@ class Base
         return $result;
     }
     // }}}
+    // {{{ isAllowedCopy
+    public function isAllowedCopy($nodeId, $targetId) {
+        return $this->isAllowedMove($nodeId, $targetId);
+    }
+    // }}}
     // {{{ isAllowedMove
     public function isAllowedMove($nodeId, $targetId) {
         return $this->isAllowedIn(
