@@ -392,9 +392,12 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedUnlink($node_id)) {
-            $this->updateLastchange();
+            $this->beginTransaction();
 
             $success = $this->unlinkNodeById($node_id);
+
+            $this->updateLastchange();
+            $this->endTransaction();
             $dth->onDocumentChange();
         }
 
@@ -419,7 +422,6 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->onDeleteNode($node_id)) {
-
             // delete the node
             $query = $this->pdo->prepare(
                 "DELETE FROM {$this->table_xml}
@@ -429,8 +431,6 @@ class Document
                 'doc_id' => $this->doc_id,
                 'node_id' => $node_id,
             ));
-
-            $this->clearCache();
 
             // update position of remaining nodes
             $query = $this->pdo->prepare(
