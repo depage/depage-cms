@@ -25,6 +25,7 @@ class MockCache
 
     public function delete($identifier)
     {
+        // stub, no actual deleting going on here
         $this->deleted = true;
     }
 }

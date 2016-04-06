@@ -18,16 +18,16 @@ class XmlDb implements XmlGetter
     // {{{ variables
     protected $doc_ids = array();
 
-    private $pdo;
-    private $cache;
+    protected $pdo;
+    protected $cache;
 
-    private $db_ns;
+    protected $db_ns;
 
-    private $table_prefix = 'dp_';
-    private $table_docs;
-    private $table_xml;
-    private $table_nodetypes;
-    private $transactions = 0;
+    protected $table_prefix = 'dp_';
+    protected $table_docs;
+    protected $table_xml;
+    protected $table_nodetypes;
+    protected $transactions = 0;
 
     public $options;
     // }}}
@@ -649,6 +649,8 @@ class XmlDb implements XmlGetter
             $this->pdo->beginTransaction();
         }
         $this->transactions++;
+
+        return $this->transactions;
     }
     // }}}
     // {{{ endTransaction
@@ -661,6 +663,8 @@ class XmlDb implements XmlGetter
         if ($this->transactions == 0) {
             $this->pdo->commit();
         }
+
+        return $this->transactions;
     }
     // }}}
 }

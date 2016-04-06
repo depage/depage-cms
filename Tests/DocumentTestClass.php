@@ -24,6 +24,18 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     {
         return parent::getFreeNodeIds($needed);
     }
+
+    public function clearCache()
+    {
+        $result = parent::clearCache();
+        $ts = $this->xmldb->transactions;
+
+        if ($ts > 0) {
+            throw new \Exception('Cache cleared too early');
+        }
+
+        return $result;
+    }
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
