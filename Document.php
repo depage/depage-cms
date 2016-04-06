@@ -587,14 +587,23 @@ class Document
      */
     public function moveNodeIn($node_id, $target_id)
     {
-        $this->beginTransaction();
+        $moved_id = false;
+        $dth = $this->getDoctypeHandler();
 
-        $position = $this->getTargetPos($target_id);
-        $success = $this->moveNode($node_id, $target_id, $position);
+        if (
+            $node_id !== $target_id
+            && $dth->isAllowedMove($node_id, $target_id)
+        ) {
+            $this->beginTransaction();
 
-        $this->endTransaction();
+            $position = $this->getTargetPos($target_id);
+            $success = $this->moveNodePrivate($node_id, $target_id, $position);
 
-        return $success;
+            $this->endTransaction();
+            $dth->onDocumentChange();
+        }
+
+        return $moved_id;
     }
     // }}}
     // {{{ moveNodeBefore
@@ -606,16 +615,25 @@ class Document
      */
     public function moveNodeBefore($node_id, $target_id)
     {
-        $this->beginTransaction();
+        $moved_id = false;
+        $dth = $this->getDoctypeHandler();
 
-        $target_parent_id = $this->getParentIdById($target_id);
-        $target_pos = $this->getPosById($target_id);
+        if (
+            $node_id !== $target_id
+            && $dth->isAllowedMove($node_id, $target_id)
+        ) {
+            $this->beginTransaction();
 
-        $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
+            $target_parent_id = $this->getParentIdById($target_id);
+            $target_pos = $this->getPosById($target_id);
 
-        $this->endTransaction();
+            $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
-        return $success;
+            $this->endTransaction();
+            $dth->onDocumentChange();
+        }
+
+        return $moved_id;
     }
     // }}}
     // {{{ moveNodeAfter
@@ -627,101 +645,120 @@ class Document
      */
     public function moveNodeAfter($node_id, $target_id)
     {
-        $this->beginTransaction();
+        $moved_id = false;
+        $dth = $this->getDoctypeHandler();
 
-        $target_parent_id = $this->getParentIdById($target_id);
-        $target_pos = $this->getPosById($target_id) + 1;
+        if (
+            $node_id !== $target_id
+            && $dth->isAllowedMove($node_id, $target_id)
+        ) {
+            $this->beginTransaction();
 
-        $success = $this->moveNode($node_id, $target_parent_id, $target_pos);
+            $target_parent_id = $this->getParentIdById($target_id);
+            $target_pos = $this->getPosById($target_id) + 1;
 
-        $this->endTransaction();
+            $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
-        return $success;
+            $this->endTransaction();
+            $dth->onDocumentChange();
+        }
+
+        return $moved_id;
     }
     // }}}
     // {{{ moveNode
+    public function moveNode($node_id, $target_id, $target_pos)
+    {
+        $moved_id = false;
+        $dth = $this->getDoctypeHandler();
+
+        if (
+            $node_id !== $target_id
+            && $dth->isAllowedMove($node_id, $target_id)
+        ) {
+            $this->beginTransaction();
+
+            $moved_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
+
+            $this->endTransaction();
+            $dth->onDocumentChange();
+        }
+
+        return $moved_id;
+    }
+    // }}}
+    // {{{ moveNodePrivate
     /**
      * moves node in database
      *
      * // TODO prevent moving a node to its children
      *
-     * @public
+     * @protected
      *
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos (int) position to move to
      */
-    public function moveNode($node_id, $target_id, $target_pos)
+    protected function moveNodePrivate($node_id, $target_id, $target_pos)
     {
-        $success = false;
+        $node_parent_id = $this->getParentIdById($node_id);
+        $node_pos = $this->getPosById($node_id);
 
-        if ($node_id !== $target_id && $this->getDoctypeHandler()->isAllowedMove($node_id, $target_id)) {
-            $this->beginTransaction();
-
-            $node_parent_id = $this->getParentIdById($node_id);
-            $node_pos = $this->getPosById($node_id);
-
-            if ($target_id == $node_parent_id && $target_pos > $node_pos) {
-                $target_pos--;
-            }
-
-            if ($target_id != $node_parent_id || $target_pos != $node_pos) {
-                // remove node from parent
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET id_doc=NULL, id_parent=NULL, pos=NULL
-                    WHERE id = :node_id AND id_doc = :doc_id"
-                );
-                $query->execute(array(
-                    'node_id' => $node_id,
-                    'doc_id' => $this->doc_id,
-                ));
-                // update position on source position
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET pos=pos-1
-                    WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
-                );
-                $query->execute(array(
-                    'node_parent_id' => $node_parent_id,
-                    'node_pos' => $node_pos,
-                    'doc_id' => $this->doc_id,
-                ));
-
-                // update positions on target position
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET pos=pos+1
-                    WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
-                );
-                $query->execute(array(
-                    'target_id' => $target_id,
-                    'target_pos' => $target_pos,
-                    'doc_id' => $this->doc_id,
-                ));
-                // reattach node at target position
-                $query = $this->pdo->prepare(
-                    "UPDATE {$this->table_xml}
-                    SET id_doc = :doc_id, id_parent = :target_id, pos = :target_pos
-                    WHERE id = :node_id"
-                );
-                $query->execute(array(
-                    'target_id' => $target_id,
-                    'target_pos' => $target_pos,
-                    'node_id' => $node_id,
-                    'doc_id' => $this->doc_id,
-                ));
-
-                $this->updateLastchange();
-            }
-
-            $success = true;
-
-            $this->endTransaction();
-            $this->getDoctypeHandler()->onDocumentChange();
+        if ($target_id == $node_parent_id && $target_pos > $node_pos) {
+            $target_pos--;
         }
 
-        return $success;
+        if ($target_id != $node_parent_id || $target_pos != $node_pos) {
+            // remove node from parent
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                SET id_doc=NULL, id_parent=NULL, pos=NULL
+                WHERE id = :node_id AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'node_id' => $node_id,
+                'doc_id' => $this->doc_id,
+            ));
+            // update position on source position
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                SET pos=pos-1
+                WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'node_parent_id' => $node_parent_id,
+                'node_pos' => $node_pos,
+                'doc_id' => $this->doc_id,
+            ));
+
+            // update positions on target position
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                SET pos=pos+1
+                WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'doc_id' => $this->doc_id,
+            ));
+            // reattach node at target position
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_xml}
+                SET id_doc = :doc_id, id_parent = :target_id, pos = :target_pos
+                WHERE id = :node_id"
+            );
+            $query->execute(array(
+                'target_id' => $target_id,
+                'target_pos' => $target_pos,
+                'node_id' => $node_id,
+                'doc_id' => $this->doc_id,
+            ));
+
+            $this->updateLastchange();
+        }
+
+        return $target_id;
     }
     // }}}
 
