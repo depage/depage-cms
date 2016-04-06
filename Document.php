@@ -389,11 +389,13 @@ class Document
     {
         $success = false;
 
-        if ($this->getDoctypeHandler()->isAllowedUnlink($node_id)) {
+        $dth = $this->getDoctypeHandler();
+
+        if ($dth->isAllowedUnlink($node_id)) {
             $this->updateLastchange();
 
             $success = $this->unlinkNodeById($node_id);
-            $this->getDoctypeHandler()->onDocumentChange();
+            $dth->onDocumentChange();
         }
 
         return $success;
@@ -587,18 +589,8 @@ class Document
     {
         $this->beginTransaction();
 
-        $query = $this->pdo->prepare(
-            "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos
-            FROM {$this->table_xml} AS xml
-            WHERE xml.id_parent = :target_id AND xml.id_doc = :doc_id"
-        );
-        $query->execute(array(
-            'target_id' => $target_id,
-            'doc_id' => $this->doc_id,
-        ));
-        $result = $query->fetchObject();
-
-        $success = $this->moveNode($node_id, $target_id, $result->newpos);
+        $position = $this->getTargetPos($target_id);
+        $success = $this->moveNode($node_id, $target_id, $position);
 
         $this->endTransaction();
 
@@ -744,18 +736,8 @@ class Document
     {
         $this->beginTransaction();
 
-        $query = $this->pdo->prepare(
-            "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS newpos
-            FROM {$this->table_xml} AS xml
-            WHERE xml.id_parent = :target_id AND xml.id_doc = :doc_id"
-        );
-        $query->execute(array(
-            'target_id' => $target_id,
-            'doc_id' => $this->doc_id,
-        ));
-        $result = $query->fetchObject();
-
-        $success = $this->copyNode($node_id, $target_id, $result->newpos);
+        $position = $this->getTargetPos($target_id);
+        $success = $this->copyNode($node_id, $target_id, $position);
 
         $this->endTransaction();
 
@@ -800,7 +782,6 @@ class Document
 
         $target_parent_id = $this->getParentIdById($target_id);
         $target_pos = $this->getPosById($target_id) + $target_pos_offset;
-
         $success = $this->copyNode($node_id, $target_parent_id, $target_pos);
 
         $this->endTransaction();
@@ -831,7 +812,6 @@ class Document
             $copy_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
             $this->endTransaction();
-
             $dth->onCopyNode($node_id, $copy_id);
             $dth->onDocumentChange();
 
@@ -1301,6 +1281,28 @@ class Document
         return ($result = $query->fetchObject()) ? $result->pos : null;
     }
     // }}}
+    // {{{ getTargetPos
+    protected function getTargetPos($target_id)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS pos
+            FROM {$this->table_xml} AS xml
+            WHERE xml.id_parent = :target_id AND id_doc = :doc_id"
+        );
+        $query->execute(array(
+            'target_id' => $target_id,
+            'doc_id' => $this->doc_id,
+        ));
+
+        if ($object = $query->fetchObject()) {
+            $result = $object->pos;
+        } else {
+            $result = null;
+        }
+
+        return $result;
+    }
+    // }}}
 
     // {{{ extractNamespaces
     public function extractNamespaces($str)
@@ -1400,20 +1402,12 @@ class Document
                 ));
                 $this->pdo->exec("SET foreign_key_checks = 1;");
             }
-            //set target_id/pos/doc
-            $query = $this->pdo->prepare(
-                "SELECT IFNULL(MAX(xml.pos), -1) + 1 AS pos
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent = :target_id AND id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'target_id' => $target_id,
-                'doc_id' => $this->doc_id,
-            ));
-            $result = $query->fetchObject();
-            if ($result) {
-                if ($target_pos > $result->pos || $target_pos == -1) {
-                    $target_pos = $result->pos;
+
+            $position = $this->getTargetPos($target_id);
+
+            if ($position) {
+                if ($target_pos > $position || $target_pos == -1) {
+                    $target_pos = $position;
                 }
             } else {
                 $target_pos = 0;
@@ -1458,7 +1452,6 @@ class Document
         }
 
         $this->updateLastchange();
-
         $this->endTransaction();
 
         if ($saveExisting) {

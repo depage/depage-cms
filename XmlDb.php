@@ -182,8 +182,7 @@ class XmlDb implements XmlGetter
     public function getDocByNodeId($nodeId)
     {
         $query = $this->pdo->prepare(
-            "SELECT
-                xml.id_doc AS id_doc
+            "SELECT xml.id_doc AS id_doc
             FROM {$this->table_xml} AS xml
             WHERE xml.id = :nodeId"
         );
