@@ -287,9 +287,9 @@ class Document
 
                 throw new Exceptions\XmlDbException("This node is no ELEMENT_NODE or node does not exist");
             }
+
             $success = $xml_doc->loadXML($xml_str);
             $dth = $this->getDoctypeHandler();
-
             $this->endTransaction();
 
             if ($dth->testDocument($xml_doc)) { // test whether the document was altered
@@ -374,9 +374,7 @@ class Document
         ));
 
         $this->endTransaction();
-
-        $dth = $this->getDoctypeHandler();
-        $dth->onDocumentChange();
+        $this->getDoctypeHandler()->onDocumentChange();
 
         return $doc_info->id;
     }
@@ -395,9 +393,7 @@ class Document
             $this->updateLastchange();
 
             $success = $this->unlinkNodeById($node_id);
-
-            $dth = $this->getDoctypeHandler();
-            $dth->onDocumentChange();
+            $this->getDoctypeHandler()->onDocumentChange();
         }
 
         return $success;
@@ -540,9 +536,7 @@ class Document
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
-
-        $dth = $this->getDoctypeHandler();
-        $dth->onDocumentChange();
+        $this->getDoctypeHandler()->onDocumentChange();
 
         return $changed_ids;
     }
@@ -732,9 +726,7 @@ class Document
             $success = true;
 
             $this->endTransaction();
-
-            $dth = $this->getDoctypeHandler();
-            $dth->onDocumentChange();
+            $this->getDoctypeHandler()->onDocumentChange();
         }
 
         return $success;
@@ -931,11 +923,8 @@ class Document
         ));
 
         $this->updateLastchange();
-
         $this->endTransaction();
-
-        $dth = $this->getDoctypeHandler();
-        $dth->onDocumentChange();
+        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
@@ -1473,8 +1462,7 @@ class Document
         $this->endTransaction();
 
         if ($saveExisting) {
-            $dth = $this->getDoctypeHandler();
-            $dth->onDocumentChange();
+            $this->getDoctypeHandler()->onDocumentChange();
         }
 
         return $node_array[0]['id'];
