@@ -531,7 +531,7 @@ class Document
         $target_id = $this->getParentIdById($id_to_replace);
         $target_pos = $this->getPosById($id_to_replace);
 
-        $this->unlinkNodeById($id_to_replace, array(), true);
+        $this->unlinkNodeById($id_to_replace);
 
         $changed_ids = array();
         $changed_ids[] = $this->saveNode($node, $target_id, $target_pos, true);
@@ -763,7 +763,6 @@ class Document
             $copy_id = $this->copyNodePrivate($node_id, $target_id, $position);
 
             $this->endTransaction();
-
             $dth->onCopyNode($node_id, $copy_id);
             $dth->onDocumentChange();
         }
@@ -789,7 +788,6 @@ class Document
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id);
 
             $this->endTransaction();
-
             $dth->onCopyNode($node_id, $copy_id);
             $dth->onDocumentChange();
         }
@@ -815,7 +813,6 @@ class Document
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id, 1);
 
             $this->endTransaction();
-
             $dth->onCopyNode($node_id, $copy_id);
             $dth->onDocumentChange();
         }
