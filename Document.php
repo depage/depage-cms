@@ -394,7 +394,7 @@ class Document
         if ($dth->isAllowedUnlink($node_id)) {
             $this->beginTransaction();
 
-            $success = $this->unlinkNodeById($node_id);
+            $success = $this->unlinkNodePrivate($node_id);
 
             $this->updateLastchange();
             $this->endTransaction();
@@ -404,7 +404,7 @@ class Document
         return $success;
     }
     // }}}
-    // {{{ unlinkNodeById
+    // {{{ unlinkNodePrivate
     /**
      * unlinks and deletes a specific node from database.
      * re-indexes the positions of the remaining elements.
@@ -413,7 +413,7 @@ class Document
      *
      * @return    $deleted_ids (array) id of parent node
      */
-    protected function unlinkNodeById($node_id)
+    protected function unlinkNodePrivate($node_id)
     {
         // get parent and position (enables other node positions to be updated after delete)
         $target_id = $this->getParentIdById($node_id);
@@ -531,7 +531,7 @@ class Document
         $target_id = $this->getParentIdById($id_to_replace);
         $target_pos = $this->getPosById($id_to_replace);
 
-        $this->unlinkNodeById($id_to_replace);
+        $this->unlinkNodePrivate($id_to_replace);
 
         $changed_ids = array();
         $changed_ids[] = $this->saveNode($node, $target_id, $target_pos, true);
@@ -578,6 +578,27 @@ class Document
     }
     // }}}
 
+    // {{{ moveNode
+    public function moveNode($node_id, $target_id, $target_pos)
+    {
+        $moved_id = false;
+        $dth = $this->getDoctypeHandler();
+
+        if (
+            $node_id !== $target_id
+            && $dth->isAllowedMove($node_id, $target_id)
+        ) {
+            $this->beginTransaction();
+
+            $moved_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
+
+            $this->endTransaction();
+            $dth->onDocumentChange();
+        }
+
+        return $moved_id;
+    }
+    // }}}
     // {{{ moveNodeIn
     /**
      * moves node to another node (append child)
@@ -626,7 +647,6 @@ class Document
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id);
-
             $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
             $this->endTransaction();
@@ -656,29 +676,7 @@ class Document
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id) + 1;
-
             $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
-
-            $this->endTransaction();
-            $dth->onDocumentChange();
-        }
-
-        return $moved_id;
-    }
-    // }}}
-    // {{{ moveNode
-    public function moveNode($node_id, $target_id, $target_pos)
-    {
-        $moved_id = false;
-        $dth = $this->getDoctypeHandler();
-
-        if (
-            $node_id !== $target_id
-            && $dth->isAllowedMove($node_id, $target_id)
-        ) {
-            $this->beginTransaction();
-
-            $moved_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
 
             $this->endTransaction();
             $dth->onDocumentChange();
@@ -1377,7 +1375,7 @@ class Document
     // }}}
 
     // {{{ extractNamespaces
-    public function extractNamespaces($str)
+    protected function extractNamespaces($str)
     {
         $namespaces = array();
         $pName = "([a-zA-Z0-9]*)";
@@ -1454,7 +1452,7 @@ class Document
                 }
 
                 //unlink old node
-                $this->unlinkNodeById($node_array[0]['id']);
+                $this->unlinkNodePrivate($node_array[0]['id']);
             } else {
                 $target_id = null;
                 $target_pos = 0;
@@ -1645,7 +1643,7 @@ class Document
      * @param int $timestamp optional timestamp, defaults to now
      * @param int $uid optional user id, defaults to current user, when user is set in xmldb options
      */
-    public function updateLastchange($timestamp = null, $uid = null) {
+    protected function updateLastchange($timestamp = null, $uid = null) {
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -1743,7 +1741,7 @@ class Document
     }
     // }}}
     // {{{ endTransaction
-    public function endTransaction()
+    protected function endTransaction()
     {
         $transactions = $this->xmldb->endTransaction();
 
