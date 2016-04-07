@@ -920,6 +920,7 @@ class Document
         }
 
         $this->endTransaction();
+        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
@@ -946,6 +947,7 @@ class Document
         }
 
         $this->endTransaction();
+        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
@@ -959,8 +961,6 @@ class Document
      */
     protected function saveAttributes($node_id, $attributes)
     {
-        $this->beginTransaction();
-
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_xml} AS xml
             SET xml.value = :attr_str
@@ -973,8 +973,6 @@ class Document
         ));
 
         $this->updateLastchange();
-        $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
