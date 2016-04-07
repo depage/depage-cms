@@ -1032,23 +1032,6 @@ class Document
         return $copy_id;
     }
     // }}}
-    // {{{ copyNodeWithOffset
-    /**
-     * copy node after another node
-     *
-     * @param    $node_id (int) db-id of node
-     * @param    $target_id (int) db-id of target node
-     * @param    $target_pos_offset (int) offset of target position
-     */
-    protected function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
-    {
-        $target_parent_id = $this->getParentIdById($target_id);
-        $target_pos = $this->getPosById($target_id) + $target_pos_offset;
-        $copy_id = $this->copyNodePrivate($node_id, $target_parent_id, $target_pos);
-
-        return $copy_id;
-    }
-    // }}}
 
     // {{{ unlinkNodePrivate
     /**
@@ -1184,6 +1167,23 @@ class Document
         $save_id = $this->saveNode($root_node, $target_id, $target_pos, true);
 
         return $save_id;
+    }
+    // }}}
+    // {{{ copyNodeWithOffset
+    /**
+     * copy node after another node
+     *
+     * @param    $node_id (int) db-id of node
+     * @param    $target_id (int) db-id of target node
+     * @param    $target_pos_offset (int) offset of target position
+     */
+    protected function copyNodeWithOffset($node_id, $target_id, $target_pos_offset = 0)
+    {
+        $target_parent_id = $this->getParentIdById($target_id);
+        $target_pos = $this->getPosById($target_id) + $target_pos_offset;
+        $copy_id = $this->copyNodePrivate($node_id, $target_parent_id, $target_pos);
+
+        return $copy_id;
     }
     // }}}
 

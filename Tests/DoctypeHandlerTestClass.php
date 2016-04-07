@@ -6,9 +6,12 @@ use Depage\XmlDb\XmlDocTypes\Base;
 
 class DoctypeHandlerTestClass extends Base
 {
+    public $isAllowedIn = true;
+    public $isAllowedCopy = true;
+    public $isAllowedMove = true;
     public $isAllowedUnlink = true;
     public $isAllowedAdd = true;
-    public $isAllowedMove = true;
+
     public $testDocument = false;
     public $availableNodes = array();
     public $validParents = array(
@@ -17,6 +20,7 @@ class DoctypeHandlerTestClass extends Base
         ),
     );
 
+    // {{{ constructor
     public function __construct($xmlDb, $document)
     {
         parent::__construct($xmlDb, $document);
@@ -30,27 +34,45 @@ class DoctypeHandlerTestClass extends Base
 
         $this->availableNodes['testNode'] = $testNode;
     }
+    // }}}
 
-    public function onDocumentChange()
+    // {{{ isAllowedIn
+    public function isAllowedIn($nodeName, $targetNodeName)
     {
-        return parent::onDocumentChange();
+        return ($this->isAllowedIn) ? parent::isAllowedIn($nodeName, $targetNodeName) : false;
     }
-    public function isAllowedUnlink($nodeId)
+    // }}}
+    // {{{ isAllowedCopy
+    public function isAllowedCopy($nodeId, $targetId)
     {
-        return ($this->isAllowedUnlink) ? parent::isAllowedUnlink($nodeId) : false;
+        return ($this->isAllowedCopy) ? parent::isAllowedCopy($nodeId, $targetId) : false;
     }
-    public function isAllowedAdd($node, $targetId)
-    {
-        return ($this->isAllowedAdd) ? parent::isAllowedAdd($node, $targetId) : false;
-    }
+    // }}}
+    // {{{ isAllowedMove
     public function isAllowedMove($nodeId, $targetId)
     {
         return ($this->isAllowedMove) ? parent::isAllowedMove($nodeId, $targetId) : false;
     }
+    // }}}
+    // {{{ isAllowedUnlink
+    public function isAllowedUnlink($nodeId)
+    {
+        return ($this->isAllowedUnlink) ? parent::isAllowedUnlink($nodeId) : false;
+    }
+    // }}}
+    // {{{ isAllowedAdd
+    public function isAllowedAdd($node, $targetId)
+    {
+        return ($this->isAllowedAdd) ? parent::isAllowedAdd($node, $targetId) : false;
+    }
+    // }}}
+
+    // {{{ testDocument
     public function testDocument($xml)
     {
         return $this->testDocument;
     }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
