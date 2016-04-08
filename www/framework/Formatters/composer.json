@@ -1,0 +1,32 @@
+{
+    "name": "depage/formatters",
+    "description": "formatters",
+    "version": "1.5.0-beta.1",
+    "type": "library",
+    "keywords": [
+    ],
+    "require": {
+        "php": " >= 5.3",
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Formatters\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-formatters",
+        "issues": "https://github.com/depage/depage-formatters/issues"
+
+    },
+    "time": "2016-04-08",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
