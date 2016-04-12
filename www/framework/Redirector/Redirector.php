@@ -140,6 +140,10 @@ class Redirector
         $this->port = !empty($parts['port']) ? $parts['port'] : "";
         $this->basePath = !empty($parts['path']) ? $parts['path'] : "/";
 
+        if (substr($this->basePath, -1) != "/") {
+            $this->basePath .= "/";
+        }
+
         return $this;
     }
     // }}}
