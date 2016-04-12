@@ -1,6 +1,6 @@
 <?php
 
-namespace Depage\Redirector;
+namespace Depage\Redirector {
 
 /**
  * brief Result
@@ -55,6 +55,8 @@ class Result
         return $this->isFallback;
     }
     // }}}
+}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */

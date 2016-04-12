@@ -1,6 +1,6 @@
 <?php
 
-namespace Depage\Redirector;
+namespace Depage\Redirector {
 
 /**
  * brief Redirector
@@ -170,9 +170,11 @@ class Redirector
         if (isset($request[1]) && strlen($request[1]) == 2) {
             // assume its a lang identifier if strlen is 2
             $this->lang = array_splice($request, 1, 1)[0];
-        } else {
+        }
+        if (!in_array($this->lang, $this->languages)) {
             $this->lang = "";
         }
+
 
         return implode("/", $request);
     }
@@ -256,7 +258,9 @@ class Redirector
      **/
     public function getIndexPage()
     {
-        return new Result($this->pages[0], true);
+        reset($this->pages);
+
+        return new Result(current($this->pages), true);
     }
     // }}}
 
@@ -303,6 +307,8 @@ class Redirector
         header("Location: $url");
     }
     // }}}
+}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
