@@ -440,8 +440,6 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getPreviewPath()
     {
-        $languages = array_keys($this->getLanguages());
-
         // @todo check template path
         return "project/{$this->name}/preview/html/pre/{$languages[0]}";
     }
@@ -504,15 +502,43 @@ class Project extends \Depage\Entity\Entity
      *
      * @return Get path to home page
      **/
-    public function getHomeUrl()
+    public function getHomeUrl($publishId = null)
     {
         $this->xmldb = $this->getXmlDb();
-
         $xml = $this->xmldb->getDocXml("pages");
+
+        $languages = array_keys($this->getLanguages());
 
         $nodelist = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "page");
 
-        return $this->getPreviewPath() . $nodelist->item(0)->getAttribute("url");
+        return $this->getBaseUrl($publishId) . $languages[0] . $nodelist->item(0)->getAttribute("url");
+    }
+    // }}}
+    // {{{ getBaseUrl()
+    /**
+     * @brief getBaseUrl
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getBaseUrl($publishId = null)
+    {
+        if (is_null($publishId)) {
+            return $this->getPreviewPath();
+        } else {
+            $targets = $this->getPublishingTargets();
+            $conf = $targets[$publishId];
+
+            // get base-url
+            $baseurl = parse_url(rtrim($conf->baseurl, "/"));
+            $rewritebase = $baseurl['path'];
+            if ($rewritebase == "") {
+                $rewritebase = "/";
+            }
+            $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
+
+            return $baseurl;
+        }
     }
     // }}}
     // {{{ getLastPublishDate()
@@ -622,9 +648,10 @@ class Project extends \Depage\Entity\Entity
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
             \$publisher->publishString(
-                \$project->generateSitemap(),
+                \$project->generateSitemap(%s),
                 %s
             );", array(
+                $publishId,
                 "sitemap.xml",
         ), $initId);
 
@@ -632,9 +659,10 @@ class Project extends \Depage\Entity\Entity
         foreach ($languages as $lang => $name) {
             $task->addSubtask("publishing atom feed ($lang)", "
                 \$publisher->publishString(
-                    \$project->generateAtomFeed(%s),
+                    \$project->generateAtomFeed(%s, %s),
                     %s
                 );", array(
+                    $publishId,
                     $lang,
                     "$lang/atom.xml",
             ), $initId);
@@ -651,9 +679,10 @@ class Project extends \Depage\Entity\Entity
 
         $task->addSubtask("publishing index", "
             \$publisher->publishString(
-                \$project->generateIndex(),
+                \$project->generateIndex(%s),
                 %s
             );", array(
+                $publishId,
                 "index.php",
         ), $initId);
 
@@ -671,7 +700,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function generateSitemap()
+    public function generateSitemap($publishId)
     {
         $this->xmldb = $this->getXmlDb();
 
@@ -683,7 +712,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => "https://depage.net/",
+            "baseUrl" => $this->getBaseUrl($publishId),
         );
 
         $sitemap = $transformer->transform($xml, $parameters);
@@ -697,7 +726,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function generateAtomFeed($lang)
+    public function generateAtomFeed($publishId, $lang)
     {
         $this->xmldb = $this->getXmlDb();
 
@@ -710,7 +739,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => "https://depage.net/",
+            "baseUrl" => $this->getBaseUrl($publishId),
         );
 
         $sitemap = $transformer->transform($xml, $parameters);
@@ -730,20 +759,13 @@ class Project extends \Depage\Entity\Entity
     {
         $htaccess = "";
         $targets = $this->getPublishingTargets();
-        $languages = $this->getLanguages();
-        $defaultLanguage = current(array_keys($languages));
+        $languages = array_keys($this->getLanguages());
+        $defaultLanguage = current($languages);
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
+        $baseurl = $this->getBaseUrl($publishId);
 
         $htaccess .= "AddCharset UTF-8 .html\n\n";
-
-        // get base-url
-        $baseurl = parse_url(rtrim($conf->baseurl, "/"));
-        $rewritebase = $baseurl['path'];
-        if ($rewritebase == "") {
-            $rewritebase = "/";
-        }
-        $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
 
         if ($conf->mod_rewrite == "true") {
             $htaccess .= "RewriteEngine       on\n";
@@ -779,7 +801,7 @@ class Project extends \Depage\Entity\Entity
             $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
             $htaccess .= "RewriteRule         ^(.*)\.html              \$1.php [L]\n\n";
 
-            $folders = implode("|", array_keys($languages)) . "|lib";
+            $folders = implode("|", $languages) . "|lib";
             // redirect all pages that are not found to index-page
             // this has to be the last rules for custom rewrite-rules to work
             $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
@@ -796,9 +818,51 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function generateIndex()
+    public function generateIndex($publishId)
     {
+        $this->xmldb = $this->getXmlDb();
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $targets = $this->getPublishingTargets();
+        $languages = array_keys($this->getLanguages());
+        $defaultLanguage = current($languages);
+        $projectPath = $this->getProjectPath();
+        $conf = $targets[$publishId];
+        $baseurl = $this->getBaseUrl($publishId);
+
+        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $conf->template_set, $transformCache);
+        $urls = $transformer->getUrlsByPageId();
+
         $index = "";
+        $index .= file_get_contents(__DIR__ . "/../Redirector/Redirector.php");
+        $index .= "?>";
+        $index .= file_get_contents(__DIR__ . "/../Redirector/Result.php");
+
+        $index .= "namespace {\n";
+
+        $index .= "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");\n";
+
+        $index .= "\$redirector->setLanguages(" . var_export($languages, true) . ");\n";
+        $index .= "\$redirector->setPages(" . var_export($urls, true) . ");\n";
+
+        if (file_exists("$projectPath/lib/shortcuts")) {
+            $index .= file_get_contents("$projectPath/lib/shortcuts");
+            $index .= "if (isset(\$shortcuts)) {\n";
+                $index .= "    \$redirector->setAliases(\$shortcuts);\n";
+            $index .= "}\n";
+        }
+
+        $index .= "\n";
+
+        $index .= "if (isset(\$_GET['notfound'])) {\n";
+            $index .= "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
+        $index .= "} else {\n";
+            $index .= "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
+        $index .= "}\n\n";
+
+        $index .= "}";
+
 
         return $index;
     }

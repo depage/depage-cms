@@ -123,10 +123,9 @@ class Preview extends \Depage\Depage\Ui\Base
         } else if ($urlPath == "/atom.xml") {
             $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
 
-            return $project->generateAtomFeed($lang);
             $feed = new \Depage\Http\Response();
             $feed
-                ->setBody($project->generateAtomFeed($lang))
+                ->setBody($project->generateAtomFeed(null, $lang))
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $feed;
