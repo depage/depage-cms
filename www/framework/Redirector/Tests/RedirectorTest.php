@@ -97,22 +97,6 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("/home.html", $alternative);
     }
     // }}}
-    // {{{ testGetAlternativePageBaseUrl()
-    /**
-     * @brief testGetAlternativePageBaseUrl
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function testGetAlternativePageBaseUrl()
-    {
-        $this->redirector->setBaseUrl("http://domain.com/path/");
-        $alternative = $this->redirector->getAlternativePage("/path/contact/imprint2.html");
-
-        $this->assertFalse($alternative->isFallback());
-        $this->assertEquals("/contact/imprint.html", $alternative);
-    }
-    // }}}
     // {{{ testAliases()
     /**
      * @brief testAliases
@@ -143,6 +127,7 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("/home.html", $index);
     }
     // }}}
+
     // {{{ testRedirectToAlternativePage()
     /**
      * @brief testRedirectToAlternativePage
@@ -180,6 +165,24 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Location: /path/de/contact/imprint.html", $headers[0]);
     }
     // }}}
+    // {{{ testRedirectToAlternativePageLangUri()
+    /**
+     * @brief testRedirectToAlternativePageLangUri
+     *
+     * @param mixed
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToAlternativePageLangUri()
+    {
+        $this->redirector->redirectToAlternativePage("/en/contact/imprint2.html", "de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /en/contact/imprint.html", $headers[0]);
+    }
+    // }}}
     // {{{ testRedirectToIndex()
     /**
      * @brief testRedirectToIndex
@@ -190,7 +193,7 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
      **/
     public function testRedirectToIndex()
     {
-        $this->redirector->redirectToIndex("de,en-US;q=0.7,en;q=0.3");
+        $this->redirector->redirectToIndex("/", "de,en-US;q=0.7,en;q=0.3");
 
         $headers = xdebug_get_headers();
 
@@ -208,11 +211,28 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
     public function testRedirectToIndexBaseUrl()
     {
         $this->redirector->setBaseUrl("http://domain.com/path/");
-        $this->redirector->redirectToIndex("de,en-US;q=0.7,en;q=0.3");
+        $this->redirector->redirectToIndex("/", "de,en-US;q=0.7,en;q=0.3");
 
         $headers = xdebug_get_headers();
 
         $this->assertEquals("Location: /path/de/home.html", $headers[0]);
+    }
+    // }}}
+    // {{{ testRedirectToIndexLangUri()
+    /**
+     * @brief testRedirectToIndexLangUri
+     *
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToIndexLangUri()
+    {
+        $this->redirector->redirectToIndex("/en/", "de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /en/home.html", $headers[0]);
     }
     // }}}
 }

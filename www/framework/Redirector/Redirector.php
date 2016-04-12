@@ -48,6 +48,11 @@ class Redirector
      **/
     protected $basePath = "/";
 
+    /**
+     * @brief lang
+     **/
+    protected $lang = "";
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -139,6 +144,36 @@ class Redirector
     }
     // }}}
 
+    // {{{ parseRequestUri()
+    /**
+     * @brief parseRequestUri
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function parseRequestUri($requestUri)
+    {
+        if ($this->basePath != "/") {
+            // remove basePath from request
+            // @todo throw error if request does not start with basePath?
+            $request = substr($requestUri, strlen($this->basePath) - 1);
+        } else {
+            $request = $requestUri;
+        }
+
+        $request = explode("/", $request);
+
+        if (isset($request[1]) && strlen($request[1]) == 2) {
+            // assume its a lang identifier if strlen is 2
+            $this->lang = array_splice($request, 1, 1)[0];
+        } else {
+            $this->lang = "";
+        }
+
+        return implode("/", $request);
+    }
+    // }}}
+
     // {{{ getLanguageByBrowser()
     /**
      * @brief getLanguageByBrowser
@@ -180,15 +215,7 @@ class Redirector
         $isFallback = false;
         $pages = array_merge(array_keys($this->aliases), $this->pages);
 
-        if ($this->basePath != "/") {
-            // remove basePath from request
-            // @todo throw error if request does not start with basePath?
-            $request = substr($request, strlen($this->basePath) - 1);
-        }
-
         $request = explode("/", $request);
-
-        // @todo handle languages in request
 
         //search for pages
         while ($altPage == "" && count($request) > 1) {
@@ -236,11 +263,14 @@ class Redirector
      * @param $request
      * @return void
      **/
-    public function redirectToAlternativePage($request, $acceptLanguage = "")
+    public function redirectToAlternativePage($requestUri, $acceptLanguage = "")
     {
         $url = $this->basePath;
+        $request = $this->parseRequestUri($requestUri);
 
-        if (!empty($this->languages)) {
+        if ($this->lang != "") {
+            $url .= $this->lang;
+        } else if (!empty($this->languages)) {
             $url .= $this->getLanguageByBrowser($acceptLanguage);
         }
         $url .= $this->getAlternativePage($request);
@@ -254,11 +284,14 @@ class Redirector
      *
      * @return void
      **/
-    public function redirectToIndex($acceptLanguage = "")
+    public function redirectToIndex($requestUri = "/", $acceptLanguage = "")
     {
         $url = $this->basePath;
+        $request = $this->parseRequestUri($requestUri);
 
-        if (!empty($this->languages)) {
+        if ($this->lang != "") {
+            $url .= $this->lang;
+        } else if (!empty($this->languages)) {
             $url .= $this->getLanguageByBrowser($acceptLanguage);
         }
         $url .= $this->getIndexPage();
