@@ -21,6 +21,7 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
         $this->redirector = new Redirector();
 
         $this->redirector
+            ->setBaseUrl("http://domain.com")
             ->setLanguages(array(
                 "en",
                 "de",
@@ -96,6 +97,22 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("/home.html", $alternative);
     }
     // }}}
+    // {{{ testGetAlternativePageBaseUrl()
+    /**
+     * @brief testGetAlternativePageBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testGetAlternativePageBaseUrl()
+    {
+        $this->redirector->setBaseUrl("http://domain.com/path/");
+        $alternative = $this->redirector->getAlternativePage("/path/contact/imprint2.html");
+
+        $this->assertFalse($alternative->isFallback());
+        $this->assertEquals("/contact/imprint.html", $alternative);
+    }
+    // }}}
     // {{{ testAliases()
     /**
      * @brief testAliases
@@ -109,7 +126,93 @@ class RedirectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($alternative->isFallback());
         $this->assertEquals("/contact.html", $alternative);
+    }
+    // }}}
+    // {{{ testGetIndexPage()
+    /**
+     * @brief testGetIndexPage
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testGetIndexPage()
+    {
+        $index = $this->redirector->getIndexPage();
 
+        $this->assertTrue($index->isFallback());
+        $this->assertEquals("/home.html", $index);
+    }
+    // }}}
+    // {{{ testRedirectToAlternativePage()
+    /**
+     * @brief testRedirectToAlternativePage
+     *
+     * @param mixed
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToAlternativePage()
+    {
+        $this->redirector->redirectToAlternativePage("/contact/imprint2.html", "de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /de/contact/imprint.html", $headers[0]);
+    }
+    // }}}
+    // {{{ testRedirectToAlternativePageBaseUrl()
+    /**
+     * @brief testRedirectToAlternativePageBaseUrl
+     *
+     * @param mixed
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToAlternativePageBaseUrl()
+    {
+        $this->redirector->setBaseUrl("http://domain.com/path/");
+        $this->redirector->redirectToAlternativePage("/path/contact/imprint2.html", "de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /path/de/contact/imprint.html", $headers[0]);
+    }
+    // }}}
+    // {{{ testRedirectToIndex()
+    /**
+     * @brief testRedirectToIndex
+     *
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToIndex()
+    {
+        $this->redirector->redirectToIndex("de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /de/home.html", $headers[0]);
+    }
+    // }}}
+    // {{{ testRedirectToIndexBaseUrl()
+    /**
+     * @brief testRedirectToIndexBaseUrl
+     *
+     * @return void
+     *
+     * @runInSeparateProcess
+     **/
+    public function testRedirectToIndexBaseUrl()
+    {
+        $this->redirector->setBaseUrl("http://domain.com/path/");
+        $this->redirector->redirectToIndex("de,en-US;q=0.7,en;q=0.3");
+
+        $headers = xdebug_get_headers();
+
+        $this->assertEquals("Location: /path/de/home.html", $headers[0]);
     }
     // }}}
 }

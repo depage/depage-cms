@@ -28,6 +28,26 @@ class Redirector
      **/
     protected $aliases = array();
 
+    /**
+     * @brief baseUrl
+     **/
+    protected $baseUrl = "";
+
+    /**
+     * @brief scheme
+     **/
+    protected $scheme = "http";
+
+    /**
+     * @brief port
+     **/
+    protected $port = 80;
+
+    /**
+     * @brief basePath
+     **/
+    protected $basePath = "/";
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -35,9 +55,11 @@ class Redirector
      * @param mixed
      * @return void
      **/
-    public function __construct()
+    public function __construct($baseUrl = "")
     {
-
+        if (!empty($baseUrl)) {
+            $this->setBaseUrl($baseUrl);
+        }
     }
     // }}}
 
@@ -96,6 +118,26 @@ class Redirector
         return $this;
     }
     // }}}
+    // {{{ setBaseUrl()
+    /**
+     * @brief setBaseUrl
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = $url;
+
+        $parts = parse_url($this->baseUrl);
+
+        $this->scheme = !empty($parts['scheme']) ? $parts['scheme'] : "";
+        $this->port = !empty($parts['port']) ? $parts['port'] : "";
+        $this->basePath = !empty($parts['path']) ? $parts['path'] : "/";
+
+        return $this;
+    }
+    // }}}
 
     // {{{ getLanguageByBrowser()
     /**
@@ -138,7 +180,15 @@ class Redirector
         $isFallback = false;
         $pages = array_merge(array_keys($this->aliases), $this->pages);
 
+        if ($this->basePath != "/") {
+            // remove basePath from request
+            // @todo throw error if request does not start with basePath?
+            $request = substr($request, strlen($this->basePath) - 1);
+        }
+
         $request = explode("/", $request);
+
+        // @todo handle languages in request
 
         //search for pages
         while ($altPage == "" && count($request) > 1) {
@@ -160,11 +210,60 @@ class Redirector
 
         // fallback to first url
         if ($altPage == "") {
-            $altPage = $this->pages[0];
-            $isFallback = true;
+            return $this->getIndexPage();
         }
 
         return new Result($altPage, $isFallback);
+    }
+    // }}}
+    // {{{ getIndexPage()
+    /**
+     * @brief getIndexPage
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getIndexPage()
+    {
+        return new Result($this->pages[0], true);
+    }
+    // }}}
+
+    // {{{ redirectToAlternativePage()
+    /**
+     * @brief redirectToAlternativePage
+     *
+     * @param $request
+     * @return void
+     **/
+    public function redirectToAlternativePage($request, $acceptLanguage = "")
+    {
+        $url = $this->basePath;
+
+        if (!empty($this->languages)) {
+            $url .= $this->getLanguageByBrowser($acceptLanguage);
+        }
+        $url .= $this->getAlternativePage($request);
+
+        header("Location: $url");
+    }
+    // }}}
+    // {{{ redirectToIndex()
+    /**
+     * @brief redirectToIndex
+     *
+     * @return void
+     **/
+    public function redirectToIndex($acceptLanguage = "")
+    {
+        $url = $this->basePath;
+
+        if (!empty($this->languages)) {
+            $url .= $this->getLanguageByBrowser($acceptLanguage);
+        }
+        $url .= $this->getIndexPage();
+
+        header("Location: $url");
     }
     // }}}
 }

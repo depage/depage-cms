@@ -18,7 +18,7 @@ class Result
      **/
     protected $isFallback = false;
 
-    // {{{ conf coct()
+    // {{{ constructor
     /**
      * @brief construct
      *
