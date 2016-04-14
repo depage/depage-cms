@@ -37,8 +37,27 @@ $conf = array(
         'phpcli' => "/opt/local/bin/php",
     ),
     // }}}
+    // {{{ edit.depage.net
+    'edit.depage.net/' => array(
+        'handler' => 'depage\Cms\Ui\Main',
+        'phpcli' => "/usr/bin/php",
+        'db' => array(
+            'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
+            'user' => 'root',
+            'password' => 'killroy',
+            'prefix' => 'dp',
+        ),
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "redis:6379",
+            ),
+        ),
+    ),
+    // }}}
     // {{{ localhost/depage-cms/
     'localhost/depage-cms/' => array(
+        'env' => 'production',
         'cache' => array(
             'xmldb' => array(
                 'disposition' => "redis",
@@ -73,6 +92,16 @@ $conf = array(
         //'env' => 'production',
         'extension' => "gm",
         'executable' => "/opt/local/bin/gm",
+        'background' => "#CCC8C4",
+        'base' => 'inherit',
+    ),
+    // }}}
+    // {{{ edit.depage.net graphics
+    'edit.depage.net/**.(gif|jpg|jpeg|png).*.(gif|jpg|jpeg|png)$' => array(
+        'handler' => 'Depage\Graphics\Ui\Graphics',
+        //'env' => 'production',
+        'extension' => "im",
+        'executable' => "/usr/bin/convert",
         'background' => "#CCC8C4",
         'base' => 'inherit',
     ),
