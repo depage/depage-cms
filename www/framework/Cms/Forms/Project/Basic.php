@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms\Project;
  * brief Project
  * Class Project
  */
-class Basic extends Base
+class Basic extends \Depage\HtmlForm\HtmlForm
 {
     /**
      * @brief list of available project groups
@@ -22,7 +22,9 @@ class Basic extends Base
      **/
     public function __construct($name, $params)
     {
+        $this->project = $params['project'];
         $this->groups = array();
+
         foreach($params['projectGroups'] as $g) {
             $this->groups[$g->id] = $g->name;
         }

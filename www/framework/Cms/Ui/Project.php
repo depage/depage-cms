@@ -66,6 +66,11 @@ class Project extends Base
             unset($tabTitles["variables"]);
             unset($tabTitles["import"]);
         }
+        if ($this->projectName == "+") {
+            $tabTitles = array(
+                "basic" => _("New Project"),
+            );
+        }
 
         if ($type == "languages") {
             $infoHead = _("Languages");

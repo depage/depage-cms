@@ -115,7 +115,11 @@ class Base extends \Depage\Depage\Ui\Base
      **/
     protected function getProject($projectName)
     {
-        return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        if ($projectName != "+") {
+            return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        } else {
+            return "";
+        }
     }
     // }}}
 
