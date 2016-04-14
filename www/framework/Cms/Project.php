@@ -440,8 +440,9 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getPreviewPath()
     {
-        // @todo check template path
-        return "project/{$this->name}/preview/html/pre/{$languages[0]}";
+        $languages = array_keys($this->getLanguages());
+
+        return $this->getBaseUrl() . "/" . $languages[0];
     }
     // }}}
 
@@ -511,7 +512,7 @@ class Project extends \Depage\Entity\Entity
 
         $nodelist = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "page");
 
-        return $this->getBaseUrl($publishId) . $languages[0] . $nodelist->item(0)->getAttribute("url");
+        return $this->getBaseUrl($publishId) . "/" . $languages[0] . $nodelist->item(0)->getAttribute("url");
     }
     // }}}
     // {{{ getBaseUrl()
@@ -524,7 +525,8 @@ class Project extends \Depage\Entity\Entity
     public function getBaseUrl($publishId = null)
     {
         if (is_null($publishId)) {
-            return $this->getPreviewPath();
+            // @todo check template path
+            return "project/{$this->name}/preview/html/pre";
         } else {
             $targets = $this->getPublishingTargets();
             $conf = $targets[$publishId];
