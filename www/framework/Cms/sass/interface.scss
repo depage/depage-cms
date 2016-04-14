@@ -677,7 +677,7 @@ html {
     .layout-left,
     .layout-right {
         position: absolute;
-        top: $toolbarHeight;
+        top: 0;
         padding-top: $infoHeight;
         bottom: 0;
         overflow: scroll;
@@ -688,6 +688,10 @@ html {
             right: 0;
             width: 100%;
         }
+    }
+    .toolbar ~ .layout-left,
+    .toolbar ~ .layout-right {
+        top: $toolbarHeight;
     }
     .layout-left {
         left: 0;
@@ -1503,7 +1507,6 @@ ul.users p {
         padding: 10px;
         background: #ccc8c4;
         margin: auto;
-        margin-top: 100px;
     }
 
     p.submit {
