@@ -493,6 +493,8 @@ class Document
                 ns = :ns"
         );
 
+        $this->beginTransaction();
+
         if ($info) {
             $query->execute(array(
                 'id' => $info->id,
@@ -501,9 +503,9 @@ class Document
                 'type' => $info->type,
                 'ns' => $info->namespaces,
             ));
-
-            $this->clearCache();
         }
+
+        $this->endTransaction();
 
         return $info;
     }
