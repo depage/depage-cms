@@ -24,15 +24,6 @@ class DocumentTest extends DatabaseTestCase
         $this->namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
     }
     // }}}
-    // {{{ generateDomDocument
-    protected function generateDomDocument($xml)
-    {
-        $doc = new \DomDocument();
-        $doc->loadXml($xml);
-
-        return $doc;
-    }
-    // }}}
 
     // {{{ testGetHistory
     public function testGetHistory()
@@ -530,6 +521,21 @@ class DocumentTest extends DatabaseTestCase
     }
     // }}}
 
+    // {{{ testMoveNode
+    public function testMoveNode()
+    {
+        $this->doc->moveNode(6, 4, 0);
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastChange($expected, $this->doc->getXml(false));
+    }
+    // }}}
     // {{{ testMoveNodeIn
     public function testMoveNodeIn()
     {
@@ -763,6 +769,20 @@ class DocumentTest extends DatabaseTestCase
         $this->assertFalse($this->doc->removeAttribute(6, 'idontexist'));
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+    }
+    // }}}
+    // {{{ testRemoveIdAttr
+    public function testRemoveIdAttr()
+    {
+        $xmlDoc = new \Depage\Xml\Document();
+        $xmlDoc->loadXml('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
+        $this->doc->removeIdAttr($xmlDoc);
+
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+                        '<node/>' .
+                    '</root>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $xmlDoc->saveXml());
     }
     // }}}
     // {{{ testGetAttribute

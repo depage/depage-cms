@@ -176,6 +176,16 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
         );
     }
     // }}}
+
+    // {{{ generateDomDocument
+    protected function generateDomDocument($xml)
+    {
+        $doc = new \DomDocument();
+        $doc->loadXml($xml);
+
+        return $doc;
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
