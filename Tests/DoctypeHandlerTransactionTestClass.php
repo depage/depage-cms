@@ -20,6 +20,14 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
         return parent::onCopyNode($node_id, $copy_id);
     }
     // }}}
+    // {{{ onMoveNode
+    public function onMoveNode($node_id, $moved_id)
+    {
+        $this->transactionTest('onMoveNode');
+
+        return parent::onMoveNode($node_id, $moved_id);
+    }
+    // }}}
     // {{{ onDeleteNode
     public function onDeleteNode($node_id, $parent_id)
     {

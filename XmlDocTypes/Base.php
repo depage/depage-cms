@@ -137,11 +137,25 @@ class Base
         return true;
     }
     // }}}
+    // {{{ onMoveNode
+    /**
+     * On Move Node
+     *
+     * @param \DomElement $node
+     * @param $node_id
+     * @param $moved_id
+     * @return bool
+     */
+    public function onMoveNode($node_id, $moved_id) {
+        return true;
+    }
+    // }}}
     // {{{ onDeleteNode
     /**
      * On Delete Node
      *
      * @param $node_id
+     * @param $parent_id
      * @return bool
      */
     public function onDeleteNode($node_id, $parent_id) {
