@@ -23,7 +23,9 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
     // {{{ onDeleteNode
     public function onDeleteNode($node_id)
     {
-        $this->transactionTest('onDeleteNode');
+        if (!$this->document->isInTransaction()) {
+            throw new \Exception("onDeleteNode triggered outside transaction.");
+        }
 
         return parent::onDeleteNode($node_id);
     }
