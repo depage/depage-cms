@@ -872,7 +872,7 @@ class Document
             $this->beginTransaction();
 
             $position = $this->getTargetPos($target_id);
-            $success = $this->moveNodePrivate($node_id, $target_id, $position);
+            $moved_id = $this->moveNodePrivate($node_id, $target_id, $position);
 
             $this->endTransaction();
             $dth->onMoveNode($node_id, $moved_id);

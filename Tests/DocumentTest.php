@@ -524,7 +524,7 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNode
     public function testMoveNode()
     {
-        $this->doc->moveNode(6, 4, 0);
+        $this->assertEquals(4, $this->doc->moveNode(6, 4, 0));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
@@ -539,7 +539,7 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNodeIn
     public function testMoveNodeIn()
     {
-        $this->doc->moveNodeIn(6, 4);
+        $this->assertEquals(4, $this->doc->moveNodeIn(6, 4));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -554,7 +554,7 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNodeBefore
     public function testMoveNodeBefore()
     {
-        $this->doc->moveNodeBefore(6, 5);
+        $this->assertEquals(4, $this->doc->moveNodeBefore(6, 5));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
@@ -569,13 +569,14 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNodeAfter
     public function testMoveNodeAfter()
     {
-        $this->doc->moveNodeAfter(6, 5);
+        $this->assertEquals(5, $this->doc->moveNodeAfter(7, 6));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub </pg:page>' .
+                '<pg:page name="P3.1.2"/>' .
                 '<pg:page name="P3.2"/>' .
             '</pg:page>' .
-            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
         '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
@@ -584,13 +585,13 @@ class DocumentTest extends DatabaseTestCase
     // {{{ testMoveNodeAfterSameLevel
     public function testMoveNodeAfterSameLevel()
     {
-        $this->doc->moveNodeAfter(6, 5);
+        $this->assertEquals(5, $this->doc->moveNodeAfter(6, 8));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
                 '<pg:page name="P3.2"/>' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
             '</pg:page>' .
-            '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
         '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
