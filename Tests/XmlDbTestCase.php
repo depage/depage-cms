@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
+class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
     // {{{ variables
     protected $pdo = null;

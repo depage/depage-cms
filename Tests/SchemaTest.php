@@ -1,6 +1,8 @@
 <?php
 
-class SchemaTest extends Depage\XmlDb\Tests\DatabaseTestCase
+namespace Depage\XmlDb\Tests;
+
+class SchemaTest extends XmlDbTestCase
 {
     // {{{ testUpdateSchema
     public function testUpdateSchema()
@@ -14,8 +16,8 @@ class SchemaTest extends Depage\XmlDb\Tests\DatabaseTestCase
 
         $this->dropTables($tables);
 
-        $cache = Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
-        $xmldb = new Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_schema_test', $this->pdo, $cache);
+        $cache = \Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
+        $xmldb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_schema_test', $this->pdo, $cache);
         $xmldb->updateSchema();
 
         foreach ($tables as $table) {

@@ -4,7 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 use Depage\XmlDb\XmlDocTypes\Base;
 
-class DoctypeHandlerBaseTest extends DatabaseTestCase
+class DoctypeHandlerBaseTest extends XmlDbTestCase
 {
     // {{{ variables
     protected $xmlDb;

@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-abstract class XpathTestCase extends DatabaseTestCase
+abstract class XpathTestCase extends XmlDbTestCase
 {
     protected $xmldb;
     protected $cache;

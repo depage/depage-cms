@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-class DocumentHistoryTest extends DatabaseTestCase
+class DocumentHistoryTest extends XmlDbTestCase
 {
     // {{{ variables
     protected $xmlDb;
