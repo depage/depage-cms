@@ -306,7 +306,7 @@ class Document
             $xml_str = "";
 
             // read from database
-            $this->beginTransaction();
+            $this->beginTransactionNonAltering();
 
             $query = $this->pdo->prepare(
                 "SELECT
@@ -493,7 +493,7 @@ class Document
                 ns = :ns"
         );
 
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         if ($info) {
             $query->execute(array(
@@ -518,7 +518,7 @@ class Document
      */
     public function save(\DomDocument $xml)
     {
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         $doc_info = $this->cleanDoc();
         $xml_text = $xml->saveXML();
@@ -569,7 +569,7 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedUnlink($node_id)) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $success = $this->unlinkNodePrivate($node_id);
 
@@ -592,7 +592,7 @@ class Document
      */
     public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true)
     {
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         /*
          * if target_id is not set, assume we are saving an existing node with a node
@@ -779,7 +779,7 @@ class Document
      */
     public function replaceNode($node, $id_to_replace)
     {
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         $target_id = $this->getParentIdById($id_to_replace);
         $target_pos = $this->getPosById($id_to_replace);
@@ -841,7 +841,7 @@ class Document
             $node_id !== $target_id
             && $dth->isAllowedMove($node_id, $target_id)
         ) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $moved_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
 
@@ -869,7 +869,7 @@ class Document
             $node_id !== $target_id
             && $dth->isAllowedMove($node_id, $target_id)
         ) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $position = $this->getTargetPos($target_id);
             $moved_id = $this->moveNodePrivate($node_id, $target_id, $position);
@@ -898,7 +898,7 @@ class Document
             $node_id !== $target_id
             && $dth->isAllowedMove($node_id, $target_id)
         ) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id);
@@ -928,7 +928,7 @@ class Document
             $node_id !== $target_id
             && $dth->isAllowedMove($node_id, $target_id)
         ) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id) + 1;
@@ -950,7 +950,7 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedCopy($node_id, $target_id)) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodePrivate($node_id, $target_id, $target_pos);
 
@@ -975,7 +975,7 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedCopy($node_id, $target_id)) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $position = $this->getTargetPos($target_id);
             $copy_id = $this->copyNodePrivate($node_id, $target_id, $position);
@@ -1001,7 +1001,7 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedCopy($node_id, $target_id)) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id);
 
@@ -1026,7 +1026,7 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedCopy($node_id, $target_id)) {
-            $this->beginTransaction();
+            $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id, 1);
 
@@ -1205,7 +1205,7 @@ class Document
     {
         $success = false;
 
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         $attributes = $this->getAttributes($node_id);
 
@@ -1237,7 +1237,7 @@ class Document
     {
         $success = false;
 
-        $this->beginTransaction();
+        $this->beginTransactionAltering();
 
         $attributes = $this->getAttributes($node_id);
 
@@ -1693,22 +1693,28 @@ class Document
     }
     // }}}
 
-    // {{{ beginTransaction
-    protected function beginTransaction()
+    // {{{ beginTransactionAltering
+    protected function beginTransactionAltering()
     {
-        return $this->xmldb->beginTransaction();
+        return $this->xmldb->beginTransactionAltering();
+    }
+    // }}}
+    // {{{ beginTransactionNonAltering
+    protected function beginTransactionNonAltering()
+    {
+        return $this->xmldb->beginTransactionNonAltering();
     }
     // }}}
     // {{{ endTransaction
     protected function endTransaction()
     {
-        $transactions = $this->xmldb->endTransaction();
+        $altered = $this->xmldb->endTransaction();
 
-        if ($transactions === 0) {
+        if ($altered) {
             $this->clearCache();
         }
 
-        return $transactions;
+        return $altered;
     }
     // }}}
     // {{{ updateLastchange

@@ -28,6 +28,7 @@ class XmlDb implements XmlGetter
     protected $table_xml;
     protected $table_nodetypes;
     protected $transactions = 0;
+    protected $alteringTransaction;
 
     public $options;
     // }}}
@@ -638,11 +639,16 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ beginTransaction
-    /**
-     * wrap database begin transaction
-     */
-    public function beginTransaction()
+    // {{{ beginTransactionAltering
+    public function beginTransactionAltering()
+    {
+        $this->alteringTransaction = true;
+
+        return $this->beginTransactionNonAltering();
+    }
+    // }}}
+    // {{{ beginTransactionNonAltering
+    public function beginTransactionNonAltering()
     {
         if ($this->transactions == 0) {
             $this->pdo->beginTransaction();
@@ -653,17 +659,19 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ endTransaction
-    /**
-     * wrap database end transaction
-     */
     public function endTransaction()
     {
+        $altered = false;
         $this->transactions--;
+
         if ($this->transactions == 0) {
             $this->pdo->commit();
+
+            $altered = $this->alteringTransaction;
+            $this->alteringTransaction = false;
         }
 
-        return $this->transactions;
+        return $altered;
     }
     // }}}
 }
