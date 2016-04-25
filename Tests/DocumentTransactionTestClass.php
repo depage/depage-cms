@@ -11,14 +11,18 @@ class DocumentTransactionTestClass extends DocumentTestClass
     {
         parent::__construct($xmldb, $doc_id);
 
-        $this->doctypeHandlers[$this->doc_id] = new DoctypeHandlerTransactionTestClass($this->xmldb, $this);
+        $dth = new DoctypeHandlerTransactionTestClass($this->xmldb, $this);
+        $this->setDoctypeHandler($dth);
     }
     // }}}
 
+    // {{{ inTransaction
     public function isInTransaction()
     {
         return ($this->xmldb->transactions > 0);
     }
+    // }}}
+    // {{{ clearCache
     public function clearCache()
     {
         if ($this->isInTransaction()) {
@@ -30,6 +34,7 @@ class DocumentTransactionTestClass extends DocumentTestClass
 
         return $result;
     }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

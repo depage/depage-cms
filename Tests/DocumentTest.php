@@ -113,10 +113,11 @@ class DocumentTest extends XmlDbTestCase
             'root',
             'child',
         ));
-        $doc = $xmlDb->getDoc(1);
+        $doc = new DocumentTestClass($xmlDb, 1);
 
         // set up doc type handler, pretend the document changed, trigger save node
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'1\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $doc);
+        $doc->setDoctypeHandler($dth);
         $doc->getDoctypeHandler()->testDocument = true;
         $doc->getSubdocByNodeId(1);
 
@@ -256,8 +257,8 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testUnlinkNodeDenied
     public function testUnlinkNodeDenied()
     {
-        // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
+        $this->doc->setDoctypeHandler($dth);
         $this->doc->getDoctypeHandler()->isAllowedUnlink = false;
 
         $this->assertFalse($this->doc->unlinkNode(6));
@@ -294,7 +295,8 @@ class DocumentTest extends XmlDbTestCase
     public function testAddNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
+        $this->doc->setDoctypeHandler($dth);
         $this->doc->getDoctypeHandler()->isAllowedAdd = false;
 
         $doc = $this->generateDomDocument('<root><node/></root>');
@@ -315,7 +317,8 @@ class DocumentTest extends XmlDbTestCase
     public function testAddNodeByName()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
+        $this->doc->setDoctypeHandler($dth);
 
         $this->doc->addNodeByName('testNode', 8, 0);
 
@@ -619,7 +622,8 @@ class DocumentTest extends XmlDbTestCase
     public function testCopyNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
+        $this->doc->setDoctypeHandler($dth);
         $this->doc->getDoctypeHandler()->isAllowedMove = false;
 
         $this->assertFalse($this->doc->copyNode(7, 8, 0));
@@ -704,7 +708,8 @@ class DocumentTest extends XmlDbTestCase
     public function testDuplicateNodeDenied()
     {
         // set up doc type handler
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Tests\\\\DoctypeHandlerTestClass\' WHERE id=\'3\'');
+        $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
+        $this->doc->setDoctypeHandler($dth);
         $this->doc->getDoctypeHandler()->isAllowedMove = false;
 
         $this->assertFalse($this->doc->duplicateNode(5));

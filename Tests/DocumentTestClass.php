@@ -4,6 +4,13 @@ namespace Depage\XmlDb\Tests;
 
 class DocumentTestClass extends \Depage\XmlDb\Document
 {
+    // {{{ setDoctypeHandler
+    public function setDoctypeHandler($dth)
+    {
+        $this->doctypeHandlers[$this->doc_id] = $dth;
+    }
+    // }}}
+
     // {{{ getPosById
     public function getPosById($id)
     {
