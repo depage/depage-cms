@@ -377,9 +377,9 @@ class Document
             }
 
             $success = $xml_doc->loadXML($xml_str);
-            $dth = $this->getDoctypeHandler();
             $this->endTransaction();
 
+            $dth = $this->getDoctypeHandler();
             if ($dth->testDocument($xml_doc)) { // test whether the document was altered
                 $this->saveNode($xml_doc);
             }
@@ -586,7 +586,6 @@ class Document
         ));
 
         $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $doc_info->id;
     }
@@ -610,7 +609,6 @@ class Document
 
             $this->updateLastchange();
             $this->endTransaction();
-            $dth->onDocumentChange();
         }
 
         return $success;
@@ -624,7 +622,6 @@ class Document
         $result = $this->saveNodeExisting($node);
 
         $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $result;
     }
@@ -764,7 +761,6 @@ class Document
             $success = $this->saveNodePrivate($node, $target_id, $target_pos, true);
 
             $this->endTransaction();
-            $dth->onDocumentChange();
         }
 
         return $success;
@@ -815,7 +811,6 @@ class Document
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $changed_ids;
     }
@@ -871,7 +866,6 @@ class Document
 
             $this->endTransaction();
             $dth->onMoveNode($node_id, $moved_id);
-            $dth->onDocumentChange();
         }
 
         return $moved_id;
@@ -900,7 +894,6 @@ class Document
 
             $this->endTransaction();
             $dth->onMoveNode($node_id, $moved_id);
-            $dth->onDocumentChange();
         }
 
         return $moved_id;
@@ -930,7 +923,6 @@ class Document
 
             $this->endTransaction();
             $dth->onMoveNode($node_id, $moved_id);
-            $dth->onDocumentChange();
         }
 
         return $moved_id;
@@ -960,7 +952,6 @@ class Document
 
             $this->endTransaction();
             $dth->onMoveNode($node_id, $moved_id);
-            $dth->onDocumentChange();
         }
 
         return $moved_id;
@@ -980,7 +971,6 @@ class Document
 
             $this->endTransaction();
             $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
         }
 
         return $copy_id;
@@ -1006,7 +996,6 @@ class Document
 
             $this->endTransaction();
             $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
         }
 
         return $copy_id;
@@ -1031,7 +1020,6 @@ class Document
 
             $this->endTransaction();
             $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
         }
 
         return $copy_id;
@@ -1056,7 +1044,6 @@ class Document
 
             $this->endTransaction();
             $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
         }
 
         return $copy_id;
@@ -1245,7 +1232,6 @@ class Document
         }
 
         $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
@@ -1272,7 +1258,6 @@ class Document
         }
 
         $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
     }
@@ -1725,6 +1710,7 @@ class Document
 
         if ($altered) {
             $this->clearCache();
+            $this->getDoctypeHandler()->onDocumentChange();
         }
 
         return $altered;
