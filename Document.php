@@ -381,7 +381,7 @@ class Document
             $this->endTransaction();
 
             if ($dth->testDocument($xml_doc)) { // test whether the document was altered
-                $this->saveNode($xml_doc);
+                $this->saveNodeExisting($xml_doc);
             }
 
             // add xml to xml-cache
@@ -569,7 +569,7 @@ class Document
         }
 
         // @TODO get document and entities or set html_entities as standard as long as php does not inherit the entites() function
-        $doc_info->rootid = $this->saveNode($xml);
+        $doc_info->rootid = $this->saveNodeExisting($xml);
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -617,77 +617,87 @@ class Document
     }
     // }}}
     // {{{ saveNode
-    /**
-     * saves a xml document or part of an document to database
-     *
-     * @param    $node (domxmlnode) node to save
-     * @param    $target_id (int) node db-id to save to
-     * @param    $target_pos (int) position to save at
-     * @param    $inc_children (bool) also save the related child nodes
-     */
-    public function saveNode($node, $target_id = null, $target_pos = -1, $inc_children = true)
+    public function saveNode($node, $target_id, $target_pos = -1, $inc_children = true)
     {
         $this->beginTransactionAltering();
 
-        /*
-         * if target_id is not set, assume we are saving an existing node with a node
-         * db:id-attribute set. if target_id is set, assume we want to save a new node
-         * so remove all existing node attributes first.
-         */
-        $saveExisting = $target_id === null;
+        $this->removeIdAttr($node);
 
-        if (!$saveExisting) {
-            $this->removeIdAttr($node);
+        $parent_id = $this->getParentIdById($target_id);
+        //unlink child nodes, if target is document
+        if ($parent_id === false) {
+            $this->pdo->exec("SET foreign_key_checks = 0;");
+            $query = $this->pdo->prepare(
+                "DELETE
+                FROM {$this->table_xml}
+                WHERE id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'doc_id' => $this->doc_id,
+            ));
+            $this->pdo->exec("SET foreign_key_checks = 1;");
+        }
+
+        $position = $this->getTargetPos($target_id);
+
+        if ($position) {
+            if ($target_pos > $position || $target_pos == -1) {
+                $target_pos = $position;
+            }
+        } else {
+            $target_pos = 0;
         }
 
         //get all nodes in array
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
 
-        if ($target_id === null) {
-            if ($node_array[0]['id'] != null) {
-                //set target_id/pos/doc
-                $target_id = $this->getParentIdById($node_array[0]['id']);
-                $target_pos = $this->getPosById($node_array[0]['id']);
+        $result = $this->saveNodePrivate($node_array, $target_id, $target_pos, $inc_children);
 
-                if ($target_id === false) {
-                    $target_id = null;
-                    $saveExisting = false;
-                }
+        $this->updateLastchange();
+        $this->endTransaction();
 
-                //unlink old node
-                $this->unlinkNodePrivate($node_array[0]['id']);
-            } else {
+        return $result;
+    }
+    // }}}
+    // {{{ saveNodeExisting
+    public function saveNodeExisting($node)
+    {
+        $this->beginTransactionAltering();
+
+        //get all nodes in array
+        $node_array = array();
+        $this->getNodeArrayForSaving($node_array, $node);
+
+        if ($node_array[0]['id'] != null) {
+            //set target_id/pos/doc
+            $target_id = $this->getParentIdById($node_array[0]['id']);
+            $target_pos = $this->getPosById($node_array[0]['id']);
+
+            if ($target_id === false) {
                 $target_id = null;
-                $target_pos = 0;
+                $saveExisting = false;
             }
+
+            //unlink old node
+            $this->unlinkNodePrivate($node_array[0]['id']);
         } else {
-            $parent_id = $this->getParentIdById($target_id);
-            //unlink child nodes, if target is document
-            if ($parent_id === false) {
-                $this->pdo->exec("SET foreign_key_checks = 0;");
-                $query = $this->pdo->prepare(
-                    "DELETE
-                    FROM {$this->table_xml}
-                    WHERE id_doc = :doc_id"
-                );
-                $query->execute(array(
-                    'doc_id' => $this->doc_id,
-                ));
-                $this->pdo->exec("SET foreign_key_checks = 1;");
-            }
-
-            $position = $this->getTargetPos($target_id);
-
-            if ($position) {
-                if ($target_pos > $position || $target_pos == -1) {
-                    $target_pos = $position;
-                }
-            } else {
-                $target_pos = 0;
-            }
+            $target_id = null;
+            $target_pos = 0;
         }
 
+        $result = $this->saveNodePrivate($node_array, $target_id, $target_pos, true);
+
+        $this->updateLastchange();
+        $this->endTransaction();
+        $this->getDoctypeHandler()->onDocumentChange();
+
+        return $result;
+    }
+    // }}}
+    // {{{ saveNodePrivate
+    protected function saveNodePrivate($node_array, $target_id, $target_pos, $inc_children)
+    {
         $this->getFreeNodeIds(count($node_array));
         for ($i = 0; $i < count($node_array); $i++) {
             if ($node_array[$i]['id'] !== null) {
@@ -723,13 +733,6 @@ class Document
                     $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
             }
-        }
-
-        $this->updateLastchange();
-        $this->endTransaction();
-
-        if ($saveExisting) {
-            $this->getDoctypeHandler()->onDocumentChange();
         }
 
         return $node_array[0]['id'];
