@@ -499,16 +499,16 @@ class XmlDb implements XmlGetter
     /**
      * CreateDoc
      *
-     * @param string $docType class-name of doctype for new document
+     * @param string $doctype class-name of doctype for new document
      * @param string $docName optional name of document
      * @return Document
      * @throws xmldbException
      */
-    public function createDoc($docType = 'Depage\XmlDb\XmlDocTypes\Base', $docName = null)
+    public function createDoc($doctype = 'Depage\XmlDb\XmlDoctypes\Base', $docName = null)
     {
         if (is_null($docName)) {
             // generate generic docname based on doctype
-            $docName = '_' . substr($docType, strrpos($docType, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
+            $docName = '_' . substr($doctype, strrpos($doctype, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
         if (!is_string($docName) || $this->docExists($docName)) {
             throw new Exceptions\XmlDbException("Invalid or duplicate document name: \"$docName\"");
@@ -520,7 +520,7 @@ class XmlDb implements XmlGetter
         );
         $query->execute(array(
             'name' => $docName,
-            'type' => $docType,
+            'type' => $doctype,
         ));
 
         $docId = $this->pdo->lastInsertId();

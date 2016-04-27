@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-use Depage\XmlDb\XmlDocTypes\Base;
+use Depage\XmlDb\XmlDoctypes\Base;
 
 class DoctypeHandlerTestClass extends Base
 {

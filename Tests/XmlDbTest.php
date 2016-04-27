@@ -126,7 +126,7 @@ class XmlDbTest extends XmlDbTestCase
     // {{{ testCreateDocSpecific
     public function testCreateDocSpecific()
     {
-        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'newDoc');
+        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'newDoc');
 
         $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
         $this->assertEquals('newDoc', $doc->getDocInfo()->name);
@@ -140,7 +140,7 @@ class XmlDbTest extends XmlDbTestCase
      */
     public function testCreateDocInvalidName()
     {
-        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', false);
+        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', false);
     }
     // }}}
 
@@ -224,7 +224,7 @@ class XmlDbTest extends XmlDbTestCase
      */
     public function testCreateDocExisting()
     {
-        $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'pages');
+        $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'pages');
     }
     // }}}
 

@@ -35,7 +35,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetDoctypeHandler
     public function testGetDoctypeHandler()
     {
-        $baseType = 'Depage\XmlDb\XmlDocTypes\Base';
+        $baseType = 'Depage\XmlDb\XmlDoctypes\Base';
 
         $this->assertEquals($baseType, $this->doc->getDocInfo()->type);
         $this->assertInstanceOf($baseType, $this->doc->getDoctypeHandler());
@@ -48,7 +48,7 @@ class DocumentTest extends XmlDbTestCase
         $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'\' WHERE id=\'3\'');
 
         $this->assertEquals('', $this->doc->getDocInfo()->type);
-        $this->assertInstanceOf('Depage\XmlDb\XmlDocTypes\Base', $this->doc->getDoctypeHandler());
+        $this->assertInstanceOf('Depage\XmlDb\XmlDoctypes\Base', $this->doc->getDoctypeHandler());
     }
     // }}}
 
