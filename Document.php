@@ -640,7 +640,6 @@ class Document
 
             if ($target_id === false) {
                 $target_id = null;
-                $saveExisting = false;
             }
 
             //unlink old node

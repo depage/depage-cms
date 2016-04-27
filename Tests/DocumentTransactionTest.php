@@ -37,6 +37,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getDocId();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetXml
@@ -44,6 +45,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getXml();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetDocInfo
@@ -51,6 +53,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getDocInfo();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetDoctypeHandler
@@ -58,6 +61,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getDoctypeHandler();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetPermissions
@@ -65,6 +69,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getPermissions();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetNamespacesAndEntities
@@ -72,6 +77,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getNamespacesAndEntities();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetHistory
@@ -79,6 +85,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getHistory();
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetNodeId
@@ -88,6 +95,7 @@ class DocumentTransactionTest extends XmlDbTestCase
         $this->doc->getNodeId($doc);
 
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetNodeDataId
@@ -97,6 +105,7 @@ class DocumentTransactionTest extends XmlDbTestCase
         $this->doc->getNodeDataId($doc);
 
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetNodeNameById
@@ -104,6 +113,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getNodeNameById(1);
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetNodeIdsByXpath
@@ -111,6 +121,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getNodeIdsByXpath('//*');
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetParentIdById
@@ -118,6 +129,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getParentIdById(5);
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetSubdocByNodeId
@@ -125,6 +137,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getSubdocByNodeId(5);
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetSubdocByXpath
@@ -132,6 +145,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getSubdocByXpath('//*');
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetAttribute
@@ -139,6 +153,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getAttribute(1, 'name');
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testGetAttributes
@@ -146,6 +161,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->getAttributes(1);
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
 
@@ -156,6 +172,7 @@ class DocumentTransactionTest extends XmlDbTestCase
         $xmlDoc->loadXml('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"><node/></root>');
         $this->doc->removeIdAttr($xmlDoc);
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testBuildNode
@@ -163,6 +180,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->buildNode('newNode', array('att' => 'val'));
         $this->assertEquals(0, $this->doc->cacheCleared);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
 
@@ -171,6 +189,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->clearDoc();
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testSave
