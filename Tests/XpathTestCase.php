@@ -61,20 +61,20 @@ abstract class XpathTestCase extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testGetSubDocByXpathByName
-    public function testGetSubDocByXpathByName()
+    // {{{ testGetSubdocByXpathByName
+    public function testGetSubdocByXpathByName()
     {
-        $subDoc = $this->testObject->getSubDocByXpath('//pg:folder');
+        $subdoc = $this->testObject->getSubdocByXpath('//pg:folder');
 
         $expected = '<pg:folder xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" file_type="html" multilang="true" name="F5.1" db:id="17" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""><pg:page file_type="html" multilang="true" name="P5.1.1" db:id="18"/><pg:page file_type="html" multilang="false" name="P5.1.2" db:id="19"><pg:folder name="F5.1.2.1" db:id="20"/>bla bla bla <pg:page name="P5.1.2.3" db:id="21">bla bla blub </pg:page></pg:page><pg:page name="P5.1.3" db:id="22"/><page name="P5.1.4" db:id="23"/><dpg:page name="P5.1.5" db:id="24"/><pg:folder name="P5.1.6" db:id="25"/><folder name="P5.1.7" db:id="26"/></pg:folder>';
 
-        $this->assertXmlStringEqualsXmlString($expected, $subDoc);
+        $this->assertXmlStringEqualsXmlString($expected, $subdoc);
     }
     // }}}
-    // {{{ testGetSubDocByXpathNone
-    public function testGetSubDocByXpathNone()
+    // {{{ testGetSubdocByXpathNone
+    public function testGetSubdocByXpathNone()
     {
-        $this->assertFalse($this->testObject->getSubDocByXpath('//iamnosubdoc'));
+        $this->assertFalse($this->testObject->getSubdocByXpath('//iamnosubdoc'));
     }
     // }}}
 

@@ -127,10 +127,10 @@ class DocumentTransactionTest extends XmlDbTestCase
         $this->assertEquals(0, $this->doc->cacheCleared);
     }
     // }}}
-    // {{{ testGetSubDocByXpath
-    public function testGetSubDocByXpath()
+    // {{{ testGetSubdocByXpath
+    public function testGetSubdocByXpath()
     {
-        $this->doc->getSubDocByXpath('//*');
+        $this->doc->getSubdocByXpath('//*');
         $this->assertEquals(0, $this->doc->cacheCleared);
     }
     // }}}

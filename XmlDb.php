@@ -220,7 +220,7 @@ class XmlDb implements XmlGetter
     }
     // }}}
 
-    // {{{ getSubDocByXpath
+    // {{{ getSubdocByXpath
     /**
      * gets document by xpath. if xpath directs to more than
      * one node, only the first node will be returned.
@@ -230,16 +230,16 @@ class XmlDb implements XmlGetter
      *
      * @return  $doc (domxmlobject)
      */
-    public function getSubDocByXpath($xpath, $add_id_attribute = true)
+    public function getSubdocByXpath($xpath, $add_id_attribute = true)
     {
-        $subDoc = false;
+        $subdoc = false;
         $ids = $this->getNodeIdsByXpath($xpath);
 
         if (isset($ids[0])) {
-            $subDoc = $this->getDocByNodeId($ids[0])->getSubdocByNodeId($ids[0], $add_id_attribute);
+            $subdoc = $this->getDocByNodeId($ids[0])->getSubdocByNodeId($ids[0], $add_id_attribute);
         }
 
-        return $subDoc;
+        return $subdoc;
     }
     // }}}
     // {{{ getNodeIdsByXpath
