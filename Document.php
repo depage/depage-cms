@@ -508,13 +508,13 @@ class Document
     }
     // }}}
 
-    // {{{ cleanDoc
+    // {{{ clearDoc
     /**
      * clean all nodes inside of document
      *
      * @return $doc (array)
      */
-    public function cleanDoc()
+    public function clearDoc()
     {
         $info = $this->getDocInfo();
 
@@ -555,7 +555,7 @@ class Document
     {
         $this->beginTransactionAltering();
 
-        $doc_info = $this->cleanDoc();
+        $doc_info = $this->clearDoc();
         $xml_text = $xml->saveXML();
 
         // @TODO get namespaces from document at this moment it is only per preg_match not by the domxml interface, because

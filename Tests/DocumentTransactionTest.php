@@ -166,10 +166,10 @@ class DocumentTransactionTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testCleanDoc
-    public function testCleanDoc()
+    // {{{ testClearDoc
+    public function testClearDoc()
     {
-        $this->doc->cleanDoc();
+        $this->doc->clearDoc();
         $this->assertEquals(1, $this->doc->cacheCleared);
     }
     // }}}
