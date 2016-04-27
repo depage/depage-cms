@@ -649,10 +649,7 @@ class Document
             $target_pos = 0;
         }
 
-        $result = $this->saveNodeArray($node_array, $target_id, $target_pos, true);
-        $this->updateLastchange();
-
-        return $result;
+        return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
     }
     // }}}
     // {{{ saveNodePrivate
@@ -689,11 +686,7 @@ class Document
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
 
-        $result = $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
-
-        $this->updateLastchange();
-
-        return $result;
+        return $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
     }
     // }}}
     // {{{ saveNodeArray
@@ -735,6 +728,8 @@ class Document
                 }
             }
         }
+
+        $this->updateLastchange();
 
         return $node_array[0]['id'];
     }
