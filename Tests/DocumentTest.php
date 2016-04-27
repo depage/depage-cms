@@ -398,18 +398,15 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testSaveNode
     public function testSaveNode()
     {
-        $doc = $this->generateDomDocument('<root><node/></root>');
+        $doc = $this->generateDomDocument('<pg:page ' . $this->namespaces . ' name="newName" db:id="8"/>');
 
-        $this->doc->saveNode($doc, 4);
+        $this->assertEquals(8, $this->doc->saveNode($doc));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
                 '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
-                '<pg:page name="P3.2"/>' .
+                '<pg:page name="newName"/>' .
             '</pg:page>' .
-            '<root>' .
-                '<node/>' .
-            '</root>' .
         '</dpg:pages>';
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));

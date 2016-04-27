@@ -381,7 +381,7 @@ class Document
             $this->endTransaction();
 
             if ($dth->testDocument($xml_doc)) { // test whether the document was altered
-                $this->saveNodeExisting($xml_doc);
+                $this->saveNode($xml_doc);
             }
 
             // add xml to xml-cache
@@ -617,10 +617,51 @@ class Document
     }
     // }}}
     // {{{ saveNode
-    public function saveNode($node, $target_id, $target_pos = -1, $inc_children = true)
+    public function saveNode($node)
     {
         $this->beginTransactionAltering();
 
+        $result = $this->saveNodeExisting($node);
+
+        $this->endTransaction();
+        $this->getDoctypeHandler()->onDocumentChange();
+
+        return $result;
+    }
+    // }}}
+    // {{{ saveNodeExisting
+    protected function saveNodeExisting($node)
+    {
+        //get all nodes in array
+        $node_array = array();
+        $this->getNodeArrayForSaving($node_array, $node);
+
+        if ($node_array[0]['id'] != null) {
+            //set target_id/pos/doc
+            $target_id = $this->getParentIdById($node_array[0]['id']);
+            $target_pos = $this->getPosById($node_array[0]['id']);
+
+            if ($target_id === false) {
+                $target_id = null;
+                $saveExisting = false;
+            }
+
+            //unlink old node
+            $this->unlinkNodePrivate($node_array[0]['id']);
+        } else {
+            $target_id = null;
+            $target_pos = 0;
+        }
+
+        $result = $this->saveNodeArray($node_array, $target_id, $target_pos, true);
+        $this->updateLastchange();
+
+        return $result;
+    }
+    // }}}
+    // {{{ saveNodePrivate
+    protected function saveNodePrivate($node, $target_id, $target_pos = -1, $inc_children = true)
+    {
         $this->removeIdAttr($node);
 
         $parent_id = $this->getParentIdById($target_id);
@@ -652,51 +693,15 @@ class Document
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
 
-        $result = $this->saveNodePrivate($node_array, $target_id, $target_pos, $inc_children);
+        $result = $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
 
         $this->updateLastchange();
-        $this->endTransaction();
 
         return $result;
     }
     // }}}
-    // {{{ saveNodeExisting
-    public function saveNodeExisting($node)
-    {
-        $this->beginTransactionAltering();
-
-        //get all nodes in array
-        $node_array = array();
-        $this->getNodeArrayForSaving($node_array, $node);
-
-        if ($node_array[0]['id'] != null) {
-            //set target_id/pos/doc
-            $target_id = $this->getParentIdById($node_array[0]['id']);
-            $target_pos = $this->getPosById($node_array[0]['id']);
-
-            if ($target_id === false) {
-                $target_id = null;
-                $saveExisting = false;
-            }
-
-            //unlink old node
-            $this->unlinkNodePrivate($node_array[0]['id']);
-        } else {
-            $target_id = null;
-            $target_pos = 0;
-        }
-
-        $result = $this->saveNodePrivate($node_array, $target_id, $target_pos, true);
-
-        $this->updateLastchange();
-        $this->endTransaction();
-        $this->getDoctypeHandler()->onDocumentChange();
-
-        return $result;
-    }
-    // }}}
-    // {{{ saveNodePrivate
-    protected function saveNodePrivate($node_array, $target_id, $target_pos, $inc_children)
+    // {{{ saveNodeArray
+    protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
     {
         $this->getFreeNodeIds(count($node_array));
         for ($i = 0; $i < count($node_array); $i++) {
@@ -753,8 +758,12 @@ class Document
 
         if ($dth->isAllowedAdd($node, $target_id)) {
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
-            $success = $this->saveNode($node, $target_id, $target_pos, true);
 
+            $this->beginTransactionAltering();
+
+            $success = $this->saveNodePrivate($node, $target_id, $target_pos, true);
+
+            $this->endTransaction();
             $dth->onDocumentChange();
         }
 
@@ -802,7 +811,7 @@ class Document
         $this->unlinkNodePrivate($id_to_replace);
 
         $changed_ids = array();
-        $changed_ids[] = $this->saveNode($node, $target_id, $target_pos, true);
+        $changed_ids[] = $this->saveNodePrivate($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
@@ -835,7 +844,7 @@ class Document
 
             $this->clearCache();
 
-            $copy_id = $this->saveNode($root_node, $target_id, $target_pos, $recursive);
+            $copy_id = $this->saveNodePrivate($root_node, $target_id, $target_pos, $recursive);
             $success = $copy_id;
 
             $dth->onCopyNode($node_id, $copy_id);
@@ -1185,7 +1194,7 @@ class Document
     {
         $xml_doc = $this->getSubdocByNodeId($node_id, false);
         $root_node = $xml_doc;
-        $save_id = $this->saveNode($root_node, $target_id, $target_pos, true);
+        $save_id = $this->saveNodePrivate($root_node, $target_id, $target_pos, true);
 
         return $save_id;
     }
