@@ -4,10 +4,17 @@ namespace Depage\XmlDb\Tests;
 
 class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
 {
+    public $onAddNode = 0;
+    public $onCopyNode = 0;
+    public $onMoveNode = 0;
+    public $onDeleteNode = 0;
+    public $onDocumentChange = 0;
+
     // {{{ onAddNode
     public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras)
     {
         $this->transactionTest('onAddNode');
+        $this->onAddNode++;
 
         return parent::onAddNode($node, $target_id, $target_pos, $extras);
     }
@@ -16,6 +23,7 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
     public function onCopyNode($node_id, $copy_id)
     {
         $this->transactionTest('onCopyNode');
+        $this->onCopyNode++;
 
         return parent::onCopyNode($node_id, $copy_id);
     }
@@ -24,6 +32,7 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
     public function onMoveNode($node_id, $moved_id)
     {
         $this->transactionTest('onMoveNode');
+        $this->onMoveNode++;
 
         return parent::onMoveNode($node_id, $moved_id);
     }
@@ -34,6 +43,7 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
         if (!$this->document->isInTransaction()) {
             throw new \Exception("onDeleteNode triggered outside transaction.");
         }
+        $this->onDeleteNode++;
 
         return parent::onDeleteNode($node_id, $parent_id);
     }
@@ -42,6 +52,7 @@ class DoctypeHandlerTransactionTestClass extends DoctypeHandlerTestClass
     public function onDocumentChange()
     {
         $this->transactionTest('onDocumentChange');
+        $this->onDocumentChange++;
 
         return parent::onDocumentChange();
     }

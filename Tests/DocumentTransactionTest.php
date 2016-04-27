@@ -22,6 +22,13 @@ class DocumentTransactionTest extends XmlDbTestCase
 
         $this->doc = new DocumentTransactionTestClass($this->xmlDb, 3);
         $this->namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
+
+        $this->dth = $this->doc->getDoctypeHandler();
+        $this->assertEquals(0, $this->dth->onAddNode);
+        $this->assertEquals(0, $this->dth->onCopyNode);
+        $this->assertEquals(0, $this->dth->onMoveNode);
+        $this->assertEquals(0, $this->dth->onDeleteNode);
+        $this->assertEquals(0, $this->dth->onDocumentChange);
     }
     // }}}
 
@@ -180,6 +187,7 @@ class DocumentTransactionTest extends XmlDbTestCase
         $this->doc->save($xml);
 
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
 
@@ -187,48 +195,59 @@ class DocumentTransactionTest extends XmlDbTestCase
     public function testUnlinkNode()
     {
         $this->doc->unlinkNode(6);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testSaveNode
     public function testSaveNode()
     {
         $doc = $this->generateDomDocument('<root><node/></root>');
+        $this->doc->saveNode($doc, null);
 
-        $this->doc->saveNode($doc, 4);
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testAddNode
     public function testAddNode()
     {
         $doc = $this->generateDomDocument('<root><node/></root>');
-
         $this->doc->addNode($doc, 6);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onAddNode);
     }
     // }}}
     // {{{ testAddNodeByName
     public function testAddNodeByName()
     {
         $this->doc->addNodeByName('testNode', 8, 0);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onAddNode);
     }
     // }}}
     // {{{ testReplaceNode
     public function testReplaceNode()
     {
         $doc = $this->generateDomDocument('<root><node/></root>');
-
         $this->doc->replaceNode($doc, 5);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testDuplicateNode
     public function testDuplicateNode()
     {
         $this->doc->duplicateNode(6);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
 
@@ -236,28 +255,40 @@ class DocumentTransactionTest extends XmlDbTestCase
     public function testMoveNode()
     {
         $this->doc->moveNode(6, 4, 0);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onMoveNode);
     }
     // }}}
     // {{{ testMoveNodeIn
     public function testMoveNodeIn()
     {
         $this->doc->moveNodeIn(6, 4);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onMoveNode);
     }
     // }}}
     // {{{ testMoveNodeBefore
     public function testMoveNodeBefore()
     {
         $this->doc->moveNodeBefore(6, 5);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onMoveNode);
     }
     // }}}
     // {{{ testMoveNodeAfter
     public function testMoveNodeAfter()
     {
         $this->doc->moveNodeAfter(6, 5);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onMoveNode);
     }
     // }}}
 
@@ -265,28 +296,40 @@ class DocumentTransactionTest extends XmlDbTestCase
     public function testCopyNode()
     {
         $this->doc->copyNode(7, 8, 0);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onCopyNode);
     }
     // }}}
     // {{{ testCopyNodeIn
     public function testCopyNodeIn()
     {
         $this->doc->copyNodeIn(7, 8);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onCopyNode);
     }
     // }}}
     // {{{ testCopyNodeBefore
     public function testCopyNodeBefore()
     {
         $this->doc->copyNodeBefore(7, 8);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onCopyNode);
     }
     // }}}
     // {{{ testCopyNodeAfter
     public function testCopyNodeAfter()
     {
         $this->doc->copyNodeAfter(7, 8);
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
+        $this->assertEquals(1, $this->dth->onCopyNode);
     }
     // }}}
 
@@ -294,14 +337,18 @@ class DocumentTransactionTest extends XmlDbTestCase
     public function testSetAttribute()
     {
         $this->doc->setAttribute(5, 'textattr', 'new value');
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
     // {{{ testRemoveAttribute
     public function testRemoveAttribute()
     {
         $this->doc->removeAttribute(6, 'name');
+
         $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}
 }
