@@ -473,6 +473,41 @@ class Document
     }
     // }}}
 
+    // {{{ buildNode
+    /**
+     *
+     * @param $name
+     * @param $attributes
+     * @return \DOMElement
+     */
+    public function buildNode($name, $attributes)
+    {
+        //@todo dont build node directly but get from templates according to document type
+        $doc_info = $this->getNamespacesAndEntities($this->doc_id);
+        $xml = "<$name {$doc_info->namespaces}";
+        foreach ($attributes as $attr => $value) {
+            $xml .= " $attr=\"$value\"";
+        }
+        $xml .= "/>";
+
+        $doc = new \Depage\Xml\Document();
+        $doc->loadXML($xml);
+
+        return $doc->documentElement;
+    }
+    // }}}
+    // {{{ removeIdAttr
+    /**
+     * recursively remove all db-id attributes from node
+     *
+     * @param    $node (domxmlnode) node to remove attribute from
+     */
+    public function removeIdAttr($node)
+    {
+        self::removeNodeAttr($node, $this->db_ns, $this->id_attribute);
+    }
+    // }}}
+
     // {{{ cleanDoc
     /**
      * clean all nodes inside of document
@@ -744,29 +779,6 @@ class Document
     }
     // }}}
 
-    // {{{ buildNode
-    /**
-     *
-     * @param $name
-     * @param $attributes
-     * @return \DOMElement
-     */
-    public function buildNode($name, $attributes)
-    {
-        //@todo dont build node directly but get from templates according to document type
-        $doc_info = $this->getNamespacesAndEntities($this->doc_id);
-        $xml = "<$name {$doc_info->namespaces}";
-        foreach ($attributes as $attr => $value) {
-            $xml .= " $attr=\"$value\"";
-        }
-        $xml .= "/>";
-
-        $doc = new \Depage\Xml\Document();
-        $doc->loadXML($xml);
-
-        return $doc->documentElement;
-    }
-    // }}}
     // {{{ replaceNode
     /**
      * replaces a node in database
@@ -1251,17 +1263,6 @@ class Document
         $this->getDoctypeHandler()->onDocumentChange();
 
         return $success;
-    }
-    // }}}
-    // {{{ removeIdAttr
-    /**
-     * recursively remove all db-id attributes from node
-     *
-     * @param    $node (domxmlnode) node to remove attribute from
-     */
-    public function removeIdAttr($node)
-    {
-        self::removeNodeAttr($node, $this->db_ns, $this->id_attribute);
     }
     // }}}
 
