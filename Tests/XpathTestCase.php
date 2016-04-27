@@ -4,7 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 abstract class XpathTestCase extends XmlDbTestCase
 {
-    protected $xmldb;
+    protected $xmlDb;
     protected $cache;
     protected $doc;
     protected $testObject;
@@ -15,11 +15,11 @@ abstract class XpathTestCase extends XmlDbTestCase
         parent::setUp();
 
         $this->cache = \Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
-        $this->xmldb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
             'root',
             'child',
         ));
-        $this->doc = new DocumentTestClass($this->xmldb, 5);
+        $this->doc = new DocumentTestClass($this->xmlDb, 5);
     }
     // }}}
 
@@ -50,7 +50,7 @@ abstract class XpathTestCase extends XmlDbTestCase
         sort($actualIds);
         $this->assertEquals($expectedIds, $actualIds, "Failed asserting that ID arrays match for XPath query $xpath");
 
-        $this->assertSame($fallbackCalled, $this->xmldb->fallbackCall, "Failed asserting that DOMXPath query fallback was called $xpath");
+        $this->assertSame($fallbackCalled, $this->xmlDb->fallbackCall, "Failed asserting that DOMXPath query fallback was called $xpath");
     }
     // }}}
 

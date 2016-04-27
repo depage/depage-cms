@@ -1,8 +1,8 @@
 <?php
 /**
- * @file    modules/XmlDb/XmldbHistory.php
+ * @file    modules/XmlDb/XmlDbHistory.php
  *
- * cms xmldb module
+ * cms xmlDb module
  *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *

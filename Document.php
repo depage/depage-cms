@@ -1,8 +1,8 @@
 <?php
 /**
- * @file    modules/xmldb/xmldb.php
+ * @file    modules/xmlDb/xmlDb.php
  *
- * cms xmldb module
+ * cms xmlDb module
  *
  *
  * copyright (c) 2002-2011 Frank Hellenkamp [jonas@depage.net]
@@ -27,7 +27,7 @@ class Document
 
     protected $transaction = 0;
 
-    protected $xmldb;
+    protected $xmlDb;
     protected $doc_id;
 
     protected $id_attribute = "id";
@@ -42,22 +42,22 @@ class Document
     /**
      * Construct
      *
-     * @param $xmldb
+     * @param $xmlDb
      * @param $doc_id
      */
-    public function __construct($xmldb, $doc_id)
+    public function __construct($xmlDb, $doc_id)
     {
-        $this->pdo = $xmldb->pdo;
-        $this->cache = $xmldb->cache;
+        $this->pdo = $xmlDb->pdo;
+        $this->cache = $xmlDb->cache;
 
         $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
 
-        $this->xmldb = $xmldb;
+        $this->xmlDb = $xmlDb;
 
-        $this->table_prefix = $xmldb->table_prefix;
-        $this->table_docs = $xmldb->table_docs;
-        $this->table_xml = $xmldb->table_xml;
-        $this->table_nodetypes = $xmldb->table_nodetypes;
+        $this->table_prefix = $xmlDb->table_prefix;
+        $this->table_docs = $xmlDb->table_docs;
+        $this->table_xml = $xmlDb->table_xml;
+        $this->table_nodetypes = $xmlDb->table_nodetypes;
 
         $this->doc_id = $doc_id;
     }
@@ -132,10 +132,10 @@ class Document
             $className = $this->getDocInfo()->type;
 
             if (empty($className)) {
-                $handler = new XmlDocTypes\Base($this->xmldb, $this);
+                $handler = new XmlDocTypes\Base($this->xmlDb, $this);
             } else {
                 $className = "\\" . $className;
-                $handler = new $className($this->xmldb, $this);
+                $handler = new $className($this->xmlDb, $this);
             }
 
             $this->doctypeHandlers[$this->doc_id] = $handler;
@@ -276,7 +276,7 @@ class Document
         $fetched_ids = $this->cache->get($identifier);
 
         if ($fetched_ids === false) {
-            $fetched_ids = $this->xmldb->getNodeIdsByXpath($xpath, $this->doc_id);
+            $fetched_ids = $this->xmlDb->getNodeIdsByXpath($xpath, $this->doc_id);
 
             $this->cache->set($identifier, $fetched_ids);
         }
@@ -549,7 +549,7 @@ class Document
     /**
      * @param $xml
      * @return mixed
-     * @throws xmldbException
+     * @throws xmlDbException
      */
     public function save(\DomDocument $xml)
     {
@@ -1697,19 +1697,19 @@ class Document
     // {{{ beginTransactionAltering
     protected function beginTransactionAltering()
     {
-        return $this->xmldb->beginTransactionAltering();
+        return $this->xmlDb->beginTransactionAltering();
     }
     // }}}
     // {{{ beginTransactionNonAltering
     protected function beginTransactionNonAltering()
     {
-        return $this->xmldb->beginTransactionNonAltering();
+        return $this->xmlDb->beginTransactionNonAltering();
     }
     // }}}
     // {{{ endTransaction
     protected function endTransaction()
     {
-        $altered = $this->xmldb->endTransaction();
+        $altered = $this->xmlDb->endTransaction();
 
         if ($altered) {
             $this->clearCache();
@@ -1723,7 +1723,7 @@ class Document
      * set or updates the lastchange date and uid for the current document
      *
      * @param int $timestamp optional timestamp, defaults to now
-     * @param int $uid optional user id, defaults to current user, when user is set in xmldb options
+     * @param int $uid optional user id, defaults to current user, when user is set in xmlDb options
      */
     protected function updateLastchange($timestamp = null, $uid = null) {
         $query = $this->pdo->prepare(
@@ -1743,8 +1743,8 @@ class Document
 
         if (!empty($uid)) {
             $user_id = $uid;
-        } else if (!empty($this->xmldb->options['userId'])) {
-            $user_id = $this->xmldb->options['userId'];
+        } else if (!empty($this->xmlDb->options['userId'])) {
+            $user_id = $this->xmlDb->options['userId'];
         } else {
             $user_id = null;
         }

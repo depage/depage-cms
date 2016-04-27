@@ -9,15 +9,15 @@ class XpathXmlDbTest extends XpathTestCase
     {
         parent::setUp();
 
-        $this->testObject = $this->xmldb;
+        $this->testObject = $this->xmlDb;
     }
     // }}}
     // {{{ getNodeIdsByDomXpath
-    protected function getNodeIdsByDomXpath($xmldb, $xpath)
+    protected function getNodeIdsByDomXpath($xmlDb, $xpath)
     {
         $ids = array();
 
-        foreach ($xmldb->getDocuments() as $doc) {
+        foreach ($xmlDb->getDocuments() as $doc) {
             $ids = array_merge($ids, parent::getNodeIdsByDomXpath($doc, $xpath));
         }
 

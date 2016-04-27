@@ -7,11 +7,11 @@ class DocumentTransactionTestClass extends DocumentTestClass
     public $cacheCleared = 0;
 
     // {{{ constructor
-    public function __construct($xmldb, $doc_id)
+    public function __construct($xmlDb, $doc_id)
     {
-        parent::__construct($xmldb, $doc_id);
+        parent::__construct($xmlDb, $doc_id);
 
-        $dth = new DoctypeHandlerTransactionTestClass($this->xmldb, $this);
+        $dth = new DoctypeHandlerTransactionTestClass($this->xmlDb, $this);
         $this->setDoctypeHandler($dth);
     }
     // }}}
@@ -19,7 +19,7 @@ class DocumentTransactionTestClass extends DocumentTestClass
     // {{{ inTransaction
     public function isInTransaction()
     {
-        return ($this->xmldb->transactions > 0);
+        return ($this->xmlDb->transactions > 0);
     }
     // }}}
     // {{{ clearCache

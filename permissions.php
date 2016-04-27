@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @file    framework/xmldb/permissions.php
+ * @file    framework/xmlDb/permissions.php
  *
- * depage xmldb permissions
+ * depage xmlDb permissions
  *
  *
  * copyright (c) 2011 Lion Vollnhals [lion.vollnhals@googlemail.com]

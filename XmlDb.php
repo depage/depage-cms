@@ -1,8 +1,8 @@
 <?php
 /**
- * @file    modules/xmldb/xmldb.php
+ * @file    modules/xmlDb/xmlDb.php
  *
- * cms xmldb module
+ * cms xmlDb module
  *
  *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
@@ -159,7 +159,7 @@ class XmlDb implements XmlGetter
     // }}}
     // {{{ getDoc
     /**
-     * Get xmldb\document
+     * Get xmlDb\document
      *
      * @param $doc_id_or_name
      * @return bool|document
@@ -175,7 +175,7 @@ class XmlDb implements XmlGetter
     // }}}
     // {{{ getDocByNodeId
     /**
-     * Get xmldb\document
+     * Get xmlDb\document
      *
      * @param $nodeId
      * @return bool|document
@@ -502,7 +502,7 @@ class XmlDb implements XmlGetter
      * @param string $doctype class-name of doctype for new document
      * @param string $docName optional name of document
      * @return Document
-     * @throws xmldbException
+     * @throws xmlDbException
      */
     public function createDoc($doctype = 'Depage\XmlDb\XmlDoctypes\Base', $docName = null)
     {
@@ -619,7 +619,7 @@ class XmlDb implements XmlGetter
 
         $this->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
 
-        // schema for xmldb
+        // schema for xmlDb
         $schema->loadGlob(__DIR__ . '/Sql/*.sql');
         $schema->update();
 

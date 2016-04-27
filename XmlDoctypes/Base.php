@@ -17,8 +17,8 @@ class Base
     // }}}
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        $this->xmldb = $xmldb;
+    public function __construct($xmlDb, $document) {
+        $this->xmlDb = $xmlDb;
         $this->document = $document;
     }
     // }}}

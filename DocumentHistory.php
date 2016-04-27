@@ -1,15 +1,15 @@
 <?php
 /**
- * @file    modules/xmldb/history.php
+ * @file    modules/xmlDb/history.php
  *
- * cms xmldb module
+ * cms xmlDb module
  *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author   Ben Wallis
  */
 
-namespace Depage\Xmldb;
+namespace Depage\XmlDb;
 
 class DocumentHistory
 {
