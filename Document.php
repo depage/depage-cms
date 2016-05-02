@@ -569,7 +569,7 @@ class Document
         }
 
         // @TODO get document and entities or set html_entities as standard as long as php does not inherit the entites() function
-        $doc_info->rootid = $this->saveNodeExisting($xml);
+        $doc_info->rootid = $this->saveNodePrivate($xml);
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
@@ -619,120 +619,11 @@ class Document
     {
         $this->beginTransactionAltering();
 
-        $result = $this->saveNodeExisting($node);
+        $result = $this->saveNodePrivate($node);
 
         $this->endTransaction();
 
         return $result;
-    }
-    // }}}
-    // {{{ saveNodeExisting
-    protected function saveNodeExisting($node)
-    {
-        // get all nodes in array
-        $node_array = array();
-        $this->getNodeArrayForSaving($node_array, $node);
-        $rootId = $node_array[0]['id'];
-
-        if (is_null($rootId)) {
-            $target_id = null;
-            $target_pos = 0;
-        } else {
-            // set target_id/pos/doc
-            $target_id = $this->getParentIdById($rootId);
-            $target_pos = $this->getPosById($rootId);
-
-            if ($target_id === false) {
-                $target_id = null;
-            }
-
-            // unlink old node
-            $this->unlinkNodePrivate($rootId);
-        }
-
-        return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
-    }
-    // }}}
-    // {{{ saveNodePrivate
-    protected function saveNodePrivate($node, $target_id, $target_pos = -1, $inc_children = true)
-    {
-        $this->removeIdAttr($node);
-
-        $parent_id = $this->getParentIdById($target_id);
-        // unlink child nodes, if target is document
-        if ($parent_id === false) {
-            $this->pdo->exec("SET foreign_key_checks = 0;");
-            $query = $this->pdo->prepare(
-                "DELETE
-                FROM {$this->table_xml}
-                WHERE id_doc = :doc_id"
-            );
-            $query->execute(array(
-                'doc_id' => $this->doc_id,
-            ));
-            $this->pdo->exec("SET foreign_key_checks = 1;");
-        }
-
-        $position = $this->getTargetPos($target_id);
-
-        if ($position) {
-            if ($target_pos > $position || $target_pos == -1) {
-                $target_pos = $position;
-            }
-        } else {
-            $target_pos = 0;
-        }
-
-        // get all nodes in array
-        $node_array = array();
-        $this->getNodeArrayForSaving($node_array, $node);
-
-        return $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
-    }
-    // }}}
-    // {{{ saveNodeArray
-    protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
-    {
-        $this->getFreeNodeIds(count($node_array));
-        for ($i = 0; $i < count($node_array); $i++) {
-            if ($node_array[$i]['id'] !== null) {
-                $index = array_search($node_array[$i]['id'], $this->free_element_ids);
-                if ($index !== false) {
-                    array_splice($this->free_element_ids, $index, 1);
-                } else {
-                    $node_array[$i]['id'] = null;
-                }
-            }
-        }
-
-        for ($i = 0; $i < count($node_array); $i++) {
-            if ($node_array[$i]['id'] === null) {
-                $node_array[$i]['id'] = array_shift($this->free_element_ids);
-            }
-        }
-
-        // save root node
-        $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
-
-        if($inc_children) {
-            // save element nodes
-            for ($i = 1; $i < count($node_array); $i++) {
-                if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
-                }
-            }
-
-            // save other nodes
-            for ($i = 1; $i < count($node_array); $i++) {
-                if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
-                }
-            }
-        }
-
-        $this->updateLastchange();
-
-        return $node_array[0]['id'];
     }
     // }}}
 
@@ -753,7 +644,7 @@ class Document
 
             $this->beginTransactionAltering();
 
-            $success = $this->saveNodePrivate($node, $target_id, $target_pos, true);
+            $success = $this->saveNodeSpecific($node, $target_id, $target_pos, true);
 
             $this->endTransaction();
         }
@@ -802,7 +693,7 @@ class Document
         $this->unlinkNodePrivate($id_to_replace);
 
         $changed_ids = array();
-        $changed_ids[] = $this->saveNodePrivate($node, $target_id, $target_pos, true);
+        $changed_ids[] = $this->saveNodeSpecific($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
@@ -834,7 +725,7 @@ class Document
 
             $this->clearCache();
 
-            $copy_id = $this->saveNodePrivate($root_node, $target_id, $target_pos, $recursive);
+            $copy_id = $this->saveNodeSpecific($root_node, $target_id, $target_pos, $recursive);
             $success = $copy_id;
 
             $dth->onCopyNode($node_id, $copy_id);
@@ -1176,7 +1067,7 @@ class Document
     {
         $xml_doc = $this->getSubdocByNodeId($node_id, false);
         $root_node = $xml_doc;
-        $save_id = $this->saveNodePrivate($root_node, $target_id, $target_pos, true);
+        $save_id = $this->saveNodeSpecific($root_node, $target_id, $target_pos, true);
 
         return $save_id;
     }
@@ -1524,6 +1415,115 @@ class Document
     }
     // }}}
 
+    // {{{ saveNodePrivate
+    protected function saveNodePrivate($node)
+    {
+        // get all nodes in array
+        $node_array = array();
+        $this->getNodeArrayForSaving($node_array, $node);
+        $rootId = $node_array[0]['id'];
+
+        if (is_null($rootId)) {
+            $target_id = null;
+            $target_pos = 0;
+        } else {
+            // set target_id/pos/doc
+            $target_id = $this->getParentIdById($rootId);
+            $target_pos = $this->getPosById($rootId);
+
+            if ($target_id === false) {
+                $target_id = null;
+            }
+
+            // unlink old node
+            $this->unlinkNodePrivate($rootId);
+        }
+
+        return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
+    }
+    // }}}
+    // {{{ saveNodeSpecific
+    protected function saveNodeSpecific($node, $target_id, $target_pos = -1, $inc_children = true)
+    {
+        $this->removeIdAttr($node);
+
+        $parent_id = $this->getParentIdById($target_id);
+        // unlink child nodes, if target is document
+        if ($parent_id === false) {
+            $this->pdo->exec("SET foreign_key_checks = 0;");
+            $query = $this->pdo->prepare(
+                "DELETE
+                FROM {$this->table_xml}
+                WHERE id_doc = :doc_id"
+            );
+            $query->execute(array(
+                'doc_id' => $this->doc_id,
+            ));
+            $this->pdo->exec("SET foreign_key_checks = 1;");
+        }
+
+        $position = $this->getTargetPos($target_id);
+
+        if ($position) {
+            if ($target_pos > $position || $target_pos == -1) {
+                $target_pos = $position;
+            }
+        } else {
+            $target_pos = 0;
+        }
+
+        // get all nodes in array
+        $node_array = array();
+        $this->getNodeArrayForSaving($node_array, $node);
+
+        return $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
+    }
+    // }}}
+    // {{{ saveNodeArray
+    protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
+    {
+        $this->getFreeNodeIds(count($node_array));
+        for ($i = 0; $i < count($node_array); $i++) {
+            if ($node_array[$i]['id'] !== null) {
+                $index = array_search($node_array[$i]['id'], $this->free_element_ids);
+                if ($index !== false) {
+                    array_splice($this->free_element_ids, $index, 1);
+                } else {
+                    $node_array[$i]['id'] = null;
+                }
+            }
+        }
+
+        for ($i = 0; $i < count($node_array); $i++) {
+            if ($node_array[$i]['id'] === null) {
+                $node_array[$i]['id'] = array_shift($this->free_element_ids);
+            }
+        }
+
+        // save root node
+        $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
+
+        if($inc_children) {
+            // save element nodes
+            for ($i = 1; $i < count($node_array); $i++) {
+                if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
+                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
+                }
+            }
+
+            // save other nodes
+            for ($i = 1; $i < count($node_array); $i++) {
+                if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
+                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
+                }
+            }
+        }
+
+        $this->updateLastchange();
+
+        return $node_array[0]['id'];
+    }
+    // }}}
     // {{{ getNodeArrayForSaving
     /**
      * gets all nodes of a document in one array
