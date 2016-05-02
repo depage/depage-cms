@@ -1488,6 +1488,7 @@ class Document
         foreach ($node_array as $i => $node) {
             if (!is_null($node['id'])) {
                 $index = array_search($node['id'], $this->free_element_ids);
+
                 if ($index === false) {
                     $node_array[$i]['id'] = null;
                 } else {

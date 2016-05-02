@@ -15,13 +15,25 @@ class DocumentTest extends XmlDbTestCase
 
         $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->dbPrefix = $this->pdo->prefix . '_proj_test';
+        $this->xmlTree = $this->dbPrefix . '_xmltree';
+
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->dbPrefix, $this->pdo, $this->cache, array(
             'root',
             'child',
         ));
 
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
         $this->namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
+    }
+    // }}}
+    // {{{ getNodeRowById
+    public function getNodeRowById($id)
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM ' . $this->xmlTree . ' WHERE id=?;');
+        $statement->execute([$id]);
+
+        return $statement->fetch(\PDO::FETCH_ASSOC);
     }
     // }}}
 
@@ -402,6 +414,101 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertEquals(8, $this->doc->saveNode($doc));
 
+        $expectedXml = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="newName"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expectedXml, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '8',
+            'id_doc' => '3',
+            'id_parent' => '5',
+            'pos' => '1',
+            'name' => 'pg:page',
+            'value' => 'name="newName" ',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(8));
+    }
+    // }}}
+    // {{{ testSaveNodeNew
+    public function testSaveNodeNew()
+    {
+        $expected = $this->doc->getXml(false);
+
+        $doc = $this->generateDomDocument('<pg:page ' . $this->namespaces . ' name="newNode"/>');
+        $this->assertEquals(37, $this->doc->saveNode($doc));
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '37',
+            'id_doc' => '3',
+            'pos' => null,
+            'name' => 'pg:page',
+            'value' => 'name="newNode" ',
+            'type' => 'ELEMENT_NODE',
+            'id_parent' => null,
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
+    }
+    // }}}
+    // {{{ testSaveNodeRecursive
+    public function testSaveNodeRecursive()
+    {
+        $doc = $this->generateDomDocument('<pg:page ' . $this->namespaces . ' name="newName" db:id="8"><pg:page name="newName2"/></pg:page>');
+
+        $this->assertEquals(8, $this->doc->saveNode($doc));
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="newName">' .
+                    '<pg:page name="newName2"/>' .
+                '</pg:page>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode1 = [
+            'id' => '8',
+            'id_doc' => '3',
+            'id_parent' => '5',
+            'pos' => '1',
+            'name' => 'pg:page',
+            'value' => 'name="newName" ',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $expectedNode2 = [
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '8',
+            'pos' => '0',
+            'name' => 'pg:page',
+            'value' => 'name="newName2" ',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode1, $this->getNodeRowById(8));
+        $this->assertEquals($expectedNode2, $this->getNodeRowById(37));
+    }
+    // }}}
+
+    // {{{ testSaveNodePrivate
+    public function testSaveNodePrivate()
+    {
+        $doc = $this->generateDomDocument('<pg:page ' . $this->namespaces . ' name="newName" db:id="8"/>');
+
+        $this->assertEquals(8, $this->doc->saveNode($doc));
+
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
                 '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
@@ -412,7 +519,6 @@ class DocumentTest extends XmlDbTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
-
     // {{{ testSaveNodeToDb
     public function testSaveNodeToDb()
     {
