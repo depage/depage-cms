@@ -629,24 +629,25 @@ class Document
     // {{{ saveNodeExisting
     protected function saveNodeExisting($node)
     {
-        //get all nodes in array
+        // get all nodes in array
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
+        $rootId = $node_array[0]['id'];
 
-        if ($node_array[0]['id'] != null) {
-            //set target_id/pos/doc
-            $target_id = $this->getParentIdById($node_array[0]['id']);
-            $target_pos = $this->getPosById($node_array[0]['id']);
+        if (is_null($rootId)) {
+            $target_id = null;
+            $target_pos = 0;
+        } else {
+            // set target_id/pos/doc
+            $target_id = $this->getParentIdById($rootId);
+            $target_pos = $this->getPosById($rootId);
 
             if ($target_id === false) {
                 $target_id = null;
             }
 
-            //unlink old node
-            $this->unlinkNodePrivate($node_array[0]['id']);
-        } else {
-            $target_id = null;
-            $target_pos = 0;
+            // unlink old node
+            $this->unlinkNodePrivate($rootId);
         }
 
         return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
@@ -658,7 +659,7 @@ class Document
         $this->removeIdAttr($node);
 
         $parent_id = $this->getParentIdById($target_id);
-        //unlink child nodes, if target is document
+        // unlink child nodes, if target is document
         if ($parent_id === false) {
             $this->pdo->exec("SET foreign_key_checks = 0;");
             $query = $this->pdo->prepare(
@@ -682,7 +683,7 @@ class Document
             $target_pos = 0;
         }
 
-        //get all nodes in array
+        // get all nodes in array
         $node_array = array();
         $this->getNodeArrayForSaving($node_array, $node);
 
@@ -710,18 +711,18 @@ class Document
             }
         }
 
-        //save root node
+        // save root node
         $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
 
         if($inc_children) {
-            //save element nodes
+            // save element nodes
             for ($i = 1; $i < count($node_array); $i++) {
                 if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
                     $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
             }
 
-            //save other nodes
+            // save other nodes
             for ($i = 1; $i < count($node_array); $i++) {
                 if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
                     $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
