@@ -1482,20 +1482,22 @@ class Document
     // {{{ saveNodeArray
     protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
     {
-        $this->getFreeNodeIds(count($node_array));
-        for ($i = 0; $i < count($node_array); $i++) {
-            if ($node_array[$i]['id'] !== null) {
-                $index = array_search($node_array[$i]['id'], $this->free_element_ids);
-                if ($index !== false) {
-                    array_splice($this->free_element_ids, $index, 1);
-                } else {
+        $nodes = count($node_array);
+        $this->getFreeNodeIds($nodes);
+
+        foreach ($node_array as $i => $node) {
+            if (!is_null($node['id'])) {
+                $index = array_search($node['id'], $this->free_element_ids);
+                if ($index === false) {
                     $node_array[$i]['id'] = null;
+                } else {
+                    array_splice($this->free_element_ids, $index, 1);
                 }
             }
         }
 
-        for ($i = 0; $i < count($node_array); $i++) {
-            if ($node_array[$i]['id'] === null) {
+        foreach ($node_array as $i => $node) {
+            if (is_null($node['id'])) {
                 $node_array[$i]['id'] = array_shift($this->free_element_ids);
             }
         }
@@ -1503,16 +1505,16 @@ class Document
         // save root node
         $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
 
-        if($inc_children) {
+        if ($inc_children) {
             // save element nodes
-            for ($i = 1; $i < count($node_array); $i++) {
+            for ($i = 1; $i < $nodes; $i++) {
                 if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
                     $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
             }
 
             // save other nodes
-            for ($i = 1; $i < count($node_array); $i++) {
+            for ($i = 1; $i < $nodes; $i++) {
                 if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
                     $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
                 }
