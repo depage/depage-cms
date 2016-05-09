@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+    require_once(__DIR__ . "/../Depage/Runner.php");
+
+    list($options, $files) = Depage\Depage\Runner::getCliOptions();
+
+    if (isset($options['target']) && count($files) > 0) {
+        $basename = basename($options['target']);
+
+        // minify javascript
+        $jsmin = \Depage\JsMin\JsMin::factory(array(
+            'extension' => "closureApi",
+        ));
+
+        $src = $jsmin->minifyFiles($basename, $files);
+        file_put_contents($options['target'], $src);
+    }
+
+// vim:set ft=php sw=4 sts=4 fdm=marker :
+
