@@ -157,18 +157,16 @@ class Runner {
      */
     static function getCliOptions() {
         static $options;
+        static $files;
 
         if (!isset($options)) {
             if (php_sapi_name() == 'cli') {
                 $printHelp = false;
                 $errorMsg = "";
 
-                $options = getopt("h", array(
-                    "dp-path:",
-                    "conf-url:",
-                ));
+                list($options, $files) = self::parseArgv();
 
-                if (isset($options['h'])) {
+                if (isset($options['h']) || isset($options['help'])) {
                     $printHelp = true;
                 } else {
                     // get path paramater
@@ -204,7 +202,54 @@ class Runner {
             }
         }
 
-        return $options;
+        return [$options, $files];
+    }
+    // }}}
+    // {{{ parseArgv()
+    /**
+     * @brief parseArgv
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public static function parseArgv($argv = null)
+    {
+        $argv = !empty($argv) ? $argv : $_SERVER['argv'];
+        array_shift($argv);
+
+        $named = [];
+        $other = [];
+
+        for ($i = 0, $j = count($argv); $i < $j; $i++) {
+            $arg = $argv[$i];
+
+            if (substr($arg, 0, 2) == '--') {
+                $pos = strpos($arg, '=');
+                if ($pos !== false) {
+                    $named[substr($arg, 2, $pos - 2)] = substr($arg, $pos + 1);
+                } else {
+                    $k = substr($arg, 2);
+
+                    if ($i + 1 < $j && $argv[$i + 1][0] !== '-') {
+                        $named[$k] = $argv[$i + 1];
+                        $i++;
+                    } else if (!isset($o[$k])) {
+                        $named[$k] = true;
+                    }
+                }
+            } else if (substr($arg, 0, 1) == '-') {
+                foreach (str_split(substr($arg, 1)) as $k) {
+                    $named[$k] = true;
+                }
+            } else {
+                $other[] = $arg;
+            }
+        }
+
+        return [
+            $named,
+            $other,
+        ];
     }
     // }}}
     // {{{ getDepagePath()
@@ -218,7 +263,7 @@ class Runner {
 
         if (!isset($path)) {
             if (php_sapi_name() == 'cli') {
-                $options = self::getCliOptions();
+                list($options, $files) = self::getCliOptions();
                 $path = $options['dp-path'] . "/";
             } else {
                 // http
