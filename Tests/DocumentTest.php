@@ -424,7 +424,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expectedXml, $this->doc->getXml(false));
 
-        $expectedNode = [
+        $expectedNode = array(
             'id' => '8',
             'id_doc' => '3',
             'id_parent' => '5',
@@ -432,7 +432,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName" ',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(8));
     }
@@ -447,7 +447,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = [
+        $expectedNode = array(
             'id' => '37',
             'id_doc' => '3',
             'pos' => null,
@@ -455,7 +455,7 @@ class DocumentTest extends XmlDbTestCase
             'value' => 'name="newNode" ',
             'type' => 'ELEMENT_NODE',
             'id_parent' => null,
-        ];
+        );
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -478,7 +478,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode1 = [
+        $expectedNode1 = array(
             'id' => '8',
             'id_doc' => '3',
             'id_parent' => '5',
@@ -486,9 +486,9 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName" ',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
-        $expectedNode2 = [
+        $expectedNode2 = array(
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '8',
@@ -496,7 +496,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName2" ',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
         $this->assertEquals($expectedNode1, $this->getNodeRowById(8));
         $this->assertEquals($expectedNode2, $this->getNodeRowById(37));
@@ -519,7 +519,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = [
+        $expectedNode = array(
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -527,7 +527,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -548,7 +548,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = [
+        $expectedNode = array(
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -556,7 +556,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -577,7 +577,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = [
+        $expectedNode = array(
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -585,7 +585,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        ];
+        );
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
