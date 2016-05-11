@@ -617,6 +617,31 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
+    // {{{ testSaveNodeSpecificRoot
+    public function testSaveNodeSpecificRoot()
+    {
+        $doc = $this->generateDomDocument('<node/>');
+
+        $this->assertEquals(4, $this->doc->saveNodeSpecific($doc, null));
+
+        $expected = '<node ' . $this->namespaces . ' />';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = array(
+            'id' => '4',
+            'id_doc' => '3',
+            'id_parent' => null,
+            'pos' => '0',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        );
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(4));
+    }
+    // }}}
+
     // {{{ testSaveNodeToDb
     public function testSaveNodeToDb()
     {
