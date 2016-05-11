@@ -607,7 +607,7 @@ class Document
 
             $success = $this->unlinkNodePrivate($node_id);
 
-            $this->updateLastchange();
+            $this->updateLastChange();
             $this->endTransaction();
         }
 
@@ -1047,7 +1047,7 @@ class Document
                 'doc_id' => $this->doc_id,
             ));
 
-            $this->updateLastchange();
+            $this->updateLastChange();
         }
 
         return $target_id;
@@ -1169,7 +1169,7 @@ class Document
             'doc_id' => $this->doc_id,
         ));
 
-        $this->updateLastchange();
+        $this->updateLastChange();
 
         return $success;
     }
@@ -1522,7 +1522,7 @@ class Document
             }
         }
 
-        $this->updateLastchange();
+        $this->updateLastChange();
 
         return $node_array[0]['id'];
     }
@@ -1714,14 +1714,14 @@ class Document
         return $altered;
     }
     // }}}
-    // {{{ updateLastchange
+    // {{{ updateLastChange
     /**
      * set or updates the lastchange date and uid for the current document
      *
      * @param int $timestamp optional timestamp, defaults to now
      * @param int $uid optional user id, defaults to current user, when user is set in xmlDb options
      */
-    protected function updateLastchange($timestamp = null, $uid = null) {
+    protected function updateLastChange($timestamp = null, $uid = null) {
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET

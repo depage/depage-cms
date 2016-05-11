@@ -719,20 +719,82 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testUpdateLastchange
-    public function testUpdateLastchange()
+    // {{{ testUpdateLastChange
+    public function testUpdateLastChange()
     {
-        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array('userId' => 42));
-        $doc = new DocumentTestClass($xmlDb, 3);
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->doc->updateLastChange();
+        $this->setForeignKeyChecks(true);
 
-        $before = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid="">' .
+        $date = date('Y-m-d H:i:s', $timestamp);
+        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="' . $date . '" db:lastchangeUid="">' .
             '<pg:page name="Home3">' .
                 '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
                 '<pg:page name="P3.2"/>' .
             '</pg:page>' .
         '</dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlString($before, $doc->getXml(false));
+        $this->assertXmlStringEqualsXmlString($after, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testUpdateLastChangeTimestamp
+    public function testUpdateLastChangeTimestamp()
+    {
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->doc->updateLastChange(1445444940);
+        $this->setForeignKeyChecks(true);
+
+        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="2015-10-21 16:29:00" db:lastchangeUid="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlString($after, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testUpdateLastChangeTimeString
+    public function testUpdateLastChangeTimeString()
+    {
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->doc->updateLastChange('2015-10-21 16:29');
+        $this->setForeignKeyChecks(true);
+
+        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="2015-10-21 16:29:00" db:lastchangeUid="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlString($after, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testUpdateLastChangeUser
+    public function testUpdateLastChangeUser()
+    {
+        $this->setForeignKeyChecks(false);
+        $timestamp = $this->doc->updateLastChange(null, 42);
+        $this->setForeignKeyChecks(true);
+
+        $date = date('Y-m-d H:i:s', $timestamp);
+        $after = '<dpg:pages ' . $this->namespaces . ' name="" db:lastchange="' . $date . '" db:lastchangeUid="42">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlString($after, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testUpdateLastChangeXmlDbUser
+    public function testUpdateLastChangeXmlDbUser()
+    {
+        // set user id
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array('userId' => 42));
+        $doc = new DocumentTestClass($xmlDb, 3);
 
         $this->setForeignKeyChecks(false);
         $timestamp = $doc->updateLastChange();
