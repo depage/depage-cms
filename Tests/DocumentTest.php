@@ -408,6 +408,14 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
+    // {{{ testGetTargetPos
+    public function testGetTargetPos()
+    {
+        $this->assertEquals(2, $this->doc->getTargetPos(6));
+        $this->assertEquals(0, $this->doc->getTargetPos(7));
+    }
+    // }}}
+
     // {{{ testSaveNode
     public function testSaveNode()
     {
@@ -500,6 +508,25 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertEquals($expectedNode1, $this->getNodeRowById(8));
         $this->assertEquals($expectedNode2, $this->getNodeRowById(37));
+    }
+    // }}}
+    // {{{ testSaveNodeRootIdNull
+    public function testSaveNodeRootIdNull()
+    {
+        $doc = new \DomText('test');
+        $this->assertEquals(37, $this->doc->saveNode($doc));
+
+        $expectedNode = array(
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => null,
+            'pos' => '0',
+            'name' => null,
+            'value' => 'test',
+            'type' => 'TEXT_NODE',
+        );
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
 

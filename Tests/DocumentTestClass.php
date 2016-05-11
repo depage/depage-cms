@@ -17,6 +17,12 @@ class DocumentTestClass extends \Depage\XmlDb\Document
         return parent::getPosById($id);
     }
     // }}}
+    // {{{ getTargetPos
+    public function getTargetPos($target_id)
+    {
+        return parent::getTargetPos($target_id);
+    }
+    // }}}
     // {{{ saveNodeToDb
     public function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
     {
@@ -45,6 +51,12 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     public function saveNodeSpecific($node, $target_id, $target_pos = -1, $inc_children = true)
     {
         return parent::saveNodeSpecific($node, $target_id, $target_pos, $inc_children);
+    }
+    // }}}
+    // {{{ saveNodePrivate
+    public function saveNodePrivate($node)
+    {
+        return parent::saveNodePrivate($node);
     }
     // }}}
 }
