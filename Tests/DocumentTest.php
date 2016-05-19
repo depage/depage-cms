@@ -815,7 +815,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testMoveNode
     public function testMoveNode()
     {
-        $this->assertEquals(4, $this->doc->moveNode(6, 4, 0));
+        $this->assertEquals(5, $this->doc->moveNode(6, 4, 0));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
@@ -830,7 +830,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testMoveNodeIn
     public function testMoveNodeIn()
     {
-        $this->assertEquals(4, $this->doc->moveNodeIn(6, 4));
+        $this->assertEquals(5, $this->doc->moveNodeIn(6, 4));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -845,7 +845,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testMoveNodeBefore
     public function testMoveNodeBefore()
     {
-        $this->assertEquals(4, $this->doc->moveNodeBefore(6, 5));
+        $this->assertEquals(5, $this->doc->moveNodeBefore(6, 5));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
@@ -860,7 +860,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testMoveNodeAfter
     public function testMoveNodeAfter()
     {
-        $this->assertEquals(5, $this->doc->moveNodeAfter(7, 6));
+        $this->assertEquals(6, $this->doc->moveNodeAfter(7, 6));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .

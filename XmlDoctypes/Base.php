@@ -143,10 +143,10 @@ class Base
      *
      * @param \DomElement $node
      * @param $node_id
-     * @param $moved_id
+     * @param $target_id
      * @return bool
      */
-    public function onMoveNode($node_id, $moved_id) {
+    public function onMoveNode($node_id, $target_id) {
         return true;
     }
     // }}}

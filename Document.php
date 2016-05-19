@@ -739,7 +739,7 @@ class Document
     // {{{ moveNode
     public function moveNode($node_id, $target_id, $target_pos)
     {
-        $moved_id = false;
+        $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
         if (
@@ -748,13 +748,13 @@ class Document
         ) {
             $this->beginTransactionAltering();
 
-            $moved_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
+            $parent_id = $this->moveNodePrivate($node_id, $target_id, $target_pos);
 
             $this->endTransaction();
-            $dth->onMoveNode($node_id, $moved_id);
+            $dth->onMoveNode($node_id, $parent_id);
         }
 
-        return $moved_id;
+        return $parent_id;
     }
     // }}}
     // {{{ moveNodeIn
@@ -766,7 +766,7 @@ class Document
      */
     public function moveNodeIn($node_id, $target_id)
     {
-        $moved_id = false;
+        $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
         if (
@@ -776,13 +776,13 @@ class Document
             $this->beginTransactionAltering();
 
             $position = $this->getTargetPos($target_id);
-            $moved_id = $this->moveNodePrivate($node_id, $target_id, $position);
+            $parent_id = $this->moveNodePrivate($node_id, $target_id, $position);
 
             $this->endTransaction();
-            $dth->onMoveNode($node_id, $moved_id);
+            $dth->onMoveNode($node_id, $parent_id);
         }
 
-        return $moved_id;
+        return $parent_id;
     }
     // }}}
     // {{{ moveNodeBefore
@@ -794,7 +794,7 @@ class Document
      */
     public function moveNodeBefore($node_id, $target_id)
     {
-        $moved_id = false;
+        $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
         if (
@@ -805,13 +805,13 @@ class Document
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id);
-            $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
+            $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
             $this->endTransaction();
-            $dth->onMoveNode($node_id, $moved_id);
+            $dth->onMoveNode($node_id, $parent_id);
         }
 
-        return $moved_id;
+        return $parent_id;
     }
     // }}}
     // {{{ moveNodeAfter
@@ -823,7 +823,7 @@ class Document
      */
     public function moveNodeAfter($node_id, $target_id)
     {
-        $moved_id = false;
+        $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
         if (
@@ -834,13 +834,13 @@ class Document
 
             $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id) + 1;
-            $moved_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
+            $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
             $this->endTransaction();
-            $dth->onMoveNode($node_id, $moved_id);
+            $dth->onMoveNode($node_id, $parent_id);
         }
 
-        return $moved_id;
+        return $parent_id;
     }
     // }}}
 
@@ -990,9 +990,12 @@ class Document
      * @param    $node_id (int) db-id of node
      * @param    $target_id (int) db-id of target node
      * @param    $target_pos (int) position to move to
+     *
+     * @return   (int) id of new parent node
      */
     protected function moveNodePrivate($node_id, $target_id, $target_pos)
     {
+        $result = false;
         $node_parent_id = $this->getParentIdById($node_id);
         $node_pos = $this->getPosById($node_id);
 
@@ -1048,9 +1051,10 @@ class Document
             ));
 
             $this->updateLastChange();
+            $result = $node_parent_id;
         }
 
-        return $target_id;
+        return $result;
     }
     // }}}
     // {{{ copyNodePrivate
