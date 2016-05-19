@@ -265,7 +265,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         $this->doc->duplicateNode(6);
 
-        $this->assertEquals(1, $this->doc->cacheCleared);
+        $this->assertEquals(2, $this->doc->cacheCleared);
         $this->assertEquals(1, $this->dth->onDocumentChange);
     }
     // }}}

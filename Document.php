@@ -714,6 +714,7 @@ class Document
     public function duplicateNode($node_id, $recursive = false)
     {
         $success = false;
+
         // get parent and position for new node
         $target_id = $this->getParentIdById($node_id);
         $target_pos = $this->getPosById($node_id) + 1;
@@ -724,12 +725,13 @@ class Document
             $root_node = $xml_doc;
 
             $this->clearCache();
+            $this->beginTransactionAltering();
 
             $copy_id = $this->saveNodeSpecific($root_node, $target_id, $target_pos, $recursive);
             $success = $copy_id;
 
+            $this->endTransaction();
             $dth->onCopyNode($node_id, $copy_id);
-            $dth->onDocumentChange();
         }
 
         return $success;
