@@ -30,8 +30,8 @@ class Document
     protected $xmlDb;
     protected $doc_id;
 
-    protected $id_attribute = "id";
-    protected $id_data_attribute = "dataid";
+    protected $id_attribute = 'id';
+    protected $id_data_attribute = 'dataid';
 
     protected $dont_strip_white = array(); // TODO set when document is loaded - add to doctypes base
     protected $free_element_ids = array();
@@ -50,7 +50,7 @@ class Document
         $this->pdo = $xmlDb->pdo;
         $this->cache = $xmlDb->cache;
 
-        $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
+        $this->db_ns = new xmlns('db', 'http://cms.depagecms.net/ns/database');
 
         $this->xmlDb = $xmlDb;
 
@@ -1550,11 +1550,10 @@ class Document
     protected function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
     {
         $type = $node->nodeType;
-        //is DOCUMENT_NODE
+
         if ($type == XML_DOCUMENT_NODE) {
             $root_node = $node->documentElement;
             $this->getNodeArrayForSaving($node_array, $root_node, $parent_index, $pos, $stripwhitespace);
-            //is ELEMENT_NODE
         } elseif ($type == XML_ELEMENT_NODE) {
             $id = $this->getNodeId($node);
             $node_array[] = array(
@@ -1564,22 +1563,31 @@ class Document
                 'pos' => $pos,
                 'node' => $node,
             );
+
             $parent_index = count($node_array) - 1;
             $node_name = (($node->prefix != '') ? $node->prefix . ':' : '') . $node->localName;
+
             if (!$stripwhitespace || in_array($node_name, $this->dont_strip_white)) {
                 $stripwhitespace = false;
             }
+
             $tmp_node = $node->firstChild;
             $i = 0;
             while ($tmp_node != null) {
-                if ($tmp_node->nodeType != XML_TEXT_NODE || (!$stripwhitespace || trim($tmp_node->textContent) != '')) {
+                if (
+                    $tmp_node->nodeType != XML_TEXT_NODE
+                    || (
+                        !$stripwhitespace
+                        || trim($tmp_node->textContent) != ''
+                    )
+                ) {
                     $this->getNodeArrayForSaving($node_array, $tmp_node, $parent_index, $i, $stripwhitespace);
                     $i++;
                 }
                 $tmp_node = $tmp_node->nextSibling;
             }
-            //is *_NODE
         } else {
+            // is *_NODE
             $node_array[] = array(
                 'id' => null,
                 'id_old' => null,
