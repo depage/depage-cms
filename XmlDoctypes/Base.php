@@ -58,7 +58,7 @@ class Base
                     $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
                 }
             }
-            $xml .= "/>";
+            $xml .= '/>';
 
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
@@ -121,7 +121,7 @@ class Base
      * @return null
      */
     public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
-        return null;
+        return true;
     }
     // }}}
     // {{{ onCopyNode

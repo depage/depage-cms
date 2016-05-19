@@ -685,16 +685,19 @@ class DocumentTest extends XmlDbTestCase
         $doc = new \DomDocument();
         $nodeElement = $doc->createEntityReference('test');
 
-        $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, 37, 8, 0));
+        $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, 37, 4, 0));
 
-        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
-            '<pg:page name="Home3">' .
-                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
-                '<pg:page name="P3.2"/>' .
-            '</pg:page>' .
-        '</dpg:pages>';
+        $expectedNode = array(
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '4',
+            'pos' => '0',
+            'name' => null,
+            'value' => 'test',
+            'type' => 'ENTITY_REF_NODE',
+        );
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
     // {{{ testSaveNodeToDbIdNull
