@@ -529,6 +529,23 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
+    // {{{ testSaveNodeDocument
+    public function testSaveNodeDocument()
+    {
+        $xml = '<dpg:pages ' . $this->namespaces . ' name="newName" db:id="4">' .
+            '<pg:page name="NewHome3" db:id="5">' .
+                '<pg:page name="NewP3.1" db:id="6">bla bla blub <pg:page name="NewP3.1.2" db:id="7"/></pg:page>' .
+                '<pg:page name="NewP3.2" db:id="8"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $doc = $this->generateDomDocument($xml);
+
+        $this->assertEquals(4, $this->doc->saveNode($doc));
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xml, $this->doc->getXml());
+    }
+    // }}}
 
     // {{{ testSaveNodeSpecificDefault
     public function testSaveNodeSpecificDefault()
@@ -1103,12 +1120,17 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetParentIdById
     public function testGetParentIdById()
     {
-        $this->assertNull($this->doc->getParentIdById(4));
         $this->assertEquals(4, $this->doc->getParentIdById(5));
     }
     // }}}
-    // {{{ testGetParentIdByIdNonExistent
-    public function testGetParentIdByIdNonExistent()
+    // {{{ testGetParentIdByIdRoot
+    public function testGetParentIdByIdRoot()
+    {
+        $this->assertNull($this->doc->getParentIdById(4));
+    }
+    // }}}
+    // {{{ testGetParentIdByIdFail
+    public function testGetParentIdByIdFail()
     {
         $this->assertFalse($this->doc->getParentIdById(1000));
         $this->assertFalse($this->doc->getParentIdById('noId'));

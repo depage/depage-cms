@@ -1452,9 +1452,10 @@ class Document
         $this->removeIdAttr($node);
 
         $parent_id = $this->getParentIdById($target_id);
+
         // unlink child nodes, if target is document
         if ($parent_id === false) {
-            $this->pdo->exec("SET foreign_key_checks = 0;");
+            $this->pdo->exec('SET foreign_key_checks = 0;');
             $query = $this->pdo->prepare(
                 "DELETE
                 FROM {$this->table_xml}
@@ -1463,7 +1464,7 @@ class Document
             $query->execute(array(
                 'doc_id' => $this->doc_id,
             ));
-            $this->pdo->exec("SET foreign_key_checks = 1;");
+            $this->pdo->exec('SET foreign_key_checks = 1;');
         }
 
         $position = $this->getTargetPos($target_id);
@@ -1603,6 +1604,7 @@ class Document
     protected function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
     {
         static $insert_query = null;
+
         if (is_null($insert_query)) {
             $insert_query = $this->pdo->prepare(
                 "INSERT {$this->table_xml}
