@@ -547,12 +547,12 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testSaveNodeSpecificDefault
-    public function testSaveNodeSpecificDefault()
+    // {{{ testSaveNodeInDefault
+    public function testSaveNodeInDefault()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeSpecific($doc, 6));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -576,12 +576,12 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
-    // {{{ testSaveNodeSpecificPos0
-    public function testSaveNodeSpecificPos0()
+    // {{{ testSaveNodeInPos0
+    public function testSaveNodeInPos0()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeSpecific($doc, 6, 0));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -605,12 +605,12 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
-    // {{{ testSaveNodeSpecificPos1
-    public function testSaveNodeSpecificPos1()
+    // {{{ testSaveNodeInPos1
+    public function testSaveNodeInPos1()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeSpecific($doc, 6, 1));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -634,12 +634,12 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
     // }}}
-    // {{{ testSaveNodeSpecificRoot
-    public function testSaveNodeSpecificRoot()
+    // {{{ testSaveNodeInRoot
+    public function testSaveNodeInRoot()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(4, $this->doc->saveNodeSpecific($doc, null));
+        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null));
 
         $expected = '<node ' . $this->namespaces . ' />';
 

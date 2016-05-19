@@ -47,10 +47,10 @@ class DocumentTestClass extends \Depage\XmlDb\Document
         return parent::getFreeNodeIds($needed);
     }
     // }}}
-    // {{{ saveNodeSpecific
-    public function saveNodeSpecific($node, $target_id, $target_pos = -1, $inc_children = true)
+    // {{{ saveNodeIn
+    public function saveNodeIn($node, $target_id, $target_pos = -1, $inc_children = true)
     {
-        return parent::saveNodeSpecific($node, $target_id, $target_pos, $inc_children);
+        return parent::saveNodeIn($node, $target_id, $target_pos, $inc_children);
     }
     // }}}
     // {{{ saveNodePrivate

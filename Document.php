@@ -644,7 +644,7 @@ class Document
 
             $this->beginTransactionAltering();
 
-            $success = $this->saveNodeSpecific($node, $target_id, $target_pos, true);
+            $success = $this->saveNodeIn($node, $target_id, $target_pos, true);
 
             $this->endTransaction();
         }
@@ -693,7 +693,7 @@ class Document
         $this->unlinkNodePrivate($id_to_replace);
 
         $changed_ids = array();
-        $changed_ids[] = $this->saveNodeSpecific($node, $target_id, $target_pos, true);
+        $changed_ids[] = $this->saveNodeIn($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
         $this->endTransaction();
@@ -727,7 +727,7 @@ class Document
             $this->clearCache();
             $this->beginTransactionAltering();
 
-            $copy_id = $this->saveNodeSpecific($root_node, $target_id, $target_pos, $recursive);
+            $copy_id = $this->saveNodeIn($root_node, $target_id, $target_pos, $recursive);
             $success = $copy_id;
 
             $this->endTransaction();
@@ -1073,7 +1073,7 @@ class Document
     {
         $xml_doc = $this->getSubdocByNodeId($node_id, false);
         $root_node = $xml_doc;
-        $save_id = $this->saveNodeSpecific($root_node, $target_id, $target_pos, true);
+        $save_id = $this->saveNodeIn($root_node, $target_id, $target_pos, true);
 
         return $save_id;
     }
@@ -1448,8 +1448,8 @@ class Document
         return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
     }
     // }}}
-    // {{{ saveNodeSpecific
-    protected function saveNodeSpecific($node, $target_id, $target_pos = -1, $inc_children = true)
+    // {{{ saveNodeIn
+    protected function saveNodeIn($node, $target_id, $target_pos = -1, $inc_children = true)
     {
         $this->removeIdAttr($node);
 
