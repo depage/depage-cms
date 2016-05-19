@@ -210,10 +210,10 @@ class DocumentTransactionTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testUnlinkNode
-    public function testUnlinkNode()
+    // {{{ testDeleteNode
+    public function testDeleteNode()
     {
-        $this->doc->unlinkNode(6);
+        $this->doc->deleteNode(6);
 
         $this->assertEquals(1, $this->doc->cacheCleared);
         $this->assertEquals(1, $this->dth->onDocumentChange);

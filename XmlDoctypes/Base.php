@@ -96,8 +96,8 @@ class Base
         );
     }
     // }}}
-    // {{{ isAllowedUnlink
-    public function isAllowedUnlink($nodeId) {
+    // {{{ isAllowedDelete
+    public function isAllowedDelete($nodeId) {
         return true;
     }
     // }}}

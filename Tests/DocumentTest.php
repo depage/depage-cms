@@ -253,10 +253,10 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testUnlinkNode
-    public function testUnlinkNode()
+    // {{{ testDeleteNode
+    public function testDeleteNode()
     {
-        $this->assertEquals(5, $this->doc->unlinkNode(6));
+        $this->assertEquals(5, $this->doc->deleteNode(6));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -267,14 +267,14 @@ class DocumentTest extends XmlDbTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
-    // {{{ testUnlinkNodeDenied
-    public function testUnlinkNodeDenied()
+    // {{{ testDeleteNodeDenied
+    public function testDeleteNodeDenied()
     {
         $dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
         $this->doc->setDoctypeHandler($dth);
-        $this->doc->getDoctypeHandler()->isAllowedUnlink = false;
+        $this->doc->getDoctypeHandler()->isAllowedDelete = false;
 
-        $this->assertFalse($this->doc->unlinkNode(6));
+        $this->assertFalse($this->doc->deleteNode(6));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .

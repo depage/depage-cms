@@ -9,7 +9,7 @@ class DoctypeHandlerTestClass extends Base
     public $isAllowedIn = true;
     public $isAllowedCopy = true;
     public $isAllowedMove = true;
-    public $isAllowedUnlink = true;
+    public $isAllowedDelete = true;
     public $isAllowedAdd = true;
 
     public $testDocument = false;
@@ -54,10 +54,10 @@ class DoctypeHandlerTestClass extends Base
         return ($this->isAllowedMove) ? parent::isAllowedMove($nodeId, $targetId) : false;
     }
     // }}}
-    // {{{ isAllowedUnlink
-    public function isAllowedUnlink($nodeId)
+    // {{{ isAllowedDelete
+    public function isAllowedDelete($nodeId)
     {
-        return ($this->isAllowedUnlink) ? parent::isAllowedUnlink($nodeId) : false;
+        return ($this->isAllowedDelete) ? parent::isAllowedDelete($nodeId) : false;
     }
     // }}}
     // {{{ isAllowedAdd

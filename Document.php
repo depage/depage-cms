@@ -591,21 +591,21 @@ class Document
     }
     // }}}
 
-    // {{{ unlinkNode
+    // {{{ deleteNode
     /**
      * @param $node_id
      * @return bool
      */
-    public function unlinkNode($node_id)
+    public function deleteNode($node_id)
     {
         $success = false;
 
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->isAllowedUnlink($node_id)) {
+        if ($dth->isAllowedDelete($node_id)) {
             $this->beginTransactionAltering();
 
-            $success = $this->unlinkNodePrivate($node_id);
+            $success = $this->deleteNodePrivate($node_id);
 
             $this->updateLastChange();
             $this->endTransaction();
@@ -690,7 +690,7 @@ class Document
         $target_id = $this->getParentIdById($id_to_replace);
         $target_pos = $this->getPosById($id_to_replace);
 
-        $this->unlinkNodePrivate($id_to_replace);
+        $this->deleteNodePrivate($id_to_replace);
 
         $changed_ids = array();
         $changed_ids[] = $this->saveNodeIn($node, $target_id, $target_pos, true);
@@ -938,7 +938,7 @@ class Document
     }
     // }}}
 
-    // {{{ unlinkNodePrivate
+    // {{{ deleteNodePrivate
     /**
      * unlinks and deletes a specific node from database.
      * re-indexes the positions of the remaining elements.
@@ -947,7 +947,7 @@ class Document
      *
      * @return    $deleted_ids (array) id of parent node
      */
-    protected function unlinkNodePrivate($node_id)
+    protected function deleteNodePrivate($node_id)
     {
         // get parent and position (enables other node positions to be updated after delete)
         $target_id = $this->getParentIdById($node_id);
@@ -1441,8 +1441,8 @@ class Document
                 $target_id = null;
             }
 
-            // unlink old node
-            $this->unlinkNodePrivate($rootId);
+            // delete old node
+            $this->deleteNodePrivate($rootId);
         }
 
         return $this->saveNodeArray($node_array, $target_id, $target_pos, true);
@@ -1455,7 +1455,7 @@ class Document
 
         $parent_id = $this->getParentIdById($target_id);
 
-        // unlink child nodes, if target is document
+        // delete child nodes, if target is document
         if ($parent_id === false) {
             $this->pdo->exec('SET foreign_key_checks = 0;');
             $query = $this->pdo->prepare(
