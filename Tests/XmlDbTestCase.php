@@ -182,7 +182,7 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ assertEqualsIgnoreLastchange
     protected function assertEqualsIgnoreLastchange($expected, $actual, $message = '')
     {
-        return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
+        return $this->assertEqualsIgnoreAttributes(
             $expected,
             $actual,
             array(

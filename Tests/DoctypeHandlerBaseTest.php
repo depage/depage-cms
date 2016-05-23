@@ -24,6 +24,7 @@ class DoctypeHandlerBaseTest extends XmlDbTestCase
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
 
         $this->setUpHandler();
+        $this->doc->setDoctypeHandler($this->dth);
     }
     // }}}
     // {{{ setUpHandler

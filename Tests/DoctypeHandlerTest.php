@@ -77,14 +77,35 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     {
         $xml = $this->generateDomDocument('<node>' .
             "   \t  " .
-            '<node/> ' .
+            '<subnode/> ' .
             "   \t  " .
         '</node>');
 
         $this->doc->save($xml);
 
         $expected = '<?xml version="1.0"?>' . "\n" .
-            '<node xmlns:db="http://cms.depagecms.net/ns/database"><node/></node>' . "\n";
+            '<node xmlns:db="http://cms.depagecms.net/ns/database"><subnode/></node>' . "\n";
+
+        $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testStripWhitespaceDont
+    public function testStripWhitespaceDont()
+    {
+        $this->dth->dontStripWhitespace = array('node');
+
+        $xml = $this->generateDomDocument('<node>' .
+            "   \t  " .
+            '<subnode/>' .
+            "   \t  " .
+        '</node>');
+
+        $this->doc->save($xml);
+
+        $expected = '<?xml version="1.0"?>' . "\n" .
+            '<node xmlns:db="http://cms.depagecms.net/ns/database">' . "   \t  " .
+            '<subnode/>' . "   \t  " .
+            '</node>' . "\n";
 
         $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
     }
