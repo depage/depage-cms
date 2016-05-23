@@ -14,6 +14,9 @@ class Base
             '*',
         ),
     );
+
+    // list of names of nodes not to be affected by whitespace stripping
+    protected $dontStripWhitespace = array();
     // }}}
 
     // {{{ constructor
@@ -67,6 +70,11 @@ class Base
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ getDontStripWhitespace
+    public function getDontStripWhitespace() {
+        return $this->dontStripWhitespace;
     }
     // }}}
 

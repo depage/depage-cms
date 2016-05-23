@@ -19,6 +19,7 @@ class DoctypeHandlerTestClass extends Base
             '*',
         ),
     );
+    public $dontStripWhitespace = array();
 
     // {{{ constructor
     public function __construct($xmlDb, $document)

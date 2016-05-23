@@ -33,9 +33,7 @@ class Document
     protected $id_attribute = 'id';
     protected $id_data_attribute = 'dataid';
 
-    protected $dont_strip_white = array(); // TODO set when document is loaded - add to doctypes base
     protected $free_element_ids = array();
-
     protected $doctypeHandlers = array();
     // }}}
     // {{{ constructor
@@ -475,9 +473,9 @@ class Document
 
     // {{{ buildNode
     /**
-     *
      * @param $name
      * @param $attributes
+     *
      * @return \DOMElement
      */
     public function buildNode($name, $attributes)
@@ -488,7 +486,7 @@ class Document
         foreach ($attributes as $attr => $value) {
             $xml .= " $attr=\"$value\"";
         }
-        $xml .= "/>";
+        $xml .= '/>';
 
         $doc = new \Depage\Xml\Document();
         $doc->loadXML($xml);
@@ -1313,7 +1311,7 @@ class Document
             );
         }
 
-        $xml_doc = "";
+        $xml_doc = '';
 
         $query->execute(array(
             'doc_id' => $this->doc_id,
@@ -1551,10 +1549,10 @@ class Document
     {
         $type = $node->nodeType;
 
-        if ($type == XML_DOCUMENT_NODE) {
+        if ($type === XML_DOCUMENT_NODE) {
             $root_node = $node->documentElement;
             $this->getNodeArrayForSaving($node_array, $root_node, $parent_index, $pos, $stripwhitespace);
-        } elseif ($type == XML_ELEMENT_NODE) {
+        } elseif ($type === XML_ELEMENT_NODE) {
             $id = $this->getNodeId($node);
             $node_array[] = array(
                 'id' => $id,
@@ -1567,7 +1565,12 @@ class Document
             $parent_index = count($node_array) - 1;
             $node_name = (($node->prefix != '') ? $node->prefix . ':' : '') . $node->localName;
 
-            if (!$stripwhitespace || in_array($node_name, $this->dont_strip_white)) {
+            $dontStripWhitespace = $this->getDoctypeHandler()->getDontStripWhitespace();
+
+            if (
+                !$stripwhitespace
+                || in_array($node_name, $dontStripWhitespace)
+            ) {
                 $stripwhitespace = false;
             }
 

@@ -7,6 +7,7 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
     // {{{ variables
     protected $pdo = null;
     protected $conn = null;
+    protected $namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
     // }}}
 
     // {{{ setUp
