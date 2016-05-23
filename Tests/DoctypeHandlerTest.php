@@ -71,4 +71,22 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
         $this->assertTrue($this->dth->isAllowedIn('node2', 'targetTestNode'));
     }
     // }}}
+
+    // {{{ testStripWhitespace
+    public function testStripWhitespace()
+    {
+        $xml = $this->generateDomDocument('<node>' .
+            "   \t  " .
+            '<node/> ' .
+            "   \t  " .
+        '</node>');
+
+        $this->doc->save($xml);
+
+        $expected = '<?xml version="1.0"?>' . "\n" .
+            '<node xmlns:db="http://cms.depagecms.net/ns/database"><node/></node>' . "\n";
+
+        $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
 }
