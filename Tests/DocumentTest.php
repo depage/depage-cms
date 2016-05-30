@@ -54,6 +54,19 @@ class DocumentTest extends XmlDbTestCase
         $this->assertInstanceOf($baseType, $this->doc->getDoctypeHandler());
     }
     // }}}
+    // {{{ testGetDoctypeHandlerFail
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Doctype handler must implement DoctypeInterface
+     */
+    public function testGetDoctypeHandlerFail()
+    {
+        // set doctype handler to class that doesn't implement doctype handler interface
+        $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Document\' WHERE id=\'3\'');
+
+        $this->doc->getDoctypeHandler();
+    }
+    // }}}
     // {{{ testGetDoctypeHandlerNoType
     public function testGetDoctypeHandlerNoType()
     {
