@@ -81,7 +81,14 @@ class Document
     public function getXml($add_id_attribute = true)
     {
         $root_id = $this->getDocInfo()->rootid;
-        return $this->getSubdocByNodeId($root_id, $add_id_attribute);
+
+        if (is_null($root_id)) {
+            throw new Exceptions\XmlDbException('Trying to get contents of empty document.');
+        } else {
+            $xml = $this->getSubdocByNodeId($root_id, $add_id_attribute);
+        }
+
+        return $xml;
     }
     // }}}
     // {{{ getDocInfo
@@ -375,7 +382,7 @@ class Document
             } else {
                 $this->endTransaction();
 
-                throw new Exceptions\XmlDbException("This node is no ELEMENT_NODE or node does not exist");
+                throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist');
             }
 
             $success = $xml_doc->loadXML($xml_str);
@@ -393,7 +400,7 @@ class Document
             }
         }
 
-        if (is_a($xml_doc, "DOMDocument") && $xml_doc->documentElement != null && !$add_id_attribute) {
+        if (is_a($xml_doc, 'DOMDocument') && $xml_doc->documentElement != null && !$add_id_attribute) {
             $this->removeIdAttr($xml_doc);
         }
 

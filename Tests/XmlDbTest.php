@@ -113,6 +113,18 @@ class XmlDbTest extends XmlDbTestCase
         $this->assertFalse($xml);
     }
     // }}}
+    // {{{ testGetDocXmlEmpty
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Trying to get contents of empty document.
+     */
+    public function testGetDocXmlEmpty()
+    {
+        $doc = $this->xmlDb->createDoc();
+
+        $this->xmlDb->getDocXml($doc->getDocId());
+    }
+    // }}}
 
     // {{{ testCreateDoc
     public function testCreateDoc()
