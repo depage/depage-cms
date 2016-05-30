@@ -751,6 +751,19 @@ class DocumentTest extends XmlDbTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
+    // {{{ testSaveNodeToDbUnknownNodeType
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Unknown DOM node type: "11".
+     */
+    public function testSaveNodeToDbUnknownNodeType()
+    {
+        $doc = new \DomDocument();
+        $nodeElement = $doc->createDocumentFragment();
+
+        $this->doc->saveNodeToDb($nodeElement, 37, 8, 0);
+    }
+    // }}}
 
     // {{{ testUpdateLastChange
     public function testUpdateLastChange()

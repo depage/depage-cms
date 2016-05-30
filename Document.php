@@ -1657,6 +1657,7 @@ class Document
             } else {
                 $name_query = $node->localName;
             }
+
             $attributes = array();
             foreach ($node->attributes as $attrib) {
                 $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
@@ -1695,6 +1696,8 @@ class Document
         } else if ($node->nodeType == XML_ENTITY_REF_NODE) {
             $node_type = 'ENTITY_REF_NODE';
             $node_data = $node->nodeName;
+        } else {
+            throw new Exceptions\XmlDbException('Unknown DOM node type: "' . $node->nodeType . '".');
         }
 
         $insert_query->execute(array(
