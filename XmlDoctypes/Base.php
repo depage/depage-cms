@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\XmlDoctypes;
 
-class Base
+class Base implements DoctypeInterface
 {
     // {{{ variables
     // list of elements that may created by a user
@@ -44,6 +44,11 @@ class Base
         return $this->availableNodes;
     }
     // }}}
+    // {{{ getDontStripWhitespace
+    public function getDontStripWhitespace() {
+        return $this->dontStripWhitespace;
+    }
+    // }}}
     // {{{ getNewNodeFor
     public function getNewNodeFor($name) {
         $result = false;
@@ -72,11 +77,6 @@ class Base
         return $result;
     }
     // }}}
-    // {{{ getDontStripWhitespace
-    public function getDontStripWhitespace() {
-        return $this->dontStripWhitespace;
-    }
-    // }}}
 
     // {{{ isAllowedIn
     public function isAllowedIn($nodeName, $targetNodeName) {
@@ -89,6 +89,14 @@ class Base
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ isAllowedAdd
+    public function isAllowedAdd($node, $targetId) {
+        return $this->isAllowedIn(
+            $node->nodeName,
+            $this->document->getNodeNameById($targetId)
+        );
     }
     // }}}
     // {{{ isAllowedCopy
@@ -109,15 +117,18 @@ class Base
         return true;
     }
     // }}}
-    // {{{ isAllowedAdd
-    public function isAllowedAdd($node, $targetId) {
-        return $this->isAllowedIn(
-            $node->nodeName,
-            $this->document->getNodeNameById($targetId)
-        );
+
+    // {{{ onDocumentChange
+    /**
+     * On Document Change
+     *
+     * @return bool
+     */
+    public function onDocumentChange()
+    {
+        return true;
     }
     // }}}
-
     // {{{ onAddNode
     /**
      * On Add Node
@@ -167,17 +178,6 @@ class Base
      * @return bool
      */
     public function onDeleteNode($node_id, $parent_id) {
-        return true;
-    }
-    // }}}
-    // {{{ onDocumentChange
-    /**
-     * On Document Change
-     *
-     * @return bool
-     */
-    public function onDocumentChange()
-    {
         return true;
     }
     // }}}
