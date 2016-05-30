@@ -26,6 +26,10 @@ class Imagemagick extends \Depage\Graphics\Graphics
      * @brief Imagemagick executable path
      **/
     protected $executable;
+    /**
+     * @brief timeout after which the image conversion will be canceled
+     **/
+    protected $timeout = 0;
     // }}}
     // {{{ __construct()
     /**
@@ -38,6 +42,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         parent::__construct($options);
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
+        $this->timeout = isset($options['timeout']) ? $options['timeout'] : 0;
     }
     // }}}
 
@@ -211,9 +216,47 @@ class Imagemagick extends \Depage\Graphics\Graphics
     {
         $command = str_replace('!', '\!', escapeshellcmd($this->command));
 
-        exec($command . ' 2>&1', $commandOutput, $returnStatus);
-        if ($returnStatus != 0) {
-            throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
+        $descriptorspec = array(
+            0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+            1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+            2 => array("pipe", "a") // stderr is pip
+        );
+        $process = proc_open("exec " . $command, $descriptorspec, $pipes);
+
+        // set pipes non blocking
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        $startTime = time();
+        $output = array(1 => "", 2 => "");
+        $terminated = false;
+
+        if (is_resource($process)) {
+            // read stdin and stderr
+            while(!feof($pipes[1]) && !feof($pipes[2])) {
+                for ($i = 1; $i < 3; $i++) {
+                    $s = fgets($pipes[$i]);
+                    $output[$i] .= $s;
+                }
+
+                usleep(10000);
+                if ($this->timeout > 0 && time() - $startTime > $this->timeout) {
+                    // terminate process of takes longer than timeout
+                    proc_terminate($process);
+                    $terminated = true;
+                }
+            }
+
+            for ($i = 0; $i < 3; $i++) {
+                fclose($pipes[$i]);
+            }
+            $returnStatus = proc_close($process);
+        }
+
+        if ($terminated) {
+            throw new \Depage\Graphics\Exceptions\Exception("Conversion over timeout");
+        } else if ($returnStatus != 0) {
+            throw new \Depage\Graphics\Exceptions\Exception($output[2]);
         }
     }
     // }}}
