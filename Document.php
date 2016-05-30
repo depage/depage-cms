@@ -120,8 +120,8 @@ class Document
     // }}}
     // {{{ getDoctypeHandler
     /**
-     *
      * @param $doc_id
+     *
      * @return mixed
      */
     public function getDoctypeHandler()
@@ -130,13 +130,17 @@ class Document
             $className = $this->getDocInfo()->type;
 
             if (empty($className)) {
-                $handler = new XmlDocTypes\Base($this->xmlDb, $this);
+                $handler = new XmlDoctypes\Base($this->xmlDb, $this);
             } else {
-                $className = "\\" . $className;
+                $className = '\\' . $className;
                 $handler = new $className($this->xmlDb, $this);
             }
 
-            $this->doctypeHandlers[$this->doc_id] = $handler;
+            if ($handler instanceOf XmlDoctypes\DoctypeInterface) {
+                $this->doctypeHandlers[$this->doc_id] = $handler;
+            } else {
+                throw new Exceptions\XmlDbException('Doctype handler must implement DoctypeInterface');
+            }
         }
 
         return $this->doctypeHandlers[$this->doc_id];
