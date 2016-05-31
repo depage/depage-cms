@@ -585,12 +585,13 @@ class Html {
 
         //$text = mb_ereg_replace('[^\d\w]+', $repl, $text);
         //$text = preg_replace('/[^0-9a-zA-Z]+/', $repl, $text);
-        $text = preg_replace('/[^\p{L}\p{Nd}_\-\.' . $qRepl . ']+/u', $repl, $text);
+        //$text = preg_replace('/[^\p{L}\p{Nd}_\-\.' . $qRepl . ']+/u', $repl, $text);
+        $text = preg_replace('/[^\d\w_\-\.' . $qRepl . ']+/u', $repl, $text);
 
         // replace double placeholders
         $text = preg_replace("/($qRepl){2,}/", '$1', $text);
 
-        $text = trim($text, $repl);
+        $text = rtrim($text, $repl);
         if ($limit > 0 && mb_strlen($text) > $limit) {
             $title = mb_strcut($text, 0, $limit);
         }
