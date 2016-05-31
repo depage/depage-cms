@@ -91,8 +91,8 @@ class Imgurl
         // get action parameters
         preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
-        $this->srcImg = $relativePath . $matches[1];
-        $this->outImg = $this->cachePath . $matches[0];
+        $this->srcImg = $relativePath . rawurldecode($matches[1]);
+        $this->outImg = $this->cachePath . rawurldecode($matches[0]);
         $this->actions = $this->analyzeActions($matches[3]);
     }
     // }}}
