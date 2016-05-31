@@ -90,9 +90,9 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(200, 200);
-        $this->graphics->render(__DIR__ . '/images/test.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -quality 85 +page jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -quality 85 +page jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -132,7 +132,7 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
 
         // 'transparent' JPG
         $this->graphics->addBackground('transparent');
-        $this->graphics->render(__DIR__ . '/images/test.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
         $this->assertSame(' -flatten -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
     }
     // }}}
@@ -146,7 +146,7 @@ class graphics_graphicsmagickTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should be true if queue is empty.');
 
         $this->graphics->addCrop(100, 100, 0, 0)->addCrop(100, 100);
-        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . 'output/test2.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test2.jpg');
         $this->assertTrue($this->graphics->getBypass(), 'Bypass test should pass.');
 
         $this->graphics->addCrop(100, 100, 1, 0);

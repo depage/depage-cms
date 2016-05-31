@@ -147,9 +147,9 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->addResize(200, 200);
-        $this->graphics->render(__DIR__ . '/images/test.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 jpg:'" . __DIR__ . "/images/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -193,7 +193,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
 
         // 'transparent' JPG
         $this->graphics->addBackground('transparent');
-        $this->graphics->render(__DIR__ . '/images/test.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
         $this->assertSame('-size 100x100 -background #FFF', $this->graphics->getBackground(), 'JPG can`t handle transparency -> white');
     }
     // }}}
@@ -203,7 +203,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
      **/
     public function testGetQualityJpg()
     {
-        $this->graphics->render(__DIR__ . '/images/test.jpg');
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
         $this->assertSame('-quality 85', $this->graphics->getQuality(), 'JPG quality string error.');
     }
     // }}}
@@ -213,7 +213,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
      **/
     public function testGetQualityPng()
     {
-        $this->graphics->render(__DIR__ . '/images/test.png');
+        $this->graphics->render(__DIR__ . '/images/test.png', __DIR__ . '/output/test.png');
         $this->assertSame('-quality 95', $this->graphics->getQuality(), 'PNG quality string error.');
     }
     // }}}
@@ -223,7 +223,7 @@ class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
      **/
     public function testGetQualityGif()
     {
-        $this->graphics->render(__DIR__ . '/images/test.gif');
+        $this->graphics->render(__DIR__ . '/images/test.gif', __DIR__ . '/output/test.gif');
         $this->assertSame('', $this->graphics->getQuality(), 'GIF quality string error.');
     }
     // }}}

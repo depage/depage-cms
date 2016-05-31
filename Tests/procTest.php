@@ -30,5 +30,15 @@ class procTest extends PHPUnit_Framework_TestCase
         $this->graphics->execCommand();
     }
     // }}}
+    // {{{ testLock()
+    /**
+     * Test file lock
+     *
+     * @todo implement test of locking
+     **/
+    public function testLock()
+    {
+    }
+    // }}}
 }
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

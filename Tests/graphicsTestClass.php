@@ -43,6 +43,16 @@ class graphicsTestClass extends \Depage\Graphics\Graphics
         $this->testQueueString .= "-thumb-{$width}-{$height}-";
     }
 
+    // don't lock
+    protected function lock()
+    {
+
+    }
+    protected function unlock()
+    {
+
+    }
+
     public function getTestQueueString()
     {
         return $this->testQueueString;

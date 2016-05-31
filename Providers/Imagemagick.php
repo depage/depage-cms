@@ -178,7 +178,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
         $this->command = '';
         $this->processQueue();
 
-        if (
+        if ($this->otherRender && file_exists($this->output)) {
+            // do nothing file is already generated
+        } else if (
             $this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
