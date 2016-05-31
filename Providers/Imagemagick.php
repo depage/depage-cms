@@ -14,6 +14,9 @@ namespace Depage\Graphics\Providers;
  *
  * The graphics_imagemagick class provides depage::graphics features using
  * the ImageMagick library.
+ *
+ * @todo use ghostscript to convert pdf and eps files directly
+ * @todo or use poppler pdftoppm to convert pdf directly
  **/
 class Imagemagick extends \Depage\Graphics\Graphics
 {
