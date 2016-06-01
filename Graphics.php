@@ -326,10 +326,10 @@ class Graphics
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
         $this->otherRender  = false;
 
+        $this->lock();
+
         $this->oldIgnoreUserAbort = ignore_user_abort();
         ignore_user_abort(true);
-
-        $this->lock();
     }
     // }}}
     // {{{ renderFinished()
@@ -340,9 +340,9 @@ class Graphics
      **/
     public function renderFinished()
     {
-        $this->unlock();
-
         ignore_user_abort($this->oldIgnoreUserAbort);
+
+        $this->unlock();
     }
     // }}}
     // {{{ optimizeImage()
