@@ -4,7 +4,6 @@
  *
  * cms xmlDb module
  *
- *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
@@ -12,6 +11,8 @@
  */
 
 namespace Depage\XmlDb;
+
+use Depage\XmlDb\Exceptions\XmlDbException;
 
 class XmlDb implements XmlGetter
 {
@@ -310,6 +311,10 @@ class XmlDb implements XmlGetter
                         foreach ($attributes as $attribute) {
                             extract($attribute); // $name, $operator, $value, $bool
 
+                            if ($bool) {
+                                $attributeCond .= $this->cleanOperator($bool);
+                            }
+
                             if ($name == 'db:id') {
                                 $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
                                 $condParams[] = $value;
@@ -319,10 +324,6 @@ class XmlDb implements XmlGetter
                                 $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
                             } else {
                                 $fallback = true;
-                            }
-
-                            if ($bool) {
-                                $attributeCond .= $this->cleanOperator($bool);
                             }
                         }
 
@@ -445,14 +446,26 @@ class XmlDb implements XmlGetter
         $pBool = '(and|or|AND|OR)';
         $pString = '\$(\d*)';
 
-        preg_match_all("/$pAttr\s*(?:$pOperator\s*$pString)?\s*$pBool?/", $conditionString, $conditions, PREG_SET_ORDER);
+        preg_match_all("/$pBool?\s*$pAttr\s*(?:$pOperator\s*$pString)?/", $conditionString, $conditions, PREG_SET_ORDER);
 
+        $first = true;
         foreach ($conditions as $condition) {
+            $bool = isset($condition[1]) ? $condition[1] : null;
+
+            if ($first) {
+                if ($bool) {
+                    throw new XmlDbException("Invalid XPath syntax");
+                }
+                $first = false;
+            } elseif (!$bool) {
+                throw new XmlDbException("Invalid XPath syntax");
+            }
+
             $conditionArray[] = array(
-                'name' => $condition[1],
-                'operator' => isset($condition[2]) ? $condition[2] : null,
-                'value' => isset($condition[3]) ? $strings[$condition[3]] : null,
-                'bool' => isset($condition[4]) ? $condition[4] : null,
+                'bool' => $bool,
+                'name' => $condition[2],
+                'operator' => isset($condition[3]) ? $condition[3] : null,
+                'value' => (isset($condition[4]) && $condition[4] != '') ? $strings[$condition[4]] : null,
             );
         }
 
@@ -490,7 +503,7 @@ class XmlDb implements XmlGetter
         if (in_array($operator, $operators)) {
             $result = $operator;
         } else {
-            throw new Exceptions\XmlDbException("Invalid XPath operator \"$operator\"");
+            throw new XmlDbException("Invalid XPath operator \"$operator\"");
         }
 
         return $result;
@@ -513,7 +526,7 @@ class XmlDb implements XmlGetter
             $docName = '_' . substr($doctype, strrpos($doctype, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
         if (!is_string($docName) || $this->docExists($docName)) {
-            throw new Exceptions\XmlDbException("Invalid or duplicate document name \"$docName\"");
+            throw new XmlDbException("Invalid or duplicate document name \"$docName\"");
         }
 
         $query = $this->pdo->prepare(

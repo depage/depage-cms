@@ -305,4 +305,15 @@ abstract class XpathTestCase extends XmlDbTestCase
         $this->assertCorrectXpathIds(array(17, 20, 28, 29), '/dpg:pages//pg:page/pg:folder', true, true);
     }
     // }}}
+
+    // {{{ testInvalidXpathOperator
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Invalid XPath syntax
+     */
+    public function testInvalidXpathOperator()
+    {
+       $this->testObject->getNodeIdsByXpath('//pg:page[@file_type = \'html\' op @multilang = \'true\']');
+    }
+    // }}}
 }
