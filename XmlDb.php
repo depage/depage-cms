@@ -303,35 +303,35 @@ class XmlDb implements XmlGetter
                 $condSql[] = "l$level.name LIKE ?";
                 $condParams[] = $this->translateName($ns, $name);
 
-                if ($condition == '') {
-                    // fetch only by name "ns:name ..."
-                } else if ($attributes = $this->parseAttributes($condition)) {
-                    // fetch by simple attributes: "ns:name[@attr1] ..."
-                    $attributeCond = '';
-                    foreach ($attributes as $attribute) {
-                        extract($attribute); // $name, $operator, $value, $bool
+                if ($condition != '') {
+                    if ($attributes = $this->parseAttributes($condition)) {
+                        // fetch by simple attributes: "ns:name[@attr1] ..."
+                        $attributeCond = '';
+                        foreach ($attributes as $attribute) {
+                            extract($attribute); // $name, $operator, $value, $bool
 
-                        if ($name == 'db:id') {
-                            $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
-                            $condParams[] = $value;
-                        } else if ($operator == '=' || $operator == '') {
-                            $attributeCond .= " l$level.value REGEXP ? ";
-                            $regExValue = (is_null($value)) ? '.*' : $value;
-                            $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
-                        } else {
-                            $fallback = true;
+                            if ($name == 'db:id') {
+                                $attributeCond .= " l$level.id {$this->cleanOperator($operator)} ? ";
+                                $condParams[] = $value;
+                            } else if ($operator == '=' || $operator == '') {
+                                $attributeCond .= " l$level.value REGEXP ? ";
+                                $regExValue = (is_null($value)) ? '.*' : $value;
+                                $condParams[] = "(^| )$name=\"$regExValue\"( |$)";
+                            } else {
+                                $fallback = true;
+                            }
+
+                            if ($bool) {
+                                $attributeCond .= $this->cleanOperator($bool);
+                            }
                         }
 
-                        if ($bool) {
-                            $attributeCond .= $this->cleanOperator($bool);
+                        if (!empty($attributeCond)) {
+                            $condSql[] = $attributeCond;
                         }
+                    } else {
+                        $fallback = true;
                     }
-
-                    if (!empty($attributeCond)) {
-                        $condSql[] = $attributeCond;
-                    }
-                } else {
-                    $fallback = true;
                 }
             }
 
@@ -489,6 +489,8 @@ class XmlDb implements XmlGetter
 
         if (in_array($operator, $operators)) {
             $result = $operator;
+        } else {
+            throw new Exceptions\XmlDbException("Invalid XPath operator \"$operator\"");
         }
 
         return $result;
@@ -511,7 +513,7 @@ class XmlDb implements XmlGetter
             $docName = '_' . substr($doctype, strrpos($doctype, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
         if (!is_string($docName) || $this->docExists($docName)) {
-            throw new Exceptions\XmlDbException("Invalid or duplicate document name: \"$docName\"");
+            throw new Exceptions\XmlDbException("Invalid or duplicate document name \"$docName\"");
         }
 
         $query = $this->pdo->prepare(

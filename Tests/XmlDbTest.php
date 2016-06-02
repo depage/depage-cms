@@ -148,7 +148,7 @@ class XmlDbTest extends XmlDbTestCase
     // {{{ testCreateDocInvalidName
     /**
      * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name: ""
+     * @expectedExceptionMessage Invalid or duplicate document name ""
      */
     public function testCreateDocInvalidName()
     {
@@ -232,7 +232,7 @@ class XmlDbTest extends XmlDbTestCase
     // {{{ testCreateDocExisting
     /**
      * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name: "pages"
+     * @expectedExceptionMessage Invalid or duplicate document name "pages"
      */
     public function testCreateDocExisting()
     {
@@ -250,8 +250,16 @@ class XmlDbTest extends XmlDbTestCase
         $this->assertEquals('>=', $this->xmlDb->cleanOperator('>='));
         $this->assertEquals('and', $this->xmlDb->cleanOperator('and'));
         $this->assertEquals('or', $this->xmlDb->cleanOperator('or'));
-
-        $this->assertEquals('', $this->xmlDb->cleanOperator('\''));
+    }
+    // }}}
+    // {{{ testCleanOperatorFail
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Invalid XPath operator "'"
+     */
+    public function testCleanOperatorFail()
+    {
+        $this->xmlDb->cleanOperator('\'');
     }
     // }}}
 }
