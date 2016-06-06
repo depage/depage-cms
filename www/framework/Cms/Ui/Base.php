@@ -89,6 +89,8 @@ class Base extends \Depage\Depage\Ui\Base
      * @return  null
      */
     public function _package($output) {
+        $output = parent::_package($output);
+
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "Depage\Html\Html")) {
             // pack into body html
