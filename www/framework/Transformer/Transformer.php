@@ -252,14 +252,14 @@ abstract class Transformer
 
         if (!$content = $this->xsltProc->transformToXml($xml)) {
             // @todo add better error handling
+            $messages = "";
             $errors = libxml_get_errors();
             foreach($errors as $error) {
                 $this->log->log("LibXMLError: " . $error->message);
-                //var_dump($error);
+                $messages .= $error->message . "\n";
             }
 
-            $error = libxml_get_last_error();
-            $error = empty($error) ? 'Could not transform the navigation XML document.' : $error->message;
+            $error = "Could not transform the XML document:\n" . $messages;
 
             throw new \Exception($error);
         } else {

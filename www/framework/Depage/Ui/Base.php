@@ -12,6 +12,8 @@
 
 namespace Depage\Depage\Ui;
 
+use \Depage\Html\Html;
+
 abstract class Base
 {
     // {{{ default config
@@ -287,6 +289,9 @@ abstract class Base
      * @return  null
      */
     protected function _package($output) {
+        if (is_array($output)) {
+            $output = new Html($output, $this->htmlOptions);
+        }
         return $output;
     }
     // }}}
@@ -327,6 +332,7 @@ abstract class Base
 
         $h .= "<h1>Error</h1>";
         if (is_string($error)) {
+            $error = nl2br($error);
             $h .= "<p>{$error}</p>";
         } elseif ($env == "production") {
             $h .= "<p>{$error->msg}</p>";
