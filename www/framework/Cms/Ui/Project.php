@@ -154,7 +154,7 @@ class Project extends Base
             $this->project->save();
             $form->clearSession(false);
 
-            //\Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/{$this->project->name}/settings/");
         }
 
         return $form;
