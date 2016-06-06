@@ -138,7 +138,7 @@ class Html {
             } else if (is_array($arg)) {
                 // set to parent params to params for subarray if not set
                 foreach ($arg as $a) {
-                    if (is_object($a) and get_class($a) == "Depage\Html\Html") {
+                    if (is_object($a) && get_class($a) == "Depage\Html\Html") {
                         if ($a->param === null) {
                             $a->setHtmlOptions($param);
                         }
@@ -210,7 +210,13 @@ class Html {
                 }
                 */
             } else {
-                self::e($this->content);
+                if (isset($this->content)) {
+                    self::e($this->content);
+                } else if (is_array($this->args)) {
+                    foreach ($this->args as $arg) {
+                        self::e($arg);
+                    }
+                }
             }
         } catch (Exception $e) {
             var_dump($e);
