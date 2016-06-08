@@ -84,7 +84,7 @@
     // }}}
     // {{{ growl
     InternalNotification.prototype.growl = function() {
-        if (this.testSystemSupport()) {
+        if (this.options.backend != "html" && this.testSystemSupport()) {
             this.growlSystemNotification();
             if (this.options.alwaysShowFallback) {
                 this.growlHtmlFallback();
@@ -161,8 +161,6 @@
 
         var n = new InternalNotification(title, options);
         n.growl();
-
-        console.log(n);
     };
     // }}}
 
