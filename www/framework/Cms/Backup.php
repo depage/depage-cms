@@ -11,7 +11,7 @@
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
-namespace Depage\Cms\Backup;
+namespace Depage\Cms;
 
 /**
  * brief Backup
@@ -19,28 +19,65 @@ namespace Depage\Cms\Backup;
  */
 class Backup
 {
-    // {{{ restore()
+    // {{{ __construct()
     /**
-     * @brief restore
+     * @brief __construct
      *
      * @param mixed $
      * @return void
      **/
-    public static function restore($projectName, $file)
+    public function __construct($pdo, $project)
+    {
+        $this->xmldb = $project->getXmlDb();
+    }
+    // }}}
+    // {{{ restoreFromFile()
+    /**
+     * @brief restoreFromFile
+     *
+     * @param string $file
+     * @return void
+     **/
+    public function restoreFromFile($file)
     {
 
     }
     // }}}
-    // {{{ create()
+    // {{{ backupToFile()
     /**
-     * @brief create
+     * @brief backupToFile
      *
-     * @param mixed $
+     * @param string $file
      * @return void
      **/
-    public static function create($projectName, $file)
+    public function backupToFile($file)
     {
+        $pharName = $file . ".phar";
+        unlink($file);
+        unlink($pharName);
 
+        $archive = new \Phar($pharName);
+
+        // added xmldb documents
+        $documents = $this->xmldb->getDocuments();
+
+        foreach ($documents as $doc) {
+            $info = $doc->getDocInfo();
+
+            $infoXml = new \SimpleXMLElement("<document></document>");
+            foreach(get_object_vars($info) as $key => $val) {
+                if (is_object($val)) {
+                    $val = $val->format("r");
+                }
+                $infoXml->addChild($key, $val);
+            }
+            $archive->addFromString("xmldb/d{$info->id}/_meta.xml", $infoXml->saveXml());
+            $archive->addFromString("xmldb/d{$info->id}/data.xml", $doc->getXml());
+        }
+
+        $archive->convertToData(\Phar::ZIP);
+
+        unlink($pharName);
     }
     // }}}
 }

@@ -384,6 +384,19 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ backup()
+    /**
+     * @brief backup
+     *
+     * @return void
+     **/
+    public function backup()
+    {
+        $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
+
+        $backup->backupToFile("projects/{$this->project->name}/backup/test.zip");
+    }
+    // }}}
 
     // {{{ details()
     function details($max = null) {
