@@ -250,13 +250,13 @@ var depageCMS = (function() {
         // {{{ setupSortables
         setupSortables: function() {
             // @todo get project name correctly
-            var xmldb = new DepageXmldb(baseUrl, "depage", "settings");
             var currentPos, newPos;
 
             $(".sortable-forms .sortable").each(function() {
                 var $container = $(this);
                 var $head = $(this).find("h1");
                 var $form = $(this).find("form");
+                var xmldb = new DepageXmldb(baseUrl, $form.attr("data-project"), $form.attr("data-document"));
 
                 $head.on("click", function() {
                     if ($container.hasClass("active")) {
