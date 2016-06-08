@@ -317,6 +317,31 @@ class Task {
         }
     }
     // }}}
+    // {{{ isRunning()
+    /**
+     * @brief isLocked
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isRunning()
+    {
+        $this->lockFp = fopen($this->lockName, 'w');
+
+        $locked = flock($this->lockFp, LOCK_EX | LOCK_NB);
+
+        if (!$locked) {
+            return true;
+        }
+
+        flock($this->lockFp, LOCK_UN);
+        fclose($this->lockFp);
+
+        $this->lockFp = null;
+
+        return false;
+    }
+    // }}}
 
     // {{{ addSubtask()
     /* addSubtask only creates task in db.

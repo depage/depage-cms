@@ -156,6 +156,35 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         }
     }
     // }}}
+    // {{{ watch()
+    /**
+     * @brief watches for tasks and runs them in a new process
+     *
+     * @return void
+     **/
+    public function watch()
+    {
+        while (true) {
+            $tasks = Task::loadAll($this->pdo);
+
+            // @todo add a maximum number of concurrently running tasks
+            foreach($tasks as $task) {
+                if ($task->status === null) {
+                    $args = array(
+                        "dp-path" => DEPAGE_PATH,
+                        "conf-url" => DEPAGE_BASE,
+                        "task-id" => $task->taskId,
+                    );
+
+                    if (!$task->isRunning()) {
+                        $this->executeInBackground(DEPAGE_PATH, "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
+                    }
+                }
+            }
+            sleep(1);
+        }
+    }
+    // }}}
     // {{{ log()
     /**
      * @brief log
@@ -212,7 +241,9 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 "task-id" => $this->task->taskId,
             );
 
-            $this->executeInBackground(DEPAGE_PATH, "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
+            if (!$task->isRunning()) {
+                $this->executeInBackground(DEPAGE_PATH, "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
+            }
         }
     }
     // }}}
@@ -368,13 +399,19 @@ if (php_sapi_name() == 'cli') {
 
     // test getopt without "standard"-options
     $options = getopt("h", array(
+        "watch",
         "task-id:",
         "dp-path:",
         "conf-url:",
     ));
 
     $task_runner = new TaskRunner($dp->conf);
-    $task_runner->runNow($options['task-id'], true);
+
+    if (isset($options['watch'])) {
+        $task_runner->watch();
+    } else if (isset($options['task-id'])) {
+        $task_runner->runNow($options['task-id'], true);
+    }
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
