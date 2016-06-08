@@ -2,7 +2,8 @@
     <?php
         foreach ($this->notifications as $n) {
             echo("$.depage.growl(" . json_encode($n->title) . ", {
-                message: " . json_encode($n->message) . "
+                message: " . json_encode($n->message) . ",
+                backend: 'html'
             });");
         }
     ?>
