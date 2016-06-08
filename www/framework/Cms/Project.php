@@ -533,10 +533,6 @@ class Project extends \Depage\Entity\Entity
 
             // get base-url
             $baseurl = parse_url(rtrim($conf->baseurl, "/"));
-            $rewritebase = $baseurl['path'];
-            if ($rewritebase == "") {
-                $rewritebase = "/";
-            }
             $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
 
             return $baseurl;
@@ -766,6 +762,11 @@ class Project extends \Depage\Entity\Entity
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
+        $baseurlParts = parse_url(rtrim($baseurl, "/"));
+        $rewritebase = $baseurlParts['path'];
+        if ($rewritebase == "") {
+            $rewritebase = "/";
+        }
 
         $htaccess .= "AddCharset UTF-8 .html\n\n";
 
