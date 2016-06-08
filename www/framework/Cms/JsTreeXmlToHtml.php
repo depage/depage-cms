@@ -15,7 +15,7 @@ class JsTreeXmlToHtml
         $xslt = new \XSLTProcessor();
         $xslt->importStylesheet($xsl);
 
-        $html = array();
+        $html = [];
         foreach ($nodes as $id => &$subdoc) {
             $html[$id] = $xslt->transformToXML($subdoc);
         }

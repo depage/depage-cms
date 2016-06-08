@@ -68,9 +68,9 @@ class XmlNav {
      * @return (array) array of nodes
      */
     public function getAllUrls(\DOMNode $node, $url = "") {
-        $urlsByPageId = array();
-        $pageIdByUrl = array();
-        $pagedataIdByPageId = array();
+        $urlsByPageId = [];
+        $pageIdByUrl = [];
+        $pagedataIdByPageId = [];
 
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
@@ -92,7 +92,7 @@ class XmlNav {
             }
         }
 
-        return array($urlsByPageId, $pageIdByUrl, $pagedataIdByPageId);
+        return [$urlsByPageId, $pageIdByUrl, $pagedataIdByPageId];
     }
     // }}}
 
@@ -219,7 +219,7 @@ class XmlNav {
      *
      * @return (string) $html
      */
-    public function transform($activeUrl, $lang, $xslParam = array()) {
+    public function transform($activeUrl, $lang, $xslParam = []) {
         if (!($this->xslDOM instanceof \DOMDocument)) {
             throw new \exception('You have to load a navigation xsl-template.');
         }

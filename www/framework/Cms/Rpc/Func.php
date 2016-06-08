@@ -18,11 +18,11 @@ class Func {
     public $charset = "UTF-8";
     public $name;
     public $args;
-    public $invisibleFuncs = Array(
+    public $invisibleFuncs = [
         'send_message_to_clients',
         'send_message_to_client',
         'keepAlive',
-    );
+    ];
     // }}}
 
     // {{{ constructor
@@ -35,7 +35,7 @@ class Func {
      * @param    $args (array)
      * @param    $funcObj (object)
      */
-    function __construct($name, $args = Array()) {
+    function __construct($name, $args = []) {
         $this->name = $name;
         $this->args = $args;
     }
@@ -86,7 +86,7 @@ class Func {
      * @return    $value (mixed)
      */
     function call() {
-        $val = call_user_func_array(array(&$this->funcObj, $this->name), Array($this->args));
+        $val = call_user_func_array([&$this->funcObj, $this->name], [$this->args]);
 
         if (!in_array($this->name, $this->invisibleFuncs)) {
             $log = new \Depage\Log\Log();

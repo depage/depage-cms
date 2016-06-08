@@ -14,63 +14,63 @@ class Pages extends Base {
         parent::__construct($xmldb, $document);
 
         // list of elements that may created by a user
-        $this->availableNodes = array(
-            'pg:page' => (object) array(
+        $this->availableNodes = [
+            'pg:page' => (object) [
                 'name' => _("Page"),
                 'new' => _("(Untitled Page)"),
                 'icon' => "",
-                'attributes' => array(),
+                'attributes' => [],
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
                 'xml_template' => 'page.xml'
-            ),
-            'pg:folder' => (object) array(
+            ],
+            'pg:folder' => (object) [
                 'name' => _("Folder"),
                 'new' => _("(Untitled Folder)"),
                 'icon' => "",
-                'attributes' => array(),
+                'attributes' => [],
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Folder',
                 'xml_template' => 'folder.xml',
-            ),
-            'pg:redirect' => (object) array(
+            ],
+            'pg:redirect' => (object) [
                 'name' => _("Redirect"),
                 'new' => _("Redirect"),
                 'icon' => "",
-                'attributes' => array(),
+                'attributes' => [],
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
                 'xml_template' => 'redirect.xml',
-            ),
-            'pg:separator' => (object) array(
+            ],
+            'pg:separator' => (object) [
                 'name' => _("Separator"),
                 'new' => "",
                 'icon' => "",
-                'attributes' => array(),
-            ),
-        );
+                'attributes' => [],
+            ],
+        ];
 
         // list of valid parents given by nodename
-        $this->validParents = array(
-            'pg:page' => array(
+        $this->validParents = [
+            'pg:page' => [
                 'dpg:pages',
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
-            ),
-            'pg:folder' => array(
+            ],
+            'pg:folder' => [
                 'dpg:pages',
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
-            ),
-            'pg:redirect' => array(
+            ],
+            'pg:redirect' => [
                 'dpg:pages',
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
-            ),
-            'pg:separator' => array(
+            ],
+            'pg:separator' => [
                 '*',
-            ),
-        );
+            ],
+        ];
     }
     // }}}
 

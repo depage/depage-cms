@@ -33,18 +33,18 @@ class Navigation extends Base
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $this->addText("name-$nodeId", array(
+        $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Navigation filter name"),
             "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@name",
             "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
-            "dataAttr" => array(
+            "dataAttr" => [
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
-            ),
-        ));
+            ],
+        ]);
 
         $fs = $this->addFieldset("localized", [
             'label' => _("Localized labels"),
@@ -53,11 +53,11 @@ class Navigation extends Base
         foreach ($this->dataNode->childNodes as $localized) {
             $lang = $localized->getAttribute("lang");
 
-            $fs->addText("localized-$nodeId-$lang", array(
+            $fs->addText("localized-$nodeId-$lang", [
                 "label" => $lang,
                 "placeholder" => _("Localized name") . " ($lang)",
                 "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/localized[@lang = '$lang']",
-            ));
+            ]);
         }
     }
     // }}}

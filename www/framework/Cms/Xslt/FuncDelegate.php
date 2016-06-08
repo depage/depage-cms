@@ -7,7 +7,7 @@ namespace Depage\Cms\Xslt;
  * context of a given object instead of just statically.
  */
 class FuncDelegate {
-    protected static $functions = array();
+    protected static $functions = [];
 
     // {{{ registerFunctions()
     public static function registerFunctions($proc, Array $functions = array())
@@ -15,7 +15,7 @@ class FuncDelegate {
         $class = get_called_class();
         static::$functions = $functions;
 
-        $names = array();
+        $names = [];
         foreach ($functions as $name => $func) {
             if (is_callable($func)) {
                 $names[] = __CLASS__ . "::" . $name;
@@ -27,7 +27,7 @@ class FuncDelegate {
     }
     // }}}
     // {{{ __callStatic()
-    public static function __callStatic($name, $parameters = array())
+    public static function __callStatic($name, $parameters = [])
     {
         if (isset(static::$functions[$name]) && is_callable(static::$functions[$name])) {
             return call_user_func_array(static::$functions[$name], $parameters);

@@ -16,7 +16,7 @@ use \Depage\Html\Html;
 
 class Edit extends Base {
     // {{{ _init()
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
         if (!empty($this->urlSubArgs[0])) {
@@ -28,10 +28,10 @@ class Edit extends Base {
 
         // get xmldb instance
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, array(
+        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, [
             "edit:text_headline",
             "edit:text_formatted",
-        ));
+        ]);
     }
     // }}}
     // {{{ package
@@ -44,11 +44,11 @@ class Edit extends Base {
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "Depage\Html\Html")) {
             // pack into body html
-            $output = new Html("html.tpl", array(
+            $output = new Html("html.tpl", [
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
                 'content' => $output,
-            ), $this->htmlOptions);
+            ], $this->htmlOptions);
         }
 
         return $output;
@@ -122,12 +122,12 @@ class Edit extends Base {
 
         $xslt = new \XSLTProcessor();
         $xslt->importStylesheet($xsl);
-        $xslt->registerPHPFunctions(array(
+        $xslt->registerPHPFunctions([
             'str_replace',
             'var_export',
-        ));
+        ]);
 
-        $forms = array();
+        $forms = [];
 
         $php = $xslt->transformToXML($doc->getXML());
 
@@ -171,10 +171,10 @@ class Edit extends Base {
             $h .= $form->__toString();
         }
 
-        $output = new Html(array(
+        $output = new Html([
             'title' => "edit",
             'content' => $h,
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
         return $output;
         //return $h;

@@ -6,7 +6,8 @@ trait MultipleLanguages
 {
     // {{{ testNodeLanguages
     protected function testNodeLanguages($node) {
-        $languages = array();
+        $languages = [];
+
         // get languages from settings
         $settings = $this->xmldb->getDoc("settings");
         $nodes = $settings->getNodeIdsByXpath("//proj:language");
@@ -30,8 +31,8 @@ trait MultipleLanguages
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         $changed = false;
-        $actual_languages = array();
-        $temp_nodes = array();
+        $actual_languages = [];
+        $temp_nodes = [];
 
         $xpath = new \DOMXPath($xml);
         $nodelist = $xpath->query("./descendant-or-self::node()[@lang]", $node);
@@ -62,7 +63,7 @@ trait MultipleLanguages
                     }
                 }
                 for ($i = 0; $i < count($temp_nodes); $i++) {
-                    $lang_nodes = array();
+                    $lang_nodes = [];
                     $temp_node = $temp_nodes[$i];
                     $sibl_node = $temp_node->nextSibling;
                     $parent_node = $temp_node->parentNode;

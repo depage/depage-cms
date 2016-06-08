@@ -16,26 +16,26 @@ use \Depage\Html\Html;
 
 class Preview extends \Depage\Depage\Ui\Base
 {
-    protected $htmlOptions = array();
+    protected $htmlOptions = [];
     protected $basetitle = "";
     protected $previewType = "dev";
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
-    protected $urlsByPageId = array();
-    protected $pageIdByUrl = array();
+    protected $urlsByPageId = [];
+    protected $pageIdByUrl = [];
     public $routeThroughIndex = true;
-    public $defaults = array(
-        'cache' => array(
-            'xmldb' => array(
+    public $defaults = [
+        'cache' => [
+            'xmldb' => [
                 'disposition' => "file",
                 'host' => "",
-            ),
-        ),
-    );
+            ],
+        ],
+    ];
 
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
         if (empty($this->pdo)) {
@@ -44,17 +44,17 @@ class Preview extends \Depage\Depage\Ui\Base
                 $this->options->db->dsn, // dsn
                 $this->options->db->user, // user
                 $this->options->db->password, // password
-                array(
+                [
                     'prefix' => $this->options->db->prefix, // database prefix
-                )
+                ]
             );
         }
 
         // get cache object for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", [
             'disposition' => $this->options->cache->xmldb->disposition,
             'host' => $this->options->cache->xmldb->host,
-        ));
+        ]);
 
         $this->projectName = $this->urlSubArgs[0];
         $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
@@ -69,11 +69,11 @@ class Preview extends \Depage\Depage\Ui\Base
         );
 
         // set html-options
-        $this->htmlOptions = array(
+        $this->htmlOptions = [
             'template_path' => __DIR__ . "/../tpl/",
             'clean' => "space",
             'env' => $this->options->env,
-        );
+        ];
         $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
     }
     // }}}
@@ -148,13 +148,13 @@ class Preview extends \Depage\Depage\Ui\Base
     public function error($error, $env) {
         $content = parent::error($error, $env);
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "error",
             'class' => "first",
-            'content' => new Html(array(
+            'content' => new Html([
                 'content' => $content,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $this->_package($h);
     }

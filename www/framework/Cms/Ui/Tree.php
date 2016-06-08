@@ -24,7 +24,8 @@ class Tree extends Base {
      *
      * @param array $importVariables
      */
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         if (!empty($this->urlSubArgs[0])) {
@@ -50,7 +51,8 @@ class Tree extends Base {
      * Destructor
      *
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
         $delta_updates->discardOldChanges();
     }
@@ -62,7 +64,8 @@ class Tree extends Base {
      *
      * @return bool|\html|null
      */
-    public function index() {
+    public function index()
+    {
         return $this->tree($this->docName);
     }
     // }}}
@@ -75,7 +78,8 @@ class Tree extends Base {
      * @param $env
      * @return null|void
      */
-    public function error($error, $env) {
+    public function error($error, $env)
+    {
         parent::error($error, $env);
         //@todo return error in json format to catch from javascript
     }
@@ -88,17 +92,18 @@ class Tree extends Base {
      * @param $docName
      * @return bool|\html
      */
-    public function tree($docName) {
+    public function tree($docName)
+    {
         $treeUrl = "project/{$this->projectName}/tree/";
         $actionUrl = "{$treeUrl}{$docName}/";
 
-        $h = new Html("jstree.tpl", array(
+        $h = new Html("jstree.tpl", [
             'treeUrl' => $treeUrl,
             'actionUrl' => $actionUrl,
             'root_id' => $this->docInfo->rootid,
             'seq_nr' => $this->get_current_seq_nr($this->docInfo->id),
             'nodes' => $this->get_html_nodes($docName),
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -109,7 +114,8 @@ class Tree extends Base {
      * @param $node child node data
      * @param $position position for new child in parent
      */
-    public function createNode() {
+    public function createNode()
+    {
         $status = false;
         $this->log->log($_REQUEST);
 
@@ -121,10 +127,10 @@ class Tree extends Base {
         $id = $this->doc->addNodeByName($type, $target_id, $position);
         $status = $id !== false;
         if ($status) {
-            $this->recordChange($this->docId, array($target_id));
+            $this->recordChange($this->docId, [$target_id]);
         }
 
-        return new \Depage\Json\Json(array("status" => $status, "id" => $id));
+        return new \Depage\Json\Json(["status" => $status, "id" => $id]);
     }
     // }}}
 
@@ -134,7 +140,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function renameNode() {
+    public function renameNode()
+    {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
@@ -154,7 +161,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function moveNode() {
+    public function moveNode()
+    {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
@@ -177,7 +185,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function copyNode() {
+    public function copyNode()
+    {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
@@ -199,7 +208,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function deleteNode() {
+    public function deleteNode()
+    {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -220,7 +230,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function duplicate_node() {
+    public function duplicate_node()
+    {
         $status = false;
         $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -243,7 +254,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function types_settings() {
+    public function types_settings()
+    {
         $settings = array();
 
         $permissions = $this->doc->getPermissions();
@@ -270,7 +282,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function save_version() {
+    public function save_version()
+    {
         $published = filter_input(INPUT_POST, 'published', FILTER_SANITIZE_STRING);
 
         $history = $this->doc->getHistory();
@@ -289,7 +302,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function get_versions() {
+    public function get_versions()
+    {
         $versions = array();
 
         $history = $this->doc->getHistory();
@@ -308,7 +322,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function delete_version() {
+    public function delete_version()
+    {
         $status = false;
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
@@ -328,7 +343,8 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function restore_version() {
+    public function restore_version()
+    {
         $xml = false;
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
 
@@ -347,7 +363,8 @@ class Tree extends Base {
      * @param $doc_id
      * @param $parent_ids
      */
-    protected function recordChange($doc_id, $parent_ids) {
+    protected function recordChange($doc_id, $parent_ids)
+    {
         $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
 
         $unique_parent_ids = array_unique($parent_ids);
@@ -364,7 +381,8 @@ class Tree extends Base {
      * @param $doc_name
      * @return mixed
      */
-    protected function get_html_nodes($doc_name) {
+    protected function get_html_nodes($doc_name)
+    {
         $doc = $this->doc->getXml($doc_name);
         $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc));
 
@@ -379,7 +397,8 @@ class Tree extends Base {
      * @param $doc_id
      * @return int
      */
-    protected function get_current_seq_nr($doc_id) {
+    protected function get_current_seq_nr($doc_id)
+    {
        $delta_updates = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
        return $delta_updates->currentChangeNumber();
     }

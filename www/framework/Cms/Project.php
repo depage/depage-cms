@@ -18,17 +18,17 @@ class Project extends \Depage\Entity\Entity
     /**
      * @brief fields
      **/
-    static protected $fields = array(
+    static protected $fields = [
         "id" => null,
         "name" => "",
         "fullname" => "",
         "groupId" => 1,
-    );
+    ];
 
     /**
      * @brief primary
      **/
-    static protected $primary = array("id");
+    static protected $primary = ["id"];
 
     /**
      * @brief pdo object for database access
@@ -158,9 +158,9 @@ class Project extends \Depage\Entity\Entity
                 projectgroup.pos ASC, fullname ASC
             "
         );
-        $projects = self::fetch($pdo, $cache, $query, array(
+        $projects = self::fetch($pdo, $cache, $query, [
             ":name" => $name,
-        ));
+        ]);
 
         if (count($projects) == 0) {
             throw new Exceptions\Project("project '$name' does not exist.");
@@ -176,13 +176,13 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $query
      * @return void
      **/
-    static protected function fetch($pdo, $cache, $query, $params = array())
+    static protected function fetch($pdo, $cache, $query, $params = [])
     {
-        $projects = array();
+        $projects = [];
         $query->execute($params);
 
         // pass pdo-instance to constructor
-        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", array($pdo, $cache));
+        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\Project", [$pdo, $cache]);
         do {
             $project = $query->fetch(\PDO::FETCH_CLASS);
             if ($project) {
@@ -202,7 +202,7 @@ class Project extends \Depage\Entity\Entity
      * @return
      */
     public function save() {
-        $fields = array();
+        $fields = [];
         $primary = self::$primary[0];
         $isNew = $this->data[$primary] === null;
 
@@ -338,11 +338,11 @@ class Project extends \Depage\Entity\Entity
             $xmlPath = "projects/" . $this->name . "/xml/";
             $libPath = "projects/" . $this->name . "/lib/";
 
-            $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, array(
+            $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
                 'project' => $this,
                 'userId' => $userId,
-            ));
+            ]);
         }
 
         return $this->xmldb;
@@ -383,7 +383,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getRecentlyChangedPages($max = null)
     {
-        $pages = array();
+        $pages = [];
 
         $this->xmldb = $this->getXmlDb();
 
@@ -458,7 +458,7 @@ class Project extends \Depage\Entity\Entity
         if ($languages = $this->cache->get("dp_proj_{$this->name}_settings/languages.ser")) {
             return $languages;
         } else {
-            $languages = array();
+            $languages = [];
             $this->xmldb = $this->getXmlDb();
 
             $settings = $this->getSettingsDoc();
@@ -483,7 +483,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getPublishingTargets()
     {
-        $targets = array();
+        $targets = [];
         $this->xmldb = $this->getXmlDb();
 
         $settings = $this->getSettingsDoc();
@@ -609,24 +609,24 @@ class Project extends \Depage\Entity\Entity
             \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
             \$transformer = %s;
             \$transformCache = %s;
-        ", array(
+        ", [
             $conf->output_folder,
             $this,
             $publishPdo,
             $publishId,
             $transformer,
             $transformCache,
-        ));
+        ]);
 
-        $task->addSubtask("testing publish target", "\$publisher->testConnection();", array(), $initId);
-        $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", array(), $initId);
+        $task->addSubtask("testing publish target", "\$publisher->testConnection();", [], $initId);
+        $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", [], $initId);
 
         // publish file library
         foreach ($files as $file) {
-            $task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", array(
+            $task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", [
                 $projectPath . $file,
                 $file,
-            ), $initId);
+            ], $initId);
         }
 
         // transform pages
@@ -637,11 +637,11 @@ class Project extends \Depage\Entity\Entity
                     \$publisher->publishString(
                         \$transformer->transformUrl(%s, %s),
                         %s
-                    );", array(
+                    );", [
                         $url,
                         $lang,
                         $target
-                ), $initId);
+                ], $initId);
             }
         }
 
@@ -652,10 +652,10 @@ class Project extends \Depage\Entity\Entity
             \$publisher->publishString(
                 \$project->generateSitemap(%s),
                 %s
-            );", array(
+            );", [
                 $publishId,
                 "sitemap.xml",
-        ), $initId);
+        ], $initId);
 
         // publish feeds
         foreach ($languages as $lang => $name) {
@@ -663,33 +663,33 @@ class Project extends \Depage\Entity\Entity
                 \$publisher->publishString(
                     \$project->generateAtomFeed(%s, %s),
                     %s
-                );", array(
+                );", [
                     $publishId,
                     $lang,
                     "$lang/atom.xml",
-            ), $initId);
+            ], $initId);
         }
 
         $task->addSubtask("publishing htaccess", "
             \$publisher->publishString(
                 \$project->generateHtaccess(%s),
                 %s
-            );", array(
+            );", [
                 $publishId,
                 ".htaccess",
-        ), $initId);
+        ], $initId);
 
         $task->addSubtask("publishing index", "
             \$publisher->publishString(
                 \$project->generateIndex(%s),
                 %s
-            );", array(
+            );", [
                 $publishId,
                 "index.php",
-        ), $initId);
+        ], $initId);
 
         // unpublish removed files
-        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", array(), $initId);
+        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", [], $initId);
 
         return $task;
     }
@@ -709,13 +709,13 @@ class Project extends \Depage\Entity\Entity
         $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "sitemap");
         $xml = $this->xmldb->getDocXml("pages");
 
-        $parameters = array(
+        $parameters = [
             "currentContentType" => "text/xml",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
             "baseUrl" => $this->getBaseUrl($publishId),
-        );
+        ];
 
         $sitemap = $transformer->transform($xml, $parameters);
         return $sitemap;
@@ -735,14 +735,14 @@ class Project extends \Depage\Entity\Entity
         $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "atom");
         $xml = $this->xmldb->getDocXml("pages");
 
-        $parameters = array(
+        $parameters = [
             "currentLang" => $lang,
             "currentContentType" => "text/xml",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
             "baseUrl" => $this->getBaseUrl($publishId),
-        );
+        ];
 
         $sitemap = $transformer->transform($xml, $parameters);
         return $sitemap;
@@ -886,12 +886,12 @@ class Project extends \Depage\Entity\Entity
         $xml = $this->xmldb->getDocXml("colors");
         $xpath = new \DOMXPath($xml);
         $nodes = $xpath->query("//proj:colorscheme[@name != 'tree_name_color_global']/@name");
-        $parameters = array(
+        $parameters = [
             "currentContentType" => "text/css",
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-        );
+        ];
         $cssPath = $this->getProjectPath() . "lib/global/css/";
 
         // generate global colorscheme
@@ -931,10 +931,10 @@ class Project extends \Depage\Entity\Entity
      */
     public function __sleep()
     {
-        return array_merge(parent::__sleep(), array(
+        return array_merge(parent::__sleep(), [
             'pdo',
             'cache',
-        ));
+        ]);
     }
     // }}}
 }

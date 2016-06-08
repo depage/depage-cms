@@ -1,17 +1,17 @@
 <?php
-    $form = new Depage\HtmlForm\HtmlForm("userprofile_edit", array(
+    $form = new Depage\HtmlForm\HtmlForm("userprofile_edit", [
         'jsautosave' => "true",
-    ));
+    ]);
 
     // define formdata
-    $form->addText("name", array(
+    $form->addText("name", [
         'defaultValue' => $this->user->fullname,
-    ));
-    $form->addEmail("email", array(
+    ]);
+    $form->addEmail("email", [
         'defaultValue' => $this->user->email,
-    ));
-    $form->addPassword("password", array(
-    ));
+    ]);
+    $form->addPassword("password", [
+    ]);
 
     // process form
     $form->process();

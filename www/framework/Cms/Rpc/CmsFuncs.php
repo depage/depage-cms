@@ -21,7 +21,7 @@ class CmsFuncs {
     protected $projectName;
     protected $libPath;
     protected $trashPath;
-    protected $callbacks = array();
+    protected $callbacks = [];
 
     // {{{ __construct
     function __construct($project, $pdo, $xmldb, $user) {
@@ -42,7 +42,7 @@ class CmsFuncs {
     // }}}
     // {{{ register_window()
     function register_window($args) {
-        return new Func('registered_window', array('wid' => $args['sid'], 'user_level' => $this->user->level, 'error' => false));
+        return new Func('registered_window', ['wid' => $args['sid'], 'user_level' => $this->user->level, 'error' => false]);
     }
     // }}}
     // {{{ get_config()
@@ -54,7 +54,7 @@ class CmsFuncs {
      * @return     $set_config (xmlfuncobj) configuration
      */
     function get_config() {
-        $conf_array = array();
+        $conf_array = [];
 
         $conf_array['app_name'] = \Depage\Depage\Runner::getName();
         $conf_array['app_version'] = \Depage\Depage\Runner::getVersion();
@@ -120,7 +120,7 @@ class CmsFuncs {
     // }}}
     // {{{ get_project()
     function get_project($args) {
-        $data = array();
+        $data = [];
 
         if ($xml = $this->xmldb->getDocXml("settings")) {
             $data['name'] = $this->projectName;
@@ -138,7 +138,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $callbackFunc = "update_tree_{$treeType}";
 
-        $data = array();
+        $data = [];
         $project_name = $this->projectName;
 
         if ($treeType == 'settings') {
@@ -164,13 +164,13 @@ class CmsFuncs {
     // }}}
     // {{{ get_imageProp()
     function get_imageProp($args) {
-        $info = array();
-        $data = array();
+        $info = [];
+        $data = [];
         $filename = "{$this->libPath}{$args['filepath']}{$args['filename']}";
 
-        $mediainfo = new \Depage\Media\MediaInfo(array(
+        $mediainfo = new \Depage\Media\MediaInfo([
             'cache' => \Depage\Cache\Cache::factory("mediainfo"),
-        ));
+        ]);
         $info = $mediainfo->getInfo($filename);
 
         if ($info['exists']) {
@@ -194,7 +194,7 @@ class CmsFuncs {
     // {{{ get_prop()
     function get_prop($args) {
         $treeType = $args['type'];
-        $data = array();
+        $data = [];
         $callbackFunc = "update_prop_{$treeType}";
 
         if ($treeType == 'files' && !empty($args['id'])) {
@@ -209,7 +209,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $node = $args['data'][0];
         $nodeId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
-        $changedIds = array();
+        $changedIds = [];
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
@@ -243,15 +243,15 @@ class CmsFuncs {
         $nodeName = $args['node_type'];
         $newNodes = $args['node_type'];
 
-        $changedIds = array();
-        $extras = array();
+        $changedIds = [];
+        $extras = [];
 
         $xmldoc = $this->xmldb->getDocByNodeId($targetId);
         if ($xmldoc) {
             // {{{ tree-type specific actions
             if ($treeType == "pages") {
                 // create node for page-types
-                $newNodes = array();
+                $newNodes = [];
                 $tempdoc = new \DOMDocument();
 
                 $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $nodeName . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
@@ -262,7 +262,7 @@ class CmsFuncs {
                 }
             } else if ($treeType == "colors") {
                 // init newNodes for colors
-                $newNodes = array();
+                $newNodes = [];
                 $tempdoc = new \DOMDocument();
                 $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><proj:colorscheme xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:db="http://cms.depagecms.net/ns/database" />');
                 $newNodes[] = $tempdoc->documentElement;
@@ -292,7 +292,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $newName = !empty($args['new_name']) ? $args['new_name'] : "";
 
-        $changedIds = array();
+        $changedIds = [];
 
         $newFolder = "{$this->libPath}{$targetId}{$newName}";
         if (!is_dir($newFolder)) {
@@ -309,7 +309,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
-        $changedIds = array();
+        $changedIds = [];
 
         if ($treeType == "files") {
             $changedIds = $this->rename_node_files($args);
@@ -324,7 +324,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
-        $changedIds = array();
+        $changedIds = [];
 
         if ($treeType == "files") {
             var_dump($nodeId);
@@ -346,7 +346,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
-        $changedIds = array();
+        $changedIds = [];
 
         $oldpath_array = explode('/', $nodeId);
         array_pop($oldpath_array);
@@ -384,7 +384,7 @@ class CmsFuncs {
             $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        $changedIds = array($nodeId, $targetId);
+        $changedIds = [$nodeId, $targetId];
     }
     // }}}
     // {{{ move_node_in_files()
@@ -396,7 +396,7 @@ class CmsFuncs {
         $temppath = $temppath[count($temppath) - 2];
         rename($this->libPath . $nodeId, $this->libPath . $targetId . $temppath . '/');
 
-        return array('/lib' . $targetId . $temppath . '/lib/', $nodeId);
+        return ['/lib' . $targetId . $temppath . '/lib/', $nodeId];
     }
     // }}}
     // {{{ move_node_before()
@@ -410,7 +410,7 @@ class CmsFuncs {
             $xmldoc->moveNodeBefore($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, [$nodeId, $targetId]);
     }
     // }}}
     // {{{ move_node_after()
@@ -424,7 +424,7 @@ class CmsFuncs {
             $xmldoc->moveNodeAfter($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, [$nodeId, $targetId]);
     }
     // }}}
     // {{{ copy_node_in()
@@ -438,7 +438,7 @@ class CmsFuncs {
             $xmldoc->copyNodeIn($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, [$nodeId, $targetId]);
     }
     // }}}
     // {{{ copy_node_before()
@@ -452,7 +452,7 @@ class CmsFuncs {
             $xmldoc->copyNodeBefore($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, [$nodeId, $targetId]);
     }
     // }}}
     // {{{ copy_node_after()
@@ -466,7 +466,7 @@ class CmsFuncs {
             $xmldoc->copyNodeAfter($nodeId, $targetId);
         }
 
-        $this->addCallback($treeType, array($nodeId, $targetId));
+        $this->addCallback($treeType, [$nodeId, $targetId]);
     }
     // }}}
     // {{{ duplicate_node()
@@ -474,7 +474,7 @@ class CmsFuncs {
         $treeType = $args['type'];
         $nodeId = $args['id'];
         $newName = $args['new_name'];
-        $changedIds = array();
+        $changedIds = [];
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
@@ -512,7 +512,7 @@ class CmsFuncs {
             $parentId = $xmldoc->unlinkNode($nodeId);
         }
 
-        $changedIds = array($nodeId, $parentId);
+        $changedIds = [$nodeId, $parentId];
 
         return $changedIds;
     }
@@ -540,7 +540,7 @@ class CmsFuncs {
 
         $pathinfo = pathinfo($nodeId);
 
-        return array('/lib' . $pathinfo['dirname'] . '/');
+        return ['/lib' . $pathinfo['dirname'] . '/'];
     }
     // }}}
     // {{{ renameExistingTrashTarget()
@@ -574,7 +574,7 @@ class CmsFuncs {
             $xmldoc->setAttribute($nodeId, "colorscheme", $colorscheme);
         }
 
-        $this->addCallback($treeType, array($nodeId));
+        $this->addCallback($treeType, [$nodeId]);
     }
     // }}}
     // {{{ set_page_navigations()
@@ -590,10 +590,10 @@ class CmsFuncs {
             }
         }
 
-        $this->addCallback($treeType, array($nodeId));
-        $this->addCallback('pages', array($nodeId));
+        $this->addCallback($treeType, [$nodeId]);
+        $this->addCallback('pages', [$nodeId]);
 
-        return new Func('preview_update', array('error' => 0));
+        return new Func('preview_update', ['error' => 0]);
     }
     // }}}
     // {{{ set_page_tags()
@@ -609,10 +609,10 @@ class CmsFuncs {
             }
         }
 
-        $this->addCallback($treeType, array($nodeId));
-        $this->addCallback('pages', array($nodeId));
+        $this->addCallback($treeType, [$nodeId]);
+        $this->addCallback('pages', [$nodeId]);
 
-        return new Func('preview_update', array('error' => 0));
+        return new Func('preview_update', ['error' => 0]);
     }
     // }}}
     // {{{ set_page_file_options()
@@ -628,16 +628,16 @@ class CmsFuncs {
             $xmldoc->setAttribute($nodeId, "file_type", $filetype);
         }
 
-        $this->addCallback($args['type'], array($nodeId));
-        $this->addCallback('pages', array($nodeId));
+        $this->addCallback($args['type'], [$nodeId]);
+        $this->addCallback('pages', [$nodeId]);
 
-        return new Func('preview_update', array('error' => 0));
+        return new Func('preview_update', ['error' => 0]);
     }
     // }}}
 
     // {{{ getTexts()
     protected function getTexts() {
-        return array(
+        return [
             'all_comment' => _("comment"),
             'auth_no_right' => _("Sorry, you don't have the authentification to change \"%name%\"."),
             'auth_not_allowed' => _("You are not allowed to do this!"),
@@ -942,12 +942,12 @@ class CmsFuncs {
             'js_dlg_publish' => _("Do you want to publish '%project%' now?"),
             'prop_tt_text_formatted_maxchars' => _("%chars% of %maxchars% characters max left"),
             'task_publish_progress' => _("%percent%% finishing in %time_until_end%min</p>"),
-        );
+        ];
     }
     // }}}
     // {{{ getGlobalEntities()
     protected function getGlobalEntities() {
-        return array(
+        return [
             'nbsp' => '#160',
             'auml' => '#228',
             'ouml' => '#246',
@@ -959,65 +959,65 @@ class CmsFuncs {
             'ndash' => '#8211',
             'copy' => '#169',
             'euro' => '#8364',
-        );
+        ];
     }
     // }}}
     // {{{ getGlobalNamespaces()
     protected function getGlobalNamespaces() {
-        return array(
-            'xsl' => array('ns' => 'xsl', 'uri' => "http://www.w3.org/1999/XSL/Transform"),
-            'rpc' => array('ns' => 'rpc', 'uri' => "http://cms.depagecms.net/ns/rpc"),
-            'database' => array('ns' => 'db', 'uri' => "http://cms.depagecms.net/ns/database"),
-            'project' => array('ns' => 'proj', 'uri' => "http://cms.depagecms.net/ns/project"),
-            'page' => array('ns' => 'pg', 'uri' => "http://cms.depagecms.net/ns/page"),
-            'section' => array('ns' => 'sec', 'uri' => "http://cms.depagecms.net/ns/section"),
-            'edit' => array('ns' => 'edit', 'uri' => "http://cms.depagecms.net/ns/edit"),
-            'backup' => array('ns' => 'backup', 'uri' => "http://cms.depagecms.net/ns/backup"),
-        );
+        return [
+            'xsl' => ['ns' => 'xsl', 'uri' => "http://www.w3.org/1999/XSL/Transform"],
+            'rpc' => ['ns' => 'rpc', 'uri' => "http://cms.depagecms.net/ns/rpc"],
+            'database' => ['ns' => 'db', 'uri' => "http://cms.depagecms.net/ns/database"],
+            'project' => ['ns' => 'proj', 'uri' => "http://cms.depagecms.net/ns/project"],
+            'page' => ['ns' => 'pg', 'uri' => "http://cms.depagecms.net/ns/page"],
+            'section' => ['ns' => 'sec', 'uri' => "http://cms.depagecms.net/ns/section"],
+            'edit' => ['ns' => 'edit', 'uri' => "http://cms.depagecms.net/ns/edit"],
+            'backup' => ['ns' => 'backup', 'uri' => "http://cms.depagecms.net/ns/backup"],
+        ];
     }
     // }}}
     // {{{ getGlobalFiletypes()
     protected function getGlobalFiletypes() {
-        return array(
-            'html' => Array(
+        return [
+            'html' => [
                 'dynamic' => false,
                 'extension' => 'html'
-            ),
-            'shtml' => Array(
+            ],
+            'shtml' => [
                 'dynamic' => true,
                 'extension' => 'shtml'
-            ),
-            'text' => Array(
+            ],
+            'text' => [
                 'dynamic' => false,
                 'extension' => 'txt'
-            ),
-            'php' => Array(
+            ],
+            'php' => [
                 'dynamic' => true,
                 'extension' => 'php'
-            ),
-            'php5' => Array(
+            ],
+            'php5' => [
                 'dynamic' => true,
                 'extension' => 'php5'
-            ),
-        );
+            ],
+        ];
     }
     // }}}
     // {{{ getGlobalOutputEncodings()
     protected function getGlobalOutputEncodings() {
-        return array(
+        return [
             'UTF-8',
             'ISO-8859-1',
-        );
+        ];
     }
     // }}}
     // {{{ getGlobalOutputMethods()
     protected function getGlobalOutputMethods() {
-        return array(
+        return [
             'html',
             'xhtml',
             'xml',
             'text',
-        );
+        ];
     }
     // }}}
     // {{{ getUserList()
@@ -1141,9 +1141,9 @@ class CmsFuncs {
         $files = glob($this->libPath . $path . "*", \GLOB_MARK);
         $dirXML = "";
 
-        $mediainfo = new \Depage\Media\MediaInfo(array(
+        $mediainfo = new \Depage\Media\MediaInfo([
             'cache' => \Depage\Cache\Cache::factory("mediainfo"),
-        ));
+        ]);
         $sizeFormatter = new \Depage\Formatters\FileSize();
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
@@ -1151,14 +1151,14 @@ class CmsFuncs {
         foreach ($files as $file) {
             if (substr($file, -1) != "/") {
                 $info = $mediainfo->getInfo($file);
-                $data = array(
+                $data = [
                     'name' => $info['name'],
                     //'path' => $path,
                     'size' => $sizeFormatter->format($info['filesize']),
                     'date' => $info['date']->format("Y/m/d H:i:s"),
                     'type' => $info['mime'],
                     'extension' => $info['extension'],
-                );
+                ];
                 if (isset($info['width'])) {
                     $data['width'] = $info['width'];
                     $data['height'] = $info['height'];
@@ -1178,7 +1178,7 @@ class CmsFuncs {
     // }}}
 
     // {{{ addCallback()
-    function addCallback($type, $ids = array(), $newActiveId = null) {
+    function addCallback($type, $ids = [], $newActiveId = null) {
         // adding callbacks that are for all logged in users
         if ($type == 'settings') {
             $this->callbacks[] = $this->getCallbackForSettings($ids);
@@ -1211,7 +1211,7 @@ class CmsFuncs {
 
         // add callback for setting active id
         if (!is_null($newActiveId)) {
-            $this->callbacks[] = new Func("set_activeId_{$type}", array('id' => $newActiveId));
+            $this->callbacks[] = new Func("set_activeId_{$type}", ['id' => $newActiveId]);
         }
         if ($type == 'pages' || $type == 'page_data') {
             // @todo see if we add this all the time?
@@ -1232,8 +1232,8 @@ class CmsFuncs {
     }
     // }}}
     // {{{ getCallbackForPages()
-    function getCallbackForPages($ids = array()) {
-        $data = array();
+    function getCallbackForPages($ids = []) {
+        $data = [];
 
         $data['data'] = $this->getTreePages();
 
@@ -1241,8 +1241,8 @@ class CmsFuncs {
     }
     // }}}
     // {{{ getCallbackForSettings()
-    function getCallbackForSettings($ids = array()) {
-        $data = array();
+    function getCallbackForSettings($ids = []) {
+        $data = [];
 
         $data['data'] = $this->getTreeSettings();
 
@@ -1250,8 +1250,8 @@ class CmsFuncs {
     }
     // }}}
     // {{{ getCallbackForColors()
-    function getCallbackForColors($ids = array()) {
-        $data = array();
+    function getCallbackForColors($ids = []) {
+        $data = [];
 
         $data['data'] = $this->getTreeColors();
 
@@ -1259,8 +1259,8 @@ class CmsFuncs {
     }
     // }}}
     // {{{ getCallbackForPagedata()
-    function getCallbackForPagedata($ids = array()) {
-        $data = array();
+    function getCallbackForPagedata($ids = []) {
+        $data = [];
 
         for ($i = 0; $i < count($ids); $i++) {
             $data['id' . ($i + 1)] = $ids[$i];
@@ -1271,8 +1271,8 @@ class CmsFuncs {
     }
     // }}}
     // {{{ getCallbackForFiles()
-    function getCallbackForFiles($ids = array()) {
-        $data = array();
+    function getCallbackForFiles($ids = []) {
+        $data = [];
 
         $cacheGraphice = \Depage\Cache\Cache::factory("graphics");
         $cacheMediainfo = \Depage\Cache\Cache::factory("mediainfo");

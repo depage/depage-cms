@@ -16,22 +16,22 @@ use \Depage\Html\Html;
 
 class Base extends \Depage\Depage\Ui\Base
 {
-    protected $htmlOptions = array();
+    protected $htmlOptions = [];
     protected $basetitle = "";
     protected $autoEnforceAuth = true;
     protected $authUser;
     protected $pdo;
-    public $defaults = array(
-        'cache' => array(
-            'xmldb' => array(
+    public $defaults = [
+        'cache' => [
+            'xmldb' => [
                 'disposition' => "file",
                 'host' => "",
-            ),
-        ),
-    );
+            ],
+        ],
+    ];
 
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
         if (empty($this->pdo)) {
@@ -40,9 +40,9 @@ class Base extends \Depage\Depage\Ui\Base
                 $this->options->db->dsn, // dsn
                 $this->options->db->user, // user
                 $this->options->db->password, // password
-                array(
+                [
                     'prefix' => $this->options->db->prefix, // database prefix
-                )
+                ]
             );
         }
 
@@ -59,17 +59,17 @@ class Base extends \Depage\Depage\Ui\Base
         );
 
         // get cache object for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", array(
+        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", [
             'disposition' => $this->options->cache->xmldb->disposition,
             'host' => $this->options->cache->xmldb->host,
-        ));
+        ]);
 
         // set html-options
-        $this->htmlOptions = array(
+        $this->htmlOptions = [
             'template_path' => __DIR__ . "/../tpl/",
             'clean' => "space",
             'env' => $this->options->env,
-        );
+        ];
         $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
 
         // establish if the user is logged in
@@ -94,14 +94,14 @@ class Base extends \Depage\Depage\Ui\Base
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "Depage\Html\Html")) {
             // pack into body html
-            $output = new Html("html.tpl", array(
+            $output = new Html("html.tpl", [
                 'title' => $this->basetitle,
                 'subtitle' => $output->title,
-                'content' => array(
+                'content' => [
                     $this->toolbar(),
                     $output,
-                )
-            ), $this->htmlOptions);
+                ]
+            ], $this->htmlOptions);
         }
 
         return $output;
@@ -133,16 +133,16 @@ class Base extends \Depage\Depage\Ui\Base
                 $project = $this->getProject($this->projectName);
                 $projectDisplayName = $project->fullname;
             }
-            $h = new Html("toolbar_main.tpl", array(
+            $h = new Html("toolbar_main.tpl", [
                 'title' => $this->basetitle,
                 'user' => $this->user,
                 'projects' => \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user),
                 'projectname' => $projectDisplayName,
-            ), $this->htmlOptions);
+            ], $this->htmlOptions);
         } else {
-            $h = new Html("toolbar_plain.tpl", array(
+            $h = new Html("toolbar_plain.tpl", [
                 'title' => $this->basetitle,
-            ), $this->htmlOptions);
+            ], $this->htmlOptions);
         }
 
         return $h;
@@ -158,14 +158,14 @@ class Base extends \Depage\Depage\Ui\Base
     public function notfound($function = "") {
         parent::notfound();
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "error",
             'class' => "first",
             'title' => "Error",
-            'content' => new Html(array(
+            'content' => new Html([
                 'content' => 'url not found' . $function,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -179,13 +179,13 @@ class Base extends \Depage\Depage\Ui\Base
     public function error($error, $env) {
         $content = parent::error($error, $env);
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "error",
             'class' => "first",
-            'content' => new Html(array(
+            'content' => new Html([
                 'content' => $content,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $this->_package($h);
     }

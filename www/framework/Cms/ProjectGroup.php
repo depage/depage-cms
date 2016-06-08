@@ -18,16 +18,16 @@ class ProjectGroup extends \Depage\Entity\Entity
     /**
      * @brief fields
      **/
-    static protected $fields = array(
+    static protected $fields = [
         "id" => null,
         "name" => "",
         "pos" => 1,
-    );
+    ];
 
     /**
      * @brief primary
      **/
-    static protected $primary = array("id");
+    static protected $primary = ["id"];
 
     /**
      * @brief pdo object for database access
@@ -85,13 +85,13 @@ class ProjectGroup extends \Depage\Entity\Entity
      * @param mixed $query
      * @return void
      **/
-    static protected function fetch($pdo, $query, $parameters = array())
+    static protected function fetch($pdo, $query, $parameters = [])
     {
-        $projects = array();
+        $projects = [];
         $query->execute($parameters);
 
         // pass pdo-instance to constructor
-        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\ProjectGroup", array($pdo));
+        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Cms\\ProjectGroup", [$pdo]);
         do {
             $project = $query->fetch(\PDO::FETCH_CLASS);
             if ($project) {

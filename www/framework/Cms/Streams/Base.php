@@ -7,7 +7,7 @@ abstract class Base {
     protected $data = null;
 
     // {{{ registerAsStream()
-    public static function registerStream($protocol, Array $parameters = array())
+    public static function registerStream($protocol, Array $parameters = [])
     {
         $class = get_called_class();
         static::$parameters = $parameters;
@@ -95,14 +95,12 @@ function stream_seek($offset, $whence)
     // }}}
     // {{{ stream_stat()
     public function stream_stat(){
-        return array();
-
+        return [];
     }
     // }}}
     // {{{ url_stat()
     public function url_stat(){
-        return array();
-
+        return [];
     }
     // }}}
 }

@@ -17,7 +17,8 @@ use \Depage\Html\Html;
 class User extends Base
 {
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         $this->userName = $this->urlSubArgs[0];
@@ -34,7 +35,8 @@ class User extends Base
     // }}}
 
     // {{{ index()
-    function index() {
+    function index()
+    {
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
             return $this->edit();
         } else {
@@ -54,10 +56,10 @@ class User extends Base
         if (!($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null)) {
             throw new \Exception("you are not allowed to to this!");
         }
-        $form = new \Depage\Cms\Forms\User("edit-user-" . $this->user->id, array(
+        $form = new \Depage\Cms\Forms\User("edit-user-" . $this->user->id, [
             "user" => $this->user,
             "authUser" => $this->authUser,
-        ));
+        ]);
         $form->process();
 
         if ($form->validate()) {
@@ -82,15 +84,15 @@ class User extends Base
         } else {
             $title = _("Add new User");
         }
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "user",
             'icon' => "framework/Cms/images/icon_users.gif",
             'class' => "first",
             'title' => $title,
-            'content' => array(
+            'content' => [
                 $form,
-            ),
-        ), $this->htmlOptions);
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -104,12 +106,12 @@ class User extends Base
      **/
     protected function show()
     {
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'class' => "box_users",
             'title' => $title,
-            'content' => array(
-            ),
-        ), $this->htmlOptions);
+            'content' => [
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }

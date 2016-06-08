@@ -28,7 +28,7 @@ trait UniqueNames
      */
     public function testChildNodeNames($node) {
         $changed = false;
-        $names = array();
+        $names = [];
 
         foreach ($node->childNodes as $child) {
             if ($child->nodeType == \XML_ELEMENT_NODE && !empty($child->getAttribute("name"))) {

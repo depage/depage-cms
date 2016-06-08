@@ -18,7 +18,8 @@ class Flash extends Base {
     protected $autoEnforceAuth = true;
 
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         $this->projectName = $this->urlSubArgs[0];
@@ -44,12 +45,12 @@ class Flash extends Base {
     public function flash($standalone = "true", $page = "")
     {
         // logged in
-        $h = new Html("flash.tpl", array(
+        $h = new Html("flash.tpl", [
             'project' => $this->projectName,
             'page' => $page,
             'standalone' => $standalone,
             'sid' => $_COOKIE[session_name()],
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -220,9 +221,9 @@ class Flash extends Base {
         //call
         $funcs = $msgHandler->parse($xmlInput);
 
-        $results = array();
+        $results = [];
         foreach ($funcs as $func) {
-            $func->add_args(array('ip' => \Depage\Http\Request::getRequestIp()));
+            $func->add_args(['ip' => \Depage\Http\Request::getRequestIp()]);
             $tempval = $func->call();
             if (is_a($tempval, 'Depage\\Cms\\Rpc\\Func')) {
                 $results[] = $tempval;
@@ -231,7 +232,7 @@ class Flash extends Base {
         $results = array_merge($results, $funcHandler->getCallbacks());
 
         if (count($results) == 0) {
-            $results[] = new \Depage\Cms\Rpc\Func('nothing', array('error' => 0));
+            $results[] = new \Depage\Cms\Rpc\Func('nothing', ['error' => 0]);
         }
 
         return \depage\Cms\Rpc\Message::create($results);

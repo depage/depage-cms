@@ -11,7 +11,7 @@ class Basic extends \Depage\HtmlForm\HtmlForm
     /**
      * @brief list of available project groups
      **/
-    protected $groups = array();
+    protected $groups = [];
 
     // {{{ __construct()
     /**
@@ -23,7 +23,7 @@ class Basic extends \Depage\HtmlForm\HtmlForm
     public function __construct($name, $params)
     {
         $this->project = $params['project'];
-        $this->groups = array();
+        $this->groups = [];
 
         foreach($params['projectGroups'] as $g) {
             $this->groups[$g->id] = $g->name;
@@ -58,21 +58,21 @@ class Basic extends \Depage\HtmlForm\HtmlForm
      **/
     public function addChildElements()
     {
-        $this->addText("fullname", array(
+        $this->addText("fullname", [
             "label" => _("Display Name"),
             "required" => "true",
-        ));
-        $this->addText("name", array(
+        ]);
+        $this->addText("name", [
             "label" => _("Identifier"),
             "required" => "true",
             "validator" => "/[-a-zA-Z0-9_]+/",
             "disabled" => $this->project->id !== null,
-        ));
-        $this->addSingle("groupId", array(
+        ]);
+        $this->addSingle("groupId", [
             "label" => _("Project Group"),
             "list" => $this->groups,
             "skin" => "select",
-        ));
+        ]);
     }
     // }}}
 }

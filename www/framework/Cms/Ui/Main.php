@@ -20,7 +20,7 @@ class Main extends Base {
 
     // {{{ _getSubHandler
     static function _getSubHandler() {
-        return array(
+        return [
             'project/*' => '\Depage\Cms\Ui\Project',
             'user/*' => '\Depage\Cms\Ui\User',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
@@ -28,7 +28,7 @@ class Main extends Base {
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
             //'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             //'project/*/edit/*' => '\Depage\Cms\Ui\Edit',
-        );
+        ];
     }
     // }}}
 
@@ -41,24 +41,24 @@ class Main extends Base {
     public function index() {
         if ($this->auth->enforceLazy()) {
             // logged in
-            $h = new Html(array(
-                'content' => new Html("home.tpl", array(
-                    'content' => array(
+            $h = new Html([
+                'content' => new Html("home.tpl", [
+                    'content' => [
                         $this->projects(),
                         $this->users("current"),
                         $this->tasks(),
-                    ),
-                )),
-            ), $this->htmlOptions);
+                    ],
+                ]),
+            ], $this->htmlOptions);
         } else {
             // not logged in
-            $h = new Html(array(
-                'content' => new Html("welcome.tpl", array(
+            $h = new Html([
+                'content' => new Html("welcome.tpl", [
                     'title' => "Welcome to\n depage::cms ",
                     'login' => "Login",
                     'login_link' => "login/",
-                )),
-            ), $this->htmlOptions);
+                ]),
+            ], $this->htmlOptions);
         }
 
         return $h;
@@ -72,23 +72,23 @@ class Main extends Base {
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         } else {
             // not logged in
-            $form = new \Depage\HtmlForm\HtmlForm("login", array(
+            $form = new \Depage\HtmlForm\HtmlForm("login", [
                 'label' => _("Login"),
                 'validator' => function($form, $values) {
                     return (bool) $this->auth->login($values['name'], $values['pass']);
                 },
-            ));
+            ]);
 
             // define formdata
-            $form->addText("name", array(
+            $form->addText("name", [
                 'label' => 'Name',
                 'required' => true,
-            ));
+            ]);
 
-            $form->addPassword("pass", array(
+            $form->addPassword("pass", [
                 'label' => 'Passwort',
                 'required' => true,
-            ));
+            ]);
 
             $form->process();
 
@@ -100,16 +100,16 @@ class Main extends Base {
                     $error = "<p class=\"error\">false/unknown username password combination</p>";
                 }
 
-                $h = new Html("box.tpl", array(
+                $h = new Html("box.tpl", [
                     'icon' => "framework/cms/images/icon_login.gif",
                     'class' => "box-login",
                     'title' => "Login",
                     'liveHelp' => _("Login"),
-                    'content' => array(
+                    'content' => [
                         $error,
                         $form,
-                    ),
-                ), $this->htmlOptions);
+                    ],
+                ], $this->htmlOptions);
 
                 return $h;
             }
@@ -122,16 +122,16 @@ class Main extends Base {
             $this->auth->enforceLogout();
         //}
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'class' => "box-logout",
             'title' => "Bye bye!",
-            'content' => new Html("logout.tpl", array(
+            'content' => new Html("logout.tpl", [
                 'content' => "Thank you for using depage::cms. ",
                 'relogin1' => "You can relogin ",
                 'relogin2' => "here",
                 'relogin_link' => "login/",
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -150,14 +150,14 @@ class Main extends Base {
         $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
 
         // construct template
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'class' => "box-projects",
             'title' => "Projects",
             'liveHelp' => _("Edit, preview or changed settings for your projects."),
-            'content' => new Html("projectlist.tpl", array(
+            'content' => new Html("projectlist.tpl", [
                 'projects' => $projects,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -172,15 +172,13 @@ class Main extends Base {
     public function overview()
     {
         if ($this->auth->enforceLazy()) {
-            $content = array();
+            $content = [
+                $this->users("current"),
+                $this->tasks(),
+                $this->notifications(),
+            ];
 
-            $content[] = $this->users("current");
-            $content[] = $this->tasks();
-            $content[] = $this->notifications();
-
-            return new Html(array(
-                'content' => $content,
-            ), $this->htmlOptions);
+            return $content;
         }
     }
     // }}}
@@ -193,11 +191,11 @@ class Main extends Base {
      */
     public function tasks($taskId = null) {
         // handle tasks deletion form
-        $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", array(
+        $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", [
             'label' => _("Remove"),
             'successUrl' => DEPAGE_BASE,
             'class' => "action-form",
-        ));
+        ]);
         $taskForm->addHidden("taskId");
 
         $taskForm->process();
@@ -212,7 +210,7 @@ class Main extends Base {
         // get data
         if (!empty($taskId)) {
             // load specific task
-            $tasks = array();
+            $tasks = [];
             $task = \Depage\Tasks\Task::load($this->pdo, $taskId);
 
             if ($task) {
@@ -231,17 +229,17 @@ class Main extends Base {
         }
 
         // construct template
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "box-tasks",
             'class' => "box-tasks",
             'title' => "Tasks",
             'updateUrl' => "tasks/",
             'liveHelp' => _("Shows the currently running background tasks."),
-            'content' => new Html("taskProgress.tpl", array(
+            'content' => new Html("taskProgress.tpl", [
                 'tasks' => $tasks,
                 'taskForm' => $taskForm,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -297,9 +295,9 @@ class Main extends Base {
         $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
 
         // construct template
-        $h = new Html("Notifications.tpl", array(
+        $h = new Html("Notifications.tpl", [
             'notifications' => $nn,
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
         foreach ($nn as $n) {
             $n->delete();
@@ -322,21 +320,23 @@ class Main extends Base {
 
         if ($showCurrent) {
             $users = \Depage\Auth\User::loadActive($this->pdo);
+            $updateUrl = "users/current/";
         } else {
             $users = \Depage\Auth\User::loadAll($this->pdo);
+            $updateUrl = "";
         }
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "box-users",
             'class' => "box-users",
             'title' => "Users",
-            'updateUrl' => "users/$current/",
+            'updateUrl' => $updateUrl,
             'liveHelp' => _("Shows the users that are currently logged in."),
-            'content' => new Html("userlist.tpl", array(
+            'content' => new Html("userlist.tpl", [
                 'title' => $this->basetitle,
                 'users' => $users,
-            )),
-        ), $this->htmlOptions);
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }

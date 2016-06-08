@@ -1,7 +1,7 @@
 <?php
     $phost = parse_url("http://" . $_SERVER["HTTP_HOST"]);
 
-    $params = array(
+    $params = [
         "nsrpc" => "rpc",
         "nsrpcuri" => "http://cms.depagecms.net/ns/rpc",
         "phost" => $phost['host'],
@@ -11,7 +11,7 @@
         "project" => $this->project,
         "page" => $this->page,
         "userid" => $this->sid,
-    );
+    ];
 
     $params = http_build_query($params);
 

@@ -33,20 +33,20 @@ class Language extends Base
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $this->addText("name-$nodeId", array(
+        $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Language name"),
             "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
             //"validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
-            "dataAttr" => array(
+            "dataAttr" => [
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
-            ),
-        ));
+            ],
+        ]);
 
-        $this->addText("shortname-$nodeId", array(
+        $this->addText("shortname-$nodeId", [
             "label" => _("Language code"),
             "placeholder" => _("Short name"),
             "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
@@ -54,22 +54,22 @@ class Language extends Base
             "required" => true,
             "class" => "node-value",
             "helpMessageHtml" => sprintf(_("Language code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"), "https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes"),
-            "dataAttr" => array(
+            "dataAttr" => [
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
-            ),
-        ));
+            ],
+        ]);
 
-        $fs = $this->addFieldset("metadata-$nodeId", array(
+        $fs = $this->addFieldset("metadata-$nodeId", [
             "label" => _("Global metadata"),
-        ));
+        ]);
 
-        $fs->addText("title-$nodeId", array(
+        $fs->addText("title-$nodeId", [
             "label" => _("Title"),
-        ));
-        $fs->addText("keyword-$nodeId", array(
+        ]);
+        $fs->addText("keyword-$nodeId", [
             "label" => _("Keywords"),
-        ));
+        ]);
     }
     // }}}
     // {{{ getFormTitle()

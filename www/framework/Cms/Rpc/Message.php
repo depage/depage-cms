@@ -16,8 +16,8 @@ class Message{
     // {{{ variables
     public $contentType = "text/xml";
     public $charset = "UTF-8";
-    public $funcs = array();
-    public $return = array();
+    public $funcs = [];
+    public $return = [];
     // }}}
 
     // {{{ constructor
@@ -92,7 +92,7 @@ class Message{
      * @return    $func_objects (array)
      */
     function parse($xmldata){
-        $funcs = Array();
+        $funcs = [];
 
         $error = false;
 
@@ -111,14 +111,14 @@ class Message{
 
                 if (method_exists($this->funcObj, $func)) {
                     $paramList = $xpath->query("./rpc:param", $nodelist->item($i));
-                    $args = Array();
+                    $args = [];
                     for ($j = 0; $j < $paramList->length; $j++) {
                         $paramNode = $paramList->item($j);
                         if ($paramNode->hasChildNodes()){
                             $argnode = $paramNode->firstChild;
 
                             if ($paramNode->childNodes->length > 1 || $argnode->nodeType == \XML_ELEMENT_NODE) {
-                                $args[$paramNode->getAttribute('name')] = array();
+                                $args[$paramNode->getAttribute('name')] = [];
                                 while($argnode !== null) {
                                     if ($argnode->nodeType == \XML_ELEMENT_NODE) {
                                         $args[$paramNode->getAttribute('name')][] = $argnode;

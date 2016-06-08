@@ -33,28 +33,28 @@ class Variable extends Base
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $this->addText("name-$nodeId", array(
+        $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Variable name"),
             "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@name",
             "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
-            "dataAttr" => array(
+            "dataAttr" => [
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
-            ),
-        ));
+            ],
+        ]);
 
-        $this->addText("value-$nodeId", array(
+        $this->addText("value-$nodeId", [
             "label" => _("Value"),
             "placeholder" => _("Variable value"),
             "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@value",
             "class" => "node-value",
-            "dataAttr" => array(
+            "dataAttr" => [
                 "nodeid" => $nodeId,
-            ),
-        ));
+            ],
+        ]);
 
     }
     // }}}

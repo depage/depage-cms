@@ -10,30 +10,30 @@ class Colors extends Base {
         parent::__construct($xmldb, $document);
 
         // list of elements that may created by a user
-        $this->availableNodes = array(
-            'proj:colorscheme' => (object) array(
+        $this->availableNodes = [
+            'proj:colorscheme' => (object) [
                 'name' => _("Colorscheme"),
                 'new' => _("(Untitled Colorscheme)"),
                 'icon' => "",
-                'attributes' => array(),
-            ),
-            'color' => (object) array(
+                'attributes' => [],
+            ],
+            'color' => (object) [
                 'name' => _("Color"),
                 'new' => _("New Color"),
                 'icon' => "",
-                'attributes' => array(),
-            ),
-        );
+                'attributes' => [],
+            ],
+        ];
 
         // list of valid parents given by nodename
-        $this->validParents = array(
-            'proj:colorscheme' => array(
+        $this->validParents = [
+            'proj:colorscheme' => [
                 'proj:colorschemes',
-            ),
-            'color' => array(
+            ],
+            'color' => [
                 'proj:colorscheme',
-            ),
-        );
+            ],
+        ];
     }
     // }}}
 
@@ -54,7 +54,7 @@ class Colors extends Base {
         $changed = false;
 
         // get all colornames
-        $colorNames = array();
+        $colorNames = [];
         $xpath = new \DOMXPath($xml);
         $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@name != 'tree_name_color_global']/color", $node);
 

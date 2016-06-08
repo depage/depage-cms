@@ -3,7 +3,7 @@
 namespace Depage\Cms\Streams;
 
 class XmlDb extends Base {
-    protected static $parameters = array();
+    protected static $parameters = [];
     protected $xmldb = null;
 
     // {{{ stream_open()

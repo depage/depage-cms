@@ -15,7 +15,7 @@ namespace depage\Cms\Ui;
 
 class SocketFallback extends Base {
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
         if (!empty($this->urlSubArgs[0])) {
@@ -25,7 +25,7 @@ class SocketFallback extends Base {
             $this->docName = $this->urlSubArgs[1];
         }
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, array());
+        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, []);
     }
     // }}}
 

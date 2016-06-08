@@ -28,11 +28,12 @@ class Base extends \Depage\Cms\Forms\XmlForm
         }
         $this->baseUrl = "project/{$this->project->name}/";
 
-        $groups = array();
+        $groups = [];
 
-        $params['dataAttr'] = array(
+        $params['dataAttr'] = [
             "document" => "settings",
-        );
+            "project" => $this->project->name,
+        ];
 
         parent::__construct($name, $params);
 

@@ -21,7 +21,7 @@ class Import
     protected $xmldb;
 
     protected $projectName;
-    protected $pageIds = array();
+    protected $pageIds = [];
 
     protected $xmlImport;
     protected $xmlSettings;
@@ -111,26 +111,26 @@ class Import
         $this->extractSettings();
         $this->extractNavigation();
 
-        $initId = $task->addSubtask("init", "\$import = %s;", array($this));
+        $initId = $task->addSubtask("init", "\$import = %s;", [$this]);
 
-        $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", array(
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", [
             $xmlFile,
-        ), $initId);
-        $task->addSubtask("clean docs", "\$import->cleanDocs();", array(), $loadId);
+        ], $initId);
+        $task->addSubtask("clean docs", "\$import->cleanDocs();", [], $loadId);
 
-        $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", array(), $loadId);
+        $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", [], $loadId);
 
-        $task->addSubtask("extract settings", "\$import->extractSettings();", array(), $getDocsId);
-        $task->addSubtask("extract navigation", "\$import->extractNavigation();", array(), $getDocsId);
-        $task->addSubtask("extract templates", "\$import->extractTemplates();", array(), $getDocsId);
-        $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", array(), $getDocsId);
-        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", array(), $getDocsId);
+        $task->addSubtask("extract settings", "\$import->extractSettings();", [], $getDocsId);
+        $task->addSubtask("extract navigation", "\$import->extractNavigation();", [], $getDocsId);
+        $task->addSubtask("extract templates", "\$import->extractTemplates();", [], $getDocsId);
+        $task->addSubtask("extract newnodes", "\$import->extractNewnodes();", [], $getDocsId);
+        $task->addSubtask("extract colorschemes", "\$import->extractColorschemes();", [], $getDocsId);
 
         foreach($this->pageIds as $pageId) {
-            $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId(%s);", array($pageId), $getDocsId);
+            $task->addSubtask("extract page $pageId", "\$import->extractPagedataForId(%s);", [$pageId], $getDocsId);
         }
 
-        $task->addSubtask("clear transform cache", "\$import->clearTransformCache();", array(), $getDocsId);
+        $task->addSubtask("clear transform cache", "\$import->clearTransformCache();", [], $getDocsId);
 
         return $task;
     }
@@ -399,7 +399,7 @@ class Import
 
             $nodeTypes = new \Depage\Cms\XmlDocTypes\Page($this->xmldb, $this->docNavigation->getDocId());
 
-            $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, array(
+            $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, [
                 'pos' => $pos,
                 'name' => $name,
                 'newName' => $contentDoc->documentElement->getAttribute("name"),
@@ -407,7 +407,7 @@ class Import
                 'validParents' => $validParents,
                 'xmlTemplate' => Html::getEscapedUrl($name) . ".xml",
                 'xmlTemplateData' => $contentDoc->saveXML(),
-            ));
+            ]);
         }
     }
     // }}}
@@ -557,9 +557,9 @@ class Import
         $xpath->registerNamespace("edit", "http://cms.depagecms.net/ns/edit");
         $nodelist = $xpath->query("//edit:plain_source/text()");
 
-        $replacements = array(
+        $replacements = [
             "\$tt_lang" => "\$currentLang",
-        );
+        ];
 
         // test all source elements
         for ($i = $nodelist->length - 1; $i >= 0; $i--) {
@@ -597,7 +597,7 @@ class Import
     public function getTemplateReplacements()
     {
         // string replacement map
-        $replacements = array(
+        $replacements = [
             // general
             "\t" => "    ",
             "\n" => "\n    ",
@@ -640,7 +640,7 @@ class Import
             "\"/pg:page/" => "\"\$currentPage/",
             "<xsl:template match=\"/\">" => "<xsl:output method=\"html\"/>\n    <xsl:template match=\"/\">",
             "nav_tag_" => "tag_",
-        );
+        ];
 
         return $replacements;
     }
@@ -654,11 +654,11 @@ class Import
     public function getTemplateReplacementRegexes()
     {
         // regex replacement map
-        $replacements = array(
+        $replacements = [
             "/\\\$ttc_([-_a-z0-9]*)/i" => "dp:color('$1')",
             "/libref:[\/]{1,3}/i" => "libref://",
             "/pageref:[\/]{1,3}/i" => "pageref://",
-        );
+        ];
 
         return $replacements;
     }
@@ -670,13 +670,13 @@ class Import
      */
     public function __sleep()
     {
-        return array(
+        return [
             'projectName',
             'xsltPath',
             'xmlPath',
             'pdo',
             'project',
-        );
+        ];
     }
     // }}}
     // {{{ __wakeup()

@@ -29,55 +29,55 @@ class User extends \Depage\HtmlForm\HtmlForm
         parent::__construct($name, $params);
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
-            $f = $this->addFieldset("Basics", array(
+            $f = $this->addFieldset("Basics", [
                 'label' => _("Basics"),
-            ));
-            $f->addText("name", array(
+            ]);
+            $f->addText("name", [
                 "label" => _("Username"),
                 "required" => "true",
                 "validator" => "/[-a-zA-Z0-9_]+/",
                 "disabled" => $this->user->id !== null,
-            ));
-            $f->addText("fullname", array(
+            ]);
+            $f->addText("fullname", [
                 "label" => _("Display Name"),
                 "required" => "true",
-            ));
-            $f->addEmail("email", array(
+            ]);
+            $f->addEmail("email", [
                 "label" => _("Email"),
-            ));
+            ]);
         }
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
-            $f = $this->addFieldset("Password", array(
+            $f = $this->addFieldset("Password", [
                 'label' => _("Change Password"),
-            ));
-            $f->addPassword("password1", array(
+            ]);
+            $f->addPassword("password1", [
                 "label" => _("Password"),
                 "autocomplete" => false,
-            ));
-            $f->addPassword("password2", array(
+            ]);
+            $f->addPassword("password2", [
                 "label" => _("Repeat Password"),
                 "autocomplete" => false,
                 "errorMessage" => _("Both passwords have to be equal"),
-            ));
+            ]);
         }
 
         if ($this->authUser->canEditAllUsers()) {
-            $f = $this->addFieldset("Permission", array(
+            $f = $this->addFieldset("Permission", [
                 'label' => _("Permissions"),
-            ));
-            $f->addSingle("type", array(
+            ]);
+            $f->addSingle("type", [
                 'label' => _("User type"),
                 'skin' => "select",
                 'defaultValue' => 'Depage\Cms\Auth\DefaultUser',
-                'list' => array(
+                'list' => [
                     'Depage\Cms\Auth\Admin' => _("Administrator"),
                     'Depage\Cms\Auth\Developer' => _("Developer"),
                     'Depage\Cms\Auth\MainUser' => _("Main User"),
                     'Depage\Cms\Auth\DefaultUser' => _("Default User"),
                     'Depage\Cms\Auth\Editor' => _("Editor"),
-                ),
-            ));
+                ],
+            ]);
         }
 
         $this->populate($this->user);

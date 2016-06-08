@@ -15,7 +15,7 @@ class Import extends Base
      * @param mixed $name, $params
      * @return void
      **/
-    public function __construct($name, $params = array())
+    public function __construct($name, $params = [])
     {
         $params['submitLabel'] = _("Import Now");
 
@@ -24,9 +24,9 @@ class Import extends Base
 
         parent::__construct($name, $params);
 
-        $this->addHidden("action", array(
+        $this->addHidden("action", [
             'defaultValue' => "import",
-        ));
+        ]);
 
     }
     // }}}

@@ -15,7 +15,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
      * @param mixed $name, $params
      * @return void
      **/
-    public function __construct($name, $params = array())
+    public function __construct($name, $params = [])
     {
         $params['submitLabel'] = _("Publish Now");
 
@@ -26,19 +26,19 @@ class Publish extends \Depage\HtmlForm\HtmlForm
 
         parent::__construct($name, $params);
 
-        $this->addHidden("action", array(
+        $this->addHidden("action", [
             'defaultValue' => "publish",
-        ));
+        ]);
 
         $targets = $this->project->getPublishingTargets();
-        $list = array();
+        $list = [];
         foreach ($targets as $id => $target) {
             $list[$id] = $target->name;
         }
-        $this->addSingle("publishId", array(
+        $this->addSingle("publishId", [
             'label' => _("Publish to"),
             'list' => $list,
-        ));
+        ]);
     }
     // }}}
 }

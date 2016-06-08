@@ -37,13 +37,13 @@ class Page extends Base
     // {{{ addNodeType
     public function addNodeType($nodeName, $options) {
         $name = $options['name'];
-        $data = array(
+        $data = [
             'pos' => 0,
             'name' => $name,
             'newName' => $name,
             'icon' => '',
             'xmlTemplate' => '',
-        );
+        ];
         foreach ($data as $key => $value) {
             if (isset($options[$key])) {
                 $data[$key] = $options[$key];
@@ -75,7 +75,7 @@ class Page extends Base
     // }}}
     // {{{ getNodeTypes
     public function getNodeTypes() {
-        $nodetypes = array();
+        $nodetypes = [];
         $query = $this->xmldb->pdo->prepare(
             "SELECT
                 id,

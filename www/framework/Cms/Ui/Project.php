@@ -18,7 +18,7 @@ use \Depage\Notifications\Notification;
 class Project extends Base
 {
     // {{{ _init
-    public function _init(array $importVariables = array()) {
+    public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
         $this->projectName = $this->urlSubArgs[0];
@@ -54,22 +54,22 @@ class Project extends Base
         $html = "";
         $infoHead = "";
         $infoText = "";
-        $tabTitles = array(
+        $tabTitles = [
             "basic" => _("Project Settings"),
             "tags" => _("Tags"),
             "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publishs" => _("Publish"),
             "import" => _("Import"),
-        );
+        ];
         if (!$this->authUser->canEditTemplates()) {
             unset($tabTitles["variables"]);
             unset($tabTitles["import"]);
         }
         if ($this->projectName == "+") {
-            $tabTitles = array(
+            $tabTitles = [
                 "basic" => _("New Project"),
-            );
+            ];
         }
 
         if ($type == "languages") {
@@ -108,23 +108,23 @@ class Project extends Base
             $title = _("Add new Project");
         }
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "box-settings",
             'class' => "box-settings",
             'title' => $title,
-            'content' => array(
-                new Html("tabs.tpl", array(
+            'content' => [
+                new Html("tabs.tpl", [
                     'baseUrl' => "project/" . $this->project->name . "/settings/",
                     'tabs' => $tabTitles,
                     'activeTab' => $type,
-                )),
+                ]),
                 new Html("info.tpl", [
                     'title' => $infoHead,
                     'content' => $infoText,
                 ]),
                 $html,
-            ),
-        ), $this->htmlOptions);
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -138,10 +138,10 @@ class Project extends Base
      **/
     private function settings_basic()
     {
-        $form = new \Depage\Cms\Forms\Project\Basic("edit-project-basic-" . $this->project->id, array(
+        $form = new \Depage\Cms\Forms\Project\Basic("edit-project-basic-" . $this->project->id, [
             'project' => $this->project,
             'projectGroups' => \Depage\Cms\ProjectGroup::loadAll($this->pdo),
-        ));
+        ]);
         $form->process();
 
         if ($form->validateAutosave()) {
@@ -178,15 +178,15 @@ class Project extends Base
         }
         $nodeIds = $settings->getNodeIdsByXpath("//proj:{$nodeName}s/proj:{$nodeName}");
         $parentId = $settings->getParentIdById($nodeIds[0]);
-        $forms = array();
+        $forms = [];
 
         foreach($nodeIds as $nodeId) {
             $xml = $settings->getSubdocByNodeId($nodeId);
-            $form = new $formClass("edit-project-{$type}s-{$this->project->id}-{$nodeId}", array(
+            $form = new $formClass("edit-project-{$type}s-{$this->project->id}-{$nodeId}", [
                 'project' => $this->project,
                 'dataNode' => $xml,
                 'parentId' => $parentId,
-            ));
+            ]);
             array_push($forms, $form);
         }
 
@@ -194,11 +194,11 @@ class Project extends Base
         $xml->load(__DIR__ . "/../XmlDocTypes/SettingsXml/{$type}.xml");
         $languages = array_keys($this->project->getLanguages());
         \Depage\Cms\XmlDocTypes\Traits\MultipleLanguages::updateLangNodes($xml, $languages);
-        $form = new $formClass("edit-project-{$type}s-{$this->project->id}-new", array(
+        $form = new $formClass("edit-project-{$type}s-{$this->project->id}-new", [
             'project' => $this->project,
             'dataNode' => $xml,
             'parentId' => $parentId,
-        ));
+        ]);
         array_push($forms, $form);
 
         foreach ($forms as $form) {
@@ -235,9 +235,9 @@ class Project extends Base
      **/
     private function import()
     {
-        $form = new \Depage\Cms\Forms\Project\Import("import-project-" . $this->project->id, array(
+        $form = new \Depage\Cms\Forms\Project\Import("import-project-" . $this->project->id, [
             'project' => $this->project,
-        ));
+        ]);
         $form->process();
 
         if ($form->validate()) {
@@ -268,9 +268,9 @@ class Project extends Base
      **/
     public function publish()
     {
-        $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, array(
+        $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, [
             'project' => $this->project,
-        ));
+        ]);
         $form->process();
 
         if ($form->validate()) {
@@ -284,16 +284,16 @@ class Project extends Base
 
         $title = sprintf(_("Publish Project '%s'"), $this->project->name);
 
-        $h = new Html("box.tpl", array(
+        $h = new Html("box.tpl", [
             'id' => "projects",
             'icon' => "framework/Cms/images/icon_projects.gif",
             'class' => "first",
             'title' => $title,
-            'content' => array(
+            'content' => [
                 $this->toolbar(),
                 $form,
-            ),
-        ), $this->htmlOptions);
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -310,10 +310,10 @@ class Project extends Base
         $libPath = "/" . implode("/", func_get_args());
         $targetPath = $this->project->getProjectPath() . "lib" . $libPath;
 
-        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", array(
+        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", [
             'project' => $this->project,
             'targetPath' => $libPath,
-        ));
+        ]);
         $form->process();
         if ($form->validate()) {
             $values = $form->getValues();
@@ -325,7 +325,7 @@ class Project extends Base
             }
 
             $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
-            $callback = new \Depage\Cms\Rpc\Func("get_update_prop_files", array('path' => $libPath . '/'));
+            $callback = new \Depage\Cms\Rpc\Func("get_update_prop_files", ['path' => $libPath . '/']);
             foreach ($activeUsers as $user) {
                 $newN = new Notification($this->pdo);
                 $newN->setData([
@@ -347,16 +347,16 @@ class Project extends Base
     // {{{ edit()
     function edit() {
         // construct template
-        $hProject = new Html("flashedit.tpl", array(
+        $hProject = new Html("flashedit.tpl", [
             'flashUrl' => "project/{$this->projectName}/flash/flash/false",
             'previewUrl' => $this->project->getPreviewPath(),
-        ));
+        ]);
 
-        $h = new Html(array(
-            'content' => array(
+        $h = new Html([
+            'content' => [
                 $hProject,
-            ),
-        ), $this->htmlOptions);
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -364,22 +364,22 @@ class Project extends Base
     // {{{ jsedit()
     function jsedit() {
         // cms tree
-        $tree = Tree::_factoryAndInit($this->options, array(
+        $tree = Tree::_factoryAndInit($this->options, [
             'pdo' => $this->pdo,
             'projectName' => $this->projectName,
-        ));
+        ]);
 
         // construct template
-        $hProject = new Html("projectmain.tpl", array(
+        $hProject = new Html("projectmain.tpl", [
             'tree_pages' => $tree->tree("pages"),
             'tree_document' => $tree->tree("testpage"),
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
-        $h = new Html(array(
-            'content' => array(
+        $h = new Html([
+            'content' => [
                 $hProject,
-            ),
-        ));
+            ],
+        ]);
 
         return $h;
     }
@@ -387,11 +387,11 @@ class Project extends Base
 
     // {{{ details()
     function details($max = null) {
-        $h = new Html(array(
-            'content' => array(
+        $h = new Html([
+            'content' => [
                 $this->recent_changes($max),
-            ),
-        ), $this->htmlOptions);
+            ],
+        ], $this->htmlOptions);
 
         return $h;
     }
@@ -401,11 +401,11 @@ class Project extends Base
         $pages = $this->project->getRecentlyChangedPages($max);
         $date = $this->project->getLastPublishDate();
 
-        $h = new Html("changelist.tpl", array(
+        $h = new Html("changelist.tpl", [
             'previewPath' => $this->project->getPreviewPath(),
             'pages' => $pages,
             'lastPublishDate' => $date,
-        ), $this->htmlOptions);
+        ], $this->htmlOptions);
 
         return $h;
     }
