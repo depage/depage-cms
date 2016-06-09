@@ -72,6 +72,7 @@ class XmlDb implements XmlGetter
      * gets the doc-id of a xml-document by name or id and checks if the document exists
      *
      * @param     $doc_id_or_name (mixed) id or name of the document
+     *
      * @return    (int) id of the document or false when document does not exist
      */
     public function docExists($doc_id_or_name)
@@ -506,6 +507,7 @@ class XmlDb implements XmlGetter
                 $newText .= $parts[1][$i];
             }
         }
+
         return $newText;
     }
     // }}}
