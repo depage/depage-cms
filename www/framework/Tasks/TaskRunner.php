@@ -241,7 +241,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 "task-id" => $this->task->taskId,
             );
 
-            if (!$task->isRunning()) {
+            if (!$this->task->isRunning()) {
                 $this->executeInBackground(DEPAGE_PATH, "framework/Tasks/" . basename(__FILE__), $args, $this->lowPriority);
             }
         }
