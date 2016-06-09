@@ -6,6 +6,7 @@ class XmlDbTestClass extends \Depage\XmlDb\XmlDb
 {
     public $doc_ids;
     public $fallbackCall = false;
+    public $transactions = 0;
 
     public function getNodeIdsByXpathDom($xpath, $docId = null)
     {

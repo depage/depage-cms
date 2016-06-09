@@ -9,15 +9,15 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     {
         $this->dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
 
-        $this->validParents = array('*' => array('*'));
-        $this->availableNodes = array();
+        $this->validParents = ['*' => ['*']];
+        $this->availableNodes = [];
 
         $testNode = new \stdClass();
         $testNode->new = 'customNameAttribute';
-        $testNode->attributes = array(
+        $testNode->attributes = [
             'attr1' => 'value1',
             'attr2' => 'value2',
-        );
+        ];
 
         $this->availableNodes['testNode'] = $testNode;
     }
@@ -39,15 +39,16 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
         $this->assertFalse($this->dth->getNewNodeFor('unknownNode'));
     }
     // }}}
+
     // {{{ testIsAllowedInRestrictedTargets
     public function testIsAllowedInRestrictedTargets()
     {
-        $this->dth->validParents = array(
-            '*' => array(
+        $this->dth->validParents = [
+            '*' => [
                 'target1',
                 'target2',
-            ),
-        );
+            ],
+        ];
 
         $this->assertFalse($this->dth->isAllowedIn('testNode', 'targetTestNode'));
         $this->assertTrue($this->dth->isAllowedIn('testNode', 'target1'));
@@ -56,18 +57,57 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testIsAllowedInRestrictedNodes
     public function testIsAllowedInRestrictedNodes()
     {
-        $this->dth->validParents = array(
-            'node1' => array(
+        $this->dth->validParents = [
+            'node1' => [
                 'target3',
-            ),
-            'node2' => array(
+            ],
+            'node2' => [
                 '*',
-            ),
-        );
+            ],
+        ];
 
         $this->assertFalse($this->dth->isAllowedIn('testNode', 'targetTestNode'));
         $this->assertTrue($this->dth->isAllowedIn('node1', 'target3'));
         $this->assertTrue($this->dth->isAllowedIn('node2', 'targetTestNode'));
+    }
+    // }}}
+
+    // {{{ testStripWhitespace
+    public function testStripWhitespace()
+    {
+        $xml = $this->generateDomDocument('<node>' .
+            "   \t  " .
+            '<subnode/> ' .
+            "   \t  " .
+        '</node>');
+
+        $this->doc->save($xml);
+
+        $expected = '<?xml version="1.0"?>' . "\n" .
+            '<node xmlns:db="http://cms.depagecms.net/ns/database"><subnode/></node>' . "\n";
+
+        $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testStripWhitespaceDont
+    public function testStripWhitespaceDont()
+    {
+        $this->dth->preserveWhitespace = ['node'];
+
+        $xml = $this->generateDomDocument('<node>' .
+            "   \t  " .
+            '<subnode/>' .
+            "   \t  " .
+        '</node>');
+
+        $this->doc->save($xml);
+
+        $expected = '<?xml version="1.0"?>' . "\n" .
+            '<node xmlns:db="http://cms.depagecms.net/ns/database">' . "   \t  " .
+            '<subnode/>' . "   \t  " .
+            '</node>' . "\n";
+
+        $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
     }
     // }}}
 }

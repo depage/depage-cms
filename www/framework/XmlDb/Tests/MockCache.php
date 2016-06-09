@@ -4,7 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 class MockCache
 {
-    public $cached = array();
+    public $cached = [];
     public $deleted = false;
 
     public function set($identifier, $xml)
@@ -25,6 +25,7 @@ class MockCache
 
     public function delete($identifier)
     {
+        // stub, no actual deleting going on here
         $this->deleted = true;
     }
 }
