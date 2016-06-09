@@ -6,10 +6,21 @@
         <var name="DB_PASSWD" value="test_db_password" />
         <var name="DB_DBNAME" value="test_db" />
     </php>
+
+    <filter>
+        <whitelist>
+            <directory>../</directory>
+            <exclude>
+                <directory>../Tests</directory>
+                <directory>../vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
     <logging>
         <log
-        type="coverage-html"
-        target="Report"
+            type="coverage-html"
+            target="Report"
         />
     </logging>
 </phpunit>
