@@ -463,14 +463,13 @@ class XmlDb implements XmlGetter
         foreach ($conditions as $condition) {
             $bool = isset($condition[1]) ? $condition[1] : null;
 
-            if ($first) {
-                if ($bool) {
-                    throw new XmlDbException("Invalid XPath syntax");
-                }
-                $first = false;
-            } elseif (!$bool) {
-                throw new XmlDbException("Invalid XPath syntax");
+            if ($first == $bool) {
+                throw new XmlDbException('Invalid XPath syntax');
             }
+
+            if ($first) {
+                $first = false;
+            };
 
             $conditionArray[] = array(
                 'bool' => $bool,
