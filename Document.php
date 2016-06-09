@@ -231,17 +231,7 @@ class Document
      */
     public function getNodeNameById($id)
     {
-        $query = $this->pdo->prepare(
-            "SELECT xml.name AS name
-            FROM {$this->table_xml} AS xml
-            WHERE xml.id = :id AND xml.id_doc = :doc_id"
-        );
-        $query->execute([
-            'id' => $id,
-            'doc_id' => $this->doc_id,
-        ]);
-
-        return ($result = $query->fetchObject()) ? $result->name : false;
+        return $this->getNodeAttributeById($id, 'name');
     }
     // }}}
     // {{{ getParentIdById
@@ -254,17 +244,23 @@ class Document
      */
     public function getParentIdById($id)
     {
+        return $this->getNodeAttributeById($id, 'id_parent');
+    }
+    // }}}
+    // {{{ getNodeAttributeById
+    protected function getNodeAttributeById($id, $attribute)
+    {
         $query = $this->pdo->prepare(
-            "SELECT xml.id_parent AS id_parent
+            "SELECT xml.$attribute AS $attribute
             FROM {$this->table_xml} AS xml
-            WHERE xml.id= :id AND xml.id_doc = :doc_id"
+            WHERE xml.id = :id AND xml.id_doc = :doc_id"
         );
         $query->execute([
             'id' => $id,
             'doc_id' => $this->doc_id,
         ]);
 
-        return ($result = $query->fetchObject()) ? $result->id_parent : false;
+        return ($result = $query->fetchObject()) ? $result->$attribute : false;
     }
     // }}}
     // {{{ getNodeIdsByXpath
@@ -1386,17 +1382,7 @@ class Document
      */
     protected function getPosById($id)
     {
-        $query = $this->pdo->prepare(
-            "SELECT xml.pos AS pos
-            FROM {$this->table_xml} AS xml
-            WHERE xml.id = :id AND xml.id_doc = :doc_id"
-        );
-        $query->execute([
-            'id' => $id,
-            'doc_id' => $this->doc_id,
-        ]);
-
-        return ($result = $query->fetchObject()) ? $result->pos : null;
+        return $this->getNodeAttributeById($id, 'pos');
     }
     // }}}
     // {{{ getTargetPos
@@ -1456,6 +1442,9 @@ class Document
 
             if ($target_id === false) {
                 $target_id = null;
+            }
+            if ($target_pos === false) {
+                $target_pos = null;
             }
 
             // delete old node

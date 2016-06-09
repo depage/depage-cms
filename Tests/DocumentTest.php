@@ -417,7 +417,7 @@ class DocumentTest extends XmlDbTestCase
     public function testGetPosByIdFail()
     {
         // there's no node with id 999
-        $this->assertNull($this->doc->getPosById(999));
+        $this->assertFalse($this->doc->getPosById(999));
     }
     // }}}
 
