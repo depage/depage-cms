@@ -310,6 +310,11 @@ class Import
 
         if (!is_dir($this->xsltPath)) mkdir($this->xsltPath);
 
+        $oldXsl = glob($this->xsltPath . "/*/*");
+        foreach ($oldXsl as $file) {
+            unlink($file);
+        }
+
         // extract template tree
         if ($nodelist->length === 1) {
             $xmlTemplates = new \Depage\Xml\Document();
@@ -386,6 +391,11 @@ class Import
         $nodelist = $xpath->query("//proj:tpl_newnodes/pg:newnode");
 
         if (!is_dir($this->xmlPath)) mkdir($this->xmlPath);
+
+        $oldXml = glob($this->xsltPath . "/*");
+        foreach ($oldXml as $file) {
+            unlink($file);
+        }
 
         for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
