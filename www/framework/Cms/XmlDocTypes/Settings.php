@@ -11,10 +11,10 @@ class Settings extends Base {
     protected $project = null;
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        parent::__construct($xmldb, $document);
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
 
-        $this->project = $this->xmldb->options['project'];
+        $this->project = $this->xmlDb->options['project'];
     }
     // }}}
 
@@ -34,13 +34,13 @@ class Settings extends Base {
     {
         parent::onDocumentChange();
 
-        $oldLanguages = $this->xmldb->cache->get("dp_proj_{$this->project->name}_settings/languages.ser");
-        $this->xmldb->cache->delete("dp_proj_{$this->project->name}_settings/*");
+        $oldLanguages = $this->xmlDb->cache->get("dp_proj_{$this->project->name}_settings/languages.ser");
+        $this->xmlDb->cache->delete("dp_proj_{$this->project->name}_settings/*");
 
         $newLanguages = $this->project->getLanguages();
 
         if ($oldLanguages != $newLanguages) {
-            $this->xmldb->cache->delete("dp_proj_{$this->project->name}_*");
+            $this->xmlDb->cache->delete("dp_proj_{$this->project->name}_*");
             // @todo clean cache after updating languages?
             // @todo add task to update all documents with new languages?
         }

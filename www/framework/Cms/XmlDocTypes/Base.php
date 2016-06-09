@@ -2,7 +2,7 @@
 
 namespace Depage\Cms\XmlDocTypes;
 
-class Base extends \Depage\XmlDb\XmlDocTypes\Base
+class Base extends \Depage\XmlDb\XmlDoctypes\Base
 {
     /**
      * @brief project
@@ -10,10 +10,10 @@ class Base extends \Depage\XmlDb\XmlDocTypes\Base
     protected $project = null;
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        parent::__construct($xmldb, $document);
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
 
-        $this->project = $this->xmldb->options['project'];
+        $this->project = $this->xmlDb->options['project'];
     }
     // }}}
 
@@ -40,7 +40,7 @@ class Base extends \Depage\XmlDb\XmlDocTypes\Base
 
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->xmldb->pdo, $this->project->name, "$template-$type");
+                $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name, "$template-$type");
                 $transformCache->clearFor($this->document->getDocId());
             }
         }

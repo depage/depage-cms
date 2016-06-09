@@ -10,12 +10,12 @@ class Page extends Base
     private $pathXMLtemplate = "";
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        parent::__construct($xmldb, $document);
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
 
-        $this->pathXMLtemplate = $this->xmldb->options['pathXMLtemplate'];
+        $this->pathXMLtemplate = $this->xmlDb->options['pathXMLtemplate'];
 
-        $this->table_nodetypes = $xmldb->table_nodetypes;
+        $this->table_nodetypes = $xmlDb->table_nodetypes;
     }
     // }}}
 
@@ -56,7 +56,7 @@ class Page extends Base
             $data['validParents'] = "*";
         }
 
-        $query = $this->xmldb->pdo->prepare(
+        $query = $this->xmlDb->pdo->prepare(
             "INSERT {$this->table_nodetypes} SET
                 pos = :pos,
                 nodename = :nodeName,
@@ -76,7 +76,7 @@ class Page extends Base
     // {{{ getNodeTypes
     public function getNodeTypes() {
         $nodetypes = [];
-        $query = $this->xmldb->pdo->prepare(
+        $query = $this->xmlDb->pdo->prepare(
             "SELECT
                 id,
                 nodename as nodeName,

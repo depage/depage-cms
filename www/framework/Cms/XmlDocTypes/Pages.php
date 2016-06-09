@@ -10,8 +10,8 @@ class Pages extends Base {
     const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        parent::__construct($xmldb, $document);
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
 
         // list of elements that may created by a user
         $this->availableNodes = [
@@ -92,7 +92,7 @@ class Pages extends Base {
                 $node->setAttribute("name", $properties->new);
             }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
-                $doc = $this->xmldb->createDoc($properties->doc_type);
+                $doc = $this->xmlDb->createDoc($properties->doc_type);
                 $xml = $this->loadXmlTemplate($properties->xml_template);
 
                 $docId = $doc->save($xml);
@@ -102,7 +102,7 @@ class Pages extends Base {
                 if (isset($extras['dataNodes'])) {
                     // add doc data to page data doc
                     foreach ($extras['dataNodes'] as $dataNode) {
-                        $doc->addNode($dataNode, $info->rootId);
+                        $doc->addNode($dataNode, $info->rootid);
                     }
                 }
 
@@ -138,7 +138,7 @@ class Pages extends Base {
             $docrefId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
 
             // duplicate document as new
-            $copiedDoc = $this->xmldb->duplicateDoc($docrefId);
+            $copiedDoc = $this->xmlDb->duplicateDoc($docrefId);
             $info = $copiedDoc->getDocInfo();
 
             $this->document->setAttribute($nodeId, "db:docref", $info->name);
@@ -151,7 +151,7 @@ class Pages extends Base {
     /**
      * On Delete Node
      *
-     * Deletes an xmldb document by the given id.
+     * Deletes an xmlDb document by the given id.
      *
      * @param $doc_id
      * @return boolean
@@ -159,7 +159,7 @@ class Pages extends Base {
     public function onDeleteNode($node_id, $parent_id)
     {
         // @todo check wether to delete attached documents directly or later
-        //$this->xmldb->removeDoc($doc_id);
+        //$this->xmlDb->removeDoc($doc_id);
         return true;
     }
     // }}}

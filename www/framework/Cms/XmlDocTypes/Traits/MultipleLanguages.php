@@ -9,7 +9,7 @@ trait MultipleLanguages
         $languages = [];
 
         // get languages from settings
-        $settings = $this->xmldb->getDoc("settings");
+        $settings = $this->xmlDb->getDoc("settings");
         $nodes = $settings->getNodeIdsByXpath("//proj:language");
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
@@ -92,7 +92,7 @@ trait MultipleLanguages
 
                                 $temp_node = $lang_node->cloneNode(true);
                                 $parent_node->insertBefore($temp_node, $temp_nodes[$i]);
-                                \Depage\XmlDb\Document::removeNodeAttr($temp_node, "http://cms.depagecms.net/ns/database", "db");
+                                \Depage\XmlDb\Document::removeNodeAttr($temp_node, new \Depage\XmlDb\XmlNs('db', 'http://cms.depagecms.net/ns/database'), "id");
                                 $temp_node->setAttribute('lang', $lang);
                             }
                         }

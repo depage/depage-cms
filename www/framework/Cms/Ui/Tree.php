@@ -214,7 +214,7 @@ class Tree extends Base {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
         $parent_id = $this->doc->getParentIdById($id);
-        $ids = $this->doc->unlinkNode($id);
+        $ids = $this->doc->deleteNode($id);
         $status = count($ids) > 0;
         if ($status) {
             $this->recordChange($this->docId, array($parent_id));

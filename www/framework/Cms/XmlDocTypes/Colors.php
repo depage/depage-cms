@@ -6,8 +6,8 @@ class Colors extends Base {
     use Traits\UniqueNames;
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        parent::__construct($xmldb, $document);
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
 
         // list of elements that may created by a user
         $this->availableNodes = [

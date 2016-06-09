@@ -509,7 +509,7 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $parentId = $xmldoc->unlinkNode($nodeId);
+            $parentId = $xmldoc->deleteNode($nodeId);
         }
 
         $changedIds = [$nodeId, $parentId];
