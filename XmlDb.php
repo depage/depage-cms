@@ -167,11 +167,13 @@ class XmlDb implements XmlGetter
      */
     public function getDoc($doc_id_or_name)
     {
+        $doc = false;
+
         if ($doc_id = $this->docExists($doc_id_or_name)) {
-            return new Document($this, $doc_id);
+            $doc = new Document($this, $doc_id);
         }
 
-        return false;
+        return $doc;
     }
     // }}}
     // {{{ getDocByNodeId
@@ -183,6 +185,8 @@ class XmlDb implements XmlGetter
      */
     public function getDocByNodeId($nodeId)
     {
+        $doc = false;
+
         $query = $this->pdo->prepare(
             "SELECT xml.id_doc AS id_doc
             FROM {$this->table_xml} AS xml
@@ -195,10 +199,10 @@ class XmlDb implements XmlGetter
         $result = $query->fetchObject();
 
         if ($result && $doc_id = $this->docExists($result->id_doc)) {
-            return new Document($this, $doc_id);
+            $doc = new Document($this, $doc_id);
         }
 
-        return false;
+        return $doc;
     }
     // }}}
 
@@ -273,7 +277,7 @@ class XmlDb implements XmlGetter
             if ($level == 0) {
                 $tableSql[] = "SELECT l$levels.id FROM";
                 if ($divider == '/') {
-                    $condSql[] = "l0.id_parent IS NULL";
+                    $condSql[] = 'l0.id_parent IS NULL';
                 }
             } else {
                 $tableSql[] = 'INNER JOIN';
@@ -428,7 +432,7 @@ class XmlDb implements XmlGetter
         $cond_array = false;
         $temp_condition = $this->removeLiteralStrings($condition, $strings);
 
-        if (preg_match("/^[\w\d@=: -<>\*]*$/", $temp_condition)) {
+        if (preg_match('/^[\w\d@=: -<>\*]*$/', $temp_condition)) {
             /**
              * "//ns:name[@attr1] ..."
              * "//ns:name[@attr1 = 'string1'] ..."
@@ -444,6 +448,7 @@ class XmlDb implements XmlGetter
     protected function translateName($ns, $name)
     {
         $colon = (strlen($ns) && strlen($name)) ? ':' : '';
+
         return str_replace('*', '%', "$ns$colon$name");
     }
     // }}}
@@ -507,16 +512,16 @@ class XmlDb implements XmlGetter
     // {{{ cleanOperator
     protected function cleanOperator($operator)
     {
-        $result = '';
+        $cleaned = '';
         $operators = ['=', '!=', '<=', '>=', '<', '>', 'and', 'or'];
 
         if (in_array($operator, $operators)) {
-            $result = $operator;
+            $cleaned = $operator;
         } else {
             throw new XmlDbException("Invalid XPath operator \"$operator\"");
         }
 
-        return $result;
+        return $cleaned;
     }
     // }}}
 
@@ -524,9 +529,11 @@ class XmlDb implements XmlGetter
     /**
      * CreateDoc
      *
-     * @param string $doctype class-name of doctype for new document
-     * @param string $docName optional name of document
+     * @param $doctype (string) class-name of doctype for new document
+     * @param $docName (string) optional name of document
+     *
      * @return Document
+     *
      * @throws xmlDbException
      */
     public function createDoc($doctype = 'Depage\XmlDb\XmlDoctypes\Base', $docName = null)
@@ -540,8 +547,7 @@ class XmlDb implements XmlGetter
         }
 
         $query = $this->pdo->prepare(
-            "INSERT {$this->table_docs} SET
-                name = :name, type = :type;"
+            "INSERT {$this->table_docs} SET name = :name, type = :type;"
         );
         $query->execute([
             'name' => $docName,
@@ -549,7 +555,6 @@ class XmlDb implements XmlGetter
         ]);
 
         $docId = $this->pdo->lastInsertId();
-
         $document = new Document($this, $docId);
 
         return $document;
@@ -559,12 +564,14 @@ class XmlDb implements XmlGetter
     /**
      * @brief duplicateDoc
      *
-     * @param mixed $docNameOrId
-     * @param string $newName optional name for new document
-     * @return bool success
+     * @param $docNameOrId (mixed)
+     * @param $newName (string) optional name for new document
+     *
+     * @return Document|bool
      **/
     public function duplicateDoc($docNameOrId, $newName = null)
     {
+        $copy = false;
         $original = $this->getDoc($docNameOrId);
 
         if ($original !== false) {
@@ -573,16 +580,15 @@ class XmlDb implements XmlGetter
 
             $copy = $this->createDoc($info->type, $newName);
             $copy->save($xml);
-
-            return $copy;
         }
 
-        return false;
+        return $copy;
     }
     // }}}
     // {{{ removeDoc
     /**
      * @param $doc_id_or_name
+     *
      * @return bool
      */
     public function removeDoc($doc_id)
@@ -622,6 +628,7 @@ class XmlDb implements XmlGetter
      * @brief updateSchema
      *
      * @param mixed
+     *
      * @return void
      **/
     public function updateSchema()
