@@ -265,6 +265,8 @@ class Project extends Base
      *
      * @param mixed
      * @return void
+     *
+     * @todo implement adding documents to xmldb history when publishing and using these for xsl transformations
      **/
     public function publish()
     {
