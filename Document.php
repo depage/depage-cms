@@ -48,7 +48,7 @@ class Document
         $this->pdo = $xmlDb->pdo;
         $this->cache = $xmlDb->cache;
 
-        $this->db_ns = new xmlns('db', 'http://cms.depagecms.net/ns/database');
+        $this->db_ns = new XmlNs('db', 'http://cms.depagecms.net/ns/database');
 
         $this->xmlDb = $xmlDb;
 

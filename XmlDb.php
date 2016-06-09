@@ -43,12 +43,12 @@ class XmlDb implements XmlGetter
 
         $this->options = $options;
 
-        $this->db_ns = new XmlNs("db", "http://cms.depagecms.net/ns/database");
+        $this->db_ns = new XmlNs('db', 'http://cms.depagecms.net/ns/database');
 
         $this->table_prefix = $table_prefix;
-        $this->table_docs = $table_prefix . "_xmldocs";
-        $this->table_xml = $table_prefix . "_xmltree";
-        $this->table_nodetypes = $table_prefix . "_xmlnodetypes";
+        $this->table_docs = $table_prefix . '_xmldocs';
+        $this->table_xml = $table_prefix . '_xmltree';
+        $this->table_nodetypes = $table_prefix . '_xmlnodetypes';
     }
     // }}}
 
