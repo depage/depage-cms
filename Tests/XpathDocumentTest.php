@@ -16,20 +16,27 @@ class XpathDocumentTest extends XpathTestCase
     // {{{ testAllWildCard
     public function testAllWildCard()
     {
-        $this->assertCorrectXpathIds(array(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29), '//*');
+        $this->assertCorrectXpathIds([15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], '//*');
     }
     // }}}
     // {{{ testAllWildCardName
     public function testAllWildCardName()
     {
-        $this->assertCorrectXpathIds(array(16, 17, 18, 19, 20, 21, 22, 25, 27, 28, 29), '//pg:*');
+        $this->assertCorrectXpathIds([16, 17, 18, 19, 20, 21, 22, 25, 27, 28, 29], '//pg:*');
     }
     // }}}
     // {{{ testAllWildCardAndIdAttributeValueLessThan
     public function testAllWildCardAndIdAttributeValueLessThan()
     {
         // no domxpath, ids are subject to database domain
-        $this->assertCorrectXpathIds(array(15, 16), '//*[@db:id < \'17\']', false);
+        $this->assertCorrectXpathIds([15, 16], '//*[@db:id < \'17\']', false);
+    }
+    // }}}
+
+    // {{{ testNoContext
+    public function testNoContext()
+    {
+        $this->assertCorrectXpathIds([16], 'pg:page', true, true);
     }
     // }}}
 }

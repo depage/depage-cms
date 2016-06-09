@@ -1,34 +1,37 @@
 <?php
 
-namespace Depage\XmlDb\XmlDocTypes;
+namespace Depage\XmlDb\XmlDoctypes;
 
-class Base
+class Base implements DoctypeInterface
 {
     // {{{ variables
     // list of elements that may created by a user
-    protected $availableNodes = array();
+    protected $availableNodes = [];
 
     // list of valid parents given by nodename
-    protected $validParents = array(
-        '*' => array(
+    protected $validParents = [
+        '*' => [
             '*',
-        ),
-    );
+        ],
+    ];
+
+    // list of names of nodes not to be affected by whitespace stripping
+    protected $preserveWhitespace = [];
     // }}}
 
     // {{{ constructor
-    public function __construct($xmldb, $document) {
-        $this->xmldb = $xmldb;
+    public function __construct($xmlDb, $document) {
+        $this->xmlDb = $xmlDb;
         $this->document = $document;
     }
     // }}}
 
     // {{{ getPermissions
     public function getPermissions() {
-        return (object) array(
+        return (object) [
             'validParents' => $this->getValidParents(),
             'availableNodes' => $this->getAvailableNodes(),
-        );
+        ];
     }
     // }}}
     // {{{ getValidParents
@@ -39,6 +42,11 @@ class Base
     // {{{ getAvailableNodes
     public function getAvailableNodes() {
         return $this->availableNodes;
+    }
+    // }}}
+    // {{{ getPreserveWhitespace
+    public function getPreserveWhitespace() {
+        return $this->preserveWhitespace;
     }
     // }}}
     // {{{ getNewNodeFor
@@ -58,7 +66,7 @@ class Base
                     $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
                 }
             }
-            $xml .= "/>";
+            $xml .= '/>';
 
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
@@ -83,19 +91,6 @@ class Base
         return $result;
     }
     // }}}
-    // {{{ isAllowedMove
-    public function isAllowedMove($nodeId, $targetId) {
-        return $this->isAllowedIn(
-            $this->document->getNodeNameById($nodeId),
-            $this->document->getNodeNameById($targetId)
-        );
-    }
-    // }}}
-    // {{{ isAllowedUnlink
-    public function isAllowedUnlink($nodeId) {
-        return true;
-    }
-    // }}}
     // {{{ isAllowedAdd
     public function isAllowedAdd($node, $targetId) {
         return $this->isAllowedIn(
@@ -104,7 +99,36 @@ class Base
         );
     }
     // }}}
+    // {{{ isAllowedCopy
+    public function isAllowedCopy($nodeId, $targetId) {
+        return $this->isAllowedMove($nodeId, $targetId);
+    }
+    // }}}
+    // {{{ isAllowedMove
+    public function isAllowedMove($nodeId, $targetId) {
+        return $this->isAllowedIn(
+            $this->document->getNodeNameById($nodeId),
+            $this->document->getNodeNameById($targetId)
+        );
+    }
+    // }}}
+    // {{{ isAllowedDelete
+    public function isAllowedDelete($nodeId) {
+        return true;
+    }
+    // }}}
 
+    // {{{ onDocumentChange
+    /**
+     * On Document Change
+     *
+     * @return bool
+     */
+    public function onDocumentChange()
+    {
+        return true;
+    }
+    // }}}
     // {{{ onAddNode
     /**
      * On Add Node
@@ -116,7 +140,7 @@ class Base
      * @return null
      */
     public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
-        return null;
+        return true;
     }
     // }}}
     // {{{ onCopyNode
@@ -132,26 +156,28 @@ class Base
         return true;
     }
     // }}}
-    // {{{ onDeleteNode()
+    // {{{ onMoveNode
+    /**
+     * On Move Node
+     *
+     * @param \DomElement $node
+     * @param $node_id
+     * @param $target_id
+     * @return bool
+     */
+    public function onMoveNode($node_id, $target_id) {
+        return true;
+    }
+    // }}}
+    // {{{ onDeleteNode
     /**
      * On Delete Node
      *
      * @param $node_id
+     * @param $parent_id
      * @return bool
      */
-    public function onDeleteNode($node_id, $parent_id)
-    {
-        return true;
-    }
-    // }}}
-    // {{{ onDocumentChange()
-    /**
-     * On Document Change
-     *
-     * @return bool
-     */
-    public function onDocumentChange()
-    {
+    public function onDeleteNode($node_id, $parent_id) {
         return true;
     }
     // }}}

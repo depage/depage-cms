@@ -2,38 +2,38 @@
 
 namespace Depage\XmlDb\Tests;
 
-class DocumentHistoryTest extends DatabaseTestCase
+class DocumentHistoryTest extends XmlDbTestCase
 {
     // {{{ variables
     protected $xmlDb;
     protected $doc;
     protected $history;
-    protected $ver1 = array(
+    protected $ver1 = [
         'last_saved_at' => '2016-02-03 16:01:00',
         'user_id' => '1',
         'published' => '0',
         'hash' => '5ceae27386aa1518d346c3129ef9c2d530c18769',
-    );
-    protected $ver2 = array(
+    ];
+    protected $ver2 = [
         'last_saved_at' => '2016-02-03 16:02:00',
         'user_id' => '1',
         'published' => '1',
         'hash' => 'a6493f0261f1287b62fa0585a16c8a0d43cf73b8',
-    );
-    protected $ver3 = array(
+    ];
+    protected $ver3 = [
         'last_saved_at' => '2016-02-03 16:03:00',
         'user_id' => '1',
         'published' => '0',
         'hash' => 'c8780f81274114f9f97771cd2e1428d2c39c2961',
-    );
+    ];
 
     protected $xml1 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver1" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
     protected $xml2 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
 
-    protected $ignoreAttributes = array(
+    protected $ignoreAttributes = [
         'db:id',
         'db:lastchangeUid',
-    );
+    ];
 
     // }}}
     // {{{ setUp
@@ -42,13 +42,13 @@ class DocumentHistoryTest extends DatabaseTestCase
         parent::setUp();
 
         // get cache instance
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        // get xmldb instance
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        // get xmlDb instance
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
-        ));
+        ]);
 
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
         $this->history = $this->doc->getHistory();
@@ -69,11 +69,11 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersions
     public function testGetVersions()
     {
-        $expected = array(
+        $expected = [
             strtotime('2016-02-03 16:01:00') => $this->ver1,
             strtotime('2016-02-03 16:02:00') => $this->ver2,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
 
         $this->assertEquals($expected, $this->history->getVersions());
     }
@@ -81,9 +81,9 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersionsPublished
     public function testGetVersionsPublished()
     {
-        $published = array(
+        $published = [
             strtotime('2016-02-03 16:02:00') => $this->ver2,
-        );
+        ];
 
         $this->assertEquals($published, $this->history->getVersions(true));
     }
@@ -91,10 +91,10 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersionsUnpublished
     public function testGetVersionsUnpublished()
     {
-        $unpublished = array(
+        $unpublished = [
             strtotime('2016-02-03 16:01:00') => $this->ver1,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
 
         $this->assertEquals($unpublished, $this->history->getVersions(false));
     }
@@ -102,9 +102,9 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersionsMaxResultsOne
     public function testGetVersionsMaxResultsOne()
     {
-        $expected = array(
+        $expected = [
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
 
         $this->assertEquals($expected, $this->history->getVersions(null, 1));
     }
@@ -112,11 +112,11 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testGetVersionsMaxResultsTen
     public function testGetVersionsMaxResultsTen()
     {
-        $expected = array(
+        $expected = [
             strtotime('2016-02-03 16:01:00') => $this->ver1,
             strtotime('2016-02-03 16:02:00') => $this->ver2,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
 
         $this->assertEquals($expected, $this->history->getVersions(null, 10));
     }
@@ -257,7 +257,7 @@ class DocumentHistoryTest extends DatabaseTestCase
 
         $result = $this->history->restore(strtotime('2016-02-03 16:01:00'));
 
-        $ignore = array('db:lastchange');
+        $ignore = ['db:lastchange'];
         $this->assertXmlStringEqualsXmlStringIgnoreAttributes($this->xml1, $this->doc->getXml(), $ignore);
         $this->assertXmlStringEqualsXmlStringIgnoreAttributes($result, $this->doc->getXml(), $ignore);
     }
@@ -266,30 +266,30 @@ class DocumentHistoryTest extends DatabaseTestCase
     // {{{ testDelete
     public function testDelete()
     {
-        $before = array(
+        $before = [
             strtotime('2016-02-03 16:01:00') => $this->ver1,
             strtotime('2016-02-03 16:02:00') => $this->ver2,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
         $this->assertEquals($before, $this->history->getVersions());
 
         $result = $this->history->delete(strtotime('2016-02-03 16:01:00'));
         $this->assertEquals(true, $result);
-        $after = array(
+        $after = [
             strtotime('2016-02-03 16:02:00') => $this->ver2,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
         $this->assertEquals($after, $this->history->getVersions());
     }
     // }}}
     // {{{ testDeleteFail
     public function testDeleteFail()
     {
-        $expected = array(
+        $expected = [
             strtotime('2016-02-03 16:01:00') => $this->ver1,
             strtotime('2016-02-03 16:02:00') => $this->ver2,
             strtotime('2016-02-03 16:03:00') => $this->ver3,
-        );
+        ];
         $this->assertEquals($expected, $this->history->getVersions());
 
         $result = $this->history->delete(strtotime('1985-10-26 09:00:00'));

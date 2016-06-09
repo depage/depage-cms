@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-class XmlDbTest extends DatabaseTestCase
+class XmlDbTest extends XmlDbTestCase
 {
     protected $xmlDb;
     protected $xmlPages = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""><pg:page name="Home3"><pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page><pg:page name="P3.2"/></pg:page></dpg:pages>';
@@ -12,11 +12,11 @@ class XmlDbTest extends DatabaseTestCase
     {
         parent::setUp();
 
-        $cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
-        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
+        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $cache, [
             'root',
             'child',
-        ));
+        ]);
     }
     // }}}
 
@@ -26,7 +26,7 @@ class XmlDbTest extends DatabaseTestCase
         $docs = $this->xmlDb->getDocuments('pages');
         $pagesDoc = $docs['pages'];
 
-        $this->assertEquals(array('pages'), array_keys($docs));
+        $this->assertEquals(['pages'], array_keys($docs));
         $this->assertInstanceOf('Depage\XmlDb\Document', $pagesDoc);
         $this->assertEquals('pages', $pagesDoc->getDocInfo()->name);
     }
@@ -35,13 +35,13 @@ class XmlDbTest extends DatabaseTestCase
     public function testGetDocuments()
     {
         $docs = $this->xmlDb->getDocuments();
-        $expectedNames = array(
+        $expectedNames = [
             'pages',
             'pages2',
             'pages3',
             'tpl_newnodes',
             'tpl_templates',
-        );
+        ];
 
         $this->assertEquals($expectedNames, array_keys($docs));
 
@@ -65,7 +65,7 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testGetDoc
     public function testGetDoc()
     {
-        $searches = array(3, '3', 'pages');
+        $searches = [3, '3', 'pages'];
 
         foreach ($searches as $search) {
             $this->assertXmlStringEqualsXmlString($this->xmlPages, $this->xmlDb->getDoc($search)->getXml(false));
@@ -113,6 +113,18 @@ class XmlDbTest extends DatabaseTestCase
         $this->assertFalse($xml);
     }
     // }}}
+    // {{{ testGetDocXmlEmpty
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Trying to get contents of empty document.
+     */
+    public function testGetDocXmlEmpty()
+    {
+        $doc = $this->xmlDb->createDoc();
+
+        $this->xmlDb->getDocXml($doc->getDocId());
+    }
+    // }}}
 
     // {{{ testCreateDoc
     public function testCreateDoc()
@@ -126,7 +138,7 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testCreateDocSpecific
     public function testCreateDocSpecific()
     {
-        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'newDoc');
+        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'newDoc');
 
         $this->assertInstanceOf('Depage\XmlDb\Document', $doc);
         $this->assertEquals('newDoc', $doc->getDocInfo()->name);
@@ -136,11 +148,11 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testCreateDocInvalidName
     /**
      * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name: ""
+     * @expectedExceptionMessage Invalid or duplicate document name ""
      */
     public function testCreateDocInvalidName()
     {
-        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', false);
+        $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', false);
     }
     // }}}
 
@@ -168,12 +180,12 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
-        $idsBefore = array(
+        $idsBefore = [
             3 => '3',
             'pages' => '3',
-        );
+        ];
 
-        $idsAfter = array();
+        $idsAfter = [];
 
         $this->assertArrayHasKey('pages', $this->xmlDb->getDocuments('pages'));
 
@@ -220,11 +232,11 @@ class XmlDbTest extends DatabaseTestCase
     // {{{ testCreateDocExisting
     /**
      * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name: "pages"
+     * @expectedExceptionMessage Invalid or duplicate document name "pages"
      */
     public function testCreateDocExisting()
     {
-        $this->xmlDb->createDoc('Depage\XmlDb\XmlDocTypes\Base', 'pages');
+        $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'pages');
     }
     // }}}
 
@@ -238,8 +250,16 @@ class XmlDbTest extends DatabaseTestCase
         $this->assertEquals('>=', $this->xmlDb->cleanOperator('>='));
         $this->assertEquals('and', $this->xmlDb->cleanOperator('and'));
         $this->assertEquals('or', $this->xmlDb->cleanOperator('or'));
-
-        $this->assertEquals('', $this->xmlDb->cleanOperator('\''));
+    }
+    // }}}
+    // {{{ testCleanOperatorFail
+    /**
+     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
+     * @expectedExceptionMessage Invalid XPath operator "'"
+     */
+    public function testCleanOperatorFail()
+    {
+        $this->xmlDb->cleanOperator('\'');
     }
     // }}}
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * @file    modules/XmlDb/XmldbHistory.php
+ * @file    modules/XmlDb/XmlDbHistory.php
  *
- * cms xmldb module
+ * cms xmlDb module
  *
  * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
@@ -14,7 +14,7 @@ namespace Depage\XmlDb;
 class XmlDbHistory implements XmlGetter
 {
     // {{{ variables
-    private $doc_ids = array();
+    private $doc_ids = [];
 
     private $pdo;
 
@@ -28,7 +28,7 @@ class XmlDbHistory implements XmlGetter
     // }}}
 
     // {{{ constructor
-    public function __construct($table_prefix, $pdo, $cache, $options = array())
+    public function __construct($table_prefix, $pdo, $cache, $options = [])
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
@@ -56,9 +56,9 @@ class XmlDbHistory implements XmlGetter
             LIMIT 1
         ");
 
-        $query->execute(array(
+        $query->execute([
             'id' => $id,
-        ));
+        ]);
 
         if ($query->fetch()) {
             $result = $id;
@@ -80,9 +80,9 @@ class XmlDbHistory implements XmlGetter
             AND doc_id = :id
         ");
 
-        $query->execute(array(
+        $query->execute([
             'id' => $id,
-        ));
+        ]);
 
         if ($doc = $query->fetchObject()) {
             $result = $doc->xml;

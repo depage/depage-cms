@@ -2,9 +2,9 @@
 
 namespace Depage\XmlDb\Tests;
 
-use Depage\XmlDb\XmlDocTypes\Base;
+use Depage\XmlDb\XmlDoctypes\Base;
 
-class DoctypeHandlerBaseTest extends DatabaseTestCase
+class DoctypeHandlerBaseTest extends XmlDbTestCase
 {
     // {{{ variables
     protected $xmlDb;
@@ -15,15 +15,16 @@ class DoctypeHandlerBaseTest extends DatabaseTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
-        ));
+        ]);
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
 
         $this->setUpHandler();
+        $this->doc->setDoctypeHandler($this->dth);
     }
     // }}}
     // {{{ setUpHandler
@@ -31,8 +32,8 @@ class DoctypeHandlerBaseTest extends DatabaseTestCase
     {
         $this->dth = new Base($this->xmlDb, $this->doc);
 
-        $this->validParents = array('*' => array('*'));
-        $this->availableNodes = array();
+        $this->validParents = ['*' => ['*']];
+        $this->availableNodes = [];
     }
     // }}}
 
@@ -58,6 +59,12 @@ class DoctypeHandlerBaseTest extends DatabaseTestCase
     public function testIsAllowedIn()
     {
         $this->assertTrue($this->dth->isAllowedIn('testNode', 'targetTestNode'));
+    }
+    // }}}
+    // {{{ testIsAllowedMove
+    public function testIsAllowedMove()
+    {
+        $this->assertTrue($this->dth->isAllowedMove(5, 7));
     }
     // }}}
 }

@@ -2,7 +2,7 @@
 
 namespace Depage\XmlDb\Tests;
 
-class XmlDbHistoryTest extends DatabaseTestCase
+class XmlDbHistoryTest extends XmlDbTestCase
 {
     // {{{ variables
     protected $xmlDbHistory;
@@ -14,7 +14,7 @@ class XmlDbHistoryTest extends DatabaseTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
         $this->xmlDbHistory = new \Depage\XmlDb\XmlDbHistory($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache);
     }
