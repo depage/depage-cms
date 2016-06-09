@@ -40,14 +40,19 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
         if (isset($params['dataNode'])) {
             foreach ($this->getElements() as $element) {
                 if (!empty($element->dataInfo)) {
-                    $node = $this->dataNodeXpath->evaluate($element->dataInfo)->item(0);
+                    $nodes = $this->dataNodeXpath->query($element->dataInfo);
                     $value = "";
 
-                    // @todo add textarea
-                    if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
-                        $value = $node->value == "true" ? true : false;
-                    } else {
-                        $value = $node->nodeValue;
+                    // @todo throw warning if nodelist is empty?
+                    if ($nodes->length > 0) {
+                        $node = $nodes->item(0);
+
+                        // @todo add textarea
+                        if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
+                            $value = $node->value == "true" ? true : false;
+                        } else {
+                            $value = $node->nodeValue;
+                        }
                     }
 
                     $element->setDefaultValue($value);
