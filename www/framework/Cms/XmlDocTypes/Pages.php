@@ -92,19 +92,17 @@ class Pages extends Base {
                 $node->setAttribute("name", $properties->new);
             }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {
-                $document = $this->xmldb->createDoc($properties->doc_type);
-                $node->setAttribute('db:docref', $document->getDocId());
+                $doc = $this->xmldb->createDoc($properties->doc_type);
                 $xml = $this->loadXmlTemplate($properties->xml_template);
-                $rootId = $document->getDocInfo()->rootid;
 
-                $docId = $document->save($xml);
+                $docId = $doc->save($xml);
+                $info = $doc->getDocInfo();
+                $node->setAttribute('db:docref', $info->name);
 
                 if (isset($extras['dataNodes'])) {
-                    // add document data to page data document
-                    $rootId = $document->getDocInfo()->rootid;
-
+                    // add doc data to page data doc
                     foreach ($extras['dataNodes'] as $dataNode) {
-                        $document->addNode($dataNode, $rootId);
+                        $doc->addNode($dataNode, $info->rootId);
                     }
                 }
 
@@ -143,7 +141,7 @@ class Pages extends Base {
             $copiedDoc = $this->xmldb->duplicateDoc($docrefId);
             $info = $copiedDoc->getDocInfo();
 
-            $this->document->setAttribute($nodeId, "db:docref", $info->id);
+            $this->document->setAttribute($nodeId, "db:docref", $info->name);
         }
 
         return true;

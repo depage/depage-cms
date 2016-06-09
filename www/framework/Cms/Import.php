@@ -283,10 +283,11 @@ class Import
 
             $doc = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\$docType");
             $newId = $doc->save($xmlData);
+            $info = $doc->getDocInfo();
 
             // updated reference attributes
             $this->docNavigation->removeAttribute($pageId, "db:ref");
-            $this->docNavigation->setAttribute($pageId, "db:docref", $newId);
+            $this->docNavigation->setAttribute($pageId, "db:docref", $info->name);
 
             $metaNode = $dataNode->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
             $changeDate = $metaNode->getAttribute("lastchange_UTC");

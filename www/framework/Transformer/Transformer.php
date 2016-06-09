@@ -479,7 +479,10 @@ abstract class Transformer
 
         if (isset($this->pageIdByUrl[$urlPath])) {
             $pageId = $this->pageIdByUrl[$urlPath];
-            $pagedataId = $this->pagedataIdByPageId[$pageId];
+            $docRef = $this->pagedataIdByPageId[$pageId];
+            // @todo this is a workaround for getting the pagedataId
+            $doc = $this->xmlGetter->getDoc($docRef);
+            $pagedataId = $doc->getDocId();
 
             return array($pageId, $pagedataId);
         } else {
