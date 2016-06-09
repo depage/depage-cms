@@ -224,7 +224,7 @@ class Main extends Base {
         foreach ($tasks as $task) {
             if ($task) {
                 $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                $taskrunner->run($task->taskId);
+                //$taskrunner->run($task->taskId);
             }
         }
 
@@ -280,6 +280,8 @@ class Main extends Base {
             }
         }
         //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
+
+        $task->begin();
 
         \Depage\Depage\Runner::redirect(DEPAGE_BASE);
     }

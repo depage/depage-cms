@@ -118,9 +118,7 @@ class Import
             $initId = $task->addSubtask("init", "\$import = %s;", [$this]);
         }
 
-        $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", [
-            $xmlFile,
-        ], $initId);
+        $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", [$xmlFile], $initId);
         $task->addSubtask("clean docs", "\$import->cleanDocs();", [], $loadId);
 
         $getDocsId = $task->addSubtask("getDocs", "\$import->getDocs();", [], $loadId);
@@ -136,6 +134,8 @@ class Import
         }
 
         $task->addSubtask("clear transform cache", "\$import->clearTransformCache();", [], $getDocsId);
+
+        $task->begin();
 
         return $task;
     }

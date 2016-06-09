@@ -687,6 +687,8 @@ class Project extends \Depage\Entity\Entity
         // unpublish removed files
         $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", [], $initId);
 
+        $task->begin();
+
         return $task;
     }
     // }}}
