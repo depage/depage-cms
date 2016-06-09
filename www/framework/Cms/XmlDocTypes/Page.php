@@ -87,7 +87,7 @@ class Page extends Base
                 xmltemplate as xmlTemplate
             FROM {$this->table_nodetypes} ORDER BY pos;"
         );
-        $query->execute($data);
+        $query->execute();
 
         do {
             $result = $query->fetchObject();
