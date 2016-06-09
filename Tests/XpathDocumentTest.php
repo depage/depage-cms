@@ -32,4 +32,11 @@ class XpathDocumentTest extends XpathTestCase
         $this->assertCorrectXpathIds(array(15, 16), '//*[@db:id < \'17\']', false);
     }
     // }}}
+
+    // {{{ testNoContext
+    public function testNoContext()
+    {
+        $this->assertCorrectXpathIds(array(16), 'pg:page', true, true);
+    }
+    // }}}
 }

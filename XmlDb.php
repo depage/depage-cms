@@ -342,31 +342,42 @@ class XmlDb implements XmlGetter
             }
         }
 
-        if ($fallback) {
-            $tableSql[0] = "SELECT DISTINCT l$level.id_doc FROM";
-        }
+        $ids = array();
 
-        $sql = implode(' ', $tableSql) . ' WHERE (' . implode(') AND (', $condSql) . ") ORDER BY l$level.id_parent, l$level.pos";
-        $params = array_merge($tableParams, $condParams);
+        if ($xpathElements) {
+            if ($fallback) {
+                $tableSql[0] = "SELECT DISTINCT l$level.id_doc FROM";
+            }
 
-        $query = $this->pdo->prepare($sql);
-        $query->execute($params);
+            $sql = implode(' ', $tableSql) . ' WHERE (' . implode(') AND (', $condSql) . ") ORDER BY l$level.id_parent, l$level.pos";
+            $params = array_merge($tableParams, $condParams);
 
-        $fetchedIds = array();
-        foreach ($query->fetchAll() as $result) {
-            $fetchedIds[] = $result[0];
+            $query = $this->pdo->prepare($sql);
+            $query->execute($params);
+
+            foreach ($query->fetchAll() as $result) {
+                $ids[] = $result[0];
+            }
+        } else {
+            $fallback = true;
+
+            foreach ($this->getDocuments() as $doc) {
+                $ids[] = $doc->getDocId();
+            }
         }
 
         if ($fallback) {
             if (is_null($docId)) {
-                $docIds = $fetchedIds;
+                $docIds = $ids;
             } else {
                 $docIds = array($docId);
             }
-            $fetchedIds = $this->getNodeIdsByXpathDom($xpath, $docIds);
+            $nodeIds = $this->getNodeIdsByXpathDom($xpath, $docIds);
+        } else {
+            $nodeIds = $ids;
         }
 
-        return $fetchedIds;
+        return $nodeIds;
     }
     // }}}
     // {{{ getNodeIdsByXpathDom

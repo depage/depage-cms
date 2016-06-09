@@ -44,4 +44,11 @@ class XpathXmlDbTest extends XpathTestCase
         $this->assertCorrectXpathIds(array(1, 2, 3, 4, 5), '//*[@db:id < \'6\']', false);
     }
     // }}}
+
+    // {{{ testNoContext
+    public function testNoContext()
+    {
+        $this->assertCorrectXpathIds(array(5, 10, 16), 'pg:page', true, true);
+    }
+    // }}}
 }
