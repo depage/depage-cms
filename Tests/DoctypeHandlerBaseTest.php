@@ -15,12 +15,12 @@ class DoctypeHandlerBaseTest extends XmlDbTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
-        ));
+        ]);
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
 
         $this->setUpHandler();
@@ -32,8 +32,8 @@ class DoctypeHandlerBaseTest extends XmlDbTestCase
     {
         $this->dth = new Base($this->xmlDb, $this->doc);
 
-        $this->validParents = array('*' => array('*'));
-        $this->availableNodes = array();
+        $this->validParents = ['*' => ['*']];
+        $this->availableNodes = [];
     }
     // }}}
 

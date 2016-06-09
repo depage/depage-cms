@@ -25,10 +25,10 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
     public function getSetUpOperation()
     {
         return new \PHPUnit_Extensions_Database_Operation_Composite(
-            array(
+            [
                 new PHPUnit_Extensions_Database_Operation_MySQL55Truncate(false),
                 \PHPUnit_Extensions_Database_Operation_Factory::INSERT(),
-            )
+            ]
         );
     }
     // }}}
@@ -40,10 +40,10 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
             $GLOBALS['DB_DSN'],
             $GLOBALS['DB_USER'],
             $GLOBALS['DB_PASSWD'],
-            array(
+            [
                 'prefix' => 'xmldb',
                 \PDO::ATTR_PERSISTENT => true,
-            )
+            ]
         );
         $this->conn = $this->createDefaultDBConnection($this->pdo->getPdoObject(), $GLOBALS['DB_DBNAME']);
 
@@ -171,7 +171,7 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
     }
     // }}}
     // {{{ assertEqualsIgnoreAttributes
-    protected function assertEqualsIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
+    protected function assertEqualsIgnoreAttributes($expected, $actual, $attributes = [], $message = '')
     {
         $expectedWithoutAttributes = $this->removeAttributes($attributes, $expected);
         $actualWithoutAttributes = $this->removeAttributes($attributes, $actual);
@@ -185,16 +185,16 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
         return $this->assertEqualsIgnoreAttributes(
             $expected,
             $actual,
-            array(
+            [
                 'db:lastchange',
                 'db:lastchangeUid',
-            ),
+            ],
             $message
         );
     }
     // }}}
     // {{{ assertXmlStringEqualsXmlStringIgnoreAttributes
-    protected function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
+    protected function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = [], $message = '')
     {
         $expectedWithoutAttributes = $this->removeAttributes($attributes, $expected);
         $actualWithoutAttributes = $this->removeAttributes($attributes, $actual);
@@ -208,10 +208,10 @@ class XmlDbTestCase extends \PHPUnit_Extensions_Database_TestCase
         return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
             $expected,
             $actual,
-            array(
+            [
                 'db:lastchange',
                 'db:lastchangeUid',
-            ),
+            ],
             $message
         );
     }

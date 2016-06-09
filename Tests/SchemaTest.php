@@ -7,16 +7,16 @@ class SchemaTest extends XmlDbTestCase
     // {{{ testUpdateSchema
     public function testUpdateSchema()
     {
-        $tables = array(
+        $tables = [
             'xmldb_proj_schema_test_xmldocs',
             'xmldb_proj_schema_test_xmltree',
             'xmldb_proj_schema_test_xmldeltaupdates',
             'xmldb_proj_schema_test_xmlnodetypes',
-        );
+        ];
 
         $this->dropTables($tables);
 
-        $cache = \Depage\Cache\Cache::factory('xmldb', array('disposition' => 'uncached'));
+        $cache = \Depage\Cache\Cache::factory('xmldb', ['disposition' => 'uncached']);
         $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_schema_test', $this->pdo, $cache);
         $xmlDb->updateSchema();
 

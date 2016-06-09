@@ -14,7 +14,7 @@ class XmlDbHistoryTest extends XmlDbTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
         $this->xmlDbHistory = new \Depage\XmlDb\XmlDbHistory($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache);
     }

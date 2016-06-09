@@ -17,7 +17,7 @@ use Depage\XmlDb\Exceptions\XmlDbException;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    protected $doc_ids = array();
+    protected $doc_ids = [];
 
     protected $pdo;
     protected $cache;
@@ -34,7 +34,7 @@ class XmlDb implements XmlGetter
     public $options;
     // }}}
     // {{{ constructor
-    public function __construct($table_prefix, $pdo, $cache, $options = array())
+    public function __construct($table_prefix, $pdo, $cache, $options = [])
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
@@ -86,9 +86,9 @@ class XmlDb implements XmlGetter
                     FROM {$this->table_docs} AS docs
                     WHERE docs.id = :doc_id"
                 );
-                $query->execute(array(
+                $query->execute([
                     'doc_id' => $id,
-                ));
+                ]);
 
                 $result = $query->fetchObject();
                 if ($result === false) {
@@ -125,16 +125,16 @@ class XmlDb implements XmlGetter
      */
     public function getDocuments($name = "")
     {
-        $docs = array();
+        $docs = [];
 
         $namequery = "";
-        $query_param = array();
+        $query_param = [];
 
         if ($name) {
             $namequery = "WHERE name = :name";
-            $query_param = array(
+            $query_param = [
                 'name' => $name
-            );
+            ];
         }
 
         $query = $this->pdo->prepare(
@@ -189,9 +189,9 @@ class XmlDb implements XmlGetter
             WHERE xml.id = :nodeId"
         );
 
-        $query->execute(array(
+        $query->execute([
             'nodeId' => $nodeId,
-        ));
+        ]);
         $result = $query->fetchObject();
 
         if ($result && $doc_id = $this->docExists($result->id_doc)) {
@@ -259,10 +259,10 @@ class XmlDb implements XmlGetter
     public function getNodeIdsByXpath($xpath, $docId = null)
     {
         $fallback = false;
-        $tableSql = array();
-        $tableParams = array();
-        $condSql = array();
-        $condParams = array();
+        $tableSql = [];
+        $tableParams = [];
+        $condSql = [];
+        $condParams = [];
         $xpathElements = $this->parseXpathElements($xpath);
         $levels = count($xpathElements) - 1;
 
@@ -342,7 +342,7 @@ class XmlDb implements XmlGetter
             }
         }
 
-        $ids = array();
+        $ids = [];
 
         if ($xpathElements) {
             if ($fallback) {
@@ -370,7 +370,7 @@ class XmlDb implements XmlGetter
             if (is_null($docId)) {
                 $docIds = $ids;
             } else {
-                $docIds = array($docId);
+                $docIds = [$docId];
             }
             $nodeIds = $this->getNodeIdsByXpathDom($xpath, $docIds);
         } else {
@@ -381,9 +381,9 @@ class XmlDb implements XmlGetter
     }
     // }}}
     // {{{ getNodeIdsByXpathDom
-    protected function getNodeIdsByXpathDom($xpath, $docs = array())
+    protected function getNodeIdsByXpathDom($xpath, $docs = [])
     {
-        $ids = array();
+        $ids = [];
 
         foreach ($docs as $doc) {
             $domXpath = new \DomXpath($this->getDoc($doc)->getXml());
@@ -410,7 +410,7 @@ class XmlDb implements XmlGetter
     // {{{ parsePosition
     protected function parsePosition($condition)
     {
-        $positionArray = array();
+        $positionArray = [];
         $pOperator = '(=|!=|<|>|<=|>=)';
         $pPosition = '([0-9]+)';
 
@@ -450,7 +450,7 @@ class XmlDb implements XmlGetter
     // {{{ getConditionAttributes
     protected function getConditionAttributes($conditionString, $strings)
     {
-        $conditionArray = array();
+        $conditionArray = [];
 
         $pAttr = '@(\w[\w\d:]*)';
         $pOperator = '(=|!=|<|>|<=|>=)';
@@ -471,12 +471,12 @@ class XmlDb implements XmlGetter
                 $first = false;
             };
 
-            $conditionArray[] = array(
+            $conditionArray[] = [
                 'bool' => $bool,
                 'name' => $condition[2],
                 'operator' => isset($condition[3]) ? $condition[3] : null,
                 'value' => (isset($condition[4]) && $condition[4] != '') ? $strings[$condition[4]] : null,
-            );
+            ];
         }
 
         return $conditionArray;
@@ -487,7 +487,7 @@ class XmlDb implements XmlGetter
     {
         $n = 0;
         $newText = '';
-        $strings = array();
+        $strings = [];
 
         $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
         preg_match_all($p, $text, $parts);
@@ -508,7 +508,7 @@ class XmlDb implements XmlGetter
     protected function cleanOperator($operator)
     {
         $result = '';
-        $operators = array('=', '!=', '<=', '>=', '<', '>', 'and', 'or');
+        $operators = ['=', '!=', '<=', '>=', '<', '>', 'and', 'or'];
 
         if (in_array($operator, $operators)) {
             $result = $operator;
@@ -543,10 +543,10 @@ class XmlDb implements XmlGetter
             "INSERT {$this->table_docs} SET
                 name = :name, type = :type;"
         );
-        $query->execute(array(
+        $query->execute([
             'name' => $docName,
             'type' => $doctype,
-        ));
+        ]);
 
         $docId = $this->pdo->lastInsertId();
 
@@ -596,9 +596,9 @@ class XmlDb implements XmlGetter
                 FROM {$this->table_docs}
                 WHERE id = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'doc_id' => $doc_id,
-            ));
+            ]);
 
             $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
 

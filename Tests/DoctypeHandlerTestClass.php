@@ -13,13 +13,13 @@ class DoctypeHandlerTestClass extends Base
     public $isAllowedAdd = true;
 
     public $testDocument = false;
-    public $availableNodes = array();
-    public $validParents = array(
-        '*' => array(
+    public $availableNodes = [];
+    public $validParents = [
+        '*' => [
             '*',
-        ),
-    );
-    public $preserveWhitespace = array();
+        ],
+    ];
+    public $preserveWhitespace = [];
 
     // {{{ constructor
     public function __construct($xmlDb, $document)
@@ -28,10 +28,10 @@ class DoctypeHandlerTestClass extends Base
 
         $testNode = new \stdClass();
         $testNode->new = 'customNameAttribute';
-        $testNode->attributes = array(
+        $testNode->attributes = [
             'attr1' => 'value1',
             'attr2' => 'value2',
-        );
+        ];
 
         $this->availableNodes['testNode'] = $testNode;
     }

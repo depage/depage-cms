@@ -6,17 +6,17 @@ class Base implements DoctypeInterface
 {
     // {{{ variables
     // list of elements that may created by a user
-    protected $availableNodes = array();
+    protected $availableNodes = [];
 
     // list of valid parents given by nodename
-    protected $validParents = array(
-        '*' => array(
+    protected $validParents = [
+        '*' => [
             '*',
-        ),
-    );
+        ],
+    ];
 
     // list of names of nodes not to be affected by whitespace stripping
-    protected $preserveWhitespace = array();
+    protected $preserveWhitespace = [];
     // }}}
 
     // {{{ constructor
@@ -28,10 +28,10 @@ class Base implements DoctypeInterface
 
     // {{{ getPermissions
     public function getPermissions() {
-        return (object) array(
+        return (object) [
             'validParents' => $this->getValidParents(),
             'availableNodes' => $this->getAvailableNodes(),
-        );
+        ];
     }
     // }}}
     // {{{ getValidParents

@@ -33,8 +33,8 @@ class Document
     protected $id_attribute = 'id';
     protected $id_data_attribute = 'dataid';
 
-    protected $free_element_ids = array();
-    protected $doctypeHandlers = array();
+    protected $free_element_ids = [];
+    protected $doctypeHandlers = [];
     // }}}
     // {{{ constructor
     /**
@@ -112,9 +112,9 @@ class Document
             WHERE docs.id = :doc_id
             LIMIT 1"
         );
-        $query->execute(array(
+        $query->execute([
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         $info = $query->fetchObject();
 
@@ -170,9 +170,9 @@ class Document
             FROM {$this->table_docs} AS docs
             WHERE docs.id = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'doc_id' => $this->doc_id,
-        ));
+        ]);
         return $query->fetchObject();
     }
     // }}}
@@ -235,10 +235,10 @@ class Document
             FROM {$this->table_xml} AS xml
             WHERE xml.id = :id AND xml.id_doc = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'id' => $id,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         return ($result = $query->fetchObject()) ? $result->name : false;
     }
@@ -258,10 +258,10 @@ class Document
             FROM {$this->table_xml} AS xml
             WHERE xml.id= :id AND xml.id_doc = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'id' => $id,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         return ($result = $query->fetchObject()) ? $result->id_parent : false;
     }
@@ -326,9 +326,9 @@ class Document
                 FROM {$this->table_docs} AS docs
                 WHERE docs.id = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
             $result = $query->fetchObject();
 
             $this->entities = $result->entities;
@@ -347,10 +347,10 @@ class Document
                 FROM {$this->table_xml} AS xml
                 WHERE xml.id = :id AND xml.id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'doc_id' => $this->doc_id,
                 'id' => $id,
-            ));
+            ]);
             $result = $query->fetchObject();
 
             //get ROOT-NODE
@@ -456,17 +456,17 @@ class Document
      */
     public function getAttributes($node_id)
     {
-        $attributes = array();
+        $attributes = [];
 
         $query = $this->pdo->prepare(
             "SELECT xml.value
             FROM {$this->table_xml} AS xml
             WHERE xml.id = :node_id AND xml.type='ELEMENT_NODE' AND xml.id_doc = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'node_id' => $node_id,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         if ($result = $query->fetchObject()) {
             $matches = preg_split("/(=\"|\"$|\" )/", $result->value);
@@ -540,13 +540,13 @@ class Document
         $this->beginTransactionAltering();
 
         if ($info) {
-            $query->execute(array(
+            $query->execute([
                 'id' => $info->id,
                 'name' => $info->name,
                 'rootid' => $info->rootid,
                 'type' => $info->type,
                 'ns' => $info->namespaces,
-            ));
+            ]);
         }
 
         $this->endTransaction();
@@ -588,11 +588,11 @@ class Document
             WHERE id = :doc_id"
         );
 
-        $query->execute(array(
+        $query->execute([
             'rootid' => $doc_info->rootid,
             'ns' => $namespaces,
             'doc_id' => $doc_info->id,
-        ));
+        ]);
 
         $this->endTransaction();
 
@@ -643,7 +643,7 @@ class Document
      * @param $target_pos
      * @return bool
      */
-    public function addNode(\DomNode $node, $target_id, $target_pos = -1, $extras = array())
+    public function addNode(\DomNode $node, $target_id, $target_pos = -1, $extras = [])
     {
         $success = false;
         $dth = $this->getDoctypeHandler();
@@ -701,7 +701,7 @@ class Document
 
         $this->deleteNodePrivate($id_to_replace);
 
-        $changed_ids = array();
+        $changed_ids = [];
         $changed_ids[] = $this->saveNodeIn($node, $target_id, $target_pos, true);
         $changed_ids[] = $target_id;
 
@@ -970,10 +970,10 @@ class Document
                 "DELETE FROM {$this->table_xml}
                 WHERE id_doc = :doc_id AND id = :node_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'doc_id' => $this->doc_id,
                 'node_id' => $node_id,
-            ));
+            ]);
 
             // update position of remaining nodes
             $query = $this->pdo->prepare(
@@ -981,11 +981,11 @@ class Document
                     SET pos=pos-1
                     WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'node_parent_id' => $target_id,
                 'node_pos' => $target_pos,
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
         }
         return $target_id;
     }
@@ -1021,21 +1021,21 @@ class Document
                 SET id_doc=NULL, id_parent=NULL, pos=NULL
                 WHERE id = :node_id AND id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'node_id' => $node_id,
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
             // update position on source position
             $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET pos=pos-1
                 WHERE id_parent = :node_parent_id AND pos > :node_pos AND id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'node_parent_id' => $node_parent_id,
                 'node_pos' => $node_pos,
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
 
             // update positions on target position
             $query = $this->pdo->prepare(
@@ -1043,23 +1043,23 @@ class Document
                 SET pos=pos+1
                 WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'target_id' => $target_id,
                 'target_pos' => $target_pos,
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
             // reattach node at target position
             $query = $this->pdo->prepare(
                 "UPDATE {$this->table_xml}
                 SET id_doc = :doc_id, id_parent = :target_id, pos = :target_pos
                 WHERE id = :node_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'target_id' => $target_id,
                 'target_pos' => $target_pos,
                 'node_id' => $node_id,
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
 
             $this->updateLastChange();
             $result = $node_parent_id;
@@ -1178,11 +1178,11 @@ class Document
             SET xml.value = :attr_str
             WHERE xml.id = :node_id AND xml.id_doc = :doc_id"
         );
-        $success = $query->execute(array(
+        $success = $query->execute([
             'node_id' => $node_id,
             'attr_str' => $this->getAttributeString($attributes),
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         $this->updateLastChange();
 
@@ -1216,11 +1216,11 @@ class Document
     protected function getAttributeString($attributes)
     {
         $attr_str = "";
-        $autogeneratedAttr = array(
+        $autogeneratedAttr = [
             $this->db_ns->ns . ':' . $this->id_attribute,
             $this->db_ns->ns . ":lastchange",
             $this->db_ns->ns . ":lastchangeUid",
-        );
+        ];
         foreach($attributes as $name => $value) {
             if (!in_array($name, $autogeneratedAttr)) {
                 $attr_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
@@ -1248,7 +1248,7 @@ class Document
                 WHERE patron_info.pid = old.id;
             END
          */
-        $this->free_element_ids = array();
+        $this->free_element_ids = [];
         $lastMax = 0;
 
         do {
@@ -1269,10 +1269,10 @@ class Document
                 ) LIMIT :maxCount;"
             );
 
-            $query->execute(array(
+            $query->execute([
                 'start' => $lastMax,
                 'maxCount' => $needed,
-            ));
+            ]);
 
             $results = $query->fetchAll(\PDO::FETCH_OBJ);
             foreach ($results as $id) {
@@ -1324,10 +1324,10 @@ class Document
 
         $xml_doc = '';
 
-        $query->execute(array(
+        $query->execute([
             'doc_id' => $this->doc_id,
             'parent_id' => $parent_id,
-        ));
+        ]);
         $results = $query->fetchAll(\PDO::FETCH_OBJ);
         foreach ($results as $row) {
             //get ELMEMENT_NODE
@@ -1385,10 +1385,10 @@ class Document
             FROM {$this->table_xml} AS xml
             WHERE xml.id = :id AND xml.id_doc = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'id' => $id,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         return ($result = $query->fetchObject()) ? $result->pos : null;
     }
@@ -1401,10 +1401,10 @@ class Document
             FROM {$this->table_xml} AS xml
             WHERE xml.id_parent = :target_id AND id_doc = :doc_id"
         );
-        $query->execute(array(
+        $query->execute([
             'target_id' => $target_id,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         if ($object = $query->fetchObject()) {
             $result = $object->pos;
@@ -1419,7 +1419,7 @@ class Document
     // {{{ extractNamespaces
     protected function extractNamespaces($str)
     {
-        $namespaces = array();
+        $namespaces = [];
         $pName = "([a-zA-Z0-9]*)";
         $pAttr = "([^\"]*)";
         preg_match_all("/xmlns:$pName=\"$pAttr\"/", $str, $ns_elements, PREG_SET_ORDER);
@@ -1434,7 +1434,7 @@ class Document
     protected function saveNodePrivate($node)
     {
         // get all nodes in array
-        $node_array = array();
+        $node_array = [];
         $this->getNodeArrayForSaving($node_array, $node);
         $rootId = $node_array[0]['id'];
 
@@ -1472,9 +1472,9 @@ class Document
                 FROM {$this->table_xml}
                 WHERE id_doc = :doc_id"
             );
-            $query->execute(array(
+            $query->execute([
                 'doc_id' => $this->doc_id,
-            ));
+            ]);
             $this->pdo->exec('SET foreign_key_checks = 1;');
         }
 
@@ -1489,7 +1489,7 @@ class Document
         }
 
         // get all nodes in array
-        $node_array = array();
+        $node_array = [];
         $this->getNodeArrayForSaving($node_array, $node);
 
         return $this->saveNodeArray($node_array, $target_id, $target_pos, $inc_children);
@@ -1565,13 +1565,13 @@ class Document
             $this->getNodeArrayForSaving($node_array, $root_node, $parent_index, $pos, $stripwhitespace);
         } elseif ($type === XML_ELEMENT_NODE) {
             $id = $this->getNodeId($node);
-            $node_array[] = array(
+            $node_array[] = [
                 'id' => $id,
                 'id_old' => $id,
                 'parent_index' => $parent_index,
                 'pos' => $pos,
                 'node' => $node,
-            );
+            ];
 
             $parent_index = count($node_array) - 1;
             $node_name = (($node->prefix != '') ? $node->prefix . ':' : '') . $node->localName;
@@ -1602,13 +1602,13 @@ class Document
             }
         } else {
             // is *_NODE
-            $node_array[] = array(
+            $node_array[] = [
                 'id' => null,
                 'id_old' => null,
                 'parent_index' => $parent_index,
                 'pos' => $pos,
                 'node' => $node,
-            );
+            ];
         }
     }
     // }}}
@@ -1658,7 +1658,7 @@ class Document
                 $name_query = $node->localName;
             }
 
-            $attributes = array();
+            $attributes = [];
             foreach ($node->attributes as $attrib) {
                 $attrib_ns = ($attrib->prefix == '') ? '' : $attrib->prefix . ':';
                 $attrib_name = $attrib->localName;
@@ -1673,11 +1673,11 @@ class Document
                     SET pos = pos + 1
                     WHERE id_parent = :target_id AND pos >= :target_pos AND id_doc = :doc_id"
                 );
-                $query->execute(array(
+                $query->execute([
                     'target_id' => $target_id,
                     'target_pos' => $target_pos,
                     'doc_id' => $this->doc_id,
-                ));
+                ]);
             }
 
             $node_type = 'ELEMENT_NODE';
@@ -1700,7 +1700,7 @@ class Document
             throw new Exceptions\XmlDbException('Unknown DOM node type: "' . $node->nodeType . '".');
         }
 
-        $insert_query->execute(array(
+        $insert_query->execute([
             'id_query' => $id_query,
             'target_id' => $target_id,
             'target_pos' => $target_pos,
@@ -1708,7 +1708,7 @@ class Document
             'value' => $node_data,
             'type' => $node_type,
             'doc_id' => $this->doc_id,
-        ));
+        ]);
 
         if (is_null($id)) {
             $id = $this->pdo->lastInsertId();
@@ -1778,11 +1778,11 @@ class Document
             $user_id = null;
         }
 
-        $params = array(
+        $params = [
             'doc_id' => $this->getDocId(),
             'timestamp' => date('Y-m-d H:i:s', $timestamp),
             'user_id' => $user_id,
-        );
+        ];
 
         return ($query->execute($params)) ? $timestamp : false;
     }

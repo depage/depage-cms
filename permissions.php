@@ -21,8 +21,8 @@ class Permissions {
     const default_element = "default";
     // }}}
     // {{{ variables
-    protected $allow_element_in = array();
-    protected $allow_unlink_of = array();
+    protected $allow_element_in = [];
+    protected $allow_unlink_of = [];
     // }}}
 
     // {{{ constructor
@@ -35,14 +35,14 @@ class Permissions {
     // {{{ allow_element_in()
     public function allow_element_in($element, $target) {
         if (!isset($this->allow_element_in[$element])) {
-            $this->allow_element_in[$element] = array();
+            $this->allow_element_in[$element] = [];
         }
 
         if (!in_array($target, $this->allow_element_in[$element])) {
             if ($target != self::wildcard) {
                 $this->allow_element_in[$element][] = $target;
             } else {
-                $this->allow_element_in[$element] = array($target);
+                $this->allow_element_in[$element] = [$target];
             }
         }
     }
@@ -53,7 +53,7 @@ class Permissions {
             if ($element != self::wildcard) {
                 $this->allow_unlink_of[] = $element;
             } else {
-                $this->allow_unlink_of[] = array($element);
+                $this->allow_unlink_of[] = [$element];
             }
         }
     }
@@ -76,12 +76,12 @@ class Permissions {
     // }}}
     // {{{ valid_children()
     public function valid_children() {
-        $valid_children_for = array();
+        $valid_children_for = [];
 
         foreach ($this->allow_element_in as $element => $targets) {
             foreach ($targets as $target) {
                 if (!isset($valid_children_for[$target])) {
-                    $valid_children_for[$target] = array();
+                    $valid_children_for[$target] = [];
                 }
 
                 $valid_children_for[$target][] = $element;
@@ -91,13 +91,13 @@ class Permissions {
         // resolve wildcard
         if (isset($valid_children_for[self::wildcard])) {
             if (!isset($valid_children_for[self::default_element])) {
-                $valid_children_for[self::default_element] = array();
+                $valid_children_for[self::default_element] = [];
             }
 
             $known_elements = array_unique(array_merge(array_keys($valid_children_for), array_keys($this->allow_element_in)));
             foreach ($known_elements as $element) {
                 if (!isset($valid_children_for[$element])) {
-                    $valid_children_for[$element] = array();
+                    $valid_children_for[$element] = [];
                 }
                 $valid_children_for[$element] = array_unique(array_merge($valid_children_for[$element], $valid_children_for[self::wildcard]));
             }
@@ -126,7 +126,7 @@ class Permissions {
     // }}}
     // {{{ __toString()
     public function __toString() {
-        return serialize(array($this->allow_element_in, $this->allow_unlink_of));
+        return serialize([$this->allow_element_in, $this->allow_unlink_of]);
     }
     // }}}
 }

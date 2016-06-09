@@ -12,11 +12,11 @@ class XmlDbTest extends XmlDbTestCase
     {
         parent::setUp();
 
-        $cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
-        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
+        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $cache, [
             'root',
             'child',
-        ));
+        ]);
     }
     // }}}
 
@@ -26,7 +26,7 @@ class XmlDbTest extends XmlDbTestCase
         $docs = $this->xmlDb->getDocuments('pages');
         $pagesDoc = $docs['pages'];
 
-        $this->assertEquals(array('pages'), array_keys($docs));
+        $this->assertEquals(['pages'], array_keys($docs));
         $this->assertInstanceOf('Depage\XmlDb\Document', $pagesDoc);
         $this->assertEquals('pages', $pagesDoc->getDocInfo()->name);
     }
@@ -35,13 +35,13 @@ class XmlDbTest extends XmlDbTestCase
     public function testGetDocuments()
     {
         $docs = $this->xmlDb->getDocuments();
-        $expectedNames = array(
+        $expectedNames = [
             'pages',
             'pages2',
             'pages3',
             'tpl_newnodes',
             'tpl_templates',
-        );
+        ];
 
         $this->assertEquals($expectedNames, array_keys($docs));
 
@@ -65,7 +65,7 @@ class XmlDbTest extends XmlDbTestCase
     // {{{ testGetDoc
     public function testGetDoc()
     {
-        $searches = array(3, '3', 'pages');
+        $searches = [3, '3', 'pages'];
 
         foreach ($searches as $search) {
             $this->assertXmlStringEqualsXmlString($this->xmlPages, $this->xmlDb->getDoc($search)->getXml(false));
@@ -180,12 +180,12 @@ class XmlDbTest extends XmlDbTestCase
     // {{{ testRemoveDoc
     public function testRemoveDoc()
     {
-        $idsBefore = array(
+        $idsBefore = [
             3 => '3',
             'pages' => '3',
-        );
+        ];
 
-        $idsAfter = array();
+        $idsAfter = [];
 
         $this->assertArrayHasKey('pages', $this->xmlDb->getDocuments('pages'));
 

@@ -49,9 +49,9 @@ class DocumentHistory
             FROM {$this->table_history} AS h
             WHERE h.doc_id = :doc_id";
 
-        $params = array(
+        $params = [
             'doc_id' => $this->document->getDocId(),
-        );
+        ];
 
         if ($published !== null) {
             $query .= " AND h.published = :published";
@@ -69,18 +69,18 @@ class DocumentHistory
 
         $sth = $this->pdo->prepare($query);
 
-        $versions = array();
+        $versions = [];
 
         if ($sth->execute($params)) {
             $results = $sth->fetchAll();
 
             foreach($results as &$result) {
-                $versions[strtotime($result['last_saved_at'])] = array(
+                $versions[strtotime($result['last_saved_at'])] = [
                     'last_saved_at' => $result['last_saved_at'],
                     'user_id' => $result['user_id'],
                     'published' => $result['published'],
                     'hash' => $result['hash'],
-                );
+                ];
             }
         }
 
@@ -114,9 +114,9 @@ class DocumentHistory
             WHERE h.last_saved_at = :timestamp"
         );
 
-        $params = array(
+        $params = [
             'timestamp' => date($this->dateFormat, $timestamp),
-        );
+        ];
 
         if ($query->execute($params) && $result = $query->fetchObject()) {
             $doc = new \Depage\Xml\Document();
@@ -176,14 +176,14 @@ class DocumentHistory
                 VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
             );
 
-            $params = array(
+            $params = [
                 'doc_id' => $this->document->getDocId(),
                 'hash' => $hash,
                 'xml' => $xml,
                 'timestamp' => date($this->dateFormat, $timestamp),
                 'user_id' => $user_id,
                 'published' => $published,
-            );
+            ];
 
             if ($query->execute($params)) {
                 $result = $timestamp;
@@ -221,10 +221,10 @@ class DocumentHistory
              WHERE doc_id = :doc_id AND last_saved_at = :timestamp;"
         );
 
-        $params = array(
+        $params = [
             'doc_id' => $this->document->getDocId(),
             'timestamp' => date($this->dateFormat, $timestamp),
-        );
+        ];
 
         if ($query->execute($params)) {
             return $query->rowCount() > 0;

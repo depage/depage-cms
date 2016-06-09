@@ -9,15 +9,15 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     {
         $this->dth = new DoctypeHandlerTestClass($this->xmlDb, $this->doc);
 
-        $this->validParents = array('*' => array('*'));
-        $this->availableNodes = array();
+        $this->validParents = ['*' => ['*']];
+        $this->availableNodes = [];
 
         $testNode = new \stdClass();
         $testNode->new = 'customNameAttribute';
-        $testNode->attributes = array(
+        $testNode->attributes = [
             'attr1' => 'value1',
             'attr2' => 'value2',
-        );
+        ];
 
         $this->availableNodes['testNode'] = $testNode;
     }
@@ -43,12 +43,12 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testIsAllowedInRestrictedTargets
     public function testIsAllowedInRestrictedTargets()
     {
-        $this->dth->validParents = array(
-            '*' => array(
+        $this->dth->validParents = [
+            '*' => [
                 'target1',
                 'target2',
-            ),
-        );
+            ],
+        ];
 
         $this->assertFalse($this->dth->isAllowedIn('testNode', 'targetTestNode'));
         $this->assertTrue($this->dth->isAllowedIn('testNode', 'target1'));
@@ -57,14 +57,14 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testIsAllowedInRestrictedNodes
     public function testIsAllowedInRestrictedNodes()
     {
-        $this->dth->validParents = array(
-            'node1' => array(
+        $this->dth->validParents = [
+            'node1' => [
                 'target3',
-            ),
-            'node2' => array(
+            ],
+            'node2' => [
                 '*',
-            ),
-        );
+            ],
+        ];
 
         $this->assertFalse($this->dth->isAllowedIn('testNode', 'targetTestNode'));
         $this->assertTrue($this->dth->isAllowedIn('node1', 'target3'));
@@ -92,7 +92,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testStripWhitespaceDont
     public function testStripWhitespaceDont()
     {
-        $this->dth->preserveWhitespace = array('node');
+        $this->dth->preserveWhitespace = ['node'];
 
         $xml = $this->generateDomDocument('<node>' .
             "   \t  " .

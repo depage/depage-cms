@@ -4,7 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 class MockCache
 {
-    public $cached = array();
+    public $cached = [];
     public $deleted = false;
 
     public function set($identifier, $xml)

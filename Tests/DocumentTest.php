@@ -13,15 +13,15 @@ class DocumentTest extends XmlDbTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
         $this->dbPrefix = $this->pdo->prefix . '_proj_test';
         $this->xmlTree = $this->dbPrefix . '_xmltree';
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->dbPrefix, $this->pdo, $this->cache, array(
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->dbPrefix, $this->pdo, $this->cache, [
             'root',
             'child',
-        ));
+        ]);
 
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
         $this->namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
@@ -31,7 +31,7 @@ class DocumentTest extends XmlDbTestCase
     public function getNodeRowById($id)
     {
         $statement = $this->pdo->prepare('SELECT * FROM ' . $this->xmlTree . ' WHERE id=?;');
-        $params = array($id);
+        $params = [$id];
         $statement->execute($params);
 
         return $statement->fetch(\PDO::FETCH_ASSOC);
@@ -105,10 +105,10 @@ class DocumentTest extends XmlDbTestCase
             '<page/>'
         );
 
-        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, [
             'root',
             'child',
-        ));
+        ]);
         $doc = $xmlDb->getDoc(3);
 
         $expected = '<page/>';
@@ -135,10 +135,10 @@ class DocumentTest extends XmlDbTestCase
         // set up mock cache
         $cache = new MockCache();
 
-        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, array(
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $cache, [
             'root',
             'child',
-        ));
+        ]);
         $doc = new DocumentTestClass($xmlDb, 1);
 
         // set up doc type handler, pretend the document changed, trigger save node
@@ -379,12 +379,12 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetPermissionѕ
     public function testGetPermissionѕ()
     {
-        $expected = array(
-            'validParents' => array(
-                '*' => array('*')
-            ),
-            'availableNodes' => array()
-        );
+        $expected = [
+            'validParents' => [
+                '*' => ['*']
+            ],
+            'availableNodes' => []
+        ];
 
         $this->assertEquals($expected, (array) $this->doc->getPermissions());
     }
@@ -445,7 +445,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expectedXml, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '8',
             'id_doc' => '3',
             'id_parent' => '5',
@@ -453,7 +453,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName" ',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(8));
     }
@@ -468,7 +468,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'pos' => null,
@@ -476,7 +476,7 @@ class DocumentTest extends XmlDbTestCase
             'value' => 'name="newNode" ',
             'type' => 'ELEMENT_NODE',
             'id_parent' => null,
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -499,7 +499,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode1 = array(
+        $expectedNode1 = [
             'id' => '8',
             'id_doc' => '3',
             'id_parent' => '5',
@@ -507,9 +507,9 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName" ',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
-        $expectedNode2 = array(
+        $expectedNode2 = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '8',
@@ -517,7 +517,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'pg:page',
             'value' => 'name="newName2" ',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode1, $this->getNodeRowById(8));
         $this->assertEquals($expectedNode2, $this->getNodeRowById(37));
@@ -529,7 +529,7 @@ class DocumentTest extends XmlDbTestCase
         $doc = new \DomText('test');
         $this->assertEquals(37, $this->doc->saveNode($doc));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => null,
@@ -537,7 +537,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => null,
             'value' => 'test',
             'type' => 'TEXT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -576,7 +576,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -584,7 +584,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -605,7 +605,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -613,7 +613,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -634,7 +634,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '6',
@@ -642,7 +642,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -658,7 +658,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '4',
             'id_doc' => '3',
             'id_parent' => null,
@@ -666,7 +666,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => 'node',
             'value' => '',
             'type' => 'ELEMENT_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(4));
     }
@@ -700,7 +700,7 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertEquals(37, $this->doc->saveNodeToDb($nodeElement, 37, 4, 0));
 
-        $expectedNode = array(
+        $expectedNode = [
             'id' => '37',
             'id_doc' => '3',
             'id_parent' => '4',
@@ -708,7 +708,7 @@ class DocumentTest extends XmlDbTestCase
             'name' => null,
             'value' => 'test',
             'type' => 'ENTITY_REF_NODE',
-        );
+        ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(37));
     }
@@ -839,7 +839,7 @@ class DocumentTest extends XmlDbTestCase
     public function testUpdateLastChangeXmlDbUser()
     {
         // set user id
-        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array('userId' => 42));
+        $xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, ['userId' => 42]);
         $doc = new DocumentTestClass($xmlDb, 3);
 
         $this->setForeignKeyChecks(false);
@@ -1062,7 +1062,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testBuildNode
     public function testBuildNode()
     {
-        $node = $this->doc->buildNode('newNode', array('att' => 'val', 'att2' => 'val2'));
+        $node = $this->doc->buildNode('newNode', ['att' => 'val', 'att2' => 'val2']);
 
         $expected = '<newNode xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" att="val" att2="val2"/>';
 
@@ -1138,9 +1138,9 @@ class DocumentTest extends XmlDbTestCase
     {
         $attrs = $this->doc->getAttributes(5);
 
-        $expected = array(
+        $expected = [
             'name' => 'Home3',
-        );
+        ];
 
         $this->assertEquals($expected, $attrs);
     }
@@ -1191,7 +1191,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetNodeArrayForSaving
     public function testGetNodeArrayForSaving()
     {
-        $nodeArray = array();
+        $nodeArray = [];
         $node = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"></root>');
 
         $this->doc->getNodeArrayForSaving($nodeArray, $node);
@@ -1203,7 +1203,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetNodeArrayForSavingStripWhitespace
     public function testGetNodeArrayForSavingStripWhitespace()
     {
-        $nodeArray = array();
+        $nodeArray = [];
         $node = $this->generateDomDocument('<root db:id="2" xmlns:db="http://cms.depagecms.net/ns/database"></root>');
 
         $this->doc->getNodeArrayForSaving($nodeArray, $node, null, 0, false);

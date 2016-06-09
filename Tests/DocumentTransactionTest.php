@@ -13,12 +13,12 @@ class DocumentTransactionTest extends XmlDbTestCase
     {
         parent::setUp();
 
-        $this->cache = \Depage\Cache\Cache::factory('xmlDb', array('disposition' => 'uncached'));
+        $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, array(
+        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
-        ));
+        ]);
 
         $this->doc = new DocumentTransactionTestClass($this->xmlDb, 3);
         $this->namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
@@ -178,7 +178,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     // {{{ testBuildNode
     public function testBuildNode()
     {
-        $this->doc->buildNode('newNode', array('att' => 'val'));
+        $this->doc->buildNode('newNode', ['att' => 'val']);
         $this->assertEquals(0, $this->doc->cacheCleared);
         $this->assertEquals(0, $this->dth->onDocumentChange);
     }
