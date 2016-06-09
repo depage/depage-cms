@@ -16,7 +16,7 @@ class Base implements DoctypeInterface
     );
 
     // list of names of nodes not to be affected by whitespace stripping
-    protected $dontStripWhitespace = array();
+    protected $preserveWhitespace = array();
     // }}}
 
     // {{{ constructor
@@ -44,9 +44,9 @@ class Base implements DoctypeInterface
         return $this->availableNodes;
     }
     // }}}
-    // {{{ getDontStripWhitespace
-    public function getDontStripWhitespace() {
-        return $this->dontStripWhitespace;
+    // {{{ getPreserveWhitespace
+    public function getPreserveWhitespace() {
+        return $this->preserveWhitespace;
     }
     // }}}
     // {{{ getNewNodeFor

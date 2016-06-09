@@ -92,7 +92,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testStripWhitespaceDont
     public function testStripWhitespaceDont()
     {
-        $this->dth->dontStripWhitespace = array('node');
+        $this->dth->preserveWhitespace = array('node');
 
         $xml = $this->generateDomDocument('<node>' .
             "   \t  " .

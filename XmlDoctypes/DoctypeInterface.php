@@ -7,7 +7,7 @@ interface DoctypeInterface
     public function getPermissions();
     public function getValidParents();
     public function getAvailableNodes();
-    public function getDontStripWhitespace();
+    public function getPreserveWhitespace();
     public function getNewNodeFor($name);
 
     public function isAllowedIn($nodeName, $targetNodeName);

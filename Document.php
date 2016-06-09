@@ -1576,11 +1576,11 @@ class Document
             $parent_index = count($node_array) - 1;
             $node_name = (($node->prefix != '') ? $node->prefix . ':' : '') . $node->localName;
 
-            $dontStripWhitespace = $this->getDoctypeHandler()->getDontStripWhitespace();
+            $preserveWhitespace = $this->getDoctypeHandler()->getPreserveWhitespace();
 
             if (
                 !$stripwhitespace
-                || in_array($node_name, $dontStripWhitespace)
+                || in_array($node_name, $preserveWhitespace)
             ) {
                 $stripwhitespace = false;
             }
