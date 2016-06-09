@@ -111,7 +111,12 @@ class Import
         $this->extractSettings();
         $this->extractNavigation();
 
-        $initId = $task->addSubtask("init", "\$import = %s;", [$this]);
+        $classFile = realpath("projects/" . $this->projectName . "/import/Import.php");
+        if (file_exists($classFile)) {
+            $initId = $task->addSubtask("init", "require_once(%s); \$import = %s;", [$classFile, $this]);
+        } else {
+            $initId = $task->addSubtask("init", "\$import = %s;", [$this]);
+        }
 
         $loadId = $task->addSubtask("load", "\$import->loadBackup(%s);", [
             $xmlFile,
