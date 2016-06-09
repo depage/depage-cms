@@ -150,6 +150,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
         $this->task = Task::load($this->pdo, (int)$taskId);
 
         if ($this->task->status != "failed" && $this->task->lock()) {
+            $this->task->begin();
             $this->abnormal_exit = true;
 
             register_shutdown_function(array($this, "_atShutdown"));

@@ -40,7 +40,7 @@ class Task {
     /**
      * @brief string current status of task
      **/
-    public $status = "";
+    public $status = "generating";
 
     /**
      * @brief string table name for tasks
@@ -222,6 +222,18 @@ class Task {
     }
     // }}}
 
+    // {{{ begin()
+    /**
+     * @brief begin
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function begin()
+    {
+        $this->setTaskStatus(null);
+    }
+    // }}}
     // {{{ setTaskStatus()
     public function setTaskStatus($status) {
         $query = $this->pdo->prepare(
@@ -470,11 +482,12 @@ class Task {
     private function createTask($taskName, $projectName = "") {
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableTasks}
-                (name, projectname, time_added) VALUES (:name, :projectName,  NOW())"
+                (name, projectname, status, time_added) VALUES (:name, :projectName, :status, NOW())"
         );
         $query->execute(array(
             "name" => $taskName,
             "projectName" => $projectName,
+            "status" => "generating",
         ));
 
         return $this->pdo->lastInsertId();
