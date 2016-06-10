@@ -43,6 +43,7 @@ class Tree extends Base {
             $this->docInfo = $this->doc->getDocInfo();
             $this->docId = $this->docInfo->id;
         }
+        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
     }
     // }}}
 
@@ -53,7 +54,6 @@ class Tree extends Base {
      */
     public function __destruct()
     {
-        $delta_updates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
         $delta_updates->discardOldChanges();
     }
     // }}}
@@ -365,11 +365,9 @@ class Tree extends Base {
      */
     protected function recordChange($doc_id, $parent_ids)
     {
-        $delta_updates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
-
         $unique_parent_ids = array_unique($parent_ids);
         foreach ($unique_parent_ids as $parent_id) {
-            $delta_updates->recordChange($parent_id);
+            $this->deltaUpdates->recordChange($parent_id);
         }
     }
     // }}}
@@ -399,8 +397,7 @@ class Tree extends Base {
      */
     protected function get_current_seq_nr($doc_id)
     {
-       $delta_updates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $doc_id);
-       return $delta_updates->currentChangeNumber();
+       return $this->deltaUpdates->currentChangeNumber();
     }
     // }}}
 }
