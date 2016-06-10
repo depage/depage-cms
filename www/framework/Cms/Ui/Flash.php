@@ -209,7 +209,7 @@ class Flash extends Base {
     protected function handleRpc($xmlInput)
     {
         if (!preg_match("/keepAlive/", $xmlInput)) {
-            $this->log->log($xmlInput);
+            //$this->log->log($xmlInput);
         }
 
         $project = $this->getProject($this->projectName);
