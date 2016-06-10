@@ -3633,6 +3633,7 @@ class_propBox_proj_filelist.prototype.onResize = function() {
 };
 // }}}
 // {{{ generateComponents()
+// @todo add doubcle click on file to select file when choose dialog interface
 class_propBox_proj_filelist.prototype.generateComponents = function() {
         var fileTypes;
         var addThis;
