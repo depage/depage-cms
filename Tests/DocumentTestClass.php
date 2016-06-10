@@ -48,7 +48,7 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     }
     // }}}
     // {{{ saveNodeIn
-    public function saveNodeIn($node, $target_id, $target_pos = -1, $inc_children = true)
+    public function saveNodeIn($node, $target_id, $target_pos, $inc_children)
     {
         return parent::saveNodeIn($node, $target_id, $target_pos, $inc_children);
     }

@@ -1492,8 +1492,7 @@ class Document
     // {{{ saveNodeArray
     protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
     {
-        $nodes = count($node_array);
-        $this->getFreeNodeIds($nodes);
+        $this->getFreeNodeIds(count($node_array));
 
         foreach ($node_array as $i => $node) {
             if (!is_null($node['id'])) {
@@ -1518,9 +1517,9 @@ class Document
 
         if ($inc_children) {
             // save element nodes
-            $this->saveNodesByType($node_array, $nodes, true);
+            $this->saveNodesByType($node_array, true);
             // save other nodes
-            $this->saveNodesByType($node_array, $nodes, false);
+            $this->saveNodesByType($node_array, false);
         }
 
         $this->updateLastChange();
@@ -1529,8 +1528,10 @@ class Document
     }
     // }}}
     // {{{ saveNodesByType
-    protected function saveNodesByType(&$node_array, $nodes, $xml_element_node)
+    protected function saveNodesByType(&$node_array, $xml_element_node)
     {
+        $nodes = count($node_array);
+
         for ($i = 1; $i < $nodes; $i++) {
             if (($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) == $xml_element_node) {
                 $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);

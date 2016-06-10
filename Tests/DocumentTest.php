@@ -560,12 +560,12 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testSaveNodeInDefault
-    public function testSaveNodeInDefault()
+    // {{{ testSaveNodeIn
+    public function testSaveNodeIn()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, -1, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -594,7 +594,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -623,7 +623,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -652,7 +652,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null));
+        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null, -1, true));
 
         $expected = '<node ' . $this->namespaces . ' />';
 
