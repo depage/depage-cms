@@ -1521,23 +1521,24 @@ class Document
 
         if ($inc_children) {
             // save element nodes
-            for ($i = 1; $i < $nodes; $i++) {
-                if ($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
-                }
-            }
-
+            $this->saveNodesByType($node_array, $nodes, true);
             // save other nodes
-            for ($i = 1; $i < $nodes; $i++) {
-                if ($node_array[$i]['node']->nodeType != XML_ELEMENT_NODE) {
-                    $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
-                }
-            }
+            $this->saveNodesByType($node_array, $nodes, false);
         }
 
         $this->updateLastChange();
 
         return $node_array[0]['id'];
+    }
+    // }}}
+    // {{{ saveNodesByType
+    protected function saveNodesByType(&$node_array, $nodes, $xml_element_node)
+    {
+        for ($i = 1; $i < $nodes; $i++) {
+            if (($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) == $xml_element_node) {
+                $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
+            }
+        }
     }
     // }}}
     // {{{ getNodeArrayForSaving
