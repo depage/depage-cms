@@ -11,9 +11,9 @@
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
  */
 
-namespace depage\websocket\jstree;
+namespace Depage\WebSocket\JsTree;
 
-class jstree_fallback extends \Depage\Depage\Ui\Base
+class Fallback extends \Depage\Depage\Ui\Base
 {
     // {{{ constructor
     public function __construct($options = NULL) {
@@ -53,7 +53,7 @@ class jstree_fallback extends \Depage\Depage\Ui\Base
         $this->auth->enforce();
 
         // TODO: cleanup old recorded changes based on logged in users
-        $delta_updates = new jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], $_REQUEST["seq_nr"]);
+        $delta_updates = new DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], $_REQUEST["seq_nr"]);
         return $delta_updates->encodedDeltaUpdate();
     }
     // }}}

@@ -1,8 +1,8 @@
 <?php
 
-namespace depage\websocket\jstree;
+namespace Depage\WebSocket\JsTree;
 
-class jstree_delta_updates {
+class DeltaUpdates {
     // clients will update themselves about every 3 seconds maximum. retain enough updates to update partially.
     // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
     const MAX_UPDATES_BEFORE_RELOAD = 50;

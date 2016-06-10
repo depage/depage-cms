@@ -1,8 +1,8 @@
 <?php
 
-require_once("framework/depage/depage.php");
+require_once("framework/Depage/Runner.php");
 // TODO: convert to autoloader
-require_once("framework/websocket/lib/WebSocket/Application/Application.php");
+require_once("framework/WebSocket/lib/WebSocket/Application/Application.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
     private $clients = array();
@@ -54,7 +54,7 @@ class JsTreeApplication extends \Websocket\Application\Application {
 
         if (empty($this->clients[$client->param])) {
             $this->clients[$client->param] = array();
-            $this->delta_updates[$client->param] = new \depage\websocket\jstree\jstree_delta_updates($this->prefix, $this->pdo, $this->xmldb, $client->param);
+            $this->delta_updates[$client->param] = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $client->param);
         }
 
         $this->clients[$client->param][] = $client;

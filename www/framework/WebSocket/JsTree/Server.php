@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL);
 
-require_once("jstree_application.php");
+require_once("Application.php");
 require(__DIR__ . '/../lib/SplClassLoader.php');
 
 // TODO: replace custom class loader with existing one
