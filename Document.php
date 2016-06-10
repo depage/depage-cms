@@ -15,15 +15,12 @@ class Document
     // {{{ variables
     protected $pdo;
     protected $cache;
-
     protected $db_ns;
 
     protected $table_prefix;
     protected $table_docs;
     protected $table_xml;
     protected $table_nodetypes;
-
-    protected $transaction = 0;
 
     protected $xmlDb;
     protected $doc_id;
@@ -1455,7 +1452,7 @@ class Document
     }
     // }}}
     // {{{ saveNodeIn
-    protected function saveNodeIn($node, $target_id, $target_pos = -1, $inc_children = true)
+    protected function saveNodeIn($node, $target_id, $target_pos, $inc_children)
     {
         $this->removeIdAttr($node);
 

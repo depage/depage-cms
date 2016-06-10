@@ -17,17 +17,17 @@ use Depage\XmlDb\Exceptions\XmlDbException;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    protected $doc_ids = [];
-
     protected $pdo;
     protected $cache;
-
     protected $db_ns;
 
     protected $table_prefix = 'dp_';
     protected $table_docs;
     protected $table_xml;
     protected $table_nodetypes;
+
+    protected $doc_ids = [];
+
     protected $transactions = 0;
     protected $alteringTransaction;
 

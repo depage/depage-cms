@@ -16,10 +16,9 @@ class DocumentHistory
     // {{{ variables
     private $pdo;
     private $db_ns;
+    private $table_history;
 
     private $document;
-
-    private $table_history;
     private $dateFormat = 'Y-m-d H:i:s';
     // }}}
     // {{{ constructor
