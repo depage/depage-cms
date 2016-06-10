@@ -54,7 +54,7 @@ class Tree extends Base {
      */
     public function __destruct()
     {
-        $delta_updates->discardOldChanges();
+        $this->deltaUpdates->discardOldChanges();
     }
     // }}}
 
