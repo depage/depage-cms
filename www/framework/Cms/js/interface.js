@@ -252,82 +252,88 @@ var depageCMS = (function() {
             // @todo get project name correctly
             var currentPos, newPos;
 
-            $(".sortable-forms .sortable").each(function() {
-                var $container = $(this);
-                var $head = $(this).find("h1");
+            $(".sortable-forms").each(function() {
+                var $sortable = $(this);
                 var $form = $(this).find("form");
                 var xmldb = new DepageXmldb(baseUrl, $form.attr("data-project"), $form.attr("data-document"));
 
-                $head.on("click", function() {
-                    if ($container.hasClass("active")) {
-                        $container.removeClass("active");
-                    } else {
-                        $(".sortable.active").removeClass("active");
-                        $container.addClass("active");
+                $sortable.find(".sortable").each( function() {
+                    var $container = $(this);
+                    var $head = $(this).find("h1");
+                    var $form = $(this).find("form");
+                    var xmldb = new DepageXmldb(baseUrl, $form.attr("data-project"), $form.attr("data-document"));
+
+                    $head.on("click", function() {
+                        if ($container.hasClass("active")) {
+                            $container.removeClass("active");
+                        } else {
+                            $(".sortable.active").removeClass("active");
+                            $container.addClass("active");
+                        }
+                    });
+
+                    if (!$container.hasClass("new")) {
+                        // @todo make last element undeletable
+                        var $deleteButton = $("<a class=\"button delete\">Delete</a>");
+
+                        $deleteButton.appendTo($form.find("p.submit"));
+                        $deleteButton.depageShyDialogue({
+                            ok: {
+                                title: 'delete',
+                                classes: 'default',
+                                click: function(e) {
+                                    var $input = $form.find("p.node-name");
+
+                                    xmldb.deleteNode($input.data("nodeid"));
+
+                                    // @todo remove only if operation was successful
+                                    $container.remove();
+
+                                    return true;
+                                }
+                            },
+                            cancel: {
+                                title: 'cancel'
+                            }
+                        },{
+                            title: "delete",
+                            message : "delete now?"
+                        });
                     }
                 });
+                $sortable.sortable({
+                    itemSelector: ".sortable:not(.new)",
+                    containerSelector: ".sortable-forms",
+                    nested: false,
+                    handle: "h1",
+                    pullPlaceholder: false,
+                    placeholder: '<div class="placeholder"></div>',
+                    tolerance: 10,
+                    onDragStart: function($item, container, _super, event) {
+                        currentPos = $item.index();
 
-                if (!$container.hasClass("new")) {
-                    // @todo make last element undeletable
-                    var $deleteButton = $("<a class=\"button delete\">Delete</a>");
+                        _super($item, container);
+                    },
+                    onDrag: function ($item, position, _super, event) {
+                        position.left = 5;
+                        position.top -= 10;
 
-                    $deleteButton.appendTo($form.find("p.submit"));
-                    $deleteButton.depageShyDialogue({
-                        ok: {
-                            title: 'delete',
-                            classes: 'default',
-                            click: function(e) {
-                                var $input = $form.find("p.node-name");
+                        $item.css(position);
+                        $(".placeholder").text($item.find("h1").text());
+                    },
+                    onDrop: function($item, container, _super, event) {
+                        var $input = $item.find("p.node-name");
 
-                                // @todo add dialog to ask if sure
-                                xmldb.deleteNode($input.data("nodeid"));
+                        console.log("onDrop", $input.data("nodeid"),  $input.data("parentid"), newPos);
 
-                                $container.remove();
+                        xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
 
-                                return true;
-                            }
-                        },
-                        cancel: {
-                            title: 'cancel'
-                        }
-                    },{
-                        title: "delete",
-                        message : "delete now?"
-                    });
-                }
-            });
-            $(".sortable-forms").sortable({
-                itemSelector: ".sortable:not(.new)",
-                containerSelector: ".sortable-forms",
-                nested: false,
-                handle: "h1",
-                pullPlaceholder: false,
-                placeholder: '<div class="placeholder"></div>',
-                tolerance: 10,
-                onDragStart: function($item, container, _super, event) {
-                    currentPos = $item.index();
-
-                    _super($item, container);
-                },
-                onDrag: function ($item, position, _super, event) {
-                    position.left = 5;
-                    position.top -= 10;
-
-                    $item.css(position);
-                    $(".placeholder").text($item.find("h1").text());
-                },
-                onDrop: function($item, container, _super, event) {
-                    var $input = $item.find("p.node-name");
-
-                    console.log("onDrop", $input.data("nodeid"),  $input.data("parentid"), newPos);
-
-                    xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
-
-                    _super($item, container);
-                },
-                afterMove: function ($placeholder, container, $closestItemOrContainer) {
-                    newPos = $placeholder.index();
-                }
+                        _super($item, container);
+                    },
+                    afterMove: function ($placeholder, container, $closestItemOrContainer) {
+                        newPos = $placeholder.index();
+                    }
+                });
             });
         },
         // }}}
