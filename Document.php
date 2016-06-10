@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    modules/xmlDb/xmlDb.php
+ * @file    modules/xmlDb/Document.php
  *
  * cms xmlDb module
  *
@@ -1750,7 +1750,7 @@ class Document
      * @param $uid (int) optional user id, defaults to current user, when user
      *        is set in xmlDb options
      */
-    protected function updateLastChange($timestamp = null, $uid = null) {
+    public function updateLastChange($timestamp = null, $uid = null) {
         $query = $this->pdo->prepare(
             "UPDATE {$this->table_docs}
             SET
