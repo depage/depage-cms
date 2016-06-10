@@ -14,15 +14,14 @@ namespace Depage\XmlDb;
 class XmlDbHistory implements XmlGetter
 {
     // {{{ variables
-    private $doc_ids = [];
-
     private $pdo;
-
     private $db_ns;
+    private $table_history;
+
+    private $doc_ids = [];
 
     private $table_prefix = 'dp_';
     private $table_docs;
-    private $table_history;
 
     private $options;
     // }}}
@@ -34,11 +33,11 @@ class XmlDbHistory implements XmlGetter
         $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
         $this->xmlDb = new XmlDb($table_prefix, $pdo, $cache, $options);
-        $this->db_ns = new XmlNs("db", "http://cms.depagecms.net/ns/database");
+        $this->db_ns = new XmlNs('db', 'http://cms.depagecms.net/ns/database');
 
         $this->table_prefix = $table_prefix;
-        $this->table_docs = $table_prefix . "_xmldocs";
-        $this->table_history = $table_prefix . "_history";
+        $this->table_docs = $table_prefix . '_xmldocs';
+        $this->table_history = $table_prefix . '_history';
     }
     // }}}
 

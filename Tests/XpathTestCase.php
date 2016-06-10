@@ -260,7 +260,7 @@ abstract class XpathTestCase extends XmlDbTestCase
     // {{{ testAllWildCardNs
     public function testAllWildCardNs()
     {
-        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath <= 2.0
+        // can't be verified by DOMXpath (XPath 1.0). Namespace wildcards are XPath >= 2.0
         $this->assertCorrectXpathIds([17, 20, 25, 28, 29], '//*:folder', false);
     }
     // }}}

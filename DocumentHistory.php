@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    modules/xmlDb/history.php
+ * @file    modules/xmlDb/History.php
  *
  * cms xmlDb module
  *
@@ -16,10 +16,9 @@ class DocumentHistory
     // {{{ variables
     private $pdo;
     private $db_ns;
+    private $table_history;
 
     private $document;
-
-    private $table_history;
     private $dateFormat = 'Y-m-d H:i:s';
     // }}}
     // {{{ constructor
@@ -28,9 +27,9 @@ class DocumentHistory
 
         $this->pdo = $pdo;
 
-        $this->db_ns = new xmlns("db", "http://cms.depagecms.net/ns/database");
+        $this->db_ns = new XmlNs('db', 'http://cms.depagecms.net/ns/database');
 
-        $this->table_history = $table_prefix . "_history";
+        $this->table_history = $table_prefix . '_history';
     }
     // }}}
 
@@ -41,7 +40,9 @@ class DocumentHistory
      * Gets versions of the docment in the history.
      * returns array of time, user_id, published, and hash per version in array indexed on the last change time.
      *
-     * @param null $published
+     * @param bool $published
+     * @param int $maxResults
+     *
      * @return mixed
      */
     public function getVersions($published = null, $maxResults = null) {
@@ -54,18 +55,18 @@ class DocumentHistory
         ];
 
         if ($published !== null) {
-            $query .= " AND h.published = :published";
+            $query .= ' AND h.published = :published';
             $params['published'] = $published == true;
         }
 
-        $query .= " ORDER BY h.last_saved_at DESC";
+        $query .= ' ORDER BY h.last_saved_at DESC';
 
         if ($maxResults > 0) {
-            $query .= " LIMIT :maxResults";
+            $query .= ' LIMIT :maxResults';
             $params['maxResults'] = $maxResults;
         }
 
-        $query .= ";";
+        $query .= ';';
 
         $sth = $this->pdo->prepare($query);
 
@@ -95,6 +96,7 @@ class DocumentHistory
      */
     public function getLatestVersion() {
         $versions = $this->getVersions(null, 1);
+
         return reset($versions);
     }
     // }}}
@@ -102,7 +104,9 @@ class DocumentHistory
     /**
      * getXml
      *
-     * @param null $timestamp
+     * @param int $timestamp
+     * @param bool $add_id_attribute
+     *
      * @return bool|\DOMDocument|object
      */
     public function getXml($timestamp, $add_id_attribute = true) {
@@ -152,7 +156,7 @@ class DocumentHistory
      * gets the current document xml and saves a version to the history
      * add SHA hash column for data integrity
      *
-     * @param $user_id
+     * @param int $user_id
      * @param bool $published
      *
      * @return bool | timestamp
@@ -198,10 +202,10 @@ class DocumentHistory
     // {{{ restore
     /**
      * Restores the document to a previous state
-     *
      */
     public function restore($timestamp) {
         $xml_doc = $this->getXml($timestamp);
+
         if ($this->document->save($xml_doc)) {
             return $xml_doc;
         };
