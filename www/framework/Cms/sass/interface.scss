@@ -681,6 +681,7 @@ html {
         padding-top: $infoHeight;
         bottom: 0;
         overflow: scroll;
+        overflow: auto;
 
         header.info {
             position: absolute;
@@ -1636,7 +1637,6 @@ progress {
         @include icon("help-preview", 0.665);
     }
 }
-/* }}} */
 
 @import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
