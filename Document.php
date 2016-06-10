@@ -4,11 +4,9 @@
  *
  * cms xmlDb module
  *
- *
  * copyright (c) 2002-2011 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
- *
  */
 namespace Depage\XmlDb;
 
@@ -221,6 +219,23 @@ class Document
             : null;
     }
     // }}}
+
+    // {{{ getNodeAttributeById
+    protected function getNodeAttributeById($id, $attribute)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT xml.$attribute AS $attribute
+            FROM {$this->table_xml} AS xml
+            WHERE xml.id = :id AND xml.id_doc = :doc_id"
+        );
+        $query->execute([
+            'id' => $id,
+            'doc_id' => $this->doc_id,
+        ]);
+
+        return ($result = $query->fetchObject()) ? $result->$attribute : false;
+    }
+    // }}}
     // {{{ getNodeNameById
     /**
      * gets node_name by node db-id
@@ -247,22 +262,20 @@ class Document
         return $this->getNodeAttributeById($id, 'id_parent');
     }
     // }}}
-    // {{{ getNodeAttributeById
-    protected function getNodeAttributeById($id, $attribute)
+    // {{{ getPosById
+    /**
+     * gets node position in its parents childlist by node db-id.
+     *
+     * @param $id (int) node id
+     *
+     * @return $pos (int) position in node parents childlist
+     */
+    protected function getPosById($id)
     {
-        $query = $this->pdo->prepare(
-            "SELECT xml.$attribute AS $attribute
-            FROM {$this->table_xml} AS xml
-            WHERE xml.id = :id AND xml.id_doc = :doc_id"
-        );
-        $query->execute([
-            'id' => $id,
-            'doc_id' => $this->doc_id,
-        ]);
-
-        return ($result = $query->fetchObject()) ? $result->$attribute : false;
+        return $this->getNodeAttributeById($id, 'pos');
     }
     // }}}
+
     // {{{ getNodeIdsByXpath
     /**
      * gets node_ids by xpath
@@ -289,7 +302,6 @@ class Document
         return $fetched_ids;
     }
     // }}}
-
     // {{{ getSubdocByNodeId
     /**
      * gets an xml-document-object from specific db-id
@@ -467,7 +479,7 @@ class Document
         ]);
 
         if ($result = $query->fetchObject()) {
-            $matches = preg_split("/(=\"|\"$|\" )/", $result->value);
+            $matches = preg_split('/(="|"$|" )/', $result->value);
             $matches = array_chunk($matches, 2);
             foreach($matches as $match) {
                 if ($match[0] != '') {
@@ -567,8 +579,8 @@ class Document
 
         // @TODO get namespaces from document at this moment it is only per preg_match not by the domxml interface, because
         // @TODO namespace definitions are not available
-        preg_match_all("/ xmlns:([^=]*)=\"([^\"]*)\"/", $xml_text, $matches, PREG_SET_ORDER);
-        $namespaces = "";
+        preg_match_all('/ xmlns:([^=]*)="([^"]*)"/', $xml_text, $matches, PREG_SET_ORDER);
+        $namespaces = '';
         for ($i = 0; $i < count($matches); $i++) {
             if ($matches[$i][1] != $this->db_ns->ns) {
                 $namespaces .= $matches[$i][0];
@@ -1201,6 +1213,7 @@ class Document
             $xpath = new \DOMXPath($xml);
             $xpath->registerNamespace($db_ns->ns, $db_ns->uri);
             $xp_result = $xpath->query("./descendant-or-self::node()[@{$db_ns->ns}:{$attribute}]", $node);
+
             foreach ($xp_result as $node) {
                 $node->removeAttributeNS($db_ns->uri, $attribute);
             }
@@ -1370,19 +1383,6 @@ class Document
         }
 
         return $xml_doc;
-    }
-    // }}}
-    // {{{ getPosById
-    /**
-     * gets node position in its parents childlist by node db-id.
-     *
-     * @param $id (int) node id
-     *
-     * @return $pos (int) position in node parents childlist
-     */
-    protected function getPosById($id)
-    {
-        return $this->getNodeAttributeById($id, 'pos');
     }
     // }}}
     // {{{ getTargetPos
