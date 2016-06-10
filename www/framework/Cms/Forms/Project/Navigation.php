@@ -17,7 +17,7 @@ class Navigation extends Base
      **/
     public function __construct($name, $params)
     {
-        $params['label'] = _("Save Tag");
+        $params['label'] = _("Save Navigation Filter");
 
         parent::__construct($name, $params);
     }
@@ -37,13 +37,19 @@ class Navigation extends Base
             "label" => _("Name"),
             "placeholder" => _("Navigation filter name"),
             "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@name",
-            "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
             "dataAttr" => [
                 "nodeid" => $nodeId,
                 "parentid" => $this->parentId,
             ],
+        ]);
+        $this->addText("localized-$nodeId-shortname", [
+            "label" => _("Shortname"),
+            "placeholder" => _("Template name"),
+            "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@shortname",
+            "required" => true,
+            "validator" => "/[-_a-zA-Z0-9]+/",
         ]);
 
         $fs = $this->addFieldset("localized", [
