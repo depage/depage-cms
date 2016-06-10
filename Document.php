@@ -1412,12 +1412,12 @@ class Document
     protected function extractNamespaces($str)
     {
         $namespaces = [];
-        $pName = "([a-zA-Z0-9]*)";
-        $pAttr = "([^\"]*)";
+        $pName = '([a-zA-Z0-9]*)';
+        $pAttr = '([^"]*)';
         preg_match_all("/xmlns:$pName=\"$pAttr\"/", $str, $ns_elements, PREG_SET_ORDER);
 
         foreach ($ns_elements AS $ns_element) {
-            $namespaces[] = new xmlns($ns_element[1], $ns_element[2]);
+            $namespaces[] = new XmlNs($ns_element[1], $ns_element[2]);
         }
 
         return $namespaces;
