@@ -128,11 +128,11 @@ class XmlDb implements XmlGetter
     {
         $docs = [];
 
-        $namequery = "";
+        $namequery = '';
         $query_param = [];
 
         if ($name) {
-            $namequery = "WHERE name = :name";
+            $namequery = 'WHERE name = :name';
             $query_param = [
                 'name' => $name
             ];
