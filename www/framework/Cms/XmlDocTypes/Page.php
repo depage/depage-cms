@@ -31,6 +31,31 @@ class Page extends Base
      */
     public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
         $this->testNodeLanguages($node);
+
+        list($doc, $node) = \Depage\Xml\Document::getDocAndNode($node);
+
+        $xpath = new \DOMXPath($doc);
+
+        $nodelist = $xpath->query("./edit:date[@value = '@now']", $node);
+        if ($nodelist->length > 0) {
+            // search for languages used in document
+            for ($i = 0; $i < $nodelist->length; $i++) {
+                $nodelist->item($i)->setAttribute('value', date('Y/m/d'));
+            }
+        }
+
+        $nodelist = $xpath->query("./edit:text_singleline[@value = '@author']", $node);
+        if ($nodelist->length > 0) {
+            // search for languages used in document
+            for ($i = 0; $i < $nodelist->length; $i++) {
+                if (!empty($this->xmlDb->options['userId'])) {
+                    $user = \Depage\Auth\User::loadById($this->xmlDb->pdo, $this->xmlDb->options['userId']);
+                    $nodelist->item($i)->setAttribute('value', $user->fullname);
+                } else {
+                    $nodelist->item($i)->setAttribute('value', "");
+                }
+            }
+        }
     }
     // }}}
 
