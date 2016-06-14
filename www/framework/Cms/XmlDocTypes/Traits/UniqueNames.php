@@ -12,9 +12,13 @@ trait UniqueNames
 
         $xpath = new \DOMXPath($xml);
         $pages = $xpath->query($xpathQuery);
+        $this->nodes = new \SplObjectStorage();
 
         foreach ($pages as $page) {
-            $changed = $this->testChildNodeNames($page) || $changed;
+            $this->nodes->attach($page);
+        }
+        foreach ($this->nodes as $node) {
+            $changed = $this->testChildNodeNames($node) || $changed;
         }
 
         return $changed;
@@ -31,7 +35,7 @@ trait UniqueNames
         $names = [];
 
         foreach ($node->childNodes as $child) {
-            if ($child->nodeType == \XML_ELEMENT_NODE && !empty($child->getAttribute("name"))) {
+            if ($child->nodeType == \XML_ELEMENT_NODE && !empty($child->getAttribute("name")) && $this->nodes->contains($child)) {
                 $nodeId = $child->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
                 $nodeName = $child->getAttribute("name");
                 $found = false;
