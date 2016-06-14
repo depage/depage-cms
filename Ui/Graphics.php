@@ -43,7 +43,7 @@ class Graphics extends \Depage\Depage\Ui\Base
     private function convert($request)
     {
         $request = rawurldecode($request);
-        preg_match('/(.*(gif|jpg|jpeg|png))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png)/', $request, $command);
+        preg_match('/(.*(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff))\.(resize|crop|thumb|thumbfill)-(.*)x(.*)\.(gif|jpg|jpeg|png|webp)/', $request, $command);
 
         // escape everything
         $file       = escapeshellcmd($command[1]);
