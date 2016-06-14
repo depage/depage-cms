@@ -83,6 +83,7 @@ class Main extends Base {
             $form->addText("name", [
                 'label' => 'Name',
                 'required' => true,
+                'autofocus' => true,
             ]);
 
             $form->addPassword("pass", [
