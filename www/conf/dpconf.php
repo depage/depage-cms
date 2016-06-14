@@ -14,8 +14,8 @@ $conf = array(
         ),
         'auth' => array(
             'realm' => 'depage::cms',
-            //'method' => 'http_cookie',
-            'method' => 'http_basic',
+            'method' => 'http_cookie',
+            //'method' => 'http_basic',
             //'method' => 'http_digest',
             //'digestCompat' => true,
         ),
@@ -53,6 +53,7 @@ $conf = array(
                 'host' => "redis:6379",
             ),
         ),
+        'env' => 'production',
     ),
     // }}}
     // {{{ localhost/depage-cms/
@@ -87,7 +88,7 @@ $conf = array(
     ),
     // }}}
     // {{{ graphics
-    '*/depage-cms/**.(gif|jpg|jpeg|png).*.(gif|jpg|jpeg|png)$' => array(
+    '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
         //'env' => 'production',
         'extension' => "gm",
@@ -97,13 +98,14 @@ $conf = array(
     ),
     // }}}
     // {{{ edit.depage.net graphics
-    'edit.depage.net/**.(gif|jpg|jpeg|png).*.(gif|jpg|jpeg|png)$' => array(
+    'edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
-        //'env' => 'production',
-        'extension' => "im",
-        'executable' => "/usr/bin/convert",
+        'env' => 'production',
+        'extension' => "gm",
+        'executable' => "/usr/bin/gm",
         'background' => "#CCC8C4",
         'base' => 'inherit',
+        'env' => 'production',
     ),
     // }}}
 );
