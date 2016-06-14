@@ -93,7 +93,6 @@ $conf = array(
         //'env' => 'production',
         'extension' => "gm",
         'executable' => "/opt/local/bin/gm",
-        'background' => "#CCC8C4",
         'base' => 'inherit',
     ),
     // }}}
