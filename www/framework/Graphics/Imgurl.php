@@ -53,7 +53,8 @@ class Imgurl
     {
         if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
-            $baseUrl = DEPAGE_PATH;
+            $info = parse_url(DEPAGE_BASE);
+            $baseUrl = rtrim($info['path'], '/');
             $relativePath = "";
             $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
         } else {
@@ -178,11 +179,11 @@ class Imgurl
             $graphics->render($this->srcImg, $this->outImg);
         } catch (Exceptions\FileNotFound $e) {
             header("HTTP/1.1 404 Not Found");
-            echo("file not found");
+            echo("File not found.");
             die();
         } catch (Exceptions\Exception $e) {
             header("HTTP/1.1 500 Internal Server Error");
-            echo("invalid image action");
+            echo("Invalid image action.");
             die();
         }
 
