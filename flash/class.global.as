@@ -1,5 +1,5 @@
 ﻿/**
- * C L A S S 
+ * C L A S S
  * Class Global
  *
  * actionScript-library:
@@ -14,7 +14,7 @@
  *	and interface-texts
  */
 // {{{ constructor()
-class_conf = function() { 
+class_conf = function() {
 	this.lang = new Object();
 	this.interface = new Object();
 	this.user = new class_user();
@@ -29,58 +29,58 @@ class_conf = function() {
 // {{{ set_values()
 class_conf.prototype.set_values = function(args) {
 	var tempXML, tempObj;
-	
-	this.app_name = args["app_name"];	
-	this.app_version = args["app_version"];	
-	
-	this.thumb_width = int(args["thumb_width"]);	
-	this.thumb_height = int(args["thumb_height"]);	
-	this.thumb_load_num = int(args["thumb_load_num"]);	
-	
-	this.interface_lib = args["interface_lib"];	
+
+	this.app_name = args["app_name"];
+	this.app_version = args["app_version"];
+
+	this.thumb_width = int(args["thumb_width"]);
+	this.thumb_height = int(args["thumb_height"]);
+	this.thumb_load_num = int(args["thumb_load_num"]);
+
+	this.interface_lib = args["interface_lib"];
 	this.url_page_scheme_intern = args["url_page_scheme_intern"];
 	this.url_lib_scheme_intern = args["url_lib_scheme_intern"];
-	
+
 	tempXML = new XML("<root>" + args["interface_text"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.lang[tempXML.attributes.name] = tempXML.attributes.value;
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
 
 	tempXML = new XML("<root>" + args["interface_scheme"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		tname = tempXML.attributes.name;
-		if (tname == "component_doubleclicktime" || tname == "component_height" || tname == "register_width" || tname == "register_space" || tname == "menu_line_height") {	
+		if (tname == "component_doubleclicktime" || tname == "component_height" || tname == "register_width" || tname == "register_space" || tname == "menu_line_height") {
 			this.interface[tempXML.attributes.name] = int(tempXML.attributes.value);
 		} else {
 			this.interface[tempXML.attributes.name] = tempXML.attributes.value;
 		}
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
 
 	tempXML = new XML("<root>" + args["projects"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.projects.push(new class_project(tempXML.attributes.name, tempXML.attributes.preview));
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
 
 	tempXML = new XML("<root>" + args["namespaces"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.ns[tempXML.attributes.name] = new class_ns(tempXML.attributes.prefix, tempXML.attributes.uri);
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
-	
+
 	tempXML = new XML("<root>" + args["global_entities"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.global_entities.push(tempXML.attributes.name);
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
-	
+
 	tempXML = new XML("<root>" + args["output_file_types"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
@@ -88,23 +88,23 @@ class_conf.prototype.set_values = function(args) {
 			name		: tempXML.attributes.name,
 			extension	: tempXML.attributes.extension
 		});
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
 
 	tempXML = new XML("<root>" + args["output_encodings"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.output_encodings.push(tempXML.attributes.name);
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
-	
+
 	tempXML = new XML("<root>" + args["output_methods"] + "</root>");
 	tempXML = tempXML.getRootNode().firstChild;
 	while (tempXML != null) {
 		this.output_methods.push(tempXML.attributes.name);
-		tempXML = tempXML.nextSibling;	
+		tempXML = tempXML.nextSibling;
 	}
-	
+
 	this.check_settings();
 }
 // }}}
@@ -113,8 +113,8 @@ class_conf.prototype.check_settings = function() {
 	var availableFonts = ["_sans", "_serif", "_typewriter"].concat(TextField.getFontList());
 	var fontArray = [];
 	var i;
-	
-	//test font	
+
+	//test font
 	if (this.interface.font_device) {
 		fontArray = this.interface.font.split(",");
 		for (i = 0; i < fontArray.length; i++) {
@@ -125,7 +125,7 @@ class_conf.prototype.check_settings = function() {
 			}
 		}
 	}
-		
+
 	//test font_source
 	if (this.interface.font_source_device) {
 		fontArray = this.interface.font_source.split(",");
@@ -137,7 +137,7 @@ class_conf.prototype.check_settings = function() {
 			}
 		}
 	}
-		
+
 	//test font_vertical
 	if (this.interface.font_vertical_device) {
 		fontArray = this.interface.font_vertical.split(",");
@@ -278,10 +278,10 @@ class_user.prototype.getSettings = function() {
 	//add filelistType property
 	// {{{ _filelistTypeGet()
 	this.settings._filelistTypeGet = function() {
-		if (this._filelistType == 1) {
-			return "thumbs";
-		} else {
+		if (this._filelistType == 0) {
 			return "details";
+		} else {
+			return "thumbs";
 		}
 	};
 	// }}}
