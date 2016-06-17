@@ -10,6 +10,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/Cms/js/xmldb.js
+ * @require framework/Cms/js/locale.js
  *
  *
  * @file    js/global.js
@@ -36,6 +37,7 @@ var depageCMS = (function() {
         $toolbarPreview,
         $toolbarRight;
     var currentLayout;
+    var locale = depageCMSlocale[lang];
 
     // local Project instance that holds all variables and function
     var localJS = {
@@ -103,7 +105,7 @@ var depageCMS = (function() {
             ];
 
             // add layout buttons
-            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"Switch layout to: Edit-only, Split-view and Preview-only\"></li>").prependTo($toolbarRight);
+            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
                 var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
@@ -115,7 +117,7 @@ var depageCMS = (function() {
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
 
             // add reload button
-            var $reloadButton = $("<a class=\"button\" data-live-help=\"Reload preview\">reload</a>")
+            var $reloadButton = $("<a class=\"button\" data-live-help=\"" + locale.reloadHelp + "\">" + locale.reload + "</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     if ($previewFrame.length > 0) {
@@ -124,7 +126,7 @@ var depageCMS = (function() {
                 });
 
             // add edit button
-            var $editButton = $("<a class=\"button\" data-live-help=\"Edit current page in edit interface on the left ←.\">edit</a>")
+            var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\">" + locale.edit + "</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     var url = $previewFrame[0].contentWindow.location.href;
@@ -140,7 +142,7 @@ var depageCMS = (function() {
 
             // add zoom select
             var zooms = [100, 75, 50];
-            var $zoomMenu = $("<li><a data-live-help=\"Change zoom level of preview.\">" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
+            var $zoomMenu = $("<li><a data-live-help=\"" + locale.zoomHelp + "\">" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
             var $zoomMenuLabel = $zoomMenu.siblings("a");
 
             $(zooms).each(function() {
@@ -155,7 +157,7 @@ var depageCMS = (function() {
 
             // add live filter to projects menu
             $("menu.projects").depageLiveFilter("li", "a", {
-                placeholder: "Filter Projects",
+                placeholder: locale.projectFilter,
                 attachInputInside: true,
                 onSelect: function($item) {
                     var $link = $item.find("a").first();
@@ -233,7 +235,7 @@ var depageCMS = (function() {
             });
 
             $projects.depageLiveFilter("dt", "strong", {
-                placeholder: "Filter Projects",
+                placeholder: locale.projectFilter,
                 autofocus: true
             });
         },
@@ -274,12 +276,12 @@ var depageCMS = (function() {
 
                     if (!$container.hasClass("new")) {
                         // @todo make last element undeletable
-                        var $deleteButton = $("<a class=\"button delete\">Delete</a>");
+                        var $deleteButton = $("<a class=\"button delete\">" + locale.delete + "</a>");
 
                         $deleteButton.appendTo($form.find("p.submit"));
                         $deleteButton.depageShyDialogue({
                             ok: {
-                                title: 'delete',
+                                title: locale.delete,
                                 classes: 'default',
                                 click: function(e) {
                                     var $input = $form.find("p.node-name");
@@ -293,11 +295,11 @@ var depageCMS = (function() {
                                 }
                             },
                             cancel: {
-                                title: 'cancel'
+                                title: locale.cancel
                             }
                         },{
-                            title: "delete",
-                            message : "delete now?"
+                            title: locale.delete,
+                            message : locale.deleteQuestion
                         });
                     }
                 });
@@ -502,7 +504,7 @@ var depageCMS = (function() {
                 var $submitButton = $box.find('input[type="submit"]');
                 var $dropArea = $box.find('.dropArea');
                 var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($box);
-                var $finishButton = $("<a class=\"button\">finished uploading/cancel</a>").appendTo($box);
+                var $finishButton = $("<a class=\"button\">" + locale.uploadFinishedCancel + "</a>").appendTo($box);
 
                 $finishButton.on("click", function() {
                     localJS.closeUpload();
@@ -561,6 +563,10 @@ var depageCMS = (function() {
             if (parent != window) {
                 parent.depageCMS.flashLayoutChanged(layout);
             } else {
+                // @todo add better solution instead of this locale hack
+                layout = layout.replace(/Seiten editieren/, "edit-pages");
+                layout = layout.replace(/Dateien/, "files");
+                layout = layout.replace(/Farben/, "colors");
                 layout = layout.replace(/ /, "-");
                 $(".live-help-mock")
                     .hide()

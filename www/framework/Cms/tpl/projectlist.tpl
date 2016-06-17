@@ -23,7 +23,7 @@
             </div>
         </dt>
         <dd>
-            loading...
+            <?php self::t(_('loading...')) ?>
         </dd>
     <?php } ?>
 </dl>

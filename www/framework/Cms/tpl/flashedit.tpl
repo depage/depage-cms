@@ -26,14 +26,14 @@
     <div class="live-help-mock layout-files">
         <div <?php self::attr([
             "class" => "mock tree-pages",
-            "data-live-help" => _("File library:\\n"),
+            "data-live-help" => _("File library:\\nHere you can choose and upload images and other files for your project."),
             "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
     </div>
     <div class="live-help-mock layout-colors">
         <div <?php self::attr([
             "class" => "mock tree-pages",
-            "data-live-help" => _("Colors:\\n"),
+            "data-live-help" => _("Colors:\\nHere you can edit the colors of your project."),
             "data-live-help-class" => "icon icon-tree",
         ]); ?>></div>
     </div>

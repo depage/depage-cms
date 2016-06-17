@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: Cms/XmlDocTypes/SettingsXml/navigation.xml:2
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 15:28+0200\n"
+"POT-Creation-Date: 2016-06-17 19:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1767,7 +1766,7 @@ msgstr ""
 msgid "The project '%project%' has been saved in '%file%'"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:723 Cms/Forms/Publish.php:23
+#: Cms/Rpc/CmsFuncs.php:723 Cms/js/locale.php:21 Cms/Forms/Publish.php:23
 #: Cms/Forms/Project/Import.php:23 Cms/Forms/User.php:26
 msgid "Cancel"
 msgstr ""
@@ -1869,7 +1868,7 @@ msgstr ""
 msgid "backup project"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:749 Cms/tpl/projectlist.tpl:12
+#: Cms/Rpc/CmsFuncs.php:749 Cms/js/locale.php:24 Cms/tpl/projectlist.tpl:12
 msgid "edit"
 msgstr ""
 
@@ -1910,7 +1909,7 @@ msgstr ""
 msgid "logout"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:760
+#: Cms/Rpc/CmsFuncs.php:760 Cms/js/locale.php:28
 msgid "reload"
 msgstr ""
 
@@ -2138,7 +2137,7 @@ msgstr ""
 msgid "Show files with wrong filetype or wrong image size."
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:823
+#: Cms/Rpc/CmsFuncs.php:823 Cms/XmlDocTypes/SettingsXml/navigation.xml:2
 msgid "name"
 msgstr ""
 
@@ -2563,6 +2562,38 @@ msgstr ""
 msgid "%percent%% finishing in %time_until_end%min</p>"
 msgstr ""
 
+#: Cms/js/locale.php:22
+msgid "Delete"
+msgstr ""
+
+#: Cms/js/locale.php:23
+msgid "Delete now?"
+msgstr ""
+
+#: Cms/js/locale.php:25
+msgid "Edit current page in edit interface on the left ←."
+msgstr ""
+
+#: Cms/js/locale.php:26
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+
+#: Cms/js/locale.php:27
+msgid "Filter Projects"
+msgstr ""
+
+#: Cms/js/locale.php:29
+msgid "reload page preview"
+msgstr ""
+
+#: Cms/js/locale.php:30
+msgid "finished uploading/cancel"
+msgstr ""
+
+#: Cms/js/locale.php:31
+msgid "Change zoom level of preview."
+msgstr ""
+
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
@@ -2627,6 +2658,10 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+#: Cms/tpl/projectlist.tpl:26
+msgid "loading..."
+msgstr ""
+
 #: Cms/tpl/projectlist.tpl:32
 msgid "add new project"
 msgstr ""
@@ -2675,11 +2710,13 @@ msgid ""
 msgstr ""
 
 #: Cms/tpl/flashedit.tpl:29
-msgid "File library:\\n"
+msgid ""
+"File library:\\nHere you can choose and upload images and other files for "
+"your project."
 msgstr ""
 
 #: Cms/tpl/flashedit.tpl:36
-msgid "Colors:\\n"
+msgid "Colors:\\nHere you can edit the colors of your project."
 msgstr ""
 
 #: Cms/tpl/flashedit.tpl:42
@@ -2958,8 +2995,16 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: Cms/Ui/Main.php:236
+msgid "Tasks"
+msgstr ""
+
 #: Cms/Ui/Main.php:238
 msgid "Shows the currently running background tasks."
+msgstr ""
+
+#: Cms/Ui/Main.php:335
+msgid "Users"
 msgstr ""
 
 #: Cms/Ui/Main.php:337

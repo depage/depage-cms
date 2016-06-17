@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html <?php self::attr("lang", DEPAGE_LANG); ?>>
     <head>
         <title><?php
             if ($this->subtitle != null) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 18:04+0200\n"
+"POT-Creation-Date: 2016-06-17 19:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1769,7 +1769,7 @@ msgstr ""
 msgid "The project '%project%' has been saved in '%file%'"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:723 Cms/Forms/Publish.php:23
+#: Cms/Rpc/CmsFuncs.php:723 Cms/js/locale.php:21 Cms/Forms/Publish.php:23
 #: Cms/Forms/Project/Import.php:23 Cms/Forms/User.php:26
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -1878,7 +1878,7 @@ msgstr ""
 msgid "backup project"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:749 Cms/tpl/projectlist.tpl:12
+#: Cms/Rpc/CmsFuncs.php:749 Cms/js/locale.php:24 Cms/tpl/projectlist.tpl:12
 msgid "edit"
 msgstr "Editieren"
 
@@ -1919,9 +1919,9 @@ msgstr ""
 msgid "logout"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:760
+#: Cms/Rpc/CmsFuncs.php:760 Cms/js/locale.php:28
 msgid "reload"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: Cms/Rpc/CmsFuncs.php:761
 msgid "manage users"
@@ -2572,6 +2572,39 @@ msgstr "%chars% von %maxchars% Zeichen übrig"
 msgid "%percent%% finishing in %time_until_end%min</p>"
 msgstr ""
 
+#: Cms/js/locale.php:22
+msgid "Delete"
+msgstr "Löschen"
+
+#: Cms/js/locale.php:23
+msgid "Delete now?"
+msgstr "Jetzt löschen?"
+
+#: Cms/js/locale.php:25
+msgid "Edit current page in edit interface on the left ←."
+msgstr "Bearbeiten Sie die aktuelle Seite im Barbeitungspanel links ←."
+
+#: Cms/js/locale.php:26
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+"Zwischen Layouts wechseln: Nur-Editieren, Geteilte Ansicht und Nur-Vorschau"
+
+#: Cms/js/locale.php:27
+msgid "Filter Projects"
+msgstr "Projekte filtern"
+
+#: Cms/js/locale.php:29
+msgid "reload page preview"
+msgstr "Seitenvorschau neu laden"
+
+#: Cms/js/locale.php:30
+msgid "finished uploading/cancel"
+msgstr ""
+
+#: Cms/js/locale.php:31
+msgid "Change zoom level of preview."
+msgstr "Ändern Sie die Zoomstufe der Vorschau"
+
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr "Farbschema"
@@ -2636,6 +2669,10 @@ msgstr "Benutzereinstellungen"
 msgid "Help"
 msgstr "Hilfe"
 
+#: Cms/tpl/projectlist.tpl:26
+msgid "loading..."
+msgstr "lade..."
+
 #: Cms/tpl/projectlist.tpl:32
 msgid "add new project"
 msgstr "Neues Projekt hinzufügen"
@@ -2695,12 +2732,16 @@ msgstr ""
 "ausgewählten Elements bearbeiten."
 
 #: Cms/tpl/flashedit.tpl:29
-msgid "File library:\\n"
-msgstr "Dateibibliothek:\\n"
+msgid ""
+"File library:\\nHere you can choose and upload images and other files for "
+"your project."
+msgstr ""
+"Dateibibliothek:\\nHier können Sie die Bilder und andere Dateien für ihre "
+"Projekt auswählen und hochladen."
 
 #: Cms/tpl/flashedit.tpl:36
-msgid "Colors:\\n"
-msgstr "Farben:\\n"
+msgid "Colors:\\nHere you can edit the colors of your project."
+msgstr "Farben:\\nHier können sie die Farben Ihres Projektes anpassen."
 
 #: Cms/tpl/flashedit.tpl:42
 msgid "Preview your current edit in the preview pane on the right →."
@@ -2708,7 +2749,7 @@ msgstr "Sehen Sie das aktuelle Element als Vorschau im Panel zur Rechten →."
 
 #: Cms/tpl/flashedit.tpl:47
 msgid "The preview of the currently selected page."
-msgstr "Die Vorschau der aktuellen Seite."
+msgstr "Vorschau der aktuellen Seite."
 
 #: Cms/tpl/flashedit.tpl:51
 msgid "Preview"
@@ -2978,9 +3019,17 @@ msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte."
 msgid "Remove"
 msgstr "Entfernen"
 
+#: Cms/Ui/Main.php:236
+msgid "Tasks"
+msgstr ""
+
 #: Cms/Ui/Main.php:238
 msgid "Shows the currently running background tasks."
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an."
+
+#: Cms/Ui/Main.php:335
+msgid "Users"
+msgstr "Benutzer"
 
 #: Cms/Ui/Main.php:337
 msgid "Shows the users that are currently logged in."
@@ -3082,6 +3131,15 @@ msgstr ""
 #: Mail/Mail.php:313
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
+
+#~ msgid "This is a Test"
+#~ msgstr "Bla bla blub"
+
+#~ msgid "File library:\\n"
+#~ msgstr "Dateibibliothek:\\n"
+
+#~ msgid "Colors:\\n"
+#~ msgstr "Farben:\\n"
 
 #~ msgid "User Profile"
 #~ msgstr "Benutzerprofil"
