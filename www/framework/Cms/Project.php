@@ -600,13 +600,18 @@ class Project extends \Depage\Entity\Entity
 
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
         $initId = $task->addSubtask("init", "
-            \$fs = \\Depage\\Fs\\Fs::factory(%s);
+            \$fs = \\Depage\\Fs\\Fs::factory(%s, array(
+                'user' => %s,
+                'pass' => %s,
+            ));
             \$project = %s;
             \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
             \$transformer = %s;
             \$transformCache = %s;
         ", [
             $conf->output_folder,
+            $conf->output_user,
+            $conf->output_pass,
             $this,
             $publishPdo,
             $publishId,
