@@ -437,8 +437,9 @@ class Runner {
             }
         }
 
-        putenv('LC_ALL=' . $locale);
-        setlocale(LC_ALL, $locale);
+        putenv('LANGUAGE=' . $locale . ".UTF-8");
+        putenv('LC_ALL=' . $locale . ".UTF-8");
+        setlocale(LC_ALL, $locale . ".UTF-8");
 
         // Specify location of translation tables
         bindtextdomain($textdomain, DEPAGE_FM_PATH . "/locale");

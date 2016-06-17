@@ -13,9 +13,9 @@
         bind_textdomain_codeset($textdomain, 'UTF-8');
         textdomain($textdomain);
 
-        putenv('LANGUAGE=' . $locale);
-        putenv('LC_ALL=' . $locale);
-        setlocale(LC_ALL, $locale);
+        putenv('LANGUAGE=' . $locale . ".UTF-8");
+        putenv('LC_ALL=' . $locale . ".UTF-8");
+        setlocale(LC_ALL, $locale . ".UTF-8");
 
         $locales[$lang] = [
             "cancel" => _("Cancel"),
