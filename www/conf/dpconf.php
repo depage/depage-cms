@@ -90,7 +90,7 @@ $conf = array(
     // {{{ graphics
     '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
-        //'env' => 'production',
+        'env' => 'production',
         'extension' => "gm",
         'executable' => "/opt/local/bin/gm",
         'base' => 'inherit',
@@ -102,7 +102,6 @@ $conf = array(
         'env' => 'production',
         'extension' => "gm",
         'executable' => "/usr/bin/gm",
-        'background' => "#CCC8C4",
         'base' => 'inherit',
         'env' => 'production',
     ),
