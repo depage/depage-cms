@@ -17,7 +17,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
      **/
     public function __construct($name, $params = [])
     {
-        $params['submitLabel'] = _("Publish Now");
+        $params['label'] = _("Publish Now");
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");

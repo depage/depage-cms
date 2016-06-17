@@ -915,7 +915,7 @@ class CmsFuncs {
             'tree_headline_colors' => _("colorschemes"),
             'tree_headline_files' => _("file-library"),
             'tree_headline_page_data' => _("document"),
-            'tree_headline_pages' => _("site"),
+            'tree_headline_pages' => _("pages"),
             'tree_headline_settings' => _("settings"),
             'tree_headline_tpl_newnodes' => _("element-templates"),
             'tree_headline_tpl_templates' => _("XSL-templates"),

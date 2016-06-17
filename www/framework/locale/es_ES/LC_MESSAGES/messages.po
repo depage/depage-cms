@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 19:27+0200\n"
+"POT-Creation-Date: 2016-06-17 21:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2196,7 +2196,7 @@ msgstr "Comentarios"
 msgid "colorschemes"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:837
+#: Cms/Rpc/CmsFuncs.php:837 Cms/Rpc/CmsFuncs.php:918
 msgid "pages"
 msgstr ""
 
@@ -2457,11 +2457,6 @@ msgstr ""
 #, fuzzy
 msgid "document"
 msgstr "Comentarios"
-
-#: Cms/Rpc/CmsFuncs.php:918
-#, fuzzy
-msgid "site"
-msgstr "Web"
 
 #: Cms/Rpc/CmsFuncs.php:920
 msgid "element-templates"
@@ -3097,3 +3092,7 @@ msgstr ""
 #: Mail/Mail.php:313
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
+
+#, fuzzy
+#~ msgid "site"
+#~ msgstr "Web"

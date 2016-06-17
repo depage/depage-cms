@@ -233,7 +233,7 @@ class Main extends Base {
         $h = new Html("box.tpl", [
             'id' => "box-tasks",
             'class' => "box-tasks",
-            'title' => "Tasks",
+            'title' => _("Tasks"),
             'updateUrl' => "tasks/",
             'liveHelp' => _("Shows the currently running background tasks."),
             'content' => new Html("taskProgress.tpl", [
@@ -332,7 +332,7 @@ class Main extends Base {
         $h = new Html("box.tpl", [
             'id' => "box-users",
             'class' => "box-users",
-            'title' => "Users",
+            'title' => _("Users"),
             'updateUrl' => $updateUrl,
             'liveHelp' => _("Shows the users that are currently logged in."),
             'content' => new Html("userlist.tpl", [
