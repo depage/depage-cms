@@ -849,6 +849,7 @@ class CmsFuncs {
             'prop_tt_img_href' => _("link"),
             'prop_tt_publish_folder_baseurl' => _("base-url"),
             'prop_tt_publish_folder_button_start' => _("publish now"),
+            'prop_tt_pg_date_release' => _("Release page now"),
             'prop_tt_publish_folder_pass' => _("password"),
             'prop_tt_publish_folder_progress' => _("%description%<br>%percent% done<br>remaining: %remaining%"),
             'prop_tt_publish_folder_targetpath' => _("target path"),

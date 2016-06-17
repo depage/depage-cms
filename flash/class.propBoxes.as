@@ -1774,6 +1774,13 @@ class_propBox_pg_date.prototype.generateComponents = function() {
         this.createTextField("dateBox", 2, 0, 0, 100, 100);
         this.dateBox.initFormat(conf.interface.textformat);
         this.dateBox.selectable = false;
+
+        this.attachMovie("component_button", "buttonRelease", 7);
+        this.buttonRelease.enabledState = true;
+        this.buttonRelease.onClick = function() {
+            this.setEnabled(false);
+        };
+
 };
 // }}}
 // {{{ setData()
@@ -1803,7 +1810,11 @@ class_propBox_pg_date.prototype.setComponents = function() {
         this.dateBox._width = this.width - this.settings.border_left - this.settings.border_right;
         this.dateBox._height = this.settings.minInnerHeight + 15;
 
-        this.innerHeight = this.dateBox._height;
+        this.buttonRelease._x = this.settings.border_left;
+        this.buttonRelease._y = this.settings.border_top + (int(conf.interface.component_height * 2) + 5);
+        this.buttonRelease.caption = conf.lang.prop_tt_pg_date_release;
+
+        this.innerHeight = this.settings.border_top + (int(conf.interface.component_height) + this.settings.border) * 2.5;
         this.height = this.innerHeight + this.settings.border_top + this.settings.border_bottom;
 };
 // }}}
