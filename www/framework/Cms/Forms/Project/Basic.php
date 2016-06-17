@@ -65,7 +65,7 @@ class Basic extends \Depage\HtmlForm\HtmlForm
         $this->addText("name", [
             "label" => _("Identifier"),
             "required" => "true",
-            "validator" => "/[-a-zA-Z0-9_]+/",
+            "validator" => "/[a-zA-Z0-9_]+/",
             "disabled" => $this->project->id !== null,
         ]);
         $this->addSingle("groupId", [
