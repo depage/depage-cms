@@ -322,7 +322,7 @@ class Project extends Base
 
             if (is_dir($targetPath)) {
                 foreach ($values['file'] as $file) {
-                    rename($file['tmp_name'], $targetPath . "/" . $file['name']);
+                    rename($file['tmp_name'], $targetPath . "/" . \Depage\Html\Html::getEscapedUrl($file['name']));
                 }
             }
 
