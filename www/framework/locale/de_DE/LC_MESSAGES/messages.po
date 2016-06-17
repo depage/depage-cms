@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 21:03+0200\n"
+"POT-Creation-Date: 2016-06-17 21:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1891,7 +1891,7 @@ msgstr "Vorschau"
 msgid "Projects"
 msgstr "Projekte"
 
-#: Cms/Rpc/CmsFuncs.php:752 Cms/Rpc/CmsFuncs.php:811 Cms/tpl/projectlist.tpl:21
+#: Cms/Rpc/CmsFuncs.php:752 Cms/Rpc/CmsFuncs.php:811 Cms/tpl/projectlist.tpl:18
 msgid "publish"
 msgstr "Veröffentlichen"
 
@@ -2208,7 +2208,7 @@ msgid "pages"
 msgstr "Seiten"
 
 #: Cms/Rpc/CmsFuncs.php:838 Cms/Rpc/CmsFuncs.php:864 Cms/Rpc/CmsFuncs.php:919
-#: Cms/tpl/projectlist.tpl:18
+#: Cms/tpl/projectlist.tpl:21
 msgid "settings"
 msgstr "Einstellungen"
 
@@ -2595,7 +2595,7 @@ msgstr "Seitenvorschau neu laden"
 
 #: Cms/js/locale.php:30
 msgid "finished uploading/cancel"
-msgstr ""
+msgstr "Upload beenden/abbrechen"
 
 #: Cms/js/locale.php:31
 msgid "Change zoom level of preview."
@@ -2920,7 +2920,7 @@ msgstr "Projektgruppe"
 
 #: Cms/Forms/Project/Upload.php:35
 msgid "Upload files to:"
-msgstr "Daten hochladen zu:"
+msgstr "Daten hochladen nach:"
 
 #: Cms/Forms/Project/Upload.php:39
 msgid "Choose File"
@@ -3002,6 +3002,14 @@ msgstr "Benutzer '%s' bearbeiten"
 #: Cms/Ui/User.php:85
 msgid "Add new User"
 msgstr "Neuen Benutzer hinzufügen"
+
+#: Cms/Ui/Main.php:57
+msgid ""
+"Welcome to\n"
+" depage::cms"
+msgstr ""
+"Willkommen bei\n"
+" depage::cms"
 
 #: Cms/Ui/Main.php:76 Cms/Ui/Main.php:108
 msgid "Login"

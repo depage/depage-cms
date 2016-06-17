@@ -54,7 +54,7 @@ class Main extends Base {
             // not logged in
             $h = new Html([
                 'content' => new Html("welcome.tpl", [
-                    'title' => "Welcome to\n depage::cms ",
+                    'title' => _("Welcome to\n depage::cms"),
                     'login' => "Login",
                     'login_link' => "login/",
                 ]),
@@ -153,7 +153,7 @@ class Main extends Base {
         // construct template
         $h = new Html("box.tpl", [
             'class' => "box-projects",
-            'title' => "Projects",
+            'title' => _("Projects"),
             'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
                 'projects' => $projects,

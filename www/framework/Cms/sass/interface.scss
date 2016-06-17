@@ -1550,6 +1550,16 @@ ul.users p {
 }
 /* }}} */
 /* {{{ upload */
+html[lang='en'] {
+    #upload .dropArea.has-drop-support .content:before {
+        content: "Drop files here";
+    }
+}
+html[lang='de'] {
+    #upload .dropArea.has-drop-support .content:before {
+        content: "Dateien hierhin ziehen";
+    }
+}
 #upload {
     background: rgba(255, 255, 255, 0.5);
 
@@ -1582,7 +1592,6 @@ ul.users p {
         height: 250px;
 
         .content:before {
-            content: "Drop files here";
             display: block;
             position: relative;
             margin: auto;

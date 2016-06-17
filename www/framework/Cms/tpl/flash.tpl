@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html <?php self::attr("lang", DEPAGE_LANG); ?>>
 <?php
     $phost = parse_url("http://" . $_SERVER["HTTP_HOST"]);
 
@@ -38,6 +40,7 @@
     <noscript>
         Javascript must be active.
     </noscript>
+</body>
 <?php
 
     /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

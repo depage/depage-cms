@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 21:51+0200\n"
+"POT-Creation-Date: 2016-06-17 21:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2981,6 +2981,12 @@ msgstr ""
 
 #: Cms/Ui/User.php:85
 msgid "Add new User"
+msgstr ""
+
+#: Cms/Ui/Main.php:57
+msgid ""
+"Welcome to\n"
+" depage::cms"
 msgstr ""
 
 #: Cms/Ui/Main.php:76 Cms/Ui/Main.php:108
