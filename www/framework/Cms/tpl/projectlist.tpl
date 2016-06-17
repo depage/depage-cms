@@ -14,11 +14,11 @@
                 <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
                     <?php self::t(_('preview')) ?>
                 </a>
-                <a href="project/<?php self::t($project->name); ?>/settings/" class="button">
-                    <?php self::t(_('settings')) ?>
-                </a>
                 <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
                     <?php self::t(_('publish')) ?>
+                </a>
+                <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
+                    <?php self::t(_('settings')) ?>
                 </a>
             </div>
         </dt>
@@ -28,7 +28,7 @@
     <?php } ?>
 </dl>
 <div class="bottom">
-    <a href="project/+/" class="button">
+    <a href="project/+/" class="button new">
         <?php self::t(_('add new project')) ?>
     </a>
 </div>

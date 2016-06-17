@@ -440,7 +440,7 @@ select,
                 @include icon("projects", 0.5);
             }
             &.icon-settings:before {
-                @include icon("settings", 0.5);
+                @include icon("settings", 0.45);
             }
             &.icon-help {
                 width: 34px;
@@ -1292,8 +1292,31 @@ dl.projectlist dt.active .opener {
 
 /* {{{ projectlist */
 .box-projects {
+    .content {
+        padding-bottom: 44px;
+    }
     .content:before {
         @include icon("projects");
+    }
+    a.new {
+        position: relative;
+        padding-left: 24px;
+        color: #000000;
+
+        &:before {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 2em;
+            height: 2em;
+            background-color: transparent;
+            @include icon-base("add", 0.5);
+        }
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 dl.projectlist {
@@ -1341,6 +1364,32 @@ dl.projectlist {
     }
     .buttons {
         float: right;
+    }
+    a {
+        overflow: hidden;
+        &.icon-settings {
+            width: 34px;
+            &:before {
+                content: " ";
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                @include icon-base();
+                margin-bottom: -8px;
+                margin-left: -2px;
+                margin-right: 6px;
+            }
+            @media screen and (max-width: 1200px) {
+                width: 34px;
+
+                &:before {
+                    margin-right: 20px;
+                }
+            }
+        }
+        &.icon-settings:before {
+            @include icon("settings", 0.45);
+        }
     }
     dt strong {
         padding-left: 0;

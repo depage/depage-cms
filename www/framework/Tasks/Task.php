@@ -446,7 +446,7 @@ class Task {
         ));
         $result = $query->fetchObject();
 
-        $progress['estimated'] = (int) (($result->time / $tasksDone) * $tasksPlanned);
+        $progress['estimated'] = (int) (($result->time / $tasksDone) * $tasksPlanned) + 1;
         $progress['time_started'] = (int) $result->time_started;
         // }}}
         // {{{ get name and status of running subtask
