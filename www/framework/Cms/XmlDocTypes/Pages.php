@@ -39,7 +39,7 @@ class Pages extends Base {
                 'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
                 'xml_template' => 'redirect.xml',
             ],
-            'pg:separator' => (object) [
+            'sec:separator' => (object) [
                 'name' => _("Separator"),
                 'new' => "",
                 'icon' => "",
@@ -54,20 +54,23 @@ class Pages extends Base {
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
+                'pg:redirect',
             ],
             'pg:folder' => [
                 'dpg:pages',
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
+                'pg:redirect',
             ],
             'pg:redirect' => [
                 'dpg:pages',
                 'proj:pages_struct',
                 'pg:page',
                 'pg:folder',
+                'pg:redirect',
             ],
-            'pg:separator' => [
+            'sec:separator' => [
                 '*',
             ],
         ];
@@ -88,7 +91,7 @@ class Pages extends Base {
         if (isset($this->availableNodes[$node->nodeName])) {
             $properties = $this->availableNodes[$node->nodeName];
 
-            if (isset($properties->new)) {
+            if (!empty($properties->new)) {
                 $node->setAttribute("name", $properties->new);
             }
             if (isset($properties->doc_type) && isset($properties->xml_template)) {

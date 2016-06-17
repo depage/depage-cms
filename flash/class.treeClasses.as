@@ -479,12 +479,12 @@ class_tree_pages.prototype.getValidNameLetters = function() {
 // }}}
 // {{{ isTreeNode()
 class_tree_pages.prototype.isTreeNode = function(node) {
-	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct" || node.nodeName == conf.ns.section + ":separator");
+	return super.isTreeNode(node) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.project + ":pages_struct" || node.nodeName == conf.ns.page + ":redirect" || this.isSeparatorNode(node));
 };
 // }}}
 // {{{ isSeparatorNode()
 class_tree_pages.prototype.isSeparatorNode = function(node) {
-	return false;
+	return node.nodeName == conf.ns.section + ":separator";
 };
 // }}}
 // {{{ isValidDelete()
@@ -494,12 +494,12 @@ class_tree_pages.prototype.isValidDelete = function(node) {
 // }}}
 // {{{ isValiMove()
 class_tree_pages.prototype.isValidMove = function(node, targetNode) {
-	return super.isValidMove(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.section + ":separator");
+	return super.isValidMove(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.page + ":redirect" || node.nodeName == conf.ns.section + ":separator");
 };
 // }}}
 // {{{ isValidCopy()
 class_tree_pages.prototype.isValidCopy = function(node, targetNode) {
-	return super.isValidCopy(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.section + ":separator");
+	return super.isValidCopy(node, targetNode) && (node.nodeName == conf.ns.page + ":page" || node.nodeName == conf.ns.page + ":folder" || node.nodeName == conf.ns.page + ":redirect" || node.nodeName == conf.ns.section + ":separator");
 };
 // }}}
 // {{{ isValidName()
@@ -646,16 +646,18 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 	var temp_node;
 	var add_node_string = "";
 	var new_name = conf.lang.tree_name_untitled;
+        var newNode;
 
 	if (type == conf.lang.tree_name_new_folder) {
 		type = "folder";
-		var newNode = super.addNode(targetNode, conf.ns.page + ":folder");
+		newNode = super.addNode(targetNode, conf.ns.page + ":folder");
         } else if (type == conf.lang.tree_name_new_separator) {
 		type = "separator";
-		var newNode = super.addNode(targetNode, conf.ns.section + ":separator");
+		newNode = super.addNode(targetNode, conf.ns.page + ":separator");
+                new_name = "";
         } else if (type == conf.lang.tree_name_new_redirect) {
 		type = "redirect";
-		var newNode = super.addNode(targetNode, conf.ns.section + ":page");
+		newNode = super.addNode(targetNode, conf.ns.section + ":redirect");
 	} else if (type == conf.lang.tree_name_new_page) {
 		type = "page";
 		if (subType != null && subType != conf.lang.tree_name_new_page_empty) {
@@ -671,9 +673,9 @@ class_tree_pages.prototype.addNode = function(targetNode, type, subType) {
 				}
 			}
 		}
-		var newNode = super.addNode(targetNode, conf.ns.page + ":page");
+		newNode = super.addNode(targetNode, conf.ns.page + ":page");
 	}
-	if (targetNode != null) {
+	if (targetNode !== null) {
 		targetNode.showChildren = true;
 		this.loading = true;
 		_root.phpConnect.send("add_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["target_id", targetNode.nid], ["type", this.type], ["node_type", type], ["xmldata", add_node_string], ["new_name", new_name]]);

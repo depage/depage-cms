@@ -254,10 +254,16 @@ class CmsFuncs {
                 $newNodes = [];
                 $tempdoc = new \DOMDocument();
 
-                $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $nodeName . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
+                if ($nodeName == "separator") {
+                    $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><sec:' . $nodeName . ' xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:db="http://cms.depagecms.net/ns/database" db:name="tree_name_separator" />');
+                } else if ($nodeName == "redirect") {
+                    $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $nodeName . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="php" />');
+                } else {
+                    $tempdoc->loadXML('<?xml version="1.0" encoding="UTF-8" ?><pg:' . $nodeName . ' xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:db="http://cms.depagecms.net/ns/database" multilang="true" file_type="html" />');
+                }
                 $newNodes[] = $tempdoc->documentElement;
 
-                if (count($args["xmldata"]) > 0) {
+                if (isset($args["xmldata"]) && count($args["xmldata"]) > 0) {
                     $extras['dataNodes'] = $args["xmldata"];
                 }
             } else if ($treeType == "colors") {

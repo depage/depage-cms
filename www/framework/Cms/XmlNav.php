@@ -87,7 +87,7 @@ class XmlNav {
         foreach ($pages as $page) {
             $urlsByPageId[$page->getAttribute("db:id")] = $page->getAttribute("url");
             $pagedataIdByPageId[$page->getAttribute("db:id")] = $page->getAttribute("db:docref");
-            if ($page->nodeName == "pg:page") {
+            if ($page->nodeName == "pg:page" || $page->nodeName == "pg:redirect") {
                 $pageIdByUrl[$page->getAttribute("url")] = $page->getAttribute("db:id");
             }
         }
@@ -112,7 +112,7 @@ class XmlNav {
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         // get current part of url from name
-        if ($node->nodeName == 'pg:folder' || $node->nodeName == 'pg:page') {
+        if ($node->nodeName == 'pg:folder' || $node->nodeName == 'pg:page' || $node->nodeName == 'pg:redirect') {
             $url .= \Depage\Html\Html::getEscapedUrl(mb_strtolower($node->getAttribute('name')));
         }
 
@@ -134,7 +134,9 @@ class XmlNav {
             $xpath = new \DOMXpath($xml);
             $urlNodes = $xpath->query("(.//pg:page/@url)[1]", $node, true);
             $url = $urlNodes->item(0)->value;
-        } elseif ($node->nodeName == 'pg:page') {
+        } elseif ($node->nodeName == 'pg:redirect') {
+            $url = $url . ".php";
+        } elseif ($node->nodeName == 'pg:page' || $node->nodeName == 'pg:redirect') {
             if ($ext = $node->getAttribute("file_type")) {
                 $url = $url . "." . $ext;
             } else {
@@ -172,21 +174,12 @@ class XmlNav {
             $page = $pages->item(0);
             $page->setAttribute('status', $this::ACTIVE_STATUS);
             $page = $page->parentNode;
-        } else {
-            // search for parent urls
-            while ($pages && $pages->length == 0 && strrpos($url, "/") !== false) {
-                $url = substr($url, 0, strrpos($url, "/"));
-                $pages = $xpath->query("//pg:page[@url='{$url}/']");
-            }
-            if ($pages && $pages->length) {
-                $page = $pages->item(0);
-            }
-        }
 
-        while ($page && $page->nodeType == XML_ELEMENT_NODE) {
-            // loop to top
-            $page->setAttribute('status', $this::PARENT_STATUS);
-            $page = $page->parentNode;
+            while ($page && $page->nodeType == XML_ELEMENT_NODE) {
+                // loop to top
+                $page->setAttribute('status', $this::PARENT_STATUS);
+                $page = $page->parentNode;
+            }
         }
     }
     // }}}
