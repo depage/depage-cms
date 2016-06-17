@@ -55,6 +55,9 @@ class Backup
         $pharName = $file . ".phar";
         unlink($file);
         unlink($pharName);
+        if (!is_dir(dirname($file))) {
+            mkdir(dirname($file), 0777, true);
+        }
 
         $archive = new \Phar($pharName);
 
