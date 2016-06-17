@@ -413,7 +413,9 @@ class Runner {
         $availableLocales = array_keys($availableLocales);
 
         // test if locale-parameter is in available_locale
-        $locale = self::localeLookup($availableLocales, $locale);
+        if (empty($locale)) {
+            $locale = self::localeLookup($availableLocales, $locale);
+        }
 
         if (!$locale) {
             // test locales from browser header
@@ -439,7 +441,7 @@ class Runner {
         setlocale(LC_ALL, $locale);
 
         // Specify location of translation tables
-        bindtextdomain($textdomain, "./locale");
+        bindtextdomain($textdomain, DEPAGE_FM_PATH . "/locale");
         bind_textdomain_codeset($textdomain, 'UTF-8');
 
         // Choose domain
@@ -484,7 +486,7 @@ class Runner {
             $availableLocales = array();
 
             // test for locales in main path
-            $dirs = glob("locale/*", GLOB_ONLYDIR);
+            $dirs = glob(DEPAGE_FM_PATH . "/locale/*", GLOB_ONLYDIR);
 
             foreach ($dirs as $dir) {
                 $locale = basename($dir);
