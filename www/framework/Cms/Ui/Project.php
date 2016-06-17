@@ -286,15 +286,17 @@ class Project extends Base
 
         $title = sprintf(_("Publish Project '%s'"), $this->project->name);
 
-        $h = new Html("box.tpl", [
-            'id' => "projects",
-            'icon' => "framework/Cms/images/icon_projects.gif",
-            'class' => "first",
-            'title' => $title,
-            'content' => [
-                $this->toolbar(),
-                $form,
-            ],
+        $h = new Html("publish.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "projects",
+                'icon' => "framework/Cms/images/icon_projects.gif",
+                'class' => "first",
+                'title' => $title,
+                'content' => [
+                    $this->toolbar(),
+                    $form,
+                ],
+            ]),
         ], $this->htmlOptions);
 
         return $h;
@@ -386,13 +388,13 @@ class Project extends Base
         return $h;
     }
     // }}}
-    // {{{ backup()
+    // {{{ backups()
     /**
      * @brief backup
      *
      * @return void
      **/
-    public function backup()
+    public function backups()
     {
         $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
 

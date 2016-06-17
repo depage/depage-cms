@@ -21,6 +21,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
+        $params['class'] = "lastchanged_pages";
 
         $this->project = $params['project'];
 
@@ -39,6 +40,25 @@ class Publish extends \Depage\HtmlForm\HtmlForm
             'label' => _("Publish to"),
             'list' => $list,
         ]);
+
+        $formatter = new \Depage\Formatters\DateNatural();
+
+        $pages = $this->project->getUnreleasedPages();
+        $date = $this->project->getLastPublishDate();
+        $previewPath = $this->project->getPreviewPath();
+
+        $fs = $this->addFieldset("recentChanges", [
+            'label' => _("Unreleased Pages"),
+        ]);
+
+        foreach($pages as $page) {
+            if ($page->lastchange->getTimestamp() > $date->getTimestamp()) {
+                $fs->addHtml("<a href=\"" . $previewPath . $page->url . "\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
+                $fs->addBoolean("page-" . $page->id, array(
+                    'label' => $page->url,
+                ));
+            }
+        }
     }
     // }}}
 }

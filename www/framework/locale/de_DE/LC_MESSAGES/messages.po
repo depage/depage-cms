@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 23:12+0200\n"
+"POT-Creation-Date: 2016-06-18 01:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2751,7 +2751,7 @@ msgstr "Sehen Sie das aktuelle Element als Vorschau im Panel zur Rechten →."
 msgid "The preview of the currently selected page."
 msgstr "Vorschau der aktuellen Seite."
 
-#: Cms/tpl/flashedit.tpl:51
+#: Cms/tpl/flashedit.tpl:51 Cms/Forms/Publish.php:56
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2763,9 +2763,13 @@ msgstr "Zuletzt veröffentlicht"
 msgid "Publish Now"
 msgstr "Jetzt veröffentlichen"
 
-#: Cms/Forms/Publish.php:39
+#: Cms/Forms/Publish.php:40
 msgid "Publish to"
 msgstr "Veröffentlichen nach"
+
+#: Cms/Forms/Publish.php:51
+msgid "Unreleased Pages"
+msgstr "Nicht freigegebene Seiten"
 
 #: Cms/Forms/Project/Publish.php:20
 msgid "Save Publish Settings"

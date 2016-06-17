@@ -421,6 +421,20 @@ class Project extends \Depage\Entity\Entity
         return $pages;
     }
     // }}}
+    // {{{ getUnreleasedPages()
+    /**
+     * @brief getUnreleasedPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUnreleasedPages()
+    {
+        $pages = $this->getRecentlyChangedPages();
+
+        return $pages;
+    }
+    // }}}
     // {{{ getProjectPath()
     /**
      * @brief getProjectPath

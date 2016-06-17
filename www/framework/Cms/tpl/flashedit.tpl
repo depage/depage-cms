@@ -1,6 +1,5 @@
 <div <?php self::attr([
         "class" => "edit layout layout-left",
-        //"data-live-help" => _("Edit interface to edit your pages and the content of your currently selected page."),
     ]); ?>>
     <header class="info">
         <h1><?php self::e(_("Tree/Edit")); ?></h1>

@@ -1640,6 +1640,18 @@ progress {
     };
 }
 /* }}} */
+/* {{{ publish-form */
+form.lastchanged_pages {
+    .input-boolean {
+        width: 75%;
+    }
+    a.preview {
+        margin-top: 3px;
+        display: block;
+        float: right;
+    }
+}
+/* }}} */
 
 /* {{{ live-filter */
 .content .depage-live-filter {

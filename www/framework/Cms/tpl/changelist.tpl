@@ -14,7 +14,6 @@
                 </tr>
             <?php
         }
-        // @todo add styling for published/unpublished pages
     ?>
         <tr>
             <td class="url <?php self::t($class); ?>"><a href="<?php self::t($this->previewPath . $page->url); ?>" class="preview" target="previewFrame"><?php self::t($page->url); ?></a></td>
