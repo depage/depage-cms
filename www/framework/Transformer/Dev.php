@@ -19,7 +19,7 @@ class Dev extends Transformer
         $xslt = "";
 
         foreach ($files as $file) {
-            $xslt .= "\n<xsl:include href=\"" . htmlentities(realpath($file)) . "\" />";
+            $xslt .= "\n<xsl:include href=\"" . htmlentities(rawurlencode(realpath($file))) . "\" />";
         }
 
         return $xslt;
