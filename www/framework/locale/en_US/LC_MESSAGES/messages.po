@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-17 21:03+0200\n"
+"POT-Creation-Date: 2016-06-17 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1881,7 +1881,7 @@ msgstr ""
 msgid "Projects"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:752 Cms/Rpc/CmsFuncs.php:811 Cms/tpl/projectlist.tpl:21
+#: Cms/Rpc/CmsFuncs.php:752 Cms/Rpc/CmsFuncs.php:811 Cms/tpl/projectlist.tpl:18
 msgid "publish"
 msgstr ""
 
@@ -2198,7 +2198,7 @@ msgid "pages"
 msgstr ""
 
 #: Cms/Rpc/CmsFuncs.php:838 Cms/Rpc/CmsFuncs.php:864 Cms/Rpc/CmsFuncs.php:919
-#: Cms/tpl/projectlist.tpl:18
+#: Cms/tpl/projectlist.tpl:21
 msgid "settings"
 msgstr ""
 
@@ -2984,7 +2984,7 @@ msgid "Login"
 msgstr ""
 
 #: Cms/Ui/Main.php:157
-msgid "Edit, preview or changed settings for your projects."
+msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
 #: Cms/Ui/Main.php:196
@@ -2996,7 +2996,7 @@ msgid "Tasks"
 msgstr ""
 
 #: Cms/Ui/Main.php:238
-msgid "Shows the currently running background tasks."
+msgid "Shows the currently running background tasks"
 msgstr ""
 
 #: Cms/Ui/Main.php:335
@@ -3004,7 +3004,7 @@ msgid "Users"
 msgstr ""
 
 #: Cms/Ui/Main.php:337
-msgid "Shows the users that are currently logged in."
+msgid "Shows the users that are currently logged in"
 msgstr ""
 
 #: Cms/Ui/Base.php:131

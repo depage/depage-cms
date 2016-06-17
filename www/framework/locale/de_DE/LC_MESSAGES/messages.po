@@ -3008,8 +3008,8 @@ msgid "Login"
 msgstr ""
 
 #: Cms/Ui/Main.php:157
-msgid "Edit, preview or changed settings for your projects."
-msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte."
+msgid "Edit, preview or changed settings for your projects"
+msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
 #: Cms/Ui/Main.php:196
 msgid "Remove"
@@ -3020,15 +3020,15 @@ msgid "Tasks"
 msgstr ""
 
 #: Cms/Ui/Main.php:238
-msgid "Shows the currently running background tasks."
-msgstr "Zeigt die aktuell laufenden Hintergrundtasks an."
+msgid "Shows the currently running background tasks"
+msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
 #: Cms/Ui/Main.php:335
 msgid "Users"
 msgstr "Benutzer"
 
 #: Cms/Ui/Main.php:337
-msgid "Shows the users that are currently logged in."
+msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
 
 #: Cms/Ui/Base.php:131

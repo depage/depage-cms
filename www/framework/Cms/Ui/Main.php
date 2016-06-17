@@ -154,7 +154,7 @@ class Main extends Base {
         $h = new Html("box.tpl", [
             'class' => "box-projects",
             'title' => "Projects",
-            'liveHelp' => _("Edit, preview or changed settings for your projects."),
+            'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
                 'projects' => $projects,
             ]),
@@ -225,7 +225,7 @@ class Main extends Base {
         foreach ($tasks as $task) {
             if ($task) {
                 $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                //$taskrunner->run($task->taskId);
+                $taskrunner->run($task->taskId);
             }
         }
 
@@ -235,7 +235,7 @@ class Main extends Base {
             'class' => "box-tasks",
             'title' => _("Tasks"),
             'updateUrl' => "tasks/",
-            'liveHelp' => _("Shows the currently running background tasks."),
+            'liveHelp' => _("Shows the currently running background tasks"),
             'content' => new Html("taskProgress.tpl", [
                 'tasks' => $tasks,
                 'taskForm' => $taskForm,
@@ -334,7 +334,7 @@ class Main extends Base {
             'class' => "box-users",
             'title' => _("Users"),
             'updateUrl' => $updateUrl,
-            'liveHelp' => _("Shows the users that are currently logged in."),
+            'liveHelp' => _("Shows the users that are currently logged in"),
             'content' => new Html("userlist.tpl", [
                 'title' => $this->basetitle,
                 'users' => $users,
