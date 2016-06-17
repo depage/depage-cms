@@ -645,7 +645,7 @@ class CmsFuncs {
     protected function getTexts() {
         return [
             'all_comment' => _("comment"),
-            'auth_no_right' => _("Sorry, you don't have the authentification to change \"%name%\"."),
+            'auth_no_right' => _("Sorry, you don't have the authentication to change \"%name%\"."),
             'auth_not_allowed' => _("You are not allowed to do this!"),
             'auth_not_loggedin' => _("You are not logged in."),
             'auth_wrong_credentials' => _("Incorrect Username or Password!"),
@@ -734,7 +734,7 @@ class CmsFuncs {
             'inhtml_logout_relogin' => _("You can relogin <a href=\".\">here</a>."),
             'inhtml_logout_text' => _("Thank you for using %app_name%."),
             'inhtml_main_title' => _("%app_name% %app_version%"),
-            'inhtml_needed_flash' => _("You need the Macromedia Flash Player%minversion%, to use %app_name%."),
+            'inhtml_needed_flash' => _("You need the Adobe Flash Player%minversion%, to use %app_name%."),
             'inhtml_no_import' => _("For this project there is no import-routine defined."),
             'inhtml_noscript' => _("You need to activate Javascript, to use %app_name%."),
             'inhtml_preview_error' => _("Error in transformation"),
@@ -750,7 +750,7 @@ class CmsFuncs {
             'inhtml_projects_preview' => _("preview"),
             'inhtml_projects_projects' => _("Projects"),
             'inhtml_projects_publish' => _("publish"),
-            'inhtml_require_javascript' => _("You have to activate javascript to use %app_name%."),
+            'inhtml_require_javascript' => _("You need to activate Javascript, to use %app_name%."),
             'inhtml_require_title' => _("requirements"),
             'inhtml_status_title' => _("%app_name% %app_version% // status"),
             'inhtml_toolbar_edit' => _("edit page"),
