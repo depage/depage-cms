@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-18 01:29+0200\n"
+"POT-Creation-Date: 2016-06-18 01:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2524,7 +2524,7 @@ msgstr "Globale Dateien"
 msgid "languages"
 msgstr "Sprachen"
 
-#: Cms/Rpc/CmsFuncs.php:940 Cms/Ui/Project.php:62
+#: Cms/Rpc/CmsFuncs.php:940 Cms/tpl/publish.tpl:5 Cms/Ui/Project.php:62
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -2695,17 +2695,17 @@ msgstr ""
 #: Cms/tpl/taskProgress.tpl:23
 #, php-format
 msgid "'%s' will finish in %s"
-msgstr "'%s' wird in %s angeschlossen sein"
+msgstr "'%s' wird in %s abgeschlossen sein"
 
 #: Cms/tpl/taskProgress.tpl:46
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
-#: Cms/tpl/flashedit.tpl:6
+#: Cms/tpl/flashedit.tpl:5
 msgid "Tree/Edit"
 msgstr "Struktur/Editieren"
 
-#: Cms/tpl/flashedit.tpl:12
+#: Cms/tpl/flashedit.tpl:11
 msgid ""
 "Page tree:\\nHere you can add, rename and delete pages. Select a page to "
 "edit it in the content tree below ↓."
@@ -2714,7 +2714,7 @@ msgstr ""
 "Wählen Sie eine Seite aus, um sie in der Dokumentenstruktur unten anzuzeigen "
 "↓."
 
-#: Cms/tpl/flashedit.tpl:17
+#: Cms/tpl/flashedit.tpl:16
 msgid ""
 "Content tree:\\nHere you can add content to your pages. Select an element to "
 "edit its properties in the pane on the right →."
@@ -2723,7 +2723,7 @@ msgstr ""
 "hinzufügen. Wählen Sie ein Element aus, um es in den Dokumenteigenschaften "
 "anzuzeigen →."
 
-#: Cms/tpl/flashedit.tpl:22
+#: Cms/tpl/flashedit.tpl:21
 msgid ""
 "Content properties:\\nHere you can edit all properties of the currently "
 "selected element."
@@ -2731,7 +2731,7 @@ msgstr ""
 "Dokumenteigenschaften:\\nHier können Sie alle Eigenschaften das aktuell "
 "ausgewählten Elements bearbeiten."
 
-#: Cms/tpl/flashedit.tpl:29
+#: Cms/tpl/flashedit.tpl:28
 msgid ""
 "File library:\\nHere you can choose and upload images and other files for "
 "your project."
@@ -2739,19 +2739,19 @@ msgstr ""
 "Dateibibliothek:\\nHier können Sie die Bilder und andere Dateien für ihre "
 "Projekt auswählen und hochladen."
 
-#: Cms/tpl/flashedit.tpl:36
+#: Cms/tpl/flashedit.tpl:35
 msgid "Colors:\\nHere you can edit the colors of your project."
 msgstr "Farben:\\nHier können sie die Farben Ihres Projektes anpassen."
 
-#: Cms/tpl/flashedit.tpl:42
+#: Cms/tpl/flashedit.tpl:41
 msgid "Preview your current edit in the preview pane on the right →."
 msgstr "Sehen Sie das aktuelle Element als Vorschau im Panel zur Rechten →."
 
-#: Cms/tpl/flashedit.tpl:47
+#: Cms/tpl/flashedit.tpl:46
 msgid "The preview of the currently selected page."
 msgstr "Vorschau der aktuellen Seite."
 
-#: Cms/tpl/flashedit.tpl:51 Cms/Forms/Publish.php:56
+#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:57
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2770,6 +2770,10 @@ msgstr "Veröffentlichen nach"
 #: Cms/Forms/Publish.php:51
 msgid "Unreleased Pages"
 msgstr "Nicht freigegebene Seiten"
+
+#: Cms/Forms/Publish.php:53
+msgid "Please select the pages you want to publish:"
+msgstr "Bitte markieren Sie die Seiten, die Sie jetzt veröffentlichen möchten:"
 
 #: Cms/Forms/Project/Publish.php:20
 msgid "Save Publish Settings"

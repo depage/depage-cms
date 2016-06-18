@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-18 01:29+0200\n"
+"POT-Creation-Date: 2016-06-18 01:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2518,7 +2518,7 @@ msgstr ""
 msgid "languages"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:940 Cms/Ui/Project.php:62
+#: Cms/Rpc/CmsFuncs.php:940 Cms/tpl/publish.tpl:5 Cms/Ui/Project.php:62
 msgid "Publish"
 msgstr ""
 
@@ -2691,47 +2691,47 @@ msgstr ""
 msgid "No current tasks."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:6
+#: Cms/tpl/flashedit.tpl:5
 msgid "Tree/Edit"
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:12
+#: Cms/tpl/flashedit.tpl:11
 msgid ""
 "Page tree:\\nHere you can add, rename and delete pages. Select a page to "
 "edit it in the content tree below ↓."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:17
+#: Cms/tpl/flashedit.tpl:16
 msgid ""
 "Content tree:\\nHere you can add content to your pages. Select an element to "
 "edit its properties in the pane on the right →."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:22
+#: Cms/tpl/flashedit.tpl:21
 msgid ""
 "Content properties:\\nHere you can edit all properties of the currently "
 "selected element."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:29
+#: Cms/tpl/flashedit.tpl:28
 msgid ""
 "File library:\\nHere you can choose and upload images and other files for "
 "your project."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:36
+#: Cms/tpl/flashedit.tpl:35
 msgid "Colors:\\nHere you can edit the colors of your project."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:42
+#: Cms/tpl/flashedit.tpl:41
 msgid "Preview your current edit in the preview pane on the right →."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:47
+#: Cms/tpl/flashedit.tpl:46
 msgid "The preview of the currently selected page."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:51 Cms/Forms/Publish.php:56
+#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:57
 msgid "Preview"
 msgstr ""
 
@@ -2749,6 +2749,10 @@ msgstr ""
 
 #: Cms/Forms/Publish.php:51
 msgid "Unreleased Pages"
+msgstr ""
+
+#: Cms/Forms/Publish.php:53
+msgid "Please select the pages you want to publish:"
 msgstr ""
 
 #: Cms/Forms/Project/Publish.php:20

@@ -50,6 +50,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         $fs = $this->addFieldset("recentChanges", [
             'label' => _("Unreleased Pages"),
         ]);
+        $fs->addHtml("<p>" . _("Please select the pages you want to publish:") . "</p>");
 
         foreach($pages as $page) {
             if ($page->lastchange->getTimestamp() > $date->getTimestamp()) {
