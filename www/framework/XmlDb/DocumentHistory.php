@@ -76,9 +76,9 @@ class DocumentHistory
             $results = $sth->fetchAll();
 
             foreach($results as &$result) {
-                $versions[strtotime($result['last_saved_at'])] = [
-                    'last_saved_at' => $result['last_saved_at'],
-                    'user_id' => $result['user_id'],
+                $versions[strtotime($result['last_saved_at'])] = (object) [
+                    'lastsaved' => new \DateTime($result['last_saved_at']),
+                    'userId' => $result['user_id'],
                     'published' => $result['published'],
                     'hash' => $result['hash'],
                 ];
@@ -174,7 +174,7 @@ class DocumentHistory
 
         $latestVersion = $this->getLatestVersion();
 
-        if (!$latestVersion || $latestVersion['hash'] != $hash) {
+        if (!$latestVersion || $latestVersion->hash != $hash) {
             $query = $this->pdo->prepare(
                 "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
                 VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
@@ -193,7 +193,7 @@ class DocumentHistory
                 $result = $timestamp;
             }
         } else {
-            $result = strtotime($latestVersion['last_saved_at']);
+            $result = strtotime($latestVersion->lastsaved);
         }
 
         return $result;
