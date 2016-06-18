@@ -401,6 +401,17 @@ class Project extends Base
         $backup->backupToFile("projects/{$this->project->name}/backup/test.zip");
     }
     // }}}
+    // {{{ statistics()
+    /**
+     * @brief statistics
+     *
+     * @todo added embedded google analytics dashboard for projects with analytics account
+     * @return void
+     **/
+    public function statistics()
+    {
+    }
+    // }}}
 
     // {{{ details()
     function details($max = null) {
