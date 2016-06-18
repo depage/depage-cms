@@ -276,7 +276,16 @@ class Project extends Base
         $form->process();
 
         if ($form->validate()) {
-            $publishId = $form->getValues()['publishId'];
+            $values = $form->getValues();
+            $publishId = $values['publishId'];
+
+            // release pages
+            foreach ($values as $key => $value) {
+                if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {
+                    $this->project->releasePage($matches[1], $this->authUser->id);
+                }
+            }
+
             $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId);
 
             $form->clearSession();

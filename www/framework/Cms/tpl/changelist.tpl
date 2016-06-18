@@ -5,7 +5,7 @@
 ?>
 <table class="recent-changes">
     <?php foreach($this->pages as $page) {
-        if (!$headerShown && $page->lastchange->getTimestamp() < $this->lastPublishDate->getTimestamp()) {
+        if (!$headerShown && $page->released === true) {
             $headerShown = true;
             $class = "published";
             ?>

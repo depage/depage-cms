@@ -44,7 +44,6 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         $formatter = new \Depage\Formatters\DateNatural();
 
         $pages = $this->project->getUnreleasedPages();
-        $date = $this->project->getLastPublishDate();
         $previewPath = $this->project->getPreviewPath();
 
         $fs = $this->addFieldset("recentChanges", [
@@ -53,7 +52,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         $fs->addHtml("<p>" . _("Please select the pages you want to publish:") . "</p>");
 
         foreach($pages as $page) {
-            if ($page->lastchange->getTimestamp() > $date->getTimestamp()) {
+            if (!$page->released) {
                 $fs->addHtml("<a href=\"" . $previewPath . $page->url . "\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
                 $fs->addBoolean("page-" . $page->id, array(
                     'label' => $page->url,

@@ -400,12 +400,18 @@ class Project extends \Depage\Entity\Entity
             if ($docId) {
                 $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
                 $docInfo->url = $node->getAttribute("url");
+                $docInfo->released = $node->getAttribute("db:released") == "true";
 
                 $pages[] = $docInfo;
             }
         }
 
         usort($pages, function($a, $b) {
+            if (!$a->released && $b->released) {
+                return -1;
+            } else if ($a->released && !$b->released) {
+                return 1;
+            }
             $aTi = $a->lastchange->getTimestamp();
             $bTi = $b->lastchange->getTimestamp();
             if ($aTi == $bTi) {
@@ -431,6 +437,10 @@ class Project extends \Depage\Entity\Entity
     public function getUnreleasedPages()
     {
         $pages = $this->getRecentlyChangedPages();
+
+        $pages = array_filter($pages, function($page) {
+            return $page->released == false;
+        });
 
         return $pages;
     }
@@ -577,6 +587,19 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ releasePage()
+    /**
+     * @brief releasePage
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function releasePage($pageId, $userId = null)
+    {
+        // @todo set userId correctly
+        $this->xmldb->getDoc($pageId)->getHistory()->save($userId, true);
+    }
+    // }}}
     // {{{ addPublishTask()
     /**
      * @brief addPublishTask

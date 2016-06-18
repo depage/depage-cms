@@ -174,7 +174,36 @@ class Pages extends Base {
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->addUrlAttributes($node);
 
+        $this->addReleaseStatusAttributes($node);
+
         return $changed;
+    }
+    // }}}
+    // {{{ addReleaseStatusAttributes()
+    /**
+     * @brief addReleaseStatusAttributes
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function addReleaseStatusAttributes($node)
+    {
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+
+        $xpath = new \DOMXPath($xml);
+        $pages = $xpath->query("//pg:page");
+
+        foreach ($pages as $page) {
+            $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));
+            $info = $doc->getDocInfo();
+            $versions = array_values($doc->getHistory()->getVersions(true, 1));
+
+            if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
+                $page->setAttribute("db:released", "true");
+            } else {
+                $page->setAttribute("db:released", "false");
+            }
+        }
     }
     // }}}
 
