@@ -1796,6 +1796,9 @@ class_propBox_pg_date.prototype.setData = function() {
         } else {
                 this.dateBox.text = "-";
         }
+        if (this.data.attributes.released == "true") {
+            this.buttonRelease.enabledState = false;
+        }
 };
 // }}}
 // {{{ saveData()
