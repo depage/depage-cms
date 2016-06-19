@@ -58,6 +58,23 @@ class Page extends Base
         }
     }
     // }}}
+    // {{{ onDocumentChange()
+    /**
+     * @brief onDocumentChange
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function onDocumentChange()
+    {
+        parent::onDocumentChange();
+
+        $this->xmlDb->getDoc("pages")->clearCache();
+
+        return true;
+
+    }
+    // }}}
 
     // {{{ addNodeType
     public function addNodeType($nodeName, $options) {
