@@ -39,6 +39,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         $this->addSingle("publishId", [
             'label' => _("Publish to"),
             'list' => $list,
+            'defaultValue' => array_keys($list)[0],
         ]);
 
         $formatter = new \Depage\Formatters\DateNatural();
