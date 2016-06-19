@@ -760,7 +760,7 @@ html {
     }
 
     // layouts for media sizes
-    @media screen and (max-width: 1300px) {
+    @media screen and (max-width: 1340px) {
         $currentEditWidth: $editWidth * 0.8;
 
         &.layout-right-full {
@@ -781,7 +781,7 @@ html {
             }
         }
     }
-    @media screen and (max-width: 1024px) {
+    @media screen and (max-width: 1080px) {
         $currentEditWidth: $editWidth * 0.7;
 
         &.layout-right-full {
@@ -799,8 +799,8 @@ html {
             }
             #toolbarmain menu.preview {
                 left: $currentEditWidth;
-                margin-left: -180px;
-                width: 180px;
+                margin-left: -230px;
+                width: 230px;
                 text-align: right;
             }
         }
