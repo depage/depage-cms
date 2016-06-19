@@ -72,8 +72,8 @@ var depageCMS = (function() {
         setup: function() {
             localJS.setupVarious();
             localJS.setupToolbar();
-            localJS.setupProjectList();
             localJS.setupPreviewLinks();
+            localJS.setupProjectList();
             localJS.setupSortables();
             localJS.setupForms();
             localJS.setupHelp();
@@ -222,6 +222,10 @@ var depageCMS = (function() {
         // {{{ setupProjectList
         setupProjectList: function() {
             var $projects = $(".projectlist").depageDetails();
+
+            $projects.find(".buttons .button").on("click", function(e) {
+                e.stopPropagation();
+            });
 
             $projects.on("depage.detail-opened", function(e, $head, $detail) {
                 var changesUrl = baseUrl + "project/" + $head.data("project") + "/details/15/?ajax=true";
