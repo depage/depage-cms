@@ -199,9 +199,9 @@ class Pages extends Base {
             $versions = array_values($doc->getHistory()->getVersions(true, 1));
 
             if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
-                $page->setAttribute("db:released", "true");
+                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
             } else {
-                $page->setAttribute("db:released", "false");
+                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
             }
         }
     }

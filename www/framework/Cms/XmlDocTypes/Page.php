@@ -161,7 +161,32 @@ class Page extends Base
 
     // {{{ testDocument
     public function testDocument($node) {
-        return $this->testNodeLanguages($node);
+        $changed = $this->testNodeLanguages($node);
+
+        $this->addReleaseStatusAttributes($node->firstChild);
+
+        return $changed;
+    }
+    // }}}
+    // {{{ addReleaseStatusAttributes()
+    /**
+     * @brief addReleaseStatusAttributes
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function addReleaseStatusAttributes($node)
+    {
+        $info = $this->document->getDocInfo();
+        $versions = array_values($this->document->getHistory()->getVersions(true, 1));
+
+        if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
+            $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
+            error_log("released");
+        } else {
+            $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
+            error_log("nooooooooooooooooooot released");
+        }
     }
     // }}}
 }

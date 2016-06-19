@@ -706,12 +706,12 @@ _global.getLocalDate = function(dateStr) {
 	var formattedDate = conf.lang.date_format;
 	var localDate = new Date();
 
-	localDate.setUTCFullYear(dateStr.substr(0, 4));
-	localDate.setUTCMonth((dateStr.substr(5, 2) - 1));
-	localDate.setUTCDate(dateStr.substr(8, 2));
-	localDate.setUTCHours(dateStr.substr(11, 2));
-	localDate.setUTCMinutes(dateStr.substr(14, 2));
-	localDate.setUTCSeconds(dateStr.substr(17, 2));
+	localDate.setFullYear(dateStr.substr(0, 4));
+	localDate.setMonth((dateStr.substr(5, 2) - 1));
+	localDate.setDate(dateStr.substr(8, 2));
+	localDate.setHours(dateStr.substr(11, 2));
+	localDate.setMinutes(dateStr.substr(14, 2));
+	localDate.setSeconds(dateStr.substr(17, 2));
 
 
 	if (dateStr.substr(0, 4) == undefined) {

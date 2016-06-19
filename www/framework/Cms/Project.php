@@ -597,7 +597,13 @@ class Project extends \Depage\Entity\Entity
     public function releasePage($pageId, $userId = null)
     {
         // @todo set userId correctly
-        $this->xmldb->getDoc($pageId)->getHistory()->save($userId, true);
+        $doc = $this->xmldb->getDoc($pageId);
+        $doc->getHistory()->save($userId, true);
+
+        $doc->clearCache();
+        $this->xmlDb->getDoc("pages")->clearCache();
+
+        return $doc->getDocInfo()->rootid;
     }
     // }}}
     // {{{ addPublishTask()
