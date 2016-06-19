@@ -22,6 +22,8 @@
             //"framework/Cms/css/jstree.css",
             "framework/Cms/css/interface.css",
         ]); ?>
+        <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="framework/Cms/images/favicon.ico">
+        <link rel="icon" type="image/png" href="framework/Cms/images/favicon.png">
     </head>
     <body>
         <?php self::e($this->content); ?>
