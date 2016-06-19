@@ -478,7 +478,7 @@ var depageCMS = (function() {
                     var $header = $result.find("header.info");
 
                     $flashFrame = $("#flashFrame");
-                    $flashFrame[0].src = unescape("project/" + projectName + "/flash/flash/false");
+                    $flashFrame[0].src = "project/" + projectName + "/flash/flash/false/" + encodeURIComponent(page);
                     //@todo add page to flash url
 
                     $window.triggerHandler("switchLayout", "split");

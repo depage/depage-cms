@@ -47,7 +47,7 @@ class Flash extends Base {
         // logged in
         $h = new Html("flash.tpl", [
             'project' => $this->projectName,
-            'page' => $page,
+            'page' => rawurldecode($page),
             'standalone' => $standalone,
             'sid' => $_COOKIE[session_name()],
         ], $this->htmlOptions);
