@@ -18,19 +18,21 @@ namespace Depage\Cms\Rpc;
 use \Depage\Notifications\Notification;
 
 class CmsFuncs {
+    protected $project;
     protected $projectName;
     protected $libPath;
     protected $trashPath;
     protected $callbacks = [];
 
     // {{{ __construct
-    function __construct($project, $pdo, $xmldb, $user) {
-        $this->projectName = $project;
+    function __construct($project, $pdo, $user) {
+        $this->project = $project;
+        $this->projectName = $project->name;
         $this->libPath = "projects/{$this->projectName}/lib";
         $this->trashPath = "projects/{$this->projectName}/trash";
         $this->pdo = $pdo;
-        $this->xmldb = $xmldb;
         $this->user = $user;
+        $this->xmldb = $this->project->getXmlDb($this->user->id);
 
         $this->log = new \Depage\Log\Log();
     }
@@ -638,6 +640,18 @@ class CmsFuncs {
         $this->addCallback('pages', [$nodeId]);
 
         return new Func('preview_update', ['error' => 0]);
+    }
+    // }}}
+    // {{{ release_page()
+    function release_page($args) {
+        $nodeId = $args['id'];
+
+        $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
+        $pageId = $xmldoc->getAttribute($nodeId, "db:docref");
+
+        $this->project->releasePage($pageId, $this->user->id);
+
+        $this->addCallback('pages', [$nodeId]);
     }
     // }}}
 

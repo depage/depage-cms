@@ -186,6 +186,7 @@ class_prop_page_data.prototype.getPropNodes = function() {
 		if (this.tree_displayObj.activeNode.nodeName == conf.ns.page + ":page") {
 			tempNode = this.data.cloneNode(false);
 			tempNode.nodeName = "pg_date";
+                        tempNode.attributes.pageId = this.tree_displayObj.activeNode.attributes['db:id'];
                         tempNode.attributes.released = this.tree_displayObj.activeNode.attributes['db:released'];
 			propNodes.push(tempNode);
 

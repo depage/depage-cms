@@ -214,9 +214,8 @@ class Flash extends Base {
         }
 
         $project = $this->getProject($this->projectName);
-        $this->xmldb = $project->getXmlDb($this->authUser->id);
 
-        $funcHandler = new \Depage\Cms\Rpc\CmsFuncs($this->projectName, $this->pdo, $this->xmldb, $this->authUser);
+        $funcHandler = new \Depage\Cms\Rpc\CmsFuncs($project, $this->pdo, $this->authUser);
         $msgHandler = new \Depage\Cms\Rpc\Message($funcHandler);
 
         //call

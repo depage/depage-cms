@@ -1779,6 +1779,8 @@ class_propBox_pg_date.prototype.generateComponents = function() {
         this.buttonRelease.enabledState = true;
         this.buttonRelease.onClick = function() {
             this.setEnabled(false);
+
+            _root.phpConnect.send("release_page", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", this._parent.data.attributes.pageId], ["type", "pages"]]);
         };
 
 };
