@@ -23,4 +23,5 @@ interface DoctypeInterface
     public function onDeleteNode($nodeId, $parentId);
 
     public function testDocument($xml);
+    public function testDocumentForHistory($xml);
 }
