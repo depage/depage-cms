@@ -187,6 +187,11 @@ class Base implements DoctypeInterface
         return false;
     }
     // }}}
+    // {{{ testDocumentForHistory
+    public function testDocumentForHistory($xml) {
+        return false;
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

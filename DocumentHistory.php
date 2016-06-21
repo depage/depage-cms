@@ -95,7 +95,7 @@ class DocumentHistory
      * gets the last document version
      */
     public function getLatestVersion() {
-        $versions = $this->getVersions(null, 1);
+        $versions = $this->getVersions(true, 1);
 
         return reset($versions);
     }
@@ -167,8 +167,12 @@ class DocumentHistory
         $timestamp = time();
 
         $doc = $this->document->getXml();
+        $dth = $this->document->getDoctypeHandler();
         Document::removeNodeAttr($doc, $this->db_ns, 'lastchange');
         Document::removeNodeAttr($doc, $this->db_ns, 'docid');
+
+        $dth->testDocumentForHistory($doc);
+
         $xml = $doc->saveXml();
         $hash = sha1($xml);
 
