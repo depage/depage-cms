@@ -355,7 +355,9 @@ abstract class Auth
         $user = User::loadBySid($this->pdo, $sid);
         if ($user) {
             $user->onLogout($sid);
-            $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            if (!empty($this->log)) {
+                $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            }
         }
 
         // delete session data for sid

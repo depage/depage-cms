@@ -184,7 +184,7 @@ class HttpCookie extends Auth
         $sessionName = session_name();
 
         session_id($sid);
-        session_start();
+        @session_start();
 
         // Override session cookie and extend the expiration time upon page load
         if (isset($_COOKIE[$sessionName])) {
