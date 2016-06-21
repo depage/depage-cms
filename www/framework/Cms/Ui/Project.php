@@ -282,9 +282,14 @@ class Project extends Base
             // release pages
             foreach ($values as $key => $value) {
                 if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {
-                    $this->project->releasePage($matches[1], $this->authUser->id);
+                    $this->project->releaseDocument($matches[1], $this->authUser->id);
                 }
             }
+
+            // save current general documents in history
+            $this->project->releaseDocument("pages", $this->authUser->id);
+            $this->project->releaseDocument("settings", $this->authUser->id);
+            $this->project->releaseDocument("colors", $this->authUser->id);
 
             $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId);
 

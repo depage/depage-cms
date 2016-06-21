@@ -649,7 +649,8 @@ class CmsFuncs {
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         $pageId = $xmldoc->getAttribute($nodeId, "db:docref");
 
-        $rootId = $this->project->releasePage($pageId, $this->user->id);
+        $rootId = $this->project->releaseDocument($pageId, $this->user->id);
+        $rootId = $this->project->releaseDocument("pages", $this->user->id);
 
         $this->addCallback('page_data', [$rootId]);
     }

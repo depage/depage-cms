@@ -587,21 +587,20 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
-    // {{{ releasePage()
+    // {{{ releaseDocument()
     /**
-     * @brief releasePage
+     * @brief releaseDocument
      *
      * @param mixed $
      * @return void
      **/
-    public function releasePage($pageId, $userId = null)
+    public function releaseDocument($docId, $userId = null)
     {
         // @todo set userId correctly
-        $doc = $this->xmldb->getDoc($pageId);
+        $doc = $this->xmldb->getDoc($docId);
         $doc->getHistory()->save($userId, true);
 
         $doc->clearCache();
-        $this->xmlDb->getDoc("pages")->clearCache();
 
         return $doc->getDocInfo()->rootid;
     }
