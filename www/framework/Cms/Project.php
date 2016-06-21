@@ -641,7 +641,7 @@ class Project extends \Depage\Entity\Entity
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->projectName);
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
         $initId = $task->addSubtask("init", "
             \$fs = \\Depage\\Fs\\Fs::factory(%s, array(
                 'user' => %s,
@@ -973,6 +973,17 @@ class Project extends \Depage\Entity\Entity
         foreach ($files as $file) {
             unlink($file);
         }
+    }
+    // }}}
+    // {{{ __toString()
+    /**
+     * @brief __toString
+     *
+     * @return void
+     **/
+    public function __toString()
+    {
+        return $this->name;
     }
     // }}}
 

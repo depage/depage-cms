@@ -191,6 +191,8 @@ class Main extends Base {
      * @return  null
      */
     public function tasks($taskId = null) {
+        $this->user = $this->auth->enforce();
+
         // handle tasks deletion form
         $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", [
             'label' => _("Remove"),
@@ -221,6 +223,18 @@ class Main extends Base {
             // load all tasks
             $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
         }
+
+        // filter tasks by user
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $tasks = array_filter($tasks, function($task) use ($projects) {
+            foreach ($projects as $project) {
+                if ($project->name == null || $project->name == $task->projectName) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         foreach ($tasks as $task) {
             if ($task) {
@@ -317,7 +331,7 @@ class Main extends Base {
      * @return  null
      */
     public function users($current = null) {
-        $this->auth->enforce();
+        $this->user = $this->auth->enforce();
 
         $showCurrent = $current === "current";
 
@@ -328,6 +342,26 @@ class Main extends Base {
             $users = \Depage\Auth\User::loadAll($this->pdo);
             $updateUrl = "";
         }
+
+        // filter users by user
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $user = $this->user;
+
+        $users = array_filter($users, function($u) use ($projects, $user) {
+            if ($u->id == $user->id) {
+                return true;
+            }
+            if ($user->canEditAllUsers()) {
+                return true;
+            }
+            $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
+            $shared = array_intersect($projects, $userProjects);
+            if (count($shared) > 0) {
+                return true;
+            }
+
+            return false;
+        });
 
         $h = new Html("box.tpl", [
             'id' => "box-users",
