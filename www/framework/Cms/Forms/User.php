@@ -71,11 +71,11 @@ class User extends \Depage\HtmlForm\HtmlForm
                 'skin' => "select",
                 'defaultValue' => 'Depage\Cms\Auth\DefaultUser',
                 'list' => [
-                    'Depage\Cms\Auth\Admin' => _("Administrator"),
-                    'Depage\Cms\Auth\Developer' => _("Developer"),
-                    'Depage\Cms\Auth\MainUser' => _("Main User"),
-                    'Depage\Cms\Auth\DefaultUser' => _("Default User"),
-                    'Depage\Cms\Auth\Editor' => _("Editor"),
+                    'Depage\Cms\Auth\Admin' => _('Depage\Cms\Auth\Admin'),
+                    'Depage\Cms\Auth\Developer' => _('Depage\Cms\Auth\Developer'),
+                    'Depage\Cms\Auth\MainUser' => _('Depage\Cms\Auth\MainUser'),
+                    'Depage\Cms\Auth\DefaultUser' => _('Depage\Cms\Auth\DefaultUser'),
+                    'Depage\Cms\Auth\Editor' => _('Depage\Cms\Auth\Editor'),
                 ],
             ]);
         }

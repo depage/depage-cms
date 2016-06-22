@@ -86,8 +86,7 @@ class User extends Base
         }
         $h = new Html("box.tpl", [
             'id' => "user",
-            'icon' => "framework/Cms/images/icon_users.gif",
-            'class' => "first",
+            'class' => "box-users",
             'title' => $title,
             'content' => [
                 $form,
@@ -107,9 +106,13 @@ class User extends Base
     protected function show()
     {
         $h = new Html("box.tpl", [
-            'class' => "box_users",
+            'id' => "user",
+            'class' => "box-users",
             'title' => $title,
             'content' => [
+                new Html("userprofile.tpl", [
+                    'user' => $this->user,
+                ]),
             ],
         ], $this->htmlOptions);
 
