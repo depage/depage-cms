@@ -150,10 +150,10 @@ class MediaInfo
      * @return array
      */
     protected function getImageInfo() {
-        $info = array();
-
         $imageinfo = @getimagesize($this->filename);
         if ($imageinfo[2] > 0) {
+            $info = array();
+
             $info['isImage'] = true;
             $info['width'] = $imageinfo[0];
             $info['height'] = $imageinfo[1];
@@ -161,6 +161,25 @@ class MediaInfo
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
 
             $this->info = array_merge($this->info, $info);
+        }
+        if (function_exists("exif_read_data")) {
+            $exif =  exif_read_data($this->filename);
+            if ($exif) {
+                //var_dump($exif); die();
+                $info = array();
+                foreach ($exif as $key => $value) {
+                    if (is_string($value)) {
+                        $info['exif' . $key] = $value;
+                    }
+                    if ($key == "COMPUTED") {
+                        foreach ($value as $keySub => $valueSub) {
+                            $info['exifComputed' . $keySub] = $valueSub;
+                        }
+                    }
+                }
+
+                $this->info = array_merge($this->info, $info);
+            }
         }
 
         return $this->info;
