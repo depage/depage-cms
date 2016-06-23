@@ -28,6 +28,27 @@ class MediaInfo
     protected $cache;
     protected $filename = "";
     protected $info = array();
+    protected $iptcHeaders = array(
+        '2#005' => 'DocumentTitle',
+        '2#010' => 'Urgency',
+        '2#015' => 'Category',
+        '2#020' => 'Subcategories',
+        '2#025' => 'Keywords',
+        '2#040' => 'SpecialInstructions',
+        '2#055' => 'CreationDate',
+        '2#080' => 'AuthorByline',
+        '2#085' => 'AuthorTitle',
+        '2#090' => 'City',
+        '2#095' => 'State',
+        '2#101' => 'Country',
+        '2#103' => 'OTR',
+        '2#105' => 'Headline',
+        '2#110' => 'Source',
+        '2#115' => 'PhotoSource',
+        '2#116' => 'Copyright',
+        '2#120' => 'Caption',
+        '2#122' => 'CaptionWriter',
+    );
     // }}}
 
     // {{{ constructor
@@ -150,7 +171,7 @@ class MediaInfo
      * @return array
      */
     protected function getImageInfo() {
-        $imageinfo = @getimagesize($this->filename);
+        $imageinfo = @getimagesize($this->filename, $extras);
         if ($imageinfo[2] > 0) {
             $info = array();
 
@@ -162,10 +183,23 @@ class MediaInfo
 
             $this->info = array_merge($this->info, $info);
         }
+        if(isset($extras['APP13'])) {
+            $info = array();
+            $iptc = iptcparse($extras['APP13']);
+
+            foreach ($iptc as $key => $value) {
+                if (isset($this->iptcHeaders[$key])) {
+                    $info['iptc' . $this->iptcHeaders[$key]] = implode(",", $value);
+                } else {
+                    $info['iptc' . $key] = implode(",", $value);
+                }
+            }
+
+            $this->info = array_merge($this->info, $info);
+        }
         if (function_exists("exif_read_data")) {
             $exif =  exif_read_data($this->filename);
             if ($exif) {
-                //var_dump($exif); die();
                 $info = array();
                 foreach ($exif as $key => $value) {
                     if (is_string($value)) {
