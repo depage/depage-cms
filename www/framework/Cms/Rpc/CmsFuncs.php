@@ -188,6 +188,7 @@ class CmsFuncs {
             if (is_bool($value)) {
                 $info[$key] = $info[$key] ? "true" : "false";
             }
+            $info[$key] = htmlspecialchars($info[$key], \ENT_XML1 | \ENT_DISALLOWED, "utf-8");
         }
 
         return new Func('set_imageProp', $info);
@@ -1188,9 +1189,12 @@ class CmsFuncs {
 
                 $dirXML .= "<file";
                 foreach ($data as $key => $value) {
-                    $dirXML .= " $key=\"" . htmlspecialchars($value) . "\"";
+                    if (!is_array($value)) {
+                        $dirXML .= " $key=\"" . htmlspecialchars($value, \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
+                    }
                 }
-                $dirXML .= " />";
+                $dirXML .= ">";
+                $dirXML .= "</file>";
             }
         }
         $dirXML .= "</proj:filelist></proj:files>";
