@@ -1788,7 +1788,7 @@ class Document
     /**
      * clears the node-cache
      */
-    protected function clearCache()
+    public function clearCache()
     {
         if (!is_null($this->doc_id)) {
             $this->cache->delete("{$this->table_docs}_d{$this->doc_id}/");
