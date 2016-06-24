@@ -3094,11 +3094,14 @@ class_propBox_edit_img.prototype.load_thumb = function() {
 };
 // }}}
 // {{{ setImageProp()
-class_propBox_edit_img.prototype.setImageProp = function(iwidth, iheigth, isize, idate) {
+class_propBox_edit_img.prototype.setImageProp = function(iwidth, iheigth, isize, idate, icopyright, idescription, ikeywords) {
         this.thumb.filesize = isize;
         this.thumb.filedate = idate;
         this.thumb.filetype = "unknown";
         this.thumb.imagesize = iwidth + "x" + iheigth;
+        this.thumb.filecopyright = icopyright;
+        this.thumb.filedescription = idescription;
+        this.thumb.filekeywords = ikeywords;
 
         this.thumb.init_tooltip();
 };
@@ -3681,6 +3684,9 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
                                 filesize        : this.data.childNodes[i].attributes.size,
                                 filedate        : this.data.childNodes[i].attributes.date,
                                 filetype        : this.data.childNodes[i].attributes.type,
+                                filedescription : this.data.childNodes[i].attributes.description,
+                                filecopyright   : this.data.childNodes[i].attributes.copyright,
+                                filekeywords    : this.data.childNodes[i].attributes.keywords,
                                 imagesize       : this.data.childNodes[i].attributes.width != undefined ? this.data.childNodes[i].attributes.width + "x" + this.data.childNodes[i].attributes.height : null,
                                 selected        : false,
                                 selectable      : false
@@ -3692,6 +3698,9 @@ class_propBox_proj_filelist.prototype.generateComponents = function() {
                                 filesize        : this.data.childNodes[i].attributes.size,
                                 filedate        : this.data.childNodes[i].attributes.date,
                                 filetype        : this.data.childNodes[i].attributes.type,
+                                filedescription : this.data.childNodes[i].attributes.description,
+                                filecopyright   : this.data.childNodes[i].attributes.copyright,
+                                filekeywords    : this.data.childNodes[i].attributes.keywords,
                                 imagesize       : this.data.childNodes[i].attributes.width != undefined ? this.data.childNodes[i].attributes.width + "x" + this.data.childNodes[i].attributes.height : null,
                                 selected        : false,
                                 selectable      : true

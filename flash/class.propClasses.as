@@ -271,7 +271,7 @@ class_prop_page_data.prototype.setImageProp = function(args) {
 	var tempStr = "";
 	for (i = 0; i < this.imageCallback.length; i++) {
 		if (this.imageCallback[i][0] == args.path && this.imageCallback[i][1] == args.name) {
-			this.imageCallback[i][2].apply(this.imageCallback[i][3], [args.width, args.height, args.size, args.date])
+			this.imageCallback[i][2].apply(this.imageCallback[i][3], [args.width, args.height, args.size, args.date, args.copyright, args.description, args.keywords])
 		}
 	}
 	for (i = 0; i < this.imageCallback.length; i++) {

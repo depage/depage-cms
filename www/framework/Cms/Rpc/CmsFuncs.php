@@ -726,9 +726,12 @@ class CmsFuncs {
             'error_parsexml-8' => _("An attribute value is not properly terminated."),
             'error_parsexml-9' => _("A start-tag is not matched with an end-tag."),
             'error_prop_xslt_template' => _("An error occured while parsing the template:"),
+            'filetip_copyright' => _("copyright: "),
+            'filetip_description' => _("description: "),
             'filetip_filedate' => _("last changed: "),
             'filetip_filesize' => _("size: "),
             'filetip_imagesize' => _("dimensions: "),
+            'filetip_keywords' => _("keywords: "),
             'inhtml_backup_name_complete' => _("Complete Backup from"),
             'inhtml_backup_not_restored' => _("Backup not restored"),
             'inhtml_backup_not_saved' => _("Backup not saved"),
@@ -1181,6 +1184,9 @@ class CmsFuncs {
                     'date' => $info['date']->format("Y/m/d H:i:s"),
                     'type' => $info['mime'],
                     'extension' => $info['extension'],
+                    'copyright' => $info['copyright'],
+                    'description' => $info['description'],
+                    'keywords' => $info['keywords'],
                 ];
                 if (isset($info['width'])) {
                     $data['width'] = $info['width'];
@@ -1190,7 +1196,7 @@ class CmsFuncs {
                 $dirXML .= "<file";
                 foreach ($data as $key => $value) {
                     if (!is_array($value)) {
-                        $dirXML .= " $key=\"" . htmlspecialchars($value, \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
+                        $dirXML .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
                     }
                 }
                 $dirXML .= ">";
