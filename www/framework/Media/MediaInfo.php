@@ -189,7 +189,7 @@ class MediaInfo
 
             foreach ($iptc as $key => $value) {
                 if (isset($this->iptcHeaders[$key])) {
-                    $info['iptc' . $this->iptcHeaders[$key]] = implode(",", $value);
+                    $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
                 } else {
                     $info['iptc' . $key] = implode(",", $value);
                 }
@@ -214,6 +214,31 @@ class MediaInfo
 
                 $this->info = array_merge($this->info, $info);
             }
+        }
+
+        // copyright
+        if (!empty($this->info['iptcCopyright'])) {
+            $this->info['copyright'] = $this->info['iptcCopyright'];
+        } else if (!empty($this->info['exifComputedCopyright'])) {
+            $this->info['copyright'] = $this->info['exifComputedCopyright'];
+        } else {
+            $this->info['copyright'] = "";
+        }
+
+        // description
+        if (!empty($this->info['iptcCaption'])) {
+            $this->info['description'] = $this->info['iptcCaption'];
+        } else if (!empty($this->info['exifImageDescription'])) {
+            $this->info['description'] = $this->info['exifImageDescription'];
+        } else {
+            $this->info['description'] = "";
+        }
+
+        // keywords
+        if (!empty($this->info['iptcKeywords'])) {
+            $this->info['keywords'] = $this->info['iptcKeywords'];
+        } else {
+            $this->info['keywords'] = "";
         }
 
         return $this->info;
