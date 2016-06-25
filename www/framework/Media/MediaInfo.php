@@ -190,14 +190,12 @@ class MediaInfo
             foreach ($iptc as $key => $value) {
                 if (isset($this->iptcHeaders[$key])) {
                     $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
-                } else {
-                    $info['iptc' . $key] = implode(",", $value);
                 }
             }
 
             $this->info = array_merge($this->info, $info);
         }
-        if (function_exists("exif_read_data") && ($info['mime'] == 'image/jpeg' || $info['mime'] == 'image/tif')) {
+        if (function_exists("exif_read_data") && isset($info['mime']) && ($info['mime'] == 'image/jpeg' || $info['mime'] == 'image/tif')) {
             $exif = exif_read_data($this->filename);
             if ($exif) {
                 $info = array();
