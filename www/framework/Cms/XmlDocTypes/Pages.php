@@ -179,6 +179,29 @@ class Pages extends Base {
         return $changed;
     }
     // }}}
+    // {{{ testDocumentForHistory
+    public function testDocumentForHistory($xml) {
+        parent::testDocumentForHistory($xml);
+
+        $this->addReleaseStatusAttributes($xml, true);
+
+        $xpath = new \DOMXPath($xml);
+
+        // remove unreleased pages
+        $unreleasedPages = $xpath->query("//pg:page[@db:released = 'false']");
+        foreach ($unreleasedPages as $page) {
+            $page->parentNode->removeChild($page);
+        }
+
+        // remove empty folders
+        do {
+            $emptyFolders = $xpath->query("//pg:folder[not(.//pg:page)]");
+            foreach ($emptyFolders as $folder) {
+                $folder->parentNode->removeChild($folder);
+            }
+        } while ($emptyFolders->length > 0);
+    }
+    // }}}
     // {{{ addReleaseStatusAttributes()
     /**
      * @brief addReleaseStatusAttributes
@@ -186,7 +209,7 @@ class Pages extends Base {
      * @param mixed $
      * @return void
      **/
-    public function addReleaseStatusAttributes($node)
+    public function addReleaseStatusAttributes($node, $getAnyVersion = false)
     {
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
@@ -195,13 +218,15 @@ class Pages extends Base {
 
         foreach ($pages as $page) {
             $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));
-            $info = $doc->getDocInfo();
-            $versions = array_values($doc->getHistory()->getVersions(true, 1));
+            if ($doc) {
+                $info = $doc->getDocInfo();
+                $versions = array_values($doc->getHistory()->getVersions(true, 1));
 
-            if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
-                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
-            } else {
-                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
+                if (count($versions) > 0 && ($getAnyVersion || $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp())) {
+                    $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
+                } else {
+                    $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
+                }
             }
         }
     }

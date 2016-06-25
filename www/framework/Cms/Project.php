@@ -44,6 +44,11 @@ class Project extends \Depage\Entity\Entity
      * @brief xmldb
      **/
     public $xmldb = null;
+
+    /**
+     * @brief previewType
+     **/
+    protected $previewType = "pre";
     // }}}
 
     /* {{{ constructor */
@@ -298,8 +303,8 @@ class Project extends \Depage\Entity\Entity
     {
         $projectName = $this->name;
 
-        $this->xmldb = $this->getXmlDb();
-        $this->xmldb->updateSchema();
+        $xmldb = $this->getXmlDb();
+        $xmldb->updateSchema();
 
         $schema = new \Depage\DB\Schema($this->pdo);
 
@@ -323,6 +328,18 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ setPreviewType()
+    /**
+     * @brief setPreviewType
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setPreviewType($type)
+    {
+        $this->previewType = $type;
+    }
+    // }}}
     // {{{ getXmlDb()
     /**
      * @brief getXmlDb
@@ -346,6 +363,33 @@ class Project extends \Depage\Entity\Entity
         }
 
         return $this->xmldb;
+    }
+    // }}}
+    // {{{ getXmlGetter()
+    /**
+     * @brief getXmlDb
+     *
+     * @return xmldb
+     **/
+    public function getXmlGetter($userId = null)
+    {
+        if ($this->previewType == "live") {
+            $prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+            $xsltPath = "projects/" . $this->name . "/xslt/";
+            $xmlPath = "projects/" . $this->name . "/xml/";
+            $libPath = "projects/" . $this->name . "/lib/";
+
+            $xmldbHistory = new \Depage\XmlDb\XmlDbHistory($prefix, $this->pdo, $this->cache, [
+                'pathXMLtemplate' => $xmlPath,
+                'project' => $this,
+                'userId' => $userId,
+            ]);
+
+            return $xmldbHistory;
+        } else {
+            return $this->getXmlDb($userId);
+        }
     }
     // }}}
     // {{{ getPdo()
@@ -529,8 +573,8 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getHomeUrl($publishId = null)
     {
-        $this->xmldb = $this->getXmlDb();
-        $xml = $this->xmldb->getDocXml("pages");
+        $xmldb = $this->getXmlGetter();
+        $xml = $xmldb->getDocXml("pages");
 
         $languages = array_keys($this->getLanguages());
 
@@ -550,7 +594,7 @@ class Project extends \Depage\Entity\Entity
     {
         if (is_null($publishId)) {
             // @todo check template path
-            return "project/{$this->name}/preview/html/pre";
+            return "project/{$this->name}/preview/html/{$this->previewType}";
         } else {
             $targets = $this->getPublishingTargets();
             $conf = $targets[$publishId];
@@ -614,7 +658,8 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId)
     {
-        $this->xmldb = $this->getXmlDb();
+        $this->setPreviewType("live");
+        $xmlgetter = $this->getXmlGetter();
 
         $projectPath = $this->getProjectPath();
         $targets = $this->getPublishingTargets();
@@ -636,7 +681,7 @@ class Project extends \Depage\Entity\Entity
 
         // get transformer
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $conf->template_set, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
@@ -749,10 +794,10 @@ class Project extends \Depage\Entity\Entity
      **/
     public function generateSitemap($publishId)
     {
-        $this->xmldb = $this->getXmlDb();
+        $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "sitemap");
-        $xml = $this->xmldb->getDocXml("pages");
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "sitemap");
+        $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
             "currentContentType" => "text/xml",
@@ -775,10 +820,10 @@ class Project extends \Depage\Entity\Entity
      **/
     public function generateAtomFeed($publishId, $lang)
     {
-        $this->xmldb = $this->getXmlDb();
+        $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "atom");
-        $xml = $this->xmldb->getDocXml("pages");
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "atom");
+        $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
             "currentLang" => $lang,
@@ -872,8 +917,8 @@ class Project extends \Depage\Entity\Entity
      **/
     public function generateIndex($publishId)
     {
-        $this->xmldb = $this->getXmlDb();
-        $xml = $this->xmldb->getDocXml("pages");
+        $xmlgetter = $this->getXmlGetter();
+        $xml = $xmlgetter->getDocXml("pages");
 
         $targets = $this->getPublishingTargets();
         $languages = array_keys($this->getLanguages());
@@ -883,7 +928,7 @@ class Project extends \Depage\Entity\Entity
         $baseurl = $this->getBaseUrl($publishId);
 
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $this->xmldb, $this->name, $conf->template_set, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $urls = $transformer->getUrlsByPageId();
 
         $index = "";
@@ -930,10 +975,10 @@ class Project extends \Depage\Entity\Entity
     {
         $this->removeGeneratedCss();
 
-        $this->xmldb = $this->getXmlDb();
+        $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $this->xmldb, $this->name, "css");
-        $xml = $this->xmldb->getDocXml("colors");
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "css");
+        $xml = $xmlgetter->getDocXml("colors");
         $xpath = new \DOMXPath($xml);
         $nodes = $xpath->query("//proj:colorscheme[@name != 'tree_name_color_global']/@name");
         $parameters = [

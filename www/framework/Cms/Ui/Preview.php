@@ -111,9 +111,10 @@ class Preview extends \Depage\Depage\Ui\Base
 
         $urlPath = "/" . implode("/", $args);
 
-        if ($lang == "sitemap.xml") {
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        $project->setPreviewType($this->previewType);
 
+        if ($lang == "sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap())
@@ -121,8 +122,6 @@ class Preview extends \Depage\Depage\Ui\Base
 
             return $sitemap;
         } else if ($urlPath == "/atom.xml") {
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
-
             $feed = new \Depage\Http\Response();
             $feed
                 ->setBody($project->generateAtomFeed(null, $lang))
@@ -131,8 +130,6 @@ class Preview extends \Depage\Depage\Ui\Base
             return $feed;
         } else if ($urlPath == "/") {
             // redirect to home
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
-
             \Depage\Depage\Runner::redirect(DEPAGE_BASE . $project->getHomeUrl());
         }
 
@@ -167,10 +164,18 @@ class Preview extends \Depage\Depage\Ui\Base
     protected function preview($urlPath, $lang)
     {
         $transformCache = null;
+        $this->project->setPreviewType($this->previewType);
+
         if ($this->previewType != "dev") {
             $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
         }
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $this->xmldb, $this->projectName, $this->template, $transformCache);
+        if ($this->previewType == "live") {
+            // @todo only for testing
+            $transformCache = null;
+        }
+        $xmlGetter = $this->project->getXmlGetter();
+
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
         $html = $transformer->display($urlPath, $lang);
 
         return $html;
