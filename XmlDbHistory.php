@@ -73,10 +73,12 @@ class XmlDbHistory implements XmlGetter
         $id = $this->docExists($doc_id_or_name);
 
         $query = $this->pdo->prepare("
-            SELECT doc_id, published, xml
+            SELECT doc_id, last_saved_at, published, xml
             FROM {$this->table_history}
             WHERE published = true
-            AND doc_id = :id
+                AND doc_id = :id
+            ORDER BY last_saved_at DESC
+            LIMIT 1
         ");
 
         $query->execute([
