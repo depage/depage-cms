@@ -483,11 +483,8 @@ abstract class Transformer
         if (isset($this->pageIdByUrl[$urlPath])) {
             $pageId = $this->pageIdByUrl[$urlPath];
             $docRef = $this->pagedataIdByPageId[$pageId];
-            // @todo this is a workaround for getting the pagedataId
-            $doc = $this->xmlGetter->getDoc($docRef);
-            $pagedataId = $doc->getDocId();
 
-            return array($pageId, $pagedataId);
+            return array($pageId, $docRef);
         } else {
             return array(false, false);
         }
@@ -554,7 +551,7 @@ abstract class Transformer
 
         $xml = "<file";
         foreach ($info as $key => $value) {
-            $xml .= " $key=\"" . htmlspecialchars($value) . "\"";
+            $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
         }
         $xml .= " />";
 
