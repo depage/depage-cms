@@ -197,8 +197,8 @@ class MediaInfo
 
             $this->info = array_merge($this->info, $info);
         }
-        if (function_exists("exif_read_data")) {
-            $exif =  exif_read_data($this->filename);
+        if (function_exists("exif_read_data") && ($info['mime'] == 'image/jpeg' || $info['mime'] == 'image/tif')) {
+            $exif = exif_read_data($this->filename);
             if ($exif) {
                 $info = array();
                 foreach ($exif as $key => $value) {
