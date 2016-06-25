@@ -94,6 +94,23 @@ class Response {
         return $data === null ? array() : $data;
     }
     // }}}
+    // {{{ getXml()
+    /**
+     * @brief getXml
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function getXml()
+    {
+        $doc = new \Depage\Xml\Document();
+        if (!$doc->loadHtml($this->body)) {
+            throw new \Exception('Unable to parse response body into XML: ' . libxml_get_last_error());
+        }
+
+        return $doc;
+    }
+    // }}}
     // {{{ addHeader()
     /**
      * @brief addHeader
