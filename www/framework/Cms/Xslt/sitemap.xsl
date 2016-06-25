@@ -29,7 +29,7 @@
             <xsl:variable name="lang" select="@shortname" />
             <url>
                 <loc>
-                    <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
+                    <xsl:value-of select="$baseUrl" />/<xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
                 </loc>
                 <lastmod>
                     <xsl:value-of select="substring-before(dp:getpage($pageId)/pg:page_data/@db:lastchange, ' ')"/>
