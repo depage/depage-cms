@@ -16,19 +16,34 @@ class Indexer
     protected $xpathTitle = "/html/head/title";
 
     /**
+     * @brief xpathDescription
+     **/
+    protected $xpathDescription = "/html/head/meta[@name = 'description']/@content";
+
+    /**
      * @brief xpathHeadlines
      **/
-    protected $xpathHeadlines = "//h1 | //h2 | //h3 | //h4 | //h5 | //h6 | //hgroup";
+    protected $xpathHeadlines = ".//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6";
 
     /**
      * @brief xpathContent
      **/
-    protected $xpathContent = "//article | //section | //main";
+    protected $xpathContent = ".//article[not(ancestor::main) and not(ancestor::section)] | .//section[not(ancestor::main) and not(ancestor::article)] | .//main";
+
+    /**
+     * @brief xpathImgAlt
+     **/
+    protected $xpathImgAlt = ".//img/@alt";
 
     /**
      * @brief xpathImages
      **/
-    protected $xpathImages = "//img";
+    protected $xpathImages = ".//img/@src | .//img/@srcset";
+
+    /**
+     * @brief xpathLinks
+     **/
+    protected $xpathLinks = ".//a/@href";
 
     // {{{ __construct()
     /**
@@ -56,50 +71,90 @@ class Indexer
         $doc = $response->getXml();
 
         $title = [];
+        $description = [];
         $headlines = [];
         $content = [];
         $images = [];
+        $links = [];
 
         $xpath = new \DOMXPath($doc);
 
+        // extract title
         $nodes = $xpath->query($this->xpathTitle);
         foreach ($nodes as $node) {
             $title[] = $node->textContent;
         }
 
-        $nodes = $xpath->query($this->xpathHeadlines);
+        // extract description
+        $nodes = $xpath->query($this->xpathDescription);
         foreach ($nodes as $node) {
-            $headlines[] = $node->textContent;
+            $description[] = $node->value;
         }
 
+        // extract content and headline
+        // @todo don't double include nodes
         $nodes = $xpath->query($this->xpathContent);
         foreach ($nodes as $node) {
             $content[] = $node->textContent;
-        }
 
-        $nodes = $xpath->query($this->xpathImages);
-        foreach ($nodes as $node) {
-            $src = $node->getAttribute("src");
-            $srcset = $node->getAttribute("srcset");
-
-            if (!empty($src)) {
-                $images[] = $src;
+            // search for headline
+            $hNodes = $xpath->query($this->xpathHeadlines, $node);
+            foreach ($hNodes as $hNode) {
+                $headlines[] = $hNode->textContent;
             }
-            if (!empty($srcset)) {
-                $imgs = preg_match_all("/([^ ]+) [^ ]+,?/", $srcset, $matches);
-                foreach ($matches[1] as $img) {
-                    $images[] = $img;
+
+            // search for image alt tags
+            $altNodes = $xpath->query($this->xpathHeadlines, $node);
+            foreach ($altNodes as $altNode) {
+                if (!empty($altNode->value)) {
+                    $content[] = $altNode->value;
                 }
             }
-        }
-        $images = array_unique($images);
-        // @todo update relative image paths to be dependend on base or on current url
 
+            // extract images
+            $imgNodes = $xpath->query($this->xpathImages, $node);
+            foreach ($imgNodes as $imgNode) {
+                $src = $imgNode->value;
+                if (preg_match_all("/([^ ]+) [^ ]+,?/", $src, $matches)) {
+                    foreach ($matches[1] as $img) {
+                        $images[] = $img;
+                    }
+                } else if (!empty($src)) {
+                    $images[] = $src;
+                }
+            }
+            $images = array_unique($images);
+            // @todo update relative image paths to be dependend on base or on current url
+
+            // extract links
+            $aNodes = $xpath->query($this->xpathLinks, $node);
+            foreach ($aNodes as $aNode) {
+                $href = $aNode->value;
+                if (!empty($href)) {
+                    $links[] = $href;
+                }
+            }
+            $links = array_unique($links);
+        }
+
+
+        echo("Title");
         var_dump($title);
+
+        echo("Description");
+        var_dump($description);
+
+        echo("Headlines");
         var_dump($headlines);
+
+        echo("Content");
         var_dump($content);
+
+        echo("Images");
         var_dump($images);
-        die();
+
+        echo("Links");
+        var_dump($links);
 
     }
     // }}}
