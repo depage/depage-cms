@@ -50,7 +50,7 @@ class Pdo
                 description = :description,
                 headlines = :headlines,
                 content = :content
-            ON DUPLICATE KEY UPDATE title=VALUES(title), headlines=VALUES(headlines), description=VALUES(content), description=VALUES(content)"
+            ON DUPLICATE KEY UPDATE title=VALUES(title), description=VALUES(description), headlines=VALUES(headlines), content=VALUES(content)"
         );
         $query->execute([
             'url' => $url,

@@ -206,6 +206,22 @@ class Indexer
     }
     // }}}
 
+    // {{{ cleanContent()
+    /**
+     * @brief cleanContent
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    protected function cleanContent($content)
+    {
+        $content = implode(" ", $content);
+        $content = preg_replace('/[\s\r\n]+/m', ' ', $content);
+        $content = trim($content);
+
+        return $content;
+    }
+    // }}}
     // {{{ getTitle()
     /**
      * @brief getTitle
@@ -221,7 +237,7 @@ class Indexer
             $this->title[] = $node->textContent;
         }
 
-        return implode(" ", $this->title);
+        return $this->cleanContent($this->title);
     }
     // }}}
     // {{{ getDescription()
@@ -239,7 +255,7 @@ class Indexer
             $this->description[] = $node->value;
         }
 
-        return implode(" ", $this->description);
+        return $this->cleanContent($this->description);
     }
     // }}}
     // {{{ getHeadlines()
@@ -258,7 +274,7 @@ class Indexer
             }
         }
 
-        return implode(" ", $this->headlines);
+        return $this->cleanContent($this->headlines);
     }
     // }}}
     // {{{ getContent()
@@ -281,7 +297,7 @@ class Indexer
             }
         }
 
-        return implode(" ", $this->content);
+        return $this->cleanContent($this->content);
     }
     // }}}
     // {{{ getImages()
