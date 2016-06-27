@@ -10,6 +10,17 @@ use Depage\Http\Request;
  */
 class Indexer
 {
+    // {{{ variables
+    /**
+     * @brief xpathBase
+     **/
+    protected $xpathBase = "/html/head/base/@href";
+
+    /**
+     * @brief xpathExcluded
+     **/
+    protected $xpathExcluded = "//script";
+
     /**
      * @brief xpathTitle
      **/
@@ -28,7 +39,8 @@ class Indexer
     /**
      * @brief xpathContent
      **/
-    protected $xpathContent = ".//article[not(ancestor::main) and not(ancestor::section)] | .//section[not(ancestor::main) and not(ancestor::article)] | .//main";
+    //protected $xpathContent = ".//article[not(ancestor::main) and not(ancestor::section)] | .//section[not(ancestor::main) and not(ancestor::article)] | .//main";
+    protected $xpathContent = ".//article | .//section | .//main";
 
     /**
      * @brief xpathImgAlt
@@ -44,6 +56,47 @@ class Indexer
      * @brief xpathLinks
      **/
     protected $xpathLinks = ".//a/@href";
+
+    /**
+     * @brief contentNodes
+     **/
+    protected $contentNodes = null;
+
+    /**
+     * @brief title
+     **/
+    protected $title = null;
+
+    /**
+     * @brief description
+     **/
+    protected $description = null;
+
+    /**
+     * @brief headlines
+     **/
+    protected $headlines = null;
+
+    /**
+     * @brief content
+     **/
+    protected $content = null;
+
+    /**
+     * @brief images
+     **/
+    protected $images = null;
+
+    /**
+     * @brief links
+     **/
+    protected $links = null;
+
+    /**
+     * @brief xpath
+     **/
+    protected $xpath = null;
+    // }}}
 
     // {{{ __construct()
     /**
@@ -66,55 +119,174 @@ class Indexer
      **/
     public function index($url)
     {
+        $this->load($url);
+
+        $this->getTitle();
+        $this->getDescription();
+        $this->getHeadlines();
+        $this->getContent();
+        $this->getImages();
+        $this->getLinks();
+
+        return $this;
+    }
+    // }}}
+    // {{{ load()
+    /**
+     * @brief load
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function load($url)
+    {
         $request = new Request($url);
         $response = $request->execute();
-        $doc = $response->getXml();
+        $this->doc = $response->getXml();
 
-        $title = [];
-        $description = [];
-        $headlines = [];
-        $content = [];
-        $images = [];
-        $links = [];
+        $this->title = [];
+        $this->description = [];
+        $this->headlines = [];
+        $this->content = [];
+        $this->images = [];
+        $this->links = [];
 
-        $xpath = new \DOMXPath($doc);
+        $this->contentNodes = new \SplObjectStorage();
 
-        // extract title
-        $nodes = $xpath->query($this->xpathTitle);
+        $this->xpath = new \DOMXPath($this->doc);
+
+        $this->extractContentNodes();
+
+        return $this;
+    }
+    // }}}
+
+    // {{{ extractContentNodes()
+    /**
+     * @brief extractContentNodes
+     *
+     * @return void
+     **/
+    protected function extractContentNodes()
+    {
+        // remove excluded nodes from document
+        $nodes = $this->xpath->query($this->xpathExcluded);
         foreach ($nodes as $node) {
-            $title[] = $node->textContent;
+            $node->parentNode->removeChild($node);
         }
 
-        // extract description
-        $nodes = $xpath->query($this->xpathDescription);
+        // extract content nodex
+        $nodes = $this->xpath->query($this->xpathContent);
         foreach ($nodes as $node) {
-            $description[] = $node->value;
+            $this->contentNodes->attach($node);
         }
 
-        // extract content and headline
-        // @todo don't double include nodes
-        $nodes = $xpath->query($this->xpathContent);
-        foreach ($nodes as $node) {
-            $content[] = $node->textContent;
-
-            // search for headline
-            $hNodes = $xpath->query($this->xpathHeadlines, $node);
-            foreach ($hNodes as $hNode) {
-                $headlines[] = $hNode->textContent;
+        // remove node if parent node is already included
+        foreach ($this->contentNodes as $node) {
+            $parentNode = $node->parentNode;
+            while ($parentNode != null) {
+                if ($this->contentNodes->contains($parentNode)) {
+                    $this->contentNodes->detach($node);
+                }
+                $parentNode = $parentNode->parentNode;
             }
+        }
+    }
+    // }}}
+
+    // {{{ getTitle()
+    /**
+     * @brief getTitle
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getTitle()
+    {
+        // extract title
+        $nodes = $this->xpath->query($this->xpathTitle);
+        foreach ($nodes as $node) {
+            $this->title[] = $node->textContent;
+        }
+
+        return implode(" ", $this->title);
+    }
+    // }}}
+    // {{{ getDescription()
+    /**
+     * @brief getDescription
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getDescription()
+    {
+        // extract description
+        $nodes = $this->xpath->query($this->xpathDescription);
+        foreach ($nodes as $node) {
+            $this->description[] = $node->value;
+        }
+
+        return implode(" ", $this->description);
+    }
+    // }}}
+    // {{{ getHeadlines()
+    /**
+     * @brief getHeadlines
+     *
+     * @return void
+     **/
+    public function getHeadlines()
+    {
+        foreach ($this->contentNodes as $contentNode) {
+            // search for headline
+            $nodes = $this->xpath->query($this->xpathHeadlines, $contentNode);
+            foreach ($nodes as $node) {
+                $this->headlines[] = $node->textContent;
+            }
+        }
+
+        return implode(" ", $this->headlines);
+    }
+    // }}}
+    // {{{ getContent()
+    /**
+     * @brief getContent
+     *
+     * @return void
+     **/
+    public function getContent()
+    {
+        foreach ($this->contentNodes as $contentNode) {
+            $this->content[] = $contentNode->textContent;
 
             // search for image alt tags
-            $altNodes = $xpath->query($this->xpathHeadlines, $node);
-            foreach ($altNodes as $altNode) {
-                if (!empty($altNode->value)) {
-                    $content[] = $altNode->value;
+            $nodes = $this->xpath->query($this->xpathImgAlt, $contentNode);
+            foreach ($nodes as $node) {
+                if (!empty($node->value)) {
+                    $this->content[] = $node->value;
                 }
             }
+        }
 
+        return implode(" ", $this->content);
+    }
+    // }}}
+    // {{{ getImages()
+    /**
+     * @brief getImages
+     *
+     * @return void
+     **/
+    public function getImages()
+    {
+        $images = [];
+
+        foreach ($this->contentNodes as $contentNode) {
             // extract images
-            $imgNodes = $xpath->query($this->xpathImages, $node);
-            foreach ($imgNodes as $imgNode) {
-                $src = $imgNode->value;
+            $nodes = $this->xpath->query($this->xpathImages, $contentNode);
+            foreach ($nodes as $node) {
+                $src = $node->value;
                 if (preg_match_all("/([^ ]+) [^ ]+,?/", $src, $matches)) {
                     foreach ($matches[1] as $img) {
                         $images[] = $img;
@@ -123,39 +295,41 @@ class Indexer
                     $images[] = $src;
                 }
             }
-            $images = array_unique($images);
-            // @todo update relative image paths to be dependend on base or on current url
+        }
 
+        $this->images = array_unique($images);
+
+        // @todo update relative image paths to be dependent on base or on current url
+
+        return $this->images;
+    }
+    // }}}
+    // {{{ getLinks()
+    /**
+     * @brief getLinks
+     *
+     * @return void
+     **/
+    public function getLinks()
+    {
+        $images = [];
+
+        foreach ($this->contentNodes as $contentNode) {
             // extract links
-            $aNodes = $xpath->query($this->xpathLinks, $node);
-            foreach ($aNodes as $aNode) {
-                $href = $aNode->value;
+            $nodes = $this->xpath->query($this->xpathLinks, $contentNode);
+            foreach ($nodes as $node) {
+                $href = $node->value;
                 if (!empty($href)) {
                     $links[] = $href;
                 }
             }
-            $links = array_unique($links);
         }
 
+        $this->links = array_unique($links);
 
-        echo("Title");
-        var_dump($title);
+        // @todo update relative image paths to be dependent on base or on current url
 
-        echo("Description");
-        var_dump($description);
-
-        echo("Headlines");
-        var_dump($headlines);
-
-        echo("Content");
-        var_dump($content);
-
-        echo("Images");
-        var_dump($images);
-
-        echo("Links");
-        var_dump($links);
-
+        return $this->links;
     }
     // }}}
 }
