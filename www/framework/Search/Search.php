@@ -8,6 +8,33 @@ namespace Depage\Search;
  */
 class Search
 {
+    // {{{ __construct()
+    /**
+     * @brief __construct
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function __construct($db)
+    {
+        $this->db = new Providers\Pdo($db);
+    }
+    // }}}
+
+    // {{{ query()
+    /**
+     * @brief query
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function query($search, $start = 0, $count = 20)
+    {
+        $results = $this->db->query($search, $start, $count);
+
+        return $results;
+    }
+    // }}}
 }
 
 

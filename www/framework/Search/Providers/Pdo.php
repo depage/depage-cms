@@ -9,15 +9,16 @@ namespace Depage\Search\Providers;
 class Pdo
 {
     /*
-     CREATE TABLE `dp_search` (
-        `url` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
-        `title` text NOT NULL,
-        `description` text NOT NULL,
-        `headlines` text NOT NULL,
-        `content` longtext NOT NULL,
-        PRIMARY KEY (`url`),
-        FULLTEXT KEY content (title, description, headlines, content)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        CREATE TABLE `dp_search` (
+            `url` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
+            `title` text NOT NULL,
+            `description` text NOT NULL,
+            `headlines` text NOT NULL,
+            `content` longtext NOT NULL,
+            `metaphone` longtext NOT NULL,
+            PRIMARY KEY (`url`),
+            FULLTEXT KEY `content` (`title`,`description`,`headlines`,`content`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
      */
     // {{{ __construct()
     /**
@@ -49,8 +50,9 @@ class Pdo
                 title = :title,
                 description = :description,
                 headlines = :headlines,
-                content = :content
-            ON DUPLICATE KEY UPDATE title=VALUES(title), description=VALUES(description), headlines=VALUES(headlines), content=VALUES(content)"
+                content = :content,
+                metaphone = :metaphone
+            ON DUPLICATE KEY UPDATE title=VALUES(title), description=VALUES(description), headlines=VALUES(headlines), content=VALUES(content), metaphone=VALUES(metaphone)"
         );
         $query->execute([
             'url' => $url,
@@ -58,6 +60,7 @@ class Pdo
             'description' => $description,
             'headlines' => $headlines,
             'content' => $content,
+            'metaphone' => $this->metaphone("$title $description $headlines $content"),
         ]);
     }
     // }}}
@@ -77,6 +80,53 @@ class Pdo
         $query->execute([
             'url' => $url,
         ]);
+
+    }
+    // }}}
+    // {{{ query()
+    /**
+     * @brief query
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function query($search, $start = 0, $count = 20)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT *,
+                MATCH (title, description, headlines, content) AGAINST (:search1 IN NATURAL LANGUAGE MODE) as score
+            FROM {$this->table}
+                WHERE MATCH (title, description, headlines, content) AGAINST (:search2 IN NATURAL LANGUAGE MODE)
+                OR metaphone LIKE :metaphone
+            LIMIT :start, :count"
+        );
+        $query->execute([
+            'search1' => $search,
+            'search2' => $search,
+            'metaphone' => "%" . $this->metaphone($search) . "%",
+            'start' => $start,
+            'count' => $count,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_OBJ);
+    }
+    // }}}
+
+    // {{{ metaphone()
+    /**
+     * @brief metaphone
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function metaphone($text)
+    {
+        $words = explode(" ", $text);
+
+        foreach ($words as $key => &$word) {
+            $word = metaphone($word);
+        }
+        return implode(" ", $words);
 
     }
     // }}}
