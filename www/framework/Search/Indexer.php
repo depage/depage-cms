@@ -105,9 +105,9 @@ class Indexer
      * @param mixed
      * @return void
      **/
-    public function __construct()
+    public function __construct($db)
     {
-
+        $this->db = new Providers\Pdo($db);
     }
     // }}}
     // {{{ index()
@@ -121,14 +121,26 @@ class Indexer
     {
         $this->load($url);
 
-        $this->getTitle();
-        $this->getDescription();
-        $this->getHeadlines();
-        $this->getContent();
-        $this->getImages();
-        $this->getLinks();
+        $title = $this->getTitle();
+        $description = $this->getDescription();
+        $headlines = $this->getHeadlines();
+        $content = $this->getContent();
+
+        $this->db->add($url, $title, $description, $headlines, $content);
 
         return $this;
+    }
+    // }}}
+    // {{{ remove()
+    /**
+     * @brief remove
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    public function remove($url)
+    {
+        $this->db->remove($url);
     }
     // }}}
     // {{{ load()
