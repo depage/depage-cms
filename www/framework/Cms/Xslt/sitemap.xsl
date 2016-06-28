@@ -30,17 +30,20 @@
 
     <xsl:template match="pg:page">
         <xsl:variable name="pageId" select="@db:id" />
+        <xsl:variable name="attr" select="@*" />
 
         <xsl:for-each select="$languages/*">
             <xsl:variable name="lang" select="@shortname" />
-            <url>
-                <loc>
-                    <xsl:value-of select="$baseUrl" />/<xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
-                </loc>
-                <lastmod>
-                    <xsl:value-of select="substring-before(dp:getpage($pageId)/pg:page_data/@db:lastchange, ' ')"/>
-                </lastmod>
-            </url>
+            <xsl:if test="not($attr[local-name() = concat('nav_no_', $lang)] = 'true')">
+                <url>
+                    <loc>
+                        <xsl:value-of select="$baseUrl" />/<xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
+                    </loc>
+                    <lastmod>
+                        <xsl:value-of select="substring-before(dp:getpage($pageId)/pg:page_data/@db:lastchange, ' ')"/>
+                    </lastmod>
+                </url>
+            </xsl:if>
         </xsl:for-each>
 
         <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
