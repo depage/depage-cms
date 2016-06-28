@@ -106,6 +106,9 @@ class Preview extends \Depage\Depage\Ui\Base
         // get parameters
         $this->template = array_shift($args);
         $this->previewType = array_shift($args);
+        if (empty($this->previewType)) {
+            $this->previewType = "pre";
+        }
 
         $lang = array_shift($args);
 
@@ -130,7 +133,7 @@ class Preview extends \Depage\Depage\Ui\Base
             return $feed;
         } else if ($urlPath == "/") {
             // redirect to home
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE . $project->getHomeUrl());
+            \Depage\Depage\Runner::redirect($project->getHomeUrl());
         }
 
         return $this->preview($urlPath, $lang);
