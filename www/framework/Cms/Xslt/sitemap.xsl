@@ -14,12 +14,12 @@
 
     <xsl:template match="proj:pages_struct">
         <urlset>
-            <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
+            <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
         </urlset>
     </xsl:template>
 
     <xsl:template match="pg:folder">
-        <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
+        <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
     </xsl:template>
 
     <xsl:template match="pg:redirect">
@@ -30,11 +30,11 @@
 
     <xsl:template match="pg:page">
         <xsl:variable name="pageId" select="@db:id" />
-        <xsl:variable name="attr" select="@*" />
+        <xsl:variable name="page" select="." />
 
         <xsl:for-each select="$languages/*">
             <xsl:variable name="lang" select="@shortname" />
-            <xsl:if test="not($attr[local-name() = concat('nav_no_', $lang)] = 'true')">
+            <xsl:if test="dp:pageVisible($page, $lang)">
                 <url>
                     <loc>
                         <xsl:value-of select="$baseUrl" />/<xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>

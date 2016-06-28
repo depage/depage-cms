@@ -160,6 +160,18 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:pageVisible() -->
+    <!--
+        dp:pageVisible(node)
+
+    -->
+    <func:function name="dp:pageVisible">
+        <xsl:param name="pageNode" />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <func:result select="not($pageNode/@nav_hidden = 'true' or $pageNode/@*[local-name() = concat('nav_no_', $lang)] = 'true')" />
+    </func:function>
+    <!-- }}} -->
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
