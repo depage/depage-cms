@@ -14,12 +14,18 @@
 
     <xsl:template match="proj:pages_struct">
         <urlset>
-            <xsl:apply-templates select="*[not(@nav_hidden = 'true')]" />
+            <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
         </urlset>
     </xsl:template>
 
     <xsl:template match="pg:folder">
-        <xsl:apply-templates select="*[not(@nav_hidden = 'true')]" />
+        <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
+    </xsl:template>
+
+    <xsl:template match="pg:redirect">
+    </xsl:template>
+
+    <xsl:template match="sec:separator">
     </xsl:template>
 
     <xsl:template match="pg:page">
@@ -37,7 +43,7 @@
             </url>
         </xsl:for-each>
 
-        <xsl:apply-templates select="*[not(@nav_hidden = 'true')]" />
+        <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
     </xsl:template>
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
