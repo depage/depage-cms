@@ -195,6 +195,8 @@ class DocumentHistory
 
             if ($query->execute($params)) {
                 $result = $timestamp;
+
+                $dth->onHistorySave();
             }
         } else {
             $result = strtotime($latestVersion->lastsaved->getTimestamp());

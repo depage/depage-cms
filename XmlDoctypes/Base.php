@@ -181,6 +181,17 @@ class Base implements DoctypeInterface
         return true;
     }
     // }}}
+    // {{{ onHistorySave
+    /**
+     * On History Save
+     *
+     * @return bool
+     */
+    public function onHistorySave()
+    {
+        return true;
+    }
+    // }}}
 
     // {{{ testDocument
     public function testDocument($xml) {
