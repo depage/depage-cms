@@ -1,5 +1,5 @@
 /**
- * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/jquery-1.12.3.min.js
  * @require framework/shared/depage-jquery-plugins/depage-flash.js
  * @require framework/shared/depage-jquery-plugins/depage-browser.js
  *

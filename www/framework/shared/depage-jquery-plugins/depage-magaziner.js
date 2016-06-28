@@ -1,5 +1,5 @@
 /**
- * @require framework/shared/jquery-1.4.2.js
+ * @require framework/shared/jquery-1.12.3.min.js
  * @require framework/shared/jquery.hammer.js
  *
  * @file    depage-magaziner.js
