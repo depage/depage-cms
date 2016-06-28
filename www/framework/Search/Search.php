@@ -30,9 +30,13 @@ class Search
      **/
     public function query($search, $start = 0, $count = 20)
     {
-        $results = $this->db->query($search, $start, $count);
+        if (!empty($search)) {
+            $results = $this->db->query($search, $start, $count);
 
-        return $results;
+            return $results;
+        } else {
+            return [];
+        }
     }
     // }}}
 }

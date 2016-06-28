@@ -172,10 +172,6 @@ class Preview extends \Depage\Depage\Ui\Base
         if ($this->previewType != "dev") {
             $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
         }
-        if ($this->previewType == "live") {
-            // @todo only for testing
-            $transformCache = null;
-        }
         $xmlGetter = $this->project->getXmlGetter();
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);

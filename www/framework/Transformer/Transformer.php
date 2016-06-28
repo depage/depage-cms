@@ -454,6 +454,10 @@ abstract class Transformer
 
             $xmlnav = new \Depage\Cms\XmlNav();
             list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
+
+            foreach($this->pagedataIdByPageId as &$value) {
+                $value = $this->xmlGetter->docExists($value);
+            }
         }
 
         return array_keys($this->pageIdByUrl);

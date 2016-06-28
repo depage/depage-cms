@@ -29,8 +29,24 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
         parent::onDocumentChange();
 
         // @todo clear transform cache
-        $templates = ["html", "atom", "debug"];
-        $previewTypes = ["pre", "live"];
+        $templates = ["html", "atom", "debug", "sitemap"];
+        $previewTypes = ["pre"];
+
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name, "$template-$type");
+                $transformCache->clearFor($this->document->getDocId());
+            }
+        }
+    }
+    // }}}
+    // {{{ onHistorySave
+    public function onHistorySave() {
+        parent::onHistorySave();
+
+        // @todo clear transform cache
+        $templates = ["html", "atom", "debug", "sitemap"];
+        $previewTypes = ["live"];
         $publishingTargets = $this->project->getPublishingTargets();
 
         foreach ($publishingTargets as $id => $settings) {

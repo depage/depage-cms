@@ -1249,6 +1249,7 @@ class Document
      */
     protected function getFreeNodeIds($needed = 1)
     {
+        $needed = $needed + 500;
         // @todo check to replace this with an extra table of deleted ids (trigger on delete)
         /* see here:
             CREATE TRIGGER log_patron_delete AFTER DELETE on patrons

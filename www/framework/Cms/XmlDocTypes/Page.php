@@ -182,10 +182,8 @@ class Page extends Base
 
         if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
             $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
-            error_log("released");
         } else {
             $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
-            error_log("nooooooooooooooooooot released");
         }
     }
     // }}}

@@ -403,6 +403,43 @@ class Main extends Base {
         }
     }
     // }}}
+
+    // {{{ test()
+    /**
+     * @brief test
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function test($param)
+    {
+        $indexer = new \Depage\Search\Indexer($this->pdo);
+
+        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-konsultation-zur-europaeischen-saeule-sozialer-rechte.html");
+        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/ueber-uns/dsvae.html");
+        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-kommission-legt-mehrwertsteuer-aktionsplan-vor.html");
+
+        $indexer->index("https://screen-pitch.com/en/");
+
+        $indexer->index("http://localhost/depage-cms/project/depage/preview/html/live/en/blog/2013/10/depage-forms-html5-form-validation-part-2.html");
+        die();
+    }
+    // }}}
+    // {{{ search()
+    /**
+     * @brief search
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function search()
+    {
+        $search = new \Depage\Search\Search($this->pdo);
+        $results = $search->query($_GET['q']);
+
+        var_dump($results);
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
