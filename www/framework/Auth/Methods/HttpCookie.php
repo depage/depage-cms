@@ -100,7 +100,7 @@ class HttpCookie extends Auth
     public function enforceLazy() {
         if (!$this->user) {
             if ($this->hasSession()) {
-                if ($this->isValidSid($_COOKIE[session_name()])) {
+                if (isset($_COOKIE[session_name()]) && $this->isValidSid($_COOKIE[session_name()])) {
                     $this->user = $this->authCookie();
                 } else {
                     $this->justLoggedOut = true;
@@ -185,8 +185,10 @@ class HttpCookie extends Auth
 
         $sessionName = session_name();
 
-        session_id($sid);
-        session_start();
+        if (!is_callable("session_status") || session_status() !== \PHP_SESSION_ACTIVE) {
+            session_id($sid);
+            session_start();
+        }
 
         // Override session cookie and extend the expiration time upon page load
         if (isset($_COOKIE[$sessionName])) {
