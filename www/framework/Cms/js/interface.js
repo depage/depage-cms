@@ -1,5 +1,5 @@
 /*
- * @require framework/shared/jquery-1.8.3.js
+ * @require framework/shared/jquery-1.12.3.min.js
  * @require framework/shared/jquery.cookie.js
  * @require framework/shared/jquery-sortable.js
  *
@@ -406,7 +406,7 @@ var depageCMS = (function() {
                 currentLayout = "left-full";
                 $(".preview-buttons").hide();
             } else {
-                $(".preview-buttons").show();
+                $(".preview-buttons").css({display: "inline"});
             }
             $html
                 .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")

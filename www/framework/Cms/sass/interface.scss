@@ -379,11 +379,19 @@ select,
 .toolbar {
     height: 30px;
 
+    .preview-buttons {
+        display: inline;
+        list-style: none !important;
+    }
+
     menu {
         padding: 2px 8px;
         display: block;
         height: 100%;
         text-align: left;
+        li {
+            list-style: none;
+        }
 
         &.right,
         &.preview,
