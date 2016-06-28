@@ -269,9 +269,9 @@ class Html {
             // get cache instance
             $src = false;
             $jsmin = \Depage\JsMin\JsMin::factory(array(
-                'extension' => $this->param['jsmin']->extension,
-                'jar' => $this->param['jsmin']->jar,
-                'java' => $this->param['jsmin']->java,
+                'extension' => isset($this->param['jsmin']->extension) ? $this->param['jsmin']->extension : "",
+                'jar' => isset($this->param['jsmin']->jar) ? $this->param['jsmin']->jar : "",
+                'java' => isset($this->param['jsmin']->java) ? $this->param['jsmin']->java : "",
             ));
             try {
                 $src = $jsmin->minifyFiles($name, $files);
