@@ -594,7 +594,7 @@ class Project extends \Depage\Entity\Entity
     {
         if (is_null($publishId)) {
             // @todo check template path
-            return "project/{$this->name}/preview/html/{$this->previewType}";
+            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}";
         } else {
             $targets = $this->getPublishingTargets();
             $conf = $targets[$publishId];
@@ -792,7 +792,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function generateSitemap($publishId)
+    public function generateSitemap($publishId = null)
     {
         $xmlgetter = $this->getXmlGetter();
 
@@ -808,6 +808,7 @@ class Project extends \Depage\Entity\Entity
         ];
 
         $sitemap = $transformer->transform($xml, $parameters);
+
         return $sitemap;
     }
     // }}}
