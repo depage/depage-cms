@@ -263,6 +263,17 @@ class Redirector
         return new Result(current($this->pages), true);
     }
     // }}}
+    // {{{ getBasePath()
+    /**
+     * @brief getBasePath
+     *
+     * @return void
+     **/
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+    // }}}
 
     // {{{ redirectToAlternativePage()
     /**

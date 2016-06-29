@@ -899,7 +899,7 @@ class Project extends \Depage\Entity\Entity
             $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
             $htaccess .= "RewriteRule         ^(.*)\.html              \$1.php [L]\n\n";
 
-            $folders = implode("|", $languages) . "|lib";
+            $folders = implode("|", $languages) . "|lib|api";
             // redirect all pages that are not found to index-page
             // this has to be the last rules for custom rewrite-rules to work
             $htaccess .= "RewriteCond         %{REQUEST_FILENAME}      !-s\n";
@@ -950,6 +950,13 @@ class Project extends \Depage\Entity\Entity
                 $index .= "    \$redirector->setAliases(\$shortcuts);\n";
             $index .= "}\n";
         }
+
+        $index .= "\n";
+
+        $index .= "if (strpos(\$_SERVER['REQUEST_URI'], \$redirector->getBasePath() . 'api/') === 0 && file_exists('lib/global/api.php')) {\n";
+            $index .= "    require_once('lib/global/api.php');\n";
+            $index .= "    die();\n";
+        $index .= "}\n";
 
         $index .= "\n";
 
