@@ -28,7 +28,7 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
     {
         parent::onDocumentChange();
 
-        // @todo clear transform cache
+        // @todo get automatic list of templates
         $templates = ["html", "atom", "debug", "sitemap"];
         $previewTypes = ["pre"];
 
@@ -44,13 +44,12 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
     public function onHistorySave() {
         parent::onHistorySave();
 
-        // @todo clear transform cache
+        // @todo get automatic list of templates
         $templates = ["html", "atom", "debug", "sitemap"];
         $previewTypes = ["live"];
         $publishingTargets = $this->project->getPublishingTargets();
 
         foreach ($publishingTargets as $id => $settings) {
-            // @todo move this into history when live publishing uses history
             array_push($previewTypes, "live-$id");
         }
 

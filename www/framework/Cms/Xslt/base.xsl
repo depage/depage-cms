@@ -512,18 +512,20 @@
 <!-- {{{ header alternate languages -->
 <xsl:template name="header_alternate_lang">
     <xsl:variable name="href_id"><xsl:value-of select="$currentPageId" /></xsl:variable>
-    <xsl:variable name="pagedataid" select="$navigation//pg:*[@db:id = $currentPageId]/@db:docref" />
+    <xsl:variable name="page" select="$navigation//pg:*[@db:id = $currentPageId]" />
+    <xsl:variable name="pagedataid" select="$page/@db:docref" />
 
     <xsl:for-each select="$settings//proj:languages/proj:language">
         <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
-        <xsl:variable name="linkdesc">
-            <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/>
-        </xsl:variable>
-        <xsl:variable name="title">
-            <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
-        </xsl:variable>
 
-        <xsl:if test="$lang != $currentLang">
+        <xsl:if test="$lang != $currentLang and dp:pageVisible($page, $lang)">
+            <xsl:variable name="linkdesc">
+                <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/>
+            </xsl:variable>
+            <xsl:variable name="title">
+                <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
+            </xsl:variable>
+
             <link rel="alternate">
                 <xsl:attribute name="href">
                     <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>

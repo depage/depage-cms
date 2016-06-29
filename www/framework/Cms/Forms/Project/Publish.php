@@ -77,10 +77,16 @@ class Publish extends Base
             "label" => _("Server supports mod rewrite"),
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
         ]);
+        $this->addBoolean("search-index-$nodeId", [
+            "label" => _("Index this target for search"),
+            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@index",
+        ]);
+        /*
         $this->addBoolean("default-$nodeId", [
             "label" => _("Publish to this target as default"),
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
         ]);
+         */
     }
     // }}}
     // {{{ getFormTitle()
