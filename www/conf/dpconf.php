@@ -37,6 +37,38 @@ $conf = array(
         'phpcli' => "/opt/local/bin/php",
     ),
     // }}}
+    // {{{ localhost/depage-cms/
+    'localhost/depage-cms/' => array(
+        //'env' => 'production',
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "localhost:6379",
+            ),
+        ),
+        'video' => array (
+            'ffmpeg' => '/opt/local/bin/ffmpeg',
+            'ffprobe' => '/opt/local/bin/ffprobe',
+            'qtfaststart' => '/opt/local/bin/qt-faststart',
+            'aaccodec' => 'aac',
+        ),
+    ),
+    // }}}
+    // {{{ cms.depagecms.net
+    'cms.depagecms.net/' => array(
+        'handler' => 'cms_ui',
+    ),
+    // }}}
+    // {{{ graphics
+    '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
+        'handler' => 'Depage\Graphics\Ui\Graphics',
+        //'env' => 'production',
+        'extension' => "gm",
+        'executable' => "/opt/local/bin/gm",
+        'base' => 'inherit',
+    ),
+    // }}}
+
     // {{{ edit.depage.net
     'edit.depage.net/' => array(
         'handler' => 'depage\Cms\Ui\Main',
@@ -54,46 +86,6 @@ $conf = array(
             ),
         ),
         'env' => 'production',
-    ),
-    // }}}
-    // {{{ localhost/depage-cms/
-    'localhost/depage-cms/' => array(
-        'env' => 'production',
-        'cache' => array(
-            'xmldb' => array(
-                'disposition' => "redis",
-                'host' => "localhost:6379",
-            ),
-        ),
-        'video' => array (
-            'ffmpeg' => '/opt/local/bin/ffmpeg',
-            'ffprobe' => '/opt/local/bin/ffprobe',
-            'qtfaststart' => '/opt/local/bin/qt-faststart',
-            'aaccodec' => 'aac',
-        ),
-    ),
-    // }}}
-    // {{{ localhost/depage_1.5/live/
-    'localhost/depage_1.5/live/' => array(
-        'handler' => 'Depage\Cms\Live',
-        'env' => 'production',
-        'cms' => array(
-            'project' => 'depagecms',
-        ),
-    ),
-    // }}}
-    // {{{ cms.depagecms.net
-    'cms.depagecms.net/' => array(
-        'handler' => 'cms_ui',
-    ),
-    // }}}
-    // {{{ graphics
-    '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
-        'handler' => 'Depage\Graphics\Ui\Graphics',
-        'env' => 'production',
-        'extension' => "gm",
-        'executable' => "/opt/local/bin/gm",
-        'base' => 'inherit',
     ),
     // }}}
     // {{{ edit.depage.net graphics

@@ -1,0 +1,34 @@
+{
+    "name": "depage/search",
+    "description": "depage-search",
+    "type": "library",
+    "keywords": [
+        "search"
+    ],
+    "require": {
+        "php": " >= 5.5",
+        "depage/http": "*@dev",
+        "depage/db": "*@dev"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Search\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-search",
+        "issues": "https://github.com/depage/depage-search/issues"
+
+    },
+    "time": "2016-06-29",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
