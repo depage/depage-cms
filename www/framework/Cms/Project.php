@@ -718,13 +718,17 @@ class Project extends \Depage\Entity\Entity
         }
 
         // transform pages
+        $baseUrl = $this->getBaseUrl($publishId);
+
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
-                $task->addSubtask("publishing $target", "
+                $pId = $task->addSubtask("publishing $target", "
+                    \$updated = false;
                     \$publisher->publishString(
                         \$transformer->transformUrl(%s, %s),
-                        %s
+                        %s,
+                        \$updated
                     );", [
                         $url,
                         $lang,
@@ -778,6 +782,27 @@ class Project extends \Depage\Entity\Entity
 
         // unpublish removed files
         $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", [], $initId);
+
+        if (file_exists($projectPath . 'lib/global/api.php')) {
+            // index pages with api
+            // @todo check if api is available for this project
+            // @todo remove indexes of removed files
+            // @todo don't index hidden pages or pages that are not available in language
+            foreach ($urls as $pageId => $url) {
+                foreach ($languages as $lang => $name) {
+                    $target = $baseUrl . "/" . $lang . $url;
+                    $task->addSubtask("indexing $target", "
+                        \$request = new \\Depage\\Http\\Request(%s);
+                        \$response = \$request->setPostData(%s)->execute();
+                        ", [
+                            $baseUrl . "/api/search/index/",
+                            [
+                                "url" => $target,
+                            ]
+                    ], $initId);
+                }
+            }
+        }
 
         $task->begin();
 
