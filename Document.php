@@ -1288,12 +1288,10 @@ class Document
             $results = $query->fetchAll(\PDO::FETCH_COLUMN);
             foreach ($results as $row) {
                 $id = (int) $row;
-                if (!in_array($id, $this->free_element_ids)) {
-                    $free[$id] = null;
-                }
+                $free[$id] = null;
             }
             if (count($results) > 0) {
-                $lastMax = (int) $id;
+                $lastMax = $id;
             }
         } while (count($free) < $needed && count($results) > 0);
 
