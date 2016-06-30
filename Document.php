@@ -1257,9 +1257,9 @@ class Document
             $query->execute($preference);
             $results = $query->fetchAll(\PDO::FETCH_COLUMN);
 
-            $this->free_element_ids = array_diff($preference, $results);
+            $free = array_flip(array_diff($preference, $results));
         } else {
-            $this->free_element_ids = [];
+            $free = [];
         }
 
         do {
@@ -1289,15 +1289,15 @@ class Document
             foreach ($results as $row) {
                 $id = (int) $row;
                 if (!in_array($id, $this->free_element_ids)) {
-                    $this->free_element_ids[] = $id;
+                    $free[$id] = null;
                 }
             }
             if (count($results) > 0) {
                 $lastMax = (int) $id;
             }
-        } while (count($this->free_element_ids) < $needed && count($results) > 0);
+        } while (count($free) < $needed && count($results) > 0);
 
-        $num = count($this->free_element_ids);
+        $num = count($free);
 
         if ($num < $needed) {
             $query = $this->pdo->prepare(
@@ -1309,11 +1309,11 @@ class Document
 
             $until = $needed - $num;
             for ($i = 0; $i < $until; $i++) {
-                $this->free_element_ids[] = $result->id_max + $i;
+                $free[$result->id_max + $i] = null;
             }
         }
 
-        $this->free_element_ids = array_values($this->free_element_ids);
+        $this->free_element_ids = array_keys($free);
     }
     // }}}
     // {{{ getChildnodesByParentId
