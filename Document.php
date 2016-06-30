@@ -1247,19 +1247,22 @@ class Document
      *
      * @param $needed (int) minimum number of ids, that are requested
      */
-    protected function getFreeNodeIds($needed = 1)
+    protected function getFreeNodeIds($preference = 1)
     {
-        // @todo check to replace this with an extra table of deleted ids (trigger on delete)
-        /* see here:
-            CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
-            FOR EACH ROW
-            BEGIN
-            DELETE FROM patron_info
-                WHERE patron_info.pid = old.id;
-            END
-         */
-        $this->free_element_ids = [];
         $lastMax = 0;
+
+        if (is_array($preference)) {
+            $ids = str_repeat('?,', count($preference) - 1) . '?';
+            $query = $this->pdo->prepare("SELECT id FROM {$this->table_xml} WHERE id IN ($ids)");
+            $query->execute($preference);
+            $results = $query->fetchAll(\PDO::FETCH_COLUMN);
+
+            $this->free_element_ids = array_diff($preference, $results);
+            $needed = count($preference);
+        } else {
+            $this->free_element_ids = [];
+            $needed = $preference;
+        }
 
         do {
             // @todo for some reason preparing before the loop does not work with native prepared statements
@@ -1284,12 +1287,15 @@ class Document
                 'maxCount' => $needed,
             ]);
 
-            $results = $query->fetchAll(\PDO::FETCH_OBJ);
-            foreach ($results as $id) {
-                $this->free_element_ids[] = $id->id;
+            $results = $query->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($results as $row) {
+                $id = (int) $row;
+                if (!in_array($id, $this->free_element_ids)) {
+                    $this->free_element_ids[] = $id;
+                }
             }
             if (count($results) > 0) {
-                $lastMax = (int) $id->id;
+                $lastMax = (int) $id;
             }
         } while (count($this->free_element_ids) < $needed && count($results) > 0);
 
@@ -1308,6 +1314,8 @@ class Document
                 $this->free_element_ids[] = $result->id_max + $i;
             }
         }
+
+        $this->free_element_ids = array_values($this->free_element_ids);
     }
     // }}}
     // {{{ getChildnodesByParentId
