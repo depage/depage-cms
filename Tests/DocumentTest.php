@@ -1395,6 +1395,33 @@ class DocumentTest extends XmlDbTestCase
         $this->assertEquals(2, $nodeArray[0]['id']);
     }
     // }}}
+
+    // {{{ testGetFreeNodeIdsDefault
+    public function testGetFreeNodeIdsDefault()
+    {
+        $this->doc->getFreeNodeIds();
+
+        $this->assertSame([37], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIds
+    public function testGetFreeNodeIds()
+    {
+        $this->doc->getFreeNodeIds(10);
+
+        $this->assertSame([37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIdsAfterDelete
+    public function testGetFreeNodeIdsAfterDelete()
+    {
+        $this->doc->deleteNode(4);
+
+        $this->doc->getFreeNodeIds(10);
+
+        $this->assertEquals([4, 5, 6, 7, 8, 30, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
+    }
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

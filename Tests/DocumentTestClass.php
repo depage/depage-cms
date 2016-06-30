@@ -4,6 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 class DocumentTestClass extends \Depage\XmlDb\Document
 {
+    public $free_element_ids = [];
     // {{{ setDoctypeHandler
     public function setDoctypeHandler($dth)
     {
