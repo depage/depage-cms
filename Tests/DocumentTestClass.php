@@ -37,9 +37,9 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     }
     // }}}
     // {{{ getFreeNodeIds
-    public function getFreeNodeIds($needed = 1)
+    public function getFreeNodeIds($total = 1, $preference = [])
     {
-        return parent::getFreeNodeIds($needed);
+        return parent::getFreeNodeIds($total, $preference);
     }
     // }}}
     // {{{ saveNodeIn

@@ -1247,21 +1247,19 @@ class Document
      *
      * @param $needed (int) minimum number of ids, that are requested
      */
-    protected function getFreeNodeIds($preference = 1)
+    protected function getFreeNodeIds($needed = 1, $preference = [])
     {
         $lastMax = 0;
 
-        if (is_array($preference)) {
+        if (!empty($preference)) {
             $ids = str_repeat('?,', count($preference) - 1) . '?';
             $query = $this->pdo->prepare("SELECT id FROM {$this->table_xml} WHERE id IN ($ids)");
             $query->execute($preference);
             $results = $query->fetchAll(\PDO::FETCH_COLUMN);
 
             $this->free_element_ids = array_diff($preference, $results);
-            $needed = count($preference);
         } else {
             $this->free_element_ids = [];
-            $needed = $preference;
         }
 
         do {
@@ -1500,7 +1498,15 @@ class Document
     // {{{ saveNodeArray
     protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
     {
-        $this->getFreeNodeIds(count($node_array));
+        $ids = [];
+
+        foreach ($node_array as $node) {
+            if ($node['id']) {
+                $ids[] = $node['id'];
+            }
+        }
+
+        $this->getFreeNodeIds(count($node_array), $ids);
 
         foreach ($node_array as $i => $node) {
             if (!is_null($node['id'])) {
