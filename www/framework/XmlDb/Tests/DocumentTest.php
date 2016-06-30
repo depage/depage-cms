@@ -560,12 +560,12 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
 
-    // {{{ testSaveNodeInDefault
-    public function testSaveNodeInDefault()
+    // {{{ testSaveNodeIn
+    public function testSaveNodeIn()
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, -1, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -594,7 +594,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -623,7 +623,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1));
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1, true));
 
         $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
             '<pg:page name="Home3">' .
@@ -652,7 +652,7 @@ class DocumentTest extends XmlDbTestCase
     {
         $doc = $this->generateDomDocument('<node/>');
 
-        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null));
+        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null, -1, true));
 
         $expected = '<node ' . $this->namespaces . ' />';
 
@@ -669,6 +669,189 @@ class DocumentTest extends XmlDbTestCase
         ];
 
         $this->assertEquals($expectedNode, $this->getNodeRowById(4));
+    }
+    // }}}
+
+    // {{{ testSaveNodeInChild
+    public function testSaveNodeInChild()
+    {
+        $doc = $this->generateDomDocument('<node><subnode/></node>');
+
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, -1, true));
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/><node><subnode/></node></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '6',
+            'pos' => '2',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+        $expectedSubNode = [
+            'id' => '38',
+            'id_doc' => '3',
+            'id_parent' => '37',
+            'pos' => '0',
+            'name' => 'subnode',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
+        $this->assertEquals($expectedSubNode, $this->getNodeRowById(38));
+    }
+    // }}}
+    // {{{ testSaveNodeInPos0Child
+    public function testSaveNodeInPos0Child()
+    {
+        $doc = $this->generateDomDocument('<node><subnode/></node>');
+
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 0, true));
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1"><node><subnode/></node>bla bla blub <pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '6',
+            'pos' => '0',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+        $expectedSubNode = [
+            'id' => '38',
+            'id_doc' => '3',
+            'id_parent' => '37',
+            'pos' => '0',
+            'name' => 'subnode',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
+        $this->assertEquals($expectedSubNode, $this->getNodeRowById(38));
+    }
+    // }}}
+    // {{{ testSaveNodeInPos1Child
+    public function testSaveNodeInPos1Child()
+    {
+        $doc = $this->generateDomDocument('<node><subnode/></node>');
+
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, 1, true));
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <node><subnode/></node><pg:page name="P3.1.2"/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '6',
+            'pos' => '1',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+        $expectedSubNode = [
+            'id' => '38',
+            'id_doc' => '3',
+            'id_parent' => '37',
+            'pos' => '0',
+            'name' => 'subnode',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
+        $this->assertEquals($expectedSubNode, $this->getNodeRowById(38));
+    }
+    // }}}
+    // {{{ testSaveNodeInRootChild
+    public function testSaveNodeInRootChild()
+    {
+        $doc = $this->generateDomDocument('<node><subnode/></node>');
+
+        $this->assertEquals(4, $this->doc->saveNodeIn($doc, null, -1, true));
+
+        $expected = '<node ' . $this->namespaces . '><subnode/></node>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '4',
+            'id_doc' => '3',
+            'id_parent' => null,
+            'pos' => '0',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+        $expectedSubNode = [
+            'id' => '5',
+            'id_doc' => '3',
+            'id_parent' => '4',
+            'pos' => '0',
+            'name' => 'subnode',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(4));
+        $this->assertEquals($expectedSubNode, $this->getNodeRowById(5));
+    }
+    // }}}
+
+    // {{{ testSaveNodeInDontIncChild
+    public function testSaveNodeInDontIncChild()
+    {
+        $doc = $this->generateDomDocument('<node><subnode/></node>');
+
+        $this->assertEquals(37, $this->doc->saveNodeIn($doc, 6, -1, false));
+
+        $expected = '<dpg:pages ' . $this->namespaces . ' name="">' .
+            '<pg:page name="Home3">' .
+                '<pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/><node/></pg:page>' .
+                '<pg:page name="P3.2"/>' .
+            '</pg:page>' .
+        '</dpg:pages>';
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+
+        $expectedNode = [
+            'id' => '37',
+            'id_doc' => '3',
+            'id_parent' => '6',
+            'pos' => '2',
+            'name' => 'node',
+            'value' => '',
+            'type' => 'ELEMENT_NODE',
+        ];
+
+        $this->assertEquals($expectedNode, $this->getNodeRowById(37));
+        $this->assertFalse($this->getNodeRowById(38));
     }
     // }}}
 
@@ -1210,6 +1393,61 @@ class DocumentTest extends XmlDbTestCase
 
         $this->assertEquals(1, count($nodeArray));
         $this->assertEquals(2, $nodeArray[0]['id']);
+    }
+    // }}}
+
+    // {{{ testGetFreeNodeIdsDefault
+    public function testGetFreeNodeIdsDefault()
+    {
+        $this->doc->getFreeNodeIds();
+
+        $this->assertSame([37], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIds
+    public function testGetFreeNodeIds()
+    {
+        $this->doc->getFreeNodeIds(10);
+
+        $this->assertSame([37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIdsAfterDelete
+    public function testGetFreeNodeIdsAfterDelete()
+    {
+        $this->doc->deleteNode(4);
+
+        $this->doc->getFreeNodeIds(10);
+
+        $this->assertEquals([4, 5, 6, 7, 8, 30, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIdsAfterDeletePreference
+    public function testGetFreeNodeIdsAfterDeletePreference()
+    {
+        $this->doc->deleteNode(4);
+
+        $this->doc->getFreeNodeIds(3, [4, 5, 6]);
+
+        $this->assertEquals([4, 5, 6], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIdsAfterDeletePreferenceMore
+    public function testGetFreeNodeIdsAfterDeletePreferenceMore()
+    {
+        $this->doc->deleteNode(4);
+
+        $this->doc->getFreeNodeIds(8, [4, 5, 6, 7, 8, 9, 10, 11]);
+
+        $this->assertEquals([4, 5, 6, 7, 8, 30, 37, 38, 39, 40, 41, 42, 43, 44], $this->doc->free_element_ids);
+    }
+    // }}}
+    // {{{ testGetFreeNodeIdsPreference
+    public function testGetFreeNodeIdsPreference()
+    {
+        $this->doc->getFreeNodeIds(3, [4, 5, 6]);
+
+        $this->assertEquals([37, 38, 39], $this->doc->free_element_ids);
     }
     // }}}
 }

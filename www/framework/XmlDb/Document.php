@@ -1247,20 +1247,20 @@ class Document
      *
      * @param $needed (int) minimum number of ids, that are requested
      */
-    protected function getFreeNodeIds($needed = 1)
+    protected function getFreeNodeIds($needed = 1, $preference = [])
     {
-        $needed = $needed + 500;
-        // @todo check to replace this with an extra table of deleted ids (trigger on delete)
-        /* see here:
-            CREATE TRIGGER log_patron_delete AFTER DELETE on patrons
-            FOR EACH ROW
-            BEGIN
-            DELETE FROM patron_info
-                WHERE patron_info.pid = old.id;
-            END
-         */
-        $this->free_element_ids = [];
         $lastMax = 0;
+
+        if (!empty($preference)) {
+            $ids = str_repeat('?,', count($preference) - 1) . '?';
+            $query = $this->pdo->prepare("SELECT id FROM {$this->table_xml} WHERE id IN ($ids)");
+            $query->execute($preference);
+            $results = $query->fetchAll(\PDO::FETCH_COLUMN);
+
+            $free = array_flip(array_diff($preference, $results));
+        } else {
+            $free = [];
+        }
 
         do {
             // @todo for some reason preparing before the loop does not work with native prepared statements
@@ -1285,16 +1285,17 @@ class Document
                 'maxCount' => $needed,
             ]);
 
-            $results = $query->fetchAll(\PDO::FETCH_OBJ);
-            foreach ($results as $id) {
-                $this->free_element_ids[] = $id->id;
+            $results = $query->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($results as $row) {
+                $id = (int) $row;
+                $free[$id] = null;
             }
             if (count($results) > 0) {
-                $lastMax = (int) $id->id;
+                $lastMax = $id;
             }
-        } while (count($this->free_element_ids) < $needed && count($results) > 0);
+        } while (count($free) < $needed && count($results) > 0);
 
-        $num = count($this->free_element_ids);
+        $num = count($free);
 
         if ($num < $needed) {
             $query = $this->pdo->prepare(
@@ -1306,9 +1307,11 @@ class Document
 
             $until = $needed - $num;
             for ($i = 0; $i < $until; $i++) {
-                $this->free_element_ids[] = $result->id_max + $i;
+                $free[$result->id_max + $i] = null;
             }
         }
+
+        $this->free_element_ids = array_keys($free);
     }
     // }}}
     // {{{ getChildnodesByParentId
@@ -1493,8 +1496,15 @@ class Document
     // {{{ saveNodeArray
     protected function saveNodeArray($node_array, $target_id, $target_pos, $inc_children)
     {
-        $nodes = count($node_array);
-        $this->getFreeNodeIds($nodes);
+        $ids = [];
+
+        foreach ($node_array as $node) {
+            if ($node['id']) {
+                $ids[] = $node['id'];
+            }
+        }
+
+        $this->getFreeNodeIds(count($node_array), $ids);
 
         foreach ($node_array as $i => $node) {
             if (!is_null($node['id'])) {
@@ -1519,9 +1529,9 @@ class Document
 
         if ($inc_children) {
             // save element nodes
-            $this->saveNodesByType($node_array, $nodes, true);
+            $this->saveNodesByType($node_array, true);
             // save other nodes
-            $this->saveNodesByType($node_array, $nodes, false);
+            $this->saveNodesByType($node_array, false);
         }
 
         $this->updateLastChange();
@@ -1530,8 +1540,10 @@ class Document
     }
     // }}}
     // {{{ saveNodesByType
-    protected function saveNodesByType(&$node_array, $nodes, $xml_element_node)
+    protected function saveNodesByType(&$node_array, $xml_element_node)
     {
+        $nodes = count($node_array);
+
         for ($i = 1; $i < $nodes; $i++) {
             if (($node_array[$i]['node']->nodeType == XML_ELEMENT_NODE) == $xml_element_node) {
                 $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);

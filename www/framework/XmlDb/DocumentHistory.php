@@ -210,13 +210,14 @@ class DocumentHistory
      * Restores the document to a previous state
      */
     public function restore($timestamp) {
+        $success = false;
         $xml_doc = $this->getXml($timestamp);
 
         if ($this->document->save($xml_doc)) {
-            return $xml_doc;
-        };
+            $success = $xml_doc;
+        }
 
-        return false;
+        return $success;
     }
     // }}}
     // delete {{{
