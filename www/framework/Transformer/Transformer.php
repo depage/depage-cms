@@ -306,7 +306,11 @@ abstract class Transformer
         $dynamic = $this->saveTransformed($this->savePath, $html);
 
         if ($dynamic) {
-            $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath);
+            $query = "";
+            if (!empty($_SERVER['QUERY_STRING'])) {
+                $query = "?" . $_SERVER['QUERY_STRING'];
+            }
+            $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath . $query);
             $request
                 ->setPostData($_POST)
                 ->setCookie($_COOKIE)
