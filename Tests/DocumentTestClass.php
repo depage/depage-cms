@@ -4,6 +4,7 @@ namespace Depage\XmlDb\Tests;
 
 class DocumentTestClass extends \Depage\XmlDb\Document
 {
+    public $free_element_ids = [];
     // {{{ setDoctypeHandler
     public function setDoctypeHandler($dth)
     {
@@ -29,12 +30,6 @@ class DocumentTestClass extends \Depage\XmlDb\Document
         return parent::saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos);
     }
     // }}}
-    // {{{ updateLastChange
-    public function updateLastChange($timestamp = null, $uid = null)
-    {
-        return parent::updateLastChange($timestamp, $uid);
-    }
-    // }}}
     // {{{ getNodeArrayForSaving
     public function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
     {
@@ -42,13 +37,13 @@ class DocumentTestClass extends \Depage\XmlDb\Document
     }
     // }}}
     // {{{ getFreeNodeIds
-    public function getFreeNodeIds($needed = 1)
+    public function getFreeNodeIds($total = 1, $preference = [])
     {
-        return parent::getFreeNodeIds($needed);
+        return parent::getFreeNodeIds($total, $preference);
     }
     // }}}
     // {{{ saveNodeIn
-    public function saveNodeIn($node, $target_id, $target_pos = -1, $inc_children = true)
+    public function saveNodeIn($node, $target_id, $target_pos, $inc_children)
     {
         return parent::saveNodeIn($node, $target_id, $target_pos, $inc_children);
     }
