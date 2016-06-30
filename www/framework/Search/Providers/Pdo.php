@@ -98,6 +98,7 @@ class Pdo
             FROM {$this->table}
                 WHERE MATCH (title, description, headlines, content) AGAINST (:search2 IN NATURAL LANGUAGE MODE)
                 OR metaphone LIKE :metaphone
+            ORDER by score DESC
             LIMIT :start, :count"
         );
         $query->execute([
