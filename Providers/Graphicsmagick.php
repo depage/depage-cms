@@ -79,10 +79,15 @@ class Graphicsmagick extends Imagemagick
     {
         \Depage\Graphics\Graphics::render($input, $output);
 
-        $this->command = $this->executable . " convert " . escapeshellarg($this->input) . " -background none";
+        $pageNumber = $this->getPageNumber();
+        $pageNumber = "";
+
+        $this->command = $this->executable . " convert " . escapeshellarg($this->input) . "{$pageNumber} -background none";
         $this->processQueue();
 
-        if (
+        if ($this->otherRender && file_exists($this->output)) {
+            // do nothing file is already generated
+        } else if (
             $this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {

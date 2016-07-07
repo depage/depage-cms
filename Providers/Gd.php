@@ -227,7 +227,9 @@ class Gd extends \Depage\Graphics\Graphics
         $this->load();
         $this->processQueue();
 
-        if ($this->bypass
+        if ($this->otherRender && file_exists($this->output)) {
+            // do nothing file is already generated
+        } else if ($this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
             $this->bypass();

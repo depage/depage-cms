@@ -51,6 +51,14 @@ class Graphics
      **/
     protected $output;
     /**
+     * @brief
+     **/
+    protected $outputLockFp = null;
+    /**
+     * @brief otherRender is set to true if another render process has already locked file
+     **/
+    protected $otherRender = false;
+    /**
      * @brief Action queue array
      **/
     protected $queue = array();
@@ -316,6 +324,9 @@ class Graphics
         $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
+        $this->otherRender  = false;
+
+        $this->lock();
 
         $this->oldIgnoreUserAbort = ignore_user_abort();
         ignore_user_abort(true);
@@ -330,6 +341,8 @@ class Graphics
     public function renderFinished()
     {
         ignore_user_abort($this->oldIgnoreUserAbort);
+
+        $this->unlock();
     }
     // }}}
     // {{{ optimizeImage()
@@ -349,6 +362,39 @@ class Graphics
         $success = $optimizer->optimize($filename);
 
         return $success;
+    }
+    // }}}
+    // {{{ lock()
+    /**
+     * @brief lock
+     *
+     * @return void
+     **/
+    protected function lock()
+    {
+        // set lock
+        $this->outputLockFp = fopen($this->output . ".lock", 'w');
+        $locked = flock($this->outputLockFp, LOCK_EX | LOCK_NB, $wouldblock);
+
+        if (!$locked && $wouldblock) {
+            $this->otherRender = true;
+            flock($this->outputLockFp, LOCK_EX);
+        }
+    }
+    // }}}
+    // {{{ unlock()
+    /**
+     * @brief unlock
+     *
+     * @return void
+     **/
+    protected function unlock()
+    {
+        // release lock
+        if (isset($this->outputLockFp)) {
+            flock($this->outputLockFp, LOCK_UN);
+            unlink($this->output . ".lock");
+        }
     }
     // }}}
 
