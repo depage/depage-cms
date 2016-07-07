@@ -6,11 +6,11 @@ doc:
 	cd documentation; $(MAKE) $(MFLAGS)
 
 test:
-	cd tests; $(MAKE) $(MFLAGS)
+	cd Tests; $(MAKE) $(MFLAGS)
 
 clean:
 	cd documentation; $(MAKE) $(MFLAGS) clean
-	cd tests; $(MAKE) $(MFLAGS) clean
+	cd Tests; $(MAKE) $(MFLAGS) clean
 	${RM} release
 
 .PHONY: all

@@ -14,6 +14,9 @@ namespace Depage\Graphics\Providers;
  *
  * The graphics_imagemagick class provides depage::graphics features using
  * the ImageMagick library.
+ *
+ * @todo use ghostscript to convert pdf and eps files directly
+ * @todo or use poppler pdftoppm to convert pdf directly
  **/
 class Imagemagick extends \Depage\Graphics\Graphics
 {
@@ -26,6 +29,10 @@ class Imagemagick extends \Depage\Graphics\Graphics
      * @brief Imagemagick executable path
      **/
     protected $executable;
+    /**
+     * @brief timeout after which the image conversion will be canceled
+     **/
+    protected $timeout = 0;
     // }}}
     // {{{ __construct()
     /**
@@ -38,6 +45,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         parent::__construct($options);
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
+        $this->timeout = isset($options['timeout']) ? $options['timeout'] : 0;
     }
     // }}}
 
@@ -173,7 +181,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
         $this->command = '';
         $this->processQueue();
 
-        if (
+        if ($this->otherRender && file_exists($this->output)) {
+            // do nothing file is already generated
+        } else if (
             $this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
@@ -182,8 +192,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $background = $this->getBackground();
             $quality    = $this->getQuality();
             $optimize   = $this->getOptimize();
+            $pageNumber = $this->getPageNumber();
 
-            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$this->command}";
+            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
             $this->command .= " ) -flatten {$quality}{$optimize}";
 
             $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
@@ -211,9 +222,47 @@ class Imagemagick extends \Depage\Graphics\Graphics
     {
         $command = str_replace('!', '\!', escapeshellcmd($this->command));
 
-        exec($command . ' 2>&1', $commandOutput, $returnStatus);
-        if ($returnStatus != 0) {
-            throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
+        $descriptorspec = array(
+            0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+            1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+            2 => array("pipe", "a") // stderr is pip
+        );
+        $process = proc_open("exec " . $command, $descriptorspec, $pipes);
+
+        // set pipes non blocking
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        $startTime = time();
+        $output = array(1 => "", 2 => "");
+        $terminated = false;
+
+        if (is_resource($process)) {
+            // read stdin and stderr
+            while(!feof($pipes[1]) && !feof($pipes[2])) {
+                for ($i = 1; $i < 3; $i++) {
+                    $s = fgets($pipes[$i]);
+                    $output[$i] .= $s;
+                }
+
+                usleep(10000);
+                if ($this->timeout > 0 && time() - $startTime > $this->timeout) {
+                    // terminate process of takes longer than timeout
+                    proc_terminate($process);
+                    $terminated = true;
+                }
+            }
+
+            for ($i = 0; $i < 3; $i++) {
+                fclose($pipes[$i]);
+            }
+            $returnStatus = proc_close($process);
+        }
+
+        if ($terminated) {
+            throw new \Depage\Graphics\Exceptions\Exception("Conversion over timeout");
+        } else if ($returnStatus != 0) {
+            throw new \Depage\Graphics\Exceptions\Exception($output[2]);
         }
     }
     // }}}
@@ -298,6 +347,22 @@ class Imagemagick extends \Depage\Graphics\Graphics
             return "-thumbnail";
         } else {
             return "-resize";
+        }
+    }
+    // }}}
+    // {{{ getPageNumber()
+    /**
+     * @brief getPageNumber
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getPageNumber()
+    {
+        if ($this->inputFormat == "pdf") {
+            return "[0]";
+        } else {
+            return "";
         }
     }
     // }}}
