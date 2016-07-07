@@ -192,8 +192,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $background = $this->getBackground();
             $quality    = $this->getQuality();
             $optimize   = $this->getOptimize();
+            $pageNumber = $this->getPageNumber();
 
-            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$this->command}";
+            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
             $this->command .= " ) -flatten {$quality}{$optimize}";
 
             $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
@@ -346,6 +347,22 @@ class Imagemagick extends \Depage\Graphics\Graphics
             return "-thumbnail";
         } else {
             return "-resize";
+        }
+    }
+    // }}}
+    // {{{ getPageNumber()
+    /**
+     * @brief getPageNumber
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getPageNumber()
+    {
+        if ($this->inputFormat == "pdf") {
+            return "[0]";
+        } else {
+            return "";
         }
     }
     // }}}
