@@ -156,6 +156,8 @@ class Publisher
         foreach ($files as $file) {
             $this->unpublishFile($file);
         }
+
+        return $files;
     }
     // }}}
 
