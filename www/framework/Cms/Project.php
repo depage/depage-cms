@@ -719,20 +719,26 @@ class Project extends \Depage\Entity\Entity
 
         // transform pages
         $baseUrl = $this->getBaseUrl($publishId);
+        $apiAvailable = file_exists($projectPath . 'lib/global/api.php');
 
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
-                $pId = $task->addSubtask("publishing $target", "
-                    \$updated = false;
+                $task->addSubtask("publishing $target", "
                     \$publisher->publishString(
                         \$transformer->transformUrl(%s, %s),
                         %s,
                         \$updated
-                    );", [
+                    ); if (%s && \$updated) {
+                        \$request = new \\Depage\\Http\\Request(%s);
+                        \$response = \$request->setPostData(%s)->execute();
+                    }", [
                         $url,
                         $lang,
-                        $target
+                        $target,
+                        $apiAvailable,
+                        $baseUrl . "/api/search/index/",
+                        ["url" => $baseUrl . "/" . $target],
                 ], $initId);
             }
         }
@@ -781,28 +787,19 @@ class Project extends \Depage\Entity\Entity
         ], $initId);
 
         // unpublish removed files
-        $task->addSubtask("removing leftover files", "\$publisher->unpublishRemovedFiles();", [], $initId);
-
-        if (file_exists($projectPath . 'lib/global/api.php')) {
-            // index pages with api
-            // @todo check if api is available for this project
-            // @todo remove indexes of removed files
-            // @todo don't index hidden pages or pages that are not available in language
-            foreach ($urls as $pageId => $url) {
-                foreach ($languages as $lang => $name) {
-                    $target = $baseUrl . "/" . $lang . $url;
-                    $task->addSubtask("indexing $target", "
-                        \$request = new \\Depage\\Http\\Request(%s);
-                        \$response = \$request->setPostData(%s)->execute();
-                        ", [
-                            $baseUrl . "/api/search/index/",
-                            [
-                                "url" => $target,
-                            ]
-                    ], $initId);
+        $task->addSubtask("removing leftover files", "
+            \$files = \$publisher->unpublishRemovedFiles();
+            if (%s) {
+                \$request = new \\Depage\\Http\\Request(%s);
+                foreach (\$files as \$file) {
+                    \$response = \$request->setPostData(array('url' => %s . '/' . \$file))->execute();
                 }
             }
-        }
+        ", [
+            $apiAvailable,
+            $baseUrl . "/api/search/remove/",
+            $baseUrl,
+        ], $initId);
 
         $task->begin();
 
