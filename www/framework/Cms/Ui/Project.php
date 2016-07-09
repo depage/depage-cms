@@ -286,12 +286,7 @@ class Project extends Base
                 }
             }
 
-            // save current general documents in history
-            $this->project->releaseDocument("pages", $this->authUser->id);
-            $this->project->releaseDocument("settings", $this->authUser->id);
-            $this->project->releaseDocument("colors", $this->authUser->id);
-
-            $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId);
+            $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId, $this->authUser->id);
 
             $form->clearSession();
 

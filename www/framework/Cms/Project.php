@@ -656,7 +656,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $param
      * @return void
      **/
-    public function addPublishTask($taskName, $publishId)
+    public function addPublishTask($taskName, $publishId, $userId)
     {
         $this->setPreviewType("live");
         $xmlgetter = $this->getXmlGetter();
@@ -665,6 +665,22 @@ class Project extends \Depage\Entity\Entity
         $targets = $this->getPublishingTargets();
         $conf = $targets[$publishId];
         $fsLocal = \Depage\Fs\Fs::factory($projectPath);
+
+        // save current general documents in history
+        $this->releaseDocument("pages", $userId);
+        $this->releaseDocument("settings", $userId);
+        $this->releaseDocument("colors", $userId);
+
+        // save folders in history
+        $xmldb = $this->getXmlDb($userId);
+        $docs = $xmldb->getDocuments();
+        foreach ($docs as $doc) {
+            $info = $doc->getDocInfo();
+            if ($info->type == "Depage\\Cms\\XmlDocTypes\\Folder") {
+                $this->releaseDocument($info->name, $userId);
+            }
+        }
+
 
         // getting als files in library
         $files = $fsLocal->lsFiles("lib/*");
