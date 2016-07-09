@@ -223,7 +223,7 @@ abstract class Transformer
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
                 "depageVersion" => \Depage\Depage\Runner::getVersion(),
-                "depageIsLive" => $this->isLive,
+                "depageIsLive" => $this->isLive ? "true()" : "false()",
                 "baseUrl" => $this->baseUrl,
             ));
 
