@@ -147,20 +147,27 @@ class Imagemagick extends \Depage\Graphics\Graphics
      **/
     protected function getImageSize()
     {
+        $imageSize = false;
         if (is_callable('getimagesize')) {
-            return getimagesize($this->input);
-        } else {
+            $imageSize = getimagesize($this->input);
+        }
+        if (!$imageSize) {
+            $pageNumber = $this->getPageNumber();
             $identify       = preg_replace('/convert$/', 'identify', $this->executable);
-            $command        = "{$identify} -format \"%wx%h\" " . escapeshellarg($this->input);
+            $command        = "{$identify} -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber;
             $escapedCommand = str_replace('!', '\!', escapeshellcmd($command));
 
             exec($escapedCommand . ' 2>&1', $commandOutput, $returnStatus);
             if ($returnStatus === 0) {
-                return explode('x', $commandOutput[0]);
+                $imageSize = explode('x', $commandOutput[0]);
             } else {
+                $this->unlock();
+
                 throw new Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
+
+        return $imageSize;
     }
     // }}}
 
@@ -260,8 +267,12 @@ class Imagemagick extends \Depage\Graphics\Graphics
         }
 
         if ($terminated) {
+            $this->unlock();
+
             throw new \Depage\Graphics\Exceptions\Exception("Conversion over timeout");
         } else if ($returnStatus != 0) {
+            $this->unlock();
+
             throw new \Depage\Graphics\Exceptions\Exception($output[2]);
         }
     }

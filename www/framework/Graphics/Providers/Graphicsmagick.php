@@ -52,16 +52,23 @@ class Graphicsmagick extends Imagemagick
      **/
     protected function getImageSize()
     {
+        $imageSize = false;
         if (is_callable('getimagesize')) {
-            return getimagesize($this->input);
-        } else {
-            exec("{$this->executable} identify -format \"%wx%h\" " . escapeshellarg($this->input) . ' 2>&1', $commandOutput, $returnStatus);
+            $imageSize = getimagesize($this->input);
+        }
+        if (!$imageSize) {
+            $pageNumber = $this->getPageNumber();
+            exec("{$this->executable} identify -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber . ' 2>&1', $commandOutput, $returnStatus);
             if ($returnStatus === 0) {
-                return explode('x', $commandOutput[0]);
+                $imageSize = explode('x', $commandOutput[0]);
             } else {
-                throw new Exceptions\Exception(implode("\n", $commandOutput));
+                $this->unlock();
+
+                throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
+
+        return $imageSize;
     }
     // }}}
 
@@ -80,7 +87,6 @@ class Graphicsmagick extends Imagemagick
         \Depage\Graphics\Graphics::render($input, $output);
 
         $pageNumber = $this->getPageNumber();
-        $pageNumber = "";
 
         $this->command = $this->executable . " convert " . escapeshellarg($this->input) . "{$pageNumber} -background none";
         $this->processQueue();
