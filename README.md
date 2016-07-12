@@ -24,8 +24,8 @@ But where SLIR is only gd-based, you can use Imagemagick or Graphicsmagick as co
 
 Basic Usage as Image Service
 ----------------------------
-    
-You can use the graphics class as an image service to automatically resize, 
+
+You can use the graphics class as an image service to automatically resize,
 crop, convert and optimize your images, or to generate thumbnails.
 
 To convert your image you add specific action to your image:
@@ -112,7 +112,7 @@ Webserver Configuration
 
     location /basedirectory {
         location ~ (?i)/basedirectory/(.*)\.(jpg|jpeg|gif|png)\.([^/]*)\.(jpg|jpeg|gif|png)$ {
-            rewrite (?i)^(/basedirectory)/(?!lib/cache/graphics)(.*)$ $1/lib/cache/graphics/$2 last;                                                       
+            rewrite (?i)^(/basedirectory)/(?!lib/cache/graphics)(.*)$ $1/lib/cache/graphics/$2 last;
 
             try_files $uri /basedirectory/lib/global/getimage.php;
         }
@@ -127,7 +127,21 @@ Webserver Configuration
 
 ### .htacess ###
 
-@todo
+RewriteEngine       on
+RewriteBase         /
+
+RewriteCond         %{REQUEST_FILENAME}   !-s
+RewriteRule         ^(?!lib/cache/graphics)(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(jpg|jpeg|png|gif)$ /lib/cache/graphics/$0
+
+RewriteCond         %{REQUEST_FILENAME}   !-s
+RewriteRule         ^lib/cache/graphics/(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(jpg|jpeg)$ /lib/global/getimage.php [T=image/jpeg]
+
+RewriteCond         %{REQUEST_FILENAME}   !-s
+RewriteRule         ^lib/cache/graphics/(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(png)$ /lib/global/getimage.php [T=image/png]
+
+RewriteCond         %{REQUEST_FILENAME}   !-s
+RewriteRule         ^lib/cache/graphics/(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(gif)$ /lib/global/getimage.php [T=image/gif]
+
 
 Install Using Composer
 ----------------------

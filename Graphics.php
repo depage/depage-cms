@@ -321,9 +321,9 @@ class Graphics
 
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;
-        $this->size         = $this->getImageSize();
         $this->inputFormat  = $this->obtainFormat($this->input);
         $this->outputFormat = ($this->format == null) ? $this->obtainFormat($this->output) : $this->format;
+        $this->size         = $this->getImageSize();
         $this->otherRender  = false;
 
         $this->lock();
@@ -523,6 +523,8 @@ class Graphics
             || ($height !== null && $height < 1)
             || ($width == null && $height == null)
         ) {
+            $this->unlock();
+
             throw new Exceptions\Exception('Invalid image size.');
         }
 
