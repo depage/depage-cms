@@ -156,7 +156,7 @@ var depageCMS = (function() {
             });
 
             // add live filter to projects menu
-            $("menu.projects").depageLiveFilter("li", "a", {
+            $("menu .projects").depageLiveFilter("li", "a", {
                 placeholder: locale.projectFilter,
                 attachInputInside: true,
                 onSelect: function($item) {
@@ -193,7 +193,7 @@ var depageCMS = (function() {
 
                         return false;
                     });
-                    $entry.children("a").on("hover", function(e) {
+                    $entry.children("a").on("mouseenter", function(e) {
                         // open submenu on hover if a menu is already open
                         if (menuOpen) {
                             $menus.removeClass("open");

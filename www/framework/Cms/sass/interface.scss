@@ -486,8 +486,12 @@ select,
             height: auto;
             z-index: 10002;
             background-color: #eeeeee !important;
-            padding: 10px 0;
+            padding: 0;
             min-width: 200px;
+
+            ul {
+                margin: 10px 0;
+            }
 
             li,
             hr {
@@ -521,10 +525,6 @@ select,
             a:hover {
                 background-color: #ffffff !important;
             }
-            hr {
-                height: 20px;
-                border: none;
-            }
             .depage-live-filter {
                 text-align: right;
                 padding-right: 0.2em;
@@ -535,7 +535,26 @@ select,
                     padding: 0.2em 0.4em;
                 }
             }
+            .project-shortcuts {
+                margin-bottom: 20px;
 
+                li:first-child {
+                    margin-bottom: 10px;
+                }
+                .thumb {
+                    position: static;
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 28px;
+                    height: 28px;
+                    margin-left: 10px;
+                    margin-right: 2px;
+                }
+            }
+            .project-shortcuts + .projects {
+                position: relative;
+                padding-top: 20px + 10px;
+            }
         }
     }
     menu li.open {
