@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: Cms/XmlDocTypes/SettingsXml/navigation.xml:2
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 19:00+0200\n"
+"POT-Creation-Date: 2016-07-14 18:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1880,7 +1881,8 @@ msgstr ""
 msgid "backup project"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:768 Cms/js/locale.php:24 Cms/tpl/projectlist.tpl:12
+#: Cms/Rpc/CmsFuncs.php:768 Cms/js/locale.php:25 Cms/tpl/toolbar_main.tpl:37
+#: Cms/tpl/projectlist.tpl:12
 msgid "edit"
 msgstr ""
 
@@ -1889,7 +1891,7 @@ msgstr ""
 msgid "preview"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:770 Cms/Ui/Main.php:156
+#: Cms/Rpc/CmsFuncs.php:770 Cms/tpl/toolbar_main.tpl:23 Cms/Ui/Main.php:156
 msgid "Projects"
 msgstr ""
 
@@ -1921,7 +1923,7 @@ msgstr ""
 msgid "logout"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:779 Cms/js/locale.php:28
+#: Cms/Rpc/CmsFuncs.php:779 Cms/js/locale.php:29
 msgid "reload"
 msgstr ""
 
@@ -2149,7 +2151,7 @@ msgstr ""
 msgid "Show files with wrong filetype or wrong image size."
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:842 Cms/XmlDocTypes/SettingsXml/navigation.xml:2
+#: Cms/Rpc/CmsFuncs.php:842
 msgid "name"
 msgstr ""
 
@@ -2526,7 +2528,8 @@ msgstr ""
 msgid "languages"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:959 Cms/tpl/publish.tpl:5 Cms/Ui/Project.php:62
+#: Cms/Rpc/CmsFuncs.php:959 Cms/tpl/publish.tpl:5 Cms/tpl/toolbar_main.tpl:41
+#: Cms/Ui/Project.php:62
 msgid "Publish"
 msgstr ""
 
@@ -2582,27 +2585,35 @@ msgstr ""
 msgid "Delete now?"
 msgstr ""
 
-#: Cms/js/locale.php:25
-msgid "Edit current page in edit interface on the left ←."
+#: Cms/js/locale.php:24
+msgid "deselect all"
 msgstr ""
 
 #: Cms/js/locale.php:26
-msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgid "Edit current page in edit interface on the left ←."
 msgstr ""
 
 #: Cms/js/locale.php:27
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+
+#: Cms/js/locale.php:28
 msgid "Filter Projects"
 msgstr ""
 
-#: Cms/js/locale.php:29
+#: Cms/js/locale.php:30
 msgid "reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:30
+#: Cms/js/locale.php:31
+msgid "select all"
+msgstr ""
+
+#: Cms/js/locale.php:32
 msgid "finished uploading/cancel"
 msgstr ""
 
-#: Cms/js/locale.php:31
+#: Cms/js/locale.php:33
 msgid "Change zoom level of preview."
 msgstr ""
 
@@ -2650,23 +2661,23 @@ msgstr ""
 msgid "Go to dashboard"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:19
+#: Cms/tpl/toolbar_main.tpl:18
 msgid "Change current project"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:30
+#: Cms/tpl/toolbar_main.tpl:44 Cms/tpl/toolbar_main.tpl:57
 msgid "Settings"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:40
+#: Cms/tpl/toolbar_main.tpl:67
 msgid "Change user settings or logout"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:43
+#: Cms/tpl/toolbar_main.tpl:71
 msgid "Account settings"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:51
+#: Cms/tpl/toolbar_main.tpl:81
 msgid "Help"
 msgstr ""
 
@@ -2739,7 +2750,7 @@ msgstr ""
 msgid "The preview of the currently selected page."
 msgstr ""
 
-#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:57
+#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:67
 msgid "Preview"
 msgstr ""
 
@@ -2751,15 +2762,15 @@ msgstr ""
 msgid "Publish Now"
 msgstr ""
 
-#: Cms/Forms/Publish.php:40
+#: Cms/Forms/Publish.php:49
 msgid "Publish to"
 msgstr ""
 
-#: Cms/Forms/Publish.php:51
+#: Cms/Forms/Publish.php:60
 msgid "Unreleased Pages"
 msgstr ""
 
-#: Cms/Forms/Publish.php:53
+#: Cms/Forms/Publish.php:63
 msgid "Please select the pages you want to publish:"
 msgstr ""
 
@@ -2806,10 +2817,10 @@ msgid "Server supports mod rewrite"
 msgstr ""
 
 #: Cms/Forms/Project/Publish.php:81
-msgid "Publish to this target as default"
+msgid "Index this target for search"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:96
+#: Cms/Forms/Project/Publish.php:102
 msgid "Add new publishing target"
 msgstr ""
 
@@ -3037,10 +3048,6 @@ msgstr ""
 msgid "Shows the users that are currently logged in"
 msgstr ""
 
-#: Cms/Ui/Base.php:131
-msgid "projects"
-msgstr ""
-
 #: Cms/Ui/Project.php:58
 msgid "Project Settings"
 msgstr ""
@@ -3106,7 +3113,7 @@ msgstr ""
 msgid "Add new Project"
 msgstr ""
 
-#: Cms/Ui/Project.php:301
+#: Cms/Ui/Project.php:296
 #, php-format
 msgid "Publish Project '%s'"
 msgstr ""

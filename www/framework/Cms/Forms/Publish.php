@@ -26,7 +26,16 @@ class Publish extends \Depage\HtmlForm\HtmlForm
         $this->project = $params['project'];
 
         parent::__construct($name, $params);
-
+    }
+    // }}}
+    // {{{ addChildElements()
+    /**
+     * @brief addChildElements
+     *
+     * @return void
+     **/
+    public function addChildElements()
+    {
         $this->addHidden("action", [
             'defaultValue' => "publish",
         ]);
@@ -49,6 +58,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
 
         $fs = $this->addFieldset("recentChanges", [
             'label' => _("Unreleased Pages"),
+            'class' => "select-all",
         ]);
         $fs->addHtml("<p>" . _("Please select the pages you want to publish:") . "</p>");
 

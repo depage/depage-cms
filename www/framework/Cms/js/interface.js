@@ -350,6 +350,27 @@ var depageCMS = (function() {
                     this.value = "";
                 });
             }, 300);
+
+            // add select-all button
+            $("form fieldset.select-all").each(function() {
+                var $boolean = $(this).find(".input-boolean");
+                var $button = $("<p class=\"select-all\"><button>" + locale.selectAll + "</button></p>").insertAfter($(this).find("legend").next()).find("button");
+                var allSelected = false;
+
+                $button.on("click", function() {
+                    if (!allSelected) {
+                        $boolean.find("input").val(["true"]);
+                        $button.html(locale.deselectAll);
+                    } else {
+                        $boolean.find("input").val(["false"]);
+                        $button.html(locale.selectAll);
+                    }
+
+                    allSelected = !allSelected;
+
+                    return false;
+                });
+            });
         },
         // }}}
         // {{{ setupHelp

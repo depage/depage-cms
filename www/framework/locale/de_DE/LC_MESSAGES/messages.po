@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: Cms/XmlDocTypes/SettingsXml/navigation.xml:2
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 19:00+0200\n"
+"POT-Creation-Date: 2016-07-14 18:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1891,7 +1892,8 @@ msgstr ""
 msgid "backup project"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:768 Cms/js/locale.php:24 Cms/tpl/projectlist.tpl:12
+#: Cms/Rpc/CmsFuncs.php:768 Cms/js/locale.php:25 Cms/tpl/toolbar_main.tpl:37
+#: Cms/tpl/projectlist.tpl:12
 msgid "edit"
 msgstr "Editieren"
 
@@ -1900,7 +1902,7 @@ msgstr "Editieren"
 msgid "preview"
 msgstr "Vorschau"
 
-#: Cms/Rpc/CmsFuncs.php:770 Cms/Ui/Main.php:156
+#: Cms/Rpc/CmsFuncs.php:770 Cms/tpl/toolbar_main.tpl:23 Cms/Ui/Main.php:156
 msgid "Projects"
 msgstr "Projekte"
 
@@ -1932,7 +1934,7 @@ msgstr ""
 msgid "logout"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:779 Cms/js/locale.php:28
+#: Cms/Rpc/CmsFuncs.php:779 Cms/js/locale.php:29
 msgid "reload"
 msgstr "Aktualisieren"
 
@@ -2160,7 +2162,7 @@ msgstr "Dateien mit falschem Typ oder falscher Größe ausblenden."
 msgid "Show files with wrong filetype or wrong image size."
 msgstr "Dateien mit falschem Typ oder falscher Größe einblenden."
 
-#: Cms/Rpc/CmsFuncs.php:842 Cms/XmlDocTypes/SettingsXml/navigation.xml:2
+#: Cms/Rpc/CmsFuncs.php:842
 msgid "name"
 msgstr "Name"
 
@@ -2537,7 +2539,8 @@ msgstr "Globale Dateien"
 msgid "languages"
 msgstr "Sprachen"
 
-#: Cms/Rpc/CmsFuncs.php:959 Cms/tpl/publish.tpl:5 Cms/Ui/Project.php:62
+#: Cms/Rpc/CmsFuncs.php:959 Cms/tpl/publish.tpl:5 Cms/tpl/toolbar_main.tpl:41
+#: Cms/Ui/Project.php:62
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -2593,28 +2596,36 @@ msgstr "Löschen"
 msgid "Delete now?"
 msgstr "Jetzt löschen?"
 
-#: Cms/js/locale.php:25
+#: Cms/js/locale.php:24
+msgid "deselect all"
+msgstr "Markierung für alle aufheben"
+
+#: Cms/js/locale.php:26
 msgid "Edit current page in edit interface on the left ←."
 msgstr "Bearbeiten Sie die aktuelle Seite im Barbeitungspanel links ←."
 
-#: Cms/js/locale.php:26
+#: Cms/js/locale.php:27
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 "Zwischen Layouts wechseln: Nur-Editieren, Geteilte Ansicht und Nur-Vorschau"
 
-#: Cms/js/locale.php:27
+#: Cms/js/locale.php:28
 msgid "Filter Projects"
 msgstr "Projekte filtern"
 
-#: Cms/js/locale.php:29
+#: Cms/js/locale.php:30
 msgid "reload page preview"
 msgstr "Seitenvorschau neu laden"
 
-#: Cms/js/locale.php:30
+#: Cms/js/locale.php:31
+msgid "select all"
+msgstr "Alle markieren"
+
+#: Cms/js/locale.php:32
 msgid "finished uploading/cancel"
 msgstr "Upload beenden/abbrechen"
 
-#: Cms/js/locale.php:31
+#: Cms/js/locale.php:33
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
 
@@ -2662,23 +2673,23 @@ msgstr "Trenner"
 msgid "Go to dashboard"
 msgstr "Gehe zum Dashboard"
 
-#: Cms/tpl/toolbar_main.tpl:19
+#: Cms/tpl/toolbar_main.tpl:18
 msgid "Change current project"
 msgstr "Aktuelles Projekt ändern"
 
-#: Cms/tpl/toolbar_main.tpl:30
+#: Cms/tpl/toolbar_main.tpl:44 Cms/tpl/toolbar_main.tpl:57
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: Cms/tpl/toolbar_main.tpl:40
+#: Cms/tpl/toolbar_main.tpl:67
 msgid "Change user settings or logout"
 msgstr "Benutzereinstellungen ändern oder logout"
 
-#: Cms/tpl/toolbar_main.tpl:43
+#: Cms/tpl/toolbar_main.tpl:71
 msgid "Account settings"
 msgstr "Benutzereinstellungen"
 
-#: Cms/tpl/toolbar_main.tpl:51
+#: Cms/tpl/toolbar_main.tpl:81
 msgid "Help"
 msgstr "Hilfe"
 
@@ -2764,7 +2775,7 @@ msgstr "Sehen Sie das aktuelle Element als Vorschau im Panel zur Rechten →."
 msgid "The preview of the currently selected page."
 msgstr "Vorschau der aktuellen Seite."
 
-#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:57
+#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:67
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2776,15 +2787,15 @@ msgstr "Zuletzt veröffentlicht"
 msgid "Publish Now"
 msgstr "Jetzt veröffentlichen"
 
-#: Cms/Forms/Publish.php:40
+#: Cms/Forms/Publish.php:49
 msgid "Publish to"
 msgstr "Veröffentlichen nach"
 
-#: Cms/Forms/Publish.php:51
+#: Cms/Forms/Publish.php:60
 msgid "Unreleased Pages"
 msgstr "Nicht freigegebene Seiten"
 
-#: Cms/Forms/Publish.php:53
+#: Cms/Forms/Publish.php:63
 msgid "Please select the pages you want to publish:"
 msgstr "Bitte markieren Sie die Seiten, die Sie jetzt veröffentlichen möchten:"
 
@@ -2831,10 +2842,10 @@ msgid "Server supports mod rewrite"
 msgstr "Server unterstützt mod-rewrite"
 
 #: Cms/Forms/Project/Publish.php:81
-msgid "Publish to this target as default"
-msgstr "Zu diesem Ziel als Standard veröffentlichen"
+msgid "Index this target for search"
+msgstr ""
 
-#: Cms/Forms/Project/Publish.php:96
+#: Cms/Forms/Project/Publish.php:102
 msgid "Add new publishing target"
 msgstr "Neue Veröffentlichungsziel hinzufügen"
 
@@ -3064,10 +3075,6 @@ msgstr "Benutzer"
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
 
-#: Cms/Ui/Base.php:131
-msgid "projects"
-msgstr "Projekte"
-
 #: Cms/Ui/Project.php:58
 msgid "Project Settings"
 msgstr "Projekt"
@@ -3148,7 +3155,7 @@ msgstr "Projekteinstellung von '%s'"
 msgid "Add new Project"
 msgstr "Neues Projekt hinzufügen"
 
-#: Cms/Ui/Project.php:301
+#: Cms/Ui/Project.php:296
 #, php-format
 msgid "Publish Project '%s'"
 msgstr "Veröffentlichen von Projekt '%s'"
@@ -3160,6 +3167,12 @@ msgstr ""
 #: Mail/Mail.php:313
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
+
+#~ msgid "projects"
+#~ msgstr "Projekte"
+
+#~ msgid "Publish to this target as default"
+#~ msgstr "Zu diesem Ziel als Standard veröffentlichen"
 
 #~ msgid "Administrator"
 #~ msgstr "Administrator"

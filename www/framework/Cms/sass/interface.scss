@@ -107,7 +107,8 @@ $borderColor: #999999;
     a,
     h2 a:hover,
     .error span,
-    .depage-form p.cancel input {
+    .depage-form p.cancel input,
+    .select-all button {
         color: #882200;
     }
     body {
@@ -284,6 +285,7 @@ a img {
 /* }}} */
 /* {{{ border-radius */
 .button,
+button,
 select,
 .toggle-button,
 .toolbar a,
@@ -1669,6 +1671,20 @@ progress {
 /* }}} */
 /* {{{ publish-form */
 form.lastchanged_pages {
+    p.select-all {
+        width: 100%;
+
+        button {
+            display: block;
+            border: none;
+            background: none;
+            font-size: 12px;
+            padding: 0;
+            margin: 0;
+            outline: 0;
+            text-decoration: underline;
+        }
+    }
     .input-boolean {
         width: 75%;
     }
