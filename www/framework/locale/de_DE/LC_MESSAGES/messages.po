@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-15 14:21+0200\n"
+"POT-Creation-Date: 2016-07-15 14:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2724,6 +2724,14 @@ msgstr "'%s' wird in %s abgeschlossen sein"
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
+#: Cms/tpl/userlist.tpl:21
+msgid "All Users"
+msgstr "Alle Benutzer"
+
+#: Cms/tpl/userlist.tpl:25
+msgid "Add New User"
+msgstr "Neuen Benutzer hinzufügen"
+
 #: Cms/tpl/flashedit.tpl:5
 msgid "Tree/Edit"
 msgstr "Struktur/Editieren"
@@ -2778,15 +2786,15 @@ msgstr "Vorschau der aktuellen Seite."
 msgid "Preview"
 msgstr "Vorschau"
 
-#: Cms/tpl/changelist.tpl:12 Cms/Forms/Publish.php:60
+#: Cms/tpl/changelist.tpl:13 Cms/Forms/Publish.php:60
 msgid "Unreleased Pages"
 msgstr "Nicht freigegebene Seiten"
 
-#: Cms/tpl/changelist.tpl:21
+#: Cms/tpl/changelist.tpl:23
 msgid "Released Pages"
 msgstr "Freigegebene Seiten"
 
-#: Cms/tpl/changelist.tpl:30
+#: Cms/tpl/changelist.tpl:32
 msgid "Last published"
 msgstr "Zuletzt veröffentlicht"
 
@@ -3070,13 +3078,17 @@ msgstr ""
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:369
+#: Cms/Ui/Main.php:368 Cms/Ui/Main.php:379
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:371
+#: Cms/Ui/Main.php:369
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
+
+#: Cms/Ui/Main.php:380
+msgid "Shows all users"
+msgstr "Zeigt alle Benutzer"
 
 #: Cms/Ui/Project.php:58
 msgid "Project Settings"

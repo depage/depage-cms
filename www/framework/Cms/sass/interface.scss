@@ -365,6 +365,26 @@ select,
             height: 48px;
         }
     }
+    a.new {
+        position: relative;
+        padding-left: 24px;
+        color: #000000;
+
+        &:before {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 2em;
+            height: 2em;
+            background-color: transparent;
+            @include icon-base("add", 0.5);
+        }
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 /* }}} */
 
@@ -1326,26 +1346,6 @@ dl.projectlist dt.active .opener {
     }
     .content:before {
         @include icon("projects");
-    }
-    a.new {
-        position: relative;
-        padding-left: 24px;
-        color: #000000;
-
-        &:before {
-            display: block;
-            content: " ";
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            width: 2em;
-            height: 2em;
-            background-color: transparent;
-            @include icon-base("add", 0.5);
-        }
-        &:hover {
-            text-decoration: underline;
-        }
     }
 }
 dl.projectlist {
