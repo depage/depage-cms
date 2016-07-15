@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-14 18:26+0200\n"
+"POT-Creation-Date: 2016-07-15 14:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1751,9 +1751,8 @@ msgid "dimensions: "
 msgstr "Maße: "
 
 #: Cms/Rpc/CmsFuncs.php:734
-#, fuzzy
 msgid "keywords: "
-msgstr "Schlüsselworte"
+msgstr "Schlüsselworte: "
 
 #: Cms/Rpc/CmsFuncs.php:735
 msgid "Complete Backup from"
@@ -2779,7 +2778,15 @@ msgstr "Vorschau der aktuellen Seite."
 msgid "Preview"
 msgstr "Vorschau"
 
-#: Cms/tpl/changelist.tpl:13
+#: Cms/tpl/changelist.tpl:12 Cms/Forms/Publish.php:60
+msgid "Unreleased Pages"
+msgstr "Nicht freigegebene Seiten"
+
+#: Cms/tpl/changelist.tpl:21
+msgid "Released Pages"
+msgstr "Freigegebene Seiten"
+
+#: Cms/tpl/changelist.tpl:30
 msgid "Last published"
 msgstr "Zuletzt veröffentlicht"
 
@@ -2790,10 +2797,6 @@ msgstr "Jetzt veröffentlichen"
 #: Cms/Forms/Publish.php:49
 msgid "Publish to"
 msgstr "Veröffentlichen nach"
-
-#: Cms/Forms/Publish.php:60
-msgid "Unreleased Pages"
-msgstr "Nicht freigegebene Seiten"
 
 #: Cms/Forms/Publish.php:63
 msgid "Please select the pages you want to publish:"

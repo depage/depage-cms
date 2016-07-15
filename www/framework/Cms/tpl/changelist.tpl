@@ -1,12 +1,31 @@
 <?php
     $formatter = new \Depage\Formatters\DateNatural();
-    $headerShown = !$this->lastPublishDate;
+    $headerShown = 0;
     $class = "";
 ?>
 <table class="recent-changes">
     <?php foreach($this->pages as $page) {
-        if (!$headerShown && $page->released === true) {
-            $headerShown = true;
+        if ($headerShown == 0) {
+            $headerShown++;
+            if ($page->released === false) {
+                ?>
+                    <tr>
+                        <td class="lastchange" colspan="2">— <?php self::t(_("Unreleased Pages")); ?> —</td>
+                    </tr>
+                <?php
+            }
+        }
+        if ($headerShown == 1 && $page->released === true) {
+            $headerShown++;
+            $class = "released";
+            ?>
+                <tr>
+                    <td class="lastchange" colspan="2">— <?php self::t(_("Released Pages")); ?> —</td>
+                </tr>
+            <?php
+        }
+        if ($headerShown == 2 && $page->lastchange->getTimestamp() <= $this->lastPublishDate->getTimestamp()) {
+            $headerShown++;
             $class = "published";
             ?>
                 <tr>
