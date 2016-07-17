@@ -11,6 +11,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/Cms/js/xmldb.js
  * @require framework/Cms/js/locale.js
+ * @require framework/Cms/js/jstree.js
  *
  *
  * @file    js/global.js

@@ -1,20 +1,20 @@
 /**
- * @require framework/cms/js/jstree/vakata.js
- * @require framework/cms/js/jstree/jstree.js
- * @require framework/cms/js/jstree/jstree.themes.js
- * @require framework/cms/js/jstree/jstree.ui.js
- * @require framework/cms/js/jstree/jstree.dnd.js
- * @require framework/cms/js/jstree/jstree.hotkeys.js
- * @require framework/cms/js/jstree/jstree.nodeinfo.js
- * @require framework/cms/js/jstree/jstree.tooltips.js
- * @require framework/cms/js/jstree/jstree.typesfromurl.js
- * @require framework/cms/js/jstree/jstree.contextmenu.js
- * @require framework/cms/js/jstree/jstree.dblclickrename.js
- * @require framework/cms/js/jstree/jstree.deltaupdates.js
- * @require framework/cms/js/jstree/jstree.pedantic_html_data.js
- * @require framework/cms/js/jstree/jstree.toolbar.js
- * @require framework/cms/js/jstree/jstree.marker.js
- * @require framework/cms/js/jstree/doctypes/jstree.doctype.page.js
+ * @require framework/Cms/js/jstree/vakata.js
+ * @require framework/Cms/js/jstree/jstree.js
+ * @require framework/Cms/js/jstree/jstree.themes.js
+ * @require framework/Cms/js/jstree/jstree.ui.js
+ * @require framework/Cms/js/jstree/jstree.dnd.js
+ * @require framework/Cms/js/jstree/jstree.hotkeys.js
+ * @require framework/Cms/js/jstree/jstree.nodeinfo.js
+ * @require framework/Cms/js/jstree/jstree.tooltips.js
+ * @require framework/Cms/js/jstree/jstree.typesfromurl.js
+ * @require framework/Cms/js/jstree/jstree.contextmenu.js
+ * @require framework/Cms/js/jstree/jstree.dblclickrename.js
+ * @require framework/Cms/js/jstree/jstree.deltaupdates.js
+ * @require framework/Cms/js/jstree/jstree.pedantic_html_data.js
+ * @require framework/Cms/js/jstree/jstree.toolbar.js
+ * @require framework/Cms/js/jstree/jstree.marker.js
+ * @require framework/Cms/js/jstree/doctypes/jstree.doctype.page.js
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js

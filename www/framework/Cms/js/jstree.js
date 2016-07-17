@@ -1,5 +1,5 @@
 /**
- * @require framework/cms/js/depage.jstree.js
+ * @require framework/Cms/js/depage.jstree.js
  *
  * Global function allows tree to be init with required options
  *
