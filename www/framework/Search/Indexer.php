@@ -156,6 +156,29 @@ class Indexer
         $response = $request->execute();
         $this->doc = $response->getXml();
 
+        $this->loadXml($this->doc);
+
+        return $this;
+    }
+    // }}}
+    // {{{ loadXml()
+    /**
+     * @brief loadXml
+     *
+     * @param mixed $content
+     * @return void
+     **/
+    public function loadXml($content)
+    {
+        if (is_string($content)) {
+            $this->doc = new \Depage\Xml\Document();
+            if (!$this->doc->loadHtml($content)) {
+                throw new \Exception('Unable to parse content into XML: ' . libxml_get_last_error());
+            }
+        } else if (!is_a($content, "DOMDocument")) {
+            throw new \Exception('loaded content is not a DOMDocument');
+        }
+
         $this->title = [];
         $this->description = [];
         $this->headlines = [];
