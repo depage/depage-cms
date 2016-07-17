@@ -364,7 +364,7 @@ class Main extends Base {
         });
 
         $h = new Html("box.tpl", [
-            'id' => "box-users",
+            'id' => $showCurrent ? "box-users" : "",
             'class' => "box-users",
             'title' => _("Users"),
             'updateUrl' => $updateUrl,
@@ -372,6 +372,7 @@ class Main extends Base {
             'content' => new Html("userlist.tpl", [
                 'title' => $this->basetitle,
                 'users' => $users,
+                'showCurrent' => $showCurrent,
             ]),
         ], $this->htmlOptions);
 
