@@ -24,7 +24,8 @@ class Pageref extends Base {
         }
 
         if ($absolute != "absolute") {
-            $path = $this->transformer->getRelativePathTo($path);
+            $url = new \Depage\Http\Url($this->transformer->currentPath);
+            $path = $url->getRelativePathTo($path);
         }
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';

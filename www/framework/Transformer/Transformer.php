@@ -198,7 +198,14 @@ abstract class Transformer
 
         $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
-        return $this->transformPage($pageId, $pagedataId);
+        $content = $this->transformPage($pageId, $pagedataId);
+
+        $indexer = new \Depage\Search\Indexer($this->pdo);
+        $images = $indexer->loadXml($content, $this->baseUrl . $this->lang . $this->currentPath)->getImages();
+        // @todo load images to have generated images forced to be generated?
+        // @todo warn about non-existant images?
+
+        return $content;
     }
     // }}}
     // {{{ transformPage()
@@ -498,39 +505,6 @@ abstract class Transformer
         }
     }
     // }}}
-    // {{{ getRelativePathTo
-    /**
-     * gets relative path to path of active page
-     *
-     * @public
-     *
-     * @param    $targetPath (string) path to target file
-     *
-     * @return    $path (string) relative path
-     */
-    public function getRelativePathTo($targetPath, $currentPath = null) {
-        if ($currentPath === null) {
-            $currentPath = $this->lang . $this->currentPath;
-        }
-
-        // link to self by default
-        $path = '';
-        if ($targetPath != '' && $targetPath != $currentPath) {
-            $currentPath = explode('/', $currentPath);
-            $targetPath = explode('/', $targetPath);
-
-            $i = 0;
-            while ((isset($currentPath[$i]) && $targetPath[$i]) && $currentPath[$i] == $targetPath[$i]) {
-                $i++;
-            }
-
-            if (count($currentPath) - $i >= 1) {
-                $path = str_repeat('../', count($currentPath) - $i - 1) . implode('/', array_slice($targetPath, $i));
-            }
-        }
-        return $path;
-    }
-    // }}}
 
     // {{{ xsltCallFileinfo
     /**
@@ -580,14 +554,15 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallChangeSrc($source) {
+        $url = new \Depage\Http\Url($this->currentPath);
         $newSource = "";
         $posOffset = 0;
         // @todo check libref:/(/)
-        while (($startPos = strpos($source, '"libref:/', $posOffset)) !== false) {
+        while (($startPos = strpos($source, '"libref://', $posOffset)) !== false) {
             $newSource .= substr($source, $posOffset, $startPos - $posOffset) . '"';
-            $posOffset = $startPos + strlen("libref:/") + 3;
+            $posOffset = $startPos + strlen("libref://") + 3;
             $endPos = strpos($source, "\"", $posOffset);
-            $newSource .= $this->getRelativePathTo('/lib' . substr($source, $startPos + 8, $endPos - ($startPos + 8)));
+            $newSource .= $url->getRelativePathTo('/lib' . substr($source, $startPos + 9, $endPos - ($startPos + 9)));
             $posOffset = $endPos;
         }
         $newSource .= substr($source, $posOffset);
