@@ -101,6 +101,11 @@ class Indexer
      * @brief xpath
      **/
     protected $xpath = null;
+
+    /**
+     * @brief db
+     **/
+    protected $db = null;
     // }}}
 
     // {{{ __construct()
@@ -110,9 +115,11 @@ class Indexer
      * @param mixed
      * @return void
      **/
-    public function __construct($db)
+    public function __construct($db = null)
     {
-        $this->db = new Providers\Pdo($db);
+        if (!empty($db)) {
+            $this->db = new Providers\Pdo($db);
+        }
     }
     // }}}
     // {{{ index()
@@ -131,6 +138,9 @@ class Indexer
         $headlines = $this->getHeadlines();
         $content = $this->getContent();
 
+        if (is_null($this->db)) {
+            throw new \Exception("Database for indexer not set");
+        }
         $this->db->add($url, $title, $description, $headlines, $content);
 
         return $this;
@@ -145,6 +155,9 @@ class Indexer
      **/
     public function remove($url)
     {
+        if (is_null($this->db)) {
+            throw new \Exception("Database for indexer not set");
+        }
         $this->db->remove($url);
     }
     // }}}
