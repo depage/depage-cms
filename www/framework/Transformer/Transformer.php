@@ -200,7 +200,7 @@ abstract class Transformer
 
         $content = $this->transformPage($pageId, $pagedataId);
 
-        $indexer = new \Depage\Search\Indexer($this->pdo);
+        $indexer = new \Depage\Search\Indexer();
         $images = $indexer->loadXml($content, $this->baseUrl . $this->lang . $this->currentPath)->getImages();
         // @todo load images to have generated images forced to be generated?
         // @todo warn about non-existant images?
