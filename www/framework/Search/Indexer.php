@@ -189,10 +189,14 @@ class Indexer
     public function loadXml($content, $url = "")
     {
         if (is_string($content)) {
+            $useInternalErrors = libxml_use_internal_errors(true);
+
             $this->doc = new \Depage\Xml\Document();
             if (!$this->doc->loadHtml($content)) {
                 throw new \Exception('Unable to parse content into XML: ' . libxml_get_last_error());
             }
+
+            libxml_use_internal_errors($useInternalErrors);
         } else if (!is_a($content, "DOMDocument")) {
             throw new \Exception('loaded content is not a DOMDocument');
         }
@@ -407,7 +411,7 @@ class Indexer
      **/
     public function getLinks()
     {
-        $images = [];
+        $links = [];
 
         foreach ($this->contentNodes as $contentNode) {
             // extract links
