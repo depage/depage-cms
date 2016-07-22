@@ -103,10 +103,14 @@ class Response {
      **/
     public function getXml()
     {
+        $useInternalErrors = libxml_use_internal_errors(true);
+
         $doc = new \Depage\Xml\Document();
         if (!$doc->loadHtml($this->body)) {
             throw new \Exception('Unable to parse response body into XML: ' . libxml_get_last_error());
         }
+
+        libxml_use_internal_errors($useInternalErrors);
 
         return $doc;
     }
