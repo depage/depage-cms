@@ -62,6 +62,12 @@ class Url
      **/
     public function getAbsolutePathTo($targetPath)
     {
+        if (substr($targetPath, 0, 1) == "/") {
+            return $targetPath;
+        } else if (parse_url($targetPath, PHP_URL_HOST) != "") {
+            return $targetPath;
+        }
+        // @todo throw exception when out of bounds
         $currentPath = explode('/', $this->url);
         array_pop($currentPath);
 
