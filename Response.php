@@ -103,7 +103,8 @@ class Response {
      **/
     public function getXml()
     {
-        $useInternalErrors = libxml_use_internal_errors(true);
+        $oldErrorHandler = set_error_handler(function() {});
+        $useInternalErrors = libxml_use_internal_errors(false);
 
         $doc = new \Depage\Xml\Document();
         if (!$doc->loadHtml($this->body)) {
@@ -111,6 +112,8 @@ class Response {
         }
 
         libxml_use_internal_errors($useInternalErrors);
+        set_error_handler($oldErrorHandler);
+        libxml_clear_errors();
 
         return $doc;
     }
