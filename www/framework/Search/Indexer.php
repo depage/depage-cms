@@ -189,7 +189,8 @@ class Indexer
     public function loadXml($content, $url = "")
     {
         if (is_string($content)) {
-            $useInternalErrors = libxml_use_internal_errors(true);
+            $oldErrorHandler = set_error_handler(function() {});
+            $useInternalErrors = libxml_use_internal_errors(false);
 
             $this->doc = new \Depage\Xml\Document();
             if (!$this->doc->loadHtml($content)) {
@@ -197,6 +198,8 @@ class Indexer
             }
 
             libxml_use_internal_errors($useInternalErrors);
+            set_error_handler($oldErrorHandler);
+            libxml_clear_errors();
         } else if (!is_a($content, "DOMDocument")) {
             throw new \Exception('loaded content is not a DOMDocument');
         }
