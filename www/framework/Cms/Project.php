@@ -834,7 +834,7 @@ class Project extends \Depage\Entity\Entity
     {
         $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "sitemap");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "sitemap");
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
@@ -861,7 +861,7 @@ class Project extends \Depage\Entity\Entity
     {
         $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "atom");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "atom");
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
