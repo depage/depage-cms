@@ -14,16 +14,16 @@ namespace Depage\XmlDb;
 class XmlDbHistory implements XmlGetter
 {
     // {{{ variables
-    private $pdo;
-    private $db_ns;
-    private $table_history;
+    protected $pdo;
+    protected $db_ns;
+    protected $table_history;
 
-    private $doc_ids = [];
+    protected $doc_ids = [];
 
-    private $table_prefix = 'dp_';
-    private $table_docs;
+    protected $table_prefix = 'dp_';
+    protected $table_docs;
 
-    private $options;
+    protected $options;
     // }}}
 
     // {{{ constructor
@@ -69,34 +69,30 @@ class XmlDbHistory implements XmlGetter
     // {{{ getDocXml
     public function getDocXml($doc_id_or_name, $add_id_attribute = true)
     {
-        $result = false;
-        $id = $this->docExists($doc_id_or_name);
+        $xml = false;
 
-        $query = $this->pdo->prepare("
-            SELECT doc_id, last_saved_at, published, xml
-            FROM {$this->table_history}
-            WHERE published = true
-                AND doc_id = :id
-            ORDER BY last_saved_at DESC
-            LIMIT 1
-        ");
-
-        $query->execute([
-            'id' => $id,
-        ]);
-
-        if ($doc = $query->fetchObject()) {
-            $result = $doc->xml;
-
-            $doc = new \Depage\Xml\Document();
-            $doc->loadXml($result);
-
-            if (!$add_id_attribute) {
-                Document::removeNodeAttr($doc, $this->db_ns, 'id');
-            }
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $history = $doc->getHistory();
+            $xml = $history->getLastPublishedXml($add_id_attribute);
         }
 
-        return $doc;
+        return $xml;
+    }
+    // }}}
+
+    // {{{ __get
+    /**
+     * Get properties (basically read-only)
+     *
+     * @param $property
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
     }
     // }}}
 }
