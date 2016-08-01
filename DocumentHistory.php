@@ -111,26 +111,31 @@ class DocumentHistory
      */
     public function getXml($timestamp, $add_id_attribute = true) {
         $doc = false;
+        $docId = $this->document->getDocId();
 
         $query = $this->pdo->prepare(
-            "SELECT h.xml
+            "SELECT
+                h.xml,
+                h.last_saved_at as lastchange,
+                h.user_id as uid
             FROM {$this->table_history} AS h
-            WHERE h.last_saved_at = :timestamp"
+            WHERE h.doc_id = :doc_id
+                AND h.last_saved_at = :timestamp"
         );
 
         $params = [
+            'doc_id' => $docId,
             'timestamp' => date($this->dateFormat, $timestamp),
         ];
 
         if ($query->execute($params) && $result = $query->fetchObject()) {
             $doc = new \Depage\Xml\Document();
             $doc->loadXML($result->xml);
-            $doc->documentElement->setAttribute('db:docid', $this->document->getDocId());
-            $doc->documentElement->setAttribute('db:lastchange', date($this->dateFormat, $timestamp));
-
             if (!$add_id_attribute) {
                 Document::removeNodeAttr($doc, $this->db_ns, 'id');
             }
+            $doc->documentElement->setAttribute('db:docid', $docId);
+            $doc->documentElement->setAttribute('db:lastchange', $result->lastchange);
         }
 
         return $doc;
