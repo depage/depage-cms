@@ -46,7 +46,7 @@
             </xsl:if>
         </xsl:for-each>
 
-        <xsl:apply-templates select="pg:*[not(@nav_hidden = 'true')]" />
+        <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
     </xsl:template>
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
