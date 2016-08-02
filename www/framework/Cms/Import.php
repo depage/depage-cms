@@ -291,13 +291,7 @@ class Import
 
             $metaNode = $dataNode->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
             $changeDate = $metaNode->getAttribute("lastchange_UTC");
-            $uid = $metaNode->getAttribute("lastchange_uid");
-
-            $user = \Depage\Auth\User::loadById($this->pdo, $uid);
-
-            if (!$user) {
-                $uid = null;
-            }
+            $uid = $this->getNewUserId($metaNode->getAttribute("lastchange_uid"));
 
             $doc->updateLastChange($changeDate, $uid);
         }
@@ -677,6 +671,24 @@ class Import
         ];
 
         return $replacements;
+    }
+    // }}}
+    // {{{ getNewUserId()
+    /**
+     * @brief getNewUserId
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getNewUserId($uid)
+    {
+        $user = \Depage\Auth\User::loadById($this->pdo, $uid);
+
+        if (!$user) {
+            $uid = null;
+        }
+
+        return $uid;
     }
     // }}}
 
