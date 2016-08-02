@@ -93,6 +93,10 @@ abstract class Transformer
         $xslFile = "{$this->projectName}/{$template}/{$this->previewType}.xsl";
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
+        if (count($files) == 0) {
+            throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
+        }
+
         if (($age = $this->xsltCache->age($xslFile)) !== false) {
             foreach ($files as $file) {
                 $regenerate = $regenerate || $age < filemtime($file);
