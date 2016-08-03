@@ -282,8 +282,8 @@ class Task {
     /* @return NULL|false returns NULL for no error, false for a parse error */
     public function runSubtask($subtask) {
         // re-add local variables
-        foreach ($this->tmpvars as $_tmpindex => $_tmpvar) {
-            $$_tmpindex = $_tmpvar;
+        foreach ($this->tmpvars as $_tmpindex => &$_tmpvar) {
+            $$_tmpindex = &$_tmpvar;
         }
 
         // evaluate statement
@@ -292,7 +292,12 @@ class Task {
 
         // unset internal variables
         unset($subtask, $_tmpindex, $_tmpvar);
-        $this->tmpvars = get_defined_vars();
+
+        $_tmpnames = array_keys(get_defined_vars());
+        foreach ($_tmpnames as $_tmpname)
+        {
+            $this->tmpvars[$_tmpname] = &$$_tmpname;
+        }
 
         return $value;
     }
