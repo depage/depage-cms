@@ -57,6 +57,7 @@ class TransformCache
      **/
     public function set($docId, $usedDocuments, $content, $subId = "default")
     {
+        $usedDocuments[] = $docId;
         $cachePath = $this->getCachePathFor($docId, $subId);
 
         $this->cache->setFile($cachePath, $content);
