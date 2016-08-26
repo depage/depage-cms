@@ -53,11 +53,11 @@ class User extends \Depage\HtmlForm\HtmlForm
             ]);
             $f->addPassword("password1", [
                 "label" => _("Password"),
-                "autocomplete" => false,
+                "autocomplete" => "new-password",
             ]);
             $f->addPassword("password2", [
                 "label" => _("Repeat Password"),
-                "autocomplete" => false,
+                "autocomplete" => "new-password",
                 "errorMessage" => _("Both passwords have to be equal"),
             ]);
         }
