@@ -137,6 +137,7 @@ class Redirector
         $parts = parse_url($this->baseUrl);
 
         $this->scheme = !empty($parts['scheme']) ? $parts['scheme'] : "";
+        $this->host = !empty($parts['host']) ? $parts['host'] : "";
         $this->port = !empty($parts['port']) ? $parts['port'] : "";
         $this->basePath = !empty($parts['path']) ? $parts['path'] : "/";
 
@@ -284,7 +285,7 @@ class Redirector
      **/
     public function redirectToAlternativePage($requestUri, $acceptLanguage = "")
     {
-        $url = $this->basePath;
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
         if ($this->lang != "") {
@@ -305,7 +306,7 @@ class Redirector
      **/
     public function redirectToIndex($requestUri = "/", $acceptLanguage = "")
     {
-        $url = $this->basePath;
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
         if ($this->lang != "") {
