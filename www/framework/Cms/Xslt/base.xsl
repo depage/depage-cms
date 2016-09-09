@@ -335,7 +335,7 @@
                 <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
             <xsl:when test="$linebreaks != ''">
-                <xsl:apply-templates/><xsl:if test="position() != last()"><br /></xsl:if>
+                <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
             </xsl:when>
             <xsl:otherwise>
                 <p><xsl:apply-templates/>&#160;</p>
@@ -556,7 +556,7 @@
     <xsl:param name="file" />
     <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
-    <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+    <script type="text/javascript" defer=""><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>
 <!-- }}} -->
 
