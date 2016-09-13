@@ -106,15 +106,19 @@
                 var $item = $items.eq(i);
 
                 if (found) {
-                    $item.show();
-                    $item.trigger("depage.filter-shown", [$item]);
+                    if ($item.is(":hidden")) {
+                        $item.show();
+                        $item.trigger("depage.filter-shown", [$item]);
+                    }
 
-                    if ($topItem == null) {
+                    if ($topItem === null) {
                         $topItem = $item;
                     }
                 } else {
-                    $item.hide();
-                    $item.trigger("depage.filter-hidden", [$item]);
+                    if ($item.is(":visible")) {
+                        $item.hide();
+                        $item.trigger("depage.filter-hidden", [$item]);
+                    }
                 }
             }
             // @todo add placeholder message when list is empty
