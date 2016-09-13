@@ -222,8 +222,9 @@ var depageCMS = (function() {
         // {{{ setupProjectList
         setupProjectList: function() {
             var $projects = $(".projectlist");
+            var $projectGroups = $projects.children(".projectgroup");
 
-            $projects.children("dl").depageDetails();
+            $projects.depageDetails();
 
             $projects.find(".buttons .button").on("click", function(e) {
                 e.stopPropagation();
@@ -243,6 +244,23 @@ var depageCMS = (function() {
             $projects.depageLiveFilter("dt", "strong", {
                 placeholder: locale.projectFilter,
                 autofocus: true
+            });
+            $projects.on("depage.filter-shown depage.filter-hidden", function(e, $item) {
+                // show and hide headlines for project-groups
+                $projectGroups.each(function() {
+                    var $group = $(this);
+                    var $headline = $group.children("h2");
+
+                    if ($group.find("dt:visible").length > 0) {
+                        $headline.show();
+                    } else {
+                        $headline.hide();
+                    }
+                });
+            });
+            $projects.on("depage.filter-hidden", function(e, $item) {
+                // close details for hidden items
+                $projects.data("depage.details").hideDetail($item);
             });
         },
         // }}}
