@@ -149,6 +149,7 @@ class Main extends Base {
 
         // get data
         $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projectGroups = \Depage\Cms\ProjectGroup::loadAll($this->pdo);
 
         // construct template
         $h = new Html("box.tpl", [
@@ -157,6 +158,7 @@ class Main extends Base {
             'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
                 'projects' => $projects,
+                'projectGroups' => $projectGroups,
             ]),
         ], $this->htmlOptions);
 
@@ -239,7 +241,7 @@ class Main extends Base {
         foreach ($tasks as $task) {
             if ($task) {
                 $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                $taskrunner->run($task->taskId);
+                //$taskrunner->run($task->taskId);
             }
         }
 
@@ -416,11 +418,12 @@ class Main extends Base {
     {
         $indexer = new \Depage\Search\Indexer($this->pdo);
 
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-konsultation-zur-europaeischen-saeule-sozialer-rechte.html");
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/ueber-uns/dsvae.html");
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-kommission-legt-mehrwertsteuer-aktionsplan-vor.html");
+        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/news.html");
+        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/news/2016/06/eu-kommission-fuehrt-konsultation-zur-dienstleistungsfreiheit-durch.html");
+        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/ueber-uns/dsvae.html");
 
         $indexer->index("https://screen-pitch.com/en/");
+        $indexer->index("http://violeta-mikic.de/de/violeta-mikic.html");
 
         $indexer->index("http://localhost/depage-cms/project/depage/preview/html/live/en/blog/2013/10/depage-forms-html5-form-validation-part-2.html");
         die();

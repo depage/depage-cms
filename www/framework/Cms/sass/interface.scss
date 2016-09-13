@@ -12,6 +12,9 @@ $editWidth: 820px;
 $treeWidth: 255px;
 
 $borderColor: #999999;
+$textBaseColor: #000000;
+$textLighterColor: #666666;
+$textBrightColor: #ffffff;
 
 @mixin icon-base($name: "", $scale: 1) {
     $iconSize: 48px;
@@ -1325,7 +1328,7 @@ div.preview.zoom100 iframe {
 }
 /* }}} */
 /* {{{ details */
-dl.projectlist dt .opener {
+.projectlist dl dt .opener {
     display: block;
     content: " ";
     float: left;
@@ -1334,7 +1337,7 @@ dl.projectlist dt .opener {
     margin-top: 7px;
     @include icon-base("closed", 0.28);
 }
-dl.projectlist dt.active .opener {
+.projectlist dl dt.active .opener {
     @include icon("open", 0.28);
 }
 /* }}} */
@@ -1348,10 +1351,22 @@ dl.projectlist dt.active .opener {
         @include icon("projects");
     }
 }
-dl.projectlist {
-    text-indent: 0;
-    margin: 12px 0 24px 24px;
+.projectlist {
+    h2 {
+        margin-top: 12px;
+        margin-bottom: 0;
+        color: $textBrightColor;
+        letter-spacing: 0.15em;
 
+        &:before,
+        &:after {
+            content: " — ";
+        }
+    }
+    dl {
+        text-indent: 0;
+        margin: 12px 0 24px 24px;
+    }
     dt {
         position: relative;
         padding: 0;

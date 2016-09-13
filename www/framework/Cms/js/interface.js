@@ -221,7 +221,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupProjectList
         setupProjectList: function() {
-            var $projects = $(".projectlist").depageDetails();
+            var $projects = $(".projectlist");
+
+            $projects.children("dl").depageDetails();
 
             $projects.find(".buttons .button").on("click", function(e) {
                 e.stopPropagation();
