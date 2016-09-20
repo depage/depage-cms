@@ -16,6 +16,6 @@ RUN chown -R testuser:testuser /home/testuser/.ssh
 ADD ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key
 ADD ssh/ssh_host_rsa_key.pub /etc/ssh/ssh_host_rsa_key.pub
 
-EXPOSE 20 21
+EXPOSE 20 21 22
 
 CMD ["proftpd", "--nodaemon"]
