@@ -18,24 +18,27 @@
     <xsl:template name="piwik">
         <xsl:param name="url" select="'https://analytics.depage.net/'" />
 
-        <script type="text/javascript">
-            var _paq = _paq || [];
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
+        <xsl:if test="$var-pa-siteId != ''">
+            <script type="text/javascript">
+                var _paq = _paq || [];
+                <xsl:if test="$var-pa-Domain != ''">_gaq.push(['_setDomainName', '<xsl:value-of select="$var-pa-Domain" />']);</xsl:if>
+                _paq.push(['trackPageView']);
+                _paq.push(['enableLinkTracking']);
+                <xsl:if test="$depageIsLive">
+                (function() {
+                    var u="<xsl:value-of select="$url" />";
+                    _paq.push(['setTrackerUrl', u+'piwik.php']);
+                    _paq.push(['setSiteId', '<xsl:value-of select="$var-pa-siteId" />']);
+                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+                })();
+                </xsl:if>
+            </script>
             <xsl:if test="$depageIsLive">
-            (function() {
-                var u="<xsl:value-of select="$url" />";
-                _paq.push(['setTrackerUrl', u+'piwik.php']);
-                _paq.push(['setSiteId', '<xsl:value-of select="$var-pa-siteId" />']);
-                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-            })();
+                <noscript><p><img style="border:0;" alt="">
+                    <xsl:attribute name="src"><xsl:value-of select="$url" />piwik.php?idsite=<xsl:value-of select="$var-pa-siteId" /></xsl:attribute>
+                </img></p></noscript>
             </xsl:if>
-        </script>
-        <xsl:if test="$depageIsLive">
-        <noscript><p><img style="border:0;" alt="">
-            <xsl:attribute name="src"><xsl:value-of select="$url" />piwik.php?idsite=<xsl:value-of select="$var-pa-siteId" /></xsl:attribute>
-        </img></p></noscript>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->

@@ -40,6 +40,10 @@ abstract class Transformer
         $this->projectName = $projectName;
         $this->template = $template;
         $this->transformCache = $transformCache;
+
+        // @todo complete baseurl this in a better way, also based on previewTyoe
+        // @todo fix this for live view !important
+        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
     }
     // }}}
     // {{{ lateInitialize()
@@ -47,9 +51,6 @@ abstract class Transformer
     {
         // add log object
         $this->log = new \Depage\Log\Log();
-
-        // @todo complete baseurl this in a better way, also based on previewTyoe
-        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
 
         // set basic variables
         //$this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
@@ -61,6 +62,18 @@ abstract class Transformer
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
 
         $this->initXsltProc();
+    }
+    // }}}
+    // {{{ setBaseUrl()
+    /**
+     * @brief setBaseUrl
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = $url;
     }
     // }}}
     // {{{ initXsltProc()
@@ -108,6 +121,7 @@ abstract class Transformer
             $regenerate = true;
         }
         // @todo clear xsl cache when settings are saved
+        // @todo clear transform cache when regenerating xsl template
         //$regenerate = true;
 
         if ($regenerate) {
@@ -124,7 +138,7 @@ abstract class Transformer
             $params = array(
                 'currentLang' => null,
                 'currentPageId' => null,
-                'depageIsLive' => "false()",
+                'depageIsLive' => null,
                 'baseUrl' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
@@ -233,8 +247,8 @@ abstract class Transformer
                 "currentPageId" => $pageId,
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
-                "depageVersion" => \Depage\Depage\Runner::getVersion(),
-                "depageIsLive" => $this->isLive ? "true()" : "false()",
+                "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive ? "true" : "",
                 "baseUrl" => $this->baseUrl,
             ));
 
