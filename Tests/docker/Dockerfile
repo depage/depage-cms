@@ -14,8 +14,12 @@ ADD ssh/authorized_keys /home/testuser/.ssh/authorized_keys
 RUN chown -R testuser:testuser /home/testuser/.ssh
 
 ADD ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key
+RUN chmod 600 /etc/ssh/ssh_host_rsa_key
 ADD ssh/ssh_host_rsa_key.pub /etc/ssh/ssh_host_rsa_key.pub
+RUN mkdir /var/run/sshd
 
 EXPOSE 20 21 22
 
-CMD ["proftpd", "--nodaemon"]
+RUN /etc/init.d/ssh start
+
+CMD proftpd && /usr/sbin/sshd -D
