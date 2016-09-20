@@ -16,7 +16,11 @@ class TestRemote extends TestBase
     // {{{ sshExec
     protected function sshExec($cmd)
     {
-        return ssh2_exec($this->sshConnection(), $cmd);
+        $stream = ssh2_exec($this->sshConnection(), $cmd);
+        stream_set_blocking($stream, true);
+        $streamResult = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+
+        return stream_get_contents($streamResult);
     }
     // }}}
 
@@ -29,7 +33,7 @@ class TestRemote extends TestBase
         $command = 'mkdir ' . $parents . '-m ' . $decMode . ' ' . $remotePath;
 
         $this->sshExec($command);
-        $this->assertTrue(is_dir($remotePath));
+        $this->assertTrue($this->isDir($remotePath));
     }
     // }}}
     // {{{ touchRemote
@@ -39,7 +43,7 @@ class TestRemote extends TestBase
         $this->sshExec('touch ' . $remotePath);
         $decMode = decoct($mode);
         $this->sshExec('chmod ' . $decMode . ' ' . $remotePath);
-        $this->assertTrue(is_file($remotePath));
+        $this->assertTrue($this->isFile($remotePath));
     }
     // }}}
 
@@ -48,15 +52,15 @@ class TestRemote extends TestBase
     {
         $dir = $GLOBALS['REMOTE_DIR'] . 'Temp';
 
-        if (file_exists($dir)) {
+        if ($this->isDir($dir)) {
             $this->deleteRemoteTestDir();
-            if (file_exists($dir)) {
+            if ($this->isDir($dir)) {
                 $this->fail('Test directory not clean: ' . $dir);
             }
         }
 
         $this->sshExec('mkdir -m 777 ' . $dir);
-        $this->assertTrue(is_dir($dir));
+        $this->assertTrue($this->isDir($dir));
 
         return $dir;
     }
@@ -73,6 +77,23 @@ class TestRemote extends TestBase
         $content = ($content === null) ? 'testString' : $content;
         $this->sshExec('printf "' . $content . '" > ' . $this->remoteDir . '/' . $path);
         $this->confirmRemoteTestFile($path, $content);
+    }
+    // }}}
+
+    // {{{ isDir
+    protected function isDir($path)
+    {
+        $result = $this->sshExec('if [ -d "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+        return (bool) trim($result);
+    }
+    // }}}
+    // {{{ isFile
+    protected function isFile($path)
+    {
+        $result = $this->sshExec('if [ -f "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+        return (bool) trim($result);
     }
     // }}}
 }
