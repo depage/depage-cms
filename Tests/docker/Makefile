@@ -4,7 +4,7 @@ build:
 	docker build --rm -t depage-fs-test .
 
 run: kill
-	docker run -d --name mock-server --net host depage-fs-test
+	docker run -d --name mock-server --net host -v $(CURDIR)/home:/home/testuser depage-fs-test
 
 kill:
 	-docker kill mock-server
