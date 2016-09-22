@@ -40,7 +40,34 @@ class Backup
      **/
     public function restoreFromFile($file)
     {
+        $this->xmldb->clearTables();
+        $this->xmldb->updateSchema();
 
+        $archive = new \ZipArchive();
+        $archive->open($file);
+
+        $documents = [];
+
+        for ($i = 0; $i < $archive->numFiles; $i++) {
+            preg_match("/xmldb\/d(\d+)\/_meta.xml/", $archive->statIndex($i)['name'], $matches);
+            if (isset($matches[1])) {
+                $documents[] = $matches[1];
+            }
+        }
+        sort($documents);
+
+        foreach ($documents as $docId) {
+            $infoXml = new \SimpleXMLElement($archive->getFromName("xmldb/d{$docId}/_meta.xml"));
+            $dataXml = new \Depage\Xml\Document();
+            $dataXml->loadXml($archive->getFromName("xmldb/d{$docId}/data.xml"));
+
+            $doc = $this->xmldb->createDoc($infoXml->type, (string) $infoXml->name);
+            $doc->save($dataXml);
+
+            // @todo restore history?
+        }
+
+        $archive->close();
     }
     // }}}
     // {{{ backupToFile()
@@ -52,14 +79,13 @@ class Backup
      **/
     public function backupToFile($file)
     {
-        $pharName = $file . ".phar";
         unlink($file);
-        unlink($pharName);
         if (!is_dir(dirname($file))) {
             mkdir(dirname($file), 0777, true);
         }
 
-        $archive = new \Phar($pharName);
+        $archive = new \ZipArchive();
+        $archive->open($file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         // added xmldb documents
         $documents = $this->xmldb->getDocuments();
@@ -76,11 +102,11 @@ class Backup
             }
             $archive->addFromString("xmldb/d{$info->id}/_meta.xml", $infoXml->saveXml());
             $archive->addFromString("xmldb/d{$info->id}/data.xml", $doc->getXml());
+
+            // @todo add history?
         }
 
-        $archive->convertToData(\Phar::ZIP);
-
-        unlink($pharName);
+        $archive->close();
     }
     // }}}
 }

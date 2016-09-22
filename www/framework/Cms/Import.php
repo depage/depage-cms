@@ -185,12 +185,12 @@ class Import
 
         $this->docSettings = $this->xmldb->getDoc("settings");
         if (!$this->docSettings) {
-            $this->docSettings = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Settings", "settings");
+            $this->docSettings = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\Settings", "settings");
         }
 
         $this->docColors = $this->xmldb->getDoc("colors");
         if (!$this->docColors) {
-            $this->docColors = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Colors", "colors");
+            $this->docColors = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\Colors", "colors");
         }
     }
     // }}}
