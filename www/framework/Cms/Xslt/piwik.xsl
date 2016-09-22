@@ -24,6 +24,7 @@
                 <xsl:if test="$var-pa-Domain != ''">_gaq.push(['_setDomainName', '<xsl:value-of select="$var-pa-Domain" />']);</xsl:if>
                 _paq.push(['trackPageView']);
                 _paq.push(['enableLinkTracking']);
+                _paq.push(['enableHeartBeatTimer']);
                 <xsl:if test="$depageIsLive">
                 (function() {
                     var u="<xsl:value-of select="$url" />";
