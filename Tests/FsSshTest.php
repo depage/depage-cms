@@ -6,7 +6,7 @@ class FsSshTest extends TestRemote
     public function createTestObject($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => __DIR__ . '/docker/home/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => 22,
@@ -43,7 +43,7 @@ class FsSshTest extends TestRemote
     public function testDefaultPort()
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => __DIR__ . '/docker/home/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],

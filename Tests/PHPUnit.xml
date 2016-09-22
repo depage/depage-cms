@@ -4,7 +4,6 @@
         <var name="REMOTE_HOST" value="localhost" />
         <var name="REMOTE_USER" value="testuser" />
         <var name="REMOTE_PASS" value="testpass" />
-        <var name="REMOTE_DIR" value="/home/testuser/" />
         <var name="PRIVATE_RSA_KEY" value="ssh/rsakey" />
         <var name="PUBLIC_RSA_KEY" value="ssh/rsakey.pub" />
         <var name="PRIVATE_DSA_KEY" value="ssh/dsakey" />

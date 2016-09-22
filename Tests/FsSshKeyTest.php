@@ -10,7 +10,7 @@ class FsSshKeyTest extends FsSshTest
     public function createTestObject($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => __DIR__ . '/docker/home/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => '22',
@@ -30,7 +30,7 @@ class FsSshKeyTest extends FsSshTest
     public function createTestObjectWithoutKeys($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => __DIR__ . '/docker/home/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => '22',

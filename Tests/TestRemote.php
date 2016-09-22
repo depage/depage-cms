@@ -27,40 +27,35 @@ class TestRemote extends TestBase
     // {{{ mkdirRemote
     protected function mkdirRemote($path, $mode = 0777, $recursive = true)
     {
-        $parents = ($recursive) ? '-p ' : '';
         $remotePath = $this->remoteDir . '/' . $path;
-        $decMode = decoct($mode);
-        $command = 'mkdir ' . $parents . '-m ' . $decMode . ' ' . $remotePath;
 
-        $this->sshExec($command);
-        $this->assertTrue($this->isDir($remotePath));
+        mkdir($remotePath, 0777, $recursive);
+        $this->assertTrue(is_dir($remotePath));
     }
     // }}}
     // {{{ touchRemote
     protected function touchRemote($path, $mode = 0777)
     {
         $remotePath = $this->remoteDir . '/' . $path;
-        $this->sshExec('touch ' . $remotePath);
-        $decMode = decoct($mode);
-        $this->sshExec('chmod ' . $decMode . ' ' . $remotePath);
-        $this->assertTrue($this->isFile($remotePath));
+        touch($remotePath);
+        $this->assertTrue(is_file($remotePath));
     }
     // }}}
 
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        $dir = $GLOBALS['REMOTE_DIR'] . 'Temp';
+        $dir = __DIR__ . '/docker/home/Temp';
 
-        if ($this->isDir($dir)) {
+        if (is_dir($dir)) {
             $this->deleteRemoteTestDir();
-            if ($this->isDir($dir)) {
+            if (is_dir($dir)) {
                 $this->fail('Test directory not clean: ' . $dir);
             }
         }
 
-        $this->sshExec('mkdir -m 777 ' . $dir);
-        $this->assertTrue($this->isDir($dir));
+        mkdir($dir, 0777);
+        $this->assertTrue(is_dir($dir));
 
         return $dir;
     }
@@ -68,32 +63,13 @@ class TestRemote extends TestBase
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
-        $this->sshExec('rm -r ' . $GLOBALS['REMOTE_DIR'] . 'Temp');
+        $this->rmr(__DIR__ . '/docker/home/Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path, $content = null)
     {
-        $content = ($content === null) ? 'testString' : $content;
-        $this->sshExec('printf "' . $content . '" > ' . $this->remoteDir . '/' . $path);
-        $this->confirmRemoteTestFile($path, $content);
-    }
-    // }}}
-
-    // {{{ isDir
-    protected function isDir($path)
-    {
-        $result = $this->sshExec('if [ -d "' . $path . '" ]; then echo 1; else echo 0; fi');
-
-        return (bool) trim($result);
-    }
-    // }}}
-    // {{{ isFile
-    protected function isFile($path)
-    {
-        $result = $this->sshExec('if [ -f "' . $path . '" ]; then echo 1; else echo 0; fi');
-
-        return (bool) trim($result);
+        $this->createTestFile($this->remoteDir . '/' . $path);
     }
     // }}}
 }
