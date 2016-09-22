@@ -45,12 +45,12 @@ class FsSsh extends Fs
     {
         if (!$this->connection) {
             if (isset($this->url['port'])) {
-                $this->connection = ssh2_connect($this->url['host'], $this->url['port']);
+                $this->connection = \ssh2_connect($this->url['host'], $this->url['port']);
             } else {
-                $this->connection = ssh2_connect($this->url['host']);
+                $this->connection = \ssh2_connect($this->url['host']);
             }
         }
-        $fingerprint = ssh2_fingerprint($this->connection);
+        $fingerprint = \ssh2_fingerprint($this->connection);
 
         return $this->connection;
     }
@@ -77,7 +77,7 @@ class FsSsh extends Fs
                 $this->authenticateByPassword($connection);
             }
 
-            $this->session = ssh2_sftp($connection);
+            $this->session = \ssh2_sftp($connection);
         }
 
         return $this->session;
@@ -86,7 +86,7 @@ class FsSsh extends Fs
     // {{{ authenticateByPassword
     protected function authenticateByPassword($connection)
     {
-        return ssh2_auth_password(
+        return \ssh2_auth_password(
             $connection,
             $this->url['user'],
             $this->url['pass']
@@ -114,7 +114,7 @@ class FsSsh extends Fs
             $public = $private->extractPublicKey($this->tmp);
         }
 
-        $authenticated = ssh2_auth_pubkey_file(
+        $authenticated = \ssh2_auth_pubkey_file(
             $connection,
             $this->url['user'],
             $public,
