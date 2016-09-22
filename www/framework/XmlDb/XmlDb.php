@@ -544,6 +544,7 @@ class XmlDb implements XmlGetter
             // generate generic docname based on doctype
             $docName = '_' . substr($doctype, strrpos($doctype, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
+        var_dump($docName);
         if (!is_string($docName) || $this->docExists($docName)) {
             throw new XmlDbException("Invalid or duplicate document name \"$docName\"");
         }
@@ -670,6 +671,8 @@ class XmlDb implements XmlGetter
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
         $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
+
+        $this->doc_ids = [];
     }
     // }}}
 
