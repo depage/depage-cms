@@ -69,7 +69,7 @@ class TestRemote extends TestBase
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path, $content = null)
     {
-        $this->createTestFile($this->remoteDir . '/' . $path);
+        $this->createTestFile($this->remoteDir . '/' . $path, $content);
     }
     // }}}
 }

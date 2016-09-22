@@ -1,6 +1,6 @@
 RM = rm -rf
 
-PHONY: test server clean
+PHONY: test server
 
 test: server
 	phpunit --configuration PHPUnit.xml .
