@@ -3,7 +3,7 @@ FROM debian:jessie
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -y update
-RUN apt-get install -y --force-yes proftpd-basic libssh2-1-dev openssh-server
+RUN apt-get install -y --force-yes proftpd-basic openssh-server
 
 RUN bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
 RUN mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
