@@ -77,7 +77,7 @@ class Backup
      * @param string $file
      * @return void
      **/
-    public function backupToFile($file)
+    public function backupToFile($file, $saveHistory = false, $saveLib = false)
     {
         unlink($file);
         if (!is_dir(dirname($file))) {
@@ -107,6 +107,40 @@ class Backup
         }
 
         $archive->close();
+    }
+    // }}}
+    // {{{ getBackupInfo()
+    /**
+     * @brief getBackupInfo
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getBackupInfo($file)
+    {
+        $archive = new \ZipArchive();
+        $archive->open($file);
+
+        $files = [];
+        $hashStr = "";
+
+        for ($i = 0; $i < $archive->numFiles; $i++) {
+            $info = $archive->statIndex($i);
+            $files[] = $info['name'];
+
+            // calculate hash from string to see if content has changed besided file modification times
+            $hashStr .= $info['name'] . " " . dechex($info['crc']) . " " . dechex($info['size']) . " / ";
+        }
+        sort($files);
+
+        $hash = sha1($hashStr);
+
+        $archive->close();
+
+        return [
+            'files' => $files,
+            'hash' => $hash,
+        ];
     }
     // }}}
 }
