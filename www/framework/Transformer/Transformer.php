@@ -16,6 +16,7 @@ abstract class Transformer
     protected $isLive = false;
     protected $profiling = false;
     protected $usedDocuments = array();
+    public $baseUrl = "";
     public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();

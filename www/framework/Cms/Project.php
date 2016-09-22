@@ -243,8 +243,6 @@ class Project extends \Depage\Entity\Entity
             if ($success) {
                 $this->dirty = array_fill_keys(array_keys(static::$fields), false);
             }
-
-            $this->initProject();
         }
     }
     // }}}
@@ -600,8 +598,11 @@ class Project extends \Depage\Entity\Entity
             $conf = $targets[$publishId];
 
             // get base-url
-            $baseurl = parse_url(rtrim($conf->baseurl, "/"));
-            $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
+            $parts = parse_url(rtrim($conf->baseurl, "/"));
+            if (!isset($parts['path'])) {
+                $parts['path'] = "";
+            }
+            $baseurl = $parts['scheme'] . "://" . $parts['host'] . $parts['path'];
 
             return $baseurl;
         }
@@ -698,6 +699,8 @@ class Project extends \Depage\Entity\Entity
         // get transformer
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
+        $baseUrl = $this->getBaseUrl($publishId);
+        $transformer->setBaseUrl($baseUrl);
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
@@ -734,7 +737,6 @@ class Project extends \Depage\Entity\Entity
         }
 
         // transform pages
-        $baseUrl = $this->getBaseUrl($publishId);
         $apiAvailable = file_exists($projectPath . 'lib/global/api.php');
 
         foreach ($urls as $pageId => $url) {
@@ -801,6 +803,19 @@ class Project extends \Depage\Entity\Entity
                 $publishId,
                 "index.php",
         ], $initId);
+
+        // @todo updated with humans.txt
+        // http://humanstxt.org/Standard.html
+        $version = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\npublished at ";
+        $task->addSubtask("publishing info", "
+            \$publisher->publishString(
+                %s . date('r'),
+                %s
+            );", [
+                $version,
+                "publishInfo.txt",
+        ], $initId);
+
 
         // unpublish removed files
         $task->addSubtask("removing leftover files", "
@@ -895,8 +910,7 @@ class Project extends \Depage\Entity\Entity
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
-        $baseurlParts = parse_url(rtrim($baseurl, "/"));
-        $rewritebase = $baseurlParts['path'];
+        $rewritebase = parse_url(rtrim($baseurl, "/"), PHP_URL_PATH);
         if ($rewritebase == "") {
             $rewritebase = "/";
         }

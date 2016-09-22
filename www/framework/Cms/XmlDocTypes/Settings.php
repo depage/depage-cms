@@ -32,8 +32,6 @@ class Settings extends Base {
      **/
     public function onDocumentChange()
     {
-        parent::onDocumentChange();
-
         $oldLanguages = $this->xmlDb->cache->get("dp_proj_{$this->project->name}_settings/languages.ser");
         $this->xmlDb->cache->delete("dp_proj_{$this->project->name}_settings/*");
 
@@ -45,8 +43,9 @@ class Settings extends Base {
             // @todo add task to update all documents with new languages?
         }
 
-        return true;
+        parent::onDocumentChange();
 
+        return true;
     }
     // }}}
 }

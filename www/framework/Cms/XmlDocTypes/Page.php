@@ -67,9 +67,9 @@ class Page extends Base
      **/
     public function onDocumentChange()
     {
-        parent::onDocumentChange();
-
         $this->xmlDb->getDoc("pages")->clearCache();
+
+        parent::onDocumentChange();
 
         return true;
 
@@ -117,6 +117,7 @@ class Page extends Base
     // }}}
     // {{{ getNodeTypes
     public function getNodeTypes() {
+        // @todo get these from xml files instead of from database
         $nodetypes = [];
         $query = $this->xmlDb->pdo->prepare(
             "SELECT
@@ -139,7 +140,7 @@ class Page extends Base
                 $templatePath = $this->pathXMLtemplate . $result->xmlTemplate;
 
                 // load template data
-                $xml = new \depage\xml\document();
+                $xml = new \Depage\Xml\Document();
                 $xml->load($templatePath);
 
                 $data = "";
@@ -180,6 +181,7 @@ class Page extends Base
         $info = $this->document->getDocInfo();
         $versions = array_values($this->document->getHistory()->getVersions(true, 1));
 
+        // @todo fix not to get from timestamp when sha1 did no change
         if (count($versions) > 0 && $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp()) {
             $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
         } else {
