@@ -544,7 +544,6 @@ class XmlDb implements XmlGetter
             // generate generic docname based on doctype
             $docName = '_' . substr($doctype, strrpos($doctype, "\\") + 1) . '_' . sha1(uniqid(dechex(mt_rand(256, 4095))));
         }
-        var_dump($docName);
         if (!is_string($docName) || $this->docExists($docName)) {
             throw new XmlDbException("Invalid or duplicate document name \"$docName\"");
         }
