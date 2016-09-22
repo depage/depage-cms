@@ -1,4 +1,5 @@
 language: php
+
 php:
     - 5.5
     - 5.4
@@ -11,11 +12,11 @@ branches:
 sudo: required
 
 services:
-  - docker
+    - docker
 
 before_script:
     - sudo apt-get install -y -qq libssh2-1-dev libssh2-php
-    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
+    - pecl install -f ssh2-beta < .noninteractive
     - cd Tests
 
 script: make
