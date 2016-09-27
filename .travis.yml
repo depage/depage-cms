@@ -1,20 +1,22 @@
 language: php
-php:
-    - 5.5
-    - 5.4
-
-sudo: required
+    php:
+        - 5.5
+        - 5.4
+        - 5.3
 
 branches:
-  only:
-      - master
+    only:
+        - master
 
 services:
 
 before_script:
+    # install ftp server and ssh dependencies
     - sudo apt-get update
-    - sudo apt-get install -y libssh2-1-dev
+    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
     - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
+
+    - php -m
     - cd Tests
 
 script: make
