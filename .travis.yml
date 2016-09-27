@@ -26,8 +26,8 @@ before_script:
     - sudo useradd -m -p co.yjyxRTlonU testuser
 
     # add authorized keys
-    - sudo cp -r Tests/docker/home/.ssh /home/testuser
-    - sudo chown -R testuser:testuser /home/testuser/.ssh
+    - sudo ln -s $TRAVIS_BUILD_DIR/Tests/docker/home /home/testuser
+    - sudo chown -R testuser:testuser /home/testuser
 
     # replace host key
     - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
