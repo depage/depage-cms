@@ -14,9 +14,9 @@ services:
     - docker
 
 before_script:
-    - sudo apt-get update
-    - sudo apt-get install -y --force-yes libssh2-1-dev
-    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.13
+    - sudo apt-get update -qq
+    - sudo apt-get install -y -qq libssh2-1-dev libssh2-php
+    - pecl install -f ssh2-beta < .noninteractive
     - cd Tests
 
 script: make
