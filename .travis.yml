@@ -2,7 +2,8 @@ language: php
 php:
     - 5.5
     - 5.4
-    - 5.3
+
+sudo: required
 
 branches:
   only:
@@ -14,7 +15,6 @@ services:
 before_script:
     - sudo apt-get update -qq
     - sudo apt-get install -y -qq libssh2-1-dev libssh2-php
-    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
     - cd Tests
 
 script: make
