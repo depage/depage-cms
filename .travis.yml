@@ -1,12 +1,3 @@
-language: php
-    php:
-        - 5.5
-        - 5.4
-        - 5.3
-
-branches:
-    only:
-        - master
 
 services:
 
@@ -16,8 +7,19 @@ before_script:
     - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
     - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
 
-    - php -m
-    - cd Tests
+    # edit ftp server settings: root user to user directory, display hidden files
+    - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
+    - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
+    - sudo /etc/init.d/proftpd restart
 
-script: make
+    # create test user account with 'testpass' password
+    - sudo useradd -m -p co.yjyxRTlonU testuser
 
+    # add authorized keys
+    - sudo cp -r Tests/docker/home/.ssh /testuser
+    - sudo chown -R testuser:testuser /home/testuser/.ssh
+
+    # replace host key
+    - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
+
+script: phpunit --configuration Tests/PHPUnit.xml Tests/
