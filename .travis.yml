@@ -15,8 +15,8 @@ branches:
       - master
 
 before_script:
-    - sudo apt-get install -y -qq libssh2-1-dev libssh2-php
-    - printf "\n" | pecl install -f ssh2-beta
+    - sudo apt-get install -y --force-yes libssh2-1-dev
+    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
     - cd Tests
 
 script: make
