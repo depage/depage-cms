@@ -1,22 +1,22 @@
 language: php
-
-sudo: required
-
-services:
-    - docker
-
 php:
     - 5.5
     - 5.4
     - 5.3
 
+sudo: required
+
 branches:
   only:
       - master
 
+services:
+    - docker
+
 before_script:
+    - sudo apt-get update
     - sudo apt-get install -y --force-yes libssh2-1-dev
-    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
+    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.13
     - cd Tests
 
 script: make
