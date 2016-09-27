@@ -4,8 +4,6 @@ php:
     - 5.4
     - 5.3
 
-sudo: required
-
 branches:
   only:
       - master
@@ -15,8 +13,8 @@ services:
 
 before_script:
     - sudo apt-get update -qq
-    - sudo apt-get install -y -qq libssh2-1-dev libssh2-php php-pear php5-dev
-    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.13
+    - sudo apt-get install -y -qq libssh2-1-dev libssh2-php
+    - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
     - cd Tests
 
 script: make
