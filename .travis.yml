@@ -10,7 +10,6 @@ branches:
       - master
 
 services:
-    - docker
 
 before_script:
     - sudo apt-get update
