@@ -29,6 +29,7 @@ before_script:
     - sudo rm -rf /home/testuser
     - sudo ln -s $TRAVIS_BUILD_DIR/Tests/docker/home /home/testuser
     - sudo chown -R testuser:testuser /home/testuser
+    - sudo chmod -R 777 /home/testuser
 
     # replace host key
     - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
