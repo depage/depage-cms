@@ -26,6 +26,7 @@ before_script:
     - sudo useradd -m -p co.yjyxRTlonU testuser
 
     # add authorized keys
+    - sudo rm -rf /home/testuser
     - sudo ln -s $TRAVIS_BUILD_DIR/Tests/docker/home /home/testuser
     - sudo chown -R testuser:testuser /home/testuser
 
