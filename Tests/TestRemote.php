@@ -27,18 +27,24 @@ class TestRemote extends TestBase
     // {{{ mkdirRemote
     protected function mkdirRemote($path, $mode = 0777, $recursive = true)
     {
-        $remotePath = $this->remoteDir . '/' . $path;
+        $remotePath = '/home/testuser/Temp/' . $path;
+        $parents = ($recursive) ? '-p ' : '';
+        $decMode = decoct($mode);
+        $command = 'mkdir ' . $parents . '-m ' . $decMode . ' ' . $remotePath;
+        $this->sshExec($command);
 
-        mkdir($remotePath, 0777, $recursive);
-        $this->assertTrue(is_dir($remotePath));
+        $this->assertTrue($this->isDir($remotePath));
     }
     // }}}
     // {{{ touchRemote
     protected function touchRemote($path, $mode = 0777)
     {
-        $remotePath = $this->remoteDir . '/' . $path;
-        touch($remotePath);
-        $this->assertTrue(is_file($remotePath));
+        $remotePath = '/home/testuser/Temp/' . $path;
+        $this->sshExec('touch ' . $remotePath);
+        $decMode = decoct($mode);
+        $this->sshExec('chmod ' . $decMode . ' ' . $remotePath);
+
+        $this->assertTrue($this->isFile($remotePath));
     }
     // }}}
 
@@ -70,6 +76,22 @@ class TestRemote extends TestBase
     public function createRemoteTestFile($path, $content = null)
     {
         $this->createTestFile($this->remoteDir . '/' . $path, $content);
+    }
+    // }}}
+    // {{{ isDir
+    protected function isDir($path)
+    {
+        $result = $this->sshExec('if [ -d "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+    return (bool) trim($result);
+    }
+    // }}}
+    // {{{ isFile
+    protected function isFile($path)
+    {
+        $result = $this->sshExec('if [ -f "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+        return (bool) trim($result);
     }
     // }}}
 }
