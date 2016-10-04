@@ -44,7 +44,7 @@ class FsFileTest extends TestBase
     // {{{ createRemoteTestFile
     public function createRemoteTestFile($path, $contents = 'testString')
     {
-        $this->createTestFile($path, $contents);
+        $this->createLocalTestFile($path, $contents);
     }
     // }}}
 
@@ -57,7 +57,7 @@ class FsFileTest extends TestBase
 
         $this->fs->cd('testDir');
         $this->fs->get('testFile');
-        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile'));
     }
     // }}}
     // {{{ testCdIntoWrapperUrl

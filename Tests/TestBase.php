@@ -36,10 +36,10 @@ class TestBase extends PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ createTestDir
-    public function createTestDir($path)
+    // {{{ createLocalTestDir
+    public function createLocalTestDir()
     {
-        $dir = $path . '/Temp';
+        $dir = $this->testRootDir . '/Temp';
 
         if (file_exists($dir)) {
             $this->rmr($dir);
@@ -54,31 +54,24 @@ class TestBase extends PHPUnit_Framework_TestCase
         return $dir;
     }
     // }}}
-    // {{{ createLocalTestDir
-    public function createLocalTestDir()
-    {
-        return $this->createTestDir($this->testRootDir);
-    }
-    // }}}
     // {{{ deleteLocalTestDir
     public function deleteLocalTestDir()
     {
         $this->rmr($this->localDir);
     }
     // }}}
-
-    // {{{ createTestFile
-    protected function createTestFile($path, $contents = 'testString')
+    // {{{ createLocalTestFile
+    protected function createLocalTestFile($path, $contents = 'testString')
     {
         $testFile = fopen($path, 'w');
         fwrite($testFile, $contents);
         fclose($testFile);
 
-        $this->assertTrue($this->confirmTestFile($path, $contents));
+        $this->assertTrue($this->confirmLocalTestFile($path, $contents));
     }
     // }}}
-    // {{{ confirmTestFile
-    protected function confirmTestFile($path, $contents = 'testString')
+    // {{{ confirmLocalTestFile
+    protected function confirmLocalTestFile($path, $contents = 'testString')
     {
         $file = file($path);
 
@@ -88,9 +81,10 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ confirmRemoteTestFile
     protected function confirmRemoteTestFile($path, $contents = 'testString')
     {
-        return $this->confirmTestFile($this->remoteDir . '/' . $path, $contents);
+        return $this->confirmLocalTestFile($this->remoteDir . '/' . $path, $contents);
     }
     // }}}
+
     // {{{ isDir
     protected function isDir($path)
     {
@@ -416,7 +410,7 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->createRemoteTestFile('testFile');
 
         $this->fs->get('testFile');
-        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile'));
     }
     // }}}
     // {{{ testGetNamed
@@ -425,27 +419,27 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->createRemoteTestFile('testFile');
 
         $this->fs->get('testFile', 'testFile2');
-        $this->assertTrue($this->confirmTestFile('testFile2'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile2'));
     }
     // }}}
     // {{{ testGetOverwrite
     public function testGetOverwrite()
     {
         $this->createRemoteTestFile('testFile', 'after');
-        $this->createTestFile('testFile2', 'before');
+        $this->createLocalTestFile('testFile2', 'before');
 
         $this->fs->get('testFile', 'testFile2');
-        $this->assertTrue($this->confirmTestFile('testFile2', 'after'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile2', 'after'));
     }
     // }}}
     // {{{ testPut
     public function testPut()
     {
-        $this->createTestFile('testFile');
+        $this->createLocalTestFile('testFile');
 
         $this->assertFalse($this->isFile($this->remoteDir . '/testFile2'));
         $this->fs->put('testFile', 'testFile2');
-        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile'));
         $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
     }
     // }}}
@@ -453,7 +447,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testPutOverwrite()
     {
         $this->createRemoteTestFile('testFile', 'before');
-        $this->createTestFile('testFile2', 'after');
+        $this->createLocalTestFile('testFile2', 'after');
 
         $this->fs->put('testFile2', 'testFile');
         $this->assertTrue($this->confirmRemoteTestFile('testFile', 'after'));

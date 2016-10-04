@@ -91,6 +91,7 @@ class TestRemote extends TestBase
         return $file === $contents;
     }
     // }}}
+
     // {{{ isDir
     protected function isDir($path)
     {
