@@ -68,27 +68,39 @@ class TestBase extends PHPUnit_Framework_TestCase
     // }}}
 
     // {{{ createTestFile
-    protected function createTestFile($path, $content = null)
+    protected function createTestFile($path, $contents = 'testString')
     {
         $testFile = fopen($path, 'w');
-        $content = ($content === null) ? 'testString' : $content;
-        fwrite($testFile, $content);
+        fwrite($testFile, $contents);
         fclose($testFile);
-        $this->assertTrue($this->confirmTestFile($path, $content));
+
+        $this->assertTrue($this->confirmTestFile($path, $contents));
     }
     // }}}
     // {{{ confirmTestFile
-    protected function confirmTestFile($path, $content = null)
+    protected function confirmTestFile($path, $contents = 'testString')
     {
-        $read = file($path);
-        $content = ($content === null) ? 'testString' : $content;
-        return $read === array($content);
+        $file = file($path);
+
+        return $file === array($contents);
     }
     // }}}
     // {{{ confirmRemoteTestFile
-    protected function confirmRemoteTestFile($path, $content = null)
+    protected function confirmRemoteTestFile($path, $contents = 'testString')
     {
-        return $this->confirmTestFile($this->remoteDir . '/' . $path, $content);
+        return $this->confirmTestFile($this->remoteDir . '/' . $path, $contents);
+    }
+    // }}}
+    // {{{ isDir
+    protected function isDir($path)
+    {
+        return is_dir($path);
+    }
+    // }}}
+    // {{{ isFile
+    protected function isFile($path)
+    {
+        return is_file($path);
     }
     // }}}
 
@@ -272,20 +284,20 @@ class TestBase extends PHPUnit_Framework_TestCase
     // {{{ testMkdir
     public function testMkdir()
     {
-        $this->assertFalse(file_exists('testDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . '/testDir'));
         $this->fs->mkdir('testDir');
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir'));
+        $this->assertTrue($this->isDir($this->remoteDir . '/testDir'));
     }
     // }}}
     // {{{ testMkdirRecursive
     public function testMkdirRecursive()
     {
-        $this->assertFalse(file_exists('testDir'));
-        $this->assertFalse(file_exists('testDir/testSubDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . 'testDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . 'testDir/testSubDir'));
 
         $this->fs->mkdir('testDir/testSubDir');
 
-        $this->assertTrue(file_exists($this->remoteDir . '/testDir/testSubDir'));
+        $this->assertTrue($this->isDir($this->remoteDir . '/testDir/testSubDir'));
     }
     // }}}
     // {{{ testMkdirFail
@@ -295,12 +307,12 @@ class TestBase extends PHPUnit_Framework_TestCase
      */
     public function testMkdirFail()
     {
-        $this->assertFalse(file_exists('testDir'));
-        $this->assertFalse(file_exists('testDir/testSubDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . 'testDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . 'testDir/testSubDir'));
 
         $this->fs->mkdir('testDir/testSubDir', 0777, false);
 
-        $this->assertFalse(file_exists($this->remoteDir . '/testDir/testSubDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . '/testDir/testSubDir'));
     }
     // }}}
     // {{{ testRm
@@ -311,7 +323,8 @@ class TestBase extends PHPUnit_Framework_TestCase
         $this->createRemoteTestFile('testDir/testSubDir/testFile');
 
         $this->fs->rm('testDir');
-        $this->assertFalse(file_exists($this->remoteDir . '/testDir'));
+        $this->assertFalse($this->isDir($this->remoteDir . '/testDir'));
+        $this->assertFalse($this->isFile($this->remoteDir . '/testDir'));
     }
     // }}}
     // {{{ testRmDoesntExist
@@ -356,10 +369,10 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testMv()
     {
         $this->createRemoteTestFile('testFile');
-        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
+        $this->assertFalse($this->isFile($this->remoteDir . '/testFile2'));
 
         $this->fs->mv('testFile', 'testFile2');
-        $this->assertFalse(file_exists($this->remoteDir . '/testFile'));
+        $this->assertFalse($this->isFile($this->remoteDir . '/testFile'));
         $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
     }
     // }}}
@@ -391,7 +404,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     public function testMvSourceDoesntExist()
     {
         $this->mkdirRemote('testDir');
-        $this->assertFalse(file_exists('testFile'));
+        $this->assertFalse($this->isFile($this->remoteDir . '/testFile'));
 
         $this->fs->mv('testFile', 'testDir/testFile');
     }
@@ -430,7 +443,7 @@ class TestBase extends PHPUnit_Framework_TestCase
     {
         $this->createTestFile('testFile');
 
-        $this->assertFalse(file_exists($this->remoteDir . '/testFile2'));
+        $this->assertFalse($this->isFile($this->remoteDir . '/testFile2'));
         $this->fs->put('testFile', 'testFile2');
         $this->assertTrue($this->confirmTestFile('testFile'));
         $this->assertTrue($this->confirmRemoteTestFile('testFile2'));

@@ -51,17 +51,17 @@ class TestRemote extends TestBase
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        $dir = __DIR__ . '/docker/home/Temp';
+        $dir = '/home/testuser/Temp';
 
-        if (is_dir($dir)) {
+        if ($this->isDir($dir)) {
             $this->deleteRemoteTestDir();
-            if (is_dir($dir)) {
+            if ($this->isDir($dir)) {
                 $this->fail('Test directory not clean: ' . $dir);
             }
         }
 
-        mkdir($dir, 0777);
-        $this->assertTrue(is_dir($dir));
+        $this->sshExec('mkdir -m 777 ' . $dir);
+        $this->assertTrue($this->isDir($dir));
 
         return $dir;
     }
@@ -69,13 +69,26 @@ class TestRemote extends TestBase
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
-        $this->rmr(__DIR__ . '/docker/home/Temp');
+        $this->sshExec('rm -r /home/testuser/Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path, $content = null)
+    public function createRemoteTestFile($path, $contents = 'testString')
     {
-        $this->createTestFile($this->remoteDir . '/' . $path, $content);
+        $remotePath = '/home/testuser/Temp/' . $path;
+
+        $this->sshExec("echo -n \"$contents\" > $remotePath");
+        $this->assertTrue($this->isFile($remotePath));
+        $this->assertTrue($this->confirmRemoteTestFile($path, $contents));
+    }
+    // }}}
+    // {{{ confirmRemoteTestFile
+    protected function confirmRemoteTestFile($path, $contents = 'testString')
+    {
+        $remotePath = '/home/testuser/Temp/' . $path;
+        $file = $this->sshExec("cat $remotePath");
+
+        return $file === $contents;
     }
     // }}}
     // {{{ isDir
@@ -83,7 +96,7 @@ class TestRemote extends TestBase
     {
         $result = $this->sshExec('if [ -d "' . $path . '" ]; then echo 1; else echo 0; fi');
 
-    return (bool) trim($result);
+        return (bool) trim($result);
     }
     // }}}
     // {{{ isFile
