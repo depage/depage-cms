@@ -1,4 +1,3 @@
-
 language: php
 php:
     - 5.5
@@ -33,4 +32,4 @@ before_script:
     # replace host key
     - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
 
-script: sudo -u testuser phpunit --configuration Tests/PHPUnit.xml Tests/
+script: phpunit --configuration Tests/PHPUnit.xml Tests/
