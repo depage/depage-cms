@@ -57,6 +57,7 @@ class Mail
     protected $cc;
     protected $bcc;
     protected $replyto;
+    protected $returnPath;
     protected $subject;
     protected $text;
     protected $htmlText;
@@ -75,6 +76,7 @@ class Mail
     public function __construct($sender)
     {
         $this->sender = $sender;
+        $this->returnPath = $sender;
         $this->boundary = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
     }
     // }}}
@@ -154,6 +156,20 @@ class Mail
     public function setReplyTo($email)
     {
         $this->replyto = $email;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setReturnPath()
+    /**
+     * @brief Sets the reply-to header
+     *
+     * @param  string $subject new reply-to address
+     * @return object returns the mail object (for chaining)
+     */
+    public function setReturnPath($email)
+    {
+        $this->returnPath = $email;
 
         return $this;
     }
@@ -270,6 +286,9 @@ class Mail
         $headers .= "From: {$this->sender}{$this->eol}";
         if ($this->replyto != "") {
             $headers .= "Reply-To: {$this->replyto}{$this->eol}";
+        }
+        if ($this->returnPath != "") {
+            $headers .= "Return-Path: {$this->returnPath}{$this->eol}";
         }
         if ($this->cc != "") {
             $headers .= "CC: " . $this->normalizeRecipients($this->cc) . $this->eol;
