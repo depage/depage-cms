@@ -282,7 +282,7 @@ class MailTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("recipient@domain.com", $results[0]);
         $this->assertEquals("=?UTF-8?B?U3ViamVjdA==?=", $results[1]);
         $this->assertEquals("Text\n", $results[2]);
-        $this->assertEquals("From: sender@domain.com\nX-Mailer: depage-mail (" . $this->mail->getVersion() . ")\nContent-type: text/plain; charset=UTF-8\nContent-transfer-encoding: quoted-printable", $results[3]);
+        $this->assertEquals("From: sender@domain.com\nReturn-Path: sender@domain.com\nX-Mailer: depage-mail (" . $this->mail->getVersion() . ")\nContent-type: text/plain; charset=UTF-8\nContent-transfer-encoding: quoted-printable", $results[3]);
     }
     // }}}
 }
