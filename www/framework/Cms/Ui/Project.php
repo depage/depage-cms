@@ -60,10 +60,12 @@ class Project extends Base
             "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publishs" => _("Publish"),
+            "backup" => _("Backup"),
             "import" => _("Import"),
         ];
         if (!$this->authUser->canEditTemplates()) {
             unset($tabTitles["variables"]);
+            unset($tabTitles["backup"]);
             unset($tabTitles["import"]);
         }
         if ($this->projectName == "+") {
@@ -98,6 +100,8 @@ class Project extends Base
             $html .= $this->settingsXmlForms("publish");
         } else if ($type == "import") {
             $html .= $this->import();
+        } else if ($type == "backup") {
+            $html .= $this->backups();
         } else {
             $html .= $this->settings_basic();
         }
@@ -403,11 +407,26 @@ class Project extends Base
      *
      * @return void
      **/
-    public function backups()
+    private function backups()
     {
         $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
+        //$backup->makeAutoBackup();
 
-        $backup->backupToFile("projects/{$this->project->name}/backup/test.zip");
+
+        $form = new \Depage\Cms\Forms\BackupsRestore("backup-restore", [
+            'backups' => $backup->getAutoBackups(),
+        ]);
+        $form->process();
+
+        if ($form->validate()) {
+            $backup->restoreFromFile($form->getValues()['file']);
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
     }
     // }}}
     // {{{ statistics()
@@ -419,6 +438,20 @@ class Project extends Base
      **/
     public function statistics()
     {
+
+    }
+    // }}}
+    // {{{ test()
+    /**
+     * @brief test
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function test($param)
+    {
+        var_dump($this->project->getPublishingTargets());
+        die();
     }
     // }}}
 

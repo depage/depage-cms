@@ -26,9 +26,10 @@ class Backup
      * @param mixed $
      * @return void
      **/
-    public function __construct($pdo, $project)
+    public function __construct($pdo, \Depage\Cms\Project $project)
     {
         $this->xmldb = $project->getXmlDb();
+        $this->backupPath = "projects/{$project->name}/backups/";
     }
     // }}}
     // {{{ restoreFromFile()
@@ -141,6 +142,89 @@ class Backup
             'files' => $files,
             'hash' => $hash,
         ];
+    }
+    // }}}
+    // {{{ makeAutoBackup()
+    /**
+     * @brief makeAutoBackup
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function makeAutoBackup($path = null)
+    {
+        $path = $this->getBackupPath($path);
+
+        $this->backupToFile("{$path}/backup_latest.zip");
+
+        $info = $this->getBackupInfo("{$path}/backup_latest.zip");
+        $files = glob("{$path}/backup_*_{$info['hash']}.zip");
+        $date = date("YmdHis");
+
+        if (count($files) == 0) {
+            link("{$path}/backup_latest.zip", "{$path}/backup_{$date}_{$info['hash']}.zip");
+        }
+    }
+    // }}}
+    // {{{ getAutoBackups()
+    /**
+     * @brief getAutoBackups
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function getAutoBackups($path = null)
+    {
+        $backups = [];
+        $path = $this->getBackupPath($path);
+
+        $files = array_reverse(glob("{$path}/backup_*_*.zip"));
+
+        foreach ($files as $file) {
+            preg_match("/\/backup_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_([a-f0-9]+)\.zip/", $file, $m);
+            $backups[] = (object) [
+                "file" => $file,
+                "date" => new \DateTime("{$m[1]}-{$m[2]}-{$m[3]} {$m[4]}:{$m[5]}:{$m[6]}"),
+                "hash" => $m[7],
+            ];
+        }
+
+        return $backups;
+    }
+    // }}}
+    // {{{ trimAutoBackups()
+    /**
+     * @brief trimAutoBackups
+     *
+     * @param mixed $path = null
+     * @return void
+     **/
+    public function trimAutoBackups($path = null)
+    {
+        $path = $this->getBackupPath($path);
+    }
+    // }}}
+    // {{{ getBackupPath()
+    /**
+     * @brief getBackupPath
+     *
+     * @param mixed $path = null
+     * @return void
+     **/
+    protected function getBackupPath($path = null)
+    {
+        if (is_null($path)) {
+            $path = $this->backupPath;
+        }
+        $path = rtrim($path, "/");
+        if (!is_dir($path)) {
+            throw new \Exception("$path is not a directory");
+        }
+        if (!is_writable($path)) {
+            throw new \Exception("$path is not a writable");
+        }
+
+        return $path;
     }
     // }}}
 }

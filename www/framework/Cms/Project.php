@@ -280,15 +280,12 @@ class Project extends \Depage\Entity\Entity
 
         $projectPath = $this->getProjectPath();
 
-        $success = is_writable($projectPath) || mkdir($projectPath, 0777, true);
-        mkdir($projectPath . "lib/", 0777, true);
-        mkdir($projectPath . "import/", 0777, true);
-        mkdir($projectPath . "xml/", 0777, true);
-        mkdir($projectPath . "xslt/", 0777, true);
-
-        if (!$success) {
-            throw new Exceptions\Project("Could not create project directory '$projectPath'.");
-        }
+        $this->createProjectDir($projectPath);
+        $this->createProjectDir($projectPath . "lib/");
+        $this->createProjectDir($projectPath . "import/");
+        $this->createProjectDir($projectPath . "xml/");
+        $this->createProjectDir($projectPath . "xslt/");
+        $this->createProjectDir($projectPath . "backups/");
     }
     // }}}
     // {{{ updateProjectSchema()
@@ -323,6 +320,24 @@ class Project extends \Depage\Entity\Entity
             $schema->loadFile($file);
             $schema->update();
         }
+    }
+    // }}}
+    // {{{ createProjectDir()
+    /**
+     * @brief createProjectDir
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    private function createProjectDir($path)
+    {
+        $success = is_writable($path) || mkdir($path, 0777, true);
+
+        if (!$success) {
+            throw new Exceptions\Project("Could not create project directory '$path'.");
+        }
+
+        return true;
     }
     // }}}
 
