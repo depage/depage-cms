@@ -403,6 +403,32 @@ class Mail
         return $success;
     }
     // }}}
+    // {{{ sendLater()
+    /**
+     * @brief sendLater
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function sendLater(\Depage\Tasks\Task $task, $recipients = null)
+    {
+        if (!is_null($recipients)) {
+            $this->setRecipients($recipients);
+        }
+
+        $recipients = array_unique(explode(",", $this->getRecipients()));
+        $this->setRecipients(null);
+
+        foreach($recipients as $to) {
+            $task->addSubtask("mailing $to", "%s->send(%s);", [
+                $this,
+                $to,
+            ]);
+        }
+
+        $task->begin();
+    }
+    // }}}
 
     // {{{ wordwrap()
     /**
