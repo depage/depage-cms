@@ -9,6 +9,9 @@ locale:
 	cd www/framework/ ; $(I18N)
 	php www/framework/Cms/js/locale.php
 
+tags:  $(wildcard www/framework/**/*.php)
+	phpctags -R -C tags-cache
+
 push: pushdev pushlive
 
 pushlive: all
