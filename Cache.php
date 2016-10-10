@@ -185,7 +185,7 @@ abstract class Cache
             // do not unserialize xml or json -> give back string
             return $value;
         } else if (is_callable("igbinary_unserialize")) {
-            return igbinary_unserialize($data);
+            return igbinary_unserialize($value);
         } else {
             return unserialize($value);
         }
