@@ -40,6 +40,9 @@ class Redis extends \Depage\Cache\Cache
             }
 
             $this->redis->connect($host, (int) $port);
+
+            // disable redis serializer -> we serialize ourselves
+            $this->redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_NONE);
         }
     }
     // }}}
