@@ -35,6 +35,14 @@ class File extends \Depage\Cache\Cache
     {
     }
     // }}}
+    // {{{ init()
+    /**
+     * @brief empty init function (called on wakeup)
+     **/
+    protected function init()
+    {
+    }
+    // }}}
     // {{{ exist
     /**
      * @brief return if a cache-item with $key exists
