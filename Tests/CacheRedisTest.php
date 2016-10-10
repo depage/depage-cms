@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/CacheFileTest.php";
+
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
