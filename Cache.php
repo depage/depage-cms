@@ -163,6 +163,8 @@ abstract class Cache
             // do not serialize xml or json -> string expected
             // @todo trigger error when not a string
             return $data;
+        } else if (is_callable("igbinary_serialize")) {
+            return igbinary_serialize($data);
         } else {
             return serialize($data);
         }
@@ -182,6 +184,8 @@ abstract class Cache
         if (in_array($ext, array(".xml", ".xsl", ".json"))) {
             // do not unserialize xml or json -> give back string
             return $value;
+        } else if (is_callable("igbinary_unserialize")) {
+            return igbinary_unserialize($data);
         } else {
             return unserialize($value);
         }
