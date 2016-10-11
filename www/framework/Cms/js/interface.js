@@ -231,14 +231,24 @@ var depageCMS = (function() {
             });
 
             $projects.on("depage.detail-opened", function(e, $head, $detail) {
-                var changesUrl = baseUrl + "project/" + $head.data("project") + "/details/15/?ajax=true";
+                var project = $head.data("project");
+                var projectNewsletter = $head.data("project-newsletter");
+                var changesUrl;
 
-                $.get(changesUrl)
-                    .done(function(data) {
-                        $detail.empty().html(data);
+                if (project) {
+                    changesUrl = baseUrl + "project/" + project + "/details/15/?ajax=true";
+                } else if (projectNewsletter) {
+                    changesUrl = baseUrl + "project/" + projectNewsletter + "/newsletter/details/?ajax=true";
+                }
 
-                        localJS.setupPreviewLinks();
-                    });
+                if (changesUrl) {
+                    $.get(changesUrl)
+                        .done(function(data) {
+                            $detail.empty().html(data);
+
+                            localJS.setupPreviewLinks();
+                        });
+                }
             });
 
             $projects.depageLiveFilter("dt", "strong", {

@@ -364,9 +364,11 @@ class Project extends \Depage\Entity\Entity
         if (is_null($this->xmldb)) {
             $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-            $xsltPath = "projects/" . $this->name . "/xslt/";
-            $xmlPath = "projects/" . $this->name . "/xml/";
-            $libPath = "projects/" . $this->name . "/lib/";
+            $projectPath = $this->getProjectPath();
+
+            $xsltPath = $projectPath . "xslt/";
+            $xmlPath = $projectPath . "xml/";
+            $libPath = $projectPath . "lib/";
 
             $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
@@ -389,9 +391,11 @@ class Project extends \Depage\Entity\Entity
         if ($this->previewType == "live") {
             $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-            $xsltPath = "projects/" . $this->name . "/xslt/";
-            $xmlPath = "projects/" . $this->name . "/xml/";
-            $libPath = "projects/" . $this->name . "/lib/";
+            $projectPath = $this->getProjectPath();
+
+            $xsltPath = $projectPath . "xslt/";
+            $xmlPath = $projectPath . "xml/";
+            $libPath = $projectPath . "lib/";
 
             $xmldbHistory = new \Depage\XmlDb\XmlDbHistory($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
@@ -526,6 +530,30 @@ class Project extends \Depage\Entity\Entity
         return $this->getBaseUrl() . "/" . $languages[0];
     }
     // }}}
+    // {{{ getXsltTemplates()
+    /**
+     * @brief getXsltTemplates
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getXsltTemplates()
+    {
+        $templates = [];
+
+        $files = glob($this->getProjectPath() . "xslt/*");
+
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                if (count(glob($file . "/*.xsl")) > 0) {
+                    $templates[] = basename($file);
+                }
+            }
+        }
+
+        return $templates;
+    }
+    // }}}
 
     // {{{ getLanguages()
     /**
@@ -644,6 +672,19 @@ class Project extends \Depage\Entity\Entity
         $date = $publisher->getLastPublishDate();
 
         return $date;
+    }
+    // }}}
+
+    // {{{ hasNewsletter()
+    /**
+     * @brief hasNewsletter
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function hasNewsletter()
+    {
+        return in_array("newsletter", $this->getXsltTemplates());
     }
     // }}}
 
