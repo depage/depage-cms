@@ -83,6 +83,26 @@ abstract class Transformer
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
+        // @todo use own dtd loaded with caching instead of having own htmlentities file
+        // @todo add a list of whitelisted dtds and entities
+        // @see https://www.oasis-open.org/committees/entity/spec.html
+        // @see http://xmlsoft.org/catalog.html
+        // libxml_set_external_entity_loader
+        /*
+        libxml_set_external_entity_loader(
+            function ($public, $system, $context) {
+                var_dump($public);
+                var_dump($system);
+                var_dump($context);
+                $f = fopen($system, "r");
+                //$f = fopen("php://temp", "r+");
+                //fwrite($f, "");
+                rewind($f);
+                return $f;
+            }
+        );
+         */
+
         $this->xsltProc = new \XSLTProcessor();
 
         $this->registerStreams($this->xsltProc);
