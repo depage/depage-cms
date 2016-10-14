@@ -144,6 +144,9 @@ class Pages extends Base {
             $copiedDoc = $this->xmlDb->duplicateDoc($docrefId);
             $info = $copiedDoc->getDocInfo();
 
+            // reset release state for copied document
+            $copiedDoc->setAttribute($info->rootid, "db:released", "false");
+
             $this->document->setAttribute($nodeId, "db:docref", $info->name);
         }
 
