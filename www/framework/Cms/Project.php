@@ -435,14 +435,14 @@ class Project extends \Depage\Entity\Entity
         return $this->xmldb->getDoc("settings");
     }
     // }}}
-    // {{{ getRecentlyChangedPages
+    // {{{ getPages()
     /**
-     * @brief getRecentlyChangedPages
+     * @brief getPages
      *
-     * @param max
-     * @return array
+     * @param mixed
+     * @return void
      **/
-    public function getRecentlyChangedPages($max = null)
+    public function getPages()
     {
         $pages = [];
 
@@ -466,6 +466,20 @@ class Project extends \Depage\Entity\Entity
                 $pages[] = $docInfo;
             }
         }
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getRecentlyChangedPages
+    /**
+     * @brief getRecentlyChangedPages
+     *
+     * @param max
+     * @return array
+     **/
+    public function getRecentlyChangedPages($max = null)
+    {
+        $pages = $this->getPages();
 
         usort($pages, function($a, $b) {
             if (!$a->released && $b->released) {

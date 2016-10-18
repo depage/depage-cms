@@ -441,22 +441,6 @@ class Project extends Base
 
     }
     // }}}
-    // {{{ newsletter()
-    function newsletter() {
-        $this->project->getXsltTemplates();
-
-        var_dump($this->project->hasNewsletter());
-        die();
-        // construct template
-        $h = new Html([
-            'content' => [
-                "newsletter"
-            ],
-        ], $this->htmlOptions);
-
-        return $h;
-    }
-    // }}}
     // {{{ test()
     /**
      * @brief test

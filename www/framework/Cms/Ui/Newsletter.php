@@ -5,7 +5,7 @@
  * depage cms ui module
  *
  *
- * copyright (c) 2016-2016 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2016 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -41,6 +41,18 @@ class Newsletter extends Base
 
     // {{{ edit()
     function edit() {
+        /*
+        $newsletter = new \Depage\Cms\Newsletter($this->project);
+        $candidates = $newsletter->getCandidates();
+        var_dump($candidates);
+         */
+        $newsletter = \Depage\Cms\Newsletter::create($this->project);
+
+        $newsletters = \Depage\Cms\Newsletter::loadAll($this->project);
+        var_dump($newsletters);
+
+        die();
+
         $h = new Html([
             'content' => [
                 "edit",

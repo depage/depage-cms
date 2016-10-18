@@ -169,6 +169,13 @@ class Page extends Base
         return $changed;
     }
     // }}}
+    // {{{ testDocumentForHistory
+    public function testDocumentForHistory($xml) {
+        parent::testDocumentForHistory($xml);
+
+        $xml->firstChild->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
+    }
+    // }}}
     // {{{ addReleaseStatusAttributes()
     /**
      * @brief addReleaseStatusAttributes

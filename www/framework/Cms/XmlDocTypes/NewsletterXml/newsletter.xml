@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<pg:newsletter xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit">
+    <pg:meta db:invalid="del,move,name,dupl" db:name="tree_name_metatags" colorscheme="">
+        <pg:title lang="" value="" />
+        <pg:linkdesc lang="" value="" />
+        <pg:desc lang="" />
+    </pg:meta>
+</pg:newsletter>
