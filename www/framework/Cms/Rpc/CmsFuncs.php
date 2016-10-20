@@ -1196,6 +1196,7 @@ class CmsFuncs {
                 $dirXML .= "<file";
                 foreach ($data as $key => $value) {
                     if (!is_array($value)) {
+                        $value = str_replace(array("\n", "\r"), " ", $value);
                         $dirXML .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
                     }
                 }

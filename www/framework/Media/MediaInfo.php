@@ -187,9 +187,11 @@ class MediaInfo
             $info = array();
             $iptc = iptcparse($extras['APP13']);
 
-            foreach ($iptc as $key => $value) {
-                if (isset($this->iptcHeaders[$key])) {
-                    $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
+            if (is_array($iptc)) {
+                foreach ($iptc as $key => $value) {
+                    if (isset($this->iptcHeaders[$key])) {
+                        $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
+                    }
                 }
             }
 
