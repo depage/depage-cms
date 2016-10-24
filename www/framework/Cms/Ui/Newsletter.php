@@ -22,13 +22,23 @@ class Newsletter extends Base
         parent::_init($importVariables);
 
         $this->projectName = $this->urlSubArgs[0];
+        $this->newsletterName = $this->urlSubArgs[1];
 
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
-        } else if ($this->projectName == "+") {
-            $this->project = new \Depage\Cms\Project($this->pdo, $this->xmldbCache);
         } else {
             $this->project = $this->getProject($this->projectName);
+        }
+
+        if (empty($this->newsletterName)) {
+            throw new \Depage\Cms\Exceptions\Project("no newsletter given");
+        } else if ($this->newsletterName == "+") {
+            $this->newsletter = \Depage\Cms\Newsletter::create($this->project);
+            // @todo redirect to newsletter url
+        } else if ($this->newsletterName == "current") {
+            // @todo get current newsletter and redirect to it
+        } else {
+            $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->project, $this->newsletterName);
         }
     }
     // }}}
@@ -41,21 +51,22 @@ class Newsletter extends Base
 
     // {{{ edit()
     function edit() {
-        /*
-        $newsletter = new \Depage\Cms\Newsletter($this->project);
-        $candidates = $newsletter->getCandidates();
-        var_dump($candidates);
-         */
-        $newsletter = \Depage\Cms\Newsletter::create($this->project);
+        $form = new \Depage\Cms\Forms\Newsletter("newsletter{$this->newsletter}", [
+            'newsletter' => $this->newsletter,
+            'candidates' => $this->newsletter->getCandidates(),
+        ]);
 
-        $newsletters = \Depage\Cms\Newsletter::loadAll($this->project);
-        var_dump($newsletters);
+        $form->process();
+        if ($form->validateAutosave()) {
+            // @todo save newsletter xml
+        }
 
-        die();
-
-        $h = new Html([
+        $h = new Html("box.tpl", [
+            'class' => "box-newsletter",
+            'title' => _("Newsletter"),
+            'liveHelp' => _("Edit your newsletter and choose which items to include"),
             'content' => [
-                "edit",
+                $form,
             ],
         ], $this->htmlOptions);
 

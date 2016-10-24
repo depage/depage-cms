@@ -56,6 +56,30 @@ class Newsletter
         return $newsletters;
     }
     // }}}
+    // {{{ loadByName()
+    /**
+     * @brief loadByName
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public static function loadByName($project, $name)
+    {
+        $xmldb = $project->getXmlDb();
+
+        $docs = $xmldb->getDocuments($name, "Depage\\Cms\\XmlDocTypes\\Newsletter");
+        $self = get_called_class();
+
+        foreach ($docs as $doc) {
+            $newsletter = new $self($project);
+            $newsletter->setDocument($doc);
+
+            return $newsletter;
+        }
+
+        throw new \Exception("Newsletter not found");
+    }
+    // }}}
     // {{{ create()
     /**
      * @brief create
@@ -77,8 +101,6 @@ class Newsletter
         $xml->load(__DIR__ . "/XmlDocTypes/NewsletterXml/newsletter.xml");
 
         $doc->save($xml);
-
-        var_dump($newsletter);
 
         return $newsletter;
     }
@@ -115,7 +137,7 @@ class Newsletter
 
                 $ids = $xmldb->getNodeIdsByXpath($xpath, $page->id);
                 if (count($ids) > 0) {
-                    $candidates[] = $page;
+                    $candidates[$page->name] = $page;
                 }
             }
         }
