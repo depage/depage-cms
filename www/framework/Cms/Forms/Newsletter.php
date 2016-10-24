@@ -46,9 +46,11 @@ class Newsletter extends \Depage\HtmlForm\HtmlForm
     {
         $this->addText("title", [
             'label' => _("Title"),
+            'required' => true,
         ]);
         $this->addText("subject", [
             'label' => _("Subject"),
+            'required' => true,
         ]);
         $this->addText("description", [
             'label' => _("Description"),

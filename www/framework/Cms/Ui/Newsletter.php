@@ -51,14 +51,23 @@ class Newsletter extends Base
 
     // {{{ edit()
     function edit() {
+        $candidates = $this->newsletter->getCandidates();
         $form = new \Depage\Cms\Forms\Newsletter("newsletter{$this->newsletter}", [
             'newsletter' => $this->newsletter,
-            'candidates' => $this->newsletter->getCandidates(),
+            'candidates' => $candidates,
         ]);
 
         $form->process();
-        if ($form->validateAutosave()) {
-            // @todo save newsletter xml
+        //if ($form->validateAutosave()) {
+        if ($form->validate()) {
+            $values = $form->getValues();
+            $pages = [];
+            foreach ($candidates as $c) {
+                if ($values[$c->name]) {
+                    $pages[] = $c;
+                }
+            }
+            $xml = $this->newsletter->setNewsletterPages($pages);
         }
 
         $h = new Html("box.tpl", [

@@ -128,6 +128,9 @@ class Newsletter
      **/
     public function getCandidates($xpath = "//sec:news")
     {
+        // @todo update candidates depending on:
+        // - if they are active in current newsletter
+        // - if they are active in an older newsletter
         $candidates = [];
         $xmldb = $this->project->getXmlDb();
         $pages = $this->project->getPages();
@@ -143,6 +146,34 @@ class Newsletter
         }
 
         return $candidates;
+    }
+    // }}}
+    // {{{ setNewsletterPages()
+    /**
+     * @brief setNewsletterPages
+     *
+     * @param mixed $pages = []
+     * @return void
+     **/
+    public function setNewsletterPages($pages = [])
+    {
+        $xml = $this->document->getXml();
+        $xpath = new \DOMXPath($xml);
+        $xpResult = $xpath->query("//sec:news");
+
+        foreach ($xpResult as $node) {
+            $node->parentNode->removeChild($node);
+        }
+
+        foreach ($pages as $page) {
+            //$newNode = $xml->createElementNS("http://cms.depagecms.net/ns/section", "news");
+            $newNode = $xml->createElement("sec:news");
+            $newNode->setAttribute("db:docref", $page->name);
+
+            $xml->documentElement->appendChild($newNode);
+        }
+
+        $this->document->save($xml);
     }
     // }}}
 }
