@@ -5,7 +5,7 @@
     @tablename _proj_PROJECTNAME_published_files
     @version 1.5.0-beta.1
 */
-CREATE TABLE `_proj_PROJECTNAME_published_files` (
+CREATE TABLE _proj_PROJECTNAME_published_files (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `publishId` int(10) unsigned NOT NULL DEFAULT '0',
   `filename` text NOT NULL DEFAULT '',
@@ -14,3 +14,9 @@ CREATE TABLE `_proj_PROJECTNAME_published_files` (
   `exist` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 1.5.0-beta.2
+*/
+CREATE INDEX publishId ON _proj_PROJECTNAME_published_files (publishId);
+CREATE INDEX filename ON _proj_PROJECTNAME_published_files (filename(20));
