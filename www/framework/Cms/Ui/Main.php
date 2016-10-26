@@ -25,7 +25,7 @@ class Main extends Base {
             'user/*' => '\Depage\Cms\Ui\User',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/flash' => '\Depage\Cms\Ui\Flash',
-            'project/*/newsletter' => '\Depage\Cms\Ui\Newsletter',
+            'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
             //'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             //'project/*/edit/*' => '\Depage\Cms\Ui\Edit',
@@ -400,7 +400,7 @@ class Main extends Base {
         \Depage\Cms\Project::updateSchema($this->pdo);
         \Depage\Notifications\Notification::updateSchema($this->pdo);
 
-        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         foreach ($projects as $project) {
             $project->updateProjectSchema();
