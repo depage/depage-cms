@@ -361,16 +361,11 @@ class Import
                             mkdir($path);
                         }
                         $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
-                        $extraXsl = "<xsl:template match=\"proj:colorschemes\"><xsl:call-template name=\"pg:css\" /></xsl:template>";
-                        file_put_contents($filename, "{$this->xslHeader}    {$extraXsl}\n\n    {$xsl}\n{$this->xslFooter}");
+                        $extraXsl = "";
+                        $extraXsl .= "    <xsl:output method=\"text\"  omit-xml-declaration=\"yes\"/>\n";
+                        $extraXsl .= "    <xsl:template match=\"proj:colorschemes\"><xsl:call-template name=\"pg:css\" /></xsl:template>\n";
+                        file_put_contents($filename, "{$this->xslHeader}{$extraXsl}\n    {$xsl}\n{$this->xslFooter}");
                     }
-
-                    /*
-                    $testDoc = new \Depage\Xml\Document();
-                    $testDoc->load($filename);
-
-                    $testDoc->save($filename);
-                     */
                 }
             }
             if ($child->nodeName == "pg:folder" || $child->nodeName == "pg:template") {
@@ -644,6 +639,7 @@ class Import
             "\$tt_multilang" => "\$currentPage/@multilang",
             "\$depage_is_live" => "\$depageIsLive",
             "\$tt_var_" => "\$var-",
+            "\$media_type" => "'global'",
             "/pg:page/pg:page_data" => "/pg:page_data",
             "/pg:page/@multilang" => "\$currentPage/@multilang",
             "\"/pg:page\"" => "\"\$currentPage\"",
