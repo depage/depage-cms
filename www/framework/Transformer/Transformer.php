@@ -248,7 +248,7 @@ abstract class Transformer
     }
     // }}}
     // {{{ transformPage()
-    protected function transformPage($pageId, $pagedataId)
+    public function transformPage($pageId, $pagedataId)
     {
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
