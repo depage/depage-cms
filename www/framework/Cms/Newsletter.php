@@ -31,6 +31,7 @@ class Newsletter
     protected function __construct($project, $name)
     {
         $this->project = $project;
+        $this->name = $name;
     }
     // }}}
     // {{{ loadAll()
@@ -48,7 +49,7 @@ class Newsletter
         $self = get_called_class();
 
         foreach ($docs as $doc) {
-            $newsletter = new $self($project);
+            $newsletter = new $self($project, $doc->getDocInfo()->name);
             $newsletter->setDocument($doc);
             $newsletters[] = $newsletter;
         }
@@ -71,7 +72,7 @@ class Newsletter
         $self = get_called_class();
 
         foreach ($docs as $doc) {
-            $newsletter = new $self($project);
+            $newsletter = new $self($project, $name);
             $newsletter->setDocument($doc);
 
             return $newsletter;
@@ -187,7 +188,9 @@ class Newsletter
      **/
     public function getPreviewPath()
     {
-        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletters/pre/";
+        $lang = "de";
+        //return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/pre/$lang/{$this->name}.html";
+        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/dev/$lang/{$this->name}.html";
     }
     // }}}
     // {{{ getXml()

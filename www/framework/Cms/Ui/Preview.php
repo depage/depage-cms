@@ -175,7 +175,17 @@ class Preview extends \Depage\Depage\Ui\Base
         $xmlGetter = $this->project->getXmlGetter();
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
-        $html = $transformer->display($urlPath, $lang);
+
+        if ($this->template == "newsletter") {
+            preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
+            $newsletterName = $matches[1];
+            $newsletter = \Depage\Cms\Newsletter::loadByName($this->project, $newsletterName);
+
+            // @todo throw error if document is not found
+            $html = $transformer->transformPage("", $newsletterName);
+        } else {
+            $html = $transformer->display($urlPath, $lang);
+        }
 
         return $html;
     }

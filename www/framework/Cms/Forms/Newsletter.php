@@ -29,6 +29,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
     {
         $parameters['label'] = _("Save");
         $parameters['jsAutosave'] = true;
+        $parameters['class'] = "newsletter edit";
 
         $this->newsletter = $parameters['newsletter'];
         $this->candidates = $parameters['candidates'];
