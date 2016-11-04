@@ -137,7 +137,6 @@ class Newsletter
 
         foreach ($pages as $page) {
             if ($page->released == true) {
-
                 $ids = $xmldb->getNodeIdsByXpath($xpath, $page->id);
                 if (count($ids) > 0) {
                     $candidates[$page->name] = $page;
@@ -155,9 +154,13 @@ class Newsletter
      * @param mixed $pages = []
      * @return void
      **/
-    public function setNewsletterPages($pages = [])
+    public function setNewsletterPages($pages = [], $xml = null)
     {
-        $xml = $this->document->getXml();
+        if (is_null($xml)) {
+            $xml = $this->getXml();
+        } else if ($xml->nodeType == \XML_ELEMENT_NODE) {
+            $xml = $xml->ownerDocument;
+        }
         $xpath = new \DOMXPath($xml);
         $xpResult = $xpath->query("//sec:news");
 
@@ -166,7 +169,6 @@ class Newsletter
         }
 
         foreach ($pages as $page) {
-            //$newNode = $xml->createElementNS("http://cms.depagecms.net/ns/section", "news");
             $newNode = $xml->createElement("sec:news");
             $newNode->setAttribute("db:docref", $page->name);
 
@@ -174,6 +176,29 @@ class Newsletter
         }
 
         $this->document->save($xml);
+    }
+    // }}}
+
+    // {{{ getPreviewPath()
+    /**
+     * @brief getPreviewPath
+     *
+     * @return void
+     **/
+    public function getPreviewPath()
+    {
+        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletters/pre/";
+    }
+    // }}}
+    // {{{ getXml()
+    /**
+     * @brief getXml
+     *
+     * @return void
+     **/
+    public function getXml()
+    {
+        return $this->document->getXml();
     }
     // }}}
 }

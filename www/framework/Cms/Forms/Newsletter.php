@@ -14,7 +14,7 @@
 namespace Depage\Cms\Forms;
 
 
-class Newsletter extends \Depage\HtmlForm\HtmlForm
+class Newsletter extends \Depage\Cms\Forms\XmlForm
 {
     // {{{ __construct()
     /**
@@ -44,24 +44,49 @@ class Newsletter extends \Depage\HtmlForm\HtmlForm
      **/
     public function addChildElements()
     {
-        $this->addText("title", [
-            'label' => _("Title"),
-            'required' => true,
-        ]);
-        $this->addText("subject", [
-            'label' => _("Subject"),
-            'required' => true,
-        ]);
-        $this->addText("description", [
-            'label' => _("Description"),
-        ]);
+        $nodes = $this->dataNodeXpath->query("//pg:meta/pg:title");
+        foreach ($nodes as $node) {
+            $lang = $node->getAttribute("lang");
+            $nodeId = $node->getAttribute("db:id");
+
+            $this->addText("title-$lang", [
+                'label' => _("Title") . " ($lang)",
+                'required' => true,
+                'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            ]);
+        }
+
+        $nodes = $this->dataNodeXpath->query("//pg:meta/pg:linkdesc");
+        foreach ($nodes as $node) {
+            $lang = $node->getAttribute("lang");
+            $nodeId = $node->getAttribute("db:id");
+
+            $this->addText("subject-$lang", [
+                'label' => _("Subject") . " ($lang)",
+                'required' => true,
+                'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            ]);
+        }
+
+        $nodes = $this->dataNodeXpath->query("//pg:meta/pg:desc");
+        foreach ($nodes as $node) {
+            $lang = $node->getAttribute("lang");
+            $nodeId = $node->getAttribute("db:id");
+
+            $this->addText("description-$lang", [
+                'label' => _("Description") . " ($lang)",
+                'dataInfo' => "//*[@db:id = '$nodeId']",
+            ]);
+        }
 
         $fs = $this->addFieldset("unsentItems", [
             'label' => _("Unsent news items"),
         ]);
         foreach ($this->candidates as $c) {
+            $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
             $fs->addBoolean("{$c->name}", [
                 'label' => $c->url,
+                'defaultValue' => $nodes->length == 1
             ]);
         }
 
