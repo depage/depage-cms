@@ -180,9 +180,11 @@ class Preview extends \Depage\Depage\Ui\Base
             preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
             $newsletterName = $matches[1];
             $newsletter = \Depage\Cms\Newsletter::loadByName($this->project, $newsletterName);
+            $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/{$this->previewType}/";
+            $transformer->useAbsolutePaths = true;
 
             // @todo throw error if document is not found
-            $html = $transformer->transformPage("", $newsletterName);
+            $html = $transformer->transformDoc("", $newsletterName, $lang);
         } else {
             $html = $transformer->display($urlPath, $lang);
         }
