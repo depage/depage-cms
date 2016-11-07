@@ -594,9 +594,6 @@ select,
             @include box-shadow(0 2px 0.2em 0 #aaaaaa);
         }
     }
-    h1 {
-        margin-top: 1px;
-    }
     h1,
     a,
     span.zoom-select {
@@ -605,6 +602,10 @@ select,
         line-height: 22px;
         height: 26px;
         padding: 2px 8px;
+    }
+    h1 {
+        padding-left: 12px;
+        margin-top: 1px;
     }
     a {
         span {
@@ -705,7 +706,9 @@ select,
 
 /* {{{ header.info */
 header.info {
-    position: fixed;
+    position: absolute;
+    position: -webkit-sticky;
+    position: sticky;
     top: $toolbarHeight;
     height: $infoHeight;
     border-bottom: 1px solid $borderColor;
@@ -716,7 +719,7 @@ header.info {
         padding: 0;
         margin: 0;
         font-size: 10px;
-        padding-left: 15px;
+        padding-left: 12px;
         font-weight: normal;
         color: #000000;
     }
@@ -734,13 +737,10 @@ html {
     .layout-right {
         position: absolute;
         top: 0;
-        padding-top: $infoHeight;
         bottom: 0;
-        overflow: scroll;
         overflow: auto;
 
         header.info {
-            position: absolute;
             top: 0;
             right: 0;
             width: 100%;
@@ -1011,7 +1011,7 @@ div.preview.zoom100 iframe {
     bottom: 0;
 }
 /* }}} */
-/* {{{ dialogs */
+/* {{{ shy-dialogs */
 .depage-shy-dialogue {
     @include depage-shy-dialogue(
         $width: 20em,
@@ -1044,6 +1044,13 @@ div.preview.zoom100 iframe {
     }
 }
 /* }}} */
+// {{{ dialog.full
+.dialog-full {
+    background: #ccc8c4;
+    padding: 12px;
+    min-height: 100%;
+}
+// }}}
 
 /* {{{ depage-scroller */
 .testbox {

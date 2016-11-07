@@ -5,7 +5,9 @@
     <header class="info">
         <h1><?php self::e(_("Newsletter Edit")); ?></h1>
     </header>
-    <?php self::e($this->content); ?>
+    <div class="dialog-full">
+        <?php self::e($this->content); ?>
+    </div>
 </div>
 <div <?php self::attr([
         "class" => "preview layout layout-right zoom100",
