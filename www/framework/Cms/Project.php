@@ -454,7 +454,7 @@ class Project extends \Depage\Entity\Entity
         $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
         $nodelist = $xpath->query("//pg:page");
 
-        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+        for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
             $docId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
 
