@@ -12,11 +12,12 @@ abstract class Transformer
     protected $xsltPath;
     protected $xmlPath;
     protected $xsltProc = null;
-    protected $lang = "";
     protected $isLive = false;
     protected $profiling = false;
     protected $usedDocuments = array();
     public $baseUrl = "";
+    public $useAbsolutePaths = false;
+    public $lang = "";
     public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
@@ -237,7 +238,7 @@ abstract class Transformer
 
         $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
-        $content = $this->transformPage($pageId, $pagedataId);
+        $content = $this->transformDoc($pageId, $pagedataId, $lang);
 
         $indexer = new \Depage\Search\Indexer();
         $images = $indexer->loadXml($content, $this->baseUrl . $this->lang . $this->currentPath)->getImages();
@@ -247,9 +248,11 @@ abstract class Transformer
         return $content;
     }
     // }}}
-    // {{{ transformPage()
-    public function transformPage($pageId, $pagedataId)
+    // {{{ transformDoc()
+    public function transformDoc($pageId, $pagedataId, $lang)
     {
+        $this->lang = $lang;
+
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
