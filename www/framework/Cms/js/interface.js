@@ -238,7 +238,7 @@ var depageCMS = (function() {
                 if (project) {
                     changesUrl = baseUrl + "project/" + project + "/details/15/?ajax=true";
                 } else if (projectNewsletter) {
-                    changesUrl = baseUrl + "project/" + projectNewsletter + "/newsletter/details/?ajax=true";
+                    changesUrl = baseUrl + "project/" + projectNewsletter + "/newsletters/?ajax=true";
                 }
 
                 if (changesUrl) {

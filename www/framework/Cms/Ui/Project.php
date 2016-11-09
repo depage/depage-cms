@@ -401,6 +401,24 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ newsletters()
+    /**
+     * @brief newsletters
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function newsletters()
+    {
+        $newsletters = \Depage\Cms\Newsletter::loadAll($this->project);
+
+        $h = new Html("newsletterList.tpl", [
+            'newsletters' => $newsletters,
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
     // {{{ backups()
     /**
      * @brief backup
@@ -441,20 +459,6 @@ class Project extends Base
 
     }
     // }}}
-    // {{{ test()
-    /**
-     * @brief test
-     *
-     * @param mixed $param
-     * @return void
-     **/
-    public function test($param)
-    {
-        var_dump($this->project->getPublishingTargets());
-        die();
-    }
-    // }}}
-
     // {{{ details()
     function details($max = null) {
         $h = new Html([

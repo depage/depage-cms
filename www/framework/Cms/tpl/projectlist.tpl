@@ -45,11 +45,14 @@
                             <strong><?php self::t($project->fullname . " – " . _("newsletter")); ?></strong>
 
                             <div class="buttons">
-                                <a href="project/<?php self::t($project->name); ?>/newsletter/edit/" class="button">
+                                <a href="project/<?php self::t($project->name); ?>/newsletter/+/" class="button">
+                                    <?php self::t(_('add')) ?>
+                                </a>
+                                <a href="project/<?php self::t($project->name); ?>/newsletter/current/edit/" class="button">
                                     <?php self::t(_('edit')) ?>
                                 </a>
                                 <?php //@todo display only for users that are allowed to publish ?>
-                                <a href="project/<?php self::t($project->name); ?>/newsletter/publish/" class="button">
+                                <a href="project/<?php self::t($project->name); ?>/newsletter/current/publish/" class="button">
                                     <?php self::t(_('publish')) ?>
                                 </a>
                             </div>

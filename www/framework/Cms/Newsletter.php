@@ -117,6 +117,7 @@ class Newsletter
     protected function setDocument($doc)
     {
         $this->document = $doc;
+        $this->name = $doc->getDocInfo()->name;
     }
     // }}}
 
