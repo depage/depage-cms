@@ -184,7 +184,7 @@ class Preview extends \Depage\Depage\Ui\Base
             $transformer->useAbsolutePaths = true;
 
             // @todo throw error if document is not found
-            $html = $transformer->transformDoc("", $newsletterName, $lang);
+            $html = $transformer->transformDoc("", $newsletter->document->getDocId(), $lang);
         } else {
             $html = $transformer->display($urlPath, $lang);
         }

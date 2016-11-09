@@ -18,7 +18,7 @@ class Libref extends Base {
             $path = "lib/" . $url['host'];
         }
 
-        if (!$this->transformer->useAbsolutePaths && $absolute != "absolute") {
+        if (!$this->transformer->useAbsolutePaths) {
             $url = new \Depage\Http\Url($this->transformer->currentPath);
             $path = $url->getRelativePathTo($path);
         } else {

@@ -52,7 +52,7 @@ class Newsletter extends Base
     // {{{ edit()
     function edit() {
         $candidates = $this->newsletter->getCandidates();
-        $form = new \Depage\Cms\Forms\Newsletter("newsletter{$this->newsletter}", [
+        $form = new \Depage\Cms\Forms\Newsletter("newsletter{$this->newsletter->name}", [
             'dataNode' => $this->newsletter->getXml(),
             'newsletter' => $this->newsletter,
             'candidates' => $candidates,
@@ -71,7 +71,6 @@ class Newsletter extends Base
             $this->newsletter->setNewsletterPages($pages, $xml);
         }
 
-        // @todo add new better template
         $h = new Html("newsletterEdit.tpl", [
             'content' => $form,
             'previewUrl' => $this->newsletter->getPreviewPath(),

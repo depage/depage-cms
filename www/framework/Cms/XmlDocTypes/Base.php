@@ -29,7 +29,7 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
         parent::onDocumentChange();
 
         // @todo get automatic list of templates
-        $templates = ["html", "atom", "debug", "sitemap"];
+        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
         $previewTypes = ["pre"];
 
         foreach ($templates as $template) {

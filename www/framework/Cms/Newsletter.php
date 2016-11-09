@@ -17,7 +17,7 @@ class Newsletter
     /**
      * @brief document
      **/
-    protected $document = null;
+    public $document = null;
     // dp_proj_{$projectName}_subscribers
     // dp_proj_{$projectName}_subscriber_groups
 
@@ -189,8 +189,7 @@ class Newsletter
     public function getPreviewPath()
     {
         $lang = "de";
-        //return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/pre/$lang/{$this->name}.html";
-        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/dev/$lang/{$this->name}.html";
+        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/pre/$lang/{$this->name}.html";
     }
     // }}}
     // {{{ getXml()

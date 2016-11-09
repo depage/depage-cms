@@ -409,8 +409,7 @@ var depageCMS = (function() {
                 $form.on("depage.form.autoSaved", function() {
                     var matches = window.location.href.match(/project\/(.*)\/newsletter\/(.*)\//);
                     var lang = "de";
-                    //var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + lang + "/" + matches[2] + ".html";
-                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/dev/" + lang + "/" + matches[2] + ".html";
+                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + lang + "/" + matches[2] + ".html";
 
                     localJS.preview(url);
                 });
