@@ -205,7 +205,7 @@ class Mail
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
-        $this->text = $this->stripTags($this->htmlText);
+        $this->text = $this->stripTags($mailtext);
 
         return $this;
     }
@@ -499,8 +499,28 @@ class Mail
      */
     protected function stripTags($string)
     {
+        // insert html links as text
+        // @todo only do this for links with specific class or attribute
+        $stripped = preg_replace_callback(array(
+            '@<a[^>]*?href="([^"]*)"[^>]*?>(.*)</a>@iu',
+        ), function($m) {
+            if ($m[1] == $m[2]) {
+                return "{$m[2]}";
+            } else if (substr($m[1], 0, 7) == "mailto:") {
+                return substr($m[1], 7);
+            } else {
+                return "{$m[2]} [{$m[1]}]";
+            }
+        }, $string);
+
+        // replace images with alt-text
         $stripped = preg_replace(array(
-            // Remove invisible/unwanted content
+            '@<img[^>]*?alt="([^"]*)"[^>]*?>@iu',
+        ), '${1}', $stripped);
+
+        // Remove invisible/unwanted content
+        $stripped = preg_replace(array(
+            '@<title[^>]*?>.*?</title>@siu',
             '@<style[^>]*?>.*?</style>@siu',
             '@<script[^>]*?.*?</script>@siu',
             '@<object[^>]*?.*?</object>@siu',
@@ -508,9 +528,12 @@ class Mail
             '@<applet[^>]*?.*?</applet>@siu',
             '@<noframes[^>]*?.*?</noframes>@siu',
             '@<noembed[^>]*?.*?</noembed>@siu',
-        ), '', $string);
+        ), '', $stripped);
 
         $stripped = strip_tags($stripped);
+
+        // remove duplicate newlines with just 2
+        $stripped = trim(preg_replace("/(\r?\n){2,}/", "\n\n", $stripped));
 
         return $stripped;
     }
