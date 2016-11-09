@@ -905,14 +905,17 @@ div.preview {
     iframe {
         display: block;
         border: none;
+        background: #ffffff;
         width: 100%;
         height: 100%;
-        background: #ffffff;
     }
 }
 div.preview .zoomwrapper {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: $infoHeight;
+    left: 0;
+    right: 0;
+    bottom: 0;
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
