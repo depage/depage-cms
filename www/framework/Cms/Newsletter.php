@@ -104,6 +104,12 @@ class Newsletter
         $xml = new \DOMDocument();
         $xml->load(__DIR__ . "/XmlDocTypes/NewsletterXml/newsletter.xml");
 
+        $node = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "title")->item(0);
+        $node->setAttribute("value", $node->getAttribute("value") . " " . date("m/Y"));
+
+        $node = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "linkdesc")->item(0);
+        $node->setAttribute("value", $node->getAttribute("value") . " " . date("m/Y"));
+
         $doc->save($xml);
 
         return $newsletter;
