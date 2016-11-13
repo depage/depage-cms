@@ -154,6 +154,7 @@ class Main extends Base {
             'title' => _("Projects"),
             'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
+                'user' => $this->user,
                 'projects' => $projects,
                 'projectGroups' => $projectGroups,
             ]),

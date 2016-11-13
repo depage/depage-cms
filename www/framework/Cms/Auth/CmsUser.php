@@ -80,6 +80,30 @@ class CmsUser extends \Depage\Auth\User
         return $this->level <= 2;
     }
     // }}}
+    // {{{ canPublishProject()
+    /**
+     * @brief canPublishProject
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function canPublishProject()
+    {
+        return $this->level <= 4;
+    }
+    // }}}
+    // {{{ canSendNewsletter()
+    /**
+     * @brief canSendNewsletter
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function canSendNewsletter()
+    {
+        return $this->level <= 2;
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :

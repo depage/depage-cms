@@ -24,10 +24,11 @@
                             <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
                                 <?php self::t(_('Preview')) ?>
                             </a>
-                            <?php //@todo display only for users that are allowed to publish ?>
-                            <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
-                                <?php self::t(_('Publish')) ?>
-                            </a>
+                            <?php if ($this->user->canPublishProject()) { ?>
+                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
+                                    <?php self::t(_('Publish')) ?>
+                                </a>
+                            <?php } ?>
                             <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
                                 <?php self::t(_('Settings')) ?>
                             </a>
@@ -36,7 +37,7 @@
                     <dd>
                         <?php self::t(_('loading...')) ?>
                     </dd>
-                    <?php if ($project->hasNewsletter()) { ?>
+                    <?php if ($project->hasNewsletter() && $this->user->canSendNewsletter()) { ?>
                         <dt data-project-newsletter="<?php self::t($project->name); ?>">
                             <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
                                 <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
@@ -51,10 +52,11 @@
                                 <a href="project/<?php self::t($project->name); ?>/newsletter/current/edit/" class="button">
                                     <?php self::t(_('Edit')) ?>
                                 </a>
-                                <?php //@todo display only for users that are allowed to publish ?>
-                                <a href="project/<?php self::t($project->name); ?>/newsletter/current/publish/" class="button">
-                                    <?php self::t(_('Publish')) ?>
-                                </a>
+                                <?php if ($this->user->canSendNewsletter()) { ?>
+                                    <a href="project/<?php self::t($project->name); ?>/newsletter/current/publish/" class="button">
+                                        <?php self::t(_('Publish')) ?>
+                                    </a>
+                                <?php } ?>
                             </div>
                         </dt>
                         <dd>
