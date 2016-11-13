@@ -28,7 +28,7 @@
         }
     ?>
         <tr>
-            <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->name); ?></a></td>
+            <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
             <td class="date <?php self::t($class); ?>"><?php self::t($formatter->format($newsletter->document->getDocInfo()->lastchange, true)); ?></td>
         </tr>
     <?php } ?>

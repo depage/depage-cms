@@ -215,7 +215,17 @@ class Newsletter
      **/
     public function getSubject($lang)
     {
-        return "Newsletter Subject $lang";
+        if (!empty($lang)) {
+            $nodes = $this->document->getNodeIdsByXpath("//pg:meta/pg:linkdesc[@lang = '$lang']");
+        } else {
+            $nodes = $this->document->getNodeIdsByXpath("//pg:meta/pg:linkdesc");
+        }
+
+        if (count($nodes) > 0) {
+            return $this->document->getAttribute($nodes[0], "value");
+        } else {
+            return "";
+        }
     }
     // }}}
     // {{{ getTitle()
@@ -227,7 +237,17 @@ class Newsletter
      **/
     public function getTitle($lang)
     {
-        return "Newsletter Subject $lang";
+        if (!empty($lang)) {
+            $nodes = $this->document->getNodeIdsByXpath("//pg:meta/pg:title[@lang = '$lang']");
+        } else {
+            $nodes = $this->document->getNodeIdsByXpath("//pg:meta/pg:title");
+        }
+
+        if (count($nodes) > 0) {
+            return $this->document->getAttribute($nodes[0], "value");
+        } else {
+            return "";
+        }
     }
     // }}}
     // {{{ getSubscriberCategories()
