@@ -1170,6 +1170,20 @@ div.preview.zoom100 iframe {
             margin-top: 12px;
             margin-bottom: 6px;
         }
+
+        &.scroll {
+            overflow-y: scroll;
+            max-height: 30vh;
+
+            legend {
+                position: -webkit-sticky;
+                position: sticky;
+                z-index: 1000;
+                background: $backgroundColor;
+                top: 0;
+                left: 0;
+            }
+        }
     }
 }
 /* }}} */

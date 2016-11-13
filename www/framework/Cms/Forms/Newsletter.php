@@ -82,18 +82,31 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
 
         $fs = $this->addFieldset("unsentItems", [
             'label' => _("Unsent news items"),
+            'class' => "scroll",
         ]);
         foreach ($this->candidates as $c) {
-            $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
-            $fs->addBoolean("{$c->name}", [
-                'label' => $c->url,
-                'defaultValue' => $nodes->length == 1
-            ]);
+            if (!$c->alreadyUsed) {
+                $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
+                $fs->addBoolean("{$c->name}", [
+                    'label' => $c->url,
+                    'defaultValue' => $nodes->length == 1
+                ]);
+            }
         }
 
         $fs = $this->addFieldset("sentItems", [
-            'label' => _("Already sent news items"),
+            'label' => _("News items included in other newsletters"),
+            'class' => "scroll detail",
         ]);
+        foreach ($this->candidates as $c) {
+            if ($c->alreadyUsed) {
+                $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
+                $fs->addBoolean("{$c->name}", [
+                    'label' => $c->url,
+                    'defaultValue' => $nodes->length == 1
+                ]);
+            }
+        }
     }
     // }}}
 }

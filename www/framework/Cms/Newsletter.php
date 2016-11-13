@@ -133,17 +133,26 @@ class Newsletter
      **/
     public function getCandidates($xpath = "//sec:news")
     {
-        // @todo update candidates depending on:
-        // - if they are active in current newsletter
-        // - if they are active in an older newsletter
         $candidates = [];
         $xmldb = $this->project->getXmlDb();
         $pages = $this->project->getPages();
+        $usedPages = [];
+
+        $allNewsletters = self::loadAll($this->pdo, $this->project);
+        foreach ($allNewsletters as $n) {
+            if ($n->name != $this->name) {
+                $ids = $n->document->getNodeIdsByXpath("//sec:news");
+                foreach ($ids as $id) {
+                    $usedPages[$n->document->getAttribute($id, "db:docref")] = true;
+                }
+            }
+        }
 
         foreach ($pages as $page) {
             if ($page->released == true) {
                 $ids = $xmldb->getNodeIdsByXpath($xpath, $page->id);
                 if (count($ids) > 0) {
+                    $page->alreadyUsed = isset($usedPages[$page->name]);
                     $candidates[$page->name] = $page;
                 }
             }
