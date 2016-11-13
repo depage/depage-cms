@@ -33,14 +33,14 @@ class Newsletter extends Base
         if (empty($this->newsletterName)) {
             throw new \Depage\Cms\Exceptions\Project("no newsletter given");
         } else if ($this->newsletterName == "+") {
-            $this->newsletter = \Depage\Cms\Newsletter::create($this->project);
+            $this->newsletter = \Depage\Cms\Newsletter::create($this->pdo, $this->project);
 
             \Depage\Depage\Runner::redirect($this->getActionUrl("edit"));
         } else if ($this->newsletterName == "current") {
-            $newsletters = \Depage\Cms\Newsletter::loadAll($this->project);
+            $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this->project);
             $this->newsletter = $newsletters[0];
         } else {
-            $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->project, $this->newsletterName);
+            $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $this->newsletterName);
         }
     }
     // }}}
@@ -93,7 +93,7 @@ class Newsletter extends Base
 
         $h = new Html("newsletterEdit.tpl", [
             'content' => $form,
-            'previewUrl' => $this->newsletter->getPreviewPath(),
+            'previewUrl' => $this->newsletter->getPreviewUrl(),
         ], $this->htmlOptions);
 
         return $h;
@@ -110,25 +110,13 @@ class Newsletter extends Base
         if ($form->validate()) {
             $values = $form->getValues();
 
-            $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->project->name, "newsletter-live");
-            $xmlGetter = $this->project->getXmlGetter();
-
-            $transformer = \Depage\Transformer\Transformer::factory("live", $xmlGetter, $this->project->name, "newsletter", $transformCache);
-
-            // @todo set baseUrl from publishing target
-            $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/live/";
-            $transformer->useAbsolutePaths = true;
-
             // @todo set lang correctly
             $lang = "de";
-            $html = $transformer->transformDoc("", $this->newsletter->document->getDocId(), $lang);
 
-            $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->newsletter->name, $this->project->name);
+            $this->newsletter->sendLater("info@depage.net", $values['emails'], $lang);
+            $form->clearSession();
 
-            $mail = new \Depage\Mail\Mail("info@depage.net");
-            $mail->setSubject("Newsletter subject")
-                ->setHtmlText($html);
-            $mail->sendLater($task, $values['emails']);
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         $h = new Html("box.tpl", [

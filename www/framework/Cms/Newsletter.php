@@ -18,8 +18,7 @@ class Newsletter
      * @brief document
      **/
     public $document = null;
-    // dp_proj_{$projectName}_subscribers
-    // dp_proj_{$projectName}_subscriber_groups
+    // dp_proj_{$projectName}_newsletter_subscribers
 
     // {{{ __construct()
     /**
@@ -28,10 +27,14 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    protected function __construct($project, $name)
+    protected function __construct($pdo, $project, $name)
     {
         $this->project = $project;
         $this->name = $name;
+        $this->pdo = $pdo;
+
+        $this->tableSubscribers = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_subscribers";
+        $this->tableSent = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_sent";
     }
     // }}}
     // {{{ loadAll()
@@ -40,7 +43,7 @@ class Newsletter
      *
      * @return void
      **/
-    static public function loadAll($project)
+    static public function loadAll($pdo, $project)
     {
         $newsletters = [];
         $xmldb = $project->getXmlDb();
@@ -49,7 +52,7 @@ class Newsletter
         $self = get_called_class();
 
         foreach ($docs as $doc) {
-            $newsletter = new $self($project, $doc->getDocInfo()->name);
+            $newsletter = new $self($pdo, $project, $doc->getDocInfo()->name);
             $newsletter->setDocument($doc);
             $newsletters[] = $newsletter;
         }
@@ -64,7 +67,7 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    public static function loadByName($project, $name)
+    public static function loadByName($pdo, $project, $name)
     {
         $xmldb = $project->getXmlDb();
 
@@ -72,7 +75,7 @@ class Newsletter
         $self = get_called_class();
 
         foreach ($docs as $doc) {
-            $newsletter = new $self($project, $name);
+            $newsletter = new $self($pdo, $project, $name);
             $newsletter->setDocument($doc);
 
             return $newsletter;
@@ -88,14 +91,14 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    public static function create($project)
+    public static function create($pdo, $project)
     {
         $xmldb = $project->getXmlDb();
 
         $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Newsletter');
 
         $self = get_called_class();
-        $newsletter = new $self($project);
+        $newsletter = new $self($pdo, $project);
         $newsletter->setDocument($doc);
 
         $xml = new \DOMDocument();
@@ -181,15 +184,14 @@ class Newsletter
     }
     // }}}
 
-    // {{{ getPreviewPath()
+    // {{{ getPreviewUrl()
     /**
-     * @brief getPreviewPath
+     * @brief getPreviewUrl
      *
      * @return void
      **/
-    public function getPreviewPath()
+    public function getPreviewUrl($lang = "de")
     {
-        $lang = "de";
         return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/pre/$lang/{$this->name}.html";
     }
     // }}}
@@ -202,6 +204,96 @@ class Newsletter
     public function getXml()
     {
         return $this->document->getXml();
+    }
+    // }}}
+    // {{{ getSubject()
+    /**
+     * @brief getSubject
+     *
+     * @param mixed $lang
+     * @return void
+     **/
+    public function getSubject($lang)
+    {
+        return "Newsletter Subject $lang";
+
+    }
+    // }}}
+    // {{{ getSubscriberCategories()
+    /**
+     * @brief getSubscriberCategories
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getSubscriberCategories()
+    {
+
+    }
+    // }}}
+    // {{{ getSubscribers()
+    /**
+     * @brief getSubscribers
+     *
+     * @param mixed $category
+     * @return void
+     **/
+    public function getSubscribers($category)
+    {
+
+    }
+    // }}}
+
+    // {{{ transform()
+    /**
+     * @brief transform
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function transform($previewType, $lang)
+    {
+        $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project->name, "newsletter");
+
+        // @todo set baseUrl from publishing target
+        $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/live/";
+        $transformer->useAbsolutePaths = true;
+
+        $html = $transformer->transformDoc("", $this->document->getDocId(), $lang);
+
+        return $html;
+    }
+    // }}}
+    // {{{ sendToSubscribers()
+    /**
+     * @brief sendToSubscribers
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function sendToSubscribers($from, $category)
+    {
+
+    }
+    // }}}
+    // {{{ sendLater()
+    /**
+     * @brief sendLater
+     *
+     * @param mixed $previewType, $
+     * @return void
+     **/
+    public function sendLater($from, $to, $lang)
+    {
+        $html = $this->transform("live", $lang);
+
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
+
+        $mail = new \Depage\Mail\Mail("info@depage.net");
+        $mail->setSubject($this->getSubject($lang))
+            ->setHtmlText($html);
+
+        $mail->sendLater($task, $to, true);
     }
     // }}}
 }

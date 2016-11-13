@@ -169,7 +169,7 @@ class Preview extends \Depage\Depage\Ui\Base
         $transformCache = null;
         $this->project->setPreviewType($this->previewType);
 
-        if ($this->previewType != "dev") {
+        if ($this->previewType != "dev" && $this->template != "newsletter") {
             $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
         }
         $xmlGetter = $this->project->getXmlGetter();
@@ -179,12 +179,9 @@ class Preview extends \Depage\Depage\Ui\Base
         if ($this->template == "newsletter") {
             preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
             $newsletterName = $matches[1];
-            $newsletter = \Depage\Cms\Newsletter::loadByName($this->project, $newsletterName);
-            $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/{$this->previewType}/";
-            $transformer->useAbsolutePaths = true;
+            $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $newsletterName);
 
-            // @todo throw error if document is not found
-            $html = $transformer->transformDoc("", $newsletter->document->getDocId(), $lang);
+            $html = $newsletter->transform($this->previewType, $lang);
         } else {
             $html = $transformer->display($urlPath, $lang);
         }

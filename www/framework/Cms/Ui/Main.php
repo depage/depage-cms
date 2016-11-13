@@ -42,23 +42,19 @@ class Main extends Base {
     public function index() {
         if ($this->auth->enforceLazy()) {
             // logged in
-            $h = new Html([
-                'content' => new Html("home.tpl", [
-                    'content' => [
-                        $this->projects(),
-                        $this->users("current"),
-                        $this->tasks(),
-                    ],
-                ]),
+            $h = new Html("home.tpl", [
+                'content' => [
+                    $this->projects(),
+                    $this->users("current"),
+                    $this->tasks(),
+                ],
             ], $this->htmlOptions);
         } else {
             // not logged in
-            $h = new Html([
-                'content' => new Html("welcome.tpl", [
-                    'title' => _("Welcome to\n depage::cms"),
-                    'login' => "Login",
-                    'login_link' => "login/",
-                ]),
+            $h = new Html("welcome.tpl", [
+                'title' => _("Welcome to\n depage::cms"),
+                'login' => "Login",
+                'login_link' => "login/",
             ], $this->htmlOptions);
         }
 
@@ -394,8 +390,6 @@ class Main extends Base {
         // add/update schema for authentication
         \Depage\Auth\Auth::updateSchema($this->pdo);
 
-        $this->auth->enforce();
-
         \Depage\Tasks\Task::updateSchema($this->pdo);
         \Depage\Cms\Project::updateSchema($this->pdo);
         \Depage\Notifications\Notification::updateSchema($this->pdo);
@@ -405,6 +399,8 @@ class Main extends Base {
         foreach ($projects as $project) {
             $project->updateProjectSchema();
         }
+
+        return "updated";
     }
     // }}}
 

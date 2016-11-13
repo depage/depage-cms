@@ -19,17 +19,17 @@
 
                         <div class="buttons">
                             <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
-                                <?php self::t(_('edit')) ?>
+                                <?php self::t(_('Edit')) ?>
                             </a>
                             <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
-                                <?php self::t(_('preview')) ?>
+                                <?php self::t(_('Preview')) ?>
                             </a>
                             <?php //@todo display only for users that are allowed to publish ?>
                             <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
-                                <?php self::t(_('publish')) ?>
+                                <?php self::t(_('Publish')) ?>
                             </a>
                             <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
-                                <?php self::t(_('settings')) ?>
+                                <?php self::t(_('Settings')) ?>
                             </a>
                         </div>
                     </dt>
@@ -46,14 +46,14 @@
 
                             <div class="buttons">
                                 <a href="project/<?php self::t($project->name); ?>/newsletter/+/" class="button">
-                                    <?php self::t(_('add')) ?>
+                                    <?php self::t(_('Add')) ?>
                                 </a>
                                 <a href="project/<?php self::t($project->name); ?>/newsletter/current/edit/" class="button">
-                                    <?php self::t(_('edit')) ?>
+                                    <?php self::t(_('Edit')) ?>
                                 </a>
                                 <?php //@todo display only for users that are allowed to publish ?>
                                 <a href="project/<?php self::t($project->name); ?>/newsletter/current/publish/" class="button">
-                                    <?php self::t(_('publish')) ?>
+                                    <?php self::t(_('Publish')) ?>
                                 </a>
                             </div>
                         </dt>

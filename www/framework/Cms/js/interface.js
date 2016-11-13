@@ -407,7 +407,7 @@ var depageCMS = (function() {
                 var $form = $(this);
 
                 $form.on("depage.form.autoSaved", function() {
-                    var matches = window.location.href.match(/project\/(.*)\/newsletter\/(.*)\//);
+                    var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
                     var lang = "de";
                     var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + lang + "/" + matches[2] + ".html";
 

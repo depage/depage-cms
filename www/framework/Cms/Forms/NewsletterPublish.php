@@ -52,6 +52,17 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
         $this->addTextarea("emails", [
             'label' => _("Emails"),
         ]);
+
+        $h = "";
+        $h .= "<h1>" . _("Preview") . "</h1>";
+        $h .= "<ul>";
+        foreach (["de", "en"] as $lang) {
+            $href = $this->newsletter->getPreviewUrl($lang);
+            $h .= "<li><a href=\"$href\" class=\"preview\">$lang</a>";
+        }
+        $h .= "</ul>";
+
+        $this->addHtml($h);
     }
     // }}}
 }
