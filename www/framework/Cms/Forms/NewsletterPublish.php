@@ -42,12 +42,16 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
      **/
     public function addChildElements()
     {
+        $categories = $this->newsletter->getSubscriberCategories();
+        $list = [];
+        foreach ($categories as $cat) {
+            $list[$cat] = $cat;
+        }
+        $list["__custom"] = _("Custom Recipients");
+
         $this->addSingle("to", array(
             'label' => _("Empfänger"),
-            'list' => [
-                'subscriber' => _("Subscribers"),
-                'custom' => _("Custom Recipients"),
-            ],
+            'list' => $list,
         ));
         $this->addTextarea("emails", [
             'label' => _("Emails"),

@@ -110,10 +110,12 @@ class Newsletter extends Base
         if ($form->validate()) {
             $values = $form->getValues();
 
-            // @todo set lang correctly
-            $lang = "de";
-
-            $this->newsletter->sendLater("info@depage.net", $values['emails'], $lang);
+            if ($values['to'] == "__custom") {
+                // @todo set lang correctly
+                $this->newsletter->sendLater("info@depage.net", $values['emails'], "de");
+            } else {
+                $this->newsletter->sendToSubscribers("info@depage.net", $values['to']);
+            }
             $form->clearSession();
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);

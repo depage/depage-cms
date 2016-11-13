@@ -216,7 +216,18 @@ class Newsletter
     public function getSubject($lang)
     {
         return "Newsletter Subject $lang";
-
+    }
+    // }}}
+    // {{{ getTitle()
+    /**
+     * @brief getTitle
+     *
+     * @param mixed $lang
+     * @return void
+     **/
+    public function getTitle($lang)
+    {
+        return "Newsletter Subject $lang";
     }
     // }}}
     // {{{ getSubscriberCategories()
@@ -228,7 +239,21 @@ class Newsletter
      **/
     public function getSubscriberCategories()
     {
+        $query = $this->pdo->prepare(
+            "SELECT category
+            FROM
+                {$this->tableSubscribers} AS subscribers
+            GROUP BY
+                category
+            ORDER BY
+                category ASC
+            "
+        );
 
+        $query->execute();
+        $categories = $query->fetchAll(\PDO::FETCH_COLUMN);
+
+        return $categories;
     }
     // }}}
     // {{{ getSubscribers()
@@ -240,7 +265,21 @@ class Newsletter
      **/
     public function getSubscribers($category)
     {
+        $query = $this->pdo->prepare(
+            "SELECT lang, email
+            FROM
+                {$this->tableSubscribers} AS subscribers
+            WHERE
+                category = :category
+            "
+        );
 
+        $query->execute([
+            'category' => $category,
+        ]);
+        $subscribers = $query->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_GROUP);
+
+        return $subscribers;
     }
     // }}}
 
@@ -273,7 +312,19 @@ class Newsletter
      **/
     public function sendToSubscribers($from, $category)
     {
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
 
+        $subscribers = $this->getSubscribers($category);
+
+        foreach ($subscribers as $lang => $to) {
+            $html = $this->transform("live", $lang);
+
+            $mail = new \Depage\Mail\Mail("info@depage.net");
+            $mail->setSubject($this->getSubject($lang))
+                ->setHtmlText($html);
+
+            $mail->sendLater($task, $to, true);
+        }
     }
     // }}}
     // {{{ sendLater()
