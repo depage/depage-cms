@@ -11,6 +11,7 @@ $infoHeight: 15px;
 $editWidth: 820px;
 $treeWidth: 255px;
 
+$backgroundColor: #ccc8c4;
 $borderColor: #999999;
 $textBaseColor: #000000;
 $textLighterColor: #666666;
@@ -121,13 +122,13 @@ $textBrightColor: #ffffff;
         background: #ffffff
     }
     .centered_box .content {
-        background: #ccc8c4;
+        background: $backgroundColor;
     }
     .centered_box.noback .content {
         background: none;
     }
     .toolbar a:hover {
-        background: #ccc8c4;
+        background: $backgroundColor;
     }
     .centered_box .toolbar a:hover,
     .projectlist a:hover {
@@ -141,7 +142,7 @@ $textBrightColor: #ffffff;
     }
     .projectlist div.details a:hover {
         color: #882200;
-        background: #ccc8c4;
+        background: $backgroundColor;
     }
     .projectlist div.details table.lastchanged_pages .date,
     .projectlist div.details table.lastchanged_pages .lastpublish,
@@ -170,7 +171,7 @@ $textBrightColor: #ffffff;
         color: #666666;
     }
     .centered_box .icon {
-        color: #ccc8c4;
+        color: $backgroundColor;
     }
     .centered_box .icon {
         color: #000000;
@@ -183,10 +184,10 @@ $textBrightColor: #ffffff;
                 color: #000000;
             }
             &:hover {
-                background: lighten(#ccc8c4, 15%);
+                background: lighten($backgroundColor, 15%);
             }
             &.active {
-                background: #ccc8c4;
+                background: $backgroundColor;
             }
         }
     }
@@ -712,7 +713,7 @@ header.info {
     top: $toolbarHeight;
     height: $infoHeight;
     border-bottom: 1px solid $borderColor;
-    background: #CCC8C4;
+    background: $backgroundColor;
     z-index: 10001;
 
     h1 {
@@ -1049,7 +1050,7 @@ div.preview.zoom100 iframe {
 /* }}} */
 // {{{ dialog.full
 .dialog-full {
-    background: #ccc8c4;
+    background: $backgroundColor;
     padding: 12px;
     min-height: 100%;
 }
@@ -1624,7 +1625,7 @@ html[lang='de'] {
         width: 520px;
         border: 1px solid $borderColor;
         padding: 10px;
-        background: #ccc8c4;
+        background: $backgroundColor;
         margin: auto;
     }
 
