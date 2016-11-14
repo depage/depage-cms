@@ -387,8 +387,8 @@ class Mail
     {
         $html = "";
 
-        $html .= "<table border=\"0\"><tr><td>";
-        $html .= "<img src=\"{$this->trackerImage}\">";
+        $html .= "<table border=\"0\"><tr><td style=\"color: #ffffff;\" width=\"100%\">";
+        $html .= "<img src=\"{$this->trackerImage}\" alt=\"-\" width=\"100\" height=\"10\">";
         $html .= "</td></tr></table>";
 
         return $html;
