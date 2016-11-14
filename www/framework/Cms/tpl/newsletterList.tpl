@@ -37,13 +37,7 @@
             "data-newsletter" => $newsletter->name,
         ]); ?>>
             <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
-            <td class="date <?php self::t($class); ?>"><?php self::t($formatter->format($newsletter->document->getDocInfo()->lastchange, true)); ?></td>
-        </tr>
-        <tr <?php self::attr([
-            "data-project" => $newsletter->project->name,
-            "data-newsletter" => $newsletter->name,
-        ]); ?>>
-            <td colspan="3">
+            <td class="actions">
                 <div class="buttons">
                     <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button"><?php self::t(_("Edit")); ?></a>
                     <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button"><?php self::t(_("Publish")); ?></a>

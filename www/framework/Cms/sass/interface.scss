@@ -1579,10 +1579,8 @@ table.recent-changes {
         font-size: 0.8em;
         white-space: nowrap;
     }
-    td.delete {
-        width: 15%;
-        text-align: right;
-        padding-left: 10px;
+    td.actions {
+        width: 70%;
     }
     td.lastchange,
     td.date,
