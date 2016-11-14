@@ -51,7 +51,7 @@ namespace Depage\Mail;
  */
 class Mail
 {
-    protected $version = "1.4.2";
+    protected $version = "1.5.0";
     protected $sender;
     protected $recipients;
     protected $cc;
@@ -61,6 +61,8 @@ class Mail
     protected $subject;
     protected $text;
     protected $htmlText;
+    protected $trackerImage;
+    protected $dontShowEmail = true;
     protected $attachements = array();
     protected $boundary;
     protected $encoding = "UTF-8";
@@ -202,12 +204,27 @@ class Mail
      */
     public function setHtmlText($mailtext)
     {
+        // @todo add option to insert/replace tracking image
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
         $this->text = $this->stripTags($mailtext);
 
         return $this;
+    }
+    // }}}
+    // {{{ setTrackerImage()
+    /**
+     * @brief setTrackerImage
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setTrackerImage($url)
+    {
+        if (!empty($url)) {
+            $this->trackerImage = $url;
+        }
     }
     // }}}
 
@@ -339,6 +356,10 @@ class Mail
             if (!empty($this->htmlText)) {
                 $htmlText = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $this->htmlText);
 
+                if (!empty($this->trackerImage)) {
+                    $htmlText = str_replace("</body>", $this->getTracker() . "</body>", $htmlText);
+                }
+
                 $message .= "{$this->eol}{$this->eol}";
                 $message .= "--{$this->boundary}{$this->eol}" .
                     "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
@@ -353,6 +374,24 @@ class Mail
         }
 
         return $message;
+    }
+    // }}}
+    // {{{ getTracker()
+    /**
+     * @brief getTracker
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getTracker()
+    {
+        $html = "";
+
+        $html .= "<table border=\"0\"><tr><td>";
+        $html .= "<img src=\"{$this->trackerImage}\">";
+        $html .= "</td></tr></table>";
+
+        return $html;
     }
     // }}}
     // {{{ getEml()
@@ -392,11 +431,12 @@ class Mail
      * @param  string|array $recipients new recipients
      * @return bool         true on success, false on error
      */
-    public function send($recipients = null)
+    public function send($recipients = null, $trackerImage = null)
     {
         if (!is_null($recipients)) {
             $this->setRecipients($recipients);
         }
+        $this->setTrackerImage($trackerImage);
 
         $success = call_user_func($this->mailFunction, $this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
 
@@ -410,7 +450,7 @@ class Mail
      * @param mixed $
      * @return void
      **/
-    public function sendLater(\Depage\Tasks\Task $task, $recipients = null)
+    public function sendLater(\Depage\Tasks\Task $task, $recipients = null, $trackerImage = null)
     {
         if (!is_null($recipients)) {
             $this->setRecipients($recipients);
@@ -419,11 +459,19 @@ class Mail
         $recipients = array_unique(explode(",", $this->getRecipients()));
         $this->setRecipients(null);
 
-        foreach($recipients as $to) {
-            $task->addSubtask("mailing $to", "%s->send(%s);", [
-                $this,
-                $to,
-            ]);
+        foreach($recipients as $i => $to) {
+            if ($this->dontShowEmail) {
+                $title = "sending mail " . ($i + 1);
+            } else {
+                $title = "sending mail to $to";
+            }
+            if (!empty($to)) {
+                $task->addSubtask($title, "%s->send(%s, %s);", [
+                    $this,
+                    $to,
+                    $trackerImage,
+                ]);
+            }
         }
 
         $task->begin();
