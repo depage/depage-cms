@@ -92,8 +92,19 @@ class Newsletter extends Base
         }
 
         $h = new Html("newsletterEdit.tpl", [
-            'content' => $form,
-            'previewUrl' => $this->newsletter->getPreviewUrl(),
+            'content' => [
+                new Html("tabs.tpl", [
+                    'baseUrl' => $this->newsletter->getBaseUrl(),
+                    'tabs' => [
+                        "edit" => _("Edit"),
+                        "publish" => _("Publish"),
+                    ],
+                    'activeTab' => "edit",
+                ]),
+                $form,
+            ],
+            'newsletter' => $this->newsletter,
+            'newsletter' => $this->newsletter,
         ], $this->htmlOptions);
 
         return $h;
@@ -125,6 +136,21 @@ class Newsletter extends Base
         $h = new Html("box.tpl", [
             'title' => "Send Newsletter",
             'content' => $form,
+        ], $this->htmlOptions);
+
+        $h = new Html("newsletterEdit.tpl", [
+            'content' => [
+                new Html("tabs.tpl", [
+                    'baseUrl' => $this->newsletter->getBaseUrl(),
+                    'tabs' => [
+                        "edit" => _("Edit"),
+                        "publish" => _("Publish"),
+                    ],
+                    'activeTab' => "publish",
+                ]),
+                $form,
+            ],
+            'newsletter' => $this->newsletter,
         ], $this->htmlOptions);
 
         return $h;

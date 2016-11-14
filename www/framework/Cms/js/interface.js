@@ -287,12 +287,10 @@ var depageCMS = (function() {
                 var $row = $(this);
                 var projectName = $row.data("project");
                 var newsletterName = $row.data("newsletter");
-                var $column = $("<td class=\"delete\"></td>")
-                    .appendTo($row);
                 var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
 
-                var $deleteButton = $("<a>" + locale.delete + "</a>")
-                    .appendTo($column)
+                var $deleteButton = $("<a class=\"button\">" + locale.delete + "</a>")
+                    .appendTo($row.next("tr").find(".buttons"))
                     .depageShyDialogue({
                         ok: {
                             title: locale.delete,

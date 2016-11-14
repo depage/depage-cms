@@ -413,6 +413,7 @@ class Project extends Base
         $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this->project);
 
         $h = new Html("newsletterList.tpl", [
+            'project' => $this->project,
             'newsletters' => $newsletters,
         ], $this->htmlOptions);
 

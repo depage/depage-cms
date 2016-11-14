@@ -201,6 +201,18 @@ class Newsletter
     }
     // }}}
 
+    // {{{ getBaseUrl()
+    /**
+     * @brief getBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getBaseUrl()
+    {
+        return "project/" . $this->project->name . "/newsletter/" . $this->name . "/";
+    }
+    // }}}
     // {{{ getPreviewUrl()
     /**
      * @brief getPreviewUrl

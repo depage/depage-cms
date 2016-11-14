@@ -45,6 +45,7 @@
 
                             <strong><?php self::t($project->fullname . " – " . _("newsletter")); ?></strong>
 
+                            <!--
                             <div class="buttons">
                                 <a href="project/<?php self::t($project->name); ?>/newsletter/+/" class="button">
                                     <?php self::t(_('Add')) ?>
@@ -58,6 +59,7 @@
                                     </a>
                                 <?php } ?>
                             </div>
+                            -->
                         </dt>
                         <dd>
                             <?php self::t(_('loading...')) ?>

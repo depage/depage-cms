@@ -50,7 +50,7 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
         $list["__custom"] = _("Custom Recipients");
 
         $this->addSingle("to", array(
-            'label' => _("Empfänger"),
+            'label' => _("Recipients"),
             'list' => $list,
         ));
         $this->addTextarea("emails", [

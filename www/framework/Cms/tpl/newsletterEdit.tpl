@@ -1,9 +1,12 @@
+<?php
+    $previewUrl = $this->newsletter->getPreviewUrl();
+?>
 <div <?php self::attr([
         'class' => "edit layout layout-left",
         'data-live-help' => _("Edit your newsletter and choose which items to include"),
     ]); ?>>
     <header class="info">
-        <h1><?php self::e(_("Newsletter Edit")); ?></h1>
+        <h1><?php self::e(_("Newsletter")); ?></h1>
     </header>
     <div class="dialog-full">
         <?php self::e($this->content); ?>
@@ -18,7 +21,7 @@
         <h1><?php self::e(_("Preview")); ?></h1>
     </header>
     <div class="zoomwrapper">
-        <iframe id="previewFrame" src="<?php self::e($this->previewUrl); ?>"></iframe>
+        <iframe id="previewFrame" src="<?php self::e($previewUrl); ?>"></iframe>
     </div>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

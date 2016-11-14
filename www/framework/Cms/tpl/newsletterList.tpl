@@ -3,6 +3,11 @@
     $headerShown = 0;
     $class = "";
 ?>
+<div class="buttons">
+    <a href="project/<?php self::t($this->project->name); ?>/newsletter/+/" class="button icon-add">
+        <?php self::t(_('Add new newsletter')) ?>
+    </a>
+</div>
 <table class="recent-changes newsletter">
     <?php foreach($this->newsletters as $newsletter) {
         $newsletterUrl = DEPAGE_BASE . "project/" . $newsletter->project->name . "/newsletter/" . $newsletter->name . "/";
@@ -33,6 +38,17 @@
         ]); ?>>
             <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
             <td class="date <?php self::t($class); ?>"><?php self::t($formatter->format($newsletter->document->getDocInfo()->lastchange, true)); ?></td>
+        </tr>
+        <tr <?php self::attr([
+            "data-project" => $newsletter->project->name,
+            "data-newsletter" => $newsletter->name,
+        ]); ?>>
+            <td colspan="3">
+                <div class="buttons">
+                    <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button"><?php self::t(_("Edit")); ?></a>
+                    <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button"><?php self::t(_("Publish")); ?></a>
+                </div>
+            </td>
         </tr>
     <?php } ?>
 </table>
