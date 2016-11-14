@@ -118,7 +118,7 @@ class Base extends \Depage\Depage\Ui\Base
     protected function getProject($projectName)
     {
         if ($projectName != "+") {
-            return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+            return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
         } else {
             return "";
         }

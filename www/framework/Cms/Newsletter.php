@@ -469,7 +469,7 @@ class Newsletter
     public function send($mail, $to, $lang)
     {
         $hash = $this->getTrackingHash($to, $lang);
-        $trackingUrl = DEPAGE_BASE . "track/newsletter/" . $this->name . "/" . $hash . ".png";
+        $trackingUrl = DEPAGE_BASE . "track/" . $this->project->name . "/newsletter/" . $this->name . "/" . $hash . "/footer.png";
 
         if ($mail->send($to, $trackingUrl)) {
             $query = $this->pdo->prepare(
@@ -477,20 +477,46 @@ class Newsletter
                 INTO
                     {$this->tableSent}
                 SET
+                    id=:hash,
                     newsletter_id=:id,
                     email=:to,
-                    lang=:lang,
-                    hash=:hash
+                    lang=:lang
+                ON DUPLICATE KEY UPDATE
+                    id=VALUES(id), sendAt=NOW()
                 "
             );
 
             $query->execute([
+                'hash' => $hash,
                 'id' => $this->id,
                 'to' => $to,
                 'lang' => $lang,
-                'hash' => $hash,
             ]);
         }
+    }
+    // }}}
+    // {{{ track()
+    /**
+     * @brief track
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function track($hash)
+    {
+        $query = $this->pdo->prepare(
+            "UPDATE
+                {$this->tableSent}
+            SET
+                readAt=NOW()
+            WHERE
+                id=:hash
+            "
+        );
+
+        $query->execute([
+            'hash' => $hash,
+        ]);
     }
     // }}}
 }

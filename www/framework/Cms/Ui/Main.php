@@ -380,6 +380,36 @@ class Main extends Base {
     }
     // }}}
 
+    // {{{ track()
+    /**
+     * @brief track
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function track($projectName, $type, $name, $hash)
+    {
+        if ($type == "newsletter") {
+            try {
+                $project = $this->getProject($projectName);
+                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+
+                $newsletter->track($hash);
+            } catch (\Exception $e) {
+            }
+        }
+
+        $im = imagecreate(100, 10);
+        $color = imagecolorallocate($im, 255, 255, 255);
+        imagefill($im, 0, 0, $color);
+
+        header('Content-Type: image/png');
+
+        imagepng($im);
+        imagedestroy($im);
+    }
+    // }}}
+
     // {{{ setup()
     /**
      * @brief adds base schemata
