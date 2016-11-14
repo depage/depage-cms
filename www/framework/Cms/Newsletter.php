@@ -57,6 +57,8 @@ class Newsletter
             $newsletters[] = $newsletter;
         }
 
+        // @todo sort the right way
+
         return $newsletters;
     }
     // }}}
@@ -327,7 +329,7 @@ class Newsletter
      **/
     public function transform($previewType, $lang)
     {
-        // @todo adjust xmlGetter depending on previewType
+        $this->project->setPreviewType($previewType);
         $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project->name, "newsletter");
 
         // @todo set baseUrl from publishing target
@@ -337,6 +339,18 @@ class Newsletter
         $html = $transformer->transformDoc("", $this->document->getDocId(), $lang);
 
         return $html;
+    }
+    // }}}
+    // {{{ release()
+    /**
+     * @brief release
+     *
+     * @param mixed $userId
+     * @return void
+     **/
+    public function release($userId)
+    {
+        $this->project->releaseDocument($this->name, $userId);
     }
     // }}}
     // {{{ sendToSubscribers()
@@ -363,14 +377,14 @@ class Newsletter
         }
     }
     // }}}
-    // {{{ sendLater()
+    // {{{ sendTo()
     /**
-     * @brief sendLater
+     * @brief sendTo
      *
      * @param mixed $previewType, $
      * @return void
      **/
-    public function sendLater($from, $to, $lang)
+    public function sendTo($from, $to, $lang)
     {
         $html = $this->transform("live", $lang);
 

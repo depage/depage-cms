@@ -1357,8 +1357,8 @@ div.preview.zoom100 iframe {
     display: block;
     content: " ";
     float: left;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     margin-top: 7px;
     @include icon-base("closed", 0.28);
 }
@@ -1492,7 +1492,7 @@ div.preview.zoom100 iframe {
 /* }}} */
 /* {{{ recent-changed */
 table.recent-changes {
-    //width: 100%;
+    width: 100%;
     table-layout: fixed;
 
     td {
@@ -1524,6 +1524,7 @@ table.recent-changes {
         white-space: nowrap;
     }
     td.delete {
+        width: 15%;
         text-align: right;
         padding-left: 10px;
     }

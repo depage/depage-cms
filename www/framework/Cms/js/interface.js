@@ -291,7 +291,7 @@ var depageCMS = (function() {
                     .appendTo($row);
                 var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
 
-                var $deleteButton = $("<a>Delete</a>")
+                var $deleteButton = $("<a>" + locale.delete + "</a>")
                     .appendTo($column)
                     .depageShyDialogue({
                         ok: {

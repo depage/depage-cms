@@ -721,7 +721,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $
      * @return void
      **/
-    public function releaseDocument($docId, $userId = null)
+    public function releaseDocument($docId, $userId)
     {
         // @todo set userId correctly
         $doc = $this->xmldb->getDoc($docId);

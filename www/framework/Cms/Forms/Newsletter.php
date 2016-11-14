@@ -80,12 +80,14 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
             ]);
         }
 
+        $count = 0;
         $fs = $this->addFieldset("unsentItems", [
             'label' => _("Unsent news items"),
             'class' => "scroll",
         ]);
         foreach ($this->candidates as $c) {
             if (!$c->alreadyUsed) {
+                $count++;
                 $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
                 $fs->addBoolean("{$c->name}", [
                     'label' => $c->url,
@@ -93,19 +95,27 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
                 ]);
             }
         }
+        if ($count == 0) {
+            $fs->addHtml("<p>" . _("No news items available.") . "</p>");
+        }
 
+        $count = 0;
         $fs = $this->addFieldset("sentItems", [
             'label' => _("News items included in other newsletters"),
             'class' => "scroll detail",
         ]);
         foreach ($this->candidates as $c) {
             if ($c->alreadyUsed) {
+                $count++;
                 $nodes = $this->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
                 $fs->addBoolean("{$c->name}", [
                     'label' => $c->url,
                     'defaultValue' => $nodes->length == 1
                 ]);
             }
+        }
+        if ($count == 0) {
+            $fs->addHtml("<p>" . _("No news items available.") . "</p>");
         }
     }
     // }}}

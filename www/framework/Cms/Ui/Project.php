@@ -410,7 +410,7 @@ class Project extends Base
      **/
     public function newsletters()
     {
-        $newsletters = array_reverse(\Depage\Cms\Newsletter::loadAll($this->pdo, $this->project));
+        $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this->project);
 
         $h = new Html("newsletterList.tpl", [
             'newsletters' => $newsletters,
