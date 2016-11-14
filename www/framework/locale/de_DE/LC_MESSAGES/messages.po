@@ -3198,7 +3198,7 @@ msgstr "Veröffentlichen von Projekt '%s'"
 
 #: Cms/Ui/Newsletter.php:105
 msgid "Edit Newsletter"
-msgstr "Newsletter Bearbeiten"
+msgstr "Newsletter bearbeiten"
 
 #: Cms/Ui/Newsletter.php:106
 msgid "Please choose the news items you want to include in the newsletter:"

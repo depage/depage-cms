@@ -18,7 +18,6 @@ class Newsletter
      * @brief document
      **/
     public $document = null;
-    // dp_proj_{$projectName}_newsletter_subscribers
 
     // {{{ __construct()
     /**
@@ -35,6 +34,15 @@ class Newsletter
 
         $this->tableSubscribers = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_subscribers";
         $this->tableSent = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_sent";
+
+        $configFile = "projects/" . $this->project->name . "/xslt/newsletter/config.php";
+        if (file_exists($configFile)) {
+            $this->conf = (object) include($configFile);
+        } else {
+            $this->conf = (object) [
+                "from" => "",
+            ];
+        }
     }
     // }}}
     // {{{ loadAll()
@@ -129,6 +137,7 @@ class Newsletter
     {
         $this->document = $doc;
         $this->name = $doc->getDocInfo()->name;
+        $this->id = $doc->getDocInfo()->id;
     }
     // }}}
 
@@ -331,6 +340,18 @@ class Newsletter
         return $subscribers;
     }
     // }}}
+    // {{{ getTrackingHash()
+    /**
+     * @brief getTrackingHash
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getTrackingHash($to, $lang = "")
+    {
+        return sha1($this->name . "::" . $to . "::" . $lang);
+    }
+    // }}}
 
     // {{{ transform()
     /**
@@ -385,12 +406,14 @@ class Newsletter
         foreach ($subscribers as $lang => $to) {
             $html = $this->transform("live", $lang);
 
-            $mail = new \Depage\Mail\Mail("info@depage.net");
+            $mail = new \Depage\Mail\Mail($this->conf->from);
             $mail->setSubject($this->getSubject($lang))
                 ->setHtmlText($html);
 
-            $mail->sendLater($task, $to, true);
+            $this->sendLater($task, $mail, $to, $lang);
         }
+
+        $task->begin();
     }
     // }}}
     // {{{ sendTo()
@@ -406,11 +429,68 @@ class Newsletter
 
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
 
-        $mail = new \Depage\Mail\Mail("info@depage.net");
+        $mail = new \Depage\Mail\Mail($this->conf->from);
         $mail->setSubject($this->getSubject($lang))
             ->setHtmlText($html);
 
-        $mail->sendLater($task, $to, true);
+        $recipients = array_unique(explode(",", $to));
+
+        foreach($recipients as $i => $to) {
+            $this->sendLater($task, $mail, $to, $lang);
+        }
+
+        $task->begin();
+    }
+    // }}}
+    // {{{ sendLater()
+    /**
+     * @brief sendLater
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function sendLater($task, $mail, $to, $lang)
+    {
+        $task->addSubtask("sending mail", "%s->send(%s, %s, %s);", [
+            $this,
+            $mail,
+            $to,
+            $lang,
+        ]);
+    }
+    // }}}
+    // {{{ send()
+    /**
+     * @brief send
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function send($mail, $to, $lang)
+    {
+        $hash = $this->getTrackingHash($to, $lang);
+        $trackingUrl = DEPAGE_BASE . "track/newsletter/" . $this->name . "/" . $hash . ".png";
+
+        if ($mail->send($to, $trackingUrl)) {
+            $query = $this->pdo->prepare(
+                "INSERT
+                INTO
+                    {$this->tableSent}
+                SET
+                    newsletter_id=:id,
+                    email=:to,
+                    lang=:lang,
+                    hash=:hash
+                "
+            );
+
+            $query->execute([
+                'id' => $this->id,
+                'to' => $to,
+                'lang' => $lang,
+                'hash' => $hash,
+            ]);
+        }
     }
     // }}}
 }

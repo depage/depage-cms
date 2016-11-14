@@ -1208,7 +1208,7 @@ div.preview.zoom100 iframe {
         }
 
         &.scroll {
-            overflow-y: scroll;
+            overflow-y: auto;
             max-height: 30vh;
 
             legend {
