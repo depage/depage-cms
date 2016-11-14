@@ -101,10 +101,13 @@ class Newsletter extends Base
                     ],
                     'activeTab' => "edit",
                 ]),
+                new Html("info.tpl", [
+                    'title' => _("Edit Newsletter"),
+                    'content' => _("Please choose the news items you want to include in the newsletter:"),
+                ]),
                 $form,
             ],
-            'newsletter' => $this->newsletter,
-            'newsletter' => $this->newsletter,
+            'previewUrl' => $this->newsletter->getPreviewUrl("pre"),
         ], $this->htmlOptions);
 
         return $h;
@@ -125,6 +128,7 @@ class Newsletter extends Base
             if ($values['to'] == "__custom") {
                 // @todo set lang correctly
                 $this->newsletter->sendTo("info@depage.net", $values['emails'], "de");
+                $this->newsletter->sendTo("info@depage.net", $values['emails'], "en");
             } else {
                 $this->newsletter->sendToSubscribers("info@depage.net", $values['to']);
             }
@@ -148,9 +152,13 @@ class Newsletter extends Base
                     ],
                     'activeTab' => "publish",
                 ]),
+                new Html("info.tpl", [
+                    'title' => _("Publish Newsletter"),
+                    'content' => _("You can send the newsletter to a group of your subscribers (e.g. 'Default') or to a comma separated list of custom emails for testing.\nPlease note that only published news items will be included in the newsletter. So make sure, that you publish your site first before sending the newsletter!"),
+                ]),
                 $form,
             ],
-            'newsletter' => $this->newsletter,
+            'previewUrl' => $this->newsletter->getPreviewUrl("live"),
         ], $this->htmlOptions);
 
         return $h;

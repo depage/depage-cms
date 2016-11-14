@@ -1015,7 +1015,7 @@ div.preview.zoom100 iframe {
             @include radius(5px);
         }
 
-        & ~ * {
+        & + * {
             margin-top: $height + $infoHeight;
         }
     }
@@ -1085,6 +1085,7 @@ div.preview.zoom100 iframe {
         margin-top: - $infoHeight;
         padding-top: 3 * $infoHeight;
     }
+    > .info,
     > form.depage-form {
         padding-left: 16px;
     }

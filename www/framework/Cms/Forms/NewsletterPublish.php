@@ -61,7 +61,7 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
         $h .= "<h1>" . _("Preview") . "</h1>";
         $h .= "<ul>";
         foreach (["de", "en"] as $lang) {
-            $href = $this->newsletter->getPreviewUrl($lang);
+            $href = $this->newsletter->getPreviewUrl("live", $lang);
             $h .= "<li><a href=\"$href\" class=\"preview\">$lang</a>";
         }
         $h .= "</ul>";

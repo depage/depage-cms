@@ -1,9 +1,11 @@
-<?php if (!empty($this->title) && !empty($this->content)) { ?>
+<?php if (!empty($this->title) || !empty($this->content)) { ?>
     <div class="info">
-        <?php if ($this->title != null) { ?>
+        <?php if (!empty($this->title)) { ?>
             <h1><?php self::t($this->title); ?></h1>
         <?php } ?>
-        <p><?php self::t($this->content, true); ?></p>
+        <?php if (!empty($this->content)) { ?>
+            <p><?php self::t($this->content, true); ?></p>
+        <?php } ?>
     </div>
 <?php } ?>
 

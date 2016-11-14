@@ -12,7 +12,7 @@ CREATE TABLE `_proj_PROJECTNAME_newsletter_subscribers` (
   `lastname` varchar(255)  NOT NULL DEFAULT '',
   `lang` char(5) NOT NULL DEFAULT '',
   `description` varchar(255)  NOT NULL DEFAULT '',
-  `category` varchar(35)  NOT NULL DEFAULT 'default',
+  `category` varchar(35)  NOT NULL DEFAULT 'Default',
   `subscribedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `SECONDARY` (`email`, `category`)

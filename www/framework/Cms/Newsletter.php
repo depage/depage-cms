@@ -219,9 +219,9 @@ class Newsletter
      *
      * @return void
      **/
-    public function getPreviewUrl($lang = "de")
+    public function getPreviewUrl($previewType, $lang = "de")
     {
-        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/pre/$lang/{$this->name}.html";
+        return DEPAGE_BASE . "project/{$this->project->name}/preview/newsletter/$previewType/$lang/{$this->name}.html";
     }
     // }}}
     // {{{ getXml()
@@ -344,8 +344,12 @@ class Newsletter
         $this->project->setPreviewType($previewType);
         $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project->name, "newsletter");
 
-        // @todo set baseUrl from publishing target
-        $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/live/";
+        if ($previewType == "live") {
+            $targets = $this->project->getPublishingTargets();
+            $transformer->baseUrl = current($targets)->baseurl;
+        } else {
+            $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/live/";
+        }
         $transformer->useAbsolutePaths = true;
 
         $html = $transformer->transformDoc("", $this->document->getDocId(), $lang);
