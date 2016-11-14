@@ -285,12 +285,13 @@ var depageCMS = (function() {
         setupNewsletterList: function() {
             var $newsletters = $(".newsletter.recent-changes tr:has(td.url)").each(function() {
                 var $row = $(this);
+                var $nextRow = $row.next("tr");
                 var projectName = $row.data("project");
                 var newsletterName = $row.data("newsletter");
                 var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
 
                 var $deleteButton = $("<a class=\"button\">" + locale.delete + "</a>")
-                    .appendTo($row.next("tr").find(".buttons"))
+                    .appendTo($nextRow.find(".buttons"))
                     .depageShyDialogue({
                         ok: {
                             title: locale.delete,
@@ -300,6 +301,7 @@ var depageCMS = (function() {
 
                                 // @todo remove only if operation was successful
                                 $row.remove();
+                                $nextRow.remove();
 
                                 return true;
                             }

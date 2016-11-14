@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-13 16:53+0100\n"
+"POT-Creation-Date: 2016-11-14 13:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1569,12 +1569,16 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: Cms/Forms/Newsletter.php:84
+#: Cms/Forms/Newsletter.php:85
 msgid "Unsent news items"
 msgstr ""
 
-#: Cms/Forms/Newsletter.php:95
-msgid "Already sent news items"
+#: Cms/Forms/Newsletter.php:99 Cms/Forms/Newsletter.php:118
+msgid "No news items available."
+msgstr ""
+
+#: Cms/Forms/Newsletter.php:104
+msgid "News items included in other newsletters"
 msgstr ""
 
 #: Cms/Forms/Publish.php:20
@@ -1593,8 +1597,8 @@ msgstr ""
 msgid "Please select the pages you want to publish:"
 msgstr ""
 
-#: Cms/Forms/Publish.php:67 Cms/Forms/NewsletterPublish.php:57
-#: Cms/tpl/newsletterEdit.tpl:18 Cms/tpl/projectlist.tpl:25
+#: Cms/Forms/Publish.php:67 Cms/Forms/NewsletterPublish.php:61
+#: Cms/tpl/newsletterEdit.tpl:21 Cms/tpl/projectlist.tpl:25
 #: Cms/tpl/flashedit.tpl:50
 msgid "Preview"
 msgstr ""
@@ -1603,19 +1607,15 @@ msgstr ""
 msgid "Send Now"
 msgstr ""
 
-#: Cms/Forms/NewsletterPublish.php:46
-msgid "Empfänger"
-msgstr ""
-
-#: Cms/Forms/NewsletterPublish.php:48
-msgid "Subscribers"
-msgstr ""
-
-#: Cms/Forms/NewsletterPublish.php:49
+#: Cms/Forms/NewsletterPublish.php:50
 msgid "Custom Recipients"
 msgstr ""
 
 #: Cms/Forms/NewsletterPublish.php:53
+msgid "Recipients"
+msgstr ""
+
+#: Cms/Forms/NewsletterPublish.php:57
 msgid "Emails"
 msgstr ""
 
@@ -1801,45 +1801,49 @@ msgstr ""
 msgid "All Users"
 msgstr ""
 
-#: Cms/tpl/newsletterEdit.tpl:3
+#: Cms/tpl/newsletterEdit.tpl:6
 msgid "Edit your newsletter and choose which items to include"
 msgstr ""
 
-#: Cms/tpl/newsletterEdit.tpl:6
-msgid "Newsletter Edit"
+#: Cms/tpl/newsletterEdit.tpl:9
+msgid "Newsletter"
 msgstr ""
 
-#: Cms/tpl/newsletterEdit.tpl:14
+#: Cms/tpl/newsletterEdit.tpl:17
 msgid "The preview of the current newsletter."
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:22 Cms/tpl/projectlist.tpl:52
+#: Cms/tpl/projectlist.tpl:22 Cms/tpl/projectlist.tpl:54
+#: Cms/tpl/newsletterList.tpl:48 Cms/Ui/Newsletter.php:99
+#: Cms/Ui/Newsletter.php:146
 msgid "Edit"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:29 Cms/tpl/projectlist.tpl:56 Cms/tpl/publish.tpl:5
-#: Cms/tpl/toolbar_main.tpl:41 Cms/Rpc/CmsFuncs.php:959 Cms/Ui/Project.php:62
+#: Cms/tpl/projectlist.tpl:29 Cms/tpl/projectlist.tpl:58 Cms/tpl/publish.tpl:5
+#: Cms/tpl/toolbar_main.tpl:41 Cms/tpl/newsletterList.tpl:49
+#: Cms/Rpc/CmsFuncs.php:959 Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:100
+#: Cms/Ui/Newsletter.php:147
 msgid "Publish"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:32 Cms/tpl/toolbar_main.tpl:44
+#: Cms/tpl/projectlist.tpl:33 Cms/tpl/toolbar_main.tpl:44
 #: Cms/tpl/toolbar_main.tpl:57
 msgid "Settings"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:37 Cms/tpl/projectlist.tpl:61
+#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectlist.tpl:65
 msgid "loading..."
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:45
+#: Cms/tpl/projectlist.tpl:46
 msgid "newsletter"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:49 Cms/Rpc/CmsFuncs.php:763
+#: Cms/tpl/projectlist.tpl:51 Cms/Rpc/CmsFuncs.php:763
 msgid "Add"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:71
+#: Cms/tpl/projectlist.tpl:75
 msgid "add new project"
 msgstr ""
 
@@ -1879,11 +1883,15 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: Cms/tpl/newsletterList.tpl:15
+#: Cms/tpl/newsletterList.tpl:8
+msgid "Add new newsletter"
+msgstr ""
+
+#: Cms/tpl/newsletterList.tpl:20
 msgid "Unreleased Newsletters"
 msgstr ""
 
-#: Cms/tpl/newsletterList.tpl:25
+#: Cms/tpl/newsletterList.tpl:30
 msgid "Released Newsletters"
 msgstr ""
 
@@ -3162,23 +3170,23 @@ msgstr ""
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:197
+#: Cms/Ui/Main.php:198
 msgid "Remove"
 msgstr ""
 
-#: Cms/Ui/Main.php:249
+#: Cms/Ui/Main.php:250
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:251
+#: Cms/Ui/Main.php:252
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:368
+#: Cms/Ui/Main.php:369
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:370
+#: Cms/Ui/Main.php:371
 msgid "Shows the users that are currently logged in"
 msgstr ""
 

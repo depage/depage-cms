@@ -191,6 +191,15 @@ $textBrightColor: #ffffff;
             }
         }
     }
+    .dialog-full .tabs {
+        background: $backgroundColor;
+
+        .tab {
+            &.active {
+                background: #ffffff;
+            }
+        }
+    }
     .depage-form {
         input,
         textarea,
@@ -1002,6 +1011,9 @@ div.preview.zoom100 iframe {
         .tab:first-child a {
             font-weight: normal;
         }
+        .tab {
+            @include radius(5px);
+        }
 
         & ~ * {
             margin-top: $height + $infoHeight;
@@ -1066,12 +1078,15 @@ div.preview.zoom100 iframe {
 // {{{ dialog.full
 .dialog-full {
     background: $backgroundColor;
-    padding: 12px;
+    padding: 11px;
     min-height: 100%;
 
     header.info + & {
         margin-top: - $infoHeight;
-        padding-top: 2 * $infoHeight;
+        padding-top: 3 * $infoHeight;
+    }
+    > form.depage-form {
+        padding-left: 16px;
     }
 }
 // }}}
