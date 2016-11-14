@@ -1492,7 +1492,7 @@ div.preview.zoom100 iframe {
 /* }}} */
 /* {{{ recent-changed */
 table.recent-changes {
-    width: 100%;
+    //width: 100%;
     table-layout: fixed;
 
     td {
@@ -1522,6 +1522,10 @@ table.recent-changes {
         text-align: right;
         font-size: 0.8em;
         white-space: nowrap;
+    }
+    td.delete {
+        text-align: right;
+        padding-left: 10px;
     }
     td.lastchange,
     td.date,

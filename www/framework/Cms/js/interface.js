@@ -74,9 +74,16 @@ var depageCMS = (function() {
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
             localJS.setupProjectList();
+            localJS.setupNewsletterList();
             localJS.setupSortables();
             localJS.setupForms();
             localJS.setupHelp();
+        },
+        // }}}
+        // {{{ setupAjaxContent
+        setupAjaxContent: function() {
+            localJS.setupPreviewLinks();
+            localJS.setupNewsletterList();
         },
         // }}}
         // {{{ setupVarious
@@ -246,7 +253,7 @@ var depageCMS = (function() {
                         .done(function(data) {
                             $detail.empty().html(data);
 
-                            localJS.setupPreviewLinks();
+                            localJS.setupAjaxContent();
                         });
                 }
             });
@@ -271,6 +278,41 @@ var depageCMS = (function() {
             $projects.on("depage.filter-hidden", function(e, $item) {
                 // close details for hidden items
                 $projects.data("depage.details").hideDetail($item);
+            });
+        },
+        // }}}
+        // {{{ setupNewsletterList
+        setupNewsletterList: function() {
+            var $newsletters = $(".newsletter.recent-changes tr:has(td.url)").each(function() {
+                var $row = $(this);
+                var projectName = $row.data("project");
+                var newsletterName = $row.data("newsletter");
+                var $column = $("<td class=\"delete\"></td>")
+                    .appendTo($row);
+                var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
+
+                var $deleteButton = $("<a>Delete</a>")
+                    .appendTo($column)
+                    .depageShyDialogue({
+                        ok: {
+                            title: locale.delete,
+                            classes: 'default',
+                            click: function(e) {
+                                xmldb.deleteDocument();
+
+                                // @todo remove only if operation was successful
+                                $row.remove();
+
+                                return true;
+                            }
+                        },
+                        cancel: {
+                            title: locale.cancel
+                        }
+                    },{
+                        title: locale.delete,
+                        message : locale.deleteQuestion
+                    });
             });
         },
         // }}}

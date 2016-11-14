@@ -53,6 +53,13 @@ var DepageXmldb = (function() {
         duplicateNode: function() {
         },
         // }}}
+        // {{{ deleteDocument()
+        deleteDocument: function() {
+            this.ajaxCall("deleteDocument", {
+                "docName": this.docName
+            });
+        },
+        // }}}
 
         // {{{ ajaxCall()
         ajaxCall: function(operation, data) {

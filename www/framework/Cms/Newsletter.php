@@ -327,6 +327,7 @@ class Newsletter
      **/
     public function transform($previewType, $lang)
     {
+        // @todo adjust xmlGetter depending on previewType
         $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project->name, "newsletter");
 
         // @todo set baseUrl from publishing target

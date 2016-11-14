@@ -117,7 +117,6 @@ class Tree extends Base {
     public function createNode()
     {
         $status = false;
-        $this->log->log($_REQUEST);
 
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
@@ -243,6 +242,25 @@ class Tree extends Base {
         }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
+    }
+    // }}}
+
+    // {{{ deleteDocument
+    /**
+     * Remove Node
+     *
+     * @return \json
+     */
+    public function deleteDocument()
+    {
+        $status = false;
+
+        $name = isset($_POST['docName']) ? filter_var($_POST['docName'], FILTER_SANITIZE_STRING) : null;
+        if ($this->docName == $name) {
+            $status = $this->xmldb->removeDoc($this->docName);
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
 

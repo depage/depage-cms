@@ -38,7 +38,7 @@ class Newsletter extends Base
             \Depage\Depage\Runner::redirect($this->getActionUrl("edit"));
         } else if ($this->newsletterName == "current") {
             $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this->project);
-            $this->newsletter = $newsletters[0];
+            $this->newsletter = end($newsletters);
         } else {
             $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $this->newsletterName);
         }

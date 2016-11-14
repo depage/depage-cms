@@ -3,7 +3,7 @@
     $headerShown = 0;
     $class = "";
 ?>
-<table class="recent-changes">
+<table class="recent-changes newsletter">
     <?php foreach($this->newsletters as $newsletter) {
         $newsletterUrl = DEPAGE_BASE . "project/" . $newsletter->project->name . "/newsletter/" . $newsletter->name . "/";
 
@@ -27,7 +27,10 @@
             <?php
         }
     ?>
-        <tr>
+        <tr <?php self::attr([
+            "data-project" => $newsletter->project->name,
+            "data-newsletter" => $newsletter->name,
+        ]); ?>>
             <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
             <td class="date <?php self::t($class); ?>"><?php self::t($formatter->format($newsletter->document->getDocInfo()->lastchange, true)); ?></td>
         </tr>
