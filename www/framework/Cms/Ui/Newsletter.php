@@ -116,6 +116,7 @@ class Newsletter extends Base
 
     // {{{ publish()
     function publish() {
+        $this->newsletter->release($this->authUser->id);
         $form = new \Depage\Cms\Forms\NewsletterPublish("newsletterPublish{$this->newsletter->name}", [
             'newsletter' => $this->newsletter,
         ]);
@@ -124,7 +125,6 @@ class Newsletter extends Base
         if ($form->validate()) {
             $values = $form->getValues();
 
-            $this->newsletter->release($this->authUser->id);
             if ($values['to'] == "__custom") {
                 // @todo set lang correctly
                 $this->newsletter->sendTo("info@depage.net", $values['emails'], "de");
