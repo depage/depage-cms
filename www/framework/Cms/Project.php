@@ -898,6 +898,24 @@ class Project extends \Depage\Entity\Entity
                 "publishInfo.txt",
         ], $initId);
 
+        // publish newsletters if available
+        if ($this->hasNewsletter()) {
+            $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this);
+
+            foreach ($newsletters as $newsletter) {
+                // @todo check if newsletter has been published
+                foreach ($languages as $lang => $name) {
+                    $task->addSubtask("publishing newsletter {$newsletter->name}", "
+                        \$publisher->publishString(
+                            %s->transform(\"live\", \"$lang\"),
+                            %s
+                        );", [
+                            $newsletter,
+                            "$lang/newsletter/{$newsletter->name}.html",
+                    ], $initId);
+                }
+            }
+        }
 
         // unpublish removed files
         $task->addSubtask("removing leftover files", "

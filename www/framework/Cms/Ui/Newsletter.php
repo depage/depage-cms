@@ -127,6 +127,8 @@ class Newsletter extends Base
 
             if ($values['to'] == "__custom") {
                 // @todo set lang correctly
+                $publishId = array_keys($this->project->getPublishingTargets())[0];
+                $this->project->addPublishTask($this->newsletter->name, $publishId, $this->authUser->id);
                 $this->newsletter->sendTo("info@depage.net", $values['emails'], "de");
                 $this->newsletter->sendTo("info@depage.net", $values['emails'], "en");
             } else {
@@ -154,7 +156,7 @@ class Newsletter extends Base
                 ]),
                 new Html("info.tpl", [
                     'title' => _("Publish Newsletter"),
-                    'content' => _("You can send the newsletter to a group of your subscribers (e.g. 'Default') or to a comma separated list of custom emails for testing.\nPlease note that only published news items will be included in the newsletter. So make sure, that you publish your site first before sending the newsletter!"),
+                    'content' => _("You can send the newsletter to a group of your subscribers (e.g. 'Default') or to a comma separated list of custom emails for testing."),
                 ]),
                 $form,
             ],

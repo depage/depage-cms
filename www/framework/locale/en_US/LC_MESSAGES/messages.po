@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-14 15:30+0100\n"
+"POT-Creation-Date: 2016-11-15 18:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1815,14 +1815,14 @@ msgstr ""
 
 #: Cms/tpl/projectlist.tpl:22 Cms/tpl/projectlist.tpl:54
 #: Cms/tpl/newsletterList.tpl:42 Cms/Ui/Newsletter.php:99
-#: Cms/Ui/Newsletter.php:150
+#: Cms/Ui/Newsletter.php:152
 msgid "Edit"
 msgstr ""
 
 #: Cms/tpl/projectlist.tpl:29 Cms/tpl/projectlist.tpl:58 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:41 Cms/tpl/newsletterList.tpl:43
 #: Cms/Rpc/CmsFuncs.php:959 Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:100
-#: Cms/Ui/Newsletter.php:151
+#: Cms/Ui/Newsletter.php:153
 msgid "Publish"
 msgstr ""
 
@@ -3164,17 +3164,14 @@ msgstr ""
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:156
+#: Cms/Ui/Newsletter.php:158
 msgid "Publish Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:157
+#: Cms/Ui/Newsletter.php:159
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
-"or to a comma separated list of custom emails for testing.\n"
-"Please note that only published news items will be included in the "
-"newsletter. So make sure, that you publish your site first before sending "
-"the newsletter!"
+"or to a comma separated list of custom emails for testing."
 msgstr ""
 
 #: Cms/Ui/Main.php:55
@@ -3251,10 +3248,10 @@ msgstr ""
 msgid "New Color"
 msgstr ""
 
-#: Mail/Mail.php:332
+#: Mail/Mail.php:348
 msgid "This is a MIME encapsulated multipart message."
 msgstr ""
 
-#: Mail/Mail.php:333
+#: Mail/Mail.php:349
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""

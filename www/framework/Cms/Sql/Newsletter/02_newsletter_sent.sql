@@ -3,8 +3,6 @@
     -----------------------------------
 
     @tablename _proj_PROJECTNAME_newsletter_sent
-    @connection _proj_PROJECTNAME_newsletter_subscribers
-    @connection _proj_PROJECTNAME_xmldocs
     @version 1.5.0-beta.2
 */
 CREATE TABLE `_proj_PROJECTNAME_newsletter_sent` (
@@ -18,6 +16,5 @@ CREATE TABLE `_proj_PROJECTNAME_newsletter_sent` (
   `status` int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   KEY `newsletter_id` (`newsletter_id`),
-  KEY `email` (`email`),
-  CONSTRAINT `_proj_PROJECTNAME_newsletter_newsletter_sent_ibfk_1` FOREIGN KEY (`newsletter_id`) REFERENCES `_proj_PROJECTNAME_xmldocs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

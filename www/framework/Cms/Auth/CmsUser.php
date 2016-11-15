@@ -101,7 +101,7 @@ class CmsUser extends \Depage\Auth\User
      **/
     public function canSendNewsletter()
     {
-        return $this->level <= 2;
+        return $this->level <= 3;
     }
     // }}}
 }

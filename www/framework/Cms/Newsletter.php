@@ -373,7 +373,7 @@ class Newsletter
         }
         $transformer->useAbsolutePaths = true;
 
-        $html = $transformer->transformDoc("", $this->document->getDocId(), $lang);
+        $html = $transformer->transformDoc("", $this->name, $lang);
 
         return $html;
     }
