@@ -269,6 +269,7 @@ abstract class Transformer
             $content = $this->transform($pageXml, array(
                 "currentLang" => $this->lang,
                 "currentPageId" => $pageId,
+                "currentPagedataId" => $pagedataId,
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
                 "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
