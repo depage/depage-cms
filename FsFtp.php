@@ -21,7 +21,7 @@ class FsFtp extends Fs
         //var_dump(class_exists('\Depage\Fs\Streams\FtpCurl'));
         //var_dump(in_array('FtpCurl', get_declared_classes()));
 
-        if (!stream_wrapper_register($scheme, 'FtpCurl')) {
+        if (!stream_wrapper_register($scheme, 'Depage\Fs\Streams\FtpCurl')) {
             throw new FsException("Unable to register $scheme stream wrapper.");
         }
     }

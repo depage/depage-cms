@@ -34,7 +34,7 @@ class FsFtpTest extends TestRemote
             'pass' => $GLOBALS['REMOTE_PASS'],
         );
 
-        $fs = new Depage\Fs\FsFtp($params);
+        $fs = new FsFtp($params);
         $this->assertTrue($fs->test());
     }
     // }}}

@@ -2,6 +2,8 @@
 
 namespace Depage\Fs\Streams;
 
+use Depage\Fs\Exceptions\FsException;
+
 class FtpCurl
 {
     // {{{ variables
@@ -130,7 +132,6 @@ class FtpCurl
      */
     public function url_stat($path, $flags)
     {
-        var_dump($path);
         $this->createHandle($path);
 
         $stat = [
@@ -150,7 +151,7 @@ class FtpCurl
         ];
 
         if (!curl_setopt($this->ch, CURLOPT_URL, $this->url)) {
-            throw new Exception ("Could not set cURL directory: $this->url");
+            throw new FsException ("Could not set cURL directory: $this->url");
         }
 
         curl_setopt($this->ch, CURLOPT_NOBODY, true );
@@ -158,16 +159,10 @@ class FtpCurl
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true );
         //curl_setopt( $curl, CURLOPT_USERAGENT, get_user_agent_string() );
 
-        var_dump(curl_exec($this->ch));
-        var_dump(curl_getinfo($this->ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
-
-
         //$info = curl_getinfo($this->ch);
-        //var_dump($info);
 
         //$stat['mtime'] = $info['filetime'];
         //$stat = array('size' => strlen($this->buffer));
-
 
         return $stat;
     }
@@ -178,7 +173,7 @@ class FtpCurl
         $this->createHandle($path);
 
         if (!curl_setopt($this->ch, CURLOPT_URL, $this->url)) {
-            throw new Exception ("Could not set cURL directory: $this->url");
+            throw new FsException ("Could not set cURL directory: $this->url");
         }
 
         curl_setopt($this->ch, CURLOPT_UPLOAD, false);
@@ -189,7 +184,7 @@ class FtpCurl
 
         $error = curl_error($this->ch);
         if (!empty($error)) {
-            throw new Exception($error);
+            throw new FsException($error);
         }
 
         $this->files = explode("\n", trim($result));
@@ -242,7 +237,7 @@ class FtpCurl
 
             $error = curl_error($this->ch);
             if (!empty($error)) {
-                throw new Exception($error);
+                throw new FsException($error);
             }
 
             $options = array(
@@ -270,13 +265,13 @@ class FtpCurl
 
             // check for successful connection
             if (!$this->ch) {
-                throw new Exception('Could not initialize cURL.');
+                throw new FsException('Could not initialize cURL.');
             }
 
             // set connection options, use foreach so useful errors can be caught instead of a generic "cannot set options" error with curl_setopt_array()
             foreach ($options as $option_name => $option_value) {
                 if (!curl_setopt($this->ch, $option_name, $option_value)) {
-                    throw new Exception(sprintf('Could not set cURL option: %s', $option_name));
+                    throw new FsException(sprintf('Could not set cURL option: %s', $option_name));
                 }
             }
 
