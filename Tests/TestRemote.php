@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
 class TestRemote extends TestBase
 {
     // {{{ sshConnection

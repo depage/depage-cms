@@ -1,6 +1,8 @@
 <?php
 
-namespace Depage\Fs;
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\PublicSshKey;
 
 class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
 {

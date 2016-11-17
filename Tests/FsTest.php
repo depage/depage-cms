@@ -1,9 +1,10 @@
 <?php
 
-use Depage\Fs\FsTestClass;
+namespace Depage\Fs\Tests;
+
 use Depage\Fs\Fs;
 
-class FsTest extends PHPUnit_Framework_TestCase
+class FsTest extends \PHPUnit_Framework_TestCase
 {
     // {{{ createTestObject
     public function createTestObject($override = array())

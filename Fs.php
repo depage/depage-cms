@@ -251,7 +251,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        file_put_contents($remote, $string, 0, $this->streamContext);
+        $this->file_put_contents($remote, $string, 0, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -542,6 +542,15 @@ class Fs
     protected function rename($source, $target)
     {
         return rename($source, $target, $this->streamContext);
+    }
+    // }}}
+    // {{{ file_put_contents
+    /**
+     * Hook, allows overriding of file_put_contents function
+     */
+    public static function file_put_contents($filename, $data, $flags = 0, $context = null)
+    {
+        \file_put_contents($filename, $data, $flags, $context);
     }
     // }}}
 }

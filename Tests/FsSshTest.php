@@ -1,5 +1,9 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\FsSsh;
+
 class FsSshTest extends TestRemote
 {
     // {{{ createTestObject
@@ -17,7 +21,7 @@ class FsSshTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsSsh($newParams);
+        return new FsSsh($newParams);
     }
     // }}}
 
@@ -51,7 +55,7 @@ class FsSshTest extends TestRemote
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
-        $fs = new Depage\Fs\FsSsh($params);
+        $fs = new FsSsh($params);
         $this->assertTrue($fs->test());
     }
     // }}}

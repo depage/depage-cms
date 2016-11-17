@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
 class FsFileTest extends TestBase
 {
     // {{{ createTestObject
@@ -8,7 +10,7 @@ class FsFileTest extends TestBase
         $params = array('scheme' => 'file');
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsFileTestClass($newParams);
+        return new FsFileTestClass($newParams);
     }
     // }}}
 

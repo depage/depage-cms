@@ -39,7 +39,7 @@ class PublicSshKey
 
         if (is_dir($tmpDir) && is_writable($tmpDir)) {
             $path = tempnam($tmpDir, 'depage-fs');
-            $bytesWritten = file_put_contents($path, $data);
+            $bytesWritten = Fs::file_put_contents($path, $data);
 
             if ($bytesWritten === false) {
                 throw new Exceptions\FsException('Cannot create temporary key file "' . $path . '".');

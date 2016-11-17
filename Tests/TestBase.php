@@ -1,6 +1,8 @@
 <?php
 
-class TestBase extends PHPUnit_Framework_TestCase
+namespace Depage\Fs\Tests;
+
+class TestBase extends \PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()

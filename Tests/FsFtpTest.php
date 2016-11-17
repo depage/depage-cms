@@ -1,5 +1,9 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\FsFtp;
+
 class FsFtpTest extends TestRemote
 {
     // {{{ createTestObject
@@ -16,7 +20,7 @@ class FsFtpTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsFtp($newParams);
+        return new FsFtp($newParams);
     }
     // }}}
     // {{{ testDefaultPort

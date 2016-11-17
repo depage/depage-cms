@@ -1,8 +1,6 @@
 <?php
 
-use Depage\Fs\FsSshTestClass;
-
-require_once(__DIR__ . '/FsSshTest.php');
+namespace Depage\Fs\Tests;
 
 class FsSshKeyTest extends FsSshTest
 {
@@ -41,7 +39,7 @@ class FsSshKeyTest extends FsSshTest
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsSsh($newParams);
+        return new \Depage\Fs\FsSsh($newParams);
     }
     // }}}
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Depage\Fs;
+namespace Depage\Fs\Tests;
 
-require_once(__DIR__ . '/PublicSshKeyTest.php');
+use Depage\Fs\PrivateSshKey;
 
 class PrivateSshKeyTest extends PublicSshKeyTest
 {
