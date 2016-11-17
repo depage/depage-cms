@@ -19,7 +19,7 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function generateTestObject($data, $tmpDir = false)
     {
-        return new PublicSshKey($data, $tmpDir);
+        return new PublicSshKeyTestClass($data, $tmpDir);
     }
     // }}}
 

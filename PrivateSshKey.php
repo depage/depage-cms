@@ -2,15 +2,17 @@
 
 namespace Depage\Fs;
 
+use Depage\Fs\Exceptions\FsException;
+
 class PrivateSshKey extends PublicSshKey
 {
     // {{{ parse
     protected function parse($keyString)
     {
-        $details = openssl_pkey_get_private($keyString);
+        $details = $this->openssl_pkey_get_private($keyString);
 
         if ($details === false) {
-            throw new Exceptions\FsException('Invalid SSH private key format (PEM format required).');
+            throw new FsException('Invalid SSH private key format (PEM format required).');
         }
 
         return $details;
@@ -29,7 +31,7 @@ class PrivateSshKey extends PublicSshKey
                 $this->sshEncodeBuffer($details['rsa']['e']) .
                 $this->sshEncodeBuffer($details['rsa']['n']);
         } else {
-            throw new Exceptions\FsException('Currently public key generation is only supported for RSA keys.');
+            throw new FsException('Currently public key generation is only supported for RSA keys.');
         }
         $publicKeyString = 'ssh-rsa ' . base64_encode($buffer) . "\n";
 
@@ -49,6 +51,16 @@ class PrivateSshKey extends PublicSshKey
         }
 
         return pack('Na*', $len, $buffer);
+    }
+    // }}}
+
+    // {{{ openssl_pkey_get_private
+    /**
+     * hook, allows overriding openssl_pkey_get_private
+     */
+    protected function openssl_pkey_get_private($key, $passphrase = '')
+    {
+        return \openssl_pkey_get_private($key, $passphrase);
     }
     // }}}
 }

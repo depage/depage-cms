@@ -2,8 +2,6 @@
 
 namespace Depage\Fs\Tests;
 
-use Depage\Fs\PrivateSshKey;
-
 class PrivateSshKeyTest extends PublicSshKeyTest
 {
     // {{{ setUp
@@ -20,7 +18,7 @@ class PrivateSshKeyTest extends PublicSshKeyTest
      */
     public function generateTestObject($data, $tmpDir = false)
     {
-        return new PrivateSshKey($data, $tmpDir);
+        return new PrivateSshKeyTestClass($data, $tmpDir);
     }
     // }}}
 

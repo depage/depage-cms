@@ -36,7 +36,7 @@ class FsTestClass extends \Depage\Fs\Fs
     {
         return parent::postCommandHook();
     }
-    public static function file_put_contents($filename, $data, $flags = 0, $context = null)
+    public function file_put_contents($filename, $data, $flags = 0, $context = null)
     {
         if ($data === 'writeFail!') {
             return false;

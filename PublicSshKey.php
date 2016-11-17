@@ -39,7 +39,7 @@ class PublicSshKey
 
         if (is_dir($tmpDir) && is_writable($tmpDir)) {
             $path = tempnam($tmpDir, 'depage-fs');
-            $bytesWritten = Fs::file_put_contents($path, $data);
+            $bytesWritten = $this->file_put_contents($path, $data);
 
             if ($bytesWritten === false) {
                 throw new Exceptions\FsException('Cannot create temporary key file "' . $path . '".');
@@ -77,6 +77,16 @@ class PublicSshKey
                 throw new Exceptions\FsException('Cannot delete temporary key file "' . $this->path . '".');
             }
         }
+    }
+    // }}}
+
+    // {{{ file_put_contents
+    /**
+     * Hook, allows overriding of file_put_contents function
+     */
+    public function file_put_contents($filename, $data, $flags = 0, $context = null)
+    {
+        \file_put_contents($filename, $data, $flags, $context);
     }
     // }}}
 }

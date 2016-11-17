@@ -548,7 +548,7 @@ class Fs
     /**
      * Hook, allows overriding of file_put_contents function
      */
-    public static function file_put_contents($filename, $data, $flags = 0, $context = null)
+    public function file_put_contents($filename, $data, $flags = 0, $context = null)
     {
         \file_put_contents($filename, $data, $flags, $context);
     }
