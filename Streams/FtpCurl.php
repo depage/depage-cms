@@ -162,7 +162,7 @@ class FtpCurl
     // {{{ dir_opendir
     public function dir_opendir($path, $options)
     {
-        $this->createHandle($path);
+        $this->createHandle($path . '/');
 
         curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
 
@@ -233,8 +233,13 @@ class FtpCurl
     // {{{ createHandle
     protected function createHandle($path)
     {
-        if (!$this->ch) {
-            $url = self::parseUrl($path);
+        $url = self::parseUrl($path);
+
+        if ($this->ch) {
+            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
+            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
+            curl_setopt($this->ch, CURLOPT_URL, $this->url);
+        } else {
             $options = [];
             //$options = stream_context_get_options($this->context);
 
