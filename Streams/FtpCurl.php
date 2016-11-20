@@ -167,7 +167,6 @@ class FtpCurl
             throw new FsException ("Could not set cURL directory: $this->url");
         }
 
-        curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
 
         $result = $this->execute();
@@ -203,6 +202,18 @@ class FtpCurl
         if ($options & STREAM_MKDIR_RECURSIVE) {
             curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
         }
+
+        return (bool) $this->execute();
+    }
+    // }}}
+    // {{{ unlink
+    public function unlink($path)
+    {
+        $this->createHandle($path);
+
+        $url = $this->parseUrl($path);
+
+        curl_setopt($this->ch, CURLOPT_POSTQUOTE, ['DELE ' . $url['path']]);
 
         return (bool) $this->execute();
     }
@@ -375,5 +386,4 @@ class FtpCurl
         return $string;
     }
     // }}}
-
 }
