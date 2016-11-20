@@ -48,12 +48,6 @@ class FtpCurl
     }
     // }}}
     // {{{ stream_read
-    /**
-     * Read the stream
-     *
-     * @param int $count number of bytes to read
-     * @return content from pos to count
-     */
     public function stream_read($count)
     {
         if (strlen($this->buffer) == 0) {
@@ -67,12 +61,6 @@ class FtpCurl
     }
     // }}}
     // {{{ stream_write
-    /**
-     * write the stream
-     *
-     * @param int $count number of bytes to write
-     * @return content from pos to count
-     */
     public function stream_write($data)
     {
         $stream = fopen('data://text/plain,' . $data, 'r');
@@ -91,9 +79,6 @@ class FtpCurl
     }
     // }}}
     // {{{ stream_eof
-    /**
-     * @return true if eof else false
-     */
     public function stream_eof()
     {
         if ($this->pos >= strlen($this->buffer)) {
@@ -104,9 +89,6 @@ class FtpCurl
     }
     // }}}
     // {{{ stream_tell
-    /**
-     * @return int the position of the current read pointer
-     */
     public function stream_tell()
     {
         return $this->pos;
@@ -120,11 +102,6 @@ class FtpCurl
     }
     // }}}
     // {{{ stream_stat
-    /**
-     * Stat the file, return only the size of the buffer
-     *
-     * @return array stat information
-     */
     public function stream_stat()
     {
         $this->createHandle($this->path);
@@ -264,8 +241,11 @@ class FtpCurl
             $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
             curl_setopt($this->ch, CURLOPT_URL, $this->url);
         } else {
-            $options = [];
-            //$options = stream_context_get_options($this->context);
+            if (is_null($this->context)) {
+                $options = [];
+            } else {
+                $options = stream_context_get_options($this->context);
+            }
 
             if (
                 !empty($options['ftp']['curl_options'])
@@ -273,7 +253,7 @@ class FtpCurl
             ) {
                 $curl_options = $options['ftp']['curl_options'];
             } else {
-                $curl_options = array();
+                $curl_options = [];
             }
 
             $username = $url['user'];
@@ -301,13 +281,6 @@ class FtpCurl
             if (!$passive_mode) {
                 $options[ CURLOPT_FTPPORT ] = '-';
             }
-
-            /*
-            if (defined('USE_PROXY') && USE_PROXY) {
-                $curl_options[CURLOPT_HTTPPROXYTUNNEL] = true;
-                $curl_options[CURLOPT_PROXY] = USE_PROXY;
-            }
-            */
 
             if (!$this->ch) {
                 throw new FsException('Could not initialize cURL.');
