@@ -219,6 +219,20 @@ class FtpCurl
         return (bool) $this->execute();
     }
     // }}}
+    // {{{ rename
+    public function rename($path_from, $path_to)
+    {
+        $parsedFrom = $this->parseUrl($path_from);
+        $parsedTo = $this->parseUrl($path_to);
+
+        $this->createHandle($path_from);
+
+        curl_setopt($this->ch, CURLOPT_URL, $parsedFrom['scheme'] . '://' . $parsedFrom['host'] . '/');
+        curl_setopt($this->ch, CURLOPT_POSTQUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
+
+        return (bool) $this->execute();
+    }
+    // }}}
 
     // {{{ createHandle
     protected function createHandle($path)
