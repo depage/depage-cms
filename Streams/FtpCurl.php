@@ -215,6 +215,18 @@ class FtpCurl
         return (bool) $this->execute();
     }
     // }}}
+    // {{{ rmdir
+    public function rmdir($path)
+    {
+        $this->createHandle($path);
+
+        $url = $this->parseUrl($path);
+
+        curl_setopt($this->ch, CURLOPT_QUOTE, ['RMD ' . $url['path']]);
+
+        return (bool) $this->execute();
+    }
+    // }}}
     // {{{ rename
     public function rename($path_from, $path_to)
     {
