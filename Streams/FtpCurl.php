@@ -124,40 +124,38 @@ class FtpCurl
     }
     // }}}
     // {{{ url_stat
-    /**
-     * Stat the url, return only the size of the buffer
-     *
-     * @return array stat information
-     */
     public function url_stat($path, $flags)
     {
+        $stat = false;
+
         $this->createHandle($path);
 
-        $stat = [
-            'dev' => 0,
-            'ino' => 0,
-            'mode' => 0,
-            'nlink' => 0,
-            'uid' => 0,
-            'gid' => 0,
-            'rdev' => 0,
-            'size' => 0,
-            'atime' => 0,
-            'mtime' => 0,
-            'ctime' => 0,
-            'blksize' => 0,
-            'blocks' => 0,
-        ];
-
-        curl_setopt($this->ch, CURLOPT_NOBODY, true );
-        curl_setopt($this->ch, CURLOPT_HEADER, true );
+        curl_setopt($this->ch, CURLOPT_NOBODY, true);
+        curl_setopt($this->ch, CURLOPT_HEADER, true);
+        curl_setopt($this->ch, CURLOPT_FILETIME, true);
 
         $result = curl_exec($this->ch);
 
-        //$info = curl_getinfo($this->ch);
+        if ($result === false) {
+            $this->createHandle($path . '/');
 
-        //$stat['mtime'] = $info['filetime'];
-        //$stat = array('size' => strlen($this->buffer));
+            curl_setopt($this->ch, CURLOPT_NOBODY, true);
+            curl_setopt($this->ch, CURLOPT_HEADER, true);
+
+            $result = curl_exec($this->ch);
+
+            $stat = $this->createStat();
+            $this->setStat($stat, 'mode', octdec(40644));
+        } else {
+            $info = curl_getinfo($this->ch);
+
+            $stat = $this->createStat();
+            $this->setStat($stat, 'mtime', (int) $info['filetime']);
+            $this->setStat($stat, 'atime', -1);
+            $this->setStat($stat, 'ctime', -1);
+            $this->setStat($stat, 'size', (int) $info['download_content_length']);
+            $this->setStat($stat, 'mode', octdec(100644));
+        }
 
         return $stat;
     }
@@ -309,6 +307,65 @@ class FtpCurl
         }
 
         return $parsed;
+    }
+    // }}}
+    // {{{ createStat
+    protected function createStat()
+    {
+        $stat = [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0,
+
+            'dev' => 0,
+            'ino' => 0,
+            'mode' => 0,
+            'nlink' => 0,
+            'uid' => 0,
+            'gid' => 0,
+            'rdev' => 0,
+            'size' => 0,
+            'atime' => 0,
+            'mtime' => 0,
+            'ctime' => 0,
+            'blksize' => 0,
+            'blocks' => 0,
+        ];
+
+        return $stat;
+    }
+    // }}}
+    // {{{ setStat
+    protected function setStat(&$stat, $name, $value)
+    {
+        $translation = [
+            'dev' => 0,
+            'ino' => 1,
+            'mode' => 2,
+            'nlink' => 3,
+            'uid' => 4,
+            'gid' => 5,
+            'rdev' => 6,
+            'size' => 7,
+            'atime' => 8,
+            'mtime' => 9,
+            'ctime' => 10,
+            'blksize' => 11,
+            'blocks' => 12,
+        ];
+
+        $stat[$name] = $value;
+        $stat[$translation[$name]] = $value;
     }
     // }}}
 }
