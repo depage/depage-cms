@@ -304,15 +304,7 @@ class FtpCurl
     // {{{ execute
     protected function execute()
     {
-        $result = curl_exec($this->ch);
-
-        if ($result === false) {
-            $error = curl_error($this->ch);
-
-            throw new FsException($error);
-        }
-
-        return $result;
+        return curl_exec($this->ch);
     }
     // }}}
 
