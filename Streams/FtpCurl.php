@@ -202,7 +202,6 @@ class FtpCurl
 
         curl_setopt($this->ch, CURLOPT_URL, $this->addTrailingSlash($this->url));
         curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
-        curl_setopt($this->ch, CURLOPT_QUOTE, ['MKD ' . $url['path']]);
 
         $this->execute();
 
@@ -245,8 +244,8 @@ class FtpCurl
 
             $options = array(
                 CURLOPT_USERPWD        => $username . ':' . $password,
-                CURLOPT_SSL_VERIFYPEER => false, // don't verify SSL
-                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => false, // @todo
+                CURLOPT_SSL_VERIFYHOST => false, // @todo
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
                 CURLOPT_RETURNTRANSFER => true,
@@ -267,7 +266,6 @@ class FtpCurl
             }
             */
 
-            // check for successful connection
             if (!$this->ch) {
                 throw new FsException('Could not initialize cURL.');
             }
