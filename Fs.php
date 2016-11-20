@@ -262,6 +262,7 @@ class Fs
     {
         $testFile = 'depage-fs-test-file.tmp';
         $testString = 'depage-fs-test-string';
+        $success = false;
 
         try {
             if (!$this->exists($testFile)) {
@@ -273,7 +274,6 @@ class Fs
             }
         } catch (Exceptions\FsException $exception) {
             $error = $exception->getMessage();
-            $success = false;
         }
 
         return $success;
