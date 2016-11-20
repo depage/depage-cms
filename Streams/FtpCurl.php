@@ -164,10 +164,6 @@ class FtpCurl
     {
         $this->createHandle($path);
 
-        if (!curl_setopt($this->ch, CURLOPT_URL, $this->url)) {
-            throw new FsException ("Could not set cURL directory: $this->url");
-        }
-
         curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
 
         $result = $this->execute();
@@ -237,9 +233,8 @@ class FtpCurl
     // {{{ createHandle
     protected function createHandle($path)
     {
-        $url = self::parseUrl($path);
-
         if (!$this->ch) {
+            $url = self::parseUrl($path);
             $options = [];
             //$options = stream_context_get_options($this->context);
 
@@ -269,7 +264,6 @@ class FtpCurl
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
                 CURLOPT_RETURNTRANSFER => true,
-                //CURLOPT_UPLOAD         => true,
                 CURLOPT_PORT           => $port,
                 CURLOPT_TIMEOUT        => 30,
             );
