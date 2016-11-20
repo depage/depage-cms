@@ -33,7 +33,6 @@ class FtpCurl
         curl_setopt($this->ch, CURLOPT_URL, $path);
         curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 
         $this->buffer = curl_exec($this->ch);
 
@@ -150,14 +149,10 @@ class FtpCurl
             'blocks' => 0,
         ];
 
-        if (!curl_setopt($this->ch, CURLOPT_URL, $this->url)) {
-            throw new FsException ("Could not set cURL directory: $this->url");
-        }
-
         curl_setopt($this->ch, CURLOPT_NOBODY, true );
         curl_setopt($this->ch, CURLOPT_HEADER, true );
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true );
-        //curl_setopt( $curl, CURLOPT_USERAGENT, get_user_agent_string() );
+
+        $result = curl_exec($this->ch);
 
         //$info = curl_getinfo($this->ch);
 
@@ -178,7 +173,6 @@ class FtpCurl
 
         curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($this->ch);
 
@@ -204,6 +198,26 @@ class FtpCurl
         }
 
         return $result;
+    }
+    // }}}
+    // {{{ mkdir
+    public function mkdir($path, $mode, $options)
+    {
+        $this->createHandle($path);
+
+        $url = $this->parseUrl($path);
+
+        curl_setopt($this->ch, CURLOPT_URL, $this->url . '/');
+        curl_setopt($this->ch, CURLOPT_QUOTE, ['MKD ' . $url['path']]);
+
+        $result = curl_exec($this->ch);
+
+        $error = curl_error($this->ch);
+        if (!empty($error)) {
+            throw new FsException($error);
+        }
+
+        return true;
     }
     // }}}
 
@@ -246,7 +260,8 @@ class FtpCurl
                 CURLOPT_SSL_VERIFYHOST => false,
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
-                CURLOPT_UPLOAD         => true,
+                CURLOPT_RETURNTRANSFER => true,
+                //CURLOPT_UPLOAD         => true,
                 CURLOPT_PORT           => $port,
                 CURLOPT_TIMEOUT        => 30,
             );
