@@ -32,6 +32,10 @@ class FtpCurl
 
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
 
+        if ($this->mode == 'wb') {
+            curl_setopt($this->ch, CURLOPT_UPLOAD, true);
+        }
+
         $this->buffer = $this->execute();
 
         return true;
@@ -71,11 +75,19 @@ class FtpCurl
      */
     public function stream_write($data)
     {
-        if (strlen($this->buffer) == 0) {
-            return false;
-        }
+        $stream = fopen('data://text/plain,' . $data, 'r');
+        $size = strlen($data);
 
-        return true;
+        curl_setopt($this->ch, CURLOPT_INFILE, $stream);
+        curl_setopt($this->ch, CURLOPT_INFILESIZE, $size);
+
+        $result = $this->execute();
+
+        if ($result === false) {
+            return 0;
+        } else {
+            return $size;
+        }
     }
     // }}}
     // {{{ stream_eof
