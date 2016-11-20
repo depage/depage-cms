@@ -30,8 +30,6 @@ class FtpCurl
         $this->opened_path = $opened_path;
         $this->createHandle($path);
 
-        curl_setopt($this->ch, CURLOPT_URL, $path);
-        curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
 
         $this->buffer = $this->execute();
@@ -200,12 +198,13 @@ class FtpCurl
 
         $url = $this->parseUrl($path);
 
-        curl_setopt($this->ch, CURLOPT_URL, $this->addTrailingSlash($this->url));
-        curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
+        curl_setopt($this->ch, CURLOPT_URL, $this->addTrailingSlash($path));
 
-        $this->execute();
+        if ($options & STREAM_MKDIR_RECURSIVE) {
+            curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
+        }
 
-        return true;
+        return (bool) $this->execute();
     }
     // }}}
 
@@ -236,11 +235,6 @@ class FtpCurl
             $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
 
             $this->ch = curl_init($this->url);
-
-            $error = curl_error($this->ch);
-            if (!empty($error)) {
-                throw new FsException($error);
-            }
 
             $options = array(
                 CURLOPT_USERPWD        => $username . ':' . $password,
