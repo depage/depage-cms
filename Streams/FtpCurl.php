@@ -137,13 +137,14 @@ class FtpCurl
         if ($result === false) {
             $this->createHandle($path . '/');
 
-            curl_setopt($this->ch, CURLOPT_NOBODY, true);
-            curl_setopt($this->ch, CURLOPT_HEADER, true);
+            curl_setopt($this->ch, CURLOPT_URL, $path . '/');
 
             $result = curl_exec($this->ch);
 
-            $stat = $this->createStat();
-            $this->setStat($stat, 'mode', octdec(40644));
+            if ($result !== false) {
+                $stat = $this->createStat();
+                $this->setStat($stat, 'mode', octdec(40644));
+            }
         } else {
             $info = curl_getinfo($this->ch);
 

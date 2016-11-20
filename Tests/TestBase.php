@@ -467,8 +467,17 @@ class TestBase extends \PHPUnit_Framework_TestCase
     }
     // }}}
 
-    // {{{ testExists
-    public function testExists()
+    // {{{ testExistsFile
+    public function testExistsFile()
+    {
+        $this->createRemoteTestFile('testFile');
+
+        $this->assertTrue($this->fs->exists('testFile'));
+        $this->assertFalse($this->fs->exists('i_dont_exist'));
+    }
+    // }}}
+    // {{{ testExistsDir
+    public function testExistsDir()
     {
         $this->mkdirRemote('testDir');
 
