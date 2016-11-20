@@ -3,6 +3,7 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\Fs;
+use Depage\Fs\Exceptions\FsException;
 
 class FsTest extends \PHPUnit_Framework_TestCase
 {
@@ -259,7 +260,7 @@ class FsTest extends \PHPUnit_Framework_TestCase
 
         try {
             $this->fs->cd('invalidPath');
-        } catch (Depage\Fs\Exceptions\FsException $e) {}
+        } catch (FsException $e) {}
 
         $this->assertSame($initialHandler, $this->currentErrorHandler());
     }
