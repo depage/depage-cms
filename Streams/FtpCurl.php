@@ -34,7 +34,7 @@ class FtpCurl
         curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
 
-        $this->buffer = curl_exec($this->ch);
+        $this->buffer = $this->execute();
 
         return true;
     }
@@ -172,12 +172,7 @@ class FtpCurl
         curl_setopt($this->ch, CURLOPT_UPLOAD, false);
         curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
 
-        $result = curl_exec($this->ch);
-
-        $error = curl_error($this->ch);
-        if (!empty($error)) {
-            throw new FsException($error);
-        }
+        $result = $this->execute();
 
         $this->files = explode("\n", trim($result));
         $this->dirPos = 0;
@@ -205,15 +200,11 @@ class FtpCurl
 
         $url = $this->parseUrl($path);
 
-        curl_setopt($this->ch, CURLOPT_URL, $this->url . '/');
+        curl_setopt($this->ch, CURLOPT_URL, $this->addTrailingSlash($this->url));
+        curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
         curl_setopt($this->ch, CURLOPT_QUOTE, ['MKD ' . $url['path']]);
 
-        $result = curl_exec($this->ch);
-
-        $error = curl_error($this->ch);
-        if (!empty($error)) {
-            throw new FsException($error);
-        }
+        $this->execute();
 
         return true;
     }
@@ -292,6 +283,20 @@ class FtpCurl
         }
     }
     // }}}
+    // {{{ execute
+    protected function execute()
+    {
+        $result = curl_exec($this->ch);
+
+        if ($result === false) {
+            $error = curl_error($this->ch);
+
+            throw new FsException($error);
+        }
+
+        return $result;
+    }
+    // }}}
 
     // {{{ parseUrl
     public static function parseUrl($url)
@@ -368,4 +373,15 @@ class FtpCurl
         $stat[$translation[$name]] = $value;
     }
     // }}}
+    // {{{ addTrailingSlash
+    protected function addTrailingSlash($string)
+    {
+        if (substr($string, -1) !== '/') {
+            $string .= '/';
+        }
+
+        return $string;
+    }
+    // }}}
+
 }
