@@ -19,12 +19,18 @@ services:
 before_script:
     # install ftp server and ssh dependencies
     - sudo apt-get update
-    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
+    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev openssh-server openssl
     - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
 
     # edit ftp server settings: root user to user directory, display hidden files
-    - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
+    - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" | sed "s/^.*Include\s\+\/etc\/proftpd\/tls.conf\s*$/Include \/etc\/proftpd\/tls.conf/" > /etc/proftpd/proftpd.conf.tmp'
     - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
+
+    - sudo mkdir /etc/proftpd/ssl
+    - sudo openssl req -new -x509 -days 365 -nodes -out /etc/proftpd/ssl/proftpd.cert.pem -keyout /etc/proftpd/ssl/proftpd.key.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=depage.net"
+    - sudo chmod 600 /etc/proftpd/ssl/proftpd.*
+    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd/tls.conf
+
     - sudo /etc/init.d/proftpd restart
 
     # create test user account with 'testpass' password
