@@ -17,6 +17,21 @@ class FtpCurl
     protected $ch;
     protected $username;
     protected $password;
+    protected $translation = [
+        'dev' => 0,
+        'ino' => 1,
+        'mode' => 2,
+        'nlink' => 3,
+        'uid' => 4,
+        'gid' => 5,
+        'rdev' => 6,
+        'size' => 7,
+        'atime' => 8,
+        'mtime' => 9,
+        'ctime' => 10,
+        'blksize' => 11,
+        'blocks' => 12,
+    ];
 
     public $context;
     // }}}
@@ -323,35 +338,12 @@ class FtpCurl
     // {{{ createStat
     protected function createStat()
     {
-        $stat = [
-            0 => 0,
-            1 => 0,
-            2 => 0,
-            3 => 0,
-            4 => 0,
-            5 => 0,
-            6 => 0,
-            7 => 0,
-            8 => 0,
-            9 => 0,
-            10 => 0,
-            11 => 0,
-            12 => 0,
+        $stat = [];
 
-            'dev' => 0,
-            'ino' => 0,
-            'mode' => 0,
-            'nlink' => 0,
-            'uid' => 0,
-            'gid' => 0,
-            'rdev' => 0,
-            'size' => 0,
-            'atime' => 0,
-            'mtime' => 0,
-            'ctime' => 0,
-            'blksize' => 0,
-            'blocks' => 0,
-        ];
+        foreach($this->translation as $name => $index) {
+            $stat[$index] = 0;
+            $stat[$name] = 0;
+        }
 
         return $stat;
     }
@@ -359,24 +351,8 @@ class FtpCurl
     // {{{ setStat
     protected function setStat(&$stat, $name, $value)
     {
-        $translation = [
-            'dev' => 0,
-            'ino' => 1,
-            'mode' => 2,
-            'nlink' => 3,
-            'uid' => 4,
-            'gid' => 5,
-            'rdev' => 6,
-            'size' => 7,
-            'atime' => 8,
-            'mtime' => 9,
-            'ctime' => 10,
-            'blksize' => 11,
-            'blocks' => 12,
-        ];
-
         $stat[$name] = $value;
-        $stat[$translation[$name]] = $value;
+        $stat[$this->translation[$name]] = $value;
     }
     // }}}
     // {{{ addTrailingSlash
