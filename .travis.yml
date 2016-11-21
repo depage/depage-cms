@@ -38,4 +38,6 @@ before_script:
     # replace host key
     - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
 
+    - composer install
+
 script: phpunit --configuration Tests/PHPUnit.xml Tests/
