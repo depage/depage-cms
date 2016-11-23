@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-15 18:32+0100\n"
+"POT-Creation-Date: 2016-11-23 19:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1608,6 +1608,13 @@ msgstr "Vorschau"
 #: Cms/Forms/NewsletterPublish.php:29
 msgid "Send Now"
 msgstr "Jetzt senden"
+
+#: Cms/Forms/NewsletterPublish.php:48
+#, php-format
+msgid "%s (%d recipient)"
+msgid_plural "%s (%d recipients)"
+msgstr[0] "%s (%d Empfänger)"
+msgstr[1] "%s (%d Empfänger)"
 
 #: Cms/Forms/NewsletterPublish.php:50
 msgid "Custom Recipients"

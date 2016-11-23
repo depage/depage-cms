@@ -45,7 +45,7 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
         $categories = $this->newsletter->getSubscriberCategories();
         $list = [];
         foreach ($categories as $cat) {
-            $list[$cat] = $cat;
+            $list[$cat->name] = sprintf(ngettext("%s (%d recipient)", "%s (%d recipients)", $cat->count), $cat->name, $cat->count);
         }
         $list["__custom"] = _("Custom Recipients");
 

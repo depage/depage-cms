@@ -298,7 +298,7 @@ class Newsletter
     public function getSubscriberCategories()
     {
         $query = $this->pdo->prepare(
-            "SELECT category
+            "SELECT category as name, COUNT(*) as count
             FROM
                 {$this->tableSubscribers} AS subscribers
             GROUP BY
@@ -309,7 +309,7 @@ class Newsletter
         );
 
         $query->execute();
-        $categories = $query->fetchAll(\PDO::FETCH_COLUMN);
+        $categories = $query->fetchAll(\PDO::FETCH_OBJ);
 
         return $categories;
     }
