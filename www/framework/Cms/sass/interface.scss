@@ -871,11 +871,16 @@ html {
 /* }}} */
 /* {{{ flash/edit */
 .edit {
+    header.info {
+        position: absolute;
+    }
     iframe {
         display: block;
         border: none;
         width: 100%;
         height: 100%;
+        max-height: calc(100% - 15px);
+        margin-top: $infoHeight;
     }
 }
 .mock {
