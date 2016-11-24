@@ -49,9 +49,12 @@ class FtpCurl
 
         if ($this->mode == 'wb') {
             curl_setopt($this->ch, CURLOPT_UPLOAD, true);
-        }
 
-        $this->buffer = $this->execute();
+            $this->buffer = fopen('php://temp' , 'w+b');
+            $this->pos = 0;
+        } else {
+            $this->buffer = $this->execute();
+        }
 
         return true;
     }
@@ -78,19 +81,12 @@ class FtpCurl
     // {{{ stream_write
     public function stream_write($data)
     {
-        $stream = fopen('data://text/plain,' . $data, 'r');
         $size = strlen($data);
 
-        curl_setopt($this->ch, CURLOPT_INFILE, $stream);
-        curl_setopt($this->ch, CURLOPT_INFILESIZE, $size);
+        fwrite($this->buffer, $data);
+        $this->pos += $size;
 
-        $result = $this->execute();
-
-        if ($result === false) {
-            return 0;
-        } else {
-            return $size;
-        }
+        return $size;
     }
     // }}}
     // {{{ stream_eof
@@ -112,6 +108,15 @@ class FtpCurl
     // {{{ stream_flush
     public function stream_flush()
     {
+        if ($this->mode == 'wb') {
+            rewind($this->buffer);
+            curl_setopt($this->ch, CURLOPT_INFILE, $this->buffer);
+            curl_setopt($this->ch, CURLOPT_INFILESIZE, $this->pos);
+            curl_setopt($this->ch, CURLOPT_BINARYTRANSFER, true);
+
+            $result = $this->execute();
+        }
+
         $this->buffer = null;
         $this->pos = null;
     }
