@@ -110,6 +110,16 @@ class TestRemote extends TestBase
         return (bool) trim($result);
     }
     // }}}
+    // {{{ sha1File
+    protected function sha1File($path)
+    {
+        $remotePath = '/home/testuser/Temp/' . $path;
+
+        $resultArray = explode(' ', $this->sshExec("sha1sum $remotePath"));
+
+        return $resultArray[0];
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

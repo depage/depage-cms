@@ -10,6 +10,7 @@ class TestBase extends \PHPUnit_Framework_TestCase
         $this->testRootDir = __DIR__;
         $this->localDir = $this->createLocalTestDir();
         $this->remoteDir = $this->createRemoteTestDir();
+
         chdir($this->localDir);
         $this->fs = $this->createTestObject();
     }
@@ -87,6 +88,13 @@ class TestBase extends \PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ assertEqualFiles
+    protected function assertEqualFiles($expectedPath, $actualPath, $message = 'Failed asserting that two files are equal.')
+    {
+        $this->assertEquals(sha1_file($expectedPath), $this->sha1File($actualPath), $message);
+    }
+    // }}}
+
     // {{{ isDir
     protected function isDir($path)
     {
@@ -97,6 +105,12 @@ class TestBase extends \PHPUnit_Framework_TestCase
     protected function isFile($path)
     {
         return is_file($path);
+    }
+    // }}}
+    // {{{ sha1File
+    protected function sha1File($path)
+    {
+        return sha1_file($path);
     }
     // }}}
 
@@ -454,6 +468,16 @@ class TestBase extends \PHPUnit_Framework_TestCase
         $this->fs->put('testFile', 'testFile2');
         $this->assertTrue($this->confirmLocalTestFile('testFile'));
         $this->assertTrue($this->confirmRemoteTestFile('testFile2'));
+    }
+    // }}}
+    // {{{ testPutBinary
+    public function testPutBinary()
+    {
+        $this->assertFalse($this->isFile($this->remoteDir . '/bash'));
+        $this->assertTrue($this->isFile('/bin/bash'));
+        $this->fs->put('/bin/bash', 'bash');
+
+        $this->assertEqualFiles('/bin/bash', 'bash');
     }
     // }}}
     // {{{ testPutOverwrite
