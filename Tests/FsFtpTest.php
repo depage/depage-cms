@@ -39,6 +39,7 @@ class FsFtpTest extends TestRemote
     }
     // }}}
 
+    // {{{ testLateConnectInvalidDirectoryFail
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
      * 
@@ -48,6 +49,16 @@ class FsFtpTest extends TestRemote
     public function testLateConnectInvalidDirectoryFail()
     {
         return parent::testLateConnectInvalidDirectoryFail();
+    }
+    // }}}
+
+    // {{{ testTest
+    public function testTest()
+    {
+        $this->assertTrue($this->fs->test());
+        $this->deleteRemoteTestDir();
+        $this->assertFalse($this->fs->test($error));
+        // @todo fix error messeage in ftp stream wrapper
     }
     // }}}
 }

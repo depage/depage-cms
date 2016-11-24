@@ -108,17 +108,22 @@ class FtpCurl
     // {{{ stream_flush
     public function stream_flush()
     {
+        $result = true;
+
         if ($this->mode == 'wb') {
             rewind($this->buffer);
+
             curl_setopt($this->ch, CURLOPT_INFILE, $this->buffer);
             curl_setopt($this->ch, CURLOPT_INFILESIZE, $this->pos);
             curl_setopt($this->ch, CURLOPT_BINARYTRANSFER, true);
 
-            $result = $this->execute();
+            $result = (bool) $this->execute();
         }
 
         $this->buffer = null;
         $this->pos = null;
+
+        return $result;
     }
     // }}}
     // {{{ stream_stat
