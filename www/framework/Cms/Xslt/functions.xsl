@@ -123,6 +123,19 @@
         <func:result select="$spans/*" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:isListCharacter() -->
+    <!--
+        dp:isListCharacter(text)
+    -->
+    <func:function name="dp:isListCharacter">
+        <xsl:param name="text" />
+
+        <xsl:variable name="character" select="normalize-space(substring($text, 1, 1))" />
+        <xsl:variable name="translated" select="translate($character, '-*•–—', '-----')" />
+
+        <func:result select="$translated = '-'" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:phpEscape() -->
     <!--
         dp:phpEscape(text)

@@ -346,8 +346,8 @@
     <!-- {{{ p mode autolist -->
     <xsl:template match="p" mode="autolist">
         <xsl:choose>
-            <xsl:when test="normalize-space(substring(., 1, 2)) = '-'">
-                <xsl:if test="position() = 1 or normalize-space(substring(preceding-sibling::*[1], 1, 2)) != '-'">
+            <xsl:when test="dp:isListCharacter(substring(., 1, 2))">
+                <xsl:if test="position() = 1 or not(dp:isListCharacter(substring(preceding-sibling::*[1], 1, 2)))">
                     <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
                 </xsl:if>
                 <li><xsl:for-each select="child::node()">
@@ -358,7 +358,7 @@
                             <xsl:apply-templates select="." />
                         </xsl:if>
                     </xsl:for-each>&#160;</li>
-                <xsl:if test="position() = last or normalize-space(substring(following-sibling::*[1], 1, 2)) != '-'">
+                <xsl:if test="position() = last or not(dp:isListCharacter(substring(following-sibling::*[1], 1, 2)))">
                     <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
                 </xsl:if>
             </xsl:when>
