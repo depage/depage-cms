@@ -3,6 +3,7 @@
 namespace Depage\Fs;
 
 use Depage\Fs\Exceptions\FsException;
+use Depage\Fs\Streams\FtpCurl;
 
 class FsFtp extends Fs
 {
@@ -11,24 +12,8 @@ class FsFtp extends Fs
     {
         parent::__construct($params);
 
-        $scheme = $this->url['scheme'];
-        $wrappers = stream_get_wrappers();
-
-        if (array_search($scheme, $wrappers) !== false) {
-            stream_wrapper_unregister($scheme);
-        }
-
-        //var_dump(class_exists('\Depage\Fs\Streams\FtpCurl'));
-        //var_dump(in_array('FtpCurl', get_declared_classes()));
-
-        if (!stream_wrapper_register($scheme, 'Depage\Fs\Streams\FtpCurl')) {
-            throw new FsException("Unable to register $scheme stream wrapper.");
-        }
+        FtpCurl::registerStream($this->url['scheme']);
     }
-    // }}}
-
-    // {{{ variables
-    protected $streamContextOptions = array('ftp' => array('overwrite' => true));
     // }}}
 }
 

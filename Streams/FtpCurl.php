@@ -7,6 +7,8 @@ use Depage\Fs\Exceptions\FsException;
 class FtpCurl
 {
     // {{{ variables
+    public $context;
+
     protected $path;
     protected $mode;
     protected $options;
@@ -33,7 +35,20 @@ class FtpCurl
         'blocks' => 12,
     ];
 
-    public $context;
+    static protected $parameters;
+    // }}}
+
+    // {{{ registersStream
+    public static function registerStream($protocol, array $parameters = [])
+    {
+        $class = get_called_class();
+        static::$parameters = $parameters;
+
+        if (in_array($protocol, stream_get_wrappers())) {
+            stream_wrapper_unregister($protocol);
+        }
+        stream_wrapper_register($protocol, $class);
+    }
     // }}}
 
     // {{{ stream_open
