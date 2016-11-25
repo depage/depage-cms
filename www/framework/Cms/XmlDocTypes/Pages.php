@@ -203,6 +203,9 @@ class Pages extends Base {
                 $folder->parentNode->removeChild($folder);
             }
         } while ($emptyFolders->length > 0);
+
+        $xmlnav = new \Depage\Cms\XmlNav();
+        $xmlnav->addUrlAttributes($xml);
     }
     // }}}
     // {{{ addReleaseStatusAttributes()

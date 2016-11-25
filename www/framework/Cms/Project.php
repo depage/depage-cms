@@ -749,11 +749,6 @@ class Project extends \Depage\Entity\Entity
         $conf = $targets[$publishId];
         $fsLocal = \Depage\Fs\Fs::factory($projectPath);
 
-        // save current general documents in history
-        $this->releaseDocument("pages", $userId);
-        $this->releaseDocument("settings", $userId);
-        $this->releaseDocument("colors", $userId);
-
         // save folders in history
         $xmldb = $this->getXmlDb($userId);
         $docs = $xmldb->getDocuments();
@@ -764,6 +759,10 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
+        // save current general documents in history
+        $this->releaseDocument("pages", $userId);
+        $this->releaseDocument("settings", $userId);
+        $this->releaseDocument("colors", $userId);
 
         // getting als files in library
         $files = $fsLocal->lsFiles("lib/*");
