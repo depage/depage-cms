@@ -42,6 +42,15 @@ class Newsletter extends Base
         } else {
             $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $this->newsletterName);
         }
+
+        $this->tabs = [
+            "edit" => _("Edit"),
+            "publish" => _("Publish"),
+        ];
+
+        if (!$this->authUser->canSendNewsletter()) {
+            unset($this->tabs['publish']);
+        }
     }
     // }}}
 
@@ -95,10 +104,7 @@ class Newsletter extends Base
             'content' => [
                 new Html("tabs.tpl", [
                     'baseUrl' => $this->newsletter->getBaseUrl(),
-                    'tabs' => [
-                        "edit" => _("Edit"),
-                        "publish" => _("Publish"),
-                    ],
+                    'tabs' => $this->tabs,
                     'activeTab' => "edit",
                 ]),
                 new Html("info.tpl", [
@@ -116,6 +122,9 @@ class Newsletter extends Base
 
     // {{{ publish()
     function publish() {
+        if (!$this->authUser->canSendNewsletter()) {
+            return $this->error(_("User is not allowed to send newsletters"));
+        }
         $this->newsletter->release($this->authUser->id);
         $form = new \Depage\Cms\Forms\NewsletterPublish("newsletterPublish{$this->newsletter->name}", [
             'newsletter' => $this->newsletter,
@@ -148,10 +157,7 @@ class Newsletter extends Base
             'content' => [
                 new Html("tabs.tpl", [
                     'baseUrl' => $this->newsletter->getBaseUrl(),
-                    'tabs' => [
-                        "edit" => _("Edit"),
-                        "publish" => _("Publish"),
-                    ],
+                    'tabs' => $this->tabs,
                     'activeTab' => "publish",
                 ]),
                 new Html("info.tpl", [

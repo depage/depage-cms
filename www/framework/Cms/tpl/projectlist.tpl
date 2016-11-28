@@ -37,29 +37,13 @@
                     <dd>
                         <?php self::t(_('loading...')) ?>
                     </dd>
-                    <?php if ($project->hasNewsletter() && $this->user->canSendNewsletter()) { ?>
+                    <?php if ($project->hasNewsletter() && $this->user->canEditNewsletter()) { ?>
                         <dt data-project-newsletter="<?php self::t($project->name); ?>">
                             <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
                                 <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
                             <?php } ?>
 
                             <strong><?php self::t($project->fullname . " – " . _("newsletter")); ?></strong>
-
-                            <!--
-                            <div class="buttons">
-                                <a href="project/<?php self::t($project->name); ?>/newsletter/+/" class="button">
-                                    <?php self::t(_('Add')) ?>
-                                </a>
-                                <a href="project/<?php self::t($project->name); ?>/newsletter/current/edit/" class="button">
-                                    <?php self::t(_('Edit')) ?>
-                                </a>
-                                <?php if ($this->user->canSendNewsletter()) { ?>
-                                    <a href="project/<?php self::t($project->name); ?>/newsletter/current/publish/" class="button">
-                                        <?php self::t(_('Publish')) ?>
-                                    </a>
-                                <?php } ?>
-                            </div>
-                            -->
                         </dt>
                         <dd>
                             <?php self::t(_('loading...')) ?>

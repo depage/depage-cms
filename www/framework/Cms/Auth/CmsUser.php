@@ -92,6 +92,18 @@ class CmsUser extends \Depage\Auth\User
         return $this->level <= 4;
     }
     // }}}
+    // {{{ canEditNewsletter()
+    /**
+     * @brief canEditNewsletter
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function canEditNewsletter()
+    {
+        return $this->level <= 4;
+    }
+    // }}}
     // {{{ canSendNewsletter()
     /**
      * @brief canSendNewsletter

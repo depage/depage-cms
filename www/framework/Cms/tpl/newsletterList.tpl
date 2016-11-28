@@ -40,7 +40,9 @@
             <td class="actions">
                 <div class="buttons">
                     <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button"><?php self::t(_("Edit")); ?></a>
-                    <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button"><?php self::t(_("Publish")); ?></a>
+                    <?php if($this->user->canSendNewsletter()) { ?>
+                        <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button"><?php self::t(_("Publish")); ?></a>
+                    <?php } ?>
                 </div>
             </td>
         </tr>
