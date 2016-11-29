@@ -21,6 +21,7 @@ class CmsFuncs {
     protected $project;
     protected $projectName;
     protected $libPath;
+    protected $excludedDirs = array();
     protected $trashPath;
     protected $callbacks = [];
 
@@ -33,6 +34,13 @@ class CmsFuncs {
         $this->pdo = $pdo;
         $this->user = $user;
         $this->xmldb = $this->project->getXmlDb($this->user->id);
+
+        if (!$this->user->canEditTemplates()) {
+            $this->excludedDirs = [
+                $this->libPath . "/cache",
+                $this->libPath . "/global",
+            ];
+        }
 
         $this->log = new \Depage\Log\Log();
     }
@@ -1154,9 +1162,12 @@ class CmsFuncs {
         $dirXML = "";
 
         foreach ($dirs as $dir) {
-            $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
-            $dirXML .= $this->getTreeDirectoriesForPath($dir);
-            $dirXML .= "</proj:dir>";
+            $dir = rtrim($dir, "/");
+            if (!in_array($dir, $this->excludedDirs)) {
+                $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
+                $dirXML .= $this->getTreeDirectoriesForPath($dir);
+                $dirXML .= "</proj:dir>";
+            }
         }
 
         return $dirXML;
