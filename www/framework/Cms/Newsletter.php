@@ -495,6 +495,46 @@ class Newsletter
         }
     }
     // }}}
+    // {{{ subscribe()
+    /**
+     * @brief subscribe
+     *
+     * @param mixed $email, $firstname, $lastname, $description, $category
+     * @return void
+     **/
+    public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
+    {
+        $query = $this->pdo->prepare(
+            "INSERT
+            INTO
+                {$this->tableSubscribers}
+            SET
+                email=:email,
+                firstname=:firstname,
+                lastname=:lastname,
+                description=:description,
+                category=:category,
+                lang=:lang
+            ON DUPLICATE KEY UPDATE
+                email=VALUES(email),
+                firstname=VALUES(firstname),
+                lastname=VALUES(lastname),
+                description=VALUES(description),
+                category=VALUES(category)
+            "
+        );
+        $success = $query->execute([
+            'email' => $email,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'description' => $description,
+            'lang' => $lang,
+            'category' => $category,
+        ]);
+
+        return $success;
+    }
+    // }}}
     // {{{ track()
     /**
      * @brief track

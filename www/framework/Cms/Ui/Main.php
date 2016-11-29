@@ -409,6 +409,38 @@ class Main extends Base {
         imagedestroy($im);
     }
     // }}}
+    // {{{ api()
+    /**
+     * @brief api
+     *
+     * @todo move this in own class
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function api($projectName, $type, $action)
+    {
+        $retVal = [
+            'success' => false,
+        ];
+        if ($type == "newsletter") {
+            try {
+                $project = $this->getProject($projectName);
+                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+
+                $values = json_decode(file_get_contents("php://input"));
+
+                if ($values && $action == "subscribe") {
+                    $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                }
+            } catch (\Exception $e) {
+                $retVal['error'] = $e->getMessage();
+            }
+        }
+
+        return new \Depage\Json\Json($retVal);
+    }
+    // }}}
 
     // {{{ setup()
     /**

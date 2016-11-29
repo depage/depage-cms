@@ -8,7 +8,7 @@
 CREATE TABLE `_proj_PROJECTNAME_newsletter_subscribers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(255)  NOT NULL DEFAULT '',
-  `firstame` varchar(255)  NOT NULL DEFAULT '',
+  `firstname` varchar(255)  NOT NULL DEFAULT '',
   `lastname` varchar(255)  NOT NULL DEFAULT '',
   `lang` char(5) NOT NULL DEFAULT '',
   `description` varchar(255)  NOT NULL DEFAULT '',

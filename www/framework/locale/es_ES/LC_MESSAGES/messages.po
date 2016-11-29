@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-23 19:02+0100\n"
+"POT-Creation-Date: 2016-11-28 18:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1823,16 +1823,14 @@ msgstr ""
 msgid "The preview of the current newsletter."
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:22 Cms/tpl/projectlist.tpl:54
-#: Cms/tpl/newsletterList.tpl:42 Cms/Ui/Newsletter.php:99
-#: Cms/Ui/Newsletter.php:152
+#: Cms/tpl/projectlist.tpl:22 Cms/tpl/newsletterList.tpl:42
+#: Cms/Ui/Newsletter.php:47
 msgid "Edit"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:29 Cms/tpl/projectlist.tpl:58 Cms/tpl/publish.tpl:5
-#: Cms/tpl/toolbar_main.tpl:41 Cms/tpl/newsletterList.tpl:43
-#: Cms/Rpc/CmsFuncs.php:959 Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:100
-#: Cms/Ui/Newsletter.php:153
+#: Cms/tpl/projectlist.tpl:29 Cms/tpl/publish.tpl:5 Cms/tpl/toolbar_main.tpl:41
+#: Cms/tpl/newsletterList.tpl:44 Cms/Rpc/CmsFuncs.php:959 Cms/Ui/Project.php:62
+#: Cms/Ui/Newsletter.php:48
 msgid "Publish"
 msgstr ""
 
@@ -1841,7 +1839,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectlist.tpl:65
+#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectlist.tpl:49
 msgid "loading..."
 msgstr ""
 
@@ -1849,11 +1847,7 @@ msgstr ""
 msgid "newsletter"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:51 Cms/Rpc/CmsFuncs.php:763
-msgid "Add"
-msgstr ""
-
-#: Cms/tpl/projectlist.tpl:75
+#: Cms/tpl/projectlist.tpl:59
 msgid "add new project"
 msgstr ""
 
@@ -2343,6 +2337,10 @@ msgstr ""
 
 #: Cms/Rpc/CmsFuncs.php:762
 msgid "name of project"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:763
+msgid "Add"
 msgstr ""
 
 #: Cms/Rpc/CmsFuncs.php:764
@@ -3169,19 +3167,23 @@ msgstr ""
 msgid "Publish Project '%s'"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:105
+#: Cms/Ui/Newsletter.php:111
 msgid "Edit Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:106
+#: Cms/Ui/Newsletter.php:112
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:158
+#: Cms/Ui/Newsletter.php:126
+msgid "User is not allowed to send newsletters"
+msgstr ""
+
+#: Cms/Ui/Newsletter.php:164
 msgid "Publish Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:159
+#: Cms/Ui/Newsletter.php:165
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
