@@ -292,7 +292,7 @@ class User extends \Depage\Entity\Entity
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
-                array_push($users, $user);
+                $users[$user->id] = $user;
             }
         } while ($user);
 

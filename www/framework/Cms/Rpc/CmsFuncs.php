@@ -41,7 +41,6 @@ class CmsFuncs {
                 $this->libPath . "/global",
             ];
         }
-
         $this->log = new \Depage\Log\Log();
     }
     // }}}
@@ -660,10 +659,14 @@ class CmsFuncs {
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         $pageId = $xmldoc->getAttribute($nodeId, "db:docref");
 
-        $rootId = $this->project->releaseDocument($pageId, $this->user->id);
-        $rootId = $this->project->releaseDocument("pages", $this->user->id);
+        if ($this->user->canPublishProject()) {
+            $rootId = $this->project->releaseDocument($pageId, $this->user->id);
+            $rootId = $this->project->releaseDocument("pages", $this->user->id);
 
-        $this->addCallback('page_data', [$rootId]);
+            $this->addCallback('page_data', [$rootId]);
+        } else {
+            $this->project->requestDocumentRelease($pageId, $this->user->id);
+        }
     }
     // }}}
 
@@ -878,7 +881,7 @@ class CmsFuncs {
             'prop_tt_img_href' => _("link"),
             'prop_tt_publish_folder_baseurl' => _("base-url"),
             'prop_tt_publish_folder_button_start' => _("publish now"),
-            'prop_tt_pg_date_release' => _("Release page now"),
+            'prop_tt_pg_date_release' => $this->user->canPublishProject() ? _("Release page now") : _("Request page release"),
             'prop_tt_publish_folder_pass' => _("password"),
             'prop_tt_publish_folder_progress' => _("%description%<br>%percent% done<br>remaining: %remaining%"),
             'prop_tt_publish_folder_targetpath' => _("target path"),

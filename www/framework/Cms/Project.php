@@ -732,6 +732,43 @@ class Project extends \Depage\Entity\Entity
         return $doc->getDocInfo()->rootid;
     }
     // }}}
+    // {{{ requestDocumentRelease()
+    /**
+     * @brief requestDocumentRelease
+     *
+     * @param mixed $docId, $userId
+     * @return void
+     **/
+    public function requestDocumentRelease($docId, $userId)
+    {
+        $users = \Depage\Auth\User::loadAll($this->pdo);
+
+        $user = $users[$userId];
+        $users = array_filter($users, function($u) {
+            if ($u->canPublishProject()) {
+                $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
+
+                return in_array($this->name, $userProjects);
+            }
+            return false;
+        });
+
+        $text = _("Requesting Document Release: ") . $docId . " / " . $user->fullname;
+
+        foreach ($users as $id => $user) {
+            $text .= "\n" . $user->fullname . " ($id)";
+        }
+
+        $mail = new \Depage\Mail\Mail("notification@edit.depage.net");
+        $mail
+            ->setSubject(_("Requesting Document Release"))
+            ->setText($text);
+
+        foreach ($users as $u) {
+            $mail->send($u->email);
+        }
+    }
+    // }}}
     // {{{ addPublishTask()
     /**
      * @brief addPublishTask
