@@ -557,6 +557,8 @@ class CmsFuncs {
 
         $pathinfo = pathinfo($nodeId);
 
+        // @todo clear cache path and project cache path
+
         return ['/lib' . $pathinfo['dirname'] . '/'];
     }
     // }}}
