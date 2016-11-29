@@ -432,6 +432,8 @@ class Main extends Base {
 
                 if ($values && $action == "subscribe") {
                     $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                } else if ($values && $action == "unsubscribe") {
+                    $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
                 }
             } catch (\Exception $e) {
                 $retVal['error'] = $e->getMessage();
@@ -500,8 +502,6 @@ class Main extends Base {
     {
         $search = new \Depage\Search\Search($this->pdo);
         $results = $search->query($_GET['q']);
-
-        var_dump($results);
     }
     // }}}
 }

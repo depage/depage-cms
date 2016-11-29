@@ -535,6 +535,35 @@ class Newsletter
         return $success;
     }
     // }}}
+    // {{{ unsubscribe()
+    /**
+     * @brief unsubscribe
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function unsubscribe($email, $lang = "en", $category = "Default")
+    {
+        $query = $this->pdo->prepare(
+            "DELETE
+            FROM
+                {$this->tableSubscribers}
+            WHERE
+                email=:email AND
+                lang=:lang AND
+                category=:category
+            "
+        );
+        $success = $query->execute([
+            'email' => $email,
+            'lang' => $lang,
+            'category' => $category,
+        ]);
+
+        return $success;
+
+    }
+    // }}}
     // {{{ track()
     /**
      * @brief track
