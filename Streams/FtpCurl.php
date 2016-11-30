@@ -50,6 +50,79 @@ class FtpCurl
         stream_wrapper_register($protocol, $class);
     }
     // }}}
+    // {{{ createHandle
+    protected function createHandle($path)
+    {
+        $url = self::parseUrl($path);
+
+        if ($this->ch) {
+            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
+            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
+            curl_setopt($this->ch, CURLOPT_URL, $this->url);
+        } else {
+            if (is_null($this->context)) {
+                $options = [];
+            } else {
+                $options = stream_context_get_options($this->context);
+            }
+
+            if (
+                !empty($options['ftp']['curl_options'])
+                && is_array($options['ftp']['curl_options'])
+            ) {
+                $curl_options = $options['ftp']['curl_options'];
+            } else {
+                $curl_options = [];
+            }
+
+            $username = $url['user'];
+            $password = (isset($url['pass'])) ? $url['pass'] : '';
+            $port = (isset($url['port'])) ? $url['port'] : 21;
+            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
+
+            $passive_mode = true;
+            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
+
+            $this->ch = curl_init($this->url);
+
+            $options = array(
+                CURLOPT_USERPWD        => $username . ':' . $password,
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_CAINFO         => __DIR__ . '/../Tests/docker/ssl/ca.pem',
+                CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
+                CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_PORT           => $port,
+                CURLOPT_TIMEOUT        => 30,
+            );
+
+            // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
+            if (!$passive_mode) {
+                $options[ CURLOPT_FTPPORT ] = '-';
+            }
+
+            if (!$this->ch) {
+                throw new FsException('Could not initialize cURL.');
+            }
+
+            // set connection options, use foreach so useful errors can be caught instead of a generic "cannot set options" error with curl_setopt_array()
+            foreach ($options as $option_name => $option_value) {
+                if (!curl_setopt($this->ch, $option_name, $option_value)) {
+                    throw new FsException(sprintf('Could not set cURL option: %s', $option_name));
+                }
+            }
+
+            $this->pos = 0;
+        }
+    }
+    // }}}
+    // {{{ execute
+    protected function execute()
+    {
+        return curl_exec($this->ch);
+    }
+    // }}}
 
     // {{{ stream_open
     public function stream_open($path, $mode, $options, &$opened_path)
@@ -268,79 +341,6 @@ class FtpCurl
         curl_setopt($this->ch, CURLOPT_POSTQUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
 
         return (bool) $this->execute();
-    }
-    // }}}
-
-    // {{{ createHandle
-    protected function createHandle($path)
-    {
-        $url = self::parseUrl($path);
-
-        if ($this->ch) {
-            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
-            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
-            curl_setopt($this->ch, CURLOPT_URL, $this->url);
-        } else {
-            if (is_null($this->context)) {
-                $options = [];
-            } else {
-                $options = stream_context_get_options($this->context);
-            }
-
-            if (
-                !empty($options['ftp']['curl_options'])
-                && is_array($options['ftp']['curl_options'])
-            ) {
-                $curl_options = $options['ftp']['curl_options'];
-            } else {
-                $curl_options = [];
-            }
-
-            $username = $url['user'];
-            $password = (isset($url['pass'])) ? $url['pass'] : '';
-            $port = (isset($url['port'])) ? $url['port'] : 21;
-            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
-
-            $passive_mode = true;
-            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
-
-            $this->ch = curl_init($this->url);
-
-            $options = array(
-                CURLOPT_USERPWD        => $username . ':' . $password,
-                CURLOPT_SSL_VERIFYPEER => false, // @todo
-                CURLOPT_SSL_VERIFYHOST => false, // @todo
-                CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
-                CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_PORT           => $port,
-                CURLOPT_TIMEOUT        => 30,
-            );
-
-            // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
-            if (!$passive_mode) {
-                $options[ CURLOPT_FTPPORT ] = '-';
-            }
-
-            if (!$this->ch) {
-                throw new FsException('Could not initialize cURL.');
-            }
-
-            // set connection options, use foreach so useful errors can be caught instead of a generic "cannot set options" error with curl_setopt_array()
-            foreach ($options as $option_name => $option_value) {
-                if (!curl_setopt($this->ch, $option_name, $option_value)) {
-                    throw new FsException(sprintf('Could not set cURL option: %s', $option_name));
-                }
-            }
-
-            $this->pos = 0;
-        }
-    }
-    // }}}
-    // {{{ execute
-    protected function execute()
-    {
-        return curl_exec($this->ch);
     }
     // }}}
 

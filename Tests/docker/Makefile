@@ -5,6 +5,7 @@ build:
 
 run: kill
 	docker run -d --name mock-server --net host -v $(CURDIR)/home:/home/testuser depage-fs-test
+	-docker cp mock-server:/etc/proftpd/ssl/ca.pem $(CURDIR)/ssl
 
 kill:
 	-docker kill mock-server
