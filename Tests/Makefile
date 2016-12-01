@@ -10,4 +10,6 @@ server:
 	$(MAKE) run -C docker
 
 clean:
-	${RM} Report Temp
+	${RM} Report Temp docker/ssl/ca.pem
+	docker rm -f mock-server
+	docker rmi -f depage-fs-test:latest
