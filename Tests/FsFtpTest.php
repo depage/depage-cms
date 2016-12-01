@@ -57,29 +57,6 @@ class FsFtpTest extends TestRemote
         $this->assertSame('SSL certificate problem: unable to get local issuer certificate', $error);
     }
     // }}}
-
-    // {{{ testLateConnectInvalidDirectoryFail
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * 
-     * override,
-     * ftp stream wrappers give weird error messages
-     */
-    public function testLateConnectInvalidDirectoryFail()
-    {
-        return parent::testLateConnectInvalidDirectoryFail();
-    }
-    // }}}
-
-    // {{{ testTest
-    public function testTest()
-    {
-        $this->assertTrue($this->fs->test());
-        $this->deleteRemoteTestDir();
-        $this->assertFalse($this->fs->test($error));
-        // @todo fix error messeage in ftp stream wrapper
-    }
-    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

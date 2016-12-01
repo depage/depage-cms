@@ -2,7 +2,6 @@
 
 namespace Depage\Fs\Streams;
 
-use Depage\Fs\Exceptions\FsException;
 use Depage\Fs\Fs;
 
 class FtpCurl
@@ -33,6 +32,12 @@ class FtpCurl
         stream_wrapper_register($protocol, $class);
     }
     // }}}
+    // {{{ getParameter
+    protected function getParameter($parameter)
+    {
+        return isset(static::$parameters[$parameter]) ? static::$parameters[$parameter] : null;
+    }
+    // }}}
     // {{{ createHandle
     protected function createHandle($path)
     {
@@ -45,7 +50,7 @@ class FtpCurl
         } else {
             $this->handle = curl_init($this->url);
             if (!$this->handle) {
-                throw new FsException('Could not initialize cURL.');
+                trigger_error('Could not initialize cURL.', E_USER_ERROR);
             }
 
             $username = $url['user'];
@@ -63,12 +68,12 @@ class FtpCurl
                 CURLOPT_FOLLOWLOCATION => true,
             ];
 
-            if (isset(static::$parameters['caCert'])) {
-                $options[CURLOPT_CAINFO] = static::$parameters['caCert'];
+            if ($this->getParameter('caCert')) {
+                $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
             }
 
             // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
-            if (isset(static::$parameters['passive']) && !static::$parameters['passive']) {
+            if (!$this->getParameter('passive') === false) {
                 $options[CURLOPT_FTPPORT] = '-';
             }
 
@@ -82,7 +87,7 @@ class FtpCurl
     protected function curlSet($option, $value)
     {
         if (!curl_setopt($this->handle, $option, $value)) {
-            throw new FsException(sprintf('Could not set cURL option: %s', $option));
+            trigger_error(sprintf('Could not set cURL option: %s', $option), E_USER_ERROR);
         }
     }
     // }}}
@@ -93,8 +98,7 @@ class FtpCurl
 
         if (
             $result === false
-            && isset(static::$parameters['ssl'])
-            && static::$parameters['ssl'] === false
+            && $this->getParameter('ssl') === false
         ) {
             $this->curlSet(CURLOPT_SSL_VERIFYPEER, false);
             $this->curlSet(CURLOPT_SSL_VERIFYHOST, false);
@@ -103,7 +107,7 @@ class FtpCurl
         }
 
         if ($result === false) {
-            throw new FsException(curl_error($this->handle));
+            trigger_error(curl_error($this->handle), E_USER_ERROR);
         }
 
         return $result;
