@@ -89,7 +89,24 @@ class FtpCurl
     // {{{ execute
     protected function execute()
     {
-        return curl_exec($this->handle);
+        $result = curl_exec($this->handle);
+
+        if (
+            $result === false
+            && isset(static::$parameters['ssl'])
+            && static::$parameters['ssl'] === false
+        ) {
+            $this->curlSet(CURLOPT_SSL_VERIFYPEER, false);
+            $this->curlSet(CURLOPT_SSL_VERIFYHOST, false);
+
+            $result = curl_exec($this->handle);
+        }
+
+        if ($result === false) {
+            throw new FsException(curl_error($this->handle));
+        }
+
+        return $result;
     }
     // }}}
 

@@ -40,6 +40,23 @@ class FsFtpTest extends TestRemote
         $this->assertTrue($fs->test());
     }
     // }}}
+    // {{{ testSslFail
+    public function testSslFail()
+    {
+        $params = array(
+            'path' => '/Temp',
+            'scheme' => 'ftp',
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['REMOTE_PASS'],
+        );
+
+        $fs = new FsFtp($params);
+
+        $this->assertFalse($fs->test($error));
+        $this->assertSame('SSL certificate problem: unable to get local issuer certificate', $error);
+    }
+    // }}}
 
     // {{{ testLateConnectInvalidDirectoryFail
     /**
