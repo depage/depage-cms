@@ -3,6 +3,7 @@
 namespace Depage\Fs\Streams;
 
 use Depage\Fs\Exceptions\FsException;
+use Depage\Fs\Fs;
 
 class FtpCurl
 {
@@ -35,7 +36,7 @@ class FtpCurl
     // {{{ createHandle
     protected function createHandle($path)
     {
-        $url = self::parseUrl($path);
+        $url = Fs::parseUrl($path);
         $initialPath = (isset($url['path'])) ? $url['path'] : '/';
         $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
 
@@ -257,7 +258,7 @@ class FtpCurl
     {
         $this->createHandle($path);
 
-        $url = $this->parseUrl($path);
+        $url = Fs::parseUrl($path);
 
         $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
 
@@ -273,7 +274,7 @@ class FtpCurl
     {
         $this->createHandle($path);
 
-        $url = $this->parseUrl($path);
+        $url = Fs::parseUrl($path);
 
         $this->curlSet(CURLOPT_POSTQUOTE, ['DELE ' . $url['path']]);
 
@@ -285,7 +286,7 @@ class FtpCurl
     {
         $this->createHandle($path);
 
-        $url = $this->parseUrl($path);
+        $url = Fs::parseUrl($path);
 
         $this->curlSet(CURLOPT_QUOTE, ['RMD ' . $url['path']]);
 
@@ -295,8 +296,8 @@ class FtpCurl
     // {{{ rename
     public function rename($path_from, $path_to)
     {
-        $parsedFrom = $this->parseUrl($path_from);
-        $parsedTo = $this->parseUrl($path_to);
+        $parsedFrom = Fs::parseUrl($path_from);
+        $parsedTo = Fs::parseUrl($path_to);
 
         $this->createHandle($path_from);
 
@@ -307,22 +308,6 @@ class FtpCurl
     }
     // }}}
 
-    // {{{ parseUrl
-    public static function parseUrl($url)
-    {
-        $parsed = parse_url($url);
-
-        // hack, parse_url matches anything after the first question mark as "query"
-        $path = (isset($parsed['path'])) ? $parsed['path'] : null;
-        $query = (isset($parsed['query'])) ? $parsed['query'] : null;
-        if ($query !== null || preg_match('/\?$/', $url)) {
-            $parsed['path'] = $path . '?' . $query;
-            unset($parsed['query']);
-        }
-
-        return $parsed;
-    }
-    // }}}
     // {{{ createStat
     protected function createStat()
     {
