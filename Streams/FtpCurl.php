@@ -16,7 +16,7 @@ class FtpCurl
     protected $buffer;
     protected $pos;
     protected $dirPos;
-    protected $ch;
+    protected $handle;
     protected $username;
     protected $password;
     protected $translation = ['dev', 'ino', 'mode', 'nlink', 'uid', 'gid', 'rdev', 'size', 'atime', 'mtime', 'ctime', 'blksize', 'blocks'];
@@ -43,17 +43,16 @@ class FtpCurl
         $initialPath = (isset($url['path'])) ? $url['path'] : '/';
         $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
 
-        if ($this->ch) {
+        if ($this->handle) {
             $this->curlSet(CURLOPT_URL, $this->url);
         } else {
-            $this->ch = curl_init($this->url);
-            if (!$this->ch) {
+            $this->handle = curl_init($this->url);
+            if (!$this->handle) {
                 throw new FsException('Could not initialize cURL.');
             }
 
             $username = $url['user'];
             $password = (isset($url['pass'])) ? $url['pass'] : '';
-            $passive_mode = true;
 
             $this->curlOptions = [
                 CURLOPT_USERPWD        => $username . ':' . $password,
@@ -72,7 +71,7 @@ class FtpCurl
             }
 
             // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
-            if (!$passive_mode) {
+            if (isset(static::$parameters['passive']) && !static::$parameters['passive']) {
                 $this->curlOptions[CURLOPT_FTPPORT] = '-';
             }
 
@@ -85,7 +84,7 @@ class FtpCurl
     // {{{ curlSet
     protected function curlSet($option, $value)
     {
-        if (!curl_setopt($this->ch, $option, $value)) {
+        if (!curl_setopt($this->handle, $option, $value)) {
             throw new FsException(sprintf('Could not set cURL option: %s', $option));
         }
     }
@@ -93,7 +92,7 @@ class FtpCurl
     // {{{ execute
     protected function execute()
     {
-        return curl_exec($this->ch);
+        return curl_exec($this->handle);
     }
     // }}}
 
@@ -120,7 +119,7 @@ class FtpCurl
     // {{{ stream_close
     public function stream_close()
     {
-        curl_close($this->ch);
+        curl_close($this->handle);
     }
     // }}}
     // {{{ stream_read
@@ -204,21 +203,21 @@ class FtpCurl
         $this->curlSet(CURLOPT_HEADER, true);
         $this->curlSet(CURLOPT_FILETIME, true);
 
-        $result = curl_exec($this->ch);
+        $result = curl_exec($this->handle);
 
         if ($result === false) {
             $this->createHandle($path . '/');
 
             $this->curlSet(CURLOPT_URL, $path . '/');
 
-            $result = curl_exec($this->ch);
+            $result = curl_exec($this->handle);
 
             if ($result !== false) {
                 $stat = $this->createStat();
                 $this->setStat($stat, 'mode', octdec(40644));
             }
         } else {
-            $info = curl_getinfo($this->ch);
+            $info = curl_getinfo($this->handle);
 
             $stat = $this->createStat();
             $this->setStat($stat, 'mtime', (int) $info['filetime']);
