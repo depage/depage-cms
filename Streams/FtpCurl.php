@@ -54,25 +54,20 @@ class FtpCurl
     protected function createHandle($path)
     {
         $url = self::parseUrl($path);
+        $initialPath = (isset($url['path'])) ? $url['path'] : '/';
+        $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
 
         if ($this->ch) {
-            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
-            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
             $this->curlSet(CURLOPT_URL, $this->url);
         } else {
-            $username = $url['user'];
-            $password = (isset($url['pass'])) ? $url['pass'] : '';
-            $port = (isset($url['port'])) ? $url['port'] : 21;
-            $initialPath = (isset($url['path'])) ? $url['path'] : '/';
-
-            $passive_mode = true;
-            $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
-
             $this->ch = curl_init($this->url);
-
             if (!$this->ch) {
                 throw new FsException('Could not initialize cURL.');
             }
+
+            $username = $url['user'];
+            $password = (isset($url['pass'])) ? $url['pass'] : '';
+            $passive_mode = true;
 
             $this->curlOptions = [
                 CURLOPT_USERPWD        => $username . ':' . $password,
@@ -81,7 +76,7 @@ class FtpCurl
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_PORT           => $port,
+                CURLOPT_PORT           => (isset($url['port'])) ? $url['port'] : 21,
                 CURLOPT_TIMEOUT        => 30,
             ];
 
