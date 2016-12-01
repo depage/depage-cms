@@ -11,14 +11,10 @@ class FtpCurl
 
     protected $path;
     protected $mode;
-    protected $curlOptions;
-    protected $opened_path;
     protected $buffer;
     protected $pos;
     protected $dirPos;
     protected $handle;
-    protected $username;
-    protected $password;
     protected $translation = ['dev', 'ino', 'mode', 'nlink', 'uid', 'gid', 'rdev', 'size', 'atime', 'mtime', 'ctime', 'blksize', 'blocks'];
 
     static protected $parameters;
@@ -54,7 +50,7 @@ class FtpCurl
             $username = $url['user'];
             $password = (isset($url['pass'])) ? $url['pass'] : '';
 
-            $this->curlOptions = [
+            $options = [
                 CURLOPT_USERPWD        => $username . ':' . $password,
                 CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_SSL_VERIFYHOST => 2,
@@ -67,15 +63,15 @@ class FtpCurl
             ];
 
             if (isset(static::$parameters['caCert'])) {
-                $this->curlOptions[CURLOPT_CAINFO] = static::$parameters['caCert'];
+                $options[CURLOPT_CAINFO] = static::$parameters['caCert'];
             }
 
             // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
             if (isset(static::$parameters['passive']) && !static::$parameters['passive']) {
-                $this->curlOptions[CURLOPT_FTPPORT] = '-';
+                $options[CURLOPT_FTPPORT] = '-';
             }
 
-            foreach ($this->curlOptions as $option => $value) {
+            foreach ($options as $option => $value) {
                 $this->curlSet($option, $value);
             }
         }
@@ -101,8 +97,6 @@ class FtpCurl
     {
         $this->path = $path;
         $this->mode = $mode;
-        $this->options = $options;
-        $this->opened_path = $opened_path;
         $this->createHandle($path);
         $this->pos = 0;
 
