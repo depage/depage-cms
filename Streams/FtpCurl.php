@@ -11,7 +11,7 @@ class FtpCurl
 
     protected $path;
     protected $mode;
-    protected $options;
+    protected $curlOptions;
     protected $opened_path;
     protected $buffer;
     protected $pos;
@@ -60,21 +60,6 @@ class FtpCurl
             $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
             curl_setopt($this->ch, CURLOPT_URL, $this->url);
         } else {
-            if (is_null($this->context)) {
-                $options = [];
-            } else {
-                $options = stream_context_get_options($this->context);
-            }
-
-            if (
-                !empty($options['ftp']['curl_options'])
-                && is_array($options['ftp']['curl_options'])
-            ) {
-                $curl_options = $options['ftp']['curl_options'];
-            } else {
-                $curl_options = [];
-            }
-
             $username = $url['user'];
             $password = (isset($url['pass'])) ? $url['pass'] : '';
             $port = (isset($url['port'])) ? $url['port'] : 21;
@@ -85,7 +70,11 @@ class FtpCurl
 
             $this->ch = curl_init($this->url);
 
-            $options = array(
+            if (!$this->ch) {
+                throw new FsException('Could not initialize cURL.');
+            }
+
+            $this->curlOptions = [
                 CURLOPT_USERPWD        => $username . ':' . $password,
                 CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_SSL_VERIFYHOST => 2,
@@ -94,25 +83,21 @@ class FtpCurl
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_PORT           => $port,
                 CURLOPT_TIMEOUT        => 30,
-            );
+            ];
 
             if (isset(static::$parameters['caCert'])) {
-                $options[CURLOPT_CAINFO] = static::$parameters['caCert'];
+                $this->curlOptions[CURLOPT_CAINFO] = static::$parameters['caCert'];
             }
 
             // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
             if (!$passive_mode) {
-                $options[CURLOPT_FTPPORT] = '-';
-            }
-
-            if (!$this->ch) {
-                throw new FsException('Could not initialize cURL.');
+                $this->curlOptions[CURLOPT_FTPPORT] = '-';
             }
 
             // set connection options, use foreach so useful errors can be caught instead of a generic "cannot set options" error with curl_setopt_array()
-            foreach ($options as $option_name => $option_value) {
-                if (!curl_setopt($this->ch, $option_name, $option_value)) {
-                    throw new FsException(sprintf('Could not set cURL option: %s', $option_name));
+            foreach ($this->curlOptions as $option => $value) {
+                if (!curl_setopt($this->ch, $option, $value)) {
+                    throw new FsException(sprintf('Could not set cURL option: %s', $option));
                 }
             }
 
