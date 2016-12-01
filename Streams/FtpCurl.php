@@ -58,7 +58,7 @@ class FtpCurl
         if ($this->ch) {
             $initialPath = (isset($url['path'])) ? $url['path'] : '/';
             $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
-            curl_setopt($this->ch, CURLOPT_URL, $this->url);
+            $this->curlSet(CURLOPT_URL, $this->url);
         } else {
             $username = $url['user'];
             $password = (isset($url['pass'])) ? $url['pass'] : '';
@@ -94,14 +94,19 @@ class FtpCurl
                 $this->curlOptions[CURLOPT_FTPPORT] = '-';
             }
 
-            // set connection options, use foreach so useful errors can be caught instead of a generic "cannot set options" error with curl_setopt_array()
             foreach ($this->curlOptions as $option => $value) {
-                if (!curl_setopt($this->ch, $option, $value)) {
-                    throw new FsException(sprintf('Could not set cURL option: %s', $option));
-                }
+                $this->curlSet($option, $value);
             }
 
             $this->pos = 0;
+        }
+    }
+    // }}}
+    // {{{ curlSet
+    protected function curlSet($option, $value)
+    {
+        if (!curl_setopt($this->ch, $option, $value)) {
+            throw new FsException(sprintf('Could not set cURL option: %s', $option));
         }
     }
     // }}}
@@ -121,10 +126,10 @@ class FtpCurl
         $this->opened_path = $opened_path;
         $this->createHandle($path);
 
-        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+        $this->curlSet(CURLOPT_FOLLOWLOCATION, true);
 
         if ($this->mode == 'wb') {
-            curl_setopt($this->ch, CURLOPT_UPLOAD, true);
+            $this->curlSet(CURLOPT_UPLOAD, true);
 
             $this->buffer = fopen('php://temp' , 'w+b');
             $this->pos = 0;
@@ -189,9 +194,9 @@ class FtpCurl
         if ($this->mode == 'wb') {
             rewind($this->buffer);
 
-            curl_setopt($this->ch, CURLOPT_INFILE, $this->buffer);
-            curl_setopt($this->ch, CURLOPT_INFILESIZE, $this->pos);
-            curl_setopt($this->ch, CURLOPT_BINARYTRANSFER, true);
+            $this->curlSet(CURLOPT_INFILE, $this->buffer);
+            $this->curlSet(CURLOPT_INFILESIZE, $this->pos);
+            $this->curlSet(CURLOPT_BINARYTRANSFER, true);
 
             $result = (bool) $this->execute();
         }
@@ -218,16 +223,16 @@ class FtpCurl
 
         $this->createHandle($path);
 
-        curl_setopt($this->ch, CURLOPT_NOBODY, true);
-        curl_setopt($this->ch, CURLOPT_HEADER, true);
-        curl_setopt($this->ch, CURLOPT_FILETIME, true);
+        $this->curlSet(CURLOPT_NOBODY, true);
+        $this->curlSet(CURLOPT_HEADER, true);
+        $this->curlSet(CURLOPT_FILETIME, true);
 
         $result = curl_exec($this->ch);
 
         if ($result === false) {
             $this->createHandle($path . '/');
 
-            curl_setopt($this->ch, CURLOPT_URL, $path . '/');
+            $this->curlSet(CURLOPT_URL, $path . '/');
 
             $result = curl_exec($this->ch);
 
@@ -254,7 +259,7 @@ class FtpCurl
     {
         $this->createHandle($path . '/');
 
-        curl_setopt($this->ch, CURLOPT_FTPLISTONLY, true);
+        $this->curlSet(CURLOPT_FTPLISTONLY, true);
 
         $result = $this->execute();
 
@@ -284,10 +289,10 @@ class FtpCurl
 
         $url = $this->parseUrl($path);
 
-        curl_setopt($this->ch, CURLOPT_URL, $this->addTrailingSlash($path));
+        $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
 
         if ($options & STREAM_MKDIR_RECURSIVE) {
-            curl_setopt($this->ch, CURLOPT_FTP_CREATE_MISSING_DIRS, true);
+            $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
         }
 
         return (bool) $this->execute();
@@ -300,7 +305,7 @@ class FtpCurl
 
         $url = $this->parseUrl($path);
 
-        curl_setopt($this->ch, CURLOPT_POSTQUOTE, ['DELE ' . $url['path']]);
+        $this->curlSet(CURLOPT_POSTQUOTE, ['DELE ' . $url['path']]);
 
         return (bool) $this->execute();
     }
@@ -312,7 +317,7 @@ class FtpCurl
 
         $url = $this->parseUrl($path);
 
-        curl_setopt($this->ch, CURLOPT_QUOTE, ['RMD ' . $url['path']]);
+        $this->curlSet(CURLOPT_QUOTE, ['RMD ' . $url['path']]);
 
         return (bool) $this->execute();
     }
@@ -325,8 +330,8 @@ class FtpCurl
 
         $this->createHandle($path_from);
 
-        curl_setopt($this->ch, CURLOPT_URL, $parsedFrom['scheme'] . '://' . $parsedFrom['host'] . '/');
-        curl_setopt($this->ch, CURLOPT_POSTQUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
+        $this->curlSet(CURLOPT_URL, $parsedFrom['scheme'] . '://' . $parsedFrom['host'] . '/');
+        $this->curlSet(CURLOPT_POSTQUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
 
         return (bool) $this->execute();
     }
