@@ -7,12 +7,17 @@ use Depage\Fs\Streams\FtpCurl;
 
 class FsFtp extends Fs
 {
+    // {{{ variables
+    protected $caCert;
+    // }}}
     // {{{ constructor
     public function __construct($params = array())
     {
         parent::__construct($params);
 
-        FtpCurl::registerStream($this->url['scheme']);
+        $this->caCert = (isset($params['caCert'])) ? $params['caCert'] : null;
+
+        FtpCurl::registerStream($this->url['scheme'], ['caCert' => $this->caCert]);
     }
     // }}}
 }

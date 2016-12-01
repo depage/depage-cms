@@ -38,7 +38,7 @@ class FtpCurl
     static protected $parameters;
     // }}}
 
-    // {{{ registersStream
+    // {{{ registerStream
     public static function registerStream($protocol, array $parameters = [])
     {
         $class = get_called_class();
@@ -89,7 +89,6 @@ class FtpCurl
                 CURLOPT_USERPWD        => $username . ':' . $password,
                 CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_CAINFO         => __DIR__ . '/../Tests/docker/ssl/ca.pem',
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
                 CURLOPT_RETURNTRANSFER => true,
@@ -97,9 +96,13 @@ class FtpCurl
                 CURLOPT_TIMEOUT        => 30,
             );
 
+            if (isset(static::$parameters['caCert'])) {
+                $options[CURLOPT_CAINFO] = static::$parameters['caCert'];
+            }
+
             // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
             if (!$passive_mode) {
-                $options[ CURLOPT_FTPPORT ] = '-';
+                $options[CURLOPT_FTPPORT] = '-';
             }
 
             if (!$this->ch) {

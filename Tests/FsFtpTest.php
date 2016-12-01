@@ -16,6 +16,7 @@ class FsFtpTest extends TestRemote
             'port' => 21,
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
+            'caCert' => $GLOBALS['CA_CERT'],
         );
 
         $newParams = array_merge($params, $override);
@@ -32,6 +33,7 @@ class FsFtpTest extends TestRemote
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
+            'caCert' => $GLOBALS['CA_CERT'],
         );
 
         $fs = new FsFtp($params);
