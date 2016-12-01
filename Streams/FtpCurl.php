@@ -19,21 +19,7 @@ class FtpCurl
     protected $ch;
     protected $username;
     protected $password;
-    protected $translation = [
-        'dev' => 0,
-        'ino' => 1,
-        'mode' => 2,
-        'nlink' => 3,
-        'uid' => 4,
-        'gid' => 5,
-        'rdev' => 6,
-        'size' => 7,
-        'atime' => 8,
-        'mtime' => 9,
-        'ctime' => 10,
-        'blksize' => 11,
-        'blocks' => 12,
-    ];
+    protected $translation = ['dev', 'ino', 'mode', 'nlink', 'uid', 'gid', 'rdev', 'size', 'atime', 'mtime', 'ctime', 'blksize', 'blocks'];
 
     static protected $parameters;
     // }}}
@@ -78,6 +64,7 @@ class FtpCurl
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_PORT           => (isset($url['port'])) ? $url['port'] : 21,
                 CURLOPT_TIMEOUT        => 30,
+                CURLOPT_FOLLOWLOCATION => true,
             ];
 
             if (isset(static::$parameters['caCert'])) {
@@ -92,8 +79,6 @@ class FtpCurl
             foreach ($this->curlOptions as $option => $value) {
                 $this->curlSet($option, $value);
             }
-
-            $this->pos = 0;
         }
     }
     // }}}
@@ -120,14 +105,11 @@ class FtpCurl
         $this->options = $options;
         $this->opened_path = $opened_path;
         $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_FOLLOWLOCATION, true);
+        $this->pos = 0;
 
         if ($this->mode == 'wb') {
             $this->curlSet(CURLOPT_UPLOAD, true);
-
             $this->buffer = fopen('php://temp' , 'w+b');
-            $this->pos = 0;
         } else {
             $this->buffer = $this->execute();
         }
@@ -353,7 +335,7 @@ class FtpCurl
     {
         $stat = [];
 
-        foreach($this->translation as $name => $index) {
+        foreach($this->translation as $index => $name) {
             $stat[$index] = 0;
             $stat[$name] = 0;
         }
@@ -365,7 +347,7 @@ class FtpCurl
     protected function setStat(&$stat, $name, $value)
     {
         $stat[$name] = $value;
-        $stat[$this->translation[$name]] = $value;
+        $stat[array_search($name, $this->translation)] = $value;
     }
     // }}}
     // {{{ addTrailingSlash
