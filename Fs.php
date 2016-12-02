@@ -550,7 +550,7 @@ class Fs
      */
     public function file_put_contents($filename, $data, $flags = 0, $context = null)
     {
-        \file_put_contents($filename, $data, $flags, $context);
+        return \file_put_contents($filename, $data, $flags, $context);
     }
     // }}}
 }

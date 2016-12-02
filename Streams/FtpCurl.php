@@ -158,12 +158,10 @@ class FtpCurl
     // {{{ stream_write
     public function stream_write($data)
     {
-        $size = strlen($data);
+        $bytesWritten = fwrite($this->buffer, $data);
+        $this->pos += $bytesWritten;
 
-        fwrite($this->buffer, $data);
-        $this->pos += $size;
-
-        return $size;
+        return $bytesWritten;
     }
     // }}}
     // {{{ stream_eof
@@ -253,14 +251,16 @@ class FtpCurl
     // {{{ dir_opendir
     public function dir_opendir($path, $options)
     {
+        $this->dirPos = 0;
+
         $this->createHandle($path . '/');
 
         $this->curlSet(CURLOPT_FTPLISTONLY, true);
 
         $result = $this->execute();
-
-        $this->files = explode("\n", trim($result));
-        $this->dirPos = 0;
+        if ($result) {
+            $this->files = explode("\n", trim($result));
+        }
 
         return (bool) $result;
     }
