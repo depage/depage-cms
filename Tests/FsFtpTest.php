@@ -57,6 +57,19 @@ class FsFtpTest extends TestRemote
         $this->assertSame('SSL certificate problem: unable to get local issuer certificate', $error);
     }
     // }}}
+
+    // {{{ testTest
+    /**
+     * override, sending data to server actually happens at stream_flush
+     * so Fs::test doesn't get a write specific error
+     */
+    public function testTest()
+    {
+        $this->assertTrue($this->fs->test());
+        $this->deleteRemoteTestDir();
+        $this->assertFalse($this->fs->test($error));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

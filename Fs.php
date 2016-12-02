@@ -510,7 +510,7 @@ class Fs
             $hidden = $this->hidden;
         }
 
-        $scanDir = scandir($cleanUrl, 0, $this->streamContext);
+        $scanDir = \scandir($cleanUrl, 0, $this->streamContext);
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {
@@ -532,7 +532,7 @@ class Fs
      */
     protected function rmdir($url)
     {
-        return rmdir($url, $this->streamContext);
+        return \rmdir($url, $this->streamContext);
     }
     // }}}
     // {{{ rename
@@ -541,7 +541,7 @@ class Fs
      */
     protected function rename($source, $target)
     {
-        return rename($source, $target, $this->streamContext);
+        return \rename($source, $target, $this->streamContext);
     }
     // }}}
     // {{{ file_put_contents
