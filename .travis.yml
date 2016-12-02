@@ -27,10 +27,20 @@ before_script:
     - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
 
     - sudo mkdir /etc/proftpd/ssl
-    - sudo openssl req -new -x509 -days 365 -nodes -out /etc/proftpd/ssl/proftpd.cert.pem -keyout /etc/proftpd/ssl/proftpd.key.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=depage.net"
-    - sudo chmod 600 /etc/proftpd/ssl/proftpd.*
-    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd/tls.conf
 
+    # generate ca key & cert
+    - sudo openssl genrsa -out /etc/proftpd/ssl/ca.key 2048
+    - sudo openssl req -x509 -new -key /etc/proftpd/ssl/ca.key -days 3650 -out /etc/proftpd/ssl/ca.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net-ca/OU=IT/CN=ca.depage.net"
+    # generate client key & cert
+    - sudo openssl genrsa -out /etc/proftpd/ssl/ftp.key 2048
+    - sudo openssl req -new -key /etc/proftpd/ssl/ftp.key -out /etc/proftpd/ssl/ftp.csr -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=localhost"
+    # generate signed client cert
+    - sudo openssl x509 -req -days 365 -CA /etc/proftpd/ssl/ca.pem -CAkey /etc/proftpd/ssl/ca.key -CAcreateserial -CAserial serial -in /etc/proftpd/ssl/ftp.csr -out /etc/proftpd/ssl/ftp.pem
+    - sudo cp /etc/proftpd/ssl/ca.pem Tests/docker/ssl
+
+    - sudo chmod 600 /etc/proftpd/ssl/*
+
+    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd/tls.conf
     - sudo /etc/init.d/proftpd restart
 
     # create test user account with 'testpass' password

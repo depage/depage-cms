@@ -21,9 +21,9 @@ RUN openssl req -new -key /etc/proftpd/ssl/ftp.key -out /etc/proftpd/ssl/ftp.csr
 # generate signed client cert
 RUN openssl x509 -req -days 365 -CA /etc/proftpd/ssl/ca.pem -CAkey /etc/proftpd/ssl/ca.key -CAcreateserial -CAserial serial -in /etc/proftpd/ssl/ftp.csr -out /etc/proftpd/ssl/ftp.pem
 
-ADD ssl/tls.conf /etc/proftpd/tls.conf
-
 RUN chmod 600 /etc/proftpd/ssl/*
+
+ADD ssl/tls.conf /etc/proftpd/tls.conf
 
 RUN useradd -m -p co.yjyxRTlonU testuser
 
