@@ -278,7 +278,7 @@ class FtpCurl
         return $result;
     }
     // }}}
-    // {{{
+    // {{{ executeFtpCommand
     protected function executeFtpCommand($command, $path)
     {
         $parsed = Fs::parseUrl($path);
@@ -323,9 +323,9 @@ class FtpCurl
         $parsedFrom = Fs::parseUrl($path_from);
         $parsedTo = Fs::parseUrl($path_to);
 
-        $this->createHandle($path_from);
+        $path = preg_replace('#' . preg_quote($parsedFrom['path']) . '(/)?$#', '', $path_from);
+        $this->createHandle($path);
 
-        $this->curlSet(CURLOPT_URL, $parsedFrom['scheme'] . '://' . $parsedFrom['host'] . '/');
         $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
 
         return (bool) $this->execute();
