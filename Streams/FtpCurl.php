@@ -279,8 +279,6 @@ class FtpCurl
     {
         $this->createHandle($path);
 
-        $url = Fs::parseUrl($path);
-
         $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
 
         if ($options & STREAM_MKDIR_RECURSIVE) {
@@ -293,11 +291,12 @@ class FtpCurl
     // {{{ unlink
     public function unlink($path)
     {
+        $parsed = Fs::parseUrl($path);
+        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
+
         $this->createHandle($path);
 
-        $url = Fs::parseUrl($path);
-
-        $this->curlSet(CURLOPT_POSTQUOTE, ['DELE ' . $url['path']]);
+        $this->curlSet(CURLOPT_QUOTE, ['DELE ' . $parsed['path']]);
 
         return (bool) $this->execute();
     }
