@@ -276,6 +276,18 @@ class FtpCurl
         return $result;
     }
     // }}}
+    // {{{
+    protected function executeFtpCommand($command, $path)
+    {
+        $parsed = Fs::parseUrl($path);
+        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
+
+        $this->createHandle($path);
+        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $parsed['path']]);
+
+        return (bool) $this->execute();
+    }
+    // }}}
     // {{{ mkdir
     public function mkdir($path, $mode, $options)
     {
@@ -285,13 +297,7 @@ class FtpCurl
 
             $result = (bool) $this->execute();
         } else {
-            $parsed = Fs::parseUrl($path);
-            $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
-
-            $this->createHandle($path);
-            $this->curlSet(CURLOPT_QUOTE, ['MKD ' . $parsed['path']]);
-
-            $result = (bool) $this->execute();
+            $result = $this->executeFtpCommand('MKD', $path);
         }
 
         return $result;
@@ -300,27 +306,13 @@ class FtpCurl
     // {{{ unlink
     public function unlink($path)
     {
-        $parsed = Fs::parseUrl($path);
-        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
-
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_QUOTE, ['DELE ' . $parsed['path']]);
-
-        return (bool) $this->execute();
+        return $this->executeFtpCommand('DELE', $path);
     }
     // }}}
     // {{{ rmdir
     public function rmdir($path)
     {
-        $parsed = Fs::parseUrl($path);
-        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
-
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_QUOTE, ['RMD ' . $parsed['path']]);
-
-        return (bool) $this->execute();
+        return $this->executeFtpCommand('RMD', $path);
     }
     // }}}
     // {{{ rename
