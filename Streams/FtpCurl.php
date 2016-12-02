@@ -92,7 +92,7 @@ class FtpCurl
     }
     // }}}
     // {{{ execute
-    protected function execute($mayFail = false)
+    protected function execute()
     {
         $result = curl_exec($this->handle);
 
@@ -106,7 +106,11 @@ class FtpCurl
             $result = curl_exec($this->handle);
         }
 
-        if ($result === false && !$mayFail) {
+        if (
+            $result === false
+            && curl_errno($this->handle) !== 9
+            && curl_errno($this->handle) !== 21
+        ) {
             trigger_error(curl_error($this->handle), E_USER_ERROR);
         }
 
@@ -289,7 +293,7 @@ class FtpCurl
             $this->createHandle($path);
             $this->curlSet(CURLOPT_QUOTE, ['MKD ' . $parsed['path']]);
 
-            $result = (bool) $this->execute(true);
+            $result = (bool) $this->execute();
         }
 
         return $result;
