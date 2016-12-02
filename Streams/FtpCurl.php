@@ -205,7 +205,9 @@ class FtpCurl
     public function stream_stat()
     {
         $this->createHandle($this->path);
-        $stat = array('size' => strlen($this->buffer));
+
+        $stat = $this->createStat();
+        $this->setStat($stat, 'size', strlen($this->buffer));
 
         return $stat;
     }
