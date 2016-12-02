@@ -584,7 +584,7 @@ class TestBase extends \PHPUnit_Framework_TestCase
     // {{{ testLateConnectInvalidDirectoryFail
     /**
      * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid path: "directorydoesnotexist"
+     * @expectedExceptionMessage directorydoesnotexist
      */
     public function testLateConnectInvalidDirectoryFail()
     {

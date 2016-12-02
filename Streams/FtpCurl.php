@@ -92,7 +92,7 @@ class FtpCurl
     }
     // }}}
     // {{{ execute
-    protected function execute()
+    protected function execute($mayFail = false)
     {
         $result = curl_exec($this->handle);
 
@@ -106,7 +106,7 @@ class FtpCurl
             $result = curl_exec($this->handle);
         }
 
-        if ($result === false) {
+        if ($result === false && !$mayFail) {
             trigger_error(curl_error($this->handle), E_USER_ERROR);
         }
 
@@ -258,7 +258,7 @@ class FtpCurl
         $this->files = explode("\n", trim($result));
         $this->dirPos = 0;
 
-        return true;
+        return (bool) $result;
     }
     // }}}
     // {{{ dir_readdir
@@ -278,8 +278,7 @@ class FtpCurl
     public function mkdir($path, $mode, $options)
     {
         if ($options & STREAM_MKDIR_RECURSIVE) {
-            $this->createHandle($path);
-            $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
+            $this->createHandle($this->addTrailingSlash($path));
             $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
 
             $result = (bool) $this->execute();
@@ -288,10 +287,9 @@ class FtpCurl
             $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
 
             $this->createHandle($path);
-
             $this->curlSet(CURLOPT_QUOTE, ['MKD ' . $parsed['path']]);
 
-            $result = (bool) curl_exec($this->handle);
+            $result = (bool) $this->execute(true);
         }
 
         return $result;
@@ -332,7 +330,7 @@ class FtpCurl
         $this->createHandle($path_from);
 
         $this->curlSet(CURLOPT_URL, $parsedFrom['scheme'] . '://' . $parsedFrom['host'] . '/');
-        $this->curlSet(CURLOPT_POSTQUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
+        $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
 
         return (bool) $this->execute();
     }
