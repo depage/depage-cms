@@ -224,11 +224,9 @@ class FtpCurl
         $result = curl_exec($this->handle);
 
         if ($result === false) {
-            $this->createHandle($path . '/');
+            $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
 
-            $this->curlSet(CURLOPT_URL, $path . '/');
-
-            $result = curl_exec($this->handle);
+            $result = $this->execute();
 
             if ($result !== false) {
                 $stat = $this->createStat();
@@ -253,7 +251,7 @@ class FtpCurl
     {
         $this->dirPos = 0;
 
-        $this->createHandle($path . '/');
+        $this->createHandle($this->addTrailingSlash($path));
 
         $this->curlSet(CURLOPT_FTPLISTONLY, true);
 

@@ -40,7 +40,7 @@ before_script:
 
     - sudo chmod 600 /etc/proftpd/ssl/*
 
-    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd/tls.conf
+    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd
     - sudo /etc/init.d/proftpd restart
 
     # create test user account with 'testpass' password
