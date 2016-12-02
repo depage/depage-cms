@@ -185,6 +185,22 @@
         <func:result select="not($pageNode/@nav_hidden = 'true' or $pageNode/@*[local-name() = concat('nav_no_', $lang)] = 'true')" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:autokeywords() -->
+    <!--
+        dp:autokeywords(keywords, contentNode)
+    -->
+    <func:function name="dp:autokeywords">
+        <xsl:param name="keywords" />
+        <xsl:param name="contentNode" select="/" />
+        <xsl:variable name="contentString">
+            <xsl:for-each select="$contentNode//*[@lang = $currentLang]//text()">
+                <xsl:value-of select="." /><xsl:text> </xsl:text>
+            </xsl:for-each>
+        </xsl:variable>
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::autokeywords', string($keywords), string($contentString))" />
+    </func:function>
+    <!-- }}} -->
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
