@@ -277,16 +277,24 @@ class FtpCurl
     // {{{ mkdir
     public function mkdir($path, $mode, $options)
     {
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
-
         if ($options & STREAM_MKDIR_RECURSIVE) {
-
+            $this->createHandle($path);
+            $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
             $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
+
+            $result = (bool) $this->execute();
+        } else {
+            $parsed = Fs::parseUrl($path);
+            $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
+
+            $this->createHandle($path);
+
+            $this->curlSet(CURLOPT_QUOTE, ['MKD ' . $parsed['path']]);
+
+            $result = (bool) curl_exec($this->handle);
         }
 
-        return (bool) $this->execute();
+        return $result;
     }
     // }}}
     // {{{ unlink
