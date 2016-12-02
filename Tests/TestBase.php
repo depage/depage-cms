@@ -295,6 +295,14 @@ class TestBase extends \PHPUnit_Framework_TestCase
     public function testMkdir()
     {
         $this->assertFalse($this->isDir($this->remoteDir . '/testDir'));
+        $this->fs->mkdir('testDir', 0777, false);
+        $this->assertTrue($this->isDir($this->remoteDir . '/testDir'));
+    }
+    // }}}
+    // {{{ testMkdirDefault
+    public function testMkdirDefault()
+    {
+        $this->assertFalse($this->isDir($this->remoteDir . '/testDir'));
         $this->fs->mkdir('testDir');
         $this->assertTrue($this->isDir($this->remoteDir . '/testDir'));
     }

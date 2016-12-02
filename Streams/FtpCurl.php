@@ -282,6 +282,7 @@ class FtpCurl
         $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
 
         if ($options & STREAM_MKDIR_RECURSIVE) {
+
             $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
         }
 
