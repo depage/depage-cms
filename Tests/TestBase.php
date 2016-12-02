@@ -335,6 +335,16 @@ class TestBase extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->isFile($this->remoteDir . '/testFile'));
     }
     // }}}
+    // {{{ testRmDir
+    public function testRmDir()
+    {
+        $this->mkdirRemote('testDir');
+
+        $this->fs->rm('testDir');
+
+        $this->assertFalse($this->isDir($this->remoteDir . '/testDir'));
+    }
+    // }}}
     // {{{ testRmRecursive
     public function testRmRecursive()
     {

@@ -305,11 +305,12 @@ class FtpCurl
     // {{{ rmdir
     public function rmdir($path)
     {
+        $parsed = Fs::parseUrl($path);
+        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
+
         $this->createHandle($path);
 
-        $url = Fs::parseUrl($path);
-
-        $this->curlSet(CURLOPT_QUOTE, ['RMD ' . $url['path']]);
+        $this->curlSet(CURLOPT_QUOTE, ['RMD ' . $parsed['path']]);
 
         return (bool) $this->execute();
     }
