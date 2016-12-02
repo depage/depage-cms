@@ -399,18 +399,21 @@ class Newsletter
      **/
     public function sendToSubscribers($from, $category)
     {
+        // @todo add these inside of task
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
 
         $subscribers = $this->getSubscribers($category);
 
-        foreach ($subscribers as $lang => $to) {
-            $html = $this->transform("live", $lang);
+        foreach ($subscribers as $lang => $emails) {
+            foreach ($emails as $to) {
+                $html = $this->transform("live", $lang);
 
-            $mail = new \Depage\Mail\Mail($this->conf->from);
-            $mail->setSubject($this->getSubject($lang))
-                ->setHtmlText($html);
+                $mail = new \Depage\Mail\Mail($this->conf->from);
+                $mail->setSubject($this->getSubject($lang))
+                    ->setHtmlText($html);
 
-            $this->sendLater($task, $mail, $to, $lang);
+                $this->sendLater($task, $mail, $to, $lang);
+            }
         }
 
         $task->begin();
