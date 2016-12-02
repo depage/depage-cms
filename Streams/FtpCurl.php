@@ -39,22 +39,23 @@ class FtpCurl
     }
     // }}}
     // {{{ createHandle
-    protected function createHandle($path)
+    protected function createHandle($url, $hostOnly = false)
     {
-        $url = Fs::parseUrl($path);
-        $initialPath = (isset($url['path'])) ? $url['path'] : '/';
-        $this->url = "{$url['scheme']}://{$url['host']}{$initialPath}";
+        $parsed = Fs::parseUrl($url);
+        $host = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $url);
+        $path = (isset($parsed['path'])) ? $parsed['path'] : '/';
 
         if ($this->handle) {
-            $this->curlSet(CURLOPT_URL, $this->url);
+            $this->curlSet(CURLOPT_URL, $host);
         } else {
-            $this->handle = curl_init($this->url);
+            $this->handle = ($hostOnly) ? curl_init($host) : curl_init($url);
+
             if (!$this->handle) {
                 trigger_error('Could not initialize cURL.', E_USER_ERROR);
             }
 
-            $username = $url['user'];
-            $password = (isset($url['pass'])) ? $url['pass'] : '';
+            $username = $parsed['user'];
+            $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
 
             $options = [
                 CURLOPT_USERPWD        => $username . ':' . $password,
@@ -63,7 +64,7 @@ class FtpCurl
                 CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_PORT           => (isset($url['port'])) ? $url['port'] : 21,
+                CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
                 CURLOPT_TIMEOUT        => 30,
                 CURLOPT_FOLLOWLOCATION => true,
             ];
@@ -81,6 +82,8 @@ class FtpCurl
                 $this->curlSet($option, $value);
             }
         }
+
+        return $path;
     }
     // }}}
     // {{{ curlSet
@@ -279,13 +282,10 @@ class FtpCurl
     }
     // }}}
     // {{{ executeFtpCommand
-    protected function executeFtpCommand($command, $path)
+    protected function executeFtpCommand($command, $url)
     {
-        $parsed = Fs::parseUrl($path);
-        $path = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $path);
-
-        $this->createHandle($path);
-        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $parsed['path']]);
+        $path = $this->createHandle($url, true);
+        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
 
         return (bool) $this->execute();
     }
@@ -320,13 +320,10 @@ class FtpCurl
     // {{{ rename
     public function rename($path_from, $path_to)
     {
-        $parsedFrom = Fs::parseUrl($path_from);
-        $parsedTo = Fs::parseUrl($path_to);
+        $from = $this->createHandle($path_from);
+        $to = $this->createHandle($path_to);
 
-        $path = preg_replace('#' . preg_quote($parsedFrom['path']) . '(/)?$#', '', $path_from);
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $parsedFrom['path'], 'RNTO ' . $parsedTo['path']]);
+        $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $from, 'RNTO ' . $to]);
 
         return (bool) $this->execute();
     }
