@@ -490,6 +490,7 @@ abstract class Transformer
             "phpEscape" => array($this, "xsltCallPhpEscape"),
             "formatDate" => array($this, "xsltCallFormatDate"),
             "fileinfo" => array($this, "xsltCallFileinfo"),
+            "autokeywords" => array($this, "xsltCallAutokeywords"),
             "urlencode" => "rawurlencode",
         ));
     }
@@ -702,6 +703,65 @@ abstract class Transformer
         $date = date($format, strtotime($date));
 
         return $date;
+    }
+    // }}}
+    // {{{ xsltCallAutokeywords()
+    /**
+     * @brief xsltCallAutokeywords
+     *
+     * @param mixed $keywords, $content
+     * @return void
+     **/
+    public function xsltCallAutokeywords($keys, $content)
+    {
+        // @todo add keyword aliases?
+        $val = "";
+        $keywords = [];
+        $originalKeywords = $this->extractWords($keys);
+        foreach ($originalKeywords as $key => $value) {
+            $keywords[$key] = mb_strtolower($value);
+        }
+        $contentWords = $this->extractWords($content, true);
+
+        $found = array_intersect($contentWords, $keywords);
+
+        foreach ($found as $word) {
+            $val .= $originalKeywords[array_search($word, $keywords)] . ", ";
+        }
+        /*
+        var_dump($keys);
+        var_dump($keywords);
+        var_dump($contentWords);
+        var_dump($val);
+        die();
+         */
+        return trim($val, ", ");
+    }
+    // }}}
+    // {{{ extractWords()
+    /**
+     * @brief extractWords
+     *
+     * @param mixed $
+     * @return void
+     **/
+    private function extractWords($string, $normalize = false)
+    {
+        preg_match_all("/\w+(-\w+)?/u", $string, $matches);
+        if (!isset($matches[0])) {
+            return [];
+        }
+
+        if ($normalize) {
+            foreach ($matches[0] as &$value) {
+                $value = mb_strtolower($value);
+            }
+
+            return array_unique($matches[0]);
+        } else {
+            return $matches[0];
+        }
+
     }
     // }}}
 
