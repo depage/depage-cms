@@ -122,11 +122,11 @@ class FtpCurl
     // }}}
 
     // {{{ stream_open
-    public function stream_open($path, $mode, $options, &$opened_path)
+    public function stream_open($url, $mode, $options, &$openedPath)
     {
-        $this->path = $path;
+        $this->url = $url;
         $this->mode = $mode;
-        $this->createHandle($path);
+        $this->createHandle($url);
         $this->pos = 0;
 
         if ($this->mode == 'wb') {
@@ -148,12 +148,12 @@ class FtpCurl
     // {{{ stream_read
     public function stream_read($count)
     {
-        if (strlen($this->buffer) == 0) {
-            return false;
-        }
+        $read = false;
 
-        $read = substr($this->buffer, $this->pos, $count);
-        $this->pos += $count;
+        if (strlen($this->buffer) > 0) {
+            $read = substr($this->buffer, $this->pos, $count);
+            $this->pos += $count;
+        }
 
         return $read;
     }
@@ -170,11 +170,13 @@ class FtpCurl
     // {{{ stream_eof
     public function stream_eof()
     {
+        $eof = false;
+
         if ($this->pos >= strlen($this->buffer)) {
-            return true;
+            $eof = true;
         }
 
-        return false;
+        return $eof;
     }
     // }}}
     // {{{ stream_tell
@@ -207,7 +209,7 @@ class FtpCurl
     // {{{ stream_stat
     public function stream_stat()
     {
-        $this->createHandle($this->path);
+        $this->createHandle($this->url);
 
         $stat = $this->createStat();
         $this->setStat($stat, 'size', strlen($this->buffer));
@@ -291,39 +293,39 @@ class FtpCurl
     }
     // }}}
     // {{{ mkdir
-    public function mkdir($path, $mode, $options)
+    public function mkdir($url, $mode, $options)
     {
         if ($options & STREAM_MKDIR_RECURSIVE) {
-            $this->createHandle($this->addTrailingSlash($path));
+            $this->createHandle($this->addTrailingSlash($url));
             $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
 
             $result = (bool) $this->execute();
         } else {
-            $result = $this->executeFtpCommand('MKD', $path);
+            $result = $this->executeFtpCommand('MKD', $url);
         }
 
         return $result;
     }
     // }}}
     // {{{ unlink
-    public function unlink($path)
+    public function unlink($url)
     {
-        return $this->executeFtpCommand('DELE', $path);
+        return $this->executeFtpCommand('DELE', $url);
     }
     // }}}
     // {{{ rmdir
-    public function rmdir($path)
+    public function rmdir($url)
     {
-        return $this->executeFtpCommand('RMD', $path);
+        return $this->executeFtpCommand('RMD', $url);
     }
     // }}}
     // {{{ rename
-    public function rename($path_from, $path_to)
+    public function rename($urlFrom, $urlTo)
     {
-        $from = $this->createHandle($path_from);
-        $to = $this->createHandle($path_to);
+        $pathFrom = $this->createHandle($urlFrom, true);
+        $pathTo = $this->createHandle($urlTo, true);
 
-        $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $from, 'RNTO ' . $to]);
+        $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $pathFrom, 'RNTO ' . $pathTo]);
 
         return (bool) $this->execute();
     }
