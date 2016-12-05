@@ -8,6 +8,7 @@ test: server
 server:
 	$(MAKE) -C docker
 	$(MAKE) run -C docker
+	sleep 1
 
 clean:
 	${RM} Report Temp docker/ssl/ca.pem
