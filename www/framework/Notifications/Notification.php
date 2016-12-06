@@ -98,6 +98,40 @@ class Notification extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ setOptions()
+    /**
+     * @brief setOptions
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function setOptions($param)
+    {
+        if (!$initialized) {
+            $this->data['options'] = $param;
+        } else {
+            $this->data['options'] = serialize($param);
+            $this->dirty['options'] = true;
+        }
+    }
+    // }}}
+    // {{{ getOptions()
+    /**
+     * @brief getOptions
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getOptions()
+    {
+        if (!empty($this->data['options'])) {
+            return unserialize($this->data['options']);
+        } else {
+            return "";
+        }
+    }
+    // }}}
+
     // {{{ save()
     /**
      * save a notification object
