@@ -107,7 +107,7 @@ class Notification extends \Depage\Entity\Entity
      **/
     public function setOptions($param)
     {
-        if (!$initialized) {
+        if (!$this->initialized) {
             $this->data['options'] = $param;
         } else {
             $this->data['options'] = serialize($param);
