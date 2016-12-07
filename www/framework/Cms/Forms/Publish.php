@@ -6,7 +6,7 @@ namespace Depage\Cms\Forms;
  * brief Project
  * Class Project
  */
-class Publish extends \Depage\HtmlForm\HtmlForm
+class Publish extends ReleasePages
 {
     // {{{ __construct()
     /**
@@ -17,15 +17,9 @@ class Publish extends \Depage\HtmlForm\HtmlForm
      **/
     public function __construct($name, $params = [])
     {
-        $params['label'] = _("Publish Now");
-
-        $params['cancelUrl'] = DEPAGE_BASE;
-        $params['cancelLabel'] = _("Cancel");
-        $params['class'] = "lastchanged_pages";
-
-        $this->project = $params['project'];
-
         parent::__construct($name, $params);
+
+        $this->label = _("Publish Now");
     }
     // }}}
     // {{{ addChildElements()
@@ -51,25 +45,7 @@ class Publish extends \Depage\HtmlForm\HtmlForm
             'defaultValue' => array_keys($list)[0],
         ]);
 
-        $formatter = new \Depage\Formatters\DateNatural();
-
-        $pages = $this->project->getUnreleasedPages();
-        $previewPath = $this->project->getPreviewPath();
-
-        $fs = $this->addFieldset("recentChanges", [
-            'label' => _("Unreleased Pages"),
-            'class' => "select-all",
-        ]);
-        $fs->addHtml("<p>" . _("Please select the pages you want to publish:") . "</p>");
-
-        foreach($pages as $page) {
-            if (!$page->released) {
-                $fs->addHtml("<a href=\"" . $previewPath . $page->url . "\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
-                $fs->addBoolean("page-" . $page->id, array(
-                    'label' => $page->url,
-                ));
-            }
-        }
+        parent::addChildElements();
     }
     // }}}
 }

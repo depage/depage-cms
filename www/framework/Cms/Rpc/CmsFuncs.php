@@ -659,13 +659,17 @@ class CmsFuncs {
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         $pageId = $xmldoc->getAttribute($nodeId, "db:docref");
 
+        $this->log->log("before");
         if ($this->user->canPublishProject()) {
+            $this->log->log("can release");
             $rootId = $this->project->releaseDocument($pageId, $this->user->id);
             $rootId = $this->project->releaseDocument("pages", $this->user->id);
 
             $this->addCallback('page_data', [$rootId]);
         } else {
+            $this->log->log("cannot release");
             $this->project->requestDocumentRelease($pageId, $this->user->id);
+            $this->log->log("after");
         }
     }
     // }}}

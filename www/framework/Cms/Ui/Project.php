@@ -276,6 +276,7 @@ class Project extends Base
     {
         $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, [
             'project' => $this->project,
+            'users' => \Depage\Auth\User::loadAll($this->pdo),
         ]);
         $form->process();
 
@@ -300,6 +301,65 @@ class Project extends Base
         $title = sprintf(_("Publish Project '%s'"), $this->project->name);
 
         $h = new Html("publish.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "projects",
+                'icon' => "framework/Cms/images/icon_projects.gif",
+                'class' => "first",
+                'title' => $title,
+                'content' => [
+                    $this->toolbar(),
+                    $form,
+                ],
+            ]),
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ release_pages()
+    /**
+     * @brief release_pages
+     *
+     * @param mixed
+     * @return void
+     *
+     * @todo implement adding documents to xmldb history when publishing and using these for xsl transformations
+     **/
+    public function release_pages($docId = null)
+    {
+        $form = new \Depage\Cms\Forms\ReleasePages("release-pages-" . $this->project->id, [
+            'project' => $this->project,
+            'users' => \Depage\Auth\User::loadAll($this->pdo),
+            'selectedDocId' => $docId,
+        ]);
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+            $publishId = $values['publishId'];
+
+            // release pages
+            foreach ($values as $key => $value) {
+                if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {
+                    $this->project->releaseDocument($matches[1], $this->authUser->id);
+                }
+            }
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        $title = sprintf(_("Release Pages for Project '%s'"), $this->project->name);
+        $previewUrl = "";
+
+        $pages = $this->project->getPages($docId);
+        if (count($pages) == 1) {
+            $previewUrl = $this->project->getPreviewPath() . $pages[0]->url;
+        }
+
+        $h = new Html("publish.tpl", [
+            'previewUrl' => $previewUrl,
             'content' => new Html("box.tpl", [
                 'id' => "projects",
                 'icon' => "framework/Cms/images/icon_projects.gif",

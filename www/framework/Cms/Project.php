@@ -12,6 +12,8 @@
 
 namespace Depage\Cms;
 
+use \Depage\Notifications\Notification;
+
 class Project extends \Depage\Entity\Entity
 {
     // {{{ variables
@@ -454,7 +456,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function getPages()
+    public function getPages($docId = null)
     {
         $pages = [];
 
@@ -464,14 +466,19 @@ class Project extends \Depage\Entity\Entity
 
         $xpath = new \DOMXPath($xml);
         $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-        $nodelist = $xpath->query("//pg:page");
+
+        if (!is_null($docId)) {
+            $nodelist = $xpath->query("//pg:page[@db:docref='$docId']");
+        } else {
+            $nodelist = $xpath->query("//pg:page");
+        }
 
         for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
-            $docId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+            $currentDocId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
 
-            if ($docId) {
-                $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
+            if ($currentDocId) {
+                $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
                 $docInfo->url = $node->getAttribute("url");
                 $docInfo->released = $node->getAttribute("db:released") == "true";
 
@@ -743,7 +750,7 @@ class Project extends \Depage\Entity\Entity
     {
         $users = \Depage\Auth\User::loadAll($this->pdo);
 
-        $user = $users[$userId];
+        $requestingUser = $users[$userId];
         $users = array_filter($users, function($u) {
             if ($u->canPublishProject()) {
                 $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
@@ -753,19 +760,22 @@ class Project extends \Depage\Entity\Entity
             return false;
         });
 
-        $text = _("Requesting Document Release: ") . $docId . " / " . $user->fullname;
-
-        foreach ($users as $id => $user) {
-            $text .= "\n" . $user->fullname . " ($id)";
-        }
-
-        $mail = new \Depage\Mail\Mail("notification@edit.depage.net");
-        $mail
-            ->setSubject(_("Requesting Document Release"))
-            ->setText($text);
+        $pages = $this->getPages($docId);
+        $title = _("Document Release request");
+        $text = sprintf(_("%s is requesting document release for '%s'"), $requestingUser->fullname, $pages[0]->url);
 
         foreach ($users as $u) {
-            $mail->send($u->email);
+            $newN = new Notification($this->pdo);
+            $newN->setData([
+                'uid' => $u->id,
+                'tag' => "depage." . $this->name,
+                'title' => $title,
+                'message' => $text,
+                'options' => [
+                    'link' => DEPAGE_BASE . "project/{$this->name}/release-pages/$docId/",
+                ],
+            ])
+            ->save();
         }
     }
     // }}}
