@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-07 16:28+0100\n"
+"POT-Creation-Date: 2016-12-07 17:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1799,14 +1799,13 @@ msgid "Import Now"
 msgstr "Jetzt importieren"
 
 #: Cms/Project.php:764
-#, fuzzy
-msgid "Document Release request"
+msgid "Document Release Request"
 msgstr "Anfrage zur Seitenfreigabe: "
 
 #: Cms/Project.php:765
-#, fuzzy, php-format
-msgid "%s is requesting document release for '%s'"
-msgstr "Anfrage zur Seitenfreigabe: "
+#, php-format
+msgid "%s is requesting a document release for '%s' on project '%s'."
+msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
 
 #: Cms/tpl/taskProgress.tpl:20
 #, php-format
@@ -1884,7 +1883,7 @@ msgstr "Gehe zum Dashboard"
 msgid "Change current project"
 msgstr "Aktuelles Projekt ändern"
 
-#: Cms/tpl/toolbar_main.tpl:23 Cms/Rpc/CmsFuncs.php:787 Cms/Ui/Main.php:154
+#: Cms/tpl/toolbar_main.tpl:23 Cms/Rpc/CmsFuncs.php:787 Cms/Ui/Main.php:158
 msgid "Projects"
 msgstr "Projekte"
 
@@ -1985,11 +1984,11 @@ msgstr "kommentieren"
 #: Cms/Rpc/CmsFuncs.php:681
 msgid "Sorry, you don't have the authentication to change \"%name%\"."
 msgstr ""
-"Entschuldigen Sie, Sie haben keine Authentisierung um \"%name%\" zu ändern."
+"Entschuldigen Sie, Sie haben keine Authentifizierung um \"%name%\" zu ändern."
 
 #: Cms/Rpc/CmsFuncs.php:682
 msgid "You are not allowed to do this!"
-msgstr "Sie haben keine Authentisierung, das zu tun!"
+msgstr "Sie haben keine Authentifizierung, das zu tun!"
 
 #: Cms/Rpc/CmsFuncs.php:683
 msgid "You are not logged in."
@@ -3062,11 +3061,11 @@ msgstr "(unbekannt)"
 
 #: Cms/Rpc/CmsFuncs.php:982
 msgid "Authentication"
-msgstr "Authentisierung"
+msgstr "Authentifizierung"
 
 #: Cms/Rpc/CmsFuncs.php:983
 msgid "You have no Authentication to access this item"
-msgstr "Sie haben keine Authentisierung, um auf dieses Element zuzugreifen"
+msgstr "Sie haben keine Authentifizierung, um auf dieses Element zuzugreifen"
 
 #: Cms/Rpc/CmsFuncs.php:984
 msgid "Which backup of '%project%' do you want to restore?"
@@ -3218,12 +3217,21 @@ msgstr "Projekteinstellung von '%s'"
 msgid "Add new Project"
 msgstr "Neues Projekt hinzufügen"
 
-#: Cms/Ui/Project.php:301
+#: Cms/Ui/Project.php:278
+msgid "You are not allowed to publish this project."
+msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
+
+#: Cms/Ui/Project.php:304
 #, php-format
 msgid "Publish Project '%s'"
 msgstr "Veröffentlichen von Projekt '%s'"
 
-#: Cms/Ui/Project.php:353
+#: Cms/Ui/Project.php:334
+msgid "You are not allowed to release pages on this project."
+msgstr ""
+"Sie haben keine Authentifizierung, Seiten in diesem Projekt freizugeben."
+
+#: Cms/Ui/Project.php:359
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr "Seiten freigeben für Projekt '%s'"
@@ -3263,33 +3271,46 @@ msgstr ""
 "Willkommen bei\n"
 " depage::cms"
 
-#: Cms/Ui/Main.php:73 Cms/Ui/Main.php:105
+#: Cms/Ui/Main.php:77 Cms/Ui/Main.php:109
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:155
+#: Cms/Ui/Main.php:159
 msgid "Edit, preview or changed settings for your projects"
 msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
-#: Cms/Ui/Main.php:198
+#: Cms/Ui/Main.php:202
 msgid "Remove"
 msgstr "Entfernen"
 
-#: Cms/Ui/Main.php:250
+#: Cms/Ui/Main.php:254
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:252
+#: Cms/Ui/Main.php:256
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:369
+#: Cms/Ui/Main.php:322
+#, php-format
+msgid "You received a new notification from %s:"
+msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
+
+#: Cms/Ui/Main.php:330
+msgid "Your faithful servant on"
+msgstr "Ihr treuer Helfer auf"
+
+#: Cms/Ui/Main.php:399
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:371
+#: Cms/Ui/Main.php:401
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
+
+#: Cms/Ui/Base.php:180
+msgid "You are not allowed here."
+msgstr "Sie haben hier keine Authentifizierung."
 
 #: Cms/XmlDocTypes/Pages.php:19
 msgid "Page"

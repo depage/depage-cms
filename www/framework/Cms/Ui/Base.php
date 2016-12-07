@@ -169,6 +169,26 @@ class Base extends \Depage\Depage\Ui\Base
         return $h;
     }
     // }}}
+    // {{{ notallowed
+    /**
+     * function to call if action/function is not defined
+     *
+     * @return  null
+     */
+    public function notallowed($message = "") {
+        if ($message == "") {
+            $message = _("You are not allowed here.");
+        }
+        $h = new Html("box.tpl", [
+            'id' => "error",
+            'class' => "first",
+            'title' => "Error",
+            'content' => $message,
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
     // {{{ error
     /**
      * function to show error messages

@@ -601,7 +601,7 @@ select,
 
         menu {
             display: block;
-            @include box-shadow(0 2px 0.2em 0 #aaaaaa);
+            @include box-shadow(0 3px 0.4em 0 #aaaaaa);
         }
     }
     h1,
@@ -1906,5 +1906,22 @@ form.lastchanged_pages {
     }
 }
 /* }}} */
+
+// {{{ depage-growl
+#depageGrowlArea {
+    z-index: 9999 !important;
+
+    div.depage-growl-message {
+        background-color: $backgroundColor;
+        color: $textBaseColor;
+
+        @include box-shadow(0 3px 0.4em 0 rgba(0, 0, 0, 0.5));
+
+        &:hover {
+            border-color: $borderColor;
+        }
+    }
+}
+// }}}
 
 /* vim:set ft=scss sw=4 sts=4 fdm=marker : */

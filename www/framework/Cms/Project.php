@@ -761,14 +761,26 @@ class Project extends \Depage\Entity\Entity
         });
 
         $pages = $this->getPages($docId);
-        $title = _("Document Release request");
-        $text = sprintf(_("%s is requesting document release for '%s'"), $requestingUser->fullname, $pages[0]->url);
+        $title = _("Document Release Request");
+        $text = sprintf(_("%s is requesting a document release for '%s' on project '%s'."), $requestingUser->fullname, $pages[0]->url, $this->name);
 
         foreach ($users as $u) {
             $newN = new Notification($this->pdo);
             $newN->setData([
                 'uid' => $u->id,
                 'tag' => "depage." . $this->name,
+                'title' => $title,
+                'message' => $text,
+                'options' => [
+                    'link' => DEPAGE_BASE . "project/{$this->name}/release-pages/$docId/",
+                ],
+            ])
+            ->save();
+
+            $newN = new Notification($this->pdo);
+            $newN->setData([
+                'uid' => $u->id,
+                'tag' => "mail." . $this->name,
                 'title' => $title,
                 'message' => $text,
                 'options' => [

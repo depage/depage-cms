@@ -274,6 +274,9 @@ class Project extends Base
      **/
     public function publish()
     {
+        if (!$this->authUser->canPublishProject()) {
+            return $this->notAllowed(_("You are not allowed to publish this project."));
+        }
         $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, [
             'project' => $this->project,
             'users' => \Depage\Auth\User::loadAll($this->pdo),
@@ -290,6 +293,7 @@ class Project extends Base
                     $this->project->releaseDocument($matches[1], $this->authUser->id);
                 }
             }
+            $this->project->releaseDocument("pages", $this->authUser->id);
 
             $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId, $this->authUser->id);
 
@@ -327,6 +331,9 @@ class Project extends Base
      **/
     public function release_pages($docId = null)
     {
+        if (!$this->authUser->canPublishProject()) {
+            return $this->notAllowed(_("You are not allowed to release pages on this project."));
+        }
         $form = new \Depage\Cms\Forms\ReleasePages("release-pages-" . $this->project->id, [
             'project' => $this->project,
             'users' => \Depage\Auth\User::loadAll($this->pdo),
@@ -344,6 +351,7 @@ class Project extends Base
                     $this->project->releaseDocument($matches[1], $this->authUser->id);
                 }
             }
+            $this->project->releaseDocument("pages", $this->authUser->id);
 
             $form->clearSession();
 

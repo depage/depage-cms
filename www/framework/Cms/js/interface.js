@@ -464,6 +464,10 @@ var depageCMS = (function() {
 
         // {{{ updateAjaxContent
         updateAjaxContent: function() {
+            if (window != window.top) {
+                // don't call this in iframed content
+                return;
+            }
             var url = "overview/";
             var timeout = 5000;
 
