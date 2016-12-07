@@ -22,6 +22,11 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
 
+        h3,
+        p {
+            font-size: inherit;
+        }
+
         &:hover {
             border-color: #ffffff;
         }
