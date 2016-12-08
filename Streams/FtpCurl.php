@@ -14,10 +14,10 @@ class FtpCurl
     protected $buffer;
     protected $pos;
     protected $dirPos;
-    protected $handle;
     protected $translation = ['dev', 'ino', 'mode', 'nlink', 'uid', 'gid', 'rdev', 'size', 'atime', 'mtime', 'ctime', 'blksize', 'blocks'];
 
     static protected $parameters;
+    static protected $handle;
     // }}}
 
     // {{{ registerStream
@@ -45,42 +45,43 @@ class FtpCurl
         $host = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $url);
         $path = (isset($parsed['path'])) ? $parsed['path'] : '/';
 
-        if ($this->handle) {
-            $this->curlSet(CURLOPT_URL, $host);
+        if (static::$handle) {
+            curl_reset(static::$handle);
+            $this->curlSet(CURLOPT_URL, ($hostOnly) ? $host : $url);
         } else {
-            $this->handle = ($hostOnly) ? curl_init($host) : curl_init($url);
+            static::$handle = ($hostOnly) ? curl_init($host) : curl_init($url);
+        }
 
-            if (!$this->handle) {
-                trigger_error('Could not initialize cURL.', E_USER_ERROR);
-            }
+        if (!static::$handle) {
+            trigger_error('Could not initialize cURL.', E_USER_ERROR);
+        }
 
-            $username = $parsed['user'];
-            $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
+        $username = $parsed['user'];
+        $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
 
-            $options = [
-                CURLOPT_USERPWD        => $username . ':' . $password,
-                CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
-                CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
-                CURLOPT_TIMEOUT        => 30,
-                CURLOPT_FOLLOWLOCATION => true,
-            ];
+        $options = [
+            CURLOPT_USERPWD        => $username . ':' . $password,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
+            CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_FOLLOWLOCATION => true,
+        ];
 
-            if ($this->getParameter('caCert')) {
-                $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
-            }
+        if ($this->getParameter('caCert')) {
+            $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
+        }
 
-            // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
-            if (!$this->getParameter('passive') === false) {
-                $options[CURLOPT_FTPPORT] = '-';
-            }
+        // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
+        if (!$this->getParameter('passive') === false) {
+            $options[CURLOPT_FTPPORT] = '-';
+        }
 
-            foreach ($options as $option => $value) {
-                $this->curlSet($option, $value);
-            }
+        foreach ($options as $option => $value) {
+            $this->curlSet($option, $value);
         }
 
         return $path;
@@ -89,7 +90,7 @@ class FtpCurl
     // {{{ curlSet
     protected function curlSet($option, $value)
     {
-        if (!curl_setopt($this->handle, $option, $value)) {
+        if (!curl_setopt(static::$handle, $option, $value)) {
             trigger_error(sprintf('Could not set cURL option: %s', $option), E_USER_ERROR);
         }
     }
@@ -97,7 +98,7 @@ class FtpCurl
     // {{{ execute
     protected function execute()
     {
-        $result = curl_exec($this->handle);
+        $result = curl_exec(static::$handle);
 
         if (
             $result === false
@@ -106,15 +107,15 @@ class FtpCurl
             $this->curlSet(CURLOPT_SSL_VERIFYPEER, false);
             $this->curlSet(CURLOPT_SSL_VERIFYHOST, false);
 
-            $result = curl_exec($this->handle);
+            $result = curl_exec(static::$handle);
         }
 
         if (
             $result === false
-            && curl_errno($this->handle) !== 9
-            && curl_errno($this->handle) !== 21
+            && curl_errno(static::$handle) !== 9
+            && curl_errno(static::$handle) !== 21
         ) {
-            trigger_error(curl_error($this->handle), E_USER_ERROR);
+            trigger_error(curl_error(static::$handle), E_USER_ERROR);
         }
 
         return $result;
@@ -126,6 +127,7 @@ class FtpCurl
     {
         $this->url = $url;
         $this->mode = $mode;
+
         $this->createHandle($url);
         $this->pos = 0;
 
@@ -142,7 +144,6 @@ class FtpCurl
     // {{{ stream_close
     public function stream_close()
     {
-        curl_close($this->handle);
     }
     // }}}
     // {{{ stream_read
@@ -228,7 +229,7 @@ class FtpCurl
         $this->curlSet(CURLOPT_HEADER, true);
         $this->curlSet(CURLOPT_FILETIME, true);
 
-        $result = curl_exec($this->handle);
+        $result = curl_exec(static::$handle);
 
         if ($result === false) {
             $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
@@ -240,7 +241,7 @@ class FtpCurl
                 $this->setStat($stat, 'mode', octdec(40644));
             }
         } else {
-            $info = curl_getinfo($this->handle);
+            $info = curl_getinfo(static::$handle);
 
             $stat = $this->createStat();
             $this->setStat($stat, 'mtime', (int) $info['filetime']);
