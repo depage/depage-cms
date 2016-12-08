@@ -320,6 +320,7 @@ class Main extends Base {
 
                 $url = parse_url(DEPAGE_BASE);
 
+                $subject = $url['host'] . " . " . $n->title;
                 $text = "";
                 $text .= sprintf(_("You received a new notification from %s:"), $url['host']) . "\n\n";
                 $text .= $n->message . "\n\n";
@@ -334,7 +335,7 @@ class Main extends Base {
 
                 $mail = new \Depage\Mail\Mail("notifications@depage.net");
                 $mail
-                    ->setSubject($n->title)
+                    ->setSubject($subject)
                     ->setText($text)
                     ->send($to);
             }
