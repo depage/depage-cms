@@ -38,7 +38,7 @@ before_script:
     - sudo openssl x509 -req -days 365 -CA /etc/proftpd/ssl/ca.pem -CAkey /etc/proftpd/ssl/ca.key -CAcreateserial -CAserial serial -in /etc/proftpd/ssl/ftp.csr -out /etc/proftpd/ssl/ftp.pem
     - sudo cp /etc/proftpd/ssl/ca.pem Tests/docker/ssl
 
-    - sudo chmod 600 /etc/proftpd/ssl/*
+    - sudo chmod -R 600 /etc/proftpd/ssl
 
     - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd
     - sudo /etc/init.d/proftpd restart
