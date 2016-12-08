@@ -135,13 +135,13 @@ class Newsletter extends Base
             $values = $form->getValues();
 
             if ($values['to'] == "__custom") {
-                // @todo set lang correctly
+                $this->newsletter->sendTo($values['emails'], "de");
+                $this->newsletter->sendTo($values['emails'], "en");
+            } else {
                 $publishId = array_keys($this->project->getPublishingTargets())[0];
                 $this->project->addPublishTask($this->newsletter->name, $publishId, $this->authUser->id);
-                $this->newsletter->sendTo("info@depage.net", $values['emails'], "de");
-                $this->newsletter->sendTo("info@depage.net", $values['emails'], "en");
-            } else {
-                $this->newsletter->sendToSubscribers("info@depage.net", $values['to']);
+
+                $this->newsletter->sendToSubscribers($values['to']);
             }
             $form->clearSession();
 

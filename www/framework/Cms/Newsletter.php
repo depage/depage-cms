@@ -394,10 +394,10 @@ class Newsletter
     /**
      * @brief sendToSubscribers
      *
-     * @param mixed $param
+     * @param string $category
      * @return void
      **/
-    public function sendToSubscribers($from, $category)
+    public function sendToSubscribers($category)
     {
         // @todo add these inside of task
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
@@ -405,14 +405,17 @@ class Newsletter
         $subscribers = $this->getSubscribers($category);
 
         foreach ($subscribers as $lang => $emails) {
+            $mail = new \Depage\Mail\Mail($this->conf->from);
+            $mail->setSubject($this->getSubject($lang))
+                ->setHtmlText($this->transform("live", $lang));
+
+            $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
+                $mail,
+                $this,
+            ]);
+
             foreach ($emails as $to) {
-                $html = $this->transform("live", $lang);
-
-                $mail = new \Depage\Mail\Mail($this->conf->from);
-                $mail->setSubject($this->getSubject($lang))
-                    ->setHtmlText($html);
-
-                $this->sendLater($task, $mail, $to, $lang);
+                $this->sendLater($task, $initId, $to, $lang);
             }
         }
 
@@ -423,10 +426,11 @@ class Newsletter
     /**
      * @brief sendTo
      *
-     * @param mixed $previewType, $
+     * @param string $to
+     * @param string $lang
      * @return void
      **/
-    public function sendTo($from, $to, $lang)
+    public function sendTo($to, $lang)
     {
         $html = $this->transform("live", $lang);
 
@@ -434,12 +438,17 @@ class Newsletter
 
         $mail = new \Depage\Mail\Mail($this->conf->from);
         $mail->setSubject($this->getSubject($lang))
-            ->setHtmlText($html);
+            ->setHtmlText($this->transform("live", $lang));
+
+        $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
+            $mail,
+            $this,
+        ]);
 
         $recipients = array_unique(explode(",", $to));
 
         foreach($recipients as $i => $to) {
-            $this->sendLater($task, $mail, $to, $lang);
+            $this->sendLater($task, $initId, $to, $lang);
         }
 
         $task->begin();
@@ -452,14 +461,12 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    protected function sendLater($task, $mail, $to, $lang)
+    protected function sendLater($task, $initId, $to, $lang)
     {
-        $task->addSubtask("sending mail", "%s->send(%s, %s, %s);", [
-            $this,
-            $mail,
+        $task->addSubtask("sending mail", "\$newsletter->send(\$mail, %s, %s);", [
             $to,
             $lang,
-        ]);
+        ], $initId);
     }
     // }}}
     // {{{ send()
@@ -589,6 +596,25 @@ class Newsletter
         $query->execute([
             'hash' => $hash,
         ]);
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'project',
+            'pdo',
+            'tableSubscribers',
+            'tableSent',
+            'conf',
+            'name',
+            'document',
+            'id',
+        );
     }
     // }}}
 }
