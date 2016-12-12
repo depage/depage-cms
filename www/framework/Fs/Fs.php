@@ -16,7 +16,10 @@ class Fs
     public function __construct($params = array())
     {
         if (isset($params['scheme']))   $this->url['scheme']    = $params['scheme'];
+        if (isset($params['user']))     $this->url['user']      = $params['user'];
+        if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
         if (isset($params['host']))     $this->url['host']      = $params['host'];
+        if (isset($params['port']))     $this->url['port']      = $params['port'];
 
         $this->hidden   = (isset($params['hidden']))    ? $params['hidden'] : false;
         $this->path     = (isset($params['path']))      ? $params['path']   : '.';
@@ -158,13 +161,12 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($pathName);
-        if (!is_dir($cleanUrl)) {
-            $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
+        $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
-            if (!$success) {
-                throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
-            }
+        if (!$success) {
+            throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
         }
+
         $this->postCommandHook();
     }
     // }}}

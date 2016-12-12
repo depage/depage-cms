@@ -18,7 +18,6 @@ class FsSsh extends Fs
     public function __construct($params = array())
     {
         parent::__construct($params);
-
         $this->privateKeyFile   = (isset($params['privateKeyFile']))    ? $params['privateKeyFile'] : null;
         $this->publicKeyFile    = (isset($params['publicKeyFile']))     ? $params['publicKeyFile']  : null;
         $this->privateKey       = (isset($params['privateKey']))        ? $params['privateKey']     : null;
