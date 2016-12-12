@@ -255,18 +255,25 @@ class FtpCurl
     }
     // }}}
     // {{{ dir_opendir
-    public function dir_opendir($path, $options)
+    public function dir_opendir($url, $options)
     {
         $this->dirPos = 0;
 
-        $this->createHandle($this->addTrailingSlash($path));
-
-        $this->curlSet(CURLOPT_FTPLISTONLY, true);
-
+        $path = $this->createHandle($url, true);
+        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
         $result = $this->execute();
-        if ($result) {
-            $this->files = explode("\n", trim($result));
+
+        $list = explode(PHP_EOL, $result);
+
+        $nodes = [];
+        foreach ($list as $line) {
+            if ($line) {
+                $info = preg_split('/\s+/', $line);
+                $nodes[] = $info[8];
+            }
         }
+
+        $this->files = $nodes;
 
         return (bool) $result;
     }
