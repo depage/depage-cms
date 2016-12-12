@@ -1,5 +1,9 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\FsFtp;
+
 class FsFtpTest extends TestRemote
 {
     // {{{ createTestObject
@@ -12,11 +16,12 @@ class FsFtpTest extends TestRemote
             'port' => 21,
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
+            'caCert' => $GLOBALS['CA_CERT'],
         );
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsFtp($newParams);
+        return new FsFtp($newParams);
     }
     // }}}
     // {{{ testDefaultPort
@@ -28,22 +33,41 @@ class FsFtpTest extends TestRemote
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['REMOTE_PASS'],
+            'caCert' => $GLOBALS['CA_CERT'],
         );
 
-        $fs = new Depage\Fs\FsFtp($params);
+        $fs = new FsFtp($params);
         $this->assertTrue($fs->test());
     }
     // }}}
-
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * 
-     * override,
-     * ftp stream wrappers give weird error messages
-     */
-    public function testLateConnectInvalidDirectoryFail()
+    // {{{ testSslFail
+    public function testSslFail()
     {
-        return parent::testLateConnectInvalidDirectoryFail();
+        $params = array(
+            'path' => '/Temp',
+            'scheme' => 'ftp',
+            'host' => $GLOBALS['REMOTE_HOST'],
+            'user' => $GLOBALS['REMOTE_USER'],
+            'pass' => $GLOBALS['REMOTE_PASS'],
+        );
+
+        $fs = new FsFtp($params);
+
+        $this->assertFalse($fs->test($error));
+        $this->assertSame('SSL certificate problem: unable to get local issuer certificate', $error);
+    }
+    // }}}
+
+    // {{{ testTest
+    /**
+     * override, sending data to server actually happens at stream_flush
+     * so Fs::test doesn't get a write specific error
+     */
+    public function testTest()
+    {
+        $this->assertTrue($this->fs->test());
+        $this->deleteRemoteTestDir();
+        $this->assertFalse($this->fs->test($error));
     }
     // }}}
 }

@@ -2,10 +2,26 @@
 
 namespace Depage\Fs;
 
+use Depage\Fs\Exceptions\FsException;
+use Depage\Fs\Streams\FtpCurl;
+
 class FsFtp extends Fs
 {
-    // {{{ variables
-    protected $streamContextOptions = array('ftp' => array('overwrite' => true));
+    // {{{ constructor
+    public function __construct($params = array())
+    {
+        parent::__construct($params);
+
+        $streamOptions = [];
+        if (isset($params['caCert'])) {
+            $streamOptions['caCert'] = $params['caCert'];
+        }
+        if (isset($params['passive'])) {
+            $streamOptions['passive'] = $params['passive'];
+        }
+
+        FtpCurl::registerStream($this->url['scheme'], $streamOptions);
+    }
     // }}}
     // {{{ constructor
     public function __construct($params = array())

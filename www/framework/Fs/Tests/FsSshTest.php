@@ -1,12 +1,16 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\FsSsh;
+
 class FsSshTest extends TestRemote
 {
     // {{{ createTestObject
     public function createTestObject($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => '/home/testuser/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => 22,
@@ -17,7 +21,7 @@ class FsSshTest extends TestRemote
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsSsh($newParams);
+        return new FsSsh($newParams);
     }
     // }}}
 
@@ -43,7 +47,7 @@ class FsSshTest extends TestRemote
     public function testDefaultPort()
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => '/home/testuser/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'user' => $GLOBALS['REMOTE_USER'],
@@ -51,7 +55,7 @@ class FsSshTest extends TestRemote
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
-        $fs = new Depage\Fs\FsSsh($params);
+        $fs = new FsSsh($params);
         $this->assertTrue($fs->test());
     }
     // }}}

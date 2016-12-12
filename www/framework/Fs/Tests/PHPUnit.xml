@@ -4,15 +4,14 @@
         <var name="REMOTE_HOST" value="localhost" />
         <var name="REMOTE_USER" value="testuser" />
         <var name="REMOTE_PASS" value="testpass" />
-        <var name="REMOTE_DIR" value="/home/testuser/" />
         <var name="PRIVATE_RSA_KEY" value="ssh/rsakey" />
         <var name="PUBLIC_RSA_KEY" value="ssh/rsakey.pub" />
         <var name="PRIVATE_DSA_KEY" value="ssh/dsakey" />
         <var name="PUBLIC_DSA_KEY" value="ssh/dsakey.pub" />
-        <var name="SSH_FINGERPRINT" value="fingerprint" />
+        <var name="SSH_FINGERPRINT" value="7d6d3ba638b39d166a48dbe7638474e3" />
         <var name="SSH_KEYPASS" value="testkeypass" />
+        <var name="CA_CERT" value="../docker/ssl/ca.pem" />
     </php>
-
     <logging>
         <log
         type="coverage-html"

@@ -1,13 +1,15 @@
 <?php
 
-namespace Depage\Fs;
+namespace Depage\Fs\Tests;
+
+use Depage\Fs\PublicSshKey;
 
 class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
 {
     // {{{ setUp
     public function setUp()
     {
-        $this->keyPath = __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'];
+        $this->keyPath = __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'];
         $this->testKey = file_get_contents($this->keyPath);
     }
     // }}}
@@ -17,7 +19,7 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function generateTestObject($data, $tmpDir = false)
     {
-        return new PublicSshKey($data, $tmpDir);
+        return new PublicSshKeyTestClass($data, $tmpDir);
     }
     // }}}
 

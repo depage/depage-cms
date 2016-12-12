@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
 class TestRemote extends TestBase
 {
     // {{{ sshConnection
@@ -16,47 +18,52 @@ class TestRemote extends TestBase
     // {{{ sshExec
     protected function sshExec($cmd)
     {
-        return ssh2_exec($this->sshConnection(), $cmd);
+        $stream = ssh2_exec($this->sshConnection(), $cmd);
+        stream_set_blocking($stream, true);
+        $streamResult = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+
+        return stream_get_contents($streamResult);
     }
     // }}}
 
     // {{{ mkdirRemote
     protected function mkdirRemote($path, $mode = 0777, $recursive = true)
     {
+        $remotePath = '/home/testuser/Temp/' . $path;
         $parents = ($recursive) ? '-p ' : '';
-        $remotePath = $this->remoteDir . '/' . $path;
         $decMode = decoct($mode);
         $command = 'mkdir ' . $parents . '-m ' . $decMode . ' ' . $remotePath;
-
         $this->sshExec($command);
-        $this->assertTrue(is_dir($remotePath));
+
+        $this->assertTrue($this->isDir($remotePath));
     }
     // }}}
     // {{{ touchRemote
     protected function touchRemote($path, $mode = 0777)
     {
-        $remotePath = $this->remoteDir . '/' . $path;
+        $remotePath = '/home/testuser/Temp/' . $path;
         $this->sshExec('touch ' . $remotePath);
         $decMode = decoct($mode);
         $this->sshExec('chmod ' . $decMode . ' ' . $remotePath);
-        $this->assertTrue(is_file($remotePath));
+
+        $this->assertTrue($this->isFile($remotePath));
     }
     // }}}
 
     // {{{ createRemoteTestDir
     public function createRemoteTestDir()
     {
-        $dir = $GLOBALS['REMOTE_DIR'] . 'Temp';
+        $dir = '/home/testuser/Temp';
 
-        if (file_exists($dir)) {
+        if ($this->isDir($dir)) {
             $this->deleteRemoteTestDir();
-            if (file_exists($dir)) {
+            if ($this->isDir($dir)) {
                 $this->fail('Test directory not clean: ' . $dir);
             }
         }
 
         $this->sshExec('mkdir -m 777 ' . $dir);
-        $this->assertTrue(is_dir($dir));
+        $this->assertTrue($this->isDir($dir));
 
         return $dir;
     }
@@ -64,15 +71,53 @@ class TestRemote extends TestBase
     // {{{ deleteRemoteTestDir
     public function deleteRemoteTestDir()
     {
-        $this->sshExec('rm -r ' . $GLOBALS['REMOTE_DIR'] . 'Temp');
+        $this->sshExec('rm -r /home/testuser/Temp');
     }
     // }}}
     // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path, $content = null)
+    public function createRemoteTestFile($path, $contents = 'testString')
     {
-        $content = ($content === null) ? 'testString' : $content;
-        $this->sshExec('printf "' . $content . '" > ' . $this->remoteDir . '/' . $path);
-        $this->confirmRemoteTestFile($path, $content);
+        $remotePath = '/home/testuser/Temp/' . $path;
+
+        $this->sshExec("echo -n \"$contents\" > $remotePath");
+        $this->assertTrue($this->isFile($remotePath));
+        $this->assertTrue($this->confirmRemoteTestFile($path, $contents));
+    }
+    // }}}
+    // {{{ confirmRemoteTestFile
+    protected function confirmRemoteTestFile($path, $contents = 'testString')
+    {
+        $remotePath = '/home/testuser/Temp/' . $path;
+        $file = $this->sshExec("cat $remotePath");
+
+        return $file === $contents;
+    }
+    // }}}
+
+    // {{{ isDir
+    protected function isDir($path)
+    {
+        $result = $this->sshExec('if [ -d "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+        return (bool) trim($result);
+    }
+    // }}}
+    // {{{ isFile
+    protected function isFile($path)
+    {
+        $result = $this->sshExec('if [ -f "' . $path . '" ]; then echo 1; else echo 0; fi');
+
+        return (bool) trim($result);
+    }
+    // }}}
+    // {{{ sha1File
+    protected function sha1File($path)
+    {
+        $remotePath = '/home/testuser/Temp/' . $path;
+
+        $resultArray = explode(' ', $this->sshExec("sha1sum $remotePath"));
+
+        return $resultArray[0];
     }
     // }}}
 }

@@ -1,16 +1,14 @@
 <?php
 
-namespace Depage\Fs;
-
-require_once(__DIR__ . '/PublicSshKeyTest.php');
+namespace Depage\Fs\Tests;
 
 class PrivateSshKeyTest extends PublicSshKeyTest
 {
     // {{{ setUp
     public function setUp()
     {
-        $this->keyPath = __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'];
-        $this->publicKeyPath = __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'];
+        $this->keyPath = __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'];
+        $this->publicKeyPath = __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'];
         $this->testKey = file_get_contents($this->keyPath);
     }
     // }}}
@@ -20,7 +18,7 @@ class PrivateSshKeyTest extends PublicSshKeyTest
      */
     public function generateTestObject($data, $tmpDir = false)
     {
-        return new PrivateSshKey($data, $tmpDir);
+        return new PrivateSshKeyTestClass($data, $tmpDir);
     }
     // }}}
 
@@ -47,7 +45,7 @@ class PrivateSshKeyTest extends PublicSshKeyTest
      */
     public function testExtractPublicKeyDsa()
     {
-        $key = $this->generateTestObject(__DIR__ . '/../' . $GLOBALS['PRIVATE_DSA_KEY']);
+        $key = $this->generateTestObject(__DIR__ . '/' . $GLOBALS['PRIVATE_DSA_KEY']);
 
         $public = $key->extractPublicKey('/tmp');
     }

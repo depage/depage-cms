@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
 class FsFileTest extends TestBase
 {
     // {{{ createTestObject
@@ -8,7 +10,7 @@ class FsFileTest extends TestBase
         $params = array('scheme' => 'file');
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsFileTestClass($newParams);
+        return new FsFileTestClass($newParams);
     }
     // }}}
 
@@ -42,9 +44,9 @@ class FsFileTest extends TestBase
     }
     // }}}
     // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path, $content = null)
+    public function createRemoteTestFile($path, $contents = 'testString')
     {
-        $this->createTestFile($path, $content);
+        $this->createLocalTestFile($path, $contents);
     }
     // }}}
 
@@ -57,7 +59,7 @@ class FsFileTest extends TestBase
 
         $this->fs->cd('testDir');
         $this->fs->get('testFile');
-        $this->assertTrue($this->confirmTestFile('testFile'));
+        $this->assertTrue($this->confirmLocalTestFile('testFile'));
     }
     // }}}
     // {{{ testCdIntoWrapperUrl

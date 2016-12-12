@@ -249,7 +249,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        file_put_contents($remote, $string, 0, $this->streamContext);
+        $this->file_put_contents($remote, $string, 0, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -260,6 +260,7 @@ class Fs
     {
         $testFile = 'depage-fs-test-file.tmp';
         $testString = 'depage-fs-test-string';
+        $success = false;
 
         try {
             if (!$this->exists($testFile)) {
@@ -271,7 +272,6 @@ class Fs
             }
         } catch (Exceptions\FsException $exception) {
             $error = $exception->getMessage();
-            $success = false;
         }
 
         return $success;
@@ -326,7 +326,7 @@ class Fs
     // }}}
 
     // {{{ parseUrl
-    protected static function parseUrl($url)
+    public static function parseUrl($url)
     {
         $parsed = parse_url($url);
 
@@ -344,7 +344,7 @@ class Fs
     // {{{ cleanUrl
     protected function cleanUrl($url, $showPass = true)
     {
-        $parsed = $this->parseUrl($url);
+        $parsed = self::parseUrl($url);
         $scheme = (isset($parsed['scheme'])) ? $parsed['scheme'] : null;
         $path = (isset($parsed['path'])) ? $parsed['path'] : null;
 
@@ -508,7 +508,7 @@ class Fs
             $hidden = $this->hidden;
         }
 
-        $scanDir = scandir($cleanUrl, 0, $this->streamContext);
+        $scanDir = \scandir($cleanUrl, 0, $this->streamContext);
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {
@@ -530,7 +530,7 @@ class Fs
      */
     protected function rmdir($url)
     {
-        return rmdir($url, $this->streamContext);
+        return \rmdir($url, $this->streamContext);
     }
     // }}}
     // {{{ rename
@@ -539,7 +539,16 @@ class Fs
      */
     protected function rename($source, $target)
     {
-        return rename($source, $target, $this->streamContext);
+        return \rename($source, $target, $this->streamContext);
+    }
+    // }}}
+    // {{{ file_put_contents
+    /**
+     * Hook, allows overriding of file_put_contents function
+     */
+    public function file_put_contents($filename, $data, $flags = 0, $context = null)
+    {
+        return \file_put_contents($filename, $data, $flags, $context);
     }
     // }}}
 }

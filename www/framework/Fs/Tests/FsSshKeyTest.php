@@ -1,8 +1,6 @@
 <?php
 
-use Depage\Fs\FsSshTestClass;
-
-require_once(__DIR__ . '/FsSshTest.php');
+namespace Depage\Fs\Tests;
 
 class FsSshKeyTest extends FsSshTest
 {
@@ -10,14 +8,14 @@ class FsSshKeyTest extends FsSshTest
     public function createTestObject($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => '/home/testuser/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => '22',
             'user' => $GLOBALS['REMOTE_USER'],
             'pass' => $GLOBALS['SSH_KEYPASS'],
-            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'],
-            'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'],
+            'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
+            'publicKeyFile' => __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'],
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
         );
 
@@ -30,7 +28,7 @@ class FsSshKeyTest extends FsSshTest
     public function createTestObjectWithoutKeys($override = array())
     {
         $params = array(
-            'path' => $GLOBALS['REMOTE_DIR'] . 'Temp',
+            'path' => '/home/testuser/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
             'port' => '22',
@@ -41,7 +39,7 @@ class FsSshKeyTest extends FsSshTest
 
         $newParams = array_merge($params, $override);
 
-        return new Depage\Fs\FsSsh($newParams);
+        return new \Depage\Fs\FsSsh($newParams);
     }
     // }}}
 
@@ -66,8 +64,8 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY']),
-            'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'],
+            'privateKey' => file_get_contents(__DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY']),
+            'publicKeyFile' => __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'],
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
@@ -79,8 +77,8 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'],
-            'publicKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY']),
+            'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
+            'publicKey' => file_get_contents(__DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY']),
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
@@ -98,7 +96,7 @@ class FsSshKeyTest extends FsSshTest
         $params = array(
             'tmp' => '/tmp',
             'privateKey' => 'iamnotaprivatesshkey' ,
-            'publicKeyFile' => __DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY'],
+            'publicKeyFile' => __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'],
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
@@ -114,7 +112,7 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'],
+            'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
             'publicKey' => 'iamnotapublicsshkey',
         );
 
@@ -128,8 +126,8 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY']),
-            'publicKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['PUBLIC_RSA_KEY']),
+            'privateKey' => file_get_contents(__DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY']),
+            'publicKey' => file_get_contents(__DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY']),
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
@@ -142,7 +140,7 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKeyFile' => __DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY'],
+            'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
@@ -154,7 +152,7 @@ class FsSshKeyTest extends FsSshTest
     {
         $params = array(
             'tmp' => '/tmp',
-            'privateKey' => file_get_contents(__DIR__ . '/../' . $GLOBALS['PRIVATE_RSA_KEY']),
+            'privateKey' => file_get_contents(__DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY']),
         );
 
         $fs = $this->createTestObjectWithoutKeys($params);
