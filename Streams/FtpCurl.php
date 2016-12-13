@@ -219,36 +219,31 @@ class FtpCurl
     }
     // }}}
     // {{{ url_stat
-    public function url_stat($path, $flags)
+    public function url_stat($url, $flags)
     {
         $stat = false;
 
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_NOBODY, true);
-        $this->curlSet(CURLOPT_HEADER, true);
+        $path = $this->createHandle($url, true);
         $this->curlSet(CURLOPT_FILETIME, true);
+        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
+        $result = $this->execute();
 
-        $result = curl_exec(static::$handle);
-
-        if ($result === false) {
-            $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
-
-            $result = $this->execute();
-
-            if ($result !== false) {
-                $stat = $this->createStat();
-                $this->setStat($stat, 'mode', octdec(40644));
-            }
-        } else {
-            $info = curl_getinfo(static::$handle);
+        if ($result) {
+            $nodes = $this->parseLs($result);
 
             $stat = $this->createStat();
-            $this->setStat($stat, 'mtime', (int) $info['filetime']);
-            $this->setStat($stat, 'atime', -1);
-            $this->setStat($stat, 'ctime', -1);
-            $this->setStat($stat, 'size', (int) $info['download_content_length']);
-            $this->setStat($stat, 'mode', octdec(100644));
+
+            if (count($nodes) === 1) {
+                $info = curl_getinfo(static::$handle);
+
+                $this->setStat($stat, 'mtime', (int) $info['filetime']);
+                $this->setStat($stat, 'atime', -1);
+                $this->setStat($stat, 'ctime', -1);
+                $this->setStat($stat, 'size', (int) $info['download_content_length']);
+                $this->setStat($stat, 'mode', octdec(100644));
+            } else {
+                $this->setStat($stat, 'mode', octdec(40644));
+            }
         }
 
         return $stat;
@@ -263,17 +258,7 @@ class FtpCurl
         $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
         $result = $this->execute();
 
-        $list = explode(PHP_EOL, $result);
-
-        $nodes = [];
-        foreach ($list as $line) {
-            if ($line) {
-                $info = preg_split('/\s+/', $line);
-                $nodes[] = $info[8];
-            }
-        }
-
-        $this->files = $nodes;
+        $this->files = array_keys($this->parseLs($result));
 
         return (bool) $result;
     }
@@ -367,6 +352,32 @@ class FtpCurl
         }
 
         return $string;
+    }
+    // }}}
+    // {{{ parseLs
+    protected function parseLs($ls)
+    {
+        $list = explode(PHP_EOL, trim($ls));
+
+        $nodes = [];
+        foreach ($list as $line) {
+            if ($line) {
+                $split = preg_split('/\s+/', $line);
+
+                $info['type'] = $split[0][0];
+                $info['permisions'] = substr(array_shift($split),1);
+                $info['hardlinks'] = array_shift($split);
+                $info['user'] = array_shift($split);
+                $info['group'] = array_shift($split);
+                $info['size'] = array_shift($split);
+                $name = implode(' ', array_splice($split, 3));
+                $info['mtime'] = strtotime(implode(' ', $split));
+
+                $nodes[$name] = $info;
+            }
+        }
+
+        return $nodes;
     }
     // }}}
 }
