@@ -2,7 +2,9 @@
 
 namespace Depage\Fs\Tests;
 
-class FsFileTestClass extends \Depage\Fs\FsFile
+use Depage\Fs\FsFile;
+
+class FsFileTestClass extends FsFile
 {
     public function lateConnect()
     {

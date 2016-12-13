@@ -121,6 +121,12 @@ class FtpCurl
         return $result;
     }
     // }}}
+    // {{{ disconnect
+    public static function disconnect()
+    {
+        static::$handle = null;
+    }
+    // }}}
 
     // {{{ stream_open
     public function stream_open($url, $mode, $options, &$openedPath)
@@ -258,7 +264,7 @@ class FtpCurl
         $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
         $result = $this->execute();
 
-        $this->files = array_keys($this->parseLs($result));
+        $this->files = ($result) ? array_keys($this->parseLs($result)) : [];
 
         return (bool) $result;
     }
