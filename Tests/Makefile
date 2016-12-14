@@ -3,7 +3,7 @@ RM = rm -rf
 PHONY: test server
 
 test: server
-	phpunit --configuration PHPUnit.xml .
+	../vendor/bin/phpunit --configuration PHPUnit.xml .
 
 server:
 	$(MAKE) -C docker
