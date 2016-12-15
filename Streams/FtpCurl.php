@@ -67,9 +67,12 @@ class FtpCurl
             CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
-            CURLOPT_TIMEOUT        => 30,
             CURLOPT_FOLLOWLOCATION => true,
         ];
+
+        if ($this->getParameter('timeout')) {
+            $options[CURLOPT_TIMEOUT] = $this->getParameter('timeout');
+        }
 
         if ($this->getParameter('caCert')) {
             $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
