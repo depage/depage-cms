@@ -295,10 +295,7 @@ class FtpCurl
     public function mkdir($url, $mode, $options)
     {
         if ($options & STREAM_MKDIR_RECURSIVE) {
-            $this->createHandle($this->addTrailingSlash($url));
-            $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
-
-            $result = (bool) $this->execute();
+            $result = $this->mkdirRecursive($url);
         } else {
             $result = $this->executeFtpCommand('MKD', $url);
         }
@@ -330,6 +327,30 @@ class FtpCurl
     }
     // }}}
 
+    // {{{ isDir
+    protected function isDir($url)
+    {
+        return $this->executeFtpCommand('CWD', $url);
+    }
+    // }}}
+    // {{{ mkdirRecursive
+    protected function mkdirRecursive($url)
+    {
+        $result = true;
+
+        if (!$this->isDir($url)) {
+            $path = explode('/', $url);
+            array_pop($path);
+            $prev = implode('/', $path);
+            if (!$this->isDir($prev)) {
+                $result = $this->mkdirRecursive($prev);
+            }
+            $result = $result && $result = $this->executeFtpCommand('MKD', $url);
+        }
+
+        return $result;
+    }
+    // }}}
     // {{{ createStat
     protected function createStat()
     {

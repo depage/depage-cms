@@ -163,7 +163,7 @@ class Fs
         $cleanUrl = $this->cleanUrl($pathName);
         $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
-        if (!$success) {
+        if (!$success && !is_dir($cleanUrl)) {
             throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
         }
 
