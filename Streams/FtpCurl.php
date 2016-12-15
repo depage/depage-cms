@@ -19,7 +19,6 @@ class FtpCurl
     static protected $parameters;
     static protected $handle;
     // }}}
-
     // {{{ registerStream
     public static function registerStream($protocol, array $parameters = [])
     {
@@ -32,6 +31,7 @@ class FtpCurl
         stream_wrapper_register($protocol, $class);
     }
     // }}}
+
     // {{{ getParameter
     protected function getParameter($parameter)
     {
@@ -87,6 +87,12 @@ class FtpCurl
         return $path;
     }
     // }}}
+    // {{{ disconnect
+    public static function disconnect()
+    {
+        static::$handle = null;
+    }
+    // }}}
     // {{{ curlSet
     protected function curlSet($option, $value)
     {
@@ -121,10 +127,38 @@ class FtpCurl
         return $result;
     }
     // }}}
-    // {{{ disconnect
-    public static function disconnect()
+    // {{{ executeFtpCommand
+    protected function executeFtpCommand($command, $url)
     {
-        static::$handle = null;
+        $path = $this->createHandle($url, true);
+        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
+
+        return (bool) $this->execute();
+    }
+    // }}}
+
+    // {{{ isDir
+    protected function isDir($url)
+    {
+        return $this->executeFtpCommand('CWD', $url);
+    }
+    // }}}
+    // {{{ mkdirRecursive
+    protected function mkdirRecursive($url)
+    {
+        $result = true;
+
+        if (!$this->isDir($url)) {
+            $path = explode('/', $url);
+            array_pop($path);
+            $prev = implode('/', $path);
+            if (!$this->isDir($prev)) {
+                $result = $this->mkdirRecursive($prev);
+            }
+            $result = $result && $result = $this->executeFtpCommand('MKD', $url);
+        }
+
+        return $result;
     }
     // }}}
 
@@ -282,15 +316,6 @@ class FtpCurl
         return $result;
     }
     // }}}
-    // {{{ executeFtpCommand
-    protected function executeFtpCommand($command, $url)
-    {
-        $path = $this->createHandle($url, true);
-        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
-
-        return (bool) $this->execute();
-    }
-    // }}}
     // {{{ mkdir
     public function mkdir($url, $mode, $options)
     {
@@ -327,30 +352,6 @@ class FtpCurl
     }
     // }}}
 
-    // {{{ isDir
-    protected function isDir($url)
-    {
-        return $this->executeFtpCommand('CWD', $url);
-    }
-    // }}}
-    // {{{ mkdirRecursive
-    protected function mkdirRecursive($url)
-    {
-        $result = true;
-
-        if (!$this->isDir($url)) {
-            $path = explode('/', $url);
-            array_pop($path);
-            $prev = implode('/', $path);
-            if (!$this->isDir($prev)) {
-                $result = $this->mkdirRecursive($prev);
-            }
-            $result = $result && $result = $this->executeFtpCommand('MKD', $url);
-        }
-
-        return $result;
-    }
-    // }}}
     // {{{ createStat
     protected function createStat()
     {
@@ -369,16 +370,6 @@ class FtpCurl
     {
         $stat[$name] = $value;
         $stat[array_search($name, $this->translation)] = $value;
-    }
-    // }}}
-    // {{{ addTrailingSlash
-    protected function addTrailingSlash($string)
-    {
-        if (substr($string, -1) !== '/') {
-            $string .= '/';
-        }
-
-        return $string;
     }
     // }}}
     // {{{ parseLs
