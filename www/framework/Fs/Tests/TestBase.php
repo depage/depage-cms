@@ -318,6 +318,17 @@ class TestBase extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->isDir($this->remoteDir . '/testDir/testSubDir'));
     }
     // }}}
+    // {{{ testMkdirRecursiveExists
+    public function testMkdirRecursiveExists()
+    {
+        $this->mkdirRemote('testDir');
+        $this->assertFalse($this->isDir($this->remoteDir . 'testDir/testSubDir'));
+
+        $this->fs->mkdir('testDir/testSubDir');
+
+        $this->assertTrue($this->isDir($this->remoteDir . '/testDir/testSubDir'));
+    }
+    // }}}
     // {{{ testMkdirFail
     /**
      * @expectedException           Depage\Fs\Exceptions\FsException

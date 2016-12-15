@@ -3,6 +3,7 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\FsFtp;
+use Depage\Fs\Streams\FtpCurl;
 
 class FsFtpTest extends TestRemote
 {
@@ -27,6 +28,8 @@ class FsFtpTest extends TestRemote
     // {{{ testDefaultPort
     public function testDefaultPort()
     {
+        FtpCurl::disconnect();
+
         $params = array(
             'path' => '/Temp',
             'scheme' => 'ftp',
@@ -43,6 +46,8 @@ class FsFtpTest extends TestRemote
     // {{{ testSslFail
     public function testSslFail()
     {
+        FtpCurl::disconnect();
+
         $params = array(
             'path' => '/Temp',
             'scheme' => 'ftp',

@@ -19,7 +19,6 @@ class FtpCurl
     static protected $parameters;
     static protected $handle;
     // }}}
-
     // {{{ registerStream
     public static function registerStream($protocol, array $parameters = [])
     {
@@ -32,6 +31,7 @@ class FtpCurl
         stream_wrapper_register($protocol, $class);
     }
     // }}}
+
     // {{{ getParameter
     protected function getParameter($parameter)
     {
@@ -67,9 +67,12 @@ class FtpCurl
             CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
-            CURLOPT_TIMEOUT        => 30,
             CURLOPT_FOLLOWLOCATION => true,
         ];
+
+        if ($this->getParameter('timeout')) {
+            $options[CURLOPT_TIMEOUT] = $this->getParameter('timeout');
+        }
 
         if ($this->getParameter('caCert')) {
             $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
@@ -85,6 +88,12 @@ class FtpCurl
         }
 
         return $path;
+    }
+    // }}}
+    // {{{ disconnect
+    public static function disconnect()
+    {
+        static::$handle = null;
     }
     // }}}
     // {{{ curlSet
@@ -116,6 +125,43 @@ class FtpCurl
             && curl_errno(static::$handle) !== 21
         ) {
             trigger_error(curl_error(static::$handle), E_USER_ERROR);
+        }
+
+        return $result;
+    }
+    // }}}
+    // {{{ executeFtpCommand
+    protected function executeFtpCommand($command, $url)
+    {
+        $path = $this->createHandle($url, true);
+        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
+        $this->curlSet(CURLOPT_NOBODY, true);
+
+        $result = $this->execute();
+
+        return ($result === false) ? false : true;
+    }
+    // }}}
+
+    // {{{ isDir
+    protected function isDir($url)
+    {
+        return $this->executeFtpCommand('CWD', $url);
+    }
+    // }}}
+    // {{{ mkdirRecursive
+    protected function mkdirRecursive($url)
+    {
+        $result = true;
+
+        if (!$this->isDir($url)) {
+            $path = explode('/', $url);
+            array_pop($path);
+            $prev = implode('/', $path);
+            if (!$this->isDir($prev)) {
+                $result = $this->mkdirRecursive($prev);
+            }
+            $result = $result && $result = $this->executeFtpCommand('MKD', $url);
         }
 
         return $result;
@@ -198,7 +244,7 @@ class FtpCurl
             $this->curlSet(CURLOPT_INFILESIZE, $this->pos);
             $this->curlSet(CURLOPT_BINARYTRANSFER, true);
 
-            $result = (bool) $this->execute();
+            $result = ($this->execute() === false) ? false : true;
         }
 
         $this->buffer = null;
@@ -219,54 +265,46 @@ class FtpCurl
     }
     // }}}
     // {{{ url_stat
-    public function url_stat($path, $flags)
+    public function url_stat($url, $flags)
     {
         $stat = false;
 
-        $this->createHandle($path);
-
-        $this->curlSet(CURLOPT_NOBODY, true);
-        $this->curlSet(CURLOPT_HEADER, true);
+        $path = $this->createHandle($url, true);
         $this->curlSet(CURLOPT_FILETIME, true);
+        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
+        $result = $this->execute();
 
-        $result = curl_exec(static::$handle);
-
-        if ($result === false) {
-            $this->curlSet(CURLOPT_URL, $this->addTrailingSlash($path));
-
-            $result = $this->execute();
-
-            if ($result !== false) {
-                $stat = $this->createStat();
-                $this->setStat($stat, 'mode', octdec(40644));
-            }
-        } else {
-            $info = curl_getinfo(static::$handle);
+        if ($result) {
+            $nodes = $this->parseLs($result);
 
             $stat = $this->createStat();
-            $this->setStat($stat, 'mtime', (int) $info['filetime']);
-            $this->setStat($stat, 'atime', -1);
-            $this->setStat($stat, 'ctime', -1);
-            $this->setStat($stat, 'size', (int) $info['download_content_length']);
-            $this->setStat($stat, 'mode', octdec(100644));
+
+            if (count($nodes) === 1) {
+                $info = curl_getinfo(static::$handle);
+
+                $this->setStat($stat, 'mtime', (int) $info['filetime']);
+                $this->setStat($stat, 'atime', -1);
+                $this->setStat($stat, 'ctime', -1);
+                $this->setStat($stat, 'size', (int) $info['download_content_length']);
+                $this->setStat($stat, 'mode', octdec(100644));
+            } else {
+                $this->setStat($stat, 'mode', octdec(40644));
+            }
         }
 
         return $stat;
     }
     // }}}
     // {{{ dir_opendir
-    public function dir_opendir($path, $options)
+    public function dir_opendir($url, $options)
     {
         $this->dirPos = 0;
 
-        $this->createHandle($this->addTrailingSlash($path));
-
-        $this->curlSet(CURLOPT_FTPLISTONLY, true);
-
+        $path = $this->createHandle($url, true);
+        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
         $result = $this->execute();
-        if ($result) {
-            $this->files = explode("\n", trim($result));
-        }
+
+        $this->files = ($result) ? array_keys($this->parseLs($result)) : [];
 
         return (bool) $result;
     }
@@ -284,23 +322,11 @@ class FtpCurl
         return $result;
     }
     // }}}
-    // {{{ executeFtpCommand
-    protected function executeFtpCommand($command, $url)
-    {
-        $path = $this->createHandle($url, true);
-        $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
-
-        return (bool) $this->execute();
-    }
-    // }}}
     // {{{ mkdir
     public function mkdir($url, $mode, $options)
     {
         if ($options & STREAM_MKDIR_RECURSIVE) {
-            $this->createHandle($this->addTrailingSlash($url));
-            $this->curlSet(CURLOPT_FTP_CREATE_MISSING_DIRS, true);
-
-            $result = (bool) $this->execute();
+            $result = $this->mkdirRecursive($url);
         } else {
             $result = $this->executeFtpCommand('MKD', $url);
         }
@@ -328,7 +354,7 @@ class FtpCurl
 
         $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $pathFrom, 'RNTO ' . $pathTo]);
 
-        return (bool) $this->execute();
+        return ($this->execute() === false) ? false : true;
     }
     // }}}
 
@@ -352,14 +378,30 @@ class FtpCurl
         $stat[array_search($name, $this->translation)] = $value;
     }
     // }}}
-    // {{{ addTrailingSlash
-    protected function addTrailingSlash($string)
+    // {{{ parseLs
+    protected function parseLs($ls)
     {
-        if (substr($string, -1) !== '/') {
-            $string .= '/';
+        $list = explode(PHP_EOL, trim($ls));
+
+        $nodes = [];
+        foreach ($list as $line) {
+            if ($line) {
+                $split = preg_split('/\s+/', $line);
+
+                $info['type'] = $split[0][0];
+                $info['permisions'] = substr(array_shift($split),1);
+                $info['hardlinks'] = array_shift($split);
+                $info['user'] = array_shift($split);
+                $info['group'] = array_shift($split);
+                $info['size'] = array_shift($split);
+                $name = implode(' ', array_splice($split, 3));
+                $info['mtime'] = strtotime(implode(' ', $split));
+
+                $nodes[$name] = $info;
+            }
         }
 
-        return $string;
+        return $nodes;
     }
     // }}}
 }
