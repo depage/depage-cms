@@ -135,8 +135,11 @@ class FtpCurl
     {
         $path = $this->createHandle($url, true);
         $this->curlSet(CURLOPT_QUOTE, [$command . ' ' . $path]);
+        $this->curlSet(CURLOPT_NOBODY, true);
 
-        return (bool) $this->execute();
+        $result = $this->execute();
+
+        return ($result === false) ? false : true;
     }
     // }}}
 
@@ -241,7 +244,7 @@ class FtpCurl
             $this->curlSet(CURLOPT_INFILESIZE, $this->pos);
             $this->curlSet(CURLOPT_BINARYTRANSFER, true);
 
-            $result = (bool) $this->execute();
+            $result = ($this->execute() === false) ? false : true;
         }
 
         $this->buffer = null;
@@ -351,7 +354,7 @@ class FtpCurl
 
         $this->curlSet(CURLOPT_QUOTE, ['RNFR ' . $pathFrom, 'RNTO ' . $pathTo]);
 
-        return (bool) $this->execute();
+        return ($this->execute() === false) ? false : true;
     }
     // }}}
 
