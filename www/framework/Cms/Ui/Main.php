@@ -501,6 +501,22 @@ class Main extends Base {
         return "updated";
     }
     // }}}
+    // {{{ info()
+    /**
+     * @brief displays php info
+     *
+     * @return void
+     **/
+    public function info()
+    {
+        if ($this->auth->enforceLazy()) {
+            $info = new \Depage\Php\Info();
+            return new Html("about.tpl", [
+                "info" => $info->getInfo(),
+            ]);
+        }
+    }
+    // }}}
 
     // {{{ test()
     /**
