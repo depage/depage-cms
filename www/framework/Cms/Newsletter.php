@@ -514,6 +514,8 @@ class Newsletter
      **/
     public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
     {
+        $this->unsubscribe($email, $lang, $category);
+
         $query = $this->pdo->prepare(
             "INSERT
             INTO
@@ -525,12 +527,6 @@ class Newsletter
                 description=:description,
                 category=:category,
                 lang=:lang
-            ON DUPLICATE KEY UPDATE
-                email=VALUES(email),
-                firstname=VALUES(firstname),
-                lastname=VALUES(lastname),
-                description=VALUES(description),
-                category=VALUES(category)
             "
         );
         $success = $query->execute([
