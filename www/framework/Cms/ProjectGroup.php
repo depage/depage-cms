@@ -69,8 +69,7 @@ class ProjectGroup extends \Depage\Entity\Entity
                 {$pdo->prefix}_project_groups AS projectgroup
             ORDER BY
                 projectgroup.pos ASC,
-                projectgroup.name DESC
-
+                projectgroup.name ASC
             "
         );
 
