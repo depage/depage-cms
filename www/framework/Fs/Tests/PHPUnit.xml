@@ -10,7 +10,7 @@
         <var name="PUBLIC_DSA_KEY" value="ssh/dsakey.pub" />
         <var name="SSH_FINGERPRINT" value="7d6d3ba638b39d166a48dbe7638474e3" />
         <var name="SSH_KEYPASS" value="testkeypass" />
-        <var name="CA_CERT" value="../docker/ssl/ca.pem" />
+        <var name="CA_CERT" value="docker/ssl/ca.pem" />
     </php>
     <filter>
         <whitelist>

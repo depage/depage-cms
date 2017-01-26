@@ -2,6 +2,8 @@
 
 namespace Depage\Fs\Tests;
 
+use Depage\Fs\Tests\TestClasses\PrivateSshKeyTestClass;
+
 class PrivateSshKeyTest extends PublicSshKeyTest
 {
     // {{{ setUp

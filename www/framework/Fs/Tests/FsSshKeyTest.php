@@ -2,6 +2,8 @@
 
 namespace Depage\Fs\Tests;
 
+use Depage\Fs\Tests\TestClasses\FsSshTestClass;
+
 class FsSshKeyTest extends FsSshTest
 {
     // {{{ createTestObject

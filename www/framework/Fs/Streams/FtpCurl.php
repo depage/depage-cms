@@ -61,9 +61,9 @@ class FtpCurl
 
         $options = [
             CURLOPT_USERPWD        => $username . ':' . $password,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_FTP_SSL        => CURLFTPSSL_ALL, // require SSL For both control and data connections
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_FTP_SSL        => CURLFTPSSL_TRY, // require SSL For both control and data connections
             CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
@@ -173,9 +173,9 @@ class FtpCurl
     {
         $this->url = $url;
         $this->mode = $mode;
+        $this->pos = 0;
 
         $this->createHandle($url);
-        $this->pos = 0;
 
         if ($this->mode == 'wb') {
             $this->curlSet(CURLOPT_UPLOAD, true);
@@ -267,28 +267,27 @@ class FtpCurl
     // {{{ url_stat
     public function url_stat($url, $flags)
     {
-        $stat = false;
+        $urlArray = explode('/', $url);
+        $nodeName = array_pop($urlArray);
+        $url = implode('/', $urlArray) . '/';
 
-        $path = $this->createHandle($url, true);
-        $this->curlSet(CURLOPT_FILETIME, true);
-        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a ' . $path);
+        $stat = false;
+        $this->createHandle($url, false);
+        $this->curlSet(CURLOPT_CUSTOMREQUEST, 'LIST -a');
         $result = $this->execute();
 
         if ($result) {
             $nodes = $this->parseLs($result);
 
-            $stat = $this->createStat();
+            if (isset($nodes[$nodeName])) {
+                $stat = $this->createStat();
+                $node = $nodes[$nodeName];
 
-            if (count($nodes) === 1) {
-                $info = curl_getinfo(static::$handle);
-
-                $this->setStat($stat, 'mtime', (int) $info['filetime']);
-                $this->setStat($stat, 'atime', -1);
-                $this->setStat($stat, 'ctime', -1);
-                $this->setStat($stat, 'size', (int) $info['download_content_length']);
-                $this->setStat($stat, 'mode', octdec(100644));
-            } else {
-                $this->setStat($stat, 'mode', octdec(40644));
+                $this->setStat(
+                    $stat,
+                    'mode',
+                    octdec($this->translateFileType($node['type']) . $this->translatePermissions($node['permissions']))
+                );
             }
         }
 
@@ -389,7 +388,7 @@ class FtpCurl
                 $split = preg_split('/\s+/', $line);
 
                 $info['type'] = $split[0][0];
-                $info['permisions'] = substr(array_shift($split),1);
+                $info['permissions'] = substr(array_shift($split),1);
                 $info['hardlinks'] = array_shift($split);
                 $info['user'] = array_shift($split);
                 $info['group'] = array_shift($split);
@@ -402,6 +401,40 @@ class FtpCurl
         }
 
         return $nodes;
+    }
+    // }}}
+
+    // {{{ translateFileType
+    protected function translateFileType($char)
+    {
+        $type = false;
+
+        switch ($char) {
+            case '-': $type = 100; break;
+            case 'd': $type = 40; break;
+        }
+
+        return $type;
+    }
+    // }}}
+    // {{{ translatePermissions
+    protected function translatePermissions($permissions)
+    {
+        $result = '';
+
+        foreach (str_split($permissions, 3) as $operator) {
+            $numerical = 0;
+
+            for ($i = 0; $i < 2; $i++) {
+                if ($operator[$i] !== '-') {
+                    $numerical += pow(2, (2 - $i));
+                }
+            }
+
+            $result .= $numerical;
+        }
+
+        return $result;
     }
     // }}}
 }

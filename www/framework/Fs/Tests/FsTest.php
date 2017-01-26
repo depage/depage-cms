@@ -4,6 +4,7 @@ namespace Depage\Fs\Tests;
 
 use Depage\Fs\Fs;
 use Depage\Fs\Exceptions\FsException;
+use Depage\Fs\Tests\TestClasses\FsTestClass;
 
 class FsTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,51 +2,44 @@
 
 namespace Depage\Fs\Tests;
 
-class FsFileTest extends TestBase
+use Depage\Fs\Tests\TestClasses\FsFileTestClass;
+
+class FsFileTest extends OperationsTestCase
 {
-    // {{{ createTestObject
-    public function createTestObject($override = array())
+    // {{{ setUp
+    public function setUp()
     {
-        $params = array('scheme' => 'file');
+        $this->assertTrue($this->src->setUp());
+        $this->assertTrue(chdir($this->src->getRoot()));
+
+        $this->fs = $this->createTestObject();
+    }
+    // }}}
+    // {{{ tearDown
+    public function tearDown()
+    {
+        $this->assertTrue($this->src->tearDown());
+
+        $this->assertTrue(chdir($this->root));
+    }
+    // }}}
+
+    // {{{ createDst
+    public function createDst()
+    {
+        return $this->src;
+    }
+    // }}}
+    // {{{ createTestObject
+    protected function createTestObject($override = array())
+    {
+        $params = [
+            'scheme' => 'file',
+        ];
+
         $newParams = array_merge($params, $override);
 
         return new FsFileTestClass($newParams);
-    }
-    // }}}
-
-    // {{{ mkdirRemote
-    protected function mkdirRemote($path, $mode = 0777, $recursive = true)
-    {
-        $remotePath = $this->remoteDir . '/' . $path;
-        mkdir($remotePath, $mode, $recursive);
-        chmod($remotePath, $mode);
-    }
-    // }}}
-    // {{{ touchRemote
-    protected function touchRemote($path, $mode = 0777)
-    {
-        $remotePath = $this->remoteDir . '/' . $path;
-        touch($remotePath, $mode);
-        chmod($remotePath, $mode);
-    }
-    // }}}
-
-    // {{{ createRemoteTestDir
-    public function createRemoteTestDir()
-    {
-        return $this->localDir;
-    }
-    // }}}
-    // {{{ deleteRemoteTestDir
-    public function deleteRemoteTestDir()
-    {
-        $this->rmr($this->localDir);
-    }
-    // }}}
-    // {{{ createRemoteTestFile
-    public function createRemoteTestFile($path, $contents = 'testString')
-    {
-        $this->createLocalTestFile($path, $contents);
     }
     // }}}
 
@@ -54,20 +47,21 @@ class FsFileTest extends TestBase
     public function testGet()
     {
         // file-scheme: create subdirectory so we don't overwrite the 'local' file
-        $this->mkdirRemote('testDir');
-        $this->createRemoteTestFile('testDir/testFile');
+        $this->mkdirDst('testDir');
+        $this->createFileDst('testDir/testFile');
 
         $this->fs->cd('testDir');
         $this->fs->get('testFile');
-        $this->assertTrue($this->confirmLocalTestFile('testFile'));
+        $this->assertTrue($this->src->checkFile('testFile'));
     }
     // }}}
     // {{{ testCdIntoWrapperUrl
     public function testCdIntoWrapperUrl()
     {
         $pwd = $this->fs->pwd();
-        mkdir($this->remoteDir . '/testDir');
-        $this->fs->cd('file://' . $this->remoteDir . '/testDir');
+        $this->mkdirDst('testDir');
+
+        $this->fs->cd('file://' . $this->dst->getRoot() . '/testDir');
         $newPwd = $this->fs->pwd();
 
         $this->assertEquals($pwd . 'testDir/', $newPwd);
@@ -83,16 +77,16 @@ class FsFileTest extends TestBase
         return parent::testMkdirFail();
     }
     // }}}
-
     // {{{ testCleanUrlFile
     public function testCleanUrlFile()
     {
         $fs = $this->createTestObject();
         $fs->lateConnect();
+        $cwd = getcwd();
 
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('file://' . getcwd() . '/path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl('path/to/file'));
-        $this->assertEquals('file://' . getcwd() . '/path/to/file', $fs->cleanUrl(getcwd() . '/path/to/file'));
+        $this->assertEquals('file://' . $cwd . '/path/to/file', $fs->cleanUrl('file://' . $cwd . '/path/to/file'));
+        $this->assertEquals('file://' . $cwd . '/path/to/file', $fs->cleanUrl('path/to/file'));
+        $this->assertEquals('file://' . $cwd . '/path/to/file', $fs->cleanUrl($cwd . '/path/to/file'));
     }
     // }}}
 }

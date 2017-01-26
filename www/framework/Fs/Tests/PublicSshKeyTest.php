@@ -2,7 +2,7 @@
 
 namespace Depage\Fs\Tests;
 
-use Depage\Fs\PublicSshKey;
+use Depage\Fs\Tests\TestClasses\PublicSshKeyTestClass;
 
 class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,39 +2,37 @@ FROM debian:jessie
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get -y update
-RUN apt-get install -y --force-yes proftpd-basic openssh-server openssl
+RUN apt-get update
+RUN apt-get install -y vsftpd supervisor openssh-server openssl
+RUN mkdir -p /var/run/vsftpd/empty
+RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /var/run/sshd
 
-RUN bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" | sed "s/^.*Include\s\+\/etc\/proftpd\/tls.conf\s*$/Include \/etc\/proftpd\/tls.conf/" > /etc/proftpd/proftpd.conf.tmp'
-RUN mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
-
-RUN mkdir /etc/proftpd/ssl
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY start.sh /usr/local/bin/start.sh
+COPY vsftpd.conf /etc/vsftpd.conf
+RUN chmod 755 /usr/local/bin/start.sh
 
 # generate ca key & cert
-RUN openssl genrsa -out /etc/proftpd/ssl/ca.key 2048
-RUN openssl req -x509 -new -key /etc/proftpd/ssl/ca.key -days 3650 -out /etc/proftpd/ssl/ca.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net-ca/OU=IT/CN=ca.depage.net"
+RUN openssl genrsa -out /etc/ssl/private/ca.key 2048
+RUN openssl req -x509 -new -key /etc/ssl/private/ca.key -days 3650 -out /etc/ssl/private/ca.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net-ca/OU=IT/CN=ca.depage.net"
 
 # generate client key & cert
-RUN openssl genrsa -out /etc/proftpd/ssl/ftp.key 2048
-RUN openssl req -new -key /etc/proftpd/ssl/ftp.key -out /etc/proftpd/ssl/ftp.csr -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=localhost"
+RUN openssl genrsa -out /etc/ssl/private/ftp.key 2048
+RUN openssl req -new -key /etc/ssl/private/ftp.key -out /etc/ssl/private/ftp.csr -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=localhost"
 
 # generate signed client cert
-RUN openssl x509 -req -days 365 -CA /etc/proftpd/ssl/ca.pem -CAkey /etc/proftpd/ssl/ca.key -CAcreateserial -CAserial serial -in /etc/proftpd/ssl/ftp.csr -out /etc/proftpd/ssl/ftp.pem
+RUN openssl x509 -req -days 365 -CA /etc/ssl/private/ca.pem -CAkey /etc/ssl/private/ca.key -CAcreateserial -CAserial serial -in /etc/ssl/private/ftp.csr -out /etc/ssl/private/ftp.pem
 
-RUN chmod 600 /etc/proftpd/ssl/*
+RUN chmod 600 /etc/ssl/private/*
 
-ADD ssl/tls.conf /etc/proftpd/tls.conf
+COPY ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key
+COPY ssh/ssh_host_rsa_key.pub /etc/ssh/ssh_host_rsa_key.pub
+RUN chmod 600 /etc/ssh/ssh_host_rsa_key
 
 RUN useradd -m -p co.yjyxRTlonU testuser
 
-ADD ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key
-RUN chmod 600 /etc/ssh/ssh_host_rsa_key
-ADD ssh/ssh_host_rsa_key.pub /etc/ssh/ssh_host_rsa_key.pub
-RUN mkdir /var/run/sshd
-
 EXPOSE 20 21 22
 
-RUN /etc/init.d/ssh start
-
-CMD proftpd && /usr/sbin/sshd -D
+CMD ["/usr/bin/supervisord"]
 

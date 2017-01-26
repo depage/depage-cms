@@ -1,6 +1,6 @@
 RM = rm -rf
 
-PHONY: test server
+PHONY: test server clean
 
 test: server
 	../vendor/bin/phpunit --configuration PHPUnit.xml .
@@ -8,9 +8,7 @@ test: server
 server:
 	$(MAKE) -C docker
 	$(MAKE) run -C docker
-	sleep 1
 
 clean:
 	${RM} Report Temp docker/ssl/ca.pem
-	docker rm -f mock-server
-	docker rmi -f depage-fs-test:latest
+	$(MAKE) clean -C docker

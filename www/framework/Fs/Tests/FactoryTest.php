@@ -1,8 +1,10 @@
 <?php
 
+namespace Depage\Fs\Tests;
+
 use Depage\Fs\Fs;
 
-class FactoryTest extends PHPUnit_Framework_TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     // {{{ testFsFile
     public function testFsFile()
