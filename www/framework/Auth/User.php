@@ -29,7 +29,6 @@ class User extends \Depage\Entity\Entity
         "passwordhash" => "",
         "email" => "",
         "settings" => "",
-        "level" => 4,
         "dateRegistered" => null,
         "dateLastlogin" => null,
         "dateUpdated" => null,

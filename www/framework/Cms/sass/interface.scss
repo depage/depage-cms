@@ -1807,6 +1807,46 @@ form.lastchanged_pages {
     }
 }
 /* }}} */
+/* {{{ about */
+.about {
+    padding: 20px;
+    padding-top: 60px;
+
+    nav {
+        list-style: none;
+    }
+
+    table {
+        width: 80%;
+        border-collapse: collapse;
+
+        caption {
+            text-align: left;
+            font-weight: bold;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: top;
+            width: 50%;
+            padding: 0 10px;
+            word-wrap: break-all;
+            overflow: auto;
+            line-height: 20px;
+        }
+        tr:hover {
+            th,
+            td {
+                background: #eeeeee;
+            }
+        }
+    }
+}
+/* }}} */
 
 /* {{{ live-filter */
 .content .depage-live-filter {

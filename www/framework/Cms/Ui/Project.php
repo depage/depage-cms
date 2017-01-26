@@ -405,7 +405,21 @@ class Project extends Base
 
             if (is_dir($targetPath)) {
                 foreach ($values['file'] as $file) {
-                    rename($file['tmp_name'], $targetPath . "/" . \Depage\Html\Html::getEscapedUrl($file['name']));
+                    $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
+                    rename($file['tmp_name'], $targetPath . "/" . $filename);
+
+                    $cachePath = $this->project->getProjectPath() . "lib/cache/";
+                    if (is_dir($cachePath)) {
+                        // remove thumbnails from cache inside of project if available
+                        $cache = \Depage\Cache\Cache::factory("graphics", [
+                            'cachepath' => $cachePath,
+                        ]);
+                        $cache->delete("lib" . $libPath . "/" . $filename . ".*");
+                    }
+
+                    // remove thumbnails from global graphics cache
+                    $cache = \Depage\Cache\Cache::factory("graphics");
+                    $cache->delete("projects/" . $this->project->name . "/lib" . $libPath . "/" . $filename . ".*");
                 }
             }
 
