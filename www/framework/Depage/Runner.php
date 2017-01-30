@@ -28,7 +28,7 @@ define("DEPAGE_PATH", Runner::getDepagePath()) ;
 define("DEPAGE_CACHE_PATH", Runner::getDepageCachePath()) ;
 
 // register autoload function
-spl_autoload_register("Depage\Depage\Runner::autoload");
+spl_autoload_register('Depage\Depage\Runner::autoload');
 
 class Runner {
     const name = 'depage-cms';
@@ -88,6 +88,19 @@ class Runner {
         date_default_timezone_set($this->options->timezone);
 
         //$this->log = new \Depage\Log\Log($this->options->log);
+    }
+    // }}}
+    // {{{ destructor
+    /**
+     * @brief __destruct
+     *
+     * @return void
+     **/
+    public function __destruct()
+    {
+        session_write_close();
+
+        $_SESSION = NULL;
     }
     // }}}
 

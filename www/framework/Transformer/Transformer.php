@@ -223,7 +223,6 @@ abstract class Transformer
     // {{{ transformUrl()
     public function transformUrl($urlPath, $lang)
     {
-        $this->currentPath = $urlPath;
         $this->lang = $lang;
 
         list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($urlPath);
@@ -359,10 +358,15 @@ abstract class Transformer
         $dynamic = $this->saveTransformed($this->savePath, $html);
 
         if ($dynamic) {
+            $GLOBALS['replacementScript'] = $this->savePath;
+            return "";
+
             $query = "";
             if (!empty($_SERVER['QUERY_STRING'])) {
                 $query = "?" . $_SERVER['QUERY_STRING'];
             }
+            // @todo add headers
+            // @todo add spoofed location header
             $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath . $query);
             $request
                 ->setPostData($_POST)
