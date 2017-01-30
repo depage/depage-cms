@@ -1043,7 +1043,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => $this->getBaseUrl($publishId),
+            "baseUrl" => $this->getBaseUrl($publishId) . "/",
         ];
 
         $sitemap = $transformer->transform($xml, $parameters);

@@ -559,6 +559,13 @@
     <script type="text/javascript" defer=""><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>
 <!-- }}} -->
+<!-- {{{ header include baseurl -->
+<xsl:template name="header_include_baseurl">
+    <xsl:variable name="call" select="dp:useBaseUrl()" />
+
+    <base href="{$baseUrl}" />
+</xsl:template>
+<!-- }}} -->
 
     <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
