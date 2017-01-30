@@ -16,7 +16,7 @@
     <xsl:template match="/">
         <feed>
             <xsl:call-template name="init-feed" />
-            <xsl:for-each select="$navigation//*[@nav_atom = 'true']/descendant-or-self::pg:page[not(@nav_hidden = 'true')]">
+            <xsl:for-each select="$navigation//*[@nav_atom = 'true']/descendant-or-self::pg:page[dp:pageVisible(.)]">
                 <xsl:if test="position() &lt; $num_items">
                     <xsl:variable name="url" select="@url" />
                     <xsl:variable name="pageid" select="@db:id" />
