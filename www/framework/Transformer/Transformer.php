@@ -227,10 +227,9 @@ abstract class Transformer
 
         list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($urlPath);
 
-        // @todo add aliases?
         if ($pageId === false || $pagedataId === false) {
             // php fallback for transparent php links
-            $this->currentPath = preg_replace("/\.html$/", ".php", $this->currentPath);
+            $this->currentPath = preg_replace("/\.html$/", ".php", $urlPath);
 
             list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($this->currentPath);
         }
@@ -302,6 +301,10 @@ abstract class Transformer
         if (is_null($this->xsltProc)) {
             $this->lateInitialize();
         }
+
+        // reset absolute path settings before transform
+        $this->useAbsolutePaths = false;
+        $this->useBaseUrl = false;
 
         $this->xsltProc->setParameter("", $parameters);
 
@@ -836,6 +839,7 @@ abstract class Transformer
             'xsltPath',
             'xmlPath',
             'transformCache',
+            'baseUrl',
         );
     }
     // }}}
