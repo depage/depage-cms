@@ -176,6 +176,11 @@ class Preview extends \Depage\Depage\Ui\Base
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
 
+        $aliasFile = $this->project->getProjectPath() . "lib/global/aliases.php";
+        if (file_exists($aliasFile)) {
+            $transformer->registerAliases(include $aliasFile);
+        }
+
         if ($this->template == "newsletter") {
             preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
             $newsletterName = $matches[1];

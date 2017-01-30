@@ -15,8 +15,10 @@ abstract class Transformer
     protected $isLive = false;
     protected $profiling = false;
     protected $usedDocuments = array();
+    protected $aliases = [];
     public $baseUrl = "";
     public $useAbsolutePaths = false;
+    public $useBaseUrl = false;
     public $lang = "";
     public $currentPath = "";
     public $urlsByPageId = array();
@@ -224,13 +226,14 @@ abstract class Transformer
         $this->currentPath = $urlPath;
         $this->lang = $lang;
 
-        list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
+        list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($urlPath);
 
+        // @todo add aliases?
         if ($pageId === false || $pagedataId === false) {
             // php fallback for transparent php links
             $this->currentPath = preg_replace("/\.html$/", ".php", $this->currentPath);
 
-            list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
+            list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($this->currentPath);
         }
         if ($pageId === false || $pagedataId === false) {
             throw new \Exception("page '{$urlPath}' does not exist");
@@ -484,6 +487,8 @@ abstract class Transformer
          */
 
         \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, array(
+            "useAbsolutePaths" => array($this, "xsltUseAbsolutePaths"),
+            "useBaseUrl" => array($this, "xsltUseBaseUrl"),
             "changesrc" => array($this, "xsltCallChangeSrc"),
             "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
             "atomizeText" => array($this, "xsltCallAtomizeText"),
@@ -493,6 +498,18 @@ abstract class Transformer
             "autokeywords" => array($this, "xsltCallAutokeywords"),
             "urlencode" => "rawurlencode",
         ));
+    }
+    // }}}
+    // {{{ registerAliases()
+    /**
+     * @brief registerAliases
+     *
+     * @param mixed $aliases
+     * @return void
+     **/
+    public function registerAliases($aliases)
+    {
+        $this->aliases = $aliases;
     }
     // }}}
 
@@ -539,13 +556,20 @@ abstract class Transformer
     {
         $this->getAllUrls();
 
+        if (!empty($this->aliases)) {
+            foreach ($this->aliases as $regex => $repl) {
+                $regex = "/" . str_replace("/", "\/", $regex) . "/";
+                $urlPath = preg_replace($regex, $repl, $urlPath);
+            }
+        }
+
         if (isset($this->pageIdByUrl[$urlPath])) {
             $pageId = $this->pageIdByUrl[$urlPath];
             $docRef = $this->pagedataIdByPageId[$pageId];
 
-            return array($pageId, $docRef);
+            return array($pageId, $docRef, $urlPath);
         } else {
-            return array(false, false);
+            return array(false, false, false);
         }
     }
     // }}}
@@ -585,6 +609,36 @@ abstract class Transformer
         $doc->loadXML($xml);
 
         return $doc;
+    }
+    // }}}
+    // {{{ xsltUseAbsolutePaths()
+    /**
+     * @brief xsltUseAbsolutePaths
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltUseAbsolutePaths()
+    {
+        $this->useAbsolutePaths = true;
+        $this->useBaseUrl = false;
+
+        return "<true />";
+    }
+    // }}}
+    // {{{ xsltUseBaseUrl()
+    /**
+     * @brief xsltUseBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltUseBaseUrl()
+    {
+        $this->useBaseUrl = true;
+        $this->useAbsolutePaths = false;
+
+        return "<true />";
     }
     // }}}
     // {{{ xsltCallChangeSrc()
