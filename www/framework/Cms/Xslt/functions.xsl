@@ -73,6 +73,26 @@
     </func:function>
     <!-- }}} -->
 
+    <!-- {{{ dp:useAbsolutePaths() -->
+    <!--
+        dp:useAbsolutePaths()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:useAbsolutePaths">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useAbsolutePaths')" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:useBaseUrl() -->
+    <!--
+        dp:useBaseUrl()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:useBaseUrl">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useBaseUrl')" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:changesrc() -->
     <!--
         dp:changesrc(src)

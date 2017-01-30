@@ -23,11 +23,13 @@ class Pageref extends Base {
             $path = $lang . $urlsByPageId[$pageId];
         }
 
-        if (!$this->transformer->useAbsolutePaths && $absolute != "absolute") {
+        if ($this->transformer->useBaseUrl) {
+            $path = $path;
+        } else if ($absolute == "absolute" || $this->transformer->useAbsolutePaths) {
+            $path = $this->transformer->baseUrl . $path;
+        } else {
             $url = new \Depage\Http\Url($this->transformer->currentPath);
             $path = $url->getRelativePathTo($path);
-        } else {
-            $path = $this->transformer->baseUrl . $path;
         }
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';

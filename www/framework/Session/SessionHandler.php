@@ -21,19 +21,7 @@ class SessionHandler implements \SessionHandlerInterface
 
         $handler = new $class($pdo);
 
-        // PHP 5.4 only
-        //session_set_save_handler($handler, true);
-
-        // PHP 5.3 save
-        session_set_save_handler(
-            array(&$handler, 'open'),
-            array(&$handler, 'close'),
-            array(&$handler, 'read'),
-            array(&$handler, 'write'),
-            array(&$handler, 'destroy'),
-            array(&$handler, 'gc')
-        );
-        register_shutdown_function("session_write_close");
+        session_set_save_handler($handler, true);
     }
     // }}}
     // {{{ __construct()
