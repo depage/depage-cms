@@ -344,6 +344,7 @@ class User extends \Depage\Entity\Entity
 
         if ($isNew) {
             $this->dateRegistered = date("Y-m-d H:i:s");
+            $this->loginTimeout = 0;
         }
 
         $dirty = array_keys($this->dirty, true);
