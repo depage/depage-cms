@@ -161,10 +161,12 @@ class Fs
         $this->preCommandHook();
 
         $cleanUrl = $this->cleanUrl($pathName);
-        $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
+        if (!is_dir($cleanUrl)) {
+            $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
-        if (!$success && !is_dir($cleanUrl)) {
-            throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
+            if (!$success && !is_dir($cleanUrl)) {
+                throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
+            }
         }
 
         $this->postCommandHook();
@@ -397,16 +399,16 @@ class Fs
     protected function buildUrl($parsed, $showPass = true)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= isset($parsed['user']) ? $parsed['user'] : '';
+        $path .= !empty($parsed['user']) ? $parsed['user'] : '';
 
-        if (isset($parsed['pass'])) {
+        if (!empty($parsed['pass'])) {
             $path .= ($showPass) ? ':' . $parsed['pass'] : ':...';
         }
 
-        $path .= isset($parsed['user']) ? '@'                   : '';
-        $path .= isset($parsed['host']) ? $parsed['host']       : '';
-        $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
-        $path .= isset($parsed['path']) ? $parsed['path']       : '/';
+        $path .= !empty($parsed['user']) ? '@'                   : '';
+        $path .= !empty($parsed['host']) ? $parsed['host']       : '';
+        $path .= !empty($parsed['port']) ? ':' . $parsed['port'] : '';
+        $path .= !empty($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
     }
