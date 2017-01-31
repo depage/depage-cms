@@ -8,9 +8,9 @@
  * handling.
  *
  *
- * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 namespace Depage\Auth\Methods;
 
@@ -69,19 +69,28 @@ class HttpBasic extends HttpCookie
             $password = $_SERVER['PHP_AUTH_PW'];
 
             // get new user object
-            $user = User::loadByUsername($this->pdo, $username);
-            $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
+            try {
+                if (strpos($username, "@") !== false) {
+                    // email login
+                    $user = User::loadByEmail($this->pdo, $username);
+                    $username = $user->name;
+                } else {
+                    // username login
+                    $user = User::loadByUsername($this->pdo, $username);
+                }
+                $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-            if ($user) {
                 if ($pass->verify($user->name, $password, $user->passwordhash)) {
                     $this->updatePasswordHash($user, $password);
 
                     if (($uid = $this->isValidSid($_COOKIE[session_name()])) !== false) {
                         if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $ipAddress = \Depage\Http\Request::getRequestIp();
+                            $this->log->log("'{$user->name}' has logged in from '{$ipAddress}'", "auth");
                             $sid = $this->registerSession($user->id, $_COOKIE[session_name()]);
                         }
                         $this->startSession();
+                        $user->sid = $this->sid;
 
                         return $user;
                     } elseif ($this->hasSession()) {
@@ -90,7 +99,9 @@ class HttpBasic extends HttpCookie
                 } else {
                     $this->prolongLogin($user);
                 }
+            } catch (\Depage\Auth\Exceptions\User $e) {
             }
+
         }
 
         $this->sendAuthHeader();

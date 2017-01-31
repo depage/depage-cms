@@ -8,11 +8,11 @@
  * handling.
  *
  *
- * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2010 Frank Hellenkamp [jonas@depage.net]
  * copyright (c) 2010 Lion Vollnhals
  *
  * @author    Lion Vollnhals
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Auth\Methods;
@@ -100,7 +100,7 @@ class HttpCookie extends Auth
     public function enforceLazy() {
         if (!$this->user) {
             if ($this->hasSession()) {
-                if ($this->isValidSid($_COOKIE[session_name()])) {
+                if (isset($_COOKIE[session_name()]) && $this->isValidSid($_COOKIE[session_name()])) {
                     $this->user = $this->authCookie();
                 } else {
                     $this->justLoggedOut = true;
@@ -125,19 +125,19 @@ class HttpCookie extends Auth
     /* }}} */
     /* {{{ login() */
     public function login($username, $password) {
-        if (strpos($username, "@") !== false) {
-            // email login
-            $user = User::loadByEmail($this->pdo, $username);
-            if ($user) {
-                $username = $user->name;
+        try {
+            if (strpos($username, "@") !== false) {
+                // email login
+                $user = User::loadByEmail($this->pdo, $username);
+                if ($user) {
+                    $username = $user->name;
+                }
+            } else {
+                // username login
+                $user = User::loadByUsername($this->pdo, $username);
             }
-        } else {
-            // username login
-            $user = User::loadByUsername($this->pdo, $username);
-        }
-        $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
+            $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-        if ($user) {
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
                 $this->updatePasswordHash($user, $password);
 
@@ -149,7 +149,9 @@ class HttpCookie extends Auth
             } else {
                 $this->prolongLogin($user);
             }
+        } catch (\Depage\Auth\Exceptions\User $e) {
         }
+
         return false;
     }
     /* }}} */
@@ -183,8 +185,10 @@ class HttpCookie extends Auth
 
         $sessionName = session_name();
 
-        session_id($sid);
-        session_start();
+        if (!is_callable("session_status") || session_status() !== \PHP_SESSION_ACTIVE) {
+            session_id($sid);
+            session_start();
+        }
 
         // Override session cookie and extend the expiration time upon page load
         if (isset($_COOKIE[$sessionName])) {
@@ -203,7 +207,7 @@ class HttpCookie extends Auth
     // }}}
     // {{{ hasSession()
     protected function hasSession() {
-        if (is_callable("session_status") && session_status() == PHP_SESSION_ACTIVE) {
+        if (is_callable("session_status") && session_status() == \PHP_SESSION_ACTIVE) {
             // PHP 5.4
             return true;
         } else {
@@ -214,7 +218,7 @@ class HttpCookie extends Auth
     // }}}
     // {{{ destroySession()
     protected function destroySession() {
-        if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
+        if (!is_callable("session_status") || session_status() == \PHP_SESSION_ACTIVE) {
             // delete cookie
             $params = session_get_cookie_params();
             setcookie(

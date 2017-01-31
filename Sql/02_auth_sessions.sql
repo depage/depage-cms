@@ -2,14 +2,14 @@
     Session Table
     -----------------------------------
 
-    @tablename auth_sessions
-    @connection auth_user
+    @tablename _auth_sessions
+    @connection _auth_user
     @version 1.5.0-beta.1
 */
 
-CREATE TABLE `auth_sessions` (
+CREATE TABLE `_auth_sessions` (
     `sid` varchar(32) NOT NULL DEFAULT '',
-    `userid` int(11) unsigned DEFAULT NULL,
+    `userId` int(11) unsigned DEFAULT NULL,
     `project` varchar(50) DEFAULT NULL,
     `ip` varchar(29) DEFAULT NULL,
     `dateLastUpdate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -17,7 +17,10 @@ CREATE TABLE `auth_sessions` (
     `useragent` varchar(255) NOT NULL DEFAULT '',
     `sessionData` longblob,
     PRIMARY KEY (`sid`),
-    KEY `userId` (`userid`),
-    CONSTRAINT `userId` FOREIGN KEY (`userid`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    KEY `userId` (`userId`),
+    CONSTRAINT `_auth_sessions_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/*
+    @version 1.5.3
+*/

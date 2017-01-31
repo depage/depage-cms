@@ -3,9 +3,9 @@
  * @file    auth_user.php
  *
  *
- * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Auth;
@@ -29,14 +29,13 @@ class User extends \Depage\Entity\Entity
         "passwordhash" => "",
         "email" => "",
         "settings" => "",
-        "level" => 4,
         "dateRegistered" => null,
         "dateLastlogin" => null,
         "dateUpdated" => null,
         "dateResetPassword" => null,
         "confirmId" => null,
         "resetPasswordId" => null,
-        "loginTimeout" => null,
+        "loginTimeout" => 0,
     );
 
     /**
@@ -52,7 +51,12 @@ class User extends \Depage\Entity\Entity
     /**
      * @brief useragent
      **/
-    protected $useragent = "";
+     protected $useragent = "";
+
+    /**
+     * @brief string sid of user when load from loadActive()
+     **/
+    public $sid = null;
     // }}}
 
     // {{{ constructor()
@@ -69,6 +73,9 @@ class User extends \Depage\Entity\Entity
         parent::__construct($pdo);
 
         $this->pdo = $pdo;
+
+        // set class to called class (for subclasses of Depage\Auth\User)
+        $this->data["type"] = get_class($this);
     }
     // }}}
 
@@ -84,7 +91,7 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -102,6 +109,10 @@ class User extends \Depage\Entity\Entity
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
+        if (!$user) {
+            throw new Exceptions\User("user '$username' does not exist.");
+        }
+
         return $user;
     }
     // }}}
@@ -117,7 +128,7 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByEmail($pdo, $email) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -135,6 +146,10 @@ class User extends \Depage\Entity\Entity
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
+        if (!$user) {
+            throw new Exceptions\User("user with email '$email' does not exist.");
+        }
+
         return $user;
     }
     // }}}
@@ -150,10 +165,10 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
-            "SELECT $fields
+            "SELECT $fields, sessions.sid as sid
             FROM
                 {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
@@ -184,7 +199,7 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadById($pdo, $id) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
@@ -217,20 +232,22 @@ class User extends \Depage\Entity\Entity
      */
     static public function loadActive($pdo) {
         $users = array();
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields,
                 sessions.project AS project,
                 sessions.ip AS ip,
+                sessions.sid AS sid,
                 sessions.dateLastUpdate AS dateLastUpdate,
                 sessions.useragent AS useragent
             FROM
                 {$pdo->prefix}_auth_user AS user,
                 {$pdo->prefix}_auth_sessions AS sessions
             WHERE
-            user.id=sessions.userid and
-            sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)"
+                user.id=sessions.userid and
+                sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+            ORDER BY user.sortname"
         );
         $uid_query->execute();
 
@@ -259,12 +276,13 @@ class User extends \Depage\Entity\Entity
      */
     static public function loadAll($pdo) {
         $users = array();
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
+        $fields = "type, " . implode(", ", self::getFields());
 
         $uid_query = $pdo->prepare(
             "SELECT $fields
             FROM
-                {$pdo->prefix}_auth_user AS user"
+                {$pdo->prefix}_auth_user AS user
+            ORDER BY user.sortname"
         );
         $uid_query->execute();
 
@@ -273,11 +291,41 @@ class User extends \Depage\Entity\Entity
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
-                array_push($users, $user);
+                $users[$user->id] = $user;
             }
         } while ($user);
 
         return $users;
+    }
+    // }}}
+
+    // {{{ setFullname()
+    /**
+     * @brief setFullname
+     *
+     * @param mixed $value
+     * @return void
+     **/
+    protected function setFullname($value)
+    {
+        $this->data['fullname'] = $value;
+        $this->dirty['fullname'] = true;
+
+        $nameparts = explode(" ", trim($value));
+        $this->data['sortname'] = end($nameparts);
+        $this->dirty['sortname'] = true;
+    }
+    // }}}
+    // {{{ setSortname()
+    /**
+     * @brief setSortname
+     *
+     * @param mixed $value
+     * @return void
+     **/
+    protected function setSortname($value)
+    {
+
     }
     // }}}
 
