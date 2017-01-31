@@ -1006,8 +1006,10 @@ class Project extends \Depage\Entity\Entity
     public function generateSitemap($publishId = null)
     {
         $xmlgetter = $this->getXmlGetter();
+        $baseUrl = $this->getBaseUrl($publishId);
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "sitemap");
+        $transformer->setBaseUrl($baseUrl);
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
@@ -1015,7 +1017,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => $this->getBaseUrl($publishId),
+            "baseUrl" => $baseUrl,
         ];
 
         $sitemap = $transformer->transform($xml, $parameters);

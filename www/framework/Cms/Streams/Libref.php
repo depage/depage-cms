@@ -21,7 +21,7 @@ class Libref extends Base {
         if ($this->transformer->useBaseUrl) {
             $path = $path;
         } else if ($this->transformer->useAbsolutePaths) {
-            $path = $this->transformer->baseUrl . $path;
+            $path = $this->transformer->baseUrl . "/" . $path;
         } else {
             $url = new \Depage\Http\Url($this->transformer->currentPath);
             $path = $url->getRelativePathTo($path);

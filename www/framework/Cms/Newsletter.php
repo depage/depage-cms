@@ -367,7 +367,8 @@ class Newsletter
 
         if ($previewType == "live") {
             $targets = $this->project->getPublishingTargets();
-            $transformer->baseUrl = current($targets)->baseurl;
+            list($publishId) = array_keys($targets);
+            $transformer->baseUrl = $this->project->getBaseUrl($publishId);
         } else {
             $transformer->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/html/live/";
         }

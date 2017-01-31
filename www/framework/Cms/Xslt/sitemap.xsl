@@ -37,7 +37,7 @@
             <xsl:if test="dp:pageVisible($page, $lang)">
                 <url>
                     <loc>
-                        <xsl:value-of select="$baseUrl" />/<xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="document(concat('pageref://', $pageId, '/', $lang, '/absolute'))/." disable-output-escaping="yes"/>
                     </loc>
                     <lastmod>
                         <!-- @todo change this date to get from publisher instead of changed xml code -->

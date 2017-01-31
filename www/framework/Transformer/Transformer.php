@@ -302,9 +302,8 @@ abstract class Transformer
             $this->lateInitialize();
         }
 
-        // reset absolute path settings before transform
-        $this->useAbsolutePaths = false;
-        $this->useBaseUrl = false;
+        $oldUseAbsolutePath = $this->useAbsolutePaths;
+        $oldUseBaseUrl = $this->useBaseUrl;
 
         $this->xsltProc->setParameter("", $parameters);
 
@@ -328,6 +327,10 @@ abstract class Transformer
                 //var_dump($error);
             }
         }
+
+        // reset absolute path settings after transform
+        $this->useAbsolutePaths = $oldUseAbsolutePath;
+        $this->useBaseUrl = $oldUseBaseUrl;
 
         return $content;
     }
