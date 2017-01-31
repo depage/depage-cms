@@ -44,7 +44,11 @@ abstract class Auth
      *
      * @public
      *
+<<<<<<< HEAD
      * @param       Depage\Db\Pdo  $pdo        depage\Db\PDO object for database access
+=======
+     * @param       Depage\Db\Pdo  $pdo        depage\DB\PDO object for database access
+>>>>>>> 9cc844dc3b294ef7008b9114ba6185d227906e7a
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -371,7 +375,9 @@ abstract class Auth
         $user = User::loadBySid($this->pdo, $sid);
         if ($user) {
             $user->onLogout($sid);
-            $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            if (!empty($this->log)) {
+                $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            }
         }
 
         // delete session data for sid
