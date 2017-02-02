@@ -154,7 +154,7 @@ abstract class Transformer
             }
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
             $xslt .= $this->getXsltEntities();
-            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" xmlns:func=\"http://exslt.org/functions\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit func \">";
 
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
