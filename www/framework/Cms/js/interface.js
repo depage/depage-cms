@@ -526,6 +526,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ preview
         preview: function(url) {
+            // @todo add preview language on multilanguage sites
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
