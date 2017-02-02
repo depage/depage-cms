@@ -903,6 +903,10 @@ class Project extends \Depage\Entity\Entity
 
         // @todo add files that should be generated automatically (e.g. through graohics)
 
+        if ($apiAvailable) {
+            // @todo add updateSchema API call
+        }
+
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
             \$publisher->publishString(
