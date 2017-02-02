@@ -268,7 +268,7 @@ abstract class Base
 
     // {{{ _send_time
     protected function _send_time($time, $content = null) {
-        if (isset($content) && isset($content->contentType)) {
+        if (isset($content) && isset($content->contentType) && empty($GLOBALS['replacementScript'])) {
             if (!(isset($_POST['ajax']) && $_POST['ajax'] == true) && $this->options->env == "development") {
                 switch ($content->contentType) {
                     case 'text/html':

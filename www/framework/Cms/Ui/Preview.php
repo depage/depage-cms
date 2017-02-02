@@ -87,11 +87,6 @@ class Preview extends \Depage\Depage\Ui\Base
         return $output;
     }
     // }}}
-    // {{{ _send_time
-    protected function _send_time($time, $content = null) {
-        echo("<!-- $time sec -->");
-    }
-    // }}}
 
     // {{{ index
     /**
