@@ -168,23 +168,23 @@
             <!-- {{{ image with link -->
             <xsl:when test="($href and $href != '') or ($href_id and $href_id != '')">
                 <!-- get name from meta-information if link is ref to page_id -->
-                <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
-                <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="document(concat('get:page/', $href_id))//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+                <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+                <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
                 <a>
                     <!-- {{{ href -->
                     <xsl:choose>
-                        <xsl:when test="$href and substring($href, 1, 8) = 'libref:/'">
+                        <xsl:when test="$href and substring($href, 1, 9) = 'libref://'">
                             <xsl:attribute name="href"><xsl:value-of select="document($href)/." disable-output-escaping="yes"/></xsl:attribute>
                         </xsl:when>
                         <xsl:when test="@href and substring($href, 1, 7) = 'mailto:'">
                             <xsl:attribute name="href"><xsl:value-of select="$href" disable-output-escaping="yes"/></xsl:attribute>
                         </xsl:when>
-                        <xsl:when test="$href != '' and not(substring($href, 1, 8) = 'pageref:')">
+                        <xsl:when test="$href != '' and not(substring($href, 1, 10) = 'pageref://')">
                             <xsl:attribute name="href"><xsl:value-of select="$href" disable-output-escaping="yes"/></xsl:attribute>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:attribute name="href"><xsl:value-of select="document(concat('pageref:/', $href_id, '/', $lang))/." disable-output-escaping="yes"/></xsl:attribute>
+                            <xsl:attribute name="href"><xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/></xsl:attribute>
                         </xsl:otherwise>
                     </xsl:choose>
                     <!-- }}} -->
