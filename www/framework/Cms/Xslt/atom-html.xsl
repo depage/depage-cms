@@ -72,7 +72,7 @@
             <xsl:choose>
                 <xsl:when test="$href and substring($href, 1, 8) = 'libref:/'">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseUrl" />lib<xsl:value-of select="substring(@href,8)" disable-output-escaping="yes" />
+                        <xsl:value-of select="$baseUrl" />lib<xsl:value-of select="substring(@href,8)" disable-output-escaping="yes" /><xsl:value-of select="$campaign" />
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="@href and substring($href, 1, 7) = 'mailto:'">
@@ -82,12 +82,12 @@
                 </xsl:when>
                 <xsl:when test="$href and substring($href, 1, 8) = 'pageref:'">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat($href, '/', $lang))/." disable-output-escaping="yes"/><xsl:value-of select="$campaign" />
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="$href_id != ''">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/><xsl:value-of select="$campaign" />
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>

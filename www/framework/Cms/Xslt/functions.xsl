@@ -175,7 +175,7 @@
         @todo define these automatically
     -->
     <func:function name="dp:formatDate">
-        <xsl:param name="date" />
+        <xsl:param name="date" select="'now'" />
         <xsl:param name="format" select="''" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::formatDate', string($date), string($format))" />

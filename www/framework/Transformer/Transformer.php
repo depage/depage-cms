@@ -760,11 +760,15 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallFormatDate($date, $format = '') {
+    public function xsltCallFormatDate($date = '', $format = '') {
         if ($format == '') {
             $format = "c";
         }
-        $date = date($format, strtotime($date));
+        if (empty($date)) {
+            $date = date($format);
+        } else {
+            $date = date($format, strtotime($date));
+        }
 
         return $date;
     }

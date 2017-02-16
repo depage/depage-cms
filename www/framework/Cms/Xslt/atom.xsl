@@ -14,6 +14,8 @@
 
     <xsl:include href="xslt://atom-html.xsl" />
 
+    <xsl:variable name="campaign" select="concat('?utm_campaign=', 'atom-feed')" />
+
     <!-- {{{ root -->
     <xsl:template match="/">
         <feed>
@@ -47,8 +49,8 @@
         <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /></xsl:attribute></link>
         <link rel="self"><xsl:attribute name="href"><xsl:value-of select="concat($baseUrl,$currentLang,'/atom.xml')" /></xsl:attribute></link>
 
-        <id><xsl:value-of select="$baseUrl" /></id>
-        <updated><xsl:value-of select="dp:formatDate('Y-m-d\TH:i:s\Z')" /></updated>
+        <id><xsl:value-of select="$baseUrl" /><xsl:value-of select="$campaign" /></id>
+        <updated><xsl:value-of select="dp:formatDate('now', 'Y-m-d\TH:i:s\Z')" /></updated>
         <author>
             <name><xsl:value-of select="$author" /></name>
         </author>
@@ -66,9 +68,9 @@
         <xsl:param name="anchor" />
         <xsl:param name="pageid" />
 
-        <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://',$pageid,'/',$currentLang))" /><xsl:value-of select="$anchor" /></xsl:attribute></link>
+        <link><xsl:attribute name="href"><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://',$pageid,'/',$currentLang))" /><xsl:value-of select="$campaign" /><xsl:value-of select="$anchor" /></xsl:attribute></link>
         <id><xsl:value-of select="$baseUrl" /><xsl:value-of select="document(concat('pageref://',$pageid,'/',$currentLang))" /><xsl:value-of select="$anchor" /></id>
-        <updated><xsl:value-of select="dp:formatDate(edit:date/@value,'Y-m-d\TH:i:s\Z')" /></updated>
+        <updated><xsl:value-of select="dp:formatDate(edit:date/@value, 'Y-m-d\TH:i:s\Z')" /></updated>
         <title><xsl:value-of select="edit:text_headline[@lang = $currentLang]/*" /></title>
         <summary><xsl:value-of select=".//edit:text_formatted[@lang = $currentLang and 1]/*" /></summary>
         <content type="xhtml">
