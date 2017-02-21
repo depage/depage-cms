@@ -20,7 +20,7 @@ class Html {
     private $param = null;
     private $template;
 
-    public $content_type = "text/html";
+    public $contentType = "text/html";
     public $charset = "UTF-8";
 
     // {{{ substitutes
@@ -138,7 +138,7 @@ class Html {
             } else if (is_array($arg)) {
                 // set to parent params to params for subarray if not set
                 foreach ($arg as $a) {
-                    if (is_object($a) and get_class($a) == "Depage\Html\Html") {
+                    if (is_object($a) && get_class($a) == "Depage\Html\Html") {
                         if ($a->param === null) {
                             $a->setHtmlOptions($param);
                         }
@@ -210,7 +210,13 @@ class Html {
                 }
                 */
             } else {
-                html::e($this->content);
+                if (isset($this->content)) {
+                    self::e($this->content);
+                } else if (is_array($this->args)) {
+                    foreach ($this->args as $arg) {
+                        self::e($arg);
+                    }
+                }
             }
         } catch (Exception $e) {
             var_dump($e);
@@ -263,9 +269,9 @@ class Html {
             // get cache instance
             $src = false;
             $jsmin = \Depage\JsMin\JsMin::factory(array(
-                'extension' => $this->param['jsmin']->extension,
-                'jar' => $this->param['jsmin']->jar,
-                'java' => $this->param['jsmin']->java,
+                'extension' => isset($this->param['jsmin']->extension) ? $this->param['jsmin']->extension : "",
+                'jar' => isset($this->param['jsmin']->jar) ? $this->param['jsmin']->jar : "",
+                'java' => isset($this->param['jsmin']->java) ? $this->param['jsmin']->java : "",
             ));
             try {
                 $src = $jsmin->minifyFiles($name, $files);
@@ -290,7 +296,7 @@ class Html {
         }
     }
     // }}}
-    // {{{ include_js_get_dependecies()
+    // {{{ includeJsGetDependencies()
     /**
      * gets dependencies from filename
      */
@@ -368,7 +374,7 @@ class Html {
                     $src .= $css;
                 }
 
-                $cssmin = \depage\cssmin\cssmin::factory(array(
+                $cssmin = \Depage\CssMin\CssMin::factory(array(
                 ));
                 $src = $cssmin->minifySrc($src);
 
@@ -476,12 +482,19 @@ class Html {
      **/
     protected function attr($name, $value = "")
     {
-        if (!empty($value)) {
+        if (is_array($name)) {
+            foreach($name as $attr => $value) {
+                if (!empty($value)) {
+                    echo(" $attr=\"");
+                    echo(trim(htmlspecialchars($value)));
+                    echo("\"");
+                }
+            }
+        } else if (!empty($value)) {
             echo(" $name=\"");
             echo(trim(htmlspecialchars($value)));
             echo("\"");
         }
-
     }
     // }}}
     // {{{ hash()
