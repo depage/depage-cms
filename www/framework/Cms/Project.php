@@ -1052,8 +1052,9 @@ class Project extends \Depage\Entity\Entity
             "baseUrl" => $this->getBaseUrl($publishId) . "/",
         ];
 
-        $sitemap = $transformer->transform($xml, $parameters);
-        return $sitemap;
+        $atom = $transformer->transform($xml, $parameters);
+
+        return $atom;
     }
     // }}}
     // {{{ generateHtaccess()
@@ -1264,6 +1265,7 @@ class Project extends \Depage\Entity\Entity
         return array_merge(parent::__sleep(), [
             'pdo',
             'cache',
+            'previewType',
         ]);
     }
     // }}}
