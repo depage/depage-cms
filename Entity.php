@@ -8,7 +8,7 @@
  *
  * Inheriting classes provide table name and column information and override getters and setters.
  *
- * copyright (c) 2003-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2003-2014 Frank Hellenkamp [jonas@depage.net]
  */
 namespace Depage\Entity;
 
@@ -69,7 +69,7 @@ abstract class Entity
     public function __construct()
     {
         if (count($this->data) === 0) {
-            // new empty object with no data
+            // new empty object with no data -> set defaults
             foreach (static::$fields as $key => $value) {
                 $this->data[$key] = $value;
             }
@@ -97,7 +97,7 @@ abstract class Entity
     public function __get($key)
     {
         $getter = "get" . ucfirst($key);
-        if (is_callable(array($this, $getter))) {
+        if (method_exists($this, $getter)) {
             return $this->$getter();
         }
         if (isset($this->data[$key])) {
@@ -120,13 +120,12 @@ abstract class Entity
     public function __set($key, $val)
     {
         $setter = "set" . ucfirst($key);
-        if (is_callable(array($this, $setter))) {
+        if (method_exists($this, $setter)) {
             return $this->$setter($val);
         }
         if (array_key_exists($key, static::$fields)) {
             // add value if property exists and is not primary
             if (!in_array($key, static::$primary) || !$this->initialized) {
-                // TODO set false on PDO  class fetch instance
                 $this->dirty[$key] = (isset($this->dirty[$key]) && $this->dirty[$key] == true) || (
                     (isset($this->data[$key]) && $this->data[$key] != $val)
                     || !isset($this->data[$key])
@@ -136,6 +135,39 @@ abstract class Entity
 
             return true;
         }
+        return false;
+    }
+    // }}}
+
+    // {{{ __call()
+    /**
+     * Call
+     *
+     * Allows to set and get variables via setVarname and getVarname methods without
+     * declaring them explicitly
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function __call($name, $arguments)
+    {
+        $prefix = substr($name, 0, 3);
+        $key = strtolower(substr($name, 3));
+
+        if ($prefix == "set") {
+            if (array_key_exists($key, static::$fields)) {
+                $this->$key = $arguments[0];
+
+                return $this;
+            }
+        } else if ($prefix == "get") {
+            if (array_key_exists($key, static::$fields)) {
+                return $this->$key;
+            }
+        }
+
         return false;
     }
     // }}}
@@ -153,6 +185,61 @@ abstract class Entity
     public function __isset($key)
     {
         return (isset($this->data[$key]));
+    }
+    // }}}
+
+    // {{{ getFields()
+    /**
+     * @brief get field names that are defined in schema
+     *
+     * @param string $prefix = ""
+     * @return array of field names
+     **/
+    protected static function getFields($prefix = "")
+    {
+        $fields = array_keys(static::$fields);
+
+        if ($prefix !== "") {
+            $fields = array_map(function($val) use ($prefix) {
+                return $prefix . "." . $val;
+            }, $fields);
+        }
+
+        return $fields;
+    }
+    // }}}
+
+    // {{{ setData()
+    /**
+     * @brief setData
+     *
+     * Sets object data with data array instead of setting properties explicitly
+     *
+     * @param mixed $data
+     * @return void
+     **/
+    public function setData($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+
+        return $this;
+    }
+    // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'initialized',
+            'data',
+            'types',
+            'dirty',
+        );
     }
     // }}}
 }

@@ -10,13 +10,13 @@
  *
  * Provides generic CRUD functions for models.
  *
- * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2006-2014 Frank Hellenkamp [jonas@depage.net]
  *
  * @author Ben Wallis [benedict_wallis@yahoo.co.uk]
  */
 namespace Depage\Entity;
 
-abstract class Entity {
+abstract class PdoEntity {
 
     // {{{ variables
     /**
@@ -92,7 +92,8 @@ abstract class Entity {
      *
      * @return void
      */
-    public function __construct(\depage\DB\PDO $pdo = null, array $data = array(), $clean = true, $insert_ignore = null){
+    public function __construct(array $data = array(), \Depage\Db\Pdo $pdo = null,  $clean = true, $insert_ignore = null){
+        // @todo check parameters
         $this->pdo = $pdo;
 
         foreach ($data AS $key => $value) {
