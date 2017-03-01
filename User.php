@@ -219,6 +219,70 @@ class User extends \Depage\Entity\Entity
         return $user;
     }
     // }}}
+    // {{{ loadByConfirmId()
+    /**
+     * gets a user-object by id directly from database
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadByConfirmId($pdo, $confirmId) {
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_auth_user AS user
+            WHERE
+                confirmId = :confirmId"
+        );
+        $uid_query->execute(array(
+            ':confirmId' => $confirmId,
+        ));
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        return $user;
+    }
+    // }}}
+    // {{{ loadByResetPasswordId()
+    /**
+     * gets a user-object by id directly from database
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadByResetPasswordId($pdo, $resetPasswordId) {
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_auth_user AS user
+            WHERE
+                resetPasswordId = :resetPasswordId"
+        );
+        $uid_query->execute(array(
+            ':resetPasswordId' => $resetPasswordId,
+        ));
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        return $user;
+    }
+    // }}}
     // {{{ loadActive()
     /**
      * gets an array of user-objects
