@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace depage\Session;
 
@@ -20,20 +20,8 @@ class SessionHandler implements \SessionHandlerInterface
         $class = __CLASS__;
 
         $handler = new $class($pdo);
-        
-        // PHP 5.4 only
-        //session_set_save_handler($handler, true);
-        
-        // PHP 5.3 save
-        session_set_save_handler(
-            array(&$handler, 'open'),
-            array(&$handler, 'close'),
-            array(&$handler, 'read'),
-            array(&$handler, 'write'),
-            array(&$handler, 'destroy'),
-            array(&$handler, 'gc')
-        );
-        register_shutdown_function("session_write_close");
+
+        session_set_save_handler($handler, true);
     }
     // }}}
     // {{{ __construct()
@@ -99,9 +87,9 @@ class SessionHandler implements \SessionHandlerInterface
 
         // get session data
         $query = $this->pdo->prepare(
-            "SELECT 
+            "SELECT
                 sid, sessionData
-            FROM 
+            FROM
                 {$this->tableName}
             WHERE
                 sid = :sid
@@ -115,9 +103,6 @@ class SessionHandler implements \SessionHandlerInterface
         if ($result) {
             return $result->sessionData;
         } else {
-            // not a valid sid available -> give the user a new sessionId
-            session_regenerate_id();
-
             return "";
         }
     }
@@ -148,7 +133,7 @@ class SessionHandler implements \SessionHandlerInterface
         );
         $query->execute(array(
             ':sid' => $sessionId,
-            ':ip' => $_SERVER['REMOTE_ADDR'],
+            ':ip' => \Depage\Http\Request::getRequestIp(),
             ':useragent' => $_SERVER['HTTP_USER_AGENT'],
             ':data1' => $sessionData,
             ':data2' => $sessionData,
@@ -170,7 +155,7 @@ class SessionHandler implements \SessionHandlerInterface
         if (class_exists("\\Depage\\Auth\\User")) {
             $user = \Depage\Auth\User::loadBySid($this->pdo, $sessionId);
             if ($user) {
-                $log = new \depage\log\log();
+                $log = new \Depage\Log\Log();
                 $log->log("logging out $user->name ($user->fullname)");
 
                 $user->onLogout($sessionId);
@@ -187,7 +172,7 @@ class SessionHandler implements \SessionHandlerInterface
         $query->execute(array(
             ':sid' => $sessionId,
         ));
-        
+
         return true;
     }
     // }}}
