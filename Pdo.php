@@ -5,9 +5,9 @@
  * depage database module
  *
  *
- * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Db;
@@ -36,7 +36,7 @@ class Pdo
      */
     public function __construct($dsn, $username = '', $password = '', $driver_options = array())
     {
-        $this->dsn = $dsn . ";charset=utf8";
+        $this->dsn = $dsn . ";charset=utf8mb4";
         $this->username = $username;
         $this->password = $password;
 
