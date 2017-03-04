@@ -89,7 +89,7 @@ class Imgurl
         $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
 
         // get action parameters
-        preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
+        preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
         $this->srcImg = $relativePath . rawurldecode($matches[1]);
         $this->outImg = $this->cachePath . rawurldecode($matches[0]);
