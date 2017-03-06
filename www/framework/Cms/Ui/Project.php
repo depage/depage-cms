@@ -503,6 +503,61 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ export()
+    /**
+     * @brief export
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function newsletter_subscribers($category = "Default")
+    {
+        $tableSubscribers = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_subscribers";
+
+        $query = $this->pdo->prepare(
+            "SELECT *
+            FROM
+                {$tableSubscribers} AS subscribers
+            WHERE
+                category = :category
+            "
+        );
+
+        $query->execute([
+            "category" => $category,
+        ]);
+        $subscriber = $query->fetch(\PDO::FETCH_ASSOC);
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename="text.csv"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $fp = fopen('php://output', 'w');
+
+        // add UTF-8 BOM
+        fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+
+        // add header
+        $keys = array_keys($subscriber);
+        fputcsv($fp, $keys, ";");
+
+        do {
+            fputcsv($fp, $subscriber, ";");
+        } while ($subscriber = $query->fetch(\PDO::FETCH_ASSOC));
+
+
+        fclose($fp);
+
+        die();
+    }
+    // }}}
     // {{{ backups()
     /**
      * @brief backup
