@@ -117,8 +117,9 @@ class Base extends \Depage\Depage\Ui\Base
      **/
     protected function getProject($projectName)
     {
+        // @todo check if current user is allowed to load project
         if ($projectName != "+") {
-            return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+            return \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $projectName)[0];
         } else {
             return "";
         }

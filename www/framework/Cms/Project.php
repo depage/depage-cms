@@ -112,11 +112,20 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadByUser($pdo, $cache, $user) {
+    static public function loadByUser($pdo, $cache, $user, $name = null) {
         if ($user->canEditAllProjects()) {
-            return self::loadAll($pdo, $cache);
+            if (!empty($name)) {
+                return [self::loadByName($pdo, $cache, $name)];
+            } else {
+                return self::loadAll($pdo, $cache);
+            }
         } else {
             $fields = implode(", ", self::getFields("projects"));
+
+            $nameQuery = "";
+            if (!empty($name)) {
+                $nameQuery = "projects.name = :name AND";
+            }
 
             $query = $pdo->prepare(
                 "SELECT $fields, projectgroup.name as groupName
@@ -125,6 +134,7 @@ class Project extends \Depage\Entity\Entity
                     {$pdo->prefix}_project_groups AS projectgroup,
                     {$pdo->prefix}_project_auth AS projectauth
                 WHERE
+                    $nameQuery
                     projects.groupId = projectgroup.id AND
                     (projects.id = projectauth.projectId AND projectauth.userId = :userid)
                 ORDER BY
@@ -133,9 +143,14 @@ class Project extends \Depage\Entity\Entity
                 "
             );
 
-            $projects = self::fetch($pdo, $cache, $query, [
+            $params = [
                 'userid' => $user->id,
-            ]);
+            ];
+            if (!empty($name)) {
+                $params['name'] = $name;
+            }
+
+            $projects = self::fetch($pdo, $cache, $query, $params);
 
             return $projects;
         }
