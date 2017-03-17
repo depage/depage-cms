@@ -977,7 +977,7 @@ class Project extends \Depage\Entity\Entity
 
         // publish newsletters if available
         if ($this->hasNewsletter()) {
-            $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this);
+            $newsletters = \Depage\Cms\Newsletter::loadReleased($this->pdo, $this);
 
             foreach ($newsletters as $newsletter) {
                 // @todo check if newsletter has been published

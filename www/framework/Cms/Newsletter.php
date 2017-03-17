@@ -64,8 +64,32 @@ class Newsletter
             $newsletter->setDocument($doc);
             $newsletters[] = $newsletter;
         }
+        // @todo sort by document date
+        usort($newsletters, function($a, $b) {
+            return strcmp($a->getTitle(), $b->getTitle());
+        });
 
-        // @todo sort the right way
+        return $newsletters;
+    }
+    // }}}
+    // {{{ loadReleased()
+    /**
+     * @brief loadReleased
+     *
+     * @param mixed
+     * @return void
+     **/
+    public static function loadReleased($pdo, $project)
+    {
+        $all = self::loadAll($pdo, $project);
+        $newsletters = [];
+
+        foreach ($all as $newsletter) {
+            $versions = $newsletter->document->getHistory()->getVersions(true);
+            if (count($versions) > 0) {
+                $newsletters[] = $newsletter;
+            }
+        }
 
         return $newsletters;
     }
@@ -273,7 +297,7 @@ class Newsletter
      * @param mixed $lang
      * @return void
      **/
-    public function getTitle($lang)
+    public function getTitle($lang = null)
     {
         if (!empty($lang)) {
             $nodes = $this->document->getNodeIdsByXpath("//pg:meta/pg:title[@lang = '$lang']");
