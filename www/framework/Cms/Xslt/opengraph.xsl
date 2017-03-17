@@ -17,7 +17,7 @@
     <xsl:param name="type"></xsl:param>
     <xsl:param name="userid"><xsl:value-of select="$var-fb-Account" /></xsl:param>
     <xsl:param name="sitename"><xsl:value-of select="$var-Title" /></xsl:param>
-    <xsl:param name="url"><xsl:value-of select="concat($baseUrl,substring(document(concat('pageref://', $currentPageId, '/', $currentLang,'/absolute'))/., 1))" /></xsl:param>
+    <xsl:param name="url"><xsl:value-of select="substring(document(concat('pageref://', $currentPageId, '/', $currentLang,'/absolute'))/., 1)" /></xsl:param>
     <xsl:param name="description"><xsl:value-of select="//pg:meta/pg:desc[@lang = $currentLang]/@value"/></xsl:param>
     <xsl:param name="image"></xsl:param>
 
