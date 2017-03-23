@@ -557,7 +557,7 @@ class Html {
      *
      * @todo move into Depage\Formatters Namespace
      */
-    static function format_date($date, $date_format = \IntlDateFormatter::LONG, $time_format = \IntlDateFormatter::SHORT, $pattern = null) {
+    static function formatDate($date, $date_format = \IntlDateFormatter::LONG, $time_format = \IntlDateFormatter::SHORT, $pattern = null) {
         if (!is_integer($date_format)) {
             $pattern = $date_format;
             $date_format = \IntlDateFormatter::LONG;
@@ -568,6 +568,8 @@ class Html {
 
         if ($date instanceof \DateTime) {
             $timestamp = $date->getTimestamp();
+        } else if (is_string($date)) {
+            $timestamp = strtotime($date);
         } else {
             $timestamp = $date;
         }
@@ -575,11 +577,11 @@ class Html {
         return $fmt->format($timestamp);
     }
     // }}}
-    // {{{ format_number()
+    // {{{ formatNumber()
     /*
      * @todo move into Depage\Formatters Namespace
      */
-    static function format_number($number, $format = \NumberFormatter::DECIMAL) {
+    static function formatNumber($number, $format = \NumberFormatter::DECIMAL) {
         // there is not getlocale, so use setlocale with null
         $current_locale = setlocale(LC_ALL, null);
         $fmt = new \NumberFormatter($current_locale, $format);
