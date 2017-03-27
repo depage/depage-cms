@@ -424,7 +424,7 @@ class Main extends Base {
     {
         if ($type == "newsletter") {
             try {
-                $project = $this->getProject($projectName);
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
                 $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
 
                 $newsletter->track($hash);
@@ -458,7 +458,7 @@ class Main extends Base {
         ];
         if ($type == "newsletter") {
             try {
-                $project = $this->getProject($projectName);
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
                 $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
 
                 $values = json_decode(file_get_contents("php://input"));
