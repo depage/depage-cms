@@ -549,7 +549,7 @@ class Html {
     }
     // }}}
 
-    // {{{ format_date()
+    // {{{ formatDate()
     /**
      * formats date parameter based on current locale
      * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
@@ -575,6 +575,27 @@ class Html {
         }
 
         return $fmt->format($timestamp);
+    }
+    // }}}
+    // {{{ formatDateNatural()
+    /**
+     * formats date parameter based on current locale
+     * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
+     * @return  string
+     *
+     * @todo move into Depage\Formatters Namespace
+     */
+    static function formatDateNatural($date, $addTime = false) {
+        $fmt = new \Depage\Formatters\DateNatural();
+        if ($date instanceof \DateTime) {
+            $timestamp = $date->getTimestamp();
+        } else if (is_string($date)) {
+            $timestamp = strtotime($date);
+        } else {
+            $timestamp = $date;
+        }
+
+        return $fmt->format($timestamp, $addTime);
     }
     // }}}
     // {{{ formatNumber()
