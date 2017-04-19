@@ -50,7 +50,7 @@ class Response {
     );
 
     // {{{ __construct()
-    public function __construct($headers = "", $body = "", $info = array()) {
+    public function __construct($body = "", $headers = "", $info = array()) {
         $this->body = $body;
         $this->info = $info;
 
@@ -150,6 +150,20 @@ class Response {
         }
 
         return $this;
+    }
+    // }}}
+    // {{{ sendHeaders()
+    /**
+     * @brief sendHeaders
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function sendHeaders()
+    {
+        foreach($this->headers as $header) {
+            header($header);
+        }
     }
     // }}}
 
