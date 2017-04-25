@@ -325,13 +325,10 @@ class Redirector
     {
         $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
-        $replacementScript = "";
 
         foreach($this->routes as $route => $target) {
             if (strpos($request, $route) === 0) {
-                if (file_exists($target)) {
-                    $replacementScript = $target;
-                }
+                return "." . $target;
             }
         }
 
@@ -344,11 +341,11 @@ class Redirector
 
         foreach($this->localizedRoutes as $route => $target) {
             if (strpos($request, $route) === 0) {
-                $replacementScript = $lang . $target;
+                return $lang . $target;
             }
         }
 
-        return $replacementScript;
+        return "";
     }
     // }}}
     // {{{ redirectToAlternativePage()
