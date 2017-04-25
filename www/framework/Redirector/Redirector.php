@@ -9,24 +9,34 @@ namespace Depage\Redirector {
 class Redirector
 {
     /**
-     * @brief langugaes
+     * @brief languages
      **/
-    protected $langugaes = array();
+    protected $languages = [];
 
     /**
      * @brief pages
      **/
-    protected $pages = array();
+    protected $pages = [];
 
     /**
      * @brief pageTree
      **/
-    protected $pageTree = array();
+    protected $pageTree = [];
 
     /**
      * @brief aliases
      **/
-    protected $aliases = array();
+    protected $aliases = [];
+
+    /**
+     * @brief routes
+     **/
+    protected $routes = [];
+
+    /**
+     * @brief localizedRoutes
+     **/
+    protected $localizedRoutes = [];
 
     /**
      * @brief baseUrl
@@ -100,7 +110,7 @@ class Redirector
 
             foreach ($parts as $part) {
                 if (!isset($node[$part])) {
-                    $node[$part] = array();
+                    $node[$part] = [];
                 }
                 $node = &$node[$part];
             }
@@ -119,6 +129,34 @@ class Redirector
     public function setAliases($aliases)
     {
         $this->aliases = $aliases;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setRoutes()
+    /**
+     * @brief setRoutes
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setRoutes($routes)
+    {
+        $this->routes = $routes;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setLocalizedRoutes()
+    /**
+     * @brief setLocalizedRoutes
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setLocalizedRoutes($routes)
+    {
+        $this->localizedRoutes = $routes;
 
         return $this;
     }
@@ -276,6 +314,43 @@ class Redirector
     }
     // }}}
 
+    // {{{ includeRoute()
+    /**
+     * @brief includeRoute
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testRoutes($requestUri, $acceptLanguage = "")
+    {
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
+        $request = $this->parseRequestUri($requestUri);
+        $replacementScript = "";
+
+        foreach($this->routes as $route => $target) {
+            if (strpos($request, $route) === 0) {
+                if (file_exists($target)) {
+                    $replacementScript = $target;
+                }
+            }
+        }
+
+        if ($this->lang != "") {
+            $lang = $this->lang;
+        } else if (!empty($this->languages)) {
+            $lang = $this->getLanguageByBrowser($acceptLanguage);
+        }
+        $url .= $lang . "/";
+
+        foreach($this->localizedRoutes as $route => $target) {
+            if (strpos($request, $route) === 0) {
+                $replacementScript = $lang . $target;
+            }
+        }
+
+        return $replacementScript;
+    }
+    // }}}
     // {{{ redirectToAlternativePage()
     /**
      * @brief redirectToAlternativePage
