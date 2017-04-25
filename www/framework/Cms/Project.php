@@ -1181,15 +1181,12 @@ class Project extends \Depage\Entity\Entity
             if (isset($aliases)) {
                 $index[] = "\$redirector->setAliases(" . var_export($aliases, true) . ");";
             }
-            if (isset($routes)) {
-                $index[] = "\$redirector->setRoutes(" . var_export($routes, true) . ");";
-            }
-            if (isset($localizedRoutes)) {
-                $index[] = "\$redirector->setLocalizedRoutes(" . var_export($localizedRoutes, true) . ");";
+            if (isset($rootAliases)) {
+                $index[] = "\$redirector->setRootAliases(" . var_export($rootAliases, true) . ");";
             }
         }
 
-        $index[] = "\$replacementScript = \$redirector->testRoutes(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+        $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
         $index[] = "if (!empty(\$replacementScript)) {";
             $index[] = "    chdir(dirname(\$replacementScript));";
             $index[] = "    include(basename(\$replacementScript));";
