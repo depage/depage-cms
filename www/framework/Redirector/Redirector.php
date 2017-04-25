@@ -29,14 +29,9 @@ class Redirector
     protected $aliases = [];
 
     /**
-     * @brief routes
+     * @brief rootAliases
      **/
-    protected $routes = [];
-
-    /**
-     * @brief localizedRoutes
-     **/
-    protected $localizedRoutes = [];
+    protected $rootAliases = [];
 
     /**
      * @brief baseUrl
@@ -133,32 +128,19 @@ class Redirector
         return $this;
     }
     // }}}
-    // {{{ setRoutes()
+    // {{{ setRootAliases()
     /**
-     * @brief setRoutes
+     * @brief setRootAliases
      *
-     * @param mixed $
+     * @param mixed $aliases
      * @return void
      **/
-    public function setRoutes($routes)
+    public function setRootAliases($aliases)
     {
-        $this->routes = $routes;
+        $this->rootAliases = $aliases;
 
         return $this;
-    }
-    // }}}
-    // {{{ setLocalizedRoutes()
-    /**
-     * @brief setLocalizedRoutes
-     *
-     * @param mixed $
-     * @return void
-     **/
-    public function setLocalizedRoutes($routes)
-    {
-        $this->localizedRoutes = $routes;
 
-        return $this;
     }
     // }}}
     // {{{ setBaseUrl()
@@ -258,14 +240,13 @@ class Redirector
     {
         $altPage = "";
         $isFallback = false;
-        $pages = array_merge(array_keys($this->aliases), $this->pages);
 
         $request = explode("/", $request);
 
         //search for pages
         while ($altPage == "" && count($request) > 1) {
             $tempUrl = implode("/", $request) . "/";
-            foreach ($pages as $page) {
+            foreach ($this->pages as $page) {
                 if (substr($page . "/", 0, strlen($tempUrl)) == $tempUrl) {
                     $altPage = $page;
 
@@ -273,11 +254,6 @@ class Redirector
                 }
             }
             array_pop($request);
-        }
-
-        // resolve alias
-        if (isset($this->aliases[$altPage])) {
-            $altPage = $this->aliases[$altPage];
         }
 
         // fallback to first url
@@ -314,22 +290,23 @@ class Redirector
     }
     // }}}
 
-    // {{{ includeRoute()
+    // {{{ testAliases()
     /**
-     * @brief includeRoute
+     * @brief testAliases
      *
      * @param mixed
      * @return void
      **/
-    public function testRoutes($requestUri, $acceptLanguage = "")
+    public function testAliases($requestUri, $acceptLanguage = "")
     {
         $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
-        foreach($this->routes as $route => $target) {
-            if (strpos($request, $route) === 0) {
-                return "." . $target;
-            }
+        foreach ($this->rootAliases as $regex => $repl) {
+            $regex = "/" . str_replace("/", "\/", $regex) . "/";
+            $url = preg_replace($regex, $repl, $request);
+
+            if ($url != $request) return "." . $url;
         }
 
         if ($this->lang != "") {
@@ -339,10 +316,11 @@ class Redirector
         }
         $url .= $lang . "/";
 
-        foreach($this->localizedRoutes as $route => $target) {
-            if (strpos($request, $route) === 0) {
-                return $lang . $target;
-            }
+        foreach ($this->aliases as $regex => $repl) {
+            $regex = "/" . str_replace("/", "\/", $regex) . "/";
+            $url = preg_replace($regex, $repl, $request);
+
+            if ($url != $request) return "./" . $lang . $url;
         }
 
         return "";
