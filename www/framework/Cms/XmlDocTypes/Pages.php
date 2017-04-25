@@ -9,9 +9,16 @@ class Pages extends Base {
 
     const XML_TEMPLATE_DIR = __DIR__ . '/PagesXml/';
 
+    /**
+     * @brief routeHtmlThroughPhp
+     **/
+    protected $routeHtmlThroughPhp = false;
+
     // {{{ constructor
     public function __construct($xmlDb, $document) {
         parent::__construct($xmlDb, $document);
+
+        $this->routeHtmlThroughPhp = $this->project->getProjectConfig()->routeHtmlThroughPhp;
 
         // list of elements that may created by a user
         $this->availableNodes = [
@@ -175,6 +182,7 @@ class Pages extends Base {
         $changed = $this->testUniqueNames($node, "//proj:pages_struct | //pg:*");
 
         $xmlnav = new \Depage\Cms\XmlNav();
+        $xmlnav->routeHtmlThroughPhp = $this->routeHtmlThroughPhp;
         $xmlnav->addUrlAttributes($node);
 
         $this->addReleaseStatusAttributes($node);
@@ -205,6 +213,7 @@ class Pages extends Base {
         } while ($emptyFolders->length > 0);
 
         $xmlnav = new \Depage\Cms\XmlNav();
+        $xmlnav->routeHtmlThroughPhp = $this->routeHtmlThroughPhp;
         $xmlnav->addUrlAttributes($xml);
     }
     // }}}

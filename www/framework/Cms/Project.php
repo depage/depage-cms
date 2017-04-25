@@ -1015,6 +1015,29 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ getProjectConfig()
+    /**
+     * @brief getProjectConfig
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getProjectConfig()
+    {
+        $projectPath = $this->getProjectPath();
+
+        if (file_exists("$projectPath/lib/global/config.php")) {
+            include("$projectPath/lib/global/config.php");
+        }
+
+        return (object) [
+            'aliases' => isset($aliases) ? $aliases : [],
+            'rootAliases' => isset($rootAliases) ? $rootAliases : [],
+            'routeHtmlThroughPhp' => isset($routeHtmlThroughPhp) ? $routeHtmlThroughPhp : false,
+        ];
+    }
+    // }}}
+
     // {{{ generateSitemap()
     /**
      * @brief generateSitemap
@@ -1176,14 +1199,12 @@ class Project extends \Depage\Entity\Entity
         $index[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
         $index[] = "\$redirector->setPages(" . var_export($urls, true) . ");";
 
-        if (file_exists("$projectPath/lib/global/config.php")) {
-            include("$projectPath/lib/global/config.php");
-            if (isset($aliases)) {
-                $index[] = "\$redirector->setAliases(" . var_export($aliases, true) . ");";
-            }
-            if (isset($rootAliases)) {
-                $index[] = "\$redirector->setRootAliases(" . var_export($rootAliases, true) . ");";
-            }
+        $projectConf = $this->getProjectConfig();
+        if (isset($projectConf->aliases)) {
+            $index[] = "\$redirector->setAliases(" . var_export($projectConf->aliases, true) . ");";
+        }
+        if (isset($projectConf->rootAliases)) {
+            $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases, true) . ");";
         }
 
         $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
