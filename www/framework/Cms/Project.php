@@ -1164,44 +1164,48 @@ class Project extends \Depage\Entity\Entity
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $urls = $transformer->getUrlsByPageId();
 
-        $index = "";
-        $index .= file_get_contents(__DIR__ . "/../Redirector/Redirector.php");
-        $index .= "?>";
-        $index .= file_get_contents(__DIR__ . "/../Redirector/Result.php");
+        $index = [];
+        $index[] = "<?php";
+        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Redirector.php"), 5);
+        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Result.php"), 5);
 
-        $index .= "namespace {\n";
+        $index[] = "namespace {";
 
-        $index .= "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");\n";
+        $index[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
-        $index .= "\$redirector->setLanguages(" . var_export($languages, true) . ");\n";
-        $index .= "\$redirector->setPages(" . var_export($urls, true) . ");\n";
+        $index[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
+        $index[] = "\$redirector->setPages(" . var_export($urls, true) . ");";
 
-        if (file_exists("$projectPath/lib/shortcuts")) {
-            $index .= file_get_contents("$projectPath/lib/shortcuts");
-            $index .= "if (isset(\$shortcuts)) {\n";
-                $index .= "    \$redirector->setAliases(\$shortcuts);\n";
-            $index .= "}\n";
+        if (file_exists("$projectPath/lib/global/config.php")) {
+            include("$projectPath/lib/global/config.php");
+            if (isset($aliases)) {
+                $index[] = "\$redirector->setAliases(" . var_export($aliases, true) . ");";
+            }
+            if (isset($routes)) {
+                $index[] = "\$redirector->setRoutes(" . var_export($routes, true) . ");";
+            }
+            if (isset($localizedRoutes)) {
+                $index[] = "\$redirector->setLocalizedRoutes(" . var_export($localizedRoutes, true) . ");";
+            }
         }
 
-        $index .= "\n";
+        $index[] = "\$replacementScript = \$redirector->testRoutes(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+        $index[] = "if (!empty(\$replacementScript)) {";
+            $index[] = "    chdir(dirname(\$replacementScript));";
+            $index[] = "    include(basename(\$replacementScript));";
+            $index[] = "    die();";
+        $index[] = "}";
 
-        $index .= "if (strpos(\$_SERVER['REQUEST_URI'], \$redirector->getBasePath() . 'api/') === 0 && file_exists('lib/global/api.php')) {\n";
-            $index .= "    require_once('lib/global/api.php');\n";
-            $index .= "    die();\n";
-        $index .= "}\n";
+        $index[] = "if (isset(\$_GET['notfound'])) {";
+            $index[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+        $index[] = "} else {";
+            $index[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+        $index[] = "}";
 
-        $index .= "\n";
-
-        $index .= "if (isset(\$_GET['notfound'])) {\n";
-            $index .= "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
-        $index .= "} else {\n";
-            $index .= "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
-        $index .= "}\n\n";
-
-        $index .= "}";
+        $index[] = "}";
 
 
-        return $index;
+        return implode($index, "\n");
     }
     // }}}
     // {{{ generateCss()
