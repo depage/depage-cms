@@ -94,9 +94,9 @@ class Url
 
         $parts = explode("/", $path);
 
-        if (isset($parts[1]) && strlen($parts[1]) == 2) {
+        if (isset($parts[0]) && strlen($parts[0]) == 2) {
             // assume its a lang identifier if strlen is 2
-            $result->lang = array_splice($parts, 1, 1)[0];
+            $result->lang = array_splice($parts, 0, 1)[0];
         }
         if (!in_array($result->lang, $languages)) {
             $result->lang = "";
@@ -118,6 +118,18 @@ class Url
     public static function fromRequestUri($baseUrl = "", $languages = [])
     {
         return self::fromUrl($_SERVER['REQUEST_URI'], $baseUrl, $languages);
+    }
+    // }}}
+    // {{{ fromRelativeUrl()
+    /**
+     * @brief fromRelativeUrl
+     *
+     * @param mixed $baseUrl = "", $languages = []
+     * @return void
+     **/
+    public static function fromRelativeUrl($url, $baseUrl = "", $languages = [])
+    {
+        return self::fromUrl($url, $baseUrl, $languages);
     }
     // }}}
 
@@ -155,7 +167,7 @@ class Url
      **/
     public function __toString()
     {
-        return $this->path;
+        return $this->scheme . "://" . $this->host . $this->path;
     }
     // }}}
 }
