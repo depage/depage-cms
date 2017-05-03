@@ -22,6 +22,16 @@ class Handler
      **/
     public $baseUrl = "";
 
+    /**
+     * @brief options
+     **/
+    public $options = [];
+
+    /**
+     * @brief subArgs
+     **/
+    public $subArgs = [];
+
     // {{{ error()
     /**
      * @brief error

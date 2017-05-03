@@ -22,6 +22,13 @@ class Router
      **/
     protected $handlers = [];
 
+    /**
+     * @brief options
+     **/
+    protected $options = [
+        'subArgs' => -1,
+    ];
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -88,22 +95,25 @@ class Router
         } else {
             $url = $this->analyzeUrl();
         }
-        $action = $url->getPart(1);
-        $params = $url->getParts(2);
-
         $handler = $this->handlers['default'];
         $handler->baseUrl = $this->baseUrl;
+        $options = (object) array_replace($this->options, $handler->options);
 
-        // @todo add support for using index-method if not default is set
-        // @todo add support for handling all methods through one function
+        // @todo add option to handler to get offset of first element
+        $handler->subArgs = $url->getParts(0, $options->subArgs);
+        $action = $url->getPart($options->subArgs);
+        $args = $url->getParts($options->subArgs);
+
+        $action = preg_replace("/\.(html|php)$/", "", $action);
 
         if (empty($action)) {
             $action = "index";
         }
+
         if (is_callable([$handler, $action])) {
-            $response = call_user_func_array([$handler, $action], $params);
+            $response = call_user_func_array([$handler, $action], $args);
         } else {
-            $response = $handler->notFound($action, $params);
+            $response = $handler->notFound($action, $args);
         }
 
         if (method_exists($response, 'sendHeaders')) {
@@ -122,6 +132,5 @@ class Router
     }
     // }}}
 }
-
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
