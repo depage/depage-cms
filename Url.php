@@ -142,7 +142,9 @@ class Url
      **/
     public function getParts($offset, $length = null)
     {
-        if ($length > 0) {
+        if ($length <= 0) {
+            return [];
+        } else if ($length > 0) {
             // initialize array with empty string up to length
             $parts = array_fill(0, $length, "");
             $parts = array_replace($parts, array_slice($this->parts, $offset, $length));

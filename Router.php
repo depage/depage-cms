@@ -102,7 +102,7 @@ class Router
         // @todo add option to handler to get offset of first element
         $handler->subArgs = $url->getParts(0, $options->subArgs);
         $action = $url->getPart($options->subArgs);
-        $args = $url->getParts($options->subArgs);
+        $args = $url->getParts($options->subArgs + 1);
 
         $action = preg_replace("/\.(html|php)$/", "", $action);
 
