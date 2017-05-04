@@ -31,6 +31,9 @@ class Pageref extends Base {
             $url = new \Depage\Http\Url($this->transformer->currentPath);
             $path = $url->getRelativePathTo($path);
         }
+        if ($this->transformer->routeHtmlThroughPhp) {
+            $path = preg_replace("/\.php$/", ".html", $path);
+        }
 
         $this->data = '<return>' . htmlspecialchars($path) . '</return>';
 

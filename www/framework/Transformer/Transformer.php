@@ -19,6 +19,7 @@ abstract class Transformer
     public $baseUrl = "";
     public $useAbsolutePaths = false;
     public $useBaseUrl = false;
+    public $routeHtmlThroughPhp = false;
     public $lang = "";
     public $currentPath = "";
     public $urlsByPageId = array();

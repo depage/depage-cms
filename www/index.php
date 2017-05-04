@@ -15,11 +15,11 @@
     $dp = new \Depage\Depage\Runner();
     $dp->handleRequest();
 
-    if (!empty($GLOBALS['replacementScript'])) {
+    if (!empty($replacementScript)) {
         unset($dp);
 
-        chdir(dirname($GLOBALS['replacementScript']));
-        include(basename($GLOBALS['replacementScript']));
+        chdir(dirname($replacementScript));
+        include(basename($replacementScript));
     }
 
     /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -856,6 +856,7 @@ class Project extends \Depage\Entity\Entity
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $baseUrl = $this->getBaseUrl($publishId);
         $transformer->setBaseUrl($baseUrl);
+        $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
