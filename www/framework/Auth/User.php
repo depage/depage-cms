@@ -112,6 +112,7 @@ class User extends \Depage\Entity\Entity
         if (!$user) {
             throw new Exceptions\User("user '$username' does not exist.");
         }
+        $user->onLoad();
 
         return $user;
     }
@@ -149,6 +150,7 @@ class User extends \Depage\Entity\Entity
         if (!$user) {
             throw new Exceptions\User("user with email '$email' does not exist.");
         }
+        $user->onLoad();
 
         return $user;
     }
@@ -184,6 +186,10 @@ class User extends \Depage\Entity\Entity
         $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
+        if ($user) {
+            $user->onLoad();
+        }
+
         return $user;
     }
     // }}}
@@ -213,8 +219,84 @@ class User extends \Depage\Entity\Entity
         ));
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\auth\\user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Sepage\\Auth\\user", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        if ($user) {
+            $user->onLoad();
+        }
+
+        return $user;
+    }
+    // }}}
+    // {{{ loadByConfirmId()
+    /**
+     * gets a user-object by id directly from database
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadByConfirmId($pdo, $confirmId) {
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_auth_user AS user
+            WHERE
+                confirmId = :confirmId"
+        );
+        $uid_query->execute(array(
+            ':confirmId' => $confirmId,
+        ));
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        if ($user) {
+            $user->onLoad();
+        }
+
+        return $user;
+    }
+    // }}}
+    // {{{ loadByResetPasswordId()
+    /**
+     * gets a user-object by id directly from database
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       int     $id         id of the user
+     *
+     * @return      auth_user
+     */
+    static public function loadByResetPasswordId($pdo, $resetPasswordId) {
+        $fields = "type, " . implode(", ", array_keys(self::$fields));
+
+        $uid_query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_auth_user AS user
+            WHERE
+                resetPasswordId = :resetPasswordId"
+        );
+        $uid_query->execute(array(
+            ':resetPasswordId' => $resetPasswordId,
+        ));
+
+        // pass pdo-instance to constructor
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
+        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+
+        if ($user) {
+            $user->onLoad();
+        }
 
         return $user;
     }
@@ -252,10 +334,11 @@ class User extends \Depage\Entity\Entity
         $uid_query->execute();
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "depage\\Auth\\User", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
+                $user->onLoad();
                 $users[] = $user;
             }
         } while ($user);
@@ -291,6 +374,7 @@ class User extends \Depage\Entity\Entity
         do {
             $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             if ($user) {
+                $user->onLoad();
                 $users[$user->id] = $user;
             }
         } while ($user);
@@ -314,6 +398,8 @@ class User extends \Depage\Entity\Entity
         $nameparts = explode(" ", trim($value));
         $this->data['sortname'] = end($nameparts);
         $this->dirty['sortname'] = true;
+
+        return $this;
     }
     // }}}
     // {{{ setSortname()
@@ -328,6 +414,21 @@ class User extends \Depage\Entity\Entity
 
     }
     // }}}
+    // {{{ setPassword()
+    /**
+     * @brief setPassword
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setPassword($newPassword, $authDomain = "")
+    {
+        $pass = new \Depage\Auth\Password($authDomain);
+        $this->passwordhash = $pass->hash($this->name, $newPassword);
+
+        return $this;
+    }
+    // }}}
 
     // {{{ save()
     /**
@@ -338,7 +439,8 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     public function save() {
-        $fields = array();
+        $fields = [];
+        $params = [];
         $primary = self::$primary[0];
         $isNew = $this->data[$primary] === null;
 
@@ -347,8 +449,7 @@ class User extends \Depage\Entity\Entity
             $this->loginTimeout = 0;
         }
 
-        $dirty = array_keys($this->dirty, true);
-
+        $dirty = array_keys(array_intersect_key($this->dirty, self::$fields), true);
         if (count($dirty) > 0) {
             if ($isNew) {
                 $query = "INSERT INTO {$this->pdo->prefix}_auth_user";
@@ -357,25 +458,26 @@ class User extends \Depage\Entity\Entity
             }
             foreach ($dirty as $key) {
                 $fields[] = "$key=:$key";
+                $params[$key] = $this->data[$key];
             }
             $query .= " SET " . implode(",", $fields);
 
             if (!$isNew) {
                 $query .= " WHERE $primary=:$primary";
-                $dirty[] = $primary;
+                $params[$primary] = $this->data[$primary];
             }
-
-            $params = array_intersect_key($this->data,  array_flip($dirty));
 
             $cmd = $this->pdo->prepare($query);
             $success = $cmd->execute($params);
 
             if ($isNew) {
-                $this->$primary = $this->pdo->lastInsertId();
+                $this->data[$primary] = $this->pdo->lastInsertId();
             }
 
             if ($success) {
-                $this->dirty = array_fill_keys(array_keys(static::$fields), false);
+                foreach (static::$fields as $key => $default) {
+                    $this->dirty[$key] = false;
+                }
             }
         }
     }
@@ -399,6 +501,7 @@ class User extends \Depage\Entity\Entity
         return $result->toString();
     }
     // }}}
+
     // {{{ onLogout
     /**
      * Logout
@@ -414,6 +517,19 @@ class User extends \Depage\Entity\Entity
     public function onLogout($sid) {
     }
     // }}}
+    // {{{ onLoad()
+    /**
+     * @brief onLoad
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function onLoad()
+    {
+        // can be overridden by child class
+    }
+    // }}}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
