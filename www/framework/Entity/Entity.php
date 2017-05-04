@@ -123,7 +123,7 @@ abstract class Entity
         if (method_exists($this, $setter)) {
             return $this->$setter($val);
         }
-        if (array_key_exists($key, static::$fields)) {
+        if (array_key_exists($key, $this->data) || !$this->initialized) {
             // add value if property exists and is not primary
             if (!in_array($key, static::$primary) || !$this->initialized) {
                 $this->dirty[$key] = (isset($this->dirty[$key]) && $this->dirty[$key] == true) || (
@@ -154,14 +154,13 @@ abstract class Entity
     public function __call($name, $arguments)
     {
         $prefix = substr($name, 0, 3);
-        $key = strtolower(substr($name, 3));
+        $key = lcFirst(substr($name, 3));
 
         if ($prefix == "set") {
             if (array_key_exists($key, static::$fields)) {
                 $this->$key = $arguments[0];
-
-                return $this;
             }
+            return $this;
         } else if ($prefix == "get") {
             if (array_key_exists($key, static::$fields)) {
                 return $this->$key;
@@ -245,3 +244,4 @@ abstract class Entity
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
+
