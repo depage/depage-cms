@@ -142,7 +142,7 @@ class Url
      **/
     public function getParts($offset, $length = null)
     {
-        if ($length <= 0) {
+        if (!is_null($length) && $length <= 0) {
             return [];
         } else if ($length > 0) {
             // initialize array with empty string up to length

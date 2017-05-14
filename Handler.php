@@ -28,9 +28,19 @@ class Handler
     public $options = [];
 
     /**
-     * @brief subArgs
+     * @brief url
      **/
-    public $subArgs = [];
+    public $url = "";
+
+    /**
+     * @brief urlPath
+     **/
+    public $urlPath = "";
+
+    /**
+     * @brief urlSubArgs
+     **/
+    public $urlSubArgs = [];
 
     // {{{ error()
     /**

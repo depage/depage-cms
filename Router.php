@@ -26,7 +26,7 @@ class Router
      * @brief options
      **/
     protected $options = [
-        'subArgs' => -1,
+        'urlSubArgs' => -1,
     ];
 
     // {{{ __construct()
@@ -93,16 +93,18 @@ class Router
         if (is_null($url)) {
             $url = $this->analyzeCurrentUrl();
         } else {
-            $url = $this->analyzeUrl();
+            $url = $this->analyzeUrl($url);
         }
         $handler = $this->handlers['default'];
         $handler->baseUrl = $this->baseUrl;
         $options = (object) array_replace($this->options, $handler->options);
 
         // @todo add option to handler to get offset of first element
-        $handler->subArgs = $url->getParts(0, $options->subArgs);
-        $action = $url->getPart($options->subArgs);
-        $args = $url->getParts($options->subArgs + 1);
+        $handler->url = $url;
+        $handler->urlPath = $url;
+        $handler->urlSubArgs = $url->getParts(0, $options->urlSubArgs);
+        $action = $url->getPart($options->urlSubArgs);
+        $args = $url->getParts($options->urlSubArgs + 1);
 
         $action = preg_replace("/\.(html|php)$/", "", $action);
 
