@@ -7,9 +7,11 @@
     <a href="project/<?php self::t($this->project->name); ?>/newsletter/+/" class="button icon-add">
         <?php self::t(_('Add new newsletter')) ?>
     </a>
-    <a href="project/<?php self::t($this->project->name); ?>/newsletter-subscribers/" class="button icon-download">
-        <?php self::t(_('Download Subscribers')) ?>
-    </a>
+    <?php if ($this->user->canSendNewsletter()) { ?>
+        <a href="project/<?php self::t($this->project->name); ?>/newsletter-subscribers/" class="button icon-download">
+            <?php self::t(_('Download Subscribers')) ?>
+        </a>
+    <?php } ?>
 </div>
 <table class="recent-changes newsletter">
     <?php foreach($this->newsletters as $newsletter) {
