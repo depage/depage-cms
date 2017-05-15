@@ -509,10 +509,12 @@ class Project extends Base
      *
      * @param mixed
      * @return void
+     *
+     * @todo look into https://github.com/PHPOffice/PhpSpreadsheet for better export
      **/
     public function newsletter_subscribers($category = "Default")
     {
-        $tableSubscribers = $this->pdo->prefix . "_proj_" . $this->project->name . "_newsletter_subscribers";
+        $tableSubscribers = "{$this->pdo->prefix}_proj_{$this->project->name}_newsletter_subscribers";
 
         $query = $this->pdo->prepare(
             "SELECT *
@@ -526,10 +528,11 @@ class Project extends Base
         $query->execute([
             "category" => $category,
         ]);
-        $subscriber = $query->fetch(\PDO::FETCH_ASSOC);
+
+        $filename = "{$this->project->name}-newsletter-subscribers-" . gmdate('Ymd-His') . ".csv";
 
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment;filename="text.csv"');
+        header("Content-Disposition: attachment;filename=\"$filename\"");
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -545,9 +548,12 @@ class Project extends Base
         fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
         // add header
+        $subscriber = $query->fetch(\PDO::FETCH_ASSOC);
+
         $keys = array_keys($subscriber);
         fputcsv($fp, $keys, ";");
 
+        // add subscribers
         do {
             fputcsv($fp, $subscriber, ";");
         } while ($subscriber = $query->fetch(\PDO::FETCH_ASSOC));
