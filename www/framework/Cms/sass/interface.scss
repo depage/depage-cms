@@ -1479,7 +1479,8 @@ div.preview.zoom100 iframe {
     dd > .buttons {
         margin-bottom: 20px;
 
-        .icon-add {
+        .icon-add,
+        .icon-download {
             position: relative;
             padding-left: 2em;
 
@@ -1492,8 +1493,13 @@ div.preview.zoom100 iframe {
                 width: 2em;
                 height: 2em;
                 background-color: transparent;
-                @include icon-base("add", 0.5);
             }
+        }
+        .icon-add:before {
+            @include icon-base("add", 0.5);
+        }
+        .icon-download:before {
+            @include icon-base("upload-drag-over", 0.5);
         }
     }
     a {
