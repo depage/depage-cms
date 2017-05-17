@@ -219,7 +219,7 @@ class User extends \Depage\Entity\Entity
         ));
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Sepage\\Auth\\user", array($pdo));
+        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
         $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
 
         if ($user) {
