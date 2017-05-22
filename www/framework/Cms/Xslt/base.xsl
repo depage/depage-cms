@@ -307,7 +307,7 @@
             <xsl:when test="$class != ''">
                 <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
-            <xsl:when test="$linebreaks != ''">
+            <xsl:when test="$linebreaks != '' or $linebreaks = true()">
                 <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
             </xsl:when>
             <xsl:otherwise>
