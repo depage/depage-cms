@@ -103,6 +103,15 @@ abstract class Entity
         if (isset($this->data[$key])) {
             return $this->data[$key];
         }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined property via __get(): ' . $key .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+
+        return null;
     }
     // }}}
 
@@ -135,6 +144,14 @@ abstract class Entity
 
             return true;
         }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined property via __set(): ' . $key .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+
         return false;
     }
     // }}}
@@ -166,6 +183,13 @@ abstract class Entity
                 return $this->$key;
             }
         }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined method via __call(): ' . $name .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_ERROR);
 
         return false;
     }
@@ -244,4 +268,3 @@ abstract class Entity
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
-
