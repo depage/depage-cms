@@ -433,6 +433,7 @@ class Newsletter
             $mail = new \Depage\Mail\Mail($this->conf->from);
             $mail->setSubject($this->getSubject($lang))
                 ->setHtmlText($this->transform("live", $lang));
+            // @todo add header List-Unsubscribe:
 
             $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
                 $mail,
@@ -464,6 +465,7 @@ class Newsletter
         $mail = new \Depage\Mail\Mail($this->conf->from);
         $mail->setSubject($this->getSubject($lang))
             ->setHtmlText($this->transform("live", $lang));
+        // @todo add header List-Unsubscribe:
 
         $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
             $mail,
