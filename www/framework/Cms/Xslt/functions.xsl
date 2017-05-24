@@ -11,6 +11,8 @@
     xmlns:exslt="http://exslt.org/common"
     extension-element-prefixes="xsl dp func php exslt ">
 
+    <xsl:include href="xslt://nodetostring.xsl" />
+
     <!-- {{{ dp:choose() -->
     <!--
         dp:choose(test, on-true, on-false)
@@ -105,6 +107,20 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::changesrc', string($src))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:nodetostring() -->
+    <!--
+        dp:nodetostring(src)
+    -->
+    <func:function name="dp:nodetostring">
+        <xsl:param name="src" />
+
+        <xsl:variable name="escaped">
+            <xsl:apply-templates select="exslt:node-set($src)" mode="nodetostring" />
+        </xsl:variable>
+
+        <func:result select="$escaped" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:urlencode() -->
     <!--
         dp:urlencode(url)
@@ -165,7 +181,7 @@
     <func:function name="dp:phpEscape">
         <xsl:param name="string" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', string($string))" />
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', $string)" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:formatDate() -->
