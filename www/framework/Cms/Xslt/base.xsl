@@ -294,7 +294,7 @@
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
         <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
-            <xsl:apply-templates><xsl:with-param name="linebreaks" select="'true'"/></xsl:apply-templates>
+            <xsl:apply-templates mode="linebreaks" />
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
@@ -308,12 +308,15 @@
                 <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
             <xsl:when test="$linebreaks != '' or $linebreaks = true()">
-                <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
+                <xsl:apply-templates select="." mode="linebreaks" />
             </xsl:when>
             <xsl:otherwise>
                 <p><xsl:apply-templates/>&#160;</p>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    <xsl:template match="p" mode="linebreaks">
+        <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ p mode autolist -->
