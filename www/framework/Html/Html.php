@@ -224,7 +224,7 @@ class Html {
         $html = ob_get_contents();
         ob_end_clean();
 
-        return $html;
+        return $this->clean($html);
     }
     // }}}
     // {{{ clean()

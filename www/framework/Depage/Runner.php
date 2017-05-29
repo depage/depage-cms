@@ -365,11 +365,7 @@ class Runner {
     static public function sendContent($content) {
         self::sendHeaders($content);
 
-        if (method_exists($content, 'clean')) {
-            echo($content->clean($content));
-        } else {
-            echo($content);
-        }
+        echo($content);
     }
     // }}}
     // {{{ sendHeaders
