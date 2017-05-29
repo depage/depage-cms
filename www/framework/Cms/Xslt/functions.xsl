@@ -181,7 +181,7 @@
     <func:function name="dp:phpEscape">
         <xsl:param name="string" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', $string)" />
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', string($string))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:formatDate() -->

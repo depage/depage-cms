@@ -746,7 +746,7 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallPhpEscape($string) {
-        $value = str_replace("\"", "\\\"", $string);
+        $value = var_export($string, true);
 
         return $value;
     }
