@@ -298,6 +298,48 @@
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
+    <!-- {{{ edit:text_headline h1 -->
+    <xsl:template match="edit:text_headline" mode="h1">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h1><xsl:apply-templates mode="linebreaks" /></h1>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h2 -->
+    <xsl:template match="edit:text_headline" mode="h2">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h2><xsl:apply-templates mode="linebreaks" /></h2>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h3 -->
+    <xsl:template match="edit:text_headline" mode="h3">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h3><xsl:apply-templates mode="linebreaks" /></h3>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h4 -->
+    <xsl:template match="edit:text_headline" mode="h4">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h4><xsl:apply-templates mode="linebreaks" /></h4>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h5 -->
+    <xsl:template match="edit:text_headline" mode="h5">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h5><xsl:apply-templates mode="linebreaks" /></h5>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h6 -->
+    <xsl:template match="edit:text_headline" mode="h6">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h6><xsl:apply-templates mode="linebreaks" /></h6>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ p -->
     <xsl:template match="p">
         <xsl:param name="class" />
