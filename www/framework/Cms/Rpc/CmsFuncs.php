@@ -342,11 +342,9 @@ class CmsFuncs {
         $newName = $args['new_name'];
         $changedIds = [];
 
-        if ($treeType == "files") {
-            var_dump($nodeId);
-            var_dump($newName);
-            die();
-        } else {
+        $newName = htmlspecialchars_decode($newName);
+
+        if ($treeType != "files") {
             $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
             if ($xmldoc) {
                 $xmldoc->setAttribute($nodeId, "name", $newName);
