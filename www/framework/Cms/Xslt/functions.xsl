@@ -238,5 +238,5 @@
     </func:function>
     <!-- }}} -->
 
-    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
+    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
