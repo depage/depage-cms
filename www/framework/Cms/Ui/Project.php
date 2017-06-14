@@ -604,20 +604,6 @@ class Project extends Base
 
     }
     // }}}
-    // {{{ clear_caches()
-    /**
-     * @brief clear_caches
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function clear_caches()
-    {
-        $this->project->clearTransformCache();
-
-        return "cache cleared";
-    }
-    // }}}
     // {{{ details()
     function details($max = null) {
         $h = new Html([

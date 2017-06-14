@@ -1055,6 +1055,8 @@ class Project extends \Depage\Entity\Entity
                 $transformCache->clearAll();
             }
         }
+
+        return true;
     }
     // }}}
 

@@ -472,6 +472,17 @@ class Main extends Base {
                 $retVal['error'] = $e->getMessage();
             }
         }
+        if ($type == "cache") {
+            try {
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+
+                if ($action == "clear") {
+                    $retVal['success'] = $project->clearTransformCache();
+                }
+            } catch (\Exception $e) {
+                $retVal['error'] = $e->getMessage();
+            }
+        }
 
         return new \Depage\Json\Json($retVal);
     }
