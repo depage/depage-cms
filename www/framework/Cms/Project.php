@@ -1047,12 +1047,17 @@ class Project extends \Depage\Entity\Entity
     public function clearTransformCache()
     {
         $templates = ["html", "atom", "debug"];
-        $previewTypes = ["pre", "live"];
+        $previewTypes = ["dev", "pre", "live"];
 
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
                 $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, "$template-$type");
                 $transformCache->clearAll();
+
+                $xslFile = "cache/xslt/$this->name/$template/$type.xsl";
+                if (file_exists($xslFile)) {
+                    unlink($xslFile);
+                }
             }
         }
 
