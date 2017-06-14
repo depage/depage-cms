@@ -1038,6 +1038,25 @@ class Project extends \Depage\Entity\Entity
         ];
     }
     // }}}
+    // {{{ clearTransformCache()
+    /**
+     * @brief clearTransformCache
+     *
+     * @return void
+     **/
+    public function clearTransformCache()
+    {
+        $templates = ["html", "atom", "debug"];
+        $previewTypes = ["pre", "live"];
+
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, "$template-$type");
+                $transformCache->clearAll();
+            }
+        }
+    }
+    // }}}
 
     // {{{ generateSitemap()
     /**

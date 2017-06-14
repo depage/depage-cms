@@ -604,6 +604,20 @@ class Project extends Base
 
     }
     // }}}
+    // {{{ clear_caches()
+    /**
+     * @brief clear_caches
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function clear_caches()
+    {
+        $this->project->clearTransformCache();
+
+        return "cache cleared";
+    }
+    // }}}
     // {{{ details()
     function details($max = null) {
         $h = new Html([
@@ -627,6 +641,25 @@ class Project extends Base
         ], $this->htmlOptions);
 
         return $h;
+    }
+    // }}}
+    // {{{ update()
+    /**
+     * @brief update
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function update()
+    {
+        $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
+        $xmldb = $this->project->getXmlDb();
+
+        if (file_exists($updateSrc)) {
+            include($updateSrc);
+        } else {
+            return "not update defined";
+        }
     }
     // }}}
 }
