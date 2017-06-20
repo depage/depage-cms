@@ -503,9 +503,9 @@ class Project extends Base
         return $h;
     }
     // }}}
-    // {{{ export()
+    // {{{ newsletter_subscribers()
     /**
-     * @brief export
+     * @brief newsletter_subscribers
      *
      * @param mixed
      * @return void
@@ -639,10 +639,11 @@ class Project extends Base
     public function update()
     {
         $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
-        $xmldb = $this->project->getXmlDb();
 
         if (file_exists($updateSrc)) {
-            include($updateSrc);
+            $this->project->addProjectUpdateTask();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         } else {
             return "not update defined";
         }

@@ -133,8 +133,6 @@ class Pages extends Base {
      * @return null
      */
     public function onCopyNode($node_id, $copy_id) {
-        $log = new \Depage\Log\Log();
-
         // get all copied nodes
         $copiedXml = $this->document->getSubdocByNodeId($copy_id, true);
         $xpath = new \DOMXPath($copiedXml);

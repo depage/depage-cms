@@ -1016,6 +1016,91 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ getXsltProcessor()
+    /**
+     * @brief getXsltProcessor
+     *
+     * @param mixed $xslFile
+     * @return void
+     **/
+    public function getXsltProcessor($xslFile)
+    {
+        libxml_disable_entity_loader(false);
+        libxml_use_internal_errors(true);
+
+        $xsltProc = new \XSLTProcessor();
+
+        $xsl = new \DOMDocument();
+        $xsl->load($xslFile);
+        $xsltProc->importStylesheet($xsl);
+
+        return $xsltProc;
+    }
+    // }}}
+    // {{{ updateXmlForNodeId()
+    /**
+    * @brief updateXmlForNodeId
+    *
+    * @param mixed $param
+    * @return void
+    **/
+    public function updateXmlForNodeId($xsltProc, $id)
+    {
+        $xmldb = $this->getXmldb();
+
+        $doc = $xmldb->getDocByNodeId($id);
+        $node = $doc->getSubdocByNodeId($id);
+
+        if (!$newNode = $xsltProc->transformToDoc($node)) {
+            // @todo add better error handling
+            $messages = "";
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $messages .= $error->message . "\n";
+            }
+
+            $error = "Could not transform the XML document:\n" . $messages;
+
+            throw new \Exception($error);
+        }
+        if ($node->saveXml() != $newNode->saveXml()) {
+            $doc->replaceNode($newNode, $id);
+        }
+    }
+    // }}}
+    // {{{ addProjectUpdateTask()
+    /**
+     * @brief addProjectUpdateTask
+     *
+     * @return void
+     **/
+    public function addProjectUpdateTask()
+    {
+        $updateSrc = $this->getProjectPath() . "xslt/update.php";
+        if (file_exists($updateSrc)) {
+            $xslSrc = $this->getProjectPath() . "xslt/update/update.xsl";
+            $xmldb = $this->getXmlDb();
+
+            $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "update project", $this->name);
+            $initId = $task->addSubtask("init", "
+                \$project = %s;
+                \$xsltProc = \$project->getXsltProcessor(%s);
+            ", [
+                $this,
+                $xslSrc,
+            ]);
+
+            include($updateSrc);
+
+            $task->addSubtask("clearing transform cache", "\$project->clearTransformCache();");
+
+            $task->begin();
+        } else {
+            return false;
+        }
+    }
+    // }}}
+
     // {{{ getProjectConfig()
     /**
      * @brief getProjectConfig
