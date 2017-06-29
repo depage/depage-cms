@@ -349,7 +349,7 @@
             <xsl:when test="$class != ''">
                 <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
-            <xsl:when test="$linebreaks != '' or $linebreaks = true()">
+            <xsl:when test="$linebreaks = 'true' or $linebreaks = true()">
                 <xsl:apply-templates select="." mode="linebreaks" />
             </xsl:when>
             <xsl:otherwise>
