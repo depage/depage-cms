@@ -132,7 +132,7 @@ class Newsletter
         $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Newsletter');
 
         $self = get_called_class();
-        $newsletter = new $self($pdo, $project);
+        $newsletter = new $self($pdo, $project, "");
         $newsletter->setDocument($doc);
 
         $xml = new \DOMDocument();
