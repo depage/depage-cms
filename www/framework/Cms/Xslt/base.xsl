@@ -572,9 +572,10 @@
 <!-- {{{ header include js -->
 <xsl:template name="header_include_js">
     <xsl:param name="file" />
+    <xsl:param name="defer" select="true()" />
     <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
-    <script type="text/javascript" defer=""><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+    <script type="text/javascript"><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
 </xsl:template>
 <!-- }}} -->
 <!-- {{{ header include baseurl -->
