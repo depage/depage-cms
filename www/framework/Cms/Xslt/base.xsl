@@ -520,7 +520,7 @@
                 <xsl:choose>
                     <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseUrl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
                     <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
-                    <xsl:otherwise>"Location: <xsl:value-of select="concat($baseUrl,document(concat('pageref://', @href_id, '/', $currentLang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
+                    <xsl:otherwise>"Location: <xsl:value-of select="document(concat('pageref://', @href_id, '/', $currentLang,'/absolute')/.)" disable-output-escaping="yes" />"</xsl:otherwise>
                 </xsl:choose>
             </xsl:for-each>);
         </xsl:if>
