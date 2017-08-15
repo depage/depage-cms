@@ -51,7 +51,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
 
         foreach($pages as $page) {
             if (!$page->released) {
-                $user = $this->users[$page->lastchangeUid];
+                $username = isset($this->users[$page->lastchangeUid]) ? $this->users[$page->lastchangeUid]->fullname : _("unknown user");
                 $selected = $page->name == $this->selectedDocId;
 
                 $fs->addHtml("<a href=\"" . $previewPath . $page->url . "\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
@@ -59,7 +59,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
                     'label' => $page->url,
                     'defaultValue' => $selected,
                 ));
-                $fs->addHtml("<p class=\"small\">" . sprintf(_("Changed by %s, %s"), $user->fullname, $formatter->format($page->lastchange, true)) . "</p>");
+                $fs->addHtml("<p class=\"small\">" . sprintf(_("Changed by %s, %s"), $username, $formatter->format($page->lastchange, true)) . "</p>");
             }
         }
     }
