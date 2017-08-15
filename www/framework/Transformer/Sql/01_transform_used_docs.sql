@@ -12,3 +12,12 @@ CREATE TABLE `_proj_PROJECTNAME_transform_used_docs` (
   KEY ids (`transformId`, `docId`),
   KEY template (`template`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 1.5.11
+*/
+DELETE FROM `_proj_PROJECTNAME_transform_used_docs` WHERE 1=1;
+ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` CHANGE `template` `template` varchar(30) NOT NULL DEFAULT '';
+ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` DROP KEY `ids`;
+ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` DROP KEY `template`;
+ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` ADD UNIQUE `unique_index`(`transformId`, `docId`, `template`);
