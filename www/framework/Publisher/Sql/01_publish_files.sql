@@ -20,3 +20,11 @@ CREATE TABLE _proj_PROJECTNAME_published_files (
 */
 CREATE INDEX publishId ON _proj_PROJECTNAME_published_files (publishId);
 CREATE INDEX filename ON _proj_PROJECTNAME_published_files (filename(20));
+
+/*
+    @version 1.5.11
+*/
+ALTER TABLE _proj_PROJECTNAME_published_files DROP KEY filename;
+ALTER TABLE _proj_PROJECTNAME_published_files ADD filenamehash varchar(40) NOT NULL DEFAULT '' AFTER filename;
+UPDATE _proj_PROJECTNAME_published_files SET filenamehash = SHA1(filename);
+ALTER TABLE _proj_PROJECTNAME_published_files ADD UNIQUE `filename`(`publishId`,`filenamehash`);
