@@ -268,6 +268,67 @@
         </xsl:choose>
     </xsl:template>
     <!-- }}} -->
+    <!-- {{{ edit:img inline-svg -->
+    <xsl:template match="edit:img" name="img-svg" mode="inline-svg">
+        <xsl:param name="href" select="@href"/>
+        <xsl:param name="href_id" select="@href_id"/>
+        <xsl:param name="type" select="@type"/>
+        <xsl:param name="rel" select="@rel"/>
+        <xsl:param name="target" select="@target"/>
+        <xsl:param name="onMouseOver" select="@onMouseOver"/>
+        <xsl:param name="onMouseOut" select="@onMouseOut"/>
+        <xsl:param name="onFocus" select="@onFocus"/>
+        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="src" select="@src"/>
+        <xsl:param name="sizes" select="@sizes"/>
+        <xsl:param name="srcset" select="@srcset"/>
+        <xsl:param name="width" select="@width"/>
+        <xsl:param name="height" select="@height"/>
+        <xsl:param name="border" select="@border"/>
+        <xsl:param name="class" select="@class"/>
+        <xsl:param name="id" select="@id"/>
+        <xsl:param name="style" select="@style"/>
+        <xsl:param name="alt" select="@alt"/>
+        <xsl:param name="title" select="@title"/>
+        <xsl:param name="hspace" select="@hspace"/>
+        <xsl:param name="vspace" select="@vspace"/>
+        <xsl:param name="img_name" select="@img_name"/>
+
+        <xsl:choose>
+            <!-- {{{ svg image -->
+            <xsl:when test="starts-with($src, 'libref://') and '.svg' = substring($src, string-length($src) - string-length('.svg') + 1)">
+                <xsl:variable name="svgFile" select="concat($libPath, substring($src, 9))" />
+                <xsl:copy-of select="document($svgFile)/*" />
+            </xsl:when>
+            <!-- }}} -->
+            <!-- {{{ other image -->
+            <xsl:otherwise>
+                <xsl:call-template name="edit:img">
+                    <xsl:with-param name="href" select="$href"/>
+                    <xsl:with-param name="href_id" select="$href_id"/>
+                    <xsl:with-param name="target" select="$target"/>
+                    <xsl:with-param name="onMouseOver" select="$onMouseOver"/>
+                    <xsl:with-param name="onMouseOut" select="$onMouseOut"/>
+                    <xsl:with-param name="class" select="$class"/>
+                    <xsl:with-param name="id" select="$id"/>
+                    <xsl:with-param name="src" select="$src"/>
+                    <xsl:with-param name="sizes" select="$sizes"/>
+                    <xsl:with-param name="srcset" select="$srcset"/>
+                    <xsl:with-param name="width" select="$width"/>
+                    <xsl:with-param name="height" select="$height"/>
+                    <xsl:with-param name="border" select="$border"/>
+                    <xsl:with-param name="style" select="$style"/>
+                    <xsl:with-param name="alt" select="$alt"/>
+                    <xsl:with-param name="title" select="$title"/>
+                    <xsl:with-param name="hspace" select="$hspace"/>
+                    <xsl:with-param name="vspace" select="$vspace"/>
+                    <xsl:with-param name="img_name" select="$img_name"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+            <!-- }}} -->
+        </xsl:choose>
+    </xsl:template>
+    <!-- }}} -->
 
     <!-- {{{ edit:text_formatted -->
     <xsl:template name="edit:text_formatted" match="edit:text_formatted">

@@ -62,6 +62,7 @@ abstract class Transformer
 
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
+        $this->libPath = "projects/" . $this->projectName . "/lib/";
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
@@ -173,6 +174,7 @@ abstract class Transformer
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings//proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
+                'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
             );
 
             // add variables from settings
