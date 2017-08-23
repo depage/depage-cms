@@ -25,10 +25,7 @@
         <xsl:param name="altcontent"/>
         <xsl:param name="class" select="@class"/>
         <xsl:param name="id" select="@id"/>
-        <xsl:param name="onFocus" select="@onFocus"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="onMouseOver" select="@onMouseOver"/>
-        <xsl:param name="onMouseOut" select="@onMouseOut"/>
         <xsl:param name="lang" select="$currentLang"/>
 
         <xsl:if test="@lang = $lang or not(@lang)">
@@ -100,15 +97,6 @@
                 <xsl:if test="$title != ''">
                     <xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute>
                 </xsl:if>
-                <xsl:if test="$onFocus != ''">
-                    <xsl:attribute name="onFocus"><xsl:value-of select="$onFocus"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOver != ''">
-                    <xsl:attribute name="onMouseOver"><xsl:value-of select="$onMouseOver"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOut != ''">
-                    <xsl:attribute name="onMouseOut"><xsl:value-of select="$onMouseOut"/></xsl:attribute>
-                </xsl:if>
                 <!-- }}} -->
                 <!-- {{{ content -->
                 <xsl:value-of select="$pretext" disable-output-escaping="yes" />
@@ -145,9 +133,6 @@
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="onMouseOver" select="@onMouseOver"/>
-        <xsl:param name="onMouseOut" select="@onMouseOut"/>
-        <xsl:param name="onFocus" select="@onFocus"/>
         <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="src" select="@src"/>
         <xsl:param name="sizes" select="@sizes"/>
@@ -160,8 +145,6 @@
         <xsl:param name="style" select="@style"/>
         <xsl:param name="alt" select="@alt"/>
         <xsl:param name="title" select="@title"/>
-        <xsl:param name="hspace" select="@hspace"/>
-        <xsl:param name="vspace" select="@vspace"/>
         <xsl:param name="img_name" select="@img_name"/>
 
         <xsl:choose>
@@ -203,16 +186,11 @@
                     <xsl:if test="$linktitle != ''"><xsl:attribute name="title"><xsl:value-of select="$linktitle"/></xsl:attribute></xsl:if>
                     <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
                     <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$onFocus != ''"><xsl:attribute name="onFocus"><xsl:value-of select="$onFocus"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$onMouseOver != ''"><xsl:attribute name="onMouseOver"><xsl:value-of select="$onMouseOver"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$onMouseOut != ''"><xsl:attribute name="onMouseOut"><xsl:value-of select="$onMouseOut"/></xsl:attribute></xsl:if>
                     <!-- }}} -->
                     <xsl:call-template name="edit:img">
                         <xsl:with-param name="href" select="''"/>
                         <xsl:with-param name="href_id" select="''"/>
                         <xsl:with-param name="target" select="''"/>
-                        <xsl:with-param name="onMouseOver" select="''"/>
-                        <xsl:with-param name="onMouseOut" select="''"/>
                         <xsl:with-param name="class" select="$class"/>
                         <xsl:with-param name="id" select="''"/>
                         <xsl:with-param name="src" select="$src"/>
@@ -224,8 +202,6 @@
                         <xsl:with-param name="style" select="$style"/>
                         <xsl:with-param name="alt" select="$alt"/>
                         <xsl:with-param name="title" select="$title"/>
-                        <xsl:with-param name="hspace" select="$hspace"/>
-                        <xsl:with-param name="vspace" select="$vspace"/>
                         <xsl:with-param name="img_name" select="$img_name"/>
                     </xsl:call-template>
                 </a>
@@ -255,8 +231,6 @@
                     <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
                     <xsl:if test="$style != ''"><xsl:attribute name="style"><xsl:value-of select="$style"/></xsl:attribute></xsl:if>
                     <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$hspace != ''"><xsl:attribute name="hspace"><xsl:value-of select="$hspace"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$vspace != ''"><xsl:attribute name="vspace"><xsl:value-of select="$vspace"/></xsl:attribute></xsl:if>
                     <xsl:if test="$img_name != ''"><xsl:attribute name="name"><xsl:value-of select="$img_name"/></xsl:attribute></xsl:if>
                     <xsl:if test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:if>
                     <xsl:if test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:if>
@@ -275,9 +249,6 @@
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="onMouseOver" select="@onMouseOver"/>
-        <xsl:param name="onMouseOut" select="@onMouseOut"/>
-        <xsl:param name="onFocus" select="@onFocus"/>
         <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="src" select="@src"/>
         <xsl:param name="sizes" select="@sizes"/>
@@ -290,8 +261,6 @@
         <xsl:param name="style" select="@style"/>
         <xsl:param name="alt" select="@alt"/>
         <xsl:param name="title" select="@title"/>
-        <xsl:param name="hspace" select="@hspace"/>
-        <xsl:param name="vspace" select="@vspace"/>
         <xsl:param name="img_name" select="@img_name"/>
 
         <xsl:choose>
@@ -307,8 +276,6 @@
                     <xsl:with-param name="href" select="$href"/>
                     <xsl:with-param name="href_id" select="$href_id"/>
                     <xsl:with-param name="target" select="$target"/>
-                    <xsl:with-param name="onMouseOver" select="$onMouseOver"/>
-                    <xsl:with-param name="onMouseOut" select="$onMouseOut"/>
                     <xsl:with-param name="class" select="$class"/>
                     <xsl:with-param name="id" select="$id"/>
                     <xsl:with-param name="src" select="$src"/>
@@ -320,8 +287,6 @@
                     <xsl:with-param name="style" select="$style"/>
                     <xsl:with-param name="alt" select="$alt"/>
                     <xsl:with-param name="title" select="$title"/>
-                    <xsl:with-param name="hspace" select="$hspace"/>
-                    <xsl:with-param name="vspace" select="$vspace"/>
                     <xsl:with-param name="img_name" select="$img_name"/>
                 </xsl:call-template>
             </xsl:otherwise>
