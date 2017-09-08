@@ -92,6 +92,22 @@ abstract class PdoEntity extends Entity {
         }
     }
     // }}}
+    // {{{ dateTimestamp()
+    /**
+     * @brief
+     *
+     * @param mixed $timestamp = null
+     * @return void
+     **/
+    protected function dateTimestamp($timestamp = null)
+    {
+        if ($timestamp === null) {
+            $timestamp = time();
+        }
+
+        return date('Y-m-d H:i:s', $timestamp);
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
