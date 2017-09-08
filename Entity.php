@@ -129,7 +129,7 @@ abstract class Entity
     public function __set($key, $val)
     {
         $setter = "set" . ucfirst($key);
-        if (method_exists($this, $setter)) {
+        if ($this->initialized && method_exists($this, $setter)) {
             return $this->$setter($val);
         }
         if (array_key_exists($key, $this->data) || !$this->initialized) {
