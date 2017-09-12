@@ -224,7 +224,7 @@ class Html {
         $html = ob_get_contents();
         ob_end_clean();
 
-        return $html;
+        return $this->clean($html);
     }
     // }}}
     // {{{ clean()
@@ -439,6 +439,18 @@ class Html {
         } else {
             echo(htmlspecialchars($text));
         }
+    }
+    // }}}
+    // {{{ sp()
+    /**
+     * outputs escaped text for use in html and html-attributes
+     *
+     * @param   $text (string) text to escape
+     *
+     * @return  void
+     */
+    static function sp($text = "", ...$params) {
+        echo(htmlspecialchars(sprintf($text, ...$params)));
     }
     // }}}
     // {{{ e()
