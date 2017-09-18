@@ -100,7 +100,7 @@ abstract class Entity
         if (method_exists($this, $getter)) {
             return $this->$getter();
         }
-        if (isset($this->data[$key])) {
+        if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
         }
 
