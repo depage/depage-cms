@@ -53,11 +53,13 @@ class HttpCookie extends Auth
         $url = parse_url($this->domain);
         $this->cookiePath = $url['path'];
 
-        $realm =  preg_replace("/[^a-zA-Z0-9]/", "", $this->realm);
+        $realm = preg_replace("/[^a-zA-Z0-9]/", "", $this->realm);
         if (!empty($realm)) {
             $this->cookieName = "$realm-session-id";
         }
-
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+            $this->cookieSecure = true;
+        }
         session_name($this->cookieName);
         session_set_cookie_params(
             $this->sessionLifetime,
@@ -90,7 +92,7 @@ class HttpCookie extends Auth
                 if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
                     $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    \Depage\Depage\Runner::redirect("$loginUrl?redirectTo=$redirectTo");
+                    \Depage\Router\Router::redirect("$loginUrl?redirectTo=$redirectTo");
                 }
             }
         }
@@ -105,7 +107,7 @@ class HttpCookie extends Auth
     public function enforceLazy() {
         if (!$this->user) {
             if ($this->hasSession()) {
-                if (isset($_COOKIE[session_name()]) && $this->isValidSid($_COOKIE[session_name()])) {
+                if (isset($_COOKIE[$this->cookieName]) && $this->isValidSid($_COOKIE[$this->cookieName])) {
                     $this->user = $this->authCookie();
                 } else {
                     $this->justLoggedOut = true;
@@ -123,7 +125,7 @@ class HttpCookie extends Auth
     public function enforceLogout() {
         if ($this->hasSession()) {
             $this->justLoggedOut = true;
-            $this->logout($_COOKIE[session_name()]);
+            $this->logout($_COOKIE[$this->cookieName]);
             $this->destroySession();
         }
     }
@@ -217,7 +219,7 @@ class HttpCookie extends Auth
             return true;
         } else {
             // PHP 5.3
-            return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+            return isset($_COOKIE[$this->cookieName]) && $_COOKIE[$this->cookieName] != "";
         }
     }
     // }}}
@@ -235,7 +237,7 @@ class HttpCookie extends Auth
                 $params['secure'],
                 $params['httponly']
             );
-            unset($_COOKIE[session_name()]);
+            unset($_COOKIE[$this->cookieName]);
             session_destroy();
         }
     }
