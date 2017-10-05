@@ -49,7 +49,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    public function error($message = "Internal Server Error")
+    protected function error($message = "Internal Server Error")
     {
         $message = htmlentities($message);
 
@@ -66,7 +66,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    public function notFound($action = "", $params = "")
+    protected function notFound($action = "", $params = "")
     {
         $action = htmlentities($action);
 
@@ -83,7 +83,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    public function notAllowed($action = "", $params = "")
+    protected function notAllowed($action = "", $params = "")
     {
         $action = htmlentities($action);
 
@@ -91,6 +91,19 @@ class Handler
             "Not Allowed '$action'",
             ["HTTP/1.0 403 Forbidden"]
         );
+    }
+    // }}}
+
+    // {{{ redirect()
+    /**
+     * @brief redirect
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    protected function redirect($url)
+    {
+        \Depage\Router\Router::redirect("{$this->baseUrl}{$this->lang}{$url}");
     }
     // }}}
 }

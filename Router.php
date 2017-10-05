@@ -111,6 +111,7 @@ class Router
         if (empty($action)) {
             $action = "index";
         }
+        $handler->action = $action;
 
         if (is_callable([$handler, $action])) {
             $response = call_user_func_array([$handler, $action], $args);
