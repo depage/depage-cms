@@ -76,6 +76,23 @@ class Handler
         );
     }
     // }}}
+    // {{{ notAllowed()
+    /**
+     * @brief notAllowed
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function notAllowed($action = "", $params = "")
+    {
+        $action = htmlentities($action);
+
+        return new \Depage\Http\Response(
+            "Not Allowed '$action'",
+            ["HTTP/1.0 403 Forbidden"]
+        );
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
