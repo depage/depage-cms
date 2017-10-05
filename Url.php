@@ -165,7 +165,7 @@ class Url
      **/
     public function getPart($offset)
     {
-        return $this->parts[$offset];
+        return $this->parts[$offset] ?? null;
     }
     // }}}
 
