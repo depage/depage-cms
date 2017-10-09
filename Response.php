@@ -50,8 +50,8 @@ class Response {
     );
 
     // {{{ __construct()
-    public function __construct($body = "", $headers = "", $info = array()) {
-        $this->body = $body;
+    public function __construct($body = "", $headers = [], $info = []) {
+        $this->setBody($body);
         $this->info = $info;
 
         if (!is_array($headers)) {
@@ -70,9 +70,13 @@ class Response {
      * @param mixed $$
      * @return void
      **/
-    public function setBody($body)
+    public function setBody($body = "")
     {
-        $this->body = $body;
+        if (is_array($body)) {
+            $this->body = implode($body, "");
+        } else {
+            $this->body = (string) $body;
+        }
 
         return $this;
     }
