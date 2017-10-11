@@ -130,15 +130,12 @@ class HttpCookie extends Auth
         }
     }
     /* }}} */
-    /* {{{ login() */
-    public function login($username, $password) {
+    /* {{{ check() */
+    public function check($username, $password) {
         try {
             if (strpos($username, "@") !== false) {
                 // email login
                 $user = User::loadByEmail($this->pdo, $username);
-                if ($user) {
-                    $username = $user->name;
-                }
             } else {
                 // username login
                 $user = User::loadByUsername($this->pdo, $username);
@@ -148,15 +145,26 @@ class HttpCookie extends Auth
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
                 $this->updatePasswordHash($user, $password);
 
-                $this->destroySession();
-                $this->registerSession($user->id);
-                $this->startSession();
-
-                return true;
-            } else {
-                $this->prolongLogin($user);
+                return $user;
             }
         } catch (\Depage\Auth\Exceptions\User $e) {
+        }
+
+        return false;
+    }
+    /* }}} */
+    /* {{{ login() */
+    public function login($username, $password) {
+        $user = $this->check($username, $password);
+
+        if ($user) {
+            $this->destroySession();
+            $this->registerSession($user->id);
+            $this->startSession();
+
+            return true;
+        } else {
+            $this->prolongLogin($user);
         }
 
         return false;
@@ -175,7 +183,9 @@ class HttpCookie extends Auth
                 return $user;
             } else {
                 $this->justLoggedOut = true;
-                $this->log->log("http_auth_cookie: invalid session ID");
+                if (!empty($this->log)) {
+                    $this->log->log("http_auth_cookie: invalid session ID");
+                }
             }
         }
 
