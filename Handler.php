@@ -33,14 +33,14 @@ class Handler
     public $url = "";
 
     /**
-     * @brief urlPath
-     **/
-    public $urlPath = "";
-
-    /**
      * @brief urlSubArgs
      **/
     public $urlSubArgs = [];
+
+    /**
+     * @brief lang
+     **/
+    public $lang = null;
 
     // {{{ error()
     /**
@@ -49,7 +49,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    protected function error($message = "Internal Server Error")
+    public function error($message = "Internal Server Error")
     {
         $message = htmlentities($message);
 
@@ -66,7 +66,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    protected function notFound($action = "", $params = "")
+    public function notFound($action = "", $params = "")
     {
         $action = htmlentities($action);
 
@@ -83,7 +83,7 @@ class Handler
      * @param mixed
      * @return void
      **/
-    protected function notAllowed($action = "", $params = "")
+    public function notAllowed($action = "", $params = "")
     {
         $action = htmlentities($action);
 

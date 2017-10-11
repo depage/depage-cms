@@ -89,7 +89,6 @@ class Url
         } else {
             $path = $path;
         }
-        $result->path = $path;
         $path = trim($path, "/");
 
         $parts = explode("/", $path);
@@ -104,6 +103,7 @@ class Url
         // @todo set default language?
 
         $result->parts = $parts;
+        $result->path = "/" . implode("/", $parts) . "/";
 
         return $result;
     }

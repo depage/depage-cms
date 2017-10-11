@@ -101,8 +101,8 @@ class Router
 
         // @todo add option to handler to get offset of first element
         $handler->url = $url;
-        $handler->urlPath = $url;
         $handler->urlSubArgs = $url->getParts(0, $options->urlSubArgs);
+        $handler->lang = $url->lang;
         $action = $url->getPart($options->urlSubArgs);
         $args = $url->getParts($options->urlSubArgs + 1);
 
