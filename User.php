@@ -429,6 +429,39 @@ class User extends \Depage\Entity\Entity
         return $this;
     }
     // }}}
+    // {{{ setSettings()
+    /**
+     * @brief setSettings
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function setSettings($param)
+    {
+        if (!$this->initialized) {
+            $this->data['settings'] = $param;
+        } else {
+            $this->data['settings'] = serialize($param);
+            $this->dirty['settings'] = true;
+        }
+    }
+    // }}}
+    // {{{ getSettings()
+    /**
+     * @brief getSettings
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getSettings()
+    {
+        $settings = [];
+        if (!empty($this->data['settings'])) {
+            $settings = unserialize($this->data['settings']);
+        }
+        return $settings;
+    }
+    // }}}
 
     // {{{ save()
     /**
