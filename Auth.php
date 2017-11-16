@@ -29,7 +29,7 @@ abstract class Auth
     public $digestCompat = false;
     public $sid, $uid;
     public $valid = false;
-    public $sessionLifetime = 10800; // in seconds
+    public $sessionLifetime = 172801; // in seconds
     public $privateKey = "private Key";
     protected $user = null;
     public $justLoggedOut = false;

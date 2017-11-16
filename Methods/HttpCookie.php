@@ -53,9 +53,11 @@ class HttpCookie extends Auth
         $url = parse_url($this->domain);
         $this->cookiePath = $url['path'];
 
-        $realm = preg_replace("/[^a-zA-Z0-9]/", "", $this->realm);
-        if (!empty($realm)) {
-            $this->cookieName = "$realm-session-id";
+        $cookiePrefix = $this->realm . "-" . $url['host'];
+        $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
+        $cookiePrefix = trim($cookiePrefix, "-");
+        if (!empty($cookiePrefix)) {
+            $this->cookieName = "$cookiePrefix-sid";
         }
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
             $this->cookieSecure = true;
