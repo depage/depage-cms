@@ -569,7 +569,10 @@ abstract class Transformer
     {
         $this->getAllUrls();
 
-        if (!empty($this->aliases)) {
+        if (!isset($this->pageIdByUrl[$urlPath]) && $this->routeHtmlThroughPhp) {
+            $urlPath = preg_replace("/\.html$/", ".php", $urlPath);
+        }
+        if (!isset($this->pageIdByUrl[$urlPath]) && !empty($this->aliases)) {
             foreach ($this->aliases as $regex => $repl) {
                 $regex = "/" . str_replace("/", "\/", $regex) . "/";
                 $urlPath = preg_replace($regex, $repl, $urlPath);
