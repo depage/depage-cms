@@ -198,11 +198,11 @@ class DocumentHistory
                 'published' => $published,
             ];
 
-            if ($query->execute($params)) {
-                $result = $timestamp;
+            $query->execute($params);
+            $dth->onHistorySave();
 
-                $dth->onHistorySave();
-            }
+            $result = $timestamp;
+
         } else {
             $result = strtotime($latestVersion->lastsaved->getTimestamp());
         }
