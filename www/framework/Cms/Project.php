@@ -691,7 +691,9 @@ class Project extends \Depage\Entity\Entity
             // get base-url
             $parts = parse_url(rtrim($conf->baseurl, "/"));
             if (!isset($parts['path'])) {
-                $parts['path'] = "";
+                $parts['path'] = "/";
+            } else {
+                $parts['path'] .= "/";
             }
             $baseurl = $parts['scheme'] . "://" . $parts['host'] . $parts['path'];
 
@@ -1131,7 +1133,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function clearTransformCache()
     {
-        $templates = ["html", "atom", "debug"];
+        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
         $previewTypes = ["dev", "pre", "live"];
 
         foreach ($templates as $template) {
