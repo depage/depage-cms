@@ -109,7 +109,7 @@ abstract class Entity
             'Undefined property via __get(): ' . $key .
             ' in ' . $trace[0]['file'] .
             ' on line ' . $trace[0]['line'],
-            E_USER_NOTICE);
+            E_USER_ERROR);
 
         return null;
     }
@@ -129,7 +129,7 @@ abstract class Entity
     public function __set($key, $val)
     {
         $setter = "set" . ucfirst($key);
-        if (method_exists($this, $setter)) {
+        if ($this->initialized && method_exists($this, $setter)) {
             return $this->$setter($val);
         }
         if (array_key_exists($key, $this->data) || !$this->initialized) {
@@ -189,7 +189,7 @@ abstract class Entity
             'Undefined method via __call(): ' . $name .
             ' in ' . $trace[0]['file'] .
             ' on line ' . $trace[0]['line'],
-            E_USER_ERROR);
+            E_USER_NOTICE);
 
         return false;
     }
