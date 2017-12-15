@@ -239,7 +239,7 @@ class Flash extends Base {
             $results[] = new \Depage\Cms\Rpc\Func('nothing', ['error' => 0]);
         }
 
-        return \depage\Cms\Rpc\Message::create($results);
+        return \Depage\Cms\Rpc\Message::create($results);
     }
     // }}}
 }

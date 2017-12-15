@@ -395,10 +395,10 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $xmldoc->moveNodeIn($nodeId, $targetId);
+            $parentId = $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        $changedIds = [$nodeId, $targetId];
+        return [$nodeId, $targetId, $parentId];
     }
     // }}}
     // {{{ move_node_in_files()
