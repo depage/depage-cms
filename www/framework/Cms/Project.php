@@ -817,6 +817,31 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId, $userId)
     {
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
+        $task->addSubtask("init publishing subtasks", "
+            \$project = %s;
+            \$project->initPublishTask(%s, %s, %s);
+        ", [
+            $this,
+            $taskName,
+            $publishId,
+            $userId,
+        ]);
+
+        $task->begin();
+
+        return $task;
+    }
+    // }}}
+    // {{{ initPublishTask()
+    /**
+     * @brief initPublishTask
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function initPublishTask($taskName, $publishId, $userId)
+    {
         $this->setPreviewType("live");
         $xmlgetter = $this->getXmlGetter();
 
