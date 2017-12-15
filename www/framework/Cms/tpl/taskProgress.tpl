@@ -19,6 +19,9 @@ foreach($this->tasks as $task) {
     if ($task->status == "failed") {
         $status = sprintf(_("\n'%s' failed:\n%s"), $progress->description, $progress->status);
         $class = "failed";
+    } else if ($progress->percent < 2) {
+        $status = sprintf(_("'%s' starting"), $progress->description);
+        $class = "running";
     } else {
         $status = sprintf(_("'%s' will finish in %s"), $progress->description, $timeFormatter->format($progress->estimated));
         $class = "running";
