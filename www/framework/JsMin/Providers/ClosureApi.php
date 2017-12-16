@@ -13,7 +13,7 @@ namespace Depage\JsMin\Providers;
  **/
 class ClosureApi extends \Depage\JsMin\JsMin {
     // {{{ variables
-    var $apiUrl = "http://closure-compiler.appspot.com/compile";
+    var $apiUrl = "https://closure-compiler.appspot.com/compile";
     // }}}
 
     // {{{ minifySrc()
