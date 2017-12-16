@@ -1346,7 +1346,8 @@ class Project extends \Depage\Entity\Entity
             $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases, true) . ");";
         }
 
-        $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+        $index[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
+        $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $index[] = "if (!empty(\$replacementScript)) {";
             $index[] = "    chdir(dirname(\$replacementScript));";
             $index[] = "    include(basename(\$replacementScript));";
@@ -1354,9 +1355,9 @@ class Project extends \Depage\Entity\Entity
         $index[] = "}";
 
         $index[] = "if (isset(\$_GET['notfound'])) {";
-            $index[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+            $index[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $index[] = "} else {";
-            $index[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);";
+            $index[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $index[] = "}";
 
         $index[] = "}";
