@@ -270,6 +270,7 @@ abstract class Transformer
             }
 
             $this->clearUsedDocuments();
+            $this->addToUsedDocuments($pagedataId);
             $content = $this->transform($pageXml, array(
                 "currentLang" => $this->lang,
                 "currentPageId" => $pageId,
