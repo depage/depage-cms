@@ -90,6 +90,8 @@ var depageCMS = (function() {
         setupVarious: function() {
             $("#logout").click( function() {
                 localJS.logout();
+
+                return false;
             });
 
             // add click event for teaser
@@ -696,14 +698,13 @@ var depageCMS = (function() {
                 type: "GET",
                 url: logoutUrl,
                 cache: false,
-                async: true,
                 username: "logout",
                 password: "logout",
                 complete: function(XMLHttpRequest, textStatus) {
                     window.location = baseUrl;
                 },
                 error: function() {
-                    window.location = baseUrl;
+                    window.location = logoutUrl;
                 }
             });
         }
