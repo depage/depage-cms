@@ -104,12 +104,11 @@ class TransformCache
         $deleteQuery = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE transformId = ? AND template = ?;");
 
         while ($result = $query->fetchObject()) {
-            $this->delete($result->transformId, $subId);
-
-            $success = $deleteQuery->execute(array(
+            $deleteQuery->execute(array(
                 $result->transformId,
                 $this->templateName,
             ));
+            $this->delete($result->transformId, $subId);
         }
     }
     // }}}
@@ -123,7 +122,7 @@ class TransformCache
     public function clearAll()
     {
         $deleteQuery = $this->pdo->prepare("TRUNCATE {$this->tableName};");
-        $success = $deleteQuery->execute();
+        $deleteQuery->execute();
 
         return $this->cache->clear();
     }
