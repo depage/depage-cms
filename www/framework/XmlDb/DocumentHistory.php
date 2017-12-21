@@ -184,16 +184,18 @@ class DocumentHistory
         $latestVersion = $this->getLatestVersion();
 
         if (!$latestVersion || $latestVersion->hash != $hash) {
+            // @todo update date of latest version
             $query = $this->pdo->prepare(
-                "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
-                VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
+                "INSERT INTO {$this->table_history} (doc_id, hash, xml, first_saved_at, last_saved_at, user_id, published)
+                VALUES(:doc_id, :hash, :xml, :timestamp1, :timestamp2, :user_id, :published);"
             );
 
             $params = [
                 'doc_id' => $this->document->getDocId(),
                 'hash' => $hash,
                 'xml' => $xml,
-                'timestamp' => date($this->dateFormat, $timestamp),
+                'timestamp1' => date($this->dateFormat, $timestamp),
+                'timestamp2' => date($this->dateFormat, $timestamp),
                 'user_id' => $user_id,
                 'published' => $published,
             ];
@@ -202,7 +204,25 @@ class DocumentHistory
             $dth->onHistorySave();
 
             $result = $timestamp;
+        } else if ($latestVersion->hash == $hash) {
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_history}
+                SET last_saved_at = :timestamp
+                WHERE
+                    doc_id = :doc_id AND
+                    hash = :hash
+                ;"
+            );
 
+            $params = [
+                'doc_id' => $this->document->getDocId(),
+                'hash' => $hash,
+                'timestamp' => date($this->dateFormat, $timestamp),
+            ];
+
+            $query->execute($params);
+
+            $result = $timestamp;
         } else {
             $result = strtotime($latestVersion->lastsaved->getTimestamp());
         }
