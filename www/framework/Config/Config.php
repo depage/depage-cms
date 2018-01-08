@@ -107,7 +107,7 @@ class Config implements \Iterator, \ArrayAccess
      * @return  null
      */
     public function setConfig($values) {
-        if (count($values) > 0) {
+        if (is_array($values) || $values instanceof \Iterator) {
             foreach ($values as $key => $value) {
                 if (is_array($value)) {
                     $this->data[$key] = new self($value);
