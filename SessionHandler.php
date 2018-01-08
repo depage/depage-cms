@@ -81,7 +81,7 @@ class SessionHandler implements \SessionHandlerInterface
         $this->sessionLock = $this->pdo->quote("session_$sessionId");
         $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", 60)");
 
-        if (count($result) != 1) {
+        if (!$result || $result->fetchColumn() != 1) {
             die("could not obtain session lock!");
         }
 
@@ -155,8 +155,12 @@ class SessionHandler implements \SessionHandlerInterface
         if (class_exists("\\Depage\\Auth\\User")) {
             $user = \Depage\Auth\User::loadBySid($this->pdo, $sessionId);
             if ($user) {
-                $log = new \Depage\Log\Log();
-                $log->log("logging out $user->name ($user->fullname)");
+                if (class_exists('Depage\Log\Log')) {
+                    $log = new \Depage\Log\Log();
+                    $log->log("logging out $user->name ($user->fullname)");
+                } else {
+                    error_log("logging out $user->name ($user->fullname)");
+                }
 
                 $user->onLogout($sessionId);
             }
