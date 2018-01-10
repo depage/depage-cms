@@ -24,7 +24,7 @@ class Config implements \Iterator, \ArrayAccess
      *
      * @return  null
      */
-    public function __construct($values = array(), $defaults = array()) {
+    public function __construct($values = []) {
         $this->setConfig($values);
     }
     // }}}
@@ -120,9 +120,7 @@ class Config implements \Iterator, \ArrayAccess
      * @return  null
      */
     public function setConfig($values) {
-        // @todo fix for php 7.2
-        //if (is_array($values) || $values instanceof \Iterator) {
-        if (count($values) > 0) {
+        if (is_array($values) || $values instanceof \Iterator) {
             foreach ($values as $key => $value) {
                 if (is_array($value)) {
                     $this->data[$key] = new self($value);
@@ -131,26 +129,6 @@ class Config implements \Iterator, \ArrayAccess
                 }
             }
         }
-    }
-    // }}}
-    // {{{ toArray
-    /**
-     * returns options as array
-     *
-     * @return  options as array
-     */
-    public function toArray() {
-        $data = array();
-
-        foreach ($this->data as $key => $value) {
-            if (is_object($value)) {
-                $data[$key] = $value->toArray();
-            } else {
-                $data[$key] = $value;
-            }
-        }
-
-        return $data;
     }
     // }}}
     // {{{ getFromDefaults
@@ -164,7 +142,7 @@ class Config implements \Iterator, \ArrayAccess
     public function getFromDefaults($defaults) {
         $data = array();
 
-        if (count($defaults) > 0) {
+        if (is_array($defaults) || $values instanceof \Iterator) {
             foreach ($defaults as $key => $value) {
                 if (isset($this->data[$key]) && !is_null($this->data[$key])) {
                     $data[$key] = $this->data[$key];
@@ -172,11 +150,11 @@ class Config implements \Iterator, \ArrayAccess
                     $data[$key] = $value;
                 }
                 if (is_array($data[$key])) {
-                    $data[$key] = (object) $data[$key];
+                    $data[$key] = new self($data[$key]);
                 }
             }
         }
-        return (object) $data;
+        return new self($data);
     }
     // }}}
     // {{{ getDefaultsFromClass

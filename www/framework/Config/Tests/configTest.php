@@ -69,6 +69,47 @@ class configTest extends PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ testSetConfigWithArray()
+    public function testSetConfigWithArray()
+    {
+        $this->config->setConfig([
+            "key1" => "bla",
+            "key2" => [
+                "sub" => [
+                    "subsub" => "blum",
+                ],
+            ],
+        ]);
+
+        $this->assertEquals("bla", $this->config->key1);
+        $this->assertEquals("bla", $this->config["key1"]);
+
+        $this->assertEquals("blum", $this->config->key2->sub->subsub);
+        $this->assertEquals("blum", $this->config["key2"]["sub"]["subsub"]);
+    }
+    // }}}
+    // {{{ testSetConfigWithConfig()
+    public function testSetConfigWithConfig()
+    {
+        $conf = new \Depage\Config\Config();
+        $conf->setConfig([
+            "key1" => "bla",
+            "key2" => [
+                "sub" => [
+                    "subsub" => "blum",
+                ],
+            ],
+        ]);
+        $this->config->setConfig($conf);
+
+        $this->assertEquals("bla", $this->config->key1);
+        $this->assertEquals("bla", $this->config["key1"]);
+
+        $this->assertEquals("blum", $this->config->key2->sub->subsub);
+        $this->assertEquals("blum", $this->config["key2"]["sub"]["subsub"]);
+    }
+    // }}}
+
     // {{{ testGlobalValuesNumber()
     public function testGlobalValuesNumber()
     {
