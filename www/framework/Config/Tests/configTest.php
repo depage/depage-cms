@@ -2,6 +2,24 @@
 
 require "../Config.php";
 
+class BaseClassWithDefaults
+{
+    public $defaults = [
+        'globalKeyString' => "base class value",
+        'globalKeyArray' => [
+            'key1' => "bla",
+        ],
+    ];
+}
+
+class ChildClassWithDefaults extends BaseClassWithDefaults
+{
+    public $defaults = [
+        'globalKeyString' => "child class value",
+        'globalKeyNumber' => 1,
+    ];
+}
+
 class configTest extends PHPUnit_Framework_TestCase
 {
     // {{{ setUp()
@@ -128,6 +146,28 @@ class configTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals("bla", $this->config->globalKeyArray1->key1);
         $this->assertEquals("bla3", $this->config->globalKeyArray2->key1);
+    }
+    // }}}
+
+    // {{{ testGetDefaultFromBaseClass()
+    public function testGetDefaultFromBaseClass()
+    {
+        $class = new BaseClassWithDefaults();
+        $values = $this->config->getDefaultsFromClass($class);
+
+        $this->assertEquals("base class value", $values->globalKeyString);
+        $this->assertEquals("bla", $values->globalKeyArray->key1);
+    }
+    // }}}
+    // {{{ testGetDefaultFromChildClass()
+    public function testGetDefaultFromChildClass()
+    {
+        $class = new ChildClassWithDefaults();
+        $values = $this->config->getDefaultsFromClass($class);
+
+        $this->assertEquals("child class value", $values->globalKeyString);
+        $this->assertEquals(1, $values->globalKeyNumber);
+        $this->assertEquals("bla", $values->globalKeyArray->key1);
     }
     // }}}
 }
