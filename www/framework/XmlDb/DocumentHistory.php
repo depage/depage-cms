@@ -77,6 +77,7 @@ class DocumentHistory
 
             foreach($results as &$result) {
                 $versions[strtotime($result['last_saved_at'])] = (object) [
+                    'firstsaved' => new \DateTime($result['first_saved_at']),
                     'lastsaved' => new \DateTime($result['last_saved_at']),
                     'userId' => $result['user_id'],
                     'published' => $result['published'],
