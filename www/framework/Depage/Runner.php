@@ -556,7 +556,7 @@ class Runner {
         $this->log->log("Error{$error->no}: {$error->msg} in '{$error->file}' on line {$error->line}");
 
         if (isset($this->handler) && is_callable($this->handler, "error")) {
-            $this->handler->error($error, $this->options['env']);
+            $this->handler->error($error, $this->options->env);
         }
 
         /* Don't execute PHP internal error handler */
@@ -582,7 +582,7 @@ class Runner {
         $this->log->log("Unhandled Exception: {$error->msg} in '{$error->file}' on line {$error->line}");
 
         if (isset($this->handler) && is_callable($this->handler, "error")) {
-            $this->handler->error($error, $this->options['env']);
+            $this->handler->error($error, $this->options->env);
         }
     }
 
