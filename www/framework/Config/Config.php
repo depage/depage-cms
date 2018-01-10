@@ -38,15 +38,6 @@ class Config implements \Iterator, \ArrayAccess
      */
     public function readConfig($configFile) {
         $values = include $configFile;
-        $depage_base = "";
-
-        $urls = array_keys($values);
-
-        // sort that shorter urls with same beginning are tested first for a match
-        // @todo change sort order to have the inherited always at the end
-        usort($urls, function($a, $b) {
-            return strlen($a) > strlen($b);
-        });
 
         if (!isset($_SERVER['HTTP_HOST'])) {
             $_SERVER['HTTP_HOST'] = "";
@@ -60,13 +51,34 @@ class Config implements \Iterator, \ArrayAccess
             $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         }
 
+        $this->setConfigForUrl($values, $acturl);
+    }
+    // }}}
+    // {{{ setConfigForUrl()
+    /**
+     * @brief setConfigForUrl
+     *
+     * @param mixed $config, $url
+     * @return void
+     **/
+    public function setConfigForUrl($values, $currentUrl)
+    {
+        $depage_base = "";
+        $urls = array_keys($values);
+
+        // sort that shorter urls with same beginning are tested first for a match
+        // @todo change sort order to have the inherited always at the end
+        usort($urls, function($a, $b) {
+            return strlen($a) > strlen($b);
+        });
+
         // remove url-parameters before matching
-        list($acturl) = explode("?", $acturl, 2);
+        list($currentUrl) = explode("?", $currentUrl, 2);
 
         $simplepatterns = self::getSimplePatterns();
         foreach ($urls as $url) {
             $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $url) . ")/";
-            if (preg_match($pattern, $acturl, $matches)) {
+            if (preg_match($pattern, $currentUrl, $matches)) {
                 // url fits into pattern
 
                 if (isset($values[$url]['base']) && $values[$url]['base'] == "inherit") {
@@ -96,6 +108,7 @@ class Config implements \Iterator, \ArrayAccess
                 define("DEPAGE_BASE", $protocol . $_SERVER['HTTP_HOST']);
             }
         }
+
     }
     // }}}
     // {{{ setConfig
@@ -107,7 +120,9 @@ class Config implements \Iterator, \ArrayAccess
      * @return  null
      */
     public function setConfig($values) {
-        if (is_array($values) || $values instanceof \Iterator) {
+        // @todo fix for php 7.2
+        //if (is_array($values) || $values instanceof \Iterator) {
+        if (count($values) > 0) {
             foreach ($values as $key => $value) {
                 if (is_array($value)) {
                     $this->data[$key] = new self($value);
@@ -161,7 +176,6 @@ class Config implements \Iterator, \ArrayAccess
                 }
             }
         }
-
         return (object) $data;
     }
     // }}}
