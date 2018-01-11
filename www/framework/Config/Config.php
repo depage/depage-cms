@@ -24,8 +24,10 @@ class Config implements \Iterator, \ArrayAccess
      *
      * @return  null
      */
-    public function __construct($values = []) {
-        $this->setConfig($values);
+    public function __construct($defaults = []) {
+        if (!empty($defaults)) {
+            $this->setConfig($defaults);
+        }
     }
     // }}}
     // {{{ readConfig
@@ -129,6 +131,26 @@ class Config implements \Iterator, \ArrayAccess
                 }
             }
         }
+    }
+    // }}}
+    // // {{{ toArray
+    /**
+     * returns options as array
+     *
+     * @return  options as array
+     */
+    public function toArray() {
+        $data = [];
+
+        foreach ($this->data as $key => $value) {
+            if ($value instanceof self) {
+                $data[$key] = $value->toArray();
+            } else {
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
     }
     // }}}
     // {{{ getFromDefaults

@@ -211,6 +211,37 @@ class configTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("bla", $values->globalKeyArray->key1);
     }
     // }}}
+
+    // {{{ testConstructor()
+    public function testConstructor()
+    {
+        $config = new \Depage\Config\Config([
+            'key' => "value",
+        ]);
+
+        $this->assertEquals("value", $config->key);
+    }
+    // }}}
+
+    // {{{ testToArray()
+    public function testToArray()
+    {
+        $array = [
+            'globalKeyNumber' => 1,
+            'globalKeyString' => "global value",
+            'globalKeyArray1' => [
+                'key1' => "bla",
+                'key2' => "blub",
+            ],
+            'globalKeyArray2' => [
+                'key1' => "bla",
+                'key2' => "blub",
+            ],
+        ];
+        $this->config->setConfig($array);
+        $this->assertEquals($array, $this->config->toArray());
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
