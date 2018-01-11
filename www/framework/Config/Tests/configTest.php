@@ -242,6 +242,31 @@ class configTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($array, $this->config->toArray());
     }
     // }}}
+
+    // {{{ testReadOnlyObject()
+    public function testReadOnlyObject()
+    {
+        $array = [
+            'key' => "value",
+        ];
+        $this->config->setConfig($array);
+
+        $this->config->key = "new value";
+        $this->assertEquals("value", $this->config->key);
+    }
+    // }}}
+    // {{{ testReadOnlyArray()
+    public function testReadOnlyArray()
+    {
+        $array = [
+            'key' => "value",
+        ];
+        $this->config->setConfig($array);
+
+        $this->config["key"] = "new value 2";
+        $this->assertEquals("value", $this->config->key);
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

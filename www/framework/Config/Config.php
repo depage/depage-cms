@@ -249,7 +249,9 @@ class Config implements \Iterator, \ArrayAccess
      */
     public function __set($name, $value) {
         // make readonly
-        error_log("cannot set '$name': config objects are read only");
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot set '$name': config objects are read only");
+        }
     }
     // }}}
     // {{{ __isset
@@ -294,7 +296,9 @@ class Config implements \Iterator, \ArrayAccess
     // {{{ offsetSet()
     public function offsetSet($offset, $value) {
         // make readonly
-        error_log("cannot set '$offset': config objects are read only");
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot set '$offset': config objects are read only");
+        }
     }
     // }}}
     // {{{ offsetExists()
@@ -305,7 +309,9 @@ class Config implements \Iterator, \ArrayAccess
     // {{{ offsetUnset()
     public function offsetUnset($offset) {
         // make readonly
-        error_log("cannot unset '$offset': config objects are read only");
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot unset '$offset': config objects are read only");
+        }
     }
     // }}}
     // {{{ offsetGet()
