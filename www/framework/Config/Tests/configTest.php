@@ -1,6 +1,6 @@
 <?php
 
-require "../Config.php";
+require __DIR__ . "/../Config.php";
 
 class BaseClassWithDefaults
 {
