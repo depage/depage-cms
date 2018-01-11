@@ -5,7 +5,7 @@
  * depage config module
  *
  *
- * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2002-2018 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -133,7 +133,7 @@ class Config implements \Iterator, \ArrayAccess
         }
     }
     // }}}
-    // // {{{ toArray
+    // {{{ toArray
     /**
      * returns options as array
      *
