@@ -1138,16 +1138,17 @@ class Project extends \Depage\Entity\Entity
     public function getProjectConfig()
     {
         $projectPath = $this->getProjectPath();
+        $config = new \Depage\Config\Config([
+            'aliases' => [],
+            'rootAliases' => [],
+            'routeHtmlThroughPhp' => false,
+        ]);
 
         if (file_exists("$projectPath/lib/global/config.php")) {
-            include("$projectPath/lib/global/config.php");
+            $config->readConfig("$projectPath/lib/global/config.php");
         }
 
-        return (object) [
-            'aliases' => isset($aliases) ? $aliases : [],
-            'rootAliases' => isset($rootAliases) ? $rootAliases : [],
-            'routeHtmlThroughPhp' => isset($routeHtmlThroughPhp) ? $routeHtmlThroughPhp : false,
-        ];
+        return $config;
     }
     // }}}
     // {{{ clearTransformCache()
@@ -1340,10 +1341,10 @@ class Project extends \Depage\Entity\Entity
 
         $projectConf = $this->getProjectConfig();
         if (isset($projectConf->aliases)) {
-            $index[] = "\$redirector->setAliases(" . var_export($projectConf->aliases, true) . ");";
+            $index[] = "\$redirector->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ");";
         }
         if (isset($projectConf->rootAliases)) {
-            $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases, true) . ");";
+            $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
         }
 
         $index[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
