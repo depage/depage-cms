@@ -536,18 +536,9 @@ class Main extends Base {
      * @param mixed $param
      * @return void
      **/
-    public function test($param)
+    public function test()
     {
-        $indexer = new \Depage\Search\Indexer($this->pdo);
 
-        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/news.html");
-        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/news/2016/06/eu-kommission-fuehrt-konsultation-zur-dienstleistungsfreiheit-durch.html");
-        $indexer->index("http://localhost/depage-cms/project/dsve/preview/html/pre/de/ueber-uns/dsvae.html");
-
-        $indexer->index("https://screen-pitch.com/en/");
-        $indexer->index("http://violeta-mikic.de/de/violeta-mikic.html");
-
-        $indexer->index("http://localhost/depage-cms/project/depage/preview/html/live/en/blog/2013/10/depage-forms-html5-form-validation-part-2.html");
         die();
     }
     // }}}
