@@ -12,10 +12,15 @@ abstract class Transformer
     protected $xsltPath;
     protected $xmlPath;
     protected $xsltProc = null;
-    protected $lang = "";
     protected $isLive = false;
     protected $profiling = false;
     protected $usedDocuments = array();
+    protected $aliases = [];
+    public $baseUrl = "";
+    public $useAbsolutePaths = false;
+    public $useBaseUrl = false;
+    public $routeHtmlThroughPhp = false;
+    public $lang = "";
     public $currentPath = "";
     public $urlsByPageId = array();
     public $pageIdByUrl = array();
@@ -40,6 +45,10 @@ abstract class Transformer
         $this->projectName = $projectName;
         $this->template = $template;
         $this->transformCache = $transformCache;
+
+        // @todo complete baseurl this in a better way, also based on previewTyoe
+        // @todo fix this for live view !important
+        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
     }
     // }}}
     // {{{ lateInitialize()
@@ -48,14 +57,12 @@ abstract class Transformer
         // add log object
         $this->log = new \Depage\Log\Log();
 
-        // @todo complete baseurl this in a better way, also based on previewTyoe
-        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
-
         // set basic variables
         //$this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
 
         $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
         $this->xmlPath = "projects/" . $this->projectName . "/xml/";
+        $this->libPath = "projects/" . $this->projectName . "/lib/";
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
@@ -63,11 +70,43 @@ abstract class Transformer
         $this->initXsltProc();
     }
     // }}}
+    // {{{ setBaseUrl()
+    /**
+     * @brief setBaseUrl
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = $url;
+    }
+    // }}}
     // {{{ initXsltProc()
     public function initXsltProc()
     {
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
+
+        // @todo use own dtd loaded with caching instead of having own htmlentities file
+        // @todo add a list of whitelisted dtds and entities
+        // @see https://www.oasis-open.org/committees/entity/spec.html
+        // @see http://xmlsoft.org/catalog.html
+        // libxml_set_external_entity_loader
+        /*
+        libxml_set_external_entity_loader(
+            function ($public, $system, $context) {
+                var_dump($public);
+                var_dump($system);
+                var_dump($context);
+                $f = fopen($system, "r");
+                //$f = fopen("php://temp", "r+");
+                //fwrite($f, "");
+                rewind($f);
+                return $f;
+            }
+        );
+         */
 
         $this->xsltProc = new \XSLTProcessor();
 
@@ -93,6 +132,10 @@ abstract class Transformer
         $xslFile = "{$this->projectName}/{$template}/{$this->previewType}.xsl";
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
+        if (count($files) == 0) {
+            throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
+        }
+
         if (($age = $this->xsltCache->age($xslFile)) !== false) {
             foreach ($files as $file) {
                 $regenerate = $regenerate || $age < filemtime($file);
@@ -104,6 +147,7 @@ abstract class Transformer
             $regenerate = true;
         }
         // @todo clear xsl cache when settings are saved
+        // @todo clear transform cache when regenerating xsl template
         //$regenerate = true;
 
         if ($regenerate) {
@@ -112,7 +156,7 @@ abstract class Transformer
             }
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
             $xslt .= $this->getXsltEntities();
-            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit \">";
+            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" xmlns:func=\"http://exslt.org/functions\" xmlns:exslt=\"http://exslt.org/common\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit func exslt \">";
 
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
@@ -120,7 +164,7 @@ abstract class Transformer
             $params = array(
                 'currentLang' => null,
                 'currentPageId' => null,
-                'depageIsLive' => "false()",
+                'depageIsLive' => null,
                 'baseUrl' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
@@ -130,6 +174,7 @@ abstract class Transformer
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings//proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
+                'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
             );
 
             // add variables from settings
@@ -181,16 +226,15 @@ abstract class Transformer
     // {{{ transformUrl()
     public function transformUrl($urlPath, $lang)
     {
-        $this->currentPath = $urlPath;
         $this->lang = $lang;
 
-        list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
+        list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($urlPath);
 
         if ($pageId === false || $pagedataId === false) {
             // php fallback for transparent php links
-            $this->currentPath = preg_replace("/\.html$/", ".php", $this->currentPath);
+            $this->currentPath = preg_replace("/\.html$/", ".php", $urlPath);
 
-            list($pageId, $pagedataId) = $this->getPageIdFor($this->currentPath);
+            list($pageId, $pagedataId, $this->currentPath) = $this->getPageIdFor($this->currentPath);
         }
         if ($pageId === false || $pagedataId === false) {
             throw new \Exception("page '{$urlPath}' does not exist");
@@ -198,12 +242,21 @@ abstract class Transformer
 
         $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
-        return $this->transformPage($pageId, $pagedataId);
+        $content = $this->transformDoc($pageId, $pagedataId, $lang);
+
+        $indexer = new \Depage\Search\Indexer();
+        $images = $indexer->loadXml($content, $this->baseUrl . $this->lang . $this->currentPath)->getImages();
+        // @todo load images to have generated images forced to be generated?
+        // @todo warn about non-existant images?
+
+        return $content;
     }
     // }}}
-    // {{{ transformPage()
-    protected function transformPage($pageId, $pagedataId)
+    // {{{ transformDoc()
+    public function transformDoc($pageId, $pagedataId, $lang)
     {
+        $this->lang = $lang;
+
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
@@ -217,13 +270,15 @@ abstract class Transformer
             }
 
             $this->clearUsedDocuments();
+            $this->addToUsedDocuments($pagedataId);
             $content = $this->transform($pageXml, array(
                 "currentLang" => $this->lang,
                 "currentPageId" => $pageId,
+                "currentPagedataId" => $pagedataId,
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
-                "depageVersion" => \Depage\Depage\Runner::getVersion(),
-                "depageIsLive" => $this->isLive ? "true()" : "false()",
+                "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive ? "true" : "",
                 "baseUrl" => $this->baseUrl,
             ));
 
@@ -251,6 +306,9 @@ abstract class Transformer
             $this->lateInitialize();
         }
 
+        $oldUseAbsolutePath = $this->useAbsolutePaths;
+        $oldUseBaseUrl = $this->useBaseUrl;
+
         $this->xsltProc->setParameter("", $parameters);
 
         if (!$content = $this->xsltProc->transformToXml($xml)) {
@@ -273,6 +331,10 @@ abstract class Transformer
                 //var_dump($error);
             }
         }
+
+        // reset absolute path settings after transform
+        $this->useAbsolutePaths = $oldUseAbsolutePath;
+        $this->useBaseUrl = $oldUseBaseUrl;
 
         return $content;
     }
@@ -306,10 +368,15 @@ abstract class Transformer
         $dynamic = $this->saveTransformed($this->savePath, $html);
 
         if ($dynamic) {
+            $GLOBALS['replacementScript'] = $this->savePath;
+            return "";
+
             $query = "";
             if (!empty($_SERVER['QUERY_STRING'])) {
                 $query = "?" . $_SERVER['QUERY_STRING'];
             }
+            // @todo add headers
+            // @todo add spoofed location header
             $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath . $query);
             $request
                 ->setPostData($_POST)
@@ -434,14 +501,29 @@ abstract class Transformer
          */
 
         \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, array(
+            "useAbsolutePaths" => array($this, "xsltUseAbsolutePaths"),
+            "useBaseUrl" => array($this, "xsltUseBaseUrl"),
             "changesrc" => array($this, "xsltCallChangeSrc"),
             "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
             "atomizeText" => array($this, "xsltCallAtomizeText"),
             "phpEscape" => array($this, "xsltCallPhpEscape"),
             "formatDate" => array($this, "xsltCallFormatDate"),
             "fileinfo" => array($this, "xsltCallFileinfo"),
+            "autokeywords" => array($this, "xsltCallAutokeywords"),
             "urlencode" => "rawurlencode",
         ));
+    }
+    // }}}
+    // {{{ registerAliases()
+    /**
+     * @brief registerAliases
+     *
+     * @param mixed $aliases
+     * @return void
+     **/
+    public function registerAliases($aliases)
+    {
+        $this->aliases = $aliases;
     }
     // }}}
 
@@ -488,47 +570,24 @@ abstract class Transformer
     {
         $this->getAllUrls();
 
+        if (!isset($this->pageIdByUrl[$urlPath]) && $this->routeHtmlThroughPhp) {
+            $urlPath = preg_replace("/\.html$/", ".php", $urlPath);
+        }
+        if (!isset($this->pageIdByUrl[$urlPath]) && !empty($this->aliases)) {
+            foreach ($this->aliases as $regex => $repl) {
+                $regex = "/" . str_replace("/", "\/", $regex) . "/";
+                $urlPath = preg_replace($regex, $repl, $urlPath);
+            }
+        }
+
         if (isset($this->pageIdByUrl[$urlPath])) {
             $pageId = $this->pageIdByUrl[$urlPath];
             $docRef = $this->pagedataIdByPageId[$pageId];
 
-            return array($pageId, $docRef);
+            return array($pageId, $docRef, $urlPath);
         } else {
-            return array(false, false);
+            return array(false, false, false);
         }
-    }
-    // }}}
-    // {{{ getRelativePathTo
-    /**
-     * gets relative path to path of active page
-     *
-     * @public
-     *
-     * @param    $targetPath (string) path to target file
-     *
-     * @return    $path (string) relative path
-     */
-    public function getRelativePathTo($targetPath, $currentPath = null) {
-        if ($currentPath === null) {
-            $currentPath = $this->lang . $this->currentPath;
-        }
-
-        // link to self by default
-        $path = '';
-        if ($targetPath != '' && $targetPath != $currentPath) {
-            $currentPath = explode('/', $currentPath);
-            $targetPath = explode('/', $targetPath);
-
-            $i = 0;
-            while ((isset($currentPath[$i]) && $targetPath[$i]) && $currentPath[$i] == $targetPath[$i]) {
-                $i++;
-            }
-
-            if (count($currentPath) - $i >= 1) {
-                $path = str_repeat('../', count($currentPath) - $i - 1) . implode('/', array_slice($targetPath, $i));
-            }
-        }
-        return $path;
     }
     // }}}
 
@@ -569,6 +628,36 @@ abstract class Transformer
         return $doc;
     }
     // }}}
+    // {{{ xsltUseAbsolutePaths()
+    /**
+     * @brief xsltUseAbsolutePaths
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltUseAbsolutePaths()
+    {
+        $this->useAbsolutePaths = true;
+        $this->useBaseUrl = false;
+
+        return "<true />";
+    }
+    // }}}
+    // {{{ xsltUseBaseUrl()
+    /**
+     * @brief xsltUseBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltUseBaseUrl()
+    {
+        $this->useBaseUrl = true;
+        $this->useAbsolutePaths = false;
+
+        return "<true />";
+    }
+    // }}}
     // {{{ xsltCallChangeSrc()
     /**
      * gets fileinfo for libref path
@@ -580,14 +669,15 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallChangeSrc($source) {
+        $url = new \Depage\Http\Url($this->currentPath);
         $newSource = "";
         $posOffset = 0;
         // @todo check libref:/(/)
-        while (($startPos = strpos($source, '"libref:/', $posOffset)) !== false) {
+        while (($startPos = strpos($source, '"libref://', $posOffset)) !== false) {
             $newSource .= substr($source, $posOffset, $startPos - $posOffset) . '"';
-            $posOffset = $startPos + strlen("libref:/") + 3;
+            $posOffset = $startPos + strlen("libref://") + 3;
             $endPos = strpos($source, "\"", $posOffset);
-            $newSource .= $this->getRelativePathTo('/lib' . substr($source, $startPos + 8, $endPos - ($startPos + 8)));
+            $newSource .= $url->getRelativePathTo('/lib' . substr($source, $startPos + 9, $endPos - ($startPos + 9)));
             $posOffset = $endPos;
         }
         $newSource .= substr($source, $posOffset);
@@ -662,7 +752,7 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltCallPhpEscape($string) {
-        $value = str_replace("\"", "\\\"", $string);
+        $value = var_export($string, true);
 
         return $value;
     }
@@ -677,13 +767,76 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallFormatDate($date, $format = '') {
+    public function xsltCallFormatDate($date = '', $format = '') {
         if ($format == '') {
             $format = "c";
         }
-        $date = date($format, strtotime($date));
+        if (empty($date)) {
+            $date = date($format);
+        } else {
+            $date = date($format, strtotime($date));
+        }
 
         return $date;
+    }
+    // }}}
+    // {{{ xsltCallAutokeywords()
+    /**
+     * @brief xsltCallAutokeywords
+     *
+     * @param mixed $keywords, $content
+     * @return void
+     **/
+    public function xsltCallAutokeywords($keys, $content)
+    {
+        // @todo add keyword aliases?
+        $val = "";
+        $keywords = [];
+        $originalKeywords = $this->extractWords($keys);
+        foreach ($originalKeywords as $key => $value) {
+            $keywords[$key] = mb_strtolower($value);
+        }
+        $contentWords = $this->extractWords($content, true);
+
+        $found = array_intersect($contentWords, $keywords);
+
+        foreach ($found as $word) {
+            $val .= $originalKeywords[array_search($word, $keywords)] . ", ";
+        }
+        /*
+        var_dump($keys);
+        var_dump($keywords);
+        var_dump($contentWords);
+        var_dump($val);
+        die();
+         */
+        return trim($val, ", ");
+    }
+    // }}}
+    // {{{ extractWords()
+    /**
+     * @brief extractWords
+     *
+     * @param mixed $
+     * @return void
+     **/
+    private function extractWords($string, $normalize = false)
+    {
+        preg_match_all("/\w+(-\w+)?/u", $string, $matches);
+        if (!isset($matches[0])) {
+            return [];
+        }
+
+        if ($normalize) {
+            foreach ($matches[0] as &$value) {
+                $value = mb_strtolower($value);
+            }
+
+            return array_unique($matches[0]);
+        } else {
+            return $matches[0];
+        }
+
     }
     // }}}
 
@@ -700,6 +853,7 @@ abstract class Transformer
             'xsltPath',
             'xmlPath',
             'transformCache',
+            'baseUrl',
         );
     }
     // }}}

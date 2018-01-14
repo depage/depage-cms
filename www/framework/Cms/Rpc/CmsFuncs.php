@@ -21,6 +21,7 @@ class CmsFuncs {
     protected $project;
     protected $projectName;
     protected $libPath;
+    protected $excludedDirs = array();
     protected $trashPath;
     protected $callbacks = [];
 
@@ -34,6 +35,12 @@ class CmsFuncs {
         $this->user = $user;
         $this->xmldb = $this->project->getXmlDb($this->user->id);
 
+        if (!$this->user->canEditTemplates()) {
+            $this->excludedDirs = [
+                $this->libPath . "/cache",
+                $this->libPath . "/global",
+            ];
+        }
         $this->log = new \Depage\Log\Log();
     }
     // }}}
@@ -335,11 +342,9 @@ class CmsFuncs {
         $newName = $args['new_name'];
         $changedIds = [];
 
-        if ($treeType == "files") {
-            var_dump($nodeId);
-            var_dump($newName);
-            die();
-        } else {
+        $newName = htmlspecialchars_decode($newName);
+
+        if ($treeType != "files") {
             $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
             if ($xmldoc) {
                 $xmldoc->setAttribute($nodeId, "name", $newName);
@@ -390,10 +395,10 @@ class CmsFuncs {
 
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         if ($xmldoc) {
-            $xmldoc->moveNodeIn($nodeId, $targetId);
+            $parentId = $xmldoc->moveNodeIn($nodeId, $targetId);
         }
 
-        $changedIds = [$nodeId, $targetId];
+        return [$nodeId, $targetId, $parentId];
     }
     // }}}
     // {{{ move_node_in_files()
@@ -549,6 +554,8 @@ class CmsFuncs {
 
         $pathinfo = pathinfo($nodeId);
 
+        // @todo clear cache path and project cache path
+
         return ['/lib' . $pathinfo['dirname'] . '/'];
     }
     // }}}
@@ -650,10 +657,14 @@ class CmsFuncs {
         $xmldoc = $this->xmldb->getDocByNodeId($nodeId);
         $pageId = $xmldoc->getAttribute($nodeId, "db:docref");
 
-        $rootId = $this->project->releaseDocument($pageId, $this->user->id);
-        $rootId = $this->project->releaseDocument("pages", $this->user->id);
+        if ($this->user->canPublishProject()) {
+            $rootId = $this->project->releaseDocument($pageId, $this->user->id);
+            $rootId = $this->project->releaseDocument("pages", $this->user->id);
 
-        $this->addCallback('page_data', [$rootId]);
+            $this->addCallback('page_data', [$rootId]);
+        } else {
+            $this->project->requestDocumentRelease($pageId, $this->user->id);
+        }
     }
     // }}}
 
@@ -868,7 +879,7 @@ class CmsFuncs {
             'prop_tt_img_href' => _("link"),
             'prop_tt_publish_folder_baseurl' => _("base-url"),
             'prop_tt_publish_folder_button_start' => _("publish now"),
-            'prop_tt_pg_date_release' => _("Release page now"),
+            'prop_tt_pg_date_release' => $this->user->canPublishProject() ? _("Release page now") : _("Request page release"),
             'prop_tt_publish_folder_pass' => _("password"),
             'prop_tt_publish_folder_progress' => _("%description%<br>%percent% done<br>remaining: %remaining%"),
             'prop_tt_publish_folder_targetpath' => _("target path"),
@@ -1154,9 +1165,12 @@ class CmsFuncs {
         $dirXML = "";
 
         foreach ($dirs as $dir) {
-            $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
-            $dirXML .= $this->getTreeDirectoriesForPath($dir);
-            $dirXML .= "</proj:dir>";
+            $dir = rtrim($dir, "/");
+            if (!in_array($dir, $this->excludedDirs)) {
+                $dirXML .= "<proj:dir name=\"" . htmlentities(basename($dir)) . "\">";
+                $dirXML .= $this->getTreeDirectoriesForPath($dir);
+                $dirXML .= "</proj:dir>";
+            }
         }
 
         return $dirXML;
@@ -1196,6 +1210,7 @@ class CmsFuncs {
                 $dirXML .= "<file";
                 foreach ($data as $key => $value) {
                     if (!is_array($value)) {
+                        $value = str_replace(array("\n", "\r"), " ", $value);
                         $dirXML .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
                     }
                 }

@@ -97,6 +97,73 @@ class Notification extends \Depage\Entity\Entity
         return $n;
     }
     // }}}
+    // {{{ loadByTag()
+    /**
+     * gets a notifications by tag for all users
+     *
+     * @public
+     *
+     * @param       Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       String            $tag        tag with which to filter the notifications. SQL wildcards % and _ are allowed to match substrings.
+     */
+    static public function loadByTag($pdo, $tag) {
+        $fields = "n." . implode(", n.", self::getFields());
+        $tagQuery = "";
+
+        $tagQuery = "tag LIKE :tag";
+        $params[':tag'] = $tag;
+
+        $query = $pdo->prepare(
+            "SELECT $fields
+            FROM
+                {$pdo->prefix}_notifications AS n
+            WHERE
+                $tagQuery
+            ORDER BY n.id"
+        );
+        $query->execute($params);
+
+        // pass pdo-instance to constructor
+        $query->setFetchMode(\PDO::FETCH_CLASS, get_called_class(), array($pdo));
+        $n = $query->fetchAll();
+
+        return $n;
+    }
+    // }}}
+
+    // {{{ setOptions()
+    /**
+     * @brief setOptions
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function setOptions($param)
+    {
+        if (!$this->initialized) {
+            $this->data['options'] = $param;
+        } else {
+            $this->data['options'] = serialize($param);
+            $this->dirty['options'] = true;
+        }
+    }
+    // }}}
+    // {{{ getOptions()
+    /**
+     * @brief getOptions
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getOptions()
+    {
+        if (!empty($this->data['options'])) {
+            return unserialize($this->data['options']);
+        } else {
+            return "";
+        }
+    }
+    // }}}
 
     // {{{ save()
     /**

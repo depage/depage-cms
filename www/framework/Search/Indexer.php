@@ -63,6 +63,11 @@ class Indexer
     protected $contentNodes = null;
 
     /**
+     * @brief baseUrl
+     **/
+    protected $baseUrl = null;
+
+    /**
      * @brief title
      **/
     protected $title = null;
@@ -96,6 +101,11 @@ class Indexer
      * @brief xpath
      **/
     protected $xpath = null;
+
+    /**
+     * @brief db
+     **/
+    protected $db = null;
     // }}}
 
     // {{{ __construct()
@@ -105,9 +115,11 @@ class Indexer
      * @param mixed
      * @return void
      **/
-    public function __construct($db)
+    public function __construct($db = null)
     {
-        $this->db = new Providers\Pdo($db);
+        if (!empty($db)) {
+            $this->db = new Providers\Pdo($db);
+        }
     }
     // }}}
     // {{{ index()
@@ -126,6 +138,9 @@ class Indexer
         $headlines = $this->getHeadlines();
         $content = $this->getContent();
 
+        if (is_null($this->db)) {
+            throw new \Exception("Database for indexer not set");
+        }
         $this->db->add($url, $title, $description, $headlines, $content);
 
         return $this;
@@ -140,6 +155,9 @@ class Indexer
      **/
     public function remove($url)
     {
+        if (is_null($this->db)) {
+            throw new \Exception("Database for indexer not set");
+        }
         $this->db->remove($url);
     }
     // }}}
@@ -156,6 +174,37 @@ class Indexer
         $response = $request->execute();
         $this->doc = $response->getXml();
 
+        $this->loadXml($this->doc, $url);
+
+        return $this;
+    }
+    // }}}
+    // {{{ loadXml()
+    /**
+     * @brief loadXml
+     *
+     * @param mixed $content
+     * @return void
+     **/
+    public function loadXml($content, $url = "")
+    {
+        if (is_string($content)) {
+            $oldErrorHandler = set_error_handler(function() {});
+            $useInternalErrors = libxml_use_internal_errors(false);
+
+            $this->doc = new \Depage\Xml\Document();
+            if (!$this->doc->loadHtml($content)) {
+                throw new \Exception('Unable to parse content into XML: ' . libxml_get_last_error());
+            }
+
+            libxml_use_internal_errors($useInternalErrors);
+            set_error_handler($oldErrorHandler);
+            libxml_clear_errors();
+        } else if (!is_a($content, "DOMDocument")) {
+            throw new \Exception('loaded content is not a DOMDocument');
+        }
+
+        $this->baseUrl = null;
         $this->title = [];
         $this->description = [];
         $this->headlines = [];
@@ -167,12 +216,32 @@ class Indexer
 
         $this->xpath = new \DOMXPath($this->doc);
 
+        $this->extractBaseUrl($url);
         $this->extractContentNodes();
 
         return $this;
     }
     // }}}
 
+    // {{{ extractBaseUrl()
+    /**
+     * @brief extractBaseUrl
+     *
+     * @param mixed $url = ""
+     * @return void
+     **/
+    public function extractBaseUrl($url = "")
+    {
+        $nodes = $this->xpath->query($this->xpathBase);
+        foreach ($nodes as $node) {
+            $this->baseUrl = $node->value;
+        }
+        if (empty($this->baseUrl)) {
+            $this->baseUrl = $url;
+        }
+        $this->baseUrl = substr($this->baseUrl, 0, strrpos($this->baseUrl, "/") + 1);
+    }
+    // }}}
     // {{{ extractContentNodes()
     /**
      * @brief extractContentNodes
@@ -187,7 +256,7 @@ class Indexer
             $node->parentNode->removeChild($node);
         }
 
-        // extract content nodex
+        // extract content nodes
         $nodes = $this->xpath->query($this->xpathContent);
         foreach ($nodes as $node) {
             $this->contentNodes->attach($node);
@@ -327,7 +396,12 @@ class Indexer
 
         $this->images = array_unique($images);
 
-        // @todo update relative image paths to be dependent on base or on current url
+        // update relative image paths to be dependent on base or on current url
+        $url = new \Depage\Http\Url($this->baseUrl);
+        foreach ($this->images as &$image) {
+            $image = $url->getAbsolutePathTo($image);
+
+        }
 
         return $this->images;
     }
@@ -340,7 +414,7 @@ class Indexer
      **/
     public function getLinks()
     {
-        $images = [];
+        $links = [];
 
         foreach ($this->contentNodes as $contentNode) {
             // extract links
@@ -355,7 +429,12 @@ class Indexer
 
         $this->links = array_unique($links);
 
-        // @todo update relative image paths to be dependent on base or on current url
+        // update relative image paths to be dependent on base or on current url
+        $url = new \Depage\Http\Url($this->baseUrl);
+        foreach ($this->links as &$link) {
+            $link = $url->getAbsolutePathTo($link);
+
+        }
 
         return $this->links;
     }

@@ -25,6 +25,8 @@ trait MultipleLanguages
      *
      * @param mixed $
      * @return void
+     *
+     * @todo check this code for bugs while reordering languages
      **/
     public static function updateLangNodes($node, $languages)
     {

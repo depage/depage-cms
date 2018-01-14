@@ -117,8 +117,9 @@ class Base extends \Depage\Depage\Ui\Base
      **/
     protected function getProject($projectName)
     {
+        // @todo check if current user is allowed to load project
         if ($projectName != "+") {
-            return \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+            return \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $projectName)[0];
         } else {
             return "";
         }
@@ -164,6 +165,26 @@ class Base extends \Depage\Depage\Ui\Base
             'content' => new Html([
                 'content' => 'url not found' . $function,
             ]),
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ notallowed
+    /**
+     * function to call if action/function is not defined
+     *
+     * @return  null
+     */
+    public function notallowed($message = "") {
+        if ($message == "") {
+            $message = _("You are not allowed here.");
+        }
+        $h = new Html("box.tpl", [
+            'id' => "error",
+            'class' => "first",
+            'title' => "Error",
+            'content' => $message,
         ], $this->htmlOptions);
 
         return $h;

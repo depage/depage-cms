@@ -87,11 +87,6 @@ class Preview extends \Depage\Depage\Ui\Base
         return $output;
     }
     // }}}
-    // {{{ _send_time
-    protected function _send_time($time, $content = null) {
-        echo("<!-- $time sec -->");
-    }
-    // }}}
 
     // {{{ index
     /**
@@ -169,13 +164,32 @@ class Preview extends \Depage\Depage\Ui\Base
         $transformCache = null;
         $this->project->setPreviewType($this->previewType);
 
-        if ($this->previewType != "dev") {
+        if ($this->previewType != "dev" && $this->template != "newsletter") {
             $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
         }
         $xmlGetter = $this->project->getXmlGetter();
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
-        $html = $transformer->display($urlPath, $lang);
+        $transformer->routeHtmlThroughPhp = true;
+
+        $projectPath = $this->project->getProjectPath();
+        if (file_exists("$projectPath/lib/global/config.php")) {
+            include("$projectPath/lib/global/config.php");
+
+            if (isset($aliases)) {
+                $transformer->registerAliases($aliases);
+            }
+        }
+
+        if ($this->template == "newsletter") {
+            preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
+            $newsletterName = $matches[1];
+            $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $newsletterName);
+
+            $html = $newsletter->transform($this->previewType, $lang);
+        } else {
+            $html = $transformer->display($urlPath, $lang);
+        }
 
         return $html;
     }

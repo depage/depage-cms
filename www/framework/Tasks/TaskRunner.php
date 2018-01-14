@@ -409,6 +409,7 @@ if (php_sapi_name() == 'cli') {
     $task_runner = new TaskRunner($dp->conf);
 
     if (isset($options['watch'])) {
+        echo("watching for new tasks\n");
         $task_runner->watch();
     } else if (isset($options['task-id'])) {
         $task_runner->runNow($options['task-id'], true);

@@ -38,16 +38,17 @@ class_tree_icon.prototype.getPageDataType = function(node, isNotStartNode) {
         this.getPageDataType(node.firstChild, true);
     }
     this.getPageDataType(node.nextSibling, true);
-    
+
     this.dataInfo.hintText = this.dataInfo.hintText.replace("\n", " ");
 };
 /* }}} */
 /* {{{ getTextContent() */
 class_tree_icon.prototype.getTextContent = function(node) {
-    textContent = " ";
+    textContent = " " + node.attributes.value;
+
     for (var i = 0; i < node.childNodes.length; i++) {
         if (textContent.length > 50) {
-            return textContent;
+            return " " + textContent.trim();
         }
         if (node.childNodes[i].nodeType == 1) {
             textContent += this.getTextContent(node.childNodes[i]);
@@ -55,8 +56,8 @@ class_tree_icon.prototype.getTextContent = function(node) {
             textContent += node.childNodes[i].nodeValue;
         }
     }
-    
-    return textContent;
+
+    return " " + textContent.trim();
 };
 /* }}} */
 /* {{{ getIconType() */
@@ -80,7 +81,7 @@ class_tree_icon.prototype.getIconType = function(node) {
         this.datainfo.icon = "meta";
     } else {
         this.getPageDataType(node);
-        
+
         if (node.attributes.icon != "" && node.attributes.icon != undefined) {
             this.datainfo.icon = node.attributes.icon;
         } else if (this.datainfo.hasAudio) {

@@ -560,7 +560,8 @@ class_tree_pages.prototype.duplicate = function(node) {
 // {{{ renameNode()
 class_tree_pages.prototype.renameNode = function(node, newName) {
 	this.loading = true;
-	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", node.nid], ["new_name", newName], ["type", this.type]]);
+        newNameEscaped = newName.replace("<", "&lt;").replace(">", "&gt;");
+	_root.phpConnect.send("rename_node", [["sid", conf.user.sid], ["wid", conf.user.wid], ["project_name", conf.project_name], ["id", node.nid], ["new_name", newNameEscaped], ["type", this.type]]);
 	super.renameNode(node, newName);
 };
 // }}}

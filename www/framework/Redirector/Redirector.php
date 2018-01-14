@@ -9,24 +9,29 @@ namespace Depage\Redirector {
 class Redirector
 {
     /**
-     * @brief langugaes
+     * @brief languages
      **/
-    protected $langugaes = array();
+    protected $languages = [];
 
     /**
      * @brief pages
      **/
-    protected $pages = array();
+    protected $pages = [];
 
     /**
      * @brief pageTree
      **/
-    protected $pageTree = array();
+    protected $pageTree = [];
 
     /**
      * @brief aliases
      **/
-    protected $aliases = array();
+    protected $aliases = [];
+
+    /**
+     * @brief rootAliases
+     **/
+    protected $rootAliases = [];
 
     /**
      * @brief baseUrl
@@ -100,7 +105,7 @@ class Redirector
 
             foreach ($parts as $part) {
                 if (!isset($node[$part])) {
-                    $node[$part] = array();
+                    $node[$part] = [];
                 }
                 $node = &$node[$part];
             }
@@ -123,6 +128,21 @@ class Redirector
         return $this;
     }
     // }}}
+    // {{{ setRootAliases()
+    /**
+     * @brief setRootAliases
+     *
+     * @param mixed $aliases
+     * @return void
+     **/
+    public function setRootAliases($aliases)
+    {
+        $this->rootAliases = $aliases;
+
+        return $this;
+
+    }
+    // }}}
     // {{{ setBaseUrl()
     /**
      * @brief setBaseUrl
@@ -137,6 +157,7 @@ class Redirector
         $parts = parse_url($this->baseUrl);
 
         $this->scheme = !empty($parts['scheme']) ? $parts['scheme'] : "";
+        $this->host = !empty($parts['host']) ? $parts['host'] : "";
         $this->port = !empty($parts['port']) ? $parts['port'] : "";
         $this->basePath = !empty($parts['path']) ? $parts['path'] : "/";
 
@@ -219,14 +240,13 @@ class Redirector
     {
         $altPage = "";
         $isFallback = false;
-        $pages = array_merge(array_keys($this->aliases), $this->pages);
 
         $request = explode("/", $request);
 
         //search for pages
         while ($altPage == "" && count($request) > 1) {
             $tempUrl = implode("/", $request) . "/";
-            foreach ($pages as $page) {
+            foreach ($this->pages as $page) {
                 if (substr($page . "/", 0, strlen($tempUrl)) == $tempUrl) {
                     $altPage = $page;
 
@@ -234,11 +254,6 @@ class Redirector
                 }
             }
             array_pop($request);
-        }
-
-        // resolve alias
-        if (isset($this->aliases[$altPage])) {
-            $altPage = $this->aliases[$altPage];
         }
 
         // fallback to first url
@@ -275,6 +290,42 @@ class Redirector
     }
     // }}}
 
+    // {{{ testAliases()
+    /**
+     * @brief testAliases
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function testAliases($requestUri, $acceptLanguage = "")
+    {
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
+        $request = $this->parseRequestUri($requestUri);
+
+        foreach ($this->rootAliases as $regex => $repl) {
+            $regex = "/" . str_replace("/", "\/", $regex) . "/";
+            $url = preg_replace($regex, $repl, $request);
+
+            if ($url != $request) return "." . $url;
+        }
+
+        if ($this->lang != "") {
+            $lang = $this->lang;
+        } else if (!empty($this->languages)) {
+            $lang = $this->getLanguageByBrowser($acceptLanguage);
+        }
+        $url .= $lang . "/";
+
+        foreach ($this->aliases as $regex => $repl) {
+            $regex = "/" . str_replace("/", "\/", $regex) . "/";
+            $url = preg_replace($regex, $repl, $request);
+
+            if ($url != $request) return "./" . $lang . $url;
+        }
+
+        return "";
+    }
+    // }}}
     // {{{ redirectToAlternativePage()
     /**
      * @brief redirectToAlternativePage
@@ -284,7 +335,7 @@ class Redirector
      **/
     public function redirectToAlternativePage($requestUri, $acceptLanguage = "")
     {
-        $url = $this->basePath;
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
         if ($this->lang != "") {
@@ -305,7 +356,7 @@ class Redirector
      **/
     public function redirectToIndex($requestUri = "/", $acceptLanguage = "")
     {
-        $url = $this->basePath;
+        $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
         if ($this->lang != "") {

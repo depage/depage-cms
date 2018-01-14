@@ -1,0 +1,38 @@
+{
+    "name": "depage/config",
+    "description": "depage-config is a simple read-only config class.",
+    "version": "1.5.0",
+    "type": "library",
+    "keywords": [
+        "config",
+        "configuration",
+        "settings"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Config\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-config",
+        "issues": "https://github.com/depage/depage-config/issues"
+
+    },
+    "time": "2018-01-11",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}

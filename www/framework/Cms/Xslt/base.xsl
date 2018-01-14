@@ -25,10 +25,7 @@
         <xsl:param name="altcontent"/>
         <xsl:param name="class" select="@class"/>
         <xsl:param name="id" select="@id"/>
-        <xsl:param name="onFocus" select="@onFocus"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="onMouseOver" select="@onMouseOver"/>
-        <xsl:param name="onMouseOut" select="@onMouseOut"/>
         <xsl:param name="lang" select="$currentLang"/>
 
         <xsl:if test="@lang = $lang or not(@lang)">
@@ -100,15 +97,6 @@
                 <xsl:if test="$title != ''">
                     <xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute>
                 </xsl:if>
-                <xsl:if test="$onFocus != ''">
-                    <xsl:attribute name="onFocus"><xsl:value-of select="$onFocus"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOver != ''">
-                    <xsl:attribute name="onMouseOver"><xsl:value-of select="$onMouseOver"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOut != ''">
-                    <xsl:attribute name="onMouseOut"><xsl:value-of select="$onMouseOut"/></xsl:attribute>
-                </xsl:if>
                 <!-- }}} -->
                 <!-- {{{ content -->
                 <xsl:value-of select="$pretext" disable-output-escaping="yes" />
@@ -145,11 +133,10 @@
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="onMouseOver" select="@onMouseOver"/>
-        <xsl:param name="onMouseOut" select="@onMouseOut"/>
-        <xsl:param name="onFocus" select="@onFocus"/>
         <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="src" select="@src"/>
+        <xsl:param name="sizes" select="@sizes"/>
+        <xsl:param name="srcset" select="@srcset"/>
         <xsl:param name="width" select="@width"/>
         <xsl:param name="height" select="@height"/>
         <xsl:param name="border" select="@border"/>
@@ -157,142 +144,154 @@
         <xsl:param name="id" select="@id"/>
         <xsl:param name="style" select="@style"/>
         <xsl:param name="alt" select="@alt"/>
-        <xsl:param name="hspace" select="@hspace"/>
-        <xsl:param name="vspace" select="@vspace"/>
+        <xsl:param name="title" select="@title"/>
         <xsl:param name="img_name" select="@img_name"/>
 
-        <!-- {{{ plain image -->
-        <xsl:if test="not($href or $href_id) or $href = ''">
-            <img>
-                <xsl:choose>
-                    <xsl:when test="$src != ''">
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="document($src)/."/>
-                        </xsl:attribute>
-                        <xsl:choose>
-                            <xsl:when test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:when>
-                            <xsl:otherwise><!--xsl:attribute name="width"><xsl:value-of select="document(concat('call:fileinfo/', $src))/file/@width"/></xsl:attribute--></xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:choose>
-                            <xsl:when test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:when>
-                            <xsl:otherwise><!--xsl:attribute name="height"><xsl:value-of select="document(concat('call:fileinfo/', $src))/file/@height"/></xsl:attribute--></xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="document('libref://grfx/all/null.gif')/."/>
-                        </xsl:attribute>
-                        <xsl:choose>
-                            <xsl:when test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:when>
-                            <xsl:otherwise><xsl:attribute name="width">1</xsl:attribute></xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:choose>
-                            <xsl:when test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:when>
-                            <xsl:otherwise><xsl:attribute name="height">1</xsl:attribute></xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
+        <xsl:choose>
+            <!-- {{{ image with link -->
+            <xsl:when test="($href and $href != '') or ($href_id and $href_id != '')">
+                <!-- get name from meta-information if link is ref to page_id -->
+                <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+                <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
-                <xsl:if test="$border != ''"><xsl:attribute name="border"><xsl:value-of select="$border"/></xsl:attribute></xsl:if>
-                <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
-                <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
-                <xsl:if test="$style != ''"><xsl:attribute name="style"><xsl:value-of select="$style"/></xsl:attribute></xsl:if>
-                <xsl:attribute name="alt"><xsl:value-of select="$alt"/></xsl:attribute>
-                <xsl:if test="$hspace != ''"><xsl:attribute name="hspace"><xsl:value-of select="$hspace"/></xsl:attribute></xsl:if>
-                <xsl:if test="$vspace != ''"><xsl:attribute name="vspace"><xsl:value-of select="$vspace"/></xsl:attribute></xsl:if>
-                <xsl:if test="$img_name != ''"><xsl:attribute name="name"><xsl:value-of select="$img_name"/></xsl:attribute></xsl:if>
-            </img>
-        </xsl:if>
-        <!-- }}} -->
-        <!-- {{{ image with link -->
-        <xsl:if test="$href != '' or $href_id">
-            <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="linkdesc"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/></xsl:if></xsl:variable>
-            <xsl:variable name="title"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)//*/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+                <a>
+                    <!-- {{{ href -->
+                    <xsl:choose>
+                        <xsl:when test="$href and substring($href, 1, 9) = 'libref://'">
+                            <xsl:attribute name="href"><xsl:value-of select="document($href)/." disable-output-escaping="yes"/></xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="@href and substring($href, 1, 7) = 'mailto:'">
+                            <xsl:attribute name="href"><xsl:value-of select="$href" disable-output-escaping="yes"/></xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="$href != '' and not(substring($href, 1, 10) = 'pageref://')">
+                            <xsl:attribute name="href"><xsl:value-of select="$href" disable-output-escaping="yes"/></xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="href"><xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/></xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <!-- }}} -->
+                    <!-- {{{ attributes -->
+                    <xsl:choose>
+                        <xsl:when test="$target != ''">
+                            <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="@href and (substring($href, 1, 5) = 'http:' or substring($href, 1, 6) = 'https:')">
+                            <xsl:attribute name="target">_blank</xsl:attribute>
+                        </xsl:when>
+                    </xsl:choose>
+                    <xsl:if test="$lang"><xsl:attribute name="hreflang"><xsl:value-of select="$lang"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$type != ''"><xsl:attribute name="type"><xsl:value-of select="$type"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$rel != ''"><xsl:attribute name="rel"><xsl:value-of select="$rel"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$linktitle != ''"><xsl:attribute name="title"><xsl:value-of select="$linktitle"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
+                    <!-- }}} -->
+                    <xsl:call-template name="edit:img">
+                        <xsl:with-param name="href" select="''"/>
+                        <xsl:with-param name="href_id" select="''"/>
+                        <xsl:with-param name="target" select="''"/>
+                        <xsl:with-param name="class" select="$class"/>
+                        <xsl:with-param name="id" select="''"/>
+                        <xsl:with-param name="src" select="$src"/>
+                        <xsl:with-param name="sizes" select="$sizes"/>
+                        <xsl:with-param name="srcset" select="$srcset"/>
+                        <xsl:with-param name="width" select="$width"/>
+                        <xsl:with-param name="height" select="$height"/>
+                        <xsl:with-param name="border" select="$border"/>
+                        <xsl:with-param name="style" select="$style"/>
+                        <xsl:with-param name="alt" select="$alt"/>
+                        <xsl:with-param name="title" select="$title"/>
+                        <xsl:with-param name="img_name" select="$img_name"/>
+                    </xsl:call-template>
+                </a>
+            </xsl:when>
+            <!-- }}} -->
+            <!-- {{{ plain image -->
+            <xsl:when test="($src and $src != '') or ($srcset and $srcset != '') or ($alt and $alt != '')">
+                <img>
+                    <xsl:choose>
+                        <xsl:when test="$src != '' and substring($src, 1, 8) = 'libref:/'">
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="document($src)/."/>
+                            </xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="$src != ''">
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="$src"/>
+                            </xsl:attribute>
+                        </xsl:when>
+                    </xsl:choose>
 
-            <a>
-                <!-- {{{ href -->
-                <xsl:choose>
-                    <xsl:when test="$href and substring($href, 1, 9) = 'libref://'">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="document($href)/." disable-output-escaping="yes"/>
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="@href and substring($href, 1, 7) = 'mailto:'">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$href" disable-output-escaping="yes"/>
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="$href and not(substring($href, 1, 10) = 'pageref://')">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$href" disable-output-escaping="yes"/>
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
-                        </xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <!-- }}} -->
-                <!-- {{{ attributes -->
-                <xsl:if test="$lang">
-                    <xsl:attribute name="hreflang"><xsl:value-of select="$lang"/></xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="$target != ''">
-                        <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
-                    </xsl:when>
-                    <xsl:when test="@href and (substring($href, 1, 5) = 'http:' or substring($href, 1, 6) = 'https:')">
-                        <xsl:attribute name="target">_blank</xsl:attribute>
-                    </xsl:when>
-                </xsl:choose>
-                <xsl:if test="$type != ''">
-                    <xsl:attribute name="type"><xsl:value-of select="$type"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$rel != ''">
-                    <xsl:attribute name="rel"><xsl:value-of select="$rel"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$title != ''">
-                    <xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$class != ''">
-                    <xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$id != ''">
-                    <xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onFocus != ''">
-                    <xsl:attribute name="onFocus"><xsl:value-of select="$onFocus"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOver != ''">
-                    <xsl:attribute name="onMouseOver"><xsl:value-of select="$onMouseOver"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="$onMouseOut != ''">
-                    <xsl:attribute name="onMouseOut"><xsl:value-of select="$onMouseOut"/></xsl:attribute>
-                </xsl:if>
-                <!-- }}} -->
+                    <xsl:attribute name="alt"><xsl:value-of select="$alt"/></xsl:attribute>
+                    <xsl:if test="$srcset != ''"><xsl:attribute name="srcset"><xsl:value-of select="$srcset"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$sizes != ''"><xsl:attribute name="sizes"><xsl:value-of select="$sizes"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$border != ''"><xsl:attribute name="border"><xsl:value-of select="$border"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$style != ''"><xsl:attribute name="style"><xsl:value-of select="$style"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$img_name != ''"><xsl:attribute name="name"><xsl:value-of select="$img_name"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:if>
+                </img>
+            </xsl:when>
+            <xsl:otherwise>
+            </xsl:otherwise>
+            <!-- }}} -->
+        </xsl:choose>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:img inline-svg -->
+    <xsl:template match="edit:img" name="img-svg" mode="inline-svg">
+        <xsl:param name="href" select="@href"/>
+        <xsl:param name="href_id" select="@href_id"/>
+        <xsl:param name="type" select="@type"/>
+        <xsl:param name="rel" select="@rel"/>
+        <xsl:param name="target" select="@target"/>
+        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="src" select="@src"/>
+        <xsl:param name="sizes" select="@sizes"/>
+        <xsl:param name="srcset" select="@srcset"/>
+        <xsl:param name="width" select="@width"/>
+        <xsl:param name="height" select="@height"/>
+        <xsl:param name="border" select="@border"/>
+        <xsl:param name="class" select="@class"/>
+        <xsl:param name="id" select="@id"/>
+        <xsl:param name="style" select="@style"/>
+        <xsl:param name="alt" select="@alt"/>
+        <xsl:param name="title" select="@title"/>
+        <xsl:param name="img_name" select="@img_name"/>
+
+        <xsl:choose>
+            <!-- {{{ svg image -->
+            <xsl:when test="starts-with($src, 'libref://') and '.svg' = substring($src, string-length($src) - string-length('.svg') + 1)">
+                <xsl:variable name="svgFile" select="concat($libPath, substring($src, 9))" />
+                <xsl:copy-of select="document($svgFile)/*" />
+            </xsl:when>
+            <!-- }}} -->
+            <!-- {{{ other image -->
+            <xsl:otherwise>
                 <xsl:call-template name="edit:img">
-                    <xsl:with-param name="href" select="''"/>
-                    <xsl:with-param name="href_id" select="''"/>
-                    <xsl:with-param name="target" select="''"/>
-                    <xsl:with-param name="onMouseOver" select="''"/>
-                    <xsl:with-param name="onMouseOut" select="''"/>
+                    <xsl:with-param name="href" select="$href"/>
+                    <xsl:with-param name="href_id" select="$href_id"/>
+                    <xsl:with-param name="target" select="$target"/>
                     <xsl:with-param name="class" select="$class"/>
-                    <xsl:with-param name="id" select="''"/>
+                    <xsl:with-param name="id" select="$id"/>
                     <xsl:with-param name="src" select="$src"/>
+                    <xsl:with-param name="sizes" select="$sizes"/>
+                    <xsl:with-param name="srcset" select="$srcset"/>
                     <xsl:with-param name="width" select="$width"/>
                     <xsl:with-param name="height" select="$height"/>
                     <xsl:with-param name="border" select="$border"/>
                     <xsl:with-param name="style" select="$style"/>
                     <xsl:with-param name="alt" select="$alt"/>
-                    <xsl:with-param name="hspace" select="$hspace"/>
-                    <xsl:with-param name="vspace" select="$vspace"/>
+                    <xsl:with-param name="title" select="$title"/>
                     <xsl:with-param name="img_name" select="$img_name"/>
                 </xsl:call-template>
-            </a>
-        </xsl:if>
-        <!-- }}} -->
+            </xsl:otherwise>
+            <!-- }}} -->
+        </xsl:choose>
     </xsl:template>
     <!-- }}} -->
 
@@ -321,7 +320,49 @@
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
         <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
-            <xsl:apply-templates><xsl:with-param name="linebreaks" select="'true'"/></xsl:apply-templates>
+            <xsl:apply-templates mode="linebreaks" />
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h1 -->
+    <xsl:template match="edit:text_headline" mode="h1">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h1><xsl:apply-templates mode="linebreaks" /></h1>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h2 -->
+    <xsl:template match="edit:text_headline" mode="h2">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h2><xsl:apply-templates mode="linebreaks" /></h2>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h3 -->
+    <xsl:template match="edit:text_headline" mode="h3">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h3><xsl:apply-templates mode="linebreaks" /></h3>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h4 -->
+    <xsl:template match="edit:text_headline" mode="h4">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h4><xsl:apply-templates mode="linebreaks" /></h4>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h5 -->
+    <xsl:template match="edit:text_headline" mode="h5">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h5><xsl:apply-templates mode="linebreaks" /></h5>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_headline h6 -->
+    <xsl:template match="edit:text_headline" mode="h6">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <h6><xsl:apply-templates mode="linebreaks" /></h6>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
@@ -334,20 +375,23 @@
             <xsl:when test="$class != ''">
                 <p class="{$class}"><xsl:apply-templates/>&#160;</p>
             </xsl:when>
-            <xsl:when test="$linebreaks != ''">
-                <xsl:apply-templates/><xsl:if test="position() != last()"><br /></xsl:if>
+            <xsl:when test="$linebreaks = 'true' or $linebreaks = true()">
+                <xsl:apply-templates select="." mode="linebreaks" />
             </xsl:when>
             <xsl:otherwise>
                 <p><xsl:apply-templates/>&#160;</p>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    <xsl:template match="p" mode="linebreaks">
+        <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
+    </xsl:template>
     <!-- }}} -->
     <!-- {{{ p mode autolist -->
     <xsl:template match="p" mode="autolist">
         <xsl:choose>
-            <xsl:when test="normalize-space(substring(., 1, 2)) = '-'">
-                <xsl:if test="position() = 1 or normalize-space(substring(preceding-sibling::*[1], 1, 2)) != '-'">
+            <xsl:when test="dp:isListCharacter(substring(., 1, 2))">
+                <xsl:if test="position() = 1 or not(dp:isListCharacter(substring(preceding-sibling::*[1], 1, 2)))">
                     <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
                 </xsl:if>
                 <li><xsl:for-each select="child::node()">
@@ -358,7 +402,7 @@
                             <xsl:apply-templates select="." />
                         </xsl:if>
                     </xsl:for-each>&#160;</li>
-                <xsl:if test="position() = last or normalize-space(substring(following-sibling::*[1], 1, 2)) != '-'">
+                <xsl:if test="position() = last or not(dp:isListCharacter(substring(following-sibling::*[1], 1, 2)))">
                     <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
                 </xsl:if>
             </xsl:when>
@@ -502,7 +546,7 @@
                 <xsl:choose>
                     <xsl:when test="@href and substring(@href, 1, 9) = 'libref://'">"Location: <xsl:value-of select="concat($baseUrl,'lib',substring(@href,8))" disable-output-escaping="yes" />"</xsl:when>
                     <xsl:when test="@href and not(substring(@href, 1, 10) = 'pageref://')">"Location: <xsl:value-of select="@href" disable-output-escaping="yes" />"</xsl:when>
-                    <xsl:otherwise>"Location: <xsl:value-of select="concat($baseUrl,document(concat('pageref://', @href_id, '/', $currentLang,'/absolute'))/.)" disable-output-escaping="yes" />"</xsl:otherwise>
+                    <xsl:otherwise>"Location: <xsl:value-of select="document(concat('pageref://', @href_id, '/', $currentLang,'/absolute')/.)" disable-output-escaping="yes" />"</xsl:otherwise>
                 </xsl:choose>
             </xsl:for-each>);
         </xsl:if>
@@ -554,11 +598,19 @@
 <!-- {{{ header include js -->
 <xsl:template name="header_include_js">
     <xsl:param name="file" />
+    <xsl:param name="defer" select="true()" />
     <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
-    <script type="text/javascript"><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+    <script type="text/javascript"><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+</xsl:template>
+<!-- }}} -->
+<!-- {{{ header include baseurl -->
+<xsl:template name="header_include_baseurl">
+    <xsl:variable name="call" select="dp:useBaseUrl()" />
+
+    <base href="{$baseUrl}" />
 </xsl:template>
 <!-- }}} -->
 
-    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
+    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>

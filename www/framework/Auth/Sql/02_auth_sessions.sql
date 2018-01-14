@@ -21,3 +21,6 @@ CREATE TABLE `_auth_sessions` (
     CONSTRAINT `_auth_sessions_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/*
+    @version 1.5.3
+*/

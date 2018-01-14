@@ -11,6 +11,8 @@
     xmlns:exslt="http://exslt.org/common"
     extension-element-prefixes="xsl dp func php exslt ">
 
+    <xsl:include href="xslt://nodetostring.xsl" />
+
     <!-- {{{ dp:choose() -->
     <!--
         dp:choose(test, on-true, on-false)
@@ -73,6 +75,26 @@
     </func:function>
     <!-- }}} -->
 
+    <!-- {{{ dp:useAbsolutePaths() -->
+    <!--
+        dp:useAbsolutePaths()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:useAbsolutePaths">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useAbsolutePaths')" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:useBaseUrl() -->
+    <!--
+        dp:useBaseUrl()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:useBaseUrl">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useBaseUrl')" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:changesrc() -->
     <!--
         dp:changesrc(src)
@@ -83,6 +105,20 @@
         <xsl:param name="src" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::changesrc', string($src))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:nodetostring() -->
+    <!--
+        dp:nodetostring(src)
+    -->
+    <func:function name="dp:nodetostring">
+        <xsl:param name="src" />
+
+        <xsl:variable name="escaped">
+            <xsl:apply-templates select="exslt:node-set($src)" mode="nodetostring" />
+        </xsl:variable>
+
+        <func:result select="$escaped" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:urlencode() -->
@@ -123,6 +159,19 @@
         <func:result select="$spans/*" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:isListCharacter() -->
+    <!--
+        dp:isListCharacter(text)
+    -->
+    <func:function name="dp:isListCharacter">
+        <xsl:param name="text" />
+
+        <xsl:variable name="character" select="normalize-space(substring($text, 1, 1))" />
+        <xsl:variable name="translated" select="translate($character, '-*•–—', '-----')" />
+
+        <func:result select="$translated = '-'" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:phpEscape() -->
     <!--
         dp:phpEscape(text)
@@ -142,7 +191,7 @@
         @todo define these automatically
     -->
     <func:function name="dp:formatDate">
-        <xsl:param name="date" />
+        <xsl:param name="date" select="'now'" />
         <xsl:param name="format" select="''" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::formatDate', string($date), string($format))" />
@@ -172,6 +221,22 @@
         <func:result select="not($pageNode/@nav_hidden = 'true' or $pageNode/@*[local-name() = concat('nav_no_', $lang)] = 'true')" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:autokeywords() -->
+    <!--
+        dp:autokeywords(keywords, contentNode)
+    -->
+    <func:function name="dp:autokeywords">
+        <xsl:param name="keywords" />
+        <xsl:param name="contentNode" select="/" />
+        <xsl:variable name="contentString">
+            <xsl:for-each select="$contentNode//*[@lang = $currentLang]//text()">
+                <xsl:value-of select="." /><xsl:text> </xsl:text>
+            </xsl:for-each>
+        </xsl:variable>
 
-    <!-- vim:set ft=xml sw=4 sts=4 fdm=marker : -->
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::autokeywords', string($keywords), string($contentString))" />
+    </func:function>
+    <!-- }}} -->
+
+    <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>

@@ -58,11 +58,13 @@ class Publish extends Base
         $this->addText("output_user-$nodeId", [
             "label" => _("Username"),
             "placeholder" => _("Username"),
+            "autocomplete" => false,
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
         ]);
         $this->addPassword("output_password-$nodeId", [
             "label" => _("Password"),
             "placeholder" => _("Password"),
+            "autocomplete" => "new-password",
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
         ]);
         $this->addSingle("template_set-$nodeId", [

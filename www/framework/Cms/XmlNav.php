@@ -9,6 +9,11 @@ class XmlNav {
     private $xslDOM;
     private $xmlDOM;
 
+    /**
+     * @brief rout
+     **/
+    public $routeHtmlThroughPhp = false;
+
     // {{{ constructor
     /**
      * initializes xmlnav object
@@ -136,8 +141,11 @@ class XmlNav {
             $url = $urlNodes->item(0)->value;
         } elseif ($node->nodeName == 'pg:redirect') {
             $url = $url . ".php";
-        } elseif ($node->nodeName == 'pg:page' || $node->nodeName == 'pg:redirect') {
+        } elseif ($node->nodeName == 'pg:page') {
             if ($ext = $node->getAttribute("file_type")) {
+                if ($this->routeHtmlThroughPhp && $ext == "html") {
+                    $ext = "php";
+                }
                 $url = $url . "." . $ext;
             } else {
                 $url = $url . "/";

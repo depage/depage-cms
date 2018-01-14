@@ -112,7 +112,7 @@ class Publisher
      **/
     protected function fileNeedsUpdate($filename, $hash)
     {
-        $query = $this->pdo->prepare("SELECT hash FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
+        $query = $this->pdo->prepare("SELECT hash FROM {$this->tableFiles} WHERE filenamehash = SHA1(:filename) AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
             'publishId' => $this->publishId,
@@ -171,7 +171,7 @@ class Publisher
      **/
     protected function fileUpdated($filename, $hash)
     {
-        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filenamehash = SHA1(:filename) AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
             'publishId' => $this->publishId,
@@ -179,14 +179,16 @@ class Publisher
         $query = $this->pdo->prepare("INSERT {$this->tableFiles}
             SET
                 publishId = :publishId,
-                filename = :filename,
+                filename = :filename1,
+                filenamehash = SHA1(:filename2),
                 hash = :hash,
                 lastmod = NOW(),
                 exist = 1;
         ");
         $query->execute(array(
             'publishId' => $this->publishId,
-            'filename' => $filename,
+            'filename1' => $filename,
+            'filename2' => $filename,
             'hash' => $hash,
         ));
     }
@@ -204,7 +206,7 @@ class Publisher
         $query = $this->pdo->prepare("UPDATE {$this->tableFiles}
             SET
                 exist = 1
-            WHERE filename = :filename AND publishId = :publishId;
+            WHERE filenamehash = SHA1(:filename) AND publishId = :publishId;
         ");
         $query->execute(array(
             'publishId' => $this->publishId,
@@ -222,7 +224,7 @@ class Publisher
      **/
     protected function fileDeleted($filename)
     {
-        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filename = :filename AND publishId = :publishId");
+        $query = $this->pdo->prepare("DELETE FROM {$this->tableFiles} WHERE filenamehash = SHA1(:filename) AND publishId = :publishId");
         $query->execute(array(
             'filename' => $filename,
             'publishId' => $this->publishId,

@@ -57,11 +57,12 @@ class TransformCache
      **/
     public function set($docId, $usedDocuments, $content, $subId = "default")
     {
+        $usedDocuments[] = $docId;
         $cachePath = $this->getCachePathFor($docId, $subId);
 
         $this->cache->setFile($cachePath, $content);
 
-        $query = $this->pdo->prepare("INSERT INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
+        $query = $this->pdo->prepare("REPLACE INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
 
         foreach ($usedDocuments as $id) {
             $query->execute(array(
@@ -103,12 +104,11 @@ class TransformCache
         $deleteQuery = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE transformId = ? AND template = ?;");
 
         while ($result = $query->fetchObject()) {
-            $this->delete($result->transformId, $subId);
-
-            $success = $deleteQuery->execute(array(
+            $deleteQuery->execute(array(
                 $result->transformId,
                 $this->templateName,
             ));
+            $this->delete($result->transformId, $subId);
         }
     }
     // }}}
@@ -122,7 +122,7 @@ class TransformCache
     public function clearAll()
     {
         $deleteQuery = $this->pdo->prepare("TRUNCATE {$this->tableName};");
-        $success = $deleteQuery->execute();
+        $deleteQuery->execute();
 
         return $this->cache->clear();
     }

@@ -21,19 +21,7 @@ class SessionHandler implements \SessionHandlerInterface
 
         $handler = new $class($pdo);
 
-        // PHP 5.4 only
-        //session_set_save_handler($handler, true);
-
-        // PHP 5.3 save
-        session_set_save_handler(
-            array(&$handler, 'open'),
-            array(&$handler, 'close'),
-            array(&$handler, 'read'),
-            array(&$handler, 'write'),
-            array(&$handler, 'destroy'),
-            array(&$handler, 'gc')
-        );
-        register_shutdown_function("session_write_close");
+        session_set_save_handler($handler, true);
     }
     // }}}
     // {{{ __construct()
@@ -93,7 +81,7 @@ class SessionHandler implements \SessionHandlerInterface
         $this->sessionLock = $this->pdo->quote("session_$sessionId");
         $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", 60)");
 
-        if (count($result) != 1) {
+        if (!$result || $result->fetchColumn() != 1) {
             die("could not obtain session lock!");
         }
 
@@ -167,8 +155,12 @@ class SessionHandler implements \SessionHandlerInterface
         if (class_exists("\\Depage\\Auth\\User")) {
             $user = \Depage\Auth\User::loadBySid($this->pdo, $sessionId);
             if ($user) {
-                $log = new \Depage\Log\Log();
-                $log->log("logging out $user->name ($user->fullname)");
+                if (class_exists('Depage\Log\Log')) {
+                    $log = new \Depage\Log\Log();
+                    $log->log("logging out $user->name ($user->fullname)");
+                } else {
+                    error_log("logging out $user->name ($user->fullname)");
+                }
 
                 $user->onLogout($sessionId);
             }

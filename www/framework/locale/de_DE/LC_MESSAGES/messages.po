@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-15 14:50+0200\n"
+"POT-Creation-Date: 2017-12-15 16:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,93 +17,25 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Comments/Ui/Comments.php:132
+#: Formatters/TimeNatural.php:16
 #, php-format
-msgid "depage comments"
-msgstr "depage Kommentare"
+msgid "%d sec"
+msgstr "%d Sekunden"
 
-#: Comments/Ui/Comments.php:132
+#: Formatters/TimeNatural.php:22
 #, php-format
-msgid "new comment for '%s'"
-msgstr "Neuer Kommentar auf '%s'"
+msgid "%d min"
+msgstr "%d Minute"
 
-#: Comments/Forms/commentform.php:18
-msgid "Send"
-msgstr "Senden"
-
-#: Comments/Forms/commentform.php:28
-msgid "Text"
-msgstr ""
-
-#: Comments/Forms/commentform.php:31
-msgid "Leave a message..."
-msgstr "Nachricht hinterlassen..."
-
-#: Comments/Forms/commentform.php:36 Cms/Rpc/CmsFuncs.php:761
-#: Cms/Forms/Project/Publish.php:37 Cms/Forms/Project/Language.php:37
-#: Cms/Forms/Project/Navigation.php:37 Cms/Forms/Project/Variable.php:37
-#: Cms/Forms/Project/Tag.php:37
-msgid "Name"
-msgstr "Name"
-
-#: Comments/Forms/commentform.php:38
-msgid "Your name"
-msgstr "Dein Name"
-
-#: Comments/Forms/commentform.php:40
-msgid "Please fill in your name."
-msgstr ""
-
-#: Comments/Forms/commentform.php:44 Cms/Forms/User.php:46
-msgid "Email"
-msgstr "E-Mail"
-
-#: Comments/Forms/commentform.php:46
-msgid "email@domain.com"
-msgstr ""
-
-#: Comments/Forms/commentform.php:48
-msgid "Enter your email address."
-msgstr "Bitte geben Sie ihre E-Mail Adresse an."
-
-#: Comments/Forms/commentform.php:52
-msgid "Website"
-msgstr "Website"
-
-#: Comments/Forms/commentform.php:52
-msgid "(public)"
-msgstr "(öffentlich)"
-
-#: Comments/Forms/commentform.php:54
-msgid "http://domain.com"
-msgstr ""
-
-#: Comments/Forms/commentform.php:55
-msgid ""
-"If you don't have a website of your own or don't want to link to it, leave "
-"it blank."
-msgstr ""
-"Wenn Sie keine Website haben oder diese nicht angeben möchten, dann lassen "
-"Sie dieses Feld einfach leer."
-
-#: Comments/Forms/commentform.php:60
-msgid "must be left empty"
-msgstr "Muss leer bleiben"
-
-#: Comments/Forms/commentform.php:63
-msgid "mandatory field"
-msgstr "Pflichtfeld"
-
-#: Comments/tpl/commentcount.tpl:3 Comments/tpl/comments.tpl:5
+#: Formatters/TimeNatural.php:24 Formatters/TimeNatural.php:26
 #, php-format
-msgid "%d Comment"
-msgid_plural "%d Comments"
-msgstr[0] "Kommentar"
-msgstr[1] "Kommentare"
+msgid "%.1f h"
+msgstr "%.1f Stunden"
 
-#: Comments/tpl/comments.tpl:7
-msgid "Comments"
-msgstr "Kommentare"
+#: Formatters/TimeNatural.php:28
+#, php-format
+msgid "%.1f days"
+msgstr "%.1f Tage"
 
 #: Formatters/DateNatural.php:37
 msgid "now"
@@ -169,41 +101,409 @@ msgstr "vor %d Woche"
 msgid "%d weeks ago"
 msgstr "vor %d Wochen"
 
-#: Formatters/TimeNatural.php:16
+#: Comments/Ui/Comments.php:132
 #, php-format
-msgid "%d sec"
-msgstr "%d Sekunden"
+msgid "depage comments"
+msgstr "depage Kommentare"
 
-#: Formatters/TimeNatural.php:22
+#: Comments/Ui/Comments.php:132
 #, php-format
-msgid "%d min"
-msgstr "%d Minute"
+msgid "new comment for '%s'"
+msgstr "Neuer Kommentar auf '%s'"
 
-#: Formatters/TimeNatural.php:24 Formatters/TimeNatural.php:26
+#: Comments/tpl/comments.tpl:5 Comments/tpl/commentcount.tpl:3
 #, php-format
-msgid "%.1f h"
-msgstr "%.1f Stunden"
+msgid "%d Comment"
+msgid_plural "%d Comments"
+msgstr[0] "Kommentar"
+msgstr[1] "Kommentare"
 
-#: Formatters/TimeNatural.php:28
-#, php-format
-msgid "%.1f days"
-msgstr "%.1f Tage"
+#: Comments/tpl/comments.tpl:7
+msgid "Comments"
+msgstr "Kommentare"
+
+#: Comments/Forms/commentform.php:18
+msgid "Send"
+msgstr "Senden"
+
+#: Comments/Forms/commentform.php:28
+msgid "Text"
+msgstr ""
+
+#: Comments/Forms/commentform.php:31
+msgid "Leave a message..."
+msgstr "Nachricht hinterlassen..."
+
+#: Comments/Forms/commentform.php:36 Cms/Forms/Project/Publish.php:37
+#: Cms/Forms/Project/Variable.php:37 Cms/Forms/Project/Tag.php:37
+#: Cms/Forms/Project/Navigation.php:37 Cms/Forms/Project/Language.php:37
+#: Cms/Rpc/CmsFuncs.php:772
+msgid "Name"
+msgstr "Name"
+
+#: Comments/Forms/commentform.php:38
+msgid "Your name"
+msgstr "Dein Name"
+
+#: Comments/Forms/commentform.php:40
+msgid "Please fill in your name."
+msgstr ""
+
+#: Comments/Forms/commentform.php:44 Cms/Forms/User.php:46
+msgid "Email"
+msgstr "E-Mail"
+
+#: Comments/Forms/commentform.php:46
+msgid "email@domain.com"
+msgstr ""
+
+#: Comments/Forms/commentform.php:48
+msgid "Enter your email address."
+msgstr "Bitte geben Sie ihre E-Mail Adresse an."
+
+#: Comments/Forms/commentform.php:52
+msgid "Website"
+msgstr "Website"
+
+#: Comments/Forms/commentform.php:52
+msgid "(public)"
+msgstr "(öffentlich)"
+
+#: Comments/Forms/commentform.php:54
+msgid "http://domain.com"
+msgstr ""
+
+#: Comments/Forms/commentform.php:55
+msgid ""
+"If you don't have a website of your own or don't want to link to it, leave "
+"it blank."
+msgstr ""
+"Wenn Sie keine Website haben oder diese nicht angeben möchten, dann lassen "
+"Sie dieses Feld einfach leer."
+
+#: Comments/Forms/commentform.php:60
+msgid "must be left empty"
+msgstr "Muss leer bleiben"
+
+#: Comments/Forms/commentform.php:63
+msgid "mandatory field"
+msgstr "Pflichtfeld"
+
+#: Mail/Mail.php:348
+msgid "This is a MIME encapsulated multipart message."
+msgstr ""
+
+#: Mail/Mail.php:349
+msgid "Please use a MIME-compliant e-mail program to open it."
+msgstr ""
 
 #: HtmlForm/Abstracts/Input.php:256
 msgid "Please enter valid data"
 msgstr "Bitte geben Sie gültige Daten an"
 
-#: HtmlForm/Elements/Email.php:53
-msgid "Please enter a valid e-mail address"
-msgstr "Bitte geben Sie eine gültige E-Mail an"
+#: HtmlForm/Elements/Tel.php:53
+msgid "Please enter a valid telephone number"
+msgstr "Bitte geben Sie eine gültige Telefonnummer an"
 
 #: HtmlForm/Elements/Number.php:79
 msgid "Please enter a valid number"
 msgstr "Bitte geben Sie eine gültige Zahl an"
 
-#: HtmlForm/Elements/Tel.php:53
-msgid "Please enter a valid telephone number"
-msgstr "Bitte geben Sie eine gültige Telefonnummer an"
+#: HtmlForm/Elements/State.php:55
+msgid "Baden-Württemberg"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:56
+msgid "Bayern"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:57
+msgid "Berlin"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:58
+msgid "Brandenburg"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:59
+msgid "Bremen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:60
+msgid "Hamburg"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:61
+msgid "Hessen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:62
+msgid "Mecklenburg-Vorpommern"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:63
+msgid "Niedersachsen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:64
+msgid "Nordrhein-Westfalen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:65
+msgid "Rheinland-Pfalz"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:66
+msgid "Saarland"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:67
+msgid "Sachsen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:68
+msgid "Sachsen-Anhalt"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:69
+msgid "Schleswig-Holstein"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:70
+msgid "Thüringen"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:74
+msgid "Alabama"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:75
+msgid "Alaska"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:76
+msgid "Arizona"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:77
+msgid "Arkansas"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:78
+msgid "California"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:79
+msgid "Colorado"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:80
+msgid "Connecticut"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:81
+msgid "Delaware"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:82
+msgid "Florida"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:83 HtmlForm/Elements/Country.php:132
+msgid "Georgia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:84
+msgid "Hawaii"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:85
+msgid "Idaho"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:86
+msgid "Illinois"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:87
+msgid "Indiana"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:88
+msgid "Iowa"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:89
+msgid "Kansas"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:90
+msgid "Kentucky"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:91
+msgid "Louisiana"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:92
+msgid "Maine"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:93
+msgid "Maryland"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:94
+msgid "Massachusetts"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:95
+msgid "Michigan"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:96
+msgid "Minnesota"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:97
+msgid "Mississippi"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:98
+msgid "Missouri"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:99
+msgid "Montana"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:100
+msgid "Nebraska"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:101
+msgid "Nevada"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:102
+msgid "New Hampshire"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:103
+msgid "New Jersey"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:104
+msgid "New Mexico"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:105
+msgid "New York"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:106
+msgid "North Carolina"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:107
+msgid "North Dakota"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:108
+msgid "Ohio"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:109
+msgid "Oklahoma"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:110
+msgid "Oregon"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:111
+msgid "Pennsylvania"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:112
+msgid "Rhode Island"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:113
+msgid "South Carolina"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:114
+msgid "South Dakota"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:115
+msgid "Tennessee"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:116
+msgid "Texas"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:117
+msgid "Utah"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:118
+msgid "Vermont"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:119
+msgid "Virginia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:120
+msgid "Washington"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:121
+msgid "West Virginia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:122
+msgid "Wisconsin"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:123
+msgid "Wyoming"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:124
+msgid "District of Columbia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:125 HtmlForm/Elements/Country.php:68
+msgid "American Samoa"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:126 HtmlForm/Elements/Country.php:144
+msgid "Guam"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:127 HtmlForm/Elements/Country.php:196
+msgid "Northern Mariana Islands"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:128 HtmlForm/Elements/Country.php:229
+msgid "Puerto Rico"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:129 HtmlForm/Elements/Country.php:275
+msgid "United States Minor Outlying Islands"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:130
+msgid "Virgin Islands, U.S.)"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:177 HtmlForm/Elements/Country.php:356
+msgid "Please Select"
+msgstr ""
 
 #: HtmlForm/Elements/Country.php:57
 msgid "Andorra"
@@ -247,10 +547,6 @@ msgstr ""
 
 #: HtmlForm/Elements/Country.php:67
 msgid "Argentina"
-msgstr ""
-
-#: HtmlForm/Elements/Country.php:68 HtmlForm/Elements/State.php:125
-msgid "American Samoa"
 msgstr ""
 
 #: HtmlForm/Elements/Country.php:69
@@ -505,10 +801,6 @@ msgstr "Großbritannien"
 msgid "Grenada"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:132 HtmlForm/Elements/State.php:83
-msgid "Georgia"
-msgstr ""
-
 #: HtmlForm/Elements/Country.php:133
 msgid "French Guiana"
 msgstr ""
@@ -551,10 +843,6 @@ msgstr ""
 
 #: HtmlForm/Elements/Country.php:143
 msgid "Guatemala"
-msgstr ""
-
-#: HtmlForm/Elements/Country.php:144 HtmlForm/Elements/State.php:126
-msgid "Guam"
 msgstr ""
 
 #: HtmlForm/Elements/Country.php:145
@@ -761,10 +1049,6 @@ msgstr ""
 msgid "Macau"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:196 HtmlForm/Elements/State.php:127
-msgid "Northern Mariana Islands"
-msgstr ""
-
 #: HtmlForm/Elements/Country.php:197
 msgid "Martinique"
 msgstr ""
@@ -891,10 +1175,6 @@ msgstr ""
 
 #: HtmlForm/Elements/Country.php:228
 msgid "Pitcairn"
-msgstr ""
-
-#: HtmlForm/Elements/Country.php:229 HtmlForm/Elements/State.php:128
-msgid "Puerto Rico"
 msgstr ""
 
 #: HtmlForm/Elements/Country.php:230
@@ -1077,10 +1357,6 @@ msgstr ""
 msgid "Uganda"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:275 HtmlForm/Elements/State.php:129
-msgid "United States Minor Outlying Islands"
-msgstr ""
-
 #: HtmlForm/Elements/Country.php:276
 msgid "United States of America"
 msgstr ""
@@ -1157,282 +1433,6 @@ msgstr ""
 msgid "Zimbabwe"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:356 HtmlForm/Elements/State.php:177
-msgid "Please Select"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:55
-msgid "Baden-Württemberg"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:56
-msgid "Bayern"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:57
-msgid "Berlin"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:58
-msgid "Brandenburg"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:59
-msgid "Bremen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:60
-msgid "Hamburg"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:61
-msgid "Hessen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:62
-msgid "Mecklenburg-Vorpommern"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:63
-msgid "Niedersachsen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:64
-msgid "Nordrhein-Westfalen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:65
-msgid "Rheinland-Pfalz"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:66
-msgid "Saarland"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:67
-msgid "Sachsen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:68
-msgid "Sachsen-Anhalt"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:69
-msgid "Schleswig-Holstein"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:70
-msgid "Thüringen"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:74
-msgid "Alabama"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:75
-msgid "Alaska"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:76
-msgid "Arizona"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:77
-msgid "Arkansas"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:78
-msgid "California"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:79
-msgid "Colorado"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:80
-msgid "Connecticut"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:81
-msgid "Delaware"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:82
-msgid "Florida"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:84
-msgid "Hawaii"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:85
-msgid "Idaho"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:86
-msgid "Illinois"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:87
-msgid "Indiana"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:88
-msgid "Iowa"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:89
-msgid "Kansas"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:90
-msgid "Kentucky"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:91
-msgid "Louisiana"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:92
-msgid "Maine"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:93
-msgid "Maryland"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:94
-msgid "Massachusetts"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:95
-msgid "Michigan"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:96
-msgid "Minnesota"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:97
-msgid "Mississippi"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:98
-msgid "Missouri"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:99
-msgid "Montana"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:100
-msgid "Nebraska"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:101
-msgid "Nevada"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:102
-msgid "New Hampshire"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:103
-msgid "New Jersey"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:104
-msgid "New Mexico"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:105
-msgid "New York"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:106
-msgid "North Carolina"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:107
-msgid "North Dakota"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:108
-msgid "Ohio"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:109
-msgid "Oklahoma"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:110
-msgid "Oregon"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:111
-msgid "Pennsylvania"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:112
-msgid "Rhode Island"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:113
-msgid "South Carolina"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:114
-msgid "South Dakota"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:115
-msgid "Tennessee"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:116
-msgid "Texas"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:117
-msgid "Utah"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:118
-msgid "Vermont"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:119
-msgid "Virginia"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:120
-msgid "Washington"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:121
-msgid "West Virginia"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:122
-msgid "Wisconsin"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:123
-msgid "Wyoming"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:124
-msgid "District of Columbia"
-msgstr ""
-
-#: HtmlForm/Elements/State.php:130
-msgid "Virgin Islands, U.S.)"
-msgstr ""
-
-#: HtmlForm/Elements/Boolean.php:64
-msgid "Please check this box if you want to proceed"
-msgstr "Bitte aktivieren Sie diese Checkbox um fortzufahren"
-
 #: HtmlForm/Elements/Address.php:103
 msgid "Address 1"
 msgstr ""
@@ -1465,1127 +1465,221 @@ msgstr "Das Land und das Bundesland passen nicht zueinander"
 msgid "Please enter a valid URL"
 msgstr "Bitte geben Sie eine gültige URL an"
 
-#: Cms/Rpc/CmsFuncs.php:663
-msgid "comment"
-msgstr "kommentieren"
-
-#: Cms/Rpc/CmsFuncs.php:664
-msgid "Sorry, you don't have the authentication to change \"%name%\"."
-msgstr ""
-"Entschuldigen Sie, Sie haben keine Authentisierung um \"%name%\" zu ändern."
-
-#: Cms/Rpc/CmsFuncs.php:665
-msgid "You are not allowed to do this!"
-msgstr "Sie haben keine Authentisierung, das zu tun!"
-
-#: Cms/Rpc/CmsFuncs.php:666
-msgid "You are not logged in."
-msgstr "Sie sind nicht eingeloggt."
-
-#: Cms/Rpc/CmsFuncs.php:667
-msgid "Incorrect Username or Password!"
-msgstr "Falscher Benutername oder Passwort!"
-
-#: Cms/Rpc/CmsFuncs.php:668
-msgid "new window"
-msgstr "Neues Fenster"
-
-#: Cms/Rpc/CmsFuncs.php:669
-msgid "existing window"
-msgstr "Existierendes Fenster"
-
-#: Cms/Rpc/CmsFuncs.php:670
-msgid "release XSLT"
-msgstr "XSLT freigeben"
-
-#: Cms/Rpc/CmsFuncs.php:671 Cms/Rpc/CmsFuncs.php:745
-msgid "upload..."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:672
-msgid "show details"
-msgstr "Details anzeigen"
-
-#: Cms/Rpc/CmsFuncs.php:673
-msgid "show thumbnails"
-msgstr "Thumbnails anzeigen"
-
-#: Cms/Rpc/CmsFuncs.php:674
-msgid "bold"
-msgstr "fett"
-
-#: Cms/Rpc/CmsFuncs.php:675
-msgid "italic"
-msgstr "Kursiv"
-
-#: Cms/Rpc/CmsFuncs.php:676 Cms/Rpc/CmsFuncs.php:792 Cms/Rpc/CmsFuncs.php:868
-msgid "link"
-msgstr "Link"
-
-#: Cms/Rpc/CmsFuncs.php:677
-msgid "small"
-msgstr "Klein"
-
-#: Cms/Rpc/CmsFuncs.php:678
-msgid "linktarget"
-msgstr "Linkziel"
-
-#: Cms/Rpc/CmsFuncs.php:679
-msgid "add row"
-msgstr "Zeile hinzufügen"
-
-#: Cms/Rpc/CmsFuncs.php:680
-msgid "delete row"
-msgstr "Zeile löschen"
-
-#: Cms/Rpc/CmsFuncs.php:681
-msgid "delete"
-msgstr "Löschen"
-
-#: Cms/Rpc/CmsFuncs.php:682
-msgid "duplicate"
-msgstr "Duplizieren"
-
-#: Cms/Rpc/CmsFuncs.php:683
-msgid "add"
-msgstr "hinzufügen"
-
-#: Cms/Rpc/CmsFuncs.php:684
-msgid "new folder"
-msgstr "Neuer Ordner"
-
-#: Cms/Rpc/CmsFuncs.php:685
-msgid "release templates to be available for all user"
-msgstr "Templates für alles Benutzer freigeben"
-
-#: Cms/Rpc/CmsFuncs.php:686
-msgid "upload new file"
-msgstr "Neue Datei hochladen"
-
-#: Cms/Rpc/CmsFuncs.php:687
-msgid "by"
-msgstr "von"
-
-#: Cms/Rpc/CmsFuncs.php:688
-msgid "Sun"
-msgstr "So"
-
-#: Cms/Rpc/CmsFuncs.php:689
-msgid "Mon"
-msgstr "Mo"
-
-#: Cms/Rpc/CmsFuncs.php:690
-msgid "Tue"
-msgstr "Di"
-
-#: Cms/Rpc/CmsFuncs.php:691
-msgid "Wed"
-msgstr "Mi"
-
-#: Cms/Rpc/CmsFuncs.php:692
-msgid "Thu"
-msgstr "Do"
-
-#: Cms/Rpc/CmsFuncs.php:693
-msgid "Fri"
-msgstr "Fr"
-
-#: Cms/Rpc/CmsFuncs.php:694
-msgid "Sat"
-msgstr "Sa"
-
-#: Cms/Rpc/CmsFuncs.php:695
-msgid "%D%, %d% %MM% %y% at %h%:%m%:%s%"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:696
-msgid "%M%/%d%/%y%"
-msgstr "%d%.%M%.%y%"
-
-#: Cms/Rpc/CmsFuncs.php:697
-msgid "Jan"
-msgstr "Jan"
-
-#: Cms/Rpc/CmsFuncs.php:698
-msgid "Oct"
-msgstr "Okt"
-
-#: Cms/Rpc/CmsFuncs.php:699
-msgid "Nov"
-msgstr "Nov"
-
-#: Cms/Rpc/CmsFuncs.php:700
-msgid "Dec"
-msgstr "Dez"
-
-#: Cms/Rpc/CmsFuncs.php:701
-msgid "Feb"
-msgstr "Feb"
-
-#: Cms/Rpc/CmsFuncs.php:702
-msgid "Mar"
-msgstr "Mär"
-
-#: Cms/Rpc/CmsFuncs.php:703
-msgid "Apr"
-msgstr "Apr"
-
-#: Cms/Rpc/CmsFuncs.php:704
-msgid "May"
-msgstr "Mai"
-
-#: Cms/Rpc/CmsFuncs.php:705
-msgid "Jun"
-msgstr "Jun"
-
-#: Cms/Rpc/CmsFuncs.php:706
-msgid "Jul"
-msgstr "Jul"
-
-#: Cms/Rpc/CmsFuncs.php:707
-msgid "Aug"
-msgstr "Aug"
-
-#: Cms/Rpc/CmsFuncs.php:708
-msgid "Sep"
-msgstr "Sep"
-
-#: Cms/Rpc/CmsFuncs.php:709
-msgid "h"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:710
-msgid "at"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:711
-msgid "%h%:%m%"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:712
-msgid "Error"
-msgstr "Fehler"
-
-#: Cms/Rpc/CmsFuncs.php:713
-msgid "Filetransfer Error:<br>"
-msgstr "Fehler beim Dateitransfer:<br>"
-
-#: Cms/Rpc/CmsFuncs.php:714
-msgid "Could not connect to:"
-msgstr "Konnte nicht verbinden zu:"
-
-#: Cms/Rpc/CmsFuncs.php:715
-msgid "Could not login as:"
-msgstr "Konnte nicht einloggen als:"
-
-#: Cms/Rpc/CmsFuncs.php:716
-msgid "Could not write to:"
-msgstr "Konnte nicht schreiben zu:"
-
-#: Cms/Rpc/CmsFuncs.php:717
-msgid "Not a valid page-id."
-msgstr "Keine gültige Seiten-Id"
-
-#: Cms/Rpc/CmsFuncs.php:718
-msgid "Node has been deleted by another user."
-msgstr "Element wurde durch anderen Benutzer gelöscht."
-
-#: Cms/Rpc/CmsFuncs.php:719
-msgid "An end-tag was encountered without a matching start-tag."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:720
-msgid "A CDATA section is not properly terminated."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:721
-msgid "The XML declaration is not properly terminated."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:722
-msgid "The DOCTYPE declaration is not properly terminated."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:723
-msgid "A comment is not properly terminated."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:724
-msgid "An XML element is malformed."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:725
-msgid "The Flashplayer is out of memory."
-msgstr "Der Flashplayer hat nicht genug Speicher."
-
-#: Cms/Rpc/CmsFuncs.php:726
-msgid "An attribute value is not properly terminated."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:727
-msgid "A start-tag is not matched with an end-tag."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:728
-msgid "An error occured while parsing the template:"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:729
-msgid "copyright: "
-msgstr "Copyright: "
-
-#: Cms/Rpc/CmsFuncs.php:730
-msgid "description: "
-msgstr "Beschreibung: "
-
-#: Cms/Rpc/CmsFuncs.php:731
-msgid "last changed: "
-msgstr "Zuletzt geändert: "
-
-#: Cms/Rpc/CmsFuncs.php:732
-msgid "size: "
-msgstr "Größe: "
-
-#: Cms/Rpc/CmsFuncs.php:733
-msgid "dimensions: "
-msgstr "Maße: "
-
-#: Cms/Rpc/CmsFuncs.php:734
-msgid "keywords: "
-msgstr "Schlüsselworte: "
-
-#: Cms/Rpc/CmsFuncs.php:735
-msgid "Complete Backup from"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:736
-msgid "Backup not restored"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:737
-msgid "Backup not saved"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:738
-msgid "Backup restored"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:739
-msgid "The project '%project%' has been restored from '%file%'."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:740
-msgid "Backup saved"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:741
-msgid "The project '%project%' has been saved in '%file%'"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:742 Cms/js/locale.php:21 Cms/Forms/Publish.php:23
-#: Cms/Forms/Project/Import.php:23 Cms/Forms/User.php:26
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: Cms/Rpc/CmsFuncs.php:743
-msgid "connection to the server has closed unexpectedly."
-msgstr "Die Verbindung zu Server wurde unerwartet unterbrochen."
-
-#: Cms/Rpc/CmsFuncs.php:744
-msgid "connection lost"
-msgstr "Verbindung unterbrochen"
-
-#: Cms/Rpc/CmsFuncs.php:746
+#: HtmlForm/Elements/Boolean.php:64
+msgid "Please check this box if you want to proceed"
+msgstr "Bitte aktivieren Sie diese Checkbox um fortzufahren"
+
+#: HtmlForm/Elements/Email.php:53
+msgid "Please enter a valid e-mail address"
+msgstr "Bitte geben Sie eine gültige E-Mail an"
+
+#: Cms/Ui/User.php:83
+#, php-format
+msgid "Edit user '%s'"
+msgstr "Benutzer '%s' bearbeiten"
+
+#: Cms/Ui/User.php:85
+msgid "Add new User"
+msgstr "Neuen Benutzer hinzufügen"
+
+#: Cms/Ui/Main.php:55
 msgid ""
-"Please choose the files, you want to upload to the file-library to '%path%'. "
-"You can upload %maxsize% max.<br/><br/><b>Attention: Existing file will be "
-"overwritten without confimation!</b>"
+"Welcome to\n"
+" depage::cms"
 msgstr ""
-"Bitte wählen Sie die Dateien aus, die sie zu '%path%' hochladen möchten. Sie "
-"können maximal %maxsize% hochladen.<br/><br/><b>Achtung: Bestehende Dateien "
-"mit gleichem Namen werden ohne Nachfrage überschrieben!</b>"
+"Willkommen bei\n"
+" depage::cms"
 
-#: Cms/Rpc/CmsFuncs.php:747
-msgid "%app_name% upload"
-msgstr "%app_name% Hochladen"
-
-#: Cms/Rpc/CmsFuncs.php:748
-msgid "The file(s) have been uploaded."
-msgstr "Die Datei(en) wurden hochgeladen."
-
-#: Cms/Rpc/CmsFuncs.php:749
-msgid "Additional actions"
-msgstr "Zusätzliche Funktionen"
-
-#: Cms/Rpc/CmsFuncs.php:750
-msgid "Last publishing"
-msgstr "Letzte Veröffentlichung"
-
-#: Cms/Rpc/CmsFuncs.php:751
-msgid "Recently changed pages"
-msgstr "Zuletzt geänderte Seiten"
-
-#: Cms/Rpc/CmsFuncs.php:752
-msgid "Bye bye!"
-msgstr "Auf Wiedersehen!"
-
-#: Cms/Rpc/CmsFuncs.php:753
-msgid "You can relogin <a href=\".\">here</a>."
-msgstr "Sie können sich <a href=\".\">hier</a> erneut einloggen."
-
-#: Cms/Rpc/CmsFuncs.php:754
-msgid "Thank you for using %app_name%."
-msgstr "Vielen Dank, dass Sie %app_name% benutzen."
-
-#: Cms/Rpc/CmsFuncs.php:755
-msgid "%app_name% %app_version%"
+#: Cms/Ui/Main.php:77 Cms/Ui/Main.php:109
+msgid "Login"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:756
-msgid "You need the Adobe Flash Player%minversion%, to use %app_name%."
-msgstr ""
-"Sie brauchen den Adobe Flash Player%minversion%, um %app_name% zu benutzen."
-
-#: Cms/Rpc/CmsFuncs.php:757
-msgid "For this project there is no import-routine defined."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:758 Cms/Rpc/CmsFuncs.php:772
-msgid "You need to activate Javascript, to use %app_name%."
-msgstr "Sie müssen Javascript aktivieren, um %app_name% zu benutzen."
-
-#: Cms/Rpc/CmsFuncs.php:759
-msgid "Error in transformation"
-msgstr "Fehler beim Transformieren"
-
-#: Cms/Rpc/CmsFuncs.php:760
-msgid "Add new project"
-msgstr "Neues Projekt hinzufügen"
-
-#: Cms/Rpc/CmsFuncs.php:762
-msgid "name of project"
-msgstr "Name des Projekts"
-
-#: Cms/Rpc/CmsFuncs.php:763
-msgid "Add"
-msgstr "Hinzufügen"
-
-#: Cms/Rpc/CmsFuncs.php:764
-msgid ""
-"The name of the project may only contain letters and numbers, no spaces or "
-"special characers allowed:<br> Please choose another name."
-msgstr ""
-"Der Name des Projekts darf nur Buchstaben und Zahlen enthalten, keine "
-"Leerzeichen oder Sonderzeichen:<br> Bitte wählen Sie einen anderen Namen."
-
-#: Cms/Rpc/CmsFuncs.php:765
-msgid "This project exists already:<br> Please choose another name."
-msgstr ""
-"Dieses Projekt existiert bereits:<br> Bitte wählen Sie einen anderen Namen."
-
-#: Cms/Rpc/CmsFuncs.php:766
-msgid "restore project from backup"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:767
-msgid "backup project"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:768 Cms/js/locale.php:25 Cms/tpl/toolbar_main.tpl:37
-#: Cms/tpl/projectlist.tpl:12
-msgid "edit"
-msgstr "Editieren"
-
-#: Cms/Rpc/CmsFuncs.php:769 Cms/Rpc/CmsFuncs.php:889 Cms/Rpc/CmsFuncs.php:891
-#: Cms/Rpc/CmsFuncs.php:896 Cms/tpl/projectlist.tpl:15
-msgid "preview"
-msgstr "Vorschau"
-
-#: Cms/Rpc/CmsFuncs.php:770 Cms/tpl/toolbar_main.tpl:23 Cms/Ui/Main.php:156
+#: Cms/Ui/Main.php:158 Cms/tpl/toolbar_main.tpl:23 Cms/Rpc/CmsFuncs.php:781
 msgid "Projects"
 msgstr "Projekte"
 
-#: Cms/Rpc/CmsFuncs.php:771 Cms/Rpc/CmsFuncs.php:830 Cms/tpl/projectlist.tpl:18
-msgid "publish"
-msgstr "Veröffentlichen"
+#: Cms/Ui/Main.php:159
+msgid "Edit, preview or changed settings for your projects"
+msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
-#: Cms/Rpc/CmsFuncs.php:773
-msgid "requirements"
-msgstr "Anforderungen"
+#: Cms/Ui/Main.php:202
+msgid "Remove"
+msgstr "Entfernen"
 
-#: Cms/Rpc/CmsFuncs.php:774
-msgid "%app_name% %app_version% // status"
+#: Cms/Ui/Main.php:254
+msgid "Tasks"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:775
-msgid "edit page"
-msgstr "Seite editieren"
-
-#: Cms/Rpc/CmsFuncs.php:776
-msgid "help"
-msgstr "Hilfe"
-
-#: Cms/Rpc/CmsFuncs.php:777
-msgid "home"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:778
-msgid "logout"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:779 Cms/js/locale.php:29
-msgid "reload"
-msgstr "Aktualisieren"
-
-#: Cms/Rpc/CmsFuncs.php:780
-msgid "manage users"
-msgstr "Benutzer verwalten"
-
-#: Cms/Rpc/CmsFuncs.php:781
-msgid "Please, choose a file"
-msgstr "Bitte wählen Sie eine Datei aus"
-
-#: Cms/Rpc/CmsFuncs.php:782
-msgid "Height: "
-msgstr "Höhe: "
-
-#: Cms/Rpc/CmsFuncs.php:783
-msgid "Type: "
-msgstr "Dateityp: "
-
-#: Cms/Rpc/CmsFuncs.php:784
-msgid "Width: "
-msgstr "Breite: "
-
-#: Cms/Rpc/CmsFuncs.php:785
-msgid "Please, choose a file to link to:"
-msgstr "Bitte wählen Sie eine Datei aus, die verlinkt werden soll:"
-
-#: Cms/Rpc/CmsFuncs.php:786
-msgid "Please, choose an image:"
-msgstr "Bitte wählen Sie ein Bild aus:"
-
-#: Cms/Rpc/CmsFuncs.php:787
-msgid "Please, choose a page to link to:"
-msgstr "Bitte wählen Sie eine Seite aus, die verlinkt werden soll:"
-
-#: Cms/Rpc/CmsFuncs.php:788
-msgid "Do you want to delete \"%name%\"?"
-msgstr "Möchten Sie \"%name%\" wirklich löschen?"
-
-#: Cms/Rpc/CmsFuncs.php:789
-msgid "[project settings]"
-msgstr "[Projekt Einstellungen]"
-
-#: Cms/Rpc/CmsFuncs.php:790
-msgid "none"
-msgstr "kein"
-
-#: Cms/Rpc/CmsFuncs.php:791 Cms/Rpc/CmsFuncs.php:813 Cms/Rpc/CmsFuncs.php:864
-msgid "description"
-msgstr "Beschreibung"
-
-#: Cms/Rpc/CmsFuncs.php:793
-msgid "audio"
-msgstr "Audio"
-
-#: Cms/Rpc/CmsFuncs.php:794
-msgid "[none]"
-msgstr "[kein]"
-
-#: Cms/Rpc/CmsFuncs.php:795
-msgid "date"
-msgstr "Datum"
-
-#: Cms/Rpc/CmsFuncs.php:796
-msgid "flash"
-msgstr "Flash"
-
-#: Cms/Rpc/CmsFuncs.php:797
-msgid "[auto]"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:798
-msgid "image"
-msgstr "Bild"
-
-#: Cms/Rpc/CmsFuncs.php:799
-msgid "image caption"
-msgstr "Bildunterschrift"
-
-#: Cms/Rpc/CmsFuncs.php:800
-msgid "copyright"
-msgstr "Copyright"
-
-#: Cms/Rpc/CmsFuncs.php:801
-msgid "thumb"
-msgstr "Thumbnail"
-
-#: Cms/Rpc/CmsFuncs.php:802
-msgid "zoom"
-msgstr "Zoom"
-
-#: Cms/Rpc/CmsFuncs.php:803
-msgid "source code"
-msgstr "Source Code"
-
-#: Cms/Rpc/CmsFuncs.php:804
-msgid "table"
-msgstr "Tabelle"
-
-#: Cms/Rpc/CmsFuncs.php:805
-msgid "text"
-msgstr "Text"
-
-#: Cms/Rpc/CmsFuncs.php:806
-msgid "list"
-msgstr "Liste"
-
-#: Cms/Rpc/CmsFuncs.php:807
-msgid "headline"
-msgstr "Überschrift"
-
-#: Cms/Rpc/CmsFuncs.php:808
-msgid "time"
-msgstr "Zeit"
-
-#: Cms/Rpc/CmsFuncs.php:809 Cms/Rpc/CmsFuncs.php:820
-msgid "type"
-msgstr "Typ"
-
-#: Cms/Rpc/CmsFuncs.php:810
-msgid "video"
-msgstr "Video"
-
-#: Cms/Rpc/CmsFuncs.php:811 Cms/Rpc/CmsFuncs.php:944
-msgid "colorscheme"
-msgstr "Farbschema"
-
-#: Cms/Rpc/CmsFuncs.php:812
-msgid "last change"
-msgstr "Letzte Änderung"
-
-#: Cms/Rpc/CmsFuncs.php:814
-msgid "page type"
-msgstr "Seitentyp"
-
-#: Cms/Rpc/CmsFuncs.php:815
-msgid "icon"
-msgstr "Icon"
-
-#: Cms/Rpc/CmsFuncs.php:816
-msgid "linkinfo"
-msgstr "Linkinfo"
-
-#: Cms/Rpc/CmsFuncs.php:817 Cms/Rpc/CmsFuncs.php:958
-msgid "navigation"
-msgstr "Navigation"
-
-#: Cms/Rpc/CmsFuncs.php:818
-msgid "tags"
-msgstr "Tags"
-
-#: Cms/Rpc/CmsFuncs.php:819 Cms/Rpc/CmsFuncs.php:834
-msgid "title"
-msgstr "Titel"
-
-#: Cms/Rpc/CmsFuncs.php:821 Cms/Rpc/CmsFuncs.php:953 Cms/Rpc/CmsFuncs.php:954
-msgid "backup"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:822 Cms/Rpc/CmsFuncs.php:890
-msgid "manually"
-msgstr "manuell"
-
-#: Cms/Rpc/CmsFuncs.php:823
-msgid "database"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:824 Cms/Rpc/CmsFuncs.php:895 Cms/Rpc/CmsFuncs.php:936
-msgid "file-library"
-msgstr "Dateibibliothek"
-
-#: Cms/Rpc/CmsFuncs.php:825 Cms/Rpc/CmsFuncs.php:880
-msgid "colors"
-msgstr "Farben"
-
-#: Cms/Rpc/CmsFuncs.php:826
-msgid "file path"
-msgstr "Dateipfad"
-
-#: Cms/Rpc/CmsFuncs.php:827
-msgid "XSL Template"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:828 Cms/Rpc/CmsFuncs.php:829
-msgid "short name"
-msgstr "Kurzname"
-
-#: Cms/Rpc/CmsFuncs.php:831
-msgid "encoding"
-msgstr "Zeichensatz"
-
-#: Cms/Rpc/CmsFuncs.php:832
-msgid "output method"
-msgstr "Ausgabemethode"
-
-#: Cms/Rpc/CmsFuncs.php:833
-msgid "variable"
-msgstr "Variable"
-
-#: Cms/Rpc/CmsFuncs.php:835
-msgid "template for new elements"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:836
-msgid "xsl-template"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:837
-msgid "valid parents"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:838
-msgid "automatic"
-msgstr "automatisch"
-
-#: Cms/Rpc/CmsFuncs.php:839
-msgid "multiple languages"
-msgstr "mehrsprachig"
-
-#: Cms/Rpc/CmsFuncs.php:840
-msgid "Hide files with wrong filetype or wrong image size."
-msgstr "Dateien mit falschem Typ oder falscher Größe ausblenden."
-
-#: Cms/Rpc/CmsFuncs.php:841
-msgid "Show files with wrong filetype or wrong image size."
-msgstr "Dateien mit falschem Typ oder falscher Größe einblenden."
-
-#: Cms/Rpc/CmsFuncs.php:842
-msgid "name"
-msgstr "Name"
-
-#: Cms/Rpc/CmsFuncs.php:843
-msgid "path to audio-file"
-msgstr "Pfad zur Audio-Datei"
-
-#: Cms/Rpc/CmsFuncs.php:844
-msgid "automatic Backup"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:845
-msgid "backup now"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:846 Cms/Rpc/CmsFuncs.php:873
-msgid "%description%<br>%percent% done<br>remaining: %remaining%"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:847
-msgid "full backup"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:848
-msgid "data only"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:849
-msgid "file-library only"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:850
-msgid "every day"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:851
-msgid "every month"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:852
-msgid "every week"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:853 Cms/Rpc/CmsFuncs.php:955
-msgid "restore"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:854
-msgid "documents"
-msgstr "Dokumente"
-
-#: Cms/Rpc/CmsFuncs.php:855 Cms/Rpc/CmsFuncs.php:935
-msgid "colorschemes"
-msgstr "Farbschemata"
-
-#: Cms/Rpc/CmsFuncs.php:856 Cms/Rpc/CmsFuncs.php:938
-msgid "pages"
-msgstr "Seiten"
-
-#: Cms/Rpc/CmsFuncs.php:857 Cms/Rpc/CmsFuncs.php:884 Cms/Rpc/CmsFuncs.php:939
-#: Cms/tpl/projectlist.tpl:21
-msgid "settings"
-msgstr "Einstellungen"
-
-#: Cms/Rpc/CmsFuncs.php:858 Cms/Rpc/CmsFuncs.php:885
-msgid "templates"
-msgstr "Templates"
-
-#: Cms/Rpc/CmsFuncs.php:859
-msgid "clean up library before restoring"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:860
-msgid "clear file-library first"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:861
-msgid "replace existing files"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:862
-msgid "_new_color"
-msgstr "_neue_Farbe"
-
-#: Cms/Rpc/CmsFuncs.php:863
-msgid "path to flash-file"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:865
-msgid "alt"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:866
-msgid "..."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:867
-msgid "path to image"
-msgstr "Pfad zum Bild"
-
-#: Cms/Rpc/CmsFuncs.php:869
-msgid "base-url"
-msgstr "Base-Url"
-
-#: Cms/Rpc/CmsFuncs.php:870
-msgid "publish now"
-msgstr "Jetzt veröffentlichen"
-
-#: Cms/Rpc/CmsFuncs.php:871
-msgid "Release page now"
-msgstr "Seite jetzt freigeben"
-
-#: Cms/Rpc/CmsFuncs.php:872 Cms/Rpc/CmsFuncs.php:905
-msgid "password"
-msgstr "Passwort"
-
-#: Cms/Rpc/CmsFuncs.php:874
-msgid "target path"
-msgstr "Zielpfad"
-
-#: Cms/Rpc/CmsFuncs.php:875 Cms/Rpc/CmsFuncs.php:906
-msgid "user"
+#: Cms/Ui/Main.php:256
+msgid "Shows the currently running background tasks"
+msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
+
+#: Cms/Ui/Main.php:325
+#, php-format
+msgid "You received a new notification from %s:"
+msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
+
+#: Cms/Ui/Main.php:333
+msgid "Your faithful servant on"
+msgstr "Ihr treuer Helfer auf"
+
+#: Cms/Ui/Main.php:402
+msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Rpc/CmsFuncs.php:876
-msgid "indent source"
+#: Cms/Ui/Main.php:404
+msgid "Shows the users that are currently logged in"
+msgstr "Zeigt alle aktuell angemeldeten Benutzer"
+
+#: Cms/Ui/Project.php:58
+msgid "Project Settings"
+msgstr "Projekt"
+
+#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:83
+msgid "Tags"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:877
-msgid "please wait ... initializing text-styles"
-msgstr "Bitte warten ... initialisiere Text-Formate"
-
-#: Cms/Rpc/CmsFuncs.php:878
-msgid "path to video-file"
-msgstr "Pfad zur Video-Datei"
-
-#: Cms/Rpc/CmsFuncs.php:879
-msgid "active"
-msgstr "aktiv"
-
-#: Cms/Rpc/CmsFuncs.php:881
-msgid "edit pages"
-msgstr "Seiten editieren"
-
-#: Cms/Rpc/CmsFuncs.php:882
-msgid "files"
-msgstr "Dateien"
-
-#: Cms/Rpc/CmsFuncs.php:883 Cms/Rpc/CmsFuncs.php:904
-msgid "login"
-msgstr "Login"
-
-#: Cms/Rpc/CmsFuncs.php:886
-msgid "after choosing"
-msgstr "Nach Auswahl"
-
-#: Cms/Rpc/CmsFuncs.php:887
-msgid "after choosing/changing"
-msgstr "Nach Auswahl/Änderung"
-
-#: Cms/Rpc/CmsFuncs.php:888
-msgid "enable feedback"
-msgstr "Feedback erlauben"
-
-#: Cms/Rpc/CmsFuncs.php:892
-msgid "template set"
-msgstr "Template-Set"
-
-#: Cms/Rpc/CmsFuncs.php:893
-msgid "edit colors and colorschemes..."
-msgstr "Farben und Farbschemata bearbeiten..."
-
-#: Cms/Rpc/CmsFuncs.php:894
-msgid "add, edit and delete pages..."
-msgstr "Seiten hinzufügen, editieren und löschen..."
-
-#: Cms/Rpc/CmsFuncs.php:897
-msgid "edit settings..."
-msgstr "Einstellungen bearbeiten..."
-
-#: Cms/Rpc/CmsFuncs.php:898
-msgid "edit templates..."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:899
-msgid "configuration loaded."
-msgstr "Konfiguration geladen."
-
-#: Cms/Rpc/CmsFuncs.php:900
-msgid "interface loaded."
-msgstr "Interface geladen."
-
-#: Cms/Rpc/CmsFuncs.php:901
-msgid "project loaded."
-msgstr "Projekt geladen."
-
-#: Cms/Rpc/CmsFuncs.php:902
-msgid "loading project..."
-msgstr "Lade Projekt..."
-
-#: Cms/Rpc/CmsFuncs.php:903
-msgid "<b>%app_name%</b><br>[%app_version%]<br><br>preloading...<br>%loading%"
-msgstr "<b>%app_name%</b><br>[%app_version%]<br><br>lade...<br>%loading%"
-
-#: Cms/Rpc/CmsFuncs.php:907
-msgid "Login failed. Please try again."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:908
-msgid "connection established."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:909
-msgid "connecting to server..."
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:910
-msgid "loading interface..."
-msgstr "Lade Interface..."
-
-#: Cms/Rpc/CmsFuncs.php:911
-msgid "project data"
-msgstr "Projektdaten"
-
-#: Cms/Rpc/CmsFuncs.php:912
-msgid "backup colorschemes"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:913
-msgid "backup content"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:914
-msgid "backup library"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:915
-msgid "backup element templates"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:916
-msgid "backup settings"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:917
-msgid "backup xslt templates"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:918
-msgid "caching colorschemes"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:919
-msgid "caching languages"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:920
-msgid "caching navigation"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:921
-msgid "caching pages"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:922
-msgid "caching settings"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:923
-msgid "caching templates"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:924
-msgid "publishing atom feeds"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:925
-msgid "publishing index"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:926
-msgid "publishing library"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:927
-msgid "preprocessing pages"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:928
-msgid "publishing pages"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:929
-msgid "publishing sitemap"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:930
-msgid "testing connection to publishing host"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:931
-msgid "(calculating)"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:932
-msgid "minutes"
-msgstr "Minuten"
-
-#: Cms/Rpc/CmsFuncs.php:933
-msgid "seconds"
-msgstr "Sekunden"
-
-#: Cms/Rpc/CmsFuncs.php:934
-msgid "(copy)"
-msgstr "(Kopie)"
-
-#: Cms/Rpc/CmsFuncs.php:937
-msgid "document"
-msgstr "Dokument"
-
-#: Cms/Rpc/CmsFuncs.php:940
-msgid "element-templates"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:941
-msgid "XSL-templates"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:942
-msgid "global colors"
-msgstr "globale Farben"
-
-#: Cms/Rpc/CmsFuncs.php:943
-msgid "Meta*"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:945
-msgid "folder"
-msgstr "Ordner"
-
-#: Cms/Rpc/CmsFuncs.php:946
-msgid "element"
-msgstr "Element"
-
-#: Cms/Rpc/CmsFuncs.php:947
-msgid "page"
-msgstr "Seite"
-
-#: Cms/Rpc/CmsFuncs.php:948
-msgid "[empty page]"
-msgstr "[Leere Seite]"
-
-#: Cms/Rpc/CmsFuncs.php:949
-msgid "redirect"
-msgstr "Redirect"
-
-#: Cms/Rpc/CmsFuncs.php:950
-msgid "separator"
-msgstr "Trenner"
-
-#: Cms/Rpc/CmsFuncs.php:951
-msgid "template"
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:952
-msgid "                    "
-msgstr ""
-
-#: Cms/Rpc/CmsFuncs.php:956
-msgid "global files"
-msgstr "Globale Dateien"
-
-#: Cms/Rpc/CmsFuncs.php:957
-msgid "languages"
+#: Cms/Ui/Project.php:60 Cms/Ui/Project.php:78
+msgid "Languages"
 msgstr "Sprachen"
 
-#: Cms/Rpc/CmsFuncs.php:959 Cms/tpl/publish.tpl:5 Cms/tpl/toolbar_main.tpl:41
-#: Cms/Ui/Project.php:62
+#: Cms/Ui/Project.php:61 Cms/Ui/Project.php:92
+msgid "Variables"
+msgstr "Variablen"
+
+#: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
+#: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
+#: Cms/tpl/toolbar_main.tpl:41 Cms/Rpc/CmsFuncs.php:970
 msgid "Publish"
 msgstr "Veröffentlichen"
 
-#: Cms/Rpc/CmsFuncs.php:960
-msgid "template-sets"
+#: Cms/Ui/Project.php:63
+msgid "Backup"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:961
-msgid "variables"
-msgstr "Variablen"
-
-#: Cms/Rpc/CmsFuncs.php:962
-msgid "(untitled)"
-msgstr "(unbenannt)"
-
-#: Cms/Rpc/CmsFuncs.php:963
-msgid " loading..."
-msgstr " lade..."
-
-#: Cms/Rpc/CmsFuncs.php:964
-msgid "(unknown)"
-msgstr "(unbekannt)"
-
-#: Cms/Rpc/CmsFuncs.php:965
-msgid "Authentication"
-msgstr "Authentisierung"
-
-#: Cms/Rpc/CmsFuncs.php:966
-msgid "You have no Authentication to access this item"
-msgstr "Sie haben keine Authentisierung, um auf dieses Element zuzugreifen"
-
-#: Cms/Rpc/CmsFuncs.php:967
-msgid "Which backup of '%project%' do you want to restore?"
+#: Cms/Ui/Project.php:64
+msgid "Import"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:968
-msgid "Do you want to publish '%project%' now?"
-msgstr "Möchten Sie '%project%' jetzt veröffentlichen?"
+#: Cms/Ui/Project.php:73
+msgid "New Project"
+msgstr "Neues Projekt"
 
-#: Cms/Rpc/CmsFuncs.php:969
-msgid "%chars% of %maxchars% characters max left"
-msgstr "%chars% von %maxchars% Zeichen übrig"
-
-#: Cms/Rpc/CmsFuncs.php:970
-msgid "%percent%% finishing in %time_until_end%min</p>"
+#: Cms/Ui/Project.php:79
+msgid ""
+"depage-cms allows to have pages in multiple languages. Here you can add or "
+"edit the available languages.\n"
+"The first language acts as the fallback-language if the page is not "
+"available in the users language. You can adjust the order by drag and drop."
 msgstr ""
+"depage-cms ermöglicht es Ihnen Seiten in mehreren Sprachen zu erstellen. "
+"Hier können Sie Sprachen hinzufügen oder bearbeiten.\n"
+"Die erste Sprache fungiert dabei als Alternativsprache, wenn die Seite nicht "
+"in der Sprache des Besuchers verfügbar ist. Sie können die Reihenfolge per "
+"Drag&Drop anpassen."
+
+#: Cms/Ui/Project.php:84
+msgid ""
+"Tags help you to categorize and filter your pages. Your templates have to "
+"support them though.\n"
+"You can adjust the order by drag and drop."
+msgstr ""
+"Tags helfen Ihnen dabei, Seiten zu kategorisieren und zu filtern. Ihre "
+"Templates müssen dies allerdings unterstützen.\n"
+"Sie können die Reihenfolge per Drag&Drop anpassen."
+
+#: Cms/Ui/Project.php:93
+msgid ""
+"Variables can be used for settings and can globally change the behaviour of "
+"various templates."
+msgstr ""
+"Variablen können für Einstellungen verwendet werden und können das globale "
+"Verhalten der Templates verändern."
+
+#: Cms/Ui/Project.php:97
+msgid "Publishing targets"
+msgstr "Veröffentlichungsziele"
+
+#: Cms/Ui/Project.php:98
+msgid ""
+"depage-cms allows to publish you pages to either a local folder or to "
+"another webserver to serve from. The first publishing targets acts as the "
+"default target. You can adjust the order by drag and drop."
+msgstr ""
+"depage-cms erlaubt es Ihnen entweder zu einem lokalen Order oder zu einem "
+"andere Webserver zu veröffentlichen, von dem die Seiten ausgeliefert werden. "
+"Das erste Veröffentlichungsziel fungiert dabei als "
+"Standardveröffentlichungsziel. Sie können die Reihenfolge per Drag&Drop "
+"anpassen."
+
+#: Cms/Ui/Project.php:110
+#, php-format
+msgid "Project '%s' Settings"
+msgstr "Projekteinstellung von '%s'"
+
+#: Cms/Ui/Project.php:112
+msgid "Add new Project"
+msgstr "Neues Projekt hinzufügen"
+
+#: Cms/Ui/Project.php:278
+msgid "You are not allowed to publish this project."
+msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
+
+#: Cms/Ui/Project.php:305
+#, php-format
+msgid "Publish Project '%s'"
+msgstr "Veröffentlichen von Projekt '%s'"
+
+#: Cms/Ui/Project.php:335
+msgid "You are not allowed to release pages on this project."
+msgstr ""
+"Sie haben keine Authentifizierung, Seiten in diesem Projekt freizugeben."
+
+#: Cms/Ui/Project.php:361
+#, php-format
+msgid "Release Pages for Project '%s'"
+msgstr "Seiten freigeben für Projekt '%s'"
+
+#: Cms/Ui/Newsletter.php:47 Cms/tpl/projectlist.tpl:22
+#: Cms/tpl/newsletterList.tpl:47
+msgid "Edit"
+msgstr "Editieren"
+
+#: Cms/Ui/Newsletter.php:111
+msgid "Edit Newsletter"
+msgstr "Newsletter bearbeiten"
+
+#: Cms/Ui/Newsletter.php:112
+msgid "Please choose the news items you want to include in the newsletter:"
+msgstr ""
+"Bitte wählen Sie die News aus, die in den Newsletter aufgenommen werden "
+"sollen:"
+
+#: Cms/Ui/Newsletter.php:126
+msgid "User is not allowed to send newsletters"
+msgstr "Dieser Benutzer darf keine Newsletter versenden"
+
+#: Cms/Ui/Newsletter.php:164
+msgid "Publish Newsletter"
+msgstr "Newsletter veröffentlichen"
+
+#: Cms/Ui/Newsletter.php:165
+msgid ""
+"You can send the newsletter to a group of your subscribers (e.g. 'Default') "
+"or to a comma separated list of custom emails for testing."
+msgstr ""
+"Sie können den Newsletter entweder an eine Gruppe Ihrer Abonnenten (z.B. "
+"'Default') schicken oder alternativ an eine komma-getrennte Liste von E-Mail-"
+"Adressen."
+
+#: Cms/Ui/Base.php:181
+msgid "You are not allowed here."
+msgstr "Sie haben hier keine Authentifizierung."
+
+#: Cms/js/locale.php:21 Cms/Forms/User.php:26 Cms/Forms/ReleasePages.php:21
+#: Cms/Forms/Project/Import.php:23 Cms/Rpc/CmsFuncs.php:753
+msgid "Cancel"
+msgstr "Abbrechen"
 
 #: Cms/js/locale.php:22
 msgid "Delete"
@@ -2599,6 +1693,10 @@ msgstr "Jetzt löschen?"
 msgid "deselect all"
 msgstr "Markierung für alle aufheben"
 
+#: Cms/js/locale.php:25 Cms/tpl/toolbar_main.tpl:37 Cms/Rpc/CmsFuncs.php:779
+msgid "edit"
+msgstr "Editieren"
+
 #: Cms/js/locale.php:26
 msgid "Edit current page in edit interface on the left ←."
 msgstr "Bearbeiten Sie die aktuelle Seite im Barbeitungspanel links ←."
@@ -2611,6 +1709,10 @@ msgstr ""
 #: Cms/js/locale.php:28
 msgid "Filter Projects"
 msgstr "Projekte filtern"
+
+#: Cms/js/locale.php:29 Cms/Rpc/CmsFuncs.php:790
+msgid "reload"
+msgstr "Aktualisieren"
 
 #: Cms/js/locale.php:30
 msgid "reload page preview"
@@ -2628,81 +1730,37 @@ msgstr "Upload beenden/abbrechen"
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
 
-#: Cms/XmlDocTypes/Colors.php:15
-msgid "Colorscheme"
-msgstr "Farbschema"
+#: Cms/Project.php:781
+msgid "Document Release Request"
+msgstr "Anfrage zur Seitenfreigabe: "
 
-#: Cms/XmlDocTypes/Colors.php:16
-msgid "(Untitled Colorscheme)"
-msgstr "(Unbenanntes Farbschema)"
+#: Cms/Project.php:782
+#, php-format
+msgid "%s is requesting a document release for '%s' on project '%s'."
+msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
 
-#: Cms/XmlDocTypes/Colors.php:21
-msgid "Color"
-msgstr "Farbe"
+#: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
+#: Cms/tpl/publish.tpl:16 Cms/tpl/flashedit.tpl:50
+#: Cms/Forms/ReleasePages.php:57 Cms/Forms/NewsletterPublish.php:63
+msgid "Preview"
+msgstr "Vorschau"
 
-#: Cms/XmlDocTypes/Colors.php:22
-msgid "New Color"
-msgstr "Neue Farbe"
-
-#: Cms/XmlDocTypes/Pages.php:19
-msgid "Page"
-msgstr "Seite"
-
-#: Cms/XmlDocTypes/Pages.php:20
-msgid "(Untitled Page)"
-msgstr "(Unbenannte Seite)"
-
-#: Cms/XmlDocTypes/Pages.php:27
-msgid "Folder"
-msgstr "Ordner"
-
-#: Cms/XmlDocTypes/Pages.php:28
-msgid "(Untitled Folder)"
-msgstr "(Unbenannter Ordner)"
-
-#: Cms/XmlDocTypes/Pages.php:35 Cms/XmlDocTypes/Pages.php:36
-msgid "Redirect"
-msgstr "Redirect"
-
-#: Cms/XmlDocTypes/Pages.php:43
-msgid "Separator"
-msgstr "Trenner"
-
-#: Cms/tpl/toolbar_main.tpl:7
-msgid "Go to dashboard"
-msgstr "Gehe zum Dashboard"
-
-#: Cms/tpl/toolbar_main.tpl:18
-msgid "Change current project"
-msgstr "Aktuelles Projekt ändern"
-
-#: Cms/tpl/toolbar_main.tpl:44 Cms/tpl/toolbar_main.tpl:57
+#: Cms/tpl/projectlist.tpl:33 Cms/tpl/toolbar_main.tpl:44
+#: Cms/tpl/toolbar_main.tpl:57
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: Cms/tpl/toolbar_main.tpl:67
-msgid "Change user settings or logout"
-msgstr "Benutzereinstellungen ändern oder logout"
-
-#: Cms/tpl/toolbar_main.tpl:71
-msgid "Account settings"
-msgstr "Benutzereinstellungen"
-
-#: Cms/tpl/toolbar_main.tpl:81
-msgid "Help"
-msgstr "Hilfe"
-
-#: Cms/tpl/projectlist.tpl:26
+#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectlist.tpl:49
 msgid "loading..."
 msgstr "lade..."
 
-#: Cms/tpl/projectlist.tpl:32
+#: Cms/tpl/projectlist.tpl:46
+msgid "newsletter"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:59
 msgid "add new project"
 msgstr "Neues Projekt hinzufügen"
-
-#: Cms/tpl/home.tpl:3
-msgid "Home"
-msgstr ""
 
 #: Cms/tpl/taskProgress.tpl:20
 #, php-format
@@ -2717,20 +1775,93 @@ msgstr ""
 
 #: Cms/tpl/taskProgress.tpl:23
 #, php-format
+msgid "'%s' starting"
+msgstr "'%s' wird gestartet"
+
+#: Cms/tpl/taskProgress.tpl:26
+#, php-format
 msgid "'%s' will finish in %s"
 msgstr "'%s' wird in %s abgeschlossen sein"
 
-#: Cms/tpl/taskProgress.tpl:46
+#: Cms/tpl/taskProgress.tpl:49
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
-#: Cms/tpl/userlist.tpl:21
+#: Cms/tpl/userprofile.tpl:9 Cms/tpl/userlist.tpl:21
 msgid "All Users"
 msgstr "Alle Benutzer"
+
+#: Cms/tpl/newsletterEdit.tpl:3
+msgid "Edit your newsletter and choose which items to include"
+msgstr ""
+
+#: Cms/tpl/newsletterEdit.tpl:6
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: Cms/tpl/newsletterEdit.tpl:14
+msgid "The preview of the current newsletter."
+msgstr "Vorschau des aktuellen Newsletters."
+
+#: Cms/tpl/home.tpl:3
+msgid "Home"
+msgstr ""
+
+#: Cms/tpl/newsletterList.tpl:8
+msgid "Add new newsletter"
+msgstr "Neuen Newsletter hinzufügen"
+
+#: Cms/tpl/newsletterList.tpl:12
+msgid "Download Subscribers"
+msgstr "Abonnenten exportieren"
+
+#: Cms/tpl/newsletterList.tpl:25
+msgid "Unreleased Newsletters"
+msgstr "Nicht freigegebene Newsletter"
+
+#: Cms/tpl/newsletterList.tpl:35
+msgid "Released Newsletters"
+msgstr "Freigegebene Newsletter"
+
+#: Cms/tpl/publish.tpl:12 Cms/tpl/flashedit.tpl:46
+msgid "The preview of the currently selected page."
+msgstr "Vorschau der aktuellen Seite."
+
+#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:47
+msgid "Unreleased Pages"
+msgstr "Nicht freigegebene Seiten"
+
+#: Cms/tpl/changelist.tpl:23
+msgid "Released Pages"
+msgstr "Freigegebene Seiten"
+
+#: Cms/tpl/changelist.tpl:32
+msgid "Last published"
+msgstr "Zuletzt veröffentlicht"
 
 #: Cms/tpl/userlist.tpl:25
 msgid "Add New User"
 msgstr "Neuen Benutzer hinzufügen"
+
+#: Cms/tpl/toolbar_main.tpl:7
+msgid "Go to dashboard"
+msgstr "Gehe zum Dashboard"
+
+#: Cms/tpl/toolbar_main.tpl:18
+msgid "Change current project"
+msgstr "Aktuelles Projekt ändern"
+
+#: Cms/tpl/toolbar_main.tpl:67
+msgid "Change user settings or logout"
+msgstr "Benutzereinstellungen ändern oder logout"
+
+#: Cms/tpl/toolbar_main.tpl:71
+msgid "Account settings"
+msgstr "Benutzereinstellungen"
+
+#: Cms/tpl/toolbar_main.tpl:81
+msgid "Help"
+msgstr "Hilfe"
 
 #: Cms/tpl/flashedit.tpl:5
 msgid "Tree/Edit"
@@ -2778,217 +1909,6 @@ msgstr "Farben:\\nHier können sie die Farben Ihres Projektes anpassen."
 msgid "Preview your current edit in the preview pane on the right →."
 msgstr "Sehen Sie das aktuelle Element als Vorschau im Panel zur Rechten →."
 
-#: Cms/tpl/flashedit.tpl:46
-msgid "The preview of the currently selected page."
-msgstr "Vorschau der aktuellen Seite."
-
-#: Cms/tpl/flashedit.tpl:50 Cms/Forms/Publish.php:67
-msgid "Preview"
-msgstr "Vorschau"
-
-#: Cms/tpl/changelist.tpl:13 Cms/Forms/Publish.php:60
-msgid "Unreleased Pages"
-msgstr "Nicht freigegebene Seiten"
-
-#: Cms/tpl/changelist.tpl:23
-msgid "Released Pages"
-msgstr "Freigegebene Seiten"
-
-#: Cms/tpl/changelist.tpl:32
-msgid "Last published"
-msgstr "Zuletzt veröffentlicht"
-
-#: Cms/Forms/Publish.php:20
-msgid "Publish Now"
-msgstr "Jetzt veröffentlichen"
-
-#: Cms/Forms/Publish.php:49
-msgid "Publish to"
-msgstr "Veröffentlichen nach"
-
-#: Cms/Forms/Publish.php:63
-msgid "Please select the pages you want to publish:"
-msgstr "Bitte markieren Sie die Seiten, die Sie jetzt veröffentlichen möchten:"
-
-#: Cms/Forms/Project/Publish.php:20
-msgid "Save Publish Settings"
-msgstr "Veröffentlichungseinstellungen speichern"
-
-#: Cms/Forms/Project/Publish.php:38
-msgid "Name of publishing target"
-msgstr "Name des Veröffentlichungsziels"
-
-#: Cms/Forms/Project/Publish.php:48
-msgid "Output folder"
-msgstr "Ausgabeordner"
-
-#: Cms/Forms/Project/Publish.php:49
-msgid "URL, where to publish project to"
-msgstr "URL, unter der veröffentlicht wird"
-
-#: Cms/Forms/Project/Publish.php:54
-msgid "Base Url"
-msgstr "Base-Url"
-
-#: Cms/Forms/Project/Publish.php:55
-msgid "Base URL of publish target"
-msgstr "Base-Url des Veröffentlichungsziels"
-
-#: Cms/Forms/Project/Publish.php:59 Cms/Forms/Project/Publish.php:60
-#: Cms/Forms/User.php:36
-msgid "Username"
-msgstr "Benutzername"
-
-#: Cms/Forms/Project/Publish.php:64 Cms/Forms/Project/Publish.php:65
-#: Cms/Forms/User.php:55
-msgid "Password"
-msgstr "Passwort"
-
-#: Cms/Forms/Project/Publish.php:69
-msgid "Template Set"
-msgstr "Template-Set"
-
-#: Cms/Forms/Project/Publish.php:77
-msgid "Server supports mod rewrite"
-msgstr "Server unterstützt mod-rewrite"
-
-#: Cms/Forms/Project/Publish.php:81
-msgid "Index this target for search"
-msgstr ""
-
-#: Cms/Forms/Project/Publish.php:102
-msgid "Add new publishing target"
-msgstr "Neue Veröffentlichungsziel hinzufügen"
-
-#: Cms/Forms/Project/Language.php:20
-msgid "Save Languages"
-msgstr "Sprachen speichern"
-
-#: Cms/Forms/Project/Language.php:38
-msgid "Language name"
-msgstr "Name der Sprache"
-
-#: Cms/Forms/Project/Language.php:50
-msgid "Language code"
-msgstr "Sprach-Code"
-
-#: Cms/Forms/Project/Language.php:51
-msgid "Short name"
-msgstr "Kurzname"
-
-#: Cms/Forms/Project/Language.php:56
-#, php-format
-msgid "Language code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"
-msgstr "Sprach-Code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"
-
-#: Cms/Forms/Project/Language.php:64
-msgid "Global metadata"
-msgstr "Globale Metadaten"
-
-#: Cms/Forms/Project/Language.php:68
-msgid "Title"
-msgstr "Titel"
-
-#: Cms/Forms/Project/Language.php:71
-msgid "Keywords"
-msgstr "Schlüsselworte"
-
-#: Cms/Forms/Project/Language.php:85
-msgid "Add new language"
-msgstr "Neue Sprache hinzufügen"
-
-#: Cms/Forms/Project/Navigation.php:20
-msgid "Save Navigation Filter"
-msgstr "Speichere Navigationsfilter"
-
-#: Cms/Forms/Project/Navigation.php:38
-msgid "Navigation filter name"
-msgstr "Name des Navigationsfilters"
-
-#: Cms/Forms/Project/Navigation.php:48
-msgid "Shortname"
-msgstr "Kurzname"
-
-#: Cms/Forms/Project/Navigation.php:49
-msgid "Template name"
-msgstr "Name des Templates"
-
-#: Cms/Forms/Project/Navigation.php:56 Cms/Forms/Project/Tag.php:50
-msgid "Localized labels"
-msgstr "Lokalisierte Bezeichnungen"
-
-#: Cms/Forms/Project/Navigation.php:64 Cms/Forms/Project/Tag.php:58
-msgid "Localized name"
-msgstr "Lokalisierter Name"
-
-#: Cms/Forms/Project/Navigation.php:80
-msgid "Add new Navigation filter"
-msgstr "Neuen Navigationsfilter hinzufügen"
-
-#: Cms/Forms/Project/Import.php:20
-msgid "Import Now"
-msgstr "Jetzt importieren"
-
-#: Cms/Forms/Project/Variable.php:20
-msgid "Save Variables"
-msgstr "Variablen Speichern"
-
-#: Cms/Forms/Project/Variable.php:38
-msgid "Variable name"
-msgstr "Name der Variable"
-
-#: Cms/Forms/Project/Variable.php:50
-msgid "Value"
-msgstr "Wert"
-
-#: Cms/Forms/Project/Variable.php:51
-msgid "Variable value"
-msgstr "Wert der Variable"
-
-#: Cms/Forms/Project/Variable.php:71
-msgid "Add new variable"
-msgstr "Neue Variable hinzufügen"
-
-#: Cms/Forms/Project/Basic.php:32
-msgid "Save Project"
-msgstr "Projekt speichern"
-
-#: Cms/Forms/Project/Basic.php:62 Cms/Forms/User.php:42
-msgid "Display Name"
-msgstr "Anzeigename"
-
-#: Cms/Forms/Project/Basic.php:66
-msgid "Identifier"
-msgstr "ID"
-
-#: Cms/Forms/Project/Basic.php:72
-msgid "Project Group"
-msgstr "Projektgruppe"
-
-#: Cms/Forms/Project/Upload.php:35
-msgid "Upload files to:"
-msgstr "Daten hochladen nach:"
-
-#: Cms/Forms/Project/Upload.php:39
-msgid "Choose File"
-msgstr "Datei auswählen"
-
-#: Cms/Forms/Project/Tag.php:20
-msgid "Save Tag"
-msgstr "Tag speichern"
-
-#: Cms/Forms/Project/Tag.php:38
-msgid "Tag name"
-msgstr "Name des Tags"
-
-#: Cms/Forms/Project/Tag.php:74
-msgid "Add new tag"
-msgstr "Neuen Tag hinzufügen"
-
-#: Cms/Forms/Project/Base.php:87
-msgid "New Tag"
-msgstr "Neuer Tag"
-
 #: Cms/Forms/User.php:23
 msgid "Save User"
 msgstr "Benutzer speichern"
@@ -3001,9 +1921,23 @@ msgstr "Benutzer bearbeiten"
 msgid "Basics"
 msgstr "Grundeinstellungen"
 
+#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:59
+#: Cms/Forms/Project/Publish.php:60
+msgid "Username"
+msgstr "Benutzername"
+
+#: Cms/Forms/User.php:42 Cms/Forms/Project/Basic.php:62
+msgid "Display Name"
+msgstr "Anzeigename"
+
 #: Cms/Forms/User.php:52
 msgid "Change Password"
 msgstr "Passwort ändern"
+
+#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:65
+#: Cms/Forms/Project/Publish.php:66
+msgid "Password"
+msgstr "Passwort"
 
 #: Cms/Forms/User.php:59
 msgid "Repeat Password"
@@ -3041,147 +1975,1420 @@ msgstr "Standardbenutzer"
 msgid "Depage\\Cms\\Auth\\Editor"
 msgstr "Editor"
 
-#: Cms/Ui/User.php:83
+#: Cms/Forms/BackupsRestore.php:22
+msgid "Restore Backup"
+msgstr ""
+
+#: Cms/Forms/BackupsRestore.php:46
+msgid "Restore Backup from:"
+msgstr ""
+
+#: Cms/Forms/BackupsRestore.php:51
+msgid ""
+" This will delete all current project pages and settings and will restore "
+"all data from the backup file. This action cannot be undone."
+msgstr ""
+
+#: Cms/Forms/BackupsRestore.php:54
+msgid "Do you really want to restore this backup?"
+msgstr ""
+
+#: Cms/Forms/Publish.php:22
+msgid "Publish Now"
+msgstr "Jetzt veröffentlichen"
+
+#: Cms/Forms/Publish.php:43
+msgid "Publish to"
+msgstr "Veröffentlichen nach"
+
+#: Cms/Forms/ReleasePages.php:30
+msgid "Release Pages Now"
+msgstr "Seiten jetzt freigeben"
+
+#: Cms/Forms/ReleasePages.php:50
+msgid "Please select the pages you want to release:"
+msgstr "Bitte markieren Sie die Seiten, die Sie freigeben möchten:"
+
+#: Cms/Forms/ReleasePages.php:54
+msgid "unknown user"
+msgstr "unbekannter Benutzer"
+
+#: Cms/Forms/ReleasePages.php:62
 #, php-format
-msgid "Edit user '%s'"
-msgstr "Benutzer '%s' bearbeiten"
+msgid "Changed by %s, %s"
+msgstr "Geändert von %s, %s"
 
-#: Cms/Ui/User.php:85
-msgid "Add new User"
-msgstr "Neuen Benutzer hinzufügen"
+#: Cms/Forms/NewsletterPublish.php:29
+msgid "Send Now"
+msgstr "Jetzt senden"
 
-#: Cms/Ui/Main.php:57
-msgid ""
-"Welcome to\n"
-" depage::cms"
-msgstr ""
-"Willkommen bei\n"
-" depage::cms"
-
-#: Cms/Ui/Main.php:76 Cms/Ui/Main.php:108
-msgid "Login"
-msgstr ""
-
-#: Cms/Ui/Main.php:157
-msgid "Edit, preview or changed settings for your projects"
-msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
-
-#: Cms/Ui/Main.php:198
-msgid "Remove"
-msgstr "Entfernen"
-
-#: Cms/Ui/Main.php:250
-msgid "Tasks"
-msgstr ""
-
-#: Cms/Ui/Main.php:252
-msgid "Shows the currently running background tasks"
-msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
-
-#: Cms/Ui/Main.php:368 Cms/Ui/Main.php:379
-msgid "Users"
-msgstr "Benutzer"
-
-#: Cms/Ui/Main.php:369
-msgid "Shows the users that are currently logged in"
-msgstr "Zeigt alle aktuell angemeldeten Benutzer"
-
-#: Cms/Ui/Main.php:380
-msgid "Shows all users"
-msgstr "Zeigt alle Benutzer"
-
-#: Cms/Ui/Project.php:58
-msgid "Project Settings"
-msgstr "Projekt"
-
-#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:81
-msgid "Tags"
-msgstr ""
-
-#: Cms/Ui/Project.php:60 Cms/Ui/Project.php:76
-msgid "Languages"
-msgstr "Sprachen"
-
-#: Cms/Ui/Project.php:61 Cms/Ui/Project.php:90
-msgid "Variables"
-msgstr "Variablen"
-
-#: Cms/Ui/Project.php:63
-msgid "Import"
-msgstr ""
-
-#: Cms/Ui/Project.php:71
-msgid "New Project"
-msgstr "Neues Projekt"
-
-#: Cms/Ui/Project.php:77
-msgid ""
-"depage-cms allows to have pages in multiple languages. Here you can add or "
-"edit the available languages.\n"
-"The first language acts as the fallback-language if the page is not "
-"available in the users language. You can adjust the order by drag and drop."
-msgstr ""
-"depage-cms ermöglicht es Ihnen Seiten in mehreren Sprachen zu erstellen. "
-"Hier können Sie Sprachen hinzufügen oder bearbeiten.\n"
-"Die erste Sprache fungiert dabei als Alternativsprache, wenn die Seite nicht "
-"in der Sprache des Besuchers verfügbar ist. Sie können die Reihenfolge per "
-"Drag&Drop anpassen."
-
-#: Cms/Ui/Project.php:82
-msgid ""
-"Tags help you to categorize and filter your pages. Your templates have to "
-"support them though.\n"
-"You can adjust the order by drag and drop."
-msgstr ""
-"Tags helfen Ihnen dabei, Seiten zu kategorisieren und zu filtern. Ihre "
-"Templates müssen dies allerdings unterstützen.\n"
-"Sie können die Reihenfolge per Drag&Drop anpassen."
-
-#: Cms/Ui/Project.php:91
-msgid ""
-"Variables can be used for settings and can globally change the behaviour of "
-"various templates."
-msgstr ""
-"Variablen können für Einstellungen verwendet werden und können das globale "
-"Verhalten der Templates verändern."
-
-#: Cms/Ui/Project.php:95
-msgid "Publishing targets"
-msgstr "Veröffentlichungsziele"
-
-#: Cms/Ui/Project.php:96
-msgid ""
-"depage-cms allows to publish you pages to either a local folder or to "
-"another webserver to serve from. The first publishing targets acts as the "
-"default target. You can adjust the order by drag and drop."
-msgstr ""
-"depage-cms erlaubt es Ihnen entweder zu einem lokalen Order oder zu einem "
-"andere Webserver zu veröffentlichen, von dem die Seiten ausgeliefert werden. "
-"Das erste Veröffentlichungsziel fungiert dabei als "
-"Standardveröffentlichungsziel. Sie können die Reihenfolge per Drag&Drop "
-"anpassen."
-
-#: Cms/Ui/Project.php:106
+#: Cms/Forms/NewsletterPublish.php:49
 #, php-format
-msgid "Project '%s' Settings"
-msgstr "Projekteinstellung von '%s'"
+msgid "%s (%d recipient)"
+msgid_plural "%s (%d recipients)"
+msgstr[0] "%s (%d Empfänger)"
+msgstr[1] "%s (%d Empfänger)"
 
-#: Cms/Ui/Project.php:108
-msgid "Add new Project"
+#: Cms/Forms/NewsletterPublish.php:52
+msgid "Custom Recipients"
+msgstr "Benutzerdefinierte Empfänger"
+
+#: Cms/Forms/NewsletterPublish.php:55
+msgid "Recipients"
+msgstr "Empfänger"
+
+#: Cms/Forms/NewsletterPublish.php:59
+msgid "Emails"
+msgstr "E-Mails"
+
+#: Cms/Forms/Newsletter.php:30
+msgid "Save"
+msgstr "Speichern"
+
+#: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
+msgid "Title"
+msgstr "Titel"
+
+#: Cms/Forms/Newsletter.php:66
+msgid "Subject"
+msgstr "Betreff"
+
+#: Cms/Forms/Newsletter.php:78
+msgid "Description"
+msgstr "Beschreibung"
+
+#: Cms/Forms/Newsletter.php:85
+msgid "Unsent news items"
+msgstr "Ungesendete News"
+
+#: Cms/Forms/Newsletter.php:99 Cms/Forms/Newsletter.php:118
+msgid "No news items available."
+msgstr "Keine News verfügbar."
+
+#: Cms/Forms/Newsletter.php:104
+msgid "News items included in other newsletters"
+msgstr "News, die in anderen Newslettern enthalten sind"
+
+#: Cms/Forms/Project/Basic.php:32
+msgid "Save Project"
+msgstr "Projekt speichern"
+
+#: Cms/Forms/Project/Basic.php:66
+msgid "Identifier"
+msgstr "ID"
+
+#: Cms/Forms/Project/Basic.php:72
+msgid "Project Group"
+msgstr "Projektgruppe"
+
+#: Cms/Forms/Project/Publish.php:20
+msgid "Save Publish Settings"
+msgstr "Veröffentlichungseinstellungen speichern"
+
+#: Cms/Forms/Project/Publish.php:38
+msgid "Name of publishing target"
+msgstr "Name des Veröffentlichungsziels"
+
+#: Cms/Forms/Project/Publish.php:48
+msgid "Output folder"
+msgstr "Ausgabeordner"
+
+#: Cms/Forms/Project/Publish.php:49
+msgid "URL, where to publish project to"
+msgstr "URL, unter der veröffentlicht wird"
+
+#: Cms/Forms/Project/Publish.php:54
+msgid "Base Url"
+msgstr "Base-Url"
+
+#: Cms/Forms/Project/Publish.php:55
+msgid "Base URL of publish target"
+msgstr "Base-Url des Veröffentlichungsziels"
+
+#: Cms/Forms/Project/Publish.php:71
+msgid "Template Set"
+msgstr "Template-Set"
+
+#: Cms/Forms/Project/Publish.php:79
+msgid "Server supports mod rewrite"
+msgstr "Server unterstützt mod-rewrite"
+
+#: Cms/Forms/Project/Publish.php:83
+msgid "Index this target for search"
+msgstr ""
+
+#: Cms/Forms/Project/Publish.php:104
+msgid "Add new publishing target"
+msgstr "Neue Veröffentlichungsziel hinzufügen"
+
+#: Cms/Forms/Project/Variable.php:20
+msgid "Save Variables"
+msgstr "Variablen Speichern"
+
+#: Cms/Forms/Project/Variable.php:38
+msgid "Variable name"
+msgstr "Name der Variable"
+
+#: Cms/Forms/Project/Variable.php:50
+msgid "Value"
+msgstr "Wert"
+
+#: Cms/Forms/Project/Variable.php:51
+msgid "Variable value"
+msgstr "Wert der Variable"
+
+#: Cms/Forms/Project/Variable.php:71
+msgid "Add new variable"
+msgstr "Neue Variable hinzufügen"
+
+#: Cms/Forms/Project/Tag.php:20
+msgid "Save Tag"
+msgstr "Tag speichern"
+
+#: Cms/Forms/Project/Tag.php:38
+msgid "Tag name"
+msgstr "Name des Tags"
+
+#: Cms/Forms/Project/Tag.php:50 Cms/Forms/Project/Navigation.php:56
+msgid "Localized labels"
+msgstr "Lokalisierte Bezeichnungen"
+
+#: Cms/Forms/Project/Tag.php:58 Cms/Forms/Project/Navigation.php:64
+msgid "Localized name"
+msgstr "Lokalisierter Name"
+
+#: Cms/Forms/Project/Tag.php:74
+msgid "Add new tag"
+msgstr "Neuen Tag hinzufügen"
+
+#: Cms/Forms/Project/Navigation.php:20
+msgid "Save Navigation Filter"
+msgstr "Speichere Navigationsfilter"
+
+#: Cms/Forms/Project/Navigation.php:38
+msgid "Navigation filter name"
+msgstr "Name des Navigationsfilters"
+
+#: Cms/Forms/Project/Navigation.php:48
+msgid "Shortname"
+msgstr "Kurzname"
+
+#: Cms/Forms/Project/Navigation.php:49
+msgid "Template name"
+msgstr "Name des Templates"
+
+#: Cms/Forms/Project/Navigation.php:80
+msgid "Add new Navigation filter"
+msgstr "Neuen Navigationsfilter hinzufügen"
+
+#: Cms/Forms/Project/Import.php:20
+msgid "Import Now"
+msgstr "Jetzt importieren"
+
+#: Cms/Forms/Project/Upload.php:35
+msgid "Upload files to:"
+msgstr "Daten hochladen nach:"
+
+#: Cms/Forms/Project/Upload.php:39
+msgid "Choose File"
+msgstr "Datei auswählen"
+
+#: Cms/Forms/Project/Base.php:87
+msgid "New Tag"
+msgstr "Neuer Tag"
+
+#: Cms/Forms/Project/Language.php:20
+msgid "Save Languages"
+msgstr "Sprachen speichern"
+
+#: Cms/Forms/Project/Language.php:38
+msgid "Language name"
+msgstr "Name der Sprache"
+
+#: Cms/Forms/Project/Language.php:50
+msgid "Language code"
+msgstr "Sprach-Code"
+
+#: Cms/Forms/Project/Language.php:51
+msgid "Short name"
+msgstr "Kurzname"
+
+#: Cms/Forms/Project/Language.php:56
+#, php-format
+msgid "Language code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"
+msgstr "Sprach-Code in <a href=\"%s\" target=\"_blank\">ISO 639-1</a>"
+
+#: Cms/Forms/Project/Language.php:64
+msgid "Global metadata"
+msgstr "Globale Metadaten"
+
+#: Cms/Forms/Project/Language.php:71
+msgid "Keywords"
+msgstr "Schlüsselworte"
+
+#: Cms/Forms/Project/Language.php:85
+msgid "Add new language"
+msgstr "Neue Sprache hinzufügen"
+
+#: Cms/Rpc/CmsFuncs.php:674
+msgid "comment"
+msgstr "kommentieren"
+
+#: Cms/Rpc/CmsFuncs.php:675
+msgid "Sorry, you don't have the authentication to change \"%name%\"."
+msgstr ""
+"Entschuldigen Sie, Sie haben keine Authentifizierung um \"%name%\" zu ändern."
+
+#: Cms/Rpc/CmsFuncs.php:676
+msgid "You are not allowed to do this!"
+msgstr "Sie haben keine Authentifizierung, das zu tun!"
+
+#: Cms/Rpc/CmsFuncs.php:677
+msgid "You are not logged in."
+msgstr "Sie sind nicht eingeloggt."
+
+#: Cms/Rpc/CmsFuncs.php:678
+msgid "Incorrect Username or Password!"
+msgstr "Falscher Benutername oder Passwort!"
+
+#: Cms/Rpc/CmsFuncs.php:679
+msgid "new window"
+msgstr "Neues Fenster"
+
+#: Cms/Rpc/CmsFuncs.php:680
+msgid "existing window"
+msgstr "Existierendes Fenster"
+
+#: Cms/Rpc/CmsFuncs.php:681
+msgid "release XSLT"
+msgstr "XSLT freigeben"
+
+#: Cms/Rpc/CmsFuncs.php:682 Cms/Rpc/CmsFuncs.php:756
+msgid "upload..."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:683
+msgid "show details"
+msgstr "Details anzeigen"
+
+#: Cms/Rpc/CmsFuncs.php:684
+msgid "show thumbnails"
+msgstr "Thumbnails anzeigen"
+
+#: Cms/Rpc/CmsFuncs.php:685
+msgid "bold"
+msgstr "fett"
+
+#: Cms/Rpc/CmsFuncs.php:686
+msgid "italic"
+msgstr "Kursiv"
+
+#: Cms/Rpc/CmsFuncs.php:687 Cms/Rpc/CmsFuncs.php:803 Cms/Rpc/CmsFuncs.php:879
+msgid "link"
+msgstr "Link"
+
+#: Cms/Rpc/CmsFuncs.php:688
+msgid "small"
+msgstr "Klein"
+
+#: Cms/Rpc/CmsFuncs.php:689
+msgid "linktarget"
+msgstr "Linkziel"
+
+#: Cms/Rpc/CmsFuncs.php:690
+msgid "add row"
+msgstr "Zeile hinzufügen"
+
+#: Cms/Rpc/CmsFuncs.php:691
+msgid "delete row"
+msgstr "Zeile löschen"
+
+#: Cms/Rpc/CmsFuncs.php:692
+msgid "delete"
+msgstr "Löschen"
+
+#: Cms/Rpc/CmsFuncs.php:693
+msgid "duplicate"
+msgstr "Duplizieren"
+
+#: Cms/Rpc/CmsFuncs.php:694
+msgid "add"
+msgstr "Hinzufügen"
+
+#: Cms/Rpc/CmsFuncs.php:695
+msgid "new folder"
+msgstr "Neuer Ordner"
+
+#: Cms/Rpc/CmsFuncs.php:696
+msgid "release templates to be available for all user"
+msgstr "Templates für alles Benutzer freigeben"
+
+#: Cms/Rpc/CmsFuncs.php:697
+msgid "upload new file"
+msgstr "Neue Datei hochladen"
+
+#: Cms/Rpc/CmsFuncs.php:698
+msgid "by"
+msgstr "von"
+
+#: Cms/Rpc/CmsFuncs.php:699
+msgid "Sun"
+msgstr "So"
+
+#: Cms/Rpc/CmsFuncs.php:700
+msgid "Mon"
+msgstr "Mo"
+
+#: Cms/Rpc/CmsFuncs.php:701
+msgid "Tue"
+msgstr "Di"
+
+#: Cms/Rpc/CmsFuncs.php:702
+msgid "Wed"
+msgstr "Mi"
+
+#: Cms/Rpc/CmsFuncs.php:703
+msgid "Thu"
+msgstr "Do"
+
+#: Cms/Rpc/CmsFuncs.php:704
+msgid "Fri"
+msgstr "Fr"
+
+#: Cms/Rpc/CmsFuncs.php:705
+msgid "Sat"
+msgstr "Sa"
+
+#: Cms/Rpc/CmsFuncs.php:706
+msgid "%D%, %d% %MM% %y% at %h%:%m%:%s%"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:707
+msgid "%M%/%d%/%y%"
+msgstr "%d%.%M%.%y%"
+
+#: Cms/Rpc/CmsFuncs.php:708
+msgid "Jan"
+msgstr "Jan"
+
+#: Cms/Rpc/CmsFuncs.php:709
+msgid "Oct"
+msgstr "Okt"
+
+#: Cms/Rpc/CmsFuncs.php:710
+msgid "Nov"
+msgstr "Nov"
+
+#: Cms/Rpc/CmsFuncs.php:711
+msgid "Dec"
+msgstr "Dez"
+
+#: Cms/Rpc/CmsFuncs.php:712
+msgid "Feb"
+msgstr "Feb"
+
+#: Cms/Rpc/CmsFuncs.php:713
+msgid "Mar"
+msgstr "Mär"
+
+#: Cms/Rpc/CmsFuncs.php:714
+msgid "Apr"
+msgstr "Apr"
+
+#: Cms/Rpc/CmsFuncs.php:715
+msgid "May"
+msgstr "Mai"
+
+#: Cms/Rpc/CmsFuncs.php:716
+msgid "Jun"
+msgstr "Jun"
+
+#: Cms/Rpc/CmsFuncs.php:717
+msgid "Jul"
+msgstr "Jul"
+
+#: Cms/Rpc/CmsFuncs.php:718
+msgid "Aug"
+msgstr "Aug"
+
+#: Cms/Rpc/CmsFuncs.php:719
+msgid "Sep"
+msgstr "Sep"
+
+#: Cms/Rpc/CmsFuncs.php:720
+msgid "h"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:721
+msgid "at"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:722
+msgid "%h%:%m%"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:723
+msgid "Error"
+msgstr "Fehler"
+
+#: Cms/Rpc/CmsFuncs.php:724
+msgid "Filetransfer Error:<br>"
+msgstr "Fehler beim Dateitransfer:<br>"
+
+#: Cms/Rpc/CmsFuncs.php:725
+msgid "Could not connect to:"
+msgstr "Konnte nicht verbinden zu:"
+
+#: Cms/Rpc/CmsFuncs.php:726
+msgid "Could not login as:"
+msgstr "Konnte nicht einloggen als:"
+
+#: Cms/Rpc/CmsFuncs.php:727
+msgid "Could not write to:"
+msgstr "Konnte nicht schreiben zu:"
+
+#: Cms/Rpc/CmsFuncs.php:728
+msgid "Not a valid page-id."
+msgstr "Keine gültige Seiten-Id"
+
+#: Cms/Rpc/CmsFuncs.php:729
+msgid "Node has been deleted by another user."
+msgstr "Element wurde durch anderen Benutzer gelöscht."
+
+#: Cms/Rpc/CmsFuncs.php:730
+msgid "An end-tag was encountered without a matching start-tag."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:731
+msgid "A CDATA section is not properly terminated."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:732
+msgid "The XML declaration is not properly terminated."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:733
+msgid "The DOCTYPE declaration is not properly terminated."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:734
+msgid "A comment is not properly terminated."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:735
+msgid "An XML element is malformed."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:736
+msgid "The Flashplayer is out of memory."
+msgstr "Der Flashplayer hat nicht genug Speicher."
+
+#: Cms/Rpc/CmsFuncs.php:737
+msgid "An attribute value is not properly terminated."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:738
+msgid "A start-tag is not matched with an end-tag."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:739
+msgid "An error occured while parsing the template:"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:740
+msgid "copyright: "
+msgstr "Copyright: "
+
+#: Cms/Rpc/CmsFuncs.php:741
+msgid "description: "
+msgstr "Beschreibung: "
+
+#: Cms/Rpc/CmsFuncs.php:742
+msgid "last changed: "
+msgstr "Zuletzt geändert: "
+
+#: Cms/Rpc/CmsFuncs.php:743
+msgid "size: "
+msgstr "Größe: "
+
+#: Cms/Rpc/CmsFuncs.php:744
+msgid "dimensions: "
+msgstr "Maße: "
+
+#: Cms/Rpc/CmsFuncs.php:745
+msgid "keywords: "
+msgstr "Schlüsselworte: "
+
+#: Cms/Rpc/CmsFuncs.php:746
+msgid "Complete Backup from"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:747
+msgid "Backup not restored"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:748
+msgid "Backup not saved"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:749
+msgid "Backup restored"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:750
+msgid "The project '%project%' has been restored from '%file%'."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:751
+msgid "Backup saved"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:752
+msgid "The project '%project%' has been saved in '%file%'"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:754
+msgid "connection to the server has closed unexpectedly."
+msgstr "Die Verbindung zu Server wurde unerwartet unterbrochen."
+
+#: Cms/Rpc/CmsFuncs.php:755
+msgid "connection lost"
+msgstr "Verbindung unterbrochen"
+
+#: Cms/Rpc/CmsFuncs.php:757
+msgid ""
+"Please choose the files, you want to upload to the file-library to '%path%'. "
+"You can upload %maxsize% max.<br/><br/><b>Attention: Existing file will be "
+"overwritten without confimation!</b>"
+msgstr ""
+"Bitte wählen Sie die Dateien aus, die sie zu '%path%' hochladen möchten. Sie "
+"können maximal %maxsize% hochladen.<br/><br/><b>Achtung: Bestehende Dateien "
+"mit gleichem Namen werden ohne Nachfrage überschrieben!</b>"
+
+#: Cms/Rpc/CmsFuncs.php:758
+msgid "%app_name% upload"
+msgstr "%app_name% Hochladen"
+
+#: Cms/Rpc/CmsFuncs.php:759
+msgid "The file(s) have been uploaded."
+msgstr "Die Datei(en) wurden hochgeladen."
+
+#: Cms/Rpc/CmsFuncs.php:760
+msgid "Additional actions"
+msgstr "Zusätzliche Funktionen"
+
+#: Cms/Rpc/CmsFuncs.php:761
+msgid "Last publishing"
+msgstr "Letzte Veröffentlichung"
+
+#: Cms/Rpc/CmsFuncs.php:762
+msgid "Recently changed pages"
+msgstr "Zuletzt geänderte Seiten"
+
+#: Cms/Rpc/CmsFuncs.php:763
+msgid "Bye bye!"
+msgstr "Auf Wiedersehen!"
+
+#: Cms/Rpc/CmsFuncs.php:764
+msgid "You can relogin <a href=\".\">here</a>."
+msgstr "Sie können sich <a href=\".\">hier</a> erneut einloggen."
+
+#: Cms/Rpc/CmsFuncs.php:765
+msgid "Thank you for using %app_name%."
+msgstr "Vielen Dank, dass Sie %app_name% benutzen."
+
+#: Cms/Rpc/CmsFuncs.php:766
+msgid "%app_name% %app_version%"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:767
+msgid "You need the Adobe Flash Player%minversion%, to use %app_name%."
+msgstr ""
+"Sie brauchen den Adobe Flash Player%minversion%, um %app_name% zu benutzen."
+
+#: Cms/Rpc/CmsFuncs.php:768
+msgid "For this project there is no import-routine defined."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:769 Cms/Rpc/CmsFuncs.php:783
+msgid "You need to activate Javascript, to use %app_name%."
+msgstr "Sie müssen Javascript aktivieren, um %app_name% zu benutzen."
+
+#: Cms/Rpc/CmsFuncs.php:770
+msgid "Error in transformation"
+msgstr "Fehler beim Transformieren"
+
+#: Cms/Rpc/CmsFuncs.php:771
+msgid "Add new project"
 msgstr "Neues Projekt hinzufügen"
 
-#: Cms/Ui/Project.php:296
-#, php-format
-msgid "Publish Project '%s'"
-msgstr "Veröffentlichen von Projekt '%s'"
+#: Cms/Rpc/CmsFuncs.php:773
+msgid "name of project"
+msgstr "Name des Projekts"
 
-#: Mail/Mail.php:312
-msgid "This is a MIME encapsulated multipart message."
+#: Cms/Rpc/CmsFuncs.php:774
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: Cms/Rpc/CmsFuncs.php:775
+msgid ""
+"The name of the project may only contain letters and numbers, no spaces or "
+"special characers allowed:<br> Please choose another name."
+msgstr ""
+"Der Name des Projekts darf nur Buchstaben und Zahlen enthalten, keine "
+"Leerzeichen oder Sonderzeichen:<br> Bitte wählen Sie einen anderen Namen."
+
+#: Cms/Rpc/CmsFuncs.php:776
+msgid "This project exists already:<br> Please choose another name."
+msgstr ""
+"Dieses Projekt existiert bereits:<br> Bitte wählen Sie einen anderen Namen."
+
+#: Cms/Rpc/CmsFuncs.php:777
+msgid "restore project from backup"
 msgstr ""
 
-#: Mail/Mail.php:313
-msgid "Please use a MIME-compliant e-mail program to open it."
+#: Cms/Rpc/CmsFuncs.php:778
+msgid "backup project"
 msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:780 Cms/Rpc/CmsFuncs.php:900 Cms/Rpc/CmsFuncs.php:902
+#: Cms/Rpc/CmsFuncs.php:907
+msgid "preview"
+msgstr "Vorschau"
+
+#: Cms/Rpc/CmsFuncs.php:782 Cms/Rpc/CmsFuncs.php:841
+msgid "publish"
+msgstr "Veröffentlichen"
+
+#: Cms/Rpc/CmsFuncs.php:784
+msgid "requirements"
+msgstr "Anforderungen"
+
+#: Cms/Rpc/CmsFuncs.php:785
+msgid "%app_name% %app_version% // status"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:786
+msgid "edit page"
+msgstr "Seite editieren"
+
+#: Cms/Rpc/CmsFuncs.php:787
+msgid "help"
+msgstr "Hilfe"
+
+#: Cms/Rpc/CmsFuncs.php:788
+msgid "home"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:789
+msgid "logout"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:791
+msgid "manage users"
+msgstr "Benutzer verwalten"
+
+#: Cms/Rpc/CmsFuncs.php:792
+msgid "Please, choose a file"
+msgstr "Bitte wählen Sie eine Datei aus"
+
+#: Cms/Rpc/CmsFuncs.php:793
+msgid "Height: "
+msgstr "Höhe: "
+
+#: Cms/Rpc/CmsFuncs.php:794
+msgid "Type: "
+msgstr "Dateityp: "
+
+#: Cms/Rpc/CmsFuncs.php:795
+msgid "Width: "
+msgstr "Breite: "
+
+#: Cms/Rpc/CmsFuncs.php:796
+msgid "Please, choose a file to link to:"
+msgstr "Bitte wählen Sie eine Datei aus, die verlinkt werden soll:"
+
+#: Cms/Rpc/CmsFuncs.php:797
+msgid "Please, choose an image:"
+msgstr "Bitte wählen Sie ein Bild aus:"
+
+#: Cms/Rpc/CmsFuncs.php:798
+msgid "Please, choose a page to link to:"
+msgstr "Bitte wählen Sie eine Seite aus, die verlinkt werden soll:"
+
+#: Cms/Rpc/CmsFuncs.php:799
+msgid "Do you want to delete \"%name%\"?"
+msgstr "Möchten Sie \"%name%\" wirklich löschen?"
+
+#: Cms/Rpc/CmsFuncs.php:800
+msgid "[project settings]"
+msgstr "[Projekt Einstellungen]"
+
+#: Cms/Rpc/CmsFuncs.php:801
+msgid "none"
+msgstr "kein"
+
+#: Cms/Rpc/CmsFuncs.php:802 Cms/Rpc/CmsFuncs.php:824 Cms/Rpc/CmsFuncs.php:875
+msgid "description"
+msgstr "Beschreibung"
+
+#: Cms/Rpc/CmsFuncs.php:804
+msgid "audio"
+msgstr "Audio"
+
+#: Cms/Rpc/CmsFuncs.php:805
+msgid "[none]"
+msgstr "[kein]"
+
+#: Cms/Rpc/CmsFuncs.php:806
+msgid "date"
+msgstr "Datum"
+
+#: Cms/Rpc/CmsFuncs.php:807
+msgid "flash"
+msgstr "Flash"
+
+#: Cms/Rpc/CmsFuncs.php:808
+msgid "[auto]"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:809
+msgid "image"
+msgstr "Bild"
+
+#: Cms/Rpc/CmsFuncs.php:810
+msgid "image caption"
+msgstr "Bildunterschrift"
+
+#: Cms/Rpc/CmsFuncs.php:811
+msgid "copyright"
+msgstr "Copyright"
+
+#: Cms/Rpc/CmsFuncs.php:812
+msgid "thumb"
+msgstr "Thumbnail"
+
+#: Cms/Rpc/CmsFuncs.php:813
+msgid "zoom"
+msgstr "Zoom"
+
+#: Cms/Rpc/CmsFuncs.php:814
+msgid "source code"
+msgstr "Source Code"
+
+#: Cms/Rpc/CmsFuncs.php:815
+msgid "table"
+msgstr "Tabelle"
+
+#: Cms/Rpc/CmsFuncs.php:816
+msgid "text"
+msgstr "Text"
+
+#: Cms/Rpc/CmsFuncs.php:817
+msgid "list"
+msgstr "Liste"
+
+#: Cms/Rpc/CmsFuncs.php:818
+msgid "headline"
+msgstr "Überschrift"
+
+#: Cms/Rpc/CmsFuncs.php:819
+msgid "time"
+msgstr "Zeit"
+
+#: Cms/Rpc/CmsFuncs.php:820 Cms/Rpc/CmsFuncs.php:831
+msgid "type"
+msgstr "Typ"
+
+#: Cms/Rpc/CmsFuncs.php:821
+msgid "video"
+msgstr "Video"
+
+#: Cms/Rpc/CmsFuncs.php:822 Cms/Rpc/CmsFuncs.php:955
+msgid "colorscheme"
+msgstr "Farbschema"
+
+#: Cms/Rpc/CmsFuncs.php:823
+msgid "last change"
+msgstr "Letzte Änderung"
+
+#: Cms/Rpc/CmsFuncs.php:825
+msgid "page type"
+msgstr "Seitentyp"
+
+#: Cms/Rpc/CmsFuncs.php:826
+msgid "icon"
+msgstr "Icon"
+
+#: Cms/Rpc/CmsFuncs.php:827
+msgid "linkinfo"
+msgstr "Linkinfo"
+
+#: Cms/Rpc/CmsFuncs.php:828 Cms/Rpc/CmsFuncs.php:969
+msgid "navigation"
+msgstr "Navigation"
+
+#: Cms/Rpc/CmsFuncs.php:829
+msgid "tags"
+msgstr "Tags"
+
+#: Cms/Rpc/CmsFuncs.php:830 Cms/Rpc/CmsFuncs.php:845
+msgid "title"
+msgstr "Titel"
+
+#: Cms/Rpc/CmsFuncs.php:832 Cms/Rpc/CmsFuncs.php:964 Cms/Rpc/CmsFuncs.php:965
+msgid "backup"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:833 Cms/Rpc/CmsFuncs.php:901
+msgid "manually"
+msgstr "manuell"
+
+#: Cms/Rpc/CmsFuncs.php:834
+msgid "database"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:835 Cms/Rpc/CmsFuncs.php:906 Cms/Rpc/CmsFuncs.php:947
+msgid "file-library"
+msgstr "Dateibibliothek"
+
+#: Cms/Rpc/CmsFuncs.php:836 Cms/Rpc/CmsFuncs.php:891
+msgid "colors"
+msgstr "Farben"
+
+#: Cms/Rpc/CmsFuncs.php:837
+msgid "file path"
+msgstr "Dateipfad"
+
+#: Cms/Rpc/CmsFuncs.php:838
+msgid "XSL Template"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:839 Cms/Rpc/CmsFuncs.php:840
+msgid "short name"
+msgstr "Kurzname"
+
+#: Cms/Rpc/CmsFuncs.php:842
+msgid "encoding"
+msgstr "Zeichensatz"
+
+#: Cms/Rpc/CmsFuncs.php:843
+msgid "output method"
+msgstr "Ausgabemethode"
+
+#: Cms/Rpc/CmsFuncs.php:844
+msgid "variable"
+msgstr "Variable"
+
+#: Cms/Rpc/CmsFuncs.php:846
+msgid "template for new elements"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:847
+msgid "xsl-template"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:848
+msgid "valid parents"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:849
+msgid "automatic"
+msgstr "automatisch"
+
+#: Cms/Rpc/CmsFuncs.php:850
+msgid "multiple languages"
+msgstr "mehrsprachig"
+
+#: Cms/Rpc/CmsFuncs.php:851
+msgid "Hide files with wrong filetype or wrong image size."
+msgstr "Dateien mit falschem Typ oder falscher Größe ausblenden."
+
+#: Cms/Rpc/CmsFuncs.php:852
+msgid "Show files with wrong filetype or wrong image size."
+msgstr "Dateien mit falschem Typ oder falscher Größe einblenden."
+
+#: Cms/Rpc/CmsFuncs.php:853
+msgid "name"
+msgstr "Name"
+
+#: Cms/Rpc/CmsFuncs.php:854
+msgid "path to audio-file"
+msgstr "Pfad zur Audio-Datei"
+
+#: Cms/Rpc/CmsFuncs.php:855
+msgid "automatic Backup"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:856
+msgid "backup now"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:857 Cms/Rpc/CmsFuncs.php:884
+msgid "%description%<br>%percent% done<br>remaining: %remaining%"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:858
+msgid "full backup"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:859
+msgid "data only"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:860
+msgid "file-library only"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:861
+msgid "every day"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:862
+msgid "every month"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:863
+msgid "every week"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:864 Cms/Rpc/CmsFuncs.php:966
+msgid "restore"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:865
+msgid "documents"
+msgstr "Dokumente"
+
+#: Cms/Rpc/CmsFuncs.php:866 Cms/Rpc/CmsFuncs.php:946
+msgid "colorschemes"
+msgstr "Farbschemata"
+
+#: Cms/Rpc/CmsFuncs.php:867 Cms/Rpc/CmsFuncs.php:949
+msgid "pages"
+msgstr "Seiten"
+
+#: Cms/Rpc/CmsFuncs.php:868 Cms/Rpc/CmsFuncs.php:895 Cms/Rpc/CmsFuncs.php:950
+msgid "settings"
+msgstr "Einstellungen"
+
+#: Cms/Rpc/CmsFuncs.php:869 Cms/Rpc/CmsFuncs.php:896
+msgid "templates"
+msgstr "Templates"
+
+#: Cms/Rpc/CmsFuncs.php:870
+msgid "clean up library before restoring"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:871
+msgid "clear file-library first"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:872
+msgid "replace existing files"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:873
+msgid "_new_color"
+msgstr "_neue_Farbe"
+
+#: Cms/Rpc/CmsFuncs.php:874
+msgid "path to flash-file"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:876
+msgid "alt"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:877
+msgid "..."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:878
+msgid "path to image"
+msgstr "Pfad zum Bild"
+
+#: Cms/Rpc/CmsFuncs.php:880
+msgid "base-url"
+msgstr "Base-Url"
+
+#: Cms/Rpc/CmsFuncs.php:881
+msgid "publish now"
+msgstr "Jetzt veröffentlichen"
+
+#: Cms/Rpc/CmsFuncs.php:882
+msgid "Release page now"
+msgstr "Seite jetzt freigeben"
+
+#: Cms/Rpc/CmsFuncs.php:882
+msgid "Request page release"
+msgstr "Seitenfreigabe anfragen"
+
+#: Cms/Rpc/CmsFuncs.php:883 Cms/Rpc/CmsFuncs.php:916
+msgid "password"
+msgstr "Passwort"
+
+#: Cms/Rpc/CmsFuncs.php:885
+msgid "target path"
+msgstr "Zielpfad"
+
+#: Cms/Rpc/CmsFuncs.php:886 Cms/Rpc/CmsFuncs.php:917
+msgid "user"
+msgstr "Benutzer"
+
+#: Cms/Rpc/CmsFuncs.php:887
+msgid "indent source"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:888
+msgid "please wait ... initializing text-styles"
+msgstr "Bitte warten ... initialisiere Text-Formate"
+
+#: Cms/Rpc/CmsFuncs.php:889
+msgid "path to video-file"
+msgstr "Pfad zur Video-Datei"
+
+#: Cms/Rpc/CmsFuncs.php:890
+msgid "active"
+msgstr "aktiv"
+
+#: Cms/Rpc/CmsFuncs.php:892
+msgid "edit pages"
+msgstr "Seiten editieren"
+
+#: Cms/Rpc/CmsFuncs.php:893
+msgid "files"
+msgstr "Dateien"
+
+#: Cms/Rpc/CmsFuncs.php:894 Cms/Rpc/CmsFuncs.php:915
+msgid "login"
+msgstr "Login"
+
+#: Cms/Rpc/CmsFuncs.php:897
+msgid "after choosing"
+msgstr "Nach Auswahl"
+
+#: Cms/Rpc/CmsFuncs.php:898
+msgid "after choosing/changing"
+msgstr "Nach Auswahl/Änderung"
+
+#: Cms/Rpc/CmsFuncs.php:899
+msgid "enable feedback"
+msgstr "Feedback erlauben"
+
+#: Cms/Rpc/CmsFuncs.php:903
+msgid "template set"
+msgstr "Template-Set"
+
+#: Cms/Rpc/CmsFuncs.php:904
+msgid "edit colors and colorschemes..."
+msgstr "Farben und Farbschemata bearbeiten..."
+
+#: Cms/Rpc/CmsFuncs.php:905
+msgid "add, edit and delete pages..."
+msgstr "Seiten hinzufügen, editieren und löschen..."
+
+#: Cms/Rpc/CmsFuncs.php:908
+msgid "edit settings..."
+msgstr "Einstellungen bearbeiten..."
+
+#: Cms/Rpc/CmsFuncs.php:909
+msgid "edit templates..."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:910
+msgid "configuration loaded."
+msgstr "Konfiguration geladen."
+
+#: Cms/Rpc/CmsFuncs.php:911
+msgid "interface loaded."
+msgstr "Interface geladen."
+
+#: Cms/Rpc/CmsFuncs.php:912
+msgid "project loaded."
+msgstr "Projekt geladen."
+
+#: Cms/Rpc/CmsFuncs.php:913
+msgid "loading project..."
+msgstr "Lade Projekt..."
+
+#: Cms/Rpc/CmsFuncs.php:914
+msgid "<b>%app_name%</b><br>[%app_version%]<br><br>preloading...<br>%loading%"
+msgstr "<b>%app_name%</b><br>[%app_version%]<br><br>lade...<br>%loading%"
+
+#: Cms/Rpc/CmsFuncs.php:918
+msgid "Login failed. Please try again."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:919
+msgid "connection established."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:920
+msgid "connecting to server..."
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:921
+msgid "loading interface..."
+msgstr "Lade Interface..."
+
+#: Cms/Rpc/CmsFuncs.php:922
+msgid "project data"
+msgstr "Projektdaten"
+
+#: Cms/Rpc/CmsFuncs.php:923
+msgid "backup colorschemes"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:924
+msgid "backup content"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:925
+msgid "backup library"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:926
+msgid "backup element templates"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:927
+msgid "backup settings"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:928
+msgid "backup xslt templates"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:929
+msgid "caching colorschemes"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:930
+msgid "caching languages"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:931
+msgid "caching navigation"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:932
+msgid "caching pages"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:933
+msgid "caching settings"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:934
+msgid "caching templates"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:935
+msgid "publishing atom feeds"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:936
+msgid "publishing index"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:937
+msgid "publishing library"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:938
+msgid "preprocessing pages"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:939
+msgid "publishing pages"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:940
+msgid "publishing sitemap"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:941
+msgid "testing connection to publishing host"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:942
+msgid "(calculating)"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:943
+msgid "minutes"
+msgstr "Minuten"
+
+#: Cms/Rpc/CmsFuncs.php:944
+msgid "seconds"
+msgstr "Sekunden"
+
+#: Cms/Rpc/CmsFuncs.php:945
+msgid "(copy)"
+msgstr "(Kopie)"
+
+#: Cms/Rpc/CmsFuncs.php:948
+msgid "document"
+msgstr "Dokument"
+
+#: Cms/Rpc/CmsFuncs.php:951
+msgid "element-templates"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:952
+msgid "XSL-templates"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:953
+msgid "global colors"
+msgstr "globale Farben"
+
+#: Cms/Rpc/CmsFuncs.php:954
+msgid "Meta*"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:956
+msgid "folder"
+msgstr "Ordner"
+
+#: Cms/Rpc/CmsFuncs.php:957
+msgid "element"
+msgstr "Element"
+
+#: Cms/Rpc/CmsFuncs.php:958
+msgid "page"
+msgstr "Seite"
+
+#: Cms/Rpc/CmsFuncs.php:959
+msgid "[empty page]"
+msgstr "[Leere Seite]"
+
+#: Cms/Rpc/CmsFuncs.php:960
+msgid "redirect"
+msgstr "Redirect"
+
+#: Cms/Rpc/CmsFuncs.php:961
+msgid "separator"
+msgstr "Trenner"
+
+#: Cms/Rpc/CmsFuncs.php:962
+msgid "template"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:963
+msgid "                    "
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:967
+msgid "global files"
+msgstr "Globale Dateien"
+
+#: Cms/Rpc/CmsFuncs.php:968
+msgid "languages"
+msgstr "Sprachen"
+
+#: Cms/Rpc/CmsFuncs.php:971
+msgid "template-sets"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:972
+msgid "variables"
+msgstr "Variablen"
+
+#: Cms/Rpc/CmsFuncs.php:973
+msgid "(untitled)"
+msgstr "(unbenannt)"
+
+#: Cms/Rpc/CmsFuncs.php:974
+msgid " loading..."
+msgstr " lade..."
+
+#: Cms/Rpc/CmsFuncs.php:975
+msgid "(unknown)"
+msgstr "(unbekannt)"
+
+#: Cms/Rpc/CmsFuncs.php:976
+msgid "Authentication"
+msgstr "Authentifizierung"
+
+#: Cms/Rpc/CmsFuncs.php:977
+msgid "You have no Authentication to access this item"
+msgstr "Sie haben keine Authentifizierung, um auf dieses Element zuzugreifen"
+
+#: Cms/Rpc/CmsFuncs.php:978
+msgid "Which backup of '%project%' do you want to restore?"
+msgstr ""
+
+#: Cms/Rpc/CmsFuncs.php:979
+msgid "Do you want to publish '%project%' now?"
+msgstr "Möchten Sie '%project%' jetzt veröffentlichen?"
+
+#: Cms/Rpc/CmsFuncs.php:980
+msgid "%chars% of %maxchars% characters max left"
+msgstr "%chars% von %maxchars% Zeichen übrig"
+
+#: Cms/Rpc/CmsFuncs.php:981
+msgid "%percent%% finishing in %time_until_end%min</p>"
+msgstr ""
+
+#: Cms/XmlDocTypes/Pages.php:26
+msgid "Page"
+msgstr "Seite"
+
+#: Cms/XmlDocTypes/Pages.php:27
+msgid "(Untitled Page)"
+msgstr "(Unbenannte Seite)"
+
+#: Cms/XmlDocTypes/Pages.php:34
+msgid "Folder"
+msgstr "Ordner"
+
+#: Cms/XmlDocTypes/Pages.php:35
+msgid "(Untitled Folder)"
+msgstr "(Unbenannter Ordner)"
+
+#: Cms/XmlDocTypes/Pages.php:42 Cms/XmlDocTypes/Pages.php:43
+msgid "Redirect"
+msgstr "Redirect"
+
+#: Cms/XmlDocTypes/Pages.php:50
+msgid "Separator"
+msgstr "Trenner"
+
+#: Cms/XmlDocTypes/Colors.php:15
+msgid "Colorscheme"
+msgstr "Farbschema"
+
+#: Cms/XmlDocTypes/Colors.php:16
+msgid "(Untitled Colorscheme)"
+msgstr "(Unbenanntes Farbschema)"
+
+#: Cms/XmlDocTypes/Colors.php:21
+msgid "Color"
+msgstr "Farbe"
+
+#: Cms/XmlDocTypes/Colors.php:22
+msgid "New Color"
+msgstr "Neue Farbe"
+
+#, fuzzy
+#~ msgid "Save Tags"
+#~ msgstr "Tag speichern"
+
+#, fuzzy
+#~ msgid "Langugage Identifier"
+#~ msgstr "ID"
+
+#, fuzzy
+#~ msgid "Select default languages"
+#~ msgstr "mehrsprachig"
+
+#~ msgid "Requesting Document Release"
+#~ msgstr "Anfrage zur Seitenfreigabe"
+
+#~ msgid "Shows all users"
+#~ msgstr "Zeigt alle Benutzer"
 
 #~ msgid "projects"
 #~ msgstr "Projekte"
@@ -3201,9 +3408,6 @@ msgstr ""
 #~ msgid "Default User"
 #~ msgstr "Standardbenutzer"
 
-#~ msgid "Editor"
-#~ msgstr "Editor"
-
 #~ msgid "site"
 #~ msgstr "Website"
 
@@ -3218,9 +3422,6 @@ msgstr ""
 
 #~ msgid "User Profile"
 #~ msgstr "Benutzerprofil"
-
-#~ msgid "unknown user profile"
-#~ msgstr "Unbekanntes Benutzerprofil"
 
 #~ msgid "%d hours ago"
 #~ msgstr "vor %d Stunden"

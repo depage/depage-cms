@@ -77,6 +77,7 @@ class DocumentHistory
 
             foreach($results as &$result) {
                 $versions[strtotime($result['last_saved_at'])] = (object) [
+                    'firstsaved' => new \DateTime($result['first_saved_at']),
                     'lastsaved' => new \DateTime($result['last_saved_at']),
                     'userId' => $result['user_id'],
                     'published' => $result['published'],
@@ -111,26 +112,31 @@ class DocumentHistory
      */
     public function getXml($timestamp, $add_id_attribute = true) {
         $doc = false;
+        $docId = $this->document->getDocId();
 
         $query = $this->pdo->prepare(
-            "SELECT h.xml
+            "SELECT
+                h.xml,
+                h.last_saved_at as lastchange,
+                h.user_id as uid
             FROM {$this->table_history} AS h
-            WHERE h.last_saved_at = :timestamp"
+            WHERE h.doc_id = :doc_id
+                AND h.last_saved_at = :timestamp"
         );
 
         $params = [
+            'doc_id' => $docId,
             'timestamp' => date($this->dateFormat, $timestamp),
         ];
 
         if ($query->execute($params) && $result = $query->fetchObject()) {
             $doc = new \Depage\Xml\Document();
             $doc->loadXML($result->xml);
-            $doc->documentElement->setAttribute('db:docid', $this->document->getDocId());
-            $doc->documentElement->setAttribute('db:lastchange', date($this->dateFormat, $timestamp));
-
             if (!$add_id_attribute) {
                 Document::removeNodeAttr($doc, $this->db_ns, 'id');
             }
+            $doc->documentElement->setAttribute('db:docid', $docId);
+            $doc->documentElement->setAttribute('db:lastchange', $result->lastchange);
         }
 
         return $doc;
@@ -179,25 +185,45 @@ class DocumentHistory
         $latestVersion = $this->getLatestVersion();
 
         if (!$latestVersion || $latestVersion->hash != $hash) {
+            // @todo update date of latest version
             $query = $this->pdo->prepare(
-                "INSERT INTO {$this->table_history} (doc_id, hash, xml, last_saved_at, user_id, published)
-                VALUES(:doc_id, :hash, :xml, :timestamp, :user_id, :published);"
+                "INSERT INTO {$this->table_history} (doc_id, hash, xml, first_saved_at, last_saved_at, user_id, published)
+                VALUES(:doc_id, :hash, :xml, :timestamp1, :timestamp2, :user_id, :published);"
             );
 
             $params = [
                 'doc_id' => $this->document->getDocId(),
                 'hash' => $hash,
                 'xml' => $xml,
-                'timestamp' => date($this->dateFormat, $timestamp),
+                'timestamp1' => date($this->dateFormat, $timestamp),
+                'timestamp2' => date($this->dateFormat, $timestamp),
                 'user_id' => $user_id,
                 'published' => $published,
             ];
 
-            if ($query->execute($params)) {
-                $result = $timestamp;
+            $query->execute($params);
+            $dth->onHistorySave();
 
-                $dth->onHistorySave();
-            }
+            $result = $timestamp;
+        } else if ($latestVersion->hash == $hash) {
+            $query = $this->pdo->prepare(
+                "UPDATE {$this->table_history}
+                SET last_saved_at = :timestamp
+                WHERE
+                    doc_id = :doc_id AND
+                    hash = :hash
+                ;"
+            );
+
+            $params = [
+                'doc_id' => $this->document->getDocId(),
+                'hash' => $hash,
+                'timestamp' => date($this->dateFormat, $timestamp),
+            ];
+
+            $query->execute($params);
+
+            $result = $timestamp;
         } else {
             $result = strtotime($latestVersion->lastsaved->getTimestamp());
         }

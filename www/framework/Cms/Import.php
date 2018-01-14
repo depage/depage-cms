@@ -164,15 +164,7 @@ class Import
      **/
     public function clearTransformCache()
     {
-        $templates = ["html", "atom", "debug"];
-        $previewTypes = ["pre", "live"];
-
-        foreach ($templates as $template) {
-            foreach ($previewTypes as $type) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, "$template-$type");
-                $transformCache->clearAll();
-            }
-        }
+        $this->project->clearTransformCache();
     }
     // }}}
     // {{{ getDocs()
@@ -185,12 +177,12 @@ class Import
 
         $this->docSettings = $this->xmldb->getDoc("settings");
         if (!$this->docSettings) {
-            $this->docSettings = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Settings", "settings");
+            $this->docSettings = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\Settings", "settings");
         }
 
         $this->docColors = $this->xmldb->getDoc("colors");
         if (!$this->docColors) {
-            $this->docColors = $this->xmldb->createDoc("Depage\Cms\XmlDocTypes\\Colors", "colors");
+            $this->docColors = $this->xmldb->createDoc("Depage\\Cms\\XmlDocTypes\\Colors", "colors");
         }
     }
     // }}}
@@ -291,13 +283,7 @@ class Import
 
             $metaNode = $dataNode->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "meta")->item(0);
             $changeDate = $metaNode->getAttribute("lastchange_UTC");
-            $uid = $metaNode->getAttribute("lastchange_uid");
-
-            $user = \Depage\Auth\User::loadById($this->pdo, $uid);
-
-            if (!$user) {
-                $uid = null;
-            }
+            $uid = $this->getNewUserId($metaNode->getAttribute("lastchange_uid"));
 
             $doc->updateLastChange($changeDate, $uid);
         }
@@ -367,16 +353,11 @@ class Import
                             mkdir($path);
                         }
                         $filename = $path . Html::getEscapedUrl($namePrefix . $child->getAttribute("name")) . ".xsl";
-                        $extraXsl = "<xsl:template match=\"proj:colorschemes\"><xsl:call-template name=\"pg:css\" /></xsl:template>";
-                        file_put_contents($filename, "{$this->xslHeader}    {$extraXsl}\n\n    {$xsl}\n{$this->xslFooter}");
+                        $extraXsl = "";
+                        $extraXsl .= "    <xsl:output method=\"text\"  omit-xml-declaration=\"yes\"/>\n";
+                        $extraXsl .= "    <xsl:template match=\"proj:colorschemes\"><xsl:call-template name=\"pg:css\" /></xsl:template>\n";
+                        file_put_contents($filename, "{$this->xslHeader}{$extraXsl}\n    {$xsl}\n{$this->xslFooter}");
                     }
-
-                    /*
-                    $testDoc = new \Depage\Xml\Document();
-                    $testDoc->load($filename);
-
-                    $testDoc->save($filename);
-                     */
                 }
             }
             if ($child->nodeName == "pg:folder" || $child->nodeName == "pg:template") {
@@ -650,6 +631,7 @@ class Import
             "\$tt_multilang" => "\$currentPage/@multilang",
             "\$depage_is_live" => "\$depageIsLive",
             "\$tt_var_" => "\$var-",
+            "\$media_type" => "'global'",
             "/pg:page/pg:page_data" => "/pg:page_data",
             "/pg:page/@multilang" => "\$currentPage/@multilang",
             "\"/pg:page\"" => "\"\$currentPage\"",
@@ -677,6 +659,24 @@ class Import
         ];
 
         return $replacements;
+    }
+    // }}}
+    // {{{ getNewUserId()
+    /**
+     * @brief getNewUserId
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getNewUserId($uid)
+    {
+        $user = \Depage\Auth\User::loadById($this->pdo, $uid);
+
+        if (!$user) {
+            $uid = null;
+        }
+
+        return $uid;
     }
     // }}}
 

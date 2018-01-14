@@ -24,7 +24,7 @@
                 </tr>
             <?php
         }
-        if ($headerShown == 2 && $page->lastchange->getTimestamp() <= $this->lastPublishDate->getTimestamp()) {
+        if ($headerShown == 2 && $this->lastPublishDate && $page->lastchange->getTimestamp() <= $this->lastPublishDate->getTimestamp()) {
             $headerShown++;
             $class = "published";
             ?>

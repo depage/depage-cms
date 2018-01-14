@@ -124,19 +124,26 @@ class XmlDb implements XmlGetter
      *
      * @return    $docs (array) the key is the name of the document, the value is the document db-id.
      */
-    public function getDocuments($name = "")
+    public function getDocuments($name = "", $type = "")
     {
         $docs = [];
 
         $namequery = '';
+        $where = [];
         $query_param = [];
 
         if ($name) {
-            $namequery = 'WHERE name = :name';
-            $query_param = [
-                'name' => $name
-            ];
+            $where[] = 'name = :name';
+            $query_param['name'] = $name;
         }
+        if ($type) {
+            $where[] = 'type = :type';
+            $query_param['type'] = $type;
+        }
+        if (count($where) > 0) {
+            $namequery = "WHERE " . implode(" AND ", $where);
+        }
+
 
         $query = $this->pdo->prepare(
             "SELECT
@@ -670,6 +677,8 @@ class XmlDb implements XmlGetter
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
         $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
+
+        $this->doc_ids = [];
     }
     // }}}
 

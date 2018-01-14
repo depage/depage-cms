@@ -16,7 +16,10 @@ class Fs
     public function __construct($params = array())
     {
         if (isset($params['scheme']))   $this->url['scheme']    = $params['scheme'];
+        if (isset($params['user']))     $this->url['user']      = $params['user'];
+        if (isset($params['pass']))     $this->url['pass']      = $params['pass'];
         if (isset($params['host']))     $this->url['host']      = $params['host'];
+        if (isset($params['port']))     $this->url['port']      = $params['port'];
 
         $this->hidden   = (isset($params['hidden']))    ? $params['hidden'] : false;
         $this->path     = (isset($params['path']))      ? $params['path']   : '.';
@@ -161,10 +164,11 @@ class Fs
         if (!is_dir($cleanUrl)) {
             $success = mkdir($cleanUrl, $mode, $recursive, $this->streamContext);
 
-            if (!$success) {
+            if (!$success && !is_dir($cleanUrl)) {
                 throw new Exceptions\FsException('Error while creating directory "' . $pathName . '".');
             }
         }
+
         $this->postCommandHook();
     }
     // }}}
@@ -249,7 +253,7 @@ class Fs
         $this->preCommandHook();
 
         $remote = $this->cleanUrl($remotePath);
-        file_put_contents($remote, $string, 0, $this->streamContext);
+        $this->file_put_contents($remote, $string, 0, $this->streamContext);
 
         $this->postCommandHook();
     }
@@ -260,6 +264,7 @@ class Fs
     {
         $testFile = 'depage-fs-test-file.tmp';
         $testString = 'depage-fs-test-string';
+        $success = false;
 
         try {
             if (!$this->exists($testFile)) {
@@ -271,7 +276,6 @@ class Fs
             }
         } catch (Exceptions\FsException $exception) {
             $error = $exception->getMessage();
-            $success = false;
         }
 
         return $success;
@@ -326,7 +330,7 @@ class Fs
     // }}}
 
     // {{{ parseUrl
-    protected static function parseUrl($url)
+    public static function parseUrl($url)
     {
         $parsed = parse_url($url);
 
@@ -344,7 +348,7 @@ class Fs
     // {{{ cleanUrl
     protected function cleanUrl($url, $showPass = true)
     {
-        $parsed = $this->parseUrl($url);
+        $parsed = self::parseUrl($url);
         $scheme = (isset($parsed['scheme'])) ? $parsed['scheme'] : null;
         $path = (isset($parsed['path'])) ? $parsed['path'] : null;
 
@@ -395,16 +399,16 @@ class Fs
     protected function buildUrl($parsed, $showPass = true)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= isset($parsed['user']) ? $parsed['user'] : '';
+        $path .= !empty($parsed['user']) ? $parsed['user'] : '';
 
-        if (isset($parsed['pass'])) {
+        if (!empty($parsed['pass'])) {
             $path .= ($showPass) ? ':' . $parsed['pass'] : ':...';
         }
 
-        $path .= isset($parsed['user']) ? '@'                   : '';
-        $path .= isset($parsed['host']) ? $parsed['host']       : '';
-        $path .= isset($parsed['port']) ? ':' . $parsed['port'] : '';
-        $path .= isset($parsed['path']) ? $parsed['path']       : '/';
+        $path .= !empty($parsed['user']) ? '@'                   : '';
+        $path .= !empty($parsed['host']) ? $parsed['host']       : '';
+        $path .= !empty($parsed['port']) ? ':' . $parsed['port'] : '';
+        $path .= !empty($parsed['path']) ? $parsed['path']       : '/';
 
         return $path;
     }
@@ -508,7 +512,7 @@ class Fs
             $hidden = $this->hidden;
         }
 
-        $scanDir = scandir($cleanUrl, 0, $this->streamContext);
+        $scanDir = \scandir($cleanUrl, 0, $this->streamContext);
         $filtered = array_diff($scanDir, array('.', '..'));
 
         if (!$hidden) {
@@ -530,7 +534,7 @@ class Fs
      */
     protected function rmdir($url)
     {
-        return rmdir($url, $this->streamContext);
+        return \rmdir($url, $this->streamContext);
     }
     // }}}
     // {{{ rename
@@ -539,7 +543,16 @@ class Fs
      */
     protected function rename($source, $target)
     {
-        return rename($source, $target, $this->streamContext);
+        return \rename($source, $target, $this->streamContext);
+    }
+    // }}}
+    // {{{ file_put_contents
+    /**
+     * Hook, allows overriding of file_put_contents function
+     */
+    public function file_put_contents($filename, $data, $flags = 0, $context = null)
+    {
+        return \file_put_contents($filename, $data, $flags, $context);
     }
     // }}}
 }

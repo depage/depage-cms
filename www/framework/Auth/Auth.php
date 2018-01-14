@@ -213,6 +213,7 @@ abstract class Auth
         } else {
             $this->sid = $sid;
         }
+        $ip = \Depage\Http\Request::getRequestIp();
         if (is_null($uid)) {
             $update_query = $this->pdo->prepare(
                 "REPLACE INTO
@@ -223,8 +224,8 @@ abstract class Auth
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
-                ':sid' => $this->sid,
-                'ip' => \Depage\Http\Request::getRequestIp(),
+                'sid' => $this->sid,
+                'ip' => $ip,
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
         } else {
@@ -240,9 +241,9 @@ abstract class Auth
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
-                ':sid' => $this->sid,
-                ':uid' => $this->uid,
-                'ip' => \Depage\Http\Request::getRequestIp(),
+                'sid' => $this->sid,
+                'uid' => $this->uid,
+                'ip' => $ip,
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
 
@@ -257,6 +258,21 @@ abstract class Auth
                     id = :uid"
             )->execute(array(
                 ':uid' => $this->uid,
+            ));
+
+            // add login entry to auth log
+            $query = $this->pdo->prepare(
+                "INSERT INTO
+                    {$this->pdo->prefix}_auth_log
+                SET
+                    userid = :uid,
+                    dateLogin = NOW(),
+                    ip = :ip,
+                    useragent = :useragent"
+            )->execute(array(
+                'uid' => $this->uid,
+                'ip' => $ip,
+                'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
         }
 
@@ -355,7 +371,9 @@ abstract class Auth
         $user = User::loadBySid($this->pdo, $sid);
         if ($user) {
             $user->onLogout($sid);
-            $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            if (!empty($this->log)) {
+                $this->log->log("'{$user->name}' has logged out with $sid", "auth");
+            }
         }
 
         // delete session data for sid

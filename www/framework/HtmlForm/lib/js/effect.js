@@ -128,6 +128,10 @@ function setupForm(form) {
                         if (this.checked) {
                             data[this.name] = this.value;
                         }
+                    } else if (type == "checkbox" && $(this).parent().parent().hasClass("input-boolean")) {
+                        if (this.checked) {
+                            data[this.name] =  $(this).val();
+                        }
                     } else if (type == "checkbox") {
                         if (this.checked) {
                             data[this.name] = data[this.name] || [];
@@ -141,13 +145,15 @@ function setupForm(form) {
             data.formAutosave = "true";
             form.data.saving = true;
 
-            // @todo trigger event before saving
+            $form.trigger("depage.form.beforeAutoSave");
             $.post(form.action, data, function(response, textStatus) {
                 now = new Date();
 
                 form.data.lastsave = now.getTime();
                 form.data.saving = false;
-                //@todo trigger events whether the autosave was successful or not
+
+                //@todo trigger different events whether the autosave was successful or not
+                $form.trigger("depage.form.autoSaved");
             });
         };
         form.data.changed = function(saveImmediately) {

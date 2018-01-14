@@ -48,7 +48,7 @@ class Cleaner
                 // trim line
                 $line = trim($line);
                 // replace multiple spaces with only one space
-                $line = preg_replace("/( )+/", " ", $line);
+                $line = preg_replace("/\"[^\"]*\"(*SKIP)(*FAIL)|'[^']*'(*SKIP)(*FAIL)|( )+/", " ", $line);
                 // throw away empty lines
                 if ($line != "") {
                     $html .= $line . "\n";

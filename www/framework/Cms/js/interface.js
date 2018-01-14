@@ -75,15 +75,24 @@ var depageCMS = (function() {
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
             localJS.setupProjectList();
+            localJS.setupNewsletterList();
             localJS.setupSortables();
             localJS.setupForms();
             localJS.setupHelp();
+        },
+        // }}}
+        // {{{ setupAjaxContent
+        setupAjaxContent: function() {
+            localJS.setupPreviewLinks();
+            localJS.setupNewsletterList();
         },
         // }}}
         // {{{ setupVarious
         setupVarious: function() {
             $("#logout").click( function() {
                 localJS.logout();
+
+                return false;
             });
 
             // add click event for teaser
@@ -222,26 +231,89 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupProjectList
         setupProjectList: function() {
-            var $projects = $(".projectlist").depageDetails();
+            var $projects = $(".projectlist");
+            var $projectGroups = $projects.children(".projectgroup");
+
+            $projects.depageDetails();
 
             $projects.find(".buttons .button").on("click", function(e) {
                 e.stopPropagation();
             });
 
             $projects.on("depage.detail-opened", function(e, $head, $detail) {
-                var changesUrl = baseUrl + "project/" + $head.data("project") + "/details/15/?ajax=true";
+                var project = $head.data("project");
+                var projectNewsletter = $head.data("project-newsletter");
+                var changesUrl;
 
-                $.get(changesUrl)
-                    .done(function(data) {
-                        $detail.empty().html(data);
+                if (project) {
+                    changesUrl = baseUrl + "project/" + project + "/details/15/?ajax=true";
+                } else if (projectNewsletter) {
+                    changesUrl = baseUrl + "project/" + projectNewsletter + "/newsletters/?ajax=true";
+                }
 
-                        localJS.setupPreviewLinks();
-                    });
+                if (changesUrl) {
+                    $.get(changesUrl)
+                        .done(function(data) {
+                            $detail.empty().html(data);
+
+                            localJS.setupAjaxContent();
+                        });
+                }
             });
 
             $projects.depageLiveFilter("dt", "strong", {
                 placeholder: locale.projectFilter,
                 autofocus: true
+            });
+            $projects.on("depage.filter-shown depage.filter-hidden", function(e, $item) {
+                // show and hide headlines for project-groups
+                $projectGroups.each(function() {
+                    var $group = $(this);
+                    var $headline = $group.children("h2");
+
+                    if ($group.find("dt:visible").length > 0) {
+                        $headline.show();
+                    } else {
+                        $headline.hide();
+                    }
+                });
+            });
+            $projects.on("depage.filter-hidden", function(e, $item) {
+                // close details for hidden items
+                $projects.data("depage.details").hideDetail($item);
+            });
+        },
+        // }}}
+        // {{{ setupNewsletterList
+        setupNewsletterList: function() {
+            var $newsletters = $(".newsletter.recent-changes tr:has(td.url)").each(function() {
+                var $row = $(this);
+                var projectName = $row.data("project");
+                var newsletterName = $row.data("newsletter");
+                var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
+
+                var $deleteButton = $("<a class=\"button\">" + locale.delete + "</a>")
+                    .appendTo($row.find(".buttons"))
+                    .depageShyDialogue({
+                        ok: {
+                            title: locale.delete,
+                            classes: 'default',
+                            click: function(e) {
+                                xmldb.deleteDocument();
+
+                                // @todo remove only if operation was successful
+                                $row.remove();
+
+                                return true;
+                            }
+                        },
+                        cancel: {
+                            title: locale.cancel
+                        }
+                    },{
+                        title: locale.delete,
+                        message : locale.deleteQuestion
+                    });
             });
         },
         // }}}
@@ -372,6 +444,19 @@ var depageCMS = (function() {
                     return false;
                 });
             });
+
+            // add autosaved event to newsletter form
+            $("form.newsletter.edit").each(function() {
+                var $form = $(this);
+
+                $form.on("depage.form.autoSaved", function() {
+                    var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
+                    var lang = "de";
+                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + lang + "/" + matches[2] + ".html";
+
+                    localJS.preview(url);
+                });
+            });
         },
         // }}}
         // {{{ setupHelp
@@ -382,6 +467,10 @@ var depageCMS = (function() {
 
         // {{{ updateAjaxContent
         updateAjaxContent: function() {
+            if (window != window.top) {
+                // don't call this in iframed content
+                return;
+            }
             var url = "overview/";
             var timeout = 5000;
 
@@ -440,6 +529,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ preview
         preview: function(url) {
+            // @todo add preview language on multilanguage sites
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
@@ -609,14 +699,13 @@ var depageCMS = (function() {
                 type: "GET",
                 url: logoutUrl,
                 cache: false,
-                async: true,
                 username: "logout",
                 password: "logout",
                 complete: function(XMLHttpRequest, textStatus) {
                     window.location = baseUrl;
                 },
                 error: function() {
-                    window.location = baseUrl;
+                    window.location = logoutUrl;
                 }
             });
         }

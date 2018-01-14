@@ -5,7 +5,7 @@
  * index file
  *
  *
- * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2017 Frank Hellenkamp [jonas@depagecms.net]
  *
  * @author    Frank Hellenkamp [jonas@depagecms.net]
  */
@@ -14,5 +14,12 @@
 
     $dp = new \Depage\Depage\Runner();
     $dp->handleRequest();
+
+    if (!empty($replacementScript)) {
+        unset($dp);
+
+        chdir(dirname($replacementScript));
+        include(basename($replacementScript));
+    }
 
     /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

@@ -112,6 +112,8 @@
         var $notification;
         var iconImg = "";
         var currentNotification = this;
+        var closeNotification;
+        var mouseIsOverNotification = false;
 
         if ($notificationArea.length === 0) {
             $notificationArea = $("<div id=\"depageGrowlArea\"></div>").appendTo("body");
@@ -124,9 +126,13 @@
         }
 
         var closeNotification = function() {
-            $notification.clearQueue().fadeOut(800, function() {
-                $(this).remove();
-            });
+            if (mouseIsOverNotification) {
+                setTimeout(closeNotification, 800);
+            } else {
+                $notification.clearQueue().fadeOut(800, function() {
+                    $(this).remove();
+                });
+            }
         };
 
         if (this.options.icon) {
@@ -135,23 +141,28 @@
         $notification = $("<div class=\"depage-growl-message\">" + iconImg + "<h3>" + htmlEncode(this.title) + "</h3><p>" + htmlEncode(this.options.message) + "</p></div>")
             .appendTo($notificationArea)
             .hide()
+            .on("mouseenter", function() {
+                mouseIsOverNotification = true;
+            })
+            .on("mouseleave", function() {
+                mouseIsOverNotification = false;
+            })
+            .on("click", function(e) {
+                currentNotification.onClick(e);
+
+                closeNotification();
+            })
             .fadeIn(400)
             .animate({
                 opacity: 1
             },{
-                duration: 3500,
+                duration: this.options.duration,
                 complete: function() {
                     closeNotification();
                 }
             });
-        $notification.click( function(e) {
-            currentNotification.onClick(e);
-
-            closeNotification();
-        });
     };
     // }}}
-
 
     var base = {};
 
@@ -169,6 +180,7 @@
         message: "",
         icon: "",
         backend: "auto",
+        duration: 3500,
         alwaysShowFallback: false,
         onClick: null,
         onError: null

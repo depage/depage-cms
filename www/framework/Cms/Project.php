@@ -12,6 +12,8 @@
 
 namespace Depage\Cms;
 
+use \Depage\Notifications\Notification;
+
 class Project extends \Depage\Entity\Entity
 {
     // {{{ variables
@@ -110,11 +112,20 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadByUser($pdo, $cache, $user) {
+    static public function loadByUser($pdo, $cache, $user, $name = null) {
         if ($user->canEditAllProjects()) {
-            return self::loadAll($pdo, $cache);
+            if (!empty($name)) {
+                return [self::loadByName($pdo, $cache, $name)];
+            } else {
+                return self::loadAll($pdo, $cache);
+            }
         } else {
             $fields = implode(", ", self::getFields("projects"));
+
+            $nameQuery = "";
+            if (!empty($name)) {
+                $nameQuery = "projects.name = :name AND";
+            }
 
             $query = $pdo->prepare(
                 "SELECT $fields, projectgroup.name as groupName
@@ -123,6 +134,7 @@ class Project extends \Depage\Entity\Entity
                     {$pdo->prefix}_project_groups AS projectgroup,
                     {$pdo->prefix}_project_auth AS projectauth
                 WHERE
+                    $nameQuery
                     projects.groupId = projectgroup.id AND
                     (projects.id = projectauth.projectId AND projectauth.userId = :userid)
                 ORDER BY
@@ -131,9 +143,14 @@ class Project extends \Depage\Entity\Entity
                 "
             );
 
-            $projects = self::fetch($pdo, $cache, $query, [
+            $params = [
                 'userid' => $user->id,
-            ]);
+            ];
+            if (!empty($name)) {
+                $params['name'] = $name;
+            }
+
+            $projects = self::fetch($pdo, $cache, $query, $params);
 
             return $projects;
         }
@@ -243,8 +260,6 @@ class Project extends \Depage\Entity\Entity
             if ($success) {
                 $this->dirty = array_fill_keys(array_keys(static::$fields), false);
             }
-
-            $this->initProject();
         }
     }
     // }}}
@@ -282,15 +297,12 @@ class Project extends \Depage\Entity\Entity
 
         $projectPath = $this->getProjectPath();
 
-        $success = is_writable($projectPath) || mkdir($projectPath, 0777, true);
-        mkdir($projectPath . "lib/", 0777, true);
-        mkdir($projectPath . "import/", 0777, true);
-        mkdir($projectPath . "xml/", 0777, true);
-        mkdir($projectPath . "xslt/", 0777, true);
-
-        if (!$success) {
-            throw new Exceptions\Project("Could not create project directory '$projectPath'.");
-        }
+        $this->createProjectDir($projectPath);
+        $this->createProjectDir($projectPath . "lib/");
+        $this->createProjectDir($projectPath . "import/");
+        $this->createProjectDir($projectPath . "xml/");
+        $this->createProjectDir($projectPath . "xslt/");
+        $this->createProjectDir($projectPath . "backups/");
     }
     // }}}
     // {{{ updateProjectSchema()
@@ -325,6 +337,36 @@ class Project extends \Depage\Entity\Entity
             $schema->loadFile($file);
             $schema->update();
         }
+
+        // update schema for newsletter
+        if ($this->hasNewsletter()) {
+            $files = array_merge(
+                glob(__DIR__ . "/Sql/Newsletter/*.sql")
+            );
+            sort($files);
+            foreach ($files as $file) {
+                $schema->loadFile($file);
+                $schema->update();
+            }
+        }
+    }
+    // }}}
+    // {{{ createProjectDir()
+    /**
+     * @brief createProjectDir
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    private function createProjectDir($path)
+    {
+        $success = is_writable($path) || mkdir($path, 0777, true);
+
+        if (!$success) {
+            throw new Exceptions\Project("Could not create project directory '$path'.");
+        }
+
+        return true;
     }
     // }}}
 
@@ -351,9 +393,11 @@ class Project extends \Depage\Entity\Entity
         if (is_null($this->xmldb)) {
             $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-            $xsltPath = "projects/" . $this->name . "/xslt/";
-            $xmlPath = "projects/" . $this->name . "/xml/";
-            $libPath = "projects/" . $this->name . "/lib/";
+            $projectPath = $this->getProjectPath();
+
+            $xsltPath = $projectPath . "xslt/";
+            $xmlPath = $projectPath . "xml/";
+            $libPath = $projectPath . "lib/";
 
             $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
@@ -376,9 +420,11 @@ class Project extends \Depage\Entity\Entity
         if ($this->previewType == "live") {
             $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-            $xsltPath = "projects/" . $this->name . "/xslt/";
-            $xmlPath = "projects/" . $this->name . "/xml/";
-            $libPath = "projects/" . $this->name . "/lib/";
+            $projectPath = $this->getProjectPath();
+
+            $xsltPath = $projectPath . "xslt/";
+            $xmlPath = $projectPath . "xml/";
+            $libPath = $projectPath . "lib/";
 
             $xmldbHistory = new \Depage\XmlDb\XmlDbHistory($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
@@ -418,14 +464,14 @@ class Project extends \Depage\Entity\Entity
         return $this->xmldb->getDoc("settings");
     }
     // }}}
-    // {{{ getRecentlyChangedPages
+    // {{{ getPages()
     /**
-     * @brief getRecentlyChangedPages
+     * @brief getPages
      *
-     * @param max
-     * @return array
+     * @param mixed
+     * @return void
      **/
-    public function getRecentlyChangedPages($max = null)
+    public function getPages($docId = null)
     {
         $pages = [];
 
@@ -435,20 +481,39 @@ class Project extends \Depage\Entity\Entity
 
         $xpath = new \DOMXPath($xml);
         $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-        $nodelist = $xpath->query("//pg:page");
 
-        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+        if (!is_null($docId)) {
+            $nodelist = $xpath->query("//pg:page[@db:docref='$docId']");
+        } else {
+            $nodelist = $xpath->query("//pg:page");
+        }
+
+        for ($i = 0; $i < $nodelist->length; $i++) {
             $node = $nodelist->item($i);
-            $docId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+            $currentDocId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
 
-            if ($docId) {
-                $docInfo = $this->xmldb->getDoc($docId)->getDocInfo();
+            if ($currentDocId) {
+                $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
                 $docInfo->url = $node->getAttribute("url");
                 $docInfo->released = $node->getAttribute("db:released") == "true";
 
                 $pages[] = $docInfo;
             }
         }
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getRecentlyChangedPages
+    /**
+     * @brief getRecentlyChangedPages
+     *
+     * @param max
+     * @return array
+     **/
+    public function getRecentlyChangedPages($max = null)
+    {
+        $pages = $this->getPages();
 
         usort($pages, function($a, $b) {
             if (!$a->released && $b->released) {
@@ -511,6 +576,30 @@ class Project extends \Depage\Entity\Entity
         $languages = array_keys($this->getLanguages());
 
         return $this->getBaseUrl() . "/" . $languages[0];
+    }
+    // }}}
+    // {{{ getXsltTemplates()
+    /**
+     * @brief getXsltTemplates
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getXsltTemplates()
+    {
+        $templates = [];
+
+        $files = glob($this->getProjectPath() . "xslt/*");
+
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                if (count(glob($file . "/*.xsl")) > 0) {
+                    $templates[] = basename($file);
+                }
+            }
+        }
+
+        return $templates;
     }
     // }}}
 
@@ -600,8 +689,13 @@ class Project extends \Depage\Entity\Entity
             $conf = $targets[$publishId];
 
             // get base-url
-            $baseurl = parse_url(rtrim($conf->baseurl, "/"));
-            $baseurl = $baseurl['scheme'] . "://" . $baseurl['host'] . $baseurl['path'];
+            $parts = parse_url(rtrim($conf->baseurl, "/"));
+            if (!isset($parts['path'])) {
+                $parts['path'] = "/";
+            } else {
+                $parts['path'] .= "/";
+            }
+            $baseurl = $parts['scheme'] . "://" . $parts['host'] . $parts['path'];
 
             return $baseurl;
         }
@@ -631,6 +725,19 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ hasNewsletter()
+    /**
+     * @brief hasNewsletter
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function hasNewsletter()
+    {
+        return in_array("newsletter", $this->getXsltTemplates());
+    }
+    // }}}
+
     // {{{ releaseDocument()
     /**
      * @brief releaseDocument
@@ -638,7 +745,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $
      * @return void
      **/
-    public function releaseDocument($docId, $userId = null)
+    public function releaseDocument($docId, $userId)
     {
         // @todo set userId correctly
         $doc = $this->xmldb->getDoc($docId);
@@ -647,6 +754,58 @@ class Project extends \Depage\Entity\Entity
         $doc->clearCache();
 
         return $doc->getDocInfo()->rootid;
+    }
+    // }}}
+    // {{{ requestDocumentRelease()
+    /**
+     * @brief requestDocumentRelease
+     *
+     * @param mixed $docId, $userId
+     * @return void
+     **/
+    public function requestDocumentRelease($docId, $userId)
+    {
+        $users = \Depage\Auth\User::loadAll($this->pdo);
+
+        $requestingUser = $users[$userId];
+        $users = array_filter($users, function($u) {
+            if ($u->canPublishProject()) {
+                $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
+
+                return in_array($this->name, $userProjects);
+            }
+            return false;
+        });
+
+        $pages = $this->getPages($docId);
+        $title = _("Document Release Request");
+        $text = sprintf(_("%s is requesting a document release for '%s' on project '%s'."), $requestingUser->fullname, $pages[0]->url, $this->name);
+
+        foreach ($users as $u) {
+            $newN = new Notification($this->pdo);
+            $newN->setData([
+                'uid' => $u->id,
+                'tag' => "depage." . $this->name,
+                'title' => $title,
+                'message' => $text,
+                'options' => [
+                    'link' => DEPAGE_BASE . "project/{$this->name}/release-pages/$docId/",
+                ],
+            ])
+            ->save();
+
+            $newN = new Notification($this->pdo);
+            $newN->setData([
+                'uid' => $u->id,
+                'tag' => "mail." . $this->name,
+                'title' => $title,
+                'message' => $text,
+                'options' => [
+                    'link' => DEPAGE_BASE . "project/{$this->name}/release-pages/$docId/",
+                ],
+            ])
+            ->save();
+        }
     }
     // }}}
     // {{{ addPublishTask()
@@ -658,6 +817,31 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId, $userId)
     {
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
+        $task->addSubtask("init publishing subtasks", "
+            \$project = %s;
+            \$project->initPublishTask(%s, %s, %s);
+        ", [
+            $this,
+            $taskName,
+            $publishId,
+            $userId,
+        ]);
+
+        $task->begin();
+
+        return $task;
+    }
+    // }}}
+    // {{{ initPublishTask()
+    /**
+     * @brief initPublishTask
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function initPublishTask($taskName, $publishId, $userId)
+    {
         $this->setPreviewType("live");
         $xmlgetter = $this->getXmlGetter();
 
@@ -665,11 +849,6 @@ class Project extends \Depage\Entity\Entity
         $targets = $this->getPublishingTargets();
         $conf = $targets[$publishId];
         $fsLocal = \Depage\Fs\Fs::factory($projectPath);
-
-        // save current general documents in history
-        $this->releaseDocument("pages", $userId);
-        $this->releaseDocument("settings", $userId);
-        $this->releaseDocument("colors", $userId);
 
         // save folders in history
         $xmldb = $this->getXmlDb($userId);
@@ -681,6 +860,10 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
+        // save current general documents in history
+        $this->releaseDocument("pages", $userId);
+        $this->releaseDocument("settings", $userId);
+        $this->releaseDocument("colors", $userId);
 
         // getting als files in library
         $files = $fsLocal->lsFiles("lib/*");
@@ -698,6 +881,9 @@ class Project extends \Depage\Entity\Entity
         // get transformer
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
+        $baseUrl = $this->getBaseUrl($publishId);
+        $transformer->setBaseUrl($baseUrl);
+        $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
@@ -734,7 +920,6 @@ class Project extends \Depage\Entity\Entity
         }
 
         // transform pages
-        $baseUrl = $this->getBaseUrl($publishId);
         $apiAvailable = file_exists($projectPath . 'lib/global/api.php');
 
         foreach ($urls as $pageId => $url) {
@@ -760,6 +945,10 @@ class Project extends \Depage\Entity\Entity
         }
 
         // @todo add files that should be generated automatically (e.g. through graohics)
+
+        if ($apiAvailable) {
+            // @todo add updateSchema API call
+        }
 
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
@@ -802,6 +991,37 @@ class Project extends \Depage\Entity\Entity
                 "index.php",
         ], $initId);
 
+        // @todo updated with humans.txt
+        // http://humanstxt.org/Standard.html
+        $version = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\npublished at ";
+        $task->addSubtask("publishing info", "
+            \$publisher->publishString(
+                %s . date('r'),
+                %s
+            );", [
+                $version,
+                "publishInfo.txt",
+        ], $initId);
+
+        // publish newsletters if available
+        if ($this->hasNewsletter()) {
+            $newsletters = \Depage\Cms\Newsletter::loadReleased($this->pdo, $this);
+
+            foreach ($newsletters as $newsletter) {
+                // @todo check if newsletter has been published
+                foreach ($languages as $lang => $name) {
+                    $task->addSubtask("publishing newsletter {$newsletter->name}", "
+                        \$publisher->publishString(
+                            %s->transform(\"live\", \"$lang\"),
+                            %s
+                        );", [
+                            $newsletter,
+                            "$lang/newsletter/{$newsletter->name}.html",
+                    ], $initId);
+                }
+            }
+        }
+
         // unpublish removed files
         $task->addSubtask("removing leftover files", "
             \$files = \$publisher->unpublishRemovedFiles();
@@ -823,6 +1043,141 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ getXsltProcessor()
+    /**
+     * @brief getXsltProcessor
+     *
+     * @param mixed $xslFile
+     * @return void
+     **/
+    public function getXsltProcessor($xslFile)
+    {
+        libxml_disable_entity_loader(false);
+        libxml_use_internal_errors(true);
+
+        $xsltProc = new \XSLTProcessor();
+
+        $xsl = new \DOMDocument();
+        $xsl->load($xslFile);
+        $xsltProc->importStylesheet($xsl);
+
+        return $xsltProc;
+    }
+    // }}}
+    // {{{ updateXmlForNodeId()
+    /**
+    * @brief updateXmlForNodeId
+    *
+    * @param mixed $param
+    * @return void
+    **/
+    public function updateXmlForNodeId($xsltProc, $id)
+    {
+        $xmldb = $this->getXmldb();
+
+        $doc = $xmldb->getDocByNodeId($id);
+        $node = $doc->getSubdocByNodeId($id);
+
+        if (!$newNode = $xsltProc->transformToDoc($node)) {
+            // @todo add better error handling
+            $messages = "";
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $messages .= $error->message . "\n";
+            }
+
+            $error = "Could not transform the XML document:\n" . $messages;
+
+            throw new \Exception($error);
+        }
+        if ($node->saveXml() != $newNode->saveXml()) {
+            $doc->replaceNode($newNode, $id);
+        }
+    }
+    // }}}
+    // {{{ addProjectUpdateTask()
+    /**
+     * @brief addProjectUpdateTask
+     *
+     * @return void
+     **/
+    public function addProjectUpdateTask()
+    {
+        $updateSrc = $this->getProjectPath() . "xslt/update.php";
+        if (file_exists($updateSrc)) {
+            $xslSrc = $this->getProjectPath() . "xslt/update/update.xsl";
+            $xmldb = $this->getXmlDb();
+
+            $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "update project", $this->name);
+            $initId = $task->addSubtask("init", "
+                \$project = %s;
+                \$xsltProc = \$project->getXsltProcessor(%s);
+            ", [
+                $this,
+                $xslSrc,
+            ]);
+
+            include($updateSrc);
+
+            $task->addSubtask("clearing transform cache", "\$project->clearTransformCache();");
+
+            $task->begin();
+        } else {
+            return false;
+        }
+    }
+    // }}}
+
+    // {{{ getProjectConfig()
+    /**
+     * @brief getProjectConfig
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getProjectConfig()
+    {
+        $projectPath = $this->getProjectPath();
+        $config = new \Depage\Config\Config([
+            'aliases' => [],
+            'rootAliases' => [],
+            'routeHtmlThroughPhp' => false,
+        ]);
+
+        if (file_exists("$projectPath/lib/global/config.php")) {
+            $config->readConfig("$projectPath/lib/global/config.php");
+        }
+
+        return $config;
+    }
+    // }}}
+    // {{{ clearTransformCache()
+    /**
+     * @brief clearTransformCache
+     *
+     * @return void
+     **/
+    public function clearTransformCache()
+    {
+        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
+        $previewTypes = ["dev", "pre", "live"];
+
+        foreach ($templates as $template) {
+            foreach ($previewTypes as $type) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, "$template-$type");
+                $transformCache->clearAll();
+
+                $xslFile = "cache/xslt/$this->name/$template/$type.xsl";
+                if (file_exists($xslFile)) {
+                    unlink($xslFile);
+                }
+            }
+        }
+
+        return true;
+    }
+    // }}}
+
     // {{{ generateSitemap()
     /**
      * @brief generateSitemap
@@ -833,8 +1188,10 @@ class Project extends \Depage\Entity\Entity
     public function generateSitemap($publishId = null)
     {
         $xmlgetter = $this->getXmlGetter();
+        $baseUrl = $this->getBaseUrl($publishId);
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "sitemap");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "sitemap");
+        $transformer->setBaseUrl($baseUrl);
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
@@ -842,7 +1199,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => $this->getBaseUrl($publishId),
+            "baseUrl" => $baseUrl,
         ];
 
         $sitemap = $transformer->transform($xml, $parameters);
@@ -861,7 +1218,7 @@ class Project extends \Depage\Entity\Entity
     {
         $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "atom");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "atom");
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
@@ -870,11 +1227,12 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => $this->getBaseUrl($publishId),
+            "baseUrl" => $this->getBaseUrl($publishId) . "/",
         ];
 
-        $sitemap = $transformer->transform($xml, $parameters);
-        return $sitemap;
+        $atom = $transformer->transform($xml, $parameters);
+
+        return $atom;
     }
     // }}}
     // {{{ generateHtaccess()
@@ -895,8 +1253,7 @@ class Project extends \Depage\Entity\Entity
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
-        $baseurlParts = parse_url(rtrim($baseurl, "/"));
-        $rewritebase = $baseurlParts['path'];
+        $rewritebase = parse_url(rtrim($baseurl, "/"), PHP_URL_PATH);
         if ($rewritebase == "") {
             $rewritebase = "/";
         }
@@ -970,44 +1327,44 @@ class Project extends \Depage\Entity\Entity
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $urls = $transformer->getUrlsByPageId();
 
-        $index = "";
-        $index .= file_get_contents(__DIR__ . "/../Redirector/Redirector.php");
-        $index .= "?>";
-        $index .= file_get_contents(__DIR__ . "/../Redirector/Result.php");
+        $index = [];
+        $index[] = "<?php";
+        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Redirector.php"), 5);
+        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Result.php"), 5);
 
-        $index .= "namespace {\n";
+        $index[] = "namespace {";
 
-        $index .= "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");\n";
+        $index[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
-        $index .= "\$redirector->setLanguages(" . var_export($languages, true) . ");\n";
-        $index .= "\$redirector->setPages(" . var_export($urls, true) . ");\n";
+        $index[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
+        $index[] = "\$redirector->setPages(" . var_export($urls, true) . ");";
 
-        if (file_exists("$projectPath/lib/shortcuts")) {
-            $index .= file_get_contents("$projectPath/lib/shortcuts");
-            $index .= "if (isset(\$shortcuts)) {\n";
-                $index .= "    \$redirector->setAliases(\$shortcuts);\n";
-            $index .= "}\n";
+        $projectConf = $this->getProjectConfig();
+        if (isset($projectConf->aliases)) {
+            $index[] = "\$redirector->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ");";
+        }
+        if (isset($projectConf->rootAliases)) {
+            $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
         }
 
-        $index .= "\n";
+        $index[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
+        $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $index[] = "if (!empty(\$replacementScript)) {";
+            $index[] = "    chdir(dirname(\$replacementScript));";
+            $index[] = "    include(basename(\$replacementScript));";
+            $index[] = "    die();";
+        $index[] = "}";
 
-        $index .= "if (strpos(\$_SERVER['REQUEST_URI'], \$redirector->getBasePath() . 'api/') === 0 && file_exists('lib/global/api.php')) {\n";
-            $index .= "    require_once('lib/global/api.php');\n";
-            $index .= "    die();\n";
-        $index .= "}\n";
+        $index[] = "if (isset(\$_GET['notfound'])) {";
+            $index[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $index[] = "} else {";
+            $index[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $index[] = "}";
 
-        $index .= "\n";
-
-        $index .= "if (isset(\$_GET['notfound'])) {\n";
-            $index .= "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
-        $index .= "} else {\n";
-            $index .= "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$_SERVER['HTTP_ACCEPT_LANGUAGE']);\n";
-        $index .= "}\n\n";
-
-        $index .= "}";
+        $index[] = "}";
 
 
-        return $index;
+        return implode($index, "\n");
     }
     // }}}
     // {{{ generateCss()
@@ -1086,6 +1443,7 @@ class Project extends \Depage\Entity\Entity
         return array_merge(parent::__sleep(), [
             'pdo',
             'cache',
+            'previewType',
         ]);
     }
     // }}}

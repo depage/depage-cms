@@ -51,15 +51,18 @@ namespace Depage\Mail;
  */
 class Mail
 {
-    protected $version = "1.4.2";
+    protected $version = "1.5.0";
     protected $sender;
     protected $recipients;
     protected $cc;
     protected $bcc;
     protected $replyto;
+    protected $returnPath;
     protected $subject;
     protected $text;
     protected $htmlText;
+    protected $trackerImage;
+    protected $dontShowEmail = true;
     protected $attachements = array();
     protected $boundary;
     protected $encoding = "UTF-8";
@@ -75,6 +78,7 @@ class Mail
     public function __construct($sender)
     {
         $this->sender = $sender;
+        $this->returnPath = $sender;
         $this->boundary = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
     }
     // }}}
@@ -158,6 +162,20 @@ class Mail
         return $this;
     }
     // }}}
+    // {{{ setReturnPath()
+    /**
+     * @brief Sets the reply-to header
+     *
+     * @param  string $subject new reply-to address
+     * @return object returns the mail object (for chaining)
+     */
+    public function setReturnPath($email)
+    {
+        $this->returnPath = $email;
+
+        return $this;
+    }
+    // }}}
     // {{{ setText()
     /**
      * @brief Sets the content of the mail as plain text.
@@ -186,12 +204,27 @@ class Mail
      */
     public function setHtmlText($mailtext)
     {
+        // @todo add option to insert/replace tracking image
         $mailtext = $this->normalizeLineEndings($mailtext);
 
         $this->htmlText = $mailtext;
-        $this->text = $this->stripTags($this->htmlText);
+        $this->text = $this->stripTags($mailtext);
 
         return $this;
+    }
+    // }}}
+    // {{{ setTrackerImage()
+    /**
+     * @brief setTrackerImage
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setTrackerImage($url)
+    {
+        if (!empty($url)) {
+            $this->trackerImage = $url;
+        }
     }
     // }}}
 
@@ -271,6 +304,9 @@ class Mail
         if ($this->replyto != "") {
             $headers .= "Reply-To: {$this->replyto}{$this->eol}";
         }
+        if ($this->returnPath != "") {
+            $headers .= "Return-Path: {$this->returnPath}{$this->eol}";
+        }
         if ($this->cc != "") {
             $headers .= "CC: " . $this->normalizeRecipients($this->cc) . $this->eol;
         }
@@ -320,6 +356,10 @@ class Mail
             if (!empty($this->htmlText)) {
                 $htmlText = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $this->htmlText);
 
+                if (!empty($this->trackerImage)) {
+                    $htmlText = str_replace("</body>", $this->getTracker() . "</body>", $htmlText);
+                }
+
                 $message .= "{$this->eol}{$this->eol}";
                 $message .= "--{$this->boundary}{$this->eol}" .
                     "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
@@ -334,6 +374,24 @@ class Mail
         }
 
         return $message;
+    }
+    // }}}
+    // {{{ getTracker()
+    /**
+     * @brief getTracker
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getTracker()
+    {
+        $html = "";
+
+        $html .= "<table border=\"0\"><tr><td style=\"color: #ffffff;\" width=\"100%\">";
+        $html .= "<img src=\"{$this->trackerImage}\" alt=\"-\" width=\"100\" height=\"10\">";
+        $html .= "</td></tr></table>";
+
+        return $html;
     }
     // }}}
     // {{{ getEml()
@@ -373,15 +431,50 @@ class Mail
      * @param  string|array $recipients new recipients
      * @return bool         true on success, false on error
      */
-    public function send($recipients = null)
+    public function send($recipients = null, $trackerImage = null)
+    {
+        if (!is_null($recipients)) {
+            $this->setRecipients($recipients);
+        }
+        $this->setTrackerImage($trackerImage);
+
+        $success = call_user_func($this->mailFunction, $this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
+
+        return $success;
+    }
+    // }}}
+    // {{{ sendLater()
+    /**
+     * @brief sendLater
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function sendLater(\Depage\Tasks\Task $task, $recipients = null, $trackerImage = null)
     {
         if (!is_null($recipients)) {
             $this->setRecipients($recipients);
         }
 
-        $success = call_user_func($this->mailFunction, $this->getRecipients(), $this->getSubject(), $this->getBody(), $this->getHeaders());
+        $recipients = array_unique(explode(",", $this->getRecipients()));
+        $this->setRecipients(null);
 
-        return $success;
+        foreach($recipients as $i => $to) {
+            if ($this->dontShowEmail) {
+                $title = "sending mail " . ($i + 1);
+            } else {
+                $title = "sending mail to $to";
+            }
+            if (!empty($to)) {
+                $task->addSubtask($title, "%s->send(%s, %s);", [
+                    $this,
+                    $to,
+                    $trackerImage,
+                ]);
+            }
+        }
+
+        $task->begin();
     }
     // }}}
 
@@ -454,8 +547,28 @@ class Mail
      */
     protected function stripTags($string)
     {
+        // insert html links as text
+        // @todo only do this for links with specific class or attribute
+        $stripped = preg_replace_callback(array(
+            '@<a[^>]*?href="([^"]*)"[^>]*?>(.*)</a>@iu',
+        ), function($m) {
+            if ($m[1] == $m[2]) {
+                return "{$m[2]}";
+            } else if (substr($m[1], 0, 7) == "mailto:") {
+                return substr($m[1], 7);
+            } else {
+                return "{$m[2]} [{$m[1]}]";
+            }
+        }, $string);
+
+        // replace images with alt-text
         $stripped = preg_replace(array(
-            // Remove invisible/unwanted content
+            '@<img[^>]*?alt="([^"]*)"[^>]*?>@iu',
+        ), '${1}', $stripped);
+
+        // Remove invisible/unwanted content
+        $stripped = preg_replace(array(
+            '@<title[^>]*?>.*?</title>@siu',
             '@<style[^>]*?>.*?</style>@siu',
             '@<script[^>]*?.*?</script>@siu',
             '@<object[^>]*?.*?</object>@siu',
@@ -463,9 +576,12 @@ class Mail
             '@<applet[^>]*?.*?</applet>@siu',
             '@<noframes[^>]*?.*?</noframes>@siu',
             '@<noembed[^>]*?.*?</noembed>@siu',
-        ), '', $string);
+        ), '', $stripped);
 
         $stripped = strip_tags($stripped);
+
+        // remove duplicate newlines with just 2
+        $stripped = trim(preg_replace("/(\r?\n){2,}/", "\n\n", $stripped));
 
         return $stripped;
     }

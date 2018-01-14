@@ -1,7 +1,14 @@
 RM = rm -rf
 
-test:
-	phpunit --configuration PHPUnit.xml .
+PHONY: test server clean
+
+test: server
+	../vendor/bin/phpunit --configuration PHPUnit.xml .
+
+server:
+	$(MAKE) -C docker
+	$(MAKE) run -C docker
 
 clean:
-	${RM} Report Temp
+	${RM} Report Temp docker/ssl/ca.pem
+	$(MAKE) clean -C docker

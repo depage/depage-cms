@@ -60,10 +60,12 @@ class Project extends Base
             "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publishs" => _("Publish"),
+            "backup" => _("Backup"),
             "import" => _("Import"),
         ];
         if (!$this->authUser->canEditTemplates()) {
             unset($tabTitles["variables"]);
+            unset($tabTitles["backup"]);
             unset($tabTitles["import"]);
         }
         if ($this->projectName == "+") {
@@ -98,6 +100,8 @@ class Project extends Base
             $html .= $this->settingsXmlForms("publish");
         } else if ($type == "import") {
             $html .= $this->import();
+        } else if ($type == "backup") {
+            $html .= $this->backups();
         } else {
             $html .= $this->settings_basic();
         }
@@ -270,8 +274,12 @@ class Project extends Base
      **/
     public function publish()
     {
+        if (!$this->authUser->canPublishProject()) {
+            return $this->notAllowed(_("You are not allowed to publish this project."));
+        }
         $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, [
             'project' => $this->project,
+            'users' => \Depage\Auth\User::loadAll($this->pdo),
         ]);
         $form->process();
 
@@ -285,6 +293,7 @@ class Project extends Base
                     $this->project->releaseDocument($matches[1], $this->authUser->id);
                 }
             }
+            $this->project->releaseDocument("pages", $this->authUser->id);
 
             $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId, $this->authUser->id);
 
@@ -296,6 +305,69 @@ class Project extends Base
         $title = sprintf(_("Publish Project '%s'"), $this->project->name);
 
         $h = new Html("publish.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "projects",
+                'icon' => "framework/Cms/images/icon_projects.gif",
+                'class' => "first",
+                'title' => $title,
+                'content' => [
+                    $this->toolbar(),
+                    $form,
+                ],
+            ]),
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ release_pages()
+    /**
+     * @brief release_pages
+     *
+     * @param mixed
+     * @return void
+     *
+     * @todo implement adding documents to xmldb history when publishing and using these for xsl transformations
+     **/
+    public function release_pages($docId = null)
+    {
+        if (!$this->authUser->canPublishProject()) {
+            return $this->notAllowed(_("You are not allowed to release pages on this project."));
+        }
+        $form = new \Depage\Cms\Forms\ReleasePages("release-pages-" . $this->project->id, [
+            'project' => $this->project,
+            'users' => \Depage\Auth\User::loadAll($this->pdo),
+            'selectedDocId' => $docId,
+        ]);
+        $form->process();
+
+        if ($form->validate()) {
+            $values = $form->getValues();
+            $publishId = $values['publishId'];
+
+            // release pages
+            foreach ($values as $key => $value) {
+                if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {
+                    $this->project->releaseDocument($matches[1], $this->authUser->id);
+                }
+            }
+            $this->project->releaseDocument("pages", $this->authUser->id);
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        $title = sprintf(_("Release Pages for Project '%s'"), $this->project->name);
+        $previewUrl = "";
+
+        $pages = $this->project->getPages($docId);
+        if (count($pages) == 1) {
+            $previewUrl = $this->project->getPreviewPath() . $pages[0]->url;
+        }
+
+        $h = new Html("publish.tpl", [
+            'previewUrl' => $previewUrl,
             'content' => new Html("box.tpl", [
                 'id' => "projects",
                 'icon' => "framework/Cms/images/icon_projects.gif",
@@ -333,7 +405,21 @@ class Project extends Base
 
             if (is_dir($targetPath)) {
                 foreach ($values['file'] as $file) {
-                    rename($file['tmp_name'], $targetPath . "/" . \Depage\Html\Html::getEscapedUrl($file['name']));
+                    $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
+                    rename($file['tmp_name'], $targetPath . "/" . $filename);
+
+                    $cachePath = $this->project->getProjectPath() . "lib/cache/";
+                    if (is_dir($cachePath)) {
+                        // remove thumbnails from cache inside of project if available
+                        $cache = \Depage\Cache\Cache::factory("graphics", [
+                            'cachepath' => $cachePath,
+                        ]);
+                        $cache->delete("lib" . $libPath . "/" . $filename . ".*");
+                    }
+
+                    // remove thumbnails from global graphics cache
+                    $cache = \Depage\Cache\Cache::factory("graphics");
+                    $cache->delete("projects/" . $this->project->name . "/lib" . $libPath . "/" . $filename . ".*");
                 }
             }
 
@@ -397,17 +483,113 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ newsletters()
+    /**
+     * @brief newsletters
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function newsletters()
+    {
+        $newsletters = \Depage\Cms\Newsletter::loadAll($this->pdo, $this->project);
+
+        $h = new Html("newsletterList.tpl", [
+            'user' => $this->authUser,
+            'project' => $this->project,
+            'newsletters' => $newsletters,
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ newsletter_subscribers()
+    /**
+     * @brief newsletter_subscribers
+     *
+     * @param mixed
+     * @return void
+     *
+     * @todo look into https://github.com/PHPOffice/PhpSpreadsheet for better export
+     **/
+    public function newsletter_subscribers($category = "Default")
+    {
+        $tableSubscribers = "{$this->pdo->prefix}_proj_{$this->project->name}_newsletter_subscribers";
+
+        $query = $this->pdo->prepare(
+            "SELECT *
+            FROM
+                {$tableSubscribers} AS subscribers
+            WHERE
+                category = :category
+            "
+        );
+
+        $query->execute([
+            "category" => $category,
+        ]);
+
+        $filename = "{$this->project->name}-newsletter-subscribers-" . gmdate('Ymd-His') . ".csv";
+
+        header('Content-Type: text/csv');
+        header("Content-Disposition: attachment;filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $fp = fopen('php://output', 'w');
+
+        // add UTF-8 BOM
+        fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+
+        // add header
+        $subscriber = $query->fetch(\PDO::FETCH_ASSOC);
+
+        $keys = array_keys($subscriber);
+        fputcsv($fp, $keys, ";");
+
+        // add subscribers
+        do {
+            fputcsv($fp, $subscriber, ";");
+        } while ($subscriber = $query->fetch(\PDO::FETCH_ASSOC));
+
+
+        fclose($fp);
+
+        die();
+    }
+    // }}}
     // {{{ backups()
     /**
      * @brief backup
      *
      * @return void
      **/
-    public function backups()
+    private function backups()
     {
         $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
+        //$backup->makeAutoBackup();
 
-        $backup->backupToFile("projects/{$this->project->name}/backup/test.zip");
+
+        $form = new \Depage\Cms\Forms\BackupsRestore("backup-restore", [
+            'backups' => $backup->getAutoBackups(),
+        ]);
+        $form->process();
+
+        if ($form->validate()) {
+            $backup->restoreFromFile($form->getValues()['file']);
+
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        return $form;
     }
     // }}}
     // {{{ statistics()
@@ -419,9 +601,9 @@ class Project extends Base
      **/
     public function statistics()
     {
+
     }
     // }}}
-
     // {{{ details()
     function details($max = null) {
         $h = new Html([
@@ -445,6 +627,26 @@ class Project extends Base
         ], $this->htmlOptions);
 
         return $h;
+    }
+    // }}}
+    // {{{ update()
+    /**
+     * @brief update
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function update()
+    {
+        $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
+
+        if (file_exists($updateSrc)) {
+            $this->project->addProjectUpdateTask();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        } else {
+            return "not update defined";
+        }
     }
     // }}}
 }

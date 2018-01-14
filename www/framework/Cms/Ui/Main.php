@@ -25,6 +25,7 @@ class Main extends Base {
             'user/*' => '\Depage\Cms\Ui\User',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/flash' => '\Depage\Cms\Ui\Flash',
+            'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
             //'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             //'project/*/edit/*' => '\Depage\Cms\Ui\Edit',
@@ -41,23 +42,19 @@ class Main extends Base {
     public function index() {
         if ($this->auth->enforceLazy()) {
             // logged in
-            $h = new Html([
-                'content' => new Html("home.tpl", [
-                    'content' => [
-                        $this->projects(),
-                        $this->users("current"),
-                        $this->tasks(),
-                    ],
-                ]),
+            $h = new Html("home.tpl", [
+                'content' => [
+                    $this->projects(),
+                    $this->users("current"),
+                    $this->tasks(),
+                ],
             ], $this->htmlOptions);
         } else {
             // not logged in
-            $h = new Html([
-                'content' => new Html("welcome.tpl", [
-                    'title' => _("Welcome to\n depage::cms"),
-                    'login' => "Login",
-                    'login_link' => "login/",
-                ]),
+            $h = new Html("welcome.tpl", [
+                'title' => _("Welcome to\n depage::cms"),
+                'login' => "Login",
+                'login_link' => "login/",
             ], $this->htmlOptions);
         }
 
@@ -69,7 +66,11 @@ class Main extends Base {
     public function login() {
         if ($this->auth->enforce()) {
             // logged in
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            if (!empty($_GET['redirectTo'])) {
+                \Depage\Depage\Runner::redirect($_GET['redirectTo']);
+            } else {
+                \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            }
         } else {
             // not logged in
             $form = new \Depage\HtmlForm\HtmlForm("login", [
@@ -149,6 +150,7 @@ class Main extends Base {
 
         // get data
         $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projectGroups = \Depage\Cms\ProjectGroup::loadAll($this->pdo);
 
         // construct template
         $h = new Html("box.tpl", [
@@ -156,7 +158,9 @@ class Main extends Base {
             'title' => _("Projects"),
             'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
+                'user' => $this->user,
                 'projects' => $projects,
+                'projectGroups' => $projectGroups,
             ]),
         ], $this->htmlOptions);
 
@@ -239,7 +243,7 @@ class Main extends Base {
         foreach ($tasks as $task) {
             if ($task) {
                 $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                $taskrunner->run($task->taskId);
+                //$taskrunner->run($task->taskId);
             }
         }
 
@@ -309,6 +313,34 @@ class Main extends Base {
      * @return  null
      */
     public function notifications() {
+        $nm = Notification::loadByTag($this->pdo, "mail.%");
+        foreach($nm as $n) {
+            if (!empty($n->uid)) {
+                $to = \Depage\Auth\User::loadById($this->pdo, $n->uid)->email;
+
+                $url = parse_url(DEPAGE_BASE);
+
+                $subject = $url['host'] . " . " . $n->title;
+                $text = "";
+                $text .= sprintf(_("You received a new notification from %s:"), $url['host']) . "\n\n";
+                $text .= $n->message . "\n\n";
+
+                if (!empty($n->options["link"])) {
+                    $text .= $n->options["link"] . "\n\n";
+                }
+
+                $text .= "--\n";
+                $text .= _("Your faithful servant on") . "\n";
+                $text .= DEPAGE_BASE . "\n";
+
+                $mail = new \Depage\Mail\Mail("notifications@depage.net");
+                $mail
+                    ->setSubject($subject)
+                    ->setText($text)
+                    ->send($to);
+            }
+        }
+
         $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
 
         // construct template
@@ -316,7 +348,8 @@ class Main extends Base {
             'notifications' => $nn,
         ], $this->htmlOptions);
 
-        foreach ($nn as $n) {
+        // delete notifications
+        foreach (array_merge($nm, $nn) as $n) {
             $n->delete();
         }
 
@@ -364,7 +397,7 @@ class Main extends Base {
         });
 
         $h = new Html("box.tpl", [
-            'id' => "box-users",
+            'id' => $showCurrent ? "box-users" : "",
             'class' => "box-users",
             'title' => _("Users"),
             'updateUrl' => $updateUrl,
@@ -372,10 +405,86 @@ class Main extends Base {
             'content' => new Html("userlist.tpl", [
                 'title' => $this->basetitle,
                 'users' => $users,
+                'showCurrent' => $showCurrent,
             ]),
         ], $this->htmlOptions);
 
         return $h;
+    }
+    // }}}
+
+    // {{{ track()
+    /**
+     * @brief track
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function track($projectName, $type, $name, $hash)
+    {
+        if ($type == "newsletter") {
+            try {
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+
+                $newsletter->track($hash);
+            } catch (\Exception $e) {
+            }
+        }
+
+        $im = imagecreate(100, 10);
+        $color = imagecolorallocate($im, 255, 255, 255);
+        imagefill($im, 0, 0, $color);
+
+        header('Content-Type: image/png');
+
+        imagepng($im);
+        imagedestroy($im);
+    }
+    // }}}
+    // {{{ api()
+    /**
+     * @brief api
+     *
+     * @todo move this in own class
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function api($projectName, $type, $action)
+    {
+        $retVal = [
+            'success' => false,
+        ];
+        if ($type == "newsletter") {
+            try {
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+
+                $values = json_decode(file_get_contents("php://input"));
+
+                if ($values && $action == "subscribe") {
+                    $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                } else if ($values && $action == "unsubscribe") {
+                    $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
+                }
+            } catch (\Exception $e) {
+                $retVal['error'] = $e->getMessage();
+            }
+        }
+        if ($type == "cache") {
+            try {
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+
+                if ($action == "clear") {
+                    $retVal['success'] = $project->clearTransformCache();
+                }
+            } catch (\Exception $e) {
+                $retVal['error'] = $e->getMessage();
+            }
+        }
+
+        return new \Depage\Json\Json($retVal);
     }
     // }}}
 
@@ -390,16 +499,32 @@ class Main extends Base {
         // add/update schema for authentication
         \Depage\Auth\Auth::updateSchema($this->pdo);
 
-        $this->auth->enforce();
-
         \Depage\Tasks\Task::updateSchema($this->pdo);
         \Depage\Cms\Project::updateSchema($this->pdo);
         \Depage\Notifications\Notification::updateSchema($this->pdo);
 
-        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         foreach ($projects as $project) {
             $project->updateProjectSchema();
+        }
+
+        return "updated";
+    }
+    // }}}
+    // {{{ info()
+    /**
+     * @brief displays php info
+     *
+     * @return void
+     **/
+    public function info()
+    {
+        if ($this->auth->enforceLazy()) {
+            $info = new \Depage\Php\Info();
+            return new Html("about.tpl", [
+                "info" => $info->getInfo(),
+            ]);
         }
     }
     // }}}
@@ -411,17 +536,9 @@ class Main extends Base {
      * @param mixed $param
      * @return void
      **/
-    public function test($param)
+    public function test()
     {
-        $indexer = new \Depage\Search\Indexer($this->pdo);
 
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-konsultation-zur-europaeischen-saeule-sozialer-rechte.html");
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/ueber-uns/dsvae.html");
-        $indexer->index("https://edit.depage.net/project/dsve/preview/html/pre/de/news/2016/06/eu-kommission-legt-mehrwertsteuer-aktionsplan-vor.html");
-
-        $indexer->index("https://screen-pitch.com/en/");
-
-        $indexer->index("http://localhost/depage-cms/project/depage/preview/html/live/en/blog/2013/10/depage-forms-html5-form-validation-part-2.html");
         die();
     }
     // }}}
@@ -436,8 +553,6 @@ class Main extends Base {
     {
         $search = new \Depage\Search\Search($this->pdo);
         $results = $search->query($_GET['q']);
-
-        var_dump($results);
     }
     // }}}
 }

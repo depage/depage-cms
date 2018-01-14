@@ -1,46 +1,59 @@
 language: php
 php:
+    - 7.0
     - 5.5
     - 5.4
     - 5.3
 
+matrix:
+    allow_failures:
+        - php: 7.0
+        - php: 5.3
+
 branches:
-  only:
-      - master
+    only:
+        - master
 
 services:
 
 before_script:
     # install ftp server and ssh dependencies
     - sudo apt-get update
-    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev
+    - sudo apt-get install -y --force-yes proftpd-basic libssh2-1-dev openssh-server openssl
     - printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
 
     # edit ftp server settings: root user to user directory, display hidden files
-    - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" > /etc/proftpd/proftpd.conf.tmp'
+    - sudo bash -c 'cat /etc/proftpd/proftpd.conf | sed "s/^.*DefaultRoot.*$/DefaultRoot ~/" | sed "s/^.*ListOptions.*$/ListOptions \"-la\"/" | sed "s/^.*Include\s\+\/etc\/proftpd\/tls.conf\s*$/Include \/etc\/proftpd\/tls.conf/" > /etc/proftpd/proftpd.conf.tmp'
     - sudo mv /etc/proftpd/proftpd.conf.tmp /etc/proftpd/proftpd.conf
+
+    - sudo mkdir /etc/proftpd/ssl
+
+    # generate ca key & cert
+    - sudo openssl genrsa -out /etc/proftpd/ssl/ca.key 2048
+    - sudo openssl req -x509 -new -key /etc/proftpd/ssl/ca.key -days 3650 -out /etc/proftpd/ssl/ca.pem -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net-ca/OU=IT/CN=ca.depage.net"
+    # generate client key & cert
+    - sudo openssl genrsa -out /etc/proftpd/ssl/ftp.key 2048
+    - sudo openssl req -new -key /etc/proftpd/ssl/ftp.key -out /etc/proftpd/ssl/ftp.csr -subj "/C=DE/ST=Berlin/L=Berlin/O=depage.net/OU=IT/CN=localhost"
+    # generate signed client cert
+    - sudo openssl x509 -req -days 365 -CA /etc/proftpd/ssl/ca.pem -CAkey /etc/proftpd/ssl/ca.key -CAcreateserial -CAserial serial -in /etc/proftpd/ssl/ftp.csr -out /etc/proftpd/ssl/ftp.pem
+    - sudo cp /etc/proftpd/ssl/ca.pem Tests/docker/ssl
+
+    - sudo chmod -R 600 /etc/proftpd/ssl
+
+    - sudo cp Tests/docker/ssl/tls.conf /etc/proftpd
     - sudo /etc/init.d/proftpd restart
 
     # create test user account with 'testpass' password
     - sudo useradd -m -p co.yjyxRTlonU testuser
 
-    # generate ssh key files
-    - mkdir ssh
-    - ssh-keygen -t rsa -N testkeypass -f ssh/rsakey
-    - ssh-keygen -t dsa -N testkeypass -f ssh/dsakey
-    # convert key to pem format
-    - openssl rsa -passin pass:testkeypass -in ssh/rsakey -out ssh/rsakey
-    - openssl dsa -passin pass:testkeypass -in ssh/dsakey -out ssh/dsakey
-    - sudo mkdir /home/testuser/.ssh
-    # add to authorized keys
-    - sudo cp ssh/rsakey.pub /home/testuser/.ssh/authorized_keys
-    - sudo bash -c 'cat ssh/dsakey.pub >> /home/testuser/.ssh/authorized_keys'
-    - sudo chown -R testuser:testuser /home/testuser/.ssh
+    # add authorized keys
+    - sudo mount --bind $TRAVIS_BUILD_DIR/Tests/docker/home /home/testuser
+    - sudo chown -R testuser:testuser /home/testuser
+    - sudo chown -R testuser:testuser $TRAVIS_BUILD_DIR/Tests/docker/home
 
-    # add local ssh fingerprint to unit test configuration
-    - fingerprint=$(ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub | awk '{print $2}' | sed 's/://g')
-    - cat Tests/PHPUnit.xml | sed "s/fingerprint/$fingerprint/" > Tests/PHPUnit.xml.tmp
-    - mv Tests/PHPUnit.xml.tmp Tests/PHPUnit.xml
+    # replace host key
+    - sudo cp Tests/docker/ssh/ssh_host_rsa_key /etc/ssh
+
+    - composer install
 
 script: phpunit --configuration Tests/PHPUnit.xml Tests/
-

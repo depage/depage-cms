@@ -34,8 +34,8 @@ class Log
         $conf = new \Depage\Config\Config($options);
         $this->options = $conf->getFromDefaults($this->defaults);
 
-        if (!$this->options->file) {
-            $this->options->file = DEPAGE_PATH . "logs/depage.log";
+        if (empty($this->options->file)) {
+            $this->options->setConfig(['file' => DEPAGE_PATH . "logs/depage.log"]);
         }
         $dir = dirname($this->options->file);
 

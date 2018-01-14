@@ -5,7 +5,7 @@
  * depage config module
  *
  *
- * copyright (c) 2002-2009 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2002-2018 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -24,8 +24,10 @@ class Config implements \Iterator, \ArrayAccess
      *
      * @return  null
      */
-    public function __construct($values = array(), $defaults = array()) {
-        $this->setConfig($values);
+    public function __construct($defaults = []) {
+        if (!empty($defaults)) {
+            $this->setConfig($defaults);
+        }
     }
     // }}}
     // {{{ readConfig
@@ -38,15 +40,6 @@ class Config implements \Iterator, \ArrayAccess
      */
     public function readConfig($configFile) {
         $values = include $configFile;
-        $depage_base = "";
-
-        $urls = array_keys($values);
-
-        // sort that shorter urls with same beginning are tested first for a match
-        // @todo change sort order to have the inherited always at the end
-        usort($urls, function($a, $b) {
-            return strlen($a) > strlen($b);
-        });
 
         if (!isset($_SERVER['HTTP_HOST'])) {
             $_SERVER['HTTP_HOST'] = "";
@@ -60,13 +53,34 @@ class Config implements \Iterator, \ArrayAccess
             $acturl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         }
 
+        $this->setConfigForUrl($values, $acturl);
+    }
+    // }}}
+    // {{{ setConfigForUrl()
+    /**
+     * @brief setConfigForUrl
+     *
+     * @param mixed $config, $url
+     * @return void
+     **/
+    public function setConfigForUrl($values, $currentUrl)
+    {
+        $depage_base = "";
+        $urls = array_keys($values);
+
+        // sort that shorter urls with same beginning are tested first for a match
+        // @todo change sort order to have the inherited always at the end
+        usort($urls, function($a, $b) {
+            return strlen($a) > strlen($b);
+        });
+
         // remove url-parameters before matching
-        list($acturl) = explode("?", $acturl, 2);
+        list($currentUrl) = explode("?", $currentUrl, 2);
 
         $simplepatterns = self::getSimplePatterns();
         foreach ($urls as $url) {
             $pattern = "/(" . str_replace(array_keys($simplepatterns), array_values($simplepatterns), $url) . ")/";
-            if (preg_match($pattern, $acturl, $matches)) {
+            if (preg_match($pattern, $currentUrl, $matches)) {
                 // url fits into pattern
 
                 if (isset($values[$url]['base']) && $values[$url]['base'] == "inherit") {
@@ -96,6 +110,7 @@ class Config implements \Iterator, \ArrayAccess
                 define("DEPAGE_BASE", $protocol . $_SERVER['HTTP_HOST']);
             }
         }
+
     }
     // }}}
     // {{{ setConfig
@@ -107,7 +122,7 @@ class Config implements \Iterator, \ArrayAccess
      * @return  null
      */
     public function setConfig($values) {
-        if (count($values) > 0) {
+        if (is_array($values) || $values instanceof \Iterator) {
             foreach ($values as $key => $value) {
                 if (is_array($value)) {
                     $this->data[$key] = new self($value);
@@ -125,10 +140,10 @@ class Config implements \Iterator, \ArrayAccess
      * @return  options as array
      */
     public function toArray() {
-        $data = array();
+        $data = [];
 
         foreach ($this->data as $key => $value) {
-            if (is_object($value)) {
+            if ($value instanceof self) {
                 $data[$key] = $value->toArray();
             } else {
                 $data[$key] = $value;
@@ -149,7 +164,7 @@ class Config implements \Iterator, \ArrayAccess
     public function getFromDefaults($defaults) {
         $data = array();
 
-        if (count($defaults) > 0) {
+        if (is_array($defaults) || $values instanceof \Iterator) {
             foreach ($defaults as $key => $value) {
                 if (isset($this->data[$key]) && !is_null($this->data[$key])) {
                     $data[$key] = $this->data[$key];
@@ -157,12 +172,11 @@ class Config implements \Iterator, \ArrayAccess
                     $data[$key] = $value;
                 }
                 if (is_array($data[$key])) {
-                    $data[$key] = (object) $data[$key];
+                    $data[$key] = new self($data[$key]);
                 }
             }
         }
-
-        return (object) $data;
+        return new self($data);
     }
     // }}}
     // {{{ getDefaultsFromClass
@@ -235,6 +249,9 @@ class Config implements \Iterator, \ArrayAccess
      */
     public function __set($name, $value) {
         // make readonly
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot set '$name': config objects are read only");
+        }
     }
     // }}}
     // {{{ __isset
@@ -279,6 +296,9 @@ class Config implements \Iterator, \ArrayAccess
     // {{{ offsetSet()
     public function offsetSet($offset, $value) {
         // make readonly
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot set '$offset': config objects are read only");
+        }
     }
     // }}}
     // {{{ offsetExists()
@@ -289,6 +309,9 @@ class Config implements \Iterator, \ArrayAccess
     // {{{ offsetUnset()
     public function offsetUnset($offset) {
         // make readonly
+        if (php_sapi_name() != 'cli') {
+            error_log("cannot unset '$offset': config objects are read only");
+        }
     }
     // }}}
     // {{{ offsetGet()
