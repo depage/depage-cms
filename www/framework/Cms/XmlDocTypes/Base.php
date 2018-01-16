@@ -28,8 +28,7 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
     {
         parent::onDocumentChange();
 
-        // @todo get automatic list of templates
-        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
+        $templates = $this->project->getXslTemplates();
         $previewTypes = ["pre"];
 
         foreach ($templates as $template) {
@@ -45,9 +44,9 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
         parent::onHistorySave();
 
         // @todo get automatic list of templates
-        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
-        $previewTypes = ["live"];
+        $templates = $this->project->getXslTemplates();
         $publishingTargets = $this->project->getPublishingTargets();
+        $previewTypes = ["live"];
 
         foreach ($publishingTargets as $id => $settings) {
             array_push($previewTypes, "live-$id");
