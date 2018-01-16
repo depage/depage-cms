@@ -172,13 +172,9 @@ class Preview extends \Depage\Depage\Ui\Base
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
         $transformer->routeHtmlThroughPhp = true;
 
-        $projectPath = $this->project->getProjectPath();
-        if (file_exists("$projectPath/lib/global/config.php")) {
-            include("$projectPath/lib/global/config.php");
-
-            if (isset($aliases)) {
-                $transformer->registerAliases($aliases);
-            }
+        $projectConfig = $this->project->getProjectConfig();
+        if (isset($projectConfig->aliases)) {
+            $transformer->registerAliases($projectConfig->aliases);
         }
 
         if ($this->template == "newsletter") {
