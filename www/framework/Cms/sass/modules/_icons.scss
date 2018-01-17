@@ -1,0 +1,136 @@
+/* {{{ icons global */
+@font-face {
+    font-family: 'depage-icons';
+    src:url('../fonts/depage-icons.eot');
+    src:url('../fonts/depage-icons.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/depage-icons.woff') format('woff'),
+        url('../fonts/depage-icons.ttf') format('truetype'),
+        url('../fonts/depage-icons.svg#depage-icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.depage-form ul.depageEditorToolbar li a {
+    background-image: none;
+}
+
+.icon {
+    position: relative;
+    font-family: 'depage-icons';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+
+    &:before {
+        text-indent: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 1.3em;
+        text-align: center;
+    }
+}
+@mixin iconChar($name, $char) {
+    .icon-#{$name} {
+        @extend .icon;
+
+        &:before {
+            content: $char;
+        }
+    }
+}
+/* }}} */
+
+@include iconChar("editor-bold", "\62");
+@include iconChar("editor-italic", "\69");
+
+@mixin icon-base($name: "", $scale: 1) {
+    $iconSize: 48px;
+
+    background-repeat: no-repeat;
+    background-image: url(../images/icon_sprite.svg);
+    background-size: (4 * $iconSize) (20 * $iconSize);
+
+    @if ($name != "") {
+        @include icon($name, $scale);
+    }
+
+}
+@mixin icon($name, $scale: 1) {
+    // @todo simplify by specifying size instead of scale
+    $iconSize: 48px * $scale;
+
+    // @todo simplify with mixin or function
+    @if ($name == "projects") {
+        background-position: 0px 0px;
+    } @else if ($name == "users") {
+        background-position: 0 (-1 * $iconSize);
+    } @else if ($name == "user") {
+        background-position: (-1 * $iconSize) (-1 * $iconSize);
+    } @else if ($name == "tasks") {
+        background-position: 0 (-2 * $iconSize);
+    } @else if ($name == "settings") {
+        background-position: (-1 * $iconSize) (-2 * $iconSize);
+
+    } @else if ($name == "left-full") {
+        background-position: 0 (-3 * $iconSize);
+    } @else if ($name == "split") {
+        background-position: (-1 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "tree-split") {
+        background-position: (-2 * $iconSize) (-3 * $iconSize);
+    } @else if ($name == "right-full") {
+        background-position: (-3 * $iconSize) (-3 * $iconSize);
+
+    } @else if ($name == "left-full-active") {
+        background-position: 0 (-4 * $iconSize);
+    } @else if ($name == "split-active") {
+        background-position: (-1 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "tree-split-active") {
+        background-position: (-2 * $iconSize) (-4 * $iconSize);
+    } @else if ($name == "right-full-active") {
+        background-position: (-3 * $iconSize) (-4 * $iconSize);
+
+    } @else if ($name == "upload") {
+        background-position: 0 (-5 * $iconSize);
+    } @else if ($name == "upload-drag-over") {
+        background-position: (-1 * $iconSize) (-5 * $iconSize);
+
+    } @else if ($name == "add") {
+        background-position: 0 (-6 * $iconSize);
+    } @else if ($name == "remove") {
+        background-position: (-1 * $iconSize) (-6 * $iconSize);
+
+    } @else if ($name == "help") {
+        background-position: 0 (-7 * $iconSize);
+    } @else if ($name == "help-active") {
+        background-position: (-1 * $iconSize) (-7 * $iconSize);
+
+
+    } @else if ($name == "closed") {
+        background-position: 0 (-8 * $iconSize);
+    } @else if ($name == "open") {
+        background-position: 0 (-9 * $iconSize);
+
+    } @else if ($name == "help-tree") {
+        background-position: 0 (-10 * $iconSize);
+    } @else if ($name == "help-properties") {
+        background-position: (-1 * $iconSize) (-10 * $iconSize);
+    } @else if ($name == "help-preview") {
+        background-position: (-2 * $iconSize) (-10 * $iconSize);
+
+    } @else {
+        background-position: 800px 800px;
+    }
+    @if ($scale != 1) {
+        background-size: (4 * $iconSize) (20 * $iconSize);
+    }
+
+}
+
+
+/* vim:set ft=scss sw=4 sts=4 fdm=marker : */

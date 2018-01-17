@@ -11,7 +11,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  * @require framework/Cms/js/xmldb.js
  * @require framework/Cms/js/locale.js
- * @require framework/Cms/js/jstree.js
+ * @require framework/Cms/js/depage.jstree.js
  *
  *
  * @file    js/global.js
@@ -79,6 +79,7 @@ var depageCMS = (function() {
             localJS.setupSortables();
             localJS.setupForms();
             localJS.setupHelp();
+            localJS.setupTrees();
         },
         // }}}
         // {{{ setupAjaxContent
@@ -462,6 +463,17 @@ var depageCMS = (function() {
         // {{{ setupHelp
         setupHelp: function() {
             $("#help").depageLivehelp({});
+        },
+        // }}}
+        // {{{ setupTrees
+        setupTrees: function() {
+            $(".tree.pages").each(function() {
+                var $treeContainer = $(this);
+
+                $treeContainer.load(baseUrl + $treeContainer.data("url") + "?ajax=true", function() {
+                    $treeContainer.children(".jstree-container").depageTree();
+                });
+            });
         },
         // }}}
 

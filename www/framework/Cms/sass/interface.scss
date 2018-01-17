@@ -4,7 +4,7 @@
 @import "../../shared/depage-jquery-plugins/sass/_depage-shy-dialogue";
 @import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
-@import "icons";
+@import "modules/_icons";
 
 $toolbarHeight: 30px;
 $infoHeight: 15px;
@@ -16,89 +16,6 @@ $borderColor: #999999;
 $textBaseColor: #000000;
 $textLighterColor: #666666;
 $textBrightColor: #ffffff;
-
-@mixin icon-base($name: "", $scale: 1) {
-    $iconSize: 48px;
-
-    background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg);
-    background-size: (4 * $iconSize) (20 * $iconSize);
-
-    @if ($name != "") {
-        @include icon($name, $scale);
-    }
-
-}
-@mixin icon($name, $scale: 1) {
-    // @todo simplify by specifying size instead of scale
-    $iconSize: 48px * $scale;
-
-    // @todo simplify with mixin or function
-    @if ($name == "projects") {
-        background-position: 0px 0px;
-    } @else if ($name == "users") {
-        background-position: 0 (-1 * $iconSize);
-    } @else if ($name == "user") {
-        background-position: (-1 * $iconSize) (-1 * $iconSize);
-    } @else if ($name == "tasks") {
-        background-position: 0 (-2 * $iconSize);
-    } @else if ($name == "settings") {
-        background-position: (-1 * $iconSize) (-2 * $iconSize);
-
-    } @else if ($name == "left-full") {
-        background-position: 0 (-3 * $iconSize);
-    } @else if ($name == "split") {
-        background-position: (-1 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "tree-split") {
-        background-position: (-2 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "right-full") {
-        background-position: (-3 * $iconSize) (-3 * $iconSize);
-
-    } @else if ($name == "left-full-active") {
-        background-position: 0 (-4 * $iconSize);
-    } @else if ($name == "split-active") {
-        background-position: (-1 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "tree-split-active") {
-        background-position: (-2 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "right-full-active") {
-        background-position: (-3 * $iconSize) (-4 * $iconSize);
-
-    } @else if ($name == "upload") {
-        background-position: 0 (-5 * $iconSize);
-    } @else if ($name == "upload-drag-over") {
-        background-position: (-1 * $iconSize) (-5 * $iconSize);
-
-    } @else if ($name == "add") {
-        background-position: 0 (-6 * $iconSize);
-    } @else if ($name == "remove") {
-        background-position: (-1 * $iconSize) (-6 * $iconSize);
-
-    } @else if ($name == "help") {
-        background-position: 0 (-7 * $iconSize);
-    } @else if ($name == "help-active") {
-        background-position: (-1 * $iconSize) (-7 * $iconSize);
-
-
-    } @else if ($name == "closed") {
-        background-position: 0 (-8 * $iconSize);
-    } @else if ($name == "open") {
-        background-position: 0 (-9 * $iconSize);
-
-    } @else if ($name == "help-tree") {
-        background-position: 0 (-10 * $iconSize);
-    } @else if ($name == "help-properties") {
-        background-position: (-1 * $iconSize) (-10 * $iconSize);
-    } @else if ($name == "help-preview") {
-        background-position: (-2 * $iconSize) (-10 * $iconSize);
-
-    } @else {
-        background-position: 800px 800px;
-    }
-    @if ($scale != 1) {
-        background-size: (4 * $iconSize) (20 * $iconSize);
-    }
-
-}
 
 /* {{{ colors */
     .head {
@@ -1026,27 +943,68 @@ div.preview.zoom100 iframe {
     }
 }
 /* }}} */
+@import "modules/_contextmenu.scss";
+@import "modules/_trees.scss";
 /* {{{ trees */
 .trees {
     position: absolute;
     background: #ffffff;
-    width: 300px;
+    width: $treeWidth;
     overflow: hidden;
+    border-right: 1px solid $borderColor;
+
+    .tree {
+        position: absolute;
+
+        .jstree-container {
+            position: absolute;
+            overflow: scroll;
+            top: 0;
+            bottom: $toolbarHeight;
+            left: 0;
+            right: 0;
+        }
+        .toolbar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+    .tree.pages {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 50%;
+        border-bottom: 1px solid $borderColor;
+    }
+    .tree.pagedata {
+        top: 50%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 }
 .trees-hidden .trees {
     display: none;
 }
-.layout-narrow .trees {
-    top: 40px;
-    left: 10px;
-    bottom: 10px;
-    border: 1px solid #000000;
-}
-.layout-wide .trees {
-    top: 30px;
+.layout-left .trees {
+    top: $infoHeight;
+    left: 0;
     bottom: 0;
 }
 /* }}} */
+// {{{ edit-properties
+.edit-properties {
+    position: absolute;
+}
+.layout-left .edit-properties {
+    left: $treeWidth;
+    right: 0;
+    bottom: 0;
+    top: $infoHeight;
+}
+// }}}
 /* {{{ shy-dialogs */
 .depage-shy-dialogue {
     @include depage-shy-dialogue(

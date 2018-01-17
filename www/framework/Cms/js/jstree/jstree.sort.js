@@ -1,38 +1,74 @@
-/* File: jstree.sort.js
-Sorts items alphabetically (or using any other function)
-*/
-/* Group: jstree sort plugin */
-(function ($) {
-	$.jstree.plugin("sort", {
-		__construct : function () {
-			this.get_container()
-				.bind("load_node.jstree", $.proxy(function (e, data) {
-						var obj = this.get_node(data.rslt.obj);
-						obj = obj === -1 ? this.get_container_ul() : obj.children("ul");
-						this._sort(obj, true);
+/**
+ * ### Sort plugin
+ *
+ * Automatically sorts all siblings in the tree according to a sorting function.
+ */
+/*globals jQuery, define, exports, require */
+(function (factory) {
+	"use strict";
+	if (typeof define === 'function' && define.amd) {
+		define('jstree.sort', ['jquery','jstree'], factory);
+	}
+	else if(typeof exports === 'object') {
+		factory(require('jquery'), require('jstree'));
+	}
+	else {
+		factory(jQuery, jQuery.jstree);
+	}
+}(function ($, jstree, undefined) {
+	"use strict";
+
+	if($.jstree.plugins.sort) { return; }
+
+	/**
+	 * the settings function used to sort the nodes.
+	 * It is executed in the tree's context, accepts two nodes as arguments and should return `1` or `-1`.
+	 * @name $.jstree.defaults.sort
+	 * @plugin sort
+	 */
+	$.jstree.defaults.sort = function (a, b) {
+		//return this.get_type(a) === this.get_type(b) ? (this.get_text(a) > this.get_text(b) ? 1 : -1) : this.get_type(a) >= this.get_type(b);
+		return this.get_text(a) > this.get_text(b) ? 1 : -1;
+	};
+	$.jstree.plugins.sort = function (options, parent) {
+		this.bind = function () {
+			parent.bind.call(this);
+			this.element
+				.on("model.jstree", $.proxy(function (e, data) {
+						this.sort(data.parent, true);
 					}, this))
-				.bind("rename_node.jstree create_node.jstree", $.proxy(function (e, data) {
-						this._sort(data.rslt.obj.parent(), false);
+				.on("rename_node.jstree create_node.jstree", $.proxy(function (e, data) {
+						this.sort(data.parent || data.node.parent, false);
+						this.redraw_node(data.parent || data.node.parent, true);
 					}, this))
-				.bind("move_node.jstree copy_node.jstree", $.proxy(function (e, data) {
-						var m = data.rslt.parent === -1 ? this.get_container_ul() : data.rslt.parent.children('ul');
-						this._sort(m, false);
+				.on("move_node.jstree copy_node.jstree", $.proxy(function (e, data) {
+						this.sort(data.parent, false);
+						this.redraw_node(data.parent, true);
 					}, this));
-		},
-		defaults : function (a, b) { return this.get_text(a, true) > this.get_text(b, true) ? 1 : -1; },
-		_fn : {
-			_sort : function (obj, deep) {
-				var s = this.get_settings(true).sort,
-					t = this;
-				obj.append($.makeArray(obj.children("li")).sort($.proxy(s, t)));
-				obj.children('li').each(function () { t.correct_node(this, false); });
+		};
+		/**
+		 * used to sort a node's children
+		 * @private
+		 * @name sort(obj [, deep])
+		 * @param  {mixed} obj the node
+		 * @param {Boolean} deep if set to `true` nodes are sorted recursively.
+		 * @plugin sort
+		 * @trigger search.jstree
+		 */
+		this.sort = function (obj, deep) {
+			var i, j;
+			obj = this.get_node(obj);
+			if(obj && obj.children && obj.children.length) {
+				obj.children.sort($.proxy(this.settings.sort, this));
 				if(deep) {
-					obj.find("> li > ul").each(function() { t._sort($(this)); });
-					t.correct_node(obj.children('li'), true);
+					for(i = 0, j = obj.children_d.length; i < j; i++) {
+						this.sort(obj.children_d[i], false);
+					}
 				}
 			}
-		}
-	});
+		};
+	};
+
 	// include the sort plugin by default
-	$.jstree.defaults.plugins.push("sort");
-})(jQuery);
+	// $.jstree.defaults.plugins.push("sort");
+}));
