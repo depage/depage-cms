@@ -578,14 +578,14 @@ class Project extends \Depage\Entity\Entity
         return $this->getBaseUrl() . "/" . $languages[0];
     }
     // }}}
-    // {{{ getXsltTemplates()
+    // {{{ getXslTemplates()
     /**
-     * @brief getXsltTemplates
+     * @brief getXslTemplates
      *
      * @param mixed
      * @return void
      **/
-    public function getXsltTemplates()
+    public function getXslTemplates()
     {
         $templates = [];
 
@@ -1159,7 +1159,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function clearTransformCache()
     {
-        $templates = ["html", "atom", "debug", "sitemap", "newsletter"];
+        $templates = $this->getXslTemplates();
         $previewTypes = ["dev", "pre", "live"];
 
         foreach ($templates as $template) {
