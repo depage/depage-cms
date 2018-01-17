@@ -446,32 +446,9 @@ class Project extends Base
     // {{{ edit()
     function edit() {
         // construct template
-        $hProject = new Html("flashedit.tpl", [
-            'flashUrl' => "project/{$this->projectName}/flash/flash/false",
-            'previewUrl' => $this->project->getPreviewPath(),
-        ]);
-
-        $h = new Html([
-            'content' => [
-                $hProject,
-            ],
-        ], $this->htmlOptions);
-
-        return $h;
-    }
-    // }}}
-    // {{{ jsedit()
-    function jsedit() {
-        // cms tree
-        $tree = Tree::_factoryAndInit($this->options, [
-            'pdo' => $this->pdo,
-            'projectName' => $this->projectName,
-        ]);
-
-        // construct template
         $hProject = new Html("projectmain.tpl", [
-            'tree_pages' => $tree->tree("pages"),
-            'tree_document' => $tree->tree("testpage"),
+            'previewUrl' => $this->project->getPreviewPath(),
+            'projectName' => $this->project->name,
         ], $this->htmlOptions);
 
         $h = new Html([
