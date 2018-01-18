@@ -1,7 +1,6 @@
 /**
  * @require framework/Cms/js/jstree/jstree.js
  * @require framework/Cms/js/jstree/jstree.changed.js
- * @require framework/Cms/js/jstree/jstree.checkbox.js
  * @require framework/Cms/js/jstree/jstree.conditionalselect.js
  * @require framework/Cms/js/jstree/jstree.contextmenu.js
  * @require framework/Cms/js/jstree/jstree.dnd.js
@@ -31,7 +30,7 @@
  *
  * Depage jstree - wraps the jstree in the depage namespace adding custom configuration and functionality.
  *
- * @copyright (c) 2006-2012 Frank Hellenkamp [jonas@depage.net]
+ * @copyright (c) 2006-2018 Frank Hellenkamp [jonas@depage.net]
  *
  * @author Frank Hellenkamp
  * @author Ben Wallis
@@ -40,7 +39,7 @@
 
     if(!$.depage){
         $.depage = {};
-    };
+    }
 
     // {{{ jstree()
     /**
@@ -87,7 +86,7 @@
          */
         base.jstree = function() {
             base.$el.jstree(base.options);
-        }
+        };
         // }}}
 
         // go!
@@ -118,7 +117,7 @@
                 "action"            : function (data) {
                     $.depage.jstree.contextCreate(data, type, position);
                 }
-            }
+            };
         });
 
         var create_menu = {
@@ -130,7 +129,7 @@
                 "action"            : false,
                 "submenu"           : sub_menu
             }
-        }
+        };
 
         return create_menu;
     };
@@ -235,7 +234,7 @@
     $.depage.jstree.contextCut = function(data) {
         var inst = $.jstree._reference(data.reference);
 
-        if (inst) { // TODO why null?
+        if (inst) { // @todo why null?
             var obj = inst.get_node(data.reference);
             if(data.ui && inst.is_selected(obj)) {
                 obj = inst.get_selected();
@@ -256,7 +255,7 @@
         position = position || 'inside';
         var inst = $.jstree._reference(data.reference);
 
-        // TODO bug why is inst not defined - clicked to quickly?
+        // @todo bug why is inst not defined - clicked to quickly?
         if (inst) {
 
             // open the node (so states are remembered after delataupdate)
@@ -279,7 +278,7 @@
      */
     $.depage.jstree.contextCopy = function(data) {
         var inst = $.jstree._reference(data.reference);
-        if (inst){ // TODO why null? BUG after delete?
+        if (inst){ // @todo why null? BUG after delete?
             var obj = inst.get_node(data.reference);
             if(inst.is_selected(obj)) {
                 obj = inst.get_selected();
@@ -297,7 +296,7 @@
      */
     $.depage.jstree.contextDuplicate = function(data) {
         var inst = $.jstree._reference(data.reference);
-        if (inst){ // TODO why null? BUG after delete?
+        if (inst){ // @todo why null? BUG after delete?
             var obj = inst.get_node(data.reference);
             if(inst.is_selected(obj)) {
                 obj = inst.get_selected();
@@ -392,11 +391,11 @@
             //"pedantic_html_data", // @todo check if still needed
             //"dnd_placeholder", // @todo check dnd vs dnd_placeholder
 
-            //"themes",
             "ui",
             "dnd",
             "typesfromurl",
             "hotkeys",
+            //"wholerow",
             //"contextmenu",
             "nodeinfo",
             "dblclickrename",
@@ -405,9 +404,8 @@
             "deltaupdates",
             "toolbar",
 
-        /**
-         * custom doctype handlers
-         */
+            // custom doctype handlers
+            // @todo get doctype handler from data-attributes
             "doctype_page"
         ],
 
@@ -415,7 +413,7 @@
          * Plugin configuration
          */
         ui : {
-            // TODO:
+            // @todo:
             "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
         },
 
@@ -593,7 +591,7 @@
                     default_items = $.extend($depageTree = $.depage.jstree.buildCreateMenu(available_nodes), default_items);
 
                 } else {
-                    // TODO default create menu
+                    // @todo default create menu
                 }
                 */
 
@@ -642,7 +640,7 @@
                                     $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
 
                                 } else {
-                                    // TODO default create menu
+                                    // @todo default create menu
                                 }
                             }
                         }
