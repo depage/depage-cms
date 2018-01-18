@@ -14,15 +14,17 @@ $iconSize: 24px;
     list-style-image: none;
 }
 .jstree-node {
+    position: relative;
     white-space: nowrap;
 }
 .jstree-anchor {
-    display: inline-block;
     color: black;
     white-space: nowrap;
-    padding: 0 4px 0 1px;
+    overflow-x: hidden;
+    padding: 0;
     margin: 0;
     vertical-align: top;
+    border: 1px solid transparent;
 
     &:focus {
         outline: 0;
@@ -34,19 +36,30 @@ $iconSize: 24px;
     &:active {
         text-decoration: none;
         color: inherit;
+        margin-left: 2 * $iconSize;
+        padding-left: 6px;
+    }
+    span {
+        margin-left: 10px;
+        color: #999999;
     }
 }
 .jstree-anchor,
 .jstree-icon {
     &,
     &:empty {
-        display: inline-block;
+        display: block;
         text-decoration: none;
         margin: 0;
         padding: 0;
         vertical-align: top;
-        text-align: center;
+        text-align: left;
     }
+}
+.jstree-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 .jstree-ocl {
     cursor: pointer;
@@ -133,20 +146,17 @@ $iconSize: 24px;
     transition: background-color 0.15s, box-shadow 0.15s;
 }
 .jstree-hovered {
-    background: #e7f4f9;
-    border-radius: 2px;
-    box-shadow: inset 0 0 1px #cccccc;
+    background: $backgroundColor;
 }
 .jstree-context {
-    background: #e7f4f9;
-    border-radius: 2px;
-    box-shadow: inset 0 0 1px #cccccc;
+    background: $backgroundColor;
 }
 .jstree-clicked {
-    background: #beebff;
-    border-radius: 2px;
-    border: 1px solid #ff9900;
-    box-shadow: inset 0 0 1px #999999;
+    border: 1px solid $selectionBackgroundColor;
+    background: $selectionBackgroundColor;
+}
+.jstree-clicked.jstree-hovered {
+    background: $selectionBackgroundColor;
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {
     display: none;
@@ -180,13 +190,6 @@ $iconSize: 24px;
 }
 .jstree-no-checkboxes .jstree-checkbox {
     display: none !important;
-}
-.jstree-clicked {
-    background: transparent;
-    box-shadow: none;
-}
-.jstree-clicked.jstree-hovered {
-    background: #e7f4f9;
 }
 .jstree-node {
     min-height: $treeLineHeight;

@@ -16,7 +16,7 @@
  *
  * @file    js/global.js
  *
- * copyright (c) 2006-2015 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2006-2018 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
