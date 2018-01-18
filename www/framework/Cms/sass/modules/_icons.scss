@@ -49,20 +49,22 @@
 @include iconChar("editor-bold", "\62");
 @include iconChar("editor-italic", "\69");
 
-@mixin icon-base($name: "", $scale: 1) {
-    $iconSize: 48px;
+@mixin icon-base($name: "", $size: 48px) {
+    $scale: $size / 48px;
+    $iconSize: 48px * $scale;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
     background-size: (4 * $iconSize) (20 * $iconSize);
 
     @if ($name != "") {
-        @include icon($name, $scale);
+        @include icon($name, $size);
     }
 
 }
-@mixin icon($name, $scale: 1) {
+@mixin icon($name, $size: 48px) {
     // @todo simplify by specifying size instead of scale
+    $scale: $size / 48px;
     $iconSize: 48px * $scale;
 
     // @todo simplify with mixin or function

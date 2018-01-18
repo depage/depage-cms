@@ -70,20 +70,6 @@ $textBrightColor: #ffffff;
     .projectlist div.details table.lastchanged_pages tr:hover a {
         color: #882200;
     }
-    #dlg {
-        background: #ffc670;
-        border: 1px solid #303238;
-        color: #303238;
-    }
-    #dlg .question {
-        background: url(../images/icon_question.gif);
-    }
-    #dlg .yes {
-        background: url(../images/icon_yes.gif);
-    }
-    #dlg .no {
-        background: url(../images/icon_no.gif);
-    }
     .centered_box small  {
         color: #666666;
     }
@@ -309,7 +295,7 @@ select,
             width: 2em;
             height: 2em;
             background-color: transparent;
-            @include icon-base("add", 0.5);
+            @include icon-base("add", 24px);
         }
         &:hover {
             text-decoration: underline;
@@ -394,13 +380,13 @@ select,
                 }
             }
             &.icon-user:before {
-                @include icon("user", 0.5);
+                @include icon("user", 24px);
             }
             &.icon-projects:before {
-                @include icon("projects", 0.5);
+                @include icon("projects", 24px);
             }
             &.icon-settings:before {
-                @include icon("settings", 0.45);
+                @include icon("settings", 22px);
             }
             &.icon-help {
                 width: 34px;
@@ -410,12 +396,12 @@ select,
                 }
             }
             &.icon-help:before {
-                @include icon("help", 0.5);
+                @include icon("help", 24px);
                 margin-right: 20px;
             }
             &.icon-help.active:before,
             &.icon-help:hover:before {
-                @include icon("help-active", 0.5);
+                @include icon("help-active", 24px);
             }
         }
         > li > a {
@@ -595,36 +581,36 @@ select,
         }
     }
     .layout-buttons a {
-        $iconScale: 0.55;
+        $iconSize: 24px;
         @include icon-base();
         text-indent: -1000em;
-        width: 2.4em;
+        width: 24px;
 
         &.left-full {
-            @include icon("left-full", $iconScale);
+            @include icon("left-full", $iconSize);
         }
         &.split {
-            @include icon("split", $iconScale);
+            @include icon("split", $iconSize);
         }
         &.tree-split {
-            @include icon("tree-split", $iconScale);
+            @include icon("tree-split", $iconSize);
         }
         &.right-full {
-            @include icon("right-full", $iconScale);
+            @include icon("right-full", $iconSize);
         }
         &.active,
         &:hover {
             &.left-full {
-                @include icon("left-full-active", $iconScale);
+                @include icon("left-full-active", $iconSize);
             }
             &.split {
-                @include icon("split-active", $iconScale);
+                @include icon("split-active", $iconSize);
             }
             &.tree-split {
-                @include icon("tree-split-active", $iconScale);
+                @include icon("tree-split-active", $iconSize);
             }
             &.right-full {
-                @include icon("right-full-active", $iconScale);
+                @include icon("right-full-active", $iconSize);
             }
         }
     }
@@ -943,8 +929,10 @@ div.preview.zoom100 iframe {
     }
 }
 /* }}} */
+
 @import "modules/_contextmenu.scss";
 @import "modules/_trees.scss";
+
 /* {{{ trees */
 .trees {
     position: absolute;
@@ -1213,7 +1201,7 @@ div.preview.zoom100 iframe {
                     width: 2em;
                     height: 2em;
                     background-color: transparent;
-                    @include icon-base("add", 0.5);
+                    @include icon-base("add", 24px);
                 }
             }
         }
@@ -1356,13 +1344,13 @@ div.preview.zoom100 iframe {
     display: block;
     content: " ";
     float: left;
-    width: 14px;
-    height: 14px;
-    margin-top: 7px;
-    @include icon-base("closed", 0.28);
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    @include icon-base("closed", 24px);
 }
 .projectlist dl dt.active .opener {
-    @include icon("open", 0.28);
+    @include icon("open", 24px);
 }
 /* }}} */
 
@@ -1454,10 +1442,10 @@ div.preview.zoom100 iframe {
             }
         }
         .icon-add:before {
-            @include icon-base("add", 0.5);
+            @include icon-base("add", 24px);
         }
         .icon-download:before {
-            @include icon-base("upload-drag-over", 0.5);
+            @include icon-base("upload-drag-over", 24px);
         }
     }
     a {
@@ -1483,7 +1471,7 @@ div.preview.zoom100 iframe {
             }
         }
         &.icon-settings:before {
-            @include icon("settings", 0.45);
+            @include icon("settings", 22px);
         }
     }
     dt strong {
@@ -1686,8 +1674,7 @@ html[lang='de'] {
         }
     }
     .dropArea.has-drop-support {
-        $scale: 2.5;
-        $size: 48px * $scale;
+        $size: 48px * 2.5;
         height: 250px;
 
         .content:before {
@@ -1699,7 +1686,7 @@ html[lang='de'] {
             font-size: 16px;
         }
         .content:after {
-            @include icon-base("upload", $scale);
+            @include icon-base("upload", $size);
             display: block;
             content: " ";
             position: relative;
@@ -1710,7 +1697,7 @@ html[lang='de'] {
             height: $size;
         }
         &.drag-over .content:after {
-            @include icon("upload-drag-over", $scale);
+            @include icon("upload-drag-over", $size);
             border-color: #4E4C4B;
         }
     }
@@ -1861,13 +1848,13 @@ form.lastchanged_pages {
         }
     }
     .icon-tree:before {
-        @include icon("help-tree", 0.665);
+        @include icon("help-tree", 32px);
     }
     .icon-properties:before {
-        @include icon("help-properties", 0.665);
+        @include icon("help-properties", 32px);
     }
     .icon-preview:before {
-        @include icon("help-preview", 0.665);
+        @include icon("help-preview", 32px);
     }
 }
 
@@ -1900,13 +1887,13 @@ form.lastchanged_pages {
         }
     }
     .icon-tree:before {
-        @include icon("help-tree", 0.665);
+        @include icon("help-tree", 32px);
     }
     .icon-properties:before {
-        @include icon("help-properties", 0.665);
+        @include icon("help-properties", 32px);
     }
     .icon-preview:before {
-        @include icon("help-preview", 0.665);
+        @include icon("help-preview", 32px);
     }
 }
 /* }}} */
