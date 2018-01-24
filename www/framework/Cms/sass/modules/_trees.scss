@@ -61,6 +61,9 @@ $iconSize: 24px;
     left: 0;
     top: 0;
 }
+.jstree-anchor > .jstree-icon {
+    left: $iconSize;
+}
 .jstree-ocl {
     cursor: pointer;
 }
@@ -193,23 +196,23 @@ $iconSize: 24px;
 }
 .jstree-node {
     min-height: $treeLineHeight;
-    line-height: $treeLineHeight;
+    line-height: $treeLineHeight - 2px;
     margin-left: $treeLineHeight;
     min-width: $treeLineHeight;
 }
 .jstree-anchor {
-    line-height: $treeLineHeight;
+    line-height: $treeLineHeight - 2px;
     height: $treeLineHeight;;
 }
 .jstree-icon {
     width: $treeLineHeight;;
     height: $treeLineHeight;;
-    line-height: $treeLineHeight;;
+    line-height: $treeLineHeight;
 }
 .jstree-icon:empty {
     width: $treeLineHeight;;
     height: $treeLineHeight;;
-    line-height: $treeLineHeight;;
+    line-height: $treeLineHeight;
 }
 .jstree-node,
 .jstree-icon,
@@ -302,7 +305,7 @@ $iconSize: 24px;
     margin-right: 0;
 }
 #jstree-dnd {
-    line-height: $treeLineHeight;;
+    line-height: $treeLineHeight - 2px;
     padding: 0 4px;
 }
 #jstree-dnd .jstree-ok,
@@ -315,7 +318,7 @@ $iconSize: 24px;
     background: transparent;
     width: $treeLineHeight;;
     height: $treeLineHeight;;
-    line-height: $treeLineHeight;;
+    line-height: $treeLineHeight;
 }
 #jstree-dnd .jstree-ok {
     background-position: -4px -68px;

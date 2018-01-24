@@ -10,7 +10,6 @@
  * @require framework/Cms/js/jstree/jstree.state.js
  * @require framework/Cms/js/jstree/jstree.types.js
  * @require framework/Cms/js/jstree/jstree.unique.js
- * @require framework/Cms/js/jstree/jstree.wholerow.js
  * @require framework/Cms/js/jstree/vakata-jstree.js
  *
  * @_require framework/Cms/js/jstree/jstree.dblclickrename.js
@@ -387,15 +386,10 @@
          * The list of plugins to include
          */
         plugins : [
-            //"select_created_nodes",
-            //"pedantic_html_data", // @todo check if still needed
-            //"dnd_placeholder", // @todo check dnd vs dnd_placeholder
-
             "ui",
             "dnd",
             "typesfromurl",
             "hotkeys",
-            //"wholerow",
             //"contextmenu",
             "nodeinfo",
             "dblclickrename",
@@ -421,17 +415,9 @@
          * Core
          */
         core : {
-            animation : 0,
+            animation : 100,
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
             copy_node : function() {alert('hello');}
-        },
-
-        /**
-         * Themes
-         */
-        themes : {
-            "theme" : "default",
-            "url" : $(this).attr("data-theme")
         },
 
         /**
