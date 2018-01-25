@@ -46,7 +46,7 @@ class DocumentHistory
      * @return mixed
      */
     public function getVersions($published = null, $maxResults = null) {
-        $query = "SELECT h.hash, h.last_saved_at, h.user_id, h.published
+        $query = "SELECT h.hash, h.last_saved_at, h.first_saved_at, h.user_id, h.published
             FROM {$this->table_history} AS h
             WHERE h.doc_id = :doc_id";
 
