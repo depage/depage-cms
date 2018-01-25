@@ -471,8 +471,17 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTrees
         setupTrees: function() {
-            $pageTreeContainer = $(".tree.pages");
+            $pageTreeContainer = $(".tree.pages").addClass("focus");
             $pagedataTreeContainer = $(".tree.pagedata");
+
+            $pageTreeContainer.on("click", function() {
+                $pageTreeContainer.addClass("focus");
+                $pagedataTreeContainer.removeClass("focus");
+            });
+            $pagedataTreeContainer.on("click", function() {
+                $pageTreeContainer.removeClass("focus");
+                $pagedataTreeContainer.addClass("focus");
+            });
 
             localJS.loadPageTree();
         },
@@ -499,7 +508,7 @@ var depageCMS = (function() {
 
                         localJS.preview(url);
                     })
-                    .jstree("select_node", $tree.find("ul:first li:first").attr("id"));
+                    .jstree("activate_node", $tree.find("ul:first li:first").attr("id"));
             });
         },
         // }}}
@@ -517,7 +526,7 @@ var depageCMS = (function() {
                     .on("activate_node.jstree", function(e, data) {
                         localJS.loadElementProperties(data.node.data.nodeId);
                     })
-                    .jstree("select_node", $tree.find("ul:first li:first").attr("id"));
+                    .jstree("activate_node", $tree.find("ul:first li:first").attr("id"));
             });
         },
         // }}}
