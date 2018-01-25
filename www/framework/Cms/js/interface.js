@@ -37,6 +37,10 @@ var depageCMS = (function() {
     var $toolbarLeft,
         $toolbarPreview,
         $toolbarRight;
+
+    var $pageTreeContainer,
+        $pagedataTreeContainer;
+
     var currentLayout;
     var locale = depageCMSlocale[lang];
 
@@ -467,13 +471,59 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTrees
         setupTrees: function() {
-            $(".tree.pages").each(function() {
-                var $treeContainer = $(this);
+            $pageTreeContainer = $(".tree.pages");
+            $pagedataTreeContainer = $(".tree.pagedata");
 
-                $treeContainer.load(baseUrl + $treeContainer.data("url") + "?ajax=true", function() {
-                    $treeContainer.children(".jstree-container").depageTree();
-                });
+            localJS.loadPageTree();
+        },
+        // }}}
+
+        // {{{ loadPageTree
+        loadPageTree: function() {
+            if ($pageTreeContainer.length === 0) return false;
+
+            var $tree;
+            var url = baseUrl + $pageTreeContainer.data("url");
+
+            $pageTreeContainer.load(url + "?ajax=true", function() {
+                $tree = $pageTreeContainer.children(".jstree-container");
+
+                $tree.depageTree()
+                    .on("activate_node.jstree", function(e, data) {
+                        localJS.loadPagedataTree(data.node.data.docRef);
+
+                        // preview page
+                        var matches = window.location.href.match(/project\/([^\/]*)\//);
+                        var lang = "de";
+                        var url = baseUrl + "project/" + matches[1] + "/preview/html/pre/" + lang + data.node.data.url;
+
+                        localJS.preview(url);
+                    })
+                    .jstree("select_node", $tree.find("ul:first li:first").attr("id"));
             });
+        },
+        // }}}
+        // {{{ loadPagedataTree
+        loadPagedataTree: function(docref) {
+            if ($pagedataTreeContainer.length === 0) return false;
+
+            var $tree;
+            var url = baseUrl + $pageTreeContainer.data("url").replace(/\/pages\//, "/" + docref + "/");
+
+            $pagedataTreeContainer.load(url + "?ajax=true", function() {
+                $tree = $pagedataTreeContainer.children(".jstree-container");
+
+                $tree.depageTree()
+                    .on("activate_node.jstree", function(e, data) {
+                        localJS.loadElementProperties(data.node.data.nodeId);
+                    })
+                    .jstree("select_node", $tree.find("ul:first li:first").attr("id"));
+            });
+        },
+        // }}}
+        // {{{ loadEleemntProperties
+        loadElementProperties: function(id) {
+            console.log("loading edit for " + id);
         },
         // }}}
 

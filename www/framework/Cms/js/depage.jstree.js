@@ -416,8 +416,8 @@
          */
         core : {
             animation : 100,
+            multiple: false,
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
-            copy_node : function() {alert('hello');}
         },
 
         /**
