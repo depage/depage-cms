@@ -497,7 +497,7 @@ var depageCMS = (function() {
             $pageTreeContainer.load(url + "?ajax=true", function() {
                 $tree = $pageTreeContainer.children(".jstree-container");
 
-                $tree.depageTree()
+                var jstree = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         localJS.loadPagedataTree(data.node.data.docRef);
 
@@ -508,7 +508,9 @@ var depageCMS = (function() {
 
                         localJS.preview(url);
                     })
-                    .jstree("activate_node", $tree.find("ul:first li:first").attr("id"));
+                    .jstree(true);
+
+                jstree.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}
@@ -522,11 +524,18 @@ var depageCMS = (function() {
             $pagedataTreeContainer.load(url + "?ajax=true", function() {
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
-                $tree.depageTree()
+                var jstree = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         localJS.loadElementProperties(data.node.data.nodeId);
                     })
-                    .jstree("activate_node", $tree.find("ul:first li:first").attr("id"));
+                    .on("ready.jstree", function () {
+                        $tree.find("ul:first li").each(function() {
+                            jstree.open_node(this, false, false);
+                        });
+                    })
+                    .jstree(true);
+
+                jstree.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}

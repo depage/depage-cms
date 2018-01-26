@@ -4,7 +4,6 @@
 <xsl:output method="html" indent="no" omit-xml-declaration="yes" />
 <xsl:strip-space elements="*" />
 
-<!-- ignore root element, only transform children -->
 <xsl:template match="/*">
     <xsl:choose>
         <xsl:when test="count(node()) > 0">
@@ -15,42 +14,55 @@
     </xsl:choose>
 </xsl:template>
 
-<xsl:template match="node()">
+<xsl:template match="pg:* | sec:*">
+    <xsl:apply-templates select="." mode="treeNode" />
+</xsl:template>
+
+<xsl:template match="pg:meta">
+    <xsl:apply-templates select="." mode="treeNodeWithoutChildren" />
+</xsl:template>
+
+<xsl:template match="*" mode="treeNode">
+    <xsl:param name="showChildren" select="true()" />
+
     <xsl:variable name="id" select="@db:id" />
     <xsl:variable name="type" select="name()" />
+    <xsl:variable name="icon" select="concat('icon-', translate($type, ':', '-'))" />
     <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint">
         <xsl:value-of select="@hint" />
         <xsl:choose>
-            <xsl:when test="$type = 'pg:separator'">—</xsl:when>
-            <xsl:otherwise><xsl:value-of select="substring($type, 4)" /></xsl:otherwise>
+            <xsl:when test="$type = 'sec:separator'">—</xsl:when>
+            <xsl:otherwise><xsl:value-of select="$type" /></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
     <xsl:variable name="ns" select="substring-before(name(), ':')" />
 
     <!-- only show nodes with namespace "pg" or "sec" in tree -->
-    <xsl:if test="$ns = 'pg' or $ns = 'sec'">
-        <li
-            rel='{$type}'
-            id='node_{$id}'
-            data-doc-ref='{@db:docref}'
-            data-url='{@url}'
-            data-node-id='{$id}'>
-            <ins class='jstree-icon jstree-ocl'>&#160;</ins>
-            <a href=''>
-                <ins class='jstree-icon jstree-themeicon'>&#160;</ins>
-                <xsl:value-of select="$name" />
-                <span><xsl:value-of select="$hint" /></span>
-            </a>
-            <xsl:choose>
-                <xsl:when test="count(node()) > 0">
-                    <ul>
-                        <xsl:apply-templates />
-                    </ul>
-                </xsl:when>
-            </xsl:choose>
-        </li>
-    </xsl:if>
+    <li
+        rel="{$type}"
+        id="node_{$id}"
+        data-doc-ref="{@db:docref}"
+        data-url="{@url}"
+        data-node-id="{$id}">
+        <a href="" class="{$icon}">
+            <xsl:value-of select="$name" />
+            <span><xsl:value-of select="$hint" /></span>
+        </a>
+        <xsl:choose>
+            <xsl:when test="$showChildren and count(node()) > 0">
+                <ul>
+                    <xsl:apply-templates />
+                </ul>
+            </xsl:when>
+        </xsl:choose>
+    </li>
+</xsl:template>
+
+<xsl:template match="*" mode="treeNodeWithoutChildren">
+    <xsl:apply-templates select="." mode="treeNode">
+        <xsl:with-param name="showChildren" select="false()" />
+    </xsl:apply-templates>
 </xsl:template>
 
 <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker et : -->
