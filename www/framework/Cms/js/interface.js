@@ -494,7 +494,7 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + $pageTreeContainer.data("url");
 
-            $pageTreeContainer.load(url + "?ajax=true", function() {
+            $pageTreeContainer.empty().load(url + "?ajax=true", function() {
                 $tree = $pageTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()
@@ -521,7 +521,7 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + $pageTreeContainer.data("url").replace(/\/pages\//, "/" + docref + "/");
 
-            $pagedataTreeContainer.load(url + "?ajax=true", function() {
+            $pagedataTreeContainer.empty().load(url + "?ajax=true", function() {
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()

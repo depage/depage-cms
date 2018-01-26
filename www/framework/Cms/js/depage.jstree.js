@@ -177,6 +177,7 @@
      *
      */
     $.depage.jstree.keyUp = function(){
+        console.log("keyUp");
         var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
 
         var prev = this.get_prev(o);

@@ -36,7 +36,7 @@ $iconSize: 24px;
     &:active {
         text-decoration: none;
         color: inherit;
-        margin-left: 2 * $iconSize;
+        margin-left: 1.8 * $iconSize;
         padding-left: 6px;
     }
     span {
@@ -62,7 +62,7 @@ $iconSize: 24px;
     top: 0;
 }
 .jstree-anchor > .jstree-icon {
-    left: $iconSize;
+    left: 0.8 * $iconSize;
 }
 .jstree-ocl {
     cursor: pointer;
@@ -205,14 +205,12 @@ $iconSize: 24px;
     height: $treeLineHeight;;
 }
 .jstree-icon {
-    width: $treeLineHeight;;
+    width: $iconSize;
     height: $treeLineHeight;;
     line-height: $treeLineHeight;
 }
-.jstree-icon:empty {
-    width: $treeLineHeight;;
-    height: $treeLineHeight;;
-    line-height: $treeLineHeight;
+.jstree-ocl {
+    width: $iconSize * 0.8;
 }
 .jstree-node,
 .jstree-icon,
@@ -294,12 +292,6 @@ $iconSize: 24px;
 .jstree-container-ul .jstree-loading > .jstree-ocl {
     background: url("throbber.gif") center center no-repeat;
 }
-.jstree-file {
-    background: url("32px.png") -100px -68px no-repeat;
-}
-.jstree-folder {
-    background: url("32px.png") -260px -4px no-repeat;
-}
 .jstree-container-ul > .jstree-node {
     margin-left: 0;
     margin-right: 0;
@@ -310,7 +302,6 @@ $iconSize: 24px;
 }
 #jstree-dnd .jstree-ok,
 #jstree-dnd .jstree-er {
-    background-image: url("32px.png");
     background-repeat: no-repeat;
     background-color: transparent;
 }
@@ -336,6 +327,21 @@ $iconSize: 24px;
 }
 .jstree-ellipsis.jstree-no-icons .jstree-anchor {
     width: calc(100% - 5px);
+}
+// }}}
+// {{{ icons
+.icon-pg-page > .jstree-icon {
+    @include icon-base("page", $iconSize);
+}
+.icon-pg-folder > .jstree-icon {
+    @include icon-base("folder", $iconSize);
+}
+.icon-pg-meta {
+    font-weight: bold;
+
+    span {
+        font-weight: normal;
+    }
 }
 // }}}
 

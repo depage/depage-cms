@@ -63,7 +63,6 @@
 
 }
 @mixin icon($name, $size: 48px) {
-    // @todo simplify by specifying size instead of scale
     $scale: $size / 48px;
     $iconSize: 48px * $scale;
 
@@ -116,7 +115,11 @@
     } @else if ($name == "closed") {
         background-position: 0 (-8 * $iconSize);
     } @else if ($name == "open") {
-        background-position: 0 (-9 * $iconSize);
+        background-position: (-1 * $iconSize) (-8 * $iconSize);
+    } @else if ($name == "folder") {
+        background-position: (0 * $iconSize) (-9 * $iconSize);
+    } @else if ($name == "page") {
+        background-position: (-1 * $iconSize) (-9 * $iconSize);
 
     } @else if ($name == "help-tree") {
         background-position: 0 (-10 * $iconSize);

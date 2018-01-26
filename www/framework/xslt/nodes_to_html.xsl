@@ -19,20 +19,22 @@
 </xsl:template>
 
 <xsl:template match="pg:meta">
-    <xsl:apply-templates select="." mode="treeNodeWithoutChildren" />
+    <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
+        <xsl:with-param name="name" select="'Meta'" />
+    </xsl:apply-templates>
 </xsl:template>
 
 <xsl:template match="*" mode="treeNode">
     <xsl:param name="showChildren" select="true()" />
+    <xsl:param name="name" select="@name" />
 
     <xsl:variable name="id" select="@db:id" />
     <xsl:variable name="type" select="name()" />
     <xsl:variable name="icon" select="concat('icon-', translate($type, ':', '-'))" />
-    <xsl:variable name="name" select="@name" />
     <xsl:variable name="hint">
         <xsl:value-of select="@hint" />
         <xsl:choose>
-            <xsl:when test="$type = 'sec:separator'">—</xsl:when>
+            <xsl:when test="$type = 'sec:separator'">–</xsl:when>
             <xsl:otherwise><xsl:value-of select="$type" /></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
@@ -45,7 +47,9 @@
         data-doc-ref="{@db:docref}"
         data-url="{@url}"
         data-node-id="{$id}">
+        <i class="jstree-icon jstree-ocl" />
         <a href="" class="{$icon}">
+            <i class="jstree-icon jstree-themeicon" />
             <xsl:value-of select="$name" />
             <span><xsl:value-of select="$hint" /></span>
         </a>
@@ -60,8 +64,11 @@
 </xsl:template>
 
 <xsl:template match="*" mode="treeNodeWithoutChildren">
+    <xsl:param name="name" />
+
     <xsl:apply-templates select="." mode="treeNode">
         <xsl:with-param name="showChildren" select="false()" />
+        <xsl:with-param name="name" select="$name" />
     </xsl:apply-templates>
 </xsl:template>
 
