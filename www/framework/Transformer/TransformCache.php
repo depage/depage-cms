@@ -29,6 +29,16 @@ class TransformCache
      **/
     public function exist($docId, $subId = "default")
     {
+        $query = $this->pdo->prepare("SELECT COUNT(transformId) FROM {$this->tableName} WHERE docId = ? AND template = ?;");
+        $query->execute(array(
+            $docId,
+            $this->templateName,
+        ));
+
+        if ($query->fetchColumn() == 0) {
+            return false;
+        }
+
         $cachePath = $this->getCachePathFor($docId, $subId);
 
         return $this->cache->exist($cachePath);
