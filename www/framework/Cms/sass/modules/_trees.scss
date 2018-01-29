@@ -197,7 +197,7 @@ $iconSize: 24px;
 .jstree-node {
     min-height: $treeLineHeight;
     line-height: $treeLineHeight - 2px;
-    margin-left: $treeLineHeight;
+    margin-left: $iconSize * 0.8;
     min-width: $treeLineHeight;
 }
 .jstree-anchor {
