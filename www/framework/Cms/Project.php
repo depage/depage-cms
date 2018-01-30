@@ -734,7 +734,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function hasNewsletter()
     {
-        return in_array("newsletter", $this->getXsltTemplates());
+        return in_array("newsletter", $this->getXslTemplates());
     }
     // }}}
 
