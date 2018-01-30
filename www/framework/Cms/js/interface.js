@@ -28,6 +28,7 @@ var depageCMS = (function() {
 
     var lang = $('html').attr('lang');
     var baseUrl = $("base").attr("href");
+    var projectName;
     var $html;
     var $window;
     var $body;
@@ -39,7 +40,8 @@ var depageCMS = (function() {
         $toolbarRight;
 
     var $pageTreeContainer,
-        $pagedataTreeContainer;
+        $pagedataTreeContainer,
+        $docPropertiesContainer;
 
     var currentLayout;
     var locale = depageCMSlocale[lang];
@@ -75,6 +77,11 @@ var depageCMS = (function() {
         // }}}
         // {{{ setup
         setup: function() {
+            var matches = window.location.href.match(/project\/([^\/]*)\/.*/);
+            if (matches !== null)  {
+                projectName = matches[1];
+            }
+
             localJS.setupVarious();
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
@@ -473,6 +480,7 @@ var depageCMS = (function() {
         setupTrees: function() {
             $pageTreeContainer = $(".tree.pages").addClass("focus");
             $pagedataTreeContainer = $(".tree.pagedata");
+            $docPropertiesContainer = $(".doc-properties");
 
             $pageTreeContainer.on("click", function() {
                 $pageTreeContainer.addClass("focus");
@@ -502,9 +510,8 @@ var depageCMS = (function() {
                         localJS.loadPagedataTree(data.node.data.docRef);
 
                         // preview page
-                        var matches = window.location.href.match(/project\/([^\/]*)\//);
                         var lang = "de";
-                        var url = baseUrl + "project/" + matches[1] + "/preview/html/pre/" + lang + data.node.data.url;
+                        var url = baseUrl + "project/" + projectName + "/preview/html/pre/" + lang + data.node.data.url;
 
                         localJS.preview(url);
                     })
@@ -519,14 +526,14 @@ var depageCMS = (function() {
             if ($pagedataTreeContainer.length === 0) return false;
 
             var $tree;
-            var url = baseUrl + $pageTreeContainer.data("url").replace(/\/pages\//, "/" + docref + "/");
+            var url = baseUrl + "project/" + projectName + "/tree/"+ docref + "/";
 
             $pagedataTreeContainer.empty().load(url + "?ajax=true", function() {
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
-                        localJS.loadElementProperties(data.node.data.nodeId);
+                        localJS.loadDocProperties(data.node.data.nodeId);
                     })
                     .on("ready.jstree", function () {
                         $tree.find("ul:first li").each(function() {
@@ -540,8 +547,15 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ loadEleemntProperties
-        loadElementProperties: function(id) {
-            console.log("loading edit for " + id);
+        loadDocProperties: function(id) {
+            var url = baseUrl + "project/" + projectName + "/doc-properties/"+ id + "/";
+            console.log(url);
+
+            $docPropertiesContainer.empty().load(url + "?ajax=true", function() {
+                $docPropertiesContainer.find('.depage-form').each( function() {
+                    setupForm(this);
+                });
+            });
         },
         // }}}
 

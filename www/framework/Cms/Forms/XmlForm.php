@@ -37,7 +37,19 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
 
         parent::__construct($name, $params);
 
-        if (isset($params['dataNode'])) {
+        $this->setDefaultValuesXml();
+    }
+    // }}}
+    // {{{ setDefaultValues()
+    /**
+     * @brief setDefaultValues
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function setDefaultValuesXml()
+    {
+        if (isset($this->dataNode)) {
             foreach ($this->getElements() as $element) {
                 if (!empty($element->dataInfo)) {
                     $nodes = $this->dataNodeXpath->query($element->dataInfo);
@@ -50,6 +62,12 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                         // @todo add textarea
                         if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                             $value = $node->value == "true" ? true : false;
+                        } elseif ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
+                            $value = "";
+
+                            foreach ($node->childNodes as $n) {
+                                $value .= $node->ownerDocument->saveHTML($n) . "\n";
+                            }
                         } else {
                             $value = $node->nodeValue;
                         }

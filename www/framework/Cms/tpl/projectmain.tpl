@@ -16,7 +16,7 @@
         </div>
     </div>
     <div <?php self::attr([
-        'class' => "edit-properties",
+        'class' => "doc-properties",
     ]); ?>>
     </div>
 </div>

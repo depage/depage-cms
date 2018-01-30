@@ -983,11 +983,12 @@ div.preview.zoom100 iframe {
     bottom: 0;
 }
 /* }}} */
-// {{{ edit-properties
-.edit-properties {
+// {{{ doc-properties
+.doc-properties {
     position: absolute;
+    overflow-y: scroll;
 }
-.layout-left .edit-properties {
+.layout-left .doc-properties {
     left: $treeWidth;
     right: 0;
     bottom: 0;
