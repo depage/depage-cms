@@ -107,11 +107,13 @@ $selectionBackgroundColor: #ff9900;
     .depage-form {
         input,
         textarea,
+        .textarea,
         select {
             border: 1px solid #000000;
             background: #e3e3e3;
             color: #000000;
 
+            &.focus,
             &:focus {
                 background: #ffffff;
             }
@@ -933,68 +935,8 @@ div.preview.zoom100 iframe {
 
 @import "modules/_contextmenu.scss";
 @import "modules/_trees.scss";
+@import "modules/_docProperties.scss";
 
-/* {{{ trees */
-.trees {
-    position: absolute;
-    background: #ffffff;
-    width: $treeWidth;
-    overflow: hidden;
-    border-right: 1px solid $borderColor;
-
-    .tree {
-        position: absolute;
-
-        .jstree-container {
-            position: absolute;
-            overflow: scroll;
-            top: 0;
-            bottom: $toolbarHeight;
-            left: 0;
-            right: 0;
-        }
-        .toolbar {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-    }
-    .tree.pages {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 50%;
-        border-bottom: 1px solid $borderColor;
-    }
-    .tree.pagedata {
-        top: 50%;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-}
-.trees-hidden .trees {
-    display: none;
-}
-.layout-left .trees {
-    top: $infoHeight;
-    left: 0;
-    bottom: 0;
-}
-/* }}} */
-// {{{ doc-properties
-.doc-properties {
-    position: absolute;
-    overflow-y: scroll;
-}
-.layout-left .doc-properties {
-    left: $treeWidth;
-    right: 0;
-    bottom: 0;
-    top: $infoHeight;
-}
-// }}}
 /* {{{ shy-dialogs */
 .depage-shy-dialogue {
     @include depage-shy-dialogue(
@@ -1099,6 +1041,7 @@ div.preview.zoom100 iframe {
 
     input,
     textarea,
+    .textarea,
     select {
         padding: 4px 9px;
     }
@@ -1917,4 +1860,4 @@ form.lastchanged_pages {
 }
 // }}}
 
-/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

@@ -1,11 +1,11 @@
 <?php
 /**
- * @file    framework/Cms/Ui/Edit.php
+ * @file    framework/Cms/Ui/DocProperties.php
  *
  * depage cms edit module
  *
  *
- * copyright (c) 2011 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2011-2018 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -78,18 +78,20 @@ class DocProperties extends Base
             'dataNode' => $node,
         ]);
 
+        if ($callback = $this->getCallbackForNode($node)) {
+            $this->$callback($form, $node);
+        }
         foreach($node->childNodes as $n) {
-            $callback = $this->getCallbackForNode($n);
-
-            $h .= $func . "<br>";
-            if ($callback) {
+            if ($callback = $this->getCallbackForNode($n)) {
                 $this->$callback($form, $n);
             }
         }
         $form->setDefaultValuesXml();
 
-        //$h .= htmlentities($xml->saveXML($node));
+        // @todo clean unsed session?
+
         $h .= $form;
+        $h .= htmlentities($xml->saveXML($node));
 
         $output = new Html([
             'title' => "edit",
@@ -133,9 +135,15 @@ class DocProperties extends Base
      * @param mixed $node
      * @return void
      **/
-    protected function getLabelForNode($node)
+    protected function getLabelForNode($node, $fallback = "")
     {
         $label = $node->getAttribute("name");
+        if (empty($label)) {
+            $label = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "name");
+        }
+        if (empty($label)) {
+            $label = $fallback;
+        }
 
         $lang = $node->getAttribute("lang");
         if ($lang) {
@@ -143,6 +151,87 @@ class DocProperties extends Base
         }
 
         return $label;
+    }
+    // }}}
+
+    // {{{ addPgMeta()
+    /**
+     * @brief addPgMeta
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addPgMeta($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        // @todo add colorschemes but only for pages
+        $list = [
+            "test",
+            "kljsdfh ksjdh fkljsdhf ",
+        ];
+        $form->addSingle("colorscheme-$nodeId", [
+            'label' => _("Colorscheme"),
+            'list' => $list,
+            'skin' => "select",
+            'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
+        ]);
+    }
+    // }}}
+    // {{{ addPgTitle()
+    /**
+     * @brief addPgTitle
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addPgTitle($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $form->addText("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Title")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
+    // {{{ addPgLinkdesc()
+    /**
+     * @brief addPgTitle
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addPgLinkdesc($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $form->addText("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Linkinfo")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
+    // {{{ addPgDesc()
+    /**
+     * @brief addPgDesc
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function addPgDesc($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $form->addRichtext("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Description")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/*",
+            'autogrow' => true,
+            'allowedTags' => [
+                "p",
+                "br",
+            ],
+        ]);
     }
     // }}}
 
@@ -158,7 +247,7 @@ class DocProperties extends Base
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
         $form->addText("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node),
+            'label' => $this->getLabelForNode($node, _("Text")),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
@@ -174,9 +263,15 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addTextarea("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node),
+        $form->addRichtext("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Headline")),
             'dataInfo' => "//*[@db:id = '$nodeId']/*",
+            'class' => "labels-on-top",
+            'autogrow' => true,
+            'allowedTags' => [
+                "p",
+                "br",
+            ],
         ]);
     }
     // }}}
@@ -191,9 +286,123 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
+        // @todo add lang attribute for spelling hint
         $form->addRichtext("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node),
-            'dataInfo' => "//*[@db:id = '$nodeId']/*",
+            'label' => $this->getLabelForNode($node, _("Text")),
+            'autogrow' => true,
+            'class' => "labels-on-top",
+            'dataInfo' => "//*[@db:id = '$nodeId']",
+        ]);
+    }
+    // }}}
+    // {{{ addEditType()
+    /**
+     * @brief addEditType
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addEditType($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $options = $node->getAttribute("options");
+        $project = $this->getProject($this->projectName);
+        $variables = $project->getVariables();
+
+        $options = preg_replace_callback("/%var_([^%]*)%/", function($matches) use ($variables) {
+            return $variables[$matches[1]];
+        }, $options);
+
+        $list = explode(",", $options);
+
+        $form->addSingle("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Type")),
+            'list' => $list,
+            //'skin' => "select",
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
+    // {{{ addEditDate()
+    /**
+     * @brief addEditDate
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addEditDate($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $form->addDate("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Date")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
+    // {{{ addEditA()
+    /**
+     * @brief addEditA
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addEditA($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $f = $form->addFieldset("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Link")),
+            'class' => "edit-img",
+        ]);
+        $f->addText("xmledit-$nodeId-href", [
+            'label' => $this->getLabelForNode($node, _("href")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
+        ]);
+        $f->addText("xmledit-$nodeId-alt", [
+            'label' => $this->getLabelForNode($node, _("Alt text")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
+        ]);
+        $f->addText("xmledit-$nodeId-title", [
+            'label' => $this->getLabelForNode($node, _("Title")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
+        ]);
+        $f->addText("xmledit-$nodeId-target", [
+            'label' => $this->getLabelForNode($node, _("Target")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@target",
+        ]);
+    }
+    // }}}
+    // {{{ addEditImg()
+    /**
+     * @brief addEditImg
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addEditImg($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $f = $form->addFieldset("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Image")),
+            'class' => "edit-img",
+        ]);
+        $f->addText("xmledit-$nodeId-img", [
+            'label' => _("Image Source"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+        ]);
+        $f->addText("xmledit-$nodeId-alt", [
+            'label' => _("Alt text"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
+        ]);
+        $f->addText("xmledit-$nodeId-title", [
+            'label' => _("Title"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
+        ]);
+        $f->addText("xmledit-$nodeId-href", [
+            'label' => _("href"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
         ]);
     }
     // }}}

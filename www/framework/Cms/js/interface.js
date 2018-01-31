@@ -9,6 +9,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-live-help.js
  * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
+ * @require framework/HtmlForm/lib/js/effect.js
  * @require framework/Cms/js/xmldb.js
  * @require framework/Cms/js/locale.js
  * @require framework/Cms/js/depage.jstree.js

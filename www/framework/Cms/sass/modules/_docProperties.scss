@@ -1,0 +1,16 @@
+// {{{ doc-properties
+.doc-properties {
+    position: absolute;
+    overflow-y: scroll;
+    background: $backgroundColor;
+    padding: 10px;
+}
+.layout-left .doc-properties {
+    left: $treeWidth;
+    right: 0;
+    bottom: 0;
+    top: $infoHeight;
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

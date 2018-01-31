@@ -345,4 +345,56 @@ $iconSize: 24px;
 }
 // }}}
 
-/* vim:set ft=scss sw=4 sts=4 fdm=marker : */
+// {{{ trees layout
+.trees {
+    position: absolute;
+    background: #ffffff;
+    width: $treeWidth;
+    overflow: hidden;
+    border-right: 1px solid $borderColor;
+
+    .tree {
+        position: absolute;
+        background: $backgroundColor;
+
+        .jstree-container {
+            position: absolute;
+            overflow: scroll;
+            top: 0;
+            bottom: $toolbarHeight;
+            left: 0;
+            right: 0;
+            background: $textBrightColor;
+        }
+        .toolbar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+    .tree.pages {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 50%;
+        border-bottom: 1px solid $borderColor;
+    }
+    .tree.pagedata {
+        top: 50%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+.trees-hidden .trees {
+    display: none;
+}
+.layout-left .trees {
+    top: $infoHeight;
+    left: 0;
+    bottom: 0;
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

@@ -653,6 +653,34 @@ class Project extends \Depage\Entity\Entity
         return $targets;
     }
     // }}}
+    // {{{ getVariables()
+    /**
+     * @brief getVariables
+     *
+     * @param mixed
+     * @return array of variables
+     **/
+    public function getVariables()
+    {
+        if ($variables = $this->cache->get("dp_proj_{$this->name}_settings/variables.ser")) {
+            return $variables;
+        } else {
+            $variables = [];
+            $this->xmldb = $this->getXmlDb();
+
+            $settings = $this->getSettingsDoc();
+            $nodes = $settings->getNodeIdsByXpath("//proj:variable");
+            foreach ($nodes as $nodeId) {
+                $attr = $settings->getAttributes($nodeId);
+                $variables[$attr['name']] = $attr['value'];
+            }
+
+            $this->cache->set("dp_proj_{$this->name}_settings/variables.ser", $variables);
+        }
+
+        return $variables;
+    }
+    // }}}
 
     // {{{ getHomeUrl()
     /**
