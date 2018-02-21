@@ -1707,6 +1707,7 @@ class Document
         } else {
             throw new Exceptions\XmlDbException('Unknown DOM node type: "' . $node->nodeType . '".');
         }
+        $node_data = \Normalizer::normalize($node_data);
 
         $insert_query->execute([
             'id_query' => $id_query,
