@@ -532,8 +532,12 @@ var depageCMS = (function() {
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
-                var oldUrl = $previewFrame[0].contentWindow.location.href;
                 var newUrl = unescape(url);
+                var oldUrl = "";
+                try {
+                    oldUrl = $previewFrame[0].contentWindow.location.href;
+                } catch(error) {
+                }
 
                 if (newUrl.substring(0, baseUrl.length) != baseUrl) {
                     newUrl = baseUrl + newUrl;
@@ -542,6 +546,9 @@ var depageCMS = (function() {
                 if (oldUrl == newUrl) {
                     $previewFrame[0].contentWindow.location.reload();
                 } else {
+                    var $newFrame = $("<iframe />").insertAfter($previewFrame);
+                    $previewFrame.remove();
+                    $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame[0].src = newUrl;
                 }
 
