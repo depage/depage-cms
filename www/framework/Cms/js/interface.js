@@ -138,7 +138,11 @@ var depageCMS = (function() {
             var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\">" + locale.edit + "</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
-                    var url = $previewFrame[0].contentWindow.location.href;
+                    var url = "";
+                    try {
+                        url = $previewFrame[0].contentWindow.location.href;
+                    } catch(error) {
+                    }
                     var matches = url.match(/project\/([^\/]*)\/preview\/[^\/]*\/[^\/]*\/[^\/]*(\/.*)/);
 
                     if (matches) {
