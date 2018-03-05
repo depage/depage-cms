@@ -282,6 +282,13 @@ class MediaInfo
         $info['duration'] = $format['duration'];
         $info['bitrate'] = $format['bit_rate'];
 
+        foreach ($format as $key => $value) {
+            if (strpos($key, "TAG:") === 0) {
+                $key = str_replace(":", "_", strtolower($key));
+                $info[$key] = $value;
+            }
+        }
+
         foreach ($streams as $stream) {
             if ($stream['codec_type'] == "video") {
                 $info['streams']['video'][] = $stream;
