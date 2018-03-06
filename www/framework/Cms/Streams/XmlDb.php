@@ -13,9 +13,16 @@ class XmlDb extends Base {
 
         $url = parse_url($path);
         $docName = $url['host'];
+        $xpath = $url['path'];
 
         if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {
-            $this->data = $this->xmldb->getDocXml($docName);
+            if (!empty($xpath) && $xpath != '/') {
+                $xpath = substr($xpath, 1);
+                $doc = $this->xmldb->getDoc($docName);
+                $this->data = $doc->getSubdocByXpath($xpath);
+            } else {
+                $this->data = $this->xmldb->getDocXml($docName);
+            }
 
             if (isset($this->transformer)) {
                 $this->transformer->addToUsedDocuments($docId);
