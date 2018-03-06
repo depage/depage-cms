@@ -52,6 +52,7 @@
     -->
     <func:function name="dp:getPage">
         <xsl:param name="pageid" />
+        <xsl:param name="xpath" select="''" />
         <xsl:variable name="pagedataid" select="key('navigation', $pageid)/@db:docref" />
 
         <xsl:choose>
@@ -59,7 +60,7 @@
                 <func:result />
             </xsl:when>
             <xsl:otherwise>
-                <func:result select="document(concat('xmldb://', $pagedataid))" />
+                <func:result select="document(concat('xmldb://', $pagedataid, '/', $xpath))" />
             </xsl:otherwise>
         </xsl:choose>
     </func:function>

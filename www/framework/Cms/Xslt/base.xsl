@@ -33,13 +33,13 @@
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="pgmeta" select="dp:getpage($href_id)/pg:page_data/pg:meta" />
-            <xsl:variable name="linkdesc"><xsl:value-of select="dp:choose(
+            <xsl:variable name="pgmeta" select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
+            <xsl:variable name="linkdesc" select="dp:choose(
                 $pgmeta/pg:linkdesc[@lang = $lang]/@value,
                 $pgmeta/pg:linkdesc[@lang = $lang]/@value,
                 key('navigation', $href_id)/@name
-            )"/></xsl:variable>
-            <xsl:variable name="title"><xsl:value-of select="$pgmeta/pg:title[@lang = $lang]/@value"/></xsl:variable>
+                )"/>
+            <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value"/>
 
             <xsl:if test="name(../..) = 'sec:unordered_list'">
                 <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
@@ -69,7 +69,7 @@
                     <xsl:when test="$target != ''">
                         <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
                     </xsl:when>
-                    <xsl:when test="@href and (substring($href, 1, 5) = 'http:' or substring($href, 1, 6) = 'https:')">
+                    <xsl:when test="@href and (substring($href, 1, 7) = 'http://' or substring($href, 1, 8) = 'https://')">
                         <xsl:attribute name="target">_blank</xsl:attribute>
                     </xsl:when>
                 </xsl:choose>
@@ -142,7 +142,7 @@
             <!-- {{{ image with link -->
             <xsl:when test="($href and $href != '') or ($href_id and $href_id != '')">
                 <!-- get name from meta-information if link is ref to page_id -->
-                <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="dp:getpage($href_id)/pg:page_data/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
+                <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="dp:getPage($href_id, '//pg:meta')/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
                 <a>
                     <!-- {{{ href -->
@@ -529,30 +529,28 @@
 
     <!-- {{{ header alternate languages -->
     <xsl:template name="header_alternate_lang">
-        <xsl:variable name="href_id"><xsl:value-of select="$currentPageId" /></xsl:variable>
-        <xsl:variable name="page" select="key('navigation', $currentPageId)" />
-        <xsl:variable name="pagedataid" select="$page/@db:docref" />
+        <xsl:variable name="pgmeta" select="//pg:meta" />
 
         <xsl:for-each select="$settings//proj:languages/proj:language">
             <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
 
-            <xsl:if test="$lang != $currentLang and dp:pageVisible($page, $lang)">
-                <xsl:variable name="linkdesc">
-                    <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:linkdesc[@lang = $lang]/@value"/>
-                </xsl:variable>
-                <xsl:variable name="title">
-                    <xsl:value-of select="document(concat('xmldb://', $pagedataid))//*/pg:meta/pg:title[@lang = $lang]/@value"/>
-                </xsl:variable>
+            <xsl:if test="$lang != $currentLang and dp:pageVisible($currentPage, $lang)">
+                <xsl:variable name="linkdesc" select="dp:choose(
+                    $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                    $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                    $currentPage/@name
+                )"/>
+                <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value"/>
 
                 <link rel="alternate">
                     <xsl:attribute name="href">
-                        <xsl:value-of select="document(concat('pageref://', $href_id, '/', $lang))/." disable-output-escaping="yes"/>
+                        <xsl:value-of select="dp:getPageRef($currentPageId, $lang)"/>
                     </xsl:attribute>
                     <xsl:attribute name="hreflang"><xsl:value-of select="$lang" /></xsl:attribute>
                     <xsl:attribute name="title">
                         <xsl:value-of select="@name" />
-                        <xsl:if test="$title != ''"> // <xsl:value-of select="$title" /></xsl:if>
-                        <xsl:if test="$linkdesc != ''">: <xsl:value-of select="$linkdesc" /></xsl:if>
+                        <xsl:if test="$linkdesc != ''"> . <xsl:value-of select="$linkdesc" /></xsl:if>
+                        <xsl:if test="$title != ''"> . <xsl:value-of select="$title" /></xsl:if>
                     </xsl:attribute>
                 </link>
             </xsl:if>
@@ -564,18 +562,22 @@
     <xsl:template name="header_include_css">
         <xsl:param name="file" />
         <xsl:param name="media" select="''" />
-        <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
-        <link rel="stylesheet" type="text/css"><xsl:if test="$media != ''"><xsl:attribute name="media"><xsl:value-of select="$media" /></xsl:attribute></xsl:if><xsl:attribute name="href"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></link>
+        <xsl:variable name="fileref" select="concat('libref://', $file)" />
+        <xsl:variable name="date" select="translate(dp:fileinfo($fileref, false())/file/@date,'/:- ','')" />
+
+        <link rel="stylesheet" type="text/css"><xsl:if test="$media != ''"><xsl:attribute name="media"><xsl:value-of select="$media" /></xsl:attribute></xsl:if><xsl:attribute name="href"><xsl:value-of select="dp:getLibRef($fileref)"/>?<xsl:value-of select="$date" /></xsl:attribute></link>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ header include js -->
     <xsl:template name="header_include_js">
         <xsl:param name="file" />
         <xsl:param name="defer" select="true()" />
-        <xsl:variable name="date"><xsl:value-of select="translate(dp:fileinfo(concat('libref://', $file), false())/file/@date,'/:- ','')" /></xsl:variable>
 
-        <script type="text/javascript"><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="document(concat('libref://', $file))/."/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+        <xsl:variable name="fileref" select="concat('libref://', $file)" />
+        <xsl:variable name="date" select="translate(dp:fileinfo($fileref, false())/file/@date,'/:- ','')" />
+
+        <script type="text/javascript"><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="dp:getLibRef($fileref)"/>?<xsl:value-of select="$date" /></xsl:attribute></script>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ header include baseurl -->
