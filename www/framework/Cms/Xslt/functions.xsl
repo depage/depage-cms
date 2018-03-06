@@ -24,7 +24,7 @@
         <xsl:param name="b" />
 
         <xsl:choose>
-            <xsl:when test="$test != '' and $test != false()">
+            <xsl:when test="not($test = '') and not($test = false())">
                 <func:result select="$a" />
             </xsl:when>
             <xsl:otherwise>
@@ -56,11 +56,8 @@
         <!--
              fallback to base select when key is not returning value
         -->
-        <xsl:variable name="pagedataid" select="dp:choose(
-            key('navigation', $pageid)/@db:docref,
-            key('navigation', $pageid)/@db:docref,
-            $navigation//*[@db:id = $pageid]/@db:docref
-        )" />
+        <xsl:variable name="docref" select="key('navigation', $pageid)/@db:docref" />
+        <xsl:variable name="pagedataid" select="dp:choose($docref, $docref, $navigation//*[@db:id = $pageid]/@db:docref)" />
 
         <xsl:choose>
             <xsl:when test="$pagedataid = ''">
