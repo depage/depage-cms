@@ -10,24 +10,7 @@ class Libref extends Base {
     {
         $this->init();
 
-        $url = parse_url($path);
-
-        if (!empty($url['path'])) {
-            $path = "lib/" . $url['host'] . $url['path'];
-        } else {
-            $path = "lib/" . $url['host'];
-        }
-
-        if ($this->transformer->useBaseUrl) {
-            $path = $path;
-        } else if ($this->transformer->useAbsolutePaths) {
-            $path = $this->transformer->baseUrl . "/" . $path;
-        } else {
-            $url = new \Depage\Http\Url($this->transformer->currentPath);
-            $path = $url->getRelativePathTo($path);
-        }
-
-        $this->data = '<return>' . htmlspecialchars($path) . '</return>';
+        $this->data = '<return>' . htmlspecialchars($this->transformer->xsltGetLibRef($path)) . '</return>';
 
         return true;
     }

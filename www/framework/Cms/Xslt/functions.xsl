@@ -37,11 +37,22 @@
     <!-- {{{ dp:getpage() -->
     <!--
         dp:getpage(pageid)
-
     -->
     <func:function name="dp:getpage">
         <xsl:param name="pageid" />
-        <xsl:variable name="pagedataid" select="$navigation//pg:*[@db:id = $pageid]/@db:docref" />
+
+        <func:result select="dp:getPage($pageid)" />
+    </func:function>
+    <!-- }}} -->
+
+    <!-- {{{ dp:getPage() -->
+    <!--
+        dp:getPage(pageid)
+
+    -->
+    <func:function name="dp:getPage">
+        <xsl:param name="pageid" />
+        <xsl:variable name="pagedataid" select="key('navigation', $pageid)/@db:docref" />
 
         <xsl:choose>
             <xsl:when test="$pagedataid = ''">
@@ -49,6 +60,55 @@
             </xsl:when>
             <xsl:otherwise>
                 <func:result select="document(concat('xmldb://', $pagedataid))" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getPageRef() -->
+    <!--
+        dp:getPageRef(pageid)
+
+    -->
+    <func:function name="dp:getPageRef">
+        <xsl:param name="pageid" />
+        <xsl:param name="lang" select="$currentLang" />
+        <xsl:param name="absolute" select="false()" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getPageRef', string($pageid), string($lang), $absolute)" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getLibRef() -->
+    <!--
+        dp:getLibRef(url)
+
+    -->
+    <func:function name="dp:getLibRef">
+        <xsl:param name="url" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getLibRef', string($url))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getHref() -->
+    <!--
+        dp:getHref(pageid)
+
+    -->
+    <func:function name="dp:getRef">
+        <xsl:param name="url" />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <xsl:choose>
+            <xsl:when test="substring($url, 1, 9) = 'libref://'">
+                <func:result select="dp:getLibRef($url)"/>
+            </xsl:when>
+            <xsl:when test="substring($url, 1, 10) = 'pageref://'">
+                <func:result select="dp:getPageRef(substring($url, 11))"/>
+            </xsl:when>
+            <xsl:when test="substring($url, 1, 7) = 'mailto:'">
+                <func:result select="dp:replaceEmailChars($url)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="$url"/>
             </xsl:otherwise>
         </xsl:choose>
     </func:function>
