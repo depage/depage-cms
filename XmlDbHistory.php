@@ -80,6 +80,30 @@ class XmlDbHistory implements XmlGetter
         return $xml;
     }
     // }}}
+    // {{{ getDocXmlXpath
+    public function getDocXmlXpath($doc_id_or_name, $xpath, $add_id_attribute = true)
+    {
+        $xml = false;
+
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $history = $doc->getHistory();
+            $xmlFull = $history->getLastPublishedXml($add_id_attribute);
+
+            $domXpath = new \DomXpath($xmlFull);
+            $list = $domXpath->query($xpath);
+
+            if ($list->length > 0) {
+                $xml = new \Depage\Xml\Document();
+                $xml->appendChild($xml->importNode($list->item(0), true));
+
+                return $xml;
+            }
+        }
+
+        return $xml;
+    }
+    // }}}
 
     // {{{ __get
     /**
