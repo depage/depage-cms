@@ -604,7 +604,7 @@ class Import
             "document('get:settings')" => "\$settings",
             "document('get:languages')/proj:languages" => "\$languages",
             "document('call:getversion')" => "\$depageVersion",
-            "document(concat('get:page/'," => "(dp:getpage(",
+            "document(concat('get:page/'," => "(dp:getPage(",
             "document(concat('call:changesrc/'," => "(dp:changesrc(",
             "document(concat('call:/changesrc/'," => "(dp:changesrc(",
             "(dp:changesrc( edit:plain_source))/*" => "(dp:changesrc(edit:plain_source))",
