@@ -53,7 +53,14 @@
     <func:function name="dp:getPage">
         <xsl:param name="pageid" />
         <xsl:param name="xpath" select="''" />
-        <xsl:variable name="pagedataid" select="key('navigation', $pageid)/@db:docref" />
+        <!--
+             fallback to base select when key is not returning value
+        -->
+        <xsl:variable name="pagedataid" select="dp:choose(
+            key('navigation', $pageid)/@db:docref,
+            key('navigation', $pageid)/@db:docref,
+            $navigation//*[@db:id = $pageid]/@db:docref
+        )" />
 
         <xsl:choose>
             <xsl:when test="$pagedataid = ''">
