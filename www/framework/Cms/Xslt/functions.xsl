@@ -57,7 +57,8 @@
 
         <xsl:choose>
             <xsl:when test="$pagedataid = ''">
-                <func:result />
+                <xsl:message terminate="no">dp:getPage unknown page id '<xsl:value-of select="$pagedataid" />'</xsl:message>
+                <error>dp:getPage unknown page id '<xsl:value-of select="$pagedataid" />'</error>
             </xsl:when>
             <xsl:otherwise>
                 <func:result select="document(concat('xmldb://', $pagedataid, '/', $xpath))" />

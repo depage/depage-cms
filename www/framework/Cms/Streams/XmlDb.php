@@ -13,7 +13,7 @@ class XmlDb extends Base {
 
         $url = parse_url($path);
         $docName = $url['host'];
-        $xpath = $url['path'];
+        $xpath = $url['path'] ?? '';
 
         if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {
             if (!empty($xpath) && $xpath != '/') {
