@@ -529,9 +529,9 @@
 
     <!-- {{{ header alternate languages -->
     <xsl:template name="header_alternate_lang">
-        <xsl:variable name="pgmeta" select="//pg:meta" />
+        <xsl:variable name="pgmeta" select="/pg:page_data/pg:meta" />
 
-        <xsl:for-each select="$settings//proj:languages/proj:language">
+        <xsl:for-each select="$settings/proj:settings/proj:languages/proj:language">
             <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
 
             <xsl:if test="$lang != $currentLang and dp:pageVisible($currentPage, $lang)">
