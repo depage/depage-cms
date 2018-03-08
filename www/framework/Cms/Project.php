@@ -922,6 +922,22 @@ class Project extends \Depage\Entity\Entity
         // transform pages
         $apiAvailable = file_exists($projectPath . 'lib/global/api.php');
 
+        if ($apiAvailable) {
+            // call updateSchema API
+            $task->addSubtask("updating schema", "
+                \$request = new \\Depage\\Http\\Request(%s);
+                \$request->allowUnsafeSSL = true;
+                \$response = \$request->execute();
+                \$result = \$response->getJson();
+
+                if (!\$result['success']) {
+                    throw new \\Exception(\$result['error']);
+                }
+            ", [
+                $baseUrl . "api/updateschema/",
+            ], $initId);
+        }
+
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
@@ -932,23 +948,20 @@ class Project extends \Depage\Entity\Entity
                         \$updated
                     ); if (%s && \$updated) {
                         \$request = new \\Depage\\Http\\Request(%s);
+                        \$request->allowUnsafeSSL = true;
                         \$response = \$request->setPostData(%s)->execute();
                     }", [
                         $url,
                         $lang,
                         $target,
                         $apiAvailable,
-                        $baseUrl . "/api/search/index/",
-                        ["url" => $baseUrl . "/" . $target],
+                        $baseUrl . "api/search/index/",
+                        ["url" => $baseUrl . $target],
                 ], $initId);
             }
         }
 
         // @todo add files that should be generated automatically (e.g. through graohics)
-
-        if ($apiAvailable) {
-            // @todo add updateSchema API call
-        }
 
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
@@ -1027,6 +1040,7 @@ class Project extends \Depage\Entity\Entity
             \$files = \$publisher->unpublishRemovedFiles();
             if (%s) {
                 \$request = new \\Depage\\Http\\Request(%s);
+                \$request->allowUnsafeSSL = true;
                 foreach (\$files as \$file) {
                     \$response = \$request->setPostData(array('url' => %s . '/' . \$file))->execute();
                 }
