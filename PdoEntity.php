@@ -108,6 +108,22 @@ abstract class PdoEntity extends Entity {
         return date('Y-m-d H:i:s', $timestamp);
     }
     // }}}
+
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'pdo',
+            'initialized',
+            'data',
+            'types',
+            'dirty',
+        );
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
