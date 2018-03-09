@@ -22,6 +22,8 @@ class Html {
 
     public $contentType = "text/html";
     public $charset = "UTF-8";
+    public $templatePath = "";
+    public $clean = false;
 
     // {{{ substitutes
     protected static $substitutes = array(
@@ -128,6 +130,8 @@ class Html {
      */
     public function setHtmlOptions($param) {
         $this->param = $param;
+        $this->templatePath = $param['template_path'] ?? "";
+        $this->clean = $param['clean'] ?? false;
 
         foreach ($this->args as $arg) {
             // set to parent params to params if not set
@@ -146,6 +150,18 @@ class Html {
                 }
             }
         }
+    }
+    // }}}
+    // {{{ addArg()
+    /**
+     * @brief addArg
+     *
+     * @param mixed $name, $value
+     * @return void
+     **/
+    public function addArg($name, $value)
+    {
+        $this->args[$name] = $value;
     }
     // }}}
     // {{{ __get()
@@ -201,21 +217,18 @@ class Html {
 
         ob_start();
         try {
+            $contents = [];
             if ($this->template !== null) {
-                require($this->param["template_path"] . $this->template);
-                /*
-                if(!@include($this->param["template_path"] . $this->template)) {
-                    echo("<h1>Template error</h1>");
-                    echo("<p>Could not load template '$this->template'<p>");
-                }
-                */
+                require($this->templatePath . $this->template);
             } else {
                 if (isset($this->content)) {
-                    self::e($this->content);
+                    $contents[] = $this->content;
                 } else if (is_array($this->args)) {
-                    foreach ($this->args as $arg) {
-                        self::e($arg);
-                    }
+                    $contents = $this->args;
+                }
+
+                foreach($contents as $c) {
+                    self::e($c);
                 }
             }
         } catch (Exception $e) {
@@ -234,7 +247,7 @@ class Html {
      * @return output
      */
     public function clean($html) {
-        if ($this->param["clean"]) {
+        if ($this->clean) {
             $cleaner = new \Depage\Html\Cleaner();
             $html = $cleaner->clean($html);
         }
@@ -464,9 +477,12 @@ class Html {
     static function e($param = "") {
         if (is_array($param)) {
             foreach ($param as $p) {
-                echo($p);
+                self::e($p);
             }
         } else {
+            if (is_object($param) && get_class($param) == "Depage\Html\Html") {
+                $param->clean = false;
+            }
             echo($param);
         }
     }
