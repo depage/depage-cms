@@ -320,34 +320,7 @@ abstract class Auth
 
     // {{{ getActiveUsers()
     function getActiveUsers() {
-        $users = array();
-
-        // get logged in users
-        $user_query = $this->pdo->prepare(
-            "SELECT
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level,
-                sessions.project AS project,
-                sessions.ip AS ip,
-                sessions.dateLastUpdate AS dateLastUpdate,
-                sessions.useragent AS useragent
-            FROM
-                {$this->pdo->prefix}_auth_user AS user,
-                {$this->pdo->prefix}_auth_sessions AS sessions
-            WHERE
-                user.id=sessions.userid"
-        );
-
-        $user_query->execute();
-        while ($user = $user_query->fetchObject("auth_user", array($this->pdo))) {
-            $users[] = $user;
-        }
-        return $users;
+        return User::loadActive($this->pdo);
     }
     // }}}
 
