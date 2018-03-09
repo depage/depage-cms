@@ -590,9 +590,8 @@ class Html {
             $pattern = $date_format;
             $date_format = \IntlDateFormatter::LONG;
         }
-        // there is not getlocale, so use setlocale with null
-        $current_locale = setlocale(LC_ALL, null);
-        $fmt = new \IntlDateFormatter($current_locale, $date_format, $time_format, null, null, $pattern);
+
+        $fmt = self::getDateFormatter($date_format, $time_format, $pattern);
 
         if ($date instanceof \DateTime) {
             $timestamp = $date->getTimestamp();
@@ -636,6 +635,30 @@ class Html {
         $fmt = new \NumberFormatter($current_locale, $format);
 
         return $fmt->format($number);
+    }
+    // }}}
+
+    // {{{ getDateFormatter()
+    /**
+     * @brief getDateFormatter
+     *
+     * @param mixed $locale, $dateFormat, $timeFormat, $pattern
+     * @return void
+     **/
+    static function getDateFormatter($dateFormat, $timeFormat, $pattern)
+    {
+        // there is not getlocale, so use setlocale with null
+        $locale = setlocale(LC_ALL, null);
+        $hash = "$dateFormat#$timeFormat#$pattern";
+
+        static $fmts = [];
+
+        if (!isset($fmts[$hash])) {
+            $fmts[$hash] = new \IntlDateFormatter($locale, $dateFormat, $timeFormat, null, null, $pattern);
+        }
+
+
+        return $fmts[$hash];
     }
     // }}}
 
