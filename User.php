@@ -317,15 +317,24 @@ class User extends \Depage\Entity\PdoEntity
         $query->execute($params);
 
         // pass pdo-instance to constructor
-        $query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", [$pdo]);
+        //$query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", [$pdo]);
+        $query->setFetchMode(\PDO::FETCH_ASSOC);
 
         do {
-            $user = $query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-            if ($user) {
+            //$user = $query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+            $data = $query->fetch();
+            if ($data) {
+                $user = new $data['type']($pdo);
+
+                foreach (static::$fields as $key => $value) {
+                    $user->data[$key] = $data[$key];
+                    $user->dirty[$key] = false;
+                }
+
                 $user->onLoad();
                 $users[$user->id] = $user;
             }
-        } while ($user);
+        } while ($data);
 
         return $users;
     }
