@@ -205,6 +205,27 @@ class User extends \Depage\Entity\PdoEntity
         return $user;
     }
     // }}}
+    // {{{ loadByFuzzyName()
+    /**
+     * gets a user-object by username directly from database
+     *
+     * @public
+     *
+     * @param       \Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       string  $username   username of the user
+     *
+     * @return      User
+     */
+    static public function loadByFuzzyName($pdo, $username) {
+        $users = self::loadBy($pdo, [
+            'fuzzyName' => $username,
+        ], [
+            "user.sortname"
+        ]);
+
+        return $users;
+    }
+    // }}}
     // {{{ loadActive()
     /**
      * gets an array of user-objects
@@ -261,6 +282,7 @@ class User extends \Depage\Entity\PdoEntity
         $params = [];
         $groupBy = "";
         $orderBy = "";
+        $limit = "";
         $join = [];
 
         // {{{ extract where part of query
@@ -290,6 +312,15 @@ class User extends \Depage\Entity\PdoEntity
             $fields .= ", session.ip, session.project, session.dateLastUpdate, session.useragent";
             $where[] = "session.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)";
         }
+        if (isset($search['fuzzyName'])) {
+            $queries = explode(" ", trim($search['fuzzyName']));
+            $limit = "LIMIT 0, 100";
+
+            foreach ($queries as $i => $q) {
+                $where[] = "user.fullname LIKE :fullname{$i} ESCAPE '|'";
+                $params["fullname{$i}"] = "%" . self::escapeLike($q, ']') . "%";
+            }
+        }
         // }}}
 
         if (!empty($where)) {
@@ -311,17 +342,16 @@ class User extends \Depage\Entity\PdoEntity
                 $join
             $where
             $groupBy
-            $orderBy";
+            $orderBy
+            $limit";
 
         $query = $pdo->prepare($sql);
         $query->execute($params);
 
         // pass pdo-instance to constructor
-        //$query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", [$pdo]);
         $query->setFetchMode(\PDO::FETCH_ASSOC);
 
         do {
-            //$user = $query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
             $data = $query->fetch();
             if ($data) {
                 $user = new $data['type']($pdo);
