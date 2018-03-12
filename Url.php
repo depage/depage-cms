@@ -92,6 +92,9 @@ class Url
         $path = trim($path, "/");
 
         $parts = explode("/", $path);
+        array_walk($parts, function(&$value, $key) {
+            $value = rawurldecode($value);
+        });
 
         if (isset($parts[0]) && strlen($parts[0]) == 2) {
             // assume its a lang identifier if strlen is 2
@@ -178,7 +181,7 @@ class Url
      **/
     public function __toString()
     {
-        return $this->scheme . "://" . $this->host . $this->path;
+        return $this->baseUrl . $this->lang . $this->path;
     }
     // }}}
 }
