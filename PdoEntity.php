@@ -108,6 +108,18 @@ abstract class PdoEntity extends Entity {
         return date('Y-m-d H:i:s', $timestamp);
     }
     // }}}
+    // {{{ escapeLike()
+    /**
+     * @brief escapeLike
+     *
+     * @param mixed $s, $e
+     * @return void
+     **/
+    static protected function escapeLike($s, $e)
+    {
+        return str_replace([$e, '_', '%'], ["{$e}{$e}", "{$e}_", "{$e}%"], $s);
+    }
+    // }}}
 
     // {{{ __sleep()
     /**
