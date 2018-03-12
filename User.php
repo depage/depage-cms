@@ -314,11 +314,19 @@ class User extends \Depage\Entity\PdoEntity
         }
         if (isset($search['fuzzyName'])) {
             $queries = explode(" ", trim($search['fuzzyName']));
-            $limit = "LIMIT 0, 100";
+            $limit = "LIMIT 0, 1000";
 
             foreach ($queries as $i => $q) {
-                $where[] = "user.fullname LIKE :fullname{$i} ESCAPE '|'";
-                $params["fullname{$i}"] = "%" . self::escapeLike($q, ']') . "%";
+                $q = self::escapeLike($q, '|');
+
+                if ($q[0] == "@") {
+                    $where[] = "user.name LIKE :name{$i} ESCAPE '|'";
+                    $params["name{$i}"] = substr($q, 1) . "%";
+                } else {
+                    $where[] = "(user.fullname LIKE :fullname{$i} ESCAPE '|' OR user.name LIKE :name{$i} ESCAPE '|')";
+                    $params["fullname{$i}"] = "%$q%";
+                    $params["name{$i}"] = "%$q%";
+                }
             }
         }
         // }}}
