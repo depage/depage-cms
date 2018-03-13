@@ -188,8 +188,7 @@ class Config implements \Iterator, \ArrayAccess
      * @return  options as object
      */
     public function getDefaultsFromClass($object) {
-        $data = array();
-        $defaults = array();
+        $defaults = [];
 
         $class = get_class($object);
         while ($class) {

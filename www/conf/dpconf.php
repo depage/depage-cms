@@ -54,6 +54,23 @@ $conf = array(
         ),
     ),
     // }}}
+    // {{{ aomame/depage-cms/
+    'aomame/depage-cms/' => array(
+        //'env' => 'production',
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "localhost:6379",
+            ),
+        ),
+        'video' => array (
+            'ffmpeg' => '/opt/local/bin/ffmpeg',
+            'ffprobe' => '/opt/local/bin/ffprobe',
+            'qtfaststart' => '/opt/local/bin/qt-faststart',
+            'aaccodec' => 'aac',
+        ),
+    ),
+    // }}}
     // {{{ cms.depagecms.net
     'cms.depagecms.net/' => array(
         'handler' => 'cms_ui',

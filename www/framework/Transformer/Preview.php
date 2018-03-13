@@ -5,6 +5,7 @@ namespace Depage\Transformer;
 class Preview extends Transformer
 {
     protected $previewType = "pre";
+    protected $profiling = false;
 
     // {{{ getXsltEntities()
     protected function getXsltEntities()

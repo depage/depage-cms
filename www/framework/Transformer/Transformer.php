@@ -156,7 +156,20 @@ abstract class Transformer
             }
             $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
             $xslt .= $this->getXsltEntities();
-            $xslt .= "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"  xmlns:dp=\"http://cms.depagecms.net/ns/depage\" xmlns:db=\"http://cms.depagecms.net/ns/database\" xmlns:proj=\"http://cms.depagecms.net/ns/project\" xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\" xmlns:func=\"http://exslt.org/functions\" xmlns:exslt=\"http://exslt.org/common\" version=\"1.0\" extension-element-prefixes=\"xsl db proj pg sec edit func exslt \">";
+            $xslt .= "<xsl:stylesheet
+                version=\"1.0\"
+                xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"
+                xmlns:dp=\"http://cms.depagecms.net/ns/depage\"
+                xmlns:db=\"http://cms.depagecms.net/ns/database\"
+                xmlns:proj=\"http://cms.depagecms.net/ns/project\"
+                xmlns:pg=\"http://cms.depagecms.net/ns/page\"
+                xmlns:sec=\"http://cms.depagecms.net/ns/section\"
+                xmlns:edit=\"http://cms.depagecms.net/ns/edit\"
+                xmlns:exslt=\"http://exslt.org/common\"
+                xmlns:func=\"http://exslt.org/functions\"
+                xmlns:str=\"http://exslt.org/strings\"
+                extension-element-prefixes=\"xsl db proj pg sec edit func exslt str \"
+            >";
 
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
@@ -172,7 +185,7 @@ abstract class Transformer
                 'navigation' => "document('xmldb://pages')",
                 'settings' => "document('xmldb://settings')",
                 'colors' => "document('xmldb://colors')",
-                'languages' => "\$settings//proj:languages",
+                'languages' => "\$settings/proj:settings/proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
             );
@@ -500,18 +513,20 @@ abstract class Transformer
          * call:fileinfo
          */
 
-        \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, array(
-            "useAbsolutePaths" => array($this, "xsltUseAbsolutePaths"),
-            "useBaseUrl" => array($this, "xsltUseBaseUrl"),
-            "changesrc" => array($this, "xsltCallChangeSrc"),
-            "replaceEmailChars" => array($this, "xsltCallReplaceEmailChars"),
-            "atomizeText" => array($this, "xsltCallAtomizeText"),
-            "phpEscape" => array($this, "xsltCallPhpEscape"),
-            "formatDate" => array($this, "xsltCallFormatDate"),
-            "fileinfo" => array($this, "xsltCallFileinfo"),
-            "autokeywords" => array($this, "xsltCallAutokeywords"),
+        \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, [
+            "atomizeText" => [$this, "xsltAtomizeText"],
+            "autokeywords" => [$this, "xsltAutokeywords"],
+            "changesrc" => [$this, "xsltChangeSrc"],
+            "fileinfo" => [$this, "xsltFileinfo"],
+            "formatDate" => [$this, "xsltFormatDate"],
+            "getLibRef" => [$this, "xsltGetLibRef"],
+            "getPageRef" => [$this, "xsltGetPageRef"],
+            "phpEscape" => [$this, "xsltPhpEscape"],
+            "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
             "urlencode" => "rawurlencode",
-        ));
+            "useAbsolutePaths" => [$this, "xsltUseAbsolutePaths"],
+            "useBaseUrl" => [$this, "xsltUseBaseUrl"],
+        ]);
     }
     // }}}
     // {{{ registerAliases()
@@ -591,7 +606,68 @@ abstract class Transformer
     }
     // }}}
 
-    // {{{ xsltCallFileinfo
+    // {{{ xsltGetLibRef()
+    /**
+     * @brief xsltGetLibRef
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function xsltGetLibRef($path)
+    {
+        $url = parse_url($path);
+
+        if (!empty($url['path'])) {
+            $path = "lib/" . $url['host'] . $url['path'];
+        } else {
+            $path = "lib/" . $url['host'];
+        }
+
+        if ($this->useBaseUrl) {
+            $path = $path;
+        } else if ($this->useAbsolutePaths) {
+            $path = $this->baseUrl . "/" . $path;
+        } else {
+            $url = new \Depage\Http\Url($this->currentPath);
+            $path = $url->getRelativePathTo($path);
+        }
+
+        return $path;
+    }
+    // }}}
+    // {{{ xsltGetPageRef()
+    /**
+     * @brief xsltGetPageRefgetPageRef
+     *
+     * @param mixed $pageId, $lang, $absolute
+     * @return void
+     **/
+    public function xsltGetPageRef($pageId, $lang = null, $absolute = false)
+    {
+        if ($lang === null) {
+            $lang = $this->lang;
+        }
+        $urlsByPageId = $this->getUrlsByPageId();
+        if (isset($urlsByPageId[$pageId])) {
+            $path = $lang . $urlsByPageId[$pageId];
+        }
+
+        if ($this->useBaseUrl) {
+            $path = $path;
+        } else if ($absolute == "absolute" || $this->useAbsolutePaths) {
+            $path = $this->baseUrl . $path;
+        } else {
+            $url = new \Depage\Http\Url($this->currentPath);
+            $path = $url->getRelativePathTo($path);
+        }
+        if ($this->routeHtmlThroughPhp) {
+            $path = preg_replace("/\.php$/", ".html", $path);
+        }
+
+        return $path;
+    }
+    // }}}
+    // {{{ xsltFileinfo
     /**
      * gets fileinfo for libref path
      *
@@ -601,7 +677,7 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallFileinfo($path, $extended = "true") {
+    public function xsltFileinfo($path, $extended = "true") {
         $xml = "";
         $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
 
@@ -658,7 +734,7 @@ abstract class Transformer
         return "<true />";
     }
     // }}}
-    // {{{ xsltCallChangeSrc()
+    // {{{ xsltChangeSrc()
     /**
      * gets fileinfo for libref path
      *
@@ -668,7 +744,7 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallChangeSrc($source) {
+    public function xsltChangeSrc($source) {
         $url = new \Depage\Http\Url($this->currentPath);
         $newSource = "";
         $posOffset = 0;
@@ -685,7 +761,7 @@ abstract class Transformer
         return $newSource;
     }
     // }}}
-    // {{{ xsltCallReplaceEmailChars()
+    // {{{ xsltReplaceEmailChars()
     /**
      * gets fileinfo for libref path
      *
@@ -695,7 +771,7 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallReplaceEmailChars($email) {
+    public function xsltReplaceEmailChars($email) {
         $original = array(
             "@",
             ".",
@@ -722,7 +798,7 @@ abstract class Transformer
         return $value;
     }
     // }}}
-    // {{{ xsltCallAtomizeText()
+    // {{{ xsltAtomizeText()
     /**
      * gets fileinfo for libref path
      *
@@ -732,7 +808,7 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallAtomizeText($text) {
+    public function xsltAtomizeText($text) {
         $xml = "<spans><span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span></spans>";
 
         $doc = new \DOMDocument();
@@ -741,7 +817,7 @@ abstract class Transformer
         return $doc;
     }
     // }}}
-    // {{{ xsltCallPhpEscape()
+    // {{{ xsltPhpEscape()
     /**
      * gets fileinfo for libref path
      *
@@ -751,13 +827,13 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallPhpEscape($string) {
+    public function xsltPhpEscape($string) {
         $value = var_export($string, true);
 
         return $value;
     }
     // }}}
-    // {{{ xsltCallFormatDate()
+    // {{{ xsltFormatDate()
     /**
      * gets fileinfo for libref path
      *
@@ -767,7 +843,7 @@ abstract class Transformer
      *
      * @return    $xml (xml) file info as xml string
      */
-    public function xsltCallFormatDate($date = '', $format = '') {
+    public function xsltFormatDate($date = '', $format = '') {
         if ($format == '') {
             $format = "c";
         }
@@ -780,14 +856,14 @@ abstract class Transformer
         return $date;
     }
     // }}}
-    // {{{ xsltCallAutokeywords()
+    // {{{ xsltAutokeywords()
     /**
-     * @brief xsltCallAutokeywords
+     * @brief xsltAutokeywords
      *
      * @param mixed $keywords, $content
      * @return void
      **/
-    public function xsltCallAutokeywords($keys, $content)
+    public function xsltAutokeywords($keys, $content)
     {
         // @todo add keyword aliases?
         $val = "";
@@ -813,6 +889,7 @@ abstract class Transformer
         return trim($val, ", ");
     }
     // }}}
+
     // {{{ extractWords()
     /**
      * @brief extractWords

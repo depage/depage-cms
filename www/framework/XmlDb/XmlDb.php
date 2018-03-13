@@ -232,6 +232,24 @@ class XmlDb implements XmlGetter
         return $xml;
     }
     // }}}
+    // {{{ getDocXmlXpath
+    /**
+     * @param $doc_id_or_name
+     * @param bool $add_id_attribute
+     * @return bool
+     */
+    public function getDocXmlXpath($doc_id_or_name, $xpath, $add_id_attribute = true)
+    {
+        $xml = false;
+
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $xml = $doc->getSubdocByXpath($xpath, $add_id_attribute);
+        }
+
+        return $xml;
+    }
+    // }}}
 
     // {{{ getSubdocByXpath
     /**

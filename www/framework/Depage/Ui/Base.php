@@ -49,8 +49,8 @@ abstract class Base
      */
     protected function __construct($options = NULL) {
         // @todo check and fix config reading
-        $conf = new \Depage\Config\Config($options);
-        $this->options = $conf->getDefaultsFromClass($this);
+        $this->conf = new \Depage\Config\Config($options);
+        $this->options = $this->conf->getDefaultsFromClass($this);
 
         if (!defined("DEPAGE_URL_HAS_LOCALE")) {
             define("DEPAGE_URL_HAS_LOCALE", $this->options->urlHasLocale);
@@ -129,7 +129,8 @@ abstract class Base
 
         if ($dp_subhandler != "") {
             // forward handling of request to a subhandler
-            $handler = $dp_subhandler::_factory($this->options);
+            // @todo add original options
+            $handler = $dp_subhandler::_factory($this->conf);
             $handler->urlSubArgs = $this->urlSubArgs;
             $handler->urlPath = $this->urlPath;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    framework/cms/UI/Preview.php
+ * @file    framework/cms/Ui/Preview.php
  *
  * preview ui handler
  *
@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
-namespace Depage\Cms\UI;
+namespace Depage\Cms\Ui;
 
 use \Depage\Html\Html;
 
