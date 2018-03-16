@@ -130,13 +130,11 @@ abstract class Auth
             FROM
                 {$this->pdo->prefix}_auth_sessions
             WHERE
-                sid = :sid AND
-                ip = :ip
+                sid = :sid
             LIMIT 1"
         );
         $session_query->execute(array(
             ':sid' => $sid,
-            ':ip' => $_SERVER['REMOTE_ADDR'],
         ));
         $result = $session_query->fetchAll();
 
