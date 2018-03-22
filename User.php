@@ -384,6 +384,26 @@ class User extends \Depage\Entity\PdoEntity
     }
     // }}}
 
+    // {{{ jsonSerialize()
+    /**
+     * @brief jsonSerialize
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function jsonSerialize()
+    {
+        $data = [
+            'name' => "@" . $this->data['name'],
+            'fullname' => $this->data['fullname'],
+            'profileImg' => $this->getProfileImage(),
+            'logline' => $this->data['logline'],
+        ];
+
+        return $data;
+    }
+    // }}}
+
     // {{{ setFullname()
     /**
      * @brief setFullname
