@@ -148,6 +148,8 @@ class HttpCookie extends Auth
                 $this->updatePasswordHash($user, $password);
 
                 return $user;
+            } else {
+                $this->prolongLogin($user);
             }
         } catch (\Depage\Auth\Exceptions\User $e) {
         }
@@ -165,8 +167,6 @@ class HttpCookie extends Auth
             $this->startSession();
 
             return true;
-        } else {
-            $this->prolongLogin($user);
         }
 
         return false;
