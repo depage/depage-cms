@@ -8,7 +8,8 @@
  */
 namespace Depage\Entity;
 
-abstract class PdoEntity extends Entity {
+abstract class PdoEntity extends Entity
+{
     // {{{ __construct()
     /**
      * @brief __construct

@@ -12,7 +12,7 @@
  */
 namespace Depage\Entity;
 
-abstract class Entity
+abstract class Entity implements \JsonSerializable
 {
     // {{{ variables
     /**
@@ -263,6 +263,19 @@ abstract class Entity
             'types',
             'dirty',
         );
+    }
+    // }}}
+
+    // {{{ jsonSerialize()
+    /**
+     * @brief jsonSerialize
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
     // }}}
 }
