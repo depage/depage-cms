@@ -312,6 +312,26 @@ class User extends \Depage\Entity\PdoEntity
             $fields .= ", session.ip, session.project, session.dateLastUpdate, session.useragent";
             $where[] = "session.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)";
         }
+        if (isset($search['dateUpdated'])) {
+            if (is_array($search['dateUpdated'])) {
+                $where[] = "user.dateUpdated >= :dateUpdatedFrom";
+                $where[] = "user.dateUpdated < :dateUpdatedTo";
+                $params['dateUpdatedFrom'] = $search['dateUpdated']['from'];
+                $params['dateUpdatedTo'] = $search['dateUpdated']['to'];
+            } else {
+                $where[] = self::sqlConditionFor('session.dateUpdated', $search['dateUpdated'], $params);
+            }
+        }
+        if (isset($search['dateRegistered'])) {
+            if (is_array($search['dateRegistered'])) {
+                $where[] = "user.dateRegistered >= :dateRegisteredFrom";
+                $where[] = "user.dateRegistered < :dateRegisteredTo";
+                $params['dateRegisteredFrom'] = $search['dateRegistered']['from'];
+                $params['dateRegisteredTo'] = $search['dateRegistered']['to'];
+            } else {
+                $where[] = self::sqlConditionFor('session.dateRegistered', $search['dateRegistered'], $params);
+            }
+        }
         if (isset($search['fuzzyName'])) {
             $queries = explode(" ", trim($search['fuzzyName']));
             $limit = "LIMIT 0, 1000";
@@ -394,8 +414,9 @@ class User extends \Depage\Entity\PdoEntity
     public function jsonSerialize()
     {
         $data = [
-            'name' => "@" . $this->data['name'],
+            'name' => $this->data['name'],
             'fullname' => $this->data['fullname'],
+            'sortname' => $this->data['sortname'],
             'profileImg' => $this->getProfileImage(),
             'logline' => $this->data['logline'],
         ];
