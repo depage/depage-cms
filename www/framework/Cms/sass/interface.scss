@@ -1055,6 +1055,13 @@ div.preview.zoom100 iframe {
     p {
         margin-bottom: 5px;
     }
+    p.input-richtext {
+        .textarea,
+        .textarea-content,
+        textarea {
+            min-height: 3em;
+        }
+    }
     p.submit,
     p.cancel {
         float: left;

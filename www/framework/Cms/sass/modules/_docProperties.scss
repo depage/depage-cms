@@ -17,6 +17,46 @@
             height: 120px;
         }
     }
+    .depage-form .input-single.edit-type {
+        $radius: 5px;
+        > span.depage-label + span {
+            @include radius($radius);
+            //border: 1px solid $borderColor;
+            display: inline-block;
+            background: lighten($backgroundColor, 10%);
+        }
+        > span > span {
+            &:first-child input[type="radio"] + span {
+                @include radius($radius, "top", "left");
+                @include radius($radius, "bottom", "left");
+            }
+            &:last-child input[type="radio"] + span {
+                @include radius($radius, "top", "right");
+                @include radius($radius, "bottom", "right");
+            }
+        }
+        label {
+            cursor: pointer;
+        }
+        input[type="radio"] {
+            opacity: 0;
+            width: 0;
+            margin-right: -0.35em;
+        }
+        input[type="radio"] + span {
+            display: inline-block;
+            padding: 6px 12px;
+            color: $textBaseColor;
+        }
+        input[type="radio"]:checked + span {
+            background: #ffffff;
+            background: darken($backgroundColor, 35%);
+            color: $textBrightColor;
+            @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
+        }
+        input[type="radio"]:disabled + span {
+        }
+    }
 }
 .layout-left .doc-properties {
     left: $treeWidth;
