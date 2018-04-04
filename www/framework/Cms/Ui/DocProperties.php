@@ -27,12 +27,8 @@ class DocProperties extends Base
             $this->nodeId = $this->urlSubArgs[1];
         }
 
-        // get xmldb instance
-        $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, [
-            "edit:text_headline",
-            "edit:text_formatted",
-        ]);
+        $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        $this->xmldb = $this->project->getXmlDb($this->authUser->id);
     }
     // }}}
     // {{{ package
@@ -75,6 +71,7 @@ class DocProperties extends Base
         list($node) = $xpath->query("//*[@db:id = '{$this->nodeId}']");
 
         $form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
+            'jsAutosave' => true,
             'dataNode' => $node,
         ]);
 
@@ -87,6 +84,15 @@ class DocProperties extends Base
             }
         }
         $form->setDefaultValuesXml();
+
+        $form->process();
+
+        if ($form->validateAutosave()) {
+            $node = $form->getValuesXml();
+            $doc->saveNode($node);
+
+            $form->clearSession(false);
+        }
 
         // @todo clean unsed session?
 
@@ -225,7 +231,7 @@ class DocProperties extends Base
 
         $form->addRichtext("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Description")),
-            'dataInfo' => "//*[@db:id = '$nodeId']/*",
+            'dataInfo' => "//*[@db:id = '$nodeId']",
             'autogrow' => true,
             'allowedTags' => [
                 "p",
@@ -265,7 +271,7 @@ class DocProperties extends Base
 
         $form->addRichtext("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Headline")),
-            'dataInfo' => "//*[@db:id = '$nodeId']/*",
+            'dataInfo' => "//*[@db:id = '$nodeId']",
             'class' => "labels-on-top",
             'autogrow' => true,
             'allowedTags' => [
