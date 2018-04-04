@@ -129,7 +129,9 @@ class DocProperties extends Base
             return $callback;
         }
 
-        echo $callback . "<br>";
+        if ($node->prefix != "sec") {
+            echo $callback . "<br>";
+        }
 
         return false;
     }
@@ -171,11 +173,7 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        // @todo add colorschemes but only for pages
-        $list = [
-            "test",
-            "kljsdfh ksjdh fkljsdhf ",
-        ];
+        $list = ['' => _("Default")] + $this->project->getColorschemes();
         $form->addSingle("colorscheme-$nodeId", [
             'label' => _("Colorscheme"),
             'list' => $list,
@@ -394,6 +392,7 @@ class DocProperties extends Base
             'label' => $this->getLabelForNode($node, _("Image")),
             'class' => "edit-img",
         ]);
+        // @todo add image preview
         $f->addText("xmledit-$nodeId-img", [
             'label' => _("Image Source"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",

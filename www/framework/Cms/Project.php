@@ -631,6 +631,34 @@ class Project extends \Depage\Entity\Entity
         return $languages;
     }
     // }}}
+    // {{{ getColorschemes()
+    /**
+     * @brief getLanggetColorschemesuages
+     *
+     * @param mixed
+     * @return array of colorschemes
+     **/
+    public function getColorschemes()
+    {
+        if ($colors = $this->cache->get("dp_proj_{$this->name}_colors/colors.ser")) {
+            return $colors;
+        } else {
+            $colors = [];
+            $xmldb = $this->getXmlDb();
+
+            $doc = $xmldb->getDoc("colors");
+            $nodes = $doc->getNodeIdsByXpath("//proj:colorscheme[@name != 'tree_name_color_global']");
+            foreach ($nodes as $nodeId) {
+                $attr = $doc->getAttributes($nodeId);
+                $colors[$attr['name']] = $attr['name'];
+            }
+
+            $this->cache->set("dp_proj_{$this->name}_colors/colors.ser", $colors);
+        }
+
+        return $colors;
+    }
+    // }}}
     // {{{ getPublishingTargets()
     /**
      * @brief getPublishingTargets
