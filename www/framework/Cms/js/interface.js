@@ -9,6 +9,8 @@
  * @require framework/shared/depage-jquery-plugins/depage-live-help.js
  * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
+ *
+ * @require framework/HtmlForm/lib/js/lodash.custom.min.js
  * @require framework/HtmlForm/lib/js/effect.js
  * @require framework/Cms/js/xmldb.js
  * @require framework/Cms/js/locale.js
@@ -30,6 +32,7 @@ var depageCMS = (function() {
     var lang = $('html').attr('lang');
     var baseUrl = $("base").attr("href");
     var projectName;
+    var currentPreviewUrl;
     var $html;
     var $window;
     var $body;
@@ -551,14 +554,18 @@ var depageCMS = (function() {
             });
         },
         // }}}
-        // {{{ loadEleemntProperties
+        // {{{ loadDocProperties
         loadDocProperties: function(id) {
             var url = baseUrl + "project/" + projectName + "/doc-properties/"+ id + "/";
-            console.log(url);
 
             $docPropertiesContainer.empty().load(url + "?ajax=true", function() {
-                $docPropertiesContainer.find('.depage-form').each( function() {
-                    setupForm(this);
+                var $form = $docPropertiesContainer.find('.depage-form');
+
+                $form.depageForm();
+                $form.find("p.submit").remove();
+
+                $form.on("depageForm.autosaved", function() {
+                    localJS.updatePreview();
                 });
             });
         },
@@ -651,6 +658,7 @@ var depageCMS = (function() {
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame[0].src = newUrl;
                 }
+                currentPreviewUrl = newUrl;
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {
                     $window.triggerHandler("switchLayout", "split");
@@ -673,6 +681,11 @@ var depageCMS = (function() {
                 });
             }
         },
+        // }}}
+        // {{{ updatePreview
+        updatePreview: _.throttle(function() {
+            this.preview(currentPreviewUrl);
+        }, 1000),
         // }}}
         // {{{ edit
         edit: function(projectName, page) {

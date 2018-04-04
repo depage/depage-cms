@@ -392,7 +392,16 @@ class DocProperties extends Base
             'label' => $this->getLabelForNode($node, _("Image")),
             'class' => "edit-img",
         ]);
-        // @todo add image preview
+
+        // add image preview
+        $imgSrc = $node->getAttribute("src");
+        $thumbSrc = str_replace("libref://", "projects/{$this->project->name}/lib/", $imgSrc);
+        $ext = pathinfo($imgSrc, \PATHINFO_EXTENSION);
+        if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
+            $thumbSrc = htmlentities($thumbSrc . ".thumb-120x120.png");
+        }
+        $f->addHtml("<div class=\"thumb\"><img src=\"$thumbSrc\"></div>");
+
         $f->addText("xmledit-$nodeId-img", [
             'label' => _("Image Source"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",

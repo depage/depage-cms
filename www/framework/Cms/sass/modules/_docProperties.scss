@@ -4,6 +4,19 @@
     overflow-y: scroll;
     background: $backgroundColor;
     padding: 10px;
+
+    .thumb {
+        float: left;
+        border: 1px solid;
+        width: 120px;
+        height: 120px;
+
+        img {
+            display: block;
+            width: 120px;
+            height: 120px;
+        }
+    }
 }
 .layout-left .doc-properties {
     left: $treeWidth;
