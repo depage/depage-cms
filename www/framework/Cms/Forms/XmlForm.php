@@ -28,9 +28,9 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
     public function __construct($name, $params)
     {
         if (isset($params['dataNode'])) {
-            list($document, $this->dataNode) = \Depage\Xml\Document::getDocAndNode($params['dataNode']);
+            list($this->dataDocument, $this->dataNode) = \Depage\Xml\Document::getDocAndNode($params['dataNode']);
 
-            $this->dataNodeXpath = new \DOMXPath($document);
+            $this->dataNodeXpath = new \DOMXPath($this->dataDocument);
             $this->dataNodeXpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
             $this->dataNodeXpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
         }
@@ -87,18 +87,30 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
      **/
     public function getValuesXml()
     {
-        if (isset($this->dataNode)) {
-            foreach ($this->getElements() as $element) {
-                if (!empty($element->dataInfo)) {
-                    $node = $this->dataNodeXpath->query($element->dataInfo)->item(0);
+        if (!isset($this->dataNode)) {
+            return;
+        }
+        foreach ($this->getElements() as $element) {
+            if (empty($element->dataInfo)) {
+                continue;
+            }
 
-                    // @todo add textarea
-                    if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
-                        $node->nodeValue = $element->getValue() === true ? "true" : "false";
-                    } else {
-                        $node->nodeValue = $element->getValue();
-                    }
+            $node = $this->dataNodeXpath->query($element->dataInfo)->item(0);
+
+            if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
+                $node->nodeValue = $element->getValue() === true ? "true" : "false";
+            } elseif ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
+                $newBody = $element->getValue();
+
+                while ($node->lastChild != null) {
+                    $node->removeChild($node->lastChild);
                 }
+                foreach ($newBody->documentElement->childNodes as $n) {
+                    $copy = $this->dataDocument->importNode($n, true);
+                    $node->appendChild($copy);
+                }
+            } else {
+                $node->nodeValue = $element->getValue();
             }
         }
 
