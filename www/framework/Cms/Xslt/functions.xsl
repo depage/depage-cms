@@ -13,6 +13,19 @@
 
     <xsl:include href="xslt://nodetostring.xsl" />
 
+    <!-- aliases -->
+    <!-- {{{ dp:getpage() -->
+    <!--
+        dp:getpage(pageid)
+    -->
+    <func:function name="dp:getpage">
+        <xsl:param name="pageid" />
+
+        <func:result select="dp:getPage($pageid)" />
+    </func:function>
+    <!-- }}} -->
+
+    <!-- functions -->
     <!-- {{{ dp:choose() -->
     <!--
         dp:choose(test, on-true, on-false)
@@ -31,17 +44,6 @@
                 <func:result select="$b" />
             </xsl:otherwise>
         </xsl:choose>
-    </func:function>
-    <!-- }}} -->
-
-    <!-- {{{ dp:getpage() -->
-    <!--
-        dp:getpage(pageid)
-    -->
-    <func:function name="dp:getpage">
-        <xsl:param name="pageid" />
-
-        <func:result select="dp:getPage($pageid)" />
     </func:function>
     <!-- }}} -->
 
@@ -273,6 +275,17 @@
         <xsl:param name="extended" select="true()" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:glob() -->
+    <!--
+        dp:glob(libref)
+
+    -->
+    <func:function name="dp:glob">
+        <xsl:param name="path" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::glob', string($path))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:pageVisible() -->

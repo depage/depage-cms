@@ -518,6 +518,7 @@ abstract class Transformer
             "autokeywords" => [$this, "xsltAutokeywords"],
             "changesrc" => [$this, "xsltChangeSrc"],
             "fileinfo" => [$this, "xsltFileinfo"],
+            "glob" => [$this, "xsltGlob"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
@@ -697,6 +698,35 @@ abstract class Transformer
             $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
         }
         $xml .= " />";
+
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+
+        return $doc;
+    }
+    // }}}
+    // {{{ xsltGlob
+    /**
+     * gets list of files for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltGlob($path) {
+        $xml = "";
+        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
+        $prefixLen = strlen("projects/" . $this->projectName . "/lib/");
+        $files = glob($path);
+
+        $xml = "<glob>";
+        foreach ($files as $filename) {
+            $filename = "libref://" . substr($filename, $prefixLen);
+            $xml .= "<file>" . htmlspecialchars($filename, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "</file>";
+        }
+        $xml .= "</glob>";
 
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
