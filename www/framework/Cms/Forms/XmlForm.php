@@ -59,7 +59,6 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                     if ($nodes->length > 0) {
                         $node = $nodes->item(0);
 
-                        // @todo add textarea
                         if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                             $value = $node->value == "true" ? true : false;
                         } elseif ($element instanceof \Depage\HtmlForm\Elements\Richtext) {

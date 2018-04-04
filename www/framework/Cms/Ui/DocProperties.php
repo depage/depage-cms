@@ -323,11 +323,19 @@ class DocProperties extends Base
             $list[$val] = $val;
         }
 
+        $class = "edit-type";
+        $skin = "radio";
+
+        if (count($list) > 6) {
+            $class = "";
+            $skin = "select";
+        }
+
         $form->addSingle("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Type")),
             'list' => $list,
-            'class' => "edit-type",
-            //'skin' => "select",
+            'class' => $class,
+            'skin' => $skin,
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
@@ -382,6 +390,27 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditAudio()
+    /**
+     * @brief addEditAudio
+     *
+     * @param mixed $form, $node
+     * @return void
+     **/
+    protected function addEditAudio($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $f = $form->addFieldset("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Audio")),
+            'class' => "edit-audio",
+        ]);
+        $f->addText("xmledit-$nodeId-src", [
+            'label' => $this->getLabelForNode($node, _("src")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+        ]);
+    }
+    // }}}
     // {{{ addEditImg()
     /**
      * @brief addEditImg
@@ -411,18 +440,24 @@ class DocProperties extends Base
             'label' => _("Image Source"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
-        $f->addText("xmledit-$nodeId-alt", [
-            'label' => _("Alt text"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
-        ]);
-        $f->addText("xmledit-$nodeId-title", [
-            'label' => _("Title"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
-        ]);
-        $f->addText("xmledit-$nodeId-href", [
-            'label' => _("href"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
-        ]);
+        if ($node->hasAttribute("alt")) {
+            $f->addText("xmledit-$nodeId-alt", [
+                'label' => _("Alt text"),
+                'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
+            ]);
+        }
+        if ($node->hasAttribute("title")) {
+            $f->addText("xmledit-$nodeId-title", [
+                'label' => _("Title"),
+                'dataInfo' => "//*[@db:id = '$nodeId']/@title",
+            ]);
+        }
+        if ($node->hasAttribute("href")) {
+            $f->addText("xmledit-$nodeId-href", [
+                'label' => _("href"),
+                'dataInfo' => "//*[@db:id = '$nodeId']/@href",
+            ]);
+        }
     }
     // }}}
 }
