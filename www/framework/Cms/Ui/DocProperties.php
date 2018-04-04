@@ -73,6 +73,7 @@ class DocProperties extends Base
         $form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
             'jsAutosave' => true,
             'dataNode' => $node,
+            'class' => "labels-on-top",
         ]);
 
         if ($callback = $this->getCallbackForNode($node)) {
@@ -317,11 +318,15 @@ class DocProperties extends Base
             return $variables[$matches[1]];
         }, $options);
 
-        $list = explode(",", $options);
+        $list = [];
+        foreach (explode(",", $options) as $val) {
+            $list[$val] = $val;
+        }
 
         $form->addSingle("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Type")),
             'list' => $list,
+            'class' => "edit-type",
             //'skin' => "select",
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
