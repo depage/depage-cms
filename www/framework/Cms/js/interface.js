@@ -581,10 +581,29 @@ var depageCMS = (function() {
                 // @todo keep squire from merging cells when deleteing at the beginning or end of cell
                 // @todo add support for better handling of tab key to jump between cells
 
+                localJS.hightlighCurrentDocProperty();
+
                 $form.on("depageForm.autosaved", function() {
                     localJS.updatePreview();
                 });
             });
+        },
+        // }}}
+        // {{{ hightlighCurrentDocProperty
+        hightlighCurrentDocProperty: function() {
+            try {
+                var className = "depage-live-edit-highlight";
+                var $current = $previewFrame.contents().find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                $previewFrame.contents().find("." + className).removeClass(className);
+                $current.addClass(className);
+                if ($current.length == 1) {
+                    $current[0].scrollIntoView({
+                        block: "center"
+                    });
+                }
+            } catch(error) {
+            }
         },
         // }}}
 
@@ -674,6 +693,7 @@ var depageCMS = (function() {
                     $previewFrame.remove();
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame[0].src = newUrl;
+                    //$previewFrame.on("load", localJS.hightlighCurrentDocProperty);
                 }
                 currentPreviewUrl = newUrl;
 
@@ -692,6 +712,7 @@ var depageCMS = (function() {
                     var $header = $result.find("header.info");
 
                     $previewFrame = $("#previewFrame");
+                    //$previewFrame.on("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame[0].src = unescape(url);
 
                     $window.triggerHandler("switchLayout", "split");
