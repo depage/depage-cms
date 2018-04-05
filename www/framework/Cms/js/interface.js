@@ -538,9 +538,9 @@ var depageCMS = (function() {
             $pagedataTreeContainer.empty();
             $docPropertiesContainer.empty();
 
-            if (docref == "") return false;
-
             currentDocId = docref;
+
+            if (docref == "") return false;
 
             var $tree;
             var url = baseUrl + "project/" + projectName + "/tree/"+ docref + "/";
@@ -550,7 +550,11 @@ var depageCMS = (function() {
 
                 var jstree = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
-                        localJS.loadDocProperties(data.node.data.nodeId);
+                        var nodeId = null;
+                        if (typeof data.node.data.nodeId !== 'undefined') {
+                            nodeId = data.node.data.nodeId;
+                        }
+                        localJS.loadDocProperties(nodeId);
                     })
                     .on("ready.jstree", function () {
                         $tree.find("ul:first li").each(function() {
