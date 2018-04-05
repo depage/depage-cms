@@ -460,5 +460,41 @@ class DocProperties extends Base
         }
     }
     // }}}
+    // {{{ addEditTable()
+    /**
+     * @brief addEditTable
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    protected function addEditTable($form, $node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $form->addRichtext("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Table")),
+            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'class' => "labels-on-top",
+            'autogrow' => true,
+            'allowedTags' => [
+                "table",
+                "tbody",
+                "tr",
+                "td",
+                "p",
+                "br",
+                "b",
+                "strong",
+                "i",
+                "em",
+                "small",
+                "a",
+                "ul",
+                "ol",
+                "li",
+            ],
+        ]);
+    }
+    // }}}
 }
 /* vim:set ft=php sts=4 fdm=marker et : */
