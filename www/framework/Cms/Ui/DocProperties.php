@@ -203,7 +203,7 @@ class DocProperties extends Base
      * @param mixed $node, $label
      * @return void
      **/
-    protected function getLangFieldset($node, $label)
+    protected function getLangFieldset($node, $label, $class = "")
     {
         $lang = $node->getAttribute("lang");
 
@@ -212,7 +212,7 @@ class DocProperties extends Base
 
             $this->fs = $this->form->addFieldset("xmledit-$nodeId-lang-fs", [
                 'label' => $label,
-                'class' => "doc-property-fieldset",
+                'class' => "doc-property-fieldset $class",
             ]);
         }
 
@@ -440,25 +440,22 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $this->form->addFieldset("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Link")),
-            'class' => "edit-img",
-        ]);
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Link")), "edit-a");
+
         // @todo support href_id attribute
-        $f->addText("xmledit-$nodeId-href", [
-            'label' => $this->getLabelForNode($node, _("href")),
+        $fs->addText("xmledit-$nodeId-href", [
+            'label' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@href",
         ]);
-        $f->addText("xmledit-$nodeId-alt", [
-            'label' => $this->getLabelForNode($node, _("Alt text")),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
-        ]);
-        $f->addText("xmledit-$nodeId-title", [
-            'label' => $this->getLabelForNode($node, _("Title")),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
-        ]);
-        $f->addText("xmledit-$nodeId-target", [
+        // @todo leave only one target setting for multiple links
+        $fs->addSingle("xmledit-$nodeId-target", [
             'label' => $this->getLabelForNode($node, _("Target")),
+            'list' => [
+                '' => _("Default"),
+                '_blank' => _("New Window"),
+            ],
+            'skin' => "radio",
+            'class' => "edit-type",
             'dataInfo' => "//*[@db:id = '$nodeId']/@target",
         ]);
     }
@@ -495,10 +492,7 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $this->form->addFieldset("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Image")),
-            'class' => "edit-img",
-        ]);
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Image")), "edit-img");
 
         // add image preview
         $imgSrc = $node->getAttribute("src");
@@ -507,27 +501,28 @@ class DocProperties extends Base
         if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
             $thumbSrc = htmlentities($thumbSrc . ".thumb-120x120.png");
         }
-        $f->addHtml("<div class=\"thumb\"><img src=\"$thumbSrc\"></div>");
+        $fs->addHtml("<div class=\"thumb\"><img src=\"$thumbSrc\"></div>");
 
-        $f->addText("xmledit-$nodeId-img", [
-            'label' => _("Image Source"),
+        $lang = $node->getAttribute("lang");
+        $fs->addText("xmledit-$nodeId-img", [
+            'label' => !empty($lang) ? $lang : _("src"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
         if ($node->hasAttribute("alt")) {
-            $f->addText("xmledit-$nodeId-alt", [
+            $fs->addText("xmledit-$nodeId-alt", [
                 'label' => _("Alt text"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
             ]);
         }
         if ($node->hasAttribute("title")) {
-            $f->addText("xmledit-$nodeId-title", [
+            $fs->addText("xmledit-$nodeId-title", [
                 'label' => _("Title"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@title",
             ]);
         }
         // @todo support href_id attribute
         if ($node->hasAttribute("href")) {
-            $f->addText("xmledit-$nodeId-href", [
+            $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@href",
             ]);
