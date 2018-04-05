@@ -593,14 +593,14 @@ var depageCMS = (function() {
         hightlighCurrentDocProperty: function() {
             try {
                 var className = "depage-live-edit-highlight";
-                var $current = $previewFrame.contents().find("*[data-db-id='" + currentDocPropertyId + "']");
+                var $iframe = $previewFrame.contents();
+                var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
 
-                $previewFrame.contents().find("." + className).removeClass(className);
+                $iframe.find("." + className).removeClass(className);
                 $current.addClass(className);
                 if ($current.length == 1) {
-                    $current[0].scrollIntoView({
-                        block: "center"
-                    });
+                    $current[0].scrollIntoView();
+                    $iframe.scrollTop($iframe.scrollTop() - 100);
                 }
             } catch(error) {
             }
