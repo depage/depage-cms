@@ -4,6 +4,9 @@
     <xsl:output method="html" indent="no" omit-xml-declaration="yes" />
     <xsl:strip-space elements="*" />
 
+    <xsl:param name="projectName" />
+    <xsl:variable name="maxlength" select="20" />
+
     <xsl:template match="/*">
         <xsl:choose>
             <xsl:when test="count(node()) > 0">
@@ -61,19 +64,31 @@
         </xsl:apply-templates>
     </xsl:template>
 
-
     <xsl:template match="sec:*" mode="hint">
-        <xsl:variable name="type" select="name()" />
         <span>
-            <xsl:value-of select="$type" />
+            <xsl:apply-templates select="edit:*" mode="hint" />
         </span>
     </xsl:template>
 
-    <xsl:template match="pg:*" mode="hint"></xsl:template>
-
-    <xsl:template match="sec:separator" mode="hint">
-        <span>—</span>
+    <xsl:template match="edit:img" mode="hint">
+        <xsl:if test="substring(@src, 1, 9) = 'libref://'">
+            <img class="mini-thumb">
+                <xsl:attribute name="src">projects/<xsl:value-of select="$projectName" />/lib/<xsl:value-of select="substring(@src, 10)" /><xsl:if test="not(substring(@src, string-length(@src) - 3) = '.svg')">.thumbfill-48x48.png</xsl:if></xsl:attribute>
+            </img>
+        </xsl:if>
     </xsl:template>
+
+    <xsl:template match="edit:text_headline | edit:text_formatted" mode="hint">
+        <xsl:value-of select="substring(., 1, $maxlength)"/>
+        <xsl:if test="string-length(.) &gt; $maxlength">
+           <xsl:text>...</xsl:text>
+       </xsl:if>
+       <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="pg:* | edit:*" mode="hint" />
+
+    <xsl:template match="sec:separator" mode="hint">—</xsl:template>
 
     <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker et : -->
 </xsl:stylesheet>

@@ -36,12 +36,21 @@ $iconSize: 24px;
     &:active {
         text-decoration: none;
         color: inherit;
-        margin-left: 1.8 * $iconSize;
+        margin-left: 2 * $iconSize;
         padding-left: 6px;
     }
     span {
         margin-left: 10px;
         color: #999999;
+
+        img.mini-thumb {
+            position: absolute;
+            top: 0;
+            left: $iconSize;
+            display: block;
+            width: $iconSize;
+            height: $iconSize;
+        }
     }
 }
 .jstree-anchor,
@@ -62,7 +71,7 @@ $iconSize: 24px;
     top: 0;
 }
 .jstree-anchor > .jstree-icon {
-    left: 0.8 * $iconSize;
+    left: 1 * $iconSize;
 }
 .jstree-ocl {
     cursor: pointer;
@@ -197,7 +206,7 @@ $iconSize: 24px;
 .jstree-node {
     min-height: $treeLineHeight;
     line-height: $treeLineHeight - 2px;
-    margin-left: $iconSize * 0.8;
+    margin-left: $iconSize;
     min-width: $treeLineHeight;
 }
 .jstree-anchor {
@@ -210,7 +219,7 @@ $iconSize: 24px;
     line-height: $treeLineHeight;
 }
 .jstree-ocl {
-    width: $iconSize * 0.8;
+    width: $iconSize;
 }
 .jstree-node,
 .jstree-icon,

@@ -400,7 +400,7 @@ class Tree extends Base {
     protected function get_html_nodes($doc_name)
     {
         $doc = $this->doc->getXml($doc_name);
-        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc));
+        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->projectName);
 
         return current($html);
     }
