@@ -254,6 +254,7 @@ class DocProperties extends Base
         $form->addText("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Text")),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'lang' => $node->getAttribute("lang"),
         ]);
     }
     // }}}
@@ -272,6 +273,7 @@ class DocProperties extends Base
             'label' => $this->getLabelForNode($node, _("Headline")),
             'dataInfo' => "//*[@db:id = '$nodeId']",
             'class' => "labels-on-top",
+            'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
             'allowedTags' => [
                 "p",
@@ -296,6 +298,7 @@ class DocProperties extends Base
             'label' => $this->getLabelForNode($node, _("Text")),
             'autogrow' => true,
             'class' => "labels-on-top",
+            'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
         ]);
     }
@@ -474,7 +477,8 @@ class DocProperties extends Base
         $form->addRichtext("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Table")),
             'dataInfo' => "//*[@db:id = '$nodeId']",
-            'class' => "labels-on-top",
+            'class' => "labels-on-top edit-table",
+            'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
             'allowedTags' => [
                 "table",

@@ -74,7 +74,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                         }
 
                         if ($node->nodeName == "edit:table") {
-                            $value = "<table>$value</table>";
+                            $value = "<table><tbody>$value</tbody></table>";
                         }
                     } else {
                         $value = $node->nodeValue;
