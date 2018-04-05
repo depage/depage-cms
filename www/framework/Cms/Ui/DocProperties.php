@@ -16,6 +16,43 @@ use \Depage\Html\Html;
 
 class DocProperties extends Base
 {
+    // {{{ variables
+    /**
+     * @brief projectName
+     **/
+    protected $projectName = "";
+
+    /**
+     * @brief nodeId
+     **/
+    protected $nodeId = null;
+
+    /**
+     * @brief project
+     **/
+    protected $project = null;
+
+    /**
+     * @brief xmldb
+     **/
+    protected $xmldb = null;
+
+    /**
+     * @brief languages
+     **/
+    protected $languages = [];
+
+    /**
+     * @brief form
+     **/
+    protected $form = null;
+
+    /**
+     * @brief fs
+     **/
+    protected $fs = null;
+    // }}}
+
     // {{{ _init()
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);
@@ -29,6 +66,8 @@ class DocProperties extends Base
 
         $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
         $this->xmldb = $this->project->getXmlDb($this->authUser->id);
+
+        $this->languages = array_keys($this->project->getLanguages());
     }
     // }}}
     // {{{ package
@@ -70,34 +109,33 @@ class DocProperties extends Base
 
         list($node) = $xpath->query("//*[@db:id = '{$this->nodeId}']");
 
-        $form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
+        $this->form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
             'jsAutosave' => true,
             'dataNode' => $node,
-            'class' => "labels-on-top",
         ]);
 
         if ($callback = $this->getCallbackForNode($node)) {
-            $this->$callback($form, $node);
+            $this->$callback($node);
         }
         foreach($node->childNodes as $n) {
             if ($callback = $this->getCallbackForNode($n)) {
-                $this->$callback($form, $n);
+                $this->$callback($n);
             }
         }
-        $form->setDefaultValuesXml();
+        $this->form->setDefaultValuesXml();
 
-        $form->process();
+        $this->form->process();
 
-        if ($form->validateAutosave()) {
-            $node = $form->getValuesXml();
+        if ($this->form->validateAutosave()) {
+            $node = $this->form->getValuesXml();
             $doc->saveNode($node);
 
-            $form->clearSession(false);
+            $this->form->clearSession(false);
         }
 
         // @todo clean unsed session?
 
-        $h .= $form;
+        $h .= $this->form;
         $h .= htmlentities($xml->saveXML($node));
 
         $output = new Html([
@@ -154,12 +192,29 @@ class DocProperties extends Base
             $label = $fallback;
         }
 
+        return $label;
+    }
+    // }}}
+    // {{{ getLangFieldset()
+    /**
+     * @brief getLangFieldset
+     *
+     * @param mixed $node, $label
+     * @return void
+     **/
+    protected function getLangFieldset($node, $label)
+    {
         $lang = $node->getAttribute("lang");
-        if ($lang) {
-            $label .= " " . $lang;
+
+        if ($lang == $this->languages[0] || $lang == "") {
+            $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+            $this->fs = $this->form->addFieldset("xmledit-$nodeId-lang-fs", [
+                'label' => $label,
+            ]);
         }
 
-        return $label;
+        return $this->fs;
     }
     // }}}
 
@@ -167,16 +222,18 @@ class DocProperties extends Base
     /**
      * @brief addPgMeta
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addPgMeta($form, $node)
+    protected function addPgMeta($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
-        $form->addSingle("colorscheme-$nodeId", [
-            'label' => _("Colorscheme"),
+
+        $fs = $this->getLangFieldset($node, _("Colorscheme"));
+        $fs->addSingle("colorscheme-$nodeId", [
+            'label' => "",
             'list' => $list,
             'skin' => "select",
             'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
@@ -187,32 +244,36 @@ class DocProperties extends Base
     /**
      * @brief addPgTitle
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addPgTitle($form, $node)
+    protected function addPgTitle($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addText("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Title")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Title")));
+        $fs->addText("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
     // {{{ addPgLinkdesc()
     /**
-     * @brief addPgTitle
+     * @brief addPgLinkdesc
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addPgLinkdesc($form, $node)
+    protected function addPgLinkdesc($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addText("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Linkinfo")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Linkinfo")));
+        $fs->addText("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
@@ -224,12 +285,14 @@ class DocProperties extends Base
      * @param mixed $
      * @return void
      **/
-    protected function addPgDesc($form, $node)
+    protected function addPgDesc($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addRichtext("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Description")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Description")));
+        $fs->addRichtext("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
             'autogrow' => true,
             'allowedTags' => [
@@ -244,17 +307,18 @@ class DocProperties extends Base
     /**
      * @brief addEditTextSingleline
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditTextSingleline($form, $node)
+    protected function addEditTextSingleline($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addText("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Text")),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
+        $fs->addText("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -265,14 +329,15 @@ class DocProperties extends Base
      * @param mixed $
      * @return void
      **/
-    protected function addEditTextHeadline($form, $node)
+    protected function addEditTextHeadline($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addRichtext("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Headline")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Headline")));
+
+        $fs->addRichtext("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
-            'class' => "labels-on-top",
             'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
             'allowedTags' => [
@@ -289,15 +354,16 @@ class DocProperties extends Base
      * @param mixed $
      * @return void
      **/
-    protected function addEditTextFormatted($form, $node)
+    protected function addEditTextFormatted($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
+
         // @todo add lang attribute for spelling hint
-        $form->addRichtext("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Text")),
+        $this->form->addRichtext("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
             'autogrow' => true,
-            'class' => "labels-on-top",
             'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
         ]);
@@ -307,15 +373,14 @@ class DocProperties extends Base
     /**
      * @brief addEditType
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditType($form, $node)
+    protected function addEditType($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $options = $node->getAttribute("options");
-        $project = $this->getProject($this->projectName);
-        $variables = $project->getVariables();
+        $variables = $this->project->getVariables();
 
         $options = preg_replace_callback("/%var_([^%]*)%/", function($matches) use ($variables) {
             return $variables[$matches[1]];
@@ -334,8 +399,9 @@ class DocProperties extends Base
             $skin = "select";
         }
 
-        $form->addSingle("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Type")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Type")));
+        $this->form->addSingle("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
             'list' => $list,
             'class' => $class,
             'skin' => $skin,
@@ -347,15 +413,16 @@ class DocProperties extends Base
     /**
      * @brief addEditDate
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditDate($form, $node)
+    protected function addEditDate($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addDate("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Date")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Date")));
+        $fs->addDate("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
@@ -364,17 +431,18 @@ class DocProperties extends Base
     /**
      * @brief addEditA
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditA($form, $node)
+    protected function addEditA($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $form->addFieldset("xmledit-$nodeId", [
+        $f = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Link")),
             'class' => "edit-img",
         ]);
+        // @todo support href_id attribute
         $f->addText("xmledit-$nodeId-href", [
             'label' => $this->getLabelForNode($node, _("href")),
             'dataInfo' => "//*[@db:id = '$nodeId']/@href",
@@ -397,14 +465,14 @@ class DocProperties extends Base
     /**
      * @brief addEditAudio
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditAudio($form, $node)
+    protected function addEditAudio($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $form->addFieldset("xmledit-$nodeId", [
+        $f = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Audio")),
             'class' => "edit-audio",
         ]);
@@ -418,14 +486,14 @@ class DocProperties extends Base
     /**
      * @brief addEditImg
      *
-     * @param mixed $form, $node
+     * @param mixed $node
      * @return void
      **/
-    protected function addEditImg($form, $node)
+    protected function addEditImg($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $form->addFieldset("xmledit-$nodeId", [
+        $f = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Image")),
             'class' => "edit-img",
         ]);
@@ -455,6 +523,7 @@ class DocProperties extends Base
                 'dataInfo' => "//*[@db:id = '$nodeId']/@title",
             ]);
         }
+        // @todo support href_id attribute
         if ($node->hasAttribute("href")) {
             $f->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
@@ -470,14 +539,16 @@ class DocProperties extends Base
      * @param mixed $param
      * @return void
      **/
-    protected function addEditTable($form, $node)
+    protected function addEditTable($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $form->addRichtext("xmledit-$nodeId", [
-            'label' => $this->getLabelForNode($node, _("Table")),
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Table")));
+        $fs->addRichtext("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
-            'class' => "labels-on-top edit-table",
+            'class' => "edit-table",
             'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
             'allowedTags' => [
