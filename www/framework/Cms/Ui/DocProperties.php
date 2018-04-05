@@ -112,6 +112,7 @@ class DocProperties extends Base
         $this->form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
             'jsAutosave' => true,
             'dataNode' => $node,
+            'class' => "labels-on-top",
         ]);
 
         if ($callback = $this->getCallbackForNode($node)) {
@@ -211,6 +212,7 @@ class DocProperties extends Base
 
             $this->fs = $this->form->addFieldset("xmledit-$nodeId-lang-fs", [
                 'label' => $label,
+                'class' => "doc-property-fieldset",
             ]);
         }
 
@@ -361,7 +363,7 @@ class DocProperties extends Base
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
 
         // @todo add lang attribute for spelling hint
-        $this->form->addRichtext("xmledit-$nodeId", [
+        $fs->addRichtext("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'autogrow' => true,
             'lang' => $node->getAttribute("lang"),
@@ -400,7 +402,7 @@ class DocProperties extends Base
         }
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Type")));
-        $this->form->addSingle("xmledit-$nodeId", [
+        $fs->addSingle("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'list' => $list,
             'class' => $class,
