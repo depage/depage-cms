@@ -47,9 +47,7 @@
         data-doc-ref="{@db:docref}"
         data-url="{@url}"
         data-node-id="{$id}">
-        <i class="jstree-icon jstree-ocl" />
         <a href="" class="{$icon}">
-            <i class="jstree-icon jstree-themeicon" />
             <xsl:value-of select="$name" />
             <span><xsl:value-of select="$hint" /></span>
         </a>
