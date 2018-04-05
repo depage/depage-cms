@@ -32,7 +32,9 @@ var depageCMS = (function() {
     var lang = $('html').attr('lang');
     var baseUrl = $("base").attr("href");
     var projectName;
-    var currentPreviewUrl;
+    var currentPreviewUrl,
+        currentDocId,
+        currentDocPropertyId;
     var $html;
     var $window;
     var $body;
@@ -531,12 +533,19 @@ var depageCMS = (function() {
         // }}}
         // {{{ loadPagedataTree
         loadPagedataTree: function(docref) {
-            if ($pagedataTreeContainer.length === 0) return false;
+            if ($pagedataTreeContainer.length === 0 || currentDocId == docref) return false;
+
+            $pagedataTreeContainer.empty();
+            $docPropertiesContainer.empty();
+
+            if (docref == "") return false;
+
+            currentDocId = docref;
 
             var $tree;
             var url = baseUrl + "project/" + projectName + "/tree/"+ docref + "/";
 
-            $pagedataTreeContainer.empty().load(url + "?ajax=true", function() {
+            $pagedataTreeContainer.load(url + "?ajax=true", function() {
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()
@@ -555,14 +564,22 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ loadDocProperties
-        loadDocProperties: function(id) {
-            var url = baseUrl + "project/" + projectName + "/doc-properties/"+ id + "/";
+        loadDocProperties: function(nodeid) {
+            if (currentDocPropertyId == nodeid) return false;
+
+            currentDocPropertyId = nodeid;
+
+            var url = baseUrl + "project/" + projectName + "/doc-properties/"+ nodeid + "/";
 
             $docPropertiesContainer.empty().load(url + "?ajax=true", function() {
                 var $form = $docPropertiesContainer.find('.depage-form');
 
                 $form.depageForm();
                 $form.find("p.submit").remove();
+
+                // @todo add ui for editing table columns and rows
+                // @todo keep squire from merging cells when deleteing at the beginning or end of cell
+                // @todo add support for better handling of tab key to jump between cells
 
                 $form.on("depageForm.autosaved", function() {
                     localJS.updatePreview();
