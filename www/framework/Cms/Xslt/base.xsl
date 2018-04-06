@@ -356,16 +356,17 @@
     <xsl:template match="p">
         <xsl:param name="class" />
         <xsl:param name="linebreaks" />
+        <xsl:variable name="nbsp"><xsl:if test="count(br[position() = last()]) = 0">&#160;last</xsl:if></xsl:variable>
 
         <xsl:choose>
             <xsl:when test="$class != ''">
-                <p class="{$class}"><xsl:apply-templates/>&#160;</p>
+                <p class="{$class}"><xsl:apply-templates/><xsl:value-of select="$nbsp" /></p>
             </xsl:when>
             <xsl:when test="$linebreaks = 'true' or $linebreaks = true()">
                 <xsl:apply-templates select="." mode="linebreaks" />
             </xsl:when>
             <xsl:otherwise>
-                <p><xsl:apply-templates/>&#160;</p>
+                <p><xsl:apply-templates/><xsl:value-of select="$nbsp" /></p>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -375,6 +376,7 @@
     <!-- }}} -->
     <!-- {{{ p mode autolist -->
     <xsl:template match="p" mode="autolist">
+        <xsl:variable name="nbsp"><xsl:if test="count(br[position() = last()]) = 0">&#160;</xsl:if></xsl:variable>
         <xsl:choose>
             <xsl:when test="dp:isListCharacter(substring(., 1, 2))">
                 <xsl:if test="position() = 1 or not(dp:isListCharacter(substring(preceding-sibling::*[1], 1, 2)))">
@@ -393,20 +395,24 @@
                 </xsl:if>
             </xsl:when>
             <xsl:otherwise>
-                <p><xsl:apply-templates/>&#160;</p>
+                <p><xsl:apply-templates/><xsl:value-of select="$nbsp" /></p>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ b -->
-    <xsl:template match="b"><b><xsl:apply-templates/></b></xsl:template>
-    <!-- }}} -->
-    <!-- {{{ i -->
-    <xsl:template match="i"><i><xsl:apply-templates/></i></xsl:template>
-    <!-- }}} -->
-    <!-- {{{ small -->
-    <xsl:template match="small"><small><xsl:apply-templates /></small></xsl:template>
-    <!-- }}} -->
+    <!-- {{{ ul ol autolist-->
+    <xsl:template match="ul | ol" mode="autolist">
+        <xsl:apply-templates select="." />
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ b i strong em small ul ol li -->
+    <xsl:template match="b | i | strong | em | small | ul | ol | li">
+        <xsl:variable name="tagName" select="name()" />
+        <xsl:element name="{$tagName}">
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ br -->
     <xsl:template match="br"><br /></xsl:template>
     <!-- }}} -->
