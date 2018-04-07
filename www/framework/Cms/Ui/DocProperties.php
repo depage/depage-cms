@@ -498,7 +498,7 @@ class DocProperties extends Base
         $imgSrc = $node->getAttribute("src");
         $thumbSrc = str_replace("libref://", "projects/{$this->project->name}/lib/", $imgSrc);
         $ext = pathinfo($imgSrc, \PATHINFO_EXTENSION);
-        if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
+        if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
             $thumbSrc = htmlentities($thumbSrc . ".thumb-120x120.png");
         }
         $fs->addHtml("<div class=\"thumb\"><img src=\"$thumbSrc\"></div>");
@@ -510,7 +510,7 @@ class DocProperties extends Base
         ]);
         if ($node->hasAttribute("alt")) {
             $fs->addText("xmledit-$nodeId-alt", [
-                'label' => _("Alt text"),
+                'label' => _("alt"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
             ]);
         }
