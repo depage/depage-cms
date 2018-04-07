@@ -54,35 +54,44 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
         }
 
         foreach ($this->getElements() as $element) {
-            if (!empty($element->dataInfo)) {
-                $nodes = $this->dataNodeXpath->query($element->dataInfo);
+            if (empty($element->dataInfo)) {
+                continue;
+            }
+            $value = "";
+            $nodes = $this->dataNodeXpath->query($element->dataInfo);
+
+            if ($nodes->length == 0 && substr($element->dataInfo, -6) == "/@href") {
+                // handle @href and @href_id attributes
+                $nodes = $this->dataNodeXpath->query($element->dataInfo . "_id");
+            }
+            if ($nodes->length == 0) {
+                // @todo throw warning if nodelist is empty?
+                continue;
+            }
+            $node = $nodes->item(0);
+
+            if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
+                $value = $node->value == "true" ? true : false;
+            } else if ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
                 $value = "";
 
-                // @todo throw warning if nodelist is empty?
-                if ($nodes->length > 0) {
-                    $node = $nodes->item(0);
+                foreach ($node->childNodes as $n) {
+                    \Depage\XmlDb\Document::removeNodeAttr($n, new \Depage\XmlDb\XmlNs('db', 'http://cms.depagecms.net/ns/database'), "id");
 
-                    if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
-                        $value = $node->value == "true" ? true : false;
-                    } else if ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
-                        $value = "";
-
-                        foreach ($node->childNodes as $n) {
-                            \Depage\XmlDb\Document::removeNodeAttr($n, new \Depage\XmlDb\XmlNs('db', 'http://cms.depagecms.net/ns/database'), "id");
-
-                            $value .= $node->ownerDocument->saveHTML($n) . "\n";
-                        }
-
-                        if ($node->nodeName == "edit:table") {
-                            $value = "<table><tbody>$value</tbody></table>";
-                        }
-                    } else {
-                        $value = $node->nodeValue;
-                    }
+                    $value .= $node->ownerDocument->saveHTML($n) . "\n";
                 }
 
-                $element->setDefaultValue($value);
+                if ($node->nodeName == "edit:table") {
+                    $value = "<table><tbody>$value</tbody></table>";
+                }
+            } else if ($node->nodeName == 'href_id' && $node->nodeType == \XML_ATTRIBUTE_NODE) {
+                // @todo user url path instead of id?
+                $value = "pageref://{$node->nodeValue}";
+            } else {
+                $value = $node->nodeValue;
             }
+
+            $element->setDefaultValue($value);
         }
     }
     // }}}
@@ -101,8 +110,17 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             if (empty($element->dataInfo)) {
                 continue;
             }
+            $nodes = $this->dataNodeXpath->query($element->dataInfo);
 
-            $node = $this->dataNodeXpath->query($element->dataInfo)->item(0);
+            if ($nodes->length == 0 && substr($element->dataInfo, -6) == "/@href") {
+                // handle @href and @href_id attributes
+                $nodes = $this->dataNodeXpath->query($element->dataInfo . "_id");
+            }
+            if ($nodes->length == 0) {
+                // @todo throw warning if nodelist is empty?
+                continue;
+            }
+            $node = $nodes->item(0);
 
             if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                 $node->nodeValue = $element->getValue() === true ? "true" : "false";
@@ -119,6 +137,16 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                 foreach ($root->childNodes as $n) {
                     $copy = $this->dataDocument->importNode($n, true);
                     $node->appendChild($copy);
+                }
+            } else if (in_array($node->nodeName, ['href_id', 'href']) && $node->nodeType == \XML_ATTRIBUTE_NODE) {
+                $parent = $node->parentNode;
+                $href = $element->getValue();
+                if (substr($href, 0, 10) == "pageref://") {
+                    $parent->setAttribute("href_id", substr($href, 10));
+                    $parent->removeAttribute("href");
+                } else {
+                    $parent->setAttribute("href", $href);
+                    $parent->removeAttribute("href_id");
                 }
             } else {
                 $node->nodeValue = $element->getValue();

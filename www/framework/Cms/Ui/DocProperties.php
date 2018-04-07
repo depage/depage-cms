@@ -520,8 +520,7 @@ class DocProperties extends Base
                 'dataInfo' => "//*[@db:id = '$nodeId']/@title",
             ]);
         }
-        // @todo support href_id attribute
-        if ($node->hasAttribute("href")) {
+        if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@href",
