@@ -86,6 +86,14 @@
        <xsl:text> </xsl:text>
     </xsl:template>
 
+    <xsl:template match="edit:text_singleline" mode="hint">
+        <xsl:value-of select="substring(@value, 1, $maxlength)"/>
+        <xsl:if test="string-length(@value) &gt; $maxlength">
+           <xsl:text>...</xsl:text>
+       </xsl:if>
+       <xsl:text> </xsl:text>
+    </xsl:template>
+
     <xsl:template match="pg:* | edit:*" mode="hint" />
 
     <xsl:template match="sec:separator" mode="hint">—</xsl:template>
