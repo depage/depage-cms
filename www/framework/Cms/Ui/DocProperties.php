@@ -442,11 +442,19 @@ class DocProperties extends Base
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Link")), "edit-a");
 
-        // @todo support href_id attribute
+        $lang = $node->getAttribute("lang");
+        $fs->addText("xmledit-$nodeId-title", [
+            'label' => !empty($lang) ? $lang : _("Title"),
+            'placeholder' => _("Link title"),
+            'dataInfo' => "//*[@db:id = '$nodeId']",
+        ]);
+
         $fs->addText("xmledit-$nodeId-href", [
-            'label' => $node->getAttribute("lang"),
+            'label' => _("href"),
+            'placeholder' => _("http://domain.com"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@href",
         ]);
+
         // @todo leave only one target setting for multiple links
         $fs->addSingle("xmledit-$nodeId-target", [
             'label' => $this->getLabelForNode($node, _("Target")),
@@ -511,18 +519,21 @@ class DocProperties extends Base
         if ($node->hasAttribute("alt")) {
             $fs->addText("xmledit-$nodeId-alt", [
                 'label' => _("alt"),
+                'placeholder' => _("Image description"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
             ]);
         }
         if ($node->hasAttribute("title")) {
             $fs->addText("xmledit-$nodeId-title", [
                 'label' => _("Title"),
+                'placeholder' => _("Image title"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@title",
             ]);
         }
         if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
+                'placeholder' => _("http://domain.com"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@href",
             ]);
         }
