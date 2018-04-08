@@ -148,6 +148,22 @@ class DocProperties extends Base
     }
     // }}}
 
+    // {{{ thumbnail()
+    /**
+     * @brief thumbnail
+     *
+     * @param mixed $file
+     * @return void
+     **/
+    public function thumbnail($file)
+    {
+        return new Html("thumbnail.tpl", [
+            'file' => $file,
+            'project' => $this->project,
+        ], $this->htmlOptions);
+    }
+    // }}}
+
     // {{{ getCallbackForNode()
     /**
      * @brief getCallbackForNode
@@ -502,14 +518,7 @@ class DocProperties extends Base
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Image")), "edit-img");
 
-        // add image preview
-        $imgSrc = $node->getAttribute("src");
-        $thumbSrc = str_replace("libref://", "projects/{$this->project->name}/lib/", $imgSrc);
-        $ext = pathinfo($imgSrc, \PATHINFO_EXTENSION);
-        if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
-            $thumbSrc = htmlentities($thumbSrc . ".thumb-120x120.png");
-        }
-        $fs->addHtml("<div class=\"thumb\"><img src=\"$thumbSrc\"></div>");
+        $fs->addHtml($this->thumbnail($node->getAttribute("src")));
 
         $lang = $node->getAttribute("lang");
         $fs->addText("xmledit-$nodeId-img", [
