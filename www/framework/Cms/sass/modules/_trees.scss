@@ -39,17 +39,18 @@ $iconSize: 24px;
         margin-left: 2 * $iconSize;
         padding-left: 6px;
     }
-    span {
+    > span.hint {
         margin-left: 10px;
         color: #999999;
 
-        img.mini-thumb {
+        > span.mini-thumb {
             position: absolute;
             top: 0;
             left: $iconSize;
-            display: block;
             width: $iconSize;
             height: $iconSize;
+            display: block;
+            background-size: 100% 100%;
         }
     }
 }

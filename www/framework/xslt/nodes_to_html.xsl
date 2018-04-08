@@ -65,16 +65,16 @@
     </xsl:template>
 
     <xsl:template match="sec:*" mode="hint">
-        <span>
+        <span class="hint">
             <xsl:apply-templates select="edit:*" mode="hint" />
         </span>
     </xsl:template>
 
     <xsl:template match="edit:img" mode="hint">
         <xsl:if test="substring(@src, 1, 9) = 'libref://'">
-            <img class="mini-thumb">
-                <xsl:attribute name="src">projects/<xsl:value-of select="$projectName" />/lib/<xsl:value-of select="substring(@src, 10)" /><xsl:if test="not(substring(@src, string-length(@src) - 3) = '.svg')">.thumbfill-48x48.png</xsl:if></xsl:attribute>
-            </img>
+            <span class="mini-thumb">
+                <xsl:attribute name="style">background-image: url('projects/<xsl:value-of select="$projectName" />/lib/<xsl:value-of select="substring(@src, 10)" /><xsl:if test="not(substring(@src, string-length(@src) - 3) = '.svg')">.thumbfill-48x48.png</xsl:if>');</xsl:attribute>
+            </span>
         </xsl:if>
     </xsl:template>
 
