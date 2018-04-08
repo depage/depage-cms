@@ -2,22 +2,28 @@
 .doc-properties {
     position: absolute;
     overflow-y: scroll;
-    background: $backgroundColor;
-    padding: 10px;
+    //background: $backgroundColor;
+    //padding: 10px;
+
+    fieldset {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 
     .thumb {
         clear: left;
         float: left;
         border: 1px solid;
         position: relative;
+        width: 126px;
         padding: 3px;
         margin-right: 10px;
         margin-bottom: 10px;
 
         img {
             display: block;
-            width: 126px;
-            height: 126px;
+            width: 126px - 6px;
+            height: 126px - 6px;
         }
         .fileinfo {
             position: absolute;
@@ -27,8 +33,8 @@
             padding: 5px;
             top: -1px;
             left: 100%;
-            min-width: 126px;
-            max-width: 252px;
+            min-width: 126px * 2;
+            max-width: 126px * 3;
             z-index: 10000;
         }
         &:hover .fileinfo {
@@ -82,6 +88,21 @@
     right: 0;
     bottom: 0;
     top: $infoHeight;
+}
+// }}}
+// {{{ .doc-properties .doc-property-fieldset
+.doc-properties .doc-property-fieldset {
+    > legend {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        font-weight: normal;
+        //text-transform: uppercase;
+    }
+    > p > .depage-label,
+    > p > label > .depage-label {
+        font-size: 11px;
+        color: $textLighterColor;
+    }
 }
 // }}}
 // {{{ doc-properties edit-img

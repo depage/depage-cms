@@ -11,10 +11,12 @@ $infoHeight: 15px;
 $editWidth: 820px;
 $treeWidth: 255px;
 
-$backgroundColor: #ccc8c4;
-$borderColor: #999999;
+$baseColor: #ccc8c4;
+$backgroundColor: lighten($baseColor, 10%);
+$borderColor: #bbbbbb;
+$borderColor: darken($baseColor, 0%);
 $textBaseColor: #000000;
-$textLighterColor: #666666;
+$textLighterColor: #888888;
 $textBrightColor: #ffffff;
 $selectionBackgroundColor: #ff9900;
 
@@ -147,7 +149,7 @@ ul,
 ol,
 li,
 p {
-    font-size : 12px;
+    font-size : 13px;
 }
 html,
 body {
@@ -707,7 +709,7 @@ html {
         .layout-right {
             left: $editWidth;
             right: 0;
-            border-left: 1px solid #000000;
+            border-left: 1px solid $borderColor;
         }
         .toolbar menu.preview {
             left: $editWidth;

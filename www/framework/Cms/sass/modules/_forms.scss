@@ -30,7 +30,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            padding-top: 2px;
+            padding-top: 4px;
             width: $labelWidth;
             height: auto;
             min-height: 0;
@@ -98,11 +98,12 @@
     fieldset {
         position: relative;
         border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
         & + fieldset {
-            border-top: 1px solid #eeeeee;
+            border-top: 1px solid $borderColor;
         }
-        margin-top: 12px;
-        margin-bottom: 12px;
 
         legend {
             font-weight: bold;

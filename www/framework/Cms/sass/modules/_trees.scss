@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
-$treeLineHeight: 24px;
-$iconSize: 24px;
+$treeLineHeight: 25px;
+$iconSize: 25px;
 
 // {{{ .jstree
 .jstree-node,
@@ -365,7 +365,7 @@ $iconSize: 24px;
 
     .tree {
         position: absolute;
-        background: $backgroundColor;
+        //background: $backgroundColor;
 
         .jstree-container {
             position: absolute;
