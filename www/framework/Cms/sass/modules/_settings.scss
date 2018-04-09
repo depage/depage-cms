@@ -1,0 +1,19 @@
+$toolbarHeight: 30px;
+$infoHeight: 15px;
+$editWidth: 820px;
+$treeWidth: 255px;
+
+$baseColor: #ccc8c4;
+$backgroundColor: lighten($baseColor, 5%);
+$backgroundLighterColor: lighten($backgroundColor, 8%);
+$borderColor: #bbbbbb;
+$borderColor: darken($baseColor, 0%);
+$textBaseColor: #000000;
+$textLighterColor: #888888;
+$textBrightColor: #ffffff;
+$selectionBackgroundColor: #ff9900;
+
+$fSizeM: 13px;
+$fSizeS: 11px;
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

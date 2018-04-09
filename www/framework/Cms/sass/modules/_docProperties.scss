@@ -2,15 +2,18 @@
 .doc-properties {
     position: absolute;
     overflow-y: scroll;
-    //background: $backgroundColor;
+    background: $backgroundLighterColor;
     //padding: 10px;
 
     fieldset {
         padding-left: 15px;
         padding-right: 15px;
     }
+    fieldset.focus {
+        background: #ffffff;
+    }
 
-    .thumb {
+    figure.thumb {
         clear: left;
         float: left;
         border: 1px solid;
@@ -24,6 +27,12 @@
             display: block;
             width: 126px - 6px;
             height: 126px - 6px;
+        }
+        figcaption {
+            font-size: $fSizeS;
+            max-width: 100%;
+            overflow: hidden;
+            color: $textLighterColor;
         }
         .fileinfo {
             position: absolute;
@@ -48,7 +57,7 @@
             @include radius($radius);
             //border: 1px solid $borderColor;
             display: inline-block;
-            background: lighten($backgroundColor, 10%);
+            background: $backgroundColor;
         }
         > span > span {
             &:first-child input[type="radio"] + span {
@@ -93,14 +102,17 @@
 // {{{ .doc-properties .doc-property-fieldset
 .doc-properties .doc-property-fieldset {
     > legend {
-        font-size: 11px;
+        font-size: $fSizeS;
         letter-spacing: 0.05em;
         font-weight: normal;
         //text-transform: uppercase;
     }
+    &.focus > legend {
+        font-weight: bold;
+    }
     > p > .depage-label,
     > p > label > .depage-label {
-        font-size: 11px;
+        font-size: $fSizeS;
         color: $textLighterColor;
     }
 }

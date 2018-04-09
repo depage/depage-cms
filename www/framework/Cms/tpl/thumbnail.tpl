@@ -16,9 +16,9 @@
         <?php self::t($info['name']); ?>
         <div class="fileinfo">
             <p><?php self::t($info['name']); ?></p>
-            <p><?php self::t($formatter->format($info['filesize'])); ?></p>
             <p><?php self::t(self::format_date($info['date'])); ?></p>
-            <p><?php self::t($info['width'] . "x" . $info['height']); ?></p>
+            <p><?php self::t($formatter->format($info['filesize'])); ?></p>
+            <p><?php self::t($info['width'] . "x" . $info['height'] . " px"); ?></p>
             <p><?php self::t($info['copyright']); ?></p>
             <p><?php self::t($info['description']); ?></p>
         </div>

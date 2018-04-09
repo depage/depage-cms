@@ -1,3 +1,7 @@
+@charset "utf-8";
+
+@import "modules/_settings";
+
 @import "../../shared/depage-sass-mixins/_base";
 @import "../../HtmlForm/lib/sass/depage-forms";
 @import "../../shared/depage-jquery-plugins/sass/_depage-growl";
@@ -5,20 +9,6 @@
 @import "../../shared/depage-jquery-plugins/sass/_depage-live-help";
 
 @import "modules/_icons";
-
-$toolbarHeight: 30px;
-$infoHeight: 15px;
-$editWidth: 820px;
-$treeWidth: 255px;
-
-$baseColor: #ccc8c4;
-$backgroundColor: lighten($baseColor, 10%);
-$borderColor: #bbbbbb;
-$borderColor: darken($baseColor, 0%);
-$textBaseColor: #000000;
-$textLighterColor: #888888;
-$textBrightColor: #ffffff;
-$selectionBackgroundColor: #ff9900;
 
 /* {{{ colors */
     .head {
@@ -111,13 +101,17 @@ $selectionBackgroundColor: #ff9900;
         textarea,
         .textarea,
         select {
-            border: 1px solid #000000;
-            background: #e3e3e3;
+            border: 1px solid $backgroundLighterColor;
+            //background: #e3e3e3;
             color: #000000;
 
+            &:hover {
+                border: 1px solid $backgroundLighterColor;
+            }
             &.focus,
             &:focus {
-                background: #ffffff;
+                border: 1px solid $borderColor;
+                //background: #ffffff;
             }
             &:disabled {
                 color: #7c808f;
@@ -133,7 +127,7 @@ $selectionBackgroundColor: #ff9900;
 
 /* {{{ global */
 * {
-    @include font(Tahoma, Verdana, Arial, Geneva, sans-serif);
+    @include font(-apple-system-body, SFUI, system, system-ui , 'Helvetica Neue', 'Segoe UI', 'Source Sans Pro', 'Oxygen', Tahoma, Arial, Geneva, sans-serif);
     margin: 0;
     padding: 0;
 }
@@ -149,7 +143,8 @@ ul,
 ol,
 li,
 p {
-    font-size : 13px;
+    font-size : $fSizeM;
+    letter-spacing: 0.03em;
 }
 html,
 body {
@@ -224,7 +219,7 @@ select,
 
     .content {
         position: relative;
-        width: 520px;
+        width: 560px;
         margin-left: auto;
         margin-right: auto;
         padding: 0 12px 12px 12px;
@@ -1063,8 +1058,10 @@ div.preview.zoom100 iframe {
     h2 {
         margin-top: 12px;
         margin-bottom: 0;
-        color: $textBrightColor;
+        color: $textLighterColor;
         letter-spacing: 0.15em;
+        font-weight: normal;
+        font-size: $fSizeS;
 
         &:before,
         &:after {
