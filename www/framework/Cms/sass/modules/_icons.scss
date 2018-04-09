@@ -65,72 +65,40 @@
 @mixin icon($name, $size: 48px) {
     $scale: $size / 48px;
     $iconSize: 48px * $scale;
+    $icons: (
+        projects: 0 0,
+        users: 0 1,
+        user: 1 1,
+        tasks: 0 2,
+        settings: 1 2,
+        left-full: 0 3,
+        split: 1 3,
+        tree-split: 2 3,
+        right-full: 3 3,
+        left-full-active: 0 4,
+        split-active: 1 4,
+        tree-split-active: 2 4,
+        right-full-active: 3 4,
+        upload: 0 5,
+        upload-drag-over: 1 5,
+        add: 0 6,
+        remove: 1 6,
+        help: 0 7,
+        help-active: 1 7,
+        closed: 0 8,
+        open: 1 8,
+        folder: 0 9,
+        page: 1 9,
+        help-tree: 0 10,
+        help-properties: 1 10,
+        help-preview: 2 10,
+    );
 
-    // @todo simplify with mixin or function
-    @if ($name == "projects") {
-        background-position: 0px 0px;
-    } @else if ($name == "users") {
-        background-position: 0 (-1 * $iconSize);
-    } @else if ($name == "user") {
-        background-position: (-1 * $iconSize) (-1 * $iconSize);
-    } @else if ($name == "tasks") {
-        background-position: 0 (-2 * $iconSize);
-    } @else if ($name == "settings") {
-        background-position: (-1 * $iconSize) (-2 * $iconSize);
-
-    } @else if ($name == "left-full") {
-        background-position: 0 (-3 * $iconSize);
-    } @else if ($name == "split") {
-        background-position: (-1 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "tree-split") {
-        background-position: (-2 * $iconSize) (-3 * $iconSize);
-    } @else if ($name == "right-full") {
-        background-position: (-3 * $iconSize) (-3 * $iconSize);
-
-    } @else if ($name == "left-full-active") {
-        background-position: 0 (-4 * $iconSize);
-    } @else if ($name == "split-active") {
-        background-position: (-1 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "tree-split-active") {
-        background-position: (-2 * $iconSize) (-4 * $iconSize);
-    } @else if ($name == "right-full-active") {
-        background-position: (-3 * $iconSize) (-4 * $iconSize);
-
-    } @else if ($name == "upload") {
-        background-position: 0 (-5 * $iconSize);
-    } @else if ($name == "upload-drag-over") {
-        background-position: (-1 * $iconSize) (-5 * $iconSize);
-
-    } @else if ($name == "add") {
-        background-position: 0 (-6 * $iconSize);
-    } @else if ($name == "remove") {
-        background-position: (-1 * $iconSize) (-6 * $iconSize);
-
-    } @else if ($name == "help") {
-        background-position: 0 (-7 * $iconSize);
-    } @else if ($name == "help-active") {
-        background-position: (-1 * $iconSize) (-7 * $iconSize);
-
-
-    } @else if ($name == "closed") {
-        background-position: 0 (-8 * $iconSize);
-    } @else if ($name == "open") {
-        background-position: (-1 * $iconSize) (-8 * $iconSize);
-    } @else if ($name == "folder") {
-        background-position: (0 * $iconSize) (-9 * $iconSize);
-    } @else if ($name == "page") {
-        background-position: (-1 * $iconSize) (-9 * $iconSize);
-
-    } @else if ($name == "help-tree") {
-        background-position: 0 (-10 * $iconSize);
-    } @else if ($name == "help-properties") {
-        background-position: (-1 * $iconSize) (-10 * $iconSize);
-    } @else if ($name == "help-preview") {
-        background-position: (-2 * $iconSize) (-10 * $iconSize);
-
-    } @else {
-        background-position: 800px 800px;
+    @if map_has_key($icons, $name) {
+        $pos: map_get($icons, $name);
+        background-position: (nth($pos, 1) * -1 * $iconSize) (nth($pos, 2) * -1 * $iconSize);
     }
+
     @if ($scale != 1) {
         background-size: (4 * $iconSize) (20 * $iconSize);
     }
