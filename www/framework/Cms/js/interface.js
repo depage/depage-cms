@@ -34,7 +34,8 @@ var depageCMS = (function() {
     var projectName;
     var currentPreviewUrl,
         currentDocId,
-        currentDocPropertyId;
+        currentDocPropertyId,
+        currentPreviewLang = "de";
     var $html;
     var $window;
     var $body;
@@ -487,8 +488,7 @@ var depageCMS = (function() {
 
                 $form.on("depage.form.autoSaved", function() {
                     var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
-                    var lang = "de";
-                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + lang + "/" + matches[2] + ".html";
+                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + currentPreviewLang + "/" + matches[2] + ".html";
 
                     localJS.preview(url);
                 });
@@ -534,8 +534,7 @@ var depageCMS = (function() {
                         localJS.loadPagedataTree(data.node.data.docRef);
 
                         // preview page
-                        var lang = "de";
-                        var url = baseUrl + "project/" + projectName + "/preview/html/pre/" + lang + data.node.data.url;
+                        var url = baseUrl + "project/" + projectName + "/preview/html/pre/" + currentPreviewLang + data.node.data.url;
 
                         localJS.preview(url);
                     })
@@ -594,6 +593,14 @@ var depageCMS = (function() {
 
                 $form.depageForm();
                 $form.find("p.submit").remove();
+                $form.find("input, textarea, .textarea-content").on("focus", function() {
+                    var lang = $(this).parents("p[lang]").attr("lang");
+                    if (typeof lang == "undefined" || lang == "") return;
+
+                    currentPreviewLang = lang;
+                    // @todo replace language more intelligently
+                    currentPreviewUrl = currentPreviewUrl.replace(/\/pre\/..\//, "/pre/" + lang + "/");
+                });
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleteing at the beginning or end of cell
@@ -711,8 +718,8 @@ var depageCMS = (function() {
                     var $newFrame = $("<iframe />").insertAfter($previewFrame);
                     $previewFrame.remove();
                     $previewFrame = $newFrame.attr("id", "previewFrame");
+                    $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame[0].src = newUrl;
-                    //$previewFrame.on("load", localJS.hightlighCurrentDocProperty);
                 }
                 currentPreviewUrl = newUrl;
 
@@ -731,7 +738,7 @@ var depageCMS = (function() {
                     var $header = $result.find("header.info");
 
                     $previewFrame = $("#previewFrame");
-                    //$previewFrame.on("load", localJS.hightlighCurrentDocProperty);
+                    $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame[0].src = unescape(url);
 
                     $window.triggerHandler("switchLayout", "split");
