@@ -18,6 +18,7 @@
     </xsl:template>
 
     <xsl:template match="pg:* | sec:*">
+        <!-- only show nodes with namespace "pg" or "sec" in tree -->
         <xsl:apply-templates select="." mode="treeNode" />
     </xsl:template>
 
@@ -38,15 +39,19 @@
             <xsl:apply-templates select="." mode="icon-class" />
         </xsl:variable>
         <xsl:variable name="ns" select="substring-before(name(), ':')" />
+        <xsl:variable name="href">
+            <xsl:if test="name() = 'pg:page' or name() = 'pg:folder'">
+                pageref://<xsl:value-of select="$id" />
+            </xsl:if>
+        </xsl:variable>
 
-        <!-- only show nodes with namespace "pg" or "sec" in tree -->
         <li
             rel="{$type}"
             id="node_{$id}"
             data-doc-ref="{@db:docref}"
             data-url="{@url}"
             data-node-id="{$id}">
-            <a href="" class="{$icon}">
+            <a href="{$href}" class="{$icon}">
                 <xsl:value-of select="$name" />
                 <xsl:apply-templates select="." mode="hint" />
             </a>
@@ -102,6 +107,11 @@
     <xsl:template match="sec:separator" mode="hint">—</xsl:template>
 
     <xsl:template match="*" mode="icon-class" />
+
+    <xsl:template match="pg:page[@redirect = 'true']" mode="icon-class">
+        <xsl:text> </xsl:text>
+        icon-redirect
+    </xsl:template>
 
     <xsl:template match="sec:*" mode="icon-class">
         <xsl:text> </xsl:text>
