@@ -18,8 +18,6 @@
             //"framework/Cms/js/jstree.js",
         ]); ?>
         <?php $this->includeCss("interface", [
-            "framework/HtmlForm/lib/css/depage-forms.css",
-            //"framework/Cms/css/jstree.css",
             "framework/Cms/css/interface.css",
         ]); ?>
         <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="framework/Cms/images/favicon.ico">

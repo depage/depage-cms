@@ -365,11 +365,12 @@ $iconSize: 25px;
 
     .tree {
         position: absolute;
-        //background: $backgroundColor;
+        background: $backgroundLighterColor;
 
         .jstree-container {
             position: absolute;
-            overflow: scroll;
+            overflow-y: auto;
+            overflow-x: hidden;
             top: 0;
             bottom: $toolbarHeight;
             left: 0;

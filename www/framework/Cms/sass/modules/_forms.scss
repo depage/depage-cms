@@ -6,10 +6,13 @@
     max-width: 100%;
 
     input,
+    button,
+    select,
     textarea,
-    .textarea .content,
-    select {
-        padding: 4px 9px;
+    .textarea,
+    .textarea-content {
+        padding: 5px 10px;
+        font-size: $fSizeM + 1px;
     }
 
     &.saving::before {
@@ -100,18 +103,30 @@
         border: none;
         padding-top: 0;
         padding-bottom: 10px;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        margin-bottom: -1px;
 
         & + fieldset {
             border-top: 1px solid $borderColor;
+
+        }
+        &.focus {
+            border-top: 1px solid $selectionBackgroundColor;
+            border-bottom: 1px solid $selectionBackgroundColor;
+            z-index: 20;
         }
 
         legend {
             font-weight: bold;
-            float: left;
             width: 100%;
             line-height: 15px;
             margin-top: 12px;
             margin-bottom: 6px;
+            float: left;
+        }
+        legend + p {
+            clear: left;
         }
 
         &.scroll {
