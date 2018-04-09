@@ -52,6 +52,20 @@ var depageCMS = (function() {
     var currentLayout;
     var locale = depageCMSlocale[lang];
 
+    jQuery.fn.scrollParent = function() {
+        var position = this.css( "position" ),
+        excludeStaticParent = position === "absolute",
+        scrollParent = this.parents().filter( function() {
+            var parent = $( this );
+            if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+            return false;
+            }
+            return (/(auto|scroll)/).test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+        }).eq( 0 );
+
+        return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
+    };
+
     // local Project instance that holds all variables and function
     var localJS = {
         // {{{ ready
@@ -604,7 +618,8 @@ var depageCMS = (function() {
                 $current.addClass(className);
                 if ($current.length == 1) {
                     $current[0].scrollIntoView();
-                    $iframe.scrollTop($iframe.scrollTop() - 100);
+                    var $scroller = $current.scrollParent();
+                    $scroller.scrollTop($scroller.scrollTop() - 100);
                 }
             } catch(error) {
             }
@@ -726,8 +741,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ updatePreview
         updatePreview: _.throttle(function() {
+            // @todo update throttle to just reload when old page has alredy been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
-        }, 1000),
+        }, 2000),
         // }}}
         // {{{ edit
         edit: function(projectName, page) {
