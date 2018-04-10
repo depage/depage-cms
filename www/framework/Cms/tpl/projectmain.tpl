@@ -1,20 +1,26 @@
 <div <?php self::attr([
         "class" => "edit layout layout-left",
     ]); ?>>
-    <header class="info">
-        <h1><?php self::e(_("Tree/Edit")); ?></h1>
-    </header>
     <div class="trees">
+        <header class="info info-tree-pages">
+            <h1><?php self::e(_("Pages")); ?></h1>
+        </header>
         <div <?php self::attr([
             'class' => "tree pages",
             'data-url' => "project/{$this->projectName}/tree/pages/",
         ]); ?>>
         </div>
+        <header class="info info-tree-pagedata">
+            <h1><?php self::e(_("Document")); ?></h1>
+        </header>
         <div <?php self::attr([
             'class' => "tree pagedata",
         ]); ?>>
         </div>
     </div>
+    <header class="info info-doc-properties">
+        <h1><?php self::e(_("Document Properties")); ?></h1>
+    </header>
     <div <?php self::attr([
         'class' => "doc-properties",
     ]); ?>>

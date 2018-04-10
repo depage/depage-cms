@@ -119,13 +119,13 @@
 
         legend {
             font-weight: bold;
-            width: 100%;
             line-height: 15px;
+            padding-right: 15px;
             margin-top: 12px;
             margin-bottom: 6px;
             float: left;
         }
-        legend + p {
+        p {
             clear: left;
         }
 

@@ -366,6 +366,7 @@ $iconSize: 25px;
     .tree {
         position: absolute;
         background: $backgroundLighterColor;
+        margin-top: $infoHeight;
 
         .jstree-container {
             position: absolute;
@@ -402,7 +403,7 @@ $iconSize: 25px;
     display: none;
 }
 .layout-left .trees {
-    top: $infoHeight;
+    top: 0;
     left: 0;
     bottom: 0;
 }

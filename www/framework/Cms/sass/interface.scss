@@ -329,6 +329,7 @@ select,
         text-align: left;
         li {
             list-style: none;
+            font-size: $fSizeMenu;
         }
 
         &.right,
@@ -519,6 +520,7 @@ select,
     h1 {
         padding-left: 12px;
         margin-top: 1px;
+        font-size: $fSizeMenu;
     }
     a {
         span {
@@ -620,9 +622,6 @@ select,
 /* {{{ header.info */
 header.info {
     position: absolute;
-    position: -webkit-sticky;
-    position: sticky;
-    top: $toolbarHeight;
     height: $infoHeight;
     border-bottom: 1px solid $borderColor;
     background: $backgroundColor;
@@ -631,11 +630,31 @@ header.info {
     h1 {
         padding: 0;
         margin: 0;
-        font-size: 10px;
         padding-left: 12px;
         font-weight: normal;
+        font-size: $fSizeXS;
+        line-height: $infoHeight - 2px;
         color: #000000;
     }
+    &.info-tree-pages,
+    &.info-tree-pagedata {
+        left: 0;
+        width: $treeWidth;
+    }
+    &.info-tree-pages {
+        top: 0;
+    }
+    &.info-tree-pagedata {
+        top: 50%;
+    }
+    &.info-doc-properties {
+        left: $treeWidth - 1;
+        border-left: 1px solid $borderColor;
+    }
+}
+.preview header.info {
+    top: 0;
+    width: 100%;
 }
 /* }}} */
 /* {{{ layouts */
@@ -654,9 +673,8 @@ html {
         overflow: auto;
 
         header.info {
-            top: 0;
+            //top: 0;
             right: 0;
-            width: 100%;
         }
     }
     .toolbar ~ .layout-left,

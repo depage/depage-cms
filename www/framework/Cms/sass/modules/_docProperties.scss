@@ -32,7 +32,7 @@
         figcaption {
             font-size: $fSizeS;
             max-width: 100%;
-            overflow: hidden;
+            //overflow: hidden;
             color: $textLighterColor;
         }
         .fileinfo {
@@ -54,11 +54,14 @@
     .depage-form .input-single.edit-type {
         $radius: 5px;
         text-align: center;
+        clear: none;
+
         > span.depage-label + span {
             @include radius($radius);
             //border: 1px solid $borderColor;
             display: inline-block;
             background: $backgroundColor;
+            margin-top: 10px;
         }
         > span > span {
             &:first-child input[type="radio"] + span {
