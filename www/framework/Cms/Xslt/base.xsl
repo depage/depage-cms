@@ -356,7 +356,7 @@
     <xsl:template match="p">
         <xsl:param name="class" />
         <xsl:param name="linebreaks" />
-        <xsl:variable name="nbsp"><xsl:if test="count(br[position() = last()]) = 0">&#160;last</xsl:if></xsl:variable>
+        <xsl:variable name="nbsp"><xsl:if test="count(br[position() = last()]) = 0">&#160;</xsl:if></xsl:variable>
 
         <xsl:choose>
             <xsl:when test="$class != ''">
@@ -382,7 +382,7 @@
                 <xsl:if test="position() = 1 or not(dp:isListCharacter(substring(preceding-sibling::*[1], 1, 2)))">
                     <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
                 </xsl:if>
-                <li><xsl:for-each select="child::node()">
+                    <li><xsl:for-each select="child::node()">
                         <xsl:if test="position() = 1">
                             <xsl:value-of select="substring(., 3)" />
                         </xsl:if>
@@ -411,6 +411,9 @@
         <xsl:element name="{$tagName}">
             <xsl:apply-templates />
         </xsl:element>
+    </xsl:template>
+    <xsl:template match="li/p">
+        <xsl:apply-templates />
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ br -->
