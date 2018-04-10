@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-15 16:42+0100\n"
+"POT-Creation-Date: 2018-04-11 01:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,7 +126,8 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:358
+#: Cms/Ui/DocProperties.php:402
 msgid "Text"
 msgstr ""
 
@@ -169,7 +170,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:493
+#: Cms/Ui/DocProperties.php:568
 msgid "http://domain.com"
 msgstr ""
 
@@ -195,7 +197,7 @@ msgstr ""
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
 
-#: HtmlForm/Abstracts/Input.php:256
+#: HtmlForm/Abstracts/Input.php:255
 msgid "Please enter valid data"
 msgstr ""
 
@@ -499,7 +501,499 @@ msgstr ""
 msgid "Virgin Islands, U.S.)"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:177 HtmlForm/Elements/Country.php:356
+#: HtmlForm/Elements/State.php:133
+msgid "Alberta"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:134
+msgid "British Columbia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:135
+msgid "Manitoba"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:136
+msgid "New Brunswick"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:137
+msgid "Newfoundland and Labrador"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:138
+msgid "Northwest Territories"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:139
+msgid "Nova Scotia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:140
+msgid "Nunavut"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:141
+msgid "Ontario"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:142
+msgid "Prince Edward Island"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:143
+msgid "Quebec"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:144
+msgid "Saskatchewan"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:145
+msgid "Yukon"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:148
+msgid "Agrigento"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:149
+msgid "Alessandria"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:150
+msgid "Ancona"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:151
+msgid "Aosta"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:152
+msgid "Arezzo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:153
+msgid "Ascoli Piceno"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:154
+msgid "Asti"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:155
+msgid "Avellino"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:156
+msgid "Bari"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:157
+msgid "Barletta-Andria-Trani"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:158
+msgid "Belluno"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:159
+msgid "Benevento"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:160
+msgid "Bergamo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:161
+msgid "Biella"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:162
+msgid "Bologna"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:163
+msgid "Bolzano"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:164
+msgid "Brescia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:165
+msgid "Brindisi"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:166
+msgid "Cagliari"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:167
+msgid "Caltanissetta"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:168
+msgid "Campobasso"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:169
+msgid "Carbonia-Iglesias"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:170
+msgid "Caserta"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:171
+msgid "Catania"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:172
+msgid "Catanzaro"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:173
+msgid "Chieti"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:174
+msgid "Como"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:175
+msgid "Cosenza"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:176
+msgid "Cremona"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:177
+msgid "Crotone"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:178
+msgid "Cuneo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:179
+msgid "Enna"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:180
+msgid "Fermo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:181
+msgid "Ferrara"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:182
+msgid "Firenze"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:183
+msgid "Foggia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:184
+msgid "Forlì-Cesena"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:185
+msgid "Frosinone"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:186
+msgid "Genova"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:187
+msgid "Gorizia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:188
+msgid "Grosseto"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:189
+msgid "Imperia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:190
+msgid "Isernia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:191
+msgid "L'Aquila"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:192
+msgid "La Spezia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:193
+msgid "Latina"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:194
+msgid "Lecce"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:195
+msgid "Lecco"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:196
+msgid "Livorno"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:197
+msgid "Lodi"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:198
+msgid "Lucca"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:199
+msgid "Macerata"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:200
+msgid "Mantova"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:201
+msgid "Massa-Carrara"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:202
+msgid "Matera"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:203
+msgid "Medio Campidano"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:204
+msgid "Messina"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:205
+msgid "Milano"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:206
+msgid "Modena"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:207
+msgid "Monza e della Brianza"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:208
+msgid "Napoli"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:209
+msgid "Novara"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:210
+msgid "Nuoro"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:211
+msgid "Ogliastra"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:212
+msgid "Olbia-Tempio"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:213
+msgid "Oristano"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:214
+msgid "Padova"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:215
+msgid "Palermo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:216
+msgid "Parma"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:217
+msgid "Pavia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:218
+msgid "Perugia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:219
+msgid "Pesaro e Urbino"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:220
+msgid "Pescara"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:221
+msgid "Piacenza"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:222
+msgid "Pisa"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:223
+msgid "Pistoia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:224
+msgid "Pordenone"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:225
+msgid "Potenza"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:226
+msgid "Prato"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:227
+msgid "Ragusa"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:228
+msgid "Ravenna"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:229
+msgid "Reggio Calabria"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:230
+msgid "Reggio Emilia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:231
+msgid "Rieti"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:232
+msgid "Rimini"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:233
+msgid "Roma"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:234
+msgid "Rovigo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:235
+msgid "Salerno"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:236
+msgid "Sassari"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:237
+msgid "Savona"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:238
+msgid "Siena"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:239
+msgid "Siracusa"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:240
+msgid "Sondrio"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:241
+msgid "Taranto"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:242
+msgid "Teramo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:243
+msgid "Terni"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:244
+msgid "Torino"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:245
+msgid "Trapani"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:246
+msgid "Trento"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:247
+msgid "Treviso"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:248
+msgid "Trieste"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:249
+msgid "Udine"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:250
+msgid "Varese"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:251
+msgid "Venezia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:252
+msgid "Verbano-Cusio-Ossola"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:253
+msgid "Vercelli"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:254
+msgid "Verona"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:255
+msgid "Vibo Valentia"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:256
+msgid "Vicenza"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:257
+msgid "Viterbo"
+msgstr ""
+
+#: HtmlForm/Elements/State.php:308 HtmlForm/Elements/Country.php:356
 msgid "Please Select"
 msgstr ""
 
@@ -1468,7 +1962,7 @@ msgid "Please check this box if you want to proceed"
 msgstr ""
 
 #: HtmlForm/Elements/Email.php:53
-msgid "Please enter a valid e-mail address"
+msgid "Please enter a valid email address"
 msgstr ""
 
 #: Cms/Ui/User.php:83
@@ -1531,7 +2025,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:83
+#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:83 Cms/Ui/DocProperties.php:274
 msgid "Tags"
 msgstr ""
 
@@ -1647,6 +2141,100 @@ msgid ""
 "or to a comma separated list of custom emails for testing."
 msgstr ""
 
+#: Cms/Ui/DocProperties.php:250 Cms/Ui/DocProperties.php:501
+msgid "Default"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:253
+msgid "Last Change"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:258 Cms/XmlDocTypes/Colors.php:15
+msgid "Colorscheme"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:269
+msgid "Navigation"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:279
+msgid "Pagetype"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:295 Cms/Ui/DocProperties.php:486
+#: Cms/Ui/DocProperties.php:560 Cms/Forms/Newsletter.php:54
+#: Cms/Forms/Project/Language.php:68
+msgid "Title"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:314
+msgid "Linkinfo"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:333 Cms/Forms/Newsletter.php:78
+msgid "Description"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:377
+msgid "Headline"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:443
+msgid "Type"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:464
+msgid "Date"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:482
+msgid "Link"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:487
+msgid "Link title"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:492 Cms/Ui/DocProperties.php:567
+msgid "href"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:499
+msgid "Target"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:502
+msgid "New Window"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:522
+msgid "Audio"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:526 Cms/Ui/DocProperties.php:548
+msgid "src"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:542
+msgid "Image"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:553 Cms/Rpc/CmsFuncs.php:876
+msgid "alt"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:554
+msgid "Image description"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:561
+msgid "Image title"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:585
+msgid "Table"
+msgstr ""
+
 #: Cms/Ui/Base.php:181
 msgid "You are not allowed here."
 msgstr ""
@@ -1704,17 +2292,17 @@ msgstr ""
 msgid "Change zoom level of preview."
 msgstr ""
 
-#: Cms/Project.php:781
+#: Cms/Project.php:837
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:782
+#: Cms/Project.php:838
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
-#: Cms/tpl/publish.tpl:16 Cms/tpl/flashedit.tpl:50
+#: Cms/tpl/projectmain.tpl:41 Cms/tpl/publish.tpl:16
 #: Cms/Forms/ReleasePages.php:57 Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
 msgstr ""
@@ -1778,6 +2366,40 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: Cms/tpl/projectmain.tpl:6
+msgid "Pages"
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:11
+msgid ""
+"Page tree:\\nHere you can add, rename and delete pages. Select a page to "
+"edit it in the content tree below ↓."
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:16
+msgid "Document"
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:20
+msgid ""
+"Document tree:\\nHere you can add content to your pages. Select an element "
+"to edit its properties in the pane on the right →."
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:26
+msgid "Document Properties"
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:30
+msgid ""
+"Document properties:\\nHere you can edit all properties of the currently "
+"selected element."
+msgstr ""
+
+#: Cms/tpl/projectmain.tpl:37 Cms/tpl/publish.tpl:12
+msgid "The preview of the currently selected page."
+msgstr ""
+
 #: Cms/tpl/newsletterList.tpl:8
 msgid "Add new newsletter"
 msgstr ""
@@ -1792,10 +2414,6 @@ msgstr ""
 
 #: Cms/tpl/newsletterList.tpl:35
 msgid "Released Newsletters"
-msgstr ""
-
-#: Cms/tpl/publish.tpl:12 Cms/tpl/flashedit.tpl:46
-msgid "The preview of the currently selected page."
 msgstr ""
 
 #: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:47
@@ -1832,42 +2450,6 @@ msgstr ""
 
 #: Cms/tpl/toolbar_main.tpl:81
 msgid "Help"
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:5
-msgid "Tree/Edit"
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:11
-msgid ""
-"Page tree:\\nHere you can add, rename and delete pages. Select a page to "
-"edit it in the content tree below ↓."
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:16
-msgid ""
-"Content tree:\\nHere you can add content to your pages. Select an element to "
-"edit its properties in the pane on the right →."
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:21
-msgid ""
-"Content properties:\\nHere you can edit all properties of the currently "
-"selected element."
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:28
-msgid ""
-"File library:\\nHere you can choose and upload images and other files for "
-"your project."
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:35
-msgid "Colors:\\nHere you can edit the colors of your project."
-msgstr ""
-
-#: Cms/tpl/flashedit.tpl:41
-msgid "Preview your current edit in the preview pane on the right →."
 msgstr ""
 
 #: Cms/Forms/User.php:23
@@ -2006,16 +2588,8 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
-msgid "Title"
-msgstr ""
-
 #: Cms/Forms/Newsletter.php:66
 msgid "Subject"
-msgstr ""
-
-#: Cms/Forms/Newsletter.php:78
-msgid "Description"
 msgstr ""
 
 #: Cms/Forms/Newsletter.php:85
@@ -2949,10 +3523,6 @@ msgstr ""
 msgid "path to flash-file"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:876
-msgid "alt"
-msgstr ""
-
 #: Cms/Rpc/CmsFuncs.php:877
 msgid "..."
 msgstr ""
@@ -3307,10 +3877,6 @@ msgstr ""
 
 #: Cms/XmlDocTypes/Pages.php:50
 msgid "Separator"
-msgstr ""
-
-#: Cms/XmlDocTypes/Colors.php:15
-msgid "Colorscheme"
 msgstr ""
 
 #: Cms/XmlDocTypes/Colors.php:16
