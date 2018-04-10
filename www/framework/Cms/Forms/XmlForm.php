@@ -72,6 +72,8 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
 
             if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                 $value = $node->value == "true" ? true : false;
+            } else if ($element instanceof \Depage\HtmlForm\Elements\Date) {
+                $value = str_replace("/", "-", $node->value);
             } else if ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
                 $value = "";
 
@@ -124,6 +126,8 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
 
             if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                 $node->nodeValue = $element->getValue() === true ? "true" : "false";
+            } else if ($element instanceof \Depage\HtmlForm\Elements\Date) {
+                $node->nodeValue = str_replace("-", "/", $element->getValue());
             } elseif ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
                 $root = $element->getValue()->documentElement;
 
