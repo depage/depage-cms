@@ -8,6 +8,8 @@
         <div <?php self::attr([
             'class' => "tree pages",
             'data-url' => "project/{$this->projectName}/tree/pages/",
+            'data-live-help' => _("Page tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
+            'data-live-help-class' => "icon icon-tree",
         ]); ?>>
         </div>
         <header class="info info-tree-pagedata">
@@ -15,6 +17,8 @@
         </header>
         <div <?php self::attr([
             'class' => "tree pagedata",
+            'data-live-help' => _("Document tree:\\nHere you can add content to your pages. Select an element to edit its properties in the pane on the right →."),
+            'data-live-help-class' => "icon icon-tree",
         ]); ?>>
         </div>
     </div>
@@ -23,13 +27,15 @@
     </header>
     <div <?php self::attr([
         'class' => "doc-properties",
+        'data-live-help' => _("Document properties:\\nHere you can edit all properties of the currently selected element."),
+        'data-live-help-class' => "icon icon-properties",
     ]); ?>>
     </div>
 </div>
 <div <?php self::attr([
-        "class" => "preview layout layout-right zoom100",
-        "data-live-help" => _("The preview of the currently selected page."),
-        "data-live-help-class" => "icon icon-preview",
+        'class' => "preview layout layout-right zoom100",
+        'data-live-help' => _("The preview of the currently selected page."),
+        'data-live-help-class' => "icon icon-preview",
     ]); ?>>
     <header class="info">
         <h1><?php self::e(_("Preview")); ?></h1>
