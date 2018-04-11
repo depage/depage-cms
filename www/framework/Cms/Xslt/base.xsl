@@ -588,5 +588,11 @@
     </xsl:template>
     <!-- }}} -->
 
+    <xsl:template match="@db:id" mode="highlight">
+        <xsl:if test="not($depageIsLive)">
+            <xsl:attribute name="data-db-id"><xsl:value-of select="." /></xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+
     <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
