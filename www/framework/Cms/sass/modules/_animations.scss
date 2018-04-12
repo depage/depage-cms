@@ -1,0 +1,48 @@
+@keyframes loading-finished-left {
+    0% {
+        opacity: 0;
+        @include transform(translateX(-$transitionDistance));
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        @include transform(translateY(0));
+    }
+}
+@keyframes loading-finished-right {
+    0% {
+        opacity: 0;
+        @include transform(translateX($transitionDistance));
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        @include transform(translateY(0));
+    }
+}
+@keyframes loading-finished-top {
+    0% {
+        opacity: 0;
+        @include transform(translateY(-$transitionDistance));
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        @include transform(translateY(0));
+    }
+}
+
+.loaded > * {
+    animation: loading-finished-left $transitionTime linear;
+}
+.tree.loaded > * {
+    animation: loading-finished-top $transitionTime linear;
+}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

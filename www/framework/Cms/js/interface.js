@@ -526,7 +526,8 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + $pageTreeContainer.data("url");
 
-            $pageTreeContainer.load(url + "?ajax=true", function() {
+            $pageTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                $pageTreeContainer.addClass("loaded");
                 $tree = $pageTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()
@@ -558,7 +559,8 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + "project/" + projectName + "/tree/"+ docref + "/";
 
-            $pagedataTreeContainer.load(url + "?ajax=true", function() {
+            $pagedataTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                $pagedataTreeContainer.addClass("loaded");
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
                 var jstree = $tree.depageTree()
@@ -588,7 +590,8 @@ var depageCMS = (function() {
 
             var url = baseUrl + "project/" + projectName + "/doc-properties/"+ nodeid + "/";
 
-            $docPropertiesContainer.load(url + "?ajax=true", function() {
+            $docPropertiesContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
 
                 $form.depageForm();

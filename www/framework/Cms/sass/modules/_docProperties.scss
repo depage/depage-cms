@@ -9,6 +9,7 @@
     fieldset {
         padding-left: 15px;
         padding-right: 15px;
+        @include transition($transitionTime, "background-color");
     }
     fieldset.focus {
         background: #ffffff;
