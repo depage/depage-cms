@@ -584,7 +584,6 @@ select,
         }
     }
     .layout-buttons a {
-        $iconSize: 24px;
         @include icon-base();
         text-indent: -1000em;
         width: 24px;
@@ -1542,11 +1541,10 @@ form.lastchanged_pages {
     p {
         line-height: 1.3em;
     }
-    $iconSize: 32px;
     .icon {
-        padding-left: $iconSize + 10px;
-        min-height: $iconSize + 10px;
-        min-width: $iconSize * 3;
+        padding-left: $helpIconSize + 10px;
+        min-height: $helpIconSize + 10px;
+        min-width: $helpIconSize * 3;
 
         &:before {
             content: " ";
@@ -1554,8 +1552,8 @@ form.lastchanged_pages {
             position: absolute;
             top: 5px;
             left: 5px;
-            width: $iconSize;
-            height: $iconSize;
+            width: $helpIconSize;
+            height: $helpIconSize;
             @include icon-base();
         }
     }
@@ -1581,11 +1579,10 @@ form.lastchanged_pages {
     p {
         line-height: 1.3em;
     }
-    $iconSize: 32px;
     .icon {
-        padding-left: $iconSize + 10px;
-        min-height: $iconSize + 10px;
-        min-width: $iconSize * 3;
+        padding-left: $helpIconSize + 10px;
+        min-height: $helpIconSize + 10px;
+        min-width: $helpIconSize * 3;
 
         &:before {
             content: " ";
@@ -1593,8 +1590,8 @@ form.lastchanged_pages {
             position: absolute;
             top: 5px;
             left: 5px;
-            width: $iconSize;
-            height: $iconSize;
+            width: $helpIconSize;
+            height: $helpIconSize;
             @include icon-base();
         }
     }

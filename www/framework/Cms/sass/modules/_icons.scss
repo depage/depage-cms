@@ -51,11 +51,11 @@
 
 @mixin icon-base($name: "", $size: 48px) {
     $scale: $size / 48px;
-    $iconSize: 48px * $scale;
+    $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg);
-    background-size: (4 * $iconSize) (20 * $iconSize);
+    background-size: (4 * $iSize) (20 * $iSize);
 
     @if ($name != "") {
         @include icon($name, $size);
@@ -64,7 +64,7 @@
 }
 @mixin icon($name, $size: 48px) {
     $scale: $size / 48px;
-    $iconSize: 48px * $scale;
+    $iSize: 48px * $scale;
     $icons: (
         projects: 0 0,
         users: 0 1,
@@ -89,20 +89,31 @@
         open: 1 8,
         folder: 0 9,
         page: 1 9,
+        pg-meta: 2 9,
+        redirect: 3 9,
         help-tree: 0 10,
         help-properties: 1 10,
         help-preview: 2 10,
+        edit-text: 0 11,
+        edit-headline: 1 11,
+        edit-video: 2 11,
+        edit-audio: 3 11,
+        edit-unknown: 0 12,
     );
 
     @if map_has_key($icons, $name) {
         $pos: map_get($icons, $name);
-        background-position: (nth($pos, 1) * -1 * $iconSize) (nth($pos, 2) * -1 * $iconSize);
+        background-position: (nth($pos, 1) * -1 * $iSize) (nth($pos, 2) * -1 * $iSize);
     }
 
     @if ($scale != 1) {
-        background-size: (4 * $iconSize) (20 * $iconSize);
+        background-size: (4 * $iSize) (20 * $iSize);
     }
-
+}
+@mixin tree-icon($name, $icon) {
+    .icon-#{$name} > .jstree-icon {
+        @include icon-base($icon, $iconSize);
+    }
 }
 
 

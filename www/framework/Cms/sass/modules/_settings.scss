@@ -1,24 +1,29 @@
-$toolbarHeight: 30px;
-$infoHeight: 15px;
-$editWidth: 820px;
-$treeWidth: 255px;
+$toolbarHeight: 30px !global;
+$infoHeight: 15px !global;
+$editWidth: 820px !global;
+$treeWidth: 255px !global;
 
-$baseColor: #ccc8c4;
-$backgroundColor: lighten($baseColor, 5%);
-$backgroundLighterColor: lighten($backgroundColor, 10%);
-$borderColor: #bbbbbb;
-$borderColor: darken($baseColor, 0%);
-$textBaseColor: #000000;
-$textLighterColor: #888888;
-$textBrightColor: #ffffff;
-$selectionBackgroundColor: lighten(#047CBF, 40%);
+$baseColor: #ccc8c4 !global;
+$backgroundColor: lighten($baseColor, 5%) !global;
+$backgroundLighterColor: lighten($backgroundColor, 10%) !global;
+$borderColor: #bbbbbb !global;
+$borderColor: darken($baseColor, 0%) !global;
+$textBaseColor: #000000 !global;
+$textLighterColor: #888888 !global;
+$textBrightColor: #ffffff !global;
+$selectionBackgroundColor: lighten(#047CBF, 40%) !global;
 
-$fSizeM: 13px;
-$fSizeS: 11px;
-$fSizeXS: 10px;
-$fSizeMenu: 12px;
+$fSizeM: 13px !global;
+$fSizeS: 11px !global;
+$fSizeXS: 10px !global;
+$fSizeMenu: 12px !global;
 
-$transitionTime: 150ms;
-$transitionDistance: 10px;
+$transitionTime: 150ms !global;
+$transitionDistance: 10px !global;
+
+$treeLineHeight: 26px !global;
+$iconSize: 24px !global;
+$helpIconSize: 32px !global;
+
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

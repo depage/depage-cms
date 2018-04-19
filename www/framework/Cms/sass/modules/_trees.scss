@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-$treeLineHeight: 25px;
-$iconSize: 25px;
-
 // {{{ .jstree
 .jstree-node,
 .jstree-children,
@@ -45,8 +42,8 @@ $iconSize: 25px;
 
         > span.mini-thumb {
             position: absolute;
-            top: 0;
-            left: $iconSize;
+            top: ($treeLineHeight - $iconSize) / 2;
+            left: $iconSize - 1px;
             width: $iconSize;
             height: $iconSize;
             display: block;
@@ -340,18 +337,25 @@ $iconSize: 25px;
 }
 // }}}
 // {{{ icons
-.icon-pg-page > .jstree-icon {
-    @include icon-base("page", $iconSize);
-}
-.icon-pg-folder > .jstree-icon {
-    @include icon-base("folder", $iconSize);
-}
+@include tree-icon("pg-page", "page");
+@include tree-icon("pg-folder", "folder");
+@include tree-icon("pg-meta", "pg-meta");
+@include tree-icon("redirect", "redirect");
+@include tree-icon("edit_text", "edit-text");
+@include tree-icon("edit_headline", "edit-headline");
+@include tree-icon("edit_video", "edit-video");
+@include tree-icon("edit_audio", "edit-audio");
+@include tree-icon("edit_unknown", "edit-unknown");
+
 .icon-pg-meta {
     font-weight: bold;
 
     span {
         font-weight: normal;
     }
+}
+.icon-sec-separator > .jstree-icon {
+    background-image: none;
 }
 // }}}
 
