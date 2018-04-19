@@ -131,6 +131,9 @@
             <xsl:when test="count(edit:text_singleline | edit:text_multiline | edit:text_formatted) &gt; 0">
                icon-edit_text
             </xsl:when>
+            <xsl:when test="count(edit:a) &gt; 0">
+               icon-edit_a
+            </xsl:when>
             <xsl:otherwise>
                 icon-edit_unknown
             </xsl:otherwise>

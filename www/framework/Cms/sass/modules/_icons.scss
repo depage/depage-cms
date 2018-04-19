@@ -99,6 +99,17 @@
         edit-video: 2 11,
         edit-audio: 3 11,
         edit-unknown: 0 12,
+        sec-section: 1 12,
+        sec-section-2col: 0 13,
+        sec-section-2col-1: 1 13,
+        sec-section-2col-2: 2 13,
+        sec-section-2col-xl: 0 14,
+        sec-section-2col-xl-1: 1 14,
+        sec-section-2col-xl-2: 2 14,
+        sec-section-3col: 0 15,
+        sec-section-3col-1: 1 15,
+        sec-section-3col-2: 2 15,
+        sec-section-3col-3: 3 15,
     );
 
     @if map_has_key($icons, $name) {

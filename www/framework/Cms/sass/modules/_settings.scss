@@ -11,7 +11,8 @@ $borderColor: darken($baseColor, 0%) !global;
 $textBaseColor: #000000 !global;
 $textLighterColor: #888888 !global;
 $textBrightColor: #ffffff !global;
-$selectionBackgroundColor: lighten(#047CBF, 40%) !global;
+$selectionBackgroundColor: #047CBF !global;
+$selectionTextColor: #ffffff !global;
 
 $fSizeM: 13px !global;
 $fSizeS: 11px !global;

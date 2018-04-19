@@ -164,6 +164,7 @@
 .jstree-clicked {
     border: 1px solid $selectionBackgroundColor;
     background: $selectionBackgroundColor;
+    color: $selectionTextColor !important;
 }
 .jstree-clicked.jstree-hovered {
     background: $selectionBackgroundColor;
@@ -341,11 +342,24 @@
 @include tree-icon("pg-folder", "folder");
 @include tree-icon("pg-meta", "pg-meta");
 @include tree-icon("redirect", "redirect");
+@include tree-icon("edit_a", "redirect");
 @include tree-icon("edit_text", "edit-text");
 @include tree-icon("edit_headline", "edit-headline");
 @include tree-icon("edit_video", "edit-video");
 @include tree-icon("edit_audio", "edit-audio");
 @include tree-icon("edit_unknown", "edit-unknown");
+@include tree-icon("sec_section", "sec-section");
+@include tree-icon("sec_section_2col", "sec-section-2col");
+@include tree-icon("sec_section_2col_1", "sec-section-2col-1");
+@include tree-icon("sec_section_2col_2", "sec-section-2col-2");
+@include tree-icon("sec_section_2col_xl", "sec-section-2col-xl");
+@include tree-icon("sec_section_2col_xl_1", "sec-section-2col-xl-1");
+@include tree-icon("sec_section_2col_xl_2", "sec-section-2col-xl-2");
+@include tree-icon("sec_section_3col", "sec-section-3col");
+@include tree-icon("sec_section_3col_1", "sec-section-3col-1");
+@include tree-icon("sec_section_3col_2", "sec-section-3col-2");
+@include tree-icon("sec_section_3col_3", "sec-section-3col-3");
+@include tree-icon("sec_vcard", "sec-section");
 
 .icon-pg-meta {
     font-weight: bold;

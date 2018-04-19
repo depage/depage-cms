@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="192" height="960" viewBox="0 0 192 960">
   <defs>
     <path id="icon_sprite-b" d="M17.0361328,6.09261025 L29.7866552,6.09261025 C31.0101724,6.09261025 32,7.08002298 32,8.2980957 L32,22.1145145 C32,23.3332436 31.0152414,24.32 29.8005172,24.32 L2.19948276,24.32 C0.992793103,24.32 5.68434189e-14,23.3345218 5.68434189e-14,22.1188673 L5.68434189e-14,2.20113273 C5.68434189e-14,0.983509091 0.989413793,0 2.20993103,0 L12.0785038,0 L17.0361328,6.09261025 Z"/>
-    <path id="icon_sprite-a" d="M12,12 L36,12 L36,36 L12,36 L12,12 Z"/>
-    <mask id="icon_sprite-c" width="24" height="24" x="0" y="0" fill="#fff">
+    <path id="icon_sprite-a" d="M8,12 L40,12 L40,36 L8,36 L8,12 Z"/>
+    <mask id="icon_sprite-c" width="32" height="24" x="0" y="0" fill="#fff">
       <use xlink:href="#icon_sprite-a"/>
     </mask>
   </defs>
@@ -67,22 +67,29 @@
       <use fill="#7F7F7F" fill-rule="evenodd" xlink:href="#icon_sprite-b"/>
       <path stroke="#4E4C4B" stroke-width="1.5" d="M11.7218614,0.75 L2.20993103,0.75 C1.40217398,0.75 0.75,1.39917683 0.75,2.20113273 L0.75,22.1188673 C0.75,22.9172332 1.40392725,23.57 2.19948276,23.57 L29.8005172,23.57 C30.6008436,23.57 31.25,22.9192126 31.25,22.1145145 L31.25,8.2980957 C31.25,7.49439687 30.596116,6.84261025 29.7866552,6.84261025 L16.6794904,6.84261025 L11.7218614,0.75 Z"/>
     </g>
-    <g stroke="#7F7F7F" stroke-linecap="square" transform="translate(12 545)">
-      <path stroke-width="2" d="M23.3373019 1.5L.342857143 1.5M23.3373019 6.5L.342857143 6.5M23.3373019 11.5L.342857143 11.5M17.1463553 16.5L.342857143 16.5"/>
+    <g fill="#7F7F7F" transform="translate(9 542)">
+      <rect width="30" height="2"/>
+      <rect width="30" height="2" y="6"/>
+      <rect width="30" height="2" y="12"/>
+      <rect width="23.226" height="2" y="18"/>
     </g>
-    <use stroke="#B0B0B0" stroke-dasharray="2 2 2 2" stroke-width="4" mask="url(#icon_sprite-c)" transform="translate(0 576)" xlink:href="#icon_sprite-a"/>
+    <use stroke="#7F7F7F" stroke-dasharray="2 2 2 2" stroke-width="4" mask="url(#icon_sprite-c)" transform="translate(0 576)" xlink:href="#icon_sprite-a"/>
+    <rect width="30" height="22" x="9" y="13" stroke="#7F7F7F" stroke-width="2" transform="translate(48 576)"/>
     <g stroke="#4E4C4B" transform="translate(56 444)">
       <path stroke-width="1.5" d="M30.947427,7.33476502 L25.1618234,0.75 L2.20993103,0.75 C1.40217398,0.75 0.75,1.39917683 0.75,2.20113273 L0.75,22.1188673 C0.75,22.9172332 1.40392725,23.57 2.19948276,23.57 L29.8005172,23.57 C30.6008436,23.57 31.25,22.9192126 31.25,22.1145145 L31.25,10.7895508 C31.25,9.89087714 31.25,9.89087714 31.25,9.44940677 C31.25,9.18136336 31.25,9.18136336 31.25,9.14982455 C31.25,8.68316327 31.1838868,8.2147399 31.0735722,7.7714034 C31.0278674,7.5877232 30.983055,7.43930837 30.947427,7.33476502 Z"/>
       <path stroke-linecap="square" stroke-width="1.5" d="M22.75 1.5L22.75 8.5M23.5 8.75L30.5 8.75"/>
     </g>
-    <g stroke-linecap="square" transform="translate(60 543)">
-      <path stroke="#047CBF" stroke-width="2" d="M23.3373019 1.5L.342857143 1.5M23.3373019 3.5L.342857143 3.5"/>
-      <path stroke="#7F7F7F" stroke-width="2" d="M23.3373019 8.5L.342857143 8.5M23.3373019 13.5L.342857143 13.5M17.1463553 18.5L.342857143 18.5"/>
+    <g transform="translate(57 542)">
+      <rect width="2" height="20" fill="#047CBF"/>
+      <rect width="25" height="2" x="5" fill="#7F7F7F"/>
+      <rect width="25" height="2" x="5" y="6" fill="#7F7F7F"/>
+      <rect width="25" height="2" x="5" y="12" fill="#7F7F7F"/>
+      <rect width="19" height="2" x="5" y="18" fill="#7F7F7F"/>
     </g>
     <polygon fill="#047CBF" points="26.505 13 25.433 22.794 35.327 20.028 36 24.838 26.555 25.536 32.685 33.66 28.224 36.053 23.838 27.131 19.925 36.053 15.315 33.66 21.346 25.536 12 24.838 12.723 20.028 22.467 22.794 21.396 13" transform="translate(96 432)"/>
-    <g stroke="#4E4C4B" stroke-width="2" transform="translate(144 432)">
-      <path d="M12,22.5812584 L25.6274734,36 L36,36 L36,12 L12,12 L12,22.5812584 Z" transform="rotate(180 24 24)"/>
-      <path stroke-linecap="square" d="M22.5 25.5L39.7626765 8.2373235M40.5 7.5L27.5 7.5M40.5 7.5L40.5 19.5"/>
+    <g fill="#7F7F7F" transform="translate(144 432)">
+      <polygon fill-rule="nonzero" points="12 16 32 16 32 36 23.124 36 23.124 38 34 38 34 14 10 14 10 25.077 12 25.077" transform="rotate(180 22 26)"/>
+      <path d="M18.9426099,3.51218452 L2.18219169,20.2726028 L1.45479446,21 L-1.0658141e-14,19.5452055 L0.72739723,18.8178083 L17.4878155,2.05739006 L6.5982696,2.05739006 L5.56957457,2.05739006 L5.56957457,0 L6.5982696,1.94153754e-15 L19.971305,1.14208091e-16 L21,0 L21,2.05739006 L21,13.3730354 L21,14.4017304 L18.9426099,14.4017304 L18.9426099,13.3730354 L18.9426099,3.51218452 Z" transform="translate(19 8)"/>
     </g>
     <g transform="translate(0 480)">
       <path stroke="#FFF" stroke-linecap="square" stroke-width="2" d="M9 3L9 42.001M18.935 19.916L18.935 31.918M18.935 42.001L9 42.001M18.935 19.916L9 19.916M29 19.916L19.066 19.916M29 31.918L19.066 31.918"/>
@@ -98,8 +105,50 @@
       <rect width="36" height="4" x="6" y="26"/>
       <rect width="36" height="4" x="6" y="34"/>
     </g>
-    <g fill="#FFF" fill-rule="nonzero" transform="translate(96 480)">
-      <path d="M43.11325,38.25425 L30.81825,25.98825 C34.24225,20.42525 33.55025,13.05025 28.71925,8.23225 C23.06625,2.58925 13.89525,2.58925 8.24125,8.23225 C2.58625,13.87325 2.58625,23.02325 8.24125,28.66725 C12.53625,33.38625 20.44225,33.89825 25.92925,30.77725 L38.26525,43.08825 C40.04425,44.86225 41.40425,43.69325 42.51925,42.58325 C43.63325,41.47225 44.88925,40.03125 43.11325,38.25425 Z M25.14825,25.04725 C21.43925,28.74425 15.42525,28.74425 11.71725,25.04725 C8.00825,21.34625 8.00825,15.34625 11.71725,11.64625 C15.42525,7.94525 21.43925,7.94525 25.14825,11.64625 C28.85725,15.34625 28.85725,21.34625 25.14825,25.04725 Z"/>
+    <path fill="#FFF" fill-rule="nonzero" d="M43.11325,38.25425 L30.81825,25.98825 C34.24225,20.42525 33.55025,13.05025 28.71925,8.23225 C23.06625,2.58925 13.89525,2.58925 8.24125,8.23225 C2.58625,13.87325 2.58625,23.02325 8.24125,28.66725 C12.53625,33.38625 20.44225,33.89825 25.92925,30.77725 L38.26525,43.08825 C40.04425,44.86225 41.40425,43.69325 42.51925,42.58325 C43.63325,41.47225 44.88925,40.03125 43.11325,38.25425 Z M25.14825,25.04725 C21.43925,28.74425 15.42525,28.74425 11.71725,25.04725 C8.00825,21.34625 8.00825,15.34625 11.71725,11.64625 C15.42525,7.94525 21.43925,7.94525 25.14825,11.64625 C28.85725,15.34625 28.85725,21.34625 25.14825,25.04725 Z" transform="translate(96 480)"/>
+    <g stroke="#7F7F7F" stroke-width="2" transform="translate(0 624)">
+      <rect width="12" height="22" x="9" y="13"/>
+      <rect width="12" height="22" x="27" y="13"/>
+    </g>
+    <g stroke-width="2" transform="translate(48 624)">
+      <rect width="12" height="22" x="9" y="13" stroke="#7F7F7F"/>
+      <rect width="12" height="22" x="27" y="13" stroke="#CACACA"/>
+    </g>
+    <g stroke-width="2" transform="translate(96 624)">
+      <rect width="12" height="22" x="9" y="13" stroke="#CACACA"/>
+      <rect width="12" height="22" x="27" y="13" stroke="#7F7F7F"/>
+    </g>
+    <g stroke="#7F7F7F" stroke-width="2" transform="translate(0 672)">
+      <rect width="18" height="22" x="9" y="13"/>
+      <rect width="6" height="22" x="33" y="13"/>
+    </g>
+    <g stroke-width="2" transform="translate(48 672)">
+      <rect width="18" height="22" x="9" y="13" stroke="#7F7F7F"/>
+      <rect width="6" height="22" x="33" y="13" stroke="#CACACA"/>
+    </g>
+    <g stroke-width="2" transform="translate(96 672)">
+      <rect width="18" height="22" x="9" y="13" stroke="#CACACA"/>
+      <rect width="6" height="22" x="33" y="13" stroke="#7F7F7F"/>
+    </g>
+    <g stroke="#7F7F7F" stroke-width="2" transform="translate(0 720)">
+      <rect width="6" height="22" x="33" y="13"/>
+      <rect width="6" height="22" x="9" y="13"/>
+      <rect width="6" height="22" x="21" y="13"/>
+    </g>
+    <g stroke-width="2" transform="translate(48 720)">
+      <rect width="6" height="22" x="33" y="13" stroke="#CACACA"/>
+      <rect width="6" height="22" x="9" y="13" stroke="#7F7F7F"/>
+      <rect width="6" height="22" x="21" y="13" stroke="#CACACA"/>
+    </g>
+    <g stroke-width="2" transform="translate(96 720)">
+      <rect width="6" height="22" x="33" y="13" stroke="#CACACA"/>
+      <rect width="6" height="22" x="9" y="13" stroke="#CACACA"/>
+      <rect width="6" height="22" x="21" y="13" stroke="#7F7F7F"/>
+    </g>
+    <g stroke-width="2" transform="translate(144 720)">
+      <rect width="6" height="22" x="33" y="13" stroke="#7F7F7F"/>
+      <rect width="6" height="22" x="9" y="13" stroke="#CACACA"/>
+      <rect width="6" height="22" x="21" y="13" stroke="#CACACA"/>
     </g>
   </g>
 </svg>
