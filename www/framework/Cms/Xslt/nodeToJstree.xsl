@@ -80,6 +80,11 @@
 
     <xsl:template match="edit:img" mode="hint">
         <xsl:if test="substring(@src, 1, 9) = 'libref://'">
+            <!--
+            <xsl:call-template name="filename">
+                <xsl:with-param name="filename" select="@src" />
+            </xsl:call-template>
+            -->
             <span class="mini-thumb">
                 <xsl:attribute name="style">background-image: url('projects/<xsl:value-of select="$projectName" />/lib/<xsl:value-of select="substring(@src, 10)" /><xsl:if test="not(substring(@src, string-length(@src) - 3) = '.svg')">.thumbfill-48x48.png</xsl:if>');</xsl:attribute>
             </span>
@@ -107,6 +112,21 @@
     <xsl:template match="sec:separator" mode="hint">—</xsl:template>
 
     <xsl:template match="*" mode="icon-class" />
+
+    <xsl:template name="filename">
+        <xsl:param name="filename"  />
+
+        <xsl:choose>
+            <xsl:when test="substring-after($filename, '/') = ''">
+                <xsl:value-of select="$filename" /><xsl:text> </xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="filename">
+                    <xsl:with-param name="filename" select="substring-after($filename, '/')" />
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:template match="pg:page[@redirect = 'true']" mode="icon-class">
         <xsl:text> </xsl:text>

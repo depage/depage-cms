@@ -10,7 +10,7 @@ class JsTreeXmlToHtml
       */
     public static function toHTML($nodes, $projectName) {
         $xsl = new \DOMDocument();
-        $xsl->load(DEPAGE_FM_PATH . "xslt/nodes_to_html.xsl", LIBXML_NOCDATA);
+        $xsl->load(DEPAGE_FM_PATH . "Cms/Xslt/nodeToJstree.xsl", LIBXML_NOCDATA);
 
         $xslt = new \XSLTProcessor();
         $xslt->importStylesheet($xsl);
@@ -24,5 +24,3 @@ class JsTreeXmlToHtml
         return $html;
     }
 }
-
-?>
