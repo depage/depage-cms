@@ -72,18 +72,6 @@
             base.options = $.extend({}, $.depage.jstree.defaultOptions, options);
 
             // init the tree
-            base.jstree();
-        };
-        // }}}
-
-        // {{{ jstree()
-        /**
-         * JsTree
-         *
-         * Re-init the tre plugin
-         *
-         */
-        base.jstree = function() {
             base.$el.jstree(base.options);
         };
         // }}}
@@ -91,7 +79,7 @@
         // go!
         base.init();
 
-    }; // end depage.jstree
+    };
     // }}}
 
     // {{{ buildCreateMenu()

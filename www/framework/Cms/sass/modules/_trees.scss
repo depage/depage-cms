@@ -65,8 +65,8 @@
 }
 .jstree-icon {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 1px;
+    top: 1px;
 }
 .jstree-anchor > .jstree-icon {
     left: 1 * $iconSize;
@@ -338,9 +338,9 @@
 }
 // }}}
 // {{{ icons
-@include tree-icon("pg-page", "page");
-@include tree-icon("pg-folder", "folder");
-@include tree-icon("pg-meta", "pg-meta");
+@include tree-icon("pg_page", "page");
+@include tree-icon("pg_folder", "folder");
+@include tree-icon("pg_meta", "pg-meta");
 @include tree-icon("redirect", "redirect");
 @include tree-icon("edit_a", "redirect");
 @include tree-icon("edit_text", "edit-text");
@@ -349,6 +349,7 @@
 @include tree-icon("edit_audio", "edit-audio");
 @include tree-icon("edit_unknown", "edit-unknown");
 @include tree-icon("edit_img", "edit-img");
+@include tree-icon("edit_imgtext", "edit-imgtext");
 @include tree-icon("sec_section", "sec-section");
 @include tree-icon("sec_section_2col", "sec-section-2col");
 @include tree-icon("sec_section_2col_1", "sec-section-2col-1");
@@ -360,16 +361,16 @@
 @include tree-icon("sec_section_3col_1", "sec-section-3col-1");
 @include tree-icon("sec_section_3col_2", "sec-section-3col-2");
 @include tree-icon("sec_section_3col_3", "sec-section-3col-3");
-@include tree-icon("sec_vcard", "sec-section");
+@include tree-icon("sec_vcard", "sec-vcard");
 
-.icon-pg-meta {
+.icon-pg_meta {
     font-weight: bold;
 
     span {
         font-weight: normal;
     }
 }
-.icon-sec-separator > .jstree-icon {
+.icon-sec_separator > .jstree-icon {
     background-image: none;
 }
 // }}}

@@ -5,6 +5,9 @@
     <mask id="icon_sprite-c" width="32" height="24" x="0" y="0" fill="#fff">
       <use xlink:href="#icon_sprite-a"/>
     </mask>
+    <rect id="icon_sprite-d" width="32" height="32" x="8" y="8"/>
+    <rect id="icon_sprite-e" width="32" height="32" x="8" y="8"/>
+    <rect id="icon_sprite-f" width="14" height="14" x="8" y="8"/>
   </defs>
   <g fill="none" fill-rule="evenodd">
     <path fill="#605E5D" fill-rule="nonzero" d="M4.933,6.871 C5.57,6.018 6.87,5.871 17.619,5.933 C28.127,5.995 31.059,5.427 32.18,6.683 C32.667,7.23 33.835,12.135 35.742,19.494 C37.64,26.82 38.243,33.085 38.054,33.805 C37.815,34.724 34.151,35.73 21.744,37.305 C7.487,39.115 7.23,39.387 5.87,37.93 C4.995,36.992 4.558,30.931 4.558,22.244 C4.558,13.536 4.497,7.455 4.933,6.871 Z" opacity=".8"/>
@@ -154,6 +157,25 @@
       <rect width="6" height="22" x="33" y="13" stroke="#7F7F7F"/>
       <rect width="6" height="22" x="9" y="13" stroke="#CACACA"/>
       <rect width="6" height="22" x="21" y="13" stroke="#CACACA"/>
+    </g>
+    <path fill="#4E4C4B" fill-rule="nonzero" d="M1.6832,1.6306 L11.584,10.24 L1.68076,18.85148 C1.43252,18.61636 1.28,18.28208 1.28,17.9112 L1.28,2.56872 C1.28,2.1986 1.43496,1.86544 1.6832,1.63056 L1.6832,1.6306 Z M30.31924,1.62852 C30.56748,1.86364 30.72,2.19792 30.72,2.5688 L30.72,17.91128 C30.72,18.28136 30.56504,18.61456 30.3168,18.84944 L20.416,10.24004 L30.31924,1.62856 L30.31924,1.62852 Z M19.45836,11.07276 L28.8,19.2 L3.2,19.2 L12.54164,11.07276 L16,14.08 L19.45836,11.07276 Z M2.5646,0 C1.1482,0 0,1.14496 0,2.5524 L0,17.9276 C0,19.33724 1.13888,20.48 2.5646,20.48 L29.4354,20.48 C30.8518,20.48 32,19.33504 32,17.9276 L32,2.5524 C32,1.14276 30.86112,2.27373675e-15 29.4354,2.27373675e-15 L2.5646,0 Z M16,12.416 L3.2,1.28 L28.8,1.28 L16,12.416 Z" transform="translate(152 590)"/>
+    <g transform="translate(96 576)">
+      <use fill="#D8D8D8" xlink:href="#icon_sprite-d"/>
+      <rect width="30" height="30" x="9" y="9" stroke="#7F7F7F" stroke-width="2"/>
+      <g>
+        <use fill="#D8D8D8" xlink:href="#icon_sprite-e"/>
+        <rect width="30" height="30" x="9" y="9" stroke="#7F7F7F" stroke-width="2"/>
+      </g>
+    </g>
+    <g transform="translate(144 624)">
+      <g fill="#7F7F7F" transform="translate(9 14)">
+        <rect width="12" height="2" x="18"/>
+        <rect width="12" height="2" x="18" y="6"/>
+        <rect width="30" height="2" y="12"/>
+        <rect width="23.226" height="2" y="18"/>
+      </g>
+      <use fill="#D8D8D8" xlink:href="#icon_sprite-f"/>
+      <rect width="12" height="12" x="9" y="9" stroke="#7F7F7F" stroke-width="2"/>
     </g>
   </g>
 </svg>

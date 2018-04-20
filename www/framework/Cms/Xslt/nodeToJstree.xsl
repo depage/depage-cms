@@ -35,7 +35,7 @@
         <xsl:variable name="id" select="@db:id" />
         <xsl:variable name="type" select="name()" />
         <xsl:variable name="icon">
-            <xsl:value-of select="concat('icon-', translate($type, ':', '-'))" />
+            <xsl:value-of select="concat('icon-', translate($type, ':', '_'))" />
             <xsl:apply-templates select="." mode="icon-class" />
         </xsl:variable>
         <xsl:variable name="ns" select="substring-before(name(), ':')" />
@@ -145,10 +145,16 @@
             <xsl:when test="count(edit:audio) &gt; 0">
                icon-edit_audio
             </xsl:when>
+            <xsl:when test="count(edit:img) &gt; 0 and count(edit:text_multiline | edit:text_formatted) &gt; 0">
+               icon-edit_imgtext
+            </xsl:when>
+            <xsl:when test="count(edit:img) &gt; 0">
+               icon-edit_img
+            </xsl:when>
             <xsl:when test="count(edit:text_headline) &gt; 0">
                icon-edit_headline
             </xsl:when>
-            <xsl:when test="count(edit:text_singleline | edit:text_multiline | edit:text_formatted) &gt; 0">
+            <xsl:when test="count(edit:text_multiline | edit:text_formatted) &gt; 0">
                icon-edit_text
             </xsl:when>
             <xsl:when test="count(edit:a) &gt; 0">
