@@ -14,6 +14,18 @@
     position: relative;
     white-space: nowrap;
 }
+.jstree-anchor,
+.jstree-icon {
+    &,
+    &:empty {
+        display: block;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+        vertical-align: top;
+        text-align: left;
+    }
+}
 .jstree-anchor {
     color: black;
     white-space: nowrap;
@@ -30,6 +42,7 @@
     &:link,
     &:visited,
     &:hover,
+    &:empty,
     &:active {
         text-decoration: none;
         color: inherit;
@@ -49,18 +62,6 @@
             display: block;
             background-size: 100% 100%;
         }
-    }
-}
-.jstree-anchor,
-.jstree-icon {
-    &,
-    &:empty {
-        display: block;
-        text-decoration: none;
-        margin: 0;
-        padding: 0;
-        vertical-align: top;
-        text-align: left;
     }
 }
 .jstree-icon {
@@ -228,6 +229,29 @@
 .jstree-node {
     background-position: -292px -4px;
     background-repeat: repeat-y;
+}
+.jstree-node > .jstree-anchor > input.jstree-rename-input {
+    position: absolute !important;
+    display: block !important;
+    left: 2 * $iconSize !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: calc(100% - #{2 * $iconSize}) !important;
+    height: auto !important;
+    padding: 0 !important;
+    padding-left: 6px !important;
+    background: #ffffff;
+    border: 1px solid $selectionBackgroundColor !important;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    font-stretch: inherit;
+    font-variant: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    line-height: inherit !important;
 }
 .jstree-last {
     background: transparent;
