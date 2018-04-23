@@ -98,6 +98,8 @@ class Tree extends Base {
         $actionUrl = "{$treeUrl}{$docName}/";
 
         $h = new Html("jstree.tpl", [
+            'projectName' => $this->projectName,
+            'docName' => $docName,
             'treeUrl' => $treeUrl,
             'actionUrl' => $actionUrl,
             'root_id' => $this->docInfo->rootid,

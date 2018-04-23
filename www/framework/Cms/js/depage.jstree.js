@@ -56,6 +56,12 @@
         base.$el = $(el);
         base.el = el;
 
+        base.projectName = "";
+        base.docName = "";
+
+        var baseUrl = $("base").attr("href");
+        var xmldb;
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.jstree", base);
 
@@ -68,11 +74,45 @@
          * @return void
          */
         base.init = function(){
-
             base.options = $.extend({}, $.depage.jstree.defaultOptions, options);
+
+            xmldb = new DepageXmldb(baseUrl, base.$el.data("projectname"), base.$el.data("docname"));
+
+            base.$el
+                .on("rename_node.jstree", base.onRename)
+                .on("delete_node.jstree", base.onDelete)
+                .on("move_node.jstree", base.onMove)
+                .on("copy_node.jstree", base.onCopy);
 
             // init the tree
             base.$el.jstree(base.options);
+        };
+        // }}}
+
+        // {{{ onRename
+        base.onRename= function(e) {
+            console.log(e);
+        };
+        // }}}
+        // {{{ onDelete
+        base.onDelete = function(e) {
+            console.log(e);
+        };
+        // }}}
+        // {{{ onMove
+        base.onMove = function(e, param) {
+            var $node = $("#node_" + param.node.data.nodeId);
+            var $parent = $node.parent().parent();
+
+            xmldb.moveNode($node.data("node-id"), $parent.data("node-id"), param.position);
+        };
+        // }}}
+        // {{{ onCopy
+        base.onCopy = function(e, param) {
+            var $node = $("#node_" + param.original.data.nodeId);
+            var $parent = $node.parent().parent();
+
+            xmldb.copyNode($node.data("node-id"), $parent.data("node-id"), param.position);
         };
         // }}}
 
@@ -407,6 +447,13 @@
             animation : 100,
             multiple: false,
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
+            check_callback : function (operation, node, node_parent, node_position, more) {
+                // @todo check types and operations
+                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node', 'copy_node' or 'edit'
+                // in case of 'rename_node' node_position is filled with the new node name
+                console.log(operation);
+                return true;
+            }
         },
 
         /**
@@ -419,9 +466,16 @@
         },
 
         /**
+         * Drag and drop
+         */
+        dnd : {
+            inside_pos: "last"
+        },
+
+        /**
          * Hotkeys
          */
-        hotkeys : {
+        disabled_keyboard : {
             "up" : function() {
                 $.depage.jstree.keyUp.apply(this);
             },
@@ -491,7 +545,7 @@
         /**
          * Context Menu
          */
-        contextmenu : {
+        disabled_contextmenu : {
             items : function (obj) {
 
                 var default_items = {
@@ -501,6 +555,7 @@
                         "separator_after"   : false,
                         "label"             : "Rename",
                         "action"            : function (data) {
+                            console.log(data);
                             $.depage.jstree.contextRename(data);
                         }
                     },

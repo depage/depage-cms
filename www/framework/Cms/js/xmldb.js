@@ -26,7 +26,12 @@ var DepageXmldb = (function() {
         },
         // }}}
         // {{{ copyNode()
-        copyNode: function() {
+        copyNode: function(nodeId, targetId, position) {
+            this.ajaxCall("copyNode", {
+                "id" : nodeId,
+                "target_id" : targetId,
+                "position" : position
+            });
         },
         // }}}
         // {{{ moveNode()
