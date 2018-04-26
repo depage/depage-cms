@@ -61,6 +61,7 @@
 
         var baseUrl = $("base").attr("href");
         var xmldb;
+        var jstree;
 
         // Add a reverse reference to the DOM object
         base.$el.data("depage.jstree", base);
@@ -85,13 +86,16 @@
                 .on("copy_node.jstree", base.onCopy);
 
             // init the tree
-            base.$el.jstree(base.options);
+            jstree = base.$el.jstree(base.options).jstree(true);
         };
         // }}}
 
         // {{{ onRename
-        base.onRename= function(e) {
-            console.log(e);
+        base.onRename= function(e, param) {
+            // @todo check if old name != new name
+            xmldb.renameNode(param.node.data.nodeId, param.text);
+
+            jstree.disable_node(param.node);
         };
         // }}}
         // {{{ onDelete
@@ -101,10 +105,13 @@
         // }}}
         // {{{ onMove
         base.onMove = function(e, param) {
+            // @todo correct position if parent stay the same?
             var $node = $("#node_" + param.node.data.nodeId);
             var $parent = $node.parent().parent();
 
             xmldb.moveNode($node.data("node-id"), $parent.data("node-id"), param.position);
+
+            jstree.disable_node(param.node);
         };
         // }}}
         // {{{ onCopy
@@ -113,6 +120,8 @@
             var $parent = $node.parent().parent();
 
             xmldb.copyNode($node.data("node-id"), $parent.data("node-id"), param.position);
+
+            jstree.disable_node(param.node);
         };
         // }}}
 
