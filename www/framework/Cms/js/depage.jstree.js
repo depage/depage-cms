@@ -99,8 +99,9 @@
         };
         // }}}
         // {{{ onDelete
-        base.onDelete = function(e) {
-            console.log(e);
+        base.onDelete = function(e, param) {
+            // @todo add dialog to make sure you want to delete node
+            xmldb.deleteNode(param.node.data.nodeId);
         };
         // }}}
         // {{{ onMove
@@ -428,7 +429,7 @@
             "dnd",
             "typesfromurl",
             "hotkeys",
-            //"contextmenu",
+            "contextmenu",
             "nodeinfo",
             "dblclickrename",
             "tooltips",
@@ -460,7 +461,17 @@
                 // @todo check types and operations
                 // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node', 'copy_node' or 'edit'
                 // in case of 'rename_node' node_position is filled with the new node name
-                console.log(operation);
+                if (node.li_attr.rel == 'pg:meta') {
+                    return false;
+                } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && node_parent.li_attr.rel == 'pg:meta') {
+                    return false;
+                } else if (operation == "edit" && node.li_attr.rel == 'sec:separator') {
+                    return false;
+                }
+
+                console.log(operation, node.li_attr.rel);
+                console.log(node);
+                console.log(node_parent);
                 return true;
             }
         },
