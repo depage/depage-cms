@@ -483,7 +483,7 @@ class Project extends \Depage\Entity\Entity
         $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
 
         if (!is_null($docId)) {
-            $nodelist = $xpath->query("//pg:page[@db:docref='$docId']");
+            $nodelist = $xpath->query("//pg:*[@db:docref='$docId']");
         } else {
             $nodelist = $xpath->query("//pg:page");
         }
@@ -496,6 +496,16 @@ class Project extends \Depage\Entity\Entity
                 $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
                 $docInfo->url = $node->getAttribute("url");
                 $docInfo->released = $node->getAttribute("db:released") == "true";
+
+                $docInfo->nav = [];
+                $docInfo->tags = [];
+                foreach ($node->attributes as $name => $attrNode) {
+                    if (substr($name, 0, 4) == 'nav_') {
+                        $docInfo->nav[substr($name, 4)] = $attrNode->value;
+                    } else if (substr($name, 0, 4) == 'tag_') {
+                        $docInfo->tags[substr($name, 4)] = $attrNode->value;
+                    }
+                }
 
                 $pages[] = $docInfo;
             }
@@ -612,20 +622,14 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getLanguages()
     {
-        if ($languages = $this->cache->get("dp_proj_{$this->name}_settings/languages.ser")) {
-            return $languages;
-        } else {
-            $languages = [];
-            $this->xmldb = $this->getXmlDb();
+        $languages = [];
+        $this->xmldb = $this->getXmlDb();
 
-            $settings = $this->getSettingsDoc();
-            $nodes = $settings->getNodeIdsByXpath("//proj:language");
-            foreach ($nodes as $nodeId) {
-                $attr = $settings->getAttributes($nodeId);
-                $languages[$attr['shortname']] = $attr['name'];
-            }
-
-            $this->cache->set("dp_proj_{$this->name}_settings/languages.ser", $languages);
+        $settings = $this->getSettingsDoc();
+        $nodes = $settings->getNodeIdsByXpath("//proj:language");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $languages[$attr['shortname']] = $attr['name'];
         }
 
         return $languages;
@@ -640,20 +644,14 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getColorschemes()
     {
-        if ($colors = $this->cache->get("dp_proj_{$this->name}_colors/colors.ser")) {
-            return $colors;
-        } else {
-            $colors = [];
-            $xmldb = $this->getXmlDb();
+        $colors = [];
+        $xmldb = $this->getXmlDb();
 
-            $doc = $xmldb->getDoc("colors");
-            $nodes = $doc->getNodeIdsByXpath("//proj:colorscheme[@name != 'tree_name_color_global']");
-            foreach ($nodes as $nodeId) {
-                $attr = $doc->getAttributes($nodeId);
-                $colors[$attr['name']] = $attr['name'];
-            }
-
-            $this->cache->set("dp_proj_{$this->name}_colors/colors.ser", $colors);
+        $doc = $xmldb->getDoc("colors");
+        $nodes = $doc->getNodeIdsByXpath("//proj:colorscheme[@name != 'tree_name_color_global']");
+        foreach ($nodes as $nodeId) {
+            $attr = $doc->getAttributes($nodeId);
+            $colors[$attr['name']] = $attr['name'];
         }
 
         return $colors;
@@ -681,6 +679,52 @@ class Project extends \Depage\Entity\Entity
         return $targets;
     }
     // }}}
+    // {{{ getTags()
+    /**
+     * @brief getTags
+     *
+     * @param mixed
+     * @return array of tags
+     **/
+    public function getTags()
+    {
+        $tags = [];
+        $this->xmldb = $this->getXmlDb();
+
+        $settings = $this->getSettingsDoc();
+        $nodes = $settings->getNodeIdsByXpath("//proj:tag");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $tags[$attr['name']] = $attr['name'];
+            // add support for localized names
+        }
+
+        return $tags;
+    }
+    // }}}
+    // {{{ getNavigations()
+    /**
+     * @brief getNavigations
+     *
+     * @param mixed
+     * @return array of navigations
+     **/
+    public function getNavigations()
+    {
+        $navs = [];
+        $this->xmldb = $this->getXmlDb();
+
+        $settings = $this->getSettingsDoc();
+        $nodes = $settings->getNodeIdsByXpath("//proj:navigation");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $navs[$attr['shortname']] = $attr['name'];
+            // add support for localized names
+        }
+
+        return $navs;
+    }
+    // }}}
     // {{{ getVariables()
     /**
      * @brief getVariables
@@ -690,20 +734,14 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getVariables()
     {
-        if ($variables = $this->cache->get("dp_proj_{$this->name}_settings/variables.ser")) {
-            return $variables;
-        } else {
-            $variables = [];
-            $this->xmldb = $this->getXmlDb();
+        $variables = [];
+        $this->xmldb = $this->getXmlDb();
 
-            $settings = $this->getSettingsDoc();
-            $nodes = $settings->getNodeIdsByXpath("//proj:variable");
-            foreach ($nodes as $nodeId) {
-                $attr = $settings->getAttributes($nodeId);
-                $variables[$attr['name']] = $attr['value'];
-            }
-
-            $this->cache->set("dp_proj_{$this->name}_settings/variables.ser", $variables);
+        $settings = $this->getSettingsDoc();
+        $nodes = $settings->getNodeIdsByXpath("//proj:variable");
+        foreach ($nodes as $nodeId) {
+            $attr = $settings->getAttributes($nodeId);
+            $variables[$attr['name']] = $attr['value'];
         }
 
         return $variables;
@@ -1143,7 +1181,7 @@ class Project extends \Depage\Entity\Entity
     **/
     public function updateXmlForNodeId($xsltProc, $id)
     {
-        $xmldb = $this->getXmldb();
+        $xmldb = $this->getXmlDb();
 
         $doc = $xmldb->getDocByNodeId($id);
         $node = $doc->getSubdocByNodeId($id);
