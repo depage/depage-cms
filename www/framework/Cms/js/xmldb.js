@@ -69,6 +69,15 @@ var DepageXmldb = (function() {
             });
         },
         // }}}
+        // {{{ setAttribute()
+        setAttribute: function(nodeId, name, value) {
+            this.ajaxCall("setAttribute", {
+                "id" : nodeId,
+                "name" : name,
+                "value" : value
+            });
+        },
+        // }}}
 
         // {{{ ajaxCall()
         ajaxCall: function(operation, data) {

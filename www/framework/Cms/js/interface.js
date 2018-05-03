@@ -557,7 +557,7 @@ var depageCMS = (function() {
             if (docref == "") return false;
 
             var $tree;
-            var url = baseUrl + "project/" + projectName + "/tree/"+ docref + "/";
+            var url = baseUrl + "project/" + projectName + "/tree/" + docref + "/";
 
             $pagedataTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                 $pagedataTreeContainer.addClass("loaded");
@@ -589,6 +589,7 @@ var depageCMS = (function() {
             currentDocPropertyId = nodeid;
 
             var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
+            var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
             $docPropertiesContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                 $docPropertiesContainer.addClass("loaded");
@@ -604,9 +605,23 @@ var depageCMS = (function() {
                     // @todo replace language more intelligently
                     currentPreviewUrl = currentPreviewUrl.replace(/\/pre\/..\//, "/pre/" + lang + "/");
                 });
+                $form.find(".page-navigations input").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "nav_" + this.value;
+                    var attrValue = this.checked ? 'true' : 'false';
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
+                $form.find(".page-tags input").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "tag_" + this.value;
+                    var attrValue = this.checked ? 'true' : 'false';
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
 
                 // @todo add ui for editing table columns and rows
-                // @todo keep squire from merging cells when deleteing at the beginning or end of cell
+                // @todo keep squire from merging cells when deleting at the beginning or end of cell
                 // @todo add support for better handling of tab key to jump between cells
 
                 localJS.hightlighCurrentDocProperty();

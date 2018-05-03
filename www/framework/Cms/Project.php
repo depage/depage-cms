@@ -494,6 +494,7 @@ class Project extends \Depage\Entity\Entity
 
             if ($currentDocId) {
                 $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
+                $docInfo->pageId = $node->getAttribute("db:id");
                 $docInfo->url = $node->getAttribute("url");
                 $docInfo->released = $node->getAttribute("db:released") == "true";
 

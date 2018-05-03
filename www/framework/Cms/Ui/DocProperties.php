@@ -293,6 +293,9 @@ class DocProperties extends Base
             'list' => $navs,
             'class' => 'page-navigations',
             'defaultValue' => $defaults,
+            'dataAttr' => [
+                'pageId' => $pageInfo->pageId,
+            ],
         ]);
 
         $tags = $this->project->getTags();
@@ -311,6 +314,9 @@ class DocProperties extends Base
             'list' => $tags,
             'class' => 'page-tags',
             'defaultValue' => $defaults,
+            'dataAttr' => [
+                'pageId' => $pageInfo->pageId,
+            ],
         ]);
 
         $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
@@ -320,10 +326,14 @@ class DocProperties extends Base
         $fs->addSingle("xmledit-$nodeId-pagetype", [
             'label' => "",
             'skin' => "select",
+            'class' => 'page-type',
             'list' => [
                 'html' => _("html"),
                 'text' => _("text"),
                 'php' => _("php"),
+            ],
+            'dataAttr' => [
+                'pageId' => $pageInfo->id,
             ],
         ]);
 

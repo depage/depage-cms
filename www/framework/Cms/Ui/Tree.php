@@ -135,6 +135,35 @@ class Tree extends Base {
     }
     // }}}
 
+    // {{{ setAttribute
+    /**
+     * Rename Node
+     *
+     * @return \json
+     */
+    public function setAttribute()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+        $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_STRING);
+
+        $this->doc->setAttribute($id, $name, $value);
+        $parent_id = $this->doc->getParentIdById($id);
+        $this->recordChange($this->docId, array($parent_id));
+        $status = true;
+
+        return new \Depage\Json\Json([
+            "status" => $status,
+            "docId" => $this->doc->getDocId(),
+            "id" => $id,
+            "name" => $name,
+            "value" => $value,
+        ]);
+        //return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+
     // {{{ renameNode
     /**
      * Rename Node
@@ -225,13 +254,13 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ duplicate_node
+    // {{{ duplicateNode
     /**
      * Duplicate Node
      *
      * @return \json
      */
-    public function duplicate_node()
+    public function duplicateNode()
     {
         $status = false;
         $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
