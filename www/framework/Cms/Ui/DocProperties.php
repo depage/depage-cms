@@ -23,6 +23,11 @@ class DocProperties extends Base
     protected $projectName = "";
 
     /**
+     * @brief docRef
+     **/
+    protected $docRef = null;
+
+    /**
      * @brief nodeId
      **/
     protected $nodeId = null;
@@ -61,10 +66,13 @@ class DocProperties extends Base
             $this->projectName = $this->urlSubArgs[0];
         }
         if (!empty($this->urlSubArgs[1])) {
-            $this->nodeId = $this->urlSubArgs[1];
+            $this->docRef = $this->urlSubArgs[1];
+        }
+        if (!empty($this->urlSubArgs[2])) {
+            $this->nodeId = $this->urlSubArgs[2];
         }
 
-        $this->project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
+        $this->project = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $this->projectName)[0];
         $this->xmldb = $this->project->getXmlDb($this->authUser->id);
 
         $this->languages = array_keys($this->project->getLanguages());
@@ -115,6 +123,10 @@ class DocProperties extends Base
             'class' => "labels-on-top",
         ]);
 
+        if ($node->getAttribute("icon")) {
+            //$this->form->addHtml("<p>Icon: " . $node->getAttribute("icon") . "</p>");
+        }
+
         if ($callback = $this->getCallbackForNode($node)) {
             $this->$callback($node);
         }
@@ -137,7 +149,7 @@ class DocProperties extends Base
         // @todo clean unsed session?
 
         $h .= $this->form;
-        $h .= htmlentities($xml->saveXML($node));
+        //$h .= htmlentities($xml->saveXML($node));
 
         $output = new Html([
             'title' => "edit",
@@ -246,16 +258,75 @@ class DocProperties extends Base
     protected function addPgMeta($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $pageInfo = $this->project->getPages($this->docRef)[0];
+
+        $fs = $this->form->addFieldset("xmledit-$nodeId-lastchange-fs", [
+            'label' => _("Last Change"),
+            'class' => "doc-property-fieldset",
+        ]);
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
-
-        $fs = $this->getLangFieldset($node, _("Colorscheme"));
+        $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
+            'label' => _("Colorscheme"),
+            'class' => "doc-property-fieldset",
+        ]);
         $fs->addSingle("colorscheme-$nodeId", [
             'label' => "",
             'list' => $list,
             'skin' => "select",
             'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
         ]);
+
+        $navs = $this->project->getNavigations();
+        $defaults = [];
+        foreach ($navs as $key => $val) {
+            if ($pageInfo->nav[$key] == 'true') {
+                $defaults[] = $key;
+            }
+        }
+        $fs = $this->form->addFieldset("xmledit-$nodeId-navigation-fs", [
+            'label' => _("Navigation"),
+            'class' => "doc-property-fieldset",
+        ]);
+        $fs->addMultiple("xmledit-$nodeId-navigation", [
+            'label' => "",
+            'list' => $navs,
+            'class' => 'page-navigations',
+            'defaultValue' => $defaults,
+        ]);
+
+        $tags = $this->project->getTags();
+        $defaults = [];
+        foreach ($tags as $key => $val) {
+            if ($pageInfo->tags[$key] == 'true') {
+                $defaults[] = $key;
+            }
+        }
+        $fs = $this->form->addFieldset("xmledit-$nodeId-tags-fs", [
+            'label' => _("Tags"),
+            'class' => "doc-property-fieldset",
+        ]);
+        $fs->addMultiple("xmledit-$nodeId-tags", [
+            'label' => "",
+            'list' => $tags,
+            'class' => 'page-tags',
+            'defaultValue' => $defaults,
+        ]);
+
+        $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
+            'label' => _("Pagetype"),
+            'class' => "doc-property-fieldset",
+        ]);
+        $fs->addSingle("xmledit-$nodeId-pagetype", [
+            'label' => "",
+            'skin' => "select",
+            'list' => [
+                'html' => _("html"),
+                'text' => _("text"),
+                'php' => _("php"),
+            ],
+        ]);
+
     }
     // }}}
     // {{{ addPgTitle()
@@ -498,6 +569,27 @@ class DocProperties extends Base
         $f = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Audio")),
             'class' => "edit-audio",
+        ]);
+        $f->addText("xmledit-$nodeId-src", [
+            'label' => $this->getLabelForNode($node, _("src")),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+        ]);
+    }
+    // }}}
+    // {{{ addEditVideo()
+    /**
+     * @brief addEditVideo
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditVideo($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $f = $this->form->addFieldset("xmledit-$nodeId", [
+            'label' => $this->getLabelForNode($node, _("Video")),
+            'class' => "edit-video",
         ]);
         $f->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
