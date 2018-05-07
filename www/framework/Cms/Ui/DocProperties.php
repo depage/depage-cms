@@ -259,11 +259,19 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $pageInfo = $this->project->getPages($this->docRef)[0];
+        $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
+        $dateFormatter = new \Depage\Formatters\DateNatural();
+        //var_dump($pageInfo);
 
         $fs = $this->form->addFieldset("xmledit-$nodeId-lastchange-fs", [
             'label' => _("Last Change"),
             'class' => "doc-property-fieldset",
         ]);
+        $fs->addHtml(sprintf(
+            _("<p>%s<br>by %s</p>"),
+            $dateFormatter->format($pageInfo->lastchange, true),
+            htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
+        ));
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
         $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
