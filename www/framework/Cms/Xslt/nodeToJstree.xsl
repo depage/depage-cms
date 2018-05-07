@@ -32,7 +32,16 @@
         <xsl:param name="showChildren" select="true()" />
         <xsl:param name="name" select="@name" />
 
-        <xsl:variable name="id" select="@db:id" />
+        <xsl:variable name="id">
+            <xsl:choose>
+                <xsl:when test="name() = 'pg:page'">
+                    page_<xsl:value-of select="@url" />
+                </xsl:when>
+                <xsl:otherwise>
+                    node_<xsl:value-of select="@db:id" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="type" select="name()" />
         <xsl:variable name="icon">
             <xsl:value-of select="concat('icon-', translate($type, ':', '_'))" />
@@ -47,10 +56,10 @@
 
         <li
             rel="{$type}"
-            id="node_{$id}"
+            id="{$id}"
             data-doc-ref="{@db:docref}"
             data-url="{@url}"
-            data-node-id="{$id}">
+            data-node-id="{@db:id}">
             <a href="{$href}" class="{$icon}">
                 <xsl:value-of select="$name" />
                 <xsl:apply-templates select="." mode="hint" />
@@ -146,7 +155,7 @@
                icon-edit_audio
             </xsl:when>
             <xsl:when test="count(edit:img) &gt; 0 and count(edit:text_multiline | edit:text_formatted) &gt; 0">
-               icon-edit_imgtext
+            icon-edit_imgtext
             </xsl:when>
             <xsl:when test="count(edit:img) &gt; 0">
                icon-edit_img
@@ -154,7 +163,7 @@
             <xsl:when test="count(edit:text_headline) &gt; 0">
                icon-edit_headline
             </xsl:when>
-            <xsl:when test="count(edit:text_multiline | edit:text_formatted) &gt; 0">
+            <xsl:when test="count(edit:text_singleline | edit:text_multiline | edit:text_formatted) &gt; 0">
                icon-edit_text
             </xsl:when>
             <xsl:when test="count(edit:a) &gt; 0">

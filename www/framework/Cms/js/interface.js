@@ -50,6 +50,9 @@ var depageCMS = (function() {
         $pagedataTreeContainer,
         $docPropertiesContainer;
 
+    var jstreePages;
+    var jstreePagedata;
+
     var currentLayout;
     var locale = depageCMSlocale[lang];
 
@@ -375,8 +378,6 @@ var depageCMS = (function() {
                 $sortable.find(".sortable").each( function() {
                     var $container = $(this);
                     var $head = $(this).find("h1");
-                    var $form = $(this).find("form");
-                    var xmldb = new DepageXmldb(baseUrl, $form.attr("data-project"), $form.attr("data-document"));
 
                     $head.on("click", function() {
                         if ($container.hasClass("active")) {
@@ -530,7 +531,7 @@ var depageCMS = (function() {
                 $pageTreeContainer.addClass("loaded");
                 $tree = $pageTreeContainer.children(".jstree-container");
 
-                var jstree = $tree.depageTree()
+                jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         localJS.loadPagedataTree(data.node.data.docRef);
 
@@ -541,7 +542,7 @@ var depageCMS = (function() {
                     })
                     .jstree(true);
 
-                jstree.activate_node($tree.find("ul:first li:first")[0]);
+                jstreePages.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}
@@ -563,7 +564,7 @@ var depageCMS = (function() {
                 $pagedataTreeContainer.addClass("loaded");
                 $tree = $pagedataTreeContainer.children(".jstree-container");
 
-                var jstree = $tree.depageTree()
+                jstreePagedata = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         var nodeId = null;
                         if (typeof data.node.data.nodeId !== 'undefined') {
@@ -573,12 +574,12 @@ var depageCMS = (function() {
                     })
                     .on("ready.jstree", function () {
                         $tree.find("ul:first li").each(function() {
-                            jstree.open_node(this, false, false);
+                            jstreePagedata.open_node(this, false, false);
                         });
                     })
                     .jstree(true);
 
-                jstree.activate_node($tree.find("ul:first li:first")[0]);
+                jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}
@@ -772,17 +773,17 @@ var depageCMS = (function() {
         // }}}
         // {{{ edit
         edit: function(projectName, page) {
-            if (parent != window) {
-                parent.depageCMS.edit(projectName, page);
-            } else if ($flashFrame.length == 1) {
-                var flash = $flashFrame.contents().find("#flash")[0];
-                flash.SetVariable("/:gotopage",page);
-                flash.Play();
-
-                if (currentLayout != "split" && currentLayout != "tree-split") {
-                    $window.triggerHandler("switchLayout", "split");
+            if (jstreePages) {
+                var node = jstreePages.get_node("page_" + page);
+                if (!node) {
+                    page = page.replace(/\.html$/, ".php");
+                    node = jstreePages.get_node("page_" + page);
+                }
+                if (node) {
+                    jstreePages.activate_node(node);
                 }
             } else {
+                // @todo updated for jsinterface
                 $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
                     var $result = $("<div></div>")
                         .html( data )
