@@ -92,7 +92,9 @@
 
         // {{{ onRename
         base.onRename= function(e, param) {
-            // @todo check if old name != new name
+            if (param.text == param.old) {
+                return;
+            }
             xmldb.renameNode(param.node.data.nodeId, param.text);
 
             jstree.disable_node(param.node);
@@ -107,7 +109,7 @@
         // {{{ onMove
         base.onMove = function(e, param) {
             // @todo correct position if parent stay the same?
-            var $node = $("#node_" + param.node.data.nodeId);
+            var $node = $("li[data-node-id='" + param.node.data.nodeId + "']", base.$el);
             var $parent = $node.parent().parent();
 
             xmldb.moveNode($node.data("node-id"), $parent.data("node-id"), param.position);
@@ -117,7 +119,7 @@
         // }}}
         // {{{ onCopy
         base.onCopy = function(e, param) {
-            var $node = $("#node_" + param.original.data.nodeId);
+            var $node = $("li[data-node-id='" + param.original.data.nodeId + "']", base.$el);
             var $parent = $node.parent().parent();
 
             xmldb.copyNode($node.data("node-id"), $parent.data("node-id"), param.position);
@@ -469,9 +471,9 @@
                     return false;
                 }
 
-                console.log(operation, node.li_attr.rel);
-                console.log(node);
-                console.log(node_parent);
+                //console.log(operation, node.li_attr.rel);
+                //console.log(node);
+                //console.log(node_parent);
                 return true;
             }
         },
