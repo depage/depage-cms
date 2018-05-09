@@ -132,7 +132,7 @@ class Request {
 
         curl_close($ch);
 
-        return new Response($header, $body, $info);
+        return new Response($body, $header, $info);
     }
     // }}}
 
