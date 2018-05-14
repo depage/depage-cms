@@ -170,6 +170,25 @@ class Response {
         }
     }
     // }}}
+    // {{{ getHeader()
+    /**
+     * @brief getHeader
+     *
+     * @param mixed $key
+     * @return void
+     **/
+    public function getHeader($search)
+    {
+        foreach($this->headers as $header) {
+            list($key, $value) = array_replace(array("", ""), explode(": ", $header));
+            if (strtolower($key) == strtolower($search)) {
+                return trim($value);
+            }
+        }
+
+        return "";
+    }
+    // }}}
 
     // {{{ __get()
     /**
