@@ -21,4 +21,4 @@ CREATE TABLE `_proj_PROJECTNAME_newsletter_subscribers` (
 /*
     @version 1.5.24
 */
-ALTER TABLE _proj_PROJECTNAME_newsletter_subscribers ADD COLUMN validation varchar(40) NOT NULL AFTER category;
+ALTER TABLE _proj_PROJECTNAME_newsletter_subscribers ADD COLUMN validation varchar(40) DEFAULT NULL AFTER category;

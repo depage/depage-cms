@@ -568,7 +568,39 @@ class Newsletter
             'validation' => $validation,
         ]);
 
-        return $validation;
+        if ($success) {
+            return $validation;
+        }
+
+        return false;
+    }
+    // }}}
+    // {{{ isSubscriber()
+    /**
+     * @brief isSubscriber
+     *
+     * @param mixed $email, $lang = "en", $category = "Default"
+     * @return void
+     **/
+    public function isSubscriber($email, $lang = "en", $category = "Default")
+    {
+        $query = $this->pdo->prepare(
+            "SELECT COUNT(*) AS n FROM
+                {$this->tableSubscribers}
+            WHERE
+                email=:email AND
+                category=:category AND
+                lang=:lang AND
+                validation IS NULL
+            "
+        );
+        $success = $query->execute([
+            'email' => $email,
+            'lang' => $lang,
+            'category' => $category,
+        ]);
+
+        return $query->fetchObject()->n > 0;
     }
     // }}}
     // {{{ confirm()

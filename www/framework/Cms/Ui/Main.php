@@ -465,6 +465,8 @@ class Main extends Base {
 
                 if ($values && $action == "subscribe") {
                     $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                } else if ($values && $action == "is-subscriber") {
+                    $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
                 } else if ($values && $action == "confirm") {
                     $retVal['success'] = $newsletter->confirm($values->validation);
                 } else if ($values && $action == "unsubscribe") {
