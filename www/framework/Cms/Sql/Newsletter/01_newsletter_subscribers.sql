@@ -1,5 +1,5 @@
 /*
-    Comments Tabe
+    Newsletter subscriber table
     -----------------------------------
 
     @tablename _proj_PROJECTNAME_newsletter_subscribers
@@ -18,3 +18,7 @@ CREATE TABLE `_proj_PROJECTNAME_newsletter_subscribers` (
   KEY `SECONDARY` (`email`, `category`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+/*
+    @version 1.5.24
+*/
+ALTER TABLE _proj_PROJECTNAME_newsletter_subscribers ADD COLUMN validation varchar(40) NOT NULL AFTER category;

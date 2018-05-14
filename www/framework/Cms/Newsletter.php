@@ -541,6 +541,7 @@ class Newsletter
      **/
     public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
     {
+        $validation = sha1($email . uniqid(dechex(mt_rand(256, 4095))));
         $this->unsubscribe($email, $lang, $category);
 
         $query = $this->pdo->prepare(
@@ -553,7 +554,8 @@ class Newsletter
                 lastname=:lastname,
                 description=:description,
                 category=:category,
-                lang=:lang
+                lang=:lang,
+                validation=:validation
             "
         );
         $success = $query->execute([
@@ -563,6 +565,32 @@ class Newsletter
             'description' => $description,
             'lang' => $lang,
             'category' => $category,
+            'validation' => $validation,
+        ]);
+
+        return $validation;
+    }
+    // }}}
+    // {{{ confirm()
+    /**
+     * @brief confirm
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function confirm($validation)
+    {
+        $query = $this->pdo->prepare(
+            "UPDATE
+                {$this->tableSubscribers}
+            SET
+                validation=NULL
+            WHERE
+                validation=:validation
+            "
+        );
+        $success = $query->execute([
+            'validation' => $validation,
         ]);
 
         return $success;
