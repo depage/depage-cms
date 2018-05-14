@@ -613,10 +613,15 @@ class Newsletter
     public function confirm($validation)
     {
         $query = $this->pdo->prepare(
-            "UPDATE
+            "SELECT
+                email,
+                firstname,
+                lastname,
+                description,
+                lang,
+                category
+            FROM
                 {$this->tableSubscribers}
-            SET
-                validation=NULL
             WHERE
                 validation=:validation
             "
@@ -624,6 +629,23 @@ class Newsletter
         $success = $query->execute([
             'validation' => $validation,
         ]);
+
+        if ($subscriber = $query->fetchObject()) {
+            $query = $this->pdo->prepare(
+                "UPDATE
+                    {$this->tableSubscribers}
+                SET
+                    validation=NULL
+                WHERE
+                    validation=:validation
+                "
+            );
+            $success = $query->execute([
+                'validation' => $validation,
+            ]);
+
+            return $subscriber;
+        }
 
         return $success;
     }
@@ -653,7 +675,7 @@ class Newsletter
             'category' => $category,
         ]);
 
-        return $success;
+        return $query->rowCount() > 0;
 
     }
     // }}}
