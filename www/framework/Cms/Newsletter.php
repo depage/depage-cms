@@ -635,7 +635,8 @@ class Newsletter
                 "UPDATE
                     {$this->tableSubscribers}
                 SET
-                    validation=NULL
+                    validation=NULL,
+                    validatedAt=NOW()
                 WHERE
                     validation=:validation
                 "
