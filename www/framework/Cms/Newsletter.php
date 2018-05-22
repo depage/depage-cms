@@ -541,7 +541,10 @@ class Newsletter
      **/
     public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
     {
-        $validation = sha1($email . uniqid(dechex(mt_rand(256, 4095))));
+        list($validation, $validatedAt, $subscribedAt) = $this->getValidationFor($email);
+        if ($validation === false) {
+            $validation = sha1($email . uniqid(dechex(mt_rand(256, 4095))));
+        }
         $this->unsubscribe($email, $lang, $category);
 
         $query = $this->pdo->prepare(
@@ -555,7 +558,9 @@ class Newsletter
                 description=:description,
                 category=:category,
                 lang=:lang,
-                validation=:validation
+                validation=:validation,
+                validatedAt=:validatedAt,
+                subscribedAt=:subscribedAt
             "
         );
         $success = $query->execute([
@@ -566,6 +571,8 @@ class Newsletter
             'lang' => $lang,
             'category' => $category,
             'validation' => $validation,
+            'validatedAt' => $validatedAt,
+            'subscribedAt' => $subscribedAt,
         ]);
 
         if ($success) {
@@ -579,21 +586,22 @@ class Newsletter
     /**
      * @brief isSubscriber
      *
-     * @param mixed $email, $lang = "en", $category = "Default"
+     * @param mixed $email
      * @return void
      **/
-    public function isSubscriber($email, $lang = "en", $category = "Default")
+    public function isSubscriber($email, $lang, $category)
     {
         $query = $this->pdo->prepare(
             "SELECT COUNT(*) AS n FROM
                 {$this->tableSubscribers}
             WHERE
                 email=:email AND
-                category=:category AND
                 lang=:lang AND
+                category=:category AND
                 validation IS NULL
             "
         );
+
         $success = $query->execute([
             'email' => $email,
             'lang' => $lang,
@@ -601,6 +609,33 @@ class Newsletter
         ]);
 
         return $query->fetchObject()->n > 0;
+    }
+    // }}}
+    // {{{ getValidationFor()
+    /**
+     * @brief getValidationFor
+     *
+     * @param mixed $email
+     * @return void
+     **/
+    protected function getValidationFor($email)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT validation, validatedAt, subscribedAt FROM
+                {$this->tableSubscribers}
+            WHERE
+                email=:email
+            "
+        );
+        $success = $query->execute([
+            'email' => $email,
+        ]);
+
+        if ($r = $query->fetchObject()) {
+            return [$r->validation, $r->validatedAt, $r->subscribedAt];
+        }
+
+        return [false, null, null];
     }
     // }}}
     // {{{ confirm()
@@ -618,8 +653,7 @@ class Newsletter
                 firstname,
                 lastname,
                 description,
-                lang,
-                category
+                lang
             FROM
                 {$this->tableSubscribers}
             WHERE

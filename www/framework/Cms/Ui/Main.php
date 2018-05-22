@@ -464,7 +464,8 @@ class Main extends Base {
                 $values = json_decode(file_get_contents("php://input"));
 
                 if ($values && $action == "subscribe") {
-                    $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                    $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                    $retVal['success'] = true;
                 } else if ($values && $action == "is-subscriber") {
                     $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
                 } else if ($values && $action == "confirm") {
