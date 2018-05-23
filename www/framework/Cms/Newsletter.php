@@ -532,6 +532,7 @@ class Newsletter
         }
     }
     // }}}
+
     // {{{ subscribe()
     /**
      * @brief subscribe
@@ -541,6 +542,8 @@ class Newsletter
      **/
     public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
     {
+        $this->clearUnconfirmed();
+
         list($validation, $validatedAt, $subscribedAt) = $this->getValidationFor($email);
         if ($validation === false) {
             $validation = sha1($email . uniqid(dechex(mt_rand(256, 4095))));
@@ -714,6 +717,26 @@ class Newsletter
 
     }
     // }}}
+    // {{{ clearUnconfirmed()
+    /**
+     * @brief clearUnconfirmed
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function clearUnconfirmed()
+    {
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->tableSubscribers}
+            WHERE
+                validation IS NOT NULL AND
+                subscribedAt < ADDDATE(NOW(),INTERVAL -2 WEEK)            "
+        );
+
+        return $query->execute();
+    }
+    // }}}
+
     // {{{ track()
     /**
      * @brief track
