@@ -339,15 +339,13 @@ class Project extends \Depage\Entity\Entity
         }
 
         // update schema for newsletter
-        if ($this->hasNewsletter()) {
-            $files = array_merge(
-                glob(__DIR__ . "/Sql/Newsletter/*.sql")
-            );
-            sort($files);
-            foreach ($files as $file) {
-                $schema->loadFile($file);
-                $schema->update();
-            }
+        $files = array_merge(
+            glob(__DIR__ . "/Sql/Newsletter/*.sql")
+        );
+        sort($files);
+        foreach ($files as $file) {
+            $schema->loadFile($file);
+            $schema->update();
         }
     }
     // }}}
