@@ -26,7 +26,7 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    protected function __construct($pdo, $project, $name)
+    public function __construct($pdo, $project, $name)
     {
         $this->project = $project;
         $this->name = $name;

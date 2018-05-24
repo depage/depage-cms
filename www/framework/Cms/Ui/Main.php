@@ -459,7 +459,7 @@ class Main extends Base {
         if ($type == "newsletter") {
             try {
                 $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+                $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
 
                 $values = json_decode(file_get_contents("php://input"));
 
