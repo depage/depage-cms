@@ -51,7 +51,7 @@ class HttpCookie extends Auth
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        $this->cookiePath = $url['path'] ?? "/";
+        $this->cookiePath = !empty($url['path']) ? $url['path'] : '';
 
         $cookiePrefix = $this->realm . "-" . $url['host'];
         $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
