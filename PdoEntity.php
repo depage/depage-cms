@@ -33,7 +33,8 @@ abstract class PdoEntity extends Entity
      * @param mixed $
      * @return void
      **/
-    abstract static public function loadBy($pdo, Array $search, Array $order = []);
+    static public function loadBy($pdo, Array $search, Array $order = []) {
+    }
     // }}}
     // {{{ save()
     /**
