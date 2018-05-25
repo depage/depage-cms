@@ -244,6 +244,15 @@ class HttpCookie extends Auth
                 $this->cookieName,
                 '',
                 time() - 42000,
+                "",
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
+            setcookie(
+                $this->cookieName,
+                '',
+                time() - 42000,
                 $params['path'],
                 $params['domain'],
                 $params['secure'],
