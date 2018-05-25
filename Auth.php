@@ -8,9 +8,9 @@
  * handling.
  *
  *
- * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2014 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  *
  * @todo look into http://www.openwall.com/articles/PHP-Users-Passwords
  */
@@ -24,12 +24,12 @@ namespace Depage\Auth;
 abstract class Auth
 {
     // {{{ variables
-    protected $realm = "depage::cms";
+    public $realm = "depage::cms";
     protected $domain = "";
-    protected $digestCompat = false;
+    public $digestCompat = false;
     public $sid, $uid;
     public $valid = false;
-    public $sessionLifetime = 10800; // in seconds
+    public $sessionLifetime = 172801; // in seconds
     public $privateKey = "private Key";
     protected $user = null;
     public $justLoggedOut = false;
@@ -44,7 +44,7 @@ abstract class Auth
      *
      * @public
      *
-     * @param       Depage\Db\Pdo  $pdo        depage\DB\PDO object for database access
+     * @param       Depage\Db\Pdo  $pdo        depage\Db\PDO object for database access
      * @param       string  $realm      realm to use for http-basic and http-digest auth
      * @param       domain  $domain     domain to use for cookie and auth validity
      *
@@ -151,7 +151,7 @@ abstract class Auth
             );
             $timestamp_query->execute(array(
                 ':sid' => $sid,
-                ':ip' => $_SERVER['REMOTE_ADDR'],
+                ':ip' => \Depage\Http\Request::getRequestIp(),
             ));
 
             $this->uid = $result[0]['userid'];
@@ -211,6 +211,7 @@ abstract class Auth
         } else {
             $this->sid = $sid;
         }
+        $ip = \Depage\Http\Request::getRequestIp();
         if (is_null($uid)) {
             $update_query = $this->pdo->prepare(
                 "REPLACE INTO
@@ -221,8 +222,8 @@ abstract class Auth
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
-                ':sid' => $this->sid,
-                'ip' => $_SERVER['REMOTE_ADDR'],
+                'sid' => $this->sid,
+                'ip' => $ip,
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
         } else {
@@ -238,9 +239,9 @@ abstract class Auth
                     ip = :ip,
                     useragent = :useragent"
             )->execute(array(
-                ':sid' => $this->sid,
-                ':uid' => $this->uid,
-                'ip' => $_SERVER['REMOTE_ADDR'],
+                'sid' => $this->sid,
+                'uid' => $this->uid,
+                'ip' => $ip,
                 'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
 
@@ -255,6 +256,21 @@ abstract class Auth
                     id = :uid"
             )->execute(array(
                 ':uid' => $this->uid,
+            ));
+
+            // add login entry to auth log
+            $query = $this->pdo->prepare(
+                "INSERT INTO
+                    {$this->pdo->prefix}_auth_log
+                SET
+                    userid = :uid,
+                    dateLogin = NOW(),
+                    ip = :ip,
+                    useragent = :useragent"
+            )->execute(array(
+                'uid' => $this->uid,
+                'ip' => $ip,
+                'useragent' => $_SERVER['HTTP_USER_AGENT'],
             ));
         }
 
@@ -302,34 +318,7 @@ abstract class Auth
 
     // {{{ getActiveUsers()
     function getActiveUsers() {
-        $users = array();
-
-        // get logged in users
-        $user_query = $this->pdo->prepare(
-            "SELECT
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level,
-                sessions.project AS project,
-                sessions.ip AS ip,
-                sessions.dateLastUpdate AS dateLastUpdate,
-                sessions.useragent AS useragent
-            FROM
-                {$this->pdo->prefix}_auth_user AS user,
-                {$this->pdo->prefix}_auth_sessions AS sessions
-            WHERE
-                user.id=sessions.userid"
-        );
-
-        $user_query->execute();
-        while ($user = $user_query->fetchObject("auth_user", array($this->pdo))) {
-            $users[] = $user;
-        }
-        return $users;
+        return User::loadActive($this->pdo);
     }
     // }}}
 
@@ -377,17 +366,17 @@ abstract class Auth
      *
      * @return void
      **/
-    public function updateSchema()
+    public static function updateSchema($pdo)
     {
-        $pdo = $this->pdo; // needed reference for php 5.3
         $schema = new \Depage\Db\Schema($pdo);
 
-        $schema
-            ->setReplace(function ($tableName) use ($pdo) {
-                return $pdo->prefix . "_" . $tableName;
-            })
-            ->loadGlob(__DIR__ . "/SQL/*.sql")
-            ->update();
+        $schema->setReplace(
+            function ($tableName) use ($pdo) {
+                return $pdo->prefix . $tableName;
+            }
+        );
+        $schema->loadGlob(__DIR__ . "/Sql/*.sql");
+        $schema->update();
     }
     // }}}
 }

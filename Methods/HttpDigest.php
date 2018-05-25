@@ -8,9 +8,9 @@
  * handling.
  *
  *
- * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depage.net]
  *
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 namespace Depage\Auth\Methods;
 
@@ -90,18 +90,20 @@ class HttpDigest extends HttpBasic
             $this->setSid("");
         }
         if (!empty($digest_header) && $data = $this->httpDigestParse($digest_header)) {
-            // get new user object
-            $user = User::loadByUsername($this->pdo, $data['username']);
-            $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
+            try {
+                // get new user object
+                $user = User::loadByUsername($this->pdo, $data['username']);
+                $validResponse = $this->checkResponse($data, isset($user->passwordhash) ? $user->passwordhash : "");
 
-            if ($user) {
                 if ($validResponse) {
                     if (($uid = $this->isValidSid($this->sid)) !== false) {
                         if ($uid == "") {
-                            $this->log->log("'{$user->name}' has logged in from '{$_SERVER["REMOTE_ADDR"]}'", "auth");
+                            $ipAddress = \Depage\Http\Request::getRequestIp();
+                            $this->log->log("'{$user->name}' has logged in from '{$ipAddress}'", "auth");
                             $sid = $this->registerSession($user->id, $this->sid);
                         }
                         $this->startSession();
+                        $user->sid = $sid;
 
                         return $user;
                     } elseif ($this->hasSession()) {
@@ -110,6 +112,7 @@ class HttpDigest extends HttpBasic
                 } else {
                     $this->prolongLogin($user);
                 }
+            } catch (\Depage\Auth\Exceptions\User $e) {
             }
         }
 
@@ -224,8 +227,9 @@ class HttpDigest extends HttpBasic
     // }}}
     // {{{ getNonce
     protected function getNonce() {
+        $ipAddress = \Depage\Http\Request::getRequestIp();
         $time = ceil(time() / $this->sessionLifetime) * $this->sessionLifetime;
-        $hash = md5(date('Y-m-d H:i', $time).':'.$_SERVER['REMOTE_ADDR'].':'.$this->privateKey);
+        $hash = md5(date('Y-m-d H:i', $time).':'.$ipAddress.':'.$this->privateKey);
 
         return $hash;
     }

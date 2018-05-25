@@ -8,11 +8,11 @@
  * handling.
  *
  *
- * copyright (c) 2010 Frank Hellenkamp [jonas@depagecms.net]
+ * copyright (c) 2010 Frank Hellenkamp [jonas@depage.net]
  * copyright (c) 2010 Lion Vollnhals
  *
  * @author    Lion Vollnhals
- * @author    Frank Hellenkamp [jonas@depagecms.net]
+ * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
 namespace Depage\Auth\Methods;
@@ -51,8 +51,17 @@ class HttpCookie extends Auth
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        $this->cookiePath = $url['path'];
+        $this->cookiePath = $url['path'] ?? "/";
 
+        $cookiePrefix = $this->realm . "-" . $url['host'];
+        $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
+        $cookiePrefix = trim($cookiePrefix, "-");
+        if (!empty($cookiePrefix)) {
+            $this->cookieName = "$cookiePrefix-sid";
+        }
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+            $this->cookieSecure = true;
+        }
         session_name($this->cookieName);
         session_set_cookie_params(
             $this->sessionLifetime,
@@ -85,7 +94,7 @@ class HttpCookie extends Auth
                 if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
                     $redirectTo = urlencode($_SERVER['REQUEST_URI']);
 
-                    \Depage\Depage\Runner::redirect("$loginUrl?redirectTo=$redirectTo");
+                    \Depage\Router\Router::redirect("$loginUrl?redirectTo=$redirectTo");
                 }
             }
         }
@@ -100,7 +109,7 @@ class HttpCookie extends Auth
     public function enforceLazy() {
         if (!$this->user) {
             if ($this->hasSession()) {
-                if ($this->isValidSid($_COOKIE[session_name()])) {
+                if (isset($_COOKIE[$this->cookieName]) && $this->isValidSid($_COOKIE[$this->cookieName])) {
                     $this->user = $this->authCookie();
                 } else {
                     $this->justLoggedOut = true;
@@ -118,38 +127,48 @@ class HttpCookie extends Auth
     public function enforceLogout() {
         if ($this->hasSession()) {
             $this->justLoggedOut = true;
-            $this->logout($_COOKIE[session_name()]);
+            $this->logout($_COOKIE[$this->cookieName]);
             $this->destroySession();
         }
     }
     /* }}} */
-    /* {{{ login() */
-    public function login($username, $password) {
-        if (strpos($username, "@") !== false) {
-            // email login
-            $user = User::loadByEmail($this->pdo, $username);
-            if ($user) {
-                $username = $user->name;
+    /* {{{ check() */
+    public function check($username, $password) {
+        try {
+            if (strpos($username, "@") !== false) {
+                // email login
+                $user = User::loadByEmail($this->pdo, $username);
+            } else {
+                // username login
+                $user = User::loadByUsername($this->pdo, $username);
             }
-        } else {
-            // username login
-            $user = User::loadByUsername($this->pdo, $username);
-        }
-        $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
+            $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
-        if ($user) {
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
                 $this->updatePasswordHash($user, $password);
 
-                $this->destroySession();
-                $this->registerSession($user->id);
-                $this->startSession();
-
-                return true;
+                return $user;
             } else {
                 $this->prolongLogin($user);
             }
+        } catch (\Depage\Auth\Exceptions\User $e) {
         }
+
+        return false;
+    }
+    /* }}} */
+    /* {{{ login() */
+    public function login($username, $password) {
+        $user = $this->check($username, $password);
+
+        if ($user) {
+            $this->destroySession();
+            $this->registerSession($user->id);
+            $this->startSession();
+
+            return true;
+        }
+
         return false;
     }
     /* }}} */
@@ -166,7 +185,9 @@ class HttpCookie extends Auth
                 return $user;
             } else {
                 $this->justLoggedOut = true;
-                $this->log->log("http_auth_cookie: invalid session ID");
+                if (!empty($this->log)) {
+                    $this->log->log("http_auth_cookie: invalid session ID");
+                }
             }
         }
 
@@ -183,8 +204,10 @@ class HttpCookie extends Auth
 
         $sessionName = session_name();
 
-        session_id($sid);
-        @session_start();
+        if (!is_callable("session_status") || session_status() !== \PHP_SESSION_ACTIVE) {
+            session_id($sid);
+            session_start();
+        }
 
         // Override session cookie and extend the expiration time upon page load
         if (isset($_COOKIE[$sessionName])) {
@@ -203,20 +226,29 @@ class HttpCookie extends Auth
     // }}}
     // {{{ hasSession()
     protected function hasSession() {
-        if (is_callable("session_status") && session_status() == PHP_SESSION_ACTIVE) {
+        if (is_callable("session_status") && session_status() == \PHP_SESSION_ACTIVE) {
             // PHP 5.4
             return true;
         } else {
             // PHP 5.3
-            return isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != "";
+            return isset($_COOKIE[$this->cookieName]) && $_COOKIE[$this->cookieName] != "";
         }
     }
     // }}}
     // {{{ destroySession()
     protected function destroySession() {
-        if (!is_callable("session_status") || session_status() == PHP_SESSION_ACTIVE) {
+        if (!is_callable("session_status") || session_status() == \PHP_SESSION_ACTIVE) {
             // delete cookie
             $params = session_get_cookie_params();
+            setcookie(
+                $this->cookieName,
+                '',
+                time() - 42000,
+                "",
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
             setcookie(
                 $this->cookieName,
                 '',
@@ -226,7 +258,7 @@ class HttpCookie extends Auth
                 $params['secure'],
                 $params['httponly']
             );
-            unset($_COOKIE[session_name()]);
+            unset($_COOKIE[$this->cookieName]);
             session_destroy();
         }
     }
