@@ -24,3 +24,7 @@ CREATE TABLE `_auth_sessions` (
 /*
     @version 1.5.3
 */
+/*
+    @version 1.5.4
+*/
+ALTER TABLE `_auth_sessions` MODIFY `ip` varchar(45) DEFAULT NULL;
