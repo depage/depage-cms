@@ -15,3 +15,8 @@ CREATE TABLE `_auth_log` (
     KEY `userId` (`userId`),
     CONSTRAINT `_auth_log_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `_auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 1.5.4
+*/
+ALTER TABLE `_auth_log` MODIFY `ip` varchar(45) DEFAULT NULL;
