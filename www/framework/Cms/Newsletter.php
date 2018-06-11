@@ -26,7 +26,7 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    protected function __construct($pdo, $project, $name)
+    public function __construct($pdo, $project, $name)
     {
         $this->project = $project;
         $this->name = $name;
@@ -532,6 +532,7 @@ class Newsletter
         }
     }
     // }}}
+
     // {{{ subscribe()
     /**
      * @brief subscribe
@@ -541,6 +542,12 @@ class Newsletter
      **/
     public function subscribe($email, $firstname = "", $lastname = "", $description = "", $lang = "en", $category = "Default")
     {
+        $this->clearUnconfirmed();
+
+        list($validation, $validatedAt, $subscribedAt) = $this->getValidationFor($email);
+        if ($validation === false) {
+            $validation = sha1($email . uniqid(dechex(mt_rand(256, 4095))));
+        }
         $this->unsubscribe($email, $lang, $category);
 
         $query = $this->pdo->prepare(
@@ -553,7 +560,10 @@ class Newsletter
                 lastname=:lastname,
                 description=:description,
                 category=:category,
-                lang=:lang
+                lang=:lang,
+                validation=:validation,
+                validatedAt=:validatedAt,
+                subscribedAt=:subscribedAt
             "
         );
         $success = $query->execute([
@@ -563,7 +573,117 @@ class Newsletter
             'description' => $description,
             'lang' => $lang,
             'category' => $category,
+            'validation' => $validation,
+            'validatedAt' => $validatedAt,
+            'subscribedAt' => $subscribedAt,
         ]);
+
+        if ($success) {
+            return $validation;
+        }
+
+        return false;
+    }
+    // }}}
+    // {{{ isSubscriber()
+    /**
+     * @brief isSubscriber
+     *
+     * @param mixed $email
+     * @return void
+     **/
+    public function isSubscriber($email, $lang, $category)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT COUNT(*) AS n FROM
+                {$this->tableSubscribers}
+            WHERE
+                email=:email AND
+                lang=:lang AND
+                category=:category AND
+                validation IS NULL
+            "
+        );
+
+        $success = $query->execute([
+            'email' => $email,
+            'lang' => $lang,
+            'category' => $category,
+        ]);
+
+        return $query->fetchObject()->n > 0;
+    }
+    // }}}
+    // {{{ getValidationFor()
+    /**
+     * @brief getValidationFor
+     *
+     * @param mixed $email
+     * @return void
+     **/
+    protected function getValidationFor($email)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT validation, validatedAt, subscribedAt FROM
+                {$this->tableSubscribers}
+            WHERE
+                email=:email
+            "
+        );
+        $success = $query->execute([
+            'email' => $email,
+        ]);
+
+        if ($r = $query->fetchObject()) {
+            return [$r->validation, $r->validatedAt, $r->subscribedAt];
+        }
+
+        return [false, null, null];
+    }
+    // }}}
+    // {{{ confirm()
+    /**
+     * @brief confirm
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function confirm($validation)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT
+                email,
+                firstname,
+                lastname,
+                description,
+                lang
+            FROM
+                {$this->tableSubscribers}
+            WHERE
+                validation=:validation
+            "
+        );
+        $success = $query->execute([
+            'validation' => $validation,
+        ]);
+
+        if ($subscriber = $query->fetchObject()) {
+            $query = $this->pdo->prepare(
+                "UPDATE
+                    {$this->tableSubscribers}
+                SET
+                    validation=NULL,
+                    validatedAt=NOW()
+                WHERE
+                    validation=:validation
+                "
+            );
+            $success = $query->execute([
+                'validation' => $validation,
+            ]);
+
+            return $subscriber;
+        }
 
         return $success;
     }
@@ -593,10 +713,30 @@ class Newsletter
             'category' => $category,
         ]);
 
-        return $success;
+        return $query->rowCount() > 0;
 
     }
     // }}}
+    // {{{ clearUnconfirmed()
+    /**
+     * @brief clearUnconfirmed
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function clearUnconfirmed()
+    {
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->tableSubscribers}
+            WHERE
+                validation IS NOT NULL AND
+                subscribedAt < ADDDATE(NOW(),INTERVAL -2 WEEK)            "
+        );
+
+        return $query->execute();
+    }
+    // }}}
+
     // {{{ track()
     /**
      * @brief track

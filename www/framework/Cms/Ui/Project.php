@@ -489,22 +489,28 @@ class Project extends Base
      *
      * @todo look into https://github.com/PHPOffice/PhpSpreadsheet for better export
      **/
-    public function newsletter_subscribers($category = "Default")
+    public function newsletter_subscribers($category = "")
     {
         $tableSubscribers = "{$this->pdo->prefix}_proj_{$this->project->name}_newsletter_subscribers";
 
-        $query = $this->pdo->prepare(
-            "SELECT *
+        $params = [];
+        $sql = "SELECT *
             FROM
-                {$tableSubscribers} AS subscribers
-            WHERE
-                category = :category
-            "
-        );
+                {$tableSubscribers} AS subscribers";
 
-        $query->execute([
-            "category" => $category,
-        ]);
+        if ($category !== "") {
+            $sql .= " WHERE
+                validation IS NULL AND
+                category = :category";
+            $params['category'] = $category;
+        } else {
+            $sql .= " WHERE
+                validation IS NULL
+                ORDER BY category";
+        }
+
+        $query = $this->pdo->prepare($sql);
+        $query->execute($params);
 
         $filename = "{$this->project->name}-newsletter-subscribers-" . gmdate('Ymd-His') . ".csv";
 

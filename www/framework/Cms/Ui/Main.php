@@ -459,12 +459,18 @@ class Main extends Base {
         if ($type == "newsletter") {
             try {
                 $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-                $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $project, $name);
+                $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
 
                 $values = json_decode(file_get_contents("php://input"));
 
                 if ($values && $action == "subscribe") {
-                    $retVal['success'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                    $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                    $retVal['success'] = true;
+                } else if ($values && $action == "is-subscriber") {
+                    $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
+                } else if ($values && $action == "confirm") {
+                    $retVal['subscriber'] = $newsletter->confirm($values->validation);
+                    $retVal['success'] = true;
                 } else if ($values && $action == "unsubscribe") {
                     $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
                 }
