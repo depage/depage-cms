@@ -34,12 +34,8 @@
 
         <xsl:variable name="id">
             <xsl:choose>
-                <xsl:when test="name() = 'pg:page'">
-                    page_<xsl:value-of select="@url" />
-                </xsl:when>
-                <xsl:otherwise>
-                    node_<xsl:value-of select="@db:id" />
-                </xsl:otherwise>
+                <xsl:when test="name() = 'pg:page'">page_<xsl:value-of select="@url" /></xsl:when>
+                <xsl:otherwise>node_<xsl:value-of select="@db:id" /></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="type" select="name()" />
@@ -49,9 +45,7 @@
         </xsl:variable>
         <xsl:variable name="ns" select="substring-before(name(), ':')" />
         <xsl:variable name="href">
-            <xsl:if test="name() = 'pg:page' or name() = 'pg:folder'">
-                pageref://<xsl:value-of select="$id" />
-            </xsl:if>
+            <xsl:if test="name() = 'pg:page' or name() = 'pg:folder'">pageref://<xsl:value-of select="@db:id" /></xsl:if>
         </xsl:variable>
 
         <li
