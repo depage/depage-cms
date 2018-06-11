@@ -8,19 +8,10 @@
  * @require framework/Cms/js/jstree/jstree.search.js
  * @require framework/Cms/js/jstree/jstree.sort.js
  * @require framework/Cms/js/jstree/jstree.state.js
+ * @require framework/Cms/js/jstree/jstree.toolbar.js
  * @require framework/Cms/js/jstree/jstree.types.js
  * @require framework/Cms/js/jstree/jstree.unique.js
  * @require framework/Cms/js/jstree/vakata-jstree.js
- *
- * @_require framework/Cms/js/jstree/jstree.dblclickrename.js
- * @_require framework/Cms/js/jstree/jstree.deltaupdates.js
- * @_require framework/Cms/js/jstree/jstree.marker.js
- * @_require framework/Cms/js/jstree/jstree.nodeinfo.js
- * @_require framework/Cms/js/jstree/jstree.pedandic_html_data.js
- * @_require framework/Cms/js/jstree/jstree.toolbar.js
- * @_require framework/Cms/js/jstree/jstree.tooltips.js
- * @_require framework/Cms/js/jstree/jstree.typesfromurl.js
- * @_require framework/Cms/js/jstree/doctypes/jstree.doctype.page.js
  *
  * @require framework/shared/jquery.json-2.2.js
  * @require framework/shared/jquery.gracefulWebSocket.js
