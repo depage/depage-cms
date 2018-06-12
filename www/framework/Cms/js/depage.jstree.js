@@ -99,7 +99,7 @@
         // }}}
         // {{{ onMove
         base.onMove = function(e, param) {
-            // @todo correct position if parent stay the same?
+            // @todo update move to use relative movements instead of positions
             var $node = $("li[data-node-id='" + param.node.data.nodeId + "']", base.$el);
             var $parent = $node.parent().parent();
 
@@ -110,6 +110,7 @@
         // }}}
         // {{{ onCopy
         base.onCopy = function(e, param) {
+            // @todo update copy to use relative movements instead of positions
             var $node = $("li[data-node-id='" + param.original.data.nodeId + "']", base.$el);
             var $parent = $node.parent().parent();
 
@@ -422,12 +423,14 @@
             "dnd",
             "typesfromurl",
             "hotkeys",
-            "contextmenu",
+            //"contextmenu",
             "nodeinfo",
             "dblclickrename",
             "tooltips",
             "add_marker",
             "deltaupdates",
+
+            // custom plugins
             "toolbar",
 
             // custom doctype handlers
@@ -449,6 +452,15 @@
         core : {
             animation : 100,
             multiple: false,
+            data: {
+                url: function(node) {
+                    var id = node.id != '#' ? node.id + '/' : '';
+                    var url = this.element.attr("data-tree-url") + id;
+                    console.log(node);
+                    console.log(url);
+                    return url;
+                },
+            },
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
             check_callback : function (operation, node, node_parent, node_position, more) {
                 // @todo check types and operations

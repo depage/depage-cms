@@ -7,11 +7,12 @@ class DeltaUpdates {
     // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
     const MAX_UPDATES_BEFORE_RELOAD = 50;
 
-    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $seq_nr = -1) {
+    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $projectName, $seq_nr = -1) {
         $this->table_name = $table_prefix . "_xmldeltaupdates";
         $this->pdo = $pdo;
         $this->xmldb = $xmldb;
         $this->doc_id = (int)$doc_id;
+        $this->projectName = $projectName;
 
         $this->seq_nr = (int)$seq_nr;
         if ($this->seq_nr == -1)
@@ -93,11 +94,12 @@ class DeltaUpdates {
             return "";
 
         $result = array(
-            'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes),
+            'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->projectName),
             'seq_nr' => $this->seq_nr,
         );
 
-        return json_encode($result);
+        return new \Depage\Json\Json($result);
+        //return json_encode($result);
     }
 }
 

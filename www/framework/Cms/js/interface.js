@@ -540,9 +540,10 @@ var depageCMS = (function() {
 
                         localJS.preview(url);
                     })
+                    .on("ready.jstree", function () {
+                        jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+                    })
                     .jstree(true);
-
-                jstreePages.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}
@@ -576,10 +577,10 @@ var depageCMS = (function() {
                         $tree.find("ul:first li").each(function() {
                             jstreePagedata.open_node(this, false, false);
                         });
+                        jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
                     })
                     .jstree(true);
 
-                jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
             });
         },
         // }}}

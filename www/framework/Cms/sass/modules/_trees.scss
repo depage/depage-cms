@@ -174,15 +174,14 @@
     display: none;
 }
 .jstree-disabled {
-    background: transparent;
-    color: #666666;
+    background: $backgroundDisabledColor;
+    opacity: 0.5;
 }
 .jstree-disabled.jstree-hovered {
-    background: transparent;
-    box-shadow: none;
+    background: $backgroundDisabledColor;
 }
 .jstree-disabled.jstree-clicked {
-    background: #efefef;
+    background: $backgroundDisabledColor;
 }
 .jstree-disabled > .jstree-icon {
     opacity: 0.8;
@@ -235,8 +234,6 @@
     display: block !important;
     left: 2 * $iconSize !important;
     top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
     width: calc(100% - #{2 * $iconSize}) !important;
     height: auto !important;
     padding: 0 !important;

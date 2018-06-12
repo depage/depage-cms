@@ -43,7 +43,7 @@ class Tree extends Base {
             $this->docInfo = $this->doc->getDocInfo();
             $this->docId = $this->docInfo->id;
         }
-        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, 0);
+        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->projectName, 0);
     }
     // }}}
 
@@ -92,19 +92,17 @@ class Tree extends Base {
      * @param $docName
      * @return bool|\html
      */
-    public function tree($docName)
+    public function tree()
     {
-        $treeUrl = "project/{$this->projectName}/tree/";
-        $actionUrl = "{$treeUrl}{$docName}/";
+        $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/nodes/";
 
         $h = new Html("jstree.tpl", [
             'projectName' => $this->projectName,
-            'docName' => $docName,
+            'docName' => $this->docName,
             'treeUrl' => $treeUrl,
-            'actionUrl' => $actionUrl,
             'root_id' => $this->docInfo->rootid,
             'seq_nr' => $this->get_current_seq_nr($this->docInfo->id),
-            'nodes' => $this->get_html_nodes($docName),
+            //'nodes' => $this->nodes($docName),
         ], $this->htmlOptions);
 
         return $h;
@@ -421,16 +419,35 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ get_html_nodes
+    // {{{ deltaUpdates()
+    /**
+     * @brief deltaUpdates
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function deltaUpdates()
+    {
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->projectName, $_REQUEST["seq_nr"]);
+
+        return $deltaUpdates->encodedDeltaUpdate();
+    }
+    // }}}
+
+    // {{{ getHtmlNodes
     /**
      * Get HTML Nodes
      *
      * @param $doc_name
      * @return mixed
      */
-    protected function get_html_nodes($doc_name)
+    public function nodes($nodeId = "")
     {
-        $doc = $this->doc->getXml($doc_name);
+        if (empty($nodeId)) {
+            $doc = $this->doc->getXml($this->docName);
+        } else {
+            $doc = $this->doc->getSubdocByNodeId($nodeId);
+        }
         $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->projectName);
 
         return current($html);
@@ -446,7 +463,7 @@ class Tree extends Base {
      */
     protected function get_current_seq_nr($doc_id)
     {
-       return $this->deltaUpdates->currentChangeNumber();
+        return $this->deltaUpdates->currentChangeNumber();
     }
     // }}}
 }

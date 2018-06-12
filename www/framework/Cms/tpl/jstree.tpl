@@ -10,9 +10,9 @@
     data-open-nodes=""
     data-tree-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-delta-updates-websocket-url=""
-    data-delta-updates-fallback-poll-url="<?php self::a($this->actionUrl . "fallback/updates/", "auto"); ?>"
-    data-delta-updates-post-url="<?php self::a($this->actionUrl, "auto"); ?>"
-    data-types-settings-url="<?php self::a($this->actionUrl . "types-settings/", "auto"); ?>"
+    data-delta-updates-fallback-poll-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
+    data-delta-updates-post-url="<?php self::a($this->treeUrl, "auto"); ?>"
+    data-types-settings-url="<?php self::a($this->treeUrl . "types-settings/", "auto"); ?>"
 >
     <!--data-delta-updates-websocket-url="ws://127.0.0.1:8000/jstree/"-->
     <?php self::e($this->nodes); ?>
