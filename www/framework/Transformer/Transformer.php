@@ -582,7 +582,7 @@ abstract class Transformer
     /**
      * @return  null
      */
-    protected function getPageIdFor($urlPath)
+    public function getPageIdFor($urlPath)
     {
         $this->getAllUrls();
 
