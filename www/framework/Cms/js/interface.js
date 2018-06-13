@@ -775,14 +775,20 @@ var depageCMS = (function() {
         // {{{ edit
         edit: function(projectName, page) {
             if (jstreePages) {
-                var node = jstreePages.get_node("page_" + page);
-                if (!node) {
-                    page = page.replace(/\.html$/, ".php");
-                    node = jstreePages.get_node("page_" + page);
-                }
-                if (node) {
-                    jstreePages.activate_node(node);
-                }
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    url: baseUrl + "api/" + projectName + "/project/pageId/",
+                    data: JSON.stringify({
+                        url: page
+                    }),
+                    success: function(data, status) {
+                        var node = jstreePages.get_node(data.pageId);
+                        if (node) {
+                            jstreePages.activate_node(node);
+                        }
+                    }
+                });
             } else {
                 // @todo updated for jsinterface
                 $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
