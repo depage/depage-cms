@@ -34,12 +34,7 @@
         <xsl:param name="showChildren" select="true()" />
         <xsl:param name="name" select="@name" />
 
-        <xsl:variable name="id">
-            <xsl:choose>
-                <xsl:when test="name() = 'pg:page'">page_<xsl:value-of select="@url" /></xsl:when>
-                <xsl:otherwise><xsl:value-of select="@db:id" /></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+        <xsl:variable name="id"><xsl:value-of select="@db:id" /></xsl:variable>
         <xsl:variable name="type" select="name()" />
         <xsl:variable name="icon">
             <xsl:value-of select="concat('icon-', translate($type, ':', '_'))" />
