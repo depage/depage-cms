@@ -90,10 +90,11 @@ class XmlNav {
         }
 
         foreach ($pages as $page) {
-            $urlsByPageId[$page->getAttribute("db:id")] = $page->getAttribute("url");
-            $pagedataIdByPageId[$page->getAttribute("db:id")] = $page->getAttribute("db:docref");
+            $id = (int) $page->getAttribute("db:id");
+            $urlsByPageId[$id] = $page->getAttribute("url");
+            $pagedataIdByPageId[$id] = $page->getAttribute("db:docref");
             if ($page->nodeName == "pg:page" || $page->nodeName == "pg:redirect") {
-                $pageIdByUrl[$page->getAttribute("url")] = $page->getAttribute("db:id");
+                $pageIdByUrl[$page->getAttribute("url")] = $id;
             }
         }
 
