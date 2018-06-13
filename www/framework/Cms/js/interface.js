@@ -540,6 +540,12 @@ var depageCMS = (function() {
 
                         localJS.preview(url);
                     })
+                    .on("refresh.jstree refresh_node.jstree", function () {
+                        var node = jstreePages.get_selected(true)[0];
+                        var url = baseUrl + "project/" + projectName + "/preview/html/pre/" + currentPreviewLang + node.data.url;
+
+                        localJS.preview(url);
+                    })
                     .on("ready.jstree", function () {
                         jstreePages.activate_node($tree.find("ul:first li:first")[0]);
                     })
@@ -771,7 +777,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ updatePreview
         updatePreview: _.throttle(function() {
-            // @todo update throttle to just reload when old page has alredy been loaded -> test performance esp. on iOS
+            // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
         }, 2000),
         // }}}
@@ -857,49 +863,6 @@ var depageCMS = (function() {
             $upload.remove();
 
             $(document).unbind('keyup.uploader');
-        },
-        // }}}
-        // {{{ setStatus
-        setStatus: function(message) {
-            console.log(unescape(message));
-            window.status = unescape(message);
-        },
-        // }}}
-        // {{{ msg
-        msg: function(newmsg) {
-            newmsg = unescape(newmsg);
-            newmsg = newmsg.replace(/<br>/g, "\n");
-            newmsg = newmsg.replace(/&apos;/g, "'");
-            newmsg = newmsg.replace(/&quot;/g, "\"");
-            newmsg = newmsg.replace(/&auml;/g, "ä");
-            newmsg = newmsg.replace(/&Auml;/g, "Ä");
-            newmsg = newmsg.replace(/&ouml;/g, "ö");
-            newmsg = newmsg.replace(/&Ouml;/g, "Ö");
-            newmsg = newmsg.replace(/&uuml;/g, "ü");
-            newmsg = newmsg.replace(/&Uuml;/g, "Ü");
-            newmsg = newmsg.replace(/&szlig;/g, "ß");
-            alert(newmsg);
-        },
-        // }}}
-        // {{{ flashLoaded
-        flashLoaded: function() {
-        },
-        // }}}
-        // {{{ flashLayoutChanged
-        flashLayoutChanged: function(layout) {
-            if (parent != window) {
-                parent.depageCMS.flashLayoutChanged(layout);
-            } else {
-                // @todo add better solution instead of this locale hack
-                layout = layout.replace(/Seiten editieren/, "edit-pages");
-                layout = layout.replace(/Dateien/, "files");
-                layout = layout.replace(/Farben/, "colors");
-                layout = layout.replace(/ /, "-");
-                $(".live-help-mock")
-                    .hide()
-                    .filter(".layout-" + layout)
-                    .show();
-            }
         },
         // }}}
 
