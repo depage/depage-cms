@@ -100,22 +100,39 @@
         // }}}
         // {{{ onMove
         base.onMove = function(e, param) {
-            // @todo update move to use relative movements instead of positions
-            var $node = $("li[data-node-id='" + param.node.data.nodeId + "']", base.$el);
-            var $parent = $node.parent().parent();
+            var nodeId = param.node.id;
+            var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
+            var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
+            var parentId = jstree.get_parent(nodeId);
 
-            xmldb.moveNode($node.data("node-id"), $parent.data("node-id"), param.position);
+            if (typeof prevId !== 'undefined') {
+                xmldb.moveNodeAfter(nodeId, prevId);
+            } else if (typeof nextId !== 'undefined') {
+                xmldb.moveNodeBefore(nodeId, nextId);
+            } else {
+                xmldb.moveNodeIn(nodeId, parentId);
+                jstree.open_node(parentId);
+            }
 
             jstree.disable_node(param.node);
         };
         // }}}
         // {{{ onCopy
         base.onCopy = function(e, param) {
-            // @todo update copy to use relative movements instead of positions
-            var $node = $("li[data-node-id='" + param.original.data.nodeId + "']", base.$el);
-            var $parent = $node.parent().parent();
+            var originalId = param.original.data.nodeId;
+            var nodeId = param.node.id;
+            var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
+            var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
+            var parentId = jstree.get_parent(nodeId);
 
-            xmldb.copyNode($node.data("node-id"), $parent.data("node-id"), param.position);
+            if (typeof prevId !== 'undefined') {
+                xmldb.copyNodeAfter(originalId, prevId);
+            } else if (typeof nextId !== 'undefined') {
+                xmldb.copyNodeBefore(originalId, nextId);
+            } else {
+                xmldb.copyNodeIn(originalId, parentId);
+                jstree.open_node(parentId);
+            }
 
             jstree.disable_node(param.node);
         };

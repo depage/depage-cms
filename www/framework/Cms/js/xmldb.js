@@ -34,12 +34,60 @@ var DepageXmldb = (function() {
             });
         },
         // }}}
+        // {{{ copyNodeIn()
+        copyNodeIn: function(nodeId, targetId) {
+            this.ajaxCall("copyNodeIn", {
+                "id" : nodeId,
+                "target_id" : targetId
+            });
+        },
+        // }}}
+        // {{{ copyNodeBefore()
+        copyNodeBefore: function(nodeId, targetId) {
+            this.ajaxCall("copyNodeBefore", {
+                "id" : nodeId,
+                "target_id" : targetId
+            });
+        },
+        // }}}
+        // {{{ copyNodeAfter()
+        copyNodeAfter: function(nodeId, targetId) {
+            this.ajaxCall("copyNodeAfter", {
+                "id" : nodeId,
+                "target_id" : targetId
+            });
+        },
+        // }}}
         // {{{ moveNode()
         moveNode: function(nodeId, targetId, position) {
             this.ajaxCall("moveNode", {
                 "id" : nodeId,
                 "target_id" : targetId,
                 "position" : position
+            });
+        },
+        // }}}
+        // {{{ moveNodeIn()
+        moveNodeIn: function(nodeId, targetId) {
+            this.ajaxCall("moveNodeIn", {
+                "id" : nodeId,
+                "target_id" : targetId
+            });
+        },
+        // }}}
+        // {{{ moveNodeBefore()
+        moveNodeBefore: function(nodeId, targetId) {
+            this.ajaxCall("moveNodeBefore", {
+                "id" : nodeId,
+                "target_id" : targetId
+            });
+        },
+        // }}}
+        // {{{ moveNodeAfter()
+        moveNodeAfter: function(nodeId, targetId) {
+            this.ajaxCall("moveNodeAfter", {
+                "id" : nodeId,
+                "target_id" : targetId
             });
         },
         // }}}

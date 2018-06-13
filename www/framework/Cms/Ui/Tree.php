@@ -28,6 +28,8 @@ class Tree extends Base {
     {
         parent::_init($importVariables);
 
+        // @todo add auth!!!
+
         if (!empty($this->urlSubArgs[0])) {
             $this->projectName = $this->urlSubArgs[0];
 
@@ -206,6 +208,72 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
+    // {{{ moveNodeIn
+    /**
+     * Move Node
+     *
+     * @return \json
+     */
+    public function moveNodeIn()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $status = $this->doc->moveNodeIn($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $target_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+    // {{{ moveNodeBefore
+    /**
+     * Move Node
+     *
+     * @return \json
+     */
+    public function moveNodeBefore()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $parent_id = $this->doc->moveNodeBefore($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+    // {{{ moveNodeAfter
+    /**
+     * Move Node
+     *
+     * @return \json
+     */
+    public function moveNodeAfter()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $parent_id = $this->doc->moveNodeAfter($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
 
     // {{{ copyNode
     /**
@@ -227,6 +295,72 @@ class Tree extends Base {
         }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $status));
+    }
+    // }}}
+    // {{{ copyNodeIn
+    /**
+     * copy Node
+     *
+     * @return \json
+     */
+    public function copyNodeIn()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $status = $this->doc->copyNodeIn($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $target_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+    // {{{ copyNodeBefore
+    /**
+     * copy Node
+     *
+     * @return \json
+     */
+    public function copyNodeBefore()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $parent_id = $this->doc->copyNodeBefore($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+    // {{{ copyNodeAfter
+    /**
+     * copy Node
+     *
+     * @return \json
+     */
+    public function copyNodeAfter()
+    {
+        $status = false;
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+
+        $old_parent_id = $this->doc->getParentIdById($id);
+        $parent_id = $this->doc->copyNodeAfter($id, $target_id);
+
+        if ($status) {
+            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
 
