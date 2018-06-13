@@ -779,13 +779,12 @@ var depageCMS = (function() {
                     async: true,
                     type: 'POST',
                     url: baseUrl + "api/" + projectName + "/project/pageId/",
-                    data: JSON.stringify({
-                        url: page
-                    }),
+                    data: { url: page },
                     success: function(data, status) {
                         var node = jstreePages.get_node(data.pageId);
                         if (node) {
                             jstreePages.activate_node(node);
+                            jstreePages.get_node(node, true)[0].scrollIntoView();
                         }
                     }
                 });

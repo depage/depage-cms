@@ -29,6 +29,9 @@ class Main extends Base {
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
             //'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
+            //'api/*/newsletter/' => '\Depage\Cms\Api\Newsletter',
+            //'api/*/cache/' => '\Depage\Cms\Api\Cache',
+            //'api/*/project/' => '\Depage\Cms\Api\Project',
         ];
     }
     // }}}
@@ -486,14 +489,14 @@ class Main extends Base {
             }
         }
         if ($type == "project") {
-            $values = json_decode(file_get_contents("php://input"));
+            $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_STRING);
 
-            if ($action == "pageId") {
+            if ($action == "pageId" && !empty($url)) {
                 $xmlGetter = $project->getXmlGetter();
 
                 $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $projectName, "html");
                 $transformer->routeHtmlThroughPhp = true;
-                list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($values->url);
+                list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($url);
 
                 $retVal['success'] = true;
             }

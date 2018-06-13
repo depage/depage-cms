@@ -74,7 +74,8 @@
                 .on("rename_node.jstree", base.onRename)
                 .on("delete_node.jstree", base.onDelete)
                 .on("move_node.jstree", base.onMove)
-                .on("copy_node.jstree", base.onCopy);
+                .on("copy_node.jstree", base.onCopy)
+                .on("activate_node.jstree", base.onActivate);
 
             // init the tree
             jstree = base.$el.jstree(base.options).jstree(true);
@@ -117,6 +118,10 @@
             xmldb.copyNode($node.data("node-id"), $parent.data("node-id"), param.position);
 
             jstree.disable_node(param.node);
+        };
+        // }}}
+        // {{{ onActivate
+        base.onActivate = function(e, param) {
         };
         // }}}
 
@@ -455,10 +460,7 @@
             data: {
                 url: function(node) {
                     var id = node.id != '#' ? node.id + '/' : '';
-                    var url = this.element.attr("data-tree-url") + id;
-                    console.log(node);
-                    console.log(url);
-                    return url;
+                    return this.element.attr("data-tree-url") + id;
                 },
             },
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
@@ -474,9 +476,6 @@
                     return false;
                 }
 
-                //console.log(operation, node.li_attr.rel);
-                //console.log(node);
-                //console.log(node_parent);
                 return true;
             }
         },
