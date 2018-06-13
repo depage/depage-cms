@@ -446,7 +446,7 @@ class Main extends Base {
     /**
      * @brief api
      *
-     * @todo move this in own class
+     * @todo move this in own class or classes
      *
      * @param mixed $
      * @return void
@@ -456,40 +456,48 @@ class Main extends Base {
         $retVal = [
             'success' => false,
         ];
+        try {
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+        } catch (\Exception $e) {
+            $retVal['error'] = $e->getMessage();
+            return new \Depage\Json\Json($retVal);
+        }
+
         if ($type == "newsletter") {
-            try {
-                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-                $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
+            $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
 
-                $values = json_decode(file_get_contents("php://input"));
+            $values = json_decode(file_get_contents("php://input"));
 
-                if ($values && $action == "subscribe") {
-                    $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
-                    $retVal['success'] = true;
-                } else if ($values && $action == "is-subscriber") {
-                    $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
-                } else if ($values && $action == "confirm") {
-                    $retVal['subscriber'] = $newsletter->confirm($values->validation);
-                    $retVal['success'] = true;
-                } else if ($values && $action == "unsubscribe") {
-                    $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
-                }
-            } catch (\Exception $e) {
-                $retVal['error'] = $e->getMessage();
+            if ($values && $action == "subscribe") {
+                $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
+                $retVal['success'] = true;
+            } else if ($values && $action == "is-subscriber") {
+                $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
+            } else if ($values && $action == "confirm") {
+                $retVal['subscriber'] = $newsletter->confirm($values->validation);
+                $retVal['success'] = true;
+            } else if ($values && $action == "unsubscribe") {
+                $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
             }
         }
         if ($type == "cache") {
-            try {
-                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-
-                if ($action == "clear") {
-                    $retVal['success'] = $project->clearTransformCache();
-                }
-            } catch (\Exception $e) {
-                $retVal['error'] = $e->getMessage();
+            if ($action == "clear") {
+                $retVal['success'] = $project->clearTransformCache();
             }
         }
+        if ($type == "project") {
+            $values = json_decode(file_get_contents("php://input"));
 
+            if ($action == "pageId") {
+                $xmlGetter = $project->getXmlGetter();
+
+                $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $projectName, "html");
+                $transformer->routeHtmlThroughPhp = true;
+                list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($values->url);
+
+                $retVal['success'] = true;
+            }
+        }
         return new \Depage\Json\Json($retVal);
     }
     // }}}
