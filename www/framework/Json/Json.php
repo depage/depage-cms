@@ -18,7 +18,7 @@ class Json
     private $param;
     private $content;
 
-    public $contentType = "text/json";
+    public $contentType = "application/json";
     public $charset = "UTF-8";
 
     // {{{ __construct()
