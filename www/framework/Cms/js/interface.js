@@ -579,6 +579,9 @@ var depageCMS = (function() {
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
                     })
+                    .on("refresh.jstree refresh_node.jstree", function () {
+                        localJS.updatePreview();
+                    })
                     .jstree(true);
 
             });
