@@ -70,6 +70,39 @@
     left: 1px;
     top: 1px;
 }
+.jstree-node-actions {
+    position: absolute;
+    display: block;
+    right: 0;
+    top: 0;
+    width: 1.5 * $treeLineHeight;
+    height: $treeLineHeight;
+    cursor: pointer;
+
+    &::before {
+        content: " ";
+        position: absolute;
+        right: 0;
+        width: $treeWidth;
+        height: 2px;
+    }
+
+    &.insert-before:hover {
+        &::before {
+            background: #ff9900;
+            top: -1px;
+        }
+    }
+    &.insert-into:hover {
+        background: #ff9900;
+    }
+    &.insert-after:hover {
+        &::before {
+            background: #ff9900;
+            bottom: -1px;
+        }
+    }
+}
 .jstree-anchor > .jstree-icon {
     left: 1 * $iconSize;
 }

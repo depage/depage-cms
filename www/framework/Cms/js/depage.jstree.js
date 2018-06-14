@@ -9,6 +9,7 @@
  * @require framework/Cms/js/jstree/jstree.sort.js
  * @require framework/Cms/js/jstree/jstree.state.js
  * @require framework/Cms/js/jstree/jstree.toolbar.js
+ * @require framework/Cms/js/jstree/jstree.nodeActions.js
  * @require framework/Cms/js/jstree/jstree.types.js
  * @require framework/Cms/js/jstree/jstree.unique.js
  * @require framework/Cms/js/jstree/vakata-jstree.js
@@ -290,6 +291,7 @@
 
             // custom plugins
             "toolbar",
+            "nodeActions",
 
             // custom doctype handlers
             // @todo get doctype handler from data-attributes
