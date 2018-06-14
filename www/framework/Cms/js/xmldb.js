@@ -26,109 +26,113 @@ var DepageXmldb = (function() {
         },
         // }}}
         // {{{ copyNode()
-        copyNode: function(nodeId, targetId, position) {
+        copyNode: function(nodeId, targetId, position, success) {
             this.ajaxCall("copyNode", {
                 "id" : nodeId,
                 "target_id" : targetId,
                 "position" : position
-            });
+            }, success);
         },
         // }}}
         // {{{ copyNodeIn()
-        copyNodeIn: function(nodeId, targetId) {
+        copyNodeIn: function(nodeId, targetId, success) {
             this.ajaxCall("copyNodeIn", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ copyNodeBefore()
-        copyNodeBefore: function(nodeId, targetId) {
+        copyNodeBefore: function(nodeId, targetId, success) {
             this.ajaxCall("copyNodeBefore", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ copyNodeAfter()
-        copyNodeAfter: function(nodeId, targetId) {
+        copyNodeAfter: function(nodeId, targetId, success) {
             this.ajaxCall("copyNodeAfter", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ moveNode()
-        moveNode: function(nodeId, targetId, position) {
+        moveNode: function(nodeId, targetId, position, success) {
             this.ajaxCall("moveNode", {
                 "id" : nodeId,
                 "target_id" : targetId,
                 "position" : position
-            });
+            }, success);
         },
         // }}}
         // {{{ moveNodeIn()
-        moveNodeIn: function(nodeId, targetId) {
+        moveNodeIn: function(nodeId, targetId, success) {
             this.ajaxCall("moveNodeIn", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ moveNodeBefore()
-        moveNodeBefore: function(nodeId, targetId) {
+        moveNodeBefore: function(nodeId, targetId, success) {
             this.ajaxCall("moveNodeBefore", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ moveNodeAfter()
-        moveNodeAfter: function(nodeId, targetId) {
+        moveNodeAfter: function(nodeId, targetId, success) {
             this.ajaxCall("moveNodeAfter", {
                 "id" : nodeId,
                 "target_id" : targetId
-            });
+            }, success);
         },
         // }}}
         // {{{ renameNode()
-        renameNode: function(nodeId, name) {
+        renameNode: function(nodeId, name, success) {
             this.ajaxCall("renameNode", {
                 "id" : nodeId,
                 "name" : name
-            });
+            }, success);
         },
         // }}}
         // {{{ deleteNode()
-        deleteNode: function(nodeId) {
+        deleteNode: function(nodeId, success) {
             this.ajaxCall("deleteNode", {
                 "id" : nodeId
-            });
+            }, success);
         },
         // }}}
         // {{{ duplicateNode()
-        duplicateNode: function() {
+        duplicateNode: function(nodeId, success) {
+            this.ajaxCall("copyNodeAfter", {
+                "id" : nodeId,
+                "target_id" : nodeId
+            }, success);
         },
         // }}}
         // {{{ deleteDocument()
-        deleteDocument: function() {
+        deleteDocument: function(success) {
             this.ajaxCall("deleteDocument", {
                 "docName": this.docName
-            });
+            }, success);
         },
         // }}}
         // {{{ setAttribute()
-        setAttribute: function(nodeId, name, value) {
+        setAttribute: function(nodeId, name, value, success) {
             this.ajaxCall("setAttribute", {
                 "id" : nodeId,
                 "name" : name,
                 "value" : value
-            });
+            }, success);
         },
         // }}}
 
         // {{{ ajaxCall()
-        ajaxCall: function(operation, data) {
+        ajaxCall: function(operation, data, success) {
             $.ajax({
                 async: true,
                 type: 'POST',
@@ -139,10 +143,7 @@ var DepageXmldb = (function() {
                     console.log("error");
                     console.log(e);
                 },
-                success: function(data, status) {
-                    console.log(status);
-                    console.log(data);
-                }
+                success: success
             });
         },
         // }}}
