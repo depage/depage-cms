@@ -779,7 +779,10 @@ var depageCMS = (function() {
         updatePreview: _.throttle(function() {
             // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
-        }, 2000),
+        }, 2000, {
+            leading: true,
+            trailing: true
+        }),
         // }}}
         // {{{ edit
         edit: function(projectName, page) {
