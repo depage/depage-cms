@@ -31,7 +31,6 @@
         $.depage = {};
     }
 
-    // {{{ jstree()
     /**
      * jstree
      *
@@ -75,7 +74,8 @@
                 .on("delete_node.jstree", base.onDelete)
                 .on("move_node.jstree", base.onMove)
                 .on("copy_node.jstree", base.onCopy)
-                .on("activate_node.jstree", base.onActivate);
+                .on("activate_node.jstree", base.onActivate)
+                .on("dblclick.jstree", ".jstree-anchor", base.onNodeDblClick);
 
             // init the tree
             jstree = base.$el.jstree(base.options).jstree(true);
@@ -141,10 +141,26 @@
         base.onActivate = function(e, param) {
         };
         // }}}
+        // {{{ onNodeDblClick
+        base.onNodeDblClick = function(e, param) {
+            var $target = $(e.target);
+            var $label;
+
+            if ($(e.target).hasClass("jstree-icon")) {
+                jstree.toggle_node(e.target);
+            } else if ($(e.target).hasClass("jstree-anchor")) {
+                $target.find(".hint").remove();
+                jstree.edit($target, $target.text());
+            } else if ($(e.target).hasClass("hint")) {
+                $label = $target.parent();
+                $target.remove();
+                jstree.edit($label, $label.text());
+            }
+        };
+        // }}}
 
         // go!
         base.init();
-
     };
     // }}}
 
@@ -188,76 +204,6 @@
     };
     // }}}
 
-    // {{{ keyLeft()
-    /**
-     * keyLeft
-     *
-     */
-    $.depage.jstree.keyLeft = function() {
-        var o = this.data.ui.hovered || this.data.ui.last_selected;
-        if(o) {
-            if(o.hasClass("jstree-open")) {
-                this.close_node(o);
-            }
-            else {
-                $.depage.jstree.keyUp.apply(this);
-            }
-        }
-    };
-    // }}}
-
-    // {{{ keyRight()
-    /**
-     * keyRight
-     *
-     */
-    $.depage.jstree.keyRight = function(){
-        var o = this.data.ui.hovered || this.data.ui.last_selected;
-
-        if(o && o.length) {
-            if(o.hasClass("jstree-closed")) {
-                this.open_node(o);
-            }
-            else {
-                $.depage.jstree.keyDown.apply(this);
-            }
-        }
-    };
-    // }}}
-
-    // {{{ keyUp()
-    /**
-     * keyUp
-     *
-     */
-    $.depage.jstree.keyUp = function(){
-        console.log("keyUp");
-        var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-        var prev = this.get_prev(o);
-        if (prev.length) {
-            this.deselect_node(o);
-            this.select_node(prev);
-        }
-    };
-    // }}}
-
-    // {{{ keyDown()
-    /**
-     * keyDown
-     *
-     */
-    $.depage.jstree.keyDown = function(){
-        var o = this.data.ui.hovered || this.data.ui.last_selected || -1;
-
-        var next = this.get_next(o);
-        if (next.length) {
-            this.deselect_node(o);
-            this.select_node(next);
-        }
-    },
-    // }}}
-
     // {{{ contextDelete()
     /**
      * contextDelete
@@ -276,116 +222,6 @@
                 inst.delete_node(obj);
             }
         });
-    };
-    // }}}
-
-    // {{{ contextCut()
-    /**
-     * contextCut
-     *
-     * @param data
-     */
-    $.depage.jstree.contextCut = function(data) {
-        var inst = $.jstree._reference(data.reference);
-
-        if (inst) { // @todo why null?
-            var obj = inst.get_node(data.reference);
-            if(data.ui && inst.is_selected(obj)) {
-                obj = inst.get_selected();
-            }
-            inst.cut(obj);
-        }
-    };
-    // }}}
-
-    // {{{ contextCreate()
-    /**
-     *
-     * @param data
-     * @param type
-     * @param position
-     */
-    $.depage.jstree.contextCreate = function(data, type, position) {
-        position = position || 'inside';
-        var inst = $.jstree._reference(data.reference);
-
-        // @todo bug why is inst not defined - clicked to quickly?
-        if (inst) {
-
-            // open the node (so states are remembered after delataupdate)
-            data.reference.parent('li').addClass("jstree-open");
-
-            var obj = inst.create_node(data.reference, type, position);
-
-            // focus for edit
-            inst.edit(obj);
-
-        }
-    };
-    // }}}
-
-    // {{{ contextCopy()
-    /**
-     * contextCopy
-     *
-     * @param data
-     */
-    $.depage.jstree.contextCopy = function(data) {
-        var inst = $.jstree._reference(data.reference);
-        if (inst){ // @todo why null? BUG after delete?
-            var obj = inst.get_node(data.reference);
-            if(inst.is_selected(obj)) {
-                obj = inst.get_selected();
-            }
-            inst.copy(obj);
-        }
-    };
-    // }}}
-
-    // {{{ contextDuplicate()
-    /**
-     * contextDuplicate
-     *
-     * @param data
-     */
-    $.depage.jstree.contextDuplicate = function(data) {
-        var inst = $.jstree._reference(data.reference);
-        if (inst){ // @todo why null? BUG after delete?
-            var obj = inst.get_node(data.reference);
-            if(inst.is_selected(obj)) {
-                obj = inst.get_selected();
-            }
-            inst.duplicate(obj);
-        }
-    };
-    // }}}
-
-    // {{{ contextPaste()
-    /**
-     * contextPaste
-     *
-     * @param data
-     * @param pos
-     */
-    $.depage.jstree.contextPaste = function(data, pos) {
-        pos = pos || "after";
-        var inst = $.jstree._reference(data.reference);
-        var obj = inst.get_node(data.reference);
-
-        inst.paste(obj, pos);
-    };
-    // }}}
-
-    // {{{ contextRename()
-    /**
-     * contextRename
-     *
-     * @param data
-     */
-    $.depage.jstree.contextRename = function(data) {
-        var inst = $.jstree._reference(data.reference);
-        var obj = inst.get_node(data.reference);
-        inst.edit(obj);
     };
     // }}}
 
@@ -474,6 +310,7 @@
         core : {
             animation : 100,
             multiple: false,
+            dblclick_toggle: false,
             data: {
                 url: function(node) {
                     var id = node.id != '#' ? node.id + '/' : '';
