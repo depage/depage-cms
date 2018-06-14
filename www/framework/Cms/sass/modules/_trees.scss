@@ -71,6 +71,7 @@
     top: 1px;
 }
 .jstree-node-actions {
+    $actionIconHeight: $treeLineHeight * 0.5 + 4px;
     position: absolute;
     display: block;
     right: 0;
@@ -78,28 +79,57 @@
     width: 1.5 * $treeLineHeight;
     height: $treeLineHeight;
     cursor: pointer;
+    z-index: 100;
 
-    &::before {
+    &:hover::before {
         content: " ";
         position: absolute;
         right: 0;
         width: $treeWidth;
         height: 2px;
     }
+    &:hover::after {
+        position: absolute;
+        font-weight: bold !important;
+        right: $treeLineHeight * 0.5;
+        width: $actionIconHeight;
+        height: $actionIconHeight;
+        line-height: $actionIconHeight - 3px;
+        @include radius($actionIconHeight * 0.5);
+        background: $selectionBackgroundColor;
+        color: $selectionTextColor;
+        text-align: center;
+    }
 
     &.insert-before:hover {
         &::before {
-            background: #ff9900;
+            background: $selectionBackgroundColor;
             top: -1px;
+        }
+        &::after {
+            content: "+";
+            top: - 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
         }
     }
     &.insert-into:hover {
-        background: #ff9900;
+        &::after {
+            content: "+";
+            width: $actionIconHeight * 1.5;
+            padding-right: $actionIconHeight * 0.5;
+            right: 0;
+            @include radius(0, "top", "right");
+            @include radius(0, "bottom", "right");
+            top: 0 + ($treeLineHeight - $actionIconHeight) * 0.5;
+        }
     }
     &.insert-after:hover {
         &::before {
-            background: #ff9900;
+            background: $selectionBackgroundColor;
             bottom: -1px;
+        }
+        &::after {
+            content: "+";
+            top: 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
         }
     }
 }
