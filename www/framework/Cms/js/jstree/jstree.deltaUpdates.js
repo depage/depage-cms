@@ -36,7 +36,7 @@
             this._data.deltaUpdates.active_ajax_requests = 0;
             this._data.deltaUpdates.pending_updates = [];
             this._data.deltaUpdates.inst = this.element.jstree(true);
-            var tree = this.element;
+            var $tree = this.element;
 
             var webSocketURL = this.element.attr("data-delta-updates-websocket-url");
             var fallbackPollURL = this.element.attr("data-delta-updates-fallback-poll-url");
@@ -45,10 +45,10 @@
                 fallbackPollURL: fallbackPollURL,
                 fallbackPollParams:  {
                     "seqNr": function () {
-                        return tree.attr("data-seq-nr");
+                        return $tree.attr("data-seq-nr");
                     },
                     "docId": function () {
-                        return tree.attr("data-doc-id");
+                        return $tree.attr("data-doc-id");
                     }
                 }
             });
@@ -69,7 +69,44 @@
         // }}}
         // {{{
         this.applyDeltaUpdates = function() {
-            console.log(this._data.deltaUpdates.pending_updates);
+            var $tree = this.element;
+            var inst = this;
+            var data;
+            $.each(this._data.deltaUpdates.pending_updates, function (index, event) {
+                try {
+                    data = $.evalJSON(event.data);
+                } catch (e) {
+                    // continue
+                    return true;
+                }
+
+                // only overwrite tree nodes if data is newer
+                var old_seq_nr = parseInt($tree.attr("data-seq-nr"));
+                var new_seq_nr = parseInt(data.seq_nr);
+                if (new_seq_nr > old_seq_nr) {
+                    // remember which tree nodes were open
+                    var state = inst.get_state();
+
+                    for (var id in data.nodes) {
+                        if (data.nodes[id]) {
+                            var parentNode = inst.get_node(id);
+                            if (!parentNode) {
+                                inst._append_html_data(inst.element, $(data.nodes[id]), function() {});
+                            } else {
+                                inst._append_html_data(inst.get_node(id), $(data.nodes[id]), function() {});
+                            }
+                        }
+                    }
+
+                    inst.set_state(state);
+
+                    $tree.attr("data-seq-nr", new_seq_nr);
+
+                    inst.trigger("refresh");
+                }
+            });
+
+            this._data.deltaUpdates.pending_updates = [];
         };
         // }}}
         // {{{ destroy()

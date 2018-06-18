@@ -25,7 +25,8 @@ class SocketFallback extends Base {
             $this->docName = $this->urlSubArgs[1];
         }
         $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-        $this->xmldb = new \Depage\XmlDb\XmlDb($this->prefix, $this->pdo, $this->xmldbCache, []);
+        $this->project = $this->getProject($this->projectName);
+        $this->xmldb = $this->project->getXmlDb();
     }
     // }}}
 

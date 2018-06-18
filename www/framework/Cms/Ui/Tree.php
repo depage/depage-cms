@@ -246,7 +246,7 @@ class Tree extends Base {
         $old_parent_id = $this->doc->getParentIdById($id);
         $parent_id = $this->doc->moveNodeBefore($id, $target_id);
 
-        if ($status) {
+        if ($parent_id) {
             $this->recordChange($this->docId, array($old_parent_id, $parent_id));
         }
 
@@ -268,7 +268,7 @@ class Tree extends Base {
         $old_parent_id = $this->doc->getParentIdById($id);
         $parent_id = $this->doc->moveNodeAfter($id, $target_id);
 
-        if ($status) {
+        if ($parent_id) {
             $this->recordChange($this->docId, array($old_parent_id, $parent_id));
         }
 

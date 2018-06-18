@@ -81,7 +81,8 @@ class DeltaUpdates {
             foreach ($parent_ids as $parent_id) {
                 // TODO this is not getting a sub doc but only top level (when $level = 0)
                 // TODO therefore don't want to save to cache
-                $changed_nodes[$parent_id] = $doc->getSubdocByNodeId($parent_id, true, $level_of_children);
+                //$changed_nodes[$parent_id] = $doc->getSubdocByNodeId($parent_id, true, $level_of_children);
+                $changed_nodes[$parent_id] = $doc->getSubdocByNodeId($parent_id, true);
             }
         }
 
