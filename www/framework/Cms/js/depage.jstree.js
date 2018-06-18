@@ -8,6 +8,7 @@
  * @require framework/Cms/js/jstree/jstree.search.js
  * @require framework/Cms/js/jstree/jstree.sort.js
  * @require framework/Cms/js/jstree/jstree.state.js
+ * @require framework/Cms/js/jstree/jstree.focus.js
  * @require framework/Cms/js/jstree/jstree.toolbar.js
  * @require framework/Cms/js/jstree/jstree.nodeActions.js
  * @require framework/Cms/js/jstree/jstree.types.js
@@ -290,6 +291,7 @@
             "deltaupdates",
 
             // custom plugins
+            "focus",
             "toolbar",
             "nodeActions",
 

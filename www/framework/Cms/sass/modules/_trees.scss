@@ -226,13 +226,17 @@
 .jstree-context {
     background: $backgroundColor;
 }
-.jstree-clicked {
-    border: 1px solid $selectionBackgroundColor;
-    background: $selectionBackgroundColor;
+.jstree-clicked,
+.jstree-clicked.jstree-hovered {
+    border: 1px solid $backgroundDisabledColor;
+    background: $backgroundDisabledColor;
     color: $selectionTextColor !important;
 }
-.jstree-clicked.jstree-hovered {
-    background: $selectionBackgroundColor;
+.jstree-focus {
+    .jstree-clicked,
+    .jstree-clicked.jstree-hovered {
+        background: $selectionBackgroundColor;
+    }
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {
     display: none;
@@ -478,16 +482,10 @@
             overflow-y: auto;
             overflow-x: hidden;
             top: 0;
-            bottom: $toolbarHeight;
+            bottom: 0;
             left: 0;
             right: 0;
             background: $textBrightColor;
-        }
-        .toolbar {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
         }
     }
     .tree.pages {

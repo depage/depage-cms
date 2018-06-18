@@ -503,18 +503,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTrees
         setupTrees: function() {
-            $pageTreeContainer = $(".tree.pages").addClass("focus");
+            $pageTreeContainer = $(".tree.pages");
             $pagedataTreeContainer = $(".tree.pagedata");
             $docPropertiesContainer = $(".doc-properties");
-
-            $pageTreeContainer.on("click", function() {
-                $pageTreeContainer.addClass("focus");
-                $pagedataTreeContainer.removeClass("focus");
-            });
-            $pagedataTreeContainer.on("click", function() {
-                $pageTreeContainer.removeClass("focus");
-                $pagedataTreeContainer.addClass("focus");
-            });
 
             localJS.loadPageTree();
         },
@@ -527,6 +518,9 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + $pageTreeContainer.data("url");
 
+            if (typeof jstreePages != 'undefined') {
+                jstreePages.destroy();
+            }
             $pageTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                 $pageTreeContainer.addClass("loaded");
                 $tree = $pageTreeContainer.children(".jstree-container");
@@ -567,6 +561,9 @@ var depageCMS = (function() {
             var $tree;
             var url = baseUrl + "project/" + projectName + "/tree/" + docref + "/";
 
+            if (typeof jstreePagedata != 'undefined') {
+                jstreePagedata.destroy();
+            }
             $pagedataTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                 $pagedataTreeContainer.addClass("loaded");
                 $tree = $pagedataTreeContainer.children(".jstree-container");

@@ -6,7 +6,7 @@ $treeWidth: 255px !global;
 $baseColor: #ccc8c4 !global;
 $backgroundColor: lighten($baseColor, 5%) !global;
 $backgroundLighterColor: lighten($backgroundColor, 10%) !global;
-$backgroundDisabledColor: #888888;
+$backgroundDisabledColor: #cccccc;
 $borderColor: #bbbbbb !global;
 $borderColor: darken($baseColor, 0%) !global;
 $textBaseColor: #000000 !global;
