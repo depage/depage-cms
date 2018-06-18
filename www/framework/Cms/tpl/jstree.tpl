@@ -3,9 +3,10 @@
     class="jstree-container"
     data-projectname="<?php self::t($this->projectName); ?>"
     data-docname="<?php self::t($this->docName); ?>"
-    data-node-id="<?php self::t($this->root_id); ?>"
+    data-doc-id="<?php self::t($this->docId); ?>"
+    data-node-id="<?php self::t($this->rootId); ?>"
 
-    data-seq-nr="<?php self::t($this->seq_nr); ?>"
+    data-seq-nr="<?php self::t($this->seqNr); ?>"
     data-selected-nodes=""
     data-open-nodes=""
     data-tree-url="<?php self::a($this->treeUrl, "auto"); ?>"

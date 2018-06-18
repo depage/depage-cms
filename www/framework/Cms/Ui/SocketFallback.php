@@ -34,7 +34,7 @@ class SocketFallback extends Base {
         $this->auth->enforce();
 
         // TODO: cleanup old recorded changes based on logged in users
-        $delta_updates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["doc_id"], $_REQUEST["seq_nr"]);
+        $delta_updates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $_REQUEST["docId"], $this->projectName, $_REQUEST["seqNr"]);
         return $delta_updates->encodedDeltaUpdate();
     }
     // }}}

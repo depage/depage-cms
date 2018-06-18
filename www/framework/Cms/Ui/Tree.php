@@ -96,14 +96,15 @@ class Tree extends Base {
      */
     public function tree()
     {
-        $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/nodes/";
+        $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/";
 
         $h = new Html("jstree.tpl", [
             'projectName' => $this->projectName,
             'docName' => $this->docName,
+            'docId' => $this->docInfo->id,
             'treeUrl' => $treeUrl,
-            'root_id' => $this->docInfo->rootid,
-            'seq_nr' => $this->get_current_seq_nr($this->docInfo->id),
+            'rootId' => $this->docInfo->rootid,
+            'seqNr' => $this->get_current_seq_nr($this->docInfo->id),
             //'nodes' => $this->nodes($docName),
         ], $this->htmlOptions);
 

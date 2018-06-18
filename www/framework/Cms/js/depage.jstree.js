@@ -10,7 +10,8 @@
  * @require framework/Cms/js/jstree/jstree.state.js
  * @require framework/Cms/js/jstree/jstree.focus.js
  * @require framework/Cms/js/jstree/jstree.toolbar.js
- * @require framework/Cms/js/jstree/jstree.nodeActions.js
+ * @require framework/Cms/js/jstree/jstree.toolbar.js
+ * @require framework/Cms/js/jstree/jstree.deltaUpdates.js
  * @require framework/Cms/js/jstree/jstree.types.js
  * @require framework/Cms/js/jstree/jstree.unique.js
  * @require framework/Cms/js/jstree/vakata-jstree.js
@@ -288,12 +289,12 @@
             "dblclickrename",
             "tooltips",
             "add_marker",
-            "deltaupdates",
 
             // custom plugins
             "focus",
             "toolbar",
             "nodeActions",
+            "deltaUpdates",
 
             // custom doctype handlers
             // @todo get doctype handler from data-attributes
@@ -318,7 +319,7 @@
             data: {
                 url: function(node) {
                     var id = node.id != '#' ? node.id + '/' : '';
-                    return this.element.attr("data-tree-url") + id;
+                    return this.element.attr("data-tree-url") + "nodes/" + id;
                 },
             },
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
@@ -328,9 +329,9 @@
                 // in case of 'rename_node' node_position is filled with the new node name
                 if (node.li_attr.rel == 'pg:meta') {
                     return false;
-                } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && node_parent.li_attr.rel == 'pg:meta') {
+                } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && (node_parent.li_attr.rel == 'pg:meta' || node_parent.li_attr.rel == 'sec:separator')) {
                     return false;
-                } else if (operation == "edit" && node.li_attr.rel == 'sec:separator') {
+                } else if ((operation == "edit" || operation == "create_node") && node.li_attr.rel == 'sec:separator') {
                     return false;
                 }
 

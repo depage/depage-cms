@@ -27,7 +27,7 @@ class Main extends Base {
             //'project/*/flash' => '\Depage\Cms\Ui\Flash',
             'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
-            //'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
+            'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
             //'api/*/newsletter/' => '\Depage\Cms\Api\Newsletter',
             //'api/*/cache/' => '\Depage\Cms\Api\Cache',
