@@ -87,14 +87,23 @@
                     // remember which tree nodes were open
                     var state = inst.get_state();
 
+                    // @todo check order of nodes (if subsequent update is parent of previous)
+                    // @todo add reload on error/problem
                     for (var id in data.nodes) {
                         if (data.nodes[id]) {
                             var parentNode = inst.get_node(id);
-                            if (!parentNode) {
-                                inst._append_html_data(inst.element, $(data.nodes[id]), function() {});
-                            } else {
-                                inst._append_html_data(inst.get_node(id), $(data.nodes[id]), function() {});
+                            var html = $(data.nodes[id]);
+
+                            if (!parentNode && id == $tree.attr("data-node-id")) {
+                                parentNode = inst.element;
                             }
+                            if (parentNode) {
+                                inst._append_html_data(parentNode, html, function() {});
+                            }
+                        } else {
+                            console.log("no no no!!");
+                            console.log(data.nodes);
+                            inst.refresh();
                         }
                     }
 

@@ -539,6 +539,8 @@ var depageCMS = (function() {
                     })
                     .on("refresh.jstree refresh_node.jstree", function () {
                         var node = jstreePages.get_selected(true)[0];
+                        if (typeof node == 'undefined') return;
+
                         var url = baseUrl + "project/" + projectName + "/preview/html/pre/" + currentPreviewLang + node.data.url;
 
                         localJS.preview(url);
