@@ -10,7 +10,7 @@
     data-selected-nodes=""
     data-open-nodes=""
     data-tree-url="<?php self::a($this->treeUrl, "auto"); ?>"
-    data-delta-updates-websocket-url=""
+    data-delta-updates-websocket-url="<?php self::t($this->wsUrl); ?>"
     data-delta-updates-fallback-poll-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
     data-delta-updates-post-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-types-settings-url="<?php self::a($this->treeUrl . "types-settings/", "auto"); ?>"

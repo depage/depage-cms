@@ -100,7 +100,6 @@ class DeltaUpdates {
         );
 
         return new \Depage\Json\Json($result);
-        //return json_encode($result);
     }
 }
 

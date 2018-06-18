@@ -5,8 +5,9 @@ require_once("framework/Depage/Runner.php");
 require_once("framework/WebSocket/lib/WebSocket/Application/Application.php");
 
 class JsTreeApplication extends \Websocket\Application\Application {
-    private $clients = array();
-    private $delta_updates = array();
+    private $clients = [];
+    private $deltaUpdates = [];
+    private $xmldbs = [];
     protected $defaults = array(
         "db" => null,
         "auth" => null,
@@ -31,14 +32,6 @@ class JsTreeApplication extends \Websocket\Application\Application {
             )
         );
 
-        // TODO: set project correctly
-        $proj = "proj";
-        $this->prefix = "{$this->pdo->prefix}_{$proj}";
-        $this->xmldb = new \Depage\XmlDb\XmlDb ($this->prefix, $this->pdo, \Depage\Cache\Cache::factory($this->prefix, array(
-            'disposition' => "redis",
-            'host' => "127.0.0.1:6379",
-        )));
-
         /* get auth object
         $this->auth = \Depage\Auth\Auth::factory(
             $this->pdo, // db_pdo
@@ -51,30 +44,40 @@ class JsTreeApplication extends \Websocket\Application\Application {
     public function onConnect($client)
     {
         // TODO: authentication ? beware of timeouts
+        $cid = $client->param;
+        list($docId, $projectName) = explode("/", $client->param);
+        $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
 
-        if (empty($this->clients[$client->param])) {
-            $this->clients[$client->param] = array();
-            $this->delta_updates[$client->param] = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $client->param);
+        if (empty($this->clients[$cid])) {
+            $this->clients[$cid] = [];
+            // @todo make instance correctly
+            $this->xmldbs[$cid] = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, \Depage\Cache\Cache::factory($prefix, array(
+                'disposition' => "redis",
+                'host' => "127.0.0.1:6379",
+            )));
+            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldbs[$cid], $docId, $projectName);
         }
 
-        $this->clients[$client->param][] = $client;
+        $this->clients[$cid][] = $client;
     }
 
     public function onDisconnect($client)
     {
-        $key = array_search($client, $this->clients[$client->param]);
+        $cid = $client->param;
+        $key = array_search($client, $this->clients[$cid]);
         if ($key) {
-            unset($this->clients[$client->param][$key]);
+            unset($this->clients[$cid][$key]);
 
-            if (empty($this->clients[$client->param])) {
-                unset($this->delta_updates[$client->param]);
+            if (empty($this->clients[$cid])) {
+                unset($this->xmldbs[$cid]);
+                unset($this->deltaUpdates[$cid]);
             }
         }
     }
 
     public function onTick() {
-        foreach ($this->clients as $doc_id => $clients) {
-            $data = $this->delta_updates[$doc_id]->encodedDeltaUpdate();
+        foreach ($this->clients as $id => $clients) {
+            $data = $this->deltaUpdates[$id]->encodedDeltaUpdate();
 
             if (!empty($data)) {
                 // send to clients

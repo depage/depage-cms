@@ -8,7 +8,7 @@ namespace WebSocket;
  * @author Nico Kaiser <nico@kaiser.me>
  */
 class Server extends Socket
-{   
+{
     private $clients = array();
 
     private $applications = array();
@@ -42,16 +42,16 @@ class Server extends Socket
                         continue;
                     } else {
                         $client = new Connection($this, $ressource);
-                        $this->clients[$ressource] = $client;
+                        $this->clients[(int) $ressource] = $client;
                         $this->allsockets[] = $ressource;
                     }
                 } else {
-                    $client = $this->clients[$socket];
+                    $client = $this->clients[(int) $socket];
                     $bytes = @socket_recv($socket, $data, 4096, 0);
                     if (!$bytes) {
                         $client->onDisconnect();
-                        unset($this->clients[$socket]);
-                        $index = array_search($socket, $this->allsockets);
+                        unset($this->clients[(int) $socket]);
+                        $index = array_search((int) $socket, $this->allsockets);
                         unset($this->allsockets[$index]);
                         unset($client);
                     } else {
@@ -74,7 +74,7 @@ class Server extends Socket
     {
         $this->applications[$key] = $application;
     }
-    
+
     public function log($message, $type = 'info')
     {
         echo date('Y-m-d H:i:s') . ' [' . ($type ? $type : 'error') . '] ' . $message . PHP_EOL;
