@@ -322,6 +322,13 @@ select,
         display: inline;
         list-style: none !important;
     }
+    .tree-actions span {
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+    }
 
     menu {
         padding: 2px 8px;

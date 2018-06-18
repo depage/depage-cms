@@ -33,7 +33,22 @@
             this._data.toolbar = {};
             parent.init.call(this, el, options);
             this._data.toolbar.inst = this.element.jstree(true);
-            this._data.toolbar.$el = $("<div class=\"toolbar\"></div>").appendTo(this.element.parent());
+            this._data.toolbar.$el = $("<span></span>").appendTo("#toolbarmain .tree-actions");
+
+
+            var $toolbar = this._data.toolbar.$el;
+
+            if (this._data.focus.focused) {
+                $toolbar.addClass("visible");
+            }
+
+            this.element
+                .on("focus.jstree", function() {
+                    $toolbar.addClass("visible");
+                })
+                .on("blur.jstree", function() {
+                    $toolbar.removeClass("visible");
+                });
         };
         // }}}
         // {{{ activate_node()
@@ -56,6 +71,13 @@
             this.addToolbarButton("rnode", "button-reload", function() {
                 inst.refresh_node(inst.get_selected());
             });
+        };
+        // }}}
+        // {{{ destroy()
+        this.destroy = function(keep_html) {
+            this._data.toolbar.$el.remove();
+
+            parent.destroy.call(this, keep_html);
         };
         // }}}
         // {{{ addToolbarButton()

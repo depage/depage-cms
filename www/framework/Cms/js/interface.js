@@ -150,6 +150,9 @@ var depageCMS = (function() {
                 "right-full"
             ];
 
+            // add tree actions
+            $toolbarLeft.append("<li class=\"tree-actions\"></li>");
+
             // add layout buttons
             var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
@@ -584,6 +587,9 @@ var depageCMS = (function() {
                     })
                     .on("refresh.jstree refresh_node.jstree", function () {
                         localJS.updatePreview();
+                    })
+                    .on("destroy.jstree", function () {
+                        console.log("destroyed");
                     })
                     .jstree(true);
 

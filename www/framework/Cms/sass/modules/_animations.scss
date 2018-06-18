@@ -44,5 +44,8 @@
 .tree.loaded > * {
     animation: loading-finished-top $transitionTime linear;
 }
+.tree-actions .visible {
+    animation: loading-finished-left $transitionTime linear;
+}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :
