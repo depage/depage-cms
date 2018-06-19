@@ -1,10 +1,11 @@
 <?php
 
 require_once("framework/Depage/Runner.php");
-// TODO: convert to autoloader
-require_once("framework/WebSocket/lib/WebSocket/Application/Application.php");
 
-class JsTreeApplication extends \Websocket\Application\Application {
+class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
+    Wrench\Application\ConnectionHandlerInterface,
+    Wrench\Application\UpdateHandlerInterface
+{
     private $clients = [];
     private $deltaUpdates = [];
     private $xmldbs = [];
@@ -16,8 +17,6 @@ class JsTreeApplication extends \Websocket\Application\Application {
     );
 
     function __construct() {
-        parent::__construct();
-
         $conf = new \Depage\Config\Config();
         $conf->readConfig(__DIR__ . "/../../../conf/dpconf.php");
         $this->options = $conf->getFromDefaults($this->defaults);
@@ -41,41 +40,53 @@ class JsTreeApplication extends \Websocket\Application\Application {
         ); */
     }
 
-    public function onConnect($client)
+    // {{{ name()
+    protected function getCid($client)
     {
-        // TODO: authentication ? beware of timeouts
-        $cid = $client->param;
-        list($docId, $projectName) = explode("/", $client->param);
+        $docId = $client->getQueryParams()['docId'];
+        $projectName = $client->getQueryParams()['projectName'];
+
+        return "{$projectName}_{$docId}";
+    }
+    // }}}
+
+    public function onConnect(Wrench\Connection $client): void
+    {
+        $docId = $client->getQueryParams()['docId'];
+        $projectName = $client->getQueryParams()['projectName'];
+        $cid = $this->getCid($client);
         $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
 
         if (empty($this->clients[$cid])) {
             $this->clients[$cid] = [];
-            // @todo make instance correctly
-            $this->xmldbs[$cid] = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, \Depage\Cache\Cache::factory($prefix, array(
+            $xmldbCache = \Depage\Cache\Cache::factory($prefix, array(
                 'disposition' => "redis",
                 'host' => "127.0.0.1:6379",
-            )));
+            ));
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
+            $this->xmldbs[$cid] = $project->getXmlDb();
             $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldbs[$cid], $docId, $projectName);
         }
 
         $this->clients[$cid][] = $client;
     }
 
-    public function onDisconnect($client)
+    public function onDisconnect(Wrench\Connection $client): void
     {
-        $cid = $client->param;
+        $cid = $this->getCid($client);
         $key = array_search($client, $this->clients[$cid]);
         if ($key) {
             unset($this->clients[$cid][$key]);
 
             if (empty($this->clients[$cid])) {
+                unset($this->clients[$cid]);
                 unset($this->xmldbs[$cid]);
                 unset($this->deltaUpdates[$cid]);
             }
         }
     }
 
-    public function onTick() {
+    public function onUpdate() {
         foreach ($this->clients as $id => $clients) {
             $data = $this->deltaUpdates[$id]->encodedDeltaUpdate();
 
@@ -91,9 +102,9 @@ class JsTreeApplication extends \Websocket\Application\Application {
         usleep(50 * 1000);
     }
 
-    public function onData($raw_data, $client)
+    public function onData(string $data, Wrench\Connection $client):void
     {
-        // do nothing, only send data in onTick() because fallback clients do not support websockets
+        // do nothing, only send data in onUpdate() because fallback clients do not support websockets
     }
 }
 
