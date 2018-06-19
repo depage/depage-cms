@@ -154,7 +154,7 @@ class Tree extends Base {
 
         $this->doc->setAttribute($id, $name, $value);
         $parent_id = $this->doc->getParentIdById($id);
-        $this->recordChange($this->docId, array($parent_id));
+        $this->recordChange($this->docId, [$parent_id]);
         $status = true;
 
         return new \Depage\Json\Json([
@@ -182,7 +182,7 @@ class Tree extends Base {
 
         $this->doc->setAttribute($id, "name", $name);
         $parent_id = $this->doc->getParentIdById($id);
-        $this->recordChange($this->docId, array($parent_id));
+        $this->recordChange($this->docId, [$parent_id]);
         $status = true;
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -206,7 +206,7 @@ class Tree extends Base {
         $status = $this->doc->moveNode($id, $target_id, $position);
 
         if ($status) {
-            $this->recordChange($this->docId, array($old_parent_id, $target_id));
+            $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -228,7 +228,7 @@ class Tree extends Base {
         $status = $this->doc->moveNodeIn($id, $target_id);
 
         if ($status) {
-            $this->recordChange($this->docId, array($old_parent_id, $target_id));
+            $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -247,10 +247,11 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $parent_id = $this->doc->moveNodeBefore($id, $target_id);
+        $parent_id = $this->doc->getParentIdById($target_id);
+        $status = $this->doc->moveNodeBefore($id, $target_id);
 
-        if ($parent_id) {
-            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        if ($status) {
+            $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -269,10 +270,11 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $parent_id = $this->doc->moveNodeAfter($id, $target_id);
+        $parent_id = $this->doc->getParentIdById($target_id);
+        $status = $this->doc->moveNodeAfter($id, $target_id);
 
-        if ($parent_id) {
-            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+        if ($status) {
+            $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -292,10 +294,11 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
+        $old_parent_id = $this->doc->getParentIdById($id);
         $status = !! $this->doc->copyNode($id, $target_id, $position);
 
         if ($status) {
-            $this->recordChange($this->docId, array($target_id, $status));
+            $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $status));
@@ -317,7 +320,7 @@ class Tree extends Base {
         $status = $this->doc->copyNodeIn($id, $target_id);
 
         if ($status) {
-            $this->recordChange($this->docId, array($old_parent_id, $target_id));
+            $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -336,10 +339,11 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $parent_id = $this->doc->copyNodeBefore($id, $target_id);
+        $parent_id = $this->doc->getParentIdById($target_id);
+        $status = $this->doc->copyNodeBefore($id, $target_id);
 
         if ($status) {
-            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+            $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -358,10 +362,11 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $parent_id = $this->doc->copyNodeAfter($id, $target_id);
+        $parent_id = $this->doc->getParentIdById($target_id);
+        $status = $this->doc->copyNodeAfter($id, $target_id);
 
         if ($status) {
-            $this->recordChange($this->docId, array($old_parent_id, $parent_id));
+            $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -383,7 +388,7 @@ class Tree extends Base {
         $ids = $this->doc->deleteNode($id);
         $status = count($ids) > 0;
         if ($status) {
-            $this->recordChange($this->docId, array($parent_id));
+            $this->recordChange($this->docId, [$parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -405,7 +410,7 @@ class Tree extends Base {
 
         if ($status) {
             $parent_id = $this->doc->getParentIdById($id);
-            $this->recordChange($this->docId, array($id, $parent_id));
+            $this->recordChange($this->docId, [$id, $parent_id]);
         }
 
         return new \Depage\Json\Json(array("status" => $status, "id" => $id));
@@ -550,8 +555,8 @@ class Tree extends Base {
      */
     protected function recordChange($doc_id, $parent_ids)
     {
-        $unique_parent_ids = array_unique($parent_ids);
-        foreach ($unique_parent_ids as $parent_id) {
+        $parent_ids = array_unique($parent_ids);
+        foreach ($parent_ids as $parent_id) {
             $this->deltaUpdates->recordChange($parent_id);
         }
     }
