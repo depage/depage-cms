@@ -39,10 +39,10 @@
                 this.element.addClass("jstree-focus");
             }
 
-            this.element.on("click.jstree focus.jstree", this.gainFocus);
+            this.element.on("mousedown.jstree mouseup.jstree focus.jstree", this.gainFocus);
         };
         // }}}
-        // {{{
+        // {{{ gainFocus
         this.gainFocus = $.proxy(function() {
             if (this._data.focus.focused) return;
 
@@ -61,7 +61,7 @@
             inst.trigger("focus");
         }, this);
         // }}}
-        // {{{
+        // {{{ looseFocus
         this.looseFocus = $.proxy(function() {
             if (!this._data.focus.focused) return;
 
