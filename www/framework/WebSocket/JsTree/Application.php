@@ -93,7 +93,11 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
             if (!empty($data)) {
                 // send to clients
                 foreach ($clients as $client) {
-                    $client->send($data);
+                    try {
+                        $client->send($data);
+                    } catch (\Wrench\Exception\SocketException $e) {
+                        $this->onDisconnect($client);
+                    }
                 }
             }
         }
