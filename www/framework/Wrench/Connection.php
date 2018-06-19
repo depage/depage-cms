@@ -196,9 +196,9 @@ class Connection extends Configurable implements LoggerAwareInterface
                 break;
 
             case Protocol::TYPE_PING:
-                $this->logger->info('Ping received', 'notice');
+                $this->logger->info('Ping received');
                 $this->send($payload->getPayload(), Protocol::TYPE_PONG);
-                $this->logger->info('Pong!', 'debug');
+                $this->logger->info('Pong!');
                 break;
 
             /**
