@@ -52,37 +52,12 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
 
     public function onConnect(Wrench\Connection $client): void
     {
-        $docId = $client->getQueryParams()['docId'];
-        $projectName = $client->getQueryParams()['projectName'];
-        $cid = $this->getCid($client);
-        $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
-
-        if (empty($this->clients[$cid])) {
-            $this->clients[$cid] = [];
-            $xmldbCache = \Depage\Cache\Cache::factory($prefix, array(
-                'disposition' => "redis",
-                'host' => "127.0.0.1:6379",
-            ));
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
-            $this->xmldbs[$cid] = $project->getXmlDb();
-            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldbs[$cid], $docId, $projectName);
-        }
-
-        $this->clients[$cid][] = $client;
     }
 
     public function onDisconnect(Wrench\Connection $client): void
     {
-        $cid = $this->getCid($client);
-        $key = array_search($client, $this->clients[$cid]);
-        if ($key) {
-            unset($this->clients[$cid][$key]);
-
-            if (empty($this->clients[$cid])) {
-                unset($this->clients[$cid]);
-                unset($this->xmldbs[$cid]);
-                unset($this->deltaUpdates[$cid]);
-            }
+        foreach ($this->clients as $cid => $clients) {
+            $this->unsubscribe($client, $cid);
         }
     }
 
@@ -108,8 +83,63 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
 
     public function onData(string $data, Wrench\Connection $client):void
     {
-        // do nothing, only send data in onUpdate() because fallback clients do not support websockets
+        $data = json_decode($data);
+        if (!$data) return;
+
+        if ($data->action == "subscribe") {
+            $this->subscribe($client, $data->projectName, $data->docId);
+        } else if ($data->action == "unsubscribe") {
+            $this->unsubscribe($client, "{$data->projectName}_{$data->docId}");
+        }
     }
+
+    // {{{ subscribe()
+    /**
+     * @brief subscribe
+     *
+     * @param mixed $client
+     * @return void
+     **/
+    protected function subscribe($client, $projectName, $docId)
+    {
+        $cid = "{$projectName}_{$docId}";
+        $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
+
+        if (empty($this->clients[$cid])) {
+            $this->clients[$cid] = [];
+            $xmldbCache = \Depage\Cache\Cache::factory($prefix, array(
+                'disposition' => "redis",
+                'host' => "127.0.0.1:6379",
+            ));
+            $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
+            $this->xmldbs[$cid] = $project->getXmlDb();
+            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldbs[$cid], $docId, $projectName);
+        }
+
+        $this->clients[$cid][$client->getId()] = $client;
+    }
+    // }}}
+    // {{{ unsubscribe()
+    /**
+     * @brief unsubscribe
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function unsubscribe($client, $cid)
+    {
+        $id = $client->getId();
+        if (isset($this->clients[$cid][$id])) {
+            unset($this->clients[$cid][$id]);
+
+            if (empty($this->clients[$cid])) {
+                unset($this->clients[$cid]);
+                unset($this->xmldbs[$cid]);
+                unset($this->deltaUpdates[$cid]);
+            }
+        }
+    }
+    // }}}
 }
 
 ?>

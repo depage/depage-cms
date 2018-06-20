@@ -65,6 +65,14 @@
                     }
                 }
             }, this);
+
+            this._data.deltaUpdates.ws.onopen = function() {
+                this.send({
+                    action: "subscribe",
+                    projectName: $tree.attr("data-projectname"),
+                    docId: $tree.attr("data-doc-id")
+                });
+            };
         };
         // }}}
         // {{{
@@ -99,11 +107,11 @@
                             }
                             if (parentNode) {
                                 inst._append_html_data(parentNode, html, function() {});
+                            } else {
+                                console.log("no no no!!");
+                                console.log(data.nodes);
+                                inst.refresh();
                             }
-                        } else {
-                            console.log("no no no!!");
-                            console.log(data.nodes);
-                            inst.refresh();
                         }
                     }
 
@@ -120,6 +128,12 @@
         // }}}
         // {{{ destroy()
         this.destroy = function(keep_html) {
+            var $tree = this.element;
+            this._data.deltaUpdates.ws.send({
+                action: "unsubscribe",
+                projectName: $tree.attr("data-projectname"),
+                docId: $tree.attr("data-doc-id")
+            });
             this._data.deltaUpdates.ws.close();
             this._data.deltaUpdates.ws = null;
 

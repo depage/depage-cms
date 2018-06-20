@@ -96,6 +96,8 @@ class DeltaUpdates {
 
         $result = array(
             'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->projectName),
+            'projectName' => $this->projectName,
+            'docId' => $this->doc_id,
             'seq_nr' => $this->seq_nr,
         );
 
