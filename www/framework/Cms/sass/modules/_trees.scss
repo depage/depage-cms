@@ -235,7 +235,7 @@
 .jstree-focus {
     .jstree-clicked,
     .jstree-clicked.jstree-hovered {
-        background: $selectionBackgroundColor;
+         background: $selectionBackgroundColor;
     }
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {
@@ -486,6 +486,13 @@
             left: 0;
             right: 0;
             background: $textBrightColor;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+
+            &.jstree-focus {
+                border-top-color: $selectionBackgroundColor;
+                border-bottom-color: $selectionBackgroundColor;
+            }
         }
     }
     .tree.pages {

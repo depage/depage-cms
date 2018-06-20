@@ -27,6 +27,7 @@
     .doc-property-fieldset > p {
         $labelWidth: 25px;
         padding-left: $labelWidth;
+        margin-bottom: 0;
 
         > .depage-label,
         > label > .depage-label {
@@ -48,6 +49,7 @@
         .textarea,
         textarea {
             display: inline-block;
+            margin-bottom: 0;
         }
     }
     p.input-richtext .textarea-content {
