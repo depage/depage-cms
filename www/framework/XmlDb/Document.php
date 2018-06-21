@@ -30,6 +30,9 @@ class Document
 
     protected $free_element_ids = [];
     protected $doctypeHandlers = [];
+
+    private $childNodeQuery = null;
+    private $insertNodeQuery = null;
     // }}}
     // {{{ constructor
     /**
@@ -1325,11 +1328,9 @@ class Document
      */
     protected function getChildnodesByParentId($parent_id, $level = PHP_INT_MAX)
     {
-        static $query = null;
-
         // prepare query
-        if (is_null($query)) {
-            $query = $this->pdo->prepare(
+        if (is_null($this->childNodeQuery)) {
+            $this->childNodeQuery = $this->pdo->prepare(
                 "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
                 FROM {$this->table_xml} AS xml
                 WHERE xml.id_parent = :parent_id AND xml.id_doc = :doc_id
@@ -1339,11 +1340,11 @@ class Document
 
         $xml_doc = '';
 
-        $query->execute([
+        $this->childNodeQuery->execute([
             'doc_id' => $this->doc_id,
             'parent_id' => $parent_id,
         ]);
-        $results = $query->fetchAll(\PDO::FETCH_OBJ);
+        $results = $this->childNodeQuery->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($results as $row) {
             //get ELMEMENT_NODE
@@ -1635,10 +1636,8 @@ class Document
      */
     protected function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
     {
-        static $insert_query = null;
-
-        if (is_null($insert_query)) {
-            $insert_query = $this->pdo->prepare(
+        if (is_null($this->insertNodeQuery)) {
+            $this->insertNodeQuery = $this->pdo->prepare(
                 "INSERT {$this->table_xml}
                 SET
                     id = :id_query,
@@ -1709,7 +1708,7 @@ class Document
         }
         $node_data = \Normalizer::normalize($node_data);
 
-        $insert_query->execute([
+        $this->insertNodeQuery->execute([
             'id_query' => $id_query,
             'target_id' => $target_id,
             'target_pos' => $target_pos,
