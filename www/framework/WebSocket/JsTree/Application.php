@@ -8,7 +8,6 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
 {
     private $clients = [];
     private $deltaUpdates = [];
-    private $xmldbs = [];
     protected $defaults = array(
         "db" => null,
         "auth" => null,
@@ -40,16 +39,6 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
         ); */
     }
 
-    // {{{ name()
-    protected function getCid($client)
-    {
-        $docId = $client->getQueryParams()['docId'];
-        $projectName = $client->getQueryParams()['projectName'];
-
-        return "{$projectName}_{$docId}";
-    }
-    // }}}
-
     public function onConnect(Wrench\Connection $client): void
     {
     }
@@ -62,8 +51,8 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
     }
 
     public function onUpdate() {
-        foreach ($this->clients as $id => $clients) {
-            $data = $this->deltaUpdates[$id]->encodedDeltaUpdate();
+        foreach ($this->clients as $cid => $clients) {
+            $data = $this->deltaUpdates[$cid]->encodedDeltaUpdate();
 
             if (!empty($data)) {
                 // send to clients
@@ -103,17 +92,18 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
     protected function subscribe($client, $projectName, $docId)
     {
         $cid = "{$projectName}_{$docId}";
-        $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
 
         if (empty($this->clients[$cid])) {
             $this->clients[$cid] = [];
+            $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
             $xmldbCache = \Depage\Cache\Cache::factory($prefix, array(
                 'disposition' => "redis",
                 'host' => "127.0.0.1:6379",
             ));
             $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
-            $this->xmldbs[$cid] = $project->getXmlDb();
-            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldbs[$cid], $docId, $projectName);
+            $xmldb = $project->getXmlDb();
+
+            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $xmldb, $docId, $projectName);
         }
 
         $this->clients[$cid][$client->getId()] = $client;
@@ -134,7 +124,6 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
 
             if (empty($this->clients[$cid])) {
                 unset($this->clients[$cid]);
-                unset($this->xmldbs[$cid]);
                 unset($this->deltaUpdates[$cid]);
             }
         }
