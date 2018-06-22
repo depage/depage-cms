@@ -1,11 +1,11 @@
 <div
-    id="node_<?php self::t($this->root_id); ?>"
+    id="<?php self::t($this->rootId); ?>"
     class="jstree-container"
+    rel="<?php self::t($this->rootNodeType); ?>"
     data-projectname="<?php self::t($this->projectName); ?>"
     data-docname="<?php self::t($this->docName); ?>"
-    data-doc-id="<?php self::t($this->docId); ?>"
     data-node-id="<?php self::t($this->rootId); ?>"
-
+    data-doc-id="<?php self::t($this->docId); ?>"
     data-seq-nr="<?php self::t($this->seqNr); ?>"
     data-selected-nodes=""
     data-open-nodes=""
@@ -13,9 +13,8 @@
     data-delta-updates-websocket-url="<?php self::t($this->wsUrl); ?>"
     data-delta-updates-fallback-poll-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
     data-delta-updates-post-url="<?php self::a($this->treeUrl, "auto"); ?>"
-    data-types-settings-url="<?php self::a($this->treeUrl . "types-settings/", "auto"); ?>"
+    data-tree-settings="<?php self::t(json_encode($this->settings)); ?>"
 >
-    <!--data-delta-updates-websocket-url="ws://127.0.0.1:8000/jstree/"-->
     <?php self::e($this->nodes); ?>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

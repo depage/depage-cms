@@ -14,8 +14,26 @@ class Page extends Base
         parent::__construct($xmlDb, $document);
 
         $this->pathXMLtemplate = $this->xmlDb->options['pathXMLtemplate'];
-
         $this->table_nodetypes = $xmlDb->table_nodetypes;
+
+        $types = $this->getNodeTypes();
+        $this->availableNodes = [];
+        $this->validParents = [];
+
+        foreach ($this->getNodeTypes() as $t) {
+            $doc = new \DOMDocument();
+            $doc->load("{$this->pathXMLtemplate}/{$t->xmlTemplate}");
+            $contentElement = $doc->documentElement->firstChild;
+            while ($contentElement->nodeType != \XML_ELEMENT_NODE) {
+                $contentElement = $contentElement->nextSibling;
+            }
+            if ($contentElement) {
+                $nodeName = $contentElement->nodeName;
+
+                $this->availableNodes[$nodeName] = $t;
+                $this->validParents[$nodeName] = explode(",", $t->validParents);
+            }
+        }
     }
     // }}}
 

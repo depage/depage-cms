@@ -102,12 +102,14 @@ class Tree extends Base {
         $h = new Html("jstree.tpl", [
             'projectName' => $this->projectName,
             'docName' => $this->docName,
+            'rootId' => $this->docInfo->rootid,
+            'rootNodeType' => $this->doc->getNodeNameById($this->docInfo->rootid),
             'docId' => $this->docInfo->id,
             'wsUrl' => $wsUrl,
             'treeUrl' => $treeUrl,
             'rootId' => $this->docInfo->rootid,
             'seqNr' => $this->get_current_seq_nr($this->docInfo->id),
-            //'nodes' => $this->nodes($docName),
+            'settings' => $this->treeSettings(),
         ], $this->htmlOptions);
 
         return $h;
@@ -435,7 +437,7 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ types_settings
+    // {{{ treeSettings
     /**
      * Type Settings
      *
@@ -443,22 +445,15 @@ class Tree extends Base {
      *
      * @return \json
      */
-    public function types_settings()
+    protected function treeSettings()
     {
-        $settings = array();
-
         $permissions = $this->doc->getPermissions();
-        $this->log->log($permissions);
-        $settings = array(
-            "typesfromurl" => array(
-                "max_depth" => -2,
-                "max_children" => -2,
-                "valid_parents" => $permissions->validParents,
-                "available_nodes" => $permissions->availableNodes
-            ),
-        );
-
-        return new \Depage\Json\Json($settings);
+        return [
+            "maxDepth" => -2,
+            "maxChildren" => -2,
+            "validParents" => $permissions->validParents,
+            "availableNodes" => $permissions->availableNodes
+        ];
     }
     // }}}
 
