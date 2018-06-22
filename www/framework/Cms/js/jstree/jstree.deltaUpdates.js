@@ -20,6 +20,52 @@
 
     if($.jstree.plugins.deltaUpdates) { return; }
 
+    // {{{ deferredWebsocket
+    var _ws = [];
+    var deferredWebsocket = function(webSocketUrl) {
+        if (typeof _ws[webSocketUrl] !== 'undefined') {
+            return _ws[webSocketUrl];
+        }
+
+        _ws[webSocketUrl] = {
+            init: function() {
+                var that = this;
+                this.messageCallbacks = $.Callbacks();
+                this.ws = new WebSocket(webSocketUrl);
+                this.ws.onmessage = function(e) {
+                    that.messageCallbacks.fire(e);
+                };
+
+                $(window).unload(function () { that.ws.close(); that.ws = null; });
+            },
+            send: function(data) {
+                var defer = $.Deferred();
+                var that = this;
+
+                defer.then( function() {
+                    that.ws.send($.toJSON(data));
+                });
+                if (this.ws.readyState == 1) {
+                    defer.resolve(data);
+                } else {
+                    this.ws.onopen = function() {
+                        defer.resolve(data);
+                    };
+                }
+            },
+            onmessage: function( callback ) {
+                this.messageCallbacks.add(callback);
+            },
+            offmessage: function( callback ) {
+                this.messageCallbacks.remove(callback);
+            }
+        };
+        _ws[webSocketUrl].init();
+
+        return _ws[webSocketUrl];
+    };
+    // }}}
+
     /**
      * deltaUpdates configuration
      *
@@ -40,40 +86,32 @@
 
             var webSocketURL = this.element.attr("data-delta-updates-websocket-url");
             var fallbackPollURL = this.element.attr("data-delta-updates-fallback-poll-url");
+            this._data.deltaUpdates.ws = deferredWebsocket(webSocketURL);
 
-            this._data.deltaUpdates.ws = $.gracefulWebSocket(webSocketURL, {
-                fallbackPollURL: fallbackPollURL,
-                fallbackPollParams:  {
-                    "seqNr": function () {
-                        return $tree.attr("data-seq-nr");
-                    },
-                    "docId": function () {
-                        return $tree.attr("data-doc-id");
-                    }
-                }
+            this._data.deltaUpdates.ws.send({
+                action: "subscribe",
+                projectName: $tree.attr("data-projectname"),
+                docId: $tree.attr("data-doc-id")
             });
+            this._data.deltaUpdates.ws.onmessage( this.onmessage );
 
-            this._data.deltaUpdates.ws.onmessage = $.proxy(function (event) {
-                if (event.data) {
-                    this._data.deltaUpdates.pending_updates.push(event);
-                    // only apply delta updates if no updates are in progress
-                    // pending delta updates are applied when local update ajax calls return
-                    if (!this._data.deltaUpdates.active_ajax_requests) {
-                        if (!$(".jstree-rename-input").unbind('end_edit').bind('end_edit', function() { this.applyDeltaUpdates(); }).length) {
-                            this.applyDeltaUpdates();
-                        }
+            // @todo reconnect after disconnect or fallback
+            // @todo add fallback when websocket is not available or cannot connect
+        };
+        // }}}
+        // {{{
+        this.onmessage = $.proxy( function(event) {
+            if (event.data) {
+                this._data.deltaUpdates.pending_updates.push(event);
+                // only apply delta updates if no updates are in progress
+                // pending delta updates are applied when local update ajax calls return
+                if (!this._data.deltaUpdates.active_ajax_requests) {
+                    if (!$(".jstree-rename-input").unbind('end_edit').bind('end_edit', function() { this.applyDeltaUpdates(); }).length) {
+                        this.applyDeltaUpdates();
                     }
                 }
-            }, this);
-
-            this._data.deltaUpdates.ws.onopen = function() {
-                this.send({
-                    action: "subscribe",
-                    projectName: $tree.attr("data-projectname"),
-                    docId: $tree.attr("data-doc-id")
-                });
-            };
-        };
+            }
+        }, this);
         // }}}
         // {{{
         this.applyDeltaUpdates = function() {
@@ -87,6 +125,9 @@
                     // continue
                     return true;
                 }
+                if ($tree.attr("data-projectname") !== data.projectName || $tree.attr("data-doc-id") != data.docId) {
+                    return;
+                }
 
                 // only overwrite tree nodes if data is newer
                 var old_seq_nr = parseInt($tree.attr("data-seq-nr"));
@@ -95,7 +136,7 @@
                     // remember which tree nodes were open
                     var state = inst.get_state();
 
-                    // @todo check order of nodes (if subsequent update is parent of previous)
+                    // @todo fix urls for newly loaded nodes? -> do that in php origin
                     // @todo add reload on error/problem
                     for (var id in data.nodes) {
                         if (data.nodes[id]) {
@@ -134,7 +175,8 @@
                 projectName: $tree.attr("data-projectname"),
                 docId: $tree.attr("data-doc-id")
             });
-            this._data.deltaUpdates.ws.close();
+            this._data.deltaUpdates.ws.offmessage( this.onmessage );
+            //this._data.deltaUpdates.ws.close();
             this._data.deltaUpdates.ws = null;
 
             parent.destroy.call(this, keep_html);
