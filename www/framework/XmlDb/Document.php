@@ -820,13 +820,13 @@ class Document
         $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
+        $target_parent_id = $this->getParentIdById($target_id);
         if (
             $node_id !== $target_id
-            && $dth->isAllowedMove($node_id, $target_id)
+            && $dth->isAllowedMove($node_id, $target_parent_id)
         ) {
             $this->beginTransactionAltering();
 
-            $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id);
             $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
@@ -849,13 +849,13 @@ class Document
         $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
+        $target_parent_id = $this->getParentIdById($target_id);
         if (
             $node_id !== $target_id
-            && $dth->isAllowedMove($node_id, $target_id)
+            && $dth->isAllowedMove($node_id, $target_parent_id)
         ) {
             $this->beginTransactionAltering();
 
-            $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id) + 1;
             $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
@@ -922,7 +922,8 @@ class Document
         $copy_id = false;
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->isAllowedCopy($node_id, $target_id)) {
+        $target_parent_id = $this->getParentIdById($target_id);
+        if ($dth->isAllowedCopy($node_id, $target_parent_id)) {
             $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id);
@@ -946,7 +947,8 @@ class Document
         $copy_id = false;
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->isAllowedCopy($node_id, $target_id)) {
+        $target_parent_id = $this->getParentIdById($target_id);
+        if ($dth->isAllowedCopy($node_id, $target_parent_id)) {
             $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id, 1);
