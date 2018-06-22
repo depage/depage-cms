@@ -181,7 +181,17 @@ class Pages extends Base {
 
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->routeHtmlThroughPhp = $this->routeHtmlThroughPhp;
-        $xmlnav->addUrlAttributes($node);
+
+        // add parent url if $node is not root node
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+        $url = "";
+        if ($node->nodeName != "proj:pages_struct") {
+            $nodeId = (int) $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+            while (($nodeId = $this->document->getParentIdById($nodeId)) != null) {
+                $url = \Depage\Html\Html::getEscapedUrl(mb_strtolower($this->document->getAttribute($nodeId, 'name'))) . "/" . $url;
+            }
+        }
+        $xmlnav->addUrlAttributes($node, $url);
 
         $this->addReleaseStatusAttributes($node);
 
