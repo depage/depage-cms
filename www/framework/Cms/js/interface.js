@@ -608,6 +608,7 @@ var depageCMS = (function() {
             var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
             $docPropertiesContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                // @todo scroll to top
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
 
@@ -641,10 +642,6 @@ var depageCMS = (function() {
                 // @todo add support for better handling of tab key to jump between cells
 
                 localJS.hightlighCurrentDocProperty();
-
-                $form.on("depageForm.autosaved", function() {
-                    localJS.updatePreview();
-                });
             });
         },
         // }}}

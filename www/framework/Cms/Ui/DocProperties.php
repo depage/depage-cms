@@ -143,6 +143,11 @@ class DocProperties extends Base
             $node = $this->form->getValuesXml();
             $doc->saveNode($node);
 
+            $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+            $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->projectName, 0);
+            $parentId = $doc->getParentIdById($this->nodeId);
+            $deltaUpdates->recordChange($parentId);
+
             $this->form->clearSession(false);
         }
 

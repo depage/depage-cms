@@ -10,7 +10,7 @@
  * @require framework/Cms/js/jstree/jstree.state.js
  * @require framework/Cms/js/jstree/jstree.focus.js
  * @require framework/Cms/js/jstree/jstree.toolbar.js
- * @require framework/Cms/js/jstree/jstree.toolbar.js
+ * @require framework/Cms/js/jstree/jstree.nodeActions.js
  * @require framework/Cms/js/jstree/jstree.deltaUpdates.js
  * @require framework/Cms/js/jstree/jstree.types.js
  * @require framework/Cms/js/jstree/jstree.unique.js
