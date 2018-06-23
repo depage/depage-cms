@@ -93,7 +93,7 @@
                 var that = this;
 
                 defer.then( function() {
-                    if (that.ws.readyState == 1) that.ws.send($.toJSON(data));
+                    if (that.ws.readyState == 1) that.ws.send(JSON.stringify(data));
                 });
                 if (this.ws.readyState == 1) {
                     defer.resolve(data);
@@ -129,7 +129,7 @@
 
                             that.messageCallbacks.fire({"data" : data});
                             try {
-                                var result = $.evalJSON(data);
+                                var result = JSON.parse(data);
                                 var id = result.projectName + "_" + result.docId;
                                 that.subscriptions[id].seqNr = result.seqNr;
                             } catch (e) {
@@ -243,7 +243,7 @@
             var data;
             $.each(this._data.deltaUpdates.pending_updates, function (index, event) {
                 try {
-                    data = $.evalJSON(event.data);
+                    data = JSON.parse(event.data);
                 } catch (e) {
                     // continue
                     return true;

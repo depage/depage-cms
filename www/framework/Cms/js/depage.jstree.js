@@ -17,8 +17,6 @@
  * @require framework/Cms/js/jstree/jstree.unique.js
  * @require framework/Cms/js/jstree/vakata-jstree.js
  *
- * @require framework/shared/jquery.json-2.2.js
- *
  * @file    depage-jstree
  *
  * Depage jstree - wraps the jstree in the depage namespace adding custom configuration and functionality.

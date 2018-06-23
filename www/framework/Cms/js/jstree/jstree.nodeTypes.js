@@ -36,7 +36,7 @@
 
             var $tree = this.element;
             try {
-                var settings = $.evalJSON($tree.attr("data-tree-settings"));
+                var settings = JSON.parse($tree.attr("data-tree-settings"));
                 $.extend(this._data.nodeTypes, settings);
             } catch (e) {
                 // continue
