@@ -24,22 +24,6 @@
     p {
         margin-bottom: 5px;
     }
-    .doc-property-fieldset > p {
-        $labelWidth: 25px;
-        padding-left: $labelWidth;
-        margin-bottom: 0;
-
-        > .depage-label,
-        > label > .depage-label {
-            position: absolute;
-            left: 0;
-            top: 0;
-            padding-top: 4px;
-            width: $labelWidth;
-            height: auto;
-            min-height: 0;
-        }
-    }
     p.input-richtext {
         .textarea,
         .textarea-content,

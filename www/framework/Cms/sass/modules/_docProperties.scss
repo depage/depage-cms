@@ -106,16 +106,73 @@
 // }}}
 // {{{ .doc-properties .doc-property-fieldset
 .doc-properties .doc-property-fieldset {
+    padding-top: 8px;
+    padding-bottom: 8px;
+
     > legend {
-        font-size: $fSizeS;
+        font-size: $fSizeXS;
         letter-spacing: 0.05em;
         font-weight: normal;
-        margin-top: 10px;
+        margin-top: 0;
         margin-bottom: 5px;
-        //text-transform: uppercase;
-    }
-    &.focus > legend {
         font-weight: bold;
+        text-transform: uppercase;
+    }
+    > p {
+        $labelWidth: 40px;
+        margin-bottom: 0;
+
+        > .depage-label,
+        > label > .depage-label {
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding-top: 6px;
+            width: $labelWidth;
+            height: auto;
+            min-height: 0;
+            z-index: 10;
+            text-align: center;
+        }
+        input,
+        textarea,
+        .textarea {
+            padding-left: $labelWidth;
+            border-color: transparent !important;
+            border-bottom-color: $backgroundLighterColor !important;
+        }
+        &:first-of-type {
+            input,
+            textarea,
+            .textarea {
+                @include radius($cornerRadius, "top", "left");
+                @include radius($cornerRadius, "top", "right");
+            }
+        }
+        &:last-child {
+            input,
+            textarea,
+            .textarea {
+                @include radius($cornerRadius, "bottom", "left");
+                @include radius($cornerRadius, "bottom", "right");
+                border-bottom-color: transparent !important;
+            }
+        }
+    }
+    &.focus {
+        > legend {
+            font-weight: bold;
+        }
+        > p {
+            &:first-of-type,
+            &:last-child {
+                input,
+                textarea,
+                .textarea {
+                    @include radius(0);
+                }
+            }
+        }
     }
     > p > .depage-label,
     > p > label > .depage-label {
