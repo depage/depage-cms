@@ -141,6 +141,10 @@
             border-color: transparent !important;
             border-bottom-color: $backgroundLighterColor !important;
         }
+        .textarea .textarea-content {
+            padding: 0;
+            padding-top: 1px;
+        }
         &:first-of-type {
             input,
             textarea,
