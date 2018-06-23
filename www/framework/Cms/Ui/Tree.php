@@ -97,7 +97,7 @@ class Tree extends Base {
     public function tree()
     {
         $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/";
-        $wsUrl = "ws://127.0.0.1:8000/jstree";
+        $wsUrl = new \Depage\Html\Link("jstree", "wss", "");
 
         $h = new Html("jstree.tpl", [
             'projectName' => $this->projectName,
