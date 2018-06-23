@@ -139,7 +139,7 @@ class XmlNav {
             // set url of folders to url of first child page
             $xpath = new \DOMXpath($xml);
             $urlNodes = $xpath->query("(.//pg:page/@url)[1]", $node, true);
-            $url = $urlNodes->item(0)->value;
+            $url = $urlNodes->item(0)->value ?? "";
         } elseif ($node->nodeName == 'pg:redirect') {
             $url = $url . ".php";
         } elseif ($node->nodeName == 'pg:page') {
