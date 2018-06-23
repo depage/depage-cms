@@ -31,12 +31,44 @@
             init: function() {
                 var that = this;
                 this.messageCallbacks = $.Callbacks();
+                this.subscriptions = [];
+
+                this.connect();
+
+                $(window).unload(function () {
+                    that.subscriptions = [];
+                    that.ws.close();
+                    that.ws = null;
+                });
+            },
+            connect: function() {
+                var that = this;
+
                 this.ws = new WebSocket(webSocketUrl);
                 this.ws.onmessage = function(e) {
                     that.messageCallbacks.fire(e);
                 };
+                this.ws.onerror = function(e) {
+                    console.log("websocket error");
+                };
+                this.ws.onclose = function(e) {
+                    console.log("websocket closed");
+                    that.reconnect();
+                };
+            },
+            reconnect: function() {
+                if (this.subscriptions.length == 0) return;
 
-                $(window).unload(function () { that.ws.close(); that.ws = null; });
+                this.connect();
+
+                for (var i = 0; i < this.subscriptions.length; i++) {
+                    console.log(this.subscriptions[i]);
+                    this.send({
+                        action: "subscribe",
+                        projectName: this.subscriptions[i].projectName,
+                        docId: this.subscriptions[i].docId
+                    });
+                }
             },
             send: function(data) {
                 var defer = $.Deferred();
@@ -48,10 +80,37 @@
                 if (this.ws.readyState == 1) {
                     defer.resolve(data);
                 } else {
-                    this.ws.onopen = function() {
+                    this.ws.addEventListener('open', function() {
+                        console.log("websocket opened");
                         defer.resolve(data);
-                    };
+                    });
                 }
+            },
+            subscribe: function(projectName, docId) {
+                console.log("subscribe " + projectName + " " + docId);
+                this.subscriptions.push({
+                    projectName: projectName,
+                    docId: docId
+                });
+                this.send({
+                    action: "subscribe",
+                    projectName: projectName,
+                    docId: docId
+                });
+            },
+            unsubscribe: function(projectName, docId) {
+                console.log("unsubscribe " + projectName + " " + docId);
+                var id = projectName + "_" + docId;
+                for (var i = this.subscriptions.length - 1; i >= 0; i--) {
+                    if (this.subscriptions[i].projectName == projectName && this.subscriptions[i].docId == docId) {
+                        this.subscriptions.splice(i, 1);
+                    }
+                }
+                this.send({
+                    action: "unsubscribe",
+                    projectName: projectName,
+                    docId: projectName
+                });
             },
             onmessage: function( callback ) {
                 this.messageCallbacks.add(callback);
@@ -88,11 +147,7 @@
             var fallbackPollURL = this.element.attr("data-delta-updates-fallback-poll-url");
             this._data.deltaUpdates.ws = deferredWebsocket(webSocketURL);
 
-            this._data.deltaUpdates.ws.send({
-                action: "subscribe",
-                projectName: $tree.attr("data-projectname"),
-                docId: $tree.attr("data-doc-id")
-            });
+            this._data.deltaUpdates.ws.subscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"));
             this._data.deltaUpdates.ws.onmessage( this.onmessage );
 
             // @todo reconnect after disconnect or fallback
@@ -170,11 +225,7 @@
         // {{{ destroy()
         this.destroy = function(keep_html) {
             var $tree = this.element;
-            this._data.deltaUpdates.ws.send({
-                action: "unsubscribe",
-                projectName: $tree.attr("data-projectname"),
-                docId: $tree.attr("data-doc-id")
-            });
+            this._data.deltaUpdates.ws.unsubscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"));
             this._data.deltaUpdates.ws.offmessage( this.onmessage );
             //this._data.deltaUpdates.ws.close();
             this._data.deltaUpdates.ws = null;

@@ -99,6 +99,7 @@
         // {{{ onDelete
         base.onDelete = function(e, param) {
             // @todo add dialog to make sure you want to delete node
+            // @todo select sibling/parent after node is deleted
             xmldb.deleteNode(param.node.data.nodeId);
         };
         // }}}
