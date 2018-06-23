@@ -98,9 +98,22 @@
         // }}}
         // {{{ onDelete
         base.onDelete = function(e, param) {
+            var nodeId = param.node.id;
+            var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
+            var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
+            var parentId = jstree.get_parent(nodeId);
+
             // @todo add dialog to make sure you want to delete node
             // @todo select sibling/parent after node is deleted
             xmldb.deleteNode(param.node.data.nodeId);
+
+            if (typeof prevId !== 'undefined') {
+                jstree.activate_node(prevId);
+            } else if (typeof nextId !== 'undefined') {
+                jstree.activate_node(nextId);
+            } else {
+                jstree.activate_node(parentId);
+            }
         };
         // }}}
         // {{{ onMove
