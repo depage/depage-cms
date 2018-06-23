@@ -18,7 +18,6 @@
  * @require framework/Cms/js/jstree/vakata-jstree.js
  *
  * @require framework/shared/jquery.json-2.2.js
- * @require framework/shared/jquery.gracefulWebSocket.js
  *
  * @file    depage-jstree
  *

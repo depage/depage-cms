@@ -11,7 +11,7 @@
     data-open-nodes=""
     data-tree-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-delta-updates-websocket-url="<?php self::t($this->wsUrl); ?>"
-    data-delta-updates-fallback-poll-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
+    data-delta-updates-fallback-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
     data-delta-updates-post-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-tree-settings="<?php self::t(json_encode($this->settings)); ?>"
 >

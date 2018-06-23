@@ -22,27 +22,37 @@
 
     // {{{ deferredWebsocket
     var _ws = [];
-    var deferredWebsocket = function(webSocketUrl) {
+    var deferredWebsocket = function(webSocketUrl, fallbackUrl) {
         if (typeof _ws[webSocketUrl] !== 'undefined') {
             return _ws[webSocketUrl];
         }
 
         _ws[webSocketUrl] = {
+            // {{{ init()
             init: function() {
                 var that = this;
                 this.messageCallbacks = $.Callbacks();
-                this.subscriptions = [];
+                this.subscriptions = {};
 
                 this.connect();
 
                 $(window).unload(function () {
-                    that.subscriptions = [];
-                    that.ws.close();
+                    that.subscriptions = {};
+                    if (that.ws) {
+                        that.ws.close();
+                    }
                     that.ws = null;
                 });
             },
+            // }}}
+            // {{{ connect()
             connect: function() {
                 var that = this;
+
+                // @todo add http fallback poll
+                if (!window.WebSocket) {
+                    return this.poll();
+                }
 
                 this.ws = new WebSocket(webSocketUrl);
                 this.ws.onmessage = function(e) {
@@ -50,32 +60,40 @@
                 };
                 this.ws.onerror = function(e) {
                     console.log("websocket error");
+                    that.poll();
                 };
                 this.ws.onclose = function(e) {
                     console.log("websocket closed");
                     that.reconnect();
                 };
             },
+            // }}}
+            // {{{ reconnect()
             reconnect: function() {
-                if (this.subscriptions.length == 0) return;
+                var keys = Object.keys(this.subscriptions);
+                if (keys.length == 0) return;
 
                 this.connect();
 
-                for (var i = 0; i < this.subscriptions.length; i++) {
-                    console.log(this.subscriptions[i]);
+                for (var i = 0; i < keys.length; i++) {
                     this.send({
                         action: "subscribe",
-                        projectName: this.subscriptions[i].projectName,
-                        docId: this.subscriptions[i].docId
+                        projectName: this.subscriptions[keys[i]].projectName,
+                        docId: this.subscriptions[keys[i]].docId
                     });
                 }
             },
+            // }}}
+            // {{{ send()
             send: function(data) {
+                if (!this.ws) {
+                    return;
+                }
                 var defer = $.Deferred();
                 var that = this;
 
                 defer.then( function() {
-                    that.ws.send($.toJSON(data));
+                    if (that.ws.readyState == 1) that.ws.send($.toJSON(data));
                 });
                 if (this.ws.readyState == 1) {
                     defer.resolve(data);
@@ -86,25 +104,70 @@
                     });
                 }
             },
-            subscribe: function(projectName, docId) {
+            // }}}
+            // {{{ poll()
+            poll: function() {
+                console.log("polling " + fallbackUrl);
+                var that = this;
+
+                var keys = Object.keys(this.subscriptions);
+                for (var i = 0; i < keys.length; i++) {
+                    var sub = this.subscriptions[keys[i]];
+                    var params = {
+                        projectName: sub.projectName,
+                        docId: sub.docId,
+                        seqNr: sub.seqNr,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: fallbackUrl,
+                        data: params,
+                        dataType: 'text',
+                        contentType : "application/x-www-form-urlencoded; charset=utf-8",
+                        success: function(data) {
+                            if (data == "") return;
+
+                            that.messageCallbacks.fire({"data" : data});
+                            try {
+                                var result = $.evalJSON(data);
+                                var id = result.projectName + "_" + result.docId;
+                                that.subscriptions[id].seqNr = result.seqNr;
+                            } catch (e) {
+                                // continue
+                                return true;
+                            }
+                        },
+                        error: function (xhr) {
+                        }
+                    });
+                }
+                setTimeout(function() {
+                    that.reconnect();
+                }, 1500);
+            },
+            // }}}
+            // {{{ subscribe()
+            subscribe: function(projectName, docId, seqNr) {
                 console.log("subscribe " + projectName + " " + docId);
-                this.subscriptions.push({
+                var id = projectName + "_" + docId;
+                this.subscriptions[id] = {
                     projectName: projectName,
-                    docId: docId
-                });
+                    docId: docId,
+                    seqNr: seqNr
+                };
                 this.send({
                     action: "subscribe",
                     projectName: projectName,
                     docId: docId
                 });
             },
+            // }}}
+            // {{{ unsubscribe()
             unsubscribe: function(projectName, docId) {
                 console.log("unsubscribe " + projectName + " " + docId);
                 var id = projectName + "_" + docId;
-                for (var i = this.subscriptions.length - 1; i >= 0; i--) {
-                    if (this.subscriptions[i].projectName == projectName && this.subscriptions[i].docId == docId) {
-                        this.subscriptions.splice(i, 1);
-                    }
+                if (this.subscriptions[id]) {
+                    delete this.subscriptions[id];
                 }
                 this.send({
                     action: "unsubscribe",
@@ -112,12 +175,17 @@
                     docId: projectName
                 });
             },
+            // }}}
+            // {{{ onmessage()
             onmessage: function( callback ) {
                 this.messageCallbacks.add(callback);
             },
+            // }}}
+            // {{{ offmessage()
             offmessage: function( callback ) {
                 this.messageCallbacks.remove(callback);
             }
+            // }}}
         };
         _ws[webSocketUrl].init();
 
@@ -144,10 +212,10 @@
             var $tree = this.element;
 
             var webSocketURL = this.element.attr("data-delta-updates-websocket-url");
-            var fallbackPollURL = this.element.attr("data-delta-updates-fallback-poll-url");
-            this._data.deltaUpdates.ws = deferredWebsocket(webSocketURL);
+            var fallbackURL = this.element.attr("data-delta-updates-fallback-url");
+            this._data.deltaUpdates.ws = deferredWebsocket(webSocketURL, fallbackURL);
 
-            this._data.deltaUpdates.ws.subscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"));
+            this._data.deltaUpdates.ws.subscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"), $tree.attr("data-seq-nr"));
             this._data.deltaUpdates.ws.onmessage( this.onmessage );
 
             // @todo reconnect after disconnect or fallback
@@ -180,13 +248,13 @@
                     // continue
                     return true;
                 }
-                if ($tree.attr("data-projectname") !== data.projectName || $tree.attr("data-doc-id") != data.docId) {
+                if ($tree.attr("data-projectname") != data.projectName || $tree.attr("data-doc-id") != data.docId) {
                     return;
                 }
 
                 // only overwrite tree nodes if data is newer
                 var old_seq_nr = parseInt($tree.attr("data-seq-nr"));
-                var new_seq_nr = parseInt(data.seq_nr);
+                var new_seq_nr = parseInt(data.seqNr);
                 if (new_seq_nr > old_seq_nr) {
                     // remember which tree nodes were open
                     var state = inst.get_state();

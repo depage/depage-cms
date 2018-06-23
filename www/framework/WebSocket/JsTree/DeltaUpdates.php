@@ -99,7 +99,7 @@ class DeltaUpdates {
             'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->projectName),
             'projectName' => $this->projectName,
             'docId' => $this->doc_id,
-            'seq_nr' => $this->seq_nr,
+            'seqNr' => $this->seq_nr,
         );
 
         return new \Depage\Json\Json($result);
