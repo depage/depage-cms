@@ -270,7 +270,7 @@ class DocProperties extends Base
 
         $fs = $this->form->addFieldset("xmledit-$nodeId-lastchange-fs", [
             'label' => _("Last Change"),
-            'class' => "doc-property-fieldset",
+            'class' => "doc-property-fieldset doc-property-meta",
         ]);
         $fs->addHtml(sprintf(
             _("<p>%s<br>by %s</p>"),

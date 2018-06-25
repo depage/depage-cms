@@ -104,6 +104,11 @@
     top: $infoHeight;
 }
 // }}}
+// {{{
+.doc-properties .doc-property-meta {
+    background-color: $baseColor;
+}
+// }}}
 // {{{ .doc-properties .doc-property-fieldset
 .doc-properties .doc-property-fieldset {
     padding-top: 8px;
