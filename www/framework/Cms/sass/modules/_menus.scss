@@ -25,6 +25,7 @@
     li {
         margin: 0;
         padding: 0;
+        line-height: $menuLineHeight;
 
         > a {
             clear: left;
@@ -35,6 +36,8 @@
             text-decoration: none;
             white-space: nowrap;
             line-height: $menuLineHeight;
+            padding-top: 0;
+            padding-bottom: 0;
 
             &:hover {
                 background-color: #ffffff !important;

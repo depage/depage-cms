@@ -126,10 +126,10 @@
                 .thumb {
                     position: static;
                     display: inline-block;
-                    width: 14px;
-                    height: 14px;
+                    width: 18px;
+                    height: 18px;
                     margin-right: 2px;
-                    margin-bottom: -2px;
+                    margin-bottom: -4px;
                 }
             }
             a.right {
@@ -188,7 +188,7 @@
         display: block;
         float: left;
         line-height: $menuLineHeight;
-        height: 26px;
+        height: $menuLineHeight;
         padding: 2px 8px;
     }
     h1 {
