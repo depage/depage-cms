@@ -40,6 +40,9 @@
             <xsl:value-of select="concat('icon-', translate($type, ':', '_'))" />
             <xsl:apply-templates select="." mode="icon-class" />
         </xsl:variable>
+        <xsl:variable name="title">
+            <xsl:apply-templates select="." mode="title" />
+        </xsl:variable>
         <xsl:variable name="ns" select="substring-before(name(), ':')" />
         <xsl:variable name="href">
             <xsl:if test="name() = 'pg:page' or name() = 'pg:folder'">pageref://<xsl:value-of select="@db:id" /></xsl:if>
@@ -51,8 +54,9 @@
             data-doc-ref="{@db:docref}"
             data-url="{@url}"
             data-node-id="{@db:id}">
-            <a href="{$href}" class="{$icon}">
+            <a href="{$href}" class="{$icon}" title="{$title}">
                 <xsl:value-of select="$name" />
+                <xsl:text> </xsl:text>
                 <xsl:apply-templates select="." mode="hint" />
             </a>
             <xsl:if test="$showChildren and count(node()) > 0">
@@ -126,6 +130,34 @@
                 </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="sec:*" mode="title">
+        <xsl:value-of select="@name" />
+        <xsl:text> </xsl:text>
+        <xsl:apply-templates select="edit:*" mode="hint" />
+    </xsl:template>
+
+
+    <xsl:template match="pg:folder | pg:page" mode="title">
+        <xsl:value-of select="@name" />
+        <xsl:if test="@db:released = 'true'"></xsl:if>
+        <xsl:if test="@db:released = 'false'"> / page changed</xsl:if>
+    </xsl:template>
+
+    <xsl:template match="pg:folder | pg:page" mode="icon-class">
+        <xsl:if test="@nav_hidden = 'true'">
+            <xsl:text> </xsl:text>
+            page-hidden
+        </xsl:if>
+        <xsl:if test="@db:released = 'true'">
+            <xsl:text> </xsl:text>
+            page-released
+        </xsl:if>
+        <xsl:if test="@db:released = 'false'">
+            <xsl:text> </xsl:text>
+            page-unreleased
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="pg:page[@redirect = 'true']" mode="icon-class">

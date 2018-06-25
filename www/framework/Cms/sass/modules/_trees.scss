@@ -70,6 +70,9 @@
     left: 1px;
     top: 1px;
 }
+.page-hidden > .jstree-icon {
+    opacity: 0.5;
+}
 .jstree-node-actions {
     $actionIconHeight: $treeLineHeight * 0.5 + 4px;
     position: absolute;
@@ -451,6 +454,20 @@
 @include tree-icon("sec_section_3col_2", "sec-section-3col-2");
 @include tree-icon("sec_section_3col_3", "sec-section-3col-3");
 @include tree-icon("sec_vcard", "sec-vcard");
+
+.icon-pg_page,
+.icon-pg_folder {
+    &.page-unreleased > .jstree-icon::after {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        @include icon-base("unreleased", $iconSize);
+    }
+}
 
 .icon-pg_meta {
     font-weight: bold;
