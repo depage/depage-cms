@@ -51,8 +51,10 @@
                     nodesForParent = inst.getAvailableNodesFor(inst.get_node(inst.get_parent(inst.get_node(this))));
                 })
                 .on("mousemove.jstree", "." + className, function(e) {
-                    // @todo check
-                    if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
+                    if (e.offsetY < 0) {
+                        // hide when out of bounds
+                        this.className = className;
+                    } else if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
                         this.className = className + " insert-before";
                     } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
                         this.className = className + " insert-after";

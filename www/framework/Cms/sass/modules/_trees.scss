@@ -136,6 +136,23 @@
         }
     }
 }
+li.jstree-open + li,
+li:first-child{
+    > .jstree-node-actions.insert-before:hover::after {
+        top: 0;
+        @include radius(0, "top", "left");
+        @include radius(0, "top", "right");
+    }
+}
+li.jstree-open,
+li:last-child {
+    > .jstree-node-actions.insert-after:hover::after {
+        top: auto;
+        bottom: 0;
+        @include radius(0, "bottom", "left");
+        @include radius(0, "bottom", "right");
+    }
+}
 .jstree-anchor > .jstree-icon {
     left: 1 * $iconSize;
 }
