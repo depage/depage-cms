@@ -68,7 +68,14 @@
 
             for (var i = 0; i < nodeNames.length; i++) {
                 var nodeName = nodeNames[i];
-                if (this._data.nodeTypes.validParents[nodeName].indexOf(nodeType) != -1 || this._data.nodeTypes.validParents[nodeName].indexOf("*") != -1) {
+                if (this._data.nodeTypes.validParents[nodeName].indexOf(nodeType) != -1 || 
+                    this._data.nodeTypes.validParents[nodeName].indexOf('*') != -1 || 
+                    (
+                        typeof this._data.nodeTypes.validParents['*'] != 'undefined' &&
+                            (this._data.nodeTypes.validParents['*'].indexOf(nodeType) != -1 ||
+                            this._data.nodeTypes.validParents['*'].indexOf('*') != -1)
+                    )
+                ) {
                     available.push(this._data.nodeTypes.availableNodes[nodeName]);
                 }
             }

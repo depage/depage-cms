@@ -78,7 +78,11 @@ class Pages extends Base {
                 'pg:redirect',
             ],
             'sec:separator' => [
-                '*',
+                'dpg:pages',
+                'proj:pages_struct',
+                'pg:page',
+                'pg:folder',
+                'pg:redirect',
             ],
         ];
     }
