@@ -32,6 +32,10 @@ class Page extends Base
 
                 $this->availableNodes[$nodeName] = $t;
                 $this->validParents[$nodeName] = explode(",", $t->validParents);
+
+                array_walk($this->validParents[$nodeName], function(&$item, $key) {
+                    $item = trim($item);
+                });
             }
         }
     }

@@ -56,20 +56,24 @@
             var inst = this._data.toolbar.inst;
 
             parent.activate_node.call(this, obj, e);
+
+            var node = inst.get_selected();
             this._data.toolbar.$el.empty();
 
+            var nodesForSelf = inst.getAvailableNodesFor(inst.get_node(node));
+
             this.addToolbarButton("create", "button-create", function() {
-                alert("create");
+                console.log(nodesForSelf);
             });
             this.addToolbarButton("delete", "button-delete", function() {
                 // @todo ask before deleting
-                inst.delete_node(inst.get_selected());
+                inst.delete_node(node);
             });
             this.addToolbarButton("reload", "button-reload", function() {
                 inst.refresh(true);
             });
             this.addToolbarButton("rnode", "button-reload", function() {
-                inst.refresh_node(inst.get_selected());
+                inst.refresh_node(node);
             });
         };
         // }}}

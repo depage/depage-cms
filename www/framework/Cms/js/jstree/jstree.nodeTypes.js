@@ -20,6 +20,18 @@
 
     if($.jstree.plugins.nodeTypes) { return; }
 
+    var unique = function(ar) {
+        var j = {};
+
+        ar.forEach( function(v) {
+            j[v.name] = v;
+        });
+
+        return Object.keys(j).map(function(v){
+            return j[v];
+        });
+    };
+
     /**
      * nodeTypes configuration
      *
@@ -43,10 +55,25 @@
                 return true;
             }
             this._data.nodeTypes.inst = this.element.jstree(true);
+
             // override default check_callback
             this.settings.core.check_callback = this.checkTypes;
-            //console.log(this._data.nodeTypes.availableNodes);
-            //console.log(this._data.nodeTypes.validParents);
+        };
+        // }}}
+        // {{{
+        this.getAvailableNodesFor = function(node) {
+            var nodeType = this.getNodeType(node);
+            var nodeNames = Object.keys(this._data.nodeTypes.validParents);
+            var available = [];
+
+            for (var i = 0; i < nodeNames.length; i++) {
+                var nodeName = nodeNames[i];
+                if (this._data.nodeTypes.validParents[nodeName].indexOf(nodeType) != -1 || this._data.nodeTypes.validParents[nodeName].indexOf("*") != -1) {
+                    available.push(this._data.nodeTypes.availableNodes[nodeName]);
+                }
+            }
+
+            return unique(available);
         };
         // }}}
         // {{{ checkTypes()
@@ -63,11 +90,11 @@
                 return false;
             }
 
-            //console.log(operation, node, node_parent);
             if (operation == "move_node" || operation == "copy_node") {
                 var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'];
                 return validParents.indexOf(this.getNodeType(node_parent)) > -1 || validParents.indexOf('*') > -1;
             }
+            console.log(operation, node, node_parent);
 
             return true;
         };

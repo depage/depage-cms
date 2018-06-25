@@ -54,6 +54,7 @@
                     return this.poll();
                 }
 
+                this.ws = null;
                 this.ws = new WebSocket(webSocketUrl);
                 this.ws.onmessage = function(e) {
                     that.messageCallbacks.fire(e);

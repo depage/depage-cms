@@ -33,17 +33,23 @@
             var className = "jstree-node-actions";
             this._data.nodeActions = {};
             parent.init.call(this, el, options);
-            this._data.nodeActions.inst = this.element.jstree(true);
+            var inst = this._data.nodeActions.inst = this.element.jstree(true);
+            var nodesForSelf = [];
+            var nodesForParent = [];
 
             // bind events
             this._data.nodeActions.inst.element
+                .on("mouseover.jstree", "." + className, function(e) {
+                    nodesForSelf = inst.getAvailableNodesFor(inst.get_node(this));
+                    nodesForParent = inst.getAvailableNodesFor(inst.get_node(inst.get_parent(inst.get_node(this))));
+                })
                 .on("mousemove.jstree", "." + className, function(e) {
                     // @todo check
-                    if (e.offsetY < this.clientHeight / 4) {
+                    if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
                         this.className = className + " insert-before";
-                    } else if (e.offsetY > this.clientHeight / 4 * 3) {
+                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
                         this.className = className + " insert-after";
-                    } else {
+                    } else if (nodesForSelf.length > 0) {
                         this.className = className + " insert-into";
                     }
                 })
@@ -52,12 +58,12 @@
                 })
                 .on("click.jstree", "." + className, function(e) {
                     // @todo check
-                    if (e.offsetY < this.clientHeight / 4) {
-                        alert("insert before");
-                    } else if (e.offsetY > this.clientHeight / 4 * 3) {
-                        alert("insert after");
-                    } else {
-                        alert("insert into");
+                    if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
+                        console.log("insert before", nodesForParent);
+                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
+                        console.log("insert after", nodesForParent);
+                    } else if (nodesForSelf.length > 0) {
+                        console.log("insert into", nodesForSelf);
                     }
                 });
         };
