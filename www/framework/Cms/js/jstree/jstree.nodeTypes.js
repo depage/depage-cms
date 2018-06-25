@@ -60,7 +60,7 @@
             this.settings.core.check_callback = this.checkTypes;
         };
         // }}}
-        // {{{
+        // {{{ getAvailableNodesFor()
         this.getAvailableNodesFor = function(node) {
             var nodeType = this.getNodeType(node);
             var nodeNames = Object.keys(this._data.nodeTypes.validParents);
@@ -74,6 +74,23 @@
             }
 
             return unique(available);
+        };
+        // }}}
+        // {{{ getCreateMenu()
+        this.getCreateMenu = function(inst, availableNodes) {
+            var menu = {};
+
+            for (var i = 0; i < availableNodes.length; i++) {
+                var node = availableNodes[i];
+                menu[node.name] = {
+                    label: node.name,
+                    action: function(data) {
+                        console.log(inst, data);
+                    }
+                };
+            }
+
+            return menu;
         };
         // }}}
         // {{{ checkTypes()

@@ -75,6 +75,7 @@
                 .on("delete_node.jstree", base.onDelete)
                 .on("move_node.jstree", base.onMove)
                 .on("copy_node.jstree", base.onCopy)
+                .on("create_node.jstree", base.onCreate)
                 .on("activate_node.jstree", base.onActivate)
                 .on("dblclick.jstree", ".jstree-anchor", base.onNodeDblClick);
 
@@ -149,6 +150,17 @@
                 jstree.open_node(parentId);
             }
 
+            jstree.disable_node(param.node);
+        };
+        // }}}
+        // {{{ onCreate
+        base.onCreate = function(e, param) {
+            var nodeId = param.node.id;
+            var parentId = jstree.get_parent(nodeId);
+
+            console.log(param);
+
+            jstree.open_node(parentId);
             jstree.disable_node(param.node);
         };
         // }}}

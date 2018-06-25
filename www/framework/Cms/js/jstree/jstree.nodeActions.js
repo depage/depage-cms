@@ -30,15 +30,22 @@
     $.jstree.plugins.nodeActions = function (options, parent) {
         // {{{ init()
         this.init = function (el, options) {
-            var className = "jstree-node-actions";
             this._data.nodeActions = {};
             parent.init.call(this, el, options);
-            var inst = this._data.nodeActions.inst = this.element.jstree(true);
+            this._data.nodeActions.inst = this.element.jstree(true);
+        };
+        // }}}
+        // {{{
+        this.bind = function() {
+            parent.bind.call(this);
+
+            var className = "jstree-node-actions";
+            var inst = this.element.jstree(true);
             var nodesForSelf = [];
             var nodesForParent = [];
 
             // bind events
-            this._data.nodeActions.inst.element
+            inst.element
                 .on("mouseover.jstree", "." + className, function(e) {
                     nodesForSelf = inst.getAvailableNodesFor(inst.get_node(this));
                     nodesForParent = inst.getAvailableNodesFor(inst.get_node(inst.get_parent(inst.get_node(this))));
@@ -60,10 +67,13 @@
                     // @todo check
                     if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
                         console.log("insert before", nodesForParent);
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
                     } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
                         console.log("insert after", nodesForParent);
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
                     } else if (nodesForSelf.length > 0) {
                         console.log("insert into", nodesForSelf);
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf));
                     }
                 });
         };

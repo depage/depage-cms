@@ -63,7 +63,7 @@
             var nodesForSelf = inst.getAvailableNodesFor(inst.get_node(node));
 
             this.addToolbarButton("create", "button-create", function() {
-                console.log(nodesForSelf);
+                $.vakata.context.show($(this), {x: 0, y: 45 }, inst.getCreateMenu(inst, nodesForSelf));
             });
             this.addToolbarButton("delete", "button-delete", function() {
                 // @todo ask before deleting
