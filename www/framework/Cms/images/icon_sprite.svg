@@ -169,5 +169,11 @@
       </g>
       <rect width="12" height="12" x="9" y="9" fill="#D8D8D8" stroke="#7F7F7F" stroke-width="2"/>
     </g>
+    <g fill="#FFF" fill-rule="nonzero" transform="translate(144 288)">
+      <polygon points="12 26.24 12 22 36 22 36 26.24"/>
+    </g>
+    <g fill="#FFF" fill-rule="nonzero" transform="translate(96 288)">
+      <polygon points="26.278 12 26.278 21.835 36 21.835 36 26.075 26.278 26.075 26.278 36 21.721 36 21.721 26.075 12 26.075 12 21.835 21.722 21.835 21.722 12"/>
+    </g>
   </g>
 </svg>

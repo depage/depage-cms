@@ -377,7 +377,8 @@
          * Drag and drop
          */
         dnd : {
-            inside_pos: "last"
+            inside_pos: "last",
+            touch: "selected"
         },
 
         /**

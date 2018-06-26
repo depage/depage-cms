@@ -56,7 +56,6 @@
             data-node-id="{@db:id}">
             <a href="{$href}" class="{$icon}" title="{$title}">
                 <xsl:value-of select="$name" />
-                <xsl:text> </xsl:text>
                 <xsl:apply-templates select="." mode="hint" />
             </a>
             <xsl:if test="$showChildren and count(node()) > 0">
@@ -78,6 +77,7 @@
 
     <xsl:template match="sec:*" mode="hint">
         <span class="hint">
+            <xsl:text> </xsl:text>
             <xsl:apply-templates select="edit:*" mode="hint" />
         </span>
     </xsl:template>
@@ -138,11 +138,10 @@
         <xsl:apply-templates select="edit:*" mode="hint" />
     </xsl:template>
 
-
     <xsl:template match="pg:folder | pg:page" mode="title">
         <xsl:value-of select="@name" />
         <xsl:if test="@db:released = 'true'"></xsl:if>
-        <xsl:if test="@db:released = 'false'"> / page changed</xsl:if>
+        <xsl:if test="@db:released = 'false'"> – changed ⤶</xsl:if>
     </xsl:template>
 
     <xsl:template match="pg:folder | pg:page" mode="icon-class">

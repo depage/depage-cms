@@ -29,11 +29,11 @@
 .jstree-anchor {
     color: black;
     white-space: nowrap;
-    overflow-x: hidden;
     padding: 0;
     margin: 0;
     vertical-align: top;
     border: 1px solid transparent;
+    position: relative;
 
     &:focus {
         outline: 0;
@@ -73,51 +73,47 @@
 .page-hidden > .jstree-icon {
     opacity: 0.5;
 }
-.jstree-node-actions {
+.jstree-node {
     $actionIconHeight: $treeLineHeight * 0.5 + 4px;
-    position: absolute;
-    display: block;
-    right: 0;
-    top: 0;
-    width: 1.5 * $treeLineHeight;
-    height: $treeLineHeight;
-    cursor: pointer;
-    z-index: 100;
 
-    &:hover::before {
+    > .jstree-anchor::after {
         content: " ";
+        display: none;
         position: absolute;
+        left: 0;
         right: 0;
-        width: $treeWidth;
         height: 2px;
-    }
-    &:hover::after {
-        position: absolute;
-        font-weight: bold !important;
-        right: $treeLineHeight * 0.5;
-        width: $actionIconHeight;
-        height: $actionIconHeight;
-        line-height: $actionIconHeight - 3px;
-        @include radius($actionIconHeight * 0.5);
         background: $selectionBackgroundColor;
-        color: $selectionTextColor;
-        text-align: center;
+        z-index: 99;
     }
+    > .jstree-node-actions {
+        position: absolute;
+        display: block;
+        right: 0;
+        top: 0;
+        width: 1.5 * $treeLineHeight;
+        height: $treeLineHeight;
+        cursor: pointer;
+        z-index: 100;
 
-    &.insert-before:hover {
-        &::before {
-            background: $selectionBackgroundColor;
-            top: -1px;
-        }
         &::after {
-            content: "+";
-            top: - 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
+            position: absolute;
+            font-weight: bold !important;
+            right: $treeLineHeight * 0.5;
+            width: $actionIconHeight;
+            height: $actionIconHeight;
+            line-height: $actionIconHeight - 3px;
+            @include radius($actionIconHeight * 0.5);
+            color: $selectionTextColor;
+            text-align: center;
+            @include icon-base("add-white", $actionIconHeight);
+            background-color: $selectionBackgroundColor;
         }
     }
-    &.insert-into:hover {
-        &::after {
-            content: "+";
-            width: $actionIconHeight * 1.5;
+    &.insert-into  {
+        > .jstree-node-actions::after {
+            content: " ";
+            width: $actionIconHeight * 1.2;
             padding-right: $actionIconHeight * 0.5;
             right: 0;
             @include radius(0, "top", "right");
@@ -125,20 +121,30 @@
             top: 0 + ($treeLineHeight - $actionIconHeight) * 0.5;
         }
     }
-    &.insert-after:hover {
-        &::before {
-            background: $selectionBackgroundColor;
-            bottom: -1px;
+    &.insert-before {
+        > .jstree-anchor::after {
+            top: -2px;
+            display: block;
         }
-        &::after {
-            content: "+";
+        > .jstree-node-actions::after {
+            content: " ";
+            top: - 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
+        }
+    }
+    &.insert-after {
+        > .jstree-anchor::after {
+            bottom: -2px;
+            display: block;
+        }
+        > .jstree-node-actions::after {
+            content: " ";
             top: 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
         }
     }
 }
 li.jstree-open + li,
 li:first-child{
-    > .jstree-node-actions.insert-before:hover::after {
+    &.insert-before > .jstree-node-actions::after {
         top: 0;
         @include radius(0, "top", "left");
         @include radius(0, "top", "right");
@@ -146,7 +152,7 @@ li:first-child{
 }
 li.jstree-open,
 li:last-child {
-    > .jstree-node-actions.insert-after:hover::after {
+    &.insert-after > .jstree-node-actions::after {
         top: auto;
         bottom: 0;
         @include radius(0, "bottom", "left");
@@ -154,7 +160,7 @@ li:last-child {
     }
 }
 .jstree-anchor > .jstree-icon {
-    left: 1 * $iconSize;
+    left: -1 * $iconSize;
 }
 .jstree-ocl {
     cursor: pointer;
@@ -197,7 +203,7 @@ li:last-child {
     border-right: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid;
+    border-left: 5px solid $selectionBackgroundColor;
     width: 0;
     height: 0;
     font-size: 0;

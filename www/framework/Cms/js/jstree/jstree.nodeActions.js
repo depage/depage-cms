@@ -43,6 +43,7 @@
             var inst = this.element.jstree(true);
             var nodesForSelf = [];
             var nodesForParent = [];
+            var re = / insert-[a-z]+/;
 
             // bind events
             inst.element
@@ -51,31 +52,35 @@
                     nodesForParent = inst.getAvailableNodesFor(inst.get_node(inst.get_parent(inst.get_node(this))));
                 })
                 .on("mousemove.jstree", "." + className, function(e) {
+                    var parent = this.parentNode;
+
                     if (e.offsetY < 0) {
                         // hide when out of bounds
-                        this.className = className;
-                    } else if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
-                        this.className = className + " insert-before";
-                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
-                        this.className = className + " insert-after";
-                    } else if (nodesForSelf.length > 0) {
-                        this.className = className + " insert-into";
+                        parent.className = parent.className.replace(re, "");
+                    } else if (nodesForSelf.length > 0 && e.offsetY > this.clientHeight / 4 && e.offsetY < this.clientHeight / 4 * 3) {
+                        parent.className = parent.className.replace(re, "") + " insert-into";
+                    } else if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 2) {
+                        parent.className = parent.className.replace(re, "") + " insert-before";
+                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 2) {
+                        parent.className = parent.className.replace(re, "") + " insert-after";
                     }
                 })
                 .on("mouseout.jstree", "." + className, function(e) {
-                    this.className = className;
+                    var parent = this.parentNode;
+
+                    parent.className = parent.className.replace(re, "");
                 })
                 .on("click.jstree", "." + className, function(e) {
                     // @todo check
-                    if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 4) {
-                        console.log("insert before", nodesForParent);
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
-                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 4 * 3) {
-                        console.log("insert after", nodesForParent);
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
-                    } else if (nodesForSelf.length > 0) {
+                    if (nodesForSelf.length > 0 && e.offsetY > this.clientHeight / 4 && e.offsetY < this.clientHeight / 4 * 3) {
                         console.log("insert into", nodesForSelf);
                         $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf));
+                    } else if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 2) {
+                        console.log("insert before", nodesForParent);
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
+                    } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 2) {
+                        console.log("insert after", nodesForParent);
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
                     }
                 });
         };
