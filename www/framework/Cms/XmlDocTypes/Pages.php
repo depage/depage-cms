@@ -245,15 +245,11 @@ class Pages extends Base {
 
         foreach ($pages as $page) {
             $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));
-            if ($doc) {
-                $info = $doc->getDocInfo();
-                $versions = array_values($doc->getHistory()->getVersions(true, 1));
 
-                if (count($versions) > 0 && ($getAnyVersion || $info->lastchange->getTimestamp() < $versions[0]->lastsaved->getTimestamp())) {
-                    $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
-                } else {
-                    $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
-                }
+            if ($doc->isReleased()) {
+                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
+            } else {
+                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
             }
         }
     }

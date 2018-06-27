@@ -97,6 +97,21 @@ class Page extends Base
 
     }
     // }}}
+    // {{{ onHistorySave()
+    /**
+     * @brief onHistorySave
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function onHistorySave()
+    {
+        parent::onHistorySave();
+
+        $doc = $this->xmlDb->getDoc("pages");
+        $doc->clearCache();
+    }
+    // }}}
 
     // {{{ addNodeType
     public function addNodeType($nodeName, $options) {
