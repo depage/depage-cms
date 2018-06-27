@@ -87,6 +87,23 @@
         this.getCreateMenu = function(inst, availableNodes) {
             var menu = {};
 
+            if (availableNodes.length > 0) {
+                menu['_add-title'] = {
+                    // @todo localize
+                    label: "Create new",
+                    action: false,
+                    _disabled: true,
+                    separator_after: true
+                };
+            } else {
+                menu['_add-title'] = {
+                    // @todo localize
+                    label: "There are no elements that can be created in this element",
+                    action: false,
+                    _disabled: true,
+                };
+            }
+
             for (var i = 0; i < availableNodes.length; i++) {
                 var node = availableNodes[i];
                 menu[node.name] = {

@@ -13,7 +13,7 @@
     @include box-shadow(0 3px 0.4em 0 #aaaaaa);
 
     ul {
-        margin: 10px 0;
+        padding: 10px 0;
     }
     li,
     hr {
@@ -40,7 +40,7 @@
             padding-bottom: 0;
 
             &:hover {
-                background-color: #ffffff !important;
+                background-color: #ffffff;
             }
             &:focus {
                 outline: 0;
@@ -66,6 +66,8 @@
         list-style: none;
 
         > a {
+            padding-left: 15px;
+            padding-right: 15px;
             &.vakata-context-parent {
                 background-image: url("data:image/gif;base64,R0lGODlhCwAHAIAAACgoKP///yH5BAEAAAEALAAAAAALAAcAAAIORI4JlrqN1oMSnmmZDQUAOw==");
                 background-position: right center;
@@ -73,30 +75,20 @@
             }
         }
     }
-    .vakata-context-separator > a {
-        &,
-        &:hover {
-            background: white;
-            border: 0;
-            border-top: 1px solid #e2e3e3;
-            height: 1px;
-            min-height: 1px;
-            max-height: 1px;
-            padding: 0;
-            margin: 0 0 0 2.4em;
-            border-left: 1px solid #e0e0e0;
-            text-shadow: 0 0 0 transparent;
-            box-shadow: 0 0 0 transparent;
-            border-radius: 0;
+    .vakata-context-separator {
+        border-top: 1px solid $borderColor;
+        height: 1px;
+        min-height: 1px;
+        max-height: 1px;
+        > a {
+            display: none;
         }
     }
-    .vakata-contextmenu-disabled a {
+    .vakata-contextmenu-disabled > a {
         &,
         &:hover {
-            color: silver;
-            background-color: transparent;
-            border: 0;
-            box-shadow: 0 0 0;
+            color: $textLighterColor !important;
+            background-color: transparent !important;
         }
     }
     li > a > i {
@@ -108,6 +100,7 @@
         vertical-align: top;
         text-align: center;
         line-height: $menuLineHeight;
+        display: none;
 
         &:empty {
             width: $menuLineHeight;
