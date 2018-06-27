@@ -636,6 +636,15 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
+                $form.find(".doc-property-meta button.release").on("click", function() {
+                    this.disabled = true;
+                    var docRef = $(this).parents("fieldset").data("docref");
+                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
+
+                    xmldb.releaseDocument();
+
+                    return false;
+                });
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleting at the beginning or end of cell
