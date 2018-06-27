@@ -108,7 +108,7 @@ class Tree extends Base {
             'wsUrl' => $wsUrl,
             'treeUrl' => $treeUrl,
             'rootId' => $this->docInfo->rootid,
-            'seqNr' => $this->get_current_seq_nr($this->docInfo->id),
+            'seqNr' => $this->getCurrentSeqNr($this->docInfo->id),
             'settings' => $this->treeSettings(),
         ], $this->htmlOptions);
 
@@ -436,6 +436,19 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
+    // {{{ releaseDocument
+    /**
+     * releases Document
+     *
+     * @return \json
+     */
+    public function releaseDocument()
+    {
+        $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
 
     // {{{ treeSettings
     /**
@@ -457,36 +470,35 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ save_version()
+    // {{{ saveVersion()
     // $.post('http://localhost/depage-cms/project/depage/tree/pages/save-version', {'published' : false}, function(response) { console.log(response); } );
     /**
-     * save_version
+     * saveVersion
      *
      * Save a version of the given document id
      *
      * @return \json
      */
-    public function save_version()
+    public function saveVersion()
     {
         $published = filter_input(INPUT_POST, 'published', FILTER_SANITIZE_STRING);
 
         $history = $this->doc->getHistory();
-        $timestamp = $history->save($this->auth_user->id, $published);
+        $timestamp = $history->save($this->authUser->id, $published);
 
         return new \Depage\Json\Json(array("status" => !! $timestamp, "time" => $timestamp));
     }
     // }}}
-
-    // {{{ get_versions()
+    // {{{ getVersions()
     // $.get('http://localhost/depage-cms/project/depage/tree/pages/get-versions', function(response) { console.log(response); } );
     /**
-     * save_version
+     * getVersions
      *
      * Save a version of the given document id
      *
      * @return \json
      */
-    public function get_versions()
+    public function getVersions()
     {
         $versions = array();
 
@@ -496,17 +508,16 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("versions" => $versions));
     }
     // }}}
-
-    // {{{ delete_version()
+    // {{{ deleteVersion()
     // $.post('http://localhost/depage-cms/project/depage/tree/pages/delete-version', {'timestamp' : 1174930995}, function(response) { console.log(response); } );
     /**
-     * delete_version
+     * deleteVersion
      *
      * Delete a saved version of the given document by timestamp.
      *
      * @return \json
      */
-    public function delete_version()
+    public function deleteVersion()
     {
         $status = false;
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
@@ -517,17 +528,16 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("status" => $status, "timestamp" => $timestamp));
     }
     // }}}
-
-    // {{{ restore_version()
+    // {{{ restoreVersion()
     // $.post('http://localhost/depage-cms/project/depage/tree/pages/restore-version', {'timestamp' : 1364490757}, function(response) { console.log(response); } );
     /**
-     * restore_version
+     * restoreVersion
      *
      * Restore a saved version of the given document by timestamp.
      *
      * @return \json
      */
-    public function restore_version()
+    public function restoreVersion()
     {
         $xml = false;
         $timestamp = filter_input(INPUT_POST, 'timestamp', FILTER_SANITIZE_NUMBER_INT);
@@ -591,14 +601,14 @@ class Tree extends Base {
     }
     // }}}
 
-    // {{{ get_current_seq_nr
+    // {{{ getCurrentSeqNr
     /**
      * Get Current Sequence Number
      *
      * @param $doc_id
      * @return int
      */
-    protected function get_current_seq_nr($doc_id)
+    protected function getCurrentSeqNr($doc_id)
     {
         return $this->deltaUpdates->currentChangeNumber();
     }

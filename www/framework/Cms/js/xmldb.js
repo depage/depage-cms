@@ -121,6 +121,11 @@ var DepageXmldb = (function() {
             }, success);
         },
         // }}}
+        // {{{ releaseDocument()
+        releaseDocument: function(success) {
+            this.ajaxCall("releaseDocument", {}, success);
+        },
+        // }}}
         // {{{ setAttribute()
         setAttribute: function(nodeId, name, value, success) {
             this.ajaxCall("setAttribute", {
