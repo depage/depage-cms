@@ -116,6 +116,7 @@ class DocProperties extends Base
         $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
 
         list($node) = $xpath->query("//*[@db:id = '{$this->nodeId}']");
+        $hashOld = $doc->hashDomNode($node);
 
         $this->form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
             'jsAutosave' => true,
@@ -140,13 +141,28 @@ class DocProperties extends Base
         $this->form->process();
 
         if ($this->form->validateAutosave()) {
+            // @todo check if content has changed
+            $released = $doc->isReleased();
             $node = $this->form->getValuesXml();
-            $doc->saveNode($node);
+            $hashNew = $doc->hashDomNode($node);
 
-            $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-            $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->projectName, 0);
-            $parentId = $doc->getParentIdById($this->nodeId);
-            $deltaUpdates->recordChange($parentId);
+            if ($hashOld !== $hashNew) {
+                $doc->saveNode($node);
+
+                $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->projectName, 0);
+                $parentId = $doc->getParentIdById($this->nodeId);
+                $deltaUpdates->recordChange($parentId);
+
+                if ($released) {
+                    // get pageId correctly
+                    $pageInfo = $this->project->getPages($this->docRef)[0];
+                    $pageDoc = $this->xmldb->getDoc("pages");
+                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->projectName, 0);
+                    $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
+                    $deltaUpdates->recordChange($parentId);
+                }
+            }
 
             $this->form->clearSession(false);
         }
@@ -271,12 +287,22 @@ class DocProperties extends Base
         $fs = $this->form->addFieldset("xmledit-$nodeId-lastchange-fs", [
             'label' => _("Last Change"),
             'class' => "doc-property-fieldset doc-property-meta",
+            'dataAttr' => [
+                'docref' => $this->docRef,
+            ],
         ]);
         $fs->addHtml(sprintf(
-            _("<p>%s<br>by %s</p>"),
+            _("<p>%s by %s</p>"),
             $dateFormatter->format($pageInfo->lastchange, true),
             htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
         ));
+        if ($this->authUser->canPublishProject()) {
+            $releaseTitle = _("Release Page");
+        } else {
+            $releaseTitle = _("Request Page Release");
+        }
+        $disabledAttr = $pageInfo->released ? "disabled" : "";
+        $fs->addHtml("<p><button class=\"release\" {$disabledAttr}>{$releaseTitle}</button></p>");
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
         $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
