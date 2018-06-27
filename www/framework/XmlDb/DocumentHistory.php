@@ -180,7 +180,7 @@ class DocumentHistory
         $dth->testDocumentForHistory($doc);
 
         $xml = $doc->saveXml();
-        $hash = sha1($xml);
+        $hash = $this->document->hashDomNode($doc);
 
         $latestVersion = $this->getLatestVersion();
 
