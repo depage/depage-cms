@@ -90,15 +90,15 @@
                 if (!this.ws) {
                     return;
                 }
-                var defer = $.Deferred();
-                var that = this;
-
-                defer.then( function() {
-                    if (that.ws.readyState == 1) that.ws.send(JSON.stringify(data));
-                });
                 if (this.ws.readyState == 1) {
-                    defer.resolve(data);
+                    this.ws.send(JSON.stringify(data));
                 } else {
+                    var defer = $.Deferred();
+                    var that = this;
+
+                    defer.then( function() {
+                        if (that.ws.readyState == 1) that.ws.send(JSON.stringify(data));
+                    });
                     this.ws.addEventListener('open', function() {
                         console.log("websocket opened");
                         defer.resolve(data);
