@@ -19,4 +19,10 @@ CREATE TABLE `_history` (
 /*
     @version 1.5.14
 */
+
 ALTER TABLE _history ADD COLUMN `first_saved_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER xml;
+
+/*
+    @version 1.5.25
+*/
+ALTER TABLE _history MODIFY `hash` varchar(64) NOT NULL DEFAULT '';
