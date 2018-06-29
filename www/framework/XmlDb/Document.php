@@ -193,11 +193,10 @@ class Document
      * @param mixed
      * @return void
      **/
-    public function isReleased(&$hash = "")
+    public function isReleased()
     {
         $info = $this->getDocInfo();
         $latest = $this->getHistory()->getLatestVersion();
-        $hash = $latest->hash;
 
         if (!empty($latest) && $info->lastchange->getTimestamp() < $latest->lastsaved->getTimestamp()) {
             return true;
@@ -1264,7 +1263,7 @@ class Document
         self::removeNodeAttr($rootNode, $this->db_ns, 'docid');
         self::removeNodeAttr($rootNode, $this->db_ns, 'released');
 
-        return sha1($doc->saveXML());
+        return hash("sha256", $doc->saveXML());
     }
     // }}}
     // {{{ getAttributeString
