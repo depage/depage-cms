@@ -28,3 +28,8 @@ ALTER TABLE _proj_PROJECTNAME_published_files DROP KEY filename;
 ALTER TABLE _proj_PROJECTNAME_published_files ADD filenamehash varchar(40) NOT NULL DEFAULT '' AFTER filename;
 UPDATE _proj_PROJECTNAME_published_files SET filenamehash = SHA1(filename);
 ALTER TABLE _proj_PROJECTNAME_published_files ADD UNIQUE `filename`(`publishId`,`filenamehash`);
+
+/*
+    @version 1.5.25
+*/
+ALTER TABLE _proj_PROJECTNAME_published_files MODIFY `hash` varchar(64) NOT NULL DEFAULT '';

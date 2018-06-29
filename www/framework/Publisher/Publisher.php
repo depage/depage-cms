@@ -67,7 +67,7 @@ class Publisher
     public function publishFile($source, $target, &$updated = false)
     {
         $updated = false;
-        $hash = sha1_file($source);
+        $hash = hash_file("sha256", $source);
         if ($this->fileNeedsUpdate($target, $hash)) {
             $this->mkdirForTarget($target);
             $this->fs->put($source, $target);
@@ -90,7 +90,7 @@ class Publisher
     public function publishString($content, $target, &$updated = false)
     {
         $updated = false;
-        $hash = sha1($content);
+        $hash = hash("sha256", $content);
         if ($this->fileNeedsUpdate($target, $hash)) {
             $this->mkdirForTarget($target);
             $this->fs->putString($target, $content);
