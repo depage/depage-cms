@@ -17,7 +17,7 @@ use Depage\XmlDb\Exceptions\XmlDbException;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    protected $pdo;
+    public $pdo;
     protected $cache;
     protected $db_ns;
 
