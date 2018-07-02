@@ -514,7 +514,6 @@ class Tree extends Base {
     {
         if ($this->authUser->canPublishProject()) {
             $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
-            // @todo record change for pages-tree
         } else {
             $status = $this->project->requestDocumentRelease($this->docName, $this->authUser->id);
         }
