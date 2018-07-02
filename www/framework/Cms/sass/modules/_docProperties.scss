@@ -107,6 +107,14 @@
 // {{{ .doc-properties .doc-property-meta
 .doc-properties .doc-property-meta {
     background-color: $baseColor;
+
+    .release {
+        display: block;
+
+        &.disabled {
+            opacity: 0.5;
+        }
+    }
 }
 // }}}
 // {{{ .doc-properties .doc-property-fieldset

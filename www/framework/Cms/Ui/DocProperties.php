@@ -302,8 +302,8 @@ class DocProperties extends Base
         } else {
             $releaseTitle = _("Request Page Release");
         }
-        $disabledAttr = $pageInfo->released ? "disabled" : "";
-        $fs->addHtml("<p><button class=\"release\" {$disabledAttr}>{$releaseTitle}</button></p>");
+        $class = $pageInfo->released ? "disabled" : "";
+        $fs->addHtml("<p><a class=\"button release $class\">{$releaseTitle}</a></p>");
 
     }
     // }}}
