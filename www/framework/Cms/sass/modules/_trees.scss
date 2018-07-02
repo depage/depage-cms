@@ -328,7 +328,7 @@
 .jstree-node > .jstree-anchor > input.jstree-rename-input {
     position: absolute !important;
     display: block !important;
-    left: 2 * $iconSize !important;
+    left: 0 !important;
     top: 0 !important;
     width: calc(100% - #{2 * $iconSize}) !important;
     height: auto !important;
