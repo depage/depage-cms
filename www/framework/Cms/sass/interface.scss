@@ -511,6 +511,8 @@ div.preview.zoom100 iframe {
 @import "modules/_docProperties.scss";
 @import "modules/_forms.scss";
 
+@import "modules/_fileLibrary.scss";
+
 /* {{{ shy-dialogs */
 .depage-shy-dialogue {
     @include depage-shy-dialogue(

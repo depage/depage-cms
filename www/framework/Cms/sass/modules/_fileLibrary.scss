@@ -1,0 +1,53 @@
+// {{{ .library
+.library {
+    .trees,
+    .files {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow: auto;
+
+        header.info {
+            right: 0;
+            left: 0;
+        }
+    }
+    .trees {
+        left: 0;
+        width: $treeWidth;
+        max-width: 100%;
+    }
+    .files {
+        left: $treeWidth;
+        right: 0;
+        border-left: 1px solid $borderColor;
+    }
+
+    .tree,
+    .file-list {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow-y: auto;
+        margin-top: $infoHeight;
+    }
+}
+.toolbar ~ .library .trees,
+.toolbar ~ .library .files {
+    top: $toolbarHeight;
+}
+// }}}
+// {{{ .library .trees
+.library .tree {
+
+}
+// }}}
+// {{{ .library .file-list
+.library .file-list {
+
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
