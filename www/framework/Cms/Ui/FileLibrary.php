@@ -26,17 +26,18 @@ class FileLibrary extends Base
             throw new \Depage\Cms\Exceptions\Project("no project given");
         } else {
             $this->project = $this->getProject($this->projectName);
+            $this->fs = \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
         }
     }
     // }}}
 
     // {{{ index()
     function index() {
-        return $this->library();
+        return $this->ui();
     }
     // }}}
     // {{{ library()
-    function library($path = "/") {
+    function ui($path = "") {
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
             'projectName' => $this->project->name,
@@ -61,9 +62,15 @@ class FileLibrary extends Base
      **/
     public function files($path = "/")
     {
-        $libPath = $this->project->getProjectPath() . "lib/";
+        $path = rawurldecode($path);
+        $files = $this->fs->lsFiles(trim($path, '/') . "/*");
 
-        return $libPath;
+        return new Html("fileListing.tpl", [
+            'path' => $path,
+            'fs' => $this->fs,
+            'files' => $files,
+            'project' => $this->project,
+        ], $this->htmlOptions);
     }
     // }}}
 }

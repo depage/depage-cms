@@ -6,9 +6,9 @@
     } else {
         $thumbSrc = $imgSrc;
     }
+    $formatter = new \Depage\Formatters\FileSize();
     $mediainfo = new \Depage\Media\MediaInfo();
     $info = $mediainfo->getInfo($imgSrc);
-    $formatter = new \Depage\Formatters\FileSize();
 ?>
 <figure class="thumb">
     <img src="<?php self::t($thumbSrc); ?>">

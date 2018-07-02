@@ -14,44 +14,13 @@
     fieldset.focus {
         background: #ffffff;
     }
-
     figure.thumb {
         clear: left;
         float: left;
-        border: 1px solid;
-        position: relative;
-        width: 126px;
-        padding: 3px;
         margin-right: 10px;
         margin-bottom: 10px;
-
-        img {
-            display: block;
-            width: 126px - 6px;
-            height: 126px - 6px;
-        }
-        figcaption {
-            font-size: $fSizeS;
-            max-width: 100%;
-            //overflow: hidden;
-            color: $textLighterColor;
-        }
-        .fileinfo {
-            position: absolute;
-            display: none;
-            background: #ffffff;
-            border: 1px solid;
-            padding: 5px;
-            top: -1px;
-            left: 100%;
-            min-width: 126px * 2;
-            max-width: 126px * 3;
-            z-index: 10000;
-        }
-        &:hover .fileinfo {
-            display: block;
-        }
     }
+
     .depage-form .input-single.edit-type {
         $radius: 5px;
         text-align: center;

@@ -506,11 +506,10 @@ div.preview.zoom100 iframe {
 }
 /* }}} */
 
+@import "modules/_forms.scss";
 @import "modules/_menus.scss";
 @import "modules/_trees.scss";
 @import "modules/_docProperties.scss";
-@import "modules/_forms.scss";
-
 @import "modules/_fileLibrary.scss";
 
 /* {{{ shy-dialogs */
