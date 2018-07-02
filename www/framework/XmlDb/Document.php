@@ -289,7 +289,7 @@ class Document
      *
      * @return $pos (int) position in node parents childlist
      */
-    protected function getPosById($id)
+    public function getPosById($id)
     {
         return $this->getNodeAttributeById($id, 'pos');
     }

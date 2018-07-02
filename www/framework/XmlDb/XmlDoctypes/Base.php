@@ -57,17 +57,20 @@ class Base implements DoctypeInterface
             $nodeInfo = $this->availableNodes[$name];
             $docInfo = $this->document->getNamespacesAndEntities();
 
-            $xml = "<$name {$docInfo->namespaces}";
-            if (!empty($nodeInfo->new)) {
-                $xml .= " name=\"" . htmlspecialchars($nodeInfo->new) . "\"";
-            }
-            if (isset($nodeInfo->attributes)) {
-                foreach ($nodeInfo->attributes as $attr => $value) {
-                    $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
+            if (isset($nodeInfo->xmlTemplateData)) {
+                $xml = $nodeInfo->xmlTemplateData;
+            } else {
+                $xml = "<$name {$docInfo->namespaces}";
+                if (!empty($nodeInfo->newName)) {
+                    $xml .= " name=\"" . htmlspecialchars($nodeInfo->newName) . "\"";
                 }
+                if (isset($nodeInfo->attributes)) {
+                    foreach ($nodeInfo->attributes as $attr => $value) {
+                        $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
+                    }
+                }
+                $xml .= '/>';
             }
-            $xml .= '/>';
-
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
 
