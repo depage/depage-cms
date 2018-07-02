@@ -128,6 +128,8 @@ class DocProperties extends Base
             //$this->form->addHtml("<p>Icon: " . $node->getAttribute("icon") . "</p>");
         }
 
+        $this->addPgRelease();
+
         if ($callback = $this->getCallbackForNode($node)) {
             $this->$callback($node);
         }
@@ -269,22 +271,21 @@ class DocProperties extends Base
     }
     // }}}
 
-    // {{{ addPgMeta()
+    // {{{ addPgRelease()
     /**
-     * @brief addPgMeta
+     * @brief addPgRelease
      *
      * @param mixed $node
      * @return void
      **/
-    protected function addPgMeta($node)
+    protected function addPgRelease()
     {
-        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $pageInfo = $this->project->getPages($this->docRef)[0];
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
         //var_dump($pageInfo);
 
-        $fs = $this->form->addFieldset("xmledit-$nodeId-lastchange-fs", [
+        $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
             'label' => _("Last Change"),
             'class' => "doc-property-fieldset doc-property-meta",
             'dataAttr' => [
@@ -303,6 +304,20 @@ class DocProperties extends Base
         }
         $disabledAttr = $pageInfo->released ? "disabled" : "";
         $fs->addHtml("<p><button class=\"release\" {$disabledAttr}>{$releaseTitle}</button></p>");
+
+    }
+    // }}}
+    // {{{ addPgMeta()
+    /**
+     * @brief addPgMeta
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addPgMeta($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $pageInfo = $this->project->getPages($this->docRef)[0];
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
         $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [

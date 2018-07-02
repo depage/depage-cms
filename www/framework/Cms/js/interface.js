@@ -645,6 +645,9 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                $form.on("depageForm.autosaved", function() {
+                    $form.find(".doc-property-meta button.release")[0].disabled = false;
+                });
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleting at the beginning or end of cell
