@@ -899,6 +899,8 @@ class Project extends \Depage\Entity\Entity
             ])
             ->save();
         }
+
+        return true;
     }
     // }}}
     // {{{ addPublishTask()

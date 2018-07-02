@@ -22,7 +22,36 @@ var DepageXmldb = (function() {
     }
     Xmldb.prototype = {
         // {{{ createNode()
-        createNode: function() {
+        createNode: function(node, targetId, position, success) {
+            this.ajaxCall("createNode", {
+                "node" : node,
+                "target_id" : targetId,
+                "position" : position
+            }, success);
+        },
+        // }}}
+        // {{{ createNodeIn()
+        createNodeIn: function(node, targetId, success) {
+            this.ajaxCall("createNodeIn", {
+                "node" : node,
+                "target_id" : targetId
+            }, success);
+        },
+        // }}}
+        // {{{ createNodeBefore()
+        createNodeBefore: function(node, targetId, success) {
+            this.ajaxCall("createNodeBefore", {
+                "node" : node,
+                "target_id" : targetId
+            }, success);
+        },
+        // }}}
+        // {{{ createNodeAfter()
+        createNodeAfter: function(node, targetId, success) {
+            this.ajaxCall("createNodeAfter", {
+                "node" : node,
+                "target_id" : targetId
+            }, success);
         },
         // }}}
         // {{{ copyNode()

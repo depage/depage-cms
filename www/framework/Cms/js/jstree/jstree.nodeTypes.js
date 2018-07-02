@@ -83,8 +83,25 @@
             return unique(available);
         };
         // }}}
+        // {{{ createInsertCallbackInside()
+        this.insertCallback = function(node, pos) {
+            // pos is "inside", "before" or "after"
+            var inst = this._data.nodeTypes.inst;
+
+            return function(data) {
+                var newNode = {
+                    text: data.item.newName,
+                    li_attr: {
+                        rel: data.item.nodeName,
+                        xmlTemplate: data.item.xmlTemplate
+                    },
+                };
+                inst.create_node(node, newNode, pos);
+            };
+        };
+        // }}}
         // {{{ getCreateMenu()
-        this.getCreateMenu = function(inst, availableNodes) {
+        this.getCreateMenu = function(inst, availableNodes, insertCallback) {
             var menu = {};
 
             if (availableNodes.length > 0) {
@@ -108,9 +125,10 @@
                 var node = availableNodes[i];
                 menu[node.name] = {
                     label: node.name,
-                    action: function(data) {
-                        console.log(inst, data);
-                    }
+                    nodeName: node.nodeName,
+                    newName: node.newName,
+                    xmlTemplate: node.xmlTemplate,
+                    action: insertCallback
                 };
             }
 
@@ -131,7 +149,7 @@
                 return false;
             }
 
-            if (operation == "move_node" || operation == "copy_node") {
+            if (operation == "create_node" || operation == "move_node" || operation == "copy_node") {
                 var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'];
                 return validParents.indexOf(this.getNodeType(node_parent)) > -1 || validParents.indexOf('*') > -1;
             }

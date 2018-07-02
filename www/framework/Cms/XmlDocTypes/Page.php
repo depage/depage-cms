@@ -159,7 +159,6 @@ class Page extends Base
         $query = $this->xmlDb->pdo->prepare(
             "SELECT
                 id,
-                nodename as nodeName,
                 name as name,
                 newname as newName,
                 validparents as validParents,
@@ -184,6 +183,10 @@ class Page extends Base
                 foreach ($xml->documentElement->childNodes as $node) {
                     if ($node->nodeType != \XML_COMMENT_NODE) {
                         $data .= $xml->saveXML($node);
+                    }
+                    if ($node->nodeType == \XML_ELEMENT_NODE) {
+                        $nodetypes[$result->id]->nodeName = $node->nodeName;
+                        $nodetypes[$result->id]->newName = $node->getAttribute("name");
                     }
                 }
                 $nodetypes[$result->id]->xmlTemplateData = $data;

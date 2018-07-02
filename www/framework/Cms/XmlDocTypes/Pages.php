@@ -21,38 +21,48 @@ class Pages extends Base {
         $this->routeHtmlThroughPhp = $this->project->getProjectConfig()->routeHtmlThroughPhp;
 
         // list of elements that may created by a user
+        // multilang="true" file_type="html" name="Using and enhancing the same development environment for years" db:docref="_Page_ec7333188d3e736e6b573659e202c4fbddf1997d" url="/blog-planned/using-and-enhancing-the-same-development-environment-for-years.html" db:released="false"
         $this->availableNodes = [
             'pg:page' => (object) [
                 'name' => _("Page"),
-                'new' => _("(Untitled Page)"),
+                'newName' => _("(Untitled Page)"),
                 'icon' => "",
-                'attributes' => [],
-                'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
-                'xml_template' => 'page.xml'
+                'attributes' => [
+                    'multilang' => "true",
+                    'file_type' => "html",
+                ],
+                'docType' => 'Depage\Cms\XmlDocTypes\Page',
+                'xmlTemplate' => 'page.xml'
             ],
             'pg:folder' => (object) [
                 'name' => _("Folder"),
-                'new' => _("(Untitled Folder)"),
+                'newName' => _("(Untitled Folder)"),
                 'icon' => "",
-                'attributes' => [],
-                'doc_type' => 'Depage\Cms\XmlDocTypes\Folder',
-                'xml_template' => 'folder.xml',
+                'docType' => 'Depage\Cms\XmlDocTypes\Folder',
+                'xmlTemplate' => 'folder.xml',
             ],
             'pg:redirect' => (object) [
                 'name' => _("Redirect"),
-                'new' => _("Redirect"),
+                'newName' => _("Redirect"),
                 'icon' => "",
-                'attributes' => [],
-                'doc_type' => 'Depage\Cms\XmlDocTypes\Page',
-                'xml_template' => 'redirect.xml',
+                'attributes' => [
+                    'multilang' => "true",
+                    'file_type' => "php",
+                ],
+                'docType' => 'Depage\Cms\XmlDocTypes\Page',
+                'xmlTemplate' => 'redirect.xml',
             ],
             'sec:separator' => (object) [
                 'name' => _("Separator"),
-                'new' => "",
+                'newName' => "",
                 'icon' => "",
                 'attributes' => [],
             ],
         ];
+
+        foreach ($this->availableNodes as $nodeName => &$node) {
+            $node->nodeName = $nodeName;
+        }
 
         // list of valid parents given by nodename
         $this->validParents = [
@@ -102,12 +112,12 @@ class Pages extends Base {
         if (isset($this->availableNodes[$node->nodeName])) {
             $properties = $this->availableNodes[$node->nodeName];
 
-            if (!empty($properties->new)) {
-                $node->setAttribute("name", $properties->new);
+            if (!empty($properties->newName)) {
+                $node->setAttribute("name", $properties->newName);
             }
-            if (isset($properties->doc_type) && isset($properties->xml_template)) {
-                $doc = $this->xmlDb->createDoc($properties->doc_type);
-                $xml = $this->loadXmlTemplate($properties->xml_template);
+            if (isset($properties->docType) && isset($properties->xmlTemplate)) {
+                $doc = $this->xmlDb->createDoc($properties->docType);
+                $xml = $this->loadXmlTemplate($properties->xmlTemplate);
 
                 $docId = $doc->save($xml);
                 $info = $doc->getDocInfo();

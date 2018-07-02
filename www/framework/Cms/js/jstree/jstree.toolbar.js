@@ -57,13 +57,13 @@
 
             parent.activate_node.call(this, obj, e);
 
-            var node = inst.get_selected();
+            var node = inst.get_node(inst.get_selected());
             this._data.toolbar.$el.empty();
 
-            var nodesForSelf = inst.getAvailableNodesFor(inst.get_node(node));
+            var nodesForSelf = inst.getAvailableNodesFor(node);
 
             this.addToolbarButton("create", "button-create", function() {
-                $.vakata.context.show($(this), {x: 160, y: 28 }, inst.getCreateMenu(inst, nodesForSelf));
+                $.vakata.context.show($(this), {x: 160, y: 28 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
             this.addToolbarButton("delete", "button-delete", function() {
                 // @todo ask before deleting

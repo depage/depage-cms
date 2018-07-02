@@ -156,11 +156,19 @@
         // {{{ onCreate
         base.onCreate = function(e, param) {
             var nodeId = param.node.id;
+            var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
+            var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
             var parentId = jstree.get_parent(nodeId);
 
-            console.log(param);
+            if (typeof prevId !== 'undefined') {
+                xmldb.createNodeAfter(param.node.li_attr.rel, prevId);
+            } else if (typeof nextId !== 'undefined') {
+                xmldb.createNodeBefore(param.node.li_attr.rel, nextId);
+            } else {
+                xmldb.createNodeIn(param.node.li_attr.rel, parentId);
+                jstree.open_node(parentId);
+            }
 
-            jstree.open_node(parentId);
             jstree.disable_node(param.node);
         };
         // }}}
@@ -362,15 +370,6 @@
 
                 return true;
             }
-        },
-
-        /**
-         * Delta Updates
-         */
-        deltaupdates : {
-            "webSocketURL" : $(this).attr("data-delta-updates-websocket-url"),
-            "fallbackPollURL" : $(this).attr("data-delta-updates-fallback-poll-url"),
-            "postURL" : $(this).attr("data-delta-updates-post-url")
         },
 
         /**

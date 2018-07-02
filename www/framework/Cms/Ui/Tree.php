@@ -125,15 +125,83 @@ class Tree extends Base {
     {
         $status = false;
 
-        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
-        $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $position = filter_input(INPUT_POST, 'position', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
 
         $id = $this->doc->addNodeByName($type, $target_id, $position);
         $status = $id !== false;
         if ($status) {
             $this->recordChange($this->docId, [$target_id]);
+        }
+
+        return new \Depage\Json\Json(["status" => $status, "id" => $id]);
+    }
+    // }}}
+    // {{{ createNodeIn
+    /**
+     * @param $node child node data
+     * @param $position position for new child in parent
+     */
+    public function createNodeIn()
+    {
+        $status = false;
+
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+
+        $id = $this->doc->addNodeByName($type, $target_id, $position);
+        $status = $id !== false;
+        if ($status) {
+            $this->recordChange($this->docId, [$target_id]);
+        }
+
+        return new \Depage\Json\Json(["status" => $status, "id" => $id]);
+    }
+    // }}}
+    // {{{ createNodeBefore
+    /**
+     * @param $node child node data
+     * @param $position position for new child in parent
+     */
+    public function createNodeBefore()
+    {
+        $status = false;
+
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+
+        $target_pos = $this->doc->getPosById($target_id);
+        $parent_id = $this->doc->getParentIdById($target_id);
+
+        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos);
+        $status = $id !== false;
+        if ($status) {
+            $this->recordChange($this->docId, [$parent_id]);
+        }
+
+        return new \Depage\Json\Json(["status" => $status, "id" => $id]);
+    }
+    // }}}
+    // {{{ createNodeAfter
+    /**
+     * @param $node child node data
+     * @param $position position for new child in parent
+     */
+    public function createNodeAfter()
+    {
+        $status = false;
+
+        $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
+        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+
+        $target_pos = $this->doc->getPosById($target_id) + 1;
+        $parent_id = $this->doc->getParentIdById($target_id);
+
+        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos);
+        $status = $id !== false;
+        if ($status) {
+            $this->recordChange($this->docId, [$parent_id]);
         }
 
         return new \Depage\Json\Json(["status" => $status, "id" => $id]);
@@ -444,7 +512,12 @@ class Tree extends Base {
      */
     public function releaseDocument()
     {
-        $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
+        if ($this->authUser->canPublishProject()) {
+            $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
+            // @todo record change for pages-tree
+        } else {
+            $status = $this->project->requestDocumentRelease($this->docName, $this->authUser->id);
+        }
 
         return new \Depage\Json\Json(array("status" => $status));
     }

@@ -35,12 +35,14 @@
             this._data.nodeActions.inst = this.element.jstree(true);
         };
         // }}}
-        // {{{
+        // {{{ bind()
         this.bind = function() {
             parent.bind.call(this);
 
             var className = "jstree-node-actions";
             var inst = this.element.jstree(true);
+            var node;
+            var nodeParent;
             var nodesForSelf = [];
             var nodesForParent = [];
             var re = / insert-[a-z]+/;
@@ -48,8 +50,10 @@
             // bind events
             inst.element
                 .on("mouseover.jstree", "." + className, function(e) {
-                    nodesForSelf = inst.getAvailableNodesFor(inst.get_node(this));
-                    nodesForParent = inst.getAvailableNodesFor(inst.get_node(inst.get_parent(inst.get_node(this))));
+                    node = inst.get_node(this);
+                    nodeParent = inst.get_node(inst.get_parent(node));
+                    nodesForSelf = inst.getAvailableNodesFor(node);
+                    nodesForParent = inst.getAvailableNodesFor(nodeParent);
                 })
                 .on("mousemove.jstree", "." + className, function(e) {
                     var parent = this.parentNode;
@@ -73,14 +77,11 @@
                 .on("click.jstree", "." + className, function(e) {
                     // @todo check
                     if (nodesForSelf.length > 0 && e.offsetY > this.clientHeight / 4 && e.offsetY < this.clientHeight / 4 * 3) {
-                        console.log("insert into", nodesForSelf);
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf));
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
                     } else if (nodesForParent.length > 0 && e.offsetY < this.clientHeight / 2) {
-                        console.log("insert before", nodesForParent);
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent, inst.insertCallback(node, "before")));
                     } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 2) {
-                        console.log("insert after", nodesForParent);
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent));
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent, inst.insertCallback(node, "after")));
                     }
                 });
         };
