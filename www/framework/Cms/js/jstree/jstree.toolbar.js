@@ -66,8 +66,7 @@
                 $.vakata.context.show($(this), {x: 160, y: 28 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
             this.addToolbarButton("delete", "button-delete", function() {
-                // @todo ask before deleting
-                inst.delete_node(node);
+                inst.askDelete(node);
             });
             this.addToolbarButton("reload", "button-reload", function() {
                 inst.refresh(true);

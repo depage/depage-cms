@@ -135,6 +135,41 @@
             return menu;
         };
         // }}}
+        // {{{ askDelete()
+        this.askDelete = $.proxy(function(node) {
+            var $body = $("body");
+            var inst = this._data.nodeTypes.inst;
+            var $node = inst.get_node(node, true);
+            var pos = $node.offset();
+
+            $body.depageShyDialogue({
+                ok: {
+                    title: "Delete",
+                    classes: 'default',
+                    click: function(e) {
+                        inst.delete_node(node);
+
+                        return true;
+                    }
+                },
+                cancel: {
+                    title: "Cancel",
+                    click: function(e) {
+                        //console.log("cancel");
+                    }
+                }
+            },{
+                bind_el: false,
+                direction: "LC",
+                directionMarker: true,
+                title: "Delete",
+                message : "Really delete?"
+            });
+
+            // @todo add click event outside of shy dialogue to hide it
+            $body.data("depage.shyDialogue").showDialogue(pos.left + 100, pos.top + 10);
+        }, this);
+        // }}}
         // {{{ checkTypes()
         this.checkTypes = function(operation, node, node_parent, node_position, more) {
             // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node', 'copy_node' or 'edit'

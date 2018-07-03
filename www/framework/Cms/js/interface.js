@@ -375,7 +375,7 @@ var depageCMS = (function() {
                 var currentPos, newPos;
                 var $sortable = $(this);
 
-                var $form = $(this).find("form");
+                var $form = $sortable.find("form");
                 var xmldb = new DepageXmldb(baseUrl, $form.attr("data-project"), $form.attr("data-document"));
 
                 $sortable.find(".sortable").each( function() {
@@ -395,7 +395,7 @@ var depageCMS = (function() {
                         // @todo make last element undeletable
                         var $deleteButton = $("<a class=\"button delete\">" + locale.delete + "</a>");
 
-                        $deleteButton.appendTo($form.find("p.submit"));
+                        $deleteButton.appendTo($container.find("p.submit"));
                         $deleteButton.depageShyDialogue({
                             ok: {
                                 title: locale.delete,

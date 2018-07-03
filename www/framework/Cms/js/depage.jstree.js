@@ -257,66 +257,6 @@
     };
     // }}}
 
-    // {{{ contextDelete()
-    /**
-     * contextDelete
-     */
-    $.depage.jstree.contextDelete = function(data) {
-        var offset = data.reference.offset();
-
-        $.depage.jstree.confirmDelete(offset.left, offset.top, function() {
-            var inst = $.jstree._reference(data.reference);
-
-            if (inst) {
-                var obj = inst.get_node(data.reference);
-                if(inst.data.ui && inst.is_selected(obj)) {
-                    obj = inst.get_selected();
-                }
-                inst.delete_node(obj);
-            }
-        });
-    };
-    // }}}
-
-    // {{{ confirmDelete()
-    /**
-     * confirmDelete
-     *
-     * @param left
-     * @param top
-     * @param delete_callback
-     */
-    $.depage.jstree.confirmDelete = function(left, top, delete_callback) {
-        // setup confirm on the delete context menu using shy-dialogue
-        var buttons = {
-            yes: {
-                click: function(e) {
-                    e.stopImmediatePropagation();
-                    delete_callback();
-                    $("#node_1").data('depage.shyDialogue').hide();
-                    return false;
-                }
-            },
-            no : false
-        };
-
-        $("#node_1").depageShyDialogue(
-            buttons, {
-                title: "Delete?",
-                message: "Are you sure you want to delete this menu item?",
-                bind_el: false // show manually
-            });
-
-        // prevent the click event hiding the menu
-        $(document).bind("click.marker", function(e) {
-            e.stopImmediatePropagation();
-            return false;
-        });
-
-        $("#node_1").data('depage.shyDialogue').showDialogue(left, top);
-    };
-    // }}}
-
     // defaultOptions {{{
     /**
      * Default Options
@@ -334,7 +274,7 @@
             "dnd",
             "typesfromurl",
             "hotkeys",
-            //"contextmenu",
+            "contextmenu",
             "nodeinfo",
             "dblclickrename",
             "tooltips",
@@ -346,10 +286,6 @@
             "nodeActions",
             "nodeTypes",
             "deltaUpdates",
-
-            // custom doctype handlers
-            // @todo get doctype handler from data-attributes
-            "doctype_page"
         ],
 
         /**
