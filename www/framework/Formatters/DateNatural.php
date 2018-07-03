@@ -62,10 +62,9 @@ class DateNatural
             $diff = round($diff / 60 / 60 / 24 / 7);
             return ($diff == 1 ? sprintf(_("%d week ago"), $diff) : sprintf(_("%d weeks ago"), $diff)) . $time; // date diff: in weeks
         } else if ($date->format('Y') == $now->format('Y')) {
-            return \Depage\Html\Html::format_date($date, 'd. MMM') . $time;
+            return \Depage\Html\Html::format_date($date, 'd. MMMM') . $time;
         } else {
-            // Full Date dd. MMM YY
-            return \Depage\Html\Html::format_date($date, \IntlDateFormatter::SHORT);
+            return \Depage\Html\Html::format_date($date, 'dd. MMMM YYYY') . $time;
         }
     }
     // }}}
