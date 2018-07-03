@@ -32,7 +32,7 @@
     padding: 0;
     margin: 0;
     vertical-align: top;
-    border: 1px solid transparent;
+    border: none;
     position: relative;
 
     &:focus {
@@ -74,92 +74,6 @@
 .page-hidden > .jstree-icon {
     opacity: 0.5;
 }
-.jstree-node {
-    $actionIconHeight: $treeLineHeight * 0.5 + 4px;
-
-    > .jstree-anchor::after {
-        content: " ";
-        display: none;
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: $selectionBackgroundColor;
-        z-index: 99;
-    }
-    > .jstree-node-actions {
-        position: absolute;
-        display: block;
-        right: 0;
-        top: 0;
-        width: 1.5 * $treeLineHeight;
-        height: $treeLineHeight;
-        cursor: pointer;
-        z-index: 100;
-
-        &::after {
-            position: absolute;
-            font-weight: bold !important;
-            right: $treeLineHeight * 0.5;
-            width: $actionIconHeight;
-            height: $actionIconHeight;
-            line-height: $actionIconHeight - 3px;
-            @include radius($actionIconHeight * 0.5);
-            color: $selectionTextColor;
-            text-align: center;
-            @include icon-base("add-white", $actionIconHeight);
-            background-color: $selectionBackgroundColor;
-        }
-    }
-    &.insert-into  {
-        > .jstree-node-actions::after {
-            content: " ";
-            width: $actionIconHeight * 1.2;
-            padding-right: $actionIconHeight * 0.5;
-            right: 0;
-            @include radius(0, "top", "right");
-            @include radius(0, "bottom", "right");
-            top: 0 + ($treeLineHeight - $actionIconHeight) * 0.5;
-        }
-    }
-    &.insert-before {
-        > .jstree-anchor::after {
-            top: -2px;
-            display: block;
-        }
-        > .jstree-node-actions::after {
-            content: " ";
-            top: - 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
-        }
-    }
-    &.insert-after {
-        > .jstree-anchor::after {
-            bottom: -2px;
-            display: block;
-        }
-        > .jstree-node-actions::after {
-            content: " ";
-            top: 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
-        }
-    }
-    &.jstree-open + li,
-    &:first-child{
-        &.insert-before > .jstree-node-actions::after {
-            top: 0;
-            @include radius(0, "top", "left");
-            @include radius(0, "top", "right");
-        }
-    }
-    &.jstree-open,
-    &:last-child {
-        &.insert-after > .jstree-node-actions::after {
-            top: auto;
-            bottom: 0;
-            @include radius(0, "bottom", "left");
-            @include radius(0, "bottom", "right");
-        }
-    }
-}
 .jstree-anchor > .jstree-icon {
     top: 0;
     left: -1 * $iconSize - 1px;
@@ -196,20 +110,119 @@
 }
 // }}}
 // {{{ #jstree-marker
+//.jstree-node > .jstree-anchor::before,
 #jstree-marker {
     position: absolute;
-    top: 0;
-    left: 0;
+    left: -4px;
     margin: -5px 0 0 0;
     padding: 0;
     border-right: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid $selectionBackgroundColor;
+    border-left: 5px solid $insertMarkerBackground;
     width: 0;
     height: 0;
     font-size: 0;
     line-height: 0;
+}
+#jstree-marker {
+    top: 0;
+}
+// }}}
+// {{{ jstree node-actions
+.jstree-node {
+    $actionIconHeight: $treeLineHeight * 0.5 + 4px;
+
+    > .jstree-anchor::after {
+        content: " ";
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $insertMarkerBackground;
+        z-index: 99;
+    }
+    > .jstree-node-actions {
+        position: absolute;
+        display: block;
+        right: 0;
+        top: 0;
+        width: 1.5 * $treeLineHeight;
+        height: $treeLineHeight;
+        cursor: pointer;
+        z-index: 100;
+
+        &::after {
+            position: absolute;
+            font-weight: bold !important;
+            right: $treeLineHeight * 0.5;
+            width: $actionIconHeight;
+            height: $actionIconHeight;
+            line-height: $actionIconHeight - 3px;
+            @include radius($actionIconHeight * 0.5);
+            color: $selectionTextColor;
+            text-align: center;
+            @include icon-base("add-white", $actionIconHeight);
+            background-color: $insertMarkerBackground;
+        }
+    }
+    &.insert-into  {
+        > .jstree-node-actions::after {
+            content: " ";
+            width: $actionIconHeight * 1.2;
+            padding-right: $actionIconHeight * 0.5;
+            right: 0;
+            @include radius(0, "top", "right");
+            @include radius(0, "bottom", "right");
+            top: 0 + ($treeLineHeight - $actionIconHeight) * 0.5;
+        }
+    }
+    &.insert-before {
+        > .jstree-anchor::before {
+            top: 0px;
+            content: " ";
+        }
+        > .jstree-anchor::after {
+            top: -1px;
+            display: block;
+        }
+        > .jstree-node-actions::after {
+            content: " ";
+            top: - 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
+        }
+    }
+    &.insert-after {
+        > .jstree-anchor::before {
+            bottom: -5px;
+            content: " ";
+        }
+        > .jstree-anchor::after {
+            bottom: -1px;
+            display: block;
+        }
+        > .jstree-node-actions::after {
+            content: " ";
+            top: 0.5 * $treeLineHeight + ($treeLineHeight - $actionIconHeight) * 0.5;
+        }
+    }
+    &.jstree-open + li,
+    &:first-child{
+        &.insert-before > .jstree-node-actions::after {
+            top: 0;
+            @include radius(0, "top", "left");
+            @include radius(0, "top", "right");
+        }
+    }
+    &.jstree-open,
+    &:last-child {
+        &.insert-after > .jstree-node-actions::after {
+            top: auto;
+            bottom: 0;
+            @include radius(0, "bottom", "left");
+            @include radius(0, "bottom", "right");
+        }
+    }
 }
 // }}}
 // {{{ #jstree-dnd
@@ -256,14 +269,13 @@
 }
 .jstree-clicked,
 .jstree-clicked.jstree-hovered {
-    border: 1px solid $backgroundDisabledColor;
     background: $backgroundDisabledColor;
     color: $selectionTextColor !important;
 }
 .jstree-focus {
     .jstree-clicked,
     .jstree-clicked.jstree-hovered {
-         background: $selectionBackgroundColor;
+        background: $selectionBackgroundColor;
     }
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {
@@ -348,6 +360,10 @@
 }
 .jstree-last {
     background: transparent;
+}
+.jstree-container-ul > .jstree-last,
+.jstree-container-ul > .jstree-last .jstree-last {
+    margin-bottom: 2 * $treeLineHeight;
 }
 .jstree-open > .jstree-ocl {
     @include icon("open", $iconSize);
