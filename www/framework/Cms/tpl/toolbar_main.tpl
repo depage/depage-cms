@@ -1,11 +1,10 @@
 <div id="toolbarmain" class="toolbar">
-    <h1>depage::cms</h1>
     <menu class="left">
         <li><a <?php self::attr([
                 "href" => " ",
-                "class" => "button",
+                "class" => "home",
                 "data-live-help" => _("Go to dashboard"),
-            ]); ?>>home</a></li>
+            ]); ?>>depage::cms</a></li>
     </menu>
     <menu class="preview">
         <!-- empty placeholder - content is added with javascript -->

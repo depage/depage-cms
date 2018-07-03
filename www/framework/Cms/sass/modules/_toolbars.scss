@@ -7,6 +7,12 @@
     border-bottom: 1px solid $borderColor;
     width: 100%;
     z-index: 10002;
+
+    menu.left a.home {
+        // @todo icon
+        color: #000000;
+        font-weight: bold;
+    }
 }
 .toolbar {
     height: 30px;
@@ -40,7 +46,7 @@
             top: 0;
         }
         &.left {
-            left: 100px;
+            left: 0;
         }
         &.right {
             right: 0;
