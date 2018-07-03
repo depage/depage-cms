@@ -4,6 +4,7 @@ namespace Depage\Cache\Providers;
 
 class Redis extends \Depage\Cache\Cache
 {
+    // @todo reconnect on connections failure
     // {{{ variables
     protected $defaults = array(
         'host' => 'localhost:6379',
