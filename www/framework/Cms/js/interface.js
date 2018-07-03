@@ -443,8 +443,6 @@ var depageCMS = (function() {
                     onDrop: function($item, container, _super, event) {
                         var $input = $item.find("p.node-name");
 
-                        console.log("onDrop", $input.data("nodeid"),  $input.data("parentid"), newPos);
-
                         xmldb.moveNode($input.data("nodeid"), $input.data("parentid"), newPos);
 
                         _super($item, container);
@@ -511,6 +509,21 @@ var depageCMS = (function() {
             $docPropertiesContainer = $(".doc-properties");
 
             localJS.loadPageTree();
+
+            localJS.setupLibraryTree();
+        },
+        // }}}
+        // {{{ setupLibraryTree
+        setupLibraryTree: function() {
+            var $libraryTreeContainer = $(".tree.library .jstree-container");
+
+            $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
+                var path = data.node.a_attr.href.replace(/libref:\/\//, "");
+
+                localJS.loadLibraryFiles(path);
+            });
+            $libraryTreeContainer.jstree();
+            //$libraryTreeContainer.depageTree();
         },
         // }}}
 
@@ -595,6 +608,16 @@ var depageCMS = (function() {
                     })
                     .jstree(true);
 
+            });
+        },
+        // }}}
+        // {{{ loadLibraryFiles
+        loadLibraryFiles: function(path) {
+            path = encodeURIComponent(path);
+            var url = baseUrl + "project/" + projectName + "/library/files/" + path + "/";
+            var $fileContainer = $(".files .file-list");
+
+            $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
             });
         },
         // }}}

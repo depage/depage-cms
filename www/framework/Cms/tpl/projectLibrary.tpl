@@ -11,6 +11,7 @@
             'data-live-help' => _("File tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
             'data-live-help-class' => "icon icon-tree",
         ]); ?>>
+            <?php self::e($this->tree); ?>
         </div>
     </div>
     <div class="files">

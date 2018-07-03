@@ -3,8 +3,11 @@
     $ext = pathinfo($imgSrc, \PATHINFO_EXTENSION);
     if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
         $thumbSrc = $imgSrc . ".thumb-120x120.png";
-    } else {
+    } else if (in_array($ext, ['svg'])) {
         $thumbSrc = $imgSrc;
+    } else {
+        // @todo add icons for other file types?
+        $thumbSrc = "framework/Cms/images/icon-page.svg";
     }
     $formatter = new \Depage\Formatters\FileSize();
     $mediainfo = new \Depage\Media\MediaInfo();

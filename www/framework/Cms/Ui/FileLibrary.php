@@ -41,6 +41,7 @@ class FileLibrary extends Base
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
             'projectName' => $this->project->name,
+            'tree' => $this->tree(),
             'files' => $this->files($path),
         ], $this->htmlOptions);
 
@@ -53,6 +54,20 @@ class FileLibrary extends Base
         return $h;
     }
     // }}}
+    // {{{ tree()
+    /**
+     * @brief tree
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function tree()
+    {
+        return new Html("treeLibrary.tpl", [
+            'fs' => $this->fs,
+        ], $this->htmlOptions);
+    }
+    // }}}
     // {{{ files()
     /**
      * @brief files
@@ -60,10 +75,10 @@ class FileLibrary extends Base
      * @param mixed $path = "/"
      * @return void
      **/
-    public function files($path = "/")
+    public function files($path = "")
     {
         $path = rawurldecode($path);
-        $files = $this->fs->lsFiles(trim($path, '/') . "/*");
+        $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
         return new Html("fileListing.tpl", [
             'path' => $path,

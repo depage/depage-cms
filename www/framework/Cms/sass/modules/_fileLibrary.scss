@@ -33,6 +33,7 @@ figure.thumb {
     }
 }
 // }}}
+
 // {{{ .library
 .library {
     .trees,
@@ -65,6 +66,7 @@ figure.thumb {
         top: 0;
         bottom: 0;
         overflow-y: auto;
+        overflow-x: hidden;
         margin-top: $infoHeight;
     }
 }
@@ -86,6 +88,10 @@ figure.thumb {
         list-style: none;
         vertical-align: top;
         display: inline-block;
+
+        figure.thumb {
+            cursor: pointer;
+        }
     }
 }
 // }}}
