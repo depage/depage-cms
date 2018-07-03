@@ -166,7 +166,7 @@ var DepageXmldb = (function() {
         // }}}
 
         // {{{ ajaxCall()
-        ajaxCall: function(operation, data, success) {
+        ajaxCall: function(operation, data, callback) {
             $.ajax({
                 async: true,
                 type: 'POST',
@@ -177,7 +177,7 @@ var DepageXmldb = (function() {
                     console.log("error");
                     console.log(e);
                 },
-                success: success
+                success: callback
             });
         },
         // }}}

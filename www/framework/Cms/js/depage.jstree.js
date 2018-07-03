@@ -53,6 +53,7 @@
         var baseUrl = $("base").attr("href");
         var xmldb;
         var jstree;
+        var nodeToActivate = false;
 
         // Add a reverse reference to the DOM object
         base.$el.data("depage.jstree", base);
@@ -77,6 +78,7 @@
                 .on("copy_node.jstree", base.onCopy)
                 .on("create_node.jstree", base.onCreate)
                 .on("activate_node.jstree", base.onActivate)
+                .on("refresh.jstree", base.onRefresh)
                 .on("dblclick.jstree", ".jstree-anchor", base.onNodeDblClick);
 
             // init the tree
@@ -85,17 +87,17 @@
         // }}}
 
         // {{{ onRename
-        base.onRename= function(e, param) {
+        base.onRename = $.proxy(function(e, param) {
             if (param.text == param.old) {
                 return;
             }
             xmldb.renameNode(param.node.data.nodeId, param.text);
 
             jstree.disable_node(param.node);
-        };
+        }, base);
         // }}}
         // {{{ onDelete
-        base.onDelete = function(e, param) {
+        base.onDelete = $.proxy(function(e, param) {
             var nodeId = param.node.id;
             var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
             var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
@@ -112,10 +114,10 @@
             } else {
                 jstree.activate_node(parentId);
             }
-        };
+        }, base);
         // }}}
         // {{{ onMove
-        base.onMove = function(e, param) {
+        base.onMove = $.proxy(function(e, param) {
             var nodeId = param.node.id;
             var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
             var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
@@ -131,10 +133,10 @@
             }
 
             jstree.disable_node(param.node);
-        };
+        }, base);
         // }}}
         // {{{ onCopy
-        base.onCopy = function(e, param) {
+        base.onCopy = $.proxy(function(e, param) {
             var originalId = param.original.data.nodeId;
             var nodeId = param.node.id;
             var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
@@ -151,33 +153,49 @@
             }
 
             jstree.disable_node(param.node);
-        };
+        }, base);
         // }}}
         // {{{ onCreate
-        base.onCreate = function(e, param) {
+        base.onCreate = $.proxy(function(e, param) {
             var nodeId = param.node.id;
             var prevId = jstree.get_node(jstree.get_prev_dom(nodeId, true)).id;
             var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
             var parentId = jstree.get_parent(nodeId);
 
             if (typeof prevId !== 'undefined') {
-                xmldb.createNodeAfter(param.node.li_attr.rel, prevId);
+                xmldb.createNodeAfter(param.node.li_attr.rel, prevId, base.afterCreate);
             } else if (typeof nextId !== 'undefined') {
-                xmldb.createNodeBefore(param.node.li_attr.rel, nextId);
+                xmldb.createNodeBefore(param.node.li_attr.rel, nextId, base.afterCreate);
             } else {
-                xmldb.createNodeIn(param.node.li_attr.rel, parentId);
+                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate);
                 jstree.open_node(parentId);
             }
 
             jstree.disable_node(param.node);
-        };
+        }, base);
+        // }}}
+        // {{{ afterCreate
+        base.afterCreate = $.proxy(function(data) {
+            if (data.status) {
+                nodeToActivate = data.id;
+            }
+        }, base);
+        // }}}
+        // {{{ onRefresh
+        base.onRefresh = $.proxy(function(e, param) {
+            if (nodeToActivate) {
+                jstree.activate_node(jstree.get_node(nodeToActivate));
+                nodeToActivate = false;
+            }
+        }, base);
         // }}}
         // {{{ onActivate
-        base.onActivate = function(e, param) {
-        };
+        base.onActivate = $.proxy(function(e, param) {
+            nodeToActivate = false;
+        }, base);
         // }}}
         // {{{ onNodeDblClick
-        base.onNodeDblClick = function(e, param) {
+        base.onNodeDblClick = $.proxy(function(e, param) {
             var $target = $(e.target);
             var $label;
 
@@ -191,7 +209,7 @@
                 $target.remove();
                 jstree.edit($label, $label.text());
             }
-        };
+        }, base);
         // }}}
 
         // go!
