@@ -527,11 +527,12 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: $textBrightColor;
+            background: $backgroundBrightColor;
             border-top: 1px solid transparent;
             border-bottom: 1px solid transparent;
 
             &.jstree-focus {
+                background: $textBrightColor;
                 border-top-color: $selectionBackgroundColor;
                 border-bottom-color: $selectionBackgroundColor;
             }
