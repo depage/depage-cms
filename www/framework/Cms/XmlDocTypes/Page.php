@@ -30,12 +30,13 @@ class Page extends Base
             if ($contentElement) {
                 $nodeName = $contentElement->nodeName;
 
-                $this->availableNodes[$nodeName] = $t;
                 $this->validParents[$nodeName] = explode(",", $t->validParents);
 
                 array_walk($this->validParents[$nodeName], function(&$item, $key) {
                     $item = trim($item);
                 });
+                $t->validParents = $this->validParents[$nodeName];
+                $this->availableNodes[$nodeName] = $t;
             }
         }
     }
@@ -205,6 +206,26 @@ class Page extends Base
         } while ($result);
 
         return $nodetypes;
+    }
+    // }}}
+    // {{{ getPageSubtypes()
+    /**
+     * @brief getPageSubtypes
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getSubtypes($for)
+    {
+        $subtypes = [];
+
+        foreach ($this->availableNodes as $node) {
+            if (in_array($for, $node->validParents)) {
+                $subtypes[] = $node;
+            }
+        }
+
+        return $subtypes;
     }
     // }}}
 

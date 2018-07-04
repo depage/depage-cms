@@ -20,8 +20,9 @@ class Pages extends Base {
 
         $this->routeHtmlThroughPhp = $this->project->getProjectConfig()->routeHtmlThroughPhp;
 
+        $doctypePage = new \Depage\Cms\XmlDocTypes\Page($this->xmlDb, null);
+
         // list of elements that may created by a user
-        // multilang="true" file_type="html" name="Using and enhancing the same development environment for years" db:docref="_Page_ec7333188d3e736e6b573659e202c4fbddf1997d" url="/blog-planned/using-and-enhancing-the-same-development-environment-for-years.html" db:released="false"
         $this->availableNodes = [
             'pg:page' => (object) [
                 'name' => _("Page"),
@@ -32,7 +33,8 @@ class Pages extends Base {
                     'file_type' => "html",
                 ],
                 'docType' => 'Depage\Cms\XmlDocTypes\Page',
-                'xmlTemplate' => 'page.xml'
+                'xmlTemplate' => 'page.xml',
+                'subTypes' => $doctypePage->getSubtypes("pg:page_data"),
             ],
             'pg:folder' => (object) [
                 'name' => _("Folder"),

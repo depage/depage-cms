@@ -165,12 +165,13 @@
             var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
             var parentId = jstree.get_parent(nodeId);
 
+            console.log(param);
             if (typeof prevId !== 'undefined') {
-                xmldb.createNodeAfter(param.node.li_attr.rel, prevId, base.afterCreate);
+                xmldb.createNodeAfter(param.node.li_attr.rel, prevId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else if (typeof nextId !== 'undefined') {
-                xmldb.createNodeBefore(param.node.li_attr.rel, nextId, base.afterCreate);
+                xmldb.createNodeBefore(param.node.li_attr.rel, nextId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else {
-                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate);
+                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate, param.node.li_attr.xmlTemplateData);
                 jstree.open_node(parentId);
             }
 

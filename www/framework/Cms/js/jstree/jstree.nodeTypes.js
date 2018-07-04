@@ -92,11 +92,13 @@
             var inst = this._data.nodeTypes.inst;
 
             return function(data) {
+                console.log(data.item);
                 var newNode = {
                     text: data.item.newName,
                     li_attr: {
                         rel: data.item.nodeName,
-                        xmlTemplate: data.item.xmlTemplate
+                        xmlTemplate: data.item.xmlTemplate,
+                        xmlTemplateData: data.item.xmlTemplateData || ""
                     },
                 };
                 inst.create_node(node, newNode, pos);
@@ -109,7 +111,6 @@
 
             if (availableNodes.length > 0) {
                 menu['_add-title'] = {
-                    // @todo localize
                     label: locale.createNew,
                     action: false,
                     _disabled: true,
@@ -117,7 +118,6 @@
                 };
             } else {
                 menu['_add-title'] = {
-                    // @todo localize
                     label: locale.createNoElements,
                     action: false,
                     _disabled: true,
@@ -126,6 +126,7 @@
 
             for (var i = 0; i < availableNodes.length; i++) {
                 var node = availableNodes[i];
+
                 menu[node.name] = {
                     label: node.name,
                     nodeName: node.nodeName,
@@ -133,6 +134,23 @@
                     xmlTemplate: node.xmlTemplate,
                     action: insertCallback
                 };
+
+                if (typeof node.subTypes != 'undefined') {
+                    for (var j = 0; j < node.subTypes.length; j++) {
+                        var sepAfter = j == node.subTypes.length - 1;
+                        menu[node.subTypes[j].name] = {
+                            // four non-breakable spaces for intendation
+                            label: "    " + node.subTypes[j].name,
+                            nodeName: node.nodeName,
+                            newName: node.newName,
+                            xmlTemplate: node.xmlTemplate,
+                            xmlTemplateData: node.subTypes[j].xmlTemplateData,
+                            action: insertCallback,
+                            separator_after: sepAfter
+                        };
+                    }
+                    console.log(node.subTypes);
+                }
             }
 
             return menu;

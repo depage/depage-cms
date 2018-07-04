@@ -128,6 +128,7 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $position = filter_input(INPUT_POST, 'position', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
+        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
 
         $id = $this->doc->addNodeByName($type, $target_id, $position);
         $status = $id !== false;
@@ -149,8 +150,9 @@ class Tree extends Base {
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
 
-        $id = $this->doc->addNodeByName($type, $target_id, $position);
+        $id = $this->doc->addNodeByName($type, $target_id, $position, $this->parseDataNodes($extra));
         $status = $id !== false;
         if ($status) {
             $this->recordChange($this->docId, [$target_id]);
@@ -170,11 +172,12 @@ class Tree extends Base {
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
 
         $target_pos = $this->doc->getPosById($target_id);
         $parent_id = $this->doc->getParentIdById($target_id);
 
-        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos);
+        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos, $this->parseDataNodes($extra));
         $status = $id !== false;
         if ($status) {
             $this->recordChange($this->docId, [$parent_id]);
@@ -194,17 +197,42 @@ class Tree extends Base {
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
+        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
 
         $target_pos = $this->doc->getPosById($target_id) + 1;
         $parent_id = $this->doc->getParentIdById($target_id);
 
-        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos);
+        $id = $this->doc->addNodeByName($type, $parent_id, $target_pos, $this->parseDataNodes($extra));
         $status = $id !== false;
         if ($status) {
             $this->recordChange($this->docId, [$parent_id]);
         }
 
         return new \Depage\Json\Json(["status" => $status, "id" => $id]);
+    }
+    // }}}
+    // {{{ parseDataNodes()
+    /**
+     * @brief parseDataNodes
+     *
+     * @param mixed $str
+     * @return void
+     **/
+    protected function parseDataNodes($str)
+    {
+        $dataNodes = [];
+        $str = trim($str, " \r\n\t");
+
+        $doc = new \DOMDocument();
+        $parsed = $doc->loadXML("<root xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\">$str</root>");
+
+        if ($parsed) {
+            foreach ($doc->documentElement->childNodes as $node) {
+                $dataNodes[] = $node;
+            }
+        }
+
+        return ['dataNodes' => $dataNodes];
     }
     // }}}
 
