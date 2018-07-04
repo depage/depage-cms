@@ -681,6 +681,9 @@ class DocProperties extends Base
             'label' => !empty($lang) ? $lang : _("src"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
+        if (!$node->hasAttribute("alt")) {
+            $node->setAttribute("alt", "");
+        }
         if ($node->hasAttribute("alt")) {
             $fs->addText("xmledit-$nodeId-alt", [
                 'label' => _("alt"),
