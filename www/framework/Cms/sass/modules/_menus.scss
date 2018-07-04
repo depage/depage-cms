@@ -10,7 +10,7 @@
     margin: 0;
     padding: 0;
     min-width: 200px;
-    @include box-shadow(0 3px 0.4em 0 #aaaaaa);
+    @include box-shadow($shadow);
 
     ul {
         padding: 10px 0;

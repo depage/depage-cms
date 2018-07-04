@@ -9,7 +9,7 @@ $backgroundLighterColor: lighten($backgroundColor, 10%) !global;
 $backgroundBrightColor: lighten($backgroundColor, 12%) !global;
 $backgroundDisabledColor: #cccccc;
 $borderColor: #bbbbbb !global;
-$borderColor: darken($baseColor, 0%) !global;
+$borderColor: darken($baseColor, 5%) !global;
 $textBaseColor: #000000 !global;
 $textLighterColor: #888888 !global;
 $textBrightColor: #ffffff !global;
@@ -17,6 +17,8 @@ $selectionBackgroundColor: #047CBF !global;
 $selectionTextColor: #ffffff !global;
 $insertMarkerBackground: lighten($selectionBackgroundColor, 10%) !global;
 $cornerRadius: 0.4em !global;
+
+$shadow: 0 3px 0.4em 0 #aaaaaa !global;
 
 $fSizeM: 13px !global;
 $fSizeS: 11px !global;
@@ -26,7 +28,7 @@ $fSizeMenu: 12px !global;
 $transitionTime: 150ms !global;
 $transitionDistance: 10px !global;
 
-$treeLineHeight: 26px !global;
+$treeLineHeight: 28px !global;
 $menuLineHeight: 30px !global;
 $iconSize: 24px !global;
 $helpIconSize: 32px !global;

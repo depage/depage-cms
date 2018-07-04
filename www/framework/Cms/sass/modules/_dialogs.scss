@@ -1,0 +1,41 @@
+/* {{{ shy-dialogs */
+.depage-shy-dialogue {
+
+    @include depage-shy-dialogue (
+        $width: 20em,
+        $padding: 10px,
+        $background: $backgroundColor,
+        $corner-radius: 10px,
+        $direction-size: 30px
+    );
+
+    z-index: 15000 !important;
+
+    .wrapper {
+        @include box-shadow($shadow);
+    }
+    h1,
+    p,
+    a {
+        font-size: 1em;
+    }
+}
+/* }}} */
+// {{{ dialog.full
+.dialog-full {
+    background: $backgroundColor;
+    padding: 11px;
+    min-height: 100%;
+
+    header.info + & {
+        margin-top: - $infoHeight;
+        padding-top: 3 * $infoHeight;
+    }
+    > .info,
+    > form.depage-form {
+        padding-left: 16px;
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

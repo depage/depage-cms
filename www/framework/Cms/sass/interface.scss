@@ -508,59 +508,10 @@ div.preview.zoom100 iframe {
 
 @import "modules/_forms.scss";
 @import "modules/_menus.scss";
+@import "modules/_dialogs.scss";
 @import "modules/_trees.scss";
 @import "modules/_docProperties.scss";
 @import "modules/_fileLibrary.scss";
-
-/* {{{ shy-dialogs */
-.depage-shy-dialogue {
-    @include depage-shy-dialogue(
-        $width: 20em,
-        $padding: 10px,
-        $corner-radius: 10px
-    );
-    .direction-marker {
-        border: 1px solid;
-    }
-    .direction-marker.left {
-        background-image: url(../shy-dialogue/direction-left.png);
-        background-position: right center;
-    }
-    .direction-marker.right {
-        background-image: url(../shy-dialogue/direction-right.png);
-        background-position: left center;
-    }
-    .direction-marker.top {
-        background-image: url(../shy-dialogue/direction-top.png);
-        background-position: center bottom;
-    }
-    .direction-marker.bottom {
-        background-image: url(../shy-dialogue/direction-bottom.png);
-        background-position: center top;
-    }
-    h1,
-    p,
-    a {
-        font-size: 1em;
-    }
-}
-/* }}} */
-// {{{ dialog.full
-.dialog-full {
-    background: $backgroundColor;
-    padding: 11px;
-    min-height: 100%;
-
-    header.info + & {
-        margin-top: - $infoHeight;
-        padding-top: 3 * $infoHeight;
-    }
-    > .info,
-    > form.depage-form {
-        padding-left: 16px;
-    }
-}
-// }}}
 
 /* {{{ depage-scroller */
 .testbox {
