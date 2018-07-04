@@ -217,46 +217,6 @@
     };
     // }}}
 
-    // {{{ buildCreateMenu()
-    /**
-     *
-     * @param available_nodes
-     * @param position
-     * @return {Object}
-     */
-    $.depage.jstree.buildCreateMenu = function (available_nodes, position){
-
-        available_nodes = available_nodes || {};
-        position = position || 'inside';
-
-        var sub_menu = {};
-
-        $.each(available_nodes, function(type, node){
-            sub_menu[type] = {
-                "label"             : node.name,
-                "separator_before"  : false,
-                "separator_after"   : false,
-                "action"            : function (data) {
-                    $.depage.jstree.contextCreate(data, type, position);
-                }
-            };
-        });
-
-        var create_menu = {
-            "create" : {
-                "_disabled"         : !$(available_nodes).size(),
-                "label"             : "Create",
-                "separator_before"  : false,
-                "separator_after"   : true,
-                "action"            : false,
-                "submenu"           : sub_menu
-            }
-        };
-
-        return create_menu;
-    };
-    // }}}
-
     // defaultOptions {{{
     /**
      * Default Options
@@ -407,87 +367,82 @@
         /**
          * Context Menu
          */
-        disabled_contextmenu : {
-            items : function (obj) {
+        contextmenu : {
+            items: function (o, cb) {
+                var defaultItems = {
+                    rename: {
+                        "label": "Rename",
+                        "_disabled": function(data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
 
-                var default_items = {
-                    "rename" : {
-                        "_disabled"         : !this.check('rename_node', obj, this.get_parent()),
-                        "separator_before"  : false,
-                        "separator_after"   : false,
-                        "label"             : "Rename",
-                        "action"            : function (data) {
-                            console.log(data);
-                            $.depage.jstree.contextRename(data);
+                            return !inst.check("rename_node", data.reference, inst.get_parent(data.reference), "");
+                        },
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            inst.edit(obj);
                         }
                     },
-                    "remove" : {
-                        "_disabled"          : !this.check('delete_node', obj, this.get_parent()),
-                        "separator_before"  : false,
-                        "icon"              : false,
-                        "separator_after"   : false,
-                        "label"             : "Delete",
-                        "action"            : function (data) {
-                            $.depage.jstree.contextDelete(data);
+                    remove: {
+                        "label": "Delete",
+                        "_disabled": function(data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            return !inst.check("delete_node", data.reference, inst.get_parent(data.reference), "");
+                        },
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            inst.askDelete(obj);
                         }
                     },
-                    "ccp" : {
-                        "separator_before"  : true,
-                        "icon"              : false,
-                        "separator_after"   : false,
-                        "label"             : "Edit",
-                        "action"            : false,
-                        "submenu" : {
-                            "cut" : {
-                                "_disabled"         : !this.check('cut_node', obj, this.get_parent()),
-                                "separator_before"  : false,
-                                "separator_after"   : false,
-                                "label"             : "Cut",
-                                "action"            : function (data) {
-                                    $depageTree = $.depage.jstree.contextCut(data);
-                                }
-                            },
-                            "copy" : {
-                                "_disabled"         : !this.check('copy_node', obj, this.get_parent()),
-                                "separator_before"  : false,
-                                "icon"              : false,
-                                "separator_after"   : false,
-                                "label"             : "Copy",
-                                "action"            : function (data) {
-                                    $depageTree = $.depage.jstree.contextCopy(data);
-                                }
-                            },
-                            "paste" : {
-                                "separator_before"  : false,
-                                "icon"              : false,
-                                "separator_after"   : false,
-                                "label"             : "Paste",
-                                "_disabled"         : typeof(this.can_paste) === "undefined" ? false : !(this.can_paste()),
-                                "action"            : function (data) {
-                                    $depageTree = $.depage.jstree.contextPaste(data);
-                                }
+                    cut: {
+                        "label": "Cut",
+                        "separator_before": true,
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            if (inst.is_selected(obj)) {
+                                inst.cut(inst.get_top_selected());
+                            } else {
+                                inst.cut(obj);
                             }
+                        }
+                    },
+                    copy: {
+                        "label": "Copy",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            if (inst.is_selected(obj)) {
+                                inst.copy(inst.get_top_selected());
+                            } else {
+                                inst.copy(obj);
+                            }
+                        }
+                    },
+                    paste: {
+                        "label": "Paste",
+                        "_disabled": function (data) {
+                            return !$.jstree.reference(data.reference).can_paste();
+                        },
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            inst.paste(obj);
                         }
                     }
                 };
 
-                // add the create menu based on the available nodes fetched in typesfromurl
-                /*
-                if(typeof(this.get_settings()['typesfromurl']) !== "undefined") {
+                // @todo add the create menu based on the available nodes fetched in typesfromurl
 
-                    var type_settings = this.get_settings()['typesfromurl'];
-
-                    var type = obj.attr(type_settings.type_attr);
-                    var available_nodes = type_settings.valid_children[type];
-
-                    default_items = $.extend($depageTree = $.depage.jstree.buildCreateMenu(available_nodes), default_items);
-
-                } else {
-                    // @todo default create menu
-                }
-                */
-
-                return default_items;
+                return defaultItems;
             }
         },
 

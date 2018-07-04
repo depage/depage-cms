@@ -596,7 +596,8 @@ var depageCMS = (function() {
                     })
                     .on("ready.jstree", function () {
                         $tree.find("ul:first li").each(function() {
-                            jstreePagedata.open_node(this, false, false);
+                            //jstreePagedata.open_node(this, false, false);
+                            jstreePagedata.open_all();
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
                     })
