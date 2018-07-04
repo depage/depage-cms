@@ -364,13 +364,14 @@ class Tree extends Base {
         $position = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $status = !! $this->doc->copyNode($id, $target_id, $position);
+        $id = $this->doc->copyNode($id, $target_id, $position);
+        $status = $id !== false;
 
         if ($status) {
             $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
-        return new \Depage\Json\Json(array("status" => $status, "id" => $status));
+        return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
     // {{{ copyNodeIn
@@ -386,13 +387,14 @@ class Tree extends Base {
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
 
         $old_parent_id = $this->doc->getParentIdById($id);
-        $status = $this->doc->copyNodeIn($id, $target_id);
+        $id = $this->doc->copyNodeIn($id, $target_id);
+        $status = $id !== false;
 
         if ($status) {
             $this->recordChange($this->docId, [$old_parent_id, $target_id]);
         }
 
-        return new \Depage\Json\Json(array("status" => $status));
+        return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
     // {{{ copyNodeBefore
@@ -409,13 +411,14 @@ class Tree extends Base {
 
         $old_parent_id = $this->doc->getParentIdById($id);
         $parent_id = $this->doc->getParentIdById($target_id);
-        $status = $this->doc->copyNodeBefore($id, $target_id);
+        $id = $this->doc->copyNodeBefore($id, $target_id);
+        $status = $id !== false;
 
         if ($status) {
             $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
-        return new \Depage\Json\Json(array("status" => $status));
+        return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
     // {{{ copyNodeAfter
@@ -432,13 +435,14 @@ class Tree extends Base {
 
         $old_parent_id = $this->doc->getParentIdById($id);
         $parent_id = $this->doc->getParentIdById($target_id);
-        $status = $this->doc->copyNodeAfter($id, $target_id);
+        $id = $this->doc->copyNodeAfter($id, $target_id);
+        $status = $id !== false;
 
         if ($status) {
             $this->recordChange($this->docId, [$old_parent_id, $parent_id]);
         }
 
-        return new \Depage\Json\Json(array("status" => $status));
+        return new \Depage\Json\Json(array("status" => $status, "id" => $id));
     }
     // }}}
 

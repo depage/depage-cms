@@ -68,6 +68,9 @@
             this.addToolbarButton("delete", "button-delete", function() {
                 inst.askDelete(node);
             });
+            this.addToolbarButton("duplicate", "button-duplicate", function() {
+                inst.copy_node(node, node, "after");
+            });
             this.addToolbarButton("reload", "button-reload", function() {
                 inst.refresh(true);
             });

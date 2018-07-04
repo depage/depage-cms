@@ -144,11 +144,11 @@
             var parentId = jstree.get_parent(nodeId);
 
             if (typeof prevId !== 'undefined') {
-                xmldb.copyNodeAfter(originalId, prevId);
+                xmldb.copyNodeAfter(originalId, prevId, base.afterCreate);
             } else if (typeof nextId !== 'undefined') {
-                xmldb.copyNodeBefore(originalId, nextId);
+                xmldb.copyNodeBefore(originalId, nextId, base.afterCreate);
             } else {
-                xmldb.copyNodeIn(originalId, parentId);
+                xmldb.copyNodeIn(originalId, parentId, base.afterCreate);
                 jstree.open_node(parentId);
             }
 
@@ -384,6 +384,15 @@
                             inst.edit(obj);
                         }
                     },
+                    duplicate: {
+                        "label": "Duplicate",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            inst.copy_node(obj, obj, "after");
+                        }
+                    },
                     remove: {
                         "label": "Delete",
                         "_disabled": function(data) {
@@ -439,8 +448,6 @@
                         }
                     }
                 };
-
-                // @todo add the create menu based on the available nodes fetched in typesfromurl
 
                 return defaultItems;
             }
