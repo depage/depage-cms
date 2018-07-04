@@ -80,6 +80,7 @@ var depageCMS = (function() {
             $html.addClass("javascript");
             $body = $("body");
 
+            localJS.locale = locale;
             localJS.setup();
 
             // setup global events
@@ -589,7 +590,7 @@ var depageCMS = (function() {
                 jstreePagedata = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         var nodeId = null;
-                        if (typeof data.node.data.nodeId !== 'undefined') {
+                        if (typeof data.node.data !== 'undefined') {
                             nodeId = data.node.data.nodeId;
                         }
                         localJS.loadDocProperties(docref, nodeId);
