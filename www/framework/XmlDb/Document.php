@@ -699,14 +699,14 @@ class Document
      * @param $target_pos
      * @return bool
      */
-    public function addNodeByName($name, $target_id, $target_pos)
+    public function addNodeByName($name, $target_id, $target_pos, $extras = [])
     {
         $success = false;
         $dth = $this->getDoctypeHandler();
         $newNode = $dth->getNewNodeFor($name);
 
         if ($newNode) {
-            $success = $this->addNode($newNode, $target_id, $target_pos);
+            $success = $this->addNode($newNode, $target_id, $target_pos, $extras);
         }
 
         return $success;
