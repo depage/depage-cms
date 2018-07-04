@@ -12,7 +12,7 @@
 (function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
 
     /**
      * markerbox

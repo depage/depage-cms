@@ -15,7 +15,7 @@
 (function($){
     if(!$.depage){
         $.depage = {};
-    };
+    }
 
     /**
      * shyDialogue

@@ -102,13 +102,36 @@
     }
 
     .direction-marker {
+        $borderWidth: $direction-size * 0.5;
         position: absolute;
         display: block;
         width: $direction-size;
         height: $direction-size;
-        background-size: $direction-size $direction-size;
-        background-repeat: no-repeat;
-        background-position: center center;
+
+        &.left {
+            border-top: $borderWidth solid transparent;
+            border-right: $borderWidth solid $background;
+            border-bottom: $borderWidth solid transparent;
+            border-left: 0;
+        }
+        &.right {
+            border-top: $borderWidth solid transparent;
+            border-right: 0;
+            border-bottom: $borderWidth solid transparent;
+            border-left: $borderWidth solid $background;
+        }
+        &.top {
+            border-top: 0;
+            border-right: $borderWidth solid transparent;
+            border-bottom: $borderWidth solid $background;
+            border-left: $borderWidth solid transparent;
+        }
+        &.bottom {
+            border-top: $borderWidth solid $background;
+            border-right: $borderWidth solid transparent;
+            border-bottom: 0;
+            border-left: $borderWidth solid transparent;
+        }
     }
 }
 /* }}} */
