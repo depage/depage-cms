@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-11 01:04+0200\n"
+"POT-Creation-Date: 2018-07-04 12:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,8 +126,8 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:358
-#: Cms/Ui/DocProperties.php:402
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:470
+#: Cms/Ui/DocProperties.php:514
 msgid "Text"
 msgstr ""
 
@@ -170,8 +170,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:493
-#: Cms/Ui/DocProperties.php:568
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:605
+#: Cms/Ui/DocProperties.php:704
 msgid "http://domain.com"
 msgstr ""
 
@@ -1974,50 +1974,50 @@ msgstr ""
 msgid "Add new User"
 msgstr ""
 
-#: Cms/Ui/Main.php:55
+#: Cms/Ui/Main.php:58
 msgid ""
 "Welcome to\n"
 " depage::cms"
 msgstr ""
 
-#: Cms/Ui/Main.php:77 Cms/Ui/Main.php:109
+#: Cms/Ui/Main.php:80 Cms/Ui/Main.php:112
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:158 Cms/tpl/toolbar_main.tpl:23 Cms/Rpc/CmsFuncs.php:781
+#: Cms/Ui/Main.php:161 Cms/tpl/toolbar_main.tpl:22 Cms/Rpc/CmsFuncs.php:781
 msgid "Projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:159
+#: Cms/Ui/Main.php:162
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:202
+#: Cms/Ui/Main.php:205
 msgid "Remove"
 msgstr ""
 
-#: Cms/Ui/Main.php:254
+#: Cms/Ui/Main.php:257
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:256
+#: Cms/Ui/Main.php:259
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:325
+#: Cms/Ui/Main.php:328
 #, php-format
 msgid "You received a new notification from %s:"
 msgstr ""
 
-#: Cms/Ui/Main.php:333
+#: Cms/Ui/Main.php:336
 msgid "Your faithful servant on"
 msgstr ""
 
-#: Cms/Ui/Main.php:402
+#: Cms/Ui/Main.php:405
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:404
+#: Cms/Ui/Main.php:407
 msgid "Shows the users that are currently logged in"
 msgstr ""
 
@@ -2025,7 +2025,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:83 Cms/Ui/DocProperties.php:274
+#: Cms/Ui/Project.php:59 Cms/Ui/Project.php:83 Cms/Ui/DocProperties.php:363
 msgid "Tags"
 msgstr ""
 
@@ -2039,7 +2039,7 @@ msgstr ""
 
 #: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
-#: Cms/tpl/toolbar_main.tpl:41 Cms/Rpc/CmsFuncs.php:970
+#: Cms/tpl/toolbar_main.tpl:43 Cms/Rpc/CmsFuncs.php:970
 msgid "Publish"
 msgstr ""
 
@@ -2119,119 +2119,153 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:111
+#: Cms/Ui/Newsletter.php:112
 msgid "Edit Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:112
+#: Cms/Ui/Newsletter.php:113
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:126
+#: Cms/Ui/Newsletter.php:127
 msgid "User is not allowed to send newsletters"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:164
+#: Cms/Ui/Newsletter.php:165
 msgid "Publish Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:165
+#: Cms/Ui/Newsletter.php:166
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:250 Cms/Ui/DocProperties.php:501
-msgid "Default"
-msgstr ""
-
-#: Cms/Ui/DocProperties.php:253
+#: Cms/Ui/DocProperties.php:289
 msgid "Last Change"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:258 Cms/XmlDocTypes/Colors.php:15
+#: Cms/Ui/DocProperties.php:296
+#, php-format
+msgid "<p>%s by %s</p>"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:298 Cms/Forms/ReleasePages.php:54
+msgid "unknown user"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:301
+msgid "Release Page"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:303
+msgid "Request Page Release"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:322 Cms/Ui/DocProperties.php:613
+msgid "Default"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:324 Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:269
+#: Cms/Ui/DocProperties.php:342
 msgid "Navigation"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:279
+#: Cms/Ui/DocProperties.php:377
 msgid "Pagetype"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:295 Cms/Ui/DocProperties.php:486
-#: Cms/Ui/DocProperties.php:560 Cms/Forms/Newsletter.php:54
+#: Cms/Ui/DocProperties.php:385
+msgid "html"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:386 Cms/Rpc/CmsFuncs.php:816
+msgid "text"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:387
+msgid "php"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:407 Cms/Ui/DocProperties.php:598
+#: Cms/Ui/DocProperties.php:696 Cms/Forms/Newsletter.php:54
 #: Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:314
+#: Cms/Ui/DocProperties.php:426
 msgid "Linkinfo"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:333 Cms/Forms/Newsletter.php:78
+#: Cms/Ui/DocProperties.php:445 Cms/Forms/Newsletter.php:78
 msgid "Description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:377
+#: Cms/Ui/DocProperties.php:489
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:443
+#: Cms/Ui/DocProperties.php:555
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:464
+#: Cms/Ui/DocProperties.php:576
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:482
+#: Cms/Ui/DocProperties.php:594
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:487
+#: Cms/Ui/DocProperties.php:599
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:492 Cms/Ui/DocProperties.php:567
+#: Cms/Ui/DocProperties.php:604 Cms/Ui/DocProperties.php:703
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:499
+#: Cms/Ui/DocProperties.php:611
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:502
+#: Cms/Ui/DocProperties.php:614
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:522
+#: Cms/Ui/DocProperties.php:634
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:526 Cms/Ui/DocProperties.php:548
+#: Cms/Ui/DocProperties.php:638 Cms/Ui/DocProperties.php:659
+#: Cms/Ui/DocProperties.php:681
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:542
+#: Cms/Ui/DocProperties.php:655
+msgid "Video"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:675
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:553 Cms/Rpc/CmsFuncs.php:876
+#: Cms/Ui/DocProperties.php:689 Cms/Rpc/CmsFuncs.php:876
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:554
+#: Cms/Ui/DocProperties.php:690
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:561
+#: Cms/Ui/DocProperties.php:697
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:585
+#: Cms/Ui/DocProperties.php:721
 msgid "Table"
 msgstr ""
 
@@ -2245,58 +2279,90 @@ msgid "Cancel"
 msgstr ""
 
 #: Cms/js/locale.php:22
-msgid "Delete"
+msgid "Copy"
 msgstr ""
 
 #: Cms/js/locale.php:23
-msgid "Delete now?"
+msgid "Create"
 msgstr ""
 
 #: Cms/js/locale.php:24
-msgid "deselect all"
+msgid "Create new:"
 msgstr ""
 
-#: Cms/js/locale.php:25 Cms/tpl/toolbar_main.tpl:37 Cms/Rpc/CmsFuncs.php:779
-msgid "edit"
+#: Cms/js/locale.php:25
+msgid "There are no elements that can be created in this element"
 msgstr ""
 
 #: Cms/js/locale.php:26
-msgid "Edit current page in edit interface on the left ←."
+msgid "Cut"
 msgstr ""
 
 #: Cms/js/locale.php:27
-msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgid "Delete"
 msgstr ""
 
 #: Cms/js/locale.php:28
-msgid "Filter Projects"
+msgid "Delete this element now?"
 msgstr ""
 
-#: Cms/js/locale.php:29 Cms/Rpc/CmsFuncs.php:790
-msgid "reload"
+#: Cms/js/locale.php:29
+msgid "deselect all"
 msgstr ""
 
 #: Cms/js/locale.php:30
-msgid "reload page preview"
+msgid "Duplicate"
 msgstr ""
 
-#: Cms/js/locale.php:31
-msgid "select all"
+#: Cms/js/locale.php:31 Cms/tpl/toolbar_main.tpl:36 Cms/Rpc/CmsFuncs.php:779
+msgid "edit"
 msgstr ""
 
 #: Cms/js/locale.php:32
-msgid "finished uploading/cancel"
+msgid "Edit current page in edit interface on the left ←."
 msgstr ""
 
 #: Cms/js/locale.php:33
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+
+#: Cms/js/locale.php:34
+msgid "Paste"
+msgstr ""
+
+#: Cms/js/locale.php:35
+msgid "Filter Projects"
+msgstr ""
+
+#: Cms/js/locale.php:36 Cms/Rpc/CmsFuncs.php:790
+msgid "reload"
+msgstr ""
+
+#: Cms/js/locale.php:37
+msgid "reload page preview"
+msgstr ""
+
+#: Cms/js/locale.php:38
+msgid "rename"
+msgstr ""
+
+#: Cms/js/locale.php:39
+msgid "select all"
+msgstr ""
+
+#: Cms/js/locale.php:40
+msgid "finished uploading/cancel"
+msgstr ""
+
+#: Cms/js/locale.php:41
 msgid "Change zoom level of preview."
 msgstr ""
 
-#: Cms/Project.php:837
+#: Cms/Project.php:874
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:838
+#: Cms/Project.php:875
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
@@ -2307,8 +2373,8 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:33 Cms/tpl/toolbar_main.tpl:44
-#: Cms/tpl/toolbar_main.tpl:57
+#: Cms/tpl/projectlist.tpl:33 Cms/tpl/toolbar_main.tpl:46
+#: Cms/tpl/toolbar_main.tpl:59
 msgid "Settings"
 msgstr ""
 
@@ -2400,6 +2466,25 @@ msgstr ""
 msgid "The preview of the currently selected page."
 msgstr ""
 
+#: Cms/tpl/projectLibrary.tpl:6 Cms/tpl/toolbar_main.tpl:40
+msgid "Library"
+msgstr ""
+
+#: Cms/tpl/projectLibrary.tpl:11
+msgid ""
+"File tree:\\nHere you can add, rename and delete pages. Select a page to "
+"edit it in the content tree below ↓."
+msgstr ""
+
+#: Cms/tpl/projectLibrary.tpl:19
+msgid "Files"
+msgstr ""
+
+#: Cms/tpl/projectLibrary.tpl:23
+msgid ""
+"Files:\\nHere you can edit all properties of the currently selected element."
+msgstr ""
+
 #: Cms/tpl/newsletterList.tpl:8
 msgid "Add new newsletter"
 msgstr ""
@@ -2432,23 +2517,23 @@ msgstr ""
 msgid "Add New User"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:7
+#: Cms/tpl/toolbar_main.tpl:6
 msgid "Go to dashboard"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:18
+#: Cms/tpl/toolbar_main.tpl:17
 msgid "Change current project"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:67
+#: Cms/tpl/toolbar_main.tpl:69
 msgid "Change user settings or logout"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:71
+#: Cms/tpl/toolbar_main.tpl:73
 msgid "Account settings"
 msgstr ""
 
-#: Cms/tpl/toolbar_main.tpl:81
+#: Cms/tpl/toolbar_main.tpl:83
 msgid "Help"
 msgstr ""
 
@@ -2550,10 +2635,6 @@ msgstr ""
 
 #: Cms/Forms/ReleasePages.php:50
 msgid "Please select the pages you want to release:"
-msgstr ""
-
-#: Cms/Forms/ReleasePages.php:54
-msgid "unknown user"
 msgstr ""
 
 #: Cms/Forms/ReleasePages.php:62
@@ -3307,10 +3388,6 @@ msgstr ""
 msgid "table"
 msgstr ""
 
-#: Cms/Rpc/CmsFuncs.php:816
-msgid "text"
-msgstr ""
-
 #: Cms/Rpc/CmsFuncs.php:817
 msgid "list"
 msgstr ""
@@ -3855,27 +3932,27 @@ msgstr ""
 msgid "%percent%% finishing in %time_until_end%min</p>"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:26
+#: Cms/XmlDocTypes/Pages.php:27
 msgid "Page"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:27
+#: Cms/XmlDocTypes/Pages.php:28
 msgid "(Untitled Page)"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:34
+#: Cms/XmlDocTypes/Pages.php:38
 msgid "Folder"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:35
+#: Cms/XmlDocTypes/Pages.php:39
 msgid "(Untitled Folder)"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:42 Cms/XmlDocTypes/Pages.php:43
+#: Cms/XmlDocTypes/Pages.php:45 Cms/XmlDocTypes/Pages.php:46
 msgid "Redirect"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:50
+#: Cms/XmlDocTypes/Pages.php:56
 msgid "Separator"
 msgstr ""
 

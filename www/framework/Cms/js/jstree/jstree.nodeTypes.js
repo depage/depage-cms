@@ -20,6 +20,9 @@
 
     if($.jstree.plugins.nodeTypes) { return; }
 
+    var lang = $('html').attr('lang');
+    var locale = depageCMSlocale[lang];
+
     var unique = function(ar) {
         var j = {};
 
@@ -107,7 +110,7 @@
             if (availableNodes.length > 0) {
                 menu['_add-title'] = {
                     // @todo localize
-                    label: "Create new",
+                    label: locale.createNew,
                     action: false,
                     _disabled: true,
                     separator_after: true
@@ -115,7 +118,7 @@
             } else {
                 menu['_add-title'] = {
                     // @todo localize
-                    label: "There are no elements that can be created in this element",
+                    label: locale.createNoElements,
                     action: false,
                     _disabled: true,
                 };
@@ -144,7 +147,7 @@
 
             $body.depageShyDialogue({
                 ok: {
-                    title: "Delete",
+                    title: locale.delete,
                     classes: 'default',
                     click: function(e) {
                         inst.delete_node(node);
@@ -153,7 +156,7 @@
                     }
                 },
                 cancel: {
-                    title: "Cancel",
+                    title: locale.cancel,
                     click: function(e) {
                         //console.log("cancel");
                     }
@@ -162,8 +165,8 @@
                 bind_el: false,
                 direction: "LC",
                 directionMarker: true,
-                title: "Delete",
-                message : "Really delete?"
+                title: locale.delete,
+                message: locale.deleteQuestion
             });
 
             // @todo add click event outside of shy dialogue to hide it

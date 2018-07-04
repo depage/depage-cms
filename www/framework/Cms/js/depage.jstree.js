@@ -32,6 +32,9 @@
         $.depage = {};
     }
 
+    var lang = $('html').attr('lang');
+    var locale = depageCMSlocale[lang];
+
     /**
      * jstree
      *
@@ -229,7 +232,7 @@
          *
          * The list of plugins to include
          */
-        plugins : [
+        plugins: [
             "ui",
             "dnd",
             "typesfromurl",
@@ -251,7 +254,7 @@
         /**
          * Plugin configuration
          */
-        ui : {
+        ui: {
             // @todo:
             "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
         },
@@ -259,7 +262,7 @@
         /**
          * Core
          */
-        core : {
+        core: {
             animation : 100,
             multiple: false,
             dblclick_toggle: false,
@@ -289,7 +292,7 @@
         /**
          * Drag and drop
          */
-        dnd : {
+        dnd: {
             inside_pos: "last",
             touch: "selected"
         },
@@ -297,7 +300,7 @@
         /**
          * Hotkeys
          */
-        disabled_keyboard : {
+        disabled_keyboard: {
             "up" : function() {
                 $.depage.jstree.keyUp.apply(this);
             },
@@ -367,11 +370,11 @@
         /**
          * Context Menu
          */
-        contextmenu : {
+        contextmenu: {
             items: function (o, cb) {
                 var defaultItems = {
                     rename: {
-                        "label": "Rename",
+                        "label": locale.rename,
                         "_disabled": function(data) {
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
@@ -385,7 +388,7 @@
                         }
                     },
                     duplicate: {
-                        "label": "Duplicate",
+                        "label": locale.duplicate,
                         "action": function (data) {
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
@@ -394,7 +397,7 @@
                         }
                     },
                     remove: {
-                        "label": "Delete",
+                        "label": locale.delete,
                         "_disabled": function(data) {
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
@@ -409,7 +412,7 @@
                         }
                     },
                     cut: {
-                        "label": "Cut",
+                        "label": locale.cut,
                         "separator_before": true,
                         "action": function (data) {
                             var inst = $.jstree.reference(data.reference),
@@ -423,7 +426,7 @@
                         }
                     },
                     copy: {
-                        "label": "Copy",
+                        "label": locale.copy,
                         "action": function (data) {
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
@@ -436,7 +439,7 @@
                         }
                     },
                     paste: {
-                        "label": "Paste",
+                        "label": locale.paste,
                         "_disabled": function (data) {
                             return !$.jstree.reference(data.reference).can_paste();
                         },
@@ -452,80 +455,6 @@
                 return defaultItems;
             }
         },
-
-        /**
-         * Toolbar
-         */
-        toolbar : {
-            items : function(obj) {
-                return {
-                    "create" : {
-                        "label"             : "Create",
-                        "separator_before"  : false,
-                        "separator_after"   : true,
-                        "_disabled"         : !this.check('create_node', obj, this.get_parent()),
-                        "action"            : function(obj, top, left) {
-
-                            var node = $(".jstree-clicked");
-
-                            var data = {
-                                "reference" : node,
-                                "element"   : node,
-                                position    : {
-                                    "x"     : left,
-                                    "y"     : top
-                                }
-                            };
-
-                            if (data.reference.length) {
-                                var inst = $.jstree._reference(data.reference);
-
-                                // build the create menu based on the available nodes fetched in typesfromurl
-
-                                if(typeof(inst.get_settings()['typesfromurl']) !== "undefined") {
-
-                                    var type_settings = inst.get_settings()['typesfromurl'];
-
-                                    var type = data.reference.parent().attr(type_settings.type_attr);
-                                    var available_nodes = type_settings.valid_children[type];
-
-                                    var create_menu = $.depage.jstree.buildCreateMenu(available_nodes);
-
-                                    $.vakata.context.show(data.reference, data.position, create_menu.create.submenu);
-
-                                } else {
-                                    // @todo default create menu
-                                }
-                            }
-                        }
-                    },
-                    "remove" : {
-                        "label"             : "Delete",
-                        "_disabled"         : !this.check('delete_node', obj, this.get_parent()),
-                        "action"            : function () {
-                            var data = { "reference" : $(".jstree-clicked") };
-                            if (data.reference.length) {
-                                $.depage.jstree.contextDelete(data);
-                            }
-                        }
-                    },
-                    "duplicate" : {
-                        "label"             : "Duplicate",
-                        "_disabled"         : !this.check('duplicate_node', obj, this.get_parent()),
-                        "action"            : function () {
-                            var obj = $(".jstree-clicked").parent("li");
-                            if (obj.length){
-                                var inst = $.depage.jstree._reference(obj);
-
-                                var data = { "reference" : obj };
-
-                                $.depage.jstree.contextDuplicate(data);
-                            }
-                        }
-                    }
-                };
-            }
-        }
     };
     // }}}
 

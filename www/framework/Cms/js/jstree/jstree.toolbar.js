@@ -20,6 +20,9 @@
 
     if($.jstree.plugins.toolbar) { return; }
 
+    var lang = $('html').attr('lang');
+    var locale = depageCMSlocale[lang];
+
     /**
      * toolbar configuration
      *
@@ -62,20 +65,17 @@
 
             var nodesForSelf = inst.getAvailableNodesFor(node);
 
-            this.addToolbarButton("create", "button-create", function() {
+            this.addToolbarButton(locale.create, "button-create", function() {
                 $.vakata.context.show($(this), {x: 160, y: 28 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
-            this.addToolbarButton("delete", "button-delete", function() {
-                inst.askDelete(node);
-            });
-            this.addToolbarButton("duplicate", "button-duplicate", function() {
+            this.addToolbarButton(locale.duplicate, "button-duplicate", function() {
                 inst.copy_node(node, node, "after");
             });
-            this.addToolbarButton("reload", "button-reload", function() {
-                inst.refresh(true);
+            this.addToolbarButton(locale.delete, "button-delete", function() {
+                inst.askDelete(node);
             });
-            this.addToolbarButton("rnode", "button-reload", function() {
-                inst.refresh_node(node);
+            this.addToolbarButton(locale.reload, "button-reload", function() {
+                inst.refresh(true);
             });
         };
         // }}}
@@ -92,8 +92,9 @@
             $button
                 .text(name)
                 .addClass("button")
-                .addClass(className).
-                on("click", callback);
+                .addClass(className)
+                .attr("title", name)
+                .on("click", callback);
 
             $button.appendTo(this._data.toolbar.$el);
         };

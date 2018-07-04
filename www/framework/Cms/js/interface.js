@@ -30,6 +30,7 @@ var depageCMS = (function() {
     /*global $:false */
 
     var lang = $('html').attr('lang');
+    var locale = depageCMSlocale[lang];
     var baseUrl = $("base").attr("href");
     var projectName;
     var currentPreviewUrl,
@@ -54,7 +55,6 @@ var depageCMS = (function() {
     var jstreePagedata;
 
     var currentLayout;
-    var locale = depageCMSlocale[lang];
 
     jQuery.fn.scrollParent = function() {
         var position = this.css( "position" ),
@@ -80,7 +80,6 @@ var depageCMS = (function() {
             $html.addClass("javascript");
             $body = $("body");
 
-            localJS.locale = locale;
             localJS.setup();
 
             // setup global events
