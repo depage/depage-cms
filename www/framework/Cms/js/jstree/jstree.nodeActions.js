@@ -46,16 +46,21 @@
             var nodesForSelf = [];
             var nodesForParent = [];
             var re = / insert-[a-z]+/;
+            var menuVisible = false;
 
             // bind events
             inst.element
                 .on("mouseover.jstree", "." + className, function(e) {
+                    if (menuVisible) return;
+
                     node = inst.get_node(this);
                     nodeParent = inst.get_node(inst.get_parent(node));
                     nodesForSelf = inst.getAvailableNodesFor(node);
                     nodesForParent = inst.getAvailableNodesFor(nodeParent);
                 })
                 .on("mousemove.jstree", "." + className, function(e) {
+                    if (menuVisible) return;
+
                     var parent = this.parentNode;
 
                     if (e.offsetY < 0) {
@@ -70,11 +75,15 @@
                     }
                 })
                 .on("mouseout.jstree", "." + className, function(e) {
+                    if (menuVisible) return;
+
                     var parent = this.parentNode;
 
                     parent.className = parent.className.replace(re, "");
                 })
                 .on("click.jstree", "." + className, function(e) {
+                    if (menuVisible) return;
+
                     // @todo check
                     if (nodesForSelf.length > 0 && e.offsetY > this.clientHeight / 4 && e.offsetY < this.clientHeight / 4 * 3) {
                         $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
@@ -83,6 +92,21 @@
                     } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 2) {
                         $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent, inst.insertCallback(node, "after")));
                     }
+                });
+
+            // @todo unbind events when tree is destroyed?
+            $(document)
+                .on("context_show.vakata", function(e) {
+                    menuVisible = true;
+                })
+                .on("context_hide.vakata", function(e) {
+                    menuVisible = false;
+
+                    if (!inst.element) return;
+
+                    inst.element.find(".jstree-node.insert-into").removeClass("insert-into");
+                    inst.element.find(".jstree-node.insert-before").removeClass("insert-before");
+                    inst.element.find(".jstree-node.insert-after").removeClass("insert-after");
                 });
         };
         // }}}
