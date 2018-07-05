@@ -188,7 +188,13 @@
         // {{{ onRefresh
         base.onRefresh = $.proxy(function(e, param) {
             if (nodeToActivate) {
-                jstree.activate_node(jstree.get_node(nodeToActivate));
+                var node = jstree.get_node(nodeToActivate);
+                var nodeType = node.li_attr.rel;
+
+                jstree.activate_node(node);
+                if (nodeType == "pg:page" || nodeType == "pg:folder") {
+                    jstree.edit(node);
+                }
                 nodeToActivate = false;
             }
         }, base);
