@@ -34,7 +34,13 @@ abstract class Cache
         } elseif (in_array($options['disposition'], array("memcache", "memory")) && extension_loaded("memcache")) {
             return new \Depage\Cache\Providers\Memcache($prefix, $options);
         } elseif (in_array($options['disposition'], array("redis", "memory")) && extension_loaded("redis")) {
-            return new \Depage\Cache\Providers\Redis($prefix, $options);
+            try {
+                return new \Depage\Cache\Providers\Redis($prefix, $options);
+            } catch (\RedisException $e) {
+                // fallback to disabled cache
+                // @todo throw error notice?
+                $options['disposition'] = "uncached";
+            }
         } elseif ($options['disposition'] == "uncached") {
             return new \Depage\Cache\Providers\Uncached($prefix, $options);
         }
