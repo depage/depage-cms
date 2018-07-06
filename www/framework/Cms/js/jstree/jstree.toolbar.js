@@ -66,7 +66,7 @@
             var nodesForSelf = inst.getAvailableNodesFor(node);
 
             this.addToolbarButton(locale.create, "button-create", function() {
-                $.vakata.context.show($(this), {x: 160, y: 28 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                $.vakata.context.show($(this), {x: 105, y: 29 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
             this.addToolbarButton(locale.duplicate, "button-duplicate", function() {
                 inst.copy_node(node, node, "after");
@@ -74,9 +74,11 @@
             this.addToolbarButton(locale.delete, "button-delete", function() {
                 inst.askDelete(node);
             });
+            /*
             this.addToolbarButton(locale.reload, "button-reload", function() {
                 inst.refresh(true);
             });
+            */
         };
         // }}}
         // {{{ destroy()

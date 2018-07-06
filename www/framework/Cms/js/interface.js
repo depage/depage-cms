@@ -522,7 +522,9 @@ var depageCMS = (function() {
                     var $parent = $target.parent().parent();
 
                     if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
-                        // @todo add hover effect
+                        $target.addClass("dnd-hover");
+                    } else {
+                        $("input.dnd-hover").removeClass("dnd-hover");
                     }
                 })
                 .on('dnd_stop.vakata.jstree', function (e, data) {
@@ -531,6 +533,7 @@ var depageCMS = (function() {
 
                     if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
                         $target[0].value = data.element.href;
+                        $target.removeClass("dnd-hover");
                         $target.trigger("change");
                     }
                 });
@@ -692,6 +695,8 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                $form.find(".edit-src").each(function() {
+                });
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta a.release").removeClass("disabled");
                 });
@@ -840,7 +845,7 @@ var depageCMS = (function() {
         updatePreview: _.throttle(function() {
             // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
-        }, 2000, {
+        }, 3000, {
             leading: true,
             trailing: true
         }),

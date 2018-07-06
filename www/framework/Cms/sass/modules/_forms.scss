@@ -296,5 +296,10 @@
     }
 }
 /* }}} */
+// {{{ dnd
+input.dnd-hover {
+    outline: 1px solid $selectionBackgroundColor;
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :
