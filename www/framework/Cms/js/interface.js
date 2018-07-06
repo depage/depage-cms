@@ -638,6 +638,37 @@ var depageCMS = (function() {
             });
         },
         // }}}
+        // {{{ loadFileChooser
+        loadFileChooser: function($input) {
+            // @todo get path from input
+            var path = $input[0].value.replace(/\/[^\/]*$/, '').replace(/^libref:\/\//, '');
+            path = encodeURIComponent(path);
+            var url = baseUrl + "project/" + projectName + "/library/manager/" + path + "/";
+
+            var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
+                .appendTo($body);
+
+            setTimeout(function() {
+                $dialogContainer.addCLass("visible");
+            }, 10);
+
+            $dialogContainer.children(".content").load(url + "?ajax=true", function() {
+                $dialogContainer.addClass("visible");
+
+                $dialogContainer.on("click", function() {
+                    $dialogContainer.removeClass("visible");
+                    setTimeout(function() {
+                        $dialogContainer.remove();
+                    }, 500);
+                });
+                $dialogContainer.children(".content").on("click", function() {
+                    return false;
+                });
+
+                localJS.setupLibraryTree();
+            });
+        },
+        // }}}
         // {{{ loadLibraryFiles
         loadLibraryFiles: function(path) {
             path = encodeURIComponent(path);
@@ -696,6 +727,12 @@ var depageCMS = (function() {
                     return false;
                 });
                 $form.find(".edit-src").each(function() {
+                    var $input = $(this).find("input");
+                    var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
+
+                    $button.on("click", function() {
+                        localJS.loadFileChooser($input);
+                    });
                 });
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta a.release").removeClass("disabled");

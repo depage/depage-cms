@@ -18,7 +18,8 @@ $selectionTextColor: #ffffff !global;
 $insertMarkerBackground: lighten($selectionBackgroundColor, 10%) !global;
 $cornerRadius: 0.4em !global;
 
-$shadow: 0 3px 0.4em 0 #aaaaaa !global;
+$shadow: 0 3px 0.5em 0 #aaaaaa !global;
+$darkShadow: 0 3px 1.5em 0 #333333 !global;
 
 $fSizeM: 13px !global;
 $fSizeS: 11px !global;

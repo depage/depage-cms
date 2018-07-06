@@ -296,9 +296,37 @@
     }
 }
 /* }}} */
-// {{{ dnd
-input.dnd-hover {
-    outline: 1px solid $selectionBackgroundColor;
+// {{{ .edit-href / .edit-src
+.edit-href {
+    input.dnd-hover {
+        outline: 1px solid $selectionBackgroundColor;
+    }
+}
+// }}}
+// {{{ .edit-src
+.edit-src {
+    position: relative;
+    input {
+        padding-right: 40px;
+    }
+
+    .choose-file {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 35px;
+        background: $baseColor;
+        padding: 3px 0px 11px 0px;
+        text-align: center;
+        line-height: 5px;
+        font-weight: bold;
+        color: $textBaseColor !important;
+        @include radius(3px);
+
+        &:hover {
+            background: $backgroundColor;
+        }
+    }
 }
 // }}}
 

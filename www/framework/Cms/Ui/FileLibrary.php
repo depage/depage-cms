@@ -33,11 +33,11 @@ class FileLibrary extends Base
 
     // {{{ index()
     function index() {
-        return $this->ui();
+        return $this->manager();
     }
     // }}}
     // {{{ library()
-    function ui($path = "") {
+    function manager($path = "") {
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
             'projectName' => $this->project->name,

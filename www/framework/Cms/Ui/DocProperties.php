@@ -637,6 +637,7 @@ class DocProperties extends Base
         ]);
         $f->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
+            'class' => "edit-src",
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
@@ -658,6 +659,7 @@ class DocProperties extends Base
         ]);
         $f->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
+            'class' => "edit-src",
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
@@ -680,6 +682,7 @@ class DocProperties extends Base
         $lang = $node->getAttribute("lang");
         $fs->addText("xmledit-$nodeId-img", [
             'label' => !empty($lang) ? $lang : _("src"),
+            'class' => "edit-src",
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
         if (!$node->hasAttribute("alt")) {

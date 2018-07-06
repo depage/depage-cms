@@ -1,6 +1,5 @@
 /* {{{ shy-dialogs */
 .depage-shy-dialogue {
-
     @include depage-shy-dialogue (
         $width: 20em,
         $padding: 10px,
@@ -23,9 +22,39 @@
 /* }}} */
 // {{{ dialog.full
 .dialog-full {
-    background: $backgroundColor;
-    padding: 11px;
-    min-height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: $toolbarHeight - 1px;
+    bottom: 0;
+    z-index: 10002;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.3);
+    @include transition(500ms, "opacity");
+
+    > .content {
+        position: absolute;
+        top: 0;
+        bottom: $toolbarHeight;
+        left: 60px;
+        right: 60px;
+        background: $backgroundColor;
+        padding: 11px;
+        border: 1px solid $borderColor;
+        overflow: hidden;
+        @include box-shadow($darkShadow);
+        @include transition(500ms, "transform");
+        @include transform(translateY(-100%));
+        @include radius(10px, "bottom", "left");
+        @include radius(10px, "bottom", "right");
+    }
+    &.visible {
+        opacity: 1;
+
+        > .content {
+            @include transform(translateY(0));
+        }
+    }
 
     header.info + & {
         margin-top: - $infoHeight;
