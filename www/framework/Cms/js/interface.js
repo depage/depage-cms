@@ -115,6 +115,7 @@ var depageCMS = (function() {
             localJS.setupForms();
             localJS.setupHelp();
             localJS.setupTrees();
+            localJS.setupDropTargets();
         },
         // }}}
         // {{{ setupAjaxContent
@@ -511,6 +512,28 @@ var depageCMS = (function() {
             localJS.loadPageTree();
 
             localJS.setupLibraryTree();
+        },
+        // }}}
+        // {{{ setupDropTargets
+        setupDropTargets: function() {
+            $(document)
+                .on("dnd_move.vakata.jstree", function(e, data) {
+                    var $target = $(data.event.target);
+                    var $parent = $target.parent().parent();
+
+                    if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
+                        // @todo add hover effect
+                    }
+                })
+                .on('dnd_stop.vakata.jstree', function (e, data) {
+                    var $target = $(data.event.target);
+                    var $parent = $target.parent().parent();
+
+                    if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
+                        $target[0].value = data.element.href;
+                        $target.trigger("change");
+                    }
+                });
         },
         // }}}
         // {{{ setupLibraryTree

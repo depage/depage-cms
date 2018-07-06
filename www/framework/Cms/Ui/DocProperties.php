@@ -602,6 +602,7 @@ class DocProperties extends Base
 
         $fs->addText("xmledit-$nodeId-href", [
             'label' => _("href"),
+            'class' => "edit-href",
             'placeholder' => _("http://domain.com"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@href",
         ]);
@@ -701,6 +702,7 @@ class DocProperties extends Base
         if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
+                'class' => "edit-href",
                 'placeholder' => _("http://domain.com"),
                 'dataInfo' => "//*[@db:id = '$nodeId']/@href",
             ]);
