@@ -192,6 +192,7 @@
                 var nodeType = node.li_attr.rel;
 
                 jstree.activate_node(node);
+                jstree.open_node(node);
                 if (nodeType == "pg:page" || nodeType == "pg:folder") {
                     jstree.edit(node);
                 }
