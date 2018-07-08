@@ -761,7 +761,7 @@ var depageCMS = (function() {
             var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
             var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
-            $docPropertiesContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+            $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
                 // @todo scroll to top
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
