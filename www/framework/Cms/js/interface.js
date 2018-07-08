@@ -115,6 +115,7 @@ var depageCMS = (function() {
             localJS.setupForms();
             localJS.setupHelp();
             localJS.setupTrees();
+            localJS.setupLibrary();
             localJS.setupDropTargets();
         },
         // }}}
@@ -510,8 +511,6 @@ var depageCMS = (function() {
             $docPropertiesContainer = $(".doc-properties");
 
             localJS.loadPageTree();
-
-            localJS.setupLibraryTree();
         },
         // }}}
         // {{{ setupDropTargets
@@ -539,8 +538,8 @@ var depageCMS = (function() {
                 });
         },
         // }}}
-        // {{{ setupLibraryTree
-        setupLibraryTree: function() {
+        // {{{ setupLibrary
+        setupLibrary: function() {
             var $libraryTreeContainer = $(".tree.library .jstree-container");
 
             $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
@@ -550,6 +549,39 @@ var depageCMS = (function() {
             });
             $libraryTreeContainer.jstree();
             //$libraryTreeContainer.depageTree();
+
+            var $fileContainer = $(".files .file-list");
+            var last = false;
+
+            $fileContainer.on("click", "figure", function(e) {
+                var $thumbs = $fileContainer.find("figure");
+                var current = $thumbs.index(this);
+
+                // @todo allow multiple select with ctrl and shift
+                if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+                    $fileContainer.find(".selected").removeClass("selected");
+                    last = false;
+                }
+                if (e.shiftKey) {
+                    if (last !== false) {
+                        var start = last;
+                        var end = current;
+                        if (last > current) {
+                            start = current;
+                            end = last;
+                        }
+                        for (var i = start; i <= end; i++) {
+                            $thumbs.eq(i).addClass("selected");
+                        }
+                    }
+                } else {
+                    $(this).toggleClass("selected");
+                }
+                last = current;
+                $(thumbs).blur();
+
+                return false;
+            });
         },
         // }}}
 
@@ -649,24 +681,37 @@ var depageCMS = (function() {
                 .appendTo($body);
 
             setTimeout(function() {
-                $dialogContainer.addCLass("visible");
+                $dialogContainer.addClass("visible");
             }, 10);
 
             $dialogContainer.children(".content").load(url + "?ajax=true", function() {
-                $dialogContainer.addClass("visible");
-
                 $dialogContainer.on("click", function() {
-                    $dialogContainer.removeClass("visible");
-                    setTimeout(function() {
-                        $dialogContainer.remove();
-                    }, 500);
+                    localJS.removeFileChooser();
                 });
                 $dialogContainer.children(".content").on("click", function() {
                     return false;
                 });
+                $(document).on("keydown.depageFileChooser", function(e) {
+                    var key = e.which;
+                    if (key === 27) {
+                        localJS.removeFileChooser();
+                    }
+                });
 
-                localJS.setupLibraryTree();
+                localJS.setupLibrary();
             });
+        },
+        // }}}
+        // {{{ removeFileChooser()
+        removeFileChooser: function($input) {
+            var $dialogContainer = $(".dialog-full");
+
+            $(document).off("keypress.depageFileChooser");
+
+            $dialogContainer.removeClass("visible");
+            setTimeout(function() {
+                $dialogContainer.remove();
+            }, 500);
         },
         // }}}
         // {{{ loadLibraryFiles
@@ -676,6 +721,7 @@ var depageCMS = (function() {
             var $fileContainer = $(".files .file-list");
 
             $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                console.log("loaded");
             });
         },
         // }}}

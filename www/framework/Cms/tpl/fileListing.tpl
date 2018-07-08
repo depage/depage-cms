@@ -8,9 +8,7 @@
                     'project' => $this->project,
                 ], $this->param);
             ?>
-            <a>
-                <?php self::e($thumb); ?>
-            </a>
+            <?php self::e($thumb); ?>
         </li>
     <?php } ?>
 

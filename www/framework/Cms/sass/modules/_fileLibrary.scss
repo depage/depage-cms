@@ -31,6 +31,14 @@ figure.thumb {
     &:hover .fileinfo {
         display: block;
     }
+    &.selected {
+        border-color: $selectionBackgroundColor;
+
+        figcaption {
+            color: $selectionBackgroundColor;
+            font-weight: bold;
+        }
+    }
 }
 // }}}
 

@@ -13,7 +13,10 @@
     $mediainfo = new \Depage\Media\MediaInfo();
     $info = $mediainfo->getInfo($imgSrc);
 ?>
-<figure class="thumb">
+<figure class="thumb" <?php self::attr([
+    'class' => "thumb",
+    'data-libref' => $this->file,
+]); ?>>
     <img src="<?php self::t($thumbSrc); ?>">
     <figcaption>
         <?php self::t($info['name']); ?>
