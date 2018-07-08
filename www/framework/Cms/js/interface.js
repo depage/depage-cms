@@ -697,6 +697,18 @@ var depageCMS = (function() {
                         localJS.removeFileChooser();
                     }
                 });
+                var $dialogBar = $("<div class=\"dialog-bar\"></div>");
+                var $ok = $("<a class=\"button default disabled\">ok</a>").appendTo($dialogBar);
+                var $cancel = $("<a class=\"button\">cancel</a>").appendTo($dialogBar);
+
+                $ok.on("click", function() {
+                    localJS.removeFileChooser($input);
+                });
+                $cancel.on("click", function() {
+                    localJS.removeFileChooser();
+                });
+
+                $dialogBar.prependTo($dialogContainer.children(".content"));
 
                 localJS.setupLibrary();
             });
@@ -705,6 +717,12 @@ var depageCMS = (function() {
         // {{{ removeFileChooser()
         removeFileChooser: function($input) {
             var $dialogContainer = $(".dialog-full");
+            var $selected = $dialogContainer.find("figure.selected");
+
+            if (typeof $input !== 'undefined' && $selected.length > 0) {
+                $input[0].value = $selected.attr("data-libref");
+                $input.trigger("change");
+            }
 
             $(document).off("keypress.depageFileChooser");
 

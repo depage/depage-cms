@@ -55,6 +55,27 @@
             @include transform(translateY(0));
         }
     }
+    .dialog-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        height: $toolbarHeight * 1.5;
+        border-top: 1px solid $borderColor;
+        padding: 0 15px;
+        text-align: right;
+
+        .button {
+            display: inline-block;
+        }
+    }
+    .dialog-bar + .library {
+        .trees,
+        .files {
+            bottom: $toolbarHeight * 1.5;
+        }
+    }
 
     header.info + & {
         margin-top: - $infoHeight;
