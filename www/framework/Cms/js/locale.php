@@ -21,6 +21,7 @@
             "cancel" => _("Cancel"),
             "copy" => _("Copy"),
             "create" => _("Create"),
+            "choose" => _("Choose"),
             "createNew" => _("Create new:"),
             "createNoElements" => _("There are no elements that can be created in this element"),
             "cut" => _("Cut"),

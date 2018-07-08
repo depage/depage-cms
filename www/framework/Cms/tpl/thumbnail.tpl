@@ -2,7 +2,7 @@
     $imgSrc = str_replace("libref://", "projects/{$this->project->name}/lib/", $this->file);
     $ext = pathinfo($imgSrc, \PATHINFO_EXTENSION);
     if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
-        $thumbSrc = $imgSrc . ".thumb-120x120.png";
+        $thumbSrc = $imgSrc . ".thumb-240x240.png";
     } else if (in_array($ext, ['svg'])) {
         $thumbSrc = $imgSrc;
     } else {

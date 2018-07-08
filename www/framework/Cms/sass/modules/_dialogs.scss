@@ -64,10 +64,24 @@
         height: $toolbarHeight * 1.5;
         border-top: 1px solid $borderColor;
         padding: 0 15px;
-        text-align: right;
+        text-align: center;
 
         .button {
             display: inline-block;
+            height: $toolbarHeight;
+            line-height: $toolbarHeight;
+            padding: 0 10px;
+            margin: 7px 7px;
+            background: $backgroundLighterColor;
+
+            &:hover {
+                background: $backgroundBrightColor;
+            }
+            &.default {
+                font-weight: bold;
+                background: $selectionBackgroundColor;
+                color: $selectionTextColor;
+            }
         }
     }
     .dialog-bar + .library {

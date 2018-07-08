@@ -578,9 +578,15 @@ var depageCMS = (function() {
                     $(this).toggleClass("selected");
                 }
                 last = current;
-                $(thumbs).blur();
+                $thumbs.blur();
 
                 return false;
+            });
+            $fileContainer.on("dblclick", "figure", function(e) {
+                var $ok = $(".dialog-full .dialog-bar .button.default");
+                if ($ok.length == 1) {
+                    $ok.click();
+                }
             });
         },
         // }}}
@@ -691,21 +697,24 @@ var depageCMS = (function() {
                 $dialogContainer.children(".content").on("click", function() {
                     return false;
                 });
-                $(document).on("keydown.depageFileChooser", function(e) {
-                    var key = e.which;
-                    if (key === 27) {
-                        localJS.removeFileChooser();
-                    }
-                });
                 var $dialogBar = $("<div class=\"dialog-bar\"></div>");
-                var $ok = $("<a class=\"button default disabled\">ok</a>").appendTo($dialogBar);
-                var $cancel = $("<a class=\"button\">cancel</a>").appendTo($dialogBar);
+                var $ok = $("<a class=\"button default disabled\">" + locale.choose + "</a>").appendTo($dialogBar);
+                var $cancel = $("<a class=\"button\">"+ locale.cancel + "</a>").appendTo($dialogBar);
 
                 $ok.on("click", function() {
                     localJS.removeFileChooser($input);
                 });
                 $cancel.on("click", function() {
                     localJS.removeFileChooser();
+                });
+
+                $(document).on("keydown.depageFileChooser", function(e) {
+                    var key = e.which;
+                    if (key === 27) { // ESC
+                        localJS.removeFileChooser();
+                    } else if (key === 13) { // Enter
+                        $ok.click();
+                    }
                 });
 
                 $dialogBar.prependTo($dialogContainer.children(".content"));
