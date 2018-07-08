@@ -192,6 +192,9 @@ class DocProperties extends Base
      **/
     public function thumbnail($file)
     {
+        if ($_GET['ajax'] == "true") {
+            $file = rawurldecode($file);
+        }
         return new Html("thumbnail.tpl", [
             'file' => $file,
             'project' => $this->project,

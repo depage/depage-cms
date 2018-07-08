@@ -803,6 +803,15 @@ var depageCMS = (function() {
                     var $input = $(this).find("input");
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
 
+                    $input.on("change", function() {
+                        // image changed -> update thumbnail
+                        var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
+
+                        $.get(thumbUrl, function(data) {
+                            var $thumb = $(data).insertBefore($input.parent().parent());
+                            $thumb.prev("figure.thumb").eq(0).remove();
+                        });
+                    });
                     $button.on("click", function() {
                         localJS.loadFileChooser($input);
                     });
