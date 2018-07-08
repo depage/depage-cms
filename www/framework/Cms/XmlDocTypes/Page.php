@@ -22,9 +22,12 @@ class Page extends Base
 
         foreach ($this->getNodeTypes() as $t) {
             $doc = new \DOMDocument();
-            $doc->load("{$this->pathXMLtemplate}/{$t->xmlTemplate}");
+            $success = $doc->load("{$this->pathXMLtemplate}/{$t->xmlTemplate}");
+
+            if (!$success) continue;
+
             $contentElement = $doc->documentElement->firstChild;
-            while ($contentElement->nodeType != \XML_ELEMENT_NODE) {
+            while ($contentElement && $contentElement->nodeType != \XML_ELEMENT_NODE) {
                 $contentElement = $contentElement->nextSibling;
             }
             if ($contentElement) {
