@@ -1,15 +1,13 @@
 // {{{ figure.thumb
 figure.thumb {
-    $width: 120px;
-    $height: 120px;
+    $width: $thumbSize;
+    $height: $thumbSize;
     border: 1px solid $backgroundBrightColor;
     background: #ffffff;
     position: relative;
     width: $width + 8px;
     padding: 3px;
-    margin-right: 10px;
-    margin-bottom: 7px;
-    @include radius(5px);
+    @include radius(6px);
 
     img {
         display: block;
@@ -24,20 +22,34 @@ figure.thumb {
         white-space: nowrap;
         text-overflow: ellipsis;
         margin-top: 5px;
+        text-align: center;
     }
     .fileinfo {
         position: absolute;
         display: none;
         background: #ffffff;
+        color: $textLighterColor;
         border: 1px solid;
         padding: 5px;
-        top: -1px;
         left: 100%;
-        min-width: $width * 2;
-        max-width: $width * 3;
+        top: $height;
+        left: 0;
+        width: 200%;
+        text-align: left;
         z-index: 10000;
+        @include box-shadow($shadow);
+
+        p {
+            margin-left: 0 !important;
+            line-height: 18px;
+            width: 100%;
+            font-weight: normal;
+            overflow-wrap: break-word;
+            white-space: normal;
+            overflow: visible;
+        }
     }
-    &:hover .fileinfo {
+    img:hover + figcaption .fileinfo {
         display: block;
     }
 }
@@ -101,6 +113,8 @@ figure.thumb {
 
         figure.thumb {
             cursor: pointer;
+            margin-right: 6px;
+            margin-bottom: 0;
 
             &:hover {
                 background: $backgroundBrightColor;
@@ -114,6 +128,18 @@ figure.thumb {
                     font-weight: bold;
                 }
             }
+        }
+    }
+}
+// }}}
+// {{{ .library .trees
+.library #upload-to-lib {
+    .input-file {
+        text-align: center;
+
+        .depage-label {
+            width: 100%;
+            text-align: center;
         }
     }
 }

@@ -37,6 +37,24 @@
         @include transform(translateY(0));
     }
 }
+@keyframes tooltip {
+    0% {
+        opacity: 0;
+    }
+    79% {
+        width: 100%;
+    }
+    80% {
+        opacity: 0;
+        width: 200%;
+        @include transform(translateY(-$transitionDistance));
+    }
+    100% {
+        opacity: 1;
+        width: 200%;
+        @include transform(translateY(0));
+    }
+}
 
 .loaded > * {
     animation: loading-finished-left $transitionTime linear;
@@ -46,6 +64,9 @@
 }
 .tree-actions .visible {
     animation: loading-finished-left $transitionTime linear;
+}
+figure.thumb img:hover + figcaption .fileinfo {
+    animation: tooltip 1000ms linear;
 }
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

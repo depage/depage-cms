@@ -177,8 +177,12 @@
 // }}}
 // {{{ doc-properties edit-img
 .doc-properties .edit-img {
+    figure.thumb + p {
+        margin-top: 20px;
+    }
     p {
-        //clear: none;
+        clear: none;
+        margin-left: $thumbSize + 20px;
     }
 }
 // }}}

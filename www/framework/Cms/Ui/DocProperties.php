@@ -688,23 +688,24 @@ class DocProperties extends Base
             'class' => "edit-src",
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
+
+        if (!$node->hasAttribute("title")) {
+            $node->setAttribute("title", "");
+        }
+        $fs->addText("xmledit-$nodeId-title", [
+            'label' => _("title"),
+            'placeholder' => _("Image title"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
+        ]);
+
         if (!$node->hasAttribute("alt")) {
             $node->setAttribute("alt", "");
         }
-        if ($node->hasAttribute("alt")) {
-            $fs->addText("xmledit-$nodeId-alt", [
-                'label' => _("alt"),
-                'placeholder' => _("Image description"),
-                'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
-            ]);
-        }
-        if ($node->hasAttribute("title")) {
-            $fs->addText("xmledit-$nodeId-title", [
-                'label' => _("Title"),
-                'placeholder' => _("Image title"),
-                'dataInfo' => "//*[@db:id = '$nodeId']/@title",
-            ]);
-        }
+        $fs->addText("xmledit-$nodeId-alt", [
+            'label' => _("alt"),
+            'placeholder' => _("Image description"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
+        ]);
         if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),

@@ -36,7 +36,8 @@ var depageCMS = (function() {
     var currentPreviewUrl,
         currentDocId,
         currentDocPropertyId,
-        currentPreviewLang = "de";
+        currentPreviewLang = "de",
+        currentLibPath = "";
     var $html;
     var $window;
     var $body;
@@ -545,6 +546,8 @@ var depageCMS = (function() {
             $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
                 var path = data.node.a_attr.href.replace(/libref:\/\//, "");
 
+                currentLibPath = path;
+
                 localJS.loadLibraryFiles(path);
             });
             $libraryTreeContainer.jstree();
@@ -589,11 +592,11 @@ var depageCMS = (function() {
                 }
             });
 
-            localJS.setupFileUpload();
+            localJS.setupFileList();
         },
         // }}}
-        // {{{
-        setupFileUpload: function() {
+        // {{{ setupFileList
+        setupFileList: function() {
             var $form = $("#upload-to-lib");
             var $dropArea = $form.parents('.files');
             var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
@@ -604,6 +607,13 @@ var depageCMS = (function() {
                 $progress_container: $progressArea
             }).on('complete', function(e, html) {
                 localJS.loadLibraryFiles($form.find("p.input-file").attr("data-path"));
+            });
+
+            $(".file-list ul").depageLiveFilter("li", "figcaption", {
+                autofocus: true
+            });
+            $(".file-list li").on("depage.filter-hidden", function() {
+                $("figure", this).removeClass("selected");
             });
         },
         // }}}
@@ -697,6 +707,10 @@ var depageCMS = (function() {
         loadFileChooser: function($input) {
             // @todo get path from input
             var path = $input[0].value.replace(/\/[^\/]*$/, '').replace(/^libref:\/\//, '');
+
+            if (path == "") {
+                path = currentLibPath;
+            }
             path = encodeURIComponent(path);
             var url = baseUrl + "project/" + projectName + "/library/manager/" + path + "/";
 
@@ -736,6 +750,8 @@ var depageCMS = (function() {
 
                 $dialogBar.prependTo($dialogContainer.children(".content"));
 
+                $("figure.thumb[data-libref='" + $input[0].value + "']").addClass("selected");
+
                 localJS.setupLibrary();
 
                 // @todo select input current file if available and scroll into view
@@ -767,7 +783,7 @@ var depageCMS = (function() {
             var $fileContainer = $(".files .file-list");
 
             $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
-                localJS.setupFileUpload();
+                localJS.setupFileList();
             });
         },
         // }}}
