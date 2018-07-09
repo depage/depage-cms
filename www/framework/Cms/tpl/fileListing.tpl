@@ -1,4 +1,5 @@
 <h1><?php self::t($this->path); ?></h1>
+<?php self::e($this->form); ?>
 <ul>
     <?php foreach($this->files as $file) { ?>
         <li>

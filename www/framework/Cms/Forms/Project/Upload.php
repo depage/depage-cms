@@ -37,7 +37,10 @@ class Upload extends \Depage\HtmlForm\HtmlForm
         $this->addHtml("<div class=\"dropArea\">");
             $this->addFile("file", [
                 'label' => _("Choose File"),
-                "maxNum" => 1000,
+                'maxNum' => 1000,
+                'dataAttr' => [
+                    'path' => $this->targetPath,
+                ],
             ]);
 
             $this->addHtml("<div class=\"content\"></div>");

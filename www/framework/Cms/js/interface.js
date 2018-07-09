@@ -588,6 +588,23 @@ var depageCMS = (function() {
                     $ok.click();
                 }
             });
+
+            localJS.setupFileUpload();
+        },
+        // }}}
+        // {{{
+        setupFileUpload: function() {
+            var $form = $("#upload-to-lib");
+            var $dropArea = $form.parents('.files');
+            var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
+
+            $form.find('input[type="submit"]').remove();
+            $form.find('input[type="file"]').depageUploader({
+                $drop_area: $dropArea,
+                $progress_container: $progressArea
+            }).on('complete', function(e, html) {
+                localJS.loadLibraryFiles($form.find("p.input-file").attr("data-path"));
+            });
         },
         // }}}
 
@@ -701,10 +718,10 @@ var depageCMS = (function() {
                 var $ok = $("<a class=\"button default disabled\">" + locale.choose + "</a>").appendTo($dialogBar);
                 var $cancel = $("<a class=\"button\">"+ locale.cancel + "</a>").appendTo($dialogBar);
 
-                $ok.on("click", function() {
+                $ok.on("click.depageFileChooser", function() {
                     localJS.removeFileChooser($input);
                 });
-                $cancel.on("click", function() {
+                $cancel.on("click.depageFileChooser", function() {
                     localJS.removeFileChooser();
                 });
 
@@ -720,6 +737,8 @@ var depageCMS = (function() {
                 $dialogBar.prependTo($dialogContainer.children(".content"));
 
                 localJS.setupLibrary();
+
+                // @todo select input current file if available and scroll into view
             });
         },
         // }}}
@@ -748,7 +767,7 @@ var depageCMS = (function() {
             var $fileContainer = $(".files .file-list");
 
             $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
-                console.log("loaded");
+                localJS.setupFileUpload();
             });
         },
         // }}}

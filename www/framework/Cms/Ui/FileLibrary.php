@@ -36,7 +36,7 @@ class FileLibrary extends Base
         return $this->manager();
     }
     // }}}
-    // {{{ library()
+    // {{{ manager()
     function manager($path = "") {
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
@@ -78,14 +78,62 @@ class FileLibrary extends Base
     public function files($path = "")
     {
         $path = rawurldecode($path);
+        $form = $this->upload($path);
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
         return new Html("fileListing.tpl", [
+            'form' => $form,
             'path' => $path,
             'fs' => $this->fs,
             'files' => $files,
             'project' => $this->project,
         ], $this->htmlOptions);
+    }
+    // }}}
+    // {{{ upload()
+    /**
+     * @brief upload
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function upload($path = "")
+    {
+        $targetPath = $this->project->getProjectPath() . "lib/" . $path;
+
+        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", [
+            'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/manager/" . rawurlencode($path) . "/",
+            'project' => $this->project,
+            'targetPath' => $path,
+        ]);
+        $form->process();
+        if ($form->validate()) {
+            $values = $form->getValues();
+
+            if (is_dir($targetPath)) {
+                foreach ($values['file'] as $file) {
+                    $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
+                    rename($file['tmp_name'], $targetPath . "/" . $filename);
+
+                    $cachePath = $this->project->getProjectPath() . "lib/cache/";
+                    if (is_dir($cachePath)) {
+                        // remove thumbnails from cache inside of project if available
+                        $cache = \Depage\Cache\Cache::factory("graphics", [
+                            'cachepath' => $cachePath,
+                        ]);
+                        $cache->delete("lib/" . $path . "/" . $filename . ".*");
+                    }
+
+                    // remove thumbnails from global graphics cache
+                    $cache = \Depage\Cache\Cache::factory("graphics");
+                    $cache->delete("projects/" . $this->project->name . "/lib/" . $path . "/" . $filename . ".*");
+                }
+            }
+
+            $form->clearValueOf("file");
+        }
+
+        return $form;
     }
     // }}}
 }
