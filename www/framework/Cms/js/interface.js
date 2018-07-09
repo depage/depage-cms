@@ -711,8 +711,8 @@ var depageCMS = (function() {
                 $dialogContainer.on("click", function() {
                     localJS.removeFileChooser();
                 });
-                $dialogContainer.children(".content").on("click", function() {
-                    return false;
+                $dialogContainer.on("click", ".content", function(e) {
+                    e.stopPropagation();
                 });
                 var $dialogBar = $("<div class=\"dialog-bar\"></div>");
                 var $ok = $("<a class=\"button default disabled\">" + locale.choose + "</a>").appendTo($dialogBar);

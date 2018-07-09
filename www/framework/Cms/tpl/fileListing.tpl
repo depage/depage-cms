@@ -7,6 +7,7 @@
                 $thumb = new \Depage\Html\Html("thumbnail.tpl", [
                     'file' => "libref://{$file}",
                     'project' => $this->project,
+                    'class' => in_array($file, $this->uploadedFiles) ? "selected" : "",
                 ], $this->param);
             ?>
             <?php self::e($thumb); ?>

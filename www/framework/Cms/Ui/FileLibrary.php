@@ -79,10 +79,13 @@ class FileLibrary extends Base
     {
         $path = rawurldecode($path);
         $form = $this->upload($path);
+        $uploadedFiles = $_SESSION['dpLibraryUploadedFiles'];
+        $_SESSION['dpLibraryUploadedFiles'] = [];
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
         return new Html("fileListing.tpl", [
             'form' => $form,
+            'uploadedFiles' => $uploadedFiles,
             'path' => $path,
             'fs' => $this->fs,
             'files' => $files,
@@ -110,10 +113,12 @@ class FileLibrary extends Base
         if ($form->validate()) {
             $values = $form->getValues();
 
-            if (is_dir($targetPath)) {
+            if (!empty($values['file']) && is_dir($targetPath)) {
+                $_SESSION['dpLibraryUploadedFiles'] = [];
                 foreach ($values['file'] as $file) {
                     $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
                     rename($file['tmp_name'], $targetPath . "/" . $filename);
+                    $_SESSION['dpLibraryUploadedFiles'][] = $path . "/" . $filename;
 
                     $cachePath = $this->project->getProjectPath() . "lib/cache/";
                     if (is_dir($cachePath)) {
@@ -128,9 +133,10 @@ class FileLibrary extends Base
                     $cache = \Depage\Cache\Cache::factory("graphics");
                     $cache->delete("projects/" . $this->project->name . "/lib/" . $path . "/" . $filename . ".*");
                 }
-            }
 
-            $form->clearValueOf("file");
+                $form->clearSession(false);
+                die();
+            }
         }
 
         return $form;

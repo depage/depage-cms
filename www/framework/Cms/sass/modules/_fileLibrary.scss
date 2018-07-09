@@ -2,10 +2,14 @@
 figure.thumb {
     $width: 120px;
     $height: 120px;
-    border: 1px solid $borderColor;
+    border: 1px solid $backgroundBrightColor;
+    background: #ffffff;
     position: relative;
-    width: $width + 6px;;
+    width: $width + 8px;
     padding: 3px;
+    margin-right: 10px;
+    margin-bottom: 7px;
+    @include radius(5px);
 
     img {
         display: block;
@@ -15,8 +19,11 @@ figure.thumb {
     figcaption {
         font-size: $fSizeS;
         max-width: 100%;
-        //overflow: hidden;
         color: $textLighterColor;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-top: 5px;
     }
     .fileinfo {
         position: absolute;
@@ -32,15 +39,6 @@ figure.thumb {
     }
     &:hover .fileinfo {
         display: block;
-    }
-    &.selected {
-        border-color: $selectionBackgroundColor;
-        background: $backgroundBrightColor;
-
-        figcaption {
-            color: $selectionBackgroundColor;
-            font-weight: bold;
-        }
     }
 }
 // }}}
@@ -103,6 +101,19 @@ figure.thumb {
 
         figure.thumb {
             cursor: pointer;
+
+            &:hover {
+                background: $backgroundBrightColor;
+            }
+            &.selected {
+                border-color: $selectionBackgroundColor;
+                background: $selectionBackgroundColor;
+
+                figcaption {
+                    color: $selectionTextColor;
+                    font-weight: bold;
+                }
+            }
         }
     }
 }
