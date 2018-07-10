@@ -19,7 +19,7 @@ class Library extends Base {
         $this->availableNodes = [
             'proj:folder' => (object) [
                 'name' => _("Folder"),
-                'newName' => _("(Untitled Folder)"),
+                'newName' => _("Untitled"),
                 'icon' => "",
             ],
         ];
@@ -48,12 +48,34 @@ class Library extends Base {
      * @param $extras
      * @return null
      */
-    public function onAddNode(\DomNode $node, $target_id, $target_pos, $extras) {
+    public function onAddNode(\DomNode $node, $targetId, $targetPos, $extras) {
         if (isset($extras)) {
             $node->setAttribute("name", $extras);
         }
+        $path = $this->getPathById($targetId, $node->getAttribute("name"));
+        $this->fs()->mkdir($path);
 
-        return false;
+        return true;
+    }
+    // }}}
+    // {{{ name()
+    /**
+     * @brief name
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function onMoveNode($nodeId, $oldParentId)
+    {
+        $name = $this->document->getAttribute($nodeId, "name");
+        $srcPath = $this->getPathById($oldParentId, $name);
+        $targetPath = $this->getPathById($nodeId);
+
+        if ($srcPath != $targetPath) {
+            $this->fs()->mv($srcPath, $targetPath);
+        }
+
+        return true;
     }
     // }}}
     // {{{ onCopyNode
@@ -67,6 +89,7 @@ class Library extends Base {
      */
     public function onCopyNode($node_id, $copy_id)
     {
+        // @todo disable copying folders?
         return true;
     }
     // }}}
@@ -79,8 +102,40 @@ class Library extends Base {
      * @param $doc_id
      * @return boolean
      */
-    public function onDeleteNode($node_id, $parent_id)
+    public function onDeleteNode($nodeId, $parentId)
     {
+        $path = $this->getPathById($nodeId);
+        if (empty($path)) {
+            return true;
+        }
+        try {
+            // @todo move to trash instead of deleting directly !important
+            $this->fs()->rm($path);
+        } catch (\Exception $e) {
+        }
+
+        return true;
+    }
+    // }}}
+    // {{{ onSetAttribute
+    /**
+     * On Delete Node
+     *
+     * @param $node_id
+     * @param $parent_id
+     * @return bool
+     */
+    public function onSetAttribute($nodeId, $attrName, $oldVal, $newVal) {
+        parent::onSetAttribute($nodeId, $attrName, $oldVal, $newVal);
+
+        if ($attrName == "name") {
+            $parentId = $this->document->getParentIdById($nodeId);
+            $srcPath = $this->getPathById($parentId, $oldVal);
+            $targetPath = $this->getPathById($parentId, $newVal);
+
+            $this->fs()->mv($srcPath, $targetPath);
+        }
+
         return true;
     }
     // }}}
@@ -93,14 +148,7 @@ class Library extends Base {
 
         // add parent url if $node is not root node
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
-        $url = "";
-        if ($node->nodeName != "proj:library") {
-            $nodeId = (int) $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
-            while (($nodeId = $this->document->getParentIdById($nodeId)) != null) {
-                $url = \Depage\Html\Html::getEscapedUrl(mb_strtolower($this->document->getAttribute($nodeId, 'name'))) . "/" . $url;
-            }
-        }
-        $xmlnav->addUrlAttributes($node, $url);
+        $xmlnav->addUrlAttributes($node, $this->getParentUrl($node));
 
         return $changed;
     }
@@ -111,6 +159,62 @@ class Library extends Base {
 
         $xmlnav = new \Depage\Cms\XmlNav();
         $xmlnav->addUrlAttributes($xml);
+    }
+    // }}}
+
+    // {{{ fs()
+    /**
+     * @brief fs
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function fs()
+    {
+        return \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
+    }
+    // }}}
+    // {{{ getPathById()
+    /**
+     * @brief getPathById
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function getPathById($nodeId, $added = "")
+    {
+        $url = $this->document->getAttribute($nodeId, 'name');
+        if (!empty($added)) {
+            $url .= "/$added";
+        }
+
+        while (($nodeId = $this->document->getParentIdById($nodeId)) != null) {
+            $url = $this->document->getAttribute($nodeId, 'name') . "/" . $url;
+        }
+
+        return trim($url, '/');
+    }
+    // }}}
+    // {{{ getParentUrl()
+    /**
+     * @brief getParentUrl
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function getParentUrl($node)
+    {
+        $url = "";
+
+        $nodeId = (int) $node->getAttributeNS("http://cms.depagecms.net/ns/database", "id");
+        $parentId = $this->document->getParentIdById($nodeId);
+        $url = $this->getPathById($parentId);
+
+        if (!empty($url)) {
+            $url = "/$url/";
+        }
+
+        return $url;
     }
     // }}}
 

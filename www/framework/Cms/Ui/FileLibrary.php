@@ -73,6 +73,9 @@ class FileLibrary extends Base
             ],
             'urlPath' => $treeUrl,
             'pdo' => $this->pdo,
+            'auth' => $this->auth,
+            'xmldbCache' => $this->xmldbCache,
+            'htmlOptions' => $this->htmlOptions,
         ]);
 
         return $uiTree->tree();
@@ -219,9 +222,10 @@ class FileLibrary extends Base
 
         // index next folder level
         foreach($dirsById as $id => $dir) {
+            // @todo restructure without need for gett the subdocument
             $xml = $doc->getSubdocByNodeId($id);
 
-            $this->syncFolder($doc, $xml->documentElement, $dir);
+            $this->syncFolder($doc, $xml->documentElement, $path . '/' . $dir);
         }
     }
     // }}}

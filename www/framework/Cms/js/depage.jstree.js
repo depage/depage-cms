@@ -193,7 +193,7 @@
 
                 jstree.activate_node(node);
                 jstree.open_node(node);
-                if (nodeType == "pg:page" || nodeType == "pg:folder") {
+                if (nodeType == "pg:page" || nodeType == "pg:folder" || nodeType == "proj:folder") {
                     jstree.edit(node);
                 }
                 nodeToActivate = false;

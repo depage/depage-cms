@@ -46,31 +46,39 @@ class Base extends \Depage\Depage\Ui\Base
             );
         }
 
-        // register session handler
-        \Depage\Session\SessionHandler::register($this->pdo);
+        if (empty($importVariables)) {
+            // register session handler
+            \Depage\Session\SessionHandler::register($this->pdo);
+        }
 
-        // get auth object
-        $this->auth = \Depage\Auth\Auth::factory(
-            $this->pdo, // db_pdo
-            $this->options->auth->realm, // auth realm
-            DEPAGE_BASE, // domain
-            $this->options->auth->method, // method
-            $this->options->auth->digestCompat // should we digest compatibility
-        );
+        if (empty($this->auth)) {
+            // get auth object
+            $this->auth = \Depage\Auth\Auth::factory(
+                $this->pdo, // db_pdo
+                $this->options->auth->realm, // auth realm
+                DEPAGE_BASE, // domain
+                $this->options->auth->method, // method
+                $this->options->auth->digestCompat // should we digest compatibility
+            );
+        }
 
-        // get cache object for xmldb
-        $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", [
-            'disposition' => $this->options->cache->xmldb->disposition,
-            'host' => $this->options->cache->xmldb->host,
-        ]);
+        if (empty($this->xmldbCache)) {
+            // get cache object for xmldb
+            $this->xmldbCache = \Depage\Cache\Cache::factory("xmldb", [
+                'disposition' => $this->options->cache->xmldb->disposition,
+                'host' => $this->options->cache->xmldb->host,
+            ]);
+        }
 
-        // set html-options
-        $this->htmlOptions = [
-            'template_path' => __DIR__ . "/../tpl/",
-            'clean' => "space",
-            'env' => $this->options->env,
-        ];
-        $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
+        if (empty($this->htmlOptions)) {
+            // set html-options
+            $this->htmlOptions = [
+                'template_path' => __DIR__ . "/../tpl/",
+                'clean' => "space",
+                'env' => $this->options->env,
+            ];
+            $this->basetitle = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion();
+        }
 
         // establish if the user is logged in
         if (empty($this->authUser)) {
