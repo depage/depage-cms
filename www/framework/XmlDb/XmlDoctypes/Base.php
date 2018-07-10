@@ -168,7 +168,7 @@ class Base implements DoctypeInterface
      * @param $target_id
      * @return bool
      */
-    public function onMoveNode($node_id, $target_id) {
+    public function onMoveNode($node_id, $oldParentId) {
         return true;
     }
     // }}}
@@ -181,6 +181,18 @@ class Base implements DoctypeInterface
      * @return bool
      */
     public function onDeleteNode($node_id, $parent_id) {
+        return true;
+    }
+    // }}}
+    // {{{ onSetAttribute
+    /**
+     * On Delete Node
+     *
+     * @param $node_id
+     * @param $parent_id
+     * @return bool
+     */
+    public function onSetAttribute($nodeId, $attrName, $oldVal, $newVal) {
         return true;
     }
     // }}}
