@@ -1,0 +1,300 @@
+// {{{ projectlist
+.box-projects {
+    .content {
+        padding-bottom: 44px;
+    }
+    .content:before {
+        @include icon("projects");
+    }
+}
+.projectlist {
+    h2 {
+        margin-top: 12px;
+        margin-bottom: 0;
+        color: $textLighterColor;
+        letter-spacing: 0.15em;
+        font-weight: normal;
+        font-size: $fSizeS;
+
+        &:before,
+        &:after {
+            content: " — ";
+        }
+    }
+    dl {
+        text-indent: 0;
+        margin: 12px 0 24px 24px;
+    }
+    dt {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 26px;
+        @include clearfix();
+    }
+    dd {
+        position: relative;
+        clear: both;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: #ffffff;
+    }
+
+    img.thumb {
+        position: absolute;
+        top: 0;
+        left: -24px;
+        display: block;
+        float: left;
+        width: 16px;
+        height: 16px;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+    dt strong,
+    a.button {
+        float: left;
+        line-height: 20px;
+        height: 26px;
+        padding: 1px 7px;
+        border: 1px solid transparent;
+        @include clearfix;
+    }
+    a.button:hover {
+        background: #ffffff;
+        //border: 1px solid #000000;
+    }
+    .buttons {
+        float: right;
+    }
+    dd > .buttons {
+        margin-bottom: 20px;
+
+        .icon-add,
+        .icon-download {
+            position: relative;
+            padding-left: 2em;
+
+            &:before {
+                display: block;
+                content: " ";
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                width: 2em;
+                height: 2em;
+                background-color: transparent;
+            }
+        }
+        .icon-add:before {
+            @include icon-base("add", 24px);
+        }
+        .icon-download:before {
+            @include icon-base("upload-drag-over", 24px);
+        }
+    }
+    a {
+        overflow: hidden;
+        &.icon-settings {
+            width: 34px;
+            &:before {
+                content: " ";
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                @include icon-base();
+                margin-bottom: -8px;
+                margin-left: -2px;
+                margin-right: 6px;
+            }
+            @media screen and (max-width: 1340px) {
+                width: 34px;
+
+                &:before {
+                    margin-right: 20px;
+                }
+            }
+        }
+        &.icon-settings:before {
+            @include icon("settings", 22px);
+        }
+    }
+    dt strong {
+        padding-left: 0;
+    }
+    div.details table.lastchanged_pages {
+        margin-bottom: 16px;
+    }
+    div.details table.lastchanged_pages a {
+        display: inline;
+        float: none;
+        padding: 0;
+    }
+    div.details table.lastchanged_pages a:hover {
+        background: none;
+    }
+    div.details table.lastchanged_pages {
+        width: 100%;
+    }
+    div.details table.lastchanged_pages td {
+        padding-left: 8px;
+        vertical-align: top;
+    }
+    div.details table.lastchanged_pages .date {
+        text-align: right;
+        white-space: nowrap;
+        font-size: 10px;
+        right: 0;
+        top: 0;
+    }
+}
+// }}}
+// {{{ projectlist details
+.projectlist dl dt .opener {
+    display: block;
+    content: " ";
+    float: left;
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    @include icon-base("closed", 24px);
+}
+.projectlist dl dt.active .opener {
+    @include icon("open", 24px);
+}
+// }}}
+// {{{ recent-changed
+table.recent-changes {
+    width: 100%;
+    table-layout: fixed;
+
+    td {
+        line-height: 24px;
+    }
+
+    td.lastchange {
+        text-align: center;
+        font-size: 0.8em;
+    }
+    td.url {
+        width: 70%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        a {
+            color: #000000;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    td.date {
+        width: 30%;
+        text-align: right;
+        font-size: 0.8em;
+        white-space: nowrap;
+    }
+    td.actions {
+        width: 70%;
+    }
+    td.lastchange,
+    td.date,
+    td.released,
+    td.published {
+        &,
+        a {
+            color: #aaaaaa;
+        }
+    }
+}
+// }}}
+// {{{ users
+.box-users {
+    .content:before {
+        @include icon("users");
+    }
+}
+ul.users h3,
+ul.users p {
+    display: inline;
+}
+// }}}
+// {{{ tasks
+.box-tasks {
+    .content:before {
+        @include icon("tasks");
+    }
+}
+.tasks {
+    dt {
+        font-weight: normal;
+        color: #882200;
+        margin-top: 24px;
+
+        &:first-child {
+            margin-top: 12px;
+        }
+    }
+    dd {
+        margin-left: 0;
+        position: relative;
+        color: #666666;
+
+        strong {
+            font-weight: normal;
+            color: #000000;
+        }
+        p {
+            width: 80%;
+        }
+
+        &.failed {
+            p {
+                margin-left: 2em;
+            }
+            p,
+            strong {
+                color: #882200;
+            }
+            strong {
+                font-weight: bold;
+
+                &:before {
+                    content: "!";
+                    display: block;
+                    float: left;
+                    margin-left: -1em;
+                    font-size: 2em;
+                }
+            }
+        }
+    }
+    #delete-task {
+        position: absolute;
+        top: -4px;
+        right: 0;
+        width: auto;
+
+        p.submit {
+            input {
+                margin: 0;
+                font-weight: normal;
+                //background: none;
+                //border: none;
+            }
+        }
+    }
+}
+// }}}
+// {{{ settings
+.box-settings {
+    .content:before {
+        @include icon("settings");
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

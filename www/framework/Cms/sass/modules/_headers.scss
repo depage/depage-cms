@@ -1,0 +1,40 @@
+/* {{{ header.info */
+header.info {
+    position: absolute;
+    height: $infoHeight;
+    border-bottom: 1px solid $borderColor;
+    background: $backgroundColor;
+    z-index: 10001;
+
+    h1 {
+        padding: 0;
+        margin: 0;
+        padding-left: 12px;
+        font-weight: normal;
+        font-size: $fSizeXS;
+        line-height: $infoHeight - 2px;
+        color: #000000;
+    }
+    &.info-tree-pages,
+    &.info-tree-pagedata {
+        left: 0;
+        width: $treeWidth;
+    }
+    &.info-tree-pages {
+        top: 0;
+    }
+    &.info-tree-pagedata {
+        top: 50%;
+    }
+    &.info-doc-properties {
+        left: $treeWidth - 1;
+        border-left: 1px solid $borderColor;
+    }
+}
+.preview header.info {
+    top: 0;
+    width: 100%;
+}
+/* }}} */
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
