@@ -706,13 +706,8 @@ var depageCMS = (function() {
         // {{{ loadFileChooser
         loadFileChooser: function($input) {
             // @todo get path from input
-            var path = $input[0].value.replace(/\/[^\/]*$/, '').replace(/^libref:\/\//, '');
-
-            if (path == "") {
-                path = currentLibPath;
-            }
-            path = encodeURIComponent(path);
-            var url = baseUrl + "project/" + projectName + "/library/manager/" + path + "/";
+            var path = $input[0].value.replace(/^libref:\/\//, '').replace(/[^\/]*$/, '') || currentLibPath;
+            var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);
