@@ -550,6 +550,17 @@ var depageCMS = (function() {
 
                 localJS.loadLibraryFiles(path);
             });
+            $libraryTreeContainer.on("refresh.jstree", function(e, data) {
+                var selected = data.instance.get_selected(true);
+
+                if (typeof selected[0] == 'undefined') return;
+                var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
+
+                currentLibPath = path;
+
+                localJS.loadLibraryFiles(path);
+            });
+
             $libraryTreeContainer.depageTree();
 
             var $fileContainer = $(".files .file-list");
@@ -608,9 +619,7 @@ var depageCMS = (function() {
                 localJS.loadLibraryFiles($form.find("p.input-file").attr("data-path"));
             });
 
-            $(".file-list ul").depageLiveFilter("li", "figcaption", {
-                autofocus: true
-            });
+            $(".file-list ul").depageLiveFilter("li", "figcaption");
             $(".file-list li").on("depage.filter-hidden", function() {
                 $("figure", this).removeClass("selected");
             });
