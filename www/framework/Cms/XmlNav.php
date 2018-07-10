@@ -118,7 +118,7 @@ class XmlNav {
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         // get current part of url from name
-        if ($node->nodeName == 'pg:folder' || $node->nodeName == 'pg:page' || $node->nodeName == 'pg:redirect') {
+        if (in_array($node->nodeName, ['pg:folder', 'pg:page', 'pg:redirect', 'proj:folder'])) {
             $url .= \Depage\Html\Html::getEscapedUrl(mb_strtolower($node->getAttribute('name')));
         }
 
@@ -151,6 +151,8 @@ class XmlNav {
             } else {
                 $url = $url . "/";
             }
+        } elseif ($node->nodeName == 'proj:folder') {
+            $url = $url . "/";
         } else {
             $url = null;
         }

@@ -17,7 +17,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="pg:* | sec:*">
+    <xsl:template match="pg:* | sec:* | proj:folder">
         <!-- only show nodes with namespace "pg" or "sec" in tree -->
         <xsl:apply-templates select="." mode="treeNode" />
     </xsl:template>
@@ -46,6 +46,7 @@
         <xsl:variable name="ns" select="substring-before(name(), ':')" />
         <xsl:variable name="href">
             <xsl:if test="name() = 'pg:page' or name() = 'pg:folder'">pageref://<xsl:value-of select="@db:id" /></xsl:if>
+            <xsl:if test="name() = 'proj:folder'">libref:/<xsl:value-of select="@url" /></xsl:if>
         </xsl:variable>
 
         <li

@@ -550,8 +550,7 @@ var depageCMS = (function() {
 
                 localJS.loadLibraryFiles(path);
             });
-            $libraryTreeContainer.jstree();
-            //$libraryTreeContainer.depageTree();
+            $libraryTreeContainer.depageTree();
 
             var $fileContainer = $(".files .file-list");
             var last = false;

@@ -38,6 +38,8 @@ class FileLibrary extends Base
     // }}}
     // {{{ manager()
     function manager($path = "") {
+        $this->syncLibraryTree();
+
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
             'projectName' => $this->project->name,
@@ -63,9 +65,17 @@ class FileLibrary extends Base
      **/
     public function tree()
     {
-        return new Html("treeLibrary.tpl", [
-            'fs' => $this->fs,
-        ], $this->htmlOptions);
+        $treeUrl = "project/{$this->projectName}/tree/files/";
+        $uiTree = Tree::_factoryAndInit($this->conf, [
+            'urlSubArgs' => [
+                $this->projectName,
+                "files",
+            ],
+            'urlPath' => $treeUrl,
+            'pdo' => $this->pdo,
+        ]);
+
+        return $uiTree->tree();
     }
     // }}}
     // {{{ files()
@@ -140,6 +150,79 @@ class FileLibrary extends Base
         }
 
         return $form;
+    }
+    // }}}
+
+    // {{{ syncLibraryTree()
+    /**
+     * @brief syncLibraryTree
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function syncLibraryTree()
+    {
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("files");
+        if (!$doc) {
+            $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Library', "files");
+
+            $xml = new \Depage\Xml\Document();
+            $xml->load(__DIR__ . "/../XmlDocTypes/LibraryXml/library.xml");
+
+            $nodeId = $doc->save($xml);
+        }
+        $xml = $doc->getXml();
+
+        $this->syncFolder($doc, $xml->documentElement);
+    }
+    // }}}
+    // {{{ syncFolder()
+    /**
+     * @brief syncFolder
+     *
+     * @param mixed $path, $folderNode
+     * @return void
+     **/
+    protected function syncFolder($doc, $folderNode, $path = "")
+    {
+        $pattern = trim($path . "/*", '/');
+        $dirs = $this->fs->lsDir($pattern);
+        array_walk($dirs, function(&$dir) {
+            $dir = pathinfo($dir, \PATHINFO_FILENAME);
+
+        });
+        $dirsById = [];
+
+        // check if folder exists
+        foreach($folderNode->childNodes as $node) {
+            $name = $node->getAttribute("name");
+            $id = $doc->getNodeId($node);
+            $index = array_search($name, $dirs);
+
+            if ($index === false) {
+                // folder does not exist anymore
+                $doc->deleteNode($doc->getNodeId($node));
+            } else {
+                // folder exists
+                array_splice($dirs, $index, 1);
+                $dirsById[$id] = $name;
+            }
+        }
+
+        // add unindexed folders
+        foreach($dirs as $dir) {
+            $parentId = $doc->getNodeId($folderNode);
+            $id = $doc->addNodeByName("proj:folder", $parentId, -1, $dir);
+            $dirsById[$id] = $dir;
+        }
+
+        // index next folder level
+        foreach($dirsById as $id => $dir) {
+            $xml = $doc->getSubdocByNodeId($id);
+
+            $this->syncFolder($doc, $xml->documentElement, $dir);
+        }
     }
     // }}}
 }
