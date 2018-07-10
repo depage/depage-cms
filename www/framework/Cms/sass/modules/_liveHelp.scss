@@ -1,0 +1,81 @@
+@import "../../../shared/depage-jquery-plugins/sass/_depage-live-help";
+
+// {{{ depage-live-help
+.live-help-mock {
+    display: none;
+}
+
+#depage-live-help {
+    .area {
+        p:first-child {
+            font-weight: bold;
+        }
+    }
+    p {
+        line-height: 1.3em;
+    }
+    .icon {
+        padding-left: $helpIconSize + 10px;
+        min-height: $helpIconSize + 10px;
+        min-width: $helpIconSize * 3;
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: $helpIconSize;
+            height: $helpIconSize;
+            @include icon-base();
+        }
+    }
+    .icon-tree:before {
+        @include icon("help-tree", 32px);
+    }
+    .icon-properties:before {
+        @include icon("help-properties", 32px);
+    }
+    .icon-preview:before {
+        @include icon("help-preview", 32px);
+    }
+}
+
+#depage-live-help {
+    .area {
+        p:first-child {
+            font-weight: bold;
+        }
+    }
+    p {
+        line-height: 1.3em;
+    }
+    .icon {
+        padding-left: $helpIconSize + 10px;
+        min-height: $helpIconSize + 10px;
+        min-width: $helpIconSize * 3;
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: $helpIconSize;
+            height: $helpIconSize;
+            @include icon-base();
+        }
+    }
+    .icon-tree:before {
+        @include icon("help-tree", 32px);
+    }
+    .icon-properties:before {
+        @include icon("help-properties", 32px);
+    }
+    .icon-preview:before {
+        @include icon("help-preview", 32px);
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

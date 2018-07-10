@@ -1,0 +1,62 @@
+/* {{{ tabs */
+.tabs {
+    $height: 32px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    @include clearfix();
+    width: 100%;
+    height: $height;
+    max-height: $height;
+
+    &,
+    .tab {
+        padding: 0;
+    }
+    .tab {
+        display: inline-block;
+        list-style: none;
+        height: $height;
+        @include radius(5px, "top", "left");
+        @include radius(5px, "top", "right");
+
+        &:first-child a {
+            font-weight: bold;
+        }
+        &.active a {
+            font-weight: bold !important;
+        }
+        a {
+            display: inline-block;
+            height: $height;
+            line-height: $height;
+            padding: 0 12px;
+        }
+    }
+    & ~ * {
+        margin-top: $height;
+    }
+    .dialog-full & {
+        top: $infoHeight;
+        padding-top: $infoHeight;
+        padding-left: $infoHeight;
+        height: $height + $infoHeight;
+        max-height: $height + $infoHeight;
+
+        .tab:first-child a {
+            font-weight: normal;
+        }
+        .tab {
+            @include radius(5px);
+        }
+
+        & + * {
+            margin-top: $height + $infoHeight;
+        }
+    }
+}
+/* }}} */
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

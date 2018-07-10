@@ -1,4 +1,6 @@
-/* {{{ shy-dialogs */
+@import "../../../shared/depage-jquery-plugins/sass/_depage-shy-dialogue";
+
+// {{{ shy-dialogs
 .depage-shy-dialogue {
     @include depage-shy-dialogue (
         $width: 20em,
@@ -19,7 +21,7 @@
         font-size: 1em;
     }
 }
-/* }}} */
+// }}}
 // {{{ dialog.full
 .dialog-full {
     position: absolute;
@@ -99,6 +101,96 @@
     > form.depage-form {
         padding-left: 16px;
     }
+}
+// }}}
+// {{{ upload
+html[lang='en'] {
+    #upload .dropArea.has-drop-support .content:before {
+        content: "Drop files here";
+    }
+}
+html[lang='de'] {
+    #upload .dropArea.has-drop-support .content:before {
+        content: "Dateien hierhin ziehen";
+    }
+}
+#upload {
+    background: rgba(255, 255, 255, 0.5);
+
+    .box {
+        //@include radius(7px);
+        @include box-shadow(0px 5px 15px 5px rgba(0, 0, 0, 0.3));
+        width: 520px;
+        border: 1px solid $borderColor;
+        padding: 10px;
+        background: $backgroundColor;
+        margin: auto;
+    }
+
+    p.submit {
+        display: none;
+    }
+    p.input-file {
+        width: 100%;
+
+        input {
+            width: 100%;
+            border: none;
+            background: none;
+            padding-left: 0;
+        }
+    }
+    .dropArea.has-drop-support {
+        $size: 48px * 2.5;
+        height: 250px;
+
+        .content:before {
+            display: block;
+            position: relative;
+            margin: auto;
+            width: $size * 2;
+            text-align: center;
+            font-size: 16px;
+        }
+        .content:after {
+            @include icon-base("upload", $size);
+            display: block;
+            content: " ";
+            position: relative;
+            border: 1px solid $borderColor;
+            @include radius(14px);
+            margin: auto;
+            width: $size;
+            height: $size;
+        }
+        &.drag-over .content:after {
+            @include icon("upload-drag-over", $size);
+            border-color: #4E4C4B;
+        }
+    }
+    .progressArea {
+        width: 400px;
+
+        .textinfo {
+            display: block;
+        }
+        progress {
+            display: block;
+        }
+    }
+}
+// }}}
+// {{{ progress
+progress {
+    display: block;
+    @include progress(#ffffff, #882200) {
+        @include radius(2em);
+        width: 80%;
+        height: 12px;
+        margin: 6px 0;
+        border: none;
+        height: 4px;
+    };
 }
 // }}}
 
