@@ -73,7 +73,7 @@ class Library extends Base {
 
         if ($srcPath != $targetPath) {
             $this->fs()->mv($srcPath, $targetPath);
-            // @todo also mv or rm cache paths?
+            $this->clearGraphicsCache($srcPath);
         }
 
         return true;
@@ -112,7 +112,7 @@ class Library extends Base {
         try {
             // @todo move to trash instead of deleting directly !important
             $this->fs()->rm($path);
-            // @todo also mv or rm cache paths?
+            $this->clearGraphicsCache($path);
         } catch (\Exception $e) {
         }
 
@@ -136,7 +136,7 @@ class Library extends Base {
             $targetPath = $this->getPathById($parentId, $newVal);
 
             $this->fs()->mv($srcPath, $targetPath);
-            // @todo also mv or rm cache paths?
+            $this->clearGraphicsCache($srcPath);
         }
 
         return true;
@@ -175,6 +175,29 @@ class Library extends Base {
     protected function fs()
     {
         return \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
+    }
+    // }}}
+    // {{{ clearGraphicsCache()
+    /**
+     * @brief clearGraphicsCache
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    protected function clearGraphicsCache($path)
+    {
+        $cachePath = $this->project->getProjectPath() . "lib/cache/";
+        if (is_dir($cachePath)) {
+            // remove thumbnails from cache inside of project if available
+            $cache = \Depage\Cache\Cache::factory("graphics", [
+                'cachepath' => $cachePath,
+            ]);
+            $cache->delete("lib/" . $path);
+        }
+
+        // remove thumbnails from global graphics cache
+        $cache = \Depage\Cache\Cache::factory("graphics");
+        $cache->delete("projects/" . $this->project->name . "/lib/" . $path);
     }
     // }}}
     // {{{ getPathById()
