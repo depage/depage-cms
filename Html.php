@@ -234,7 +234,7 @@ class Html {
      * @return output
      */
     public function clean($html) {
-        if ($this->param["clean"]) {
+        if (isset($this->param["clean"]) && $this->param["clean"]) {
             $cleaner = new \Depage\Html\Cleaner();
             $html = $cleaner->clean($html);
         }
