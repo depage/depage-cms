@@ -104,8 +104,20 @@ figure.thumb {
 // {{{ .library .file-list
 .library .file-list {
     padding: 15px;
-    background: #ffffff;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    background: $backgroundBrightColor;
+    @include transition(300ms, "background-color");
 
+    &.focus {
+        border-top: 1px solid $selectionBackgroundColor;
+        border-bottom: 1px solid $selectionBackgroundColor;
+        background: #ffffff;
+    }
+
+    progress {
+        background-color: transparent;
+    }
     li {
         list-style: none;
         vertical-align: top;
@@ -115,6 +127,7 @@ figure.thumb {
             cursor: pointer;
             margin-right: 6px;
             margin-bottom: 0;
+            background: transparent;
 
             &:hover {
                 background: $backgroundBrightColor;

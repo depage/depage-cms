@@ -91,8 +91,14 @@ class FileLibrary extends Base
     public function files($path = "")
     {
         $path = rawurldecode($path);
+        $targetPath = $this->project->getProjectPath() . "lib/" . $path;
+
+        if (!is_dir($targetPath)) {
+            return "";
+        }
+
         $form = $this->upload($path);
-        $uploadedFiles = $_SESSION['dpLibraryUploadedFiles'];
+        $uploadedFiles = $_SESSION['dpLibraryUploadedFiles'] ?? [];
         $_SESSION['dpLibraryUploadedFiles'] = [];
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
@@ -100,7 +106,6 @@ class FileLibrary extends Base
             'form' => $form,
             'uploadedFiles' => $uploadedFiles,
             'path' => $path,
-            'fs' => $this->fs,
             'files' => $files,
             'project' => $this->project,
         ], $this->htmlOptions);

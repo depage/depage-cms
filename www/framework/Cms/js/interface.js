@@ -542,6 +542,8 @@ var depageCMS = (function() {
         // {{{ setupLibrary
         setupLibrary: function() {
             var $libraryTreeContainer = $(".tree.library .jstree-container");
+            var $fileContainer = $(".files .file-list");
+            var last = false;
 
             $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
                 var path = data.node.a_attr.href.replace(/libref:\/\//, "");
@@ -560,12 +562,16 @@ var depageCMS = (function() {
 
                 localJS.loadLibraryFiles(path);
             });
+            $libraryTreeContainer.on("focus.jstree", function(e, data) {
+                $fileContainer.removeClass("focus");
+            });
 
             $libraryTreeContainer.depageTree();
 
-            var $fileContainer = $(".files .file-list");
-            var last = false;
-
+            $fileContainer.on("click", function(e) {
+                $fileContainer.addClass("focus");
+                $libraryTreeContainer.jstree(true).looseFocus();
+            });
             $fileContainer.on("click", "figure", function(e) {
                 var $thumbs = $fileContainer.find("figure");
                 var current = $thumbs.index(this);
@@ -592,8 +598,6 @@ var depageCMS = (function() {
                 }
                 last = current;
                 $thumbs.blur();
-
-                return false;
             });
             $fileContainer.on("dblclick", "figure", function(e) {
                 var $ok = $(".dialog-full .dialog-bar .button.default");
@@ -772,6 +776,10 @@ var depageCMS = (function() {
             }
 
             $(document).off("keypress.depageFileChooser");
+            $(".tree.library .jstree-container").jstree(true).destroy();
+
+            // @todo focus document tree
+            $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
 
             $dialogContainer.removeClass("visible");
             setTimeout(function() {

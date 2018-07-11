@@ -546,6 +546,7 @@
             background: $backgroundBrightColor;
             border-top: 1px solid transparent;
             border-bottom: 1px solid transparent;
+            @include transition(300ms, "background-color");
 
             &.jstree-focus {
                 background: $textBrightColor;
