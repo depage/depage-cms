@@ -243,13 +243,13 @@
         plugins: [
             "ui",
             "dnd",
-            "typesfromurl",
+            //"typesfromurl",
             "hotkeys",
             "contextmenu",
-            "nodeinfo",
-            "dblclickrename",
-            "tooltips",
-            "add_marker",
+            //"nodeinfo",
+            //"dblclickrename",
+            //"tooltips",
+            //"add_marker",
 
             // custom plugins
             "focus",
@@ -281,20 +281,6 @@
                 },
             },
             initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
-            check_callback : function (operation, node, node_parent, node_position, more) {
-                // @todo check types and operations
-                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node', 'copy_node' or 'edit'
-                // in case of 'rename_node' node_position is filled with the new node name
-                if (node.li_attr.rel == 'pg:meta') {
-                    return false;
-                } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && (node_parent.li_attr.rel == 'pg:meta' || node_parent.li_attr.rel == 'sec:separator')) {
-                    return false;
-                } else if ((operation == "edit" || operation == "create_node") && node.li_attr.rel == 'sec:separator') {
-                    return false;
-                }
-
-                return true;
-            }
         },
 
         /**

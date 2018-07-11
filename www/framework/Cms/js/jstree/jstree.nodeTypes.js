@@ -58,9 +58,33 @@
                 return true;
             }
             this._data.nodeTypes.inst = this.element.jstree(true);
+            this._data.nodeTypes.rootNodeType = this.element.attr("rel");
 
             // override default check_callback
             this.settings.core.check_callback = this.checkTypes;
+        };
+        // }}}
+        // {{{ edit()
+        this.edit = function(obj, default_text, callback) {
+            parent.edit.call(this, obj, default_text, callback);
+
+            if (this._data.nodeTypes.rootNodeType == "proj:library") {
+                $("input.jstree-rename-input")
+                    .attr("pattern", "^[a-zA-Z0-9\-_]*$")
+                    .on("keypress", function(e) {
+                        var key = e.which;
+
+                        if (e.charCode != 0 &&
+                            (key < 48 || key > 57) && // 0-9
+                            (key < 65 || key > 90) &&  // a-z
+                            (key < 97 || key > 122) &&  // A-Z
+                            key != 45 &&  // -
+                            key != 95 // _
+                        ) {
+                            e.preventDefault();
+                        }
+                    });
+            }
         };
         // }}}
         // {{{ getAvailableNodesFor()
@@ -92,7 +116,6 @@
             var inst = this._data.nodeTypes.inst;
 
             return function(data) {
-                console.log(data.item);
                 var newNode = {
                     text: data.item.newName,
                     li_attr: {
@@ -149,7 +172,6 @@
                             separator_after: sepAfter
                         };
                     }
-                    console.log(node.subTypes);
                 }
             }
 
@@ -205,6 +227,7 @@
                 return false;
             }
 
+            // test validParents
             if (operation == "create_node" || operation == "move_node" || operation == "copy_node") {
                 var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'];
                 return validParents.indexOf(this.getNodeType(node_parent)) > -1 || validParents.indexOf('*') > -1;
