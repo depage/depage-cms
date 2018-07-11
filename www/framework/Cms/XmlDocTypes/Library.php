@@ -73,6 +73,7 @@ class Library extends Base {
 
         if ($srcPath != $targetPath) {
             $this->fs()->mv($srcPath, $targetPath);
+            // @todo also mv or rm cache paths?
         }
 
         return true;
@@ -111,6 +112,7 @@ class Library extends Base {
         try {
             // @todo move to trash instead of deleting directly !important
             $this->fs()->rm($path);
+            // @todo also mv or rm cache paths?
         } catch (\Exception $e) {
         }
 
@@ -134,6 +136,7 @@ class Library extends Base {
             $targetPath = $this->getPathById($parentId, $newVal);
 
             $this->fs()->mv($srcPath, $targetPath);
+            // @todo also mv or rm cache paths?
         }
 
         return true;
@@ -212,6 +215,9 @@ class Library extends Base {
 
         if (!empty($url)) {
             $url = "/$url/";
+        }
+        if ($node->nodeName == "proj:folder" && empty($url)) {
+            $url = "/";
         }
 
         return $url;

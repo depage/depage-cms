@@ -196,6 +196,7 @@ class FileLibrary extends Base
 
         });
         $dirsById = [];
+        $nodesById = [];
 
         // check if folder exists
         foreach($folderNode->childNodes as $node) {
@@ -210,22 +211,27 @@ class FileLibrary extends Base
                 // folder exists
                 array_splice($dirs, $index, 1);
                 $dirsById[$id] = $name;
+                $nodesById[$id] = $node;
             }
         }
 
         // add unindexed folders
         foreach($dirs as $dir) {
             $parentId = $doc->getNodeId($folderNode);
-            $id = $doc->addNodeByName("proj:folder", $parentId, -1, $dir);
+            $node = $folderNode->ownerDocument->createElementNS ("http://cms.depagecms.net/ns/project", "proj:folder");
+            $id = $doc->addNode($node, $parentId, -1, $dir);
+            $node->setAttribute("name", $dir);
+            $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:id", $id);
+
             $dirsById[$id] = $dir;
+            $nodesById[$id] = $node;
+
+            $folderNode->appendChild($node);
         }
 
         // index next folder level
         foreach($dirsById as $id => $dir) {
-            // @todo restructure without need for gett the subdocument
-            $xml = $doc->getSubdocByNodeId($id);
-
-            $this->syncFolder($doc, $xml->documentElement, $path . '/' . $dir);
+            $this->syncFolder($doc, $nodesById[$id], $path . '/' . $dir);
         }
     }
     // }}}
