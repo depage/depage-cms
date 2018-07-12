@@ -19,7 +19,6 @@
     hr {
         float: none;
         clear: both;
-        display: block;
         white-space: nowrap;
     }
     li {
@@ -64,6 +63,7 @@
     }
     li {
         list-style: none;
+        display: block;
 
         > a {
             padding-left: 15px;
