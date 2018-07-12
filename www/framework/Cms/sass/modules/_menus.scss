@@ -1,7 +1,8 @@
 @charset "UTF-8";
 
 .toolbar li menu,
-.vakata-context {
+.vakata-context,
+.vakata-context ul {
     display: none;
     position: absolute;
     border: 1px solid $borderColor;
@@ -11,10 +12,9 @@
     padding: 0;
     min-width: 200px;
     @include box-shadow($shadow);
-
-    ul {
-        padding: 10px 0;
-    }
+}
+.toolbar li menu,
+.vakata-context {
     li,
     hr {
         float: none;
@@ -68,6 +68,7 @@
         > a {
             padding-left: 15px;
             padding-right: 15px;
+
             &.vakata-context-parent {
                 background-image: url("data:image/gif;base64,R0lGODlhCwAHAIAAACgoKP///yH5BAEAAAEALAAAAAALAAcAAAIORI4JlrqN1oMSnmmZDQUAOw==");
                 background-position: right center;

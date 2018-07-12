@@ -84,6 +84,8 @@
                 .on("refresh.jstree", base.onRefresh)
                 .on("dblclick.jstree", ".jstree-anchor", base.onNodeDblClick);
 
+            base.options.contextmenu.items = base.contextMenuItems;
+
             // init the tree
             jstree = base.$el.jstree(base.options).jstree(true);
         };
@@ -218,6 +220,94 @@
                 jstree.edit($label);
             }
         }, base);
+        // }}}
+
+        // {{{ contextMenuItems
+        base.contextMenuItems = function(o, cb) {
+            console.log(o);
+            console.log(jstree);
+            var inst = jstree;
+
+            var defaultItems = {
+                create : {
+                        "separator_after": true,
+                        "label": locale.create,
+                        "action": false,
+                        "submenu": inst.getCreateMenu(inst, inst.getAvailableNodesFor(o), inst.insertCallback(o, "last"))
+                },
+                rename: {
+                    "label": locale.rename,
+                    "_disabled": function(data) {
+                        var obj = inst.get_node(data.reference);
+
+                        return !inst.check("rename_node", data.reference, inst.get_parent(data.reference), "");
+                    },
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+                        inst.edit(obj);
+                    }
+                },
+                duplicate: {
+                    "label": locale.duplicate,
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+
+                        inst.copy_node(obj, obj, "after");
+                    }
+                },
+                remove: {
+                    "label": locale.delete,
+                    "_disabled": function(data) {
+                        var obj = inst.get_node(data.reference);
+
+                        return !inst.check("delete_node", data.reference, inst.get_parent(data.reference), "");
+                    },
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+
+                        inst.askDelete(obj);
+                    }
+                },
+                cut: {
+                    "label": locale.cut,
+                    "separator_before": true,
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+
+                        if (inst.is_selected(obj)) {
+                            inst.cut(inst.get_top_selected());
+                        } else {
+                            inst.cut(obj);
+                        }
+                    }
+                },
+                copy: {
+                    "label": locale.copy,
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+
+                        if (inst.is_selected(obj)) {
+                            inst.copy(inst.get_top_selected());
+                        } else {
+                            inst.copy(obj);
+                        }
+                    }
+                },
+                paste: {
+                    "label": locale.paste,
+                    "_disabled": function (data) {
+                        return !$.jstree.reference(data.reference).can_paste();
+                    },
+                    "action": function (data) {
+                        var obj = inst.get_node(data.reference);
+
+                        inst.paste(obj);
+                    }
+                }
+            };
+
+            return defaultItems;
+        };
         // }}}
 
         // go!
@@ -362,89 +452,6 @@
          * Context Menu
          */
         contextmenu: {
-            items: function (o, cb) {
-                var defaultItems = {
-                    rename: {
-                        "label": locale.rename,
-                        "_disabled": function(data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            return !inst.check("rename_node", data.reference, inst.get_parent(data.reference), "");
-                        },
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-                            inst.edit(obj);
-                        }
-                    },
-                    duplicate: {
-                        "label": locale.duplicate,
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            inst.copy_node(obj, obj, "after");
-                        }
-                    },
-                    remove: {
-                        "label": locale.delete,
-                        "_disabled": function(data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            return !inst.check("delete_node", data.reference, inst.get_parent(data.reference), "");
-                        },
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            inst.askDelete(obj);
-                        }
-                    },
-                    cut: {
-                        "label": locale.cut,
-                        "separator_before": true,
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            if (inst.is_selected(obj)) {
-                                inst.cut(inst.get_top_selected());
-                            } else {
-                                inst.cut(obj);
-                            }
-                        }
-                    },
-                    copy: {
-                        "label": locale.copy,
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            if (inst.is_selected(obj)) {
-                                inst.copy(inst.get_top_selected());
-                            } else {
-                                inst.copy(obj);
-                            }
-                        }
-                    },
-                    paste: {
-                        "label": locale.paste,
-                        "_disabled": function (data) {
-                            return !$.jstree.reference(data.reference).can_paste();
-                        },
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
-
-                            inst.paste(obj);
-                        }
-                    }
-                };
-
-                return defaultItems;
-            }
         },
     };
     // }}}
