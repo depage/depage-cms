@@ -74,7 +74,7 @@
             inst.element
                 .on("ready.jstree refresh.jstree", function(e) {
                     if (inst._data.nodeTypes.rootNodeType == "proj:library") {
-                        if (true || !inst._data.nodeTypes.userCanPublish) {
+                        if (!inst._data.nodeTypes.userCanPublish) {
                             var $toHide = inst.get_container_ul()
                                 .children(".jstree-node[data-url='/global/'], .jstree-node[data-url='/cache/']");
 
