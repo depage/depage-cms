@@ -165,7 +165,6 @@
             var nextId = jstree.get_node(jstree.get_next_dom(nodeId, true)).id;
             var parentId = jstree.get_parent(nodeId);
 
-            console.log(param);
             if (typeof prevId !== 'undefined') {
                 xmldb.createNodeAfter(param.node.li_attr.rel, prevId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else if (typeof nextId !== 'undefined') {
@@ -213,12 +212,10 @@
             if ($(e.target).hasClass("jstree-icon")) {
                 jstree.toggle_node(e.target);
             } else if ($(e.target).hasClass("jstree-anchor")) {
-                $target.find(".hint").remove();
-                jstree.edit($target, $target.text());
+                jstree.edit($target);
             } else if ($(e.target).hasClass("hint")) {
                 $label = $target.parent();
-                $target.remove();
-                jstree.edit($label, $label.text());
+                jstree.edit($label);
             }
         }, base);
         // }}}

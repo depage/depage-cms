@@ -66,10 +66,20 @@
         // }}}
         // {{{ edit()
         this.edit = function(obj, default_text, callback) {
-            parent.edit.call(this, obj, default_text, callback);
+            var inst = this._data.nodeTypes.inst;
+            var $node = inst.get_node(obj, true).children("a.jstree-anchor");
+            var $hint = $node.children("span").detach();
+            var $input;
+
+            parent.edit.call(this, obj, $node.text(), function(tmp, nv, cancel) {
+                var $node = inst.get_node(tmp, true).children("a.jstree-anchor");
+                $node.append($hint);
+            });
+
+            $input = $("input.jstree-rename-input");
 
             if (this._data.nodeTypes.rootNodeType == "proj:library") {
-                $("input.jstree-rename-input")
+                $input
                     .attr("pattern", "^[a-zA-Z0-9\-_]*$")
                     .on("keypress", function(e) {
                         var key = e.which;
@@ -232,7 +242,7 @@
                 var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'];
                 return validParents.indexOf(this.getNodeType(node_parent)) > -1 || validParents.indexOf('*') > -1;
             }
-            console.log(operation, node, node_parent);
+            //console.log(operation, node, node_parent);
 
             return true;
         };
