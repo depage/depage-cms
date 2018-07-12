@@ -17,7 +17,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="pg:* | sec:* | proj:folder">
+    <xsl:template match="pg:* | sec:* | proj:folder | edit:plain_source">
         <!-- only show nodes with namespace "pg" or "sec" in tree -->
         <xsl:apply-templates select="." mode="treeNode" />
     </xsl:template>
