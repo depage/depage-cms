@@ -548,9 +548,11 @@ var depageCMS = (function() {
             $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
                 var path = data.node.a_attr.href.replace(/libref:\/\//, "");
 
-                currentLibPath = path;
+                if (currentLibPath != path) {
+                    currentLibPath = path;
 
-                localJS.loadLibraryFiles(path);
+                    localJS.loadLibraryFiles(path);
+                }
             });
             $libraryTreeContainer.on("refresh.jstree", function(e, data) {
                 var selected = data.instance.get_selected(true);
@@ -558,9 +560,15 @@ var depageCMS = (function() {
                 if (typeof selected[0] == 'undefined') return;
                 var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
 
-                currentLibPath = path;
+                if (currentLibPath != path) {
+                    currentLibPath = path;
 
-                localJS.loadLibraryFiles(path);
+                    localJS.loadLibraryFiles(path);
+                }
+            });
+            $libraryTreeContainer.on("ready.jstree", function(e, data) {
+                $libraryTreeContainer.jstree(true).gainFocus();
+                $fileContainer.click();
             });
             $libraryTreeContainer.on("focus.jstree", function(e, data) {
                 $fileContainer.removeClass("focus");
@@ -570,6 +578,7 @@ var depageCMS = (function() {
 
             $fileContainer.on("click", function(e) {
                 $fileContainer.addClass("focus");
+                // @todo create toolbar for selected files
                 $libraryTreeContainer.jstree(true).looseFocus();
             });
             $fileContainer.on("click", "figure", function(e) {
@@ -721,6 +730,8 @@ var depageCMS = (function() {
             var path = $input[0].value.replace(/^libref:\/\//, '').replace(/[^\/]*$/, '') || currentLibPath;
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
+            currentLibPath = path;
+
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);
 
@@ -757,11 +768,10 @@ var depageCMS = (function() {
 
                 $dialogBar.prependTo($dialogContainer.children(".content"));
 
+                // @todo select input current file if available and scroll into view
                 $("figure.thumb[data-libref='" + $input[0].value + "']").addClass("selected");
 
                 localJS.setupLibrary();
-
-                // @todo select input current file if available and scroll into view
             });
         },
         // }}}
