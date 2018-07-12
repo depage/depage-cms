@@ -64,6 +64,28 @@
             this.settings.core.check_callback = this.checkTypes;
         };
         // }}}
+        // {{{ bind()
+        this.bind = function() {
+            parent.bind.call(this);
+
+            var inst = this;
+
+            // bind events
+            inst.element
+                .on("ready.jstree refresh.jstree", function(e) {
+                    if (inst._data.nodeTypes.rootNodeType == "proj:library") {
+                        if (true || !inst._data.nodeTypes.userCanPublish) {
+                            var $toHide = inst.get_container_ul()
+                                .children(".jstree-node[data-url='/global/'], .jstree-node[data-url='/cache/']");
+
+                            for (var i = 0; i < $toHide.length; i++) {
+                                inst.hide_node($toHide[i]);
+                            }
+                        }
+                    }
+                });
+        };
+        // }}}
         // {{{ edit()
         this.edit = function(obj, default_text, callback) {
             var inst = this._data.nodeTypes.inst;

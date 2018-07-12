@@ -568,7 +568,8 @@ class Tree extends Base {
             "maxDepth" => -2,
             "maxChildren" => -2,
             "validParents" => $permissions->validParents,
-            "availableNodes" => $permissions->availableNodes
+            "availableNodes" => $permissions->availableNodes,
+            "userCanPublish" => $this->authUser->canPublishProject(),
         ];
     }
     // }}}
