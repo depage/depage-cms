@@ -38,12 +38,13 @@ class FileLibrary extends Base
     // }}}
     // {{{ manager()
     function manager($path = "") {
-        $this->syncLibraryTree();
+        $path = rawurldecode($path);
+        $selected = $this->syncLibraryTree($path);
 
         // construct template
         $hLib = new Html("projectLibrary.tpl", [
             'projectName' => $this->project->name,
-            'tree' => $this->tree(),
+            'tree' => $this->tree($selected),
             'files' => $this->files($path),
         ], $this->htmlOptions);
 
@@ -63,9 +64,9 @@ class FileLibrary extends Base
      * @param mixed
      * @return void
      **/
-    public function tree()
+    public function tree($selected = "")
     {
-        $treeUrl = "project/{$this->projectName}/tree/files/";
+        $treeUrl = "project/{$this->projectName}/tree/files/{$selected}/";
         $uiTree = Tree::_factoryAndInit($this->conf, [
             'urlSubArgs' => [
                 $this->projectName,
@@ -78,7 +79,7 @@ class FileLibrary extends Base
             'htmlOptions' => $this->htmlOptions,
         ]);
 
-        return $uiTree->tree();
+        return $uiTree->tree($selected);
     }
     // }}}
     // {{{ files()
@@ -168,7 +169,7 @@ class FileLibrary extends Base
      * @param mixed
      * @return void
      **/
-    protected function syncLibraryTree()
+    protected function syncLibraryTree($selectedPath)
     {
         $xmldb = $this->project->getXmlDb();
         $doc = $xmldb->getDoc("files");
@@ -182,7 +183,27 @@ class FileLibrary extends Base
         }
         $xml = $doc->getXml();
 
-        $this->syncFolder($doc, $xml->documentElement);
+        $this->syncFolder($doc, $xml->documentElement, "", $path);
+
+        if (!empty($selectedPath)) {
+            $selectedPath = trim($selectedPath, '/');
+            $dirs = explode('/', $selectedPath);
+            $xpath = new \DOMXPath($xml);
+            $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
+
+            $query = "/proj:library";
+            foreach ($dirs as $dir) {
+                $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
+            }
+            $query .= "/@db:id";
+
+            $result = $xpath->evaluate($query);
+            if ($result->length == 1) {
+                return $result->item(0)->nodeValue;
+            } else {
+                return false;
+            }
+        }
     }
     // }}}
     // {{{ syncFolder()

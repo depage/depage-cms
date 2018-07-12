@@ -75,6 +75,7 @@
             xmldb = new DepageXmldb(baseUrl, base.$el.data("projectname"), base.$el.data("docname"));
 
             base.$el
+                .on("ready.jstree", base.onReady)
                 .on("rename_node.jstree", base.onRename)
                 .on("delete_node.jstree", base.onDelete)
                 .on("move_node.jstree", base.onMove)
@@ -91,6 +92,16 @@
         };
         // }}}
 
+        // {{{ onReady
+        base.onReady = $.proxy(function(e, param) {
+            var nodeId = base.$el.attr("data-selected-nodes");
+            var node = jstree.get_node(nodeId);
+
+            if (node) {
+                jstree.activate_node(node);
+            }
+        }, base);
+        // }}}
         // {{{ onRename
         base.onRename = $.proxy(function(e, param) {
             if (param.text == param.old) {
@@ -347,14 +358,6 @@
         ],
 
         /**
-         * Plugin configuration
-         */
-        ui: {
-            // @todo:
-            "initially_select" : ($(this).attr("data-selected-nodes") || "").split(" ")
-        },
-
-        /**
          * Core
          */
         core: {
@@ -367,7 +370,6 @@
                     return this.element.attr("data-tree-url") + "nodes/" + id;
                 },
             },
-            initially_open : ($(this).attr("data-open-nodes") || "").split(" "),
         },
 
         /**

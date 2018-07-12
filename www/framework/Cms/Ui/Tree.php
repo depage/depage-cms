@@ -94,7 +94,7 @@ class Tree extends Base {
      * @param $docName
      * @return bool|\html
      */
-    public function tree()
+    public function tree($selected = false)
     {
         $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/";
         $wsUrl = new \Depage\Html\Link("jstree", "wss", "");
@@ -110,6 +110,7 @@ class Tree extends Base {
             'rootId' => $this->docInfo->rootid,
             'seqNr' => $this->getCurrentSeqNr($this->docInfo->id),
             'settings' => $this->treeSettings(),
+            'selected' => $selected,
         ], $this->htmlOptions);
     }
     // }}}

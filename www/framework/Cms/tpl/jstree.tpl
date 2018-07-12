@@ -7,7 +7,7 @@
     data-node-id="<?php self::t($this->rootId); ?>"
     data-doc-id="<?php self::t($this->docId); ?>"
     data-seq-nr="<?php self::t($this->seqNr); ?>"
-    data-selected-nodes=""
+    data-selected-nodes="<?php self::t($this->selected ? $this->selected : ""); ?>"
     data-open-nodes=""
     data-tree-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-delta-updates-websocket-url="<?php self::t($this->wsUrl); ?>"
