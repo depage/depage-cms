@@ -66,9 +66,10 @@
     $scale: $size / 48px;
     $iSize: 48px * $scale;
     $icons: (
-        projects: 0 0,
+        depagecms: 0 0,
         users: 0 1,
         user: 1 1,
+        projects: 2 1,
         tasks: 0 2,
         settings: 1 2,
         left-full: 0 3,
@@ -116,6 +117,9 @@
         sec-section-3col-1: 1 15,
         sec-section-3col-2: 2 15,
         sec-section-3col-3: 3 15,
+        create: 0 17,
+        duplicate: 1 17,
+        delete: 2 17,
     );
 
     @if map_has_key($icons, $name) {

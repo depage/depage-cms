@@ -56,7 +56,6 @@
         > span.mini-thumb {
             position: absolute;
             top: ($treeLineHeight - $iconSize) / 2;
-            top: 0;
             left: -1 * $iconSize - 1px;
             width: $iconSize;
             height: $iconSize;

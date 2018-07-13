@@ -2,9 +2,9 @@
     <menu class="left">
         <li><a <?php self::attr([
                 "href" => " ",
-                "class" => "home",
+                "class" => "home icon-depagecms",
                 "data-live-help" => _("Go to dashboard"),
-            ]); ?>>depage::cms</a></li>
+            ]); ?>>depage-cms</a></li>
     </menu>
     <menu class="preview">
         <!-- empty placeholder - content is added with javascript -->

@@ -67,9 +67,22 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 20px;
+            line-height: 22px;
             height: 27px;
 
+            &.icon-delete,
+            &.icon-duplicate {
+                width: 28px;
+                margin-right: 8px;
+            }
+            &.home:hover {
+                background: transparent;
+            }
+
+            &.icon-depagecms,
+            &.icon-create,
+            &.icon-duplicate,
+            &.icon-delete,
             &.icon-user,
             &.icon-help,
             &.icon-projects,
@@ -80,9 +93,10 @@
                     width: 24px;
                     height: 24px;
                     @include icon-base();
-                    margin-bottom: -8px;
-                    margin-left: -2px;
-                    margin-right: 6px;
+                    vertical-align: top;
+                    margin-top: -1px;
+                    margin-left: -6px;
+                    margin-right: 2px;
                 }
                 @media screen and (max-width: 1200px) {
                     width: 34px;
@@ -91,6 +105,18 @@
                         margin-right: 20px;
                     }
                 }
+            }
+            &.icon-depagecms:before {
+                @include icon("depagecms", 24px);
+            }
+            &.icon-create:before {
+                @include icon("create", 24px);
+            }
+            &.icon-duplicate:before {
+                @include icon("duplicate", 24px);
+            }
+            &.icon-delete:before {
+                @include icon("delete", 24px);
             }
             &.icon-user:before {
                 @include icon("user", 24px);
@@ -197,7 +223,6 @@
             @include box-shadow(0 3px 0.4em 0 #aaaaaa);
         }
     }
-    h1,
     a,
     span.zoom-select {
         display: block;
@@ -205,11 +230,6 @@
         line-height: $menuLineHeight;
         height: $menuLineHeight;
         padding: 2px 8px;
-    }
-    h1 {
-        padding-left: 12px;
-        margin-top: 1px;
-        font-size: $fSizeMenu;
     }
     a {
         span {
