@@ -129,9 +129,32 @@
 }
 // }}}
 // {{{ jstree node-actions
-.jstree-node {
-    $actionIconHeight: $treeLineHeight * 0.5 + 4px;
+.jstree-container-ul {
+    position: relative;
 
+    &::after {
+        position: absolute;
+        content: " ";
+        font-weight: bold !important;
+        bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
+        right: $treeLineHeight * 0.5;
+        width: $actionIconHeight;
+        height: $actionIconHeight;
+        line-height: $actionIconHeight - 3px;
+        @include radius($actionIconHeight * 0.5);
+        color: $selectionTextColor;
+        background-color: $backgroundDisabledColor;
+        text-align: center;
+        @include icon-base("add-white", $actionIconHeight);
+        cursor: pointer;
+    }
+}
+.jstree-focus .jstree-container-ul {
+    &::after {
+        background-color: $insertMarkerBackground;
+    }
+}
+.jstree-node {
     > .jstree-anchor::after {
         content: " ";
         display: none;
@@ -361,7 +384,7 @@
     background: transparent;
 }
 .jstree-container-ul {
-    margin-bottom: 2 * $treeLineHeight;
+    padding-bottom: 2 * $treeLineHeight;
 }
 .jstree-open > .jstree-ocl {
     @include icon("open", $iconSize);

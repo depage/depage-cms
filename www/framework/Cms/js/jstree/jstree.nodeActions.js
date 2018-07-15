@@ -92,6 +92,17 @@
                     } else if (nodesForParent.length > 0 && e.offsetY > this.clientHeight / 2) {
                         $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForParent, inst.insertCallback(node, "after")));
                     }
+                    e.stopPropagation();
+                })
+                .on("click.jstree", ".jstree-container-ul", function(e) {
+                    var $container = $(this);
+                    if ($container.height() < e.offsetY && $container.width() - 50 < e.offsetX) {
+                        var node = inst.get_node($container.parent());
+                        var nodesForSelf = inst.getAvailableNodesFor(node);
+
+                        // @todo get correct position for menu
+                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                    }
                 });
 
             // @todo unbind events when tree is destroyed?

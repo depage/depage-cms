@@ -235,8 +235,6 @@
 
         // {{{ contextMenuItems
         base.contextMenuItems = function(o, cb) {
-            console.log(o);
-            console.log(jstree);
             var inst = jstree;
 
             var defaultItems = {
