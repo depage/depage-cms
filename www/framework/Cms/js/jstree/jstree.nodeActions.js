@@ -118,6 +118,18 @@
                     inst.element.find(".jstree-node.insert-into").removeClass("insert-into");
                     inst.element.find(".jstree-node.insert-before").removeClass("insert-before");
                     inst.element.find(".jstree-node.insert-after").removeClass("insert-after");
+                })
+                .on("dnd_move.vakata", function(e, data) {
+                    var $parent = $('.jstree-hovered');
+
+                    if ($parent.length > 0) {
+                        var $marker = $('#jstree-marker');
+                        if ($parent.parent().hasClass("jstree-dnd-parent")) {
+                            $marker.width(0);
+                        } else {
+                            $marker.width($parent.width() + 5);
+                        }
+                    }
                 });
         };
         // }}}
