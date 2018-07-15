@@ -195,6 +195,14 @@
             background-color: $insertMarkerBackground;
         }
     }
+    &.insert-into,
+    &.insert-before,
+    &.insert-after {
+        & > .jstree-anchor {
+            background: transparent;
+            color: #000000 !important;
+        }
+    }
     &.insert-into  {
         > .jstree-node-actions::after {
             content: " ";
