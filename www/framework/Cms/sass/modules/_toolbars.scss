@@ -70,11 +70,6 @@
             line-height: 20px;
             height: 27px;
 
-            &.icon-delete,
-            &.icon-duplicate {
-                width: 28px;
-                margin-right: 8px;
-            }
             &.home:hover {
                 background: transparent;
                 border-top: 1px solid transparent;
@@ -97,11 +92,34 @@
                     @include icon-base();
                     vertical-align: top;
                     margin-top: -2px;
-                    margin-left: -6px;
+                    margin-left: -5px;
                     margin-right: 2px;
                 }
+            }
+            &.icon-delete,
+            &.icon-duplicate {
+                width: 30px;
+
+                &:before {
+                    margin-right: 20px;
+                }
+            }
+            &.icon-depagecms,
+            &.icon-create,
+            &.icon-duplicate,
+            &.icon-delete {
+                @media screen and (max-width: 1030px) {
+                    width: 30px;
+
+                    &:before {
+                        margin-right: 20px;
+                    }
+                }
+            }
+            &.icon-user,
+            &.icon-projects {
                 @media screen and (max-width: 1200px) {
-                    width: 34px;
+                    width: 30px;
 
                     &:before {
                         margin-right: 20px;
