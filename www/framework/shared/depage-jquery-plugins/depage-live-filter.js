@@ -59,6 +59,8 @@
                 if (key == 27) {
                     // clear filter on escape key
                     this.value = "";
+
+                    e.stopPropagation();
                 } else if (key == 13) {
                     if ($topItem !== null) {
                         // leave input on enter
@@ -68,6 +70,8 @@
                             base.options.onSelect($topItem);
                         }
                     }
+
+                    e.stopPropagation();
                 }
                 base.filterBy(this.value);
             });
