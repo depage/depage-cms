@@ -91,8 +91,10 @@
          * @return void
          */
         base.showDialogue = function(x, y){
-            base.show(x, y);
-            base.showButtons();
+            setTimeout(function() {
+                base.show(x, y);
+                base.showButtons();
+            }, 50);
         };
         /// }}}
 

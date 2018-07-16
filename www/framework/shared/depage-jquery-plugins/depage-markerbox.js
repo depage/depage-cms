@@ -61,13 +61,7 @@
                     var key = e.which || e.keyCode;
                     if (key == 27) {
                         base.hide();
-                        $(document).unbind('keyup.marker');
-                    };
-                });
-
-                // hide dialog when clicked outside
-                $(document).bind("click.marker", function() {
-                    base.hide();
+                    }
                 });
 
                 // stop propagation of hide when clicking inside the wrapper or input
@@ -75,8 +69,15 @@
                     e.stopPropagation();
                 });
 
-                this.$el.click(function(e) {
-                    e.stopPropagation();
+                if (base.options.bind_el) {
+                    this.$el.click(function(e) {
+                        e.stopPropagation();
+                    });
+                }
+
+                // hide dialog when clicked outside
+                $(document).bind("click.marker", function() {
+                    base.hide();
                 });
 
                 // allow chaining
@@ -94,7 +95,7 @@
              * @return void
              */
             hide : function(duration, callback) {
-                $("html").unbind("click.marker");
+                $(document).unbind("click.marker").unbind('keyup.marker');
                 if (!$dialogue) return;
 
                 duration = duration || base.options.fadeoutDuration;
