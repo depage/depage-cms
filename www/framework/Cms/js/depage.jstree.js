@@ -224,12 +224,15 @@
 
             if ($(e.target).hasClass("jstree-icon")) {
                 jstree.toggle_node(e.target);
-            } else if ($(e.target).hasClass("jstree-anchor")) {
-                jstree.edit($target);
+
+                return;
             } else if ($(e.target).hasClass("hint")) {
-                $label = $target.parent();
-                jstree.edit($label);
+                $target = $target.parent();
             }
+            setTimeout(function() {
+                jstree.edit($target);
+            }, 50);
+
         }, base);
         // }}}
 
