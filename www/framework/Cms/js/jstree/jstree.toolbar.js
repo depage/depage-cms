@@ -66,7 +66,16 @@
             var nodesForSelf = inst.getAvailableNodesFor(node);
 
             this.addToolbarButton(locale.create, "icon-create", function() {
-                $.vakata.context.show($(this), {x: 105, y: 29 }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                var $button = $(this);
+                var pos = $button.offset();
+                pos.top += $button.height() + 5;
+
+                $button.addClass("open");
+                $(document).one("context_hide.vakata", function() {
+                    $button.removeClass("open");
+                });
+
+                $.vakata.context.show($button, {x: pos.left, y: pos.top }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
             this.addToolbarButton(locale.duplicate, "icon-duplicate", function() {
                 inst.copy_node(node, node, "after");

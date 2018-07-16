@@ -72,8 +72,7 @@
 
             &.home:hover {
                 background: transparent;
-                border-top: 1px solid transparent;
-                border-bottom: 1px solid transparent;
+                border: 1px solid transparent;
             }
 
             &.icon-depagecms,
@@ -231,15 +230,22 @@
             }
         }
     }
-    menu li.open {
+    a.open,
+    menu li.open > a {
         &,
-        &:hover,
-        > a:hover {
-            @include gradient(lighten($backgroundColor, 7%), darken($backgroundColor, 2%));
+        &:hover {
+            color: $linkColor;
+            @include radius(0, "bottom", "left");
+            @include radius(0, "bottom", "right");
+            border: 1px solid $borderColor;
+            border-bottom-color: transparent !important;
+            background: $backgroundMenu;
         }
-
+    }
+    menu li.open {
         menu {
             display: block;
+            margin-top: -1px;
             @include box-shadow(0 3px 0.4em 0 #aaaaaa);
         }
     }
@@ -285,13 +291,13 @@
         }
 
         &:hover {
-            background-color: #eeeeee;
+            background-color: $backgroundMenu;
         }
     }
     .pills {
         a.button,
         a.toggle-button {
-            background-color: #eeeeee;
+            background-color: $backgroundMenu;
             border-right: 1px solid #dddddd;
             @include radius(0);
 

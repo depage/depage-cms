@@ -6,8 +6,8 @@
     display: none;
     position: absolute;
     border: 1px solid $borderColor;
-    z-index: 10002;
-    background-color: #eeeeee !important;
+    z-index: 11002;
+    background-color: $backgroundMenu;
     margin: 0;
     padding: 0;
     min-width: 200px;
@@ -35,11 +35,15 @@
             text-decoration: none;
             white-space: nowrap;
             line-height: $menuLineHeight;
+            height: $menuLineHeight;
             padding-top: 0;
             padding-bottom: 0;
+            color: $linkColor;
+            border: none;
+            @include radius(0);
 
             &:hover {
-                background-color: #ffffff;
+                background: #ffffff;
             }
             &:focus {
                 outline: 0;

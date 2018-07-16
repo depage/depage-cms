@@ -21,7 +21,7 @@
     .error span,
     .depage-form p.cancel input,
     .select-all button {
-        color: #882200;
+        color: $linkColor;
     }
     body {
         background: #ffffff
@@ -36,13 +36,13 @@
         background: none;
     }
     .toolbar a {
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
+        border: 1px solid transparent;
+        color: $textBaseColor;
 
         &:hover {
-            @include gradient(lighten($backgroundColor, 7%), darken($backgroundColor, 2%));
-            border-top: 1px solid lighten($backgroundColor, 10%);
-            border-bottom: 1px solid darken($backgroundColor, 10%);
+            @include gradient(lighten($backgroundColor, 10%), lighten($backgroundColor, 2%));
+            border-top-color: lighten($backgroundColor, 12%);
+            border-bottom-color: darken($backgroundColor, 0%);
         }
     }
     .centered_box .toolbar a:hover,
@@ -56,7 +56,7 @@
         color: #000000;
     }
     .projectlist div.details a:hover {
-        color: #882200;
+        color: $linkColor;
         background: $backgroundColor;
     }
     .projectlist div.details table.lastchanged_pages .date,
@@ -66,7 +66,7 @@
     }
     .projectlist div.details table.lastchanged_pages tr:hover a .date,
     .projectlist div.details table.lastchanged_pages tr:hover a {
-        color: #882200;
+        color: $linkColor;
     }
     .centered_box small  {
         color: #666666;
@@ -213,7 +213,7 @@ select,
 .projectlist a,
 .depage-form .submit input,
 .depage-form .cancel input {
-    @include radius(3px);
+    @include radius(4px);
     cursor: pointer;
 }
 /* }}} */
