@@ -1,19 +1,27 @@
-/* {{{ depage-live-filter */
-.content .depage-live-filter {
+// {{{ depage-live-filter
+.content .depage-live-filter,
+.library .depage-live-filter {
     position: absolute;
-    top: 8px;
-    right: 12px;
 
     input {
         font-size: 12px;
         padding: 2px 5px;
-        border: 1px solid #ffffff;
+        border: 1px solid $backgroundLighterColor;
+        @include radius(3px);
 
         &:focus {
-            border: 1px solid #000000;
+            border-color: $selectionBackgroundColor;
         }
     }
 }
-/* }}} */
+.content .depage-live-filter {
+    top: 8px;
+    right: 12px;
+}
+.library .depage-live-filter {
+    top: 15px;
+    right: 15px;
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

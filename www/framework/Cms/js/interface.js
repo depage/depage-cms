@@ -547,28 +547,28 @@ var depageCMS = (function() {
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
 
-            $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
-                var path = data.node.a_attr.href.replace(/libref:\/\//, "");
-
-                if (currentLibPath != path) {
-                    currentLibPath = path;
-
-                    localJS.loadLibraryFiles(path);
-                }
-            });
-            $libraryTreeContainer.on("refresh.jstree", function(e, data) {
-                var selected = data.instance.get_selected(true);
-
-                if (typeof selected[0] == 'undefined') return;
-                var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
-
-                if (currentLibPath != path) {
-                    currentLibPath = path;
-
-                    localJS.loadLibraryFiles(path);
-                }
-            });
             $libraryTreeContainer
+                .on("activate_node.jstree", function(e, data) {
+                    var path = data.node.a_attr.href.replace(/libref:\/\//, "");
+
+                    if (currentLibPath != path) {
+                        currentLibPath = path;
+
+                        localJS.loadLibraryFiles(path);
+                    }
+                })
+                .on("refresh.jstree", function(e, data) {
+                    var selected = data.instance.get_selected(true);
+
+                    if (typeof selected[0] == 'undefined') return;
+                    var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
+
+                    if (currentLibPath != path) {
+                        currentLibPath = path;
+
+                        localJS.loadLibraryFiles(path);
+                    }
+                })
                 .on("ready.jstree", function(e, data) {
                     $libraryTreeContainer.jstree(true).gainFocus();
                     $fileContainer.click();
@@ -768,7 +768,7 @@ var depageCMS = (function() {
                     localJS.removeFileChooser();
                 });
 
-                $(document).on("keydown.depageFileChooser", function(e) {
+                $(document).on("keyup.depageFileChooser", function(e) {
                     var key = e.which;
                     if (key === 27) { // ESC
                         localJS.removeFileChooser();
@@ -841,7 +841,7 @@ var depageCMS = (function() {
                         $.post(url, {
                             files: files
                         }, function() {
-                            $files.remove();
+                            $files.parent().remove();
                         });
 
                         return true;

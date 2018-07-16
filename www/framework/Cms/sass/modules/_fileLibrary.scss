@@ -109,12 +109,9 @@ figure.thumb {
     background: $backgroundBrightColor;
     @include transition(300ms, "background-color");
 
-    &.focus {
-        border-top: 1px solid $selectionBackgroundColor;
-        border-bottom: 1px solid $selectionBackgroundColor;
-        background: #ffffff;
+    h1 {
+        padding: 0;
     }
-
     progress {
         background-color: transparent;
     }
@@ -133,13 +130,27 @@ figure.thumb {
                 background: $backgroundBrightColor;
             }
             &.selected {
-                border-color: $selectionBackgroundColor;
-                background: $selectionBackgroundColor;
+                border-color: $backgroundDisabledColor;
+                background: $backgroundDisabledColor;
 
                 figcaption {
-                    color: $selectionTextColor;
-                    font-weight: bold;
+                    color: $selectionBackgroundColor;
                 }
+            }
+        }
+    }
+
+    &.focus {
+        border-top: 1px solid $selectionBackgroundColor;
+        border-bottom: 1px solid $selectionBackgroundColor;
+        background: #ffffff;
+
+        figure.thumb.selected {
+            border-color: $selectionBackgroundColor;
+            background: $selectionBackgroundColor;
+
+            figcaption {
+                color: $selectionTextColor;
             }
         }
     }

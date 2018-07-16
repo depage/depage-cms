@@ -24,9 +24,15 @@
             <p><?php self::t($info['name']); ?></p>
             <p><?php self::t(self::format_date($info['date'])); ?></p>
             <p><?php self::t($formatter->format($info['filesize'])); ?></p>
-            <p><?php self::t($info['width'] . "x" . $info['height'] . " px"); ?></p>
-            <p><?php self::t($info['copyright']); ?></p>
-            <p><?php self::t($info['description']); ?></p>
+            <?php if (isset($info['width'])) { ?>
+                <p><?php self::t($info['width'] . "x" . $info['height'] . " px"); ?></p>
+            <?php } ?>
+            <?php if (isset($info['copyright'])) { ?>
+                <p><?php self::t($info['copyright'] ?? ""); ?></p>
+            <?php } ?>
+            <?php if (isset($info['description'])) { ?>
+                <p><?php self::t($info['description'] ?? ""); ?></p>
+            <?php } ?>
         </div>
     </figcaption>
 </figure>
