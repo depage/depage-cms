@@ -228,10 +228,7 @@
                     }
                 },
                 cancel: {
-                    title: locale.cancel,
-                    click: function(e) {
-                        //console.log("cancel");
-                    }
+                    title: locale.cancel
                 }
             },{
                 bind_el: false,

@@ -81,21 +81,16 @@
                 $createButton.addClass("disabled");
             }
 
-            var $duplicateButton = this.addToolbarButton(locale.duplicate, "icon-duplicate", function() {
+            var $duplicateButton = this.addToolbarButton(locale.duplicate, "icon-duplicate icon-only", function() {
                 inst.copy_node(node, node, "after");
             });
 
-            var $deleteButton = this.addToolbarButton(locale.delete, "icon-delete", function() {
+            var $deleteButton = this.addToolbarButton(locale.delete, "icon-delete icon-only", function() {
                 inst.askDelete(node);
             });
             if (!inst.check("delete_node", node)) {
                 $deleteButton.addClass("disabled");
             }
-            /*
-            this.addToolbarButton(locale.reload, "button-reload", function() {
-                inst.refresh(true);
-            });
-            */
         };
         // }}}
         // {{{ destroy()
