@@ -101,7 +101,7 @@
                         var nodesForSelf = inst.getAvailableNodesFor(node);
 
                         // @todo get correct position for menu
-                        $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                        $.vakata.context.show($(this), {x: e.pageX, y: e.pageY }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
                     }
                 });
 
