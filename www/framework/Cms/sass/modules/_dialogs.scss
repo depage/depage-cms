@@ -84,6 +84,10 @@
                 background: $selectionBackgroundColor;
                 color: $selectionTextColor;
             }
+            &.default.disabled {
+                opacity: 0.5;
+                background: $backgroundDisabledColor;
+            }
         }
     }
     .dialog-bar + .library {

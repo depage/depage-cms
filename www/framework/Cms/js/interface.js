@@ -580,6 +580,13 @@ var depageCMS = (function() {
                 .depageTree();
 
             $fileContainer
+                .on("selectionChange.depage", function() {
+                    if ($fileContainer.find(".selected").length > 0) {
+                        $deleteButton.removeClass("disabled");
+                    } else {
+                        $deleteButton.addClass("disabled");
+                    }
+                })
                 .on("click", function(e) {
                     $fileContainer.addClass("focus");
                     $toolbar.addClass("visible");
@@ -590,11 +597,12 @@ var depageCMS = (function() {
                     var $thumbs = $fileContainer.find("figure");
                     var current = $thumbs.index(this);
 
-                    // @todo allow multiple select with ctrl and shift
+                    // allow multiple select with ctrl and shift
                     if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
                         $fileContainer.find(".selected").removeClass("selected");
                         last = false;
                     }
+                    // allow multiple select in row with shift
                     if (e.shiftKey) {
                         if (last !== false) {
                             var start = last;
@@ -613,11 +621,7 @@ var depageCMS = (function() {
                     last = current;
                     $thumbs.blur();
 
-                    if ($fileContainer.find(".selected").length > 0) {
-                        $deleteButton.removeClass("disabled");
-                    } else {
-                        $deleteButton.addClass("disabled");
-                    }
+                    $fileContainer.trigger("selectionChange.depage");
                 })
                 .on("dblclick", "figure", function(e) {
                     var $ok = $(".dialog-full .dialog-bar .button.default");
@@ -634,6 +638,7 @@ var depageCMS = (function() {
             var $form = $("#upload-to-lib");
             var $dropArea = $form.parents('.files');
             var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
+            var $fileContainer = $(".files .file-list");
 
             $form.find('input[type="submit"]').remove();
             $form.find('input[type="file"]').depageUploader({
@@ -646,7 +651,10 @@ var depageCMS = (function() {
             $(".file-list ul").depageLiveFilter("li", "figcaption");
             $(".file-list li").on("depage.filter-hidden", function() {
                 $("figure", this).removeClass("selected");
+                $fileContainer.trigger("selectionChange.depage");
             });
+
+            $fileContainer.trigger("selectionChange.depage");
         },
         // }}}
 
@@ -782,6 +790,16 @@ var depageCMS = (function() {
                 // @todo select input current file if available and scroll into view
                 $("figure.thumb[data-libref='" + $input[0].value + "']").addClass("selected");
 
+                var $fileContainer = $(".files .file-list");
+                $fileContainer
+                    .on("selectionChange.depage", function() {
+                        if ($fileContainer.find(".selected").length > 0) {
+                            $ok.removeClass("disabled");
+                        } else {
+                            $ok.addClass("disabled");
+                        }
+                    });
+
                 localJS.setupLibrary();
             });
         },
@@ -842,6 +860,7 @@ var depageCMS = (function() {
                             files: files
                         }, function() {
                             $files.parent().remove();
+                            $fileContainer.trigger("selectionChange.depage");
                         });
 
                         return true;
