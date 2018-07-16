@@ -371,91 +371,78 @@
                     return this.element.attr("data-tree-url") + "nodes/" + id;
                 },
             },
+            keyboard: {
+                'ctrl-space': function (e) {
+                    // aria defines space only with Ctrl
+                    e.type = "click";
+                    $(e.currentTarget).trigger(e);
+                },
+                'enter': function (e) {
+                    // enter
+                    e.type = "click";
+                    $(e.currentTarget).trigger(e);
+                },
+                'left': function (e) {
+                    // left
+                    e.preventDefault();
+                    if(this.is_open(e.currentTarget)) {
+                        this.close_node(e.currentTarget);
+                    } else {
+                        var o = this.get_parent(e.currentTarget);
+                        if (o && o.id !== $.jstree.root) { this.get_node(o, true).children('.jstree-anchor').click(); }
+                    }
+                },
+                'up': function (e) {
+                    // up
+                    e.preventDefault();
+                    var o = this.get_prev_dom(e.currentTarget);
+                    if (o && o.length) { o.children('.jstree-anchor').click(); }
+                },
+                'right': function (e) {
+                    // right
+                    e.preventDefault();
+                    if(this.is_closed(e.currentTarget)) {
+                            this.open_node(e.currentTarget, function (o) { this.get_node(o, true).children('.jstree-anchor').focus(); });
+                    }
+                    else if (this.is_open(e.currentTarget)) {
+                            var o = this.get_node(e.currentTarget, true).children('.jstree-children')[0];
+                            if(o) { $(this._firstChild(o)).children('.jstree-anchor').click(); }
+                    }
+                },
+                'down': function (e) {
+                    // down
+                    e.preventDefault();
+                    var o = this.get_next_dom(e.currentTarget);
+                    if(o && o.length) { o.children('.jstree-anchor').click(); }
+                },
+                '*': function (e) {
+                    // aria defines * on numpad as open_all - not very common
+                    this.open_all();
+                },
+                'home': function (e) {
+                    // home
+                    e.preventDefault();
+                    var o = this._firstChild(this.get_container_ul()[0]);
+                    if(o) { $(o).children('.jstree-anchor').filter(':visible').click(); }
+                },
+                'end': function (e) {
+                    // end
+                    e.preventDefault();
+                    this.element.find('.jstree-anchor').filter(':visible').last().click();
+                },
+                'f2': function (e) {
+                    // f2 - safe to include - if check_callback is false it will fail
+                    e.preventDefault();
+                    this.edit(e.currentTarget);
+                }
+            },
         },
-
-        /**
-         * Drag and drop
-         */
         dnd: {
             inside_pos: "last",
             touch: "selected"
         },
-
-        /**
-         * Hotkeys
-         */
-        disabled_keyboard: {
-            "up" : function() {
-                $.depage.jstree.keyUp.apply(this);
-            },
-            "ctrl+up" : function () {
-                $.depage.jstree.keyUp.apply(this);
-                return false;
-            },
-            "shift+up" : function () {
-                $.depage.jstree.keyUp.apply(this);
-                return false;
-            },
-            "down" : function(){
-                $.depage.jstree.keyDown.apply(this);
-                return false;
-            },
-            "ctrl+down" : function () {
-                $.depage.jstree.keyDown.apply(this);
-                return false;
-            },
-            "shift+down" : function () {
-                $.depage.jstree.keyDown.apply(this);
-                return false;
-            },
-            "left" : function () {
-                $.depage.jstree.keyLeft.apply(this);
-                return false;
-            },
-            "ctrl+left" : function () {
-                $.depage.jstree.keyLeft.apply(this);
-                return false;
-            },
-            "shift+left" : function () {
-                $.depage.jstree.keyLeft.apply(this);
-                return false;
-            },
-            "right" : function () {
-                $.depage.jstree.keyRight.apply(this);
-                return false;
-            },
-            "ctrl+right" : function () {
-                $.depage.jstree.keyRight.apply(this);
-                return false;
-            },
-            "shift+right" : function () {
-                $.depage.jstree.keyRight.apply(this);
-                return false;
-            },
-            "del" : function () {
-                var node = $(this.data.ui.selected[0] || this.data.ui.hovered[0]);
-
-                var offset = node.offset();
-
-                $depageTree = $.depage.jstree;
-
-                $depageTree.confirmDelete(offset.left, offset.top, function(){
-                    $depageTree.contextDelete(node);
-                });
-            },
-            "return" : function() {
-                // @todo bind enter key to prevent default so that we dont leave input on enter
-                var node = this;
-                setTimeout(function () { node.edit(); }, 300);
-                return false;
-            }
-        },
-
-        /**
-         * Context Menu
-         */
         contextmenu: {
-        },
+        }
     };
     // }}}
 
