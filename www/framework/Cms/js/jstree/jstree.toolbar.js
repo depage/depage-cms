@@ -65,7 +65,7 @@
 
             var nodesForSelf = inst.getAvailableNodesFor(node);
 
-            this.addToolbarButton(locale.create, "icon-create", function() {
+            var $createButton = this.addToolbarButton(locale.create, "icon-create", function() {
                 var $button = $(this);
                 var pos = $button.offset();
                 pos.top += $button.height() + 5;
@@ -77,12 +77,20 @@
 
                 $.vakata.context.show($button, {x: pos.left, y: pos.top }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
             });
-            this.addToolbarButton(locale.duplicate, "icon-duplicate", function() {
+            if (nodesForSelf.length == 0) {
+                $createButton.addClass("disabled");
+            }
+
+            var $duplicateButton = this.addToolbarButton(locale.duplicate, "icon-duplicate", function() {
                 inst.copy_node(node, node, "after");
             });
-            this.addToolbarButton(locale.delete, "icon-delete", function() {
+
+            var $deleteButton = this.addToolbarButton(locale.delete, "icon-delete", function() {
                 inst.askDelete(node);
             });
+            if (!inst.check("delete_node", node)) {
+                $deleteButton.addClass("disabled");
+            }
             /*
             this.addToolbarButton(locale.reload, "button-reload", function() {
                 inst.refresh(true);
@@ -105,9 +113,13 @@
                 .addClass("button")
                 .addClass(className)
                 .attr("title", name)
-                .on("click", callback);
+                .on("click", function() {
+                    if (!$(this).hasClass("disabled")) callback.apply(this);
+                });
 
             $button.appendTo(this._data.toolbar.$el);
+
+            return $button;
         };
         // }}}
     };

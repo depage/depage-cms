@@ -70,6 +70,16 @@
             line-height: 20px;
             height: 27px;
 
+            &.disabled {
+                &,
+                &:hover {
+                    background: transparent !important;
+                }
+                &:before {
+                    opacity: 0.5;
+                }
+            }
+
             &.home:hover {
                 background: transparent;
                 border: 1px solid transparent;
@@ -97,7 +107,7 @@
             }
             &.icon-delete,
             &.icon-duplicate {
-                width: 30px;
+                width: 32px;
 
                 &:before {
                     margin-right: 20px;
@@ -108,7 +118,7 @@
             &.icon-duplicate,
             &.icon-delete {
                 @media screen and (max-width: 1030px) {
-                    width: 30px;
+                    width: 32px;
 
                     &:before {
                         margin-right: 20px;
@@ -297,6 +307,7 @@
     .pills {
         a.button,
         a.toggle-button {
+            width: 28px;
             background-color: $backgroundMenu;
             border-right: 1px solid #dddddd;
             @include radius(0);
