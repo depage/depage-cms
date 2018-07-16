@@ -10,7 +10,7 @@
         $direction-size: 30px
     );
 
-    z-index: 15000 !important;
+    z-index: 9000 !important;
 
     .wrapper {
         @include box-shadow($shadow);
@@ -29,7 +29,7 @@
     right: 0;
     top: $toolbarHeight - 1px;
     bottom: 0;
-    z-index: 10002;
+    z-index: 5002;
     opacity: 0;
     background: rgba(0, 0, 0, 0.3);
     @include transition(500ms, "opacity");

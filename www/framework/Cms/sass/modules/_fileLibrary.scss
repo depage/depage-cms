@@ -36,7 +36,7 @@ figure.thumb {
         left: 0;
         width: 200%;
         text-align: left;
-        z-index: 10000;
+        z-index: 5000;
         @include box-shadow($shadow);
 
         p {

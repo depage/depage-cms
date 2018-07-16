@@ -120,6 +120,7 @@
     line-height: 0;
     border-top: 1px solid $insertMarkerBackground;
     border-bottom: 1px solid $insertMarkerBackground;
+    z-index: 12000 !important;
 
     &:before {
         content: " ";

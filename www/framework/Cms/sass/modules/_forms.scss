@@ -179,7 +179,7 @@
         }
         &.dragged {
             position: absolute;
-            z-index: 10000;
+            z-index: 5000;
 
             h1 {
                 background: #ffffff;
@@ -225,7 +225,7 @@
         }
         &.dragged {
             position: absolute;
-            z-index: 10000;
+            z-index: 5000;
 
             h1 {
                 background: #ffffff;
