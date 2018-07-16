@@ -148,7 +148,7 @@ class MediaInfo
             $info['name'] = $fileinfo['basename'];
             $info['path'] = $fileinfo['dirname'];
             $info['basename'] = $fileinfo['basename'];
-            $info['extension'] = $fileinfo['extension'];
+            $info['extension'] = $fileinfo['extension'] ?? "";
             $info['fullpath'] = $this->filename;
             $info['realpath'] = realpath($this->filename);
             $info['filesize'] = filesize($this->filename);
