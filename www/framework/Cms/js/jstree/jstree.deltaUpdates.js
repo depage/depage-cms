@@ -293,10 +293,12 @@
         // }}}
         // {{{ destroy()
         this.destroy = function(keep_html) {
-            var $tree = this.element;
-            this._data.deltaUpdates.ws.unsubscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"));
-            this._data.deltaUpdates.ws.offmessage( this.onmessage );
-            //this._data.deltaUpdates.ws.close();
+            if (this._data.deltaUpdates.ws) {
+                var $tree = this.element;
+
+                this._data.deltaUpdates.ws.unsubscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"));
+                this._data.deltaUpdates.ws.offmessage( this.onmessage );
+            }
             this._data.deltaUpdates.ws = null;
 
             parent.destroy.call(this, keep_html);
