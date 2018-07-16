@@ -126,6 +126,7 @@ class FileLibrary extends Base
         foreach ($files as $file) {
             if (strpos($file, "libref://") === 0) {
                 $file = substr($file, 9);
+                // @todo move file to trash instead of directly deleting it?
                 $this->fs->rm($file);
 
                 $cachePath = $this->project->getProjectPath() . "lib/cache/";

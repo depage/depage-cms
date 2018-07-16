@@ -543,7 +543,7 @@ var depageCMS = (function() {
         setupLibrary: function() {
             var $libraryTreeContainer = $(".tree.library .jstree-container");
             var $fileContainer = $(".files .file-list");
-            var $toolbar = $("<span></span>").appendTo("#toolbarmain .tree-actions");
+            var $toolbar = $("<span class=\"toolbar-filelist\"></span>").appendTo("#toolbarmain .tree-actions");
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
 
@@ -797,9 +797,10 @@ var depageCMS = (function() {
             }
 
             $(document).off("keypress.depageFileChooser");
+            $(".toolbar-filelist").remove();
             $(".tree.library .jstree-container").jstree(true).destroy();
 
-            // @todo focus document tree
+            // focus document tree
             $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
 
             $dialogContainer.removeClass("visible");
@@ -822,6 +823,15 @@ var depageCMS = (function() {
 
             var pos = $files.eq(0).offset();
             var url = baseUrl + "project/" + projectName + "/library/delete/";
+            var markerDirection = "LC";
+
+            pos.top += 135;
+            if (pos.left > $(window).width() - 400) {
+                markerDirection = "RC";
+                pos.left += 20;
+            } else {
+                pos.left += 100;
+            }
 
             $body.depageShyDialogue({
                 ok: {
@@ -842,14 +852,14 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: "LC",
+                direction: markerDirection,
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
             });
 
             // @todo add click event outside of shy dialogue to hide it
-            $body.data("depage.shyDialogue").showDialogue(pos.left + 100, pos.top + 135);
+            $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
         // }}}
         // {{{ loadLibraryFiles

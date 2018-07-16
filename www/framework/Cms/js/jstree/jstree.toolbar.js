@@ -81,9 +81,11 @@
                 $createButton.addClass("disabled");
             }
 
-            var $duplicateButton = this.addToolbarButton(locale.duplicate, "icon-duplicate icon-only", function() {
-                inst.copy_node(node, node, "after");
-            });
+            if (inst._data.nodeTypes.rootNodeType != "proj:library") {
+                var $duplicateButton = this.addToolbarButton(locale.duplicate, "icon-duplicate icon-only", function() {
+                    inst.copy_node(node, node, "after");
+                });
+            }
 
             var $deleteButton = this.addToolbarButton(locale.delete, "icon-delete icon-only", function() {
                 inst.askDelete(node);
