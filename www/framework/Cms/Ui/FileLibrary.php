@@ -112,6 +112,38 @@ class FileLibrary extends Base
         ], $this->htmlOptions);
     }
     // }}}
+    // {{{ delete()
+    /**
+     * @brief files
+     *
+     * @param mixed $path = "/"
+     * @return void
+     **/
+    public function delete($path = "")
+    {
+        $files = $_POST['files'];
+
+        foreach ($files as $file) {
+            if (strpos($file, "libref://") === 0) {
+                $file = substr($file, 9);
+                $this->fs->rm($file);
+
+                $cachePath = $this->project->getProjectPath() . "lib/cache/";
+                if (is_dir($cachePath)) {
+                    // remove thumbnails from cache inside of project if available
+                    $cache = \Depage\Cache\Cache::factory("graphics", [
+                        'cachepath' => $cachePath,
+                    ]);
+                    $cache->delete("lib/" . $file . ".*");
+                }
+
+                // remove thumbnails from global graphics cache
+                $cache = \Depage\Cache\Cache::factory("graphics");
+                $cache->delete("projects/" . $this->project->name . "/lib/" . $file . ".*");
+            }
+        }
+    }
+    // }}}
     // {{{ upload()
     /**
      * @brief upload
@@ -137,7 +169,7 @@ class FileLibrary extends Base
                 foreach ($values['file'] as $file) {
                     $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
                     rename($file['tmp_name'], $targetPath . "/" . $filename);
-                    $_SESSION['dpLibraryUploadedFiles'][] = $path . "/" . $filename;
+                    $_SESSION['dpLibraryUploadedFiles'][] = $path . $filename;
 
                     $cachePath = $this->project->getProjectPath() . "lib/cache/";
                     if (is_dir($cachePath)) {

@@ -543,6 +543,8 @@ var depageCMS = (function() {
         setupLibrary: function() {
             var $libraryTreeContainer = $(".tree.library .jstree-container");
             var $fileContainer = $(".files .file-list");
+            var $toolbar = $("<span></span>").appendTo("#toolbarmain .tree-actions");
+            var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
 
             $libraryTreeContainer.on("activate_node.jstree", function(e, data) {
@@ -566,54 +568,63 @@ var depageCMS = (function() {
                     localJS.loadLibraryFiles(path);
                 }
             });
-            $libraryTreeContainer.on("ready.jstree", function(e, data) {
-                $libraryTreeContainer.jstree(true).gainFocus();
-                $fileContainer.click();
-            });
-            $libraryTreeContainer.on("focus.jstree", function(e, data) {
-                $fileContainer.removeClass("focus");
-            });
+            $libraryTreeContainer
+                .on("ready.jstree", function(e, data) {
+                    $libraryTreeContainer.jstree(true).gainFocus();
+                    $fileContainer.click();
+                })
+                .on("focus.jstree", function(e, data) {
+                    $fileContainer.removeClass("focus");
+                    $toolbar.removeClass("visible");
+                })
+                .depageTree();
 
-            $libraryTreeContainer.depageTree();
+            $fileContainer
+                .on("click", function(e) {
+                    $fileContainer.addClass("focus");
+                    $toolbar.addClass("visible");
+                    // @todo create toolbar for selected files
+                    $libraryTreeContainer.jstree(true).looseFocus();
+                })
+                .on("click", "figure", function(e) {
+                    var $thumbs = $fileContainer.find("figure");
+                    var current = $thumbs.index(this);
 
-            $fileContainer.on("click", function(e) {
-                $fileContainer.addClass("focus");
-                // @todo create toolbar for selected files
-                $libraryTreeContainer.jstree(true).looseFocus();
-            });
-            $fileContainer.on("click", "figure", function(e) {
-                var $thumbs = $fileContainer.find("figure");
-                var current = $thumbs.index(this);
-
-                // @todo allow multiple select with ctrl and shift
-                if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
-                    $fileContainer.find(".selected").removeClass("selected");
-                    last = false;
-                }
-                if (e.shiftKey) {
-                    if (last !== false) {
-                        var start = last;
-                        var end = current;
-                        if (last > current) {
-                            start = current;
-                            end = last;
-                        }
-                        for (var i = start; i <= end; i++) {
-                            $thumbs.eq(i).addClass("selected");
-                        }
+                    // @todo allow multiple select with ctrl and shift
+                    if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+                        $fileContainer.find(".selected").removeClass("selected");
+                        last = false;
                     }
-                } else {
-                    $(this).toggleClass("selected");
-                }
-                last = current;
-                $thumbs.blur();
-            });
-            $fileContainer.on("dblclick", "figure", function(e) {
-                var $ok = $(".dialog-full .dialog-bar .button.default");
-                if ($ok.length == 1) {
-                    $ok.click();
-                }
-            });
+                    if (e.shiftKey) {
+                        if (last !== false) {
+                            var start = last;
+                            var end = current;
+                            if (last > current) {
+                                start = current;
+                                end = last;
+                            }
+                            for (var i = start; i <= end; i++) {
+                                $thumbs.eq(i).addClass("selected");
+                            }
+                        }
+                    } else {
+                        $(this).toggleClass("selected");
+                    }
+                    last = current;
+                    $thumbs.blur();
+
+                    if ($fileContainer.find(".selected").length > 0) {
+                        $deleteButton.removeClass("disabled");
+                    } else {
+                        $deleteButton.addClass("disabled");
+                    }
+                })
+                .on("dblclick", "figure", function(e) {
+                    var $ok = $(".dialog-full .dialog-bar .button.default");
+                    if ($ok.length == 1) {
+                        $ok.click();
+                    }
+                });
 
             localJS.setupFileList();
         },
@@ -795,6 +806,50 @@ var depageCMS = (function() {
             setTimeout(function() {
                 $dialogContainer.remove();
             }, 500);
+        },
+        // }}}
+        // {{{ deleteSelectedFiles()
+        deleteSelectedFiles: function() {
+            var $fileContainer = $(".files .file-list");
+            var $files = $fileContainer.find(".selected");
+            var files = [];
+
+            if ($files.length == 0) return;
+
+            $files.each(function() {
+                files.push($(this).attr("data-libref"));
+            });
+
+            var pos = $files.eq(0).offset();
+            var url = baseUrl + "project/" + projectName + "/library/delete/";
+
+            $body.depageShyDialogue({
+                ok: {
+                    title: locale.delete,
+                    classes: 'default',
+                    click: function(e) {
+                        $.post(url, {
+                            files: files
+                        }, function() {
+                            $files.remove();
+                        });
+
+                        return true;
+                    }
+                },
+                cancel: {
+                    title: locale.cancel
+                }
+            },{
+                bind_el: false,
+                direction: "LC",
+                directionMarker: true,
+                title: locale.delete,
+                message: locale.deleteQuestion
+            });
+
+            // @todo add click event outside of shy dialogue to hide it
+            $body.data("depage.shyDialogue").showDialogue(pos.left + 100, pos.top + 135);
         },
         // }}}
         // {{{ loadLibraryFiles
@@ -1107,6 +1162,24 @@ var depageCMS = (function() {
             $upload.remove();
 
             $(document).unbind('keyup.uploader');
+        },
+        // }}}
+
+        // {{{ addToolbarButton
+        addToolbarButton: function($container, name, className, callback) {
+            var $button = $("<a></a>");
+            $button
+                .text(name)
+                .addClass("button")
+                .addClass(className)
+                .attr("title", name)
+                .on("click", function() {
+                    if (!$(this).hasClass("disabled")) callback.apply(this);
+                });
+
+            $button.appendTo($container);
+
+            return $button;
         },
         // }}}
 
