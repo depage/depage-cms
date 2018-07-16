@@ -570,7 +570,6 @@ var depageCMS = (function() {
                     }
                 })
                 .on("ready.jstree", function(e, data) {
-                    $libraryTreeContainer.jstree(true).gainFocus();
                     $fileContainer.click();
                 })
                 .on("focus.jstree", function(e, data) {
@@ -750,6 +749,9 @@ var depageCMS = (function() {
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
             currentLibPath = path;
+
+            $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
+            $pagedataTreeContainer.children(".jstree-container").jstree(true).looseFocus();
 
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);
