@@ -37,6 +37,32 @@
         }
     }
     p.input-richtext .textarea-content {
+        a {
+            color: $selectionBackgroundColor;
+            text-decoration: underline;
+        }
+        li {
+            padding: 0;
+        }
+        p,
+        ul,
+        ol {
+            margin-bottom: 7px;
+            padding: 0;
+        }
+        ul,
+        ol {
+            &,
+            li {
+                font-size: 1em;
+            }
+        }
+        ul li {
+            @include custom-bullet("–", 1.8em);
+        }
+        ol li {
+            @include custom-numbering(".", 1.8em);
+        }
         table {
             width: 100%;
             max-width: 100%;
