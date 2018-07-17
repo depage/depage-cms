@@ -243,11 +243,10 @@
     menu li.open > a {
         &,
         &:hover {
-            color: $linkColor;
+            color: $textBrightColor;
             @include radius(0, "bottom", "left");
             @include radius(0, "bottom", "right");
-            border: 1px solid $borderColor;
-            border-bottom-color: transparent !important;
+            border-color: transparent !important;
             background: $backgroundMenu;
         }
     }
@@ -255,8 +254,16 @@
         menu {
             display: block;
             margin-top: -1px;
-            @include box-shadow(0 3px 0.4em 0 #aaaaaa);
+            @include box-shadow($shadow);
+            @include radius(4px);
         }
+    }
+    menu.left li.open menu,
+    menu.preview li.open menu {
+        @include radius(0, "top", "left");
+    }
+    menu.right li.open menu {
+        @include radius(0, "top", "right");
     }
     a,
     span.zoom-select {
@@ -307,7 +314,7 @@
         a.button,
         a.toggle-button {
             width: 28px;
-            background-color: $backgroundMenu;
+            background-color: $backgroundLighterColor;
             border-right: 1px solid #dddddd;
             @include radius(0);
 

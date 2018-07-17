@@ -5,13 +5,13 @@ $editWidth: 3 * $treeWidth !global;
 
 $baseColor: #ccc8c4 !global;
 $backgroundColor: lighten($baseColor, 5%) !global;
-$backgroundDarkColor: transparentize(darken($baseColor, 70%), 0.15) !global;
+$backgroundDarkColor: transparentize(darken($baseColor, 65%), 0.12) !global;
 $backgroundLighterColor: lighten($backgroundColor, 10%) !global;
 $backgroundBrightColor: lighten($backgroundColor, 12%) !global;
 $backgroundDisabledColor: #cccccc;
-$backgroundMenu: #eeeeee;
-$borderColor: #bbbbbb !global;
+$backgroundMenu: $backgroundDarkColor;
 $borderColor: darken($baseColor, 5%) !global;
+$borderDarkColor: darken($borderColor, 25%);
 $linkColor: #882200;
 $textBaseColor: #000000 !global;
 $textLighterColor: #888888 !global;
@@ -21,8 +21,8 @@ $selectionTextColor: #ffffff !global;
 $insertMarkerBackground: lighten($selectionBackgroundColor, 10%) !global;
 $cornerRadius: 0.4em !global;
 
-$shadow: 0 3px 0.5em 0 #aaaaaa !global;
-$darkShadow: 0 3px 1.5em 0 #333333 !global;
+$shadow: 0 3px 0.5em 0 #000000 !global;
+$darkShadow: 0 3px 1.5em 0 #000000 !global;
 
 $fSizeM: 13px !global;
 $fSizeS: 11px !global;

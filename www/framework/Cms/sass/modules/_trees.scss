@@ -306,13 +306,14 @@
 }
 .jstree-clicked,
 .jstree-clicked.jstree-hovered {
-    background: $backgroundDisabledColor;
-    color: $selectionTextColor !important;
+    background: $backgroundColor;
+    color: $textBaseColor !important;
 }
 .jstree-focus {
     .jstree-clicked,
     .jstree-clicked.jstree-hovered {
         background: $selectionBackgroundColor;
+        color: $selectionTextColor !important;
     }
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {

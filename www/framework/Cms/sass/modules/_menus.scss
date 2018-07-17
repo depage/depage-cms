@@ -5,12 +5,15 @@
 .vakata-context ul {
     display: none;
     position: absolute;
-    border: 1px solid $borderColor;
+    border: transparent;
     z-index: 6002;
     background-color: $backgroundMenu;
     margin: 0;
     padding: 0;
     min-width: 200px;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+
     @include box-shadow($shadow);
 }
 .toolbar li menu,
@@ -25,6 +28,7 @@
         margin: 0;
         padding: 0;
         line-height: $menuLineHeight;
+        color: $textBrightColor;
 
         > a {
             clear: left;
@@ -38,12 +42,12 @@
             height: $menuLineHeight;
             padding-top: 0;
             padding-bottom: 0;
-            color: $linkColor;
+            color: $textBrightColor;
             border: none;
             @include radius(0);
 
             &:hover {
-                background: #ffffff;
+                background: $selectionBackgroundColor;
             }
             &:focus {
                 outline: 0;
@@ -53,6 +57,11 @@
 }
 
 .vakata-context {
+    &,
+    ul {
+        @include radius(4px);
+    }
+
     ul {
         list-style: none;
         left: 100%;
@@ -81,7 +90,7 @@
         }
     }
     .vakata-context-separator {
-        border-top: 1px solid $borderColor;
+        border-top: 1px solid $borderDarkColor;
         height: 1px;
         min-height: 1px;
         max-height: 1px;
