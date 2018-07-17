@@ -204,8 +204,14 @@
             a.right {
                 clear: none;
                 float: right;
-                width: 34px;
+                width: 32px;
                 margin-left: -100%;
+
+                &:before {
+                    margin-top: 4px;
+                    margin-left: -2px;
+                    margin-right: 4px;
+                }
             }
             .depage-live-filter {
                 text-align: right;

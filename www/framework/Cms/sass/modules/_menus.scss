@@ -7,10 +7,10 @@
     position: absolute;
     border: transparent;
     z-index: 6002;
-    background-color: $backgroundMenu;
     margin: 0;
     padding: 0;
     min-width: 200px;
+    background-color: $backgroundMenu;
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
 
