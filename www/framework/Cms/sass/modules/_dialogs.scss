@@ -5,7 +5,7 @@
     @include depage-shy-dialogue (
         $width: 20em,
         $padding: 10px,
-        $background: $backgroundColor,
+        $background: $backgroundDarkColor,
         $corner-radius: 10px,
         $direction-size: 30px
     );
@@ -18,7 +18,13 @@
     h1,
     p,
     a {
+        color: $textBrightColor;
         font-size: 1em;
+    }
+    a.button.default {
+        padding: 6px 12px;
+        background: $selectionBackgroundColor;
+        color: $textBrightColor;
     }
 }
 // }}}

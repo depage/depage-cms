@@ -5,6 +5,7 @@ $editWidth: 3 * $treeWidth !global;
 
 $baseColor: #ccc8c4 !global;
 $backgroundColor: lighten($baseColor, 5%) !global;
+$backgroundDarkColor: transparentize(darken($baseColor, 70%), 0.15) !global;
 $backgroundLighterColor: lighten($backgroundColor, 10%) !global;
 $backgroundBrightColor: lighten($backgroundColor, 12%) !global;
 $backgroundDisabledColor: #cccccc;
