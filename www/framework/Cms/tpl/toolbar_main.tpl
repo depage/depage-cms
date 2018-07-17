@@ -33,7 +33,7 @@
                         </li>
                         <li>
                             <a href="project/<?php self::t($this->project->name); ?>/">
-                                <?php self::t(_("edit")); ?>
+                                <?php self::t(_("Edit")); ?>
                             </a>
                         </li>
                         <li>

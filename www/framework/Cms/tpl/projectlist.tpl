@@ -29,6 +29,9 @@
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>
+                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
+                                <?php self::t(_('Library')) ?>
+                            </a>
                             <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
                                 <?php self::t(_('Settings')) ?>
                             </a>
