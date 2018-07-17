@@ -59,7 +59,11 @@
 
             inst.element.addClass("jstree-focus");
             inst.trigger("focus");
-            inst.get_node(inst.get_selected(), true).find('> .jstree-anchor').focus();
+
+            var $node = inst.get_node(inst.get_selected(), true);
+            if ($node) {
+                $node.find('> .jstree-anchor').focus();
+            }
         }, this);
         // }}}
         // {{{ looseFocus
