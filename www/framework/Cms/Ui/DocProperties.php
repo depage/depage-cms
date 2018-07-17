@@ -368,6 +368,7 @@ class DocProperties extends Base
         ]);
         $fs->addMultiple("xmledit-$nodeId-tags", [
             'label' => "",
+            'skin' => "tags",
             'list' => $tags,
             'class' => 'page-tags',
             'defaultValue' => $defaults,
