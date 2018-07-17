@@ -1,10 +1,7 @@
 /**
  * @require framework/Cms/js/jstree/jstree.js
- * @require framework/Cms/js/jstree/jstree.changed.js
- * @require framework/Cms/js/jstree/jstree.conditionalselect.js
  * @require framework/Cms/js/jstree/jstree.contextmenu.js
  * @require framework/Cms/js/jstree/jstree.dnd.js
- * @require framework/Cms/js/jstree/jstree.massload.js
  * @require framework/Cms/js/jstree/jstree.search.js
  * @require framework/Cms/js/jstree/jstree.sort.js
  * @require framework/Cms/js/jstree/jstree.state.js
@@ -340,15 +337,8 @@
          * The list of plugins to include
          */
         plugins: [
-            "ui",
             "dnd",
-            //"typesfromurl",
-            "hotkeys",
             "contextmenu",
-            //"nodeinfo",
-            //"dblclickrename",
-            //"tooltips",
-            //"add_marker",
 
             // custom plugins
             "focus",
