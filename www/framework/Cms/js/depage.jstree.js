@@ -430,6 +430,10 @@
                     e.preventDefault();
                     this.element.find('.jstree-anchor').filter(':visible').last().click();
                 },
+                'delete': function (e) {
+                    e.preventDefault();
+                    this.askDelete(e.currentTarget);
+                },
                 'f2': function (e) {
                     // f2 - safe to include - if check_callback is false it will fail
                     e.preventDefault();
