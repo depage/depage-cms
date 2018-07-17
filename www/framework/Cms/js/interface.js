@@ -622,6 +622,25 @@ var depageCMS = (function() {
 
                     $fileContainer.trigger("selectionChange.depage");
                 })
+                .on("contextmenu", "figure", function(e) {
+                    console.log(e);
+                    var $thumb = $(this);
+                    if (!$thumb.hasClass("selected")) {
+                        $thumb.addClass("selected");
+                        $fileContainer.trigger("selectionChange.depage");
+                    }
+
+                    $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
+                        _delete: {
+                            label: locale.delete,
+                            action: function() {
+                                localJS.deleteSelectedFiles();
+                            }
+                        }
+                    });
+
+                    return false;
+                })
                 .on("dblclick", "figure", function(e) {
                     var $ok = $(".dialog-full .dialog-bar .button.default");
                     if ($ok.length == 1) {
