@@ -125,26 +125,6 @@
     }
 }
 // }}}
-// {{{ .doc-properties .doc-property-meta
-.doc-properties .doc-property-meta {
-    background-color: $baseColor;
-
-    p {
-        padding-right: 100px;
-        position: relative;
-    }
-    .release {
-        display: block;
-        position: absolute;
-        top: -23px;
-        right: 0;
-
-        &.disabled {
-            opacity: 0.5;
-        }
-    }
-}
-// }}}
 // {{{ .doc-properties .doc-property-fieldset
 .doc-properties .doc-property-fieldset {
     padding-top: 8px;
@@ -231,6 +211,34 @@
     > p > label > .depage-label {
         font-size: $fSizeS;
         color: $textLighterColor;
+    }
+}
+// }}}
+// {{{ .doc-properties .doc-property-meta
+.doc-properties .doc-property-meta {
+    background-color: $baseColor;
+    padding-bottom: 3px;
+
+    > legend {
+        margin-bottom: 2px;
+    }
+    p {
+        padding-right: 100px;
+        position: relative;
+        line-height: $treeLineHeight;
+    }
+    p + p {
+        //margin-bottom: -5px;
+    }
+    .release {
+        display: block;
+        position: absolute;
+        top: - $treeLineHeight;
+        right: 0;
+
+        &.disabled {
+            opacity: 0.5;
+        }
     }
 }
 // }}}
