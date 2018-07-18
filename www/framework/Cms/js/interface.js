@@ -498,6 +498,40 @@ var depageCMS = (function() {
                     localJS.preview(url);
                 });
             });
+
+            if (typeof Squire !== 'undefined') {
+                // {{{ Squire.showLinkDialog()
+                Squire.prototype.showLinkDialog = function(href, callback) {
+                    var $body = $("body");
+                    var pos = this.getPosBySelection();
+
+                    $body.depageShyDialogue({
+                        ok: {
+                            title: locale.ok,
+                            click: function(e) {
+                                callback($("#depage-shy-dialogue input")[0].value);
+                            }
+                        },
+                        cancel: {
+                            title: locale.cancel
+                        }
+                    },{
+                        bind_el: false,
+                        direction: "CB",
+                        directionMarker: true,
+                        inputs: {
+                            href: {
+                                placeholder: 'http://domain.com',
+                                classes: 'edit-href',
+                                value: href
+                            }
+                        }
+                    });
+
+                    $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+                };
+                // }}}
+            }
         },
         // }}}
         // {{{ setupHelp
@@ -521,7 +555,7 @@ var depageCMS = (function() {
                     var $target = $(data.event.target);
                     var $parent = $target.parent().parent();
 
-                    if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
+                    if (($target.hasClass("edit-href") || $parent.hasClass("edit-href")) && data.element.href.indexOf("pageref://") === 0) {
                         $target.addClass("dnd-hover");
                     } else {
                         $("input.dnd-hover").removeClass("dnd-hover");
@@ -531,7 +565,7 @@ var depageCMS = (function() {
                     var $target = $(data.event.target);
                     var $parent = $target.parent().parent();
 
-                    if ($parent.hasClass("edit-href") && data.element.href.indexOf("pageref://") === 0) {
+                    if (($target.hasClass("edit-href") || $parent.hasClass("edit-href")) && data.element.href.indexOf("pageref://") === 0) {
                         $target[0].value = data.element.href;
                         $target.removeClass("dnd-hover");
                         $target.trigger("change");

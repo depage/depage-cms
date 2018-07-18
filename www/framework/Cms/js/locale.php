@@ -19,9 +19,9 @@
 
         $locales[$lang] = [
             "cancel" => _("Cancel"),
+            "choose" => _("Choose"),
             "copy" => _("Copy"),
             "create" => _("Create"),
-            "choose" => _("Choose"),
             "createNew" => _("Create new:"),
             "createNoElements" => _("There are no elements that can be created in this element"),
             "cut" => _("Cut"),
@@ -32,6 +32,7 @@
             "edit" => _("Edit"),
             "editHelp" => _("Edit current page in edit interface on the left ←."),
             "layoutSwitchHelp" => _("Switch layout to: Edit-only, Split-view and Preview-only"),
+            "ok" => _("Ok"),
             "paste" => _("Paste"),
             "projectFilter" => _("Filter Projects"),
             "reload" => _("Reload"),
