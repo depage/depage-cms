@@ -504,6 +504,7 @@ var depageCMS = (function() {
                 Squire.prototype.showLinkDialog = function(href, callback) {
                     var $body = $("body");
                     var pos = this.getPosBySelection();
+                    var editor = this;
 
                     $body.depageShyDialogue({
                         ok: {
@@ -513,7 +514,10 @@ var depageCMS = (function() {
                             }
                         },
                         cancel: {
-                            title: locale.cancel
+                            title: locale.cancel,
+                            click: function(e) {
+                                editor.focus();
+                            }
                         }
                     },{
                         bind_el: false,
