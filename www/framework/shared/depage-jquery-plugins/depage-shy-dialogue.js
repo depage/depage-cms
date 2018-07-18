@@ -114,7 +114,8 @@
             }
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
-            $wrapper.find('input, a').eq(0).focus();
+
+            $wrapper.find('input, a').eq(0).focus().select();
         };
         // }}}
 

@@ -84,7 +84,7 @@
         padding-top: $padding;
     }
 
-    $default-multiplier: 2;
+    $default-multiplier: 1.2;
 
     a.button {
         @include radius($corner-radius / 2);
