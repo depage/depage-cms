@@ -509,6 +509,7 @@ var depageCMS = (function() {
                     $body.depageShyDialogue({
                         ok: {
                             title: locale.ok,
+                            classes: "default",
                             click: function(e) {
                                 callback($("#depage-shy-dialogue input")[0].value);
                             }
