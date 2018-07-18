@@ -77,6 +77,14 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
                 $value = "";
 
+                // @todo update links with href_id
+                $links = $this->dataNodeXpath->query("a[@href_id]", $node);
+
+                foreach ($links as $n) {
+                    $url = "pageref://" . $n->getAttribute("href_id");
+                    $parent->setAttribute("href", $url);
+                    $parent->removeAttribute("href_id");
+                }
                 foreach ($node->childNodes as $n) {
                     \Depage\XmlDb\Document::removeNodeAttr($n, new \Depage\XmlDb\XmlNs('db', 'http://cms.depagecms.net/ns/database'), "id");
 
