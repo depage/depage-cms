@@ -521,7 +521,7 @@ var depageCMS = (function() {
                         }
                     },{
                         bind_el: false,
-                        direction: "CB",
+                        direction: "BC",
                         directionMarker: true,
                         inputs: {
                             href: {
