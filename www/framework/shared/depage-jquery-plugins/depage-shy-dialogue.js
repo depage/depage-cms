@@ -37,6 +37,7 @@
 
         // enable buttons in the dialogue
         var $buttonWrapper = null;
+        var $inputWrapper = null;
 
         // {{{ init
         /**
@@ -105,10 +106,59 @@
          * @return void
          */
         base.showButtons = function() {
-            $buttonWrapper = $('<div class="buttons" />');
-            $wrapper.append($buttonWrapper);
+            if (!$buttonWrapper) {
+                $buttonWrapper = $('<div class="buttons" />');
+                $inputWrapper = $('<div class="inputs" />');
+                $wrapper.append($inputWrapper);
+                $wrapper.append($buttonWrapper);
+            }
+            base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
-            $wrapper.find('a:first').focus();
+            $wrapper.find('input, a').eq(0).focus();
+        };
+        // }}}
+
+        // {{{ setInputs()
+        /**
+         * setInputs
+         *
+         * @param buttons
+         *
+         * @return void
+         */
+        base.setInputs = function(inputs) {
+            $inputWrapper.empty();
+
+            for(var i in inputs) {
+                (function() {
+                    var input = base.options.inputs[i];
+                    var placeholder = input.placeholder || "";
+                    var inputType = input.type || "text";
+                    var value = input.value || "";
+                    var className = "input";
+                    if (input.classes) {
+                        className += " " + input.classes;
+                    }
+                    var $input = $('<input class="' + className + '" />')
+                        .attr('id', base.options.id + '-i' + i)
+                        .attr('placeholder', placeholder)
+                        .attr('type', inputType)
+                        .attr('value', value)
+                        .data('depage.shyDialogue', base);
+
+                    $input
+                        .on("keyup", function(e) {
+                            if (e.which == 13) {
+                                $wrapper.find('a').eq(0).click();
+                            }
+                        });
+
+                    $inputWrapper.append($input);
+                })();
+            }
+
+            // allow chaining
+            return this;
         };
         // }}}
 
@@ -175,6 +225,7 @@
         direction : 'TL',
         directionMarker : null,
         fadeoutDuration: 300,
+        inputs: {},
         buttons: {},
         bind_el: null
     };

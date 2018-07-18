@@ -55,31 +55,40 @@
         padding: $padding;
         width: $width;
         height: $height;
-    }
-    &.depage-shy-dialogue .message {
-        padding-bottom: 5em;
+
+        .message,
+        .inputs,
+        .buttons {
+            position: relative;
+        }
     }
 
     h1,
     p {
+        padding: 0;
+        margin: 0;
         font-size: 1.2em;
     }
     h1 {
         font-weight: bold;
     }
+    input {
+        width: 100%;
+        border: none;
+        font-size: 1em;
+        padding: 0.3em;
+    }
 
     .buttons {
-        position: absolute;
-        right: $padding;
-        bottom: $padding;
+        text-align: right;
+        padding-top: $padding;
     }
 
     $default-multiplier: 2;
 
     a.button {
         @include radius($corner-radius / 2);
-        display: block;
-        float: left;
+        display: inline-block;
         padding: ($corner-radius / 3);
         margin-top: 1em * $default-multiplier - 1em;
         margin-right: 0.2em;

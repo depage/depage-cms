@@ -101,6 +101,8 @@
                 duration = duration || base.options.fadeoutDuration;
                 $wrapper.fadeOut(duration, callback);
 
+                // @todo restore previous focused element?
+
                 // allow chaining
                 return this;
             },
@@ -150,9 +152,6 @@
 
                 $contentWrapper = $('<div class="message" />');
                 $wrapper.append($contentWrapper);
-
-                $buttonWrapper = $('<div class="buttons" />');
-                $wrapper.append($buttonWrapper);
 
                 $("body").append($dialogue);
 
@@ -248,11 +247,15 @@
                         }
                         break;
                     case 't': // top
-                        wrapperPos.top = -paddingTop - dHeight / 2;
+                        if (wrapperPos.top) {
+                            wrapperPos.top = -paddingTop - dHeight / 2;
+                        }
                         markerPos.top = paddingTop;
                         break;
                     case 'b': // bottom
-                        wrapperPos.bottom = -paddingBottom - dHeight / 2;
+                        if (wrapperPos.bottom) {
+                            wrapperPos.bottom = -paddingBottom - dHeight / 2;
+                        }
                         markerPos.bottom = paddingBottom;
                         break;
                 }
