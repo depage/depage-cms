@@ -120,7 +120,7 @@
         margin-bottom: -1px;
 
         & + fieldset {
-            border-top: 1px solid $borderColor;
+            border-top: 1px solid $borderLightColor;
 
         }
         &.focus {
@@ -327,6 +327,12 @@
     input.dnd-hover {
         outline: 1px solid $selectionBackgroundColor;
     }
+}
+// }}}
+// {{{ .selectize-input
+.depage-form .selectize-input {
+    border-color: transparent;
+    @include radius(4px);
 }
 // }}}
 // {{{ .edit-src

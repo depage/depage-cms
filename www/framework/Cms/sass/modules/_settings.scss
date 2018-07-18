@@ -11,6 +11,7 @@ $backgroundBrightColor: lighten($backgroundColor, 12%) !global;
 $backgroundDisabledColor: #cccccc;
 $backgroundMenu: $backgroundDarkColor;
 $borderColor: darken($baseColor, 5%) !global;
+$borderLightColor: lighten($borderColor, 12%);
 $borderDarkColor: darken($borderColor, 25%);
 $linkColor: #882200;
 $textBaseColor: #000000 !global;
