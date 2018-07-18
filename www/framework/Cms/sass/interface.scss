@@ -9,6 +9,14 @@
 @import "modules/_icons";
 
 /* {{{ colors */
+    *::selection {
+        background: $selectionBackgroundColor;
+        color: $selectionTextColor;
+    }
+    *::-moz-selection {
+        background: $selectionBackgroundColor;
+        color: $selectionTextColor;
+    }
     .head {
         color: #000000;
     }

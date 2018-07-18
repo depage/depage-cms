@@ -22,12 +22,11 @@
     }
 
     .depage-form .input-single.edit-type {
-        $radius: 5px;
         text-align: center;
         clear: none;
 
         > span.depage-label + span {
-            @include radius($radius);
+            @include radius($cornerRadius);
             //border: 1px solid $borderColor;
             display: inline-block;
             background: $backgroundColor;
@@ -35,21 +34,23 @@
         }
         > span > span {
             &:first-child input[type="radio"] + span {
-                @include radius($radius, "top", "left");
-                @include radius($radius, "bottom", "left");
+                @include radius($cornerRadius, "top", "left");
+                @include radius($cornerRadius, "bottom", "left");
             }
             &:last-child input[type="radio"] + span {
-                @include radius($radius, "top", "right");
-                @include radius($radius, "bottom", "right");
+                @include radius($cornerRadius, "top", "right");
+                @include radius($cornerRadius, "bottom", "right");
             }
         }
         label {
             cursor: pointer;
+            display: inline;
+            position: relative;
         }
         input[type="radio"] {
+            position: absolute;
             opacity: 0;
             width: 0;
-            margin-right: -0.35em;
         }
         input[type="radio"] + span {
             display: inline-block;
@@ -61,6 +62,49 @@
             background: darken($backgroundColor, 35%);
             color: $textBrightColor;
             @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
+        }
+        input[type="radio"]:disabled + span {
+        }
+    }
+    .depage-form .input-multiple.skin-checkbox {
+        margin-bottom: -3px;
+
+        label {
+            position: relative;
+            display: inline-block;
+            margin-right: 1px;
+            margin-bottom: 1px;
+        }
+        input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+        }
+        input[type="checkbox"] + span {
+            display: inline-block;
+            padding: 3px 10px;
+            color: $textBaseColor;
+            cursor: pointer;
+            letter-spacing: 0.03em;
+            @include radius($cornerRadius);
+
+            &:before {
+                //content: "- ";
+            }
+
+            &:hover {
+                background: $backgroundColor;
+                @include box-shadow(inset 0 0 3px 0 rgba(0, 0, 0, 0.5));
+            }
+        }
+        input[type="checkbox"]:checked + span {
+            background: darken($backgroundColor, 35%);
+            color: $textBrightColor;
+            @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
+
+            &:before {
+                //content: "x ";
+            }
         }
         input[type="radio"]:disabled + span {
         }
