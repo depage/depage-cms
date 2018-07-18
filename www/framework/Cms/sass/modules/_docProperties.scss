@@ -212,6 +212,17 @@
         font-size: $fSizeS;
         color: $textLighterColor;
     }
+    @media screen and (min-width: 1800px) {
+        $indent: 120px;
+        padding-left: $indent + 15px;;
+
+        > legend {
+            position: absolute;
+            width: $indent;
+            margin-left: -$indent;
+            top: 10px;
+        }
+    }
 }
 // }}}
 // {{{ .doc-properties .doc-property-meta

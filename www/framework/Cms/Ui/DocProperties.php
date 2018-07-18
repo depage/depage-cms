@@ -362,20 +362,22 @@ class DocProperties extends Base
                 $defaults[] = $key;
             }
         }
-        $fs = $this->form->addFieldset("xmledit-$nodeId-tags-fs", [
-            'label' => _("Tags"),
-            'class' => "doc-property-fieldset",
-        ]);
-        $fs->addMultiple("xmledit-$nodeId-tags", [
-            'label' => "",
-            //'skin' => "tags",
-            'list' => $tags,
-            'class' => 'page-tags',
-            'defaultValue' => $defaults,
-            'dataAttr' => [
-                'pageId' => $pageInfo->pageId,
-            ],
-        ]);
+        if (count($tags) > 0) {
+            $fs = $this->form->addFieldset("xmledit-$nodeId-tags-fs", [
+                'label' => _("Tags"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addMultiple("xmledit-$nodeId-tags", [
+                'label' => "",
+                //'skin' => "tags",
+                'list' => $tags,
+                'class' => 'page-tags',
+                'defaultValue' => $defaults,
+                'dataAttr' => [
+                    'pageId' => $pageInfo->pageId,
+                ],
+            ]);
+        }
 
         $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
             'label' => _("Pagetype"),

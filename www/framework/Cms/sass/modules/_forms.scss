@@ -333,6 +333,8 @@
 .depage-form .selectize-input {
     border-color: transparent;
     @include radius(4px);
+
+    // @todo make background dark on opened menu
 }
 // }}}
 // {{{ .edit-src
