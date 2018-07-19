@@ -132,6 +132,7 @@ figure.thumb {
             &.selected {
                 border-color: $backgroundDisabledColor;
                 background: $backgroundDisabledColor;
+                @include box-shadow($lightShadow);
 
                 figcaption {
                     color: $selectionBackgroundColor;
