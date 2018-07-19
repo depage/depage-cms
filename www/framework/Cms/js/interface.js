@@ -87,10 +87,11 @@ var depageCMS = (function() {
             $window.on("statechangecomplete", localJS.setup);
             $window.on("switchLayout", localJS.switchLayout);
 
-            $window.triggerHandler("switchLayout", "split");
-
             $previewFrame = $("#previewFrame");
             $flashFrame = $("#flashFrame");
+
+            $window.triggerHandler("switchLayout", "split");
+
             // @todo add event to page, when clicking outside of edit interface to save current fields
 
             // @todo test/remove
@@ -366,6 +367,9 @@ var depageCMS = (function() {
         // {{{ setupPreviewLinks
         setupPreviewLinks: function() {
             $("a.preview").on("click", function(e) {
+                if (currentLayout != "split" && currentLayout != "tree-split") {
+                    $window.triggerHandler("switchLayout", "split");
+                }
                 localJS.preview(this.href);
 
                 return false;
@@ -1107,6 +1111,10 @@ var depageCMS = (function() {
             var $buttons = $toolbarRight.find(".layout-buttons a")
                 .removeClass("active")
                 .filter("." + currentLayout).addClass("active");
+
+            if (currentLayout != "left-full") {
+                localJS.updatePreview();
+            }
         },
         // }}}
         // {{{ preview
@@ -1125,6 +1133,12 @@ var depageCMS = (function() {
                 if (newUrl.substring(0, baseUrl.length) != baseUrl) {
                     newUrl = baseUrl + newUrl;
                 }
+                currentPreviewUrl = newUrl;
+
+                if (currentLayout == "left-full") {
+                    // @todo load preview when changing layout?
+                    return;
+                }
 
                 if (oldUrl == newUrl) {
                     $previewFrame[0].contentWindow.location.reload();
@@ -1134,11 +1148,6 @@ var depageCMS = (function() {
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame[0].src = newUrl;
-                }
-                currentPreviewUrl = newUrl;
-
-                if (currentLayout != "split" && currentLayout != "tree-split") {
-                    $window.triggerHandler("switchLayout", "split");
                 }
             } else {
                 // add preview frame
