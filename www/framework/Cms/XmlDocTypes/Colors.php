@@ -17,21 +17,12 @@ class Colors extends Base {
                 'icon' => "",
                 'attributes' => [],
             ],
-            'color' => (object) [
-                'name' => _("Color"),
-                'new' => _("New Color"),
-                'icon' => "",
-                'attributes' => [],
-            ],
         ];
 
         // list of valid parents given by nodename
         $this->validParents = [
             'proj:colorscheme' => [
                 'proj:colorschemes',
-            ],
-            'color' => [
-                'proj:colorscheme',
             ],
         ];
     }

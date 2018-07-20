@@ -28,6 +28,18 @@
         </xsl:apply-templates>
     </xsl:template>
 
+    <xsl:template match="proj:colorscheme">
+        <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
+            <xsl:with-param name="name" select="@name" />
+        </xsl:apply-templates>
+    </xsl:template>
+
+    <xsl:template match="proj:colorscheme[@db:name = 'tree_name_color_global']">
+        <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
+            <xsl:with-param name="name" select="'Global Colors'" />
+        </xsl:apply-templates>
+    </xsl:template>
+
     <xsl:template match="pg:title | pg:linkdesc | pg:desc" />
 
     <xsl:template match="*" mode="treeNode">

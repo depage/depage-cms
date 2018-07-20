@@ -29,6 +29,7 @@ class Main extends Base {
             'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
             'project/*/library' => '\Depage\Cms\Ui\FileLibrary',
+            'project/*/colors' => '\Depage\Cms\Ui\ColorSchemes',
             //'api/*/newsletter/' => '\Depage\Cms\Api\Newsletter',
             //'api/*/cache/' => '\Depage\Cms\Api\Cache',
             //'api/*/project/' => '\Depage\Cms\Api\Project',
