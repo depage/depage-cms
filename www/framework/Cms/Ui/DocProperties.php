@@ -110,12 +110,12 @@ class DocProperties extends Base
 
         $h = "";
         $doc = $this->xmldb->getDocByNodeId($this->nodeId);
-        $xml = $doc->getXml();
+        $xml = $doc->getSubdocByNodeId($this->nodeId);
 
         $xpath = new \DOMXPath($xml);
         $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
 
-        list($node) = $xpath->query("//*[@db:id = '{$this->nodeId}']");
+        $node = $xml->documentElement;
         $hashOld = $doc->hashDomNode($node);
 
         $this->form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
@@ -128,7 +128,10 @@ class DocProperties extends Base
             //$this->form->addHtml("<p>Icon: " . $node->getAttribute("icon") . "</p>");
         }
 
-        $this->addPgRelease();
+        if (in_array($node->prefix, ['pg', 'sec'])) {
+            // only for page data content
+            $this->addPgRelease();
+        }
 
         if ($callback = $this->getCallbackForNode($node)) {
             $this->$callback($node);
@@ -223,7 +226,7 @@ class DocProperties extends Base
             return $callback;
         }
 
-        if ($node->prefix != "sec") {
+        if ($node->prefix != "sec" && $node->prefix != "proj") {
             echo $callback . "<br>";
         }
 
@@ -755,6 +758,24 @@ class DocProperties extends Base
                 "ol",
                 "li",
             ],
+        ]);
+    }
+    // }}}
+
+    // {{{ addColor()
+    /**
+     * @brief addColor
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function addColor($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $this->form->addText("xmledit-$nodeId", [
+            'label' => $node->getAttribute("name"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
