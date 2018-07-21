@@ -1,4 +1,5 @@
 <ul <?php self::attr([
+    'data-colorschemeId' => $this->colorschemeId,
     'data-type' => $this->type,
 ]); ?>>
     <?php foreach($this->colorNodes as $node) { ?>

@@ -27,7 +27,9 @@
         var j = {};
 
         ar.forEach( function(v) {
-            j[v.name] = v;
+            if (typeof v !== 'undefined') {
+                j[v.name] = v;
+            }
         });
 
         return Object.keys(j).map(function(v){

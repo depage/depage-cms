@@ -748,7 +748,7 @@ var depageCMS = (function() {
                 })
                 .on("ready.jstree", function(e, data) {
                     $colorTreeContainer.jstree(true).activate_node($colorTreeContainer.find("ul:first li:first")[0]);
-                    $colorContainer.click();
+                    //$colorContainer.click();
                 })
                 .on("focus.jstree", function(e, data) {
                     $colorContainer.removeClass("focus");
@@ -1179,10 +1179,17 @@ var depageCMS = (function() {
         addColor: function() {
             var $colorContainer = $(".colorscheme .color-list");
             var colorType = $colorContainer.children("ul").attr("data-type");
+            var colorschemeId = $colorContainer.children("ul").attr("data-colorschemeid");
             var url = baseUrl + "project/" + projectName + "/colors/addColor/";
 
             $.post(url, {
                 colorType: colorType
+            }, function() {
+                var url = baseUrl + "project/" + projectName + "/colors/edit/" + colorschemeId + "/";
+
+                $colorContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                    $colorContainer.trigger("selectionChange.depage");
+                });
             });
         },
         // }}}
