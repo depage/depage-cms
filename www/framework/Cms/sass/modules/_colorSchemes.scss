@@ -1,0 +1,79 @@
+// {{{ div.color
+figure.thumb.color {
+    $width: $thumbSize;
+    $height: $thumbSize * 0.5;
+
+    .preview {
+        display: block;
+        width: $width;
+        height: $height;
+        @include radius(4px);
+    }
+}
+// }}}
+
+// {{{ .colorschemes
+.colorschemes {
+    .trees,
+    .colorscheme,
+    .colorprops {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow: auto;
+
+        header.info {
+            right: 0;
+            left: 0;
+        }
+    }
+    .trees {
+        left: 0;
+        width: $treeWidth;
+        max-width: 100%;
+    }
+    .colorscheme {
+        left: $treeWidth;
+        right: $treeWidth;
+    }
+    .colorprops {
+        width: $treeWidth;
+        max-width: 100%;
+        right: 0;
+        border-left: 1px solid $borderColor;
+        background: $backgroundLighterColor;
+    }
+
+    .tree,
+    .color-list,
+    .color-property {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-top: $infoHeight;
+    }
+}
+.toolbar ~ .colorschemes {
+    .trees,
+    .colorscheme,
+    .colorprops {
+        top: $toolbarHeight;
+    }
+}
+// }}}
+// {{{ .colorschemes .color-list
+.colorschemes .color-list {
+    @extend .file-list;
+}
+// }}}
+// {{{ .colorschemes .color-property
+.colorschemes .color-property {
+    padding: 15px;
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

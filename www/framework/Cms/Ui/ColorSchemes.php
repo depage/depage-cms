@@ -40,7 +40,7 @@ class ColorSchemes extends Base
         $path = rawurldecode($path);
 
         // construct template
-        $hLib = new Html("projectLibrary.tpl", [
+        $hLib = new Html("colorschemes.tpl", [
             'projectName' => $this->project->name,
             'tree' => $this->tree(),
         ], $this->htmlOptions);
@@ -79,15 +79,22 @@ class ColorSchemes extends Base
         return $uiTree->tree();
     }
     // }}}
-    // {{{ colors()
+    // {{{ edit()
     /**
      * @brief colors
      *
      * @param mixed $path = "/"
      * @return void
      **/
-    public function colors($colorscheme = "")
+    public function edit($nodeId)
     {
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("colors");
+        $xml = $doc->getSubdocByNodeId($nodeId);
+
+        return new Html("colorListing.tpl", [
+            'colorNodes' => $xml->documentElement->getElementsByTagName("color"),
+        ], $this->htmlOptions);
     }
     // }}}
 }

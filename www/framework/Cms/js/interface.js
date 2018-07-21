@@ -15,6 +15,7 @@
  * @require framework/Cms/js/xmldb.js
  * @require framework/Cms/js/locale.js
  * @require framework/Cms/js/depage.jstree.js
+ * @require framework/Cms/js/spectrum.js
  *
  *
  * @file    js/global.js
@@ -118,6 +119,7 @@ var depageCMS = (function() {
             localJS.setupHelp();
             localJS.setupTrees();
             localJS.setupLibrary();
+            localJS.setupColorSchemes();
             localJS.setupDropTargets();
         },
         // }}}
@@ -718,6 +720,117 @@ var depageCMS = (function() {
             $fileContainer.trigger("selectionChange.depage");
         },
         // }}}
+        // {{{ setupColorSchemes
+        setupColorSchemes: function() {
+            var $colorTreeContainer = $(".tree.colors .jstree-container");
+            var $colorContainer = $(".colorscheme .color-list");
+            var $colorProps = $(".color-property");
+            var docref = $colorTreeContainer.attr("data-doc-id");
+
+            var $toolbar = $("<span class=\"toolbar-colors\"></span>").appendTo("#toolbarmain .tree-actions");
+            var $addButton = localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addNewColor);
+            var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedColor);
+
+            var last = false;
+
+            $colorTreeContainer
+                .on("activate_node.jstree", function(e, data) {
+                    var nodeId = null;
+                    if (typeof data.node.data !== 'undefined') {
+                        nodeId = data.node.data.nodeId;
+                    }
+
+                    var url = baseUrl + "project/" + projectName + "/colors/edit/" + nodeId + "/";
+
+                    $colorContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                        $colorContainer.trigger("selectionChange.depage");
+                    });
+                })
+                .on("ready.jstree", function(e, data) {
+                    $colorTreeContainer.jstree(true).activate_node($colorTreeContainer.find("ul:first li:first")[0]);
+                    $colorContainer.click();
+                })
+                .on("focus.jstree", function(e, data) {
+                    $colorContainer.removeClass("focus");
+                    $toolbar.removeClass("visible");
+                })
+                .depageTree();
+
+            $colorContainer
+                .on("selectionChange.depage", function() {
+                    var $color = $colorContainer.find(".selected");
+                    if ($color.length > 0) {
+                        $deleteButton.removeClass("disabled");
+                    } else {
+                        $deleteButton.addClass("disabled");
+                    }
+                    localJS.setupColorProperties($color);
+                })
+                .on("click", function(e) {
+                    $colorContainer.addClass("focus");
+                    $toolbar.addClass("visible");
+
+                    $colorTreeContainer.jstree(true).looseFocus();
+                })
+                .on("click", "figure", function(e) {
+                    var $thumbs = $colorContainer.find("figure");
+                    var current = $thumbs.index(this);
+
+                    $colorContainer.find(".selected").removeClass("selected");
+
+                    $(this).addClass("selected");
+
+                    $thumbs.blur();
+
+                    $colorContainer.trigger("selectionChange.depage");
+                })
+                .on("contextmenu", "figure", function(e) {
+                    var $thumb = $(this);
+                    if (!$thumb.hasClass("selected")) {
+                        $thumb.addClass("selected");
+                        $colorContainer.trigger("selectionChange.depage");
+                    }
+
+                    $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
+                        _delete: {
+                            label: locale.delete,
+                            action: function() {
+                                localJS.deleteSelectedColor();
+                            }
+                        }
+                    });
+
+                    return false;
+                });
+        },
+        // }}}
+        // {{{ setupColorProperties
+        setupColorProperties: function($color) {
+            var $colorProps = $(".color-property").empty();
+
+            if (!$color || $color.length == 0) return;
+
+            var $input = $("<input />")
+                .attr("value", $color.attr("data-value"))
+                .on("move.spectrum", function(e, color) {
+                    var hex = color.toHexString();
+
+                    $color.attr("value", hex);
+                    $color.children(".preview")
+                        .css("backgroundColor", hex);
+                })
+                .appendTo($colorProps);
+
+            $input.spectrum({
+                flat: true,
+                preferredFormat: "hex",
+                showButtons: false,
+                showInitial: true,
+                showInput: true
+            });
+            // @todo add palette based on colors in colorschemes of current project?
+        },
+        // }}}
 
         // {{{ loadPageTree
         loadPageTree: function() {
@@ -801,6 +914,93 @@ var depageCMS = (function() {
                     })
                     .jstree(true);
 
+            });
+        },
+        // }}}
+        // {{{ loadDocProperties
+        loadDocProperties: function(docref, nodeid) {
+            if (currentDocPropertyId == nodeid) return false;
+
+            currentDocPropertyId = nodeid;
+
+            var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
+            var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
+
+            $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
+                // @todo scroll to top
+                $docPropertiesContainer.addClass("loaded");
+                var $form = $docPropertiesContainer.find('.depage-form');
+
+                $form.depageForm();
+                $form.find("p.submit").remove();
+                $form.find("input, textarea, .textarea-content").on("focus", function() {
+                    var lang = $(this).parents("p[lang]").attr("lang");
+                    if (typeof lang == "undefined" || lang == "") return;
+
+                    currentPreviewLang = lang;
+                    // @todo replace language more intelligently
+                    currentPreviewUrl = currentPreviewUrl.replace(/\/pre\/..\//, "/pre/" + lang + "/");
+                });
+                $form.find(".page-navigations input").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "nav_" + this.value;
+                    var attrValue = this.checked ? 'true' : 'false';
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
+                $form.find(".page-tags input").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "tag_" + this.value;
+                    var attrValue = this.checked ? 'true' : 'false';
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
+                $form.find(".doc-property-meta a.release").on("click", function() {
+                    $(this).addClass("disabled");
+                    var docRef = $(this).parents("fieldset").data("docref");
+                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
+
+                    xmldb.releaseDocument();
+
+                    return false;
+                });
+                $form.find(".edit-src").each(function() {
+                    var $input = $(this).find("input");
+                    var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
+
+                    $input.on("change", function() {
+                        // image changed -> update thumbnail
+                        var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
+
+                        $.get(thumbUrl, function(data) {
+                            var $thumb = $(data).insertBefore($input.parent().parent());
+                            $thumb.prev("figure.thumb").eq(0).remove();
+                        });
+                    });
+                    $button.on("click", function() {
+                        localJS.loadFileChooser($input);
+                    });
+                });
+                $form.on("depageForm.autosaved", function() {
+                    $form.find(".doc-property-meta a.release").removeClass("disabled");
+                });
+
+                // @todo add ui for editing table columns and rows
+                // @todo keep squire from merging cells when deleting at the beginning or end of cell
+                // @todo add support for better handling of tab key to jump between cells
+
+                localJS.hightlighCurrentDocProperty();
+            });
+        },
+        // }}}
+        // {{{ loadLibraryFiles
+        loadLibraryFiles: function(path) {
+            path = encodeURIComponent(path);
+            var url = baseUrl + "project/" + projectName + "/library/files/" + path + "/";
+            var $fileContainer = $(".files .file-list");
+
+            $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                localJS.setupFileList();
             });
         },
         // }}}
@@ -945,111 +1145,6 @@ var depageCMS = (function() {
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
         // }}}
-        // {{{ loadLibraryFiles
-        loadLibraryFiles: function(path) {
-            path = encodeURIComponent(path);
-            var url = baseUrl + "project/" + projectName + "/library/files/" + path + "/";
-            var $fileContainer = $(".files .file-list");
-
-            $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
-                localJS.setupFileList();
-            });
-        },
-        // }}}
-        // {{{ loadDocProperties
-        loadDocProperties: function(docref, nodeid) {
-            if (currentDocPropertyId == nodeid) return false;
-
-            currentDocPropertyId = nodeid;
-
-            var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
-            var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
-
-            $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
-                // @todo scroll to top
-                $docPropertiesContainer.addClass("loaded");
-                var $form = $docPropertiesContainer.find('.depage-form');
-
-                $form.depageForm();
-                $form.find("p.submit").remove();
-                $form.find("input, textarea, .textarea-content").on("focus", function() {
-                    var lang = $(this).parents("p[lang]").attr("lang");
-                    if (typeof lang == "undefined" || lang == "") return;
-
-                    currentPreviewLang = lang;
-                    // @todo replace language more intelligently
-                    currentPreviewUrl = currentPreviewUrl.replace(/\/pre\/..\//, "/pre/" + lang + "/");
-                });
-                $form.find(".page-navigations input").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
-                    var attrName = "nav_" + this.value;
-                    var attrValue = this.checked ? 'true' : 'false';
-
-                    xmldb.setAttribute(pageId, attrName, attrValue);
-                });
-                $form.find(".page-tags input").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
-                    var attrName = "tag_" + this.value;
-                    var attrValue = this.checked ? 'true' : 'false';
-
-                    xmldb.setAttribute(pageId, attrName, attrValue);
-                });
-                $form.find(".doc-property-meta a.release").on("click", function() {
-                    $(this).addClass("disabled");
-                    var docRef = $(this).parents("fieldset").data("docref");
-                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
-
-                    xmldb.releaseDocument();
-
-                    return false;
-                });
-                $form.find(".edit-src").each(function() {
-                    var $input = $(this).find("input");
-                    var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
-
-                    $input.on("change", function() {
-                        // image changed -> update thumbnail
-                        var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
-
-                        $.get(thumbUrl, function(data) {
-                            var $thumb = $(data).insertBefore($input.parent().parent());
-                            $thumb.prev("figure.thumb").eq(0).remove();
-                        });
-                    });
-                    $button.on("click", function() {
-                        localJS.loadFileChooser($input);
-                    });
-                });
-                $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta a.release").removeClass("disabled");
-                });
-
-                // @todo add ui for editing table columns and rows
-                // @todo keep squire from merging cells when deleting at the beginning or end of cell
-                // @todo add support for better handling of tab key to jump between cells
-
-                localJS.hightlighCurrentDocProperty();
-            });
-        },
-        // }}}
-        // {{{ hightlighCurrentDocProperty
-        hightlighCurrentDocProperty: function() {
-            try {
-                var className = "depage-live-edit-highlight";
-                var $iframe = $previewFrame.contents();
-                var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
-
-                $iframe.find("." + className).removeClass(className);
-                $current.addClass(className);
-                if ($current.length == 1) {
-                    $current[0].scrollIntoView();
-                    var $scroller = $current.scrollParent();
-                    $scroller.scrollTop($scroller.scrollTop() - 100);
-                }
-            } catch(error) {
-            }
-        },
-        // }}}
 
         // {{{ updateAjaxContent
         updateAjaxContent: function() {
@@ -1178,6 +1273,24 @@ var depageCMS = (function() {
             trailing: true
         }),
         // }}}
+        // {{{ hightlighCurrentDocProperty
+        hightlighCurrentDocProperty: function() {
+            try {
+                var className = "depage-live-edit-highlight";
+                var $iframe = $previewFrame.contents();
+                var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                $iframe.find("." + className).removeClass(className);
+                $current.addClass(className);
+                if ($current.length == 1) {
+                    $current[0].scrollIntoView();
+                    var $scroller = $current.scrollParent();
+                    $scroller.scrollTop($scroller.scrollTop() - 100);
+                }
+            } catch(error) {
+            }
+        },
+        // }}}
         // {{{ edit
         edit: function(projectName, page) {
             if (jstreePages) {
@@ -1212,6 +1325,7 @@ var depageCMS = (function() {
             }
         },
         // }}}
+
         // {{{ openUpload
         openUpload: function(projectName, targetPath) {
             $upload = $("#upload");

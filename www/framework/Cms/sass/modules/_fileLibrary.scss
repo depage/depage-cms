@@ -91,18 +91,15 @@ figure.thumb {
         margin-top: $infoHeight;
     }
 }
-.toolbar ~ .library .trees,
-.toolbar ~ .library .files {
-    top: $toolbarHeight;
+.toolbar ~ .library {
+    .trees,
+    .files {
+        top: $toolbarHeight;
+    }
 }
 // }}}
-// {{{ .library .trees
-.library .tree {
-
-}
-// }}}
-// {{{ .library .file-list
-.library .file-list {
+// {{{ .file-list
+.file-list {
     padding: 15px;
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
@@ -157,7 +154,7 @@ figure.thumb {
     }
 }
 // }}}
-// {{{ .library .trees
+// {{{ .library #upload-to-lib
 .library #upload-to-lib {
     .input-file {
         text-align: center;

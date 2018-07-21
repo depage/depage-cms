@@ -1,5 +1,5 @@
 <div <?php self::attr([
-        "class" => "colors",
+        "class" => "colorschemes",
     ]); ?>>
     <div class="trees">
         <header class="info info-tree-colors">
@@ -14,13 +14,24 @@
             <?php self::e($this->tree); ?>
         </div>
     </div>
-    <div class="colors">
+    <div class="colorscheme">
         <header class="info info-colors">
             <h1><?php self::e(_("Colors")); ?></h1>
         </header>
         <div <?php self::attr([
-            'class' => "color-list focus doc-properties",
-            'data-live-help' => _("Edit you colors here."),
+            'class' => "color-list focus",
+            'data-live-help' => _("Available colors"),
+            'data-live-help-class' => "icon icon-colors",
+        ]); ?>>
+        </div>
+    </div>
+    <div class="colorprops">
+        <header class="info info-color-properties">
+            <h1><?php self::e(_("Color Properties")); ?></h1>
+        </header>
+        <div <?php self::attr([
+            'class' => "color-property",
+            'data-live-help' => _("Change you color here."),
             'data-live-help-class' => "icon icon-colors",
         ]); ?>>
         </div>
