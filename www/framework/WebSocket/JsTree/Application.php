@@ -96,10 +96,14 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
         if (empty($this->clients[$cid])) {
             $this->clients[$cid] = [];
             $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
+
+            // get cache options from config
+            $dp = new \Depage\Depage\Runner();
             $xmldbCache = \Depage\Cache\Cache::factory($prefix, array(
-                'disposition' => "redis",
-                'host' => "127.0.0.1:6379",
+                'disposition' => $dp->conf->cache->xmldb->disposition,
+                'host' => $dp->conf->cache->xmldb->host,
             ));
+
             $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
             $xmldb = $project->getXmlDb();
 
