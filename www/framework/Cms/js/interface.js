@@ -731,7 +731,7 @@ var depageCMS = (function() {
             var $addButton = localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addNewColor);
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedColor);
 
-            var last = false;
+            var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
 
             $colorTreeContainer
                 .on("activate_node.jstree", function(e, data) {
@@ -784,6 +784,16 @@ var depageCMS = (function() {
 
                     $colorContainer.trigger("selectionChange.depage");
                 })
+                .on("change.spectrum", "figure", function(e) {
+                    var $color = $(this);
+                    var value = $color.attr("data-value");
+                    var nodeId = $color.attr("data-nodeid");
+
+                    $color.children(".preview")
+                        .css("backgroundColor", value);
+
+                    localJS.saveColorValue(nodeId, value);
+                })
                 .on("contextmenu", "figure", function(e) {
                     var $thumb = $(this);
                     if (!$thumb.hasClass("selected")) {
@@ -815,9 +825,8 @@ var depageCMS = (function() {
                 .on("move.spectrum", function(e, color) {
                     var hex = color.toHexString();
 
-                    $color.attr("value", hex);
-                    $color.children(".preview")
-                        .css("backgroundColor", hex);
+                    $color.attr("data-value", hex);
+                    $color.trigger("change.spectrum");
                 })
                 .appendTo($colorProps);
 
@@ -1144,6 +1153,15 @@ var depageCMS = (function() {
             // @todo add click event outside of shy dialogue to hide it
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
+        // }}}
+        // {{{ saveColorValue()
+        saveColorValue: _.throttle(function(nodeId, value) {
+            var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
+                xmldb.setAttribute(nodeId, "value", value);
+        }, 500, {
+            leading: true,
+            trailing: true
+        }),
         // }}}
 
         // {{{ updateAjaxContent
