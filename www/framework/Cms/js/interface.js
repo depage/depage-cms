@@ -1158,7 +1158,7 @@ var depageCMS = (function() {
         saveColorValue: _.throttle(function(nodeId, value) {
             var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
                 xmldb.setAttribute(nodeId, "value", value);
-        }, 500, {
+        }, 750, {
             leading: true,
             trailing: true
         }),
