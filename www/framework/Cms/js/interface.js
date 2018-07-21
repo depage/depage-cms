@@ -784,15 +784,25 @@ var depageCMS = (function() {
 
                     $colorContainer.trigger("selectionChange.depage");
                 })
-                .on("change.spectrum", "figure", function(e) {
+                .on("changeColorValue.spectrum", "figure", function(e) {
                     var $color = $(this);
-                    var value = $color.attr("data-value");
                     var nodeId = $color.attr("data-nodeid");
+                    var value = $color.attr("data-value");
 
                     $color.children(".preview")
                         .css("backgroundColor", value);
 
-                    localJS.saveColorValue(nodeId, value);
+                    localJS.saveColor(nodeId, value);
+                })
+                .on("changeColorName.spectrum", "figure", function(e) {
+                    var $color = $(this);
+                    var nodeId = $color.attr("data-nodeid");
+                    var value = $color.attr("data-name");
+
+                    $color.children("figcaption")
+                        .text(value);
+
+                    localJS.renameColor(nodeId, value);
                 })
                 .on("contextmenu", "figure", function(e) {
                     var $thumb = $(this);
@@ -826,7 +836,7 @@ var depageCMS = (function() {
                     var hex = color.toHexString();
 
                     $color.attr("data-value", hex);
-                    $color.trigger("change.spectrum");
+                    $color.trigger("changeColorValue.spectrum");
                 })
                 .appendTo($colorProps);
 
@@ -837,6 +847,17 @@ var depageCMS = (function() {
                 showInitial: true,
                 showInput: true
             });
+
+            var $nameInput = $("<input />")
+                .attr("class", "sp-input")
+                .attr("type", "text")
+                .attr("value", $color.attr("data-name"))
+                .on("change", function(e) {
+                    $color.attr("data-name", this.value);
+                    $color.trigger("changeColorName.spectrum");
+                })
+                .appendTo(".sp-input-container");
+
             // @todo add palette based on colors in colorschemes of current project?
         },
         // }}}
@@ -1154,14 +1175,24 @@ var depageCMS = (function() {
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
         // }}}
-        // {{{ saveColorValue()
-        saveColorValue: _.throttle(function(nodeId, value) {
+        // {{{ saveColor()
+        saveColor: _.throttle(function(nodeId, value) {
             var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
                 xmldb.setAttribute(nodeId, "value", value);
         }, 750, {
             leading: true,
             trailing: true
         }),
+        // }}}
+        // {{{ renameColor()
+        renameColor: function(nodeId, value) {
+            var url = baseUrl + "project/" + projectName + "/colors/renameColor/";
+
+            $.post(url, {
+                id: nodeId,
+                name: value
+            });
+        },
         // }}}
 
         // {{{ updateAjaxContent

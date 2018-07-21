@@ -97,6 +97,51 @@ class ColorSchemes extends Base
         ], $this->htmlOptions);
     }
     // }}}
+
+    // {{{ renameColor()
+    /**
+     * @brief renameColor
+     *
+     * @param mixed $nodeId, $name
+     * @return void
+     **/
+    public function renameColor()
+    {
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("colors");
+        $xml = $doc->getXML();
+
+        $xpath = new \DOMXPath($xml);
+        $nodelist = $xpath->query("//color[@db:id = '$id']");
+
+        if ($nodelist->length == 0) {
+            return new \Depage\Json\Json(array("status" => false));
+        }
+
+        $colorNode = $nodelist->item(0);
+
+        $doc->beginTransactionAltering();
+
+        if ($colorNode->parentNode->getAttribute("db:name") == 'tree_name_color_global') {
+            // global color -> just set name for current color
+            $doc->setAttribute($id, "name", $name);
+        } else {
+            // color in colorscheme -> set all names
+            $oldName = $colorNode->getAttribute("name");
+            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@name != 'tree_name_color_global']/color[@name = '$oldName']/@db:id");
+
+            foreach ($nodelist as $colorNodeId) {
+                $doc->setAttribute($colorNodeId->nodeValue, "name", $name);
+            }
+        }
+        $doc->endTransaction();
+
+        return new \Depage\Json\Json(array("status" => true));
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

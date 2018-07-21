@@ -90,7 +90,7 @@ class Colors extends Base {
         $node->insertBefore($tempNode, $node->firstChild);
 
         foreach($colorNames as $color) {
-            $nodelist = $xpath->query("/color[@name = '$color']", $node);
+            $nodelist = $xpath->query("color[@name = '$color']", $node);
 
             if ($nodelist->length > 0) {
                 // move current colornode
@@ -113,6 +113,7 @@ class Colors extends Base {
         $node->removeChild($tempNode);
     }
     // }}}
+
     // {{{ onDocumentChange()
     /**
      * @brief onDocumentChange
