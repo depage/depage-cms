@@ -1,4 +1,6 @@
-<ul>
+<ul <?php self::attr([
+    'data-type' => $this->type,
+]); ?>>
     <?php foreach($this->colorNodes as $node) { ?>
         <li>
             <figure <?php self::attr([

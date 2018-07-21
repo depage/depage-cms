@@ -24,6 +24,9 @@ class Colors extends Base {
             'proj:colorscheme' => [
                 'proj:colorschemes',
             ],
+            'color' => [
+                'proj:colorscheme',
+            ],
         ];
     }
     // }}}

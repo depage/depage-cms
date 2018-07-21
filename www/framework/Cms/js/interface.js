@@ -728,7 +728,7 @@ var depageCMS = (function() {
             var docref = $colorTreeContainer.attr("data-doc-id");
 
             var $toolbar = $("<span class=\"toolbar-colors\"></span>").appendTo("#toolbarmain .tree-actions");
-            var $addButton = localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addNewColor);
+            var $addButton = localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addColor);
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedColor);
 
             var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
@@ -1173,6 +1173,17 @@ var depageCMS = (function() {
 
             // @todo add click event outside of shy dialogue to hide it
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+        },
+        // }}}
+        // {{{ addColor()
+        addColor: function() {
+            var $colorContainer = $(".colorscheme .color-list");
+            var colorType = $colorContainer.children("ul").attr("data-type");
+            var url = baseUrl + "project/" + projectName + "/colors/addColor/";
+
+            $.post(url, {
+                colorType: colorType
+            });
         },
         // }}}
         // {{{ saveColor()

@@ -94,10 +94,45 @@ class ColorSchemes extends Base
 
         return new Html("colorListing.tpl", [
             'colorNodes' => $xml->documentElement->getElementsByTagName("color"),
+            'type' => $xml->documentElement->getAttribute("db:name") == "tree_name_color_global" ? "global" : "scheme",
         ], $this->htmlOptions);
     }
     // }}}
 
+    // {{{ addColor()
+    /**
+     * @brief addColor
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function addColor()
+    {
+        $colorType = filter_input(INPUT_POST, 'colorType', FILTER_SANITIZE_STRING);
+
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("colors");
+        $xml = $doc->getXML();
+        $xpath = new \DOMXPath($xml);
+
+        if ($colorType == "global") {
+            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@db:name = 'tree_name_color_global']/@db:id");
+        } else if ($colorType == "scheme") {
+            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[not(@db:name = 'tree_name_color_global')]/@db:id");
+        }
+        $doc->beginTransactionAltering();
+        $colorNode = $xml->createElement("color");
+        $colorNode->setAttribute("name", _("unnamed_color"));
+        $colorNode->setAttribute("value", "#000000");
+
+        foreach ($nodelist as $schemeId) {
+            $success = $doc->addNode($colorNode, $schemeId->nodeValue);
+        }
+        $doc->endTransaction();
+
+        return new \Depage\Json\Json(array("status" => true));
+    }
+    // }}}
     // {{{ renameColor()
     /**
      * @brief renameColor
@@ -109,6 +144,10 @@ class ColorSchemes extends Base
     {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
         $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+
+        if (empty($id) || empty($name)) {
+            return new \Depage\Json\Json(array("status" => false));
+        }
 
         $xmldb = $this->project->getXmlDb();
         $doc = $xmldb->getDoc("colors");
@@ -135,6 +174,10 @@ class ColorSchemes extends Base
     public function deleteColor()
     {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        if (empty($id)) {
+            return new \Depage\Json\Json(array("status" => false));
+        }
 
         $xmldb = $this->project->getXmlDb();
         $doc = $xmldb->getDoc("colors");
@@ -174,7 +217,7 @@ class ColorSchemes extends Base
             $ids[] = $colorNode->getAttribute("db:id");
         } else {
             $name = $colorNode->getAttribute("name");
-            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@name != 'tree_name_color_global']/color[@name = '$name']/@db:id");
+            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[not(@db:name = 'tree_name_color_global')]/color[@name = '$name']/@db:id");
         }
         foreach ($nodelist as $colorNodeId) {
             $ids[] = $colorNodeId->nodeValue;
