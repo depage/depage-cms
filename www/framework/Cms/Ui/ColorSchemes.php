@@ -125,6 +125,33 @@ class ColorSchemes extends Base
         return new \Depage\Json\Json(array("status" => true));
     }
     // }}}
+    // {{{ deleteColor()
+    /**
+     * @brief deleteColor
+     *
+     * @param mixed $nodeId, $name
+     * @return void
+     **/
+    public function deleteColor()
+    {
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("colors");
+        $xml = $doc->getXML();
+
+        $doc->beginTransactionAltering();
+        $ids = $this->getColorIds($xml, $id);
+
+        foreach ($ids as $id) {
+            $doc->deleteNode($id);
+        }
+        $doc->endTransaction();
+
+        return new \Depage\Json\Json(array("status" => true));
+    }
+    // }}}
+
     // {{{ getColorIdsByNode()
     /**
      * @brief getColorIdsByNode

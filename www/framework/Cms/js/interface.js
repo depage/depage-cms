@@ -1194,6 +1194,54 @@ var depageCMS = (function() {
             });
         },
         // }}}
+        // {{{ deleteSelectedColor()
+        deleteSelectedColor: function(nodeId) {
+            var url = baseUrl + "project/" + projectName + "/colors/deleteColor/";
+            var $colorContainer = $(".colorscheme .color-list");
+            var $colors = $colorContainer.find(".selected");
+            var colorId = $colors.attr("data-nodeid");
+
+            if ($colors.length == 0) return;
+
+            var pos = $colors.eq(0).offset();
+            var markerDirection = "LC";
+
+            pos.top += 75;
+            if (pos.left > $(window).width() - 400) {
+                markerDirection = "RC";
+                pos.left += 20;
+            } else {
+                pos.left += 100;
+            }
+
+            $body.depageShyDialogue({
+                ok: {
+                    title: locale.delete,
+                    classes: 'default',
+                    click: function(e) {
+                        $.post(url, {
+                            id: colorId
+                        }, function() {
+                            $colors.parent().remove();
+                            $colorContainer.trigger("selectionChange.depage");
+                        });
+                    }
+                },
+                cancel: {
+                    title: locale.cancel
+                }
+            },{
+                bind_el: false,
+                direction: markerDirection,
+                directionMarker: true,
+                title: locale.delete,
+                message: locale.deleteQuestion
+            });
+
+            // @todo add click event outside of shy dialogue to hide it
+            $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+        },
+        // }}}
 
         // {{{ updateAjaxContent
         updateAjaxContent: function() {
