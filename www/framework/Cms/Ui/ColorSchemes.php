@@ -92,8 +92,14 @@ class ColorSchemes extends Base
         $doc = $xmldb->getDoc("colors");
         $xml = $doc->getSubdocByNodeId($nodeId);
 
+        // sort colors by name
+        $colorNodes = iterator_to_array($xml->documentElement->getElementsByTagName("color"));
+        usort($colorNodes, function($a, $b) {
+            return strcmp($a->getAttribute("name"), $b->getAttribute("name"));
+        });
+
         return new Html("colorListing.tpl", [
-            'colorNodes' => $xml->documentElement->getElementsByTagName("color"),
+            'colorNodes' => $colorNodes,
             'colorschemeId' => $nodeId,
             'type' => $xml->documentElement->getAttribute("db:name") == "tree_name_color_global" ? "global" : "scheme",
         ], $this->htmlOptions);
