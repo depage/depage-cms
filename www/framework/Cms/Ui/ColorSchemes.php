@@ -114,32 +114,46 @@ class ColorSchemes extends Base
         $doc = $xmldb->getDoc("colors");
         $xml = $doc->getXML();
 
-        $xpath = new \DOMXPath($xml);
-        $nodelist = $xpath->query("//color[@db:id = '$id']");
-
-        if ($nodelist->length == 0) {
-            return new \Depage\Json\Json(array("status" => false));
-        }
-
-        $colorNode = $nodelist->item(0);
-
         $doc->beginTransactionAltering();
+        $ids = $this->getColorIds($xml, $id);
 
-        if ($colorNode->parentNode->getAttribute("db:name") == 'tree_name_color_global') {
-            // global color -> just set name for current color
+        foreach ($ids as $id) {
             $doc->setAttribute($id, "name", $name);
-        } else {
-            // color in colorscheme -> set all names
-            $oldName = $colorNode->getAttribute("name");
-            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@name != 'tree_name_color_global']/color[@name = '$oldName']/@db:id");
-
-            foreach ($nodelist as $colorNodeId) {
-                $doc->setAttribute($colorNodeId->nodeValue, "name", $name);
-            }
         }
         $doc->endTransaction();
 
         return new \Depage\Json\Json(array("status" => true));
+    }
+    // }}}
+    // {{{ getColorIdsByNode()
+    /**
+     * @brief getColorIdsByNode
+     *
+     * @param mixed $colorNode
+     * @return void
+     **/
+    protected function getColorIds($xml, $id)
+    {
+        $ids = [];
+
+        $xpath = new \DOMXPath($xml);
+        $nodelist = $xpath->query("//color[@db:id = '$id']");
+        if ($nodelist->length == 0) {
+            return $ids;
+        }
+        $colorNode = $nodelist->item(0);
+
+        if ($colorNode->parentNode->getAttribute("db:name") == 'tree_name_color_global') {
+            $ids[] = $colorNode->getAttribute("db:id");
+        } else {
+            $name = $colorNode->getAttribute("name");
+            $nodelist = $xpath->query("/proj:colorschemes/proj:colorscheme[@name != 'tree_name_color_global']/color[@name = '$name']/@db:id");
+        }
+        foreach ($nodelist as $colorNodeId) {
+            $ids[] = $colorNodeId->nodeValue;
+        }
+
+        return $ids;
     }
     // }}}
 }
