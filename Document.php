@@ -1781,19 +1781,19 @@ class Document
     // }}}
 
     // {{{ beginTransactionAltering
-    protected function beginTransactionAltering()
+    public function beginTransactionAltering()
     {
         return $this->xmlDb->beginTransactionAltering();
     }
     // }}}
     // {{{ beginTransactionNonAltering
-    protected function beginTransactionNonAltering()
+    public function beginTransactionNonAltering()
     {
         return $this->xmlDb->beginTransactionNonAltering();
     }
     // }}}
     // {{{ endTransaction
-    protected function endTransaction()
+    public function endTransaction()
     {
         $altered = $this->xmlDb->endTransaction();
 
