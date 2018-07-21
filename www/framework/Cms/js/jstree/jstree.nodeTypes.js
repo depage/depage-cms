@@ -258,7 +258,7 @@
 
             // test validParents
             if (operation == "create_node" || operation == "move_node" || operation == "copy_node") {
-                var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'];
+                var validParents = this._data.nodeTypes.validParents[this.getNodeType(node)] || this._data.nodeTypes.validParents['*'] || [];
                 return validParents.indexOf(this.getNodeType(node_parent)) > -1 || validParents.indexOf('*') > -1;
             }
             //console.log(operation, node, node_parent);
