@@ -743,12 +743,13 @@ var depageCMS = (function() {
                     var url = baseUrl + "project/" + projectName + "/colors/edit/" + nodeId + "/";
 
                     $colorContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+                        $colorContainer.find("figure[data-name='unnamed_color']").addClass("selected");
                         $colorContainer.trigger("selectionChange.depage");
                     });
                 })
                 .on("ready.jstree", function(e, data) {
                     $colorTreeContainer.jstree(true).activate_node($colorTreeContainer.find("ul:first li:first")[0]);
-                    //$colorContainer.click();
+                    $colorContainer.click();
                 })
                 .on("focus.jstree", function(e, data) {
                     $colorContainer.removeClass("focus");
@@ -830,10 +831,19 @@ var depageCMS = (function() {
 
             if (!$color || $color.length == 0) return;
 
-            var $input = $("<input />")
+            var $input,
+                $nameInput,
+                $r, $g, $b;
+
+            $input = $("<input />")
                 .attr("value", $color.attr("data-value"))
                 .on("move.spectrum", function(e, color) {
                     var hex = color.toHexString();
+                    var rgb = color.toRgb();
+
+                    $r[0].value = rgb.r;
+                    $g[0].value = rgb.g;
+                    $b[0].value = rgb.b;
 
                     $color.attr("data-value", hex);
                     $color.trigger("changeColorValue.spectrum");
@@ -848,7 +858,47 @@ var depageCMS = (function() {
                 showInput: true
             });
 
-            var $nameInput = $("<input />")
+            var rgb = $input.spectrum("get").toRgb();
+            var setFromRgbInputs = function() {
+                // use rgb presentation to parse to catch errors
+                var c = tinycolor("rgb(" + $r[0].value + "," + $g[0].value + "," + $b[0].value + ")");
+
+                if (c.isValid()) {
+                    // set new color
+                    $input.spectrum("set", c);
+                } else {
+                    // reset color
+                    c = $input.spectrum("get");
+                }
+                $input.trigger("move.spectrum", $input.spectrum("get"));
+            };
+
+            $r = $("<input />")
+                .attr("placeholder", "Red")
+                .attr("value", rgb.r);
+
+            $g = $("<input />")
+                .attr("placeholder", "Green")
+                .attr("value", rgb.g);
+
+            $b = $("<input />")
+                .attr("placeholder", "Blue")
+                .attr("value", rgb.b);
+
+            $().add($r).add($g).add($b)
+                .attr("class", "sp-input")
+                .attr("type", "text")
+                .on("paste blur", function(e) {
+                    setFromRgbInputs(this);
+                })
+                .on("keydown", function(e) {
+                    if (e.keyCode == 13) {
+                        setFromRgbInputs(this);
+                    }
+                })
+                .appendTo(".sp-input-container");
+
+            $nameInput = $("<input />")
                 .attr("class", "sp-input")
                 .attr("type", "text")
                 .attr("value", $color.attr("data-name"))
