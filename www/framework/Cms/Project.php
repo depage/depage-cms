@@ -746,6 +746,29 @@ class Project extends \Depage\Entity\Entity
         return $variables;
     }
     // }}}
+    // {{{ getColorPalette()
+    /**
+     * @brief getColorPalette
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getColorPalette()
+    {
+        $colors = [];
+        $doc = $this->xmldb->getDoc("colors");
+        $xml = $doc->getXML();
+
+        $xpath = new \DOMXPath($xml);
+        $nodelist = $xpath->query("//color");
+
+        foreach ($nodelist as $node) {
+            $colors[$node->getAttribute("value")] = true;
+        }
+
+        return array_keys($colors);
+    }
+    // }}}
 
     // {{{ getHomeUrl()
     /**

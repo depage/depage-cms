@@ -102,6 +102,7 @@ class ColorSchemes extends Base
             'colorNodes' => $colorNodes,
             'colorschemeId' => $nodeId,
             'type' => $xml->documentElement->getAttribute("db:name") == "tree_name_color_global" ? "global" : "scheme",
+            'palette' => $this->project->getColorPalette(),
         ], $this->htmlOptions);
     }
     // }}}

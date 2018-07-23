@@ -739,6 +739,11 @@ var depageCMS = (function() {
                     if (typeof data.node.data !== 'undefined') {
                         nodeId = data.node.data.nodeId;
                     }
+                    if (data.node.li_attr.rel != "proj:colorscheme") {
+                        $colorContainer.empty();
+                        $colorProps.empty();
+                        return;
+                    }
 
                     var url = baseUrl + "project/" + projectName + "/colors/edit/" + nodeId + "/";
 
@@ -856,12 +861,17 @@ var depageCMS = (function() {
                 })
                 .appendTo($colorProps);
 
+
+            var p = JSON.parse($(".color-list ul").attr("data-palette"));
             $input.spectrum({
                 flat: true,
                 preferredFormat: "hex",
                 showButtons: false,
                 showInitial: true,
-                showInput: true
+                showInput: true,
+                showPalette: true,
+                showSelectionPalette: false,
+                palette: p
             });
 
             var rgb = $input.spectrum("get").toRgb();

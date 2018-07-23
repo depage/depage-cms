@@ -1,6 +1,7 @@
 <ul <?php self::attr([
     'data-colorschemeId' => $this->colorschemeId,
     'data-type' => $this->type,
+    'data-palette' => json_encode($this->palette),
 ]); ?>>
     <?php foreach($this->colorNodes as $node) { ?>
         <li>
