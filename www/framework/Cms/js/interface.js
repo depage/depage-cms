@@ -922,7 +922,7 @@ var depageCMS = (function() {
                 .attr("value", Math.round(hsv.v * 100));
 
             $().add($r).add($g).add($b).add($h).add($s).add($v)
-                .attr("class", "sp-input")
+                .attr("class", "sp-input sp-color-value")
                 .attr("type", "number")
                 .appendTo(".sp-input-container");
 
@@ -954,7 +954,7 @@ var depageCMS = (function() {
                     $color.attr("data-name", this.value);
                     $color.trigger("changeColorName.spectrum");
                 })
-                .appendTo(".sp-input-container");
+                .prependTo(".sp-input-container");
 
             // @todo add palette based on colors in colorschemes of current project?
         },

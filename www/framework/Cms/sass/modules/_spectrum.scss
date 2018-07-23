@@ -260,21 +260,28 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 100%;
 }
 .sp-input {
-   font-size: 12px !important;
-   border: 1px inset;
-   padding: 4px 5px;
-   margin: 0;
-   width: 100%;
-   background:transparent;
-   @include radius($cornerRadius);
-   color: #222;
+    font-size: 12px !important;
+    border: 1px solid $borderLightColor;
+    padding: 4px 5px;
+    margin: 0 5px 5px 0;
+    width: calc((100% - 15%) - 5px);
+    background:transparent;
+    @include radius($cornerRadius);
+    color: #222;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+                box-sizing: border-box;
 }
 .sp-input:focus  {
     background: #ffffff;
+    border: 1px solid $borderColor;
 }
 .sp-input.sp-validation-error {
     border: 1px solid red;
     background: #fdd;
+}
+.sp-color-value {
+    width: calc(((100% - 15%) / 3) - 5px);
 }
 .sp-picker-container,
 .sp-palette-container {
@@ -294,6 +301,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 .sp-palette-only .sp-palette-container {
     border: 0;
+}
+.sp-palette-row-initial {
+    @include radius($cornerRadius);
+    overflow: hidden;
 }
 
 .sp-palette .sp-thumb-el {
