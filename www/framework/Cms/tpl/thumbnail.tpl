@@ -9,9 +9,11 @@
         // @todo add icons for other file types?
         $thumbSrc = "framework/Cms/images/icon-page.svg";
     }
-    $formatter = new \Depage\Formatters\FileSize();
+    $sizeFormatter = new \Depage\Formatters\FileSize();
+    $timeFormatter = new \Depage\Formatters\TimeAbsolute();
     $mediainfo = new \Depage\Media\MediaInfo();
     $info = $mediainfo->getInfo($imgSrc);
+
 ?>
 <figure <?php self::attr([
     'class' => "thumb " . $this->class,
@@ -23,15 +25,27 @@
         <div class="fileinfo">
             <p><?php self::t($info['name']); ?></p>
             <p><?php self::t(self::format_date($info['date'])); ?></p>
-            <p><?php self::t($formatter->format($info['filesize'])); ?></p>
+            <p><?php self::t($sizeFormatter->format($info['filesize'])); ?></p>
             <?php if (isset($info['width'])) { ?>
                 <p><?php self::t($info['width'] . "x" . $info['height'] . " px"); ?></p>
             <?php } ?>
             <?php if (isset($info['copyright'])) { ?>
-                <p><?php self::t($info['copyright'] ?? ""); ?></p>
+                <p><?php self::t($info['copyright']); ?></p>
             <?php } ?>
             <?php if (isset($info['description'])) { ?>
-                <p><?php self::t($info['description'] ?? ""); ?></p>
+                <p><?php self::t($info['description']); ?></p>
+            <?php } ?>
+            <?php if (isset($info['duration'])) { ?>
+                <p><?php self::t($timeFormatter->format($info['duration'])); ?></p>
+            <?php } ?>
+            <?php if (isset($info['tag_artist'])) { ?>
+                <p><?php self::t($info['tag_artist']); ?></p>
+            <?php } ?>
+            <?php if (isset($info['tag_album'])) { ?>
+                <p><?php self::t($info['tag_album']); ?></p>
+            <?php } ?>
+            <?php if (isset($info['tag_title'])) { ?>
+                <p><?php self::t($info['tag_title']); ?></p>
             <?php } ?>
         </div>
     </figcaption>
