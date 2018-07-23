@@ -70,6 +70,7 @@
             table-layout: fixed;
 
             td {
+                position: relative;
                 vertical-align: top;
                 border: 1px solid $borderColor;
                 padding: 3px 6px;
@@ -77,6 +78,30 @@
                 word-break: break-word;
                 word-wrap: break-word;
                 width: auto;
+
+                &:last-child {
+                    padding-right: 1em;
+
+                    &:before,
+                    &:after {
+                        position: absolute;
+                        display: block;
+                        right: 0;
+                        width: 1em;
+                        text-align: center;
+                        line-height: 1.5em;
+                        cursor: pointer;
+                        @include radius(50%);
+                    }
+                }
+                &:last-child:before {
+                    content: "+";
+                    top: 0em;
+                }
+                &:last-child:after {
+                    content: "-";
+                    top: 1.2em;
+                }
             }
         }
     }
