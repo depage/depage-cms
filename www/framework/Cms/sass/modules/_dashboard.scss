@@ -96,8 +96,11 @@
     }
     a {
         overflow: hidden;
+
+        &.icon-colors,
         &.icon-settings {
-            width: 34px;
+            width: 30px;
+
             &:before {
                 content: " ";
                 display: inline-block;
@@ -105,16 +108,19 @@
                 height: 24px;
                 @include icon-base();
                 margin-bottom: -8px;
-                margin-left: -2px;
+                margin-left: -4px;
                 margin-right: 6px;
             }
             @media screen and (max-width: 1340px) {
-                width: 34px;
+                width: 30px;
 
                 &:before {
                     margin-right: 20px;
                 }
             }
+        }
+        &.icon-colors:before {
+            @include icon("colors", 22px);
         }
         &.icon-settings:before {
             @include icon("settings", 22px);

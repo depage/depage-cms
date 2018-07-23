@@ -1144,7 +1144,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ loadFileChooser
         loadFileChooser: function($input) {
-            // @todo get path from input
+            // @todo add support to only select specific file type/mime type
             var path = $input[0].value.replace(/^libref:\/\//, '').replace(/[^\/]*$/, '') || currentLibPath;
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
