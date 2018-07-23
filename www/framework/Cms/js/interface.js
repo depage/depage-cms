@@ -868,29 +868,35 @@ var depageCMS = (function() {
             var hsv = $input.spectrum("get").toHsv();
             var setFromRgbInputs = function() {
                 // use rgb presentation to parse to catch errors
-                var c = tinycolor("rgb(" + $r[0].value + "," + $g[0].value + "," + $b[0].value + ")");
+                var c1 = $input.spectrum("get");
+                var c2 = tinycolor("rgb(" + $r[0].value + "," + $g[0].value + "," + $b[0].value + ")");
 
-                if (c.isValid()) {
+                if (c2.isValid()) {
                     // set new color
-                    $input.spectrum("set", c);
+                    $input.spectrum("set", c2);
                 } else {
                     // reset color
-                    c = $input.spectrum("get");
+                    c2 = c1;
                 }
-                $input.trigger("move.spectrum", $input.spectrum("get"));
+                if (!tinycolor.equals(c1, c2)) {
+                    $input.trigger("move.spectrum", c2);
+                }
             };
             var setFromHsvInputs = function() {
                 // use hsv presentation to parse to catch errors
-                var c = tinycolor("hsv(" + $h[0].value + "," + ($s[0].value / 100) + "," + ($v[0].value / 100) + ")");
+                var c1 = $input.spectrum("get");
+                var c2 = tinycolor("hsv(" + $h[0].value + "," + ($s[0].value / 100) + "," + ($v[0].value / 100) + ")");
 
-                if (c.isValid()) {
+                if (c2.isValid()) {
                     // set new color
-                    $input.spectrum("set", c);
+                    $input.spectrum("set", c2);
                 } else {
                     // reset color
-                    c = $input.spectrum("get");
+                    c2 = c1;
                 }
-                $input.trigger("move.spectrum", $input.spectrum("get"));
+                if (!tinycolor.equals(c1, c2)) {
+                    $input.trigger("move.spectrum", c2);
+                }
             };
 
             $r = $("<input />")
@@ -903,22 +909,26 @@ var depageCMS = (function() {
                 .attr("placeholder", "Blue")
                 .attr("value", rgb.b);
             $h = $("<input />")
+                .attr("min", 0).attr("max", 360)
                 .attr("placeholder", "Hue")
                 .attr("value", Math.round(hsv.h));
             $s = $("<input />")
                 .attr("placeholder", "Saturation")
+                .attr("min", 0).attr("max", 100)
                 .attr("value", Math.round(hsv.s * 100));
             $v = $("<input />")
                 .attr("placeholder", "Brightness")
+                .attr("min", 0).attr("max", 100)
                 .attr("value", Math.round(hsv.v * 100));
 
             $().add($r).add($g).add($b).add($h).add($s).add($v)
                 .attr("class", "sp-input")
-                .attr("type", "text")
+                .attr("type", "number")
                 .appendTo(".sp-input-container");
 
             $().add($r).add($g).add($b)
-                .on("paste blur", function(e) {
+                .attr("min", 0).attr("max", 255)
+                .on("paste blur change", function(e) {
                     setFromRgbInputs(this);
                 })
                 .on("keydown", function(e) {
@@ -927,7 +937,7 @@ var depageCMS = (function() {
                     }
                 });
             $().add($h).add($s).add($v)
-                .on("paste blur", function(e) {
+                .on("paste blur change", function(e) {
                     setFromHsvInputs(this);
                 })
                 .on("keydown", function(e) {
