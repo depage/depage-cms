@@ -754,9 +754,6 @@ class DocProperties extends Base
                 "em",
                 "small",
                 "a",
-                "ul",
-                "ol",
-                "li",
             ],
         ]);
     }
