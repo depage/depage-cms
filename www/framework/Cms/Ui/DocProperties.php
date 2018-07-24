@@ -528,6 +528,62 @@ class DocProperties extends Base
             'autogrow' => true,
             'lang' => $node->getAttribute("lang"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
+            'allowedTags' => [
+                // inline elements
+                "a",
+                "b",
+                "strong",
+                "i",
+                "em",
+                "small",
+
+                // block elements
+                "p",
+                "br",
+                "ul",
+                "ol",
+                "li",
+            ],
+        ]);
+    }
+    // }}}
+    // {{{ addEditRichtext()
+    /**
+     * @brief addEditRichtext
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function addEditRichtext($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
+
+        // @todo add lang attribute for spelling hint
+        $fs->addRichtext("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'autogrow' => true,
+            'lang' => $node->getAttribute("lang"),
+            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'allowedTags' => [
+                // inline elements
+                "a",
+                "b",
+                "strong",
+                "i",
+                "em",
+                "small",
+
+                // block elements
+                "p",
+                "br",
+                "h1",
+                "h2",
+                "ul",
+                "ol",
+                "li",
+            ],
         ]);
     }
     // }}}
