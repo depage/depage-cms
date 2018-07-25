@@ -21,6 +21,8 @@ $server = new \Wrench\BasicServer('ws://0.0.0.0:8000/', [
         'localhost',
         'aomame.local',
         'aomame',
+        'edit.depage.net',
+        'editbeta.depage.net',
     ],
 ]);
 $server->registerApplication('jstree', new JsTreeApplication());
