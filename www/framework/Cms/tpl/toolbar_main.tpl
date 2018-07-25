@@ -32,16 +32,18 @@
                             <?php self::t($this->project->fullname); ?>
                         </li>
                         <li>
-                            <a href="project/<?php self::t($this->project->name); ?>/">
+                            <a href="project/<?php self::t($this->project->name); ?>/<?php self::t(($this->project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/">
                                 <?php self::t(_("Edit")); ?>
                             </a>
                         </li>
-                        <li>
-                            <a href="project/<?php self::t($this->project->name); ?>/library/"><?php self::t(_("Library")); ?></a>
-                        </li>
-                        <li>
-                            <a href="project/<?php self::t($this->project->name); ?>/colors/"><?php self::t(_("Colors")); ?></a>
-                        </li>
+                        <?php if ($this->project->getProjectConfig()->version == 2) { ?>
+                            <li>
+                                <a href="project/<?php self::t($this->project->name); ?>/library/"><?php self::t(_("Library")); ?></a>
+                            </li>
+                            <li>
+                                <a href="project/<?php self::t($this->project->name); ?>/colors/"><?php self::t(_("Colors")); ?></a>
+                            </li>
+                        <?php } ?>
                         <li>
                             <a href="project/<?php self::t($this->project->name); ?>/publish/"><?php self::t(_("Publish")); ?></a>
                         </li>
@@ -53,7 +55,7 @@
                 <ul class="projects">
                     <?php foreach($this->projects as $project) { ?>
                         <li class="project">
-                            <a href="project/<?php self::t($project->name); ?>/">
+                            <a href="project/<?php self::t($project->name); ?>/<?php self::t(($project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/" class="button">
                                 <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
                                     <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
                                 <?php } ?>

@@ -18,7 +18,7 @@
                         <strong><?php self::t($project->fullname); ?></strong>
 
                         <div class="buttons">
-                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
+                            <a href="project/<?php self::t($project->name); ?>/<?php self::t(($project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/" class="button">
                                 <?php self::t(_('Edit')) ?>
                             </a>
                             <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
@@ -29,12 +29,14 @@
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>
-                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
-                                <?php self::t(_('Library')) ?>
-                            </a>
-                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors">
-                                <?php self::t(_('Colors')) ?>
-                            </a>
+                            <?php if ($project->getProjectConfig()->version == 2) { ?>
+                                <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
+                                    <?php self::t(_('Library')) ?>
+                                </a>
+                                <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors">
+                                    <?php self::t(_('Colors')) ?>
+                                </a>
+                            <?php } ?>
                             <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
                                 <?php self::t(_('Settings')) ?>
                             </a>

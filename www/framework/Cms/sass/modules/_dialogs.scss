@@ -42,8 +42,8 @@
     }
 }
 // }}}
-// {{{ dialog.full
-.dialog-full {
+// {{{ body > dialog.full
+body > .dialog-full {
     position: absolute;
     left: 0;
     right: 0;
@@ -116,6 +116,22 @@
             bottom: $toolbarHeight * 1.5;
         }
     }
+
+    header.info + & {
+        margin-top: - $infoHeight;
+        padding-top: 3 * $infoHeight;
+    }
+    > .info,
+    > form.depage-form {
+        padding-left: 16px;
+    }
+}
+// }}}
+// {{{ .layout > dialog.full
+.layout > .dialog-full {
+    background: $backgroundColor;
+    padding: 11px;
+    min-height: 100%;
 
     header.info + & {
         margin-top: - $infoHeight;

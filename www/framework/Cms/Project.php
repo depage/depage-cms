@@ -1274,6 +1274,7 @@ class Project extends \Depage\Entity\Entity
             'aliases' => [],
             'rootAliases' => [],
             'routeHtmlThroughPhp' => false,
+            'version' => 1,
         ]);
 
         if (file_exists("$projectPath/lib/global/config.php")) {

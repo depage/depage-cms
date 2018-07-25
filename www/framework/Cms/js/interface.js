@@ -1437,6 +1437,8 @@ var depageCMS = (function() {
         // }}}
         // {{{ preview
         preview: function(url) {
+            if (typeof url == 'undefined') return;
+
             // @todo add preview language on multilanguage sites
             if (parent != window) {
                 parent.depageCMS.preview(url);
@@ -1597,6 +1599,49 @@ var depageCMS = (function() {
             $upload.remove();
 
             $(document).unbind('keyup.uploader');
+        },
+        // }}}
+        // {{{ setStatus
+        setStatus: function(message) {
+            console.log(unescape(message));
+            window.status = unescape(message);
+        },
+        // }}}
+        // {{{ msg
+        msg: function(newmsg) {
+            newmsg = unescape(newmsg);
+            newmsg = newmsg.replace(/<br>/g, "\n");
+            newmsg = newmsg.replace(/&apos;/g, "'");
+            newmsg = newmsg.replace(/&quot;/g, "\"");
+            newmsg = newmsg.replace(/&auml;/g, "ä");
+            newmsg = newmsg.replace(/&Auml;/g, "Ä");
+            newmsg = newmsg.replace(/&ouml;/g, "ö");
+            newmsg = newmsg.replace(/&Ouml;/g, "Ö");
+            newmsg = newmsg.replace(/&uuml;/g, "ü");
+            newmsg = newmsg.replace(/&Uuml;/g, "Ü");
+            newmsg = newmsg.replace(/&szlig;/g, "ß");
+            alert(newmsg);
+        },
+        // }}}
+        // {{{ flashLoaded
+        flashLoaded: function() {
+        },
+        // }}}
+        // {{{ flashLayoutChanged
+        flashLayoutChanged: function(layout) {
+            if (parent != window) {
+                parent.depageCMS.flashLayoutChanged(layout);
+            } else {
+                // @todo add better solution instead of this locale hack
+                layout = layout.replace(/Seiten editieren/, "edit-pages");
+                layout = layout.replace(/Dateien/, "files");
+                layout = layout.replace(/Farben/, "colors");
+                layout = layout.replace(/ /, "-");
+                $(".live-help-mock")
+                    .hide()
+                    .filter(".layout-" + layout)
+                    .show();
+            }
         },
         // }}}
 

@@ -395,7 +395,7 @@ class Project extends Base
         $libPath = "/" . implode("/", func_get_args());
         $targetPath = $this->project->getProjectPath() . "lib" . $libPath;
 
-        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", [
+        $form = new \Depage\Cms\Forms\Project\FlashUpload("upload-to-lib", [
             'project' => $this->project,
             'targetPath' => $libPath,
         ]);
@@ -445,6 +445,23 @@ class Project extends Base
 
     // {{{ edit()
     function edit() {
+        // construct template
+        $hProject = new Html("flashedit.tpl", [
+            'flashUrl' => "project/{$this->projectName}/flash/flash/false",
+            'previewUrl' => $this->project->getPreviewPath(),
+        ]);
+
+        $h = new Html([
+            'content' => [
+                $hProject,
+            ],
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ jsedit()
+    function jsedit() {
         // construct template
         $hProject = new Html("projectmain.tpl", [
             'previewUrl' => $this->project->getPreviewPath(),
