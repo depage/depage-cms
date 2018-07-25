@@ -98,7 +98,8 @@ class Newsletter extends Base
                 }
             }
             $this->newsletter->setNewsletterPages($pages, $xml);
-            // @todo clear session values?
+
+            $form->clearSession(false);
         }
 
         $h = new Html("newsletterEdit.tpl", [
