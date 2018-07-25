@@ -115,6 +115,35 @@ $conf = array(
         'env' => 'production',
     ),
     // }}}
+    // {{{ editbeta.depage.net
+    'editbeta.depage.net/' => array(
+        'handler' => 'depage\Cms\Ui\Main',
+        'phpcli' => "/usr/bin/php",
+        'db' => array(
+            'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
+            'user' => 'root',
+            'password' => 'killroy',
+            'prefix' => 'dp',
+        ),
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "redis:6379",
+            ),
+        ),
+        'env' => 'production',
+    ),
+    // }}}
+    // {{{ edit.depage.net graphics
+    'editbeta.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
+        'handler' => 'Depage\Graphics\Ui\Graphics',
+        'env' => 'production',
+        'extension' => "gm",
+        'executable' => "/usr/bin/gm",
+        'base' => 'inherit',
+        'env' => 'production',
+    ),
+    // }}}
 );
 
 return $conf;
