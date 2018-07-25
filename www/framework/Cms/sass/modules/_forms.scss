@@ -169,6 +169,7 @@
 
         &.scroll {
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             max-height: 30vh;
 
             legend {
@@ -348,22 +349,15 @@
     }
 }
 /* }}} */
-// {{{ .edit-href / .edit-src
+// {{{ .edit-href
 .edit-href {
     input.dnd-hover {
         outline: 1px solid $selectionBackgroundColor;
     }
 }
 // }}}
-// {{{ .selectize-input
-.depage-form .selectize-input {
-    border-color: transparent;
-    @include radius(4px);
-
-    // @todo make background dark on opened menu
-}
-// }}}
-// {{{ .edit-src
+// {{{ .edit-href .edit-src
+.edit-href,
 .edit-src {
     position: relative;
     input {
@@ -387,6 +381,21 @@
             background: $backgroundColor;
         }
     }
+}
+// }}}
+// {{{ .edit-target
+.edit-target {
+    .depage-label {
+        display: none;
+    }
+}
+// }}}
+// {{{ .selectize-input
+.depage-form .selectize-input {
+    border-color: transparent;
+    @include radius(4px);
+
+    // @todo make background dark on opened menu
 }
 // }}}
 // {{{ .depageEditorToolbar
