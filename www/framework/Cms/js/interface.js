@@ -1119,6 +1119,14 @@ var depageCMS = (function() {
                         localJS.loadFileChooser($input);
                     });
                 });
+                $form.find(".edit-href").each(function() {
+                    var $input = $(this).find("input");
+                    var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
+
+                    $button.on("click", function() {
+                        localJS.loadFileChooser($input);
+                    });
+                });
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta a.release").removeClass("disabled");
                 });
