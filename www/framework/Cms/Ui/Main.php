@@ -107,15 +107,17 @@ class Main extends Base {
                     $error = "<p class=\"error\">false/unknown username password combination</p>";
                 }
 
-                $h = new Html("box.tpl", [
-                    'icon' => "framework/cms/images/icon_login.gif",
-                    'class' => "box-login",
-                    'title' => "Login",
-                    'liveHelp' => _("Login"),
-                    'content' => [
-                        $error,
-                        $form,
-                    ],
+                $h = new Html("scrollable.tpl", [
+                    'content' => new Html("box.tpl", [
+                        'icon' => "framework/cms/images/icon_login.gif",
+                        'class' => "box-login",
+                        'title' => "Login",
+                        'liveHelp' => _("Login"),
+                        'content' => [
+                            $error,
+                            $form,
+                        ],
+                    ]),
                 ], $this->htmlOptions);
 
                 return $h;
@@ -129,14 +131,16 @@ class Main extends Base {
             $this->auth->enforceLogout();
         //}
 
-        $h = new Html("box.tpl", [
-            'class' => "box-logout",
-            'title' => "Bye bye!",
-            'content' => new Html("logout.tpl", [
-                'content' => "Thank you for using depage::cms. ",
-                'relogin1' => "You can relogin ",
-                'relogin2' => "here",
-                'relogin_link' => "login/",
+        $h = new Html("scrollable.tpl", [
+            'content' => new Html("box.tpl", [
+                'class' => "box-logout",
+                'title' => "Bye bye!",
+                'content' => new Html("logout.tpl", [
+                    'content' => "Thank you for using depage::cms. ",
+                    'relogin1' => "You can relogin ",
+                    'relogin2' => "here",
+                    'relogin_link' => "login/",
+                ]),
             ]),
         ], $this->htmlOptions);
 
