@@ -128,7 +128,7 @@ class DocProperties extends Base
             //$this->form->addHtml("<p>Icon: " . $node->getAttribute("icon") . "</p>");
         }
 
-        if (in_array($node->prefix, ['pg', 'sec'])) {
+        if (in_array($node->prefix, ['pg', 'sec', 'edit'])) {
             // only for page data content
             $this->addPgRelease();
         }
@@ -222,12 +222,16 @@ class DocProperties extends Base
         }
         $callback = "add" . implode($parts);
 
+        if ($callback == "addEditPlainSource" && $this->nodeId != $node->getAttribute("db:id")) {
+            return false;
+        }
+
         if (is_callable([$this, $callback])) {
             return $callback;
         }
 
         if ($node->prefix != "sec" && $node->prefix != "proj") {
-            echo $callback . "<br>";
+            //echo $callback . "<br>";
         }
 
         return false;
@@ -812,6 +816,43 @@ class DocProperties extends Base
                 "a",
             ],
         ]);
+    }
+    // }}}
+    // {{{ addEditPlainSource()
+    /**
+     * @brief addEditPlainSource
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    protected function addEditPlainSource($node)
+    {
+        if (!$this->authUser->canEditTemplates()) {
+            return $this->addNotAllowed();
+        }
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Source")));
+
+        $fs->addTextarea("xmledit-$nodeId", [
+            'label' => "",
+            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'autogrow' => true,
+            'class' => "edit-source"
+        ]);
+    }
+    // }}}
+    // {{{ addNotAllowed()
+    /**
+     * @brief addNotAllowed
+     *
+     * @return void
+     **/
+    protected function addNotAllowed()
+    {
+        $this->form->addHtml("<p class=\"error\">");
+            $this->form->addHtml(htmlentities(_("Not allowed to edit this element.")));
+        $this->form->addHtml("</p>");
     }
     // }}}
 
