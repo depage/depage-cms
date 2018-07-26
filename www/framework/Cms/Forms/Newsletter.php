@@ -83,8 +83,8 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
         $count = 0;
         $fs = $this->addFieldset("unsentItems", [
             'label' => _("Unsent news items"),
-            'class' => "scroll",
         ]);
+        $fs->addHtml("<div class=\"scrollable-content\">");
         foreach ($this->candidates as $c) {
             if (!$c->alreadyUsed) {
                 $count++;
@@ -98,12 +98,14 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
         if ($count == 0) {
             $fs->addHtml("<p>" . _("No news items available.") . "</p>");
         }
+        $fs->addHtml("</div>");
 
         $count = 0;
         $fs = $this->addFieldset("sentItems", [
             'label' => _("News items included in other newsletters"),
-            'class' => "scroll detail",
+            'class' => "detail",
         ]);
+        $fs->addHtml("<div class=\"scrollable-content\">");
         foreach ($this->candidates as $c) {
             if ($c->alreadyUsed) {
                 $count++;
@@ -114,6 +116,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
                 ]);
             }
         }
+        $fs->addHtml("</div>");
         if ($count == 0) {
             $fs->addHtml("<p>" . _("No news items available.") . "</p>");
         }

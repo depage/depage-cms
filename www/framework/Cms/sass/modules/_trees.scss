@@ -572,14 +572,10 @@
     .tree {
         position: absolute;
         background: $backgroundLighterColor;
-        margin-top: $infoHeight;
 
         .jstree-container {
             position: absolute;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            top: 0;
+            top: $infoHeight;
             bottom: 0;
             left: 0;
             right: 0;

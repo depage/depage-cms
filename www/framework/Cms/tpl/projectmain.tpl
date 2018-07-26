@@ -26,7 +26,7 @@
         <h1><?php self::e(_("Document Properties")); ?></h1>
     </header>
     <div <?php self::attr([
-        'class' => "doc-properties",
+        'class' => "doc-properties scrollable-content",
         'data-live-help' => _("Document properties:\\nHere you can edit all properties of the currently selected element."),
         'data-live-help-class' => "icon icon-properties",
     ]); ?>>

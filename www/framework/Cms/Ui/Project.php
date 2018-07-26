@@ -112,22 +112,24 @@ class Project extends Base
             $title = _("Add new Project");
         }
 
-        $h = new Html("box.tpl", [
-            'id' => "box-settings",
-            'class' => "box-settings",
-            'title' => $title,
-            'content' => [
-                new Html("tabs.tpl", [
-                    'baseUrl' => "project/" . $this->project->name . "/settings/",
-                    'tabs' => $tabTitles,
-                    'activeTab' => $type,
-                ]),
-                new Html("info.tpl", [
-                    'title' => $infoHead,
-                    'content' => $infoText,
-                ]),
-                $html,
-            ],
+        $h = new Html("settings.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "box-settings",
+                'class' => "box-settings",
+                'title' => $title,
+                'content' => [
+                    new Html("tabs.tpl", [
+                        'baseUrl' => "project/" . $this->project->name . "/settings/",
+                        'tabs' => $tabTitles,
+                        'activeTab' => $type,
+                    ]),
+                    new Html("info.tpl", [
+                        'title' => $infoHead,
+                        'content' => $infoText,
+                    ]),
+                    $html,
+                ],
+            ]),
         ], $this->htmlOptions);
 
         return $h;

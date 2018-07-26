@@ -680,7 +680,7 @@ class DocProperties extends Base
                 '_blank' => _("New Window"),
             ],
             'skin' => "radio",
-            'class' => "edit-type",
+            'class' => "edit-type edit-target",
             'dataInfo' => "//*[@db:id = '$nodeId']/@target",
         ]);
     }

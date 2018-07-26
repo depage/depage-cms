@@ -19,7 +19,7 @@
             <h1><?php self::e(_("Files")); ?></h1>
         </header>
         <div <?php self::attr([
-            'class' => "file-list focus",
+            'class' => "file-list focus scrollable-content",
             'data-live-help' => _("Files:\\nHere you can edit all properties of the currently selected element."),
             'data-live-help-class' => "icon icon-files",
         ]); ?>>

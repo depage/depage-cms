@@ -19,7 +19,7 @@
             <h1><?php self::e(_("Colors")); ?></h1>
         </header>
         <div <?php self::attr([
-            'class' => "color-list focus",
+            'class' => "color-list focus scrollable-content",
             'data-live-help' => _("Available colors"),
             'data-live-help-class' => "icon icon-colors",
         ]); ?>>
@@ -30,7 +30,7 @@
             <h1><?php self::e(_("Color Properties")); ?></h1>
         </header>
         <div <?php self::attr([
-            'class' => "color-property",
+            'class' => "color-property scrollable-content",
             'data-live-help' => _("Change you color here."),
             'data-live-help-class' => "icon icon-colors",
         ]); ?>>

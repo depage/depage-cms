@@ -131,7 +131,6 @@ body > .dialog-full {
 .layout > .dialog-full {
     background: $backgroundColor;
     padding: 11px;
-    min-height: 100%;
 
     header.info + & {
         margin-top: - $infoHeight;

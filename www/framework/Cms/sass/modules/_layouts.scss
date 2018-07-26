@@ -6,12 +6,24 @@ html {
     .layout {
         @include transition(200ms, "left, right, width");
     }
+    .scrollable-content {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    header.info ~ .scrollable-content {
+        top: $infoHeight;
+    }
     .layout-left,
     .layout-right {
         position: absolute;
         top: 0;
         bottom: 0;
-        overflow: auto;
 
         header.info {
             //top: 0;

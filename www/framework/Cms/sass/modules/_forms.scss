@@ -167,19 +167,14 @@
             clear: left;
         }
 
-        &.scroll {
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            max-height: 30vh;
-
-            legend {
-                position: -webkit-sticky;
-                position: sticky;
-                z-index: 1000;
-                background: $backgroundColor;
-                top: 0;
-                left: 0;
-            }
+        .scrollable-content {
+            clear: left;
+            position: relative;
+            top: auto;
+            bottom: auto;
+            left: auto;
+            right: auto;
+            max-height: 25vh;
         }
     }
 }

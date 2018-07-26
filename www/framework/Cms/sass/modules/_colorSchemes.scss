@@ -52,10 +52,6 @@ figure.thumb.color {
         right: 0;
         top: 0;
         bottom: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        margin-top: $infoHeight;
     }
 }
 .toolbar ~ .colorschemes {

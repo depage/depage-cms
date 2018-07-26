@@ -4,7 +4,9 @@
     <header class="info">
         <h1><?php self::e(_("Publish")); ?></h1>
     </header>
-    <?php self::e($this->content); ?>
+    <div class="scrollable-content">
+        <?php self::e($this->content); ?>
+    </div>
 </div>
 <?php if (!empty($this->previewUrl)) { ?>
     <div <?php self::attr([

@@ -229,6 +229,7 @@ select,
 .centered_box {
     width: 100%;
     margin-top: 20px;
+    margin-bottom: 20px;
 
     .content {
         position: relative;
@@ -260,12 +261,14 @@ select,
             opacity: 1;
         }
     }
-    .toolbar + & .content,
-    header.info + & .content {
-        height: auto !important;
-        height: 200px;
-        min-height: 250px;
+    .scrollable-content &:first-child {
         margin-top: 100px;
+
+        .content {
+            height: auto !important;
+            height: 200px;
+            min-height: 250px;
+        }
     }
     .bottom {
         position: absolute;

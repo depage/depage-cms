@@ -1,6 +1,8 @@
-<div class="edit layout layout-left">
+<div <?php self::attr([
+        "class" => "edit layout layout-left",
+    ]); ?>>
     <header class="info">
-        <h1><?php self::e(_("Home")); ?></h1>
+        <h1><?php self::e(_("Settings")); ?></h1>
     </header>
     <div class="scrollable-content">
         <?php self::e($this->content); ?>

@@ -1,6 +1,6 @@
 <div
     id="<?php self::t($this->rootId); ?>"
-    class="jstree-container"
+    class="jstree-container scrollable-content"
     rel="<?php self::t($this->rootNodeType); ?>"
     data-projectname="<?php self::t($this->projectName); ?>"
     data-docname="<?php self::t($this->docName); ?>"

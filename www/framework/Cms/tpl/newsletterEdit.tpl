@@ -5,7 +5,7 @@
     <header class="info">
         <h1><?php self::e(_("Newsletter")); ?></h1>
     </header>
-    <div class="dialog-full">
+    <div class="dialog-full scrollable-content">
         <?php self::e($this->content); ?>
     </div>
 </div>
