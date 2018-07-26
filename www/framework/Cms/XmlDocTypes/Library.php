@@ -110,9 +110,7 @@ class Library extends Base {
             return true;
         }
         try {
-            // @todo move to trash instead of deleting directly !important
-            $this->fs()->rm($path);
-            $this->clearGraphicsCache($path);
+            $this->moveToTrash($path);
         } catch (\Exception $e) {
         }
 
@@ -175,6 +173,58 @@ class Library extends Base {
     protected function fs()
     {
         return \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
+    }
+    // }}}
+    // {{{ moveToTrash()
+    /**
+     * @brief moveToTrash
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function moveToTrash($path)
+    {
+        // @todo check path for validity ".." and if file exists
+        $trashPath = $this->project->getProjectPath() . "trash/";
+        $srcPath = $this->project->getProjectPath() . "lib/" . $path;
+        $targetPath = $trashPath . $path;
+
+        if (!is_dir($trashPath)) {
+            mkdir($trashPath, 0777, true);
+        }
+
+        if (!is_dir($srcPath)) {
+            $pathinfo = pathinfo($targetPath);
+            if (!is_dir($pathinfo['dirname'])) {
+                mkdir($pathinfo['dirname'], 0777, true);
+            }
+        }
+        if (file_exists($targetPath) || is_dir($targetPath)) {
+            $targetPath = $this->renameExistingTrashTarget($targetPath);
+        }
+        rename($srcPath, $targetPath);
+
+        $this->clearGraphicsCache($path);
+    }
+    // }}}
+    // {{{ renameExistingTrashTarget()
+    /**
+     * @brief renameExistingTrashTarget
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function renameExistingTrashTarget($targetPath)
+    {
+        $pathinfo = pathinfo($targetPath);
+        $date = date("_Y-m-d_h-i-s");
+
+        $targetPath = $pathinfo['dirname'] . "/" . $pathinfo['filename'] . $date;
+        if (isset($pathinfo['extension'])) {
+            $targetPath .= "." . $pathinfo['extension'];
+        }
+
+        return $targetPath;
     }
     // }}}
     // {{{ clearGraphicsCache()

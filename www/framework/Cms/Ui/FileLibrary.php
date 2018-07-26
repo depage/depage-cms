@@ -126,21 +126,12 @@ class FileLibrary extends Base
         foreach ($files as $file) {
             if (strpos($file, "libref://") === 0) {
                 $file = substr($file, 9);
-                // @todo move file to trash instead of directly deleting it?
-                $this->fs->rm($file);
 
-                $cachePath = $this->project->getProjectPath() . "lib/cache/";
-                if (is_dir($cachePath)) {
-                    // remove thumbnails from cache inside of project if available
-                    $cache = \Depage\Cache\Cache::factory("graphics", [
-                        'cachepath' => $cachePath,
-                    ]);
-                    $cache->delete("lib/" . $file . ".*");
-                }
+                $xmldb = $this->project->getXmlDb();
+                $doc = $xmldb->getDoc("files");
+                $dth = $doc->getDocTypeHandler();
 
-                // remove thumbnails from global graphics cache
-                $cache = \Depage\Cache\Cache::factory("graphics");
-                $cache->delete("projects/" . $this->project->name . "/lib/" . $file . ".*");
+                $dth->moveToTrash($file);
             }
         }
     }
