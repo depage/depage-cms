@@ -84,13 +84,15 @@ class User extends Base
         } else {
             $title = _("Add new User");
         }
-        $h = new Html("box.tpl", [
-            'id' => "user",
-            'class' => "box-users",
-            'title' => $title,
-            'content' => [
-                $form,
-            ],
+        $h = new Html("scrollable.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "user",
+                'class' => "box-users",
+                'title' => $title,
+                'content' => [
+                    $form,
+                ],
+            ]),
         ], $this->htmlOptions);
 
         return $h;
@@ -105,15 +107,17 @@ class User extends Base
      **/
     protected function show()
     {
-        $h = new Html("box.tpl", [
-            'id' => "user",
-            'class' => "box-users",
-            'title' => $title,
-            'content' => [
-                new Html("userprofile.tpl", [
-                    'user' => $this->user,
-                ]),
-            ],
+        $h = new Html("scrollable.tpl", [
+            'content' => new Html("box.tpl", [
+                'id' => "user",
+                'class' => "box-users",
+                'title' => $title,
+                'content' => [
+                    new Html("userprofile.tpl", [
+                        'user' => $this->user,
+                    ]),
+                ],
+            ]),
         ], $this->htmlOptions);
 
         return $h;

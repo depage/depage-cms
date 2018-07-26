@@ -418,6 +418,12 @@ class Main extends Base {
             ]),
         ], $this->htmlOptions);
 
+        if (!$showCurrent && !isset($_GET['ajax'])) {
+            $h = new Html("scrollable.tpl", [
+                'content' => $h,
+            ], $this->htmlOptions);
+        }
+
         return $h;
     }
     // }}}
