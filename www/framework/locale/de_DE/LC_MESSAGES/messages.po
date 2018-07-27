@@ -2045,7 +2045,7 @@ msgstr "Variablen"
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:48 Cms/Rpc/CmsFuncs.php:970
 msgid "Publish"
-msgstr "Veröffentlichen"
+msgstr "Publizieren"
 
 #: Cms/Ui/Project.php:63
 msgid "Backup"
@@ -2092,7 +2092,7 @@ msgstr ""
 
 #: Cms/Ui/Project.php:97
 msgid "Publishing targets"
-msgstr "Veröffentlichungsziele"
+msgstr "Publizierungsziele"
 
 #: Cms/Ui/Project.php:98
 msgid ""
@@ -2102,7 +2102,7 @@ msgid ""
 msgstr ""
 "depage-cms erlaubt es Ihnen entweder zu einem lokalen Order oder zu einem "
 "andere Webserver zu veröffentlichen, von dem die Seiten ausgeliefert werden. "
-"Das erste Veröffentlichungsziel fungiert dabei als "
+"Das erste Publizierungsziel fungiert dabei als "
 "Standardveröffentlichungsziel. Sie können die Reihenfolge per Drag&Drop "
 "anpassen."
 
@@ -2122,7 +2122,7 @@ msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
 #: Cms/Ui/Project.php:307
 #, php-format
 msgid "Publish Project '%s'"
-msgstr "Veröffentlichen von Projekt '%s'"
+msgstr "Publizieren von Projekt '%s'"
 
 #: Cms/Ui/Project.php:337
 msgid "You are not allowed to release pages on this project."
@@ -2751,7 +2751,7 @@ msgstr "Jetzt veröffentlichen"
 
 #: Cms/Forms/Publish.php:43
 msgid "Publish to"
-msgstr "Veröffentlichen nach"
+msgstr "Publizieren nach"
 
 #: Cms/Forms/ReleasePages.php:30
 msgid "Release Pages Now"
@@ -2831,11 +2831,11 @@ msgstr "Datei auswählen"
 
 #: Cms/Forms/Project/Publish.php:20
 msgid "Save Publish Settings"
-msgstr "Veröffentlichungseinstellungen speichern"
+msgstr "Publizierungseinstellungen speichern"
 
 #: Cms/Forms/Project/Publish.php:38
 msgid "Name of publishing target"
-msgstr "Name des Veröffentlichungsziels"
+msgstr "Name des Publizierungsziels"
 
 #: Cms/Forms/Project/Publish.php:48
 msgid "Output folder"
@@ -2851,7 +2851,7 @@ msgstr "Base-Url"
 
 #: Cms/Forms/Project/Publish.php:55
 msgid "Base URL of publish target"
-msgstr "Base-Url des Veröffentlichungsziels"
+msgstr "Base-Url des Publizierungsziels"
 
 #: Cms/Forms/Project/Publish.php:71
 msgid "Template Set"
@@ -2867,7 +2867,7 @@ msgstr "Dieses Ziel für die Textsuche indizieren"
 
 #: Cms/Forms/Project/Publish.php:104
 msgid "Add new publishing target"
-msgstr "Neue Veröffentlichungsziel hinzufügen"
+msgstr "Neue Publizierungsziel hinzufügen"
 
 #: Cms/Forms/Project/Variable.php:20
 msgid "Save Variables"
@@ -3323,7 +3323,7 @@ msgstr "Zusätzliche Funktionen"
 
 #: Cms/Rpc/CmsFuncs.php:761
 msgid "Last publishing"
-msgstr "Letzte Veröffentlichung"
+msgstr "Letzte Publizierung"
 
 #: Cms/Rpc/CmsFuncs.php:762
 msgid "Recently changed pages"
@@ -3406,7 +3406,7 @@ msgstr "Vorschau"
 
 #: Cms/Rpc/CmsFuncs.php:782 Cms/Rpc/CmsFuncs.php:841
 msgid "publish"
-msgstr "Veröffentlichen"
+msgstr "Publizieren"
 
 #: Cms/Rpc/CmsFuncs.php:784
 msgid "requirements"
