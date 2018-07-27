@@ -17,6 +17,8 @@ div.preview .zoomwrapper {
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 div.preview.zoom50 .zoomwrapper {
     zoom: 0.5;

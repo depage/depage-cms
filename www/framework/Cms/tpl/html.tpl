@@ -20,6 +20,7 @@
         <?php $this->includeCss("interface", [
             "framework/Cms/css/interface.css",
         ]); ?>
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="framework/Cms/images/favicon.ico">
         <link rel="icon" type="image/png" href="framework/Cms/images/favicon.png">
     </head>
