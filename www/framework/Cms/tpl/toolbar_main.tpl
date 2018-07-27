@@ -32,7 +32,7 @@
                             <?php self::t($this->project->fullname); ?>
                         </li>
                         <li>
-                            <a href="project/<?php self::t($this->project->name); ?>/<?php self::t(($this->project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/">
+                            <a href="project/<?php self::t($this->project->name); ?>/edit/">
                                 <?php self::t(_("Edit")); ?>
                             </a>
                         </li>

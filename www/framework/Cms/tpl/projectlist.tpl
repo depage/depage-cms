@@ -18,7 +18,7 @@
                         <strong><?php self::t($project->fullname); ?></strong>
 
                         <div class="buttons">
-                            <a href="project/<?php self::t($project->name); ?>/<?php self::t(($project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/" class="button">
+                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
                                 <?php self::t(_('Edit')) ?>
                             </a>
                             <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">

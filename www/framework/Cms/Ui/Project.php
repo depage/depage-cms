@@ -447,6 +447,15 @@ class Project extends Base
 
     // {{{ edit()
     function edit() {
+        if ($this->project->getProjectConfig()->version == 2) {
+            return $this->jsedit();
+        } else {
+            return $this->flashedit();
+        }
+    }
+    // }}}
+    // {{{ flashedit()
+    function flashedit() {
         // construct template
         $hProject = new Html("flashedit.tpl", [
             'flashUrl' => "project/{$this->projectName}/flash/flash/false",
