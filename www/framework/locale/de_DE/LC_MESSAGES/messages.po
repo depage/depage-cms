@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-27 16:16+0200\n"
+"POT-Creation-Date: 2018-07-27 17:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2556,26 +2556,21 @@ msgid "The preview of the currently selected page."
 msgstr "Vorschau der aktuellen Seite."
 
 #: Cms/tpl/projectLibrary.tpl:11
-#, fuzzy
 msgid ""
-"File tree:\\nHere you can add, rename and delete pages. Select a page to "
-"edit it in the content tree below ↓."
+"File tree:\\nHere you can add, rename and delete folders. Select a folder to "
+"show its contents."
 msgstr ""
-"Dateibaum:\\nHier können Sie Seiten hinzufügen, umbenennen und löschen. "
-"Wählen Sie eine Seite aus, um sie in der Dokumentenstruktur unten anzuzeigen "
-"↓."
+"Dateibaum:\\nHier können Sie Ordner hinzufügen, umbenennen und löschen. "
+"Wählen Sie einen Ordner aus, um seinen Inhalt anzuzeigen."
 
 #: Cms/tpl/projectLibrary.tpl:19
 msgid "Files"
 msgstr "Dateien"
 
 #: Cms/tpl/projectLibrary.tpl:23
-#, fuzzy
-msgid ""
-"Files:\\nHere you can edit all properties of the currently selected element."
+msgid "Files:\\nHere you can manage the files of the current folder."
 msgstr ""
-"Dokument Eigenschaften:\\nHier können Sie alle Eigenschaften des aktuell "
-"ausgewählten Elements bearbeiten."
+"Dateien:\\nHier können sie die Dateien, des aktuellen Ordners verwalten."
 
 #: Cms/tpl/newsletterList.tpl:8
 msgid "Add new newsletter"
@@ -2634,7 +2629,6 @@ msgid "Tree/Edit"
 msgstr "Struktur/Editieren"
 
 #: Cms/tpl/flashedit.tpl:16
-#, fuzzy
 msgid ""
 "Content tree:\\nHere you can add content to your pages. Select an element to "
 "edit its properties in the pane on the right →."
@@ -2644,7 +2638,6 @@ msgstr ""
 "anzuzeigen →."
 
 #: Cms/tpl/flashedit.tpl:21
-#, fuzzy
 msgid ""
 "Content properties:\\nHere you can edit all properties of the currently "
 "selected element."

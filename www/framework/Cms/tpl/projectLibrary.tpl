@@ -8,7 +8,7 @@
         <div <?php self::attr([
             'class' => "tree library",
             'data-url' => "project/{$this->projectName}/tree/lib/",
-            'data-live-help' => _("File tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
+            'data-live-help' => _("File tree:\\nHere you can add, rename and delete folders. Select a folder to show its contents."),
             'data-live-help-class' => "icon icon-tree",
         ]); ?>>
             <?php self::e($this->tree); ?>
@@ -20,7 +20,7 @@
         </header>
         <div <?php self::attr([
             'class' => "file-list focus scrollable-content",
-            'data-live-help' => _("Files:\\nHere you can edit all properties of the currently selected element."),
+            'data-live-help' => _("Files:\\nHere you can manage the files of the current folder."),
             'data-live-help-class' => "icon icon-files",
         ]); ?>>
             <?php self::e($this->files); ?>

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-27 16:16+0200\n"
+"POT-Creation-Date: 2018-07-27 17:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2520,8 +2520,8 @@ msgstr ""
 
 #: Cms/tpl/projectLibrary.tpl:11
 msgid ""
-"File tree:\\nHere you can add, rename and delete pages. Select a page to "
-"edit it in the content tree below ↓."
+"File tree:\\nHere you can add, rename and delete folders. Select a folder to "
+"show its contents."
 msgstr ""
 
 #: Cms/tpl/projectLibrary.tpl:19
@@ -2529,8 +2529,7 @@ msgid "Files"
 msgstr ""
 
 #: Cms/tpl/projectLibrary.tpl:23
-msgid ""
-"Files:\\nHere you can edit all properties of the currently selected element."
+msgid "Files:\\nHere you can manage the files of the current folder."
 msgstr ""
 
 #: Cms/tpl/newsletterList.tpl:8
