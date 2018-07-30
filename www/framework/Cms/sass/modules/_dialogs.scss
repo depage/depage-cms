@@ -129,7 +129,7 @@ body > .dialog-full {
 // }}}
 // {{{ .layout > dialog.full
 .layout > .dialog-full {
-    background: $backgroundColor;
+    background: $backgroundLighterColor;
     padding: 11px;
 
     header.info + & {

@@ -106,6 +106,33 @@
             }
         }
     }
+    p.input-multiple.skin-checkbox,
+    p.input-boolean {
+        input[type="checkbox"] {
+            position: absolute;
+            z-index: 100;
+            opacity: 0;
+        }
+        input[type="checkbox"] + span {
+            padding-left: $checkboxSize * 1.25;
+        }
+        input[type="checkbox"] + span::before {
+            position: absolute;
+            top: -7px;
+            //top: -1px;
+            left: 0;
+            width: $checkboxSize;
+            height: $checkboxSize;
+            content: "";
+            display: block;
+            @include icon-base("switch-off", $checkboxSize);
+            //@include icon-base("checkbox-unchecked", $checkboxSize);
+        }
+        input[type="checkbox"]:checked + span::before {
+            @include icon("switch-on", $checkboxSize);
+            //@include icon("checkbox-checked", $checkboxSize);
+        }
+    }
     p.submit,
     p.cancel {
         float: left;

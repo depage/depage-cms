@@ -79,6 +79,7 @@
 // {{{ .doc-properties .input-multiple.skin-checkbox
 .doc-properties {
     .depage-form .input-multiple.skin-checkbox {
+        $tagIconSize: 18px;
         margin-bottom: -3px;
 
         label {
@@ -95,15 +96,19 @@
         input[type="checkbox"] + span {
             display: inline-block;
             padding: 3px 10px;
+            padding-left: $tagIconSize * 1.25;
             color: $textBaseColor;
             cursor: pointer;
             letter-spacing: 0.03em;
             @include radius($cornerRadius);
 
-            &:before {
-                //content: "- ";
+            &::before {
+                top: 6px;
+                left: 3px;
+                width: $tagIconSize;
+                height: $tagIconSize;
+                @include icon-base("checkbox-unchecked-white", $tagIconSize);
             }
-
             &:hover {
                 background: $backgroundColor;
                 @include box-shadow(inset 0 0 3px 0 rgba(0, 0, 0, 0.5));
@@ -115,7 +120,7 @@
             @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
 
             &:before {
-                //content: "x ";
+                @include icon-base("checkbox-checked-white", $tagIconSize);
             }
         }
         input[type="radio"]:disabled + span {
