@@ -115,15 +115,13 @@
             }
         }
         input[type="checkbox"]:checked + span {
-            background: $selectionBackgroundColor;
+            background: darken($backgroundColor, 35%);
             color: $textBrightColor;
             @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
 
             &:before {
                 @include icon-base("checkbox-checked-white", $tagIconSize);
             }
-        }
-        input[type="radio"]:disabled + span {
         }
     }
 }
