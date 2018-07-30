@@ -1002,7 +1002,25 @@ var depageCMS = (function() {
                         localJS.preview(url);
                     })
                     .on("ready.jstree", function () {
-                        jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+                        if (currentPreviewUrl) {
+                            $.ajax({
+                                async: true,
+                                type: 'POST',
+                                url: baseUrl + "api/" + projectName + "/project/pageId/",
+                                data: { url: currentPreviewUrl },
+                                success: function(data, status) {
+                                    var node = jstreePages.get_node(data.pageId);
+                                    if (node) {
+                                        jstreePages.activate_node(node);
+                                        jstreePages.get_node(node, true)[0].scrollIntoView();
+                                    } else {
+                                        jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+                                    }
+                                }
+                            });
+                        } else {
+                            jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+                        }
                     })
                     .jstree(true);
             });
@@ -1445,7 +1463,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ preview
         preview: function(url) {
-            if (typeof url == 'undefined') return;
+            if (typeof url == 'undefined' || url[0] == "/") return;
 
             // @todo add preview language on multilanguage sites
             if (parent != window) {
@@ -1525,12 +1543,12 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ edit
-        edit: function(projectName, page) {
+        edit: function(pName, page) {
             if (jstreePages) {
                 $.ajax({
                     async: true,
                     type: 'POST',
-                    url: baseUrl + "api/" + projectName + "/project/pageId/",
+                    url: baseUrl + "api/" + pName + "/project/pageId/",
                     data: { url: page },
                     success: function(data, status) {
                         var node = jstreePages.get_node(data.pageId);
@@ -1542,19 +1560,27 @@ var depageCMS = (function() {
                 });
             } else {
                 // @todo updated for jsinterface
-                $.get(baseUrl + "project/" + projectName + "/edit/?ajax=true", function(data) {
+                $.get(baseUrl + "project/" + pName + "/edit/?ajax=true", function(data) {
                     var $result = $("<div></div>")
                         .html( data )
                         .find("div.edit")
                         .appendTo($body);
                     var $header = $result.find("header.info");
+                    projectName = pName;
+                    currentPreviewUrl = page;
 
                     $flashFrame = $("#flashFrame");
-                    $flashFrame[0].src = "project/" + projectName + "/flash/flash/false/" + encodeURIComponent(page);
-                    //@todo add page to flash url
+                    if ($flashFrame.length > 0) {
+                        $flashFrame[0].src = "project/" + pName + "/flash/flash/false/" + encodeURIComponent(page);
+                    } else {
+                        localJS.setupTrees();
+                    }
 
                     $window.triggerHandler("switchLayout", "split");
                 });
+            }
+            if (typeof window.history != 'undefined') {
+                window.history.pushState(null, null, baseUrl + "project/" + pName + "/edit/");
             }
         },
         // }}}
