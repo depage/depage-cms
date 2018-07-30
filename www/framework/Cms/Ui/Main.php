@@ -322,34 +322,6 @@ class Main extends Base {
      * @return  null
      */
     public function notifications() {
-        $nm = Notification::loadByTag($this->pdo, "mail.%");
-        foreach($nm as $n) {
-            if (!empty($n->uid)) {
-                $to = \Depage\Auth\User::loadById($this->pdo, $n->uid)->email;
-
-                $url = parse_url(DEPAGE_BASE);
-
-                $subject = $url['host'] . " . " . $n->title;
-                $text = "";
-                $text .= sprintf(_("You received a new notification from %s:"), $url['host']) . "\n\n";
-                $text .= $n->message . "\n\n";
-
-                if (!empty($n->options["link"])) {
-                    $text .= $n->options["link"] . "\n\n";
-                }
-
-                $text .= "--\n";
-                $text .= _("Your faithful servant on") . "\n";
-                $text .= DEPAGE_BASE . "\n";
-
-                $mail = new \Depage\Mail\Mail("notifications@depage.net");
-                $mail
-                    ->setSubject($subject)
-                    ->setText($text)
-                    ->send($to);
-            }
-        }
-
         $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
 
         // construct template
@@ -358,7 +330,7 @@ class Main extends Base {
         ], $this->htmlOptions);
 
         // delete notifications
-        foreach (array_merge($nm, $nn) as $n) {
+        foreach ($nn as $n) {
             $n->delete();
         }
 
