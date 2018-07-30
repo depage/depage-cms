@@ -170,6 +170,15 @@
             &.icon-help:hover:before {
                 @include icon("help-active", 24px);
             }
+            &.menu-project {
+                img.thumb {
+                    position: static;
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 18px;
+                    height: 18px;
+                }
+            }
         }
         > li > a {
             max-width: 10em;
@@ -193,8 +202,10 @@
 
             a {
                 .thumb {
-                    position: static;
-                    display: inline-block;
+                    position: absolute;
+                    display: block;
+                    top: 6px;
+                    left: 6px;
                     width: 18px;
                     height: 18px;
                     margin-right: 2px;
@@ -202,10 +213,10 @@
                 }
             }
             a.right {
-                clear: none;
-                float: right;
+                position: absolute;
+                right: 0;
+                top: 0;
                 width: 32px;
-                margin-left: -100%;
 
                 &:before {
                     margin-top: 4px;
@@ -227,21 +238,25 @@
                 margin-bottom: 20px;
 
                 li:first-child {
+                    padding-left: 5px;
                     margin-bottom: 10px;
                 }
                 .thumb {
                     position: static;
                     display: inline-block;
                     vertical-align: middle;
-                    width: 28px;
-                    height: 28px;
-                    margin-left: 10px;
+                    width: 32px;
+                    height: 32px;
                     margin-right: 8px;
                 }
             }
             .project-shortcuts + .projects {
                 position: relative;
                 padding-top: 20px + 10px;
+            }
+            .project .button {
+                position: relative;
+                padding-left: 30px;
             }
         }
     }

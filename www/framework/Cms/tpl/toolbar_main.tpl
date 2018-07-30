@@ -10,13 +10,19 @@
         <!-- empty placeholder - content is added with javascript -->
     </menu>
     <menu class="right">
+        <?php
+            $hasFavicon = file_exists("projects/{$this->project->name}/lib/global/favicon.png");
+        ?>
         <!-- add submenu for project -->
         <li><a <?php self::attr([
                 "href" => "",
-                "class" => "button icon-projects",
+                "class" => "button menu-project" . ($hasFavicon ? "" : " icon-projects"),
                 "data-live-help" => _("Change current project"),
             ]); ?>>
                 <?php if(!empty($this->project)) {
+                    if ($hasFavicon) { ?>
+                        <img class="thumb" src="projects/<?php self::t($this->project->name); ?>/lib/global/favicon.png">
+                    <?php }
                     self::t($this->project->fullname);
                 } else {
                     self::t(_("Projects"));
@@ -55,7 +61,7 @@
                 <ul class="projects">
                     <?php foreach($this->projects as $project) { ?>
                         <li class="project">
-                            <a href="project/<?php self::t($project->name); ?>/<?php self::t(($project->getProjectConfig()->version == 2) ? "jsedit" : "edit"); ?>/" class="button">
+                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
                                 <?php if (file_exists("projects/$project->name/lib/global/favicon.png")) { ?>
                                     <img class="thumb" src="projects/<?php self::t($project->name); ?>/lib/global/favicon.png">
                                 <?php } ?>
