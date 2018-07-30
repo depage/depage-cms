@@ -14,15 +14,13 @@ $logger = new class extends \Psr\Log\AbstractLogger implements Psr\Log\LoggerInt
     }
 };
 
-// TODO: add configuration options for port and application name
 $server = new \Wrench\BasicServer('ws://0.0.0.0:8000/', [
     'allowed_origins' => [
         '127.0.0.1',
         'localhost',
-        'aomame.local',
-        'aomame',
         'edit.depage.net',
         'editbeta.depage.net',
+        parse_url(DEPAGE_BASE, \PHP_URL_HOST),
     ],
 ]);
 $server->registerApplication('jstree', new JsTreeApplication());

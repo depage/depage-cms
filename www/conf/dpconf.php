@@ -54,8 +54,8 @@ $conf = array(
         ),
     ),
     // }}}
-    // {{{ aomame/depage-cms/
-    'aomame/depage-cms/' => array(
+    // {{{ shirasu/depage-cms/
+    'shirasu/depage-cms/' => array(
         //'env' => 'production',
         'cache' => array(
             'xmldb' => array(
@@ -69,11 +69,6 @@ $conf = array(
             'qtfaststart' => '/opt/local/bin/qt-faststart',
             'aaccodec' => 'aac',
         ),
-    ),
-    // }}}
-    // {{{ cms.depagecms.net
-    'cms.depagecms.net/' => array(
-        'handler' => 'cms_ui',
     ),
     // }}}
     // {{{ graphics
