@@ -106,16 +106,26 @@
             }
         }
     }
+    p.input-single.skin-radio,
     p.input-multiple.skin-checkbox,
     p.input-boolean {
+        label {
+            position: relative;
+        }
+
+        input[type="radio"],
         input[type="checkbox"] {
             position: absolute;
             z-index: 100;
             opacity: 0;
         }
+        input[type="radio"] + span {
+            padding-left: $checkboxSize;
+        }
         input[type="checkbox"] + span {
             padding-left: $checkboxSize * 1.25;
         }
+        input[type="radio"] + span::before,
         input[type="checkbox"] + span::before {
             position: absolute;
             top: -7px;
@@ -125,6 +135,14 @@
             height: $checkboxSize;
             content: "";
             display: block;
+        }
+        input[type="radio"] + span::before {
+            @include icon-base("radio-unchecked", $checkboxSize);
+        }
+        input[type="radio"]:checked + span::before {
+            @include icon("radio-checked", $checkboxSize);
+        }
+        input[type="checkbox"] + span::before {
             @include icon-base("switch-off", $checkboxSize);
             //@include icon-base("checkbox-unchecked", $checkboxSize);
         }

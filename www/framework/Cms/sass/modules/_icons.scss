@@ -124,6 +124,8 @@
         checkbox-unchecked-white: 3 18,
         switch-on: 0 19,
         switch-off: 1 19,
+        radio-checked: 2 19,
+        radio-unchecked: 3 19,
     );
 
     @if map_has_key($icons, $name) {
