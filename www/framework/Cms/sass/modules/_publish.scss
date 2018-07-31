@@ -23,7 +23,7 @@ form.lastchanged_pages {
         float: right;
     }
     p.small {
-        margin-left: 20px;
+        margin-left: $checkboxSize * 1.25;
         margin-top: -10px;
         color: #555555;
         font-size: 9px;
