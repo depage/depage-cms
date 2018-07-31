@@ -399,8 +399,9 @@ class DocProperties extends Base
                 'text' => _("text"),
                 'php' => _("php"),
             ],
+            'defaultValue' => $pageInfo->fileType,
             'dataAttr' => [
-                'pageId' => $pageInfo->id,
+                'pageId' => $pageInfo->pageId,
             ],
         ]);
 
