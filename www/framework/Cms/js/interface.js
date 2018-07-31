@@ -1171,7 +1171,7 @@ var depageCMS = (function() {
             var url = baseUrl + "project/" + projectName + "/library/files/" + path + "/";
             var $fileContainer = $(".files .file-list");
 
-            $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+            $fileContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
                 localJS.setupFileList();
             });
         },
