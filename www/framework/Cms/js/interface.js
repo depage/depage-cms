@@ -1111,6 +1111,14 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
+                $form.find(".page-type select").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "file_type";
+                    var attrValue = this.value;
+                    console.log(pageId, attrName, attrValue);
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
                 $form.find(".doc-property-meta a.release").on("click", function() {
                     $(this).addClass("disabled");
                     var docRef = $(this).parents("fieldset").data("docref");
