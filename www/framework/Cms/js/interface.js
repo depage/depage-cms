@@ -1192,6 +1192,7 @@ var depageCMS = (function() {
 
             setTimeout(function() {
                 $dialogContainer.addClass("visible");
+                $(".layout").addClass("no-live-help");
             }, 10);
 
             $dialogContainer.children(".content").load(url + "?ajax=true", function() {
@@ -1258,6 +1259,7 @@ var depageCMS = (function() {
             $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
 
             $dialogContainer.removeClass("visible");
+            $(".layout").removeClass("no-live-help");
             setTimeout(function() {
                 $dialogContainer.remove();
             }, 500);
