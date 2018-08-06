@@ -144,6 +144,11 @@ figure.thumb {
             border-color: $selectionBackgroundColor;
             background: $selectionBackgroundColor;
 
+            &.selected.invalid-selection {
+                border-color: $backgroundDisabledColor;
+                background: $backgroundDisabledColor;
+            }
+
             figcaption {
                 color: $selectionTextColor;
             }
