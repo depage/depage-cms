@@ -784,7 +784,7 @@ class DocProperties extends Base
             'label' => !empty($lang) ? $lang : _("src"),
             'class' => "edit-src",
             'dataAttr' => [
-                'accept' => ".jpg,.jpeg,.png,.gif,.pdf,.svg",
+                'accept' => ".jpg,.jpeg,.png,.gif,.svg,.pdf",
                 'forceSize' => $this->getForceSize($node),
             ],
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",

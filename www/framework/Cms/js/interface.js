@@ -1180,15 +1180,12 @@ var depageCMS = (function() {
         // }}}
         // {{{ loadFileChooser
         loadFileChooser: function($input) {
-            // @todo add support to only select specific file type/mime type
-            // @todo add support to only select specific image sizes
             var path = $input[0].value.replace(/^libref:\/\//, '').replace(/[^\/]*$/, '') || currentLibPath;
             var $inputParent = $input.parent().parent();
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
             currentLibAccept = $inputParent.attr("data-accept");
             currentLibForceSize = $inputParent.attr("data-forceSize");
-
             currentLibPath = path;
 
             $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
@@ -1252,6 +1249,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ removeFileChooser()
         removeFileChooser: function($input) {
+            var jstree;
             var $dialogContainer = $(".dialog-full");
             var $selected = $dialogContainer.find("figure.selected:not(.invalid-selection)");
 
@@ -1262,7 +1260,10 @@ var depageCMS = (function() {
 
             $(document).off("keypress.depageFileChooser");
             $(".toolbar-filelist").remove();
-            $(".tree.library .jstree-container").jstree(true).destroy();
+            if ((jstree = $(".tree.library .jstree-container").jstree(true))) {
+                jstree.destroy();
+            }
+
 
             // focus document tree
             $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
@@ -1278,15 +1279,40 @@ var depageCMS = (function() {
         checkSelectedFiles: function($input) {
             var $fileContainer = $(".files .file-list");
             var $files = $fileContainer.find(".selected");
-            var exts = currentLibAccept.split(",");
+            var exts = [];
             var matches = /(\d+|X)x(\d+|X)/.exec(currentLibForceSize);
             var width = "X", height = "X";
 
+            if (currentLibAccept != "") {
+                exts = currentLibAccept.split(",");
+            }
             if (matches && matches.length == 3) {
                 width = matches[1];
                 height = matches[2];
             }
-            if ((!matches || matches.length != 3) && exts.length == 0) return;
+
+            $(".file-list > .message").remove();
+            var $message = $("<p class=\"message\"></p>").insertBefore(".dialog-full .file-list > ul");
+
+            $message.append("<b>" + locale.chooseFileMessage + "</b>");
+            $message.append("<br>");
+
+            if (width == "X" && height == "X" && exts.length == 0) return;
+
+            if (exts.length > 0) {
+                $message.append(document.createTextNode(currentLibAccept));
+                $message.append("<br>");
+            }
+            if (width != "X") {
+                $message.append(document.createTextNode(locale.forceWidthMessage + width + "px"));
+                $message.append("<br>");
+            }
+            if (height != "X") {
+                $message.append(document.createTextNode(locale.forceHeightMessage + height + "px"));
+                $message.append("<br>");
+            }
+
+            // @todo add message about selectable files
 
             $files.each(function() {
                 var $file = $(this);
