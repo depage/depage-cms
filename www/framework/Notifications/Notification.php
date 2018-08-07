@@ -6,7 +6,7 @@ namespace Depage\Notifications;
  * brief Notfication
  * Class Notfication
  */
-class Notification extends \Depage\Entity\Entity
+class Notification extends \Depage\Entity\Entity implements \JsonSerializable
 {
     // {{{ variables
     /**
@@ -233,6 +233,24 @@ class Notification extends \Depage\Entity\Entity
         }
 
         return true;
+    }
+    // }}}
+
+    // {{{  jsonSerialize()
+    /**
+     * @brief  jsonSerialize
+     *
+     * @return void
+     **/
+    public function  jsonSerialize()
+    {
+        return [
+            'tag' => $this->tag,
+            'title' => $this->title,
+            'message' => $this->message,
+            'options' => $this->options,
+            'date' => $this->date,
+        ];
     }
     // }}}
 
