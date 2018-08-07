@@ -60,12 +60,10 @@
                     that.messageCallbacks.fire(e);
                 };
                 this.ws.onerror = function(e) {
-                    console.log("websocket error");
                     that.poll();
                 };
                 this.ws.onclose = function(e) {
-                    console.log("websocket closed");
-                    that.reconnect();
+                    setTimeout(that.reconnect, 1000);
                 };
             },
             // }}}
