@@ -123,6 +123,7 @@ var depageCMS = (function() {
             localJS.setupLibrary();
             localJS.setupColorSchemes();
             localJS.setupDropTargets();
+            localJS.setupNotifications();
         },
         // }}}
         // {{{ setupAjaxContent
@@ -143,6 +144,49 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+        },
+        // }}}
+        // {{{ setupNotifications
+        setupNotifications: function() {
+            if (!window.WebSocket) {
+                return;
+
+            }
+
+            var ws = null;
+            var webSocketUrl = baseUrl.replace(/^(http)/, "ws") + "notifications";
+
+            ws = new WebSocket(webSocketUrl);
+            ws.onmessage = function(e) {
+                try {
+                    var n = JSON.parse(e.data);
+                    var action = null;
+                    var duration = 3000;
+                    var options = {
+                        message: n.message,
+                        backend: 'html'
+                    };
+
+                    if (n.options.link != "") {
+                        options.onClick = function() {
+                            window.location = n.options.link;
+                        };
+                        options.duration = 10000;
+                    }
+
+                    $.depage.growl(n.title, options);
+
+                    console.log(notification);
+                } catch (exeption) {
+                    return true;
+                }
+            };
+            ws.onerror = function(e) {
+                console.log("websocket error");
+            };
+            ws.onclose = function(e) {
+                console.log("websocket closed");
+            };
         },
         // }}}
         // {{{ setupToolbar
@@ -1492,6 +1536,7 @@ var depageCMS = (function() {
                         return;
                     }
                     var $html = $(responseText);
+                    var found = false;
 
                     // get children with ids and replace content
                     $html.filter("[id]").each( function() {
@@ -1502,14 +1547,20 @@ var depageCMS = (function() {
                         if (newTimeout && newTimeout < timeout) {
                             timeout = newTimeout;
                         }
-                        $("#" + id).empty().append($el.children());
+                        var $target = $("#" + id);
+                        if ($target.length > 0) {
+                            $target.empty().append($el.children());
+                            found = true;
+                        }
                     });
 
                     // get script elements
                     $html.filter("script").each( function() {
                         $body.append(this);
                     });
-                    setTimeout(localJS.updateAjaxContent, timeout);
+                    if (found) {
+                        setTimeout(localJS.updateAjaxContent, timeout);
+                    }
                 }
             });
         },

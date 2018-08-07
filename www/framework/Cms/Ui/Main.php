@@ -189,7 +189,6 @@ class Main extends Base {
             $content = [
                 $this->users("current"),
                 $this->tasks(),
-                $this->notifications(),
             ];
 
             return $content;
@@ -312,29 +311,6 @@ class Main extends Base {
         $task->begin();
 
         \Depage\Depage\Runner::redirect(DEPAGE_BASE);
-    }
-    // }}}
-
-    // {{{ notifications
-    /**
-     * gets notifications as javascript
-     *
-     * @return  null
-     */
-    public function notifications() {
-        $nn = Notification::loadBySid($this->pdo, $this->authUser->sid, "depage.%");
-
-        // construct template
-        $h = new Html("Notifications.tpl", [
-            'notifications' => $nn,
-        ], $this->htmlOptions);
-
-        // delete notifications
-        foreach ($nn as $n) {
-            $n->delete();
-        }
-
-        return $h;
     }
     // }}}
 
