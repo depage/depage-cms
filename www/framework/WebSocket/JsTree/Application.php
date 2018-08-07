@@ -71,9 +71,6 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 }
             }
         }
-
-        // do not sleep too long, this impacts new incoming connections
-        usleep(50 * 1000);
     }
     // }}}
     // {{{ onData
