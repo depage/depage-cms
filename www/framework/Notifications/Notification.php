@@ -245,6 +245,7 @@ class Notification extends \Depage\Entity\Entity implements \JsonSerializable
     public function  jsonSerialize()
     {
         return [
+            'type' => "notification",
             'tag' => $this->tag,
             'title' => $this->title,
             'message' => $this->message,
