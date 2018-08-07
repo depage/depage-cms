@@ -50,7 +50,7 @@
     $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg);
+    background-image: url(../images/icon_sprite.svg?201807312351);
     background-size: (4 * $iSize) (20 * $iSize);
 
     @if ($name != "") {

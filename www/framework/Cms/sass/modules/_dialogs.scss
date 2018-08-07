@@ -107,6 +107,7 @@ body > .dialog-full {
             &.default.disabled {
                 opacity: 0.5;
                 background: $backgroundDisabledColor;
+                cursor: auto;
             }
         }
     }

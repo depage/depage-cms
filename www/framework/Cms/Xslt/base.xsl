@@ -370,8 +370,9 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
     <xsl:template match="p" mode="linebreaks">
-        <xsl:apply-templates/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
+        <xsl:apply-templates mode="linebreaks"/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ p mode autolist -->
@@ -418,6 +419,9 @@
     <!-- }}} -->
     <!-- {{{ br -->
     <xsl:template match="br"><br /></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ br mode linebreaks-->
+    <xsl:template match="br" mode="linebreaks"></xsl:template>
     <!-- }}} -->
     <!-- {{{ a -->
     <xsl:template match="a">

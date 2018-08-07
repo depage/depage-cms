@@ -998,8 +998,9 @@ class Project extends \Depage\Entity\Entity
         $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
         // get transformer
-        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
+        //$transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
+        //$transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, null);
         $baseUrl = $this->getBaseUrl($publishId);
         $transformer->setBaseUrl($baseUrl);
         $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";

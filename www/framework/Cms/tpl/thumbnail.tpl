@@ -13,11 +13,13 @@
     $timeFormatter = new \Depage\Formatters\TimeAbsolute();
     $mediainfo = new \Depage\Media\MediaInfo();
     $info = $mediainfo->getInfo($imgSrc);
-
 ?>
 <figure <?php self::attr([
     'class' => "thumb " . $this->class,
     'data-libref' => $this->file,
+    'data-width' => $info['width'] ?? -1,
+    'data-height' => $info['height'] ?? -1,
+    'data-ext' => $ext,
 ]); ?>>
     <img src="<?php self::t($thumbSrc); ?>">
     <figcaption>

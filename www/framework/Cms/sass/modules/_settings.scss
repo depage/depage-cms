@@ -16,6 +16,7 @@ $borderDarkColor: darken($borderColor, 25%);
 $linkColor: #882200;
 $textBaseColor: #000000 !global;
 $textLighterColor: #888888 !global;
+$textDisabledColor: #888888 !global;
 $textBrightColor: #ffffff !global;
 $selectionBackgroundColor: #047CBF !global;
 $selectionTextColor: #ffffff !global;
@@ -44,7 +45,6 @@ $helpIconSize: 32px !global;
 $thumbSize: 120px !global;
 $actionIconHeight: $treeLineHeight * 0.5 + 4px !global;
 $checkboxSize: 36px;
-//$checkboxSize: 24px;
 
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

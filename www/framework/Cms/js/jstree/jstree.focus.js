@@ -46,7 +46,6 @@
         this.gainFocus = $.proxy(function() {
             if (this._data.focus.focused) return;
 
-            console.log("gain focus");
             var inst = this._data.focus.inst;
             this._data.focus.focused = true;
 
@@ -70,7 +69,6 @@
         this.looseFocus = $.proxy(function() {
             if (!this._data.focus.focused) return;
 
-            console.log("loose focus");
             var inst = this._data.focus.inst;
             this._data.focus.focused = false;
 

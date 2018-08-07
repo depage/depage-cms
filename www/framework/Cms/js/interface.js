@@ -38,7 +38,9 @@ var depageCMS = (function() {
         currentDocId,
         currentDocPropertyId,
         currentPreviewLang = "de",
-        currentLibPath = "";
+        currentLibPath = "",
+        currentLibAccept = "",
+        currentLibForceSize = "";
     var $html;
     var $window;
     var $body;
@@ -625,6 +627,8 @@ var depageCMS = (function() {
 
             $fileContainer
                 .on("selectionChange.depage", function() {
+                    localJS.checkSelectedFiles();
+
                     if ($fileContainer.find(".selected").length > 0) {
                         $deleteButton.removeClass("disabled");
                     } else {
@@ -668,7 +672,6 @@ var depageCMS = (function() {
                     $fileContainer.trigger("selectionChange.depage");
                 })
                 .on("contextmenu", "figure", function(e) {
-                    console.log(e);
                     var $thumb = $(this);
                     if (!$thumb.hasClass("selected")) {
                         $thumb.addClass("selected");
@@ -1115,7 +1118,6 @@ var depageCMS = (function() {
                     var pageId = $(this).parents("p").data("pageid");
                     var attrName = "file_type";
                     var attrValue = this.value;
-                    console.log(pageId, attrName, attrValue);
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
@@ -1171,17 +1173,19 @@ var depageCMS = (function() {
             var url = baseUrl + "project/" + projectName + "/library/files/" + path + "/";
             var $fileContainer = $(".files .file-list");
 
-            $fileContainer.removeClass("loaded").load(url + "?ajax=true", function() {
+            $fileContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
                 localJS.setupFileList();
             });
         },
         // }}}
         // {{{ loadFileChooser
         loadFileChooser: function($input) {
-            // @todo add support to only select specific file type/mime type
             var path = $input[0].value.replace(/^libref:\/\//, '').replace(/[^\/]*$/, '') || currentLibPath;
+            var $inputParent = $input.parent().parent();
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
+            currentLibAccept = $inputParent.attr("data-accept");
+            currentLibForceSize = $inputParent.attr("data-forceSize");
             currentLibPath = path;
 
             $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
@@ -1192,6 +1196,7 @@ var depageCMS = (function() {
 
             setTimeout(function() {
                 $dialogContainer.addClass("visible");
+                $(".layout").addClass("no-live-help");
             }, 10);
 
             $dialogContainer.children(".content").load(url + "?ajax=true", function() {
@@ -1206,6 +1211,8 @@ var depageCMS = (function() {
                 var $cancel = $("<a class=\"button\">"+ locale.cancel + "</a>").appendTo($dialogBar);
 
                 $ok.on("click.depageFileChooser", function() {
+                    if ($(this).hasClass("disabled")) return false;
+
                     localJS.removeFileChooser($input);
                 });
                 $cancel.on("click.depageFileChooser", function() {
@@ -1226,24 +1233,25 @@ var depageCMS = (function() {
                 // @todo select input current file if available and scroll into view
                 $("figure.thumb[data-libref='" + $input[0].value + "']").addClass("selected");
 
+                localJS.setupLibrary();
+
                 var $fileContainer = $(".files .file-list");
                 $fileContainer
                     .on("selectionChange.depage", function() {
-                        if ($fileContainer.find(".selected").length > 0) {
+                        if ($fileContainer.find(".selected:not(.invalid-selection)").length > 0) {
                             $ok.removeClass("disabled");
                         } else {
                             $ok.addClass("disabled");
                         }
                     });
-
-                localJS.setupLibrary();
             });
         },
         // }}}
         // {{{ removeFileChooser()
         removeFileChooser: function($input) {
+            var jstree;
             var $dialogContainer = $(".dialog-full");
-            var $selected = $dialogContainer.find("figure.selected");
+            var $selected = $dialogContainer.find("figure.selected:not(.invalid-selection)");
 
             if (typeof $input !== 'undefined' && $selected.length > 0) {
                 $input[0].value = $selected.attr("data-libref");
@@ -1252,15 +1260,80 @@ var depageCMS = (function() {
 
             $(document).off("keypress.depageFileChooser");
             $(".toolbar-filelist").remove();
-            $(".tree.library .jstree-container").jstree(true).destroy();
+            if ((jstree = $(".tree.library .jstree-container").jstree(true))) {
+                jstree.destroy();
+            }
+
 
             // focus document tree
             $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
 
             $dialogContainer.removeClass("visible");
+            $(".layout").removeClass("no-live-help");
             setTimeout(function() {
                 $dialogContainer.remove();
             }, 500);
+        },
+        // }}}
+        // {{{ checkSelectedFiles()
+        checkSelectedFiles: function($input) {
+            var $fileContainer = $(".files .file-list");
+            var $files = $fileContainer.find(".selected");
+            var exts = [];
+            var matches = /(\d+|X)x(\d+|X)/.exec(currentLibForceSize);
+            var width = "X", height = "X";
+
+            if (currentLibAccept != "") {
+                exts = currentLibAccept.split(",");
+            }
+            if (matches && matches.length == 3) {
+                width = matches[1];
+                height = matches[2];
+            }
+
+            $(".file-list > .message").remove();
+            var $message = $("<p class=\"message\"></p>").insertBefore(".dialog-full .file-list > ul");
+
+            $message.append("<b>" + locale.chooseFileMessage + "</b>");
+            $message.append("<br>");
+
+            if (width == "X" && height == "X" && exts.length == 0) return;
+
+            if (exts.length > 0) {
+                $message.append(document.createTextNode(currentLibAccept));
+                $message.append("<br>");
+            }
+            if (width != "X") {
+                $message.append(document.createTextNode(locale.forceWidthMessage + width + "px"));
+                $message.append("<br>");
+            }
+            if (height != "X") {
+                $message.append(document.createTextNode(locale.forceHeightMessage + height + "px"));
+                $message.append("<br>");
+            }
+
+            // @todo add message about selectable files
+
+            $files.each(function() {
+                var $file = $(this);
+
+                if (exts.length > 0) {
+                    var ext = "." + $file.attr("data-ext");
+                    if (exts.indexOf(ext) == -1) {
+                        $file.addClass("invalid-selection");
+                    }
+                }
+                if (width != "X") {
+                    if ($file.attr("data-width") != width) {
+                        $file.addClass("invalid-selection");
+                    }
+                }
+                if (height != "X") {
+                    if ($file.attr("data-height") != height) {
+                        $file.addClass("invalid-selection");
+                    }
+                }
+            });
         },
         // }}}
         // {{{ deleteSelectedFiles()

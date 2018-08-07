@@ -64,6 +64,10 @@
             display: inline-block;
             padding: 3px 12px;
             color: $textBaseColor;
+
+            &::before {
+                display: none;
+            }
         }
         input[type="radio"]:checked + span {
             background: #ffffff;

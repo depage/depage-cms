@@ -280,6 +280,29 @@ class DocProperties extends Base
         return $this->fs;
     }
     // }}}
+    // {{{ getForceSize()
+    /**
+     * @brief getForceSize
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function getForceSize($node)
+    {
+        $forceSize = $node->getAttribute("force_size");
+        $forceWidth = $node->getAttribute("force_width") ?? "X";
+        $forceHeight = $node->getAttribute("force_height") ?? "X";
+
+        if (empty($forceSize)) {
+            $forceSize = $forceWidth . "x" . $forceHeight;
+        }
+        if ($forceSize == "XxX") {
+            $forceSize = "";
+        }
+
+        return $forceSize;
+    }
+    // }}}
 
     // {{{ addPgRelease()
     /**
@@ -708,6 +731,9 @@ class DocProperties extends Base
         $f->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
             'class' => "edit-src",
+            'dataAttr' => [
+                'accept' => ".mp3,.m4a,.ogg,.wav,.flac",
+            ],
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
@@ -730,6 +756,9 @@ class DocProperties extends Base
         $f->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
             'class' => "edit-src",
+            'dataAttr' => [
+                'accept' => ".mp4,.m4v,.ogv,.webm",
+            ],
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
@@ -749,10 +778,15 @@ class DocProperties extends Base
 
         $fs->addHtml($this->thumbnail($node->getAttribute("src")));
 
+
         $lang = $node->getAttribute("lang");
         $fs->addText("xmledit-$nodeId-img", [
             'label' => !empty($lang) ? $lang : _("src"),
             'class' => "edit-src",
+            'dataAttr' => [
+                'accept' => ".jpg,.jpeg,.png,.gif,.svg,.pdf",
+                'forceSize' => $this->getForceSize($node),
+            ],
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
 

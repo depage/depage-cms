@@ -13,6 +13,10 @@
     .textarea-content {
         padding: 5px 10px;
         font-size: $fSizeM + 1px;
+
+        &::placeholder {
+            color: $textDisabledColor;
+        }
     }
 
     &.saving::before {

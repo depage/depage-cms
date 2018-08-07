@@ -39,8 +39,6 @@
         onResize = function(){
             if (!base.$helpPane) return;
 
-            base.$helpElements = $("*[data-live-help]");
-
             if (base.$helpSvg) {
                 base.$helpSvg.remove();
             }
@@ -193,11 +191,15 @@
             $html.trigger("depage.livehelp.show");
 
             base.$helpPane = $("<div id=\"depage-live-help\"></div>").appendTo("body");
-            base.$helpElements = $("*[data-live-help]");
+            base.$helpElements = $("*[data-live-help]").filter(function() {
+                return !$(this).hasClass("no-live-help") && $(this).parents(".no-live-help").length == 0;
+            });
 
             base.$helpElements.each(function() {
-                var helpTexts = $(this).attr("data-live-help").split("\\n");
-                var classes = $(this).attr("data-live-help-class") || "";
+                var $this = $(this);
+
+                var helpTexts = $this.attr("data-live-help").split("\\n");
+                var classes = $this.attr("data-live-help-class") || "";
                 var $div = $("<div class=\"" + classes + "\"></div>");
 
                 for (var i = 0; i < helpTexts.length; i++) {
@@ -230,6 +232,8 @@
 
                 base.$helpPane.remove();
                 base.$helpPane = false;
+                base.$helpElements = false;
+                base.$helpSvg = false;
 
                 $html.trigger("depage.livehelp.hide");
             }, 500);
