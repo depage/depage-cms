@@ -5,13 +5,15 @@
     z-index: 9999 !important;
 
     div.depage-growl-message {
-        background-color: $backgroundColor;
-        color: $textBaseColor;
+        background-color: $backgroundDarkColor;
+        background-color: $selectionBackgroundColor;
+        color: $textBrightColor;
 
         @include box-shadow(0 3px 0.4em 0 rgba(0, 0, 0, 0.5));
 
         &:hover {
-            border-color: $borderColor;
+            border-color: $insertMarkerBackground;
+            background-color: $selectionBackgroundColor;
         }
     }
 }
