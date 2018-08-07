@@ -42,6 +42,7 @@
                             </a>
                         </div>
                     </dt>
+                    <?php // @todo add project shortcut for sorted elements (news/blogentry etc.)?>
                     <dd>
                         <?php self::t(_('loading...')) ?>
                     </dd>

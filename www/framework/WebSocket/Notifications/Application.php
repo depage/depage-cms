@@ -34,6 +34,9 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 'prefix' => $this->options->db->prefix, // database prefix
             )
         );
+
+        $this->timeFormatter = new \Depage\Formatters\TimeNatural();
+        $this->lastTaskUpdate = time();
     }
     // }}}
     // {{{ onConnect
@@ -56,17 +59,46 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     // }}}
     // {{{ onUpdate
     public function onUpdate() {
+        $sendTaskUpdate = time() - $this->lastTaskUpdate > 0;
+
+        $data = [];
+        if ($sendTaskUpdate) {
+            $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
+
+            foreach ($tasks as $task) {
+                if ($task->status == "failed") continue;
+
+                $progress = $task->getProgress();
+                $status = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+                $data[] = (object) [
+                    'type' => "task",
+                    'id' => $task->taskId,
+                    'name' => $task->taskName,
+                    'project' => $task->projectName,
+                    'percent' => $progress->percent,
+                    'status' => $status,
+                ];
+            }
+
+        }
+
         foreach ($this->clients as $cid => $client) {
+            // send notifications
             list($key, $sid) = explode("=", $client->getHeaders()['cookie']);
             $nn = Notification::loadBySid($this->pdo, $sid, "depage.%");
 
             foreach ($nn as $n) {
-                $data = json_encode($n);
-                $client->send($data);
+                $client->send(json_encode($n));
 
                 $n->delete();
             }
+
+            if (!empty($data)) {
+                $client->send(json_encode($data));
+            }
         }
+
+        $this->lastTaskUpdate = time();
     }
     // }}}
     // {{{ onData

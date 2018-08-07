@@ -159,24 +159,13 @@ var depageCMS = (function() {
             ws = new WebSocket(webSocketUrl);
             ws.onmessage = function(e) {
                 try {
-                    var n = JSON.parse(e.data);
-                    var action = null;
-                    var duration = 3000;
-                    var options = {
-                        message: n.message,
-                        backend: 'html'
-                    };
+                    var data = JSON.parse(e.data);
 
-                    if (n.options.link != "") {
-                        options.onClick = function() {
-                            window.location = n.options.link;
-                        };
-                        options.duration = 10000;
+                    if (data.type == "notification") {
+                        localJS.handleNotifications(data);
+                    } else if (data.type == "task") {
+                        localJS.handleTaskMessage(data);
                     }
-
-                    $.depage.growl(n.title, options);
-
-                    console.log(notification);
                 } catch (exeption) {
                     return true;
                 }
@@ -1714,6 +1703,31 @@ var depageCMS = (function() {
             if (typeof window.history != 'undefined') {
                 window.history.pushState(null, null, baseUrl + "project/" + pName + "/edit/");
             }
+        },
+        // }}}
+
+        // {{{ handleNotifications
+        handleNotifications: function(n) {
+            var action = null;
+            var duration = 3000;
+            var options = {
+                message: n.message,
+                backend: 'html'
+            };
+
+            if (n.options.link != "") {
+                options.onClick = function() {
+                    window.location = n.options.link;
+                };
+                options.duration = 10000;
+            }
+
+            $.depage.growl(n.title, options);
+        },
+        // }}}
+        // {{{ handleTaskMessage
+        handleTaskMessage: function(tasks) {
+            console.log(tasks);
         },
         // }}}
 

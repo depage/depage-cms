@@ -248,13 +248,6 @@ class Main extends Base {
             return false;
         });
 
-        foreach ($tasks as $task) {
-            if ($task) {
-                $taskrunner = new \Depage\Tasks\TaskRunner($this->options);
-                //$taskrunner->run($task->taskId);
-            }
-        }
-
         // construct template
         $h = new Html("box.tpl", [
             'id' => "box-tasks",
