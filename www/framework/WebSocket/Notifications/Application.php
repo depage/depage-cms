@@ -94,6 +94,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
             }
 
             if (!empty($data)) {
+                // @todo filter tasks per user
                 $client->send(json_encode($data));
             }
         }

@@ -163,7 +163,7 @@ var depageCMS = (function() {
 
                     if (data.type == "notification") {
                         localJS.handleNotifications(data);
-                    } else if (data.type == "task") {
+                    } else {
                         localJS.handleTaskMessage(data);
                     }
                 } catch (exeption) {
@@ -1727,7 +1727,19 @@ var depageCMS = (function() {
         // }}}
         // {{{ handleTaskMessage
         handleTaskMessage: function(tasks) {
-            console.log(tasks);
+            var $wrapper = $("#toolbarmain > .task-progress");
+            var $progress = $wrapper.find("progress");
+
+            if (tasks.length > 0) {
+                $wrapper.show();
+            } else {
+                $wrapper.hide();
+            }
+            for (var i = 0; i < tasks.length; i++) {
+                var task = tasks[i];
+
+                $progress.attr("value", task.percent);
+            }
         },
         // }}}
 

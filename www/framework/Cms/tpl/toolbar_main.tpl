@@ -94,5 +94,6 @@
                 "data-live-help" => _("Help"),
             ]); ?>>?</a></li>
     </menu>
+    <div class="task-progress"><progress value="0" max="100"></progress></div>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :
