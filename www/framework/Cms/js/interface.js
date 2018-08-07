@@ -185,7 +185,7 @@ var depageCMS = (function() {
                 console.log("websocket error");
             };
             ws.onclose = function(e) {
-                console.log("websocket closed");
+                setTimeout(localJS.setupNotifications, 1000);
             };
         },
         // }}}
