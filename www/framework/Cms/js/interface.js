@@ -1772,14 +1772,21 @@ var depageCMS = (function() {
             var percent = 0;
             var i, prop;
 
-            if (tasks.length > 0) {
-                $wrappers.show();
-            } else {
-                $wrappers.hide();
-            }
-
             for (prop in currentTasks) {
                 currentTasks[prop] = false;
+            }
+
+            if (tasks.length > 0) {
+                if (Object.keys(currentTasks).length == 0) {
+                    $(".task-progress .task-list").text("");
+                }
+                $("#toolbarmain .task-progress").show();
+            } else {
+                localJS.cleanTaskProgress();
+                $("#toolbarmain .task-progress").hide();
+                $(".task-progress .task-list").text(locale.noCurrentTasks);
+
+                return;
             }
 
             // render global progress
@@ -1789,7 +1796,6 @@ var depageCMS = (function() {
             // render local progress
             for (i = 0; i < tasks.length; i++) {
                 var t = tasks[i];
-                // @todo map to current tasks
 
                 localJS.renderProgressFor($wrappers.children(".task-list"), t.id, t.name, t.project, t.percent, t.status);
             }
@@ -1798,13 +1804,14 @@ var depageCMS = (function() {
 
             clearTimeout(currentTasksTimeout);
             currentTasksTimeout = setTimeout(function() {
-                console.log("final");
                 localJS.cleanTaskProgress(true);
             }, 2500);
         },
         // }}}
         // {{{ renderProgressFor
         renderProgressFor: function($wrappers, taskId, name, project, percent, status) {
+            var lastFrame = +(new Date()) - 100;
+
             $wrappers.each(function(i, wrapper) {
                 var id = "task-progress-" + i + "-" + taskId;
                 var $t = $("#" + id);
@@ -1817,9 +1824,8 @@ var depageCMS = (function() {
 
                 var $p = $t.children("progress");
                 var $pText = $t.children("strong");
-                var p = parseInt($p.attr("value"), 10);
-                var lastP;
-                var lastFrame = +(new Date()) - 100;
+                var targetP = percent;
+                var lastP = parseFloat($p.attr("value"));
 
                 $t.children("em").eq(0).text(name);
                 $t.children("em").eq(1).text(status);
@@ -1831,7 +1837,7 @@ var depageCMS = (function() {
                         return false;
                     }
 
-                    var newP = lerp(p, percent, timeDiff / 1000);
+                    var newP = lerp(lastP, targetP, timeDiff / 1000);
                     var newPfloored = Math.floor(newP);
 
                     if (newP - newPfloored < 1) {
@@ -1841,10 +1847,8 @@ var depageCMS = (function() {
                         return;
                     }
 
-                    $pText.text(newPfloored + "%");
+                    $pText.text(newP + "%");
                     $p.attr("value", newP);
-
-                    lastP = newP;
                 });
             });
         },

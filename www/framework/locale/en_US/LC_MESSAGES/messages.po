@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-06 15:31+0200\n"
+"POT-Creation-Date: 2018-08-08 19:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: WebSocket/Notifications/Application.php:91
+#, php-format
+msgid "'%s' will finish in %s"
+msgstr ""
 
 #: Formatters/TimeNatural.php:16
 #, php-format
@@ -1992,23 +1997,23 @@ msgstr ""
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:211
+#: Cms/Ui/Main.php:210
 msgid "Remove"
 msgstr ""
 
-#: Cms/Ui/Main.php:263
+#: Cms/Ui/Main.php:255
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:265
+#: Cms/Ui/Main.php:257
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:383
+#: Cms/Ui/Main.php:352
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:385
+#: Cms/Ui/Main.php:354
 msgid "Shows the users that are currently logged in"
 msgstr ""
 
@@ -2354,39 +2359,43 @@ msgstr ""
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 
-#: Cms/js/locale.php:38
-msgid "Ok"
+#: Cms/js/locale.php:38 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:97
+msgid "No current tasks."
 msgstr ""
 
 #: Cms/js/locale.php:39
-msgid "Paste"
+msgid "Ok"
 msgstr ""
 
 #: Cms/js/locale.php:40
-msgid "Filter Projects"
+msgid "Paste"
 msgstr ""
 
 #: Cms/js/locale.php:41
-msgid "Reload"
+msgid "Filter Projects"
 msgstr ""
 
 #: Cms/js/locale.php:42
-msgid "Reload page preview"
+msgid "Reload"
 msgstr ""
 
 #: Cms/js/locale.php:43
-msgid "Rename"
+msgid "Reload page preview"
 msgstr ""
 
 #: Cms/js/locale.php:44
-msgid "Select all"
+msgid "Rename"
 msgstr ""
 
 #: Cms/js/locale.php:45
-msgid "Finished uploading/Cancel"
+msgid "Select all"
 msgstr ""
 
 #: Cms/js/locale.php:46
+msgid "Finished uploading/Cancel"
+msgstr ""
+
+#: Cms/js/locale.php:47
 msgid "Change zoom level of preview."
 msgstr ""
 
@@ -2420,38 +2429,16 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:46 Cms/tpl/projectlist.tpl:57
+#: Cms/tpl/projectlist.tpl:47 Cms/tpl/projectlist.tpl:58
 msgid "loading..."
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:54
+#: Cms/tpl/projectlist.tpl:55
 msgid "newsletter"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:67
+#: Cms/tpl/projectlist.tpl:68
 msgid "add new project"
-msgstr ""
-
-#: Cms/tpl/taskProgress.tpl:20
-#, php-format
-msgid ""
-"\n"
-"'%s' failed:\n"
-"%s"
-msgstr ""
-
-#: Cms/tpl/taskProgress.tpl:23
-#, php-format
-msgid "'%s' starting"
-msgstr ""
-
-#: Cms/tpl/taskProgress.tpl:26
-#, php-format
-msgid "'%s' will finish in %s"
-msgstr ""
-
-#: Cms/tpl/taskProgress.tpl:49
-msgid "No current tasks."
 msgstr ""
 
 #: Cms/tpl/userprofile.tpl:9 Cms/tpl/userlist.tpl:21

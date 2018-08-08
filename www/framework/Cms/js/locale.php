@@ -35,6 +35,7 @@
             "forceHeightMessage" => _("Height: "),
             "forceWidthMessage" => _("Width: "),
             "layoutSwitchHelp" => _("Switch layout to: Edit-only, Split-view and Preview-only"),
+            "noCurrentTasks" => _("No current tasks."),
             "ok" => _("Ok"),
             "paste" => _("Paste"),
             "projectFilter" => _("Filter Projects"),
