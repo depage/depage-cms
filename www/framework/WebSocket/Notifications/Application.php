@@ -61,16 +61,14 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     public function onUpdate() {
         $sendTaskUpdate = time() - $this->lastTaskUpdate > 0;
 
-        $data = [];
+        $taskInfo = [];
         if ($sendTaskUpdate) {
             $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
 
             foreach ($tasks as $task) {
-                if ($task->status == "failed") continue;
-
                 $progress = $task->getProgress();
                 $status = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
-                $data[] = (object) [
+                $taskInfo[] = (object) [
                     'type' => "task",
                     'id' => $task->taskId,
                     'name' => $task->taskName,
@@ -93,9 +91,9 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 $n->delete();
             }
 
-            if (!empty($data)) {
-                // @todo filter tasks per user
-                $client->send(json_encode($data));
+            // @todo filter tasks per user
+            if ($sendTaskUpdate) {
+                $client->send(json_encode($taskInfo));
             }
         }
 

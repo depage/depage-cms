@@ -250,7 +250,7 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", [
-            'id' => "box-tasks",
+            //'id' => "box-tasks",
             'class' => "box-tasks",
             'title' => _("Tasks"),
             'updateUrl' => "tasks/",
@@ -285,8 +285,8 @@ class Main extends Base {
     {
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
         $sleepMin = 0;
-        $sleepMax = 10 * 1000000;
-        $sleepMax = 10000;
+        $sleepMax = 100000;
+        //$sleepMax = 10000;
 
         for ($i = 0; $i < 5; $i++) {
             $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");

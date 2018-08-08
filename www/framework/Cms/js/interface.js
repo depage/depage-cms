@@ -40,7 +40,9 @@ var depageCMS = (function() {
         currentPreviewLang = "de",
         currentLibPath = "",
         currentLibAccept = "",
-        currentLibForceSize = "";
+        currentLibForceSize = "",
+        currentTasksTimeout = null,
+        currentTasks = {};
     var $html;
     var $window;
     var $body;
@@ -73,6 +75,45 @@ var depageCMS = (function() {
 
         return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
     };
+
+    // Cross browser, backward compatible solution
+    (function( window, Date ) {
+        // feature testing
+        var raf = window.requestAnimationFrame     ||
+                window.mozRequestAnimationFrame    ||
+                window.webkitRequestAnimationFrame ||
+                window.msRequestAnimationFrame     ||
+                window.oRequestAnimationFrame;
+
+        window.animLoop = function(render) {
+            var running, lastFrame = +(new Date());
+            function loop( now ) {
+                if (running !== false) {
+                    raf ?
+                        raf(loop) :
+                        // fallback to setTimeout
+                        setTimeout(loop, 16);
+
+                    // Make sure to use a valid time, since:
+                    // - Chrome 10 doesn't return it at all
+                    // - setTimeout returns the actual timeout
+                    now = +(new Date());
+                    var deltaT = now - lastFrame;
+
+                    // do not render frame when deltaT is too high
+                    if (deltaT < 160) {
+                        running = render(deltaT, now);
+                    }
+                    lastFrame = now;
+                }
+            }
+            loop();
+        };
+    })(window, Date);
+
+    function lerp(min, max, fraction) {
+        return (max - min) * fraction + min;
+    }
 
     // local Project instance that holds all variables and function
     var localJS = {
@@ -1727,18 +1768,86 @@ var depageCMS = (function() {
         // }}}
         // {{{ handleTaskMessage
         handleTaskMessage: function(tasks) {
-            var $wrapper = $("#toolbarmain > .task-progress");
-            var $progress = $wrapper.find("progress");
+            var $wrappers = $(".task-progress");
+            var percent = 0;
+            var i, prop;
 
             if (tasks.length > 0) {
-                $wrapper.show();
+                $wrappers.show();
             } else {
-                $wrapper.hide();
+                $wrappers.hide();
             }
-            for (var i = 0; i < tasks.length; i++) {
-                var task = tasks[i];
 
-                $progress.attr("value", task.percent);
+            for (prop in currentTasks) {
+                currentTasks[prop] = false;
+            }
+
+            // render global progress
+            percent = Math.round(tasks.reduce(function(a, task) { return a + task.percent; }, 0) / tasks.length);
+            localJS.renderProgressFor($wrappers, "global", "global", "", percent, "");
+
+            // render local progress
+            for (i = 0; i < tasks.length; i++) {
+                var t = tasks[i];
+                // @todo map to current tasks
+
+                localJS.renderProgressFor($wrappers, t.id, t.name, t.project, t.percent, t.status);
+            }
+
+            localJS.cleanTaskProgress();
+
+            clearTimeout(currentTasksTimeout);
+            currentTasksTimeout = setTimeout(function() {
+                console.log("final");
+                localJS.cleanTaskProgress(true);
+            }, 2500);
+        },
+        // }}}
+        // {{{ renderProgressFor
+        renderProgressFor: function($wrappers, taskId, name, project, percent, status) {
+            $wrappers.each(function(i, wrapper) {
+                var id = "task-progress-" + i + "-" + taskId;
+                var $t = $("#" + id);
+
+                currentTasks[id] = true;
+
+                if ($t.length == 0) {
+                    $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\" value=\"" + percent + "\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
+                }
+
+                var $p = $t.children("progress");
+                var $pText = $t.children("strong");
+                var p = parseInt($p.attr("value"), 10);
+                var lastFrame = +(new Date()) - 100;
+
+                $t.children("em").eq(0).text(name);
+                $t.children("em").eq(1).text(status);
+
+                animLoop(function(deltaT, now) {
+                    var timeDiff = now - lastFrame;
+                    if (timeDiff > 1000) {
+                        // run for maximal 1 second until next update from websocket server
+                        return false;
+                    }
+
+                    var newP = lerp(p, percent, timeDiff / 1000);
+
+                    $pText.text(Math.round(newP) + "%");
+                    $p.attr("value", newP);
+
+                });
+            });
+        },
+        // }}}
+        // {{{
+        cleanTaskProgress: function(force) {
+            for (var prop in currentTasks) {
+                if (force || !currentTasks[prop]) {
+                    console.log(force, prop, currentTasks[prop]);
+                    $("#" + prop).remove();
+
+                    delete currentTasks[prop];
+                }
             }
         },
         // }}}
@@ -1879,7 +1988,7 @@ var depageCMS = (function() {
     return localJS;
 })();
 
-// {{{ registeroevents
+// {{{ register events
 $(document).ready(function() {
     depageCMS.ready();
 });
