@@ -59,27 +59,59 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     // }}}
     // {{{ onUpdate
     public function onUpdate() {
+        $this->sendNotifications();
+
+        // send tasks only once per second
         $sendTaskUpdate = time() - $this->lastTaskUpdate > 0;
-
-        $taskInfo = [];
         if ($sendTaskUpdate) {
-            $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
-
-            foreach ($tasks as $task) {
-                $progress = $task->getProgress();
-                $status = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
-                $taskInfo[] = (object) [
-                    'type' => "task",
-                    'id' => $task->taskId,
-                    'name' => $task->taskName,
-                    'project' => $task->projectName,
-                    'percent' => $progress->percent,
-                    'status' => $status,
-                ];
-            }
-
+            $this->sendTasks();
         }
+        $this->lastTaskUpdate = time();
+    }
+    // }}}
+    // {{{ onData
+    public function onData(string $data, \Wrench\Connection $client):void
+    {
+    }
+    // }}}
 
+    // {{{ sendTasks()
+    /**
+     * @brief sendTasks
+     *
+     * @return void
+     **/
+    protected function sendTasks()
+    {
+        $taskInfo = [];
+        $tasks = \Depage\Tasks\Task::loadAll($this->pdo);
+
+        foreach ($tasks as $task) {
+            $progress = $task->getProgress();
+            $status = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+            $taskInfo[] = (object) [
+                'type' => "task",
+                'id' => $task->taskId,
+                'name' => $task->taskName,
+                'project' => $task->projectName,
+                'percent' => $progress->percent,
+                'status' => $status,
+            ];
+        }
+        // @todo filter tasks per user
+        foreach ($this->clients as $cid => $client) {
+            $client->send(json_encode($taskInfo));
+        }
+    }
+    // }}}
+    // {{{ sendNotifications()
+    /**
+     * @brief sendNotifications
+     *
+     * @return void
+     **/
+    protected function sendNotifications()
+    {
         foreach ($this->clients as $cid => $client) {
             // send notifications
             list($key, $sid) = explode("=", $client->getHeaders()['cookie']);
@@ -90,19 +122,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 
                 $n->delete();
             }
-
-            // @todo filter tasks per user
-            if ($sendTaskUpdate) {
-                $client->send(json_encode($taskInfo));
-            }
         }
-
-        $this->lastTaskUpdate = time();
-    }
-    // }}}
-    // {{{ onData
-    public function onData(string $data, \Wrench\Connection $client):void
-    {
     }
     // }}}
 }

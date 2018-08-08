@@ -286,7 +286,7 @@ class Main extends Base {
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
         $sleepMin = 0;
         $sleepMax = 100000;
-        //$sleepMax = 10000;
+        $sleepMax = 10000000;
 
         for ($i = 0; $i < 5; $i++) {
             $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");

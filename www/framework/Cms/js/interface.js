@@ -1784,14 +1784,14 @@ var depageCMS = (function() {
 
             // render global progress
             percent = Math.round(tasks.reduce(function(a, task) { return a + task.percent; }, 0) / tasks.length);
-            localJS.renderProgressFor($wrappers, "global", "global", "", percent, "");
+            localJS.renderProgressFor($wrappers.children(".task-overview"), "global", "global", "", percent, "");
 
             // render local progress
             for (i = 0; i < tasks.length; i++) {
                 var t = tasks[i];
                 // @todo map to current tasks
 
-                localJS.renderProgressFor($wrappers, t.id, t.name, t.project, t.percent, t.status);
+                localJS.renderProgressFor($wrappers.children(".task-list"), t.id, t.name, t.project, t.percent, t.status);
             }
 
             localJS.cleanTaskProgress();
@@ -1818,6 +1818,7 @@ var depageCMS = (function() {
                 var $p = $t.children("progress");
                 var $pText = $t.children("strong");
                 var p = parseInt($p.attr("value"), 10);
+                var lastP;
                 var lastFrame = +(new Date()) - 100;
 
                 $t.children("em").eq(0).text(name);
@@ -1831,10 +1832,19 @@ var depageCMS = (function() {
                     }
 
                     var newP = lerp(p, percent, timeDiff / 1000);
+                    var newPfloored = Math.floor(newP);
 
-                    $pText.text(Math.round(newP) + "%");
+                    if (newP - newPfloored < 1) {
+                        newP = newPfloored;
+                    }
+                    if (lastP == newP) {
+                        return;
+                    }
+
+                    $pText.text(newPfloored + "%");
                     $p.attr("value", newP);
 
+                    lastP = newP;
                 });
             });
         },
@@ -1843,7 +1853,6 @@ var depageCMS = (function() {
         cleanTaskProgress: function(force) {
             for (var prop in currentTasks) {
                 if (force || !currentTasks[prop]) {
-                    console.log(force, prop, currentTasks[prop]);
                     $("#" + prop).remove();
 
                     delete currentTasks[prop];

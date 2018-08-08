@@ -390,24 +390,5 @@
     }
 }
 // }}}
-// {{{ toolbar task-progress
-#toolbarmain .task-progress {
-    position: absolute;
-    right: 0;
-    top: $toolbarHeight;
-    width: 300px;
-    max-width: 100%;
-    padding: 0 15px;
-    display: none;
-
-    progress {
-        width: 100%;
-    }
-
-    &:hover {
-        // show complete task info
-    }
-}
-// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :
