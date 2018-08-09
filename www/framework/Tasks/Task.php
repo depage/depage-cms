@@ -216,7 +216,7 @@ class Task {
             "DELETE FROM {$this->tableTasks}
             WHERE id = :id"
         );
-        $query->execute(array(
+        return $query->execute(array(
             "id" => $this->taskId,
         ));
     }

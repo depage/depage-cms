@@ -205,23 +205,6 @@ class Main extends Base {
     public function tasks($taskId = null) {
         $this->user = $this->auth->enforce();
 
-        // handle tasks deletion form
-        $taskForm = new \Depage\HtmlForm\HtmlForm("delete-task", [
-            'label' => _("Remove"),
-            'successUrl' => DEPAGE_BASE,
-            'class' => "action-form",
-        ]);
-        $taskForm->addHidden("taskId");
-
-        $taskForm->process();
-        if ($taskForm->valid) {
-            if ($task = \Depage\Tasks\Task::load($this->pdo, $taskForm->getValues()['taskId'])) {
-                $task->remove();
-            }
-
-            $taskForm->clearSession();
-        }
-
         // get data
         if (!empty($taskId)) {
             // load specific task
@@ -413,7 +396,9 @@ class Main extends Base {
             'success' => false,
         ];
         try {
-            $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+            if ($projectName != "-") {
+                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
+            }
         } catch (\Exception $e) {
             $retVal['error'] = $e->getMessage();
             return new \Depage\Json\Json($retVal);
@@ -454,6 +439,15 @@ class Main extends Base {
                 $retVal['success'] = true;
             }
         }
+        if ($type == "task") {
+            $taskToDelete = filter_input(INPUT_POST, 'taskId', FILTER_SANITIZE_NUMBER_INT);
+            if ($action == "delete") {
+                if ($task = \Depage\Tasks\Task::load($this->pdo, $taskToDelete)) {
+                    $retVal['success'] = $task->remove();
+                }
+            }
+        }
+
         return new \Depage\Json\Json($retVal);
     }
     // }}}

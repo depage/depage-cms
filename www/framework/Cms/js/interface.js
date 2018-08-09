@@ -1815,11 +1815,40 @@ var depageCMS = (function() {
             $wrappers.each(function(i, wrapper) {
                 var id = "task-progress-" + i + "-" + taskId;
                 var $t = $("#" + id);
+                var $b;
 
                 currentTasks[id] = true;
 
                 if ($t.length == 0) {
                     $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\" value=\"" + percent + "\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
+
+                    if (taskId != "global") {
+                        $b = $("<a class=\"button\"></a>")
+                            .text(locale.delete)
+                            .appendTo($t)
+                            .depageShyDialogue({
+                                ok: {
+                                    title: locale.delete,
+                                    classes: 'default',
+                                    click: function(e) {
+                                        $.ajax({
+                                            async: true,
+                                            type: 'POST',
+                                            url: baseUrl + "api/-/task/delete/",
+                                            data: { taskId: taskId }
+                                        });
+
+                                        return true;
+                                    }
+                                },
+                                cancel: {
+                                    title: locale.cancel
+                                }
+                            },{
+                                title: locale.delete,
+                                message : locale.deleteQuestion
+                            });
+                    }
                 }
 
                 var $p = $t.children("progress");
@@ -1829,6 +1858,8 @@ var depageCMS = (function() {
 
                 $t.children("em").eq(0).text(name);
                 $t.children("em").eq(1).text(status);
+
+                // @todo add different optics when task failed
 
                 animLoop(function(deltaT, now) {
                     var timeDiff = now - lastFrame;
