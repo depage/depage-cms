@@ -1756,7 +1756,7 @@ var depageCMS = (function() {
                 backend: 'html'
             };
 
-            if (n.options.link != "") {
+            if (typeof n.options.link == 'string') {
                 options.onClick = function() {
                     window.location = n.options.link;
                 };
@@ -1856,6 +1856,8 @@ var depageCMS = (function() {
                 var targetP = percent;
                 var lastP = parseFloat($p.attr("value"));
 
+                $pText.text(lastP + "%");
+                $p.attr("value", lastP);
                 $t.children("em").eq(0).text(name);
                 $t.children("em").eq(1).text(status);
 
