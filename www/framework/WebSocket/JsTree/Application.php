@@ -1,11 +1,12 @@
 <?php
 
-require_once("framework/Depage/Runner.php");
+namespace Depage\WebSocket\JsTree;
 
-class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
-    Wrench\Application\ConnectionHandlerInterface,
-    Wrench\Application\UpdateHandlerInterface
+class Application implements \Wrench\Application\DataHandlerInterface,
+    \Wrench\Application\ConnectionHandlerInterface,
+    \Wrench\Application\UpdateHandlerInterface
 {
+    // {{{ variables
     private $clients = [];
     private $deltaUpdates = [];
     protected $defaults = array(
@@ -14,7 +15,9 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
         'env' => "development",
         'timezone' => "UST",
     );
+    // }}}
 
+    // {{{ __construct
     function __construct() {
         $conf = new \Depage\Config\Config();
         $conf->readConfig(__DIR__ . "/../../../conf/dpconf.php");
@@ -38,18 +41,21 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
             $this->options->auth->method // method
         ); */
     }
-
-    public function onConnect(Wrench\Connection $client): void
+    // }}}
+    // {{{ onConnect
+    public function onConnect(\Wrench\Connection $client): void
     {
     }
-
-    public function onDisconnect(Wrench\Connection $client): void
+    // }}}
+    // {{{ onDisconnect
+    public function onDisconnect(\Wrench\Connection $client): void
     {
         foreach ($this->clients as $cid => $clients) {
             $this->unsubscribe($client, $cid);
         }
     }
-
+    // }}}
+    // {{{ onUpdate
     public function onUpdate() {
         foreach ($this->clients as $cid => $clients) {
             $data = $this->deltaUpdates[$cid]->encodedDeltaUpdate();
@@ -65,12 +71,10 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
                 }
             }
         }
-
-        // do not sleep too long, this impacts new incoming connections
-        usleep(50 * 1000);
     }
-
-    public function onData(string $data, Wrench\Connection $client):void
+    // }}}
+    // {{{ onData
+    public function onData(string $data, \Wrench\Connection $client):void
     {
         $data = json_decode($data);
         if (!$data) return;
@@ -81,7 +85,7 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
             $this->unsubscribe($client, "{$data->projectName}_{$data->docId}");
         }
     }
-
+    // }}}
     // {{{ subscribe()
     /**
      * @brief subscribe
@@ -135,4 +139,4 @@ class JsTreeApplication implements \Wrench\Application\DataHandlerInterface,
     // }}}
 }
 
-?>
+// vim:set ft=php sw=4 sts=4 fdm=marker et :
