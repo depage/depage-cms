@@ -1886,7 +1886,7 @@ var depageCMS = (function() {
             });
         },
         // }}}
-        // {{{
+        // {{{ cleanTaskProgress
         cleanTaskProgress: function(force) {
             for (var prop in currentTasks) {
                 if (force || !currentTasks[prop]) {

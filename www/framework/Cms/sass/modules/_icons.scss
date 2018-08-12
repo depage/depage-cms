@@ -51,7 +51,7 @@
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg?201807312351);
-    background-size: (4 * $iSize) (20 * $iSize);
+    background-size: (4 * $iSize) (24 * $iSize);
 
     @if ($name != "") {
         @include icon($name, $size);
@@ -127,6 +127,12 @@
         switch-off: 1 19,
         radio-checked: 2 19,
         radio-unchecked: 3 19,
+        img-full: 0 20,
+        img-crop: 1 20,
+        img-contain: 2 20,
+        img-full-white: 0 21,
+        img-crop-white: 1 21,
+        img-contain-white: 2 21,
     );
 
     @if map_has_key($icons, $name) {
@@ -135,7 +141,7 @@
     }
 
     @if ($scale != 1) {
-        background-size: (4 * $iSize) (20 * $iSize);
+        background-size: (4 * $iSize) (24 * $iSize);
     }
 }
 @mixin tree-icon($name, $icon) {

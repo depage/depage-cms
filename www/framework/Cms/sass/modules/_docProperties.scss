@@ -50,11 +50,6 @@
                 @include radius($cornerRadius, "bottom", "right");
             }
         }
-        label {
-            cursor: pointer;
-            display: inline;
-            position: relative;
-        }
         input[type="radio"] {
             position: absolute;
             opacity: 0;
@@ -76,6 +71,50 @@
             @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
         }
         input[type="radio"]:disabled + span {
+        }
+        label {
+            cursor: pointer;
+            display: inline;
+
+            > span::after {
+                display: block;
+                position: absolute;
+                content: " ";
+                left: 6px;
+                top: -9px;
+                width: 32px;
+                height: 32px;
+            }
+        }
+        label.input-single-option-contain,
+        label.input-single-option-fill,
+        label.input-single-option-full {
+            > span {
+                text-indent: -1000em;
+                width: 44px;
+
+                &::after {
+                    @include icon-base();
+                }
+            }
+        }
+        label.input-single-option-fill > span::after {
+            @include icon("img-crop", 32px);
+        }
+        label.input-single-option-contain > span::after {
+            @include icon("img-contain", 32px);
+        }
+        label.input-single-option-full > span::after {
+            @include icon("img-full", 32px);
+        }
+        label.input-single-option-fill > input[type="radio"]:checked + span::after {
+            @include icon("img-crop-white", 32px);
+        }
+        label.input-single-option-contain > input[type="radio"]:checked + span::after {
+            @include icon("img-contain-white", 32px);
+        }
+        label.input-single-option-full > input[type="radio"]:checked + span::after {
+            @include icon("img-full-white", 32px);
         }
     }
 }
