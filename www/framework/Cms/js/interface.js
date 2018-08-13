@@ -437,7 +437,9 @@ var depageCMS = (function() {
                         }
                     },{
                         title: locale.delete,
-                        message : locale.deleteQuestion
+                        message : locale.deleteQuestion,
+                        direction: 'LC',
+                        directionMarker: true
                     });
             });
         },
@@ -501,7 +503,9 @@ var depageCMS = (function() {
                             }
                         },{
                             title: locale.delete,
-                            message : locale.deleteQuestion
+                            message : locale.deleteQuestion,
+                            direction: 'LC',
+                            directionMarker: true
                         });
                     }
                 });
@@ -1424,15 +1428,9 @@ var depageCMS = (function() {
 
             var pos = $files.eq(0).offset();
             var url = baseUrl + "project/" + projectName + "/library/delete/";
-            var markerDirection = "LC";
 
             pos.top += 135;
-            if (pos.left > $(window).width() - 400) {
-                markerDirection = "RC";
-                pos.left += 20;
-            } else {
-                pos.left += 100;
-            }
+            pos.left += 100;
 
             $body.depageShyDialogue({
                 ok: {
@@ -1454,7 +1452,7 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: markerDirection,
+                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1511,15 +1509,9 @@ var depageCMS = (function() {
             if ($colors.length == 0) return;
 
             var pos = $colors.eq(0).offset();
-            var markerDirection = "LC";
 
             pos.top += 75;
-            if (pos.left > $(window).width() - 400) {
-                markerDirection = "RC";
-                pos.left += 20;
-            } else {
-                pos.left += 100;
-            }
+            pos.left += 100;
 
             $body.depageShyDialogue({
                 ok: {
@@ -1539,7 +1531,7 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: markerDirection,
+                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1846,7 +1838,9 @@ var depageCMS = (function() {
                                 }
                             },{
                                 title: locale.delete,
-                                message : locale.deleteQuestion
+                                message : locale.deleteQuestion,
+                                direction: 'LC',
+                                directionMarker: true
                             });
                     }
                 }
