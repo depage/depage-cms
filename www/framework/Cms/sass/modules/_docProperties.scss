@@ -145,16 +145,20 @@
             letter-spacing: 0.03em;
             @include radius($cornerRadius);
 
-            &::before {
+            &:before {
                 top: 6px;
                 left: 3px;
                 width: $tagIconSize;
                 height: $tagIconSize;
-                @include icon-base("checkbox-unchecked-white", $tagIconSize);
+                @include icon-base("checkbox-unchecked", $tagIconSize);
             }
             &:hover {
                 background: $backgroundColor;
                 @include box-shadow(inset 0 0 3px 0 rgba(0, 0, 0, 0.5));
+
+                &:before {
+                    @include icon-base("checkbox-unchecked-white", $tagIconSize);
+                }
             }
         }
         input[type="checkbox"]:checked + span {

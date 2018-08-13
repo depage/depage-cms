@@ -62,6 +62,7 @@
     $scale: $size / 48px;
     $iSize: 48px * $scale;
     $icons: (
+        none: -10 -10,
         depagecms: 0 0,
         users: 0 1,
         user: 1 1,
