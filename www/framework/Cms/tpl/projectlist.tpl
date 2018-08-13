@@ -29,14 +29,12 @@
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>
-                            <?php if ($project->getProjectConfig()->version == 2) { ?>
-                                <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
-                                    <?php self::t(_('Library')) ?>
-                                </a>
-                                <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors">
-                                    <?php self::t(_('Colors')) ?>
-                                </a>
-                            <?php } ?>
+                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
+                                <?php self::t(_('Library')) ?>
+                            </a>
+                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors">
+                                <?php self::t(_('Colors')) ?>
+                            </a>
                             <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
                                 <?php self::t(_('Settings')) ?>
                             </a>

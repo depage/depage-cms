@@ -42,14 +42,12 @@
                                 <?php self::t(_("Edit")); ?>
                             </a>
                         </li>
-                        <?php if ($this->project->getProjectConfig()->version == 2) { ?>
-                            <li>
-                                <a href="project/<?php self::t($this->project->name); ?>/library/"><?php self::t(_("Library")); ?></a>
-                            </li>
-                            <li>
-                                <a href="project/<?php self::t($this->project->name); ?>/colors/"><?php self::t(_("Colors")); ?></a>
-                            </li>
-                        <?php } ?>
+                        <li>
+                            <a href="project/<?php self::t($this->project->name); ?>/library/"><?php self::t(_("Library")); ?></a>
+                        </li>
+                        <li>
+                            <a href="project/<?php self::t($this->project->name); ?>/colors/"><?php self::t(_("Colors")); ?></a>
+                        </li>
                         <li>
                             <a href="project/<?php self::t($this->project->name); ?>/publish/"><?php self::t(_("Publish")); ?></a>
                         </li>
