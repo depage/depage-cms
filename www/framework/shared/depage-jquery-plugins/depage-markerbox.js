@@ -207,7 +207,7 @@
 
                 // adjust position to always be inside of view
                 // @todo center on very small screens?
-                if (newLeft + wrapperWidth > $(window).width()) {
+                if (newLeft + wrapperWidth + dWidth > $(window).width() - 20) {
                     console.log("move from left to right");
                     if (direction[0] == "l") {
                         direction = direction.replaceAt(0, "r");
@@ -215,7 +215,7 @@
                     if (direction[1] == "l") {
                         direction = direction.replaceAt(1, "r");
                     }
-                } else if (newLeft - wrapperWidth < 0) {
+                } else if (newLeft - wrapperWidth - dWidth < 20) {
                     console.log("move from right to left");
                     if (direction[0] == "r") {
                         direction = direction.replaceAt(0, "l");
