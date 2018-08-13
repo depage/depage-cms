@@ -125,7 +125,7 @@
             });
         }
 
-        var closeNotification = function() {
+        closeNotification = function() {
             if (mouseIsOverNotification) {
                 setTimeout(closeNotification, 800);
             } else {
