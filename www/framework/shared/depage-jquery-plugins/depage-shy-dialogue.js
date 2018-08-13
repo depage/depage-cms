@@ -106,12 +106,11 @@
          * @return void
          */
         base.showButtons = function() {
-            if (!$buttonWrapper) {
-                $buttonWrapper = $('<div class="buttons" />');
-                $inputWrapper = $('<div class="inputs" />');
-                $wrapper.append($inputWrapper);
-                $wrapper.append($buttonWrapper);
-            }
+            $buttonWrapper = $('<div class="buttons" />');
+            $inputWrapper = $('<div class="inputs" />');
+            $wrapper.append($inputWrapper);
+            $wrapper.append($buttonWrapper);
+
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
 
