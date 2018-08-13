@@ -70,6 +70,13 @@ body > .dialog-full {
         @include radius(10px, "bottom", "left");
         @include radius(10px, "bottom", "right");
     }
+    @media (pointer:coarse) {
+        top: $toolbarHeight * $touchScale - 1px;
+
+        > .content {
+            bottom: $toolbarHeight * $touchScale;
+        }
+    }
     &.visible {
         opacity: 1;
 
@@ -87,6 +94,10 @@ body > .dialog-full {
         border-top: 1px solid $borderColor;
         padding: 0 15px;
         text-align: center;
+
+        @media (pointer:coarse) {
+            height: $toolbarHeight * 1.5 * $touchScale;
+        }
 
         .button {
             display: inline-block;
@@ -115,6 +126,10 @@ body > .dialog-full {
         .trees,
         .files {
             bottom: $toolbarHeight * 1.5;
+
+            @media (pointer:coarse) {
+                bottom: $toolbarHeight * 1.5 * $touchScale;
+            }
         }
     }
 

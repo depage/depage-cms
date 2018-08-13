@@ -59,6 +59,10 @@ figure.thumb.color {
     .colorscheme,
     .colorprops {
         top: $toolbarHeight;
+
+        @media (pointer:coarse) {
+            top: $toolbarHeight * $touchScale;
+        }
     }
 }
 // }}}

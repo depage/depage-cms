@@ -366,10 +366,9 @@
 .jstree-ocl {
     width: $iconSize;
 }
-.jstree-node,
 .jstree-icon,
 .jstree-ocl {
-    @include icon-base("", $iconSize);
+    @include icon-base("none", $iconSize);
 }
 .jstree-node {
     background-position: -292px -4px;
@@ -408,21 +407,9 @@
 .jstree-closed > .jstree-ocl {
     @include icon("closed", $iconSize);
 }
-.jstree-leaf > .jstree-ocl {
-    background-position: -68px -4px;
-}
-.jstree-themeicon {
-    background-position: -260px -4px;
-}
 .jstree-no-dots .jstree-node,
 .jstree-no-dots .jstree-leaf > .jstree-ocl {
     background: transparent;
-}
-.jstree-no-dots .jstree-open > .jstree-ocl {
-    background-position: -36px -4px;
-}
-.jstree-no-dots .jstree-closed > .jstree-ocl {
-    background-position: -4px -4px;
 }
 .jstree-disabled {
     background: transparent;
@@ -467,9 +454,6 @@
     background-image: none;
     background-position: 0 0;
 }
-.jstree-container-ul .jstree-loading > .jstree-ocl {
-    //background: url("throbber.gif") center center no-repeat;
-}
 .jstree-container-ul > .jstree-node {
     margin-left: 0;
     margin-right: 0;
@@ -507,6 +491,7 @@
     width: calc(100% - 5px);
 }
 // }}}
+
 // {{{ icons
 @include tree-icon("pg_page", "page");
 @include tree-icon("pg_folder", "folder");
@@ -558,6 +543,49 @@
 }
 .icon-sec_separator > .jstree-icon {
     background-image: none;
+}
+// }}}
+
+// {{{ touch size adjustments
+@media (pointer:coarse) {
+    .jstree-node {
+        min-height: $treeLineHeight * $touchScale;
+        line-height: $treeLineHeight * $touchScale;
+        margin-left: $iconSize * $touchScale;
+        min-width: $treeLineHeight * $touchScale;
+    }
+    .jstree-icon {
+        width: $iconSize * $touchScale;
+        height: $treeLineHeight * $touchScale;
+        line-height: $treeLineHeight * $touchScale;
+    }
+    .jstree-anchor {
+        line-height: $treeLineHeight * $touchScale;
+        height: $treeLineHeight * $touchScale;
+
+        &,
+        &:link,
+        &:visited,
+        &:hover,
+        &:empty,
+        &:active {
+            margin-left: 2 * $iconSize * $touchScale;
+        }
+        > span.hint {
+            > span.mini-thumb {
+                top: ($treeLineHeight * $touchScale - $iconSize * $touchScale) / 2;
+                left: -1 * $iconSize * $touchScale - 1px;
+                width: $iconSize * $touchScale;
+                height: $iconSize * $touchScale;
+            }
+        }
+        > .jstree-icon {
+            left: -1 * $iconSize * $touchScale - 1px;
+        }
+    }
+    .jstree-ocl {
+        width: $iconSize * $touchScale;
+    }
 }
 // }}}
 

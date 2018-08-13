@@ -1,0 +1,115 @@
+// {{{ .task-progress
+.task-progress {
+    > .task-overview {
+        strong,
+        em {
+            display: none;
+        }
+    }
+    div {
+        position: relative;
+    }
+    a.button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 24px;
+        width: 24px !important;
+        overflow: hidden;
+        padding: 0 0 0 24px !important;
+
+        @include icon-base("cancel", 24px);
+
+        &:hover {
+            border: none;
+            background-color: $backgroundLighterColor;
+        }
+    }
+}
+// }}}
+// {{{ #toolbarmain .task-progress
+#toolbarmain .task-progress {
+    position: absolute;
+    right: 15px;
+    top: $toolbarHeight;
+    width: $treeWidth;
+    max-width: 100%;
+    padding: 0 15px;
+    display: none;
+
+    @media (pointer:coarse) {
+        top: $toolbarHeight * $touchScale;
+    }
+
+    > .task-overview {
+        padding-top: 5px;
+
+        progress {
+            @include progress($backgroundLighterColor, $borderDarkColor) {
+                @include radius($cornerRadius);
+                width: 100%;
+                height: 4px;
+                margin: 0;
+                border: none;
+            };
+        }
+    }
+    > .task-list {
+        display: none;
+        color: $textBrightColor;
+        position: relative;
+        left: 0;
+        right: 0;
+        top: $infoHeight;
+        top: 0;
+
+        div {
+            padding-bottom: 15px;
+        }
+    }
+
+    &:hover {
+        background-color: $backgroundDarkColor;
+        padding-bottom: 15px;
+        @include radius($cornerRadius);
+        @include box-shadow($shadow);
+
+        > .task-overview {
+            progress {
+                @include progress($borderColor, $textBrightColor) {
+                    @include radius($cornerRadius);
+                    width: 100%;
+                    height: 4px;
+                    margin: 0;
+                    border: none;
+                };
+            }
+        }
+        > .task-list {
+            display: block;
+        }
+    }
+}
+// }}}
+// {{{ .box-tasks .task-progress
+.box-tasks {
+    .task-progress {
+        div {
+            margin-top: 15px;
+        }
+        strong {
+            font-weight: normal;
+            color: $linkColor;
+            font-size: 20px;
+        }
+        > .task-overview {
+            display: none;
+        }
+        a.button {
+            top: 25x;
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

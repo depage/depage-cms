@@ -92,6 +92,10 @@ figure.thumb {
     .trees,
     .files {
         top: $toolbarHeight;
+
+        @media (pointer:coarse) {
+            top: $toolbarHeight * $touchScale;
+        }
     }
 }
 // }}}

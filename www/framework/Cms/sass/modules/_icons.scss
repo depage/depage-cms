@@ -53,6 +53,10 @@
     background-image: url(../images/icon_sprite.svg?201807312351);
     background-size: (4 * $iSize) (24 * $iSize);
 
+    @media (pointer:coarse) {
+        background-size: (4 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+    }
+
     @if ($name != "") {
         @include icon($name, $size);
     }
@@ -139,10 +143,18 @@
     @if map_has_key($icons, $name) {
         $pos: map_get($icons, $name);
         background-position: (nth($pos, 1) * -1 * $iSize) (nth($pos, 2) * -1 * $iSize);
+
+        @media (pointer:coarse) {
+            background-position: (nth($pos, 1) * -1 * $iSize * $touchScale) (nth($pos, 2) * -1 * $iSize * $touchScale);
+        }
     }
 
     @if ($scale != 1) {
         background-size: (4 * $iSize) (24 * $iSize);
+
+        @media (pointer:coarse) {
+            background-size: (4 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+        }
     }
 }
 @mixin tree-icon($name, $icon) {

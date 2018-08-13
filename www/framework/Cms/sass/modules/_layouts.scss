@@ -33,6 +33,10 @@ html {
     .toolbar ~ .layout-left,
     .toolbar ~ .layout-right {
         top: $toolbarHeight;
+
+        @media (pointer:coarse) {
+            top: $toolbarHeight * $touchScale;
+        }
     }
     .layout-left {
         left: 0;

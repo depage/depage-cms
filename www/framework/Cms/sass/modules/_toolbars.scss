@@ -15,7 +15,11 @@
     }
 }
 .toolbar {
-    height: 30px;
+    height: $toolbarHeight;
+
+    @media (pointer:coarse) {
+        height: $toolbarHeight * $touchScale;
+    }
 
     .preview-buttons {
         display: inline;
@@ -67,8 +71,13 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 20px;
-            height: 27px;
+            line-height: $toolbarHeight - 10px;
+            height: $toolbarHeight - 3px;
+
+            @media (pointer:coarse) {
+                line-height: $toolbarHeight * $touchScale - 10px;
+                height: $toolbarHeight * $touchScale - 3px;
+            }
 
             &.disabled {
                 &,
@@ -96,13 +105,18 @@
                 &:before {
                     content: " ";
                     display: inline-block;
-                    width: 24px;
-                    height: 24px;
+                    width: $toolbarHeight - 6px;
+                    height: $toolbarHeight - 6px;
                     @include icon-base();
                     vertical-align: top;
                     margin-top: -2px;
                     margin-left: -5px;
                     margin-right: 2px;
+
+                    @media (pointer:coarse) {
+                        width: $toolbarHeight * $touchScale - 6px;
+                        height: $toolbarHeight * $touchScale - 6px;
+                    }
                 }
             }
             &.icon-only {
@@ -110,6 +124,14 @@
 
                 &:before {
                     margin-right: 20px;
+                }
+
+                @media (pointer:coarse) {
+                    width: 32px * $touchScale;
+
+                    &:before {
+                        margin-right: 20px * $touchScale;
+                    }
                 }
             }
             &.icon-depagecms,
@@ -122,6 +144,14 @@
                     &:before {
                         margin-right: 20px;
                     }
+
+                    @media (pointer:coarse) {
+                        width: 32px * $touchScale;
+
+                        &:before {
+                            margin-right: 20px * $touchScale;
+                        }
+                    }
                 }
             }
             &.icon-user,
@@ -131,6 +161,14 @@
 
                     &:before {
                         margin-right: 20px;
+                    }
+
+                    @media (pointer:coarse) {
+                        width: 32px * $touchScale;
+
+                        &:before {
+                            margin-right: 20px * $touchScale;
+                        }
                     }
                 }
             }
@@ -195,6 +233,10 @@
             left: 0;
             border-top: none;
             height: auto;
+
+            @media (pointer:coarse) {
+                top: $toolbarHeight * $touchScale;
+            }
 
             li {
                 width: 100%;
