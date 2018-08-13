@@ -22,6 +22,10 @@
     $.depage.markerbox = function(options) {
         var base = {};
 
+        String.prototype.replaceAt=function(index, replacement) {
+            return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+        }
+
         // {{{ init
         /**
          * Init
@@ -190,14 +194,35 @@
                 var paddingRight = parseInt($wrapper.css("padding-right"), 10);
                 var paddingTop = parseInt($wrapper.css("padding-top"), 10);
                 var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
+                var dHeight = 0,
+                    dWidth = 0;
 
-                var dHeight = dWidth = 0;
                 if (typeof($directionMarker) !== "undefined") {
                     dHeight = $directionMarker.height();
                     dWidth = $directionMarker.width();
                 } else {
                     dHeight = - paddingTop * 2;
                     dWidth = - paddingLeft * 2;
+                }
+
+                // adjust position to always be inside of view
+                // @todo center on very small screens?
+                if (newLeft + wrapperWidth > $(window).width()) {
+                    console.log("move from left to right");
+                    if (direction[0] == "l") {
+                        direction = direction.replaceAt(0, "r");
+                    }
+                    if (direction[1] == "l") {
+                        direction = direction.replaceAt(1, "r");
+                    }
+                } else if (newLeft - wrapperWidth < 0) {
+                    console.log("move from right to left");
+                    if (direction[0] == "r") {
+                        direction = direction.replaceAt(0, "l");
+                    }
+                    if (direction[1] == "r") {
+                        direction = direction.replaceAt(1, "l");
+                    }
                 }
 
                 var wrapperPos = {};
