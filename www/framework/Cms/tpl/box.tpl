@@ -1,6 +1,6 @@
 <div <?php self::attr([
         "id" => $this->id,
-        "class" => "centered_box $this->class",
+        "class" => "$this->class",
         "data-ajax-update-url" => $this->updateUrl,
     ]); ?>>
     <div <?php self::attr([

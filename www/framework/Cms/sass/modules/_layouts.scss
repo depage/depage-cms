@@ -1,4 +1,104 @@
-/* {{{ layouts */
+// {{{ centered_box
+.centered_box {
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    @media screen and (max-width: 768px) {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .content {
+        position: relative;
+        width: 560px;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 12px 12px 12px;
+
+        height: auto !important;
+        height: 48px;
+        min-height: 48px;
+
+        @media screen and (max-width: 768px) {
+            width: 100%;
+            padding-top: 12px;
+        }
+
+        &:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 5px;
+            left: -70px;
+            width: 48px;
+            height: 48px;
+            font-size: 1em;
+            opacity: 1;
+            @include icon-base();
+
+            @media screen and (max-width: 768px) {
+                display: none;
+            }
+        }
+    }
+    &:hover {
+        .content:before {
+            opacity: 1;
+        }
+    }
+    .scrollable-content &:first-child {
+        margin-top: 100px;
+
+        @media screen and (max-width: 768px) {
+            margin-top: 0;
+        }
+
+        .content {
+            height: auto !important;
+            height: 200px;
+            min-height: 250px;
+        }
+    }
+    .bottom {
+        position: absolute;
+        bottom: 12px;
+    }
+    .right {
+        right: 12px;
+    }
+    &.noback .content {
+        margin-top: 6px;
+        padding-left: 0;
+    }
+    small {
+        font-size: 10px;
+    }
+    a.new {
+        position: relative;
+        padding-left: 24px;
+        color: #000000;
+
+        &:before {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 2em;
+            height: 2em;
+            background-color: transparent;
+            @include icon-base("add", 24px);
+        }
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+// }}}
+// {{{ layouts
 html {
     // base styles for layouts
     header.info,
@@ -167,6 +267,6 @@ html {
         }
     }
 }
-/* }}} */
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

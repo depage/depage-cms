@@ -1,5 +1,7 @@
-// {{{ projectlist
+// {{{ box-projects
 .box-projects {
+    @extend .centered_box;
+
     .content {
         padding-bottom: 44px;
     }
@@ -7,6 +9,36 @@
         @include icon("projects");
     }
 }
+// }}}
+// {{{ box-users
+.box-users {
+    @extend .centered_box;
+
+    .content:before {
+        @include icon("users");
+    }
+}
+// }}}
+// {{{ box-tasks
+.box-tasks {
+    @extend .centered_box;
+
+    .content:before {
+        @include icon("tasks");
+    }
+}
+// }}}
+// {{{ box-settings
+.box-settings {
+    @extend .centered_box;
+
+    .content:before {
+        @include icon("settings");
+    }
+}
+// }}}
+
+// {{{ projectlist
 .projectlist {
     h2 {
         margin-top: 12px;
@@ -236,22 +268,12 @@ table.recent-changes {
 }
 // }}}
 // {{{ users
-.box-users {
-    .content:before {
-        @include icon("users");
-    }
-}
 ul.users h3,
 ul.users p {
     display: inline;
 }
 // }}}
 // {{{ tasks
-.box-tasks {
-    .content:before {
-        @include icon("tasks");
-    }
-}
 .tasks {
     dt {
         font-weight: normal;
@@ -310,13 +332,6 @@ ul.users p {
                 //border: none;
             }
         }
-    }
-}
-// }}}
-// {{{ settings
-.box-settings {
-    .content:before {
-        @include icon("settings");
     }
 }
 // }}}
