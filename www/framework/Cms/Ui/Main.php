@@ -52,6 +52,7 @@ class Main extends Base {
                     $this->projects(),
                     $this->tasks(),
                     $this->users("current"),
+                    $this->news(),
                 ],
             ], $this->htmlOptions);
         } else {
@@ -269,6 +270,7 @@ class Main extends Base {
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
         $sleepMin = 0;
         $sleepMax = 100000;
+        $sleepMax = 1000000;
         //$sleepMax = 10000000;
 
         for ($i = 0; $i < 5; $i++) {
@@ -347,6 +349,26 @@ class Main extends Base {
                 'content' => $h,
             ], $this->htmlOptions);
         }
+
+        return $h;
+    }
+    // }}}
+
+    // {{{ news
+    /**
+     * overview of depage-related ews
+     *
+     * @return  null
+     */
+    public function news() {
+        // construct template
+        $h = new Html("box.tpl", [
+            'class' => "box-news",
+            'title' => _("News"),
+            'liveHelp' => _("Shows news and version info"),
+            'content' => new Html("news.tpl", [
+            ]),
+        ], $this->htmlOptions);
 
         return $h;
     }

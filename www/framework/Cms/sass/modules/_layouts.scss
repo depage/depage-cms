@@ -14,6 +14,7 @@
         height: auto !important;
         height: 48px;
         min-height: 48px;
+        border-bottom: 1px solid $borderLightColor;
     }
     .bottom {
         position: absolute;
@@ -52,6 +53,7 @@
     @extend .box;
 
     width: 66.6666%;
+    max-width: 4 * $treeWidth;
     float: left;
 }
 // }}}

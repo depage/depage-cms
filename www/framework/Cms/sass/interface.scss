@@ -38,7 +38,7 @@
         background: #ffffff
     }
     .box .content {
-        background: $backgroundLighterColor;
+        //background: $backgroundLighterColor;
     }
     .toolbar a {
         border: 1px solid transparent;
@@ -152,8 +152,14 @@ ul,
 ol,
 li,
 p {
-    font-size : $fSizeM;
+    font-size: $fSizeM;
     letter-spacing: 0.03em;
+}
+.content > h1 {
+    font-size: $fSizeL;
+    font-weight: normal;
+    letter-spacing: 0.04em;
+    margin-bottom: 20px;
 }
 html,
 body {

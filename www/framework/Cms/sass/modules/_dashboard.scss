@@ -10,6 +10,15 @@
     }
 }
 // }}}
+// {{{ box-news
+.box-news {
+    @extend .box-aside;
+
+    .content:before {
+        @include icon("users");
+    }
+}
+// }}}
 // {{{ box-users
 .box-users {
     @extend .box-aside;
@@ -64,18 +73,18 @@
     }
     dl {
         text-indent: 0;
-        margin: 12px 0 24px 24px;
+        margin: 12px 0 24px 28px;
     }
     dt {
         position: relative;
         padding: 0;
         margin: 0;
         width: 100%;
-        height: 26px;
+        min-height: 32px;
         @include clearfix();
 
         @media (pointer:coarse) {
-            height: 26px * $touchScale;
+            height: 32px * $touchScale;
         }
     }
     dd {
@@ -85,17 +94,12 @@
         margin-bottom: 12px;
         background: #ffffff;
     }
-
-    img.thumb {
-        position: absolute;
+    img.thumb { position: absolute;
         top: 0;
-        left: -24px;
+        left: -28px;
         display: block;
-        float: left;
-        width: 16px;
-        height: 16px;
-        margin-top: 5px;
-        margin-right: 5px;
+        width: 24px;
+        height: 24px;
     }
     dt strong,
     a.button {
@@ -112,8 +116,7 @@
         }
     }
     a.button:hover {
-        background: #ffffff;
-        //border: 1px solid #000000;
+        background: $backgroundLighterColor;
     }
     .buttons {
         float: right;
@@ -220,13 +223,17 @@
     margin-top: 1px;
     @include icon-base("closed", 24px);
 }
-.projectlist dl dt.active .opener {
-    @include icon("open", 24px);
+.projectlist dl dt.active {
+    .opener {
+        @include icon("open", 24px);
+    }
 }
 .projectlist dd {
+    background: $backgroundBrightColor;
     max-height: 65vh;
     overflow-y: auto;
     overflow-x: none;
+    @include radius($cornerRadius);
 }
 // }}}
 // {{{ recent-changed

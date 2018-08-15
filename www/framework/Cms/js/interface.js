@@ -1782,6 +1782,7 @@ var depageCMS = (function() {
             }
 
             // render global progress
+            // @todo keep number of tasks until back to zero
             percent = Math.round(tasks.reduce(function(a, task) { return a + task.percent; }, 0) / tasks.length);
             localJS.renderProgressFor($wrappers.children(".task-overview"), "global", "global", "", percent, "");
 
