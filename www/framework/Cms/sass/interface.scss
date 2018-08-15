@@ -37,11 +37,8 @@
     #toolbarmain {
         background: #ffffff
     }
-    .centered_box .content {
-        background: $backgroundColor;
-    }
-    .centered_box.noback .content {
-        background: none;
+    .box .content {
+        background: $backgroundLighterColor;
     }
     .toolbar a {
         border: 1px solid transparent;

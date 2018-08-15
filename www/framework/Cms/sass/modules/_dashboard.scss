@@ -1,6 +1,6 @@
 // {{{ box-projects
 .box-projects {
-    @extend .centered_box;
+    @extend .box-main;
 
     .content {
         padding-bottom: 44px;
@@ -12,7 +12,7 @@
 // }}}
 // {{{ box-users
 .box-users {
-    @extend .centered_box;
+    @extend .box-aside;
 
     .content:before {
         @include icon("users");
@@ -21,7 +21,7 @@
 // }}}
 // {{{ box-tasks
 .box-tasks {
-    @extend .centered_box;
+    @extend .box-aside;
 
     .content:before {
         @include icon("tasks");

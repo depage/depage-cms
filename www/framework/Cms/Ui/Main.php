@@ -50,8 +50,8 @@ class Main extends Base {
             $h = new Html("home.tpl", [
                 'content' => [
                     $this->projects(),
-                    $this->users("current"),
                     $this->tasks(),
+                    $this->users("current"),
                 ],
             ], $this->htmlOptions);
         } else {
@@ -187,8 +187,8 @@ class Main extends Base {
     {
         if ($this->auth->enforceLazy()) {
             $content = [
-                $this->users("current"),
                 $this->tasks(),
+                $this->users("current"),
             ];
 
             return $content;

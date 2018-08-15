@@ -1,18 +1,17 @@
-// {{{ centered_box
-.centered_box {
+// {{{ .box
+.box {
     position: relative;
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    padding: 20px;
 
-    @media screen and (max-width: 768px) {
-        margin-top: 1px;
-        margin-bottom: 1px;
+    @media screen and (max-width: 800px) {
+        padding: 1px 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
     .content {
         position: relative;
-        width: 560px;
+        width: 4 * $treeWidth;
         max-width: 100%;
         margin-left: auto;
         margin-right: auto;
@@ -21,6 +20,65 @@
         height: auto !important;
         height: 48px;
         min-height: 48px;
+    }
+    .bottom {
+        position: absolute;
+        bottom: 12px;
+    }
+    .right {
+        right: 12px;
+    }
+    small {
+        font-size: 10px;
+    }
+    a.new {
+        position: relative;
+        padding-left: 24px;
+        color: #000000;
+
+        &:before {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 2em;
+            height: 2em;
+            background-color: transparent;
+            @include icon-base("add", 24px);
+        }
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+// }}}
+// {{{ .box-main
+.box-main {
+    @extend .box;
+
+    width: 66.6666%;
+    float: left;
+}
+// }}}
+// {{{ .box-aside
+.box-aside {
+    @extend .box;
+
+    width: 33.3333%;
+    max-width: 1.5 * $treeWidth;
+    float: right;
+    padding-left: 0;
+    padding-bottom: 0;
+}
+// }}}
+// {{{ centered_box
+.centered_box {
+    @extend .box;
+    width: 100%;
+
+    .content {
+        position: relative;
 
         @media screen and (max-width: 768px) {
             width: 100%;
@@ -60,40 +118,6 @@
             height: auto !important;
             height: 200px;
             min-height: 250px;
-        }
-    }
-    .bottom {
-        position: absolute;
-        bottom: 12px;
-    }
-    .right {
-        right: 12px;
-    }
-    &.noback .content {
-        margin-top: 6px;
-        padding-left: 0;
-    }
-    small {
-        font-size: 10px;
-    }
-    a.new {
-        position: relative;
-        padding-left: 24px;
-        color: #000000;
-
-        &:before {
-            display: block;
-            content: " ";
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            width: 2em;
-            height: 2em;
-            background-color: transparent;
-            @include icon-base("add", 24px);
-        }
-        &:hover {
-            text-decoration: underline;
         }
     }
 }
