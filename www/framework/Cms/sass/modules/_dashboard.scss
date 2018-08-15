@@ -37,6 +37,15 @@
     }
 }
 // }}}
+// {{{ box-publish
+.box-publish {
+    @extend .box-full;
+
+    .content:before {
+        @include icon("settings");
+    }
+}
+// }}}
 
 // {{{ projectlist
 .projectlist {

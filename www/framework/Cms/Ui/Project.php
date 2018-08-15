@@ -310,7 +310,7 @@ class Project extends Base
             'content' => new Html("box.tpl", [
                 'id' => "projects",
                 'icon' => "framework/Cms/images/icon_projects.gif",
-                'class' => "first",
+                'class' => "box-publish",
                 'title' => $title,
                 'content' => [
                     $this->toolbar(),
@@ -373,7 +373,7 @@ class Project extends Base
             'content' => new Html("box.tpl", [
                 'id' => "projects",
                 'icon' => "framework/Cms/images/icon_projects.gif",
-                'class' => "first",
+                'class' => "box-publish",
                 'title' => $title,
                 'content' => [
                     $this->toolbar(),

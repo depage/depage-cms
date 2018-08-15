@@ -3,12 +3,6 @@
     position: relative;
     padding: 20px;
 
-    @media screen and (max-width: 800px) {
-        padding: 1px 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
     .content {
         position: relative;
         width: 4 * $treeWidth;
@@ -61,6 +55,13 @@
     float: left;
 }
 // }}}
+// {{{ .box-full
+.box-full {
+    @extend .box;
+
+    width: 100%;
+}
+// }}}
 // {{{ .box-aside
 .box-aside {
     @extend .box;
@@ -72,6 +73,22 @@
     padding-bottom: 0;
 }
 // }}}
+.layout-split .layout-left {
+    .box {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .box-aside {
+        padding-left: 20px;
+    }
+}
+@media screen and (max-width: 800px) {
+    .box {
+        padding: 1px 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
 // {{{ centered_box
 .centered_box {
     @extend .box;
