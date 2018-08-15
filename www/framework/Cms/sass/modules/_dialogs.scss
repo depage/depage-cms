@@ -235,18 +235,5 @@ html[lang='de'] {
     }
 }
 // }}}
-// {{{ progress
-progress {
-    display: block;
-    @include progress(#ffffff, #882200) {
-        @include radius(2em);
-        width: 80%;
-        height: 12px;
-        margin: 6px 0;
-        border: none;
-        height: 4px;
-    };
-}
-// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

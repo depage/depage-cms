@@ -1,6 +1,6 @@
 <div class="edit layout layout-left">
     <header class="info">
-        <h1><?php self::e(_("Home")); ?></h1>
+        <h1><?php self::e(_("Dashboard")); ?></h1>
     </header>
     <div class="scrollable-content dashboard">
         <?php self::e($this->content); ?>
