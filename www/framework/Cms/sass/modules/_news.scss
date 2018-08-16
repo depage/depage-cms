@@ -1,0 +1,18 @@
+// {{{ .news-list
+.news-list {
+    .news {
+        margin-bottom: 15px;
+
+        h2 {
+            font-size: $fSizeXS;
+            letter-spacing: 0.05em;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

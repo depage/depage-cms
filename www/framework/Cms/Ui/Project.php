@@ -107,7 +107,7 @@ class Project extends Base
         }
 
         if ($this->project->id != null) {
-            $title = sprintf(_("Project '%s' Settings"), $this->project->name);
+            $title = sprintf(_("Project Settings: %s"), $this->project->fullname);
         } else {
             $title = _("Add new Project");
         }
