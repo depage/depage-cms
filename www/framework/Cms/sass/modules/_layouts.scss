@@ -73,6 +73,22 @@
     float: right;
     padding-left: 0;
     padding-bottom: 0;
+
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-left: 32px + 10px;
+        }
+        .content::before {
+            display: block;
+            position: absolute;
+            top: 4px;
+            left: 0;
+            content: " ";
+            width: 32px;
+            height: 32px;
+            @include icon-base("none");
+        }
+    }
 }
 // }}}
 

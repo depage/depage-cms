@@ -16,16 +16,34 @@
 // {{{ box-news
 .box-news {
     @extend .box-aside;
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("depagecms", 32px);
+        }
+    }
 }
 // }}}
 // {{{ box-users
 .box-users {
     @extend .box-aside;
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("users", 32px);
+        }
+    }
 }
 // }}}
 // {{{ box-tasks
 .box-tasks {
     @extend .box-aside;
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("tasks", 32px);
+        }
+    }
 }
 // }}}
 // {{{ box-settings
