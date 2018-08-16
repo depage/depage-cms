@@ -1,3 +1,20 @@
+// {{{ box-welcome, box-login
+.box-welcome,
+.box-login {
+    @extend .box-small;
+    margin-top: $toolbarHeight * 3;
+
+    .content {
+        min-height: 200px;
+    }
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("depagecms", 32px);
+        }
+    }
+}
+// }}}
 // {{{ box-projects
 .box-projects {
     @extend .box-main;

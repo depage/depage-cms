@@ -73,7 +73,24 @@
     float: right;
     padding-left: 0;
     padding-bottom: 0;
+}
+// }}}
+// {{{ .box-small
+.box-small {
+    @extend .box;
 
+    .content {
+        max-width: 2.5 * $treeWidth;
+    }
+
+    padding-left: 0;
+    padding-bottom: 0;
+}
+// }}}
+
+// {{{ box with icons
+.box-aside,
+.box-small {
     @media screen and (min-width: 1000px) {
         .content {
             padding-left: 32px + 10px;

@@ -1,5 +1,5 @@
 <div class="scrollable-content">
-    <div id="box_welcome" class="centered_box first">
+    <div class="box-welcome">
         <div class="content">
             <h1 class="size-XL"><?php self::t($this->title, true); ?></h1>
             <p class="size-L"><a href="<?php self::t($this->login_link); ?>"><?php self::t($this->login); ?></a></p>
