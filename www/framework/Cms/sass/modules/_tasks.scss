@@ -1,7 +1,7 @@
 // {{{ progress
 progress {
     display: block;
-    @include progress(#ffffff, $selectionBackgroundColor) {
+    @include progress($borderLightColor, $selectionBackgroundColor) {
         @include radius(2em);
         width: 100%;
         margin: 6px 0;
@@ -33,12 +33,14 @@ progress {
         width: 24px !important;
         overflow: hidden;
         padding: 0 0 0 24px !important;
+        opacity: 0.3;
 
         @include icon-base("cancel", 24px);
 
         &:hover {
             border: none;
             background-color: $backgroundLighterColor;
+            opacity: 1;
         }
     }
 }
@@ -126,6 +128,25 @@ progress {
         }
         strong {
             font-size: $fSizeL;
+        }
+        em {
+            font-style: normal;
+            font-size: $fSizeS;
+            color: $textDisabledColor;
+
+            &:after {
+                content: " / ";
+            }
+        }
+        em + br {
+            display: none;
+        }
+        em + br + em {
+            font-style: italic;
+
+            &:after {
+                content: "";
+            }
         }
         > .task-overview {
             display: none;
