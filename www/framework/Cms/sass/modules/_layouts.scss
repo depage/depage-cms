@@ -75,6 +75,8 @@
     padding-bottom: 0;
 }
 // }}}
+
+// {{{ box layout-split
 .layout-split .layout-left {
     .box {
         width: 100% !important;
@@ -91,6 +93,8 @@
         max-width: 100% !important;
     }
 }
+// }}}
+
 // {{{ centered_box
 .centered_box {
     @extend .box;
