@@ -2,12 +2,11 @@
 .tabs {
     $height: 32px;
 
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     @include clearfix();
     width: 100%;
+    margin-top: $height;
+    margin-left: -12px;
     height: $height;
     max-height: $height;
 
@@ -19,8 +18,7 @@
         display: inline-block;
         list-style: none;
         height: $height;
-        @include radius(5px, "top", "left");
-        @include radius(5px, "top", "right");
+        @include radius($cornerRadius);
 
         &:first-child a {
             font-weight: bold;
@@ -38,6 +36,10 @@
     & ~ * {
         margin-top: $height;
     }
+    & ~ hr {
+        border: none;
+        border-top: 1px solid $borderLightColor;
+    }
     .dialog-full & {
         top: $infoHeight;
         padding-top: $infoHeight;
@@ -47,9 +49,6 @@
 
         .tab:first-child a {
             font-weight: normal;
-        }
-        .tab {
-            @include radius(5px);
         }
 
         & + * {

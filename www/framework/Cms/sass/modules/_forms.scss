@@ -230,8 +230,12 @@
 /* }}} */
 /* {{{ sortable forms */
 .sortable-forms {
-    $height: 26px;
+    $height: $menuLineHeight;
     margin-top: 15px;
+
+    form fieldset {
+        border-color: transparent !important;
+    }
 
     .sortable {
         position: relative;
@@ -262,7 +266,7 @@
         &:target,
         &.active {
             h1 {
-                background-color: #ffffff;
+                background-color: $backgroundLighterColor;
                 font-weight: bold;
                 width: 34%;
 
@@ -279,7 +283,7 @@
             z-index: 5000;
 
             h1 {
-                background: #ffffff;
+                background-color: $backgroundLighterColor;
                 font-weight: bold;
             }
             form {
@@ -288,18 +292,16 @@
         }
         h1 {
             position: relative;
-            position: relative;
         }
     }
     .placeholder {
-        //border: 1px solid #ffffff;
         height: $height;
     }
 
     h1,
     form {
         padding: 5px 10px;
-        background: #ffffff;
+        background-color: $backgroundLighterColor;
     }
     h1 {
         position: absolute;
@@ -309,6 +311,7 @@
         cursor: pointer;
         width: 100%;
         height: $height;
+        line-height: $height;
         margin: 0;
         float: none;
         white-space: nowrap;
@@ -316,6 +319,7 @@
         text-overflow: ellipsis;
         background: none;
         font-weight: normal;
+        padding-top: 0;
 
         &:hover {
             text-decoration: underline;
@@ -325,7 +329,6 @@
             z-index: 5000;
 
             h1 {
-                background: #ffffff;
                 font-weight: bold;
             }
             form {
@@ -342,31 +345,6 @@
         height: $height;
     }
 
-    h1,
-    form {
-        padding: 5px 10px;
-        background: #ffffff;
-    }
-    h1 {
-        position: absolute;
-        left: -33%;
-        top: 0;
-        display: block;
-        cursor: pointer;
-        width: 100%;
-        height: $height;
-        margin: 0;
-        float: none;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        background: none;
-        font-weight: normal;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
     form {
         display: none;
         width: 100%;

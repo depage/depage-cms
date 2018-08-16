@@ -2,7 +2,6 @@
 .box-welcome,
 .box-login {
     @extend .box-small;
-    margin-top: $toolbarHeight * 3;
 
     .content {
         min-height: 200px;
@@ -65,7 +64,13 @@
 // }}}
 // {{{ box-settings
 .box-settings {
-    @extend .centered_box;
+    @extend .box-small;
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("tasks", 32px);
+        }
+    }
 }
 // }}}
 // {{{ box-publish

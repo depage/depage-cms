@@ -89,7 +89,7 @@
                 color: #000000;
             }
             &:hover {
-                background: lighten($backgroundColor, 15%);
+                background: $backgroundLighterColor;
             }
             &.active {
                 background: $backgroundColor;

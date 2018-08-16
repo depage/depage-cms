@@ -114,7 +114,6 @@ class Project extends Base
 
         $h = new Html("settings.tpl", [
             'content' => new Html("box.tpl", [
-                'id' => "box-settings",
                 'class' => "box-settings",
                 'title' => $title,
                 'content' => [

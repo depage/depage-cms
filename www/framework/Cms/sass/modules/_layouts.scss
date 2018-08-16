@@ -78,6 +78,7 @@
 // {{{ .box-small
 .box-small {
     @extend .box;
+    margin-top: $toolbarHeight * 2;
 
     .content {
         max-width: 2.5 * $treeWidth;
