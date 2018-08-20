@@ -445,11 +445,14 @@ class Project extends Base
     // }}}
 
     // {{{ edit()
-    function edit() {
+    function edit($pageId = null) {
+        $pageId = (int) $pageId;
+
         // construct template
         $hProject = new Html("projectmain.tpl", [
             'previewUrl' => $this->project->getPreviewPath(),
             'projectName' => $this->project->name,
+            'pageId' => $pageId,
         ], $this->htmlOptions);
 
         $h = new Html([

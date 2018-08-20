@@ -1067,6 +1067,9 @@ var depageCMS = (function() {
 
                 jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
+                        if (typeof window.history != 'undefined') {
+                            window.history.pushState(null, null, baseUrl + "project/" + projectName + "/edit/" + data.node.id + "/");
+                        }
                         localJS.loadPagedataTree(data.node.data.docRef);
 
                         // preview page
@@ -1083,6 +1086,7 @@ var depageCMS = (function() {
                         localJS.preview(url);
                     })
                     .on("ready.jstree", function () {
+                        var currentPageId = $pageTreeContainer.attr("data-selected-nodes");
                         if (currentPreviewUrl) {
                             $.ajax({
                                 async: true,
@@ -1099,9 +1103,19 @@ var depageCMS = (function() {
                                     }
                                 }
                             });
-                        } else {
-                            jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+
+                            return;
+                        } else if (currentPageId) {
+                            var node = jstreePages.get_node(currentPageId);
+                            if (node) {
+                                jstreePages.activate_node(node);
+                                jstreePages.get_node(node, true)[0].scrollIntoView();
+
+                                return;
+                            }
                         }
+
+                        jstreePages.activate_node($tree.find("ul:first li:first")[0]);
                     })
                     .jstree(true);
             });

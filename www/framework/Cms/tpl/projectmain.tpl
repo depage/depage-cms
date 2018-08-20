@@ -8,6 +8,7 @@
         <div <?php self::attr([
             'class' => "tree pages",
             'data-url' => "project/{$this->projectName}/tree/pages/",
+            'data-selected-nodes' => $this->pageId,
             'data-live-help' => _("Page tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
             'data-live-help-class' => "icon icon-tree",
         ]); ?>>
