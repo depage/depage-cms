@@ -32,6 +32,25 @@
     var lang = $('html').attr('lang');
     var locale = depageCMSlocale[lang];
 
+    var decodeEntities = (function() {
+        // this prevents any overhead from creating the object each time
+        var element = document.createElement('div');
+
+        function decodeHTMLEntities (str) {
+            if(str && typeof str === 'string') {
+                // strip script/html tags
+                str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+                element.innerHTML = str;
+                str = element.textContent;
+                element.textContent = '';
+            }
+
+            return str;
+        }
+
+        return decodeHTMLEntities;
+    })();
+
     /**
      * jstree
      *
@@ -104,7 +123,7 @@
             if (param.text == param.old) {
                 return;
             }
-            xmldb.renameNode(param.node.data.nodeId, param.text);
+            xmldb.renameNode(param.node.data.nodeId, decodeEntities(param.text));
 
             jstree.disable_node(param.node);
         }, base);
@@ -355,6 +374,7 @@
             animation : 100,
             multiple: false,
             dblclick_toggle: false,
+            force_text: false,
             data: {
                 url: function(node) {
                     var id = node.id != '#' ? node.id + '/' : '';
