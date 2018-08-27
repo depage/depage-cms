@@ -374,7 +374,7 @@ class Import
 
         if (!is_dir($this->xmlPath)) mkdir($this->xmlPath);
 
-        $oldXml = glob($this->xsltPath . "/*");
+        $oldXml = glob($this->xmlPath . "/*");
         foreach ($oldXml as $file) {
             unlink($file);
         }
