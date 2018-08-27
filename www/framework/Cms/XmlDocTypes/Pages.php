@@ -258,7 +258,7 @@ class Pages extends Base {
         foreach ($pages as $page) {
             $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));
 
-            if ($doc->isReleased()) {
+            if ($doc && $doc->isReleased()) {
                 $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
             } else {
                 $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
