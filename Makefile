@@ -12,7 +12,7 @@ locale:
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
 
-push: pushdev pushlive
+push: pushlive
 
 pushlive: all
 	rsync \
@@ -29,6 +29,8 @@ pushdev: all
 	    --exclude '.git' \
 	    --exclude 'cache/' \
 	    www/framework www/conf www/index.php jonas@depage.net:/var/www/depagecms/net.depage.editbeta/
+
+pushtwins: all
 	rsync \
 	    -k -r -v -c \
 	    --exclude '.DS_Store' \
