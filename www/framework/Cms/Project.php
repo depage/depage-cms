@@ -874,6 +874,10 @@ class Project extends \Depage\Entity\Entity
         $month = date("m");
 
         $pages = $this->xmldb->getDoc("pages");
+        $docId = $pages->getDocId();
+        $prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $docId, $this->name, 0);
         $nodeIdNews = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']"));
         $nodeIdYear = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']"));
         $nodeIdMonth = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']/pg:folder[@name = '$month']"));
@@ -881,15 +885,22 @@ class Project extends \Depage\Entity\Entity
         if (!$nodeIdYear) {
             $nodeIdYear = $pages->addNodeByName("pg:folder", $nodeIdNews, 0);
             $pages->setAttribute($nodeIdYear, "name", $year);
+
+            $deltaUpdates->recordChange($nodeIdNews);
         }
         if (!$nodeIdMonth) {
             $nodeIdMonth = $pages->addNodeByName("pg:folder", $nodeIdYear, 0);
             $pages->setAttribute($nodeIdMonth, "name", $month);
+
+            $deltaUpdates->recordChange($nodeIdYear);
         }
         $doc = new \DOMDocument();
         $doc->load($this->getPostTemplate());
 
-        return $pages->addNodeByName("pg:page", $nodeIdMonth, 0, ['dataNodes' => $doc->documentElement->childNodes]);
+        $pageId = $pages->addNodeByName("pg:page", $nodeIdMonth, 0, ['dataNodes' => $doc->documentElement->childNodes]);
+        $deltaUpdates->recordChange($nodeIdMonth);
+
+        return $pageId;
     }
     // }}}
     // {{{ getPostTemplate()

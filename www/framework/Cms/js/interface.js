@@ -366,9 +366,16 @@ var depageCMS = (function() {
             });
             $projects.find(".buttons .button.shortcuts").on("click", function(e) {
                 var projectName = $(this).parents("dt").data("project");
+
                 $.vakata.context.show($(this), null, {
-                    add: {
-                        label: locale.createNewNewsEntry,
+                    '_add-title': {
+                        label: locale.createNew,
+                        action: false,
+                        _disabled: true,
+                        separator_after: true
+                    },
+                    '_add-post': {
+                        label: locale.newPost,
                         action: function() {
                             localJS.addNewPost(projectName);
                         }
