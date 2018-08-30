@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-13 12:36+0200\n"
+"POT-Creation-Date: 2018-08-30 22:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +175,7 @@ msgid "(public)"
 msgstr ""
 
 #: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:699
-#: Cms/Ui/DocProperties.php:814
+#: Cms/Ui/DocProperties.php:808
 msgid "http://domain.com"
 msgstr ""
 
@@ -1978,38 +1978,46 @@ msgstr ""
 msgid "Add new User"
 msgstr ""
 
-#: Cms/Ui/Main.php:60
+#: Cms/Ui/Main.php:61
 msgid ""
 "Welcome to\n"
 " depage::cms"
 msgstr ""
 
-#: Cms/Ui/Main.php:82 Cms/Ui/Main.php:115
+#: Cms/Ui/Main.php:83 Cms/Ui/Main.php:116
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:167 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:168 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:168
+#: Cms/Ui/Main.php:169
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:238
+#: Cms/Ui/Main.php:239
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:240
+#: Cms/Ui/Main.php:241
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:335
+#: Cms/Ui/Main.php:337
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:337
+#: Cms/Ui/Main.php:339
 msgid "Shows the users that are currently logged in"
+msgstr ""
+
+#: Cms/Ui/Main.php:367
+msgid "News"
+msgstr ""
+
+#: Cms/Ui/Main.php:368
+msgid "Shows news and version info"
 msgstr ""
 
 #: Cms/Ui/Project.php:58
@@ -2028,7 +2036,7 @@ msgstr ""
 msgid "Variables"
 msgstr ""
 
-#: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
+#: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:34
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:52
 msgid "Publish"
@@ -2080,27 +2088,27 @@ msgstr ""
 
 #: Cms/Ui/Project.php:110
 #, php-format
-msgid "Project '%s' Settings"
+msgid "Project Settings: %s"
 msgstr ""
 
 #: Cms/Ui/Project.php:112
 msgid "Add new Project"
 msgstr ""
 
-#: Cms/Ui/Project.php:280
+#: Cms/Ui/Project.php:279
 msgid "You are not allowed to publish this project."
 msgstr ""
 
-#: Cms/Ui/Project.php:307
+#: Cms/Ui/Project.php:306
 #, php-format
 msgid "Publish Project '%s'"
 msgstr ""
 
-#: Cms/Ui/Project.php:337
+#: Cms/Ui/Project.php:336
 msgid "You are not allowed to release pages on this project."
 msgstr ""
 
-#: Cms/Ui/Project.php:363
+#: Cms/Ui/Project.php:362
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr ""
@@ -2214,7 +2222,7 @@ msgstr ""
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:697 Cms/Ui/DocProperties.php:812
+#: Cms/Ui/DocProperties.php:697 Cms/Ui/DocProperties.php:806
 msgid "href"
 msgstr ""
 
@@ -2243,31 +2251,31 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:797
+#: Cms/Ui/DocProperties.php:794
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:798
+#: Cms/Ui/DocProperties.php:795
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:806
+#: Cms/Ui/DocProperties.php:800
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:807
+#: Cms/Ui/DocProperties.php:801
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:831
+#: Cms/Ui/DocProperties.php:825
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:870
+#: Cms/Ui/DocProperties.php:864
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:889
+#: Cms/Ui/DocProperties.php:883
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2298,27 +2306,27 @@ msgid "Choose"
 msgstr ""
 
 #: Cms/js/locale.php:23
-msgid "Copy"
+msgid "Please choose a file"
 msgstr ""
 
 #: Cms/js/locale.php:24
-msgid "New"
+msgid "Copy"
 msgstr ""
 
 #: Cms/js/locale.php:25
-msgid "Create new:"
+msgid "New"
 msgstr ""
 
 #: Cms/js/locale.php:26
-msgid "There are no elements that can be created in this element"
+msgid "Create new:"
 msgstr ""
 
 #: Cms/js/locale.php:27
-msgid "Cut"
+msgid "There are no elements that can be created in this element"
 msgstr ""
 
 #: Cms/js/locale.php:28
-msgid "Please choose a file"
+msgid "Cut"
 msgstr ""
 
 #: Cms/js/locale.php:29
@@ -2353,85 +2361,89 @@ msgstr ""
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 
-#: Cms/js/locale.php:38 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+#: Cms/js/locale.php:38
+msgid "News- or blog-post"
+msgstr ""
+
+#: Cms/js/locale.php:39 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
 msgid "No current tasks."
 msgstr ""
 
-#: Cms/js/locale.php:39
+#: Cms/js/locale.php:40
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:40
+#: Cms/js/locale.php:41
 msgid "Paste"
 msgstr ""
 
-#: Cms/js/locale.php:41
+#: Cms/js/locale.php:42
 msgid "Filter Projects"
 msgstr ""
 
-#: Cms/js/locale.php:42
+#: Cms/js/locale.php:43
 msgid "Reload"
 msgstr ""
 
-#: Cms/js/locale.php:43
+#: Cms/js/locale.php:44
 msgid "Reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:44
+#: Cms/js/locale.php:45
 msgid "Rename"
 msgstr ""
 
-#: Cms/js/locale.php:45
+#: Cms/js/locale.php:46
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:46
+#: Cms/js/locale.php:47
 msgid "Finished uploading/Cancel"
 msgstr ""
 
-#: Cms/js/locale.php:47
+#: Cms/js/locale.php:48
 msgid "Change zoom level of preview."
 msgstr ""
 
-#: Cms/Project.php:898
+#: Cms/Project.php:984
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:899
+#: Cms/Project.php:985
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
 
-#: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:39
+#: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
 #: Cms/tpl/toolbar_main.tpl:55 Cms/tpl/toolbar_main.tpl:68
 msgid "Settings"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
-#: Cms/tpl/projectmain.tpl:41 Cms/tpl/publish.tpl:18
+#: Cms/tpl/projectlist.tpl:30 Cms/tpl/newsletterEdit.tpl:18
+#: Cms/tpl/projectmain.tpl:42 Cms/tpl/publish.tpl:18
 #: Cms/Forms/ReleasePages.php:57 Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:33 Cms/tpl/projectLibrary.tpl:6
+#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectLibrary.tpl:6
 #: Cms/tpl/toolbar_main.tpl:46
 msgid "Library"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:36 Cms/tpl/colorschemes.tpl:19
+#: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:19
 #: Cms/tpl/toolbar_main.tpl:49
 msgid "Colors"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:45 Cms/tpl/projectlist.tpl:56
+#: Cms/tpl/projectlist.tpl:50 Cms/tpl/projectlist.tpl:61
 msgid "loading..."
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:53
+#: Cms/tpl/projectlist.tpl:58
 msgid "newsletter"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:66
+#: Cms/tpl/projectlist.tpl:71
 msgid "add new project"
 msgstr ""
 
@@ -2472,40 +2484,40 @@ msgid "Change you color here."
 msgstr ""
 
 #: Cms/tpl/home.tpl:3
-msgid "Home"
+msgid "Dashboard"
 msgstr ""
 
 #: Cms/tpl/projectmain.tpl:6
 msgid "Pages"
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:11
+#: Cms/tpl/projectmain.tpl:12
 msgid ""
 "Page tree:\\nHere you can add, rename and delete pages. Select a page to "
 "edit it in the content tree below ↓."
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:16
+#: Cms/tpl/projectmain.tpl:17
 msgid "Document"
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:20
+#: Cms/tpl/projectmain.tpl:21
 msgid ""
 "Document tree:\\nHere you can add content to your pages. Select an element "
 "to edit its properties in the pane on the right →."
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:26
+#: Cms/tpl/projectmain.tpl:27
 msgid "Document Properties"
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:30
+#: Cms/tpl/projectmain.tpl:31
 msgid ""
 "Document properties:\\nHere you can edit all properties of the currently "
 "selected element."
 msgstr ""
 
-#: Cms/tpl/projectmain.tpl:37 Cms/tpl/publish.tpl:14
+#: Cms/tpl/projectmain.tpl:38 Cms/tpl/publish.tpl:14
 msgid "The preview of the currently selected page."
 msgstr ""
 
