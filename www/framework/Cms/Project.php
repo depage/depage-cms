@@ -856,7 +856,7 @@ class Project extends \Depage\Entity\Entity
         $pages = $this->xmldb->getDoc("pages");
         $nodeIds = $pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']");
 
-        return count($nodeIds) > 0 && file_exists($this->getProjectPath() . "xml/Post.xml");
+        return count($nodeIds) > 0 && $this->getPostTemplate();
     }
     // }}}
     // {{{ addNewPost()
@@ -887,9 +887,34 @@ class Project extends \Depage\Entity\Entity
             $pages->setAttribute($nodeIdMonth, "name", $month);
         }
         $doc = new \DOMDocument();
-        $doc->load($this->getProjectPath() . "xml/Post.xml");
+        $doc->load($this->getPostTemplate());
 
         return $pages->addNodeByName("pg:page", $nodeIdMonth, 0, ['dataNodes' => $doc->documentElement->childNodes]);
+    }
+    // }}}
+    // {{{ getPostTemplate()
+    /**
+     * @brief getPostTemplate
+     *
+     * @return void
+     **/
+    protected function getPostTemplate()
+    {
+        $templatePath = $this->getProjectPath() . "xml/";
+        $names = [
+            'Post.xml',
+            'Blogentry.xml',
+            'News.xml',
+        ];
+
+        foreach ($names as $name) {
+            $file = $templatePath . $name;
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return false;
     }
     // }}}
     // {{{ hasNewsletter()
