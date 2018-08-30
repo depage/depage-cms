@@ -58,17 +58,30 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                 continue;
             }
             $value = "";
-            $nodes = $this->dataNodeXpath->query($element->dataInfo);
+            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataInfo, $matches);
+            list($xpath, $nodeXpath, $attrXpath, $attrName) = $matches;
 
-            if ($nodes->length == 0 && substr($element->dataInfo, -6) == "/@href") {
+            $nodes = $this->dataNodeXpath->query($xpath);
+
+            if ($nodes->length == 0 && $attrName == "href") {
                 // handle @href and @href_id attributes
-                $nodes = $this->dataNodeXpath->query($element->dataInfo . "_id");
+                $nodes = $this->dataNodeXpath->query($xpath . "_id");
             }
-            if ($nodes->length == 0) {
+            if ($nodes->length == 0 && !empty($attrName)) {
+                $nodes = $this->dataNodeXpath->query($nodeXpath);
+
+                if ($nodes->length == 0) continue;
+
+                $parentNode = $nodes->item(0);
+                $parentNode->setAttribute($attrName, "");
+
+                $node = $parentNode->getAttributeNode($attrName);
+            } else if ($nodes->length == 0) {
                 // @todo throw warning if nodelist is empty?
                 continue;
+            } else {
+                $node = $nodes->item(0);
             }
-            $node = $nodes->item(0);
 
             if ($element instanceof \Depage\HtmlForm\Elements\Boolean) {
                 $value = $node->value == "true" ? true : false;
@@ -77,7 +90,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if ($element instanceof \Depage\HtmlForm\Elements\Richtext) {
                 $value = "";
 
-                // @todo update links with href_id
+                // update links with href_id
                 $links = $this->dataNodeXpath->query("a[@href_id]", $node);
 
                 foreach ($links as $n) {

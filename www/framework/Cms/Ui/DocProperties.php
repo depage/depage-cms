@@ -504,10 +504,6 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        if (!$node->hasAttribute("value")) {
-            $node->setAttribute("value", "");
-        }
-
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
@@ -649,10 +645,6 @@ class DocProperties extends Base
             $skin = "select";
         }
 
-        if (!$node->hasAttribute("value")) {
-            $node->setAttribute("value", "");
-        }
-
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Type")));
         $fs->addSingle("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
@@ -673,10 +665,6 @@ class DocProperties extends Base
     protected function addEditDate($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-
-        if (!$node->hasAttribute("value")) {
-            $node->setAttribute("value", "");
-        }
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Date")));
         $fs->addDate("xmledit-$nodeId", [
@@ -802,18 +790,12 @@ class DocProperties extends Base
             'dataInfo' => "//*[@db:id = '$nodeId']/@src",
         ]);
 
-        if (!$node->hasAttribute("title")) {
-            $node->setAttribute("title", "");
-        }
         $fs->addText("xmledit-$nodeId-title", [
             'label' => _("title"),
             'placeholder' => _("Image title"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@title",
         ]);
 
-        if (!$node->hasAttribute("alt")) {
-            $node->setAttribute("alt", "");
-        }
         $fs->addText("xmledit-$nodeId-alt", [
             'label' => _("alt"),
             'placeholder' => _("Image description"),
@@ -913,10 +895,6 @@ class DocProperties extends Base
     protected function addColor($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-
-        if (!$node->hasAttribute("value")) {
-            $node->setAttribute("value", "");
-        }
 
         $this->form->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("name"),
