@@ -364,6 +364,17 @@ var depageCMS = (function() {
             $projects.find(".buttons .button").on("click", function(e) {
                 e.stopPropagation();
             });
+            $projects.find(".buttons .button.shortcuts").on("click", function(e) {
+                var projectName = $(this).parents("dt").data("project");
+                $.vakata.context.show($(this), null, {
+                    add: {
+                        label: locale.createNewNewsEntry,
+                        action: function() {
+                            localJS.addNewPost(projectName);
+                        }
+                    }
+                });
+            });
 
             $projects.on("depage.detail-opened", function(e, $head, $detail) {
                 var project = $head.data("project");
@@ -1553,6 +1564,21 @@ var depageCMS = (function() {
 
             // @todo add click event outside of shy dialogue to hide it
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+        },
+        // }}}
+        // {{{ addNewPost()
+        addNewPost: function(projectName) {
+            var url = baseUrl + "project/" + projectName + "/add-new-post/";
+
+            $.post(url, {
+                projectName: projectName
+            }, function(data) {
+                if (!data.pageId) return;
+
+                var url = baseUrl + "project/" + projectName + "/edit/" + data.pageId + "/";
+
+                window.location = url;
+            });
         },
         // }}}
 

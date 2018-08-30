@@ -23,6 +23,7 @@
             "copy" => _("Copy"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
+            "createNewNewsEntry" => _("Add news- or blog-post"),
             "createNoElements" => _("There are no elements that can be created in this element"),
             "cut" => _("Cut"),
             "chooseFileMessage" => _("Please choose a file"),

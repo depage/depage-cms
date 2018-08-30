@@ -842,6 +842,56 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ hasPageShortcuts()
+    /**
+     * @brief hasPageShortcuts
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function hasPageShortcuts()
+    {
+        $this->xmldb = $this->getXmlDb();
+
+        $pages = $this->xmldb->getDoc("pages");
+        $nodeIds = $pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']");
+
+        return count($nodeIds) > 0 && file_exists($this->getProjectPath() . "xml/Post.xml");
+    }
+    // }}}
+    // {{{ addNewPost()
+    /**
+     * @brief addNewPost
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function addNewPost()
+    {
+        $this->xmldb = $this->getXmlDb();
+
+        $year = date("Y");
+        $month = date("m");
+
+        $pages = $this->xmldb->getDoc("pages");
+        $nodeIdNews = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']"));
+        $nodeIdYear = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']"));
+        $nodeIdMonth = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']/pg:folder[@name = '$month']"));
+
+        if (!$nodeIdYear) {
+            $nodeIdYear = $pages->addNodeByName("pg:folder", $nodeIdNews, 0);
+            $pages->setAttribute($nodeIdYear, "name", $year);
+        }
+        if (!$nodeIdMonth) {
+            $nodeIdMonth = $pages->addNodeByName("pg:folder", $nodeIdYear, 0);
+            $pages->setAttribute($nodeIdMonth, "name", $month);
+        }
+        $doc = new \DOMDocument();
+        $doc->load($this->getProjectPath() . "xml/Post.xml");
+
+        return $pages->addNodeByName("pg:page", $nodeIdMonth, 0, ['dataNodes' => $doc->documentElement->childNodes]);
+    }
+    // }}}
     // {{{ hasNewsletter()
     /**
      * @brief hasNewsletter

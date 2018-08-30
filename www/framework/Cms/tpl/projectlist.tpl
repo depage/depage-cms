@@ -21,6 +21,11 @@
                             <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
                                 <?php self::t(_('Edit')) ?>
                             </a>
+                            <?php if ($project->hasPageShortcuts()) { ?>
+                                <a class="button shortcuts">
+                                    +
+                                </a>
+                            <?php } ?>
                             <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
                                 <?php self::t(_('Preview')) ?>
                             </a>

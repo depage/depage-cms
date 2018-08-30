@@ -464,6 +464,17 @@ class Project extends Base
         return $h;
     }
     // }}}
+    // {{{ add-new-post()
+    function add_new_post() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            //die();
+        }
+
+        return new \Depage\Json\Json([
+            "pageId" => $this->project->addNewPost(),
+        ]);
+    }
+    // }}}
     // {{{ newsletters()
     /**
      * @brief newsletters
