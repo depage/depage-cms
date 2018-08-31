@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-30 22:04+0200\n"
+"POT-Creation-Date: 2018-08-31 14:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2037,7 +2037,7 @@ msgstr ""
 msgid "Variables"
 msgstr ""
 
-#: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:34
+#: Cms/Ui/Project.php:62 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:52
 msgid "Publish"
@@ -2420,10 +2420,30 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: Cms/tpl/projectlist.tpl:30 Cms/tpl/newsletterEdit.tpl:18
+#: Cms/tpl/projectlist.tpl:21
+msgid "Edit this project"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:24
+msgid "Preview your project"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
 #: Cms/tpl/projectmain.tpl:42 Cms/tpl/publish.tpl:18
 #: Cms/Forms/ReleasePages.php:57 Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:28
+msgid "Publish all changes to the live server"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:33
+msgid "Project shortcuts"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:37
+msgid "Manage file library"
 msgstr ""
 
 #: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectLibrary.tpl:6
@@ -2431,9 +2451,17 @@ msgstr ""
 msgid "Library"
 msgstr ""
 
+#: Cms/tpl/projectlist.tpl:40
+msgid "Add and edit colors"
+msgstr ""
+
 #: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:19
 #: Cms/tpl/toolbar_main.tpl:49
 msgid "Colors"
+msgstr ""
+
+#: Cms/tpl/projectlist.tpl:43
+msgid "Change project settings"
 msgstr ""
 
 #: Cms/tpl/projectlist.tpl:50 Cms/tpl/projectlist.tpl:61

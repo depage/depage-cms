@@ -18,29 +18,29 @@
                         <strong><?php self::t($project->fullname); ?></strong>
 
                         <div class="buttons">
-                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button">
+                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button" title="<?php self::t(_("Edit this project")); ?>">
                                 <?php self::t(_('Edit')) ?>
                             </a>
-                            <?php if ($project->hasPageShortcuts()) { ?>
-                                <a class="button shortcuts">
-                                    +
-                                </a>
-                            <?php } ?>
-                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame">
+                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" title="<?php self::t(_("Preview your project")); ?>">
                                 <?php self::t(_('Preview')) ?>
                             </a>
                             <?php if ($this->user->canPublishProject()) { ?>
-                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button">
+                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button" title="<?php self::t(_("Publish all changes to the live server")); ?>">
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>
-                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library">
+                            <?php if ($project->hasPageShortcuts()) { ?>
+                                <a class="button shortcuts icon-add" title="<?php self::t(_("Project shortcuts")); ?>">
+                                    +
+                                </a>
+                            <?php } ?>
+                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library" title="<?php self::t(_("Manage file library")); ?>">
                                 <?php self::t(_('Library')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors">
+                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors" title="<?php self::t(_("Add and edit colors")); ?>">
                                 <?php self::t(_('Colors')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings">
+                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings" title="<?php self::t(_("Change project settings")); ?>">
                                 <?php self::t(_('Settings')) ?>
                             </a>
                         </div>

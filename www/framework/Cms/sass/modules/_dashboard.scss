@@ -151,6 +151,8 @@
         .icon-download {
             position: relative;
             padding-left: 2em;
+            overflow: none;
+            width: auto;
 
             &:before {
                 display: block;
@@ -173,6 +175,7 @@
     a {
         overflow: hidden;
 
+        &.icon-add,
         &.icon-library,
         &.icon-colors,
         &.icon-settings {
@@ -195,6 +198,9 @@
                     margin-right: 20px;
                 }
             }
+        }
+        &.icon-add:before {
+            @include icon("add", 22px);
         }
         &.icon-library:before {
             @include icon("folder", 22px);
@@ -283,6 +289,7 @@ table.recent-changes {
 
             &:hover {
                 text-decoration: underline;
+                background: transparent;
             }
         }
     }
