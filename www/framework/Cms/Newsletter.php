@@ -66,7 +66,8 @@ class Newsletter
         }
         // @todo sort by document date
         usort($newsletters, function($a, $b) {
-            return strcmp($a->getTitle(), $b->getTitle());
+            return $a->lastchange < $b->lastchange;
+            //return strcmp($a->getTitle(), $b->getTitle());
         });
 
         return $newsletters;
@@ -160,8 +161,10 @@ class Newsletter
     protected function setDocument($doc)
     {
         $this->document = $doc;
-        $this->name = $doc->getDocInfo()->name;
-        $this->id = $doc->getDocInfo()->id;
+        $docinfo = $doc->getDocInfo();
+        $this->name = $docinfo->name;
+        $this->id = $docinfo->id;
+        $this->lastchange = $docinfo->lastchange;
     }
     // }}}
 
