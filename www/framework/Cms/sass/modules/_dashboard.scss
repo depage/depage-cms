@@ -42,6 +42,10 @@
 // }}}
 // {{{ box-users
 .box-users {
+    @extend .box-full;
+    margin-top: $toolbarHeight * 2;
+}
+.dashboard .box-users {
     @extend .box-aside;
 
     @media screen and (min-width: 1000px) {
