@@ -25,7 +25,6 @@ class Main extends Base {
             'user/*' => '\Depage\Cms\Ui\User',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
-            'project/*/flash' => '\Depage\Cms\Ui\Flash',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
             'project/*/tree/*/fallback' => '\Depage\Cms\Ui\SocketFallback',
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
