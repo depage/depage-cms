@@ -1,7 +1,7 @@
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
 
-.PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive
+.PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive doc clean
 
 all: locale
 
@@ -11,6 +11,15 @@ locale:
 
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
+
+doc:
+	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	#doxygen Docs/Doxyfile
+	doxygen Docs/de/Doxyfile
+	cp -r Docs/depage-docu/www/lib Docs/html/de/
+
+clean:
+	$(RM) Docs/depage-docu/ Docs/html/
 
 push: pushlive
 
