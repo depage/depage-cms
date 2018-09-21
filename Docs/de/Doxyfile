@@ -66,7 +66,7 @@ LAYOUT_FILE            = Docs/de/DoxygenLayout.xml
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = 01-Introduction.md
+USE_MDFILE_AS_MAINPAGE = 01_Introduction.md
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of

@@ -3,10 +3,12 @@
   <navindex>
     <tab type="mainpage" visible="yes" title="Home"/>
 
-    <tab type="user" url="md__docs_de_02-_interface.html" title="Interface">
-        <tab type="user" url="md__docs__introduction.html" title="Introduction"/>
-        <tab type="user" url="md__docs__validation.html" title="Validation"/>
-    </tab>
+    <tab type="user" url="md__docs_de_02__interface.html" title="Interface" />
+    <tab type="user" url="md__docs_de_03__editing_pages.html" title="Seiten Editieren" />
+    <tab type="user" url="md__docs_de_04__file_library.html" title="Dateibibliothek" />
+    <tab type="user" url="md__docs_de_05__colors.html" title="Farbschemata" />
+    <tab type="user" url="md__docs_de_06__settings.html" title="Einstellungen" />
+    <tab type="user" url="md__docs_de_07__newsletter.html" title="Newsletter" />
 
     <tab type="examples" visible="no" title="Examples" intro=""/>
 
