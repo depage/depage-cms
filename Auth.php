@@ -96,7 +96,7 @@ abstract class Auth
      * @param       string  $method     method to use for authentication. Can be http
      * @return      void
      */
-    abstract public function enforce();
+    abstract public function enforce($testUserFunction = null);
     // }}}
     // {{{ enforceLazy()
     /**

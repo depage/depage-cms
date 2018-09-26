@@ -74,28 +74,34 @@ class HttpCookie extends Auth
     /* }}} */
 
     /* {{{ enforce */
-    public function enforce() {
+    public function enforce($testUserFunction = null) {
         // only enforce authentication if not authenticated before
         if (!$this->user) {
             $this->user = $this->authCookie();
+        }
 
-            if (!$this->user) {
-                // remove trailing slashes when comparing urls, disregard query string
-                $loginUrl = Html::link($this->loginUrl, "auto");
+        // test user with custom user function
+        if ($this->user && !is_null($testUserFunction)) {
+            $this->user = call_user_func($testUserFunction, $this->user);
+        }
 
-                // set protocol
-                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
-                    $protocol = "https://";
-                } else {
-                    $protocol = "http://";
-                }
+        // redirect to login page
+        if (!$this->user) {
+            // remove trailing slashes when comparing urls, disregard query string
+            $loginUrl = Html::link($this->loginUrl, "auto");
 
-                $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
-                if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
-                    $redirectTo = urlencode($_SERVER['REQUEST_URI']);
+            // set protocol
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+                $protocol = "https://";
+            } else {
+                $protocol = "http://";
+            }
 
-                    \Depage\Router\Router::redirect("$loginUrl?redirectTo=$redirectTo");
-                }
+            $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
+            if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
+                $redirectTo = urlencode($_SERVER['REQUEST_URI']);
+
+                \Depage\Router\Router::redirect("$loginUrl?redirectTo=$redirectTo");
             }
         }
 

@@ -31,6 +31,10 @@ class HttpDigest extends HttpBasic
         if (!$this->user) {
             $this->user = $this->authDigest();
 
+            if ($this->user && !is_null($testUserFunction)) {
+                $this->user = $testUserFunction($this->user);
+            }
+
             if (!$this->user) {
                 throw new \Exception("you are not allowed to to this!");
             }
