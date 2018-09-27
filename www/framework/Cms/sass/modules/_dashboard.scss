@@ -142,12 +142,9 @@
         }
     }
     a.button {
-        color: $borderDarkColor;
+        color: $textLighterColor;
 
         &:hover {
-            background: $backgroundLighterColor;
-            color: $linkHoverColor;
-
             background: $selectionBackgroundColor;
             color: $selectionTextColor;
         }
