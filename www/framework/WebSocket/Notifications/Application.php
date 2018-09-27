@@ -113,8 +113,12 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     protected function sendNotifications()
     {
         foreach ($this->clients as $cid => $client) {
+            $headers = $client->getHeaders();
+
+            if (!isset($headers['cookie'])) break;
+
             // send notifications
-            list($key, $sid) = explode("=", $client->getHeaders()['cookie']);
+            list($key, $sid) = explode("=", $headers['cookie']);
             $nn = Notification::loadBySid($this->pdo, $sid, "depage.%");
 
             foreach ($nn as $n) {
