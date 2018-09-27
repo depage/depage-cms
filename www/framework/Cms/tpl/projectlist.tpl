@@ -18,14 +18,14 @@
                         <strong><?php self::t($project->fullname); ?></strong>
 
                         <div class="buttons">
-                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button" title="<?php self::t(_("Edit this project")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button" aria-label="<?php self::t(_("Edit this project")); ?>">
                                 <?php self::t(_('Edit')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" title="<?php self::t(_("Preview your project")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" aria-label="<?php self::t(_("Preview your project")); ?>">
                                 <?php self::t(_('Preview')) ?>
                             </a>
                             <?php if ($this->user->canPublishProject()) { ?>
-                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button" title="<?php self::t(_("Publish all changes to the live server")); ?>">
+                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button" aria-label="<?php self::t(_("Publish all changes to the live server")); ?>">
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>

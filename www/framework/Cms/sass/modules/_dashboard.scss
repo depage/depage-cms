@@ -141,8 +141,16 @@
             height: 26px * $touchScale;
         }
     }
-    a.button:hover {
-        background: $backgroundLighterColor;
+    a.button {
+        color: $borderDarkColor;
+
+        &:hover {
+            background: $backgroundLighterColor;
+            color: $linkHoverColor;
+
+            background: $selectionBackgroundColor;
+            color: $selectionTextColor;
+        }
     }
     .buttons {
         float: right;

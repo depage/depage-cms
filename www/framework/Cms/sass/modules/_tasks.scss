@@ -1,7 +1,7 @@
 // {{{ progress
 progress {
     display: block;
-    @include progress($borderLightColor, $selectionBackgroundColor) {
+    @include progress($borderLightColor, $linkColor) {
         @include radius(2em);
         width: 100%;
         margin: 6px 0;
@@ -20,7 +20,7 @@ progress {
     }
     strong {
         font-weight: normal;
-        color: $selectionBackgroundColor;
+        color: $linkColor;
     }
     div {
         position: relative;
