@@ -1,9 +1,15 @@
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
 
+SASSDIR = www/framework/Cms/sass/
+CSSDIR = www/framework/Cms/css/
+JSDIR = www/framework/Cms/js/
+
 .PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive
 
-all: locale
+all: locale min
+
+min: sassc
 
 locale:
 	cd www/framework/ ; $(I18N)
@@ -11,6 +17,11 @@ locale:
 
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
+
+$(CSSDIR)%.css: $(SASSDIR)%.scss $(SASSDIR)modules/*.scss www/framework/HtmlForm/lib/sass/*.scss
+	sassc --style compressed $< $@
+
+sassc: $(patsubst %.scss,$(CSSDIR)%.css, $(notdir $(wildcard $(SASSDIR)*.scss)))
 
 push: pushlive
 

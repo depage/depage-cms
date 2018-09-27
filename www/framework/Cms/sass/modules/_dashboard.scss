@@ -135,7 +135,6 @@
         height: 26px;
         padding: 1px 7px;
         border: 1px solid transparent;
-        @include clearfix;
 
         @media (pointer:coarse) {
             line-height: 20px * $touchScale;

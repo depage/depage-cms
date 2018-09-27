@@ -30,17 +30,17 @@
                                 </a>
                             <?php } ?>
                             <?php if ($project->hasPageShortcuts()) { ?>
-                                <a class="button shortcuts icon-add" title="<?php self::t(_("Project shortcuts")); ?>">
+                                <a class="button shortcuts icon-add" aria-label="<?php self::t(_("Project shortcuts")); ?>">
                                     +
                                 </a>
                             <?php } ?>
-                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library" title="<?php self::t(_("Manage file library")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library" aria-label="<?php self::t(_("Manage file library")); ?>">
                                 <?php self::t(_('Library')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors" title="<?php self::t(_("Add and edit colors")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors" aria-label="<?php self::t(_("Add and edit colors")); ?>">
                                 <?php self::t(_('Colors')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings" title="<?php self::t(_("Change project settings")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings" aria-label="<?php self::t(_("Change project settings")); ?>">
                                 <?php self::t(_('Settings')) ?>
                             </a>
                         </div>
