@@ -26,10 +26,15 @@
     }
     a,
     h2 a:hover,
-    .error span,
     .depage-form p.cancel input,
     .select-all button {
         color: $linkColor;
+    }
+    a:hover {
+        color: $linkHoverColor;
+    }
+    .error span {
+        color: $errorColor;
     }
     body {
         background: #ffffff
@@ -219,6 +224,7 @@ select,
 @import "modules/_toolbars.scss";
 @import "modules/_headers.scss";
 @import "modules/_layouts.scss";
+@import "modules/_tooltips.scss";
 
 @import "modules/_preview.scss";
 @import "modules/_tabs.scss";

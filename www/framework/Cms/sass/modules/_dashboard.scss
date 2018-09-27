@@ -135,15 +135,19 @@
         height: 26px;
         padding: 1px 7px;
         border: 1px solid transparent;
-        @include clearfix;
 
         @media (pointer:coarse) {
             line-height: 20px * $touchScale;
             height: 26px * $touchScale;
         }
     }
-    a.button:hover {
-        background: $backgroundLighterColor;
+    a.button {
+        color: $textLighterColor;
+
+        &:hover {
+            background: $selectionBackgroundColor;
+            color: $selectionTextColor;
+        }
     }
     .buttons {
         float: right;
