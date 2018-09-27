@@ -1,3 +1,4 @@
+RM = rm -rf
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
 
@@ -14,9 +15,11 @@ tags:  $(wildcard www/framework/**/*.php)
 
 doc:
 	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	mkdir -p Docs/html/
 	#doxygen Docs/Doxyfile
 	doxygen Docs/de/Doxyfile
 	cp -r Docs/depage-docu/www/lib Docs/html/de/
+	cp -r Docs/de/images/ Docs/html/de/images/
 
 clean:
 	$(RM) Docs/depage-docu/ Docs/html/

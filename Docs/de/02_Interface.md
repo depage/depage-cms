@@ -1,17 +1,24 @@
 Das Interface
 =============
 
-Das Login
+Das Dashboard
 ---------
 
-Beim Start von depage-cms begrüßt einen zunächst das Login-Fenster. Es muss der Benutzername und das dazugehörige Passwort eingegeben werden. Nach Eingabe der Zugangsdaten öffnet sich der Startscreen von depage-cms. Man ist nun am System angemeldet.
+Beim Start von depage-cms begrüßt einen zunächst das Login-Fenster. Es muss der Benutzername und das dazugehörige Passwort eingegeben werden. Nach Eingabe der Zugangsdaten öffnet sich das Dashboard von depage-cms. Man ist nun am System angemeldet.
 Im Startscreen kann man sich direkt die zuletzt geändert Seiten anzeigen lassen. Über Editieren wird die Editieransicht von depage-cms geöffnet. Über Vorschau lässt sich der aktuelle unveröffentlichte Stand der Seite anzeigen.
 
+![Dashboard](images/dashboard.png "Das Dashboard mit der Übersicht der Projekte")
 
 Das Split-Interface
 -------------------
 
 Innerhalb von depage-cms arbeitet man die meiste Zeit innerhalb eines geteilten Fensters. Der linke Teil enthält die eigentliche Bedienoberfläche von depage-cms. Dort werden neue Seiten erstellt, Texte abgeändert oder Bilder ausgewählt. In der rechten Seite, die sich öffnet, sobald man eine Seite editiert, wird die automatische Vorschau der Seite angezeigt, die aktuell bearbeitet wird.
+
+![Das Split Interface](images/split-interface.png "Das Split-Interface")
+
+kjsdhf kjsdhf
+
+![Caption Das Split Interface](images/menu-new.png "Das Menu zum Erstellen neuer Elemente")
 
 
 Der Editierbereich
