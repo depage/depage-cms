@@ -46,8 +46,8 @@ var depageCMS = (function() {
     var $html;
     var $window;
     var $body;
-    var $previewFrame;
-    var $flashFrame;
+    var $previewFrame,
+        $helpFrame;
     var $upload;
     var $toolbarLeft,
         $toolbarPreview,
@@ -132,7 +132,7 @@ var depageCMS = (function() {
             $window.on("switchLayout", localJS.switchLayout);
 
             $previewFrame = $("#previewFrame");
-            $flashFrame = $("#flashFrame");
+            $helpFrame = $("#helpFrame");
 
             $window.triggerHandler("switchLayout", "split");
 
@@ -646,6 +646,15 @@ var depageCMS = (function() {
         // {{{ setupHelp
         setupHelp: function() {
             $("#help").depageLivehelp({});
+
+            $("a.help").on("click", function(e) {
+                if (currentLayout != "split" && currentLayout != "tree-split") {
+                    $window.triggerHandler("switchLayout", "split");
+                }
+                localJS.help(this.href);
+
+                return false;
+            });
         },
         // }}}
         // {{{ setupTrees
@@ -1705,7 +1714,6 @@ var depageCMS = (function() {
                         .html( data )
                         .find("div.preview")
                         .appendTo($body);
-                    var $header = $result.find("header.info");
 
                     $previewFrame = $("#previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
@@ -1724,6 +1732,50 @@ var depageCMS = (function() {
             leading: true,
             trailing: true
         }),
+        // }}}
+        // {{{ help
+        help: function(url) {
+            if (typeof url == 'undefined' || url[0] == "/") return;
+
+            if ($helpFrame.length == 1) {
+                var newUrl = unescape(url);
+                var oldUrl = "";
+                try {
+                    oldUrl = $helpFrame[0].contentWindow.location.href;
+                } catch(error) {
+                }
+
+                if (currentLayout == "left-full") {
+                    // @todo load preview when changing layout?
+                    return;
+                }
+
+                if (oldUrl == newUrl) {
+                    $helpFrame[0].contentWindow.location.reload();
+                } else {
+                    var $newFrame = $("<iframe />").insertAfter($helpFrame);
+                    $helpFrame.remove();
+                    $helpFrame = $newFrame.attr("id", "helpFrame");
+                    $helpFrame.one("load", localJS.hightlighCurrentDocProperty);
+                    $helpFrame[0].src = newUrl;
+                }
+            } else {
+                // add help frame
+                $.get(baseUrl + "help/?ajax=true", function(data) {
+                    var $result = $("<div></div>")
+                        .html( data )
+                        .find("div.help")
+                        .removeClass("layout-full")
+                        .addClass("layout-right")
+                        .appendTo($body);
+
+                    $helpFrame = $("#helpFrame");
+                    $helpFrame[0].src = unescape(url);
+
+                    $window.triggerHandler("switchLayout", "split");
+                });
+            }
+        },
         // }}}
         // {{{ hightlighCurrentDocProperty
         hightlighCurrentDocProperty: function() {
@@ -1770,12 +1822,7 @@ var depageCMS = (function() {
                     projectName = pName;
                     currentPreviewUrl = page;
 
-                    $flashFrame = $("#flashFrame");
-                    if ($flashFrame.length > 0) {
-                        $flashFrame[0].src = "project/" + pName + "/flash/flash/false/" + encodeURIComponent(page);
-                    } else {
-                        localJS.setupTrees();
-                    }
+                    localJS.setupTrees();
 
                     $window.triggerHandler("switchLayout", "split");
                 });

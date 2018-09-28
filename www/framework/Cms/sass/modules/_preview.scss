@@ -1,5 +1,7 @@
 /* {{{ preview */
 div.preview {
+    z-index: 10;
+
     iframe {
         display: block;
         border: none;

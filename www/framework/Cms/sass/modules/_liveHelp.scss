@@ -78,7 +78,9 @@
 }
 // }}}
 // {{{ help
-.help {
+div.preview.help {
+    z-index: 11;
+
     header.info {
         background: $helpColor;
         border-bottom-color: $helpColor;

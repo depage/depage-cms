@@ -509,7 +509,7 @@ class Main extends Base {
             $info = new \Depage\Php\Info();
             return new Html("about.tpl", [
                 "info" => $info->getInfo(),
-            ]);
+            ], $this->htmlOptions);
         }
     }
     // }}}
@@ -523,7 +523,7 @@ class Main extends Base {
     {
         return new Html("help.tpl", [
             'url' => "https://localhost/depage-cms-docs/de/index.html",
-        ]);
+        ], $this->htmlOptions);
     }
     // }}}
 
