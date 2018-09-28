@@ -513,6 +513,19 @@ class Main extends Base {
         }
     }
     // }}}
+    // {{{ help()
+    /**
+     * @brief displays inline help
+     *
+     * @return void
+     **/
+    public function help()
+    {
+        return new Html("help.tpl", [
+            'url' => "https://localhost/depage-cms-docs/de/index.html",
+        ]);
+    }
+    // }}}
 
     // {{{ test()
     /**
