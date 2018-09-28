@@ -1,8 +1,13 @@
 Das Interface
 =============
 
+[TOC]
+
+Das Interface
+=============
+
 Das Dashboard
----------
+-------------
 
 Beim Start von depage-cms begrüßt einen zunächst das Login-Fenster. Es muss der Benutzername und das dazugehörige Passwort eingegeben werden. Nach Eingabe der Zugangsdaten öffnet sich das Dashboard von depage-cms. Man ist nun am System angemeldet.
 Im Startscreen kann man sich direkt die zuletzt geändert Seiten anzeigen lassen. Über Editieren wird die Editieransicht von depage-cms geöffnet. Über Vorschau lässt sich der aktuelle unveröffentlichte Stand der Seite anzeigen.

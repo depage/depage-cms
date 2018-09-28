@@ -1,6 +1,11 @@
 Newsletter
 ==========
 
+[TOC]
+
+Newsletter
+==========
+
 Editieren
 ---------
 

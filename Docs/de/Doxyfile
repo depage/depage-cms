@@ -91,3 +91,5 @@ HTML_OUTPUT            = Docs/html/de/
 # *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf and *.qsf.
 
 FILE_PATTERNS          = *.md
+
+TOC_INCLUDE_HEADINGS = 99

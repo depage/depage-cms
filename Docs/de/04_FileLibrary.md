@@ -1,6 +1,11 @@
 Die Dateibibliothek
 ===================
 
+[TOC]
+
+Die Dateibibliothek
+===================
+
 Die Dateibibliothek ist ein Satz von Dateien, die nicht von depage-cms direkt erstellt werden, sondern in Seiten eingebunden oder von dort verlinkt werden können. Es gibt zwei Ansichten:
 Die Thumbnailansicht
 In der Thumbnailansicht wird von allen Dateien, für die es möglich ist, eine Vorschau angezeigt. Sie ist vor allem dann praktisch, wenn es um die Auswahl von Bildern geht.

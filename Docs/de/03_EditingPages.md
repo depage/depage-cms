@@ -1,6 +1,11 @@
 Seiten editieren
 ================
 
+[TOC]
+
+Seiten editieren
+================
+
 Die Strukturansicht
 -------------------
 

@@ -1,6 +1,11 @@
 Farbschemata
 ============
 
+[TOC]
+
+Farbschemata
+============
+
 depage-cms Farbschemata
 -----------------------
 
