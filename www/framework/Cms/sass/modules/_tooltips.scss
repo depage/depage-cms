@@ -1,0 +1,37 @@
+// {{{ tooltips
+a,
+a.button {
+    &[aria-label]::after {
+        display: block;
+        position: absolute;
+        z-index: 1000;
+        content: attr(aria-label);
+        opacity: 0;
+        padding: 0;
+        background: $backgroundMenu;
+        color: $textBrightColor;
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+        bottom: 0;
+        white-space: nowrap;
+        height: 0;
+        width: 0;
+        overflow: hidden;
+
+        @include radius($cornerRadius);
+        @include transform(translateX(-40%) translateY(130%));
+    }
+    &[aria-label]:hover::after {
+        height: auto;
+        width: auto;
+        padding: 5px 10px;
+        opacity: 1;
+
+        @include transition(300ms, "opacity");
+        transition-delay: 0.5s;
+        @include box-shadow($shadow);
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
