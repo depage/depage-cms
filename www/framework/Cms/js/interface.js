@@ -465,6 +465,8 @@ var depageCMS = (function() {
         // {{{ setupPreviewLinks
         setupPreviewLinks: function() {
             $("a.preview").on("click", function(e) {
+                if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
+
                 if (currentLayout != "split" && currentLayout != "tree-split") {
                     $window.triggerHandler("switchLayout", "split");
                 }
@@ -648,6 +650,8 @@ var depageCMS = (function() {
             $("#help").depageLivehelp({});
 
             $("a.help").on("click", function(e) {
+                if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
+
                 if (currentLayout != "split" && currentLayout != "tree-split") {
                     $window.triggerHandler("switchLayout", "split");
                 }
@@ -1737,7 +1741,7 @@ var depageCMS = (function() {
         help: function(url) {
             if (typeof url == 'undefined' || url[0] == "/") return;
 
-            if ($helpFrame.length == 1) {
+            if ($helpFrame && $helpFrame.length == 1) {
                 var newUrl = unescape(url);
                 var oldUrl = "";
                 try {
@@ -1756,7 +1760,6 @@ var depageCMS = (function() {
                     var $newFrame = $("<iframe />").insertAfter($helpFrame);
                     $helpFrame.remove();
                     $helpFrame = $newFrame.attr("id", "helpFrame");
-                    $helpFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $helpFrame[0].src = newUrl;
                 }
             } else {
@@ -1768,6 +1771,18 @@ var depageCMS = (function() {
                         .removeClass("layout-full")
                         .addClass("layout-right")
                         .appendTo($body);
+
+                    // @todo add close button to header
+                    $("<a class=\"close\">x</a>").appendTo(
+                        $result.find("header.info")
+                    ).on("click", function() {
+                        $("div.help").remove();
+                        $helpFrame = null;
+
+                        if ($previewFrame.length == 0) {
+                            $window.triggerHandler("switchLayout", "left");
+                        }
+                    });
 
                     $helpFrame = $("#helpFrame");
                     $helpFrame[0].src = unescape(url);

@@ -80,6 +80,7 @@
 // {{{ help
 div.preview.help {
     z-index: 11;
+    border: 1px solid $helpColor;
 
     header.info {
         background: $helpColor;
@@ -87,6 +88,17 @@ div.preview.help {
 
         h1 {
             color: $textBrightColor;
+        }
+        a.close {
+            cursor: pointer;
+            color: $textBrightColor;
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0 15px;
+            line-height: $infoHeight - 3px;
+            font-weight: bold;
         }
     }
 }
