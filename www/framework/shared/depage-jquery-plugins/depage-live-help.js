@@ -188,8 +188,6 @@
         // }}}
         // {{{ showHelp()
         base.showHelp = function(){
-            $html.trigger("depage.livehelp.show");
-
             base.$helpPane = $("<div id=\"depage-live-help\"></div>").appendTo("body");
             base.$helpElements = $("*[data-live-help]").filter(function() {
                 return !$(this).hasClass("no-live-help") && $(this).parents(".no-live-help").length == 0;
@@ -199,21 +197,36 @@
                 var $this = $(this);
 
                 var helpTexts = $this.attr("data-live-help").split("\\n");
+                var helpHtml = $this.attr("data-live-help-html") || "";
                 var classes = $this.attr("data-live-help-class") || "";
                 var $div = $("<div class=\"" + classes + "\"></div>");
 
                 for (var i = 0; i < helpTexts.length; i++) {
                     $("<p></p>").text(helpTexts[i]).appendTo($div);
                 }
+                if (helpHtml) {
+                    $(helpHtml).appendTo($div);
+                }
                 $div.appendTo(base.$helpPane);
 
                 if (helpTexts.join().length > 100) {
                     $div.addClass("big");
                 }
-            });
-            base.$helpDivs = base.$helpPane.children("div");
+                var $links = $div.find("a");
 
+                if ($links.length == 1) {
+                    $div.on("click", function(e) {
+                        if (e.target.tagName != "A") {
+                            $links.eq(0).click();
+                        }
+                    });
+                }
+            });
+
+            base.$helpDivs = base.$helpPane.children("div");
             base.$helpPane.on("click", base.toggleHelp);
+
+            $html.trigger("depage.livehelp.show");
 
             setTimeout(function() {
                 onResize();
@@ -230,7 +243,9 @@
             setTimeout(function() {
                 base.$el.removeClass("active");
 
-                base.$helpPane.remove();
+                if (base.$helpPane) {
+                    base.$helpPane.remove();
+                }
                 base.$helpPane = false;
                 base.$helpElements = false;
                 base.$helpSvg = false;
