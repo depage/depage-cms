@@ -202,7 +202,8 @@ html {
         top: $infoHeight;
     }
     .layout-left,
-    .layout-right {
+    .layout-right,
+    .layout-full {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -213,7 +214,8 @@ html {
         }
     }
     .toolbar ~ .layout-left,
-    .toolbar ~ .layout-right {
+    .toolbar ~ .layout-right,
+    .toolbar ~ .layout-full {
         top: $toolbarHeight;
 
         @media (pointer:coarse) {
@@ -224,6 +226,10 @@ html {
         left: 0;
     }
     .layout-right {
+        right: 0;
+    }
+    .layout-full {
+        left: 0;
         right: 0;
     }
 

@@ -1,3 +1,4 @@
+RM = rm -rf
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
 
@@ -5,7 +6,7 @@ SASSDIR = www/framework/Cms/sass/
 CSSDIR = www/framework/Cms/css/
 JSDIR = www/framework/Cms/js/
 
-.PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive
+.PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive doc clean
 
 all: locale min
 
@@ -17,6 +18,17 @@ locale:
 
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
+
+doc:
+	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	mkdir -p Docs/html/
+	#doxygen Docs/Doxyfile
+	doxygen Docs/de/Doxyfile
+	cp -r Docs/depage-docu/www/lib Docs/html/de/
+	cp -r Docs/de/images/ Docs/html/de/images/
+
+clean:
+	$(RM) Docs/depage-docu/ Docs/html/
 
 $(CSSDIR)%.css: $(SASSDIR)%.scss $(SASSDIR)modules/*.scss www/framework/HtmlForm/lib/sass/*.scss
 	sassc --style compressed $< $@

@@ -53,6 +53,7 @@ class Main extends Base {
                     $this->users("current"),
                     $this->news(),
                 ],
+                'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
             // not logged in
@@ -509,8 +510,21 @@ class Main extends Base {
             $info = new \Depage\Php\Info();
             return new Html("about.tpl", [
                 "info" => $info->getInfo(),
-            ]);
+            ], $this->htmlOptions);
         }
+    }
+    // }}}
+    // {{{ help()
+    /**
+     * @brief displays inline help
+     *
+     * @return void
+     **/
+    public function help()
+    {
+        return new Html("help.tpl", [
+            'helpUrl' => $this->helpUrl,
+        ], $this->htmlOptions);
     }
     // }}}
 

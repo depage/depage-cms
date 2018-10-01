@@ -1,5 +1,7 @@
 /* {{{ preview */
 div.preview {
+    z-index: 10;
+
     iframe {
         display: block;
         border: none;
@@ -17,34 +19,38 @@ div.preview .zoomwrapper {
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
+    transform-origin: 0 0;
+
+    @media (pointer:coarse) {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 div.preview.zoom50 .zoomwrapper {
-    zoom: 0.5;
     -moz-transform: scale(0.5);
     -o-transform: scale(0.5);
     -webkit-transform: scale(0.5);
+    transform: scale(0.5);
 }
 div.preview.zoom50 iframe {
     width: 200%;
     height: 200%;
 }
 div.preview.zoom75 .zoomwrapper {
-    zoom: 0.75;
     -moz-transform: scale(0.75);
     -o-transform: scale(0.75);
     -webkit-transform: scale(0.75);
+    transform: scale(0.75);
 }
 div.preview.zoom75 iframe {
     width: 133%;
     height: 133%;
 }
 div.preview.zoom100 .zoomwrapper {
-    zoom: 1;
     -moz-transform: scale(1);
     -o-transform: scale(1);
     -webkit-transform: scale(1);
+    transform: scale(1);
 }
 div.preview.zoom100 iframe {
     width: 100%;

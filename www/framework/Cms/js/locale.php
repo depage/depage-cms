@@ -21,6 +21,7 @@
             "cancel" => _("Cancel"),
             "choose" => _("Choose"),
             "chooseFileMessage" => _("Please choose a file"),
+            "close" => _("Close"),
             "copy" => _("Copy"),
             "create" => _("New"),
             "createNew" => _("Create new:"),

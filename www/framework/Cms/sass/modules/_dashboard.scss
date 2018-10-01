@@ -40,6 +40,17 @@
     }
 }
 // }}}
+// {{{ box-help
+.box-help {
+    @extend .box-aside;
+
+    @media screen and (min-width: 1000px) {
+        .content:before {
+            @include icon("help-active", 32px);
+        }
+    }
+}
+// }}}
 // {{{ box-users
 .box-users {
     @extend .box-full;
