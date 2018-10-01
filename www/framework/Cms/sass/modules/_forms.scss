@@ -467,11 +467,31 @@
         padding: 0 0.4em;
         display: inline-block;
         vertical-align: top;
-        line-height: $buttonSize;
+        line-height: $buttonSize - 2px;
         min-width: $buttonSize;
         height: $buttonSize;
         text-align: center;
         cursor: pointer;
+
+        &.format-a,
+        &.format-p,
+        &.format-ul,
+        &.format-ol {
+            @include icon-base();
+            text-indent: -1000em;
+        }
+        &.format-a {
+            @include icon("format-a", $buttonSize);
+        }
+        &.format-p {
+            @include icon("format-p", $buttonSize);
+        }
+        &.format-ul {
+            @include icon("format-ul", $buttonSize);
+        }
+        &.format-ol {
+            @include icon("format-ol", $buttonSize);
+        }
     }
 }
 // }}}

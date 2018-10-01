@@ -139,6 +139,10 @@
         img-contain-white: 2 21,
         cancel: 0 22,
         cancel-white: 1 22,
+        format-a: 0 23,
+        format-p: 1 23,
+        format-ul: 2 23,
+        format-ol: 3 23,
     );
 
     @if map_has_key($icons, $name) {
