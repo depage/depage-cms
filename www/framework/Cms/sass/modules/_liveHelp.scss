@@ -39,7 +39,10 @@
     .icon-preview:before {
         @include icon("help-preview", 32px);
     }
-    div.online-docu {
+    .icon-help {
+        &:before {
+            @include icon("help", 32px);
+        }
         p a {
             display: block;
             font-size: 1.6em;

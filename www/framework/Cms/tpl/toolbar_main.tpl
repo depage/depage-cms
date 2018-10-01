@@ -97,7 +97,7 @@
 <div <?php self::attr([
     'class' => "live-help-documentation-placeholder",
     'data-live-help' => _("More help"),
-    'data-live-help-class' => "big online-docu",
+    'data-live-help-class' => "icon icon-help big",
     'data-live-help-html' => "<p><a href=\"{$this->helpUrl}\" class=\"help\" target=\"_blank\">" . _("Open Online Documentation") . "</a></p>",
 ]); ?>>
 
