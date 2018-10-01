@@ -1,3 +1,5 @@
+$progressAddFallback: false !default;
+
 // {{{ progress
 @mixin progress($colorBack, $colorBar) {
     & {
@@ -36,15 +38,17 @@
             display: block;
             background: $colorBar;
         }
-        @for $i from 0 through 100 {
-            $dec: $i / 100;
-            // for progress without max
-            &[value ^= '#{$dec}']:before {
-                width: percentage($i / 100);
-            }
-            // for progress with max of 100 (for percent)
-            &[max = '100'][value ^= '#{$i}']:before {
-                width: percentage($i / 100);
+        @if ($progressAddFallback) {
+            @for $i from 0 through 100 {
+                $dec: $i / 100;
+                // for progress without max
+                &[value ^= '#{$dec}']:before {
+                    width: percentage($i / 100);
+                }
+                // for progress with max of 100 (for percent)
+                &[max = '100'][value ^= '#{$i}']:before {
+                    width: percentage($i / 100);
+                }
             }
         }
     }
