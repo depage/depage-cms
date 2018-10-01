@@ -608,7 +608,6 @@ var depageCMS = (function() {
             if (typeof Squire !== 'undefined') {
                 // {{{ Squire.showLinkDialog()
                 Squire.prototype.showLinkDialog = function(href, callback) {
-                    var $body = $("body");
                     var pos = this.getPosBySelection();
                     var editor = this;
 
@@ -649,7 +648,7 @@ var depageCMS = (function() {
         setupHelp: function() {
             $("#help").depageLivehelp({});
 
-            $("a.help").on("click", function(e) {
+            $body.on("click", "a.help", function(e) {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {

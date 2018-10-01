@@ -87,11 +87,20 @@
             </menu>
         </li>
         <li><a <?php self::attr([
-                "id" => "help",
-                "class" => "button icon-help",
-                "data-live-help" => _("Help"),
-            ]); ?>>?</a></li>
+            "id" => "help",
+            "class" => "button icon-help",
+            "data-live-help" => _("Help"),
+        ]); ?>>?</a></li>
     </menu>
     <div class="task-progress"><div class="task-overview"></div><div class="task-list"><?php self::t(_("No current tasks.")); ?></div></div>
 </div>
+<div <?php self::attr([
+    'class' => "live-help-documentation-placeholder",
+    'data-live-help' => _("More help"),
+    'data-live-help-class' => "big online-docu",
+    'data-live-help-html' => "<p><a href=\"{$this->helpUrl}\" class=\"help\">" . _("Open Online Documentation") . "</a></p>",
+]); ?>>
+
+</div>
+
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

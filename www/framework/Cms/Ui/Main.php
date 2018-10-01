@@ -522,7 +522,7 @@ class Main extends Base {
     public function help()
     {
         return new Html("help.tpl", [
-            'url' => "https://localhost/depage-cms-docs/de/index.html",
+            'helpUrl' => $this->helpUrl,
         ], $this->htmlOptions);
     }
     // }}}

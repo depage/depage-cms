@@ -34,6 +34,8 @@ class Base extends \Depage\Depage\Ui\Base
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
+        $this->helpUrl = "https://localhost/depage-cms-docs/de/index.html";
+
         if (empty($this->pdo)) {
             // get database instance
             $this->pdo = new \Depage\Db\Pdo (
@@ -146,6 +148,7 @@ class Base extends \Depage\Depage\Ui\Base
                 'user' => $this->user,
                 'projects' => \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user),
                 'project' => $project,
+                'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
             $h = new Html("toolbar_plain.tpl", [
