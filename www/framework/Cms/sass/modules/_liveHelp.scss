@@ -97,8 +97,10 @@ div.preview.help {
             top: 0;
             right: 0;
             padding: 0 15px;
+            height: $infoHeight;
             line-height: $infoHeight - 3px;
-            font-weight: bold;
+            text-indent: -1000em;
+            @include icon-base("cancel-white", $infoHeight);
         }
     }
 }

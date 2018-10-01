@@ -17,6 +17,7 @@ a.button {
         height: 0;
         width: 0;
         overflow: hidden;
+        text-indent: 0;
 
         @include radius($cornerRadius);
         @include transform(translateX(-40%) translateY(130%));

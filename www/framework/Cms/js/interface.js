@@ -1773,7 +1773,7 @@ var depageCMS = (function() {
                         .appendTo($body);
 
                     // @todo add close button to header
-                    $("<a class=\"close\">x</a>").appendTo(
+                    $("<a class=\"close\" aria-label=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
                         $result.find("header.info")
                     ).on("click", function() {
                         $("div.help").remove();
