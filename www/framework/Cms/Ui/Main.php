@@ -53,6 +53,7 @@ class Main extends Base {
                     $this->users("current"),
                     $this->news(),
                 ],
+                'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
             // not logged in

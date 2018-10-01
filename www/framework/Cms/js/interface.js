@@ -648,6 +648,7 @@ var depageCMS = (function() {
         setupHelp: function() {
             $("#help").depageLivehelp({});
 
+            /*
             $body.on("click", "a.help", function(e) {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
@@ -658,6 +659,7 @@ var depageCMS = (function() {
 
                 return false;
             });
+            */
         },
         // }}}
         // {{{ setupTrees

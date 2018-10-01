@@ -98,7 +98,7 @@
     'class' => "live-help-documentation-placeholder",
     'data-live-help' => _("More help"),
     'data-live-help-class' => "big online-docu",
-    'data-live-help-html' => "<p><a href=\"{$this->helpUrl}\" class=\"help\">" . _("Open Online Documentation") . "</a></p>",
+    'data-live-help-html' => "<p><a href=\"{$this->helpUrl}\" class=\"help\" target=\"_blank\">" . _("Open Online Documentation") . "</a></p>",
 ]); ?>>
 
 </div>
