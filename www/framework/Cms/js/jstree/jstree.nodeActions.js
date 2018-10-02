@@ -96,7 +96,7 @@
                 })
                 .on("click.jstree", ".jstree-container-ul", function(e) {
                     var $container = $(this);
-                    if ($container.height() < e.offsetY && $container.width() - 50 < e.offsetX) {
+                    if ($container.height() + 30 < e.offsetY && 50 > e.offsetX) {
                         var node = inst.get_node($container.parent());
                         var nodesForSelf = inst.getAvailableNodesFor(node);
 

@@ -144,7 +144,7 @@
         content: " ";
         font-weight: bold !important;
         bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
-        right: $treeLineHeight * 0.5;
+        left: $treeLineHeight - 2px;
         width: $actionIconHeight;
         height: $actionIconHeight;
         line-height: $actionIconHeight - 3px;
@@ -154,11 +154,6 @@
         text-align: center;
         @include icon-base("add-white", $actionIconHeight);
         cursor: pointer;
-    }
-}
-.jstree-focus .jstree-container-ul {
-    &::after {
-        //background-color: $insertMarkerBackground;
     }
 }
 .jstree-node {
@@ -399,7 +394,7 @@
     background: transparent;
 }
 .jstree-container-ul {
-    padding-bottom: 2 * $treeLineHeight;
+    padding-bottom: 2.5 * $treeLineHeight;
 }
 .jstree-open > .jstree-ocl {
     @include icon("open", $iconSize);
