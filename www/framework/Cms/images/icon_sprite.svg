@@ -47,17 +47,17 @@
         </g>
       </g>
     </g>
-    <g fill="#4E4C4B" transform="translate(8 156)">
+    <g fill="#7F7F7F" transform="translate(8 156)">
       <polygon fill-rule="nonzero" points="32 0 33 0 33 24 32 24"/>
       <path fill-rule="nonzero" d="M29,1 L29,23 L1,23 L1,1 L29,1 L29,1 Z M30,0 L0,0 L0,24 L30,24 L30,0 L30,0 Z"/>
     </g>
-    <g fill="#4E4C4B" transform="translate(56 156)">
+    <g fill="#7F7F7F" transform="translate(56 156)">
       <path fill-rule="nonzero" d="M14 1L14 23 1 23 1 1 14 1 14 1zM15 0L0 0 0 24 15 24 15 0 15 0zM32 1L32 23 19 23 19 1 32 1 32 1zM33 0L18 0 18 24 33 24 33 0 33 0z"/>
     </g>
-    <g fill="#4E4C4B" transform="translate(104 156)">
+    <g fill="#7F7F7F" transform="translate(104 156)">
       <path fill-rule="nonzero" d="M6 1L6 23 1 23 1 1 6 1 6 1zM7 0L0 0 0 24 7 24 7 0 7 0zM32 1L32 23 11 23 11 1 32 1 32 1zM33 0L10 0 10 24 33 24 33 0 33 0z"/>
     </g>
-    <g fill="#4E4C4B" transform="translate(152 156)">
+    <g fill="#7F7F7F" transform="translate(152 156)">
       <path fill-rule="nonzero" d="M32,1 L32,23 L4,23 L4,1 L32,1 L32,1 Z M33,0 L3,0 L3,24 L33,24 L33,0 L33,0 Z"/>
       <rect width="1" height="24" fill-rule="nonzero"/>
     </g>
