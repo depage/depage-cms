@@ -109,7 +109,7 @@
                 .text(name)
                 .addClass("button")
                 .addClass(className)
-                .attr("title", name)
+                .attr("aria-label", name)
                 .on("click", function() {
                     if (!$(this).hasClass("disabled")) callback.apply(this);
                 });

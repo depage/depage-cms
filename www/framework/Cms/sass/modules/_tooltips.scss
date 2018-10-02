@@ -8,29 +8,44 @@ a.button {
         content: attr(aria-label);
         opacity: 0;
         padding: 0;
+        margin-bottom: -15px;
         background: $backgroundMenu;
         color: $textBrightColor;
         -webkit-backdrop-filter: blur(5px);
         backdrop-filter: blur(5px);
         bottom: 0;
-        white-space: nowrap;
+        //white-space: nowrap;
         height: 0;
         width: 0;
+        min-width: 50px;
+        max-width: 250px;
         overflow: hidden;
         text-indent: 0;
 
         @include radius($cornerRadius);
-        @include transform(translateX(-40%) translateY(130%));
+        @include transform(translateX(-40%) translateY(100%));
     }
     &[aria-label]:hover::after {
         height: auto;
         width: auto;
+        width: intrinsic;           // Safari/WebKit
+        width: -moz-max-content;    // Firefox/Gecko
+        width: -webkit-max-content; // Chrome
         padding: 5px 10px;
         opacity: 1;
 
         @include transition(300ms, "opacity");
         transition-delay: 0.5s;
         @include box-shadow($shadow);
+    }
+}
+// }}}
+// {{{ left align tooltips
+// }}}
+// {{{ right align tooltips
+a.button.release {
+    &[aria-label]::after {
+        @include transform(translateX(-80%) translateY(100%));
     }
 }
 // }}}

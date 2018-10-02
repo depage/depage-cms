@@ -52,15 +52,21 @@ class Main extends Base {
                     $this->tasks(),
                     $this->users("current"),
                     $this->news(),
+                    $this->help(),
                 ],
                 'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
             // not logged in
             $h = new Html("welcome.tpl", [
+                'class' => "top",
                 'title' => _("Welcome to\n depage::cms"),
                 'login' => "Login",
                 'login_link' => "login/",
+                'content' => [
+                    $this->news(),
+                    $this->help(),
+                ],
             ], $this->htmlOptions);
         }
 
@@ -109,6 +115,7 @@ class Main extends Base {
                 }
 
                 $h = new Html("scrollable.tpl", [
+                    'class' => "top",
                     'content' => new Html("box.tpl", [
                         'icon' => "framework/cms/images/icon_login.gif",
                         'class' => "box-login",
@@ -133,6 +140,7 @@ class Main extends Base {
         //}
 
         $h = new Html("scrollable.tpl", [
+            'class' => "top",
             'content' => new Html("box.tpl", [
                 'class' => "box-logout",
                 'title' => "Bye bye!",
@@ -522,7 +530,7 @@ class Main extends Base {
      **/
     public function help()
     {
-        return new Html("help.tpl", [
+        return new Html("helpLink.tpl", [
             'helpUrl' => $this->helpUrl,
         ], $this->htmlOptions);
     }

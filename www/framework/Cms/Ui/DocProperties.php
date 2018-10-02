@@ -332,11 +332,13 @@ class DocProperties extends Base
         ));
         if ($this->authUser->canPublishProject()) {
             $releaseTitle = _("Release Page");
+            $releaseHover = _("Mark this page to be published, when project gets published next time");
         } else {
             $releaseTitle = _("Request Page Release");
+            $releaseHover = _("Ask for this page the be released");
         }
         $class = $pageInfo->released ? "disabled" : "";
-        $fs->addHtml("<p><a class=\"button release $class\">{$releaseTitle}</a></p>");
+        $fs->addHtml("<p><a class=\"button release $class\" aria-label=\"$releaseHover\">{$releaseTitle}</a></p>");
 
     }
     // }}}
