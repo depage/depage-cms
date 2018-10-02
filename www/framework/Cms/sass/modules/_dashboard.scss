@@ -1,7 +1,7 @@
 // {{{ box-welcome, box-login
 .box-welcome,
 .box-login {
-    @extend .box-small;
+    @extend .box-main;
 
     .content {
         min-height: 200px;
