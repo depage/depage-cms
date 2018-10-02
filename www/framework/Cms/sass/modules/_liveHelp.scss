@@ -45,7 +45,7 @@
         }
         p a {
             display: block;
-            font-size: 1.6em;
+            font-size: 1.4em;
             line-height: 1.3em;
             margin-top: 3px;
             text-decoration: underline;
@@ -86,6 +86,27 @@ div.preview.help {
             line-height: $infoHeight - 3px;
             text-indent: -1000em;
             @include icon-base("cancel-white", $infoHeight);
+        }
+    }
+}
+// }}}
+// {{{ .box-help
+.box-help {
+    padding-top: 15px;
+
+    .content {
+        border-bottom: none;
+
+        &::before {
+            top: 0;
+        }
+        h2 {
+            font-size: $fSizeXS;
+            letter-spacing: 0.05em;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
     }
 }

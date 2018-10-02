@@ -1,5 +1,5 @@
-Das Interface
-=============
+Einführung
+==========
 
 [TOC]
 
@@ -36,13 +36,9 @@ Server gesendet oder vom Server empfangen werden, weil man selbst oder jemand an
 
 Der Einstellungsbereich erweitert sich je nach Inhalt dynamisch nach unten, und muss bei Bedarf entsprechend nach oben oder nach unten gescrollt werden.
 
-Die verschiedenen Bearbeitungsmodi
-----------------------------------
 
-Im Hauptfenster steht auf der linken Seite eine Reihe von Buttons zur Verfügung, mit denen man in verschiedene Bearbeitungsmodi von depage-cms springen kann.
-Zunächst wird automatisch der Bearbeitungsmodus Seiten editieren geöffnet. Dort kann man neue Seiten erstellen, verschieben oder löschen und ihr Inhalte bearbeiten: Texte verändern, Bildern auswählen etc.
-Darunter befindet sich die Dateibibliothek. Dort befinden sich alle manuell hinzugefügten Dateien, die in die Seiten integriert werden sollen, aber nicht vom depage-cms System erstellt werden. Hierzu zählen beispielsweise die Bilder, die in die Seite integriert werden, wie auch Flash-Animationen, Videos, PDFs, Zip-Dateien und andere.
-Über den Bearbeitungsmodus Farben und Farbschemata bearbeiten lassen sich die einzelnen Farben bearbeiten oder neue Farbschemata anlegen.
+Seitenvorschau
+==============
 
 Der Vorschau-Button
 -------------------

@@ -24,7 +24,7 @@ doc:
 	mkdir -p Docs/html/
 	#doxygen Docs/Doxyfile
 	doxygen Docs/de/Doxyfile
-	cp -r Docs/depage-docu/www/lib Docs/html/de/
+	#cp -r Docs/depage-docu/www/lib Docs/html/de/
 	cp -r Docs/de/images/ Docs/html/de/images/
 
 clean:
