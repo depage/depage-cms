@@ -144,7 +144,7 @@
         content: " ";
         font-weight: bold !important;
         bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
-        left: $treeLineHeight - 2px;
+        left: $treeLineHeight - 1px;
         width: $actionIconHeight;
         height: $actionIconHeight;
         line-height: $actionIconHeight - 3px;
