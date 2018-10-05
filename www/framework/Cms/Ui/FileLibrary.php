@@ -207,7 +207,7 @@ class FileLibrary extends Base
         }
         $xml = $doc->getXml();
 
-        $this->syncFolder($doc, $xml->documentElement, "", $path);
+        $this->syncFolder($doc, $xml->documentElement, "");
 
         if (!empty($selectedPath)) {
             $selectedPath = trim($selectedPath, '/');
