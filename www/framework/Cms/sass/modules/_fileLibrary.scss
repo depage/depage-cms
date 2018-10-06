@@ -27,10 +27,10 @@ figure.thumb {
     .fileinfo {
         position: absolute;
         display: none;
-        background: #ffffff;
-        color: $textLighterColor;
-        border: 1px solid;
-        padding: 5px;
+        background: $backgroundMenu;
+        color: $textBrightColor;
+        border: 1px solid none;
+        padding: 5px 15px;
         left: 100%;
         top: $height;
         left: 0;
@@ -38,6 +38,7 @@ figure.thumb {
         text-align: left;
         z-index: 5000;
         @include box-shadow($shadow);
+        @include radius($cornerRadius);
 
         p {
             margin-left: 0 !important;
