@@ -31,7 +31,7 @@ a.button {
         width: intrinsic;           // Safari/WebKit
         width: -moz-max-content;    // Firefox/Gecko
         width: -webkit-max-content; // Chrome
-        padding: 5px 10px;
+        padding: 5px 15px;
         opacity: 1;
 
         @include transition(300ms, "opacity");
