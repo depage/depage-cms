@@ -49,5 +49,12 @@ a.button.release {
     }
 }
 // }}}
+// {{{ bottom left aligned tooltips
+a.jstree-root-add-button {
+    &[aria-label]::after {
+        @include transform(translateX(10%) translateY(-250%));
+    }
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

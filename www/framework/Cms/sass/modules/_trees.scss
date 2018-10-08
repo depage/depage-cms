@@ -136,26 +136,6 @@
 }
 // }}}
 // {{{ jstree node-actions
-.jstree-container-ul {
-    position: relative;
-
-    &::after {
-        position: absolute;
-        content: " ";
-        font-weight: bold !important;
-        bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
-        left: $treeLineHeight - 1px;
-        width: $actionIconHeight;
-        height: $actionIconHeight;
-        line-height: $actionIconHeight - 3px;
-        @include radius($actionIconHeight * 0.5);
-        color: $selectionTextColor;
-        background-color: $backgroundDisabledColor;
-        text-align: center;
-        @include icon-base("add-white", $actionIconHeight);
-        cursor: pointer;
-    }
-}
 .jstree-node {
     > .jstree-anchor::after {
         content: " ";
@@ -254,6 +234,38 @@
             @include radius(0, "bottom", "left");
             @include radius(0, "bottom", "right");
         }
+    }
+}
+// }}}
+// {{{ .jstree-root-add-button
+.jstree-root-add-button {
+    position: relative;
+    display: block;
+    height: 2 * $treeLineHeight;
+    width: 2 * $treeLineHeight;
+    cursor: pointer;
+    margin-top: 1.5 * $treeLineHeight;
+    text-indent: -1000em;
+
+
+    &::before {
+        position: absolute;
+        content: " ";
+        font-weight: bold !important;
+        bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
+        left: $treeLineHeight - 1px;
+        width: $actionIconHeight;
+        height: $actionIconHeight;
+        line-height: $actionIconHeight - 3px;
+        @include radius($actionIconHeight * 0.5);
+        color: $selectionTextColor;
+        background-color: $backgroundDisabledColor;
+        text-align: center;
+        @include icon-base("add-white", $actionIconHeight);
+        cursor: pointer;
+    }
+    &:hover::before {
+        background-color: $insertMarkerBackground;
     }
 }
 // }}}
@@ -392,9 +404,6 @@
 }
 .jstree-last {
     background: transparent;
-}
-.jstree-container-ul {
-    padding-bottom: 2.5 * $treeLineHeight;
 }
 .jstree-open > .jstree-ocl {
     @include icon("open", $iconSize);
