@@ -205,6 +205,21 @@ class Document
         return false;
     }
     // }}}
+    // {{{ isPublished()
+    /**
+     * @brief isPublished
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isPublished()
+    {
+        $info = $this->getDocInfo();
+        $latest = $this->getHistory()->getLatestVersion();
+
+        return !empty($latest);
+    }
+    // }}}
 
     // {{{ getNodeId
     /**
