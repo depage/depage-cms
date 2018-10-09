@@ -57,12 +57,13 @@ class Main extends Base {
                 'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
+            $form = new \Depage\Cms\Forms\Login("login");
+
             // not logged in
             $h = new Html("welcome.tpl", [
                 'class' => "top",
-                'title' => _("Welcome to\n depage::cms"),
-                'login' => "Login",
-                'login_link' => "login/",
+                'title' => _("Welcome to depage::cms"),
+                'loginForm' => $form,
                 'content' => [
                     $this->news(),
                     $this->help(),
@@ -85,23 +86,10 @@ class Main extends Base {
             }
         } else {
             // not logged in
-            $form = new \Depage\HtmlForm\HtmlForm("login", [
-                'label' => _("Login"),
+            $form = new \Depage\Cms\Forms\Login("login", [
                 'validator' => function($form, $values) {
                     return (bool) $this->auth->login($values['name'], $values['pass']);
                 },
-            ]);
-
-            // define formdata
-            $form->addText("name", [
-                'label' => 'Name',
-                'required' => true,
-                'autofocus' => true,
-            ]);
-
-            $form->addPassword("pass", [
-                'label' => 'Passwort',
-                'required' => true,
             ]);
 
             $form->process();
