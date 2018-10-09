@@ -256,13 +256,12 @@
         left: $treeLineHeight - 1px;
         width: $actionIconHeight;
         height: $actionIconHeight;
-        line-height: $actionIconHeight - 3px;
-        @include radius($actionIconHeight * 0.5);
         color: $selectionTextColor;
-        background-color: $backgroundDisabledColor;
+        background-color: $backgroundColor;
         text-align: center;
         @include icon-base("add-white", $actionIconHeight);
-        cursor: pointer;
+        @include transition(300ms, "background-color");
+        @include radius(50%);
     }
     &:hover::before {
         background-color: $insertMarkerBackground;

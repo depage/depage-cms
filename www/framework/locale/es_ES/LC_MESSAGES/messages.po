@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-02 18:04+0200\n"
+"POT-Creation-Date: 2018-10-08 17:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1979,45 +1979,45 @@ msgstr ""
 msgid "Add new User"
 msgstr ""
 
-#: Cms/Ui/Main.php:61
+#: Cms/Ui/Main.php:63
 msgid ""
 "Welcome to\n"
 " depage::cms"
 msgstr ""
 
-#: Cms/Ui/Main.php:83 Cms/Ui/Main.php:116
+#: Cms/Ui/Main.php:89 Cms/Ui/Main.php:123
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:168 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:176 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:169
+#: Cms/Ui/Main.php:177
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:239
+#: Cms/Ui/Main.php:247
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:241
+#: Cms/Ui/Main.php:249
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:337
+#: Cms/Ui/Main.php:345
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:339
+#: Cms/Ui/Main.php:347
 msgid "Shows the users that are currently logged in"
 msgstr ""
 
-#: Cms/Ui/Main.php:367
+#: Cms/Ui/Main.php:375
 msgid "News"
 msgstr ""
 
-#: Cms/Ui/Main.php:368
+#: Cms/Ui/Main.php:376
 msgid "Shows news and version info"
 msgstr ""
 
@@ -2114,7 +2114,7 @@ msgstr ""
 msgid "Release Pages for Project '%s'"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:34 Cms/tpl/projectlist.tpl:22
+#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:35 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
 msgid "Edit"
 msgstr ""
@@ -2339,86 +2339,90 @@ msgid "Create new:"
 msgstr ""
 
 #: Cms/js/locale.php:28
-msgid "There are no elements that can be created in this element"
+msgid "Create new element at the end"
 msgstr ""
 
 #: Cms/js/locale.php:29
-msgid "Cut"
+msgid "There are no elements that can be created in this element"
 msgstr ""
 
 #: Cms/js/locale.php:30
-msgid "Delete"
+msgid "Cut"
 msgstr ""
 
 #: Cms/js/locale.php:31
-msgid "Delete this element now?"
+msgid "Delete"
 msgstr ""
 
 #: Cms/js/locale.php:32
-msgid "Deselect all"
+msgid "Delete this element now?"
 msgstr ""
 
 #: Cms/js/locale.php:33
+msgid "Deselect all"
+msgstr ""
+
+#: Cms/js/locale.php:34
 msgid "Duplicate"
 msgstr ""
 
-#: Cms/js/locale.php:35
+#: Cms/js/locale.php:36
 msgid "Edit current page in edit interface on the left ←."
 msgstr ""
 
-#: Cms/js/locale.php:36
+#: Cms/js/locale.php:37
 msgid "Height: "
 msgstr ""
 
-#: Cms/js/locale.php:37
+#: Cms/js/locale.php:38
 msgid "Width: "
 msgstr ""
 
-#: Cms/js/locale.php:38
+#: Cms/js/locale.php:39
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 
-#: Cms/js/locale.php:39
+#: Cms/js/locale.php:40
 msgid "News- or blog-post"
 msgstr ""
 
-#: Cms/js/locale.php:40 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+#: Cms/js/locale.php:41 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
 msgid "No current tasks."
 msgstr ""
 
-#: Cms/js/locale.php:41
+#: Cms/js/locale.php:42
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:42
+#: Cms/js/locale.php:43
 msgid "Paste"
 msgstr ""
 
-#: Cms/js/locale.php:43
+#: Cms/js/locale.php:44
 msgid "Filter Projects"
 msgstr ""
 
-#: Cms/js/locale.php:44
+#: Cms/js/locale.php:45
 msgid "Reload"
 msgstr ""
 
-#: Cms/js/locale.php:45
+#: Cms/js/locale.php:46
 msgid "Reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:46
+#: Cms/js/locale.php:47
 msgid "Rename"
 msgstr ""
 
-#: Cms/js/locale.php:47
+#: Cms/js/locale.php:48
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:48
+#: Cms/js/locale.php:49
 msgid "Finished uploading/Cancel"
 msgstr ""
 
-#: Cms/js/locale.php:49
+#: Cms/js/locale.php:50
 msgid "Change zoom level of preview."
 msgstr ""
 
@@ -2434,6 +2438,14 @@ msgstr ""
 #: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
 #: Cms/tpl/toolbar_main.tpl:55 Cms/tpl/toolbar_main.tpl:68
 msgid "Settings"
+msgstr ""
+
+#: Cms/tpl/helpLink.tpl:3 Cms/tpl/help.tpl:7 Cms/tpl/toolbar_main.tpl:92
+msgid "Help"
+msgstr ""
+
+#: Cms/tpl/helpLink.tpl:4
+msgid "Open online documentation"
 msgstr ""
 
 #: Cms/tpl/projectlist.tpl:21
@@ -2530,14 +2542,6 @@ msgstr ""
 
 #: Cms/tpl/home.tpl:3
 msgid "Dashboard"
-msgstr ""
-
-#: Cms/tpl/home.tpl:10 Cms/tpl/help.tpl:7 Cms/tpl/toolbar_main.tpl:92
-msgid "Help"
-msgstr ""
-
-#: Cms/tpl/home.tpl:11
-msgid "Open online documentation"
 msgstr ""
 
 #: Cms/tpl/projectmain.tpl:6

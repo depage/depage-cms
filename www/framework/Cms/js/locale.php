@@ -25,6 +25,7 @@
             "copy" => _("Copy"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
+            "createNewAtEnd" => _("Create new element at the end"),
             "createNoElements" => _("There are no elements that can be created in this element"),
             "cut" => _("Cut"),
             "delete" => _("Delete"),
