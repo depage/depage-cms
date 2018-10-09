@@ -64,6 +64,32 @@
     width: 100%;
 }
 // }}}
+// {{{ .box-full
+.box-full-minus-aside {
+    @extend .box;
+
+    float: left;
+    width: 100%;
+
+    @media screen and (min-width: 1000px) and (max-width: 1600px) {
+        width: 100% - 33.3333%;;
+        width: calc(100% - #{1.5 * $treeWidth});
+        margin-right: 0;
+    }
+    @media screen and (min-width: 1600px) {
+        margin-right: -1.5 * $treeWidth;
+    }
+    @media screen and (max-width: 1000px) {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .content {
+        width: 100%;
+        max-width: 2.5 * $treeWidth;
+    }
+}
+// }}}
 // {{{ .box-aside
 .box-aside {
     @extend .box;
@@ -72,6 +98,7 @@
     width: 33.3333%;
     max-width: 1.5 * $treeWidth;
     float: right;
+    clear: right;
     padding-left: 0;
     padding-bottom: 0;
 }
@@ -200,7 +227,7 @@ html {
         -webkit-overflow-scrolling: touch;
 
         &.top {
-            padding-top: 4 * $toolbarHeight;
+            padding-top: 1.5 * $toolbarHeight;
         }
     }
     header.info ~ .scrollable-content {

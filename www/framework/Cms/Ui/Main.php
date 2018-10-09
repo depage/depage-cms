@@ -62,7 +62,7 @@ class Main extends Base {
             // not logged in
             $h = new Html("welcome.tpl", [
                 'class' => "top",
-                'title' => _("Welcome to depage::cms"),
+                'title' => _("Welcome to depage-cms"),
                 'loginForm' => $form,
                 'content' => [
                     $this->news(),

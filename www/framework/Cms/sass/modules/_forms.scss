@@ -159,6 +159,7 @@
     p.submit,
     p.cancel {
         float: left;
+
         input {
             margin-top: 24px;
             cursor: pointer;
@@ -170,6 +171,8 @@
     p.submit {
         input {
             font-weight: bold;
+            color: $textBrightColor;
+            background: $selectionBackgroundColor;
         }
     }
     p.cancel {
@@ -232,7 +235,7 @@
 /* {{{ sortable forms */
 .sortable-forms {
     $height: $menuLineHeight * 1.5;
-    margin-top: 25px;
+    margin-top: 40px;
 
     form fieldset {
         border-color: transparent !important;
@@ -247,9 +250,13 @@
         margin-left: 25%;
 
         &.new {
-            margin-top: 22px;
+            margin-top: 40px;
+
             h1 {
                 padding-left: 2em;
+                color: $textBaseColor;
+                text-decoration: none;
+                border-top: 1px solid transparent;
 
                 &:before {
                     display: block;
@@ -264,13 +271,32 @@
                 }
             }
         }
+        &:first-child {
+            h1 {
+                border-top: 1px solid transparent;
+            }
+        }
         &:target,
         &.active {
+            z-index: 100;
+
+            h1,
+            form {
+                @include box-shadow($lightShadow);
+            }
+            h1,
+            form,
+            form::before {
+                border-top: 1px solid $selectionBackgroundColor;
+                border-bottom: 1px solid $selectionBackgroundColor;
+            }
             h1 {
+                border-left: 5px solid $selectionBackgroundColor;
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
                 width: 33%;
-                @include box-shadow($lightShadow);
+                color: $textBaseColor;
+                text-decoration: none;
 
                 &:hover {
                     text-decoration: none;
@@ -279,17 +305,14 @@
             form {
                 display: block;
                 padding-top: 12px;
-                @include box-shadow($lightShadow);
-                @include radius($cornerRadius * 1.5);
-                @include radius(0, "top", "left");
 
                 &::before {
                     content: " ";
                     display: block;
                     position: absolute;
-                    top: 0;
+                    top: -1px;
                     left: -10px;
-                    width: 15px;
+                    width: 10px;
                     height: $height;
                     background-color: $backgroundLighterColor;
                 }
@@ -302,8 +325,9 @@
             h1 {
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
+                width: 133%;
                 @include box-shadow($lightShadow);
-                @include radius($cornerRadius);
+                //@include radius($cornerRadius);
             }
             form {
                 display: none !important;
@@ -328,7 +352,7 @@
         top: 0;
         display: block;
         cursor: pointer;
-        width: 100%;
+        width: 133%;
         height: $height;
         line-height: $height;
         margin: 0;
@@ -339,28 +363,12 @@
         background: none;
         font-weight: normal;
         padding-top: 0;
-        margin: -($menuLineHeight * 0.25) 0;
-
-        @include radius($cornerRadius, "top", "left");
-        @include radius($cornerRadius, "bottom", "left");
-
-        &:hover {
-            text-decoration: underline;
-        }
-        &.dragged {
-            position: absolute;
-            z-index: 5000;
-
-            h1 {
-                font-weight: bold;
-            }
-            form {
-                display: none !important;
-            }
-        }
-        h1 {
-            position: relative;
-        }
+        margin: -($menuLineHeight * 0.125) 0;
+        color: $linkColor;
+        text-decoration: none;
+        border-top: 1px solid $borderLightColor;
+        border-bottom: 1px solid transparent;
+        border-left: 5px solid transparent;
     }
     .placeholder {
         height: $height;
