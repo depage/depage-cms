@@ -167,6 +167,7 @@ class Pages extends Base {
 
             // reset release state for copied document
             $copiedDoc->setAttribute($info->rootid, "db:released", "false");
+            $copiedDoc->setAttribute($info->rootid, "db:published", "false");
 
             $this->document->setAttribute($nodeId, "db:docref", $info->name);
         }
@@ -222,9 +223,9 @@ class Pages extends Base {
 
         $xpath = new \DOMXPath($xml);
 
-        // remove unreleased pages
-        $unreleasedPages = $xpath->query("//pg:page[@db:released = 'false']");
-        foreach ($unreleasedPages as $page) {
+        // remove unpublished pages
+        $unpublishedPages = $xpath->query("//pg:page[@db:published = 'false']");
+        foreach ($unpublishedPages as $page) {
             $page->parentNode->removeChild($page);
         }
 
@@ -258,11 +259,17 @@ class Pages extends Base {
         foreach ($pages as $page) {
             $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));
 
+            $released = false;
+            $published = false;
+
             if ($doc && $doc->isReleased()) {
-                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
-            } else {
-                $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
+                $released = true;
             }
+            if ($doc && $doc->isPublished()) {
+                $published = true;
+            }
+            $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", $released ? "true" : "false");
+            $page->setAttributeNS("http://cms.depagecms.net/ns/database", "db:published", $published ? "true" : "false");
         }
     }
     // }}}
