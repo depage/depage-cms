@@ -52,7 +52,7 @@ a.button.release {
 // {{{ bottom left aligned tooltips
 a.jstree-root-add-button {
     &[aria-label]::after {
-        @include transform(translateX(10%) translateY(-250%));
+        @include transform(translateX(10%) translateY(-150%));
     }
 }
 // }}}

@@ -82,7 +82,8 @@
     margin-top: $toolbarHeight * 2;
 
     .content {
-        max-width: 2.5 * $treeWidth;
+        width: 100%;
+        max-width: 3 * $treeWidth;
     }
 
     padding-left: 0;

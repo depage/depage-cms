@@ -110,33 +110,6 @@
             }
         }
     }
-    .depage-form {
-        input,
-        textarea,
-        .textarea,
-        select {
-            border: 1px solid $backgroundLighterColor;
-            //background: #e3e3e3;
-            color: #000000;
-
-            &:hover {
-                border: 1px solid $backgroundLighterColor;
-            }
-            &.focus,
-            &:focus {
-                border: 1px solid $borderColor;
-                //background: #ffffff;
-            }
-            &:disabled {
-                color: #7c808f;
-            }
-        }
-        p.submit {
-            input {
-                border: 1px solid lighten(#7c808f, 10%);
-            }
-        }
-    }
 /* }}} */
 
 /* {{{ global */
@@ -216,7 +189,7 @@ select,
 .projectlist a,
 .depage-form .submit input,
 .depage-form .cancel input {
-    @include radius(4px);
+    @include radius($cornerRadius);
     cursor: pointer;
 }
 /* }}} */

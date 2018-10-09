@@ -10,8 +10,9 @@
     select,
     textarea,
     .textarea,
-    .textarea-content {
-        padding: 5px 10px;
+    .textarea-content,
+    .selectize-input {
+        padding: 8px 12px;
         font-size: $fSizeM + 1px;
 
         &::placeholder {
@@ -230,8 +231,8 @@
 /* }}} */
 /* {{{ sortable forms */
 .sortable-forms {
-    $height: $menuLineHeight;
-    margin-top: 15px;
+    $height: $menuLineHeight * 1.5;
+    margin-top: 25px;
 
     form fieldset {
         border-color: transparent !important;
@@ -254,7 +255,7 @@
                     display: block;
                     content: " ";
                     position: absolute;
-                    top: 0em;
+                    top: 10px;
                     left: 0em;
                     width: 2em;
                     height: 2em;
@@ -268,7 +269,8 @@
             h1 {
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
-                width: 34%;
+                width: 33%;
+                @include box-shadow($lightShadow);
 
                 &:hover {
                     text-decoration: none;
@@ -276,6 +278,21 @@
             }
             form {
                 display: block;
+                padding-top: 12px;
+                @include box-shadow($lightShadow);
+                @include radius($cornerRadius * 1.5);
+                @include radius(0, "top", "left");
+
+                &::before {
+                    content: " ";
+                    display: block;
+                    position: absolute;
+                    top: 0;
+                    left: -10px;
+                    width: 15px;
+                    height: $height;
+                    background-color: $backgroundLighterColor;
+                }
             }
         }
         &.dragged {
@@ -285,6 +302,8 @@
             h1 {
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
+                @include box-shadow($lightShadow);
+                @include radius($cornerRadius);
             }
             form {
                 display: none !important;
@@ -320,6 +339,10 @@
         background: none;
         font-weight: normal;
         padding-top: 0;
+        margin: -($menuLineHeight * 0.25) 0;
+
+        @include radius($cornerRadius, "top", "left");
+        @include radius($cornerRadius, "bottom", "left");
 
         &:hover {
             text-decoration: underline;
@@ -337,26 +360,12 @@
         }
         h1 {
             position: relative;
-            position: relative;
         }
     }
     .placeholder {
-        //border: 1px solid #ffffff;
         height: $height;
     }
 
-    form {
-        display: none;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
-    }
-    p.submit {
-        position: static;
-        float: none;
-    }
     form {
         display: none;
         width: 100%;
@@ -420,11 +429,13 @@
 }
 // }}}
 // {{{ .selectize-input
-.depage-form .selectize-input {
-    border-color: transparent;
-    @include radius(4px);
-
-    // @todo make background dark on opened menu
+.depage-form {
+    .selectize-input.dropdown-active,
+    .selectize-input.dropdown-active::before,
+    .selectize-dropdown {
+        color: $textBrightColor !important;
+        background-color: $backgroundMenu !important;
+    }
 }
 // }}}
 // {{{ .depageEditorToolbar

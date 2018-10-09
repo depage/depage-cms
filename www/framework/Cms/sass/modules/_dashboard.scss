@@ -5,6 +5,19 @@
 
     .content {
         min-height: 200px;
+        border-bottom: none;
+
+        form {
+            padding: 15px;
+            max-width: 2.5 * $treeWidth;
+            background: $backgroundLighterColor;
+            @include radius($cornerRadius * 2);
+            @include box-shadow($lightShadow);
+
+            h2 {
+                margin-bottom: 15px;
+            }
+        }
     }
 
     @media screen and (min-width: 1000px) {

@@ -30,6 +30,11 @@ $cornerRadius: 0.4em !global;
 
 $depageFormSelectionColor: $selectionTextColor !global;
 $depageFormSelectionBackground: $selectionBackgroundColor !global;
+$depageFormBorderRadius: $cornerRadius !global;
+$depageFormErrorColor: $errorColor !global;
+$depageFormBorderColor: $backgroundLighterColor !global;
+$depageFormBorderColorFocus: $selectionBackgroundColor !global;
+
 
 $shadow: 0 3px 0.5em 0 #000000 !global;
 $lightShadow: 0 1px 0.3em 0 rgba(0, 0, 0, 0.5) !global;

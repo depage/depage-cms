@@ -536,7 +536,7 @@ var depageCMS = (function() {
                     handle: "h1",
                     pullPlaceholder: false,
                     placeholder: '<div class="placeholder"></div>',
-                    tolerance: 10,
+                    tolerance: 40,
                     onDragStart: function($item, container, _super, event) {
                         currentPos = $item.index();
 
