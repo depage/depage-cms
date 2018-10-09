@@ -100,6 +100,7 @@ class Main extends Base {
                 $error = "";
                 if (!$form->isEmpty()) {
                     $error = "<p class=\"error\">false/unknown username password combination</p>";
+                    $form->addHtml($error);
                 }
 
                 $h = new Html("scrollable.tpl", [
@@ -110,7 +111,6 @@ class Main extends Base {
                         'title' => "Login",
                         'liveHelp' => _("Login"),
                         'content' => [
-                            $error,
                             $form,
                         ],
                     ]),
