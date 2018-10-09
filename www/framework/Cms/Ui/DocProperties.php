@@ -319,7 +319,7 @@ class DocProperties extends Base
         //var_dump($pageInfo);
 
         $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
-            'label' => _("Last Change"),
+            'label' => _("Changed"),
             'class' => "doc-property-fieldset doc-property-meta",
             'dataAttr' => [
                 'docref' => $this->docRef,

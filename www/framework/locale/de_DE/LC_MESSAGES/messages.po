@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-08 17:46+0200\n"
+"POT-Creation-Date: 2018-10-09 19:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1980,47 +1980,46 @@ msgstr "Benutzer '%s' bearbeiten"
 msgid "Add new User"
 msgstr "Neuen Benutzer hinzufügen"
 
-#: Cms/Ui/Main.php:63
-msgid ""
-"Welcome to\n"
-" depage::cms"
+#: Cms/Ui/Main.php:65
+#, fuzzy
+msgid "Welcome to depage-cms"
 msgstr ""
 "Willkommen bei\n"
 " depage::cms"
 
-#: Cms/Ui/Main.php:89 Cms/Ui/Main.php:123
+#: Cms/Ui/Main.php:111 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:176 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:164 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr "Projekte"
 
-#: Cms/Ui/Main.php:177
+#: Cms/Ui/Main.php:165
 msgid "Edit, preview or changed settings for your projects"
 msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
-#: Cms/Ui/Main.php:247
+#: Cms/Ui/Main.php:235
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:249
+#: Cms/Ui/Main.php:237
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:345
+#: Cms/Ui/Main.php:333
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:347
+#: Cms/Ui/Main.php:335
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
 
-#: Cms/Ui/Main.php:375
+#: Cms/Ui/Main.php:363
 msgid "News"
 msgstr ""
 
-#: Cms/Ui/Main.php:376
+#: Cms/Ui/Main.php:364
 msgid "Shows news and version info"
 msgstr ""
 
@@ -2166,8 +2165,8 @@ msgstr ""
 "Adressen."
 
 #: Cms/Ui/DocProperties.php:322
-msgid "Last Change"
-msgstr "Letzte Änderung"
+msgid "Changed"
+msgstr "Geändert"
 
 #: Cms/Ui/DocProperties.php:329
 #, php-format
@@ -3004,6 +3003,19 @@ msgstr "Schlüsselworte"
 #: Cms/Forms/Project/Language.php:85
 msgid "Add new language"
 msgstr "Neue Sprache hinzufügen"
+
+#: Cms/Forms/Login.php:23
+msgid "labels-on-top"
+msgstr ""
+
+#: Cms/Forms/Login.php:41
+msgid "Username or email@domain.com"
+msgstr ""
+
+#: Cms/Forms/Login.php:46
+#, fuzzy
+msgid "Your Password"
+msgstr "Passwort"
 
 #: Cms/XmlDocTypes/Pages.php:28
 msgid "Page"
