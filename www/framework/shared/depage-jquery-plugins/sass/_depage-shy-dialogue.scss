@@ -54,6 +54,7 @@
         background: $background;
         padding: $padding;
         width: $width;
+        max-width: 80vw;
         height: $height;
 
         .message,

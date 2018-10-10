@@ -76,6 +76,9 @@
              */
             hide: function(duration, callback) {
                 duration = duration || base.options.fadeoutDuration;
+
+                if (!this.$wrapper) return this;
+
                 this.$wrapper.fadeOut(duration, callback);
 
                 // allow chaining
@@ -184,9 +187,15 @@
 
                 // adjust position to always be inside of view
                 // @todo center on very small screens?
-                if (d[1] == "r" && pos.left + wrapperWidth + dWidth > $(window).width() - 20) {
+                var elWidth = !left ? this.$el.width() : 0;
+                var outOfBoundsLeft = pos.left - wrapperWidth - dWidth - elWidth < 10;
+                var outOfBoundsRight = pos.left + wrapperWidth + dWidth + elWidth > $(window).width() - 10;
+
+                if (outOfBoundsLeft && outOfBoundsRight) {
+                    d = d.replaceAt(1, "c");
+                } else if (d[1] == "r" && outOfBoundsRight) {
                     d = d.replaceAt(1, "l");
-                } else if (d[1] == "l" && pos.left - wrapperWidth - dWidth < 20) {
+                } else if (d[1] == "l" && outOfBoundsLeft) {
                     d = d.replaceAt(1, "r");
                 }
                 pos = this.adjustPositionToElement(top, left, d, this.$el);
