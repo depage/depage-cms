@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-09 19:53+0200\n"
+"POT-Creation-Date: 2018-10-10 18:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1966,6 +1966,10 @@ msgstr ""
 msgid "Please check this box if you want to proceed"
 msgstr ""
 
+#: HtmlForm/Elements/Date.php:29
+msgid "YYYY-MM-DD"
+msgstr ""
+
 #: HtmlForm/Elements/Email.php:53
 msgid "Please enter a valid email address"
 msgstr ""
@@ -1979,43 +1983,39 @@ msgstr ""
 msgid "Add new User"
 msgstr ""
 
-#: Cms/Ui/Main.php:65
-msgid "Welcome to depage-cms"
-msgstr ""
-
-#: Cms/Ui/Main.php:111 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
+#: Cms/Ui/Main.php:110 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:164 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:162 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:165
+#: Cms/Ui/Main.php:163
 msgid "Edit, preview or changed settings for your projects"
 msgstr ""
 
-#: Cms/Ui/Main.php:235
+#: Cms/Ui/Main.php:233
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:237
+#: Cms/Ui/Main.php:235
 msgid "Shows the currently running background tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:333
+#: Cms/Ui/Main.php:331
 msgid "Users"
 msgstr ""
 
-#: Cms/Ui/Main.php:335
+#: Cms/Ui/Main.php:333
 msgid "Shows the users that are currently logged in"
 msgstr ""
 
-#: Cms/Ui/Main.php:363
+#: Cms/Ui/Main.php:361
 msgid "News"
 msgstr ""
 
-#: Cms/Ui/Main.php:364
+#: Cms/Ui/Main.php:362
 msgid "Shows news and version info"
 msgstr ""
 
@@ -2365,62 +2365,66 @@ msgid "Duplicate"
 msgstr ""
 
 #: Cms/js/locale.php:36
-msgid "Edit current page in edit interface on the left ←."
+msgid "Edit the current page in edit interface on the left ←."
 msgstr ""
 
 #: Cms/js/locale.php:37
-msgid "Height: "
+msgid "Edit the current page"
 msgstr ""
 
 #: Cms/js/locale.php:38
-msgid "Width: "
+msgid "Height: "
 msgstr ""
 
 #: Cms/js/locale.php:39
-msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgid "Width: "
 msgstr ""
 
 #: Cms/js/locale.php:40
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+
+#: Cms/js/locale.php:41
 msgid "News- or blog-post"
 msgstr ""
 
-#: Cms/js/locale.php:41 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+#: Cms/js/locale.php:42 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
 msgid "No current tasks."
 msgstr ""
 
-#: Cms/js/locale.php:42
+#: Cms/js/locale.php:43
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:43
+#: Cms/js/locale.php:44
 msgid "Paste"
 msgstr ""
 
-#: Cms/js/locale.php:44
+#: Cms/js/locale.php:45
 msgid "Filter Projects"
 msgstr ""
 
-#: Cms/js/locale.php:45
+#: Cms/js/locale.php:46
 msgid "Reload"
 msgstr ""
 
-#: Cms/js/locale.php:46
+#: Cms/js/locale.php:47 Cms/js/locale.php:48
 msgid "Reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:47
+#: Cms/js/locale.php:49
 msgid "Rename"
 msgstr ""
 
-#: Cms/js/locale.php:48
+#: Cms/js/locale.php:50
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:49
+#: Cms/js/locale.php:51
 msgid "Finished uploading/Cancel"
 msgstr ""
 
-#: Cms/js/locale.php:50
+#: Cms/js/locale.php:52
 msgid "Change zoom level of preview."
 msgstr ""
 
@@ -2621,6 +2625,10 @@ msgstr ""
 
 #: Cms/tpl/changelist.tpl:32
 msgid "Last published"
+msgstr ""
+
+#: Cms/tpl/welcome.tpl:6
+msgid "Welcome to depage-cms"
 msgstr ""
 
 #: Cms/tpl/userlist.tpl:25
@@ -2964,10 +2972,6 @@ msgstr ""
 
 #: Cms/Forms/Project/Language.php:85
 msgid "Add new language"
-msgstr ""
-
-#: Cms/Forms/Login.php:23
-msgid "labels-on-top"
 msgstr ""
 
 #: Cms/Forms/Login.php:41

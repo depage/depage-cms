@@ -4,11 +4,11 @@
         $width: 20em,
         $padding: 10px,
         $background: $backgroundDarkColor,
-        $corner-radius: 10px,
-        $direction-size: 20px
+        $corner-radius: $cornerRadius,
+        $direction-size: 15px
     );
 
-    z-index: 1000 !important;
+    z-index: 9000 !important;
 
     .wrapper {
         -webkit-backdrop-filter: blur(5px);

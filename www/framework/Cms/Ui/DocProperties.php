@@ -338,7 +338,7 @@ class DocProperties extends Base
             $releaseHover = _("Ask for this page the be released");
         }
         $class = $pageInfo->released ? "disabled" : "";
-        $fs->addHtml("<p><a class=\"button release $class\" aria-label=\"$releaseHover\">{$releaseTitle}</a></p>");
+        $fs->addHtml("<p><a class=\"button release $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
 
     }
     // }}}

@@ -18,29 +18,29 @@
                         <strong><?php self::t($project->fullname); ?></strong>
 
                         <div class="buttons">
-                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button" aria-label="<?php self::t(_("Edit this project")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/edit/" class="button" data-tooltip="<?php self::t(_("Edit this project")); ?>">
                                 <?php self::t(_('Edit')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" aria-label="<?php self::t(_("Preview your project")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" data-tooltip="<?php self::t(_("Preview your project")); ?>">
                                 <?php self::t(_('Preview')) ?>
                             </a>
                             <?php if ($this->user->canPublishProject()) { ?>
-                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button" aria-label="<?php self::t(_("Publish all changes to the live server")); ?>">
+                                <a href="project/<?php self::t($project->name); ?>/publish/" class="button" data-tooltip="<?php self::t(_("Publish all changes to the live server")); ?>">
                                     <?php self::t(_('Publish')) ?>
                                 </a>
                             <?php } ?>
                             <?php if ($project->hasPageShortcuts()) { ?>
-                                <a class="button shortcuts icon-add" aria-label="<?php self::t(_("Project shortcuts")); ?>">
+                                <a class="button shortcuts icon-add" data-tooltip="<?php self::t(_("Project shortcuts")); ?>">
                                     +
                                 </a>
                             <?php } ?>
-                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library" aria-label="<?php self::t(_("Manage file library")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/library/" class="button icon-library" data-tooltip="<?php self::t(_("Manage file library")); ?>">
                                 <?php self::t(_('Library')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors" aria-label="<?php self::t(_("Add and edit colors")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/colors/" class="button icon-colors" data-tooltip="<?php self::t(_("Add and edit colors")); ?>">
                                 <?php self::t(_('Colors')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings" aria-label="<?php self::t(_("Change project settings")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/settings/" class="button icon-settings" data-tooltip="<?php self::t(_("Change project settings")); ?>">
                                 <?php self::t(_('Settings')) ?>
                             </a>
                         </div>

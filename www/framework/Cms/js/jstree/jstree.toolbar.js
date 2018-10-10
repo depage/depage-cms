@@ -109,7 +109,7 @@
                 .text(name)
                 .addClass("button")
                 .addClass(className)
-                .attr("aria-label", name)
+                .attr("data-tooltip", name)
                 .on("click", function() {
                     if (!$(this).hasClass("disabled")) callback.apply(this);
                 });

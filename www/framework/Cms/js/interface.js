@@ -242,7 +242,7 @@ var depageCMS = (function() {
             var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
-                var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
+                var $button = $("<a class=\"toggle-button " + newLayout + "\" data-tooltip=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
                     .appendTo($layoutButtons)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
@@ -250,17 +250,8 @@ var depageCMS = (function() {
             // add button placeholder
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
 
-            // add reload button
-            var $reloadButton = $("<a class=\"button\" data-live-help=\"" + locale.reloadHelp + "\">" + locale.reload + "</a>")
-                .appendTo($previewButtons)
-                .on("click", function() {
-                    if ($previewFrame.length > 0) {
-                        $previewFrame[0].contentWindow.location.reload();
-                    }
-                });
-
             // add edit button
-            var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\">" + locale.edit + "</a>")
+            var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\" data-tooltip=\"" + locale.editTooltip + "\">" + locale.edit + "</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     var url = "";
@@ -275,6 +266,15 @@ var depageCMS = (function() {
                         var page = matches[2];
 
                         localJS.edit(project, page);
+                    }
+                });
+
+            // add reload button
+            var $reloadButton = $("<a class=\"button icon-reload icon-only\" data-live-help=\"" + locale.reloadHelp + "\" data-tooltip=\"" + locale.reloadTooltip + "\">" + locale.reload + "</a>")
+                .appendTo($previewButtons)
+                .on("click", function() {
+                    if ($previewFrame.length > 0) {
+                        $previewFrame[0].contentWindow.location.reload();
                     }
                 });
 
@@ -667,22 +667,15 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTooltips
         setupTooltips: function() {
-            $("a[aria-label]").each(function() {
+            $("a[data-tooltip]").each(function() {
                 var $t = $(this);
 
                 $t.depageTooltip({
                     direction: "TC",
                     directionMarker: true,
-                    message: $t.attr("aria-label")
+                    message: $t.attr("data-tooltip")
                 });
             });
-            /*
-                .off("mouseenter.tooltip").on("mouseenter.tooltip", function(e) {
-                })
-                .off("mouseleave.tooltip").on("mouseleave.tooltip", function(e) {
-                    console.log("hiding", $(this).attr("aria-label"));
-                });
-                */
         },
         // }}}
         // {{{ setupTrees
@@ -1236,6 +1229,8 @@ var depageCMS = (function() {
                 // @todo scroll to top
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
+
+                localJS.setupTooltips();
 
                 $form.depageForm();
                 $form.find("p.submit").remove();
@@ -1797,7 +1792,7 @@ var depageCMS = (function() {
                         .appendTo($body);
 
                     // @todo add close button to header
-                    $("<a class=\"close\" aria-label=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
+                    $("<a class=\"close\" data-tooltip=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
                         $result.find("header.info")
                     ).on("click", function() {
                         $("div.help").remove();

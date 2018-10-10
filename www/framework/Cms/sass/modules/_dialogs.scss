@@ -1,6 +1,12 @@
 // {{{ shy-dialogs
 .depage-shy-dialogue {
-    @extend .depage-tooltip;
+    @include depage-shy-dialogue (
+        $width: 20em,
+        $padding: 10px,
+        $background: $backgroundDarkColor,
+        $corner-radius: $cornerRadius * 2,
+        $direction-size: 20px
+    );
 
     z-index: 9000 !important;
 
@@ -10,6 +16,12 @@
         @include box-shadow($shadow);
     }
 
+    h1,
+    p,
+    a {
+        color: $textBrightColor;
+        font-size: 1em;
+    }
     input {
         padding: 6px;
         @include radius(4px);

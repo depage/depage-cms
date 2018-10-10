@@ -102,7 +102,7 @@
                     var $button = el.children(".jstree-root-add-button");
 
                     if ($button.length == 0) {
-                        $button = $("<a class=\"jstree-root-add-button\" aria-label=\"" + locale.createNewAtEnd + "\">+</a>").appendTo(el);
+                        $button = $("<a class=\"jstree-root-add-button\" data-tooltip=\"" + locale.createNewAtEnd + "\">+</a>").appendTo(el);
 
                         $button.on("click", function() {
                             var node = inst.get_node(el);

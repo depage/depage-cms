@@ -20,7 +20,7 @@ class Login extends \Depage\HtmlForm\HtmlForm
 
         $parameters['submitUrl'] = $submitUrl;
         $parameters['label'] = _("Login");
-        $parameters['class'] = _("labels-on-top");
+        $parameters['class'] = "labels-on-top";
 
         parent::__construct($name, $parameters, $form);
     }
