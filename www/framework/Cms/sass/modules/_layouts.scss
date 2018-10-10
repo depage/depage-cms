@@ -64,7 +64,7 @@
     width: 100%;
 }
 // }}}
-// {{{ .box-full
+// {{{ .box-full-minus-aside
 .box-full-minus-aside {
     @extend .box;
 
@@ -149,7 +149,7 @@
         padding-left: 20px;
     }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1000px) {
     .box {
         padding: 1px 0 !important;
         width: 100% !important;

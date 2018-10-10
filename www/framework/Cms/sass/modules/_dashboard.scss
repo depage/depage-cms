@@ -6,9 +6,10 @@
     .content {
         min-height: 200px;
         border-bottom: none;
+        margin-bottom: 45px;
 
         @media screen and (min-width: 1000px) {
-            margin-top: 15vh;
+            margin-top: 20vh;
         }
 
         form {
