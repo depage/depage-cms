@@ -52,12 +52,13 @@
              *
              * @return void
              */
-            show : function(left, top) {
+            show: function(left, top) {
                 var direction = base.options.direction.toLowerCase();
+                var that = this;
 
-                this.addWrapper();
-                this.setContent(base.options.title, base.options.message, base.options.icon);
-                this.setPosition(top, left, base.options.direction);
+                that.addWrapper();
+                that.setContent(base.options.title, base.options.message, base.options.icon);
+                that.setPosition(top, left, base.options.direction);
 
                 this.$wrapper.fadeIn(base.options.fadeinDuration);
 
@@ -65,7 +66,7 @@
                 $(document).bind('keyup.marker', function(e){
                     var key = e.which || e.keyCode;
                     if (key == 27) {
-                        base.hide();
+                        that.hide();
                     }
                 });
 
@@ -75,14 +76,14 @@
                 });
 
                 if (base.options.bind_el) {
-                    this.$el.click(function(e) {
+                    that.$el.click(function(e) {
                         e.stopPropagation();
                     });
                 }
 
                 // hide dialog when clicked outside
                 $(document).bind("click.marker", function() {
-                    base.hide();
+                    that.hide();
                 });
 
                 // allow chaining
