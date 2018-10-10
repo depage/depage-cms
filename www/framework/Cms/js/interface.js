@@ -7,6 +7,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-live-help.js
+ * @require framework/shared/depage-jquery-plugins/depage-tooltip.js
  * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  *
@@ -155,6 +156,7 @@ var depageCMS = (function() {
             localJS.setupVarious();
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
+            localJS.setupTooltips();
             localJS.setupProjectList();
             localJS.setupNewsletterList();
             localJS.setupSortables();
@@ -170,6 +172,7 @@ var depageCMS = (function() {
         // {{{ setupAjaxContent
         setupAjaxContent: function() {
             localJS.setupPreviewLinks();
+            localJS.setupTooltips();
             localJS.setupNewsletterList();
         },
         // }}}
@@ -660,6 +663,26 @@ var depageCMS = (function() {
                 return false;
             });
             */
+        },
+        // }}}
+        // {{{ setupTooltips
+        setupTooltips: function() {
+            $("a[aria-label]").each(function() {
+                var $t = $(this);
+
+                $t.depageTooltip({
+                    direction: "TC",
+                    directionMarker: true,
+                    message: $t.attr("aria-label")
+                });
+            });
+            /*
+                .off("mouseenter.tooltip").on("mouseenter.tooltip", function(e) {
+                })
+                .off("mouseleave.tooltip").on("mouseleave.tooltip", function(e) {
+                    console.log("hiding", $(this).attr("aria-label"));
+                });
+                */
         },
         // }}}
         // {{{ setupTrees
@@ -1828,7 +1851,6 @@ var depageCMS = (function() {
                     }
                 });
             } else {
-                // @todo updated for jsinterface
                 $.get(baseUrl + "project/" + pName + "/edit/?ajax=true", function(data) {
                     var $result = $("<div></div>")
                         .html( data )

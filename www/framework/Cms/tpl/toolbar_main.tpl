@@ -4,6 +4,7 @@
                 "href" => " ",
                 "class" => "home icon-depagecms",
                 "data-live-help" => _("Go to dashboard"),
+                "aria-label" => _("Go to dashboard"),
             ]); ?>>depage-cms</a></li>
     </menu>
     <menu class="preview">
@@ -18,6 +19,7 @@
                 "href" => "",
                 "class" => "button menu-project" . ($hasFavicon ? "" : " icon-projects"),
                 "data-live-help" => _("Change current project"),
+                "aria-label" => _("Project menu"),
             ]); ?>>
                 <?php if(!empty($this->project)) {
                     if ($hasFavicon) { ?>

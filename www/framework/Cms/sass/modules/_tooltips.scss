@@ -1,59 +1,36 @@
-// {{{ tooltips
-a,
-a.button {
-    &[aria-label]::after {
-        display: block;
-        position: absolute;
-        z-index: 1000;
-        content: attr(aria-label);
-        opacity: 0;
-        padding: 0;
-        margin-bottom: -15px;
-        background: $backgroundMenu;
-        color: $textBrightColor;
+// {{{ .depage-tooltip
+.depage-tooltip {
+    @include depage-shy-dialogue (
+        $width: 20em,
+        $padding: 10px,
+        $background: $backgroundDarkColor,
+        $corner-radius: 10px,
+        $direction-size: 20px
+    );
+
+    z-index: 1000 !important;
+
+    .wrapper {
         -webkit-backdrop-filter: blur(5px);
         backdrop-filter: blur(5px);
-        bottom: 0;
-        //white-space: nowrap;
-        height: 0;
-        width: 0;
-        min-width: 50px;
-        max-width: 250px;
-        overflow: hidden;
-        text-indent: 0;
 
-        @include radius($cornerRadius);
-        @include transform(translateX(-40%) translateY(100%));
-    }
-    &[aria-label]:hover::after {
-        height: auto;
-        width: auto;
-        width: intrinsic;           // Safari/WebKit
-        width: -moz-max-content;    // Firefox/Gecko
-        width: -webkit-max-content; // Chrome
-        padding: 5px 15px;
-        opacity: 1;
-
-        @include transition(300ms, "opacity");
-        transition-delay: 0.5s;
         @include box-shadow($shadow);
     }
-}
-// }}}
-// {{{ left align tooltips
-// }}}
-// {{{ right align tooltips
-a.button.release {
-    &[aria-label]::after {
-        @include transform(translateX(-80%) translateY(100%));
+
+    h1,
+    p,
+    a {
+        color: $textBrightColor;
+        font-size: 1em;
     }
 }
-// }}}
-// {{{ bottom left aligned tooltips
-a.jstree-root-add-button {
-    &[aria-label]::after {
-        @include transform(translateX(10%) translateY(-150%));
-    }
+.depage-tooltip .wrapper {
+    max-width: 250px;
+    width: auto;
+    width: intrinsic;           // Safari/WebKit
+    width: -moz-max-content;    // Firefox/Gecko
+    width: -webkit-max-content; // Chrome
+    @include box-shadow($lightShadow);
 }
 // }}}
 

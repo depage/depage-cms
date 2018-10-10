@@ -1,29 +1,15 @@
-@import "../../../shared/depage-jquery-plugins/sass/_depage-shy-dialogue";
-
 // {{{ shy-dialogs
 .depage-shy-dialogue {
-    @include depage-shy-dialogue (
-        $width: 20em,
-        $padding: 10px,
-        $background: $backgroundDarkColor,
-        $corner-radius: 10px,
-        $direction-size: 30px
-    );
+    @extend .depage-tooltip;
 
     z-index: 9000 !important;
 
     .wrapper {
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
-
+        max-width: 100%;
+        min-width: 20em;
         @include box-shadow($shadow);
     }
-    h1,
-    p,
-    a {
-        color: $textBrightColor;
-        font-size: 1em;
-    }
+
     input {
         padding: 6px;
         @include radius(4px);
