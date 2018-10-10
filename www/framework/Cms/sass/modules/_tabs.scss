@@ -42,8 +42,9 @@
     }
     .dialog-full & {
         top: $infoHeight;
-        padding-top: $infoHeight;
+        //padding-top: $infoHeight;
         padding-left: $infoHeight;
+        margin-top: 0;
         height: $height + $infoHeight;
         max-height: $height + $infoHeight;
 
@@ -52,7 +53,7 @@
         }
 
         & + * {
-            margin-top: $height + $infoHeight * 2;
+            margin-top: $height;
         }
     }
 }
