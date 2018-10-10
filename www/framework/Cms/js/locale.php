@@ -50,6 +50,9 @@
             "selectAll" => _("Select all"),
             "uploadFinishedCancel" => _("Finished uploading/Cancel"),
             "zoomHelp" => _("Change zoom level of preview."),
+            "layout-left-full" => _("Switch to edit-only layout"),
+            "layout-split" => _("Switch to split layout"),
+            "layout-right-full" => _("Switch to preview-only layout"),
         ];
     }
 

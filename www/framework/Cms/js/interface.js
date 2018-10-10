@@ -242,7 +242,8 @@ var depageCMS = (function() {
             var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
-                var $button = $("<a class=\"toggle-button " + newLayout + "\" data-tooltip=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
+                var tooltip = locale["layout-" + newLayout];
+                var $button = $("<a class=\"toggle-button " + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
                     .appendTo($layoutButtons)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
