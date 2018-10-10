@@ -30,6 +30,8 @@
         base.$el = $(el);
         base.el = el;
 
+        var showTimeout = null;
+
         // Add a reverse reference to the DOM object
         base.$el.data("depage.tooltip", base);
 
@@ -57,10 +59,16 @@
         base.tip = function(){
             base.$el
                 .bind('mouseenter.tooltip', function(e) {
-                    base.show(e.pageX, e.PageY);
+                    clearTimeout(showTimeout);
+
+                    showTimeout = setTimeout(function() {
+                        base.show();
+                    }, base.options.fadeinTimeout);
                     return false;
                 })
                 .bind('mouseleave.tooltip', function(e) {
+                    clearTimeout(showTimeout);
+
                     var hideIfOut = function(e) {
                         // FF does not have toElement, and only relatedTarget on mouseleave - e.target is for mousemove
                         if ($(e.toElement || e.relatedTarget || e.target).parents('#depage-tooltip').length === 0) {
@@ -106,7 +114,9 @@
         message: '',
         direction : 'TL',
         directionMarker : null,
-        fadeoutDuration: 300
+        fadeinTimeout: 500,
+        fadeinDuration: 200,
+        fadeoutDuration: 200
     };
 
     $.fn.depageTooltip = function(options){

@@ -22,9 +22,9 @@
     $.depage.markerbox = function(options) {
         var base = {};
 
-        String.prototype.replaceAt=function(index, replacement) {
+        String.prototype.replaceAt = function(index, replacement) {
             return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
-        }
+        };
 
         // {{{ init
         /**
@@ -53,12 +53,13 @@
              * @return void
              */
             show : function(left, top) {
-                left = left || this.$el.offset().left + this.$el.width();
-                top = top || Math.ceil(this.$el.offset().top - this.$el.height());
+                var direction = base.options.direction.toLowerCase();
 
-                base.addWrapper();
-                base.setContent(base.options.title, base.options.message, base.options.icon);
-                base.setPosition(top, left, base.options.direction);
+                this.addWrapper();
+                this.setContent(base.options.title, base.options.message, base.options.icon);
+                this.setPosition(top, left, base.options.direction);
+
+                $wrapper.fadeIn(base.options.fadeinDuration);
 
                 // bind escape key to cancel
                 $(document).bind('keyup.marker', function(e){
@@ -145,7 +146,7 @@
 
                 $dialogue = $('<div />');
 
-                $wrapper = $('<div class="wrapper" />');
+                $wrapper = $('<div class="wrapper" />').hide();
                 $dialogue.append($wrapper);
 
                 if (base.options.directionMarker) {
@@ -177,8 +178,6 @@
              * @return void
              */
             setPosition : function(newTop, newLeft, direction) {
-                $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
-
                 direction = direction.toLowerCase();
                 directions = {
                     l: 'left',
@@ -205,10 +204,35 @@
                     dWidth = - paddingLeft * 2;
                 }
 
+                console.log(direction);
+                if (!newLeft) {
+                    newLeft = this.$el.offset().left;
+                    if (direction[0] == "l") {
+                        newLeft += this.$el.width() + this.options.positionOffset;
+                    } else if (direction[0] == "r") {
+                        newLeft -= this.options.positionOffset;
+                    } else if (direction[1] == "c") {
+                        newLeft += this.$el.width() * 0.5;
+                    }
+                }
+                if (!newTop) {
+                    newTop = this.$el.offset().top;
+                    if (direction[0] == "t") {
+                        newTop += this.$el.height() + this.options.positionOffset;
+                    } else if (direction[0] == "c") {
+                        newTop += this.$el.height() * 0.5;
+                    } else {
+                        newTop -= this.options.positionOffset;
+                    }
+                }
+                newTop = Math.ceil(newTop);
+                newLeft = Math.ceil(newLeft);
+
+                $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
+
                 // adjust position to always be inside of view
                 // @todo center on very small screens?
                 if (newLeft + wrapperWidth + dWidth > $(window).width() - 20) {
-                    console.log("move from left to right");
                     if (direction[0] == "l") {
                         direction = direction.replaceAt(0, "r");
                     }
@@ -216,7 +240,6 @@
                         direction = direction.replaceAt(1, "r");
                     }
                 } else if (newLeft - wrapperWidth - dWidth < 20) {
-                    console.log("move from right to left");
                     if (direction[0] == "r") {
                         direction = direction.replaceAt(0, "l");
                     }
@@ -337,6 +360,8 @@
         message: '',
         direction : 'TL',
         directionMarker : null,
+        positionOffset: 20,
+        fadeinDuration: 300,
         fadeoutDuration: 300
     };
     // }}}
