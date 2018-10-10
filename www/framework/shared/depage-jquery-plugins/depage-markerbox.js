@@ -178,14 +178,18 @@
              *
              * @return void
              */
-            setPosition : function(newTop, newLeft, direction) {
-                direction = direction.toLowerCase();
+            setPosition : function(top, left, d) {
+                d = d.toLowerCase();
                 directions = {
-                    l: 'left',
-                    r: 'right',
-                    t: 'top',
-                    b: 'bottom',
-                    c: 'center'
+                    tl: 'right',
+                    cl: 'right',
+                    bl: 'right',
+                    tr: 'left',
+                    br: 'left',
+                    cr: 'left',
+                    tc: 'bottom',
+                    cc: '',
+                    bc: 'top',
                 };
 
                 var wrapperHeight = this.$wrapper.height();
@@ -194,8 +198,10 @@
                 var paddingRight = parseInt(this.$wrapper.css("padding-right"), 10);
                 var paddingTop = parseInt(this.$wrapper.css("padding-top"), 10);
                 var paddingBottom = parseInt(this.$wrapper.css("padding-bottom"), 10);
+                var offset = base.options.positionOffset;
                 var dHeight = 0,
-                    dWidth = 0;
+                    dWidth = 0,
+                    pos;
 
                 if (typeof(this.$directionMarker) !== "undefined") {
                     dHeight = this.$directionMarker.height();
@@ -205,113 +211,106 @@
                     dWidth = - paddingLeft * 2;
                 }
 
-                if (!newLeft) {
-                    newLeft = this.$el.offset().left;
-                    if (direction[0] == "l") {
-                        newLeft += this.$el.width() + this.options.positionOffset;
-                    } else if (direction[0] == "r") {
-                        newLeft -= this.options.positionOffset;
-                    } else if (direction[1] == "c") {
-                        newLeft += this.$el.width() * 0.5 + dWidth / 2;
-                    }
-                }
-                if (!newTop) {
-                    newTop = this.$el.offset().top;
-                    if (direction[0] == "t") {
-                        newTop += this.$el.height() + this.options.positionOffset;
-                    } else if (direction[0] == "c") {
-                        newTop += this.$el.height() * 0.5 + dWidth / 2;
-                    } else {
-                        newTop -= this.options.positionOffset;
-                    }
-                }
-                newTop = Math.ceil(newTop);
-                newLeft = Math.ceil(newLeft);
-
-                this.$dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
+                pos = this.adjustPositionToElement(top, left, d, this.$el);
 
                 // adjust position to always be inside of view
                 // @todo center on very small screens?
-                if (newLeft + wrapperWidth + dWidth > $(window).width() - 20) {
-                    if (direction[0] == "l") {
-                        direction = direction.replaceAt(0, "r");
-                    }
-                    if (direction[1] == "l") {
-                        direction = direction.replaceAt(1, "r");
-                    }
-                } else if (newLeft - wrapperWidth - dWidth < 20) {
-                    if (direction[0] == "r") {
-                        direction = direction.replaceAt(0, "l");
-                    }
-                    if (direction[1] == "r") {
-                        direction = direction.replaceAt(1, "l");
-                    }
+                if (d[1] == "r" && pos.left + wrapperWidth + dWidth > $(window).width() - 20) {
+                    d = d.replaceAt(1, "l");
+                } else if (d[1] == "l" && pos.left - wrapperWidth - dWidth < 20) {
+                    d = d.replaceAt(1, "r");
                 }
+                pos = this.adjustPositionToElement(top, left, d, this.$el);
+
+                this.$dialogue.attr("style", "position: absolute; top: " + pos.top + "px; left: " + pos.left + "px; z-index: 10000");
 
                 var wrapperPos = {};
                 var markerPos = {};
 
-                // to which side will the direction-marker attached to
-                switch (direction[0]) {
+                // vertical
+                switch (d[0]) {
                     case 't': // top
-                        wrapperPos.top = dHeight / 2;
-                        markerPos.top = -dHeight;
-                        break;
-                    case 'b': // bottom
-                        wrapperPos.bottom = dHeight / 2;
-                        markerPos.bottom = -dHeight;
-                        break;
-                    case 'l': // left
-                        wrapperPos.left = dWidth / 2;
-                        markerPos.left = -dWidth;
-                        break;
-                    case 'r': // right
-                        wrapperPos.right = dWidth / 2;
-                        markerPos.right = -dWidth;
+                        wrapperPos.top = - paddingTop - dHeight * 0.5;
+                        if (d[1] != "c") markerPos.top = paddingTop;
                         break;
                     case 'c': // center
-                        wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
                         wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
+                        break;
+                    case 'b': // bottom
+                        wrapperPos.bottom = - paddingBottom - dHeight * 0.5;
+                        if (d[1] != "c") markerPos.bottom = paddingBottom;
                         break;
                 }
 
-                // on which position will it be displayed
-                switch (direction[1]) {
+                // horizontal
+                switch (d[1]) {
                     case 'l': // left
-                        wrapperPos.left = -paddingLeft - dWidth / 2;
-                        markerPos.left = paddingLeft;
+                        wrapperPos.right = dHeight + offset - dHeight * 0.5;
+                        markerPos.right = -dHeight;
                         break;
                     case 'r': // right
-                        wrapperPos.right = -paddingRight - dWidth / 2;
-                        markerPos.right = paddingRight;
+                        wrapperPos.left = dHeight + offset - dHeight * 0.5;
+                        markerPos.left = -dHeight;
                         break;
                     case 'c': // center
-                        if (direction[0] == "t" || direction[0] == "b") { // horizontal
-                            wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
+                        wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
+                        if (d[0] == "t") {
+                            wrapperPos.top -= wrapperHeight +  paddingTop + offset;
+                        } else if (d[0] == "b") {
+                            wrapperPos.bottom -= wrapperHeight + paddingBottom + offset;
+                        }
+                        if (d[0] == "t" || d[0] == "b") { // horizontal
                             markerPos.left = (wrapperWidth + paddingLeft + paddingRight) / 2 - dWidth / 2;
-                        } else if (direction[0] == "l" || direction[0] == "r") { // vertical
-                            wrapperPos.top = - (wrapperHeight + paddingTop + paddingBottom) / 2;
-                            markerPos.top = (wrapperHeight + paddingTop + paddingBottom) / 2 - dHeight / 2;
                         }
                         break;
-                    case 't': // top
-                        if (wrapperPos.top) {
-                            wrapperPos.top = -paddingTop - dHeight / 2;
-                        }
-                        markerPos.top = paddingTop;
-                        break;
-                    case 'b': // bottom
-                        if (wrapperPos.bottom) {
-                            wrapperPos.bottom = -paddingBottom - dHeight / 2;
-                        }
-                        markerPos.bottom = paddingBottom;
-                        break;
+                }
+                if (d == "tc") {
+                    markerPos.bottom = -dHeight;
+                } else if (d == "bc") {
+                    markerPos.top = -dHeight;
                 }
 
                 this.$wrapper.css(wrapperPos);
                 if (typeof(this.$directionMarker) !== "undefined") {
-                    this.$directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
+                    this.$directionMarker.css(markerPos).attr("class", "direction-marker " + directions[d]);
                 }
+            },
+            // }}}
+            // {{{ getPositionFromElement()
+            /**
+             * set the position of the dialogue including the direction marker
+             *
+             * @return void
+             */
+            adjustPositionToElement : function(top, left, d, $el) {
+                d = d.toLowerCase();
+
+                // get position from current element
+                if (!left) {
+                    left = $el.offset().left;
+
+                    if (d[1] == "r") {
+                        left += $el.width();
+                    } else if (d[1] == "c") {
+                        left += $el.width() * 0.5;
+                    }
+                }
+                if (!top) {
+                    top = $el.offset().top;
+
+                    if (d[0] == "b") {
+                        top += $el.height();
+                    } else if (d[0] == "c") {
+                        top += $el.height() * 0.5;
+                    }
+                }
+                top = Math.ceil(top);
+                left = Math.ceil(left);
+
+                return {
+                    top: Math.ceil(top),
+                    left: Math.ceil(left)
+                };
             },
             // }}}
 
@@ -360,7 +359,7 @@
         message: '',
         direction : 'TL',
         directionMarker : null,
-        positionOffset: 20,
+        positionOffset: 10,
         fadeinDuration: 300,
         fadeoutDuration: 300
     };

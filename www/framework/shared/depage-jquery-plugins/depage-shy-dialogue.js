@@ -222,7 +222,7 @@
         icon: '',
         title: '',
         message: '',
-        direction : 'TL',
+        direction : 'TR',
         directionMarker : null,
         fadeoutDuration: 300,
         inputs: {},
