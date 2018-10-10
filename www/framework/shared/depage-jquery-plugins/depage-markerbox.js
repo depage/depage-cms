@@ -212,7 +212,7 @@
                     } else if (direction[0] == "r") {
                         newLeft -= this.options.positionOffset;
                     } else if (direction[1] == "c") {
-                        newLeft += this.$el.width() * 0.5;
+                        newLeft += this.$el.width() * 0.5 + dWidth / 2;
                     }
                 }
                 if (!newTop) {
@@ -220,7 +220,7 @@
                     if (direction[0] == "t") {
                         newTop += this.$el.height() + this.options.positionOffset;
                     } else if (direction[0] == "c") {
-                        newTop += this.$el.height() * 0.5;
+                        newTop += this.$el.height() * 0.5 + dWidth / 2;
                     } else {
                         newTop -= this.options.positionOffset;
                     }
