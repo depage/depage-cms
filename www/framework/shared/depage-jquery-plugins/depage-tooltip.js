@@ -58,6 +58,10 @@
          */
         base.tip = function(){
             base.$el
+                .bind('click.tooltip', function(e) {
+                    clearTimeout(showTimeout);
+                    base.hide();
+                })
                 .bind('mouseenter.tooltip', function(e) {
                     clearTimeout(showTimeout);
 

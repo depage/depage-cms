@@ -59,7 +59,7 @@
                 this.setContent(base.options.title, base.options.message, base.options.icon);
                 this.setPosition(top, left, base.options.direction);
 
-                $wrapper.fadeIn(base.options.fadeinDuration);
+                this.$wrapper.fadeIn(base.options.fadeinDuration);
 
                 // bind escape key to cancel
                 $(document).bind('keyup.marker', function(e){
@@ -70,7 +70,7 @@
                 });
 
                 // stop propagation of hide when clicking inside the wrapper or input
-                $wrapper.click(function(e) {
+                this.$wrapper.click(function(e) {
                     e.stopPropagation();
                 });
 
@@ -101,10 +101,11 @@
              */
             hide : function(duration, callback) {
                 $(document).unbind("click.marker").unbind('keyup.marker');
-                if (!$dialogue) return;
+
+                if (!this.$dialogue) return;
 
                 duration = duration || base.options.fadeoutDuration;
-                $wrapper.fadeOut(duration, callback);
+                this.$wrapper.fadeOut(duration, callback);
 
                 // @todo restore previous focused element?
 
@@ -144,24 +145,24 @@
                 // remove old wrapper (also with multiple dialogues)
                 $('#' + base.options.id).remove();
 
-                $dialogue = $('<div />');
+                this.$dialogue = $('<div />');
 
-                $wrapper = $('<div class="wrapper" />').hide();
-                $dialogue.append($wrapper);
+                this.$wrapper = $('<div class="wrapper" />').hide();
+                this.$dialogue.append(this.$wrapper);
 
                 if (base.options.directionMarker) {
                     // add direction marker
-                    $directionMarker = $('<span class="direction-marker" />');
-                    $wrapper.append($directionMarker);
+                    this.$directionMarker = $('<span class="direction-marker" />');
+                    this.$wrapper.append(this.$directionMarker);
                 }
 
-                $contentWrapper = $('<div class="message" />');
-                $wrapper.append($contentWrapper);
+                this.$contentWrapper = $('<div class="message" />');
+                this.$wrapper.append(this.$contentWrapper);
 
-                $("body").append($dialogue);
+                $("body").append(this.$dialogue);
 
-                $wrapper.data("depage.markerbox", base);
-                $dialogue.attr({
+                this.$wrapper.data("depage.markerbox", base);
+                this.$dialogue.attr({
                     'class': "depage-markerbox " + base.options.classes,
                     'id': base.options.id
                 });
@@ -187,24 +188,23 @@
                     c: 'center'
                 };
 
-                var wrapperHeight = $wrapper.height();
-                var wrapperWidth = $wrapper.width();
-                var paddingLeft = parseInt($wrapper.css("padding-left"), 10);
-                var paddingRight = parseInt($wrapper.css("padding-right"), 10);
-                var paddingTop = parseInt($wrapper.css("padding-top"), 10);
-                var paddingBottom = parseInt($wrapper.css("padding-bottom"), 10);
+                var wrapperHeight = this.$wrapper.height();
+                var wrapperWidth = this.$wrapper.width();
+                var paddingLeft = parseInt(this.$wrapper.css("padding-left"), 10);
+                var paddingRight = parseInt(this.$wrapper.css("padding-right"), 10);
+                var paddingTop = parseInt(this.$wrapper.css("padding-top"), 10);
+                var paddingBottom = parseInt(this.$wrapper.css("padding-bottom"), 10);
                 var dHeight = 0,
                     dWidth = 0;
 
-                if (typeof($directionMarker) !== "undefined") {
-                    dHeight = $directionMarker.height();
-                    dWidth = $directionMarker.width();
+                if (typeof(this.$directionMarker) !== "undefined") {
+                    dHeight = this.$directionMarker.height();
+                    dWidth = this.$directionMarker.width();
                 } else {
                     dHeight = - paddingTop * 2;
                     dWidth = - paddingLeft * 2;
                 }
 
-                console.log(direction);
                 if (!newLeft) {
                     newLeft = this.$el.offset().left;
                     if (direction[0] == "l") {
@@ -228,7 +228,7 @@
                 newTop = Math.ceil(newTop);
                 newLeft = Math.ceil(newLeft);
 
-                $dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
+                this.$dialogue.attr("style", "position: absolute; top: " + newTop + "px; left: " + newLeft + "px; z-index: 10000");
 
                 // adjust position to always be inside of view
                 // @todo center on very small screens?
@@ -308,9 +308,9 @@
                         break;
                 }
 
-                $wrapper.css(wrapperPos);
-                if (typeof($directionMarker) !== "undefined") {
-                    $directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
+                this.$wrapper.css(wrapperPos);
+                if (typeof(this.$directionMarker) !== "undefined") {
+                    this.$directionMarker.css(markerPos).attr("class", "direction-marker " + directions[direction[0]]);
                 }
             },
             // }}}
@@ -329,7 +329,7 @@
                 var $title = $('<h1 />').text(title);
                 var $message = $('<p />').text(message);
 
-                $contentWrapper.empty()
+                this.$contentWrapper.empty()
                     .append($title)
                     .append($message);
 

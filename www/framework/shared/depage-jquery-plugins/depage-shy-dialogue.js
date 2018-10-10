@@ -108,13 +108,13 @@
         base.showButtons = function() {
             $buttonWrapper = $('<div class="buttons" />');
             $inputWrapper = $('<div class="inputs" />');
-            $wrapper.append($inputWrapper);
-            $wrapper.append($buttonWrapper);
+            this.$wrapper.append($inputWrapper);
+            this.$wrapper.append($buttonWrapper);
 
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
 
-            $wrapper.find('input, a').eq(0).focus().select();
+            this.$wrapper.find('input, a').eq(0).focus().select();
         };
         // }}}
 
