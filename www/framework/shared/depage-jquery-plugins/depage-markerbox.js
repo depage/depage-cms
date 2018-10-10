@@ -54,37 +54,11 @@
              */
             show: function(left, top) {
                 var direction = base.options.direction.toLowerCase();
-                var that = this;
-
-                that.addWrapper();
-                that.setContent(base.options.title, base.options.message, base.options.icon);
-                that.setPosition(top, left, base.options.direction);
+                this.addWrapper();
+                this.setContent(base.options.title, base.options.message, base.options.icon);
+                this.setPosition(top, left, base.options.direction);
 
                 this.$wrapper.fadeIn(base.options.fadeinDuration);
-
-                // bind escape key to cancel
-                $(document).bind('keyup.marker', function(e){
-                    var key = e.which || e.keyCode;
-                    if (key == 27) {
-                        that.hide();
-                    }
-                });
-
-                // stop propagation of hide when clicking inside the wrapper or input
-                this.$wrapper.click(function(e) {
-                    e.stopPropagation();
-                });
-
-                if (base.options.bind_el) {
-                    that.$el.click(function(e) {
-                        e.stopPropagation();
-                    });
-                }
-
-                // hide dialog when clicked outside
-                $(document).bind("click.marker", function() {
-                    that.hide();
-                });
 
                 // allow chaining
                 return this;
@@ -100,15 +74,9 @@
              *
              * @return void
              */
-            hide : function(duration, callback) {
-                $(document).unbind("click.marker").unbind('keyup.marker');
-
-                if (!this.$dialogue) return;
-
+            hide: function(duration, callback) {
                 duration = duration || base.options.fadeoutDuration;
                 this.$wrapper.fadeOut(duration, callback);
-
-                // @todo restore previous focused element?
 
                 // allow chaining
                 return this;
@@ -285,10 +253,11 @@
              */
             adjustPositionToElement : function(top, left, d, $el) {
                 d = d.toLowerCase();
+                var o = $el.offset();
 
                 // get position from current element
                 if (!left) {
-                    left = $el.offset().left;
+                    left = o.left;
 
                     if (d[1] == "r") {
                         left += $el.width();
@@ -297,9 +266,13 @@
                     }
                 }
                 if (!top) {
-                    top = $el.offset().top;
+                    top = o.top;
 
-                    if (d[0] == "b") {
+                    if (d[0] == "t" && d[1] != "c") {
+                        top += base.options.positionOffset;
+                    } else if (d[0] == "b" && d[1] != "c") {
+                        top += $el.height() - base.options.positionOffset;
+                    } else if (d[0] == "b") {
                         top += $el.height();
                     } else if (d[0] == "c") {
                         top += $el.height() * 0.5;

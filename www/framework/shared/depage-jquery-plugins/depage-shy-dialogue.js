@@ -95,9 +95,42 @@
             setTimeout(function() {
                 base.show(x, y);
                 base.showButtons();
+
+                // bind escape key to cancel
+                $(document).on('keyup.shydialogue', function(e){
+                    var key = e.which || e.keyCode;
+                    if (key == 27) {
+                        base.hideDialogue();
+                    }
+                });
+
+                // stop propagation of hide when clicking inside the wrapper or input
+                base.$wrapper.click(function(e) {
+                    e.stopPropagation();
+                });
+
+                if (base.options.bind_el) {
+                    base.$el.click(function(e) {
+                        e.stopPropagation();
+                    });
+                }
+
+                // hide dialog when clicked outside
+                $(document).on("click.shydialogue", function() {
+                    base.hideDialogue();
+                });
+
             }, 50);
         };
         /// }}}
+        // {{{ hideDialogue
+        base.hideDialogue = function() {
+            base.hide();
+
+            $(document).off("click.shydialogue").off('keyup.shydialogue');
+
+        };
+        // }}}
 
         // {{{ showButtons()
         /**
@@ -187,7 +220,7 @@
                         .data('depage.shyDialogue', base)
                         .click(function(e){
                             if (typeof(button.click) !== 'function' || button.click(e) !== false) {
-                                base.hide();
+                                base.hideDialogue();
                             }
                             return false;
                         });
