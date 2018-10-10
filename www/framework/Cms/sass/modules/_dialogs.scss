@@ -2,10 +2,10 @@
 .depage-shy-dialogue {
     @include depage-shy-dialogue (
         $width: 20em,
-        $padding: 10px,
+        $padding: 10px 15px,
         $background: $backgroundDarkColor,
         $corner-radius: $cornerRadius * 2,
-        $direction-size: 20px
+        $direction-size: 15px
     );
 
     z-index: 9000 !important;
@@ -21,6 +21,7 @@
     a {
         color: $textBrightColor;
         font-size: 1em;
+        line-height: 1.5em;
     }
     input {
         padding: 6px;

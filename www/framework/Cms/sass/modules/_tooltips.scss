@@ -2,7 +2,7 @@
 .depage-tooltip {
     @include depage-shy-dialogue (
         $width: 20em,
-        $padding: 10px,
+        $padding: 8px 15px,
         $background: $backgroundDarkColor,
         $corner-radius: $cornerRadius,
         $direction-size: 15px
@@ -22,6 +22,7 @@
     a {
         color: $textBrightColor;
         font-size: 1em;
+        line-height: 1.5em;
     }
 }
 .depage-tooltip .wrapper {
