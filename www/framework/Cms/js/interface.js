@@ -460,7 +460,6 @@ var depageCMS = (function() {
                     },{
                         title: locale.delete,
                         message : locale.deleteQuestion,
-                        direction: 'LC',
                         directionMarker: true
                     });
             });
@@ -528,7 +527,6 @@ var depageCMS = (function() {
                         },{
                             title: locale.delete,
                             message : locale.deleteQuestion,
-                            direction: 'LC',
                             directionMarker: true
                         });
                     }
@@ -631,7 +629,7 @@ var depageCMS = (function() {
                         }
                     },{
                         bind_el: false,
-                        direction: "BC",
+                        direction: "TC",
                         directionMarker: true,
                         inputs: {
                             href: {
@@ -670,10 +668,12 @@ var depageCMS = (function() {
         setupTooltips: function() {
             $("a[data-tooltip]").each(function() {
                 var $t = $(this);
+                var dir = $t.attr("data-pos") || "BC";
 
                 $t.depageTooltip({
-                    direction: "TC",
+                    direction: dir,
                     directionMarker: true,
+                    positionOffset: 20,
                     message: $t.attr("data-tooltip")
                 });
             });
@@ -1517,7 +1517,6 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1596,7 +1595,6 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1968,7 +1966,6 @@ var depageCMS = (function() {
                             },{
                                 title: locale.delete,
                                 message : locale.deleteQuestion,
-                                direction: 'LC',
                                 directionMarker: true
                             });
                     }

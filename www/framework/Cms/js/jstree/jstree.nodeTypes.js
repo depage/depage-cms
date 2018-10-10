@@ -234,7 +234,6 @@
                 }
             },{
                 bind_el: false,
-                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
