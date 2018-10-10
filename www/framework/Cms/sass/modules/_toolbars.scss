@@ -381,7 +381,6 @@
         a.button,
         a.toggle-button {
             width: 28px;
-            background-color: $backgroundLighterColor;
             border-right: 1px solid #dddddd;
             @include radius(0);
 
@@ -395,6 +394,9 @@
                 @include radius(3px, "top", "right");
                 @include radius(3px, "bottom", "right");
                 border-right: none;
+            }
+            &:hover {
+                background-color: $backgroundLighterColor;
             }
         }
         a.toggle-button.active {

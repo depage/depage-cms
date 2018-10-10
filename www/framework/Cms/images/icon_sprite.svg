@@ -47,33 +47,37 @@
         </g>
       </g>
     </g>
-    <g fill="#7F7F7F" transform="translate(8 156)">
-      <polygon fill-rule="nonzero" points="32 0 33 0 33 24 32 24"/>
-      <path fill-rule="nonzero" d="M29,1 L29,23 L1,23 L1,1 L29,1 L29,1 Z M30,0 L0,0 L0,24 L30,24 L30,0 L30,0 Z"/>
+    <g transform="translate(0 144)">
+      <rect width="27.5" height="22.5" x="8.75" y="12.75" stroke="#7F7F7F" stroke-width="1.5"/>
+      <rect width="2" height="24" x="39" y="12" fill="#7F7F7F"/>
     </g>
-    <g fill="#7F7F7F" transform="translate(56 156)">
-      <path fill-rule="nonzero" d="M14 1L14 23 1 23 1 1 14 1 14 1zM15 0L0 0 0 24 15 24 15 0 15 0zM32 1L32 23 19 23 19 1 32 1 32 1zM33 0L18 0 18 24 33 24 33 0 33 0z"/>
+    <g stroke="#7F7F7F" stroke-width="1.5" transform="translate(48 144)">
+      <rect width="13.5" height="22.5" x="8.75" y="12.75"/>
+      <rect width="13.5" height="22.5" x="26.75" y="12.75"/>
     </g>
-    <g fill="#7F7F7F" transform="translate(104 156)">
-      <path fill-rule="nonzero" d="M6 1L6 23 1 23 1 1 6 1 6 1zM7 0L0 0 0 24 7 24 7 0 7 0zM32 1L32 23 11 23 11 1 32 1 32 1zM33 0L10 0 10 24 33 24 33 0 33 0z"/>
+    <g stroke="#7F7F7F" stroke-width="1.5" transform="translate(96 144)">
+      <rect width="5.5" height="22.5" x="8.75" y="12.75"/>
+      <rect width="21.5" height="22.5" x="18.75" y="12.75"/>
     </g>
-    <g fill="#7F7F7F" transform="translate(152 156)">
-      <path fill-rule="nonzero" d="M32,1 L32,23 L4,23 L4,1 L32,1 L32,1 Z M33,0 L3,0 L3,24 L33,24 L33,0 L33,0 Z"/>
-      <rect width="1" height="24" fill-rule="nonzero"/>
+    <g transform="translate(144 144)">
+      <rect width="2" height="24" x="8" y="12" fill="#7F7F7F"/>
+      <rect width="27.5" height="22.5" x="12.75" y="12.75" stroke="#7F7F7F" stroke-width="1.5"/>
     </g>
-    <g fill="#047CBF" transform="translate(8 204)">
-      <polygon fill-rule="nonzero" points="32 0 33 0 33 24 32 24"/>
-      <path fill-rule="nonzero" d="M29,23 L1,23 L1,1 L29,1 L29,23 Z M0,0 L0,24 L30,24 L30,0 L0,0 Z"/>
+    <g transform="translate(0 192)">
+      <rect width="27.5" height="22.5" x="8.75" y="12.75" stroke="#047CBF" stroke-width="1.5"/>
+      <rect width="2" height="24" x="39" y="12" fill="#047CBF"/>
     </g>
-    <g fill="#047CBF" transform="translate(56 204)">
-      <path fill-rule="nonzero" d="M14 1L14 23 1 23 1 1 14 1 14 1zM15 0L0 0 0 24 15 24 15 0 15 0zM32 1L32 23 19 23 19 1 32 1 32 1zM33 0L18 0 18 24 33 24 33 0 33 0z"/>
+    <g stroke="#047CBF" stroke-width="1.5" transform="translate(48 192)">
+      <rect width="13.5" height="22.5" x="8.75" y="12.75"/>
+      <rect width="13.5" height="22.5" x="26.75" y="12.75"/>
     </g>
-    <g fill="#047CBF" transform="translate(103 204)">
-      <path fill-rule="nonzero" d="M6 1L6 23 1 23 1 1 6 1 6 1zM7 0L0 0 0 24 7 24 7 0 7 0zM32 1L32 23 11 23 11 1 32 1 32 1zM33 0L10 0 10 24 33 24 33 0 33 0z"/>
+    <g stroke="#047CBF" stroke-width="1.5" transform="translate(95 192)">
+      <rect width="5.5" height="22.5" x="8.75" y="12.75"/>
+      <rect width="21.5" height="22.5" x="18.75" y="12.75"/>
     </g>
-    <g fill="#047CBF" transform="translate(152 204)">
-      <path fill-rule="nonzero" d="M32,1 L32,23 L4,23 L4,1 L32,1 L32,1 Z M33,0 L3,0 L3,24 L33,24 L33,0 L33,0 Z"/>
-      <rect width="1" height="24" fill-rule="nonzero"/>
+    <g transform="translate(144 192)">
+      <rect width="2" height="24" x="8" y="12" fill="#047CBF"/>
+      <rect width="27.5" height="22.5" x="12.75" y="12.75" stroke="#047CBF" stroke-width="1.5"/>
     </g>
     <path stroke="#4E4C4B" d="M34.5178146,25.753 C34.5178146,25.753 36.7468146,25.486 35.5668146,26.697 L24.5338146,37.792 C24.5338146,37.792 23.8678146,38.65 23.2648146,37.775 L12.2988146,26.73 C12.2988146,26.73 11.1238146,25.751 13.4338146,25.751 L18.8008146,25.751 L18.7848146,12.105 C18.8908146,9.99600003 21.0568146,10 21.0568146,10 L26.7608146,10.002 C28.9058146,10.072 28.9408146,12.252 28.9408146,12.252 L28.9248146,25.752 L34.5178146,25.753 L34.5178146,25.753 L34.5178146,25.753 Z" transform="translate(0 240)"/>
     <path fill="#4E4C4B" fill-rule="nonzero" d="M34.5164364,25.753 C34.5164364,25.753 36.7454364,25.486 35.5654364,26.697 L24.5324364,37.792 C24.5324364,37.792 23.8664364,38.65 23.2634364,37.775 L12.2984364,26.73 C12.2984364,26.73 11.1244364,25.751 13.4334364,25.751 L18.8004364,25.751 L18.7844364,12.104 C18.8904364,10 21.0564364,10 21.0564364,10 L26.7604364,10.003 C28.9054364,10.073 28.9404364,12.253 28.9404364,12.253 L28.9244364,25.753 L34.5164364,25.753 Z" transform="translate(48 240)"/>
