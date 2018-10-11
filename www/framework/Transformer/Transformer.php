@@ -648,6 +648,7 @@ abstract class Transformer
         if ($lang === null) {
             $lang = $this->lang;
         }
+        $path = "";
         $urlsByPageId = $this->getUrlsByPageId();
         if (isset($urlsByPageId[$pageId])) {
             $path = $lang . $urlsByPageId[$pageId];
