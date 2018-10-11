@@ -134,9 +134,6 @@ class HttpCookie extends Auth
             if (strpos($username, "@") !== false) {
                 // email login
                 $user = User::loadByEmail($this->pdo, $username);
-                if ($user) {
-                    $username = $user->name;
-                }
             } else {
                 // username login
                 $user = User::loadByUsername($this->pdo, $username);
