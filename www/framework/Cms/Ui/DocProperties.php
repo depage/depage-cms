@@ -357,29 +357,41 @@ class DocProperties extends Base
         if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
             $target = $this->project->getDefaultTargetUrl();
             $fs = $this->form->addFieldset("xmledit-$nodeId-page-url", [
-                'label' => _("Status / Url"),
+                'label' => _("Page Status / Url"),
+                'class' => "doc-property-fieldset doc-property-pageurl",
+            ]);
+            $url = $target . $pageInfo->url;
+
+            if ($pageInfo->published) {
+                $fs->addHtml(sprintf(
+                    _("<div><p><a href=\"%s\" target=\"_blank\">%s</a></p></div>"),
+                    htmlspecialchars($url),
+                    _("Page is published")
+                ));
+            } else {
+                $fs->addHtml(sprintf(
+                    _("<div><p>%s</p></div>"),
+                    _("Page has not been released yet")
+                ));
+            }
+            $fs->addUrl("url-$nodeId", [
+                'label' => _("url"),
+                'readonly' => true,
+                'defaultValue' => $url,
+            ]);
+
+            $list = ['' => _("Default")] + $this->project->getColorschemes();
+            $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
+                'label' => _("Colorscheme"),
                 'class' => "doc-property-fieldset",
             ]);
-            $url = htmlspecialchars($target . $pageInfo->url);
-            $fs->addHtml(sprintf(
-                _("<p>%s <a href=\"%s\" target=\"_blank\">%s</a></p>"),
-                $pageInfo->published ? _("Page published on") : _("Not released yet. / Page will be published on"),
-                $url,
-                $url
-            ));
+            $fs->addSingle("colorscheme-$nodeId", [
+                'label' => "",
+                'list' => $list,
+                'skin' => "select",
+                'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
+            ]);
         }
-
-        $list = ['' => _("Default")] + $this->project->getColorschemes();
-        $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
-            'label' => _("Colorscheme"),
-            'class' => "doc-property-fieldset",
-        ]);
-        $fs->addSingle("colorscheme-$nodeId", [
-            'label' => "",
-            'list' => $list,
-            'skin' => "select",
-            'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
-        ]);
 
         $navs = $this->project->getNavigations();
         $defaults = [];
@@ -426,25 +438,26 @@ class DocProperties extends Base
             ]);
         }
 
-        $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
-            'label' => _("Pagetype"),
-            'class' => "doc-property-fieldset",
-        ]);
-        $fs->addSingle("xmledit-$nodeId-pagetype", [
-            'label' => "",
-            'skin' => "select",
-            'class' => 'page-type',
-            'list' => [
-                'html' => _("html"),
-                'text' => _("text"),
-                'php' => _("php"),
-            ],
-            'defaultValue' => $pageInfo->fileType,
-            'dataAttr' => [
-                'pageId' => $pageInfo->pageId,
-            ],
-        ]);
-
+        if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
+            $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
+                'label' => _("Pagetype"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addSingle("xmledit-$nodeId-pagetype", [
+                'label' => "",
+                'skin' => "select",
+                'class' => 'page-type',
+                'list' => [
+                    'html' => _("html"),
+                    'text' => _("text"),
+                    'php' => _("php"),
+                ],
+                'defaultValue' => $pageInfo->fileType,
+                'dataAttr' => [
+                    'pageId' => $pageInfo->pageId,
+                ],
+            ]);
+        }
     }
     // }}}
     // {{{ addPgTitle()

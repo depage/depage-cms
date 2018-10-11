@@ -238,7 +238,7 @@
                 @include radius($cornerRadius, "top", "right");
             }
         }
-        &:last-child {
+        &:last-of-type  {
             input,
             textarea,
             .textarea {
@@ -275,7 +275,7 @@
 // }}}
 // {{{ .doc-properties .doc-property-meta
 .doc-properties .doc-property-meta {
-    background-color: $baseColor;
+    background-color: $backgroundColor;
     padding-bottom: 3px;
 
     > legend {
@@ -299,6 +299,13 @@
             opacity: 0.5;
         }
     }
+}
+// }}}
+// {{{ .doc-properties .doc-property-pageurl
+.doc-properties .doc-property-pageurl {
+    background-color: $backgroundColor;
+    padding-top: 20px;
+    border-top-color: transparent;
 }
 // }}}
 // {{{ .doc-properties .error
