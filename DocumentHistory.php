@@ -185,7 +185,7 @@ class DocumentHistory
         $latestVersion = $this->getLatestVersion();
 
         if (!$latestVersion || $latestVersion->hash != $hash) {
-            // @todo update date of latest version
+            // insert new version into history
             $query = $this->pdo->prepare(
                 "INSERT INTO {$this->table_history} (doc_id, hash, xml, first_saved_at, last_saved_at, user_id, published)
                 VALUES(:doc_id, :hash, :xml, :timestamp1, :timestamp2, :user_id, :published);"
@@ -206,6 +206,7 @@ class DocumentHistory
 
             $result = $timestamp;
         } else if ($latestVersion->hash == $hash) {
+            // update date of latest version
             $query = $this->pdo->prepare(
                 "UPDATE {$this->table_history}
                 SET last_saved_at = :timestamp
