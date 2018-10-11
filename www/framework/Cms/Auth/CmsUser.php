@@ -67,7 +67,9 @@ class CmsUser extends \Depage\Auth\User
      **/
     public function canEditProject($projectName)
     {
-        return \Depage\Cms\Project::loadByUser($this->pdo, null, $this, $projectName)[0] == true;
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, null, $this, $projectName);
+
+        return $projects && $projects[0] == true;
     }
     // }}}
     // {{{ canAddProjects()
