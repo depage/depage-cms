@@ -252,39 +252,6 @@ class Main extends Base {
         return $this->tasks($taskId);
     }
     // }}}
-    // {{{ test_task()
-    /**
-     * @brief test_task
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function test_task()
-    {
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
-        $sleepMin = 0;
-        $sleepMax = 100000;
-        $sleepMax = 1000000;
-        //$sleepMax = 10000000;
-
-        for ($i = 0; $i < 5; $i++) {
-            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");
-
-            for ($j = 0; $j < 5; $j++) {
-                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); usleep(rand($sleepMin, $sleepMax));", $dep1);
-
-                for ($k = 0; $k < 10; $k++) {
-                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); usleep(rand($sleepMin, $sleepMax));", $dep2);
-                }
-            }
-        }
-        //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
-
-        $task->begin();
-
-        \Depage\Depage\Runner::redirect(DEPAGE_BASE);
-    }
-    // }}}
 
     // {{{ users
     /**
@@ -522,19 +489,6 @@ class Main extends Base {
     }
     // }}}
 
-    // {{{ test()
-    /**
-     * @brief test
-     *
-     * @param mixed $param
-     * @return void
-     **/
-    public function test()
-    {
-
-        die();
-    }
-    // }}}
     // {{{ search()
     /**
      * @brief search
