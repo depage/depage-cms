@@ -30,6 +30,10 @@ class Project extends Base
         } else {
             $this->project = $this->getProject($this->projectName);
         }
+
+        if (!$this->project) {
+            throw new \Depage\Cms\Exceptions\Project("not allowed");
+        }
     }
     // }}}
 

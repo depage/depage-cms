@@ -10,7 +10,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 {
     // {{{ variables
     private $clients = [];
-    private $deltaUpdates = [];
+    private $projects = [];
     protected $defaults = array(
         "db" => null,
         "auth" => null,
@@ -45,6 +45,18 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         $id = $client->getId();
         if (empty($this->clients[$id])) {
             $this->clients[$id] = $client;
+            $this->projects[$id] = [];
+
+            $sid = $this->getClientSid($client);
+            $user = \Depage\Auth\User::loadBySid($this->pdo, $sid);
+
+            if ($user) {
+                $projects = \Depage\Cms\Project::loadByUser($this->pdo, null, $user);
+
+                foreach ($projects as $p) {
+                    $this->projects[$id][$p->name] = true;
+                }
+            }
         }
     }
     // }}}
@@ -54,6 +66,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         $id = $client->getId();
         if (isset($this->clients[$id])) {
             unset($this->clients[$id]);
+            unset($this->projects[$id]);
         }
     }
     // }}}
@@ -98,9 +111,10 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 'status' => $status,
             ];
         }
-        // @todo filter tasks per user
-        foreach ($this->clients as $cid => $client) {
-            $client->send(json_encode($taskInfo));
+        foreach ($this->clients as $id => $client) {
+            if (empty($task->projectName) || isset($this->projects[$id][$task->projectName])) {
+                $client->send(json_encode($taskInfo));
+            }
         }
     }
     // }}}
@@ -113,12 +127,11 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     protected function sendNotifications()
     {
         foreach ($this->clients as $cid => $client) {
-            $headers = $client->getHeaders();
+            $sid = $this->getClientSid($client);
 
-            if (!isset($headers['cookie'])) break;
+            if (!$sid) break;
 
             // send notifications
-            list($key, $sid) = explode("=", $headers['cookie']);
             $nn = Notification::loadBySid($this->pdo, $sid, "depage.%");
 
             foreach ($nn as $n) {
@@ -127,6 +140,25 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 $n->delete();
             }
         }
+    }
+    // }}}
+
+    // {{{ getClientSid()
+    /**
+     * @brief getClientSid
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function getClientSid($client)
+    {
+        $headers = $client->getHeaders();
+
+        if (!isset($headers['cookie'])) return false;
+
+        list($key, $sid) = explode("=", $headers['cookie']);
+
+        return $sid;
     }
     // }}}
 }

@@ -24,8 +24,11 @@ class ColorSchemes extends Base
 
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
-        } else {
-            $this->project = $this->getProject($this->projectName);
+        }
+        $this->project = $this->getProject($this->projectName);
+
+        if (!$this->project) {
+            throw new \Depage\Cms\Exceptions\Project("not allowed");
         }
     }
     // }}}
