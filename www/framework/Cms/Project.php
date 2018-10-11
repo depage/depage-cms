@@ -495,6 +495,7 @@ class Project extends \Depage\Entity\Entity
                 $docInfo->pageId = $node->getAttribute("db:id");
                 $docInfo->url = $node->getAttribute("url");
                 $docInfo->fileType = $node->getAttribute("file_type");
+                $docInfo->published = $node->getAttribute("db:published") == "true";
                 $docInfo->released = $node->getAttribute("db:released") == "true";
 
                 $docInfo->nav = [];
@@ -768,6 +769,22 @@ class Project extends \Depage\Entity\Entity
         }
 
         return array_keys($colors);
+    }
+    // }}}
+    // {{{ getDefaultTargetUrl()
+    /**
+     * @brief getDefaultTargetUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getDefaultTargetUrl()
+    {
+        $target = rtrim(reset($this->getPublishingTargets())->baseurl, "/");
+        $lang = reset(array_keys($this->getLanguages()));
+
+        return "$target/$lang";
+
     }
     // }}}
 

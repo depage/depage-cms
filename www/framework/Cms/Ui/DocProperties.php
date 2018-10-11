@@ -316,7 +316,6 @@ class DocProperties extends Base
         $pageInfo = $this->project->getPages($this->docRef)[0];
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
-        //var_dump($pageInfo);
 
         $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
             'label' => _("Changed"),
@@ -330,6 +329,7 @@ class DocProperties extends Base
             $dateFormatter->format($pageInfo->lastchange, true),
             htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
         ));
+
         if ($this->authUser->canPublishProject()) {
             $releaseTitle = _("Release Page");
             $releaseHover = _("Mark this page to be published, when project gets published next time");
@@ -339,7 +339,6 @@ class DocProperties extends Base
         }
         $class = $pageInfo->released ? "disabled" : "";
         $fs->addHtml("<p><a class=\"button release $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
-
     }
     // }}}
     // {{{ addPgMeta()
@@ -351,8 +350,24 @@ class DocProperties extends Base
      **/
     protected function addPgMeta($node)
     {
+        $pageInfo = $this->project->getPages($this->docRef)[0];
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $pageInfo = $this->project->getPages($this->docRef)[0];
+
+        if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
+            $target = $this->project->getDefaultTargetUrl();
+            $fs = $this->form->addFieldset("xmledit-$nodeId-page-url", [
+                'label' => _("Status / Url"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $url = htmlspecialchars($target . $pageInfo->url);
+            $fs->addHtml(sprintf(
+                _("<p>%s <a href=\"%s\" target=\"_blank\">%s</a></p>"),
+                $pageInfo->published ? _("Page published on") : _("Not released yet. / Page will be published on"),
+                $url,
+                $url
+            ));
+        }
 
         $list = ['' => _("Default")] + $this->project->getColorschemes();
         $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
