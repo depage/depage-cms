@@ -533,7 +533,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        @include icon-base("unreleased", $iconSize);
+        @include icon-base("unreleased-small", $iconSize);
     }
 }
 

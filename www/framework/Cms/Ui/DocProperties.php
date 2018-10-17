@@ -361,17 +361,35 @@ class DocProperties extends Base
                 'class' => "doc-property-fieldset doc-property-pageurl",
             ]);
             $url = $target . $pageInfo->url;
+            $icon = "";
+            $message = "";
+
+            if ($pageInfo->published) {
+                $icon .= "<i class=\"icon icon-published\"></i>";
+            }
+            if (!$pageInfo->released) {
+                $icon .= "<i class=\"icon icon-unreleased\"></i>";
+            }
+            if ($pageInfo->published && !$pageInfo->released) {
+                $message = _("Page is published but has unreleased changes.");
+            } else if ($pageInfo->published) {
+                $message = _("Page is published.");
+            } else if (!$pageInfo->released) {
+                $message = _("Page has not been published yet.");
+            }
 
             if ($pageInfo->published) {
                 $fs->addHtml(sprintf(
-                    _("<div><p><a href=\"%s\" target=\"_blank\">%s</a></p></div>"),
+                    _("<div><p>%s<a href=\"%s\" target=\"_blank\">%s</a></p></div>"),
+                    $icon,
                     htmlspecialchars($url),
-                    _("Page is published")
+                    htmlspecialchars($message)
                 ));
             } else {
                 $fs->addHtml(sprintf(
-                    _("<div><p>%s</p></div>"),
-                    _("Page has not been released yet")
+                    _("<div><p>%s%s</p></div>"),
+                    $icon,
+                    htmlspecialchars($message)
                 ));
             }
             $fs->addUrl("url-$nodeId", [

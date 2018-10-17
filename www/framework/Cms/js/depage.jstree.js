@@ -124,6 +124,7 @@
                 return;
             }
             xmldb.renameNode(param.node.data.nodeId, decodeEntities(param.text));
+            // @todo updated page status in pg-meta element
 
             jstree.disable_node(param.node);
         }, base);

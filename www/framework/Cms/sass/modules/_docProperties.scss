@@ -303,9 +303,30 @@
 // }}}
 // {{{ .doc-properties .doc-property-pageurl
 .doc-properties .doc-property-pageurl {
+    $iconSize: 32px;
+
     background-color: $backgroundColor;
     padding-top: 20px;
     border-top-color: transparent;
+
+    p {
+        line-height: $iconSize;
+    }
+    i.icon {
+        display: inline-block;
+        vertical-align: middle;
+        margin-top: -2px;
+        width: $iconSize;
+        height: $iconSize;
+        margin-right: 5px;
+        @include icon-base("", $iconSize);
+    }
+    i.icon-published {
+        @include icon("published", $iconSize);
+    }
+    i.icon-unreleased {
+        @include icon("unreleased", $iconSize);
+    }
 }
 // }}}
 // {{{ .doc-properties .error
