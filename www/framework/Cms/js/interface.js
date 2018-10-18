@@ -1184,8 +1184,8 @@ var depageCMS = (function() {
             var $inputParent = $input.parent().parent();
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
-            currentLibAccept = $inputParent.attr("data-accept");
-            currentLibForceSize = $inputParent.attr("data-forceSize");
+            currentLibAccept = $inputParent.attr("data-accept") || "";
+            currentLibForceSize = $inputParent.attr("data-forceSize") || "";
             currentLibPath = path;
 
             $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
