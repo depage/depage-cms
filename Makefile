@@ -40,6 +40,7 @@ push: pushlive
 pushlive: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
@@ -48,6 +49,7 @@ pushlive: all
 pushdev: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
@@ -56,6 +58,7 @@ pushdev: all
 pushtwins: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
