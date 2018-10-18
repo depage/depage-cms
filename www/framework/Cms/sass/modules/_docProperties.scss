@@ -275,43 +275,47 @@
 // }}}
 // {{{ .doc-properties .doc-property-meta
 .doc-properties .doc-property-meta {
+    $iconSize: 32px;
+
     background-color: $backgroundColor;
     padding-bottom: 3px;
 
     > legend {
         margin-bottom: 2px;
+        display: none;
     }
     p {
-        padding-right: 100px;
+        //padding-right: 100px;
         position: relative;
         line-height: $treeLineHeight;
     }
-    p + p {
-        //margin-bottom: -5px;
+    p.status {
+        padding-right: 0;
+        line-height: $iconSize;
     }
     .release {
         display: block;
-        position: absolute;
-        top: - $treeLineHeight;
-        right: 0;
+        float: right;
+        //position: absolute;
+        //top: - $treeLineHeight;
+        //right: 0;
 
         &.disabled {
             opacity: 0.5;
         }
     }
-}
-// }}}
-// {{{ .doc-properties .doc-property-pageurl
-.doc-properties .doc-property-pageurl {
-    $iconSize: 32px;
-
-    background-color: $backgroundColor;
-    padding-top: 20px;
-    border-top-color: transparent;
-
-    p {
-        line-height: $iconSize;
+    > p.input-url input {
+        @include radius($cornerRadius);
     }
+
+    div.details {
+        display: none;
+
+        span.depage-label {
+            display: none;
+        }
+    }
+
     i.icon {
         display: inline-block;
         vertical-align: middle;
@@ -326,6 +330,12 @@
     }
     i.icon-unreleased {
         @include icon("unreleased", $iconSize);
+    }
+
+    &.open {
+        div.details {
+            display: block;
+        }
     }
 }
 // }}}
