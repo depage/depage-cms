@@ -17,7 +17,7 @@ use Depage\XmlDb\Exceptions\XmlDbException;
 class XmlDb implements XmlGetter
 {
     // {{{ variables
-    protected $pdo;
+    public $pdo;
     protected $cache;
     protected $db_ns;
 
@@ -124,19 +124,26 @@ class XmlDb implements XmlGetter
      *
      * @return    $docs (array) the key is the name of the document, the value is the document db-id.
      */
-    public function getDocuments($name = "")
+    public function getDocuments($name = "", $type = "")
     {
         $docs = [];
 
         $namequery = '';
+        $where = [];
         $query_param = [];
 
         if ($name) {
-            $namequery = 'WHERE name = :name';
-            $query_param = [
-                'name' => $name
-            ];
+            $where[] = 'name = :name';
+            $query_param['name'] = $name;
         }
+        if ($type) {
+            $where[] = 'type = :type';
+            $query_param['type'] = $type;
+        }
+        if (count($where) > 0) {
+            $namequery = "WHERE " . implode(" AND ", $where);
+        }
+
 
         $query = $this->pdo->prepare(
             "SELECT
@@ -220,6 +227,24 @@ class XmlDb implements XmlGetter
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             $doc = new Document($this, $doc_id);
             $xml = $doc->getXml($add_id_attribute);
+        }
+
+        return $xml;
+    }
+    // }}}
+    // {{{ getDocXmlXpath
+    /**
+     * @param $doc_id_or_name
+     * @param bool $add_id_attribute
+     * @return bool
+     */
+    public function getDocXmlXpath($doc_id_or_name, $xpath, $add_id_attribute = true)
+    {
+        $xml = false;
+
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $xml = $doc->getSubdocByXpath($xpath, $add_id_attribute);
         }
 
         return $xml;
@@ -670,6 +695,8 @@ class XmlDb implements XmlGetter
         $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
         $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
         $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
+
+        $this->doc_ids = [];
     }
     // }}}
 

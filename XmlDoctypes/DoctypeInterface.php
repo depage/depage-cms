@@ -19,8 +19,10 @@ interface DoctypeInterface
     public function onDocumentChange();
     public function onAddNode(\DomNode $node, $targetId, $targetPos, $extras);
     public function onCopyNode($nodeId, $copyId);
-    public function onMoveNode($nodeId, $targetId);
+    public function onMoveNode($nodeId, $oldParentId);
     public function onDeleteNode($nodeId, $parentId);
+    public function onSetAttribute($nodeId, $attrName, $oldVal, $newVal);
 
     public function testDocument($xml);
+    public function testDocumentForHistory($xml);
 }

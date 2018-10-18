@@ -30,6 +30,9 @@ class Document
 
     protected $free_element_ids = [];
     protected $doctypeHandlers = [];
+
+    private $childNodeQuery = null;
+    private $insertNodeQuery = null;
     // }}}
     // {{{ constructor
     /**
@@ -183,6 +186,40 @@ class Document
         return new DocumentHistory($this->pdo, $this->table_prefix, $this);
     }
     // }}}
+    // {{{ isReleased()
+    /**
+     * @brief isReleased
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isReleased()
+    {
+        $info = $this->getDocInfo();
+        $latest = $this->getHistory()->getLatestVersion();
+
+        if (!empty($latest) && $info->lastchange->getTimestamp() <= $latest->lastsaved->getTimestamp()) {
+            return true;
+        }
+
+        return false;
+    }
+    // }}}
+    // {{{ isPublished()
+    /**
+     * @brief isPublished
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isPublished()
+    {
+        $info = $this->getDocInfo();
+        $latest = $this->getHistory()->getLatestVersion();
+
+        return !empty($latest);
+    }
+    // }}}
 
     // {{{ getNodeId
     /**
@@ -267,7 +304,7 @@ class Document
      *
      * @return $pos (int) position in node parents childlist
      */
-    protected function getPosById($id)
+    public function getPosById($id)
     {
         return $this->getNodeAttributeById($id, 'pos');
     }
@@ -677,14 +714,14 @@ class Document
      * @param $target_pos
      * @return bool
      */
-    public function addNodeByName($name, $target_id, $target_pos)
+    public function addNodeByName($name, $target_id, $target_pos, $extras = [])
     {
         $success = false;
         $dth = $this->getDoctypeHandler();
         $newNode = $dth->getNewNodeFor($name);
 
         if ($newNode) {
-            $success = $this->addNode($newNode, $target_id, $target_pos);
+            $success = $this->addNode($newNode, $target_id, $target_pos, $extras);
         }
 
         return $success;
@@ -817,13 +854,13 @@ class Document
         $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
+        $target_parent_id = $this->getParentIdById($target_id);
         if (
             $node_id !== $target_id
-            && $dth->isAllowedMove($node_id, $target_id)
+            && $dth->isAllowedMove($node_id, $target_parent_id)
         ) {
             $this->beginTransactionAltering();
 
-            $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id);
             $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
@@ -846,13 +883,13 @@ class Document
         $parent_id = false;
         $dth = $this->getDoctypeHandler();
 
+        $target_parent_id = $this->getParentIdById($target_id);
         if (
             $node_id !== $target_id
-            && $dth->isAllowedMove($node_id, $target_id)
+            && $dth->isAllowedMove($node_id, $target_parent_id)
         ) {
             $this->beginTransactionAltering();
 
-            $target_parent_id = $this->getParentIdById($target_id);
             $target_pos = $this->getPosById($target_id) + 1;
             $parent_id = $this->moveNodePrivate($node_id, $target_parent_id, $target_pos);
 
@@ -919,7 +956,8 @@ class Document
         $copy_id = false;
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->isAllowedCopy($node_id, $target_id)) {
+        $target_parent_id = $this->getParentIdById($target_id);
+        if ($dth->isAllowedCopy($node_id, $target_parent_id)) {
             $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id);
@@ -943,7 +981,8 @@ class Document
         $copy_id = false;
         $dth = $this->getDoctypeHandler();
 
-        if ($dth->isAllowedCopy($node_id, $target_id)) {
+        $target_parent_id = $this->getParentIdById($target_id);
+        if ($dth->isAllowedCopy($node_id, $target_parent_id)) {
             $this->beginTransactionAltering();
 
             $copy_id = $this->copyNodeWithOffset($node_id, $target_id, 1);
@@ -1137,6 +1176,9 @@ class Document
             )
             || !isset($attributes[$attr_name])
         ) {
+            $dth = $this->getDoctypeHandler();
+            $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name], $attr_value);
+
             $attributes[$attr_name] = $attr_value;
             $success = $this->saveAttributes($node_id, $attributes);
         }
@@ -1217,6 +1259,31 @@ class Document
         }
     }
     // }}}
+    // {{{ hashDomNode()
+    /**
+     * @brief hashDomNode
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    public function hashDomNode($node)
+    {
+        $doc = new \DOMDocument();
+        $doc->formatOutput = false;
+
+        list($d, $node) = \Depage\Xml\Document::getDocAndNode($node);
+        $rootNode = $doc->importNode($node, true);
+        $doc->appendChild($rootNode);
+
+        self::removeIdAttr($rootNode);
+        self::removeNodeAttr($rootNode, $this->db_ns, 'lastchange');
+        self::removeNodeAttr($rootNode, $this->db_ns, 'lastchangeUid');
+        self::removeNodeAttr($rootNode, $this->db_ns, 'docid');
+        self::removeNodeAttr($rootNode, $this->db_ns, 'released');
+
+        return hash("sha256", $doc->saveXML());
+    }
+    // }}}
     // {{{ getAttributeString
     /**
      * gets attribute string for saving
@@ -1231,6 +1298,7 @@ class Document
             $this->db_ns->ns . ':lastchange',
             $this->db_ns->ns . ':lastchangeUid',
         ];
+        ksort($attributes);
         foreach($attributes as $name => $value) {
             if (!in_array($name, $autogeneratedAttr)) {
                 $attr_str .= "$name=\"" . htmlspecialchars($value) . "\" ";
@@ -1325,11 +1393,9 @@ class Document
      */
     protected function getChildnodesByParentId($parent_id, $level = PHP_INT_MAX)
     {
-        static $query = null;
-
         // prepare query
-        if (is_null($query)) {
-            $query = $this->pdo->prepare(
+        if (is_null($this->childNodeQuery)) {
+            $this->childNodeQuery = $this->pdo->prepare(
                 "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
                 FROM {$this->table_xml} AS xml
                 WHERE xml.id_parent = :parent_id AND xml.id_doc = :doc_id
@@ -1339,11 +1405,11 @@ class Document
 
         $xml_doc = '';
 
-        $query->execute([
+        $this->childNodeQuery->execute([
             'doc_id' => $this->doc_id,
             'parent_id' => $parent_id,
         ]);
-        $results = $query->fetchAll(\PDO::FETCH_OBJ);
+        $results = $this->childNodeQuery->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($results as $row) {
             //get ELMEMENT_NODE
@@ -1635,10 +1701,8 @@ class Document
      */
     protected function saveNodeToDb($node, $id, $target_id, $target_pos, $increase_pos = false)
     {
-        static $insert_query = null;
-
-        if (is_null($insert_query)) {
-            $insert_query = $this->pdo->prepare(
+        if (is_null($this->insertNodeQuery)) {
+            $this->insertNodeQuery = $this->pdo->prepare(
                 "INSERT {$this->table_xml}
                 SET
                     id = :id_query,
@@ -1709,7 +1773,7 @@ class Document
         }
         $node_data = \Normalizer::normalize($node_data);
 
-        $insert_query->execute([
+        $this->insertNodeQuery->execute([
             'id_query' => $id_query,
             'target_id' => $target_id,
             'target_pos' => $target_pos,
@@ -1732,19 +1796,19 @@ class Document
     // }}}
 
     // {{{ beginTransactionAltering
-    protected function beginTransactionAltering()
+    public function beginTransactionAltering()
     {
         return $this->xmlDb->beginTransactionAltering();
     }
     // }}}
     // {{{ beginTransactionNonAltering
-    protected function beginTransactionNonAltering()
+    public function beginTransactionNonAltering()
     {
         return $this->xmlDb->beginTransactionNonAltering();
     }
     // }}}
     // {{{ endTransaction
-    protected function endTransaction()
+    public function endTransaction()
     {
         $altered = $this->xmlDb->endTransaction();
 

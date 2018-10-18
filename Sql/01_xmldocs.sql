@@ -21,3 +21,9 @@ CREATE TABLE `_xmldocs` (
   KEY `lastchange_uid` (`lastchange_uid`),
   CONSTRAINT `_xmldocs_ibfk_1` FOREIGN KEY (`lastchange_uid`) REFERENCES `_auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 1.9.0
+*/
+ALTER TABLE _xmldocs MODIFY `ns` mediumtext NOT NULL DEFAULT '';
+ALTER TABLE _xmldocs MODIFY `entities` mediumtext NOT NULL DEFAULT '';

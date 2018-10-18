@@ -14,16 +14,16 @@ namespace Depage\XmlDb;
 class XmlDbHistory implements XmlGetter
 {
     // {{{ variables
-    private $pdo;
-    private $db_ns;
-    private $table_history;
+    protected $pdo;
+    protected $db_ns;
+    protected $table_history;
 
-    private $doc_ids = [];
+    protected $doc_ids = [];
 
-    private $table_prefix = 'dp_';
-    private $table_docs;
+    protected $table_prefix = 'dp_';
+    protected $table_docs;
 
-    private $options;
+    protected $options;
     // }}}
 
     // {{{ constructor
@@ -69,33 +69,54 @@ class XmlDbHistory implements XmlGetter
     // {{{ getDocXml
     public function getDocXml($doc_id_or_name, $add_id_attribute = true)
     {
-        $result = false;
-        $id = $this->docExists($doc_id_or_name);
+        $xml = false;
 
-        $query = $this->pdo->prepare("
-            SELECT doc_id, published, xml
-            FROM {$this->table_history}
-            WHERE published = true
-            AND doc_id = :id
-        ");
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $history = $doc->getHistory();
+            $xml = $history->getLastPublishedXml($add_id_attribute);
+        }
 
-        $query->execute([
-            'id' => $id,
-        ]);
+        return $xml;
+    }
+    // }}}
+    // {{{ getDocXmlXpath
+    public function getDocXmlXpath($doc_id_or_name, $xpath, $add_id_attribute = true)
+    {
+        $xml = false;
 
-        if ($doc = $query->fetchObject()) {
-            $result = $doc->xml;
+        if ($doc_id = $this->docExists($doc_id_or_name)) {
+            $doc = new Document($this, $doc_id);
+            $history = $doc->getHistory();
+            $xmlFull = $history->getLastPublishedXml($add_id_attribute);
 
-            if (!$add_id_attribute) {
-                $doc = new \DomDocument();
-                $doc->loadXml($result);
-                Document::removeNodeAttr($doc, $this->db_ns, 'id');
+            $domXpath = new \DomXpath($xmlFull);
+            $list = $domXpath->query($xpath);
 
-                $result = $doc->saveXML();
+            if ($list->length > 0) {
+                $xml = new \Depage\Xml\Document();
+                $xml->appendChild($xml->importNode($list->item(0), true));
+
+                return $xml;
             }
         }
 
-        return $result;
+        return $xml;
+    }
+    // }}}
+
+    // {{{ __get
+    /**
+     * Get properties (basically read-only)
+     *
+     * @param $property
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
     }
     // }}}
 }

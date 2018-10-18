@@ -57,17 +57,20 @@ class Base implements DoctypeInterface
             $nodeInfo = $this->availableNodes[$name];
             $docInfo = $this->document->getNamespacesAndEntities();
 
-            $xml = "<$name {$docInfo->namespaces}";
-            if (!empty($nodeInfo->new)) {
-                $xml .= " name=\"" . htmlspecialchars($nodeInfo->new) . "\"";
-            }
-            if (isset($nodeInfo->attributes)) {
-                foreach ($nodeInfo->attributes as $attr => $value) {
-                    $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
+            if (isset($nodeInfo->xmlTemplateData)) {
+                $xml = $nodeInfo->xmlTemplateData;
+            } else {
+                $xml = "<$name {$docInfo->namespaces}";
+                if (!empty($nodeInfo->newName)) {
+                    $xml .= " name=\"" . htmlspecialchars($nodeInfo->newName) . "\"";
                 }
+                if (isset($nodeInfo->attributes)) {
+                    foreach ($nodeInfo->attributes as $attr => $value) {
+                        $xml .= " $attr=\"" . htmlspecialchars($value) . "\"";
+                    }
+                }
+                $xml .= '/>';
             }
-            $xml .= '/>';
-
             $doc = new \DOMDocument;
             $doc->loadXML($xml);
 
@@ -165,7 +168,7 @@ class Base implements DoctypeInterface
      * @param $target_id
      * @return bool
      */
-    public function onMoveNode($node_id, $target_id) {
+    public function onMoveNode($node_id, $oldParentId) {
         return true;
     }
     // }}}
@@ -181,9 +184,37 @@ class Base implements DoctypeInterface
         return true;
     }
     // }}}
+    // {{{ onSetAttribute
+    /**
+     * On Delete Node
+     *
+     * @param $node_id
+     * @param $parent_id
+     * @return bool
+     */
+    public function onSetAttribute($nodeId, $attrName, $oldVal, $newVal) {
+        return true;
+    }
+    // }}}
+    // {{{ onHistorySave
+    /**
+     * On History Save
+     *
+     * @return bool
+     */
+    public function onHistorySave()
+    {
+        return true;
+    }
+    // }}}
 
     // {{{ testDocument
     public function testDocument($xml) {
+        return false;
+    }
+    // }}}
+    // {{{ testDocumentForHistory
+    public function testDocumentForHistory($xml) {
         return false;
     }
     // }}}
