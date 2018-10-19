@@ -366,7 +366,7 @@ class DocProperties extends Base
             $fs->addHtml("<div class=\"details\">");
             // {{{ add changed date
             $fs->addHtml(sprintf(
-                _("<p>%s: %s by %s</p>"),
+                _("<p class=\"date\">%s: %s by %s</p>"),
                 _("Changed"),
                 $dateFormatter->format($pageInfo->lastchange, true),
                 htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
@@ -382,12 +382,12 @@ class DocProperties extends Base
             $fs->addHtml("</div>");
 
             // {{{ add release button
-            if (!$pageInfo->released) {
+            if (true || !$pageInfo->released) {
                 if ($this->authUser->canPublishProject()) {
                     $releaseTitle = _("Release Page");
                     $releaseHover = _("Mark this page to be published, when project gets published next time");
                 } else {
-                    $releaseTitle = _("Request Page Release");
+                    $releaseTitle = _("Request Release");
                     $releaseHover = _("Ask for this page the be released");
                 }
                 $class = $pageInfo->released ? "disabled" : "";

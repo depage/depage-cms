@@ -1273,6 +1273,14 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                $form.find(".doc-property-meta .details").each(function() {
+                    var $details = $(this);
+                    var $button = $("<span class=\"opener\"></span>").insertBefore($details);
+
+                    $button.on("click", function() {
+                        $details.parent().toggleClass("open");
+                    });
+                });
                 $form.find(".edit-src").each(function() {
                     var $input = $(this).find("input");
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
