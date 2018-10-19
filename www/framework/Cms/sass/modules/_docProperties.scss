@@ -297,11 +297,13 @@
 
         a {
             text-decoration: underline;
+            color: $textBaseColor;
         }
     }
     p.date {
-        font-size: $fSizeS;
+        //font-size: $fSizeS;
         //font-style: italic;
+        color: $textLighterColor;
     }
     .opener {
         position: absolute;

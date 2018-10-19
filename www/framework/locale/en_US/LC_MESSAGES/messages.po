@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 15:13+0200\n"
+"POT-Creation-Date: 2018-10-19 17:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2166,7 +2166,7 @@ msgstr ""
 
 #: Cms/Ui/DocProperties.php:369
 #, php-format
-msgid "<p class=\"date\">%s: %s by %s</p>"
+msgid "<p class=\"date\">%s %s by %s</p>"
 msgstr ""
 
 #: Cms/Ui/DocProperties.php:370

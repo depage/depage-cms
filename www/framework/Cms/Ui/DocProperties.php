@@ -366,7 +366,7 @@ class DocProperties extends Base
             $fs->addHtml("<div class=\"details\">");
             // {{{ add changed date
             $fs->addHtml(sprintf(
-                _("<p class=\"date\">%s: %s by %s</p>"),
+                _("<p class=\"date\">%s %s by %s</p>"),
                 _("Changed"),
                 $dateFormatter->format($pageInfo->lastchange, true),
                 htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
